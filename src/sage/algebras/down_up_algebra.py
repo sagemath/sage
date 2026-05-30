@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Down-Up Algebras
 
@@ -28,6 +27,7 @@ from sage.sets.family import Family
 from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
+
 
 class DownUpAlgebra(CombinatorialFreeModule):
     r"""
@@ -99,7 +99,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         b*u^2*d + a*u*(d*u) + g*u
 
     We verify some examples of Proposition 3.5 in [BR1998]_, which states
-    that the 0-th degree part is commutative::
+    that the `0`-th degree part is commutative::
 
         sage: DU0 = [u^i * (d*u)^j * d^i for i,j in
         ....:        cartesian_product([range(3), range(3)])]
@@ -214,7 +214,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, indices, category=cat, sorting_reverse=True)
         self._assign_names(['d', 'u'])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -227,7 +227,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         return "Down-Up algebra with parameters ({}, {}, {}) over {}".format(
             self._alpha, self._beta, self._gamma, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -240,7 +240,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         """
         return "\\mathcal{DU}(%s,%s,%s)" % (self._alpha, self._beta, self._gamma)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -272,7 +272,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
                 ret += f"{s}^{m[i]}"
         return ret
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation for the basis element indexed by ``m``.
 
@@ -318,7 +318,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         return Family({'d': d, 'u': u})
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
@@ -540,13 +540,12 @@ class VermaModule(CombinatorialFreeModule):
     construction of the irreducible representation `V(5)` (but they are
     different as `\mathfrak{gl}_2` weights)::
 
-        sage: B = crystals.Tableaux(['A',1], shape=[5])                                 # needs sage.graphs
-        sage: [b.weight() for b in B]                                                   # needs sage.graphs
+        sage: B = crystals.Tableaux(['A',1], shape=[5])
+        sage: [b.weight() for b in B]
         [(5, 0), (4, 1), (3, 2), (2, 3), (1, 4), (0, 5)]
 
     An example with periodic weights (see Theorem 2.13 of [BR1998]_)::
 
-        sage: # needs sage.rings.number_field
         sage: k.<z6> = CyclotomicField(6)
         sage: al = z6 + 1
         sage: (al - 1)^6 == 1
@@ -621,7 +620,7 @@ class VermaModule(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, NonNegativeIntegers(),
                                          prefix='v', category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -633,7 +632,7 @@ class VermaModule(CombinatorialFreeModule):
         """
         return f"Verma module of weight {self._weights[0]} of {self._DU}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -774,9 +773,9 @@ class VermaModule(CombinatorialFreeModule):
                                         for m, mc in scalar._monomial_coefficients.items()
                                         for n, nc in self._monomial_coefficients.items())
 
-        def is_weight_vector(self):
+        def is_weight_vector(self) -> bool:
             r"""
-            Return if ``self`` is a weight vector.
+            Return whether ``self`` is a weight vector.
 
             EXAMPLES::
 
@@ -805,7 +804,6 @@ class VermaModule(CombinatorialFreeModule):
 
             P = self.parent()
             R = P.base_ring()
-            weights = P._weights
 
             def get_wt(n):
                 if not n:
@@ -852,9 +850,8 @@ class VermaModule(CombinatorialFreeModule):
             P = self.parent()
             R = P.base_ring()
             V = FreeModule(R, 2)
-            weights = P._weights
             it = iter(self._monomial_coefficients)
             n = next(it)
             if not n:
                 return V([P._weights[0], R.zero()])
-            return V([P._weights[n], P._weights[n-1]])
+            return V([P._weights[n], P._weights[n - 1]])

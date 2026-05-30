@@ -8,12 +8,12 @@ Root system data for relabelled Cartan types
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.combinat.root_system import ambient_space, cartan_type
+from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.family import Family, FiniteFamily
-from sage.combinat.root_system import cartan_type
-from sage.combinat.root_system import ambient_space
-from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 
 
 class CartanType(cartan_type.CartanType_decorator):
@@ -261,7 +261,6 @@ class CartanType(cartan_type.CartanType_decorator):
             sage: latex(CoxeterType(['I',5]).relabel({1:0,2:1}))
             I_2(5) \text{ relabelled by } \left\{1 : 0, 2 : 1\right\}
         """
-        from sage.misc.latex import latex
         # Special case for type D_4^{(3)}
         if (self._type.is_affine() and self._type.dual().type() == 'G'
                 and self.options("notation") == "Kac"):
@@ -317,7 +316,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dynkin_diagram(self):
         """
-        Returns the Dynkin diagram for this Cartan type.
+        Return the Dynkin diagram for this Cartan type.
 
         EXAMPLES::
 
@@ -358,7 +357,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dual(self):
         """
-        Implements :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
+        Implement :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
         using that taking the dual and relabelling are commuting operations.
 
         EXAMPLES::
@@ -545,8 +544,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         if self._space._plot_projection == self._space._plot_projection_barycentric:
             return self._plot_projection_barycentric
-        else:
-            RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
+        RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
 
 
 class CartanType_finite(CartanType, cartan_type.CartanType_finite):
@@ -677,7 +675,6 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
             O---O---O---O
             2   3   4   0
             A4 relabelled by {1: 2, 2: 3, 3: 4, 4: 0}
-
         """
         return self._type.classical().relabel(self._relabelling)
 
@@ -700,7 +697,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def special_node(self):
         r"""
-        Returns a special node of the Dynkin diagram
+        Return a special node of the Dynkin diagram.
 
         .. SEEALSO:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
 
@@ -718,7 +715,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def is_untwisted_affine(self):
         """
-        Implement :meth:`CartanType_affine.is_untwisted_affine`
+        Implement :meth:`CartanType_affine.is_untwisted_affine`.
 
         A relabelled Cartan type is untwisted affine if the original is.
 
@@ -726,6 +723,5 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
             sage: CartanType(['B', 3, 1]).relabel({1:2, 2:3, 3:0, 0:1}).is_untwisted_affine()
             True
-
         """
         return self._type.is_untwisted_affine()

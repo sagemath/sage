@@ -32,27 +32,30 @@ EXAMPLES::
     sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10, pts[5])])
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
-#*******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>
 #  Copyright (C) 2005 William Stein
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
+
+from bisect import bisect_left
 
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
 from sage.rings.integer_ring import ZZ
+from sage.schemes.affine.affine_space import AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring
 from sage.structure.formal_sum import FormalSum
 
-from .morphism import is_SchemeMorphism
-from sage.schemes.affine.affine_space import is_AffineSpace
-from sage.schemes.projective.projective_space import is_ProjectiveSpace
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 
-def CurvePointToIdeal(C,P):
+def CurvePointToIdeal(C, P):
     r"""
     Return the vanishing ideal of a point on a curve.
 
@@ -68,11 +71,11 @@ def CurvePointToIdeal(C,P):
     R = A.coordinate_ring()
     n = A.ngens()
     x = A.gens()
-    polys = [ ]
-    m = n-1
+    polys = []
+    m = n - 1
     while m > 0 and P[m] == 0:
         m += -1
-    if is_ProjectiveSpace(A):
+    if isinstance(A, ProjectiveSpace_ring):
         a_m = P[m]
         x_m = x[m]
         for i in range(m):
@@ -81,46 +84,43 @@ def CurvePointToIdeal(C,P):
                 polys.append(x[i])
             else:
                 polys.append(a_m*x[i]-ai*x_m)
-    elif is_AffineSpace(A):
-        for i in range(m+1):
+    elif isinstance(A, AffineSpace_generic):
+        for i in range(m + 1):
             ai = P[i]
             if ai == 0:
                 polys.append(x[i])
             else:
-                polys.append(x[i]-ai)
-    for i in range(m+1,n):
-        polys.append(x[i])
+                polys.append(x[i] - ai)
+    polys.extend(x[i] for i in range(m + 1, n))
     return R.ideal(polys)
-
-
-def is_Divisor(x):
-    r"""
-    Test whether ``x`` is an instance of :class:`Divisor_generic`
-
-    INPUT:
-
-    - ``x`` -- anything.
-
-    OUTPUT:
-
-    ``True`` or ``False``.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.divisor import is_Divisor
-        sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
-        sage: C = Curve(y^2 - x^9 - x)
-        sage: is_Divisor(C.divisor([]))
-        True
-        sage: is_Divisor("Ceci n'est pas un diviseur")
-        False
-    """
-    return isinstance(x, Divisor_generic)
 
 
 class Divisor_generic(FormalSum):
     r"""
     A Divisor.
+
+    TESTS::
+
+        sage: E = EllipticCurve([1, 2])
+        sage: P = E(-1, 0)
+        sage: Q = E(1, 2)
+        sage: Pd = E.divisor(P)
+        sage: Qd = E.divisor(Q)
+        sage: Pd + Qd == Qd + Pd
+        True
+        sage: Pd != Qd
+        True
+        sage: C = EllipticCurve([2, 1])
+        sage: R = C(1, 2)
+        sage: Rd = C.divisor(R)
+        sage: Qd == Rd
+        False
+        sage: Rd == Qd
+        False
+        sage: Qd == (2 * (Qd * 1/2))
+        True
+        sage: Qd == 1/2 * Qd
+        False
     """
 
     def __init__(self, v, parent, check=True, reduce=True):
@@ -131,16 +131,15 @@ class Divisor_generic(FormalSum):
 
         INPUT:
 
-        - ``v`` -- object. Usually a list of pairs
-          ``(coefficient,divisor)``.
+        - ``v`` -- object; usually a list of pairs ``(coefficient,divisor)``
 
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
 
-        - ``check`` -- bool (default: True). Whether to coerce
+        - ``check`` -- boolean (default: ``True``); whether to coerce
           coefficients into base ring. Setting it to ``False`` can
           speed up construction.
 
-        - ``reduce`` -- reduce (default: True). Whether to combine
+        - ``reduce`` -- reduce (default: ``True``); whether to combine
           common terms. Setting it to ``False`` can speed up
           construction.
 
@@ -164,9 +163,7 @@ class Divisor_generic(FormalSum):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -187,16 +184,15 @@ class Divisor_generic(FormalSum):
         # straight - as the test above demonstrates, it results in the first
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
-        return repr_lincomb([(r"\mathrm{V}\left(%s\right)" % latex(v), c) for c,v in terms],
+        return repr_lincomb([(r"\mathrm{V}\left(%s\right)" % latex(v), c)
+                             for c, v in terms],
                             is_latex=True)
 
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -216,7 +212,7 @@ class Divisor_generic(FormalSum):
         # straight - as the test above demonstrates, it results in the first
         # generator being in front of the second one
         terms.sort(key=lambda x: x[1], reverse=True)
-        return repr_lincomb([("V(%s)" % v, c) for c,v in terms])
+        return repr_lincomb([("V(%s)" % v, c) for c, v in terms])
 
     def scheme(self):
         """
@@ -241,14 +237,12 @@ class Divisor_curve(Divisor_generic):
     For any curve `C`, use ``C.divisor(v)`` to
     construct a divisor on `C`. Here `v` can be either
 
+    - a rational point on `C`
 
-    -  a rational point on `C`
+    - a list of rational points
 
-    -  a list of rational points
-
-    -  a list of 2-tuples `(c,P)`, where `c` is an
-       integer and `P` is a rational point.
-
+    - a list of 2-tuples `(c,P)`, where `c` is an
+      integer and `P` is a rational point
 
     TODO: Divisors shouldn't be restricted to rational points. The
     problem is that the divisor group is the formal sum of the group of
@@ -279,12 +273,11 @@ class Divisor_curve(Divisor_generic):
 
         INPUT:
 
-        - ``v`` -- a list of pairs ``(c, P)``, where ``c`` is an
-           integer and ``P`` is a point on a curve. The P's must all
-           lie on the same curve.
+        - ``v`` -- list of pairs ``(c, P)``, where ``c`` is an
+          integer and ``P`` is a point on a curve. The P's must all
+          lie on the same curve.
 
-
-        - To create the divisor 0 use ``[(0, P)]``, so as to give the curve.
+        To create the divisor 0 use ``[(0, P)]``, so as to give the curve.
 
         EXAMPLES::
 
@@ -297,7 +290,7 @@ class Divisor_curve(Divisor_generic):
         """
         from sage.schemes.generic.divisor_group import DivisorGroup_curve
         if not isinstance(v, (list, tuple)):
-            v = [(1,v)]
+            v = [(1, v)]
 
         if parent is None:
             if v:
@@ -331,29 +324,34 @@ class Divisor_curve(Divisor_generic):
                 if isinstance(t, tuple) and len(t) == 2:
                     n = ZZ(t[0])
                     I = t[1]
-                    points.append((n,I))
+                    points.append((n, I))
                 else:
                     n = ZZ(1)
                     I = t
-                if is_SchemeMorphism(I):
-                    I = CurvePointToIdeal(C,I)
+                if isinstance(I, SchemeMorphism):
+                    I = CurvePointToIdeal(C, I)
                 else:
                     know_points = False
-                w.append((n,I))
+                w.append((n, I))
             v = w
         Divisor_generic.__init__(
             self, v, check=False, reduce=True, parent=parent)
 
         if know_points:
             self._points = points
+        else:
+            # TODO: in the next line, we should probably replace
+            # rational_points() with irreducible_components()
+            # once Sage can deal with divisors that are not only
+            # rational points (see trac #16225)
+            self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
+        self._sort_points()
 
     def _repr_(self):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -363,14 +361,49 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self):
+    def _sort_points(self):
+        """
+        Sort the list of the points of this divisor, and combine duplicates if
+        needed.
+
+        EXAMPLES::
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: G.support()  # indirect doctest
+            [(0 : 0 : 1)]
+            sage: G = C.divisor([(3, Points[1]), (1, Points[0])])
+            sage: G.support()  # indirect doctest
+            [(0 : 0 : 1), (0 : 1 : 0)]
+        """
+        sorted_points = []
+        for coefficient, point in self._points:
+            try:
+                position = bisect_left(sorted_points, point, key=lambda l: l[1])
+            except TypeError:
+                # Some sets of points cannot be sorted, ignore
+                return
+            if position == len(sorted_points):
+                sorted_points.append([coefficient, point])
+            elif sorted_points[position][1] != point:
+                sorted_points.insert(position, [coefficient, point])
+            else:
+                sorted_points[position][0] += coefficient
+        self._points = [tuple(l) for l in sorted_points]
+
+    def support(self) -> list:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
 
         EXAMPLES::
 
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
+            sage: A = AffineSpace(2, GF(5), names='xy')
+            sage: x, y = A.gens()
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]
@@ -400,16 +433,7 @@ class Divisor_curve(Divisor_generic):
         try:
             return self._support
         except AttributeError:
-            try:
-                pts = self._points
-            except AttributeError:
-                # TODO: in the next line, we should probably replace
-                # rational_points() with irreducible_components()
-                # once Sage can deal with divisors that are not only
-                # rational points (see trac #16225)
-                self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
-                pts = self._points
-            self._support = [s[1] for s in pts]
+            self._support = [s[1] for s in self._points]
             return self._support
 
     def coefficient(self, P):
@@ -431,12 +455,24 @@ class Divisor_curve(Divisor_generic):
             3
             sage: D.coefficient(pts[1])
             -1
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: G.coefficient(Points[0])
+            4
+            sage: G.coefficient(Points[1])
+            0
         """
         P = self.parent().scheme()(P)
         if P not in self.support():
             return self.base_ring().zero()
         t, i = search(self.support(), P)
-        assert t
+        if not t:
+            return Integer(0)
         try:
             return self._points[i][0]
         except AttributeError:

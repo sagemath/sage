@@ -1,10 +1,10 @@
-httpcore: A minimal low-level HTTP client.
-==========================================
+httpcore: Minimal low-level HTTP client
+=======================================
 
 Description
 -----------
 
-A minimal low-level HTTP client.
+Minimal low-level HTTP client
 
 License
 -------

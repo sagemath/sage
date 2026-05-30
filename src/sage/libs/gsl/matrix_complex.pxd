@@ -85,7 +85,6 @@ cdef extern from "gsl/gsl_matrix_complex_double.h":
   int  gsl_matrix_complex_fprintf(FILE * stream, gsl_matrix_complex * m, char * format)
 
 
-
   # Copying or exchanging elements
   int  gsl_matrix_complex_memcpy(gsl_matrix_complex * dest, gsl_matrix_complex * src)
 

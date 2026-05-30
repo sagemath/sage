@@ -27,9 +27,6 @@ cdef extern from "gap/calls.h" nogil:
 
 
 cdef extern from "gap/libgap-api.h" nogil:
-    """
-    #define sig_GAP_Enter()  {int t = GAP_Enter(); if (!t) sig_error();}
-    """
     ctypedef void (*GAP_CallbackFunc)()
     void GAP_Initialize(int argc, char ** argv,
             GAP_CallbackFunc markBagsCallback, GAP_CallbackFunc errorCallback,
@@ -40,7 +37,6 @@ cdef extern from "gap/libgap-api.h" nogil:
     cdef void GAP_EnterStack()
     cdef void GAP_LeaveStack()
     cdef int GAP_Enter() except 0
-    cdef void sig_GAP_Enter()
     cdef void GAP_Leave()
     cdef int GAP_Error_Setjmp() except 0
 
@@ -59,6 +55,7 @@ cdef extern from "gap/libgap-api.h" nogil:
 
     cdef Obj GAP_True
     cdef Obj GAP_False
+    cdef Obj GAP_Fail
 
     Obj GAP_CallFuncList(Obj func, Obj args);
     Obj GAP_CallFuncArray(Obj func, UInt narg, Obj * args);
@@ -73,7 +70,10 @@ cdef extern from "gap/libgap-api.h" nogil:
     bint GAP_IsInt(Obj)
     bint GAP_IsSmallInt(Obj)
     Obj GAP_NewObjIntFromInt(Int val)
+    Obj GAP_MakeObjInt(const UInt* limbs, Int size)
     Int GAP_ValueInt(Obj)
+    Int GAP_SizeInt(Obj)
+    const UInt* GAP_AddrInt(Obj)
 
     bint GAP_IsList(Obj lst)
     UInt GAP_LenList(Obj lst)
@@ -89,7 +89,7 @@ cdef extern from "gap/libgap-api.h" nogil:
     char* GAP_CSTR_STRING(Obj list)
     Obj GAP_MakeStringWithLen(const char* buf, UInt len)
 
-    Int GAP_ValueOfChar(Obj obj)
+    bint GAP_IsChar(Obj obj)
 
 
 cdef extern from "gap/lists.h" nogil:
@@ -102,7 +102,7 @@ cdef extern from "gap/objects.h" nogil:
     Obj CopyObj(Obj obj, int mut)
 
     UInt TNUM_OBJ(Obj obj)
-    char* TNAM_OBJ(Obj obj)
+    const char* TNAM_OBJ(Obj obj)
 
     cdef enum TNUM:
         T_RAT
@@ -141,9 +141,11 @@ cdef extern from "gap/records.h" nogil:
 
 
 cdef extern from "gap/stringobj.h" nogil:
-    bint IS_STRING(Obj obj)
-    bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
+
+
+cdef extern from "gap/stats.h" nogil:
+    void InterruptExecStat()
 
 
 cdef extern from "<structmember.h>" nogil:

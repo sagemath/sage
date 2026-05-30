@@ -49,9 +49,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define register
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include "gmp.h"
 #include "flint/fmpz.h"
 #include "flint/fmpz_factor.h"
 
@@ -74,15 +74,6 @@
 #include "factory/factory.h"
 #pragma clang diagnostic pop
 
-#ifdef PYNAC_HAVE_LIBGIAC
-#undef _POSIX_C_SOURCE
-#undef _XOPEN_SOURCE
-
-#include <giac/global.h>
-#include <giac/gausspol.h>
-#include <giac/fraction.h>
-#endif
-
 //#define Logging_refctr
 #if defined(Logging_refctr)
 #undef Py_INCREF
@@ -90,14 +81,14 @@
 
 #define Py_INCREF(op) (                         \
     _Py_INC_REFTOTAL  _Py_REF_DEBUG_COMMA       \
-    ((PyObject*)(op))->ob_refcnt++) ; \
+    Py_SET_REFCNT((PyObject*)(op), Py_REFCNT(op) + 1)) ; \
 std::cerr << "+ " << long(op) << ", " << Py_REFCNT(op) << ", " << Py_TYPE(op)->tp_name << std::endl; std::cerr.flush();
 
 #define Py_DECREF(op)                                   \
     do {                                                \
 std::cerr << "- " << long(op) << ", " << Py_REFCNT(op) << ", " << Py_TYPE(op)->tp_name << std::endl; std::cerr.flush(); \
         if (_Py_DEC_REFTOTAL  _Py_REF_DEBUG_COMMA       \
-        --((PyObject*)(op))->ob_refcnt != 0)            \
+        (Py_SET_REFCNT((PyObject*)(op), Py_REFCNT(op) - 1), Py_REFCNT(op) != 0))            \
             _Py_CHECK_REFCNT(op)                        \
         else                                            \
         _Py_Dealloc((PyObject *)(op));                  \
@@ -634,7 +625,7 @@ int numeric::compare_same_type(const numeric& right) const {
         }
 }
 
-#if PY_MAJOR_VERSION < 3 || defined(PYPY_VERSION)
+#if defined(PYPY_VERSION)
 #define hash_bits (8 * sizeof(void*))
 #else
 #define hash_bits _PyHASH_BITS
@@ -1189,10 +1180,11 @@ numeric numeric::conj() const {
                 "conjugate");
                 if (obj == nullptr)
                         return *this;
-                obj = PyObject_CallObject(obj, NULL);
-                if (obj == nullptr)
+                PyObject *res = PyObject_CallObject(obj, NULL);
+                Py_DECREF(obj);
+                if (res == nullptr)
                         py_error("Error calling Python conjugate");
-                return obj;
+                return res;
         }
         default:
                 stub("invalid type: ::conjugate() type not handled");
@@ -1801,6 +1793,18 @@ const numeric numeric::pow_intexp(const numeric &exponent) const
 		if (not mpz_fits_sint_p(mpq_numref(exponent.v._bigrat)))
 			throw std::runtime_error("size of exponent exceeds signed long size");
 		return power(mpz_get_si(mpq_numref(exponent.v._bigrat)));
+        }
+        if (exponent.t == PYOBJECT) {
+                // exponent.v._long would alias the PyObject* pointer and be
+                // garbage; convert via the Python integer protocol instead.
+                // to_long() throws conversion_error if it does not fit in a
+                // signed long, which we re-raise as the same overflow message
+                // used for MPZ above.
+                try {
+                        return power(exponent.to_long());
+                } catch (const conversion_error&) {
+                        throw std::runtime_error("size of exponent exceeds signed long size");
+                }
         }
         return power(exponent.v._long);
 }
@@ -2862,7 +2866,7 @@ static void fill_small_powers()
 
 bool numeric::is_small_power(std::pair<int,int>& p) const
 {
-        int i;
+        long i;
         switch (t) {
         case LONG:
                 if (v._long < 2)
@@ -3258,33 +3262,6 @@ void numeric::canonicalize()
         }
 }
 
-#ifdef PYNAC_HAVE_LIBGIAC
-giac::gen* numeric::to_giacgen(giac::context* cptr) const
-{
-        if (t == LONG)
-                return new giac::gen(v._long);
-        if (t == MPZ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, v._bigint);
-                auto ret = new giac::gen(bigint);
-                mpz_clear(bigint);
-                return ret;
-        }
-        if (t == MPQ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, mpq_numref(v._bigrat));
-                giac::gen gn(bigint);
-                mpz_set(bigint, mpq_denref(v._bigrat));
-                giac::gen gd(bigint);
-                giac::Tfraction<giac::gen> frac(gn, gd);
-                mpz_clear(bigint);
-                return new giac::gen(frac);
-        }
-        else
-                return nullptr;
-}
-#endif
-
 CanonicalForm numeric::to_canonical() const
 {
         if (t == LONG)
@@ -3413,7 +3390,7 @@ ex numeric::evalf(int /*level*/, PyObject* parent) const {
         if (ans == nullptr)
                 throw (std::runtime_error("numeric::evalf(): error calling py_float()"));
 
-        return ans;
+        return numeric(ans);
 }
 
 const numeric numeric::try_py_method(const std::string& s) const
@@ -3426,7 +3403,6 @@ const numeric numeric::try_py_method(const std::string& s) const
                 PyErr_Clear();
                 throw std::logic_error("");
         }
-        
         return numeric(ret);
 }
 
@@ -3702,7 +3678,7 @@ const numeric numeric::log(const numeric &b, PyObject* parent) const {
 }
 
 // General log
-// Handle special cases here that return MPZ/MPQ
+// Handle special cases here that return MPZ/MPQ (or an infinity)
 const numeric numeric::ratlog(const numeric &b, bool& israt) const {
         israt = true;
         if (b.is_one()) {
@@ -3724,6 +3700,9 @@ const numeric numeric::ratlog(const numeric &b, bool& israt) const {
                 if (b.v._long <= 0) {
                         israt = false;
                         return *_num0_p;
+                }
+                if (v._long == 0) {
+                        return py_funcs.py_eval_neg_infinity();
                 }
                 int c = 0;
                 std::ldiv_t ld;
@@ -5048,13 +5027,18 @@ const numeric isqrt(const numeric &x) {
 
 /** Floating point evaluation of Sage's constants. */
 ex ConstantEvalf(unsigned serial, PyObject* dict) {
+        PyObject* x;
         if (dict == nullptr) {
                 dict = PyDict_New();
                 PyDict_SetItemString(dict, "parent", CC_get());
+                x = py_funcs.py_eval_constant(serial, dict);
+                Py_DECREF(dict); // To avoid a memory leak, see bug #27536.
         }
-        PyObject* x = py_funcs.py_eval_constant(serial, dict);
+        else x = py_funcs.py_eval_constant(serial, dict);
+
         if (x == nullptr) py_error("error getting digits of constant");
-        return x;
+
+        return numeric(x);
 }
 
 ex UnsignedInfinityEvalf(unsigned serial, PyObject* parent) {

@@ -83,9 +83,9 @@ TESTS::
 
 from sage.rings.integer import Integer
 
-import sage.modular.arithgroup.all as arithgroup
-import sage.modular.dirichlet as dirichlet
-import sage.modular.modsym.modsym as modsym
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor
+from sage.modular import dirichlet
+from sage.modular.modsym import modsym
 from sage.misc.cachefunc import cached_method
 
 from .ambient import ModularFormsAmbient
@@ -93,6 +93,7 @@ from .ambient import ModularFormsAmbient
 from . import ambient_R
 from . import cuspidal_submodule
 from . import eisenstein_submodule
+
 
 class ModularFormsAmbient_eps(ModularFormsAmbient):
     """
@@ -102,7 +103,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         Create an ambient modular forms space with character.
 
-        .. note::
+        .. NOTE::
 
            The base ring must be of characteristic 0.  The ambient_R
            Python module is used for computing in characteristic p,
@@ -110,11 +111,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
         INPUT:
 
-        - ``weight`` - int
+        - ``weight`` -- integer
 
-        - ``character`` - dirichlet.DirichletCharacter
+        - ``character`` -- dirichlet.DirichletCharacter
 
-        - ``base_ring`` - base field
+        - ``base_ring`` -- base field
 
         EXAMPLES::
 
@@ -124,7 +125,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: type(m)
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
-        if not dirichlet.is_DirichletCharacter(character):
+        if not isinstance(character, dirichlet.DirichletCharacter):
             raise TypeError("character (=%s) must be a Dirichlet character" % character)
         if base_ring is None:
             base_ring = character.base_ring()
@@ -132,7 +133,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:
             raise ValueError("the base ring must have characteristic 0.")
-        group = arithgroup.Gamma1(character.modulus())
+        group = Gamma1_constructor(character.modulus())
         base_ring = character.base_ring()
         ModularFormsAmbient.__init__(self, group, weight, base_ring, character, eis_only)
 
@@ -161,9 +162,8 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         if self._eis_only:
             return "Modular Forms space of character %s and weight %s over %s" % (
                         self.character()._repr_short_(), self.weight(), self.base_ring())
-        else:
-            return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
-            self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
+        return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
+        self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
 
     @cached_method
     def cuspidal_submodule(self):
@@ -182,8 +182,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         if self.weight() > 1:
             return cuspidal_submodule.CuspidalSubmodule_eps(self)
-        else:
-            return cuspidal_submodule.CuspidalSubmodule_wt1_eps(self)
+        return cuspidal_submodule.CuspidalSubmodule_wt1_eps(self)
 
     def change_ring(self, base_ring):
         """
@@ -260,10 +259,10 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
     def hecke_module_of_level(self, N):
         r"""
-        Return the Hecke module of level N corresponding to self, which is the
-        domain or codomain of a degeneracy map from self. Here N must be either
-        a divisor or a multiple of the level of self, and a multiple of the
-        conductor of the character of self.
+        Return the Hecke module of level N corresponding to ``self``, which is the
+        domain or codomain of a degeneracy map from ``self``. Here N must be either
+        a divisor or a multiple of the level of ``self``, and a multiple of the
+        conductor of the character of ``self``.
 
         EXAMPLES::
 
@@ -283,7 +282,21 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         from . import constructor
         if N % self.level() == 0:
             return constructor.ModularForms(self.character().extend(N), self.weight(), self.base_ring(), prec=self.prec())
-        elif self.level() % N == 0:
+        if self.level() % N == 0:
             return constructor.ModularForms(self.character().restrict(N), self.weight(), self.base_ring(), prec=self.prec())
-        else:
-            raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
+        raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
+
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: m = ModularForms(DirichletGroup(17).0^2, 2)
+            sage: pari.mfdim(m)
+            3
+            sage: pari.mfparams(m)
+            [17, 2, Mod(9, 17), 4, t^4 + 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight(), self.character()], 4)

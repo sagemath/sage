@@ -4,15 +4,15 @@
 Helpers for creating matrices
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2018 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 cimport cython
 from cpython.sequence cimport PySequence_Fast
@@ -23,7 +23,7 @@ MatrixSpace = None
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.structure.coerce cimport (coercion_model,
-        is_numpy_type, py_scalar_parent)
+                                    is_numpy_type, py_scalar_parent)
 from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
@@ -211,7 +211,6 @@ cdef class MatrixArgs:
         [1 2]
         [3 4]
 
-        sage: # needs sage.libs.pari
         sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
@@ -274,7 +273,6 @@ cdef class MatrixArgs:
         [1.0000 2.0000]
         [3.0000 4.0000]
 
-        sage: # needs sage.graphs
         sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 3 by 3 dense matrices
          over Integer Ring; typ=MATRIX; entries=[0 1 1]
@@ -296,10 +294,13 @@ cdef class MatrixArgs:
 
     Test invalid input::
 
-        sage: MatrixArgs(ZZ, 2, 2, entries="abcd").finalized()
+        sage: MatrixArgs(ZZ, 2, 2, entries='abcd').finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+        over Integer Ring; typ=SCALAR; entries='abcd'>
+        sage: matrix(ZZ, 2, 2, entries='abcd')
         Traceback (most recent call last):
         ...
-        TypeError: unable to convert 'abcd' to a matrix
+        TypeError: unable to convert 'abcd' to an integer
         sage: MatrixArgs(ZZ, 2, 2, entries=MatrixArgs()).finalized()
         Traceback (most recent call last):
         ...
@@ -372,7 +373,8 @@ cdef class MatrixArgs:
         # Parse positional arguments (base, nrows, ncols, entries)
         # where each of them is optional.
         cdef Py_ssize_t argi = 0, argc = len(args)
-        if argi == argc: return
+        if argi == argc:
+            return
 
         # fast check for certain types of entries which cannot be
         # confused with a base ring or a number.
@@ -390,10 +392,14 @@ cdef class MatrixArgs:
             if argi == argc:
                 return
 
-        # check nrows and ncols argument
-        cdef int k
+        # check positional nrows and ncols argument
+        # even if redundant with row_keys, column_keys given as keywords;
+        # but do not check for positional row_keys, column_keys arguments
+        # -- we do not allow those, as they would be too easy to
+        # confuse with entries
+        cdef Py_ssize_t k
         cdef long v
-        if self.nrows == -1 and self.ncols == -1 and self.row_keys is None and self.column_keys is None:
+        if self.nrows == -1 and self.ncols == -1:
             for k in range(2):
                 arg = args[argi]
                 if is_numpy_type(type(arg)):
@@ -410,13 +416,15 @@ cdef class MatrixArgs:
                     else:
                         self.set_ncols(v)
                     argi += 1
-                    if argi == argc: return
+                    if argi == argc:
+                        return
 
         # check for entries argument
         if self.entries is None:
             self.entries = args[argi]
             argi += 1
-            if argi == argc: return
+            if argi == argc:
+                return
 
         raise TypeError("too many arguments in matrix constructor")
 
@@ -468,7 +476,7 @@ cdef class MatrixArgs:
 
     def __iter__(self):
         """
-        Default iteration (dense with conversion)
+        Default iteration (dense with conversion).
 
         EXAMPLES::
 
@@ -481,14 +489,14 @@ cdef class MatrixArgs:
 
     def iter(self, bint convert=True, bint sparse=False):
         """
-        Iteration over the entries in the matrix
+        Iteration over the entries in the matrix.
 
         INPUT:
 
-        - ``convert`` -- If ``True``, the entries are converted to the
-          base right. If ``False``, the entries are returned as given.
+        - ``convert`` -- if ``True``, the entries are converted to the
+          base right; if ``False``, the entries are returned as given
 
-        - ``sparse`` -- See OUTPUT below.
+        - ``sparse`` -- see OUTPUT below
 
         OUTPUT: iterator
 
@@ -760,7 +768,7 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``immutable`` -- boolean; if ``True``, the result will be immutable.
+        - ``immutable`` -- boolean; if ``True``, the result will be immutable
 
         OUTPUT: an element of ``self.space``
 
@@ -814,8 +822,8 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``convert`` -- If ``True``, the entries are converted to the base
-          ring. Otherwise, the entries are returned as given.
+        - ``convert`` -- if ``True``, the entries are converted to the base
+          ring; otherwise, the entries are returned as given
 
         .. NOTE::
 
@@ -852,7 +860,7 @@ cdef class MatrixArgs:
 
         cdef list L
         if self.typ == MA_ENTRIES_SEQ_FLAT and not convert:
-            # Try to re-use existing list
+            # Try to reuse existing list
             if type(self.entries) is not list:
                 L = list(self.entries)
             else:
@@ -876,7 +884,7 @@ cdef class MatrixArgs:
         """
         Return the entries of the matrix as a :class:`dict`.
 
-        The keys of this :class:`dict` are the non-zero positions ``(i,j)``. The
+        The keys of this :class:`dict` are the nonzero positions ``(i,j)``. The
         corresponding value is the entry at that position. Zero values are skipped.
 
         If ``convert`` is ``True``, the entries are converted to the base
@@ -931,7 +939,8 @@ cdef class MatrixArgs:
                     Integer Ring
                  in Category of finite dimensional modules with basis over
                     (Dedekind domains and euclidean domains
-                     and infinite enumerated sets and metric spaces);
+                     and noetherian rings and infinite enumerated sets
+                     and metric spaces);
              typ=ZERO; entries=None>
         """
         if self.column_keys is not None and self.column_keys != column_keys:
@@ -967,7 +976,8 @@ cdef class MatrixArgs:
                  to Free module generated by {'u', 'v'} over Integer Ring
                  in Category of finite dimensional modules with basis over
                     (Dedekind domains and euclidean domains
-                     and infinite enumerated sets and metric spaces);
+                     and noetherian rings and infinite enumerated sets
+                     and metric spaces);
              typ=ZERO; entries=None>
         """
         if self.row_keys is not None and self.row_keys != row_keys:
@@ -1081,7 +1091,6 @@ cdef class MatrixArgs:
 
         Check github issue #36065:
 
-            sage: # needs sage.rings.number_field
             sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
             ....:     def __bool__(self):
             ....:         raise ValueError
@@ -1393,7 +1402,7 @@ cdef class MatrixArgs:
                                                            for vec in e])
             self.entries = []
             for i, row in enumerate(e):
-                for j, val in (<Vector?>row).iteritems():
+                for j, val in (<Vector?>row).items():
                     self.entries.append(make_SparseEntry(i, j, val))
 
             self.set_ncols(max((<Vector>vec)._parent.ambient_module().rank() for vec in e))
@@ -1474,7 +1483,6 @@ cdef class MatrixArgs:
 
         Check that :issue:`26655` is fixed::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(9)
             sage: M = MatrixSpace(F, 2, 2)
             sage: A = M([[1, a], [0, 1]])
@@ -1493,12 +1501,33 @@ cdef class MatrixArgs:
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
+
+        Check that :issue:`38221` is fixed::
+
+            sage: G = CyclicPermutationGroup(7)
+            sage: R = GF(2)
+            sage: A = G.algebra(R)
+            sage: matrix(A, 3, 3, A.zero())
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
+            sage: matrix(A, 3, 3, A.one())
+            [()  0  0]
+            [ 0 ()  0]
+            [ 0  0 ()]
+
+        Verify that :issue:`34821` is fixed::
+
+            sage: matrix(ZZ, 2, 2, "3")
+            [3 0]
+            [0 3]
         """
         # Check basic Python types. This is very fast, so it doesn't
         # hurt to do these first.
         if self.entries is None:
             return MA_ENTRIES_ZERO
-        if isinstance(self.entries, (int, float, complex, Integer)):
+        if isinstance(self.entries, (int, float, complex, Integer, str)):
+            # Note that a string is not considered to be a sequence.
             if self.entries:
                 return MA_ENTRIES_SCALAR
             return MA_ENTRIES_ZERO
@@ -1517,6 +1546,8 @@ cdef class MatrixArgs:
         cdef bint is_elt = isinstance(self.entries, Element)
         if is_elt and isinstance(self.entries, Matrix):
             return MA_ENTRIES_MATRIX
+        if is_elt and self.base is not None and self.entries.parent() == self.base:
+            return MA_ENTRIES_SCALAR
         t = type(self.entries)
         try:
             f = t._matrix_
@@ -1541,9 +1572,6 @@ cdef class MatrixArgs:
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion
             return MA_ENTRIES_UNKNOWN
-        if isinstance(self.entries, str):
-            # Blacklist strings, we don't want them to be considered a sequence
-            return MA_ENTRIES_UNKNOWN
         try:
             self.entries = list(self.entries)
         except TypeError:
@@ -1562,6 +1590,16 @@ cdef class MatrixArgs:
         is a sequence.
 
         If the entries are invalid, return ``MA_ENTRIES_UNKNOWN``.
+
+        TESTS:
+
+        Verify that :issue:`34821` is fixed::
+
+            sage: matrix(ZZ, 1,2, ["1", "2"])
+            [1 2]
+            sage: matrix(ZZ, 2,1, ["1", "2"])
+            [1]
+            [2]
         """
         if not self.entries:
             return MA_ENTRIES_SEQ_FLAT
@@ -1577,13 +1615,11 @@ cdef class MatrixArgs:
                 return MA_ENTRIES_SEQ_SEQ
             else:
                 return MA_ENTRIES_SEQ_FLAT
-        if isinstance(x, (int, float, complex)):
+        if isinstance(x, (int, float, complex, str)):
+            # Note that a string is not considered to be a sequence.
             return MA_ENTRIES_SEQ_FLAT
         if isinstance(x, Element) and element_is_scalar(<Element>x):
             return MA_ENTRIES_SEQ_FLAT
-        if isinstance(x, str):
-            # Blacklist strings, we don't want them to be considered a sequence
-            return MA_ENTRIES_UNKNOWN
         try:
             iter(x)
         except TypeError:

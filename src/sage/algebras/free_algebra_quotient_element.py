@@ -1,14 +1,12 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Free algebra quotient elements
 
 AUTHORS:
-    - William Stein (2011-11-19): improved doctest coverage to 100%
-    - David Kohel (2005-09): initial version
 
+- William Stein (2011-11-19): improved doctest coverage to 100%
+- David Kohel (2005-09): initial version
 """
-
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -20,9 +18,8 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.misc.repr import repr_lincomb
 from sage.structure.element import RingElement, AlgebraElement
 from sage.structure.parent_gens import localvars
@@ -33,26 +30,8 @@ from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.algebras.free_algebra_element import FreeAlgebraElement
 
 
-def is_FreeAlgebraQuotientElement(x):
-    """
-    EXAMPLES::
-
-        sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(i)
-        True
-
-    Of course this is testing the data type::
-
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(1)
-        False
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(H(1))
-        True
-    """
-    return isinstance(x, FreeAlgebraQuotientElement)
-
-
 class FreeAlgebraQuotientElement(AlgebraElement):
-    def __init__(self, A, x):
+    def __init__(self, A, x) -> None:
         """
         Create the element x of the FreeAlgebraQuotient A.
 
@@ -79,10 +58,10 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         if isinstance(x, (Integer, int)):
             self.__vector = Q.module().gen(0) * x
             return
-        elif isinstance(x, FreeModuleElement) and x.parent() is Q.module():
+        if isinstance(x, FreeModuleElement) and x.parent() is Q.module():
             self.__vector = x
             return
-        elif isinstance(x, FreeModuleElement) and x.parent() == A.module():
+        if isinstance(x, FreeModuleElement) and x.parent() == A.module():
             self.__vector = x
             return
         R = A.base_ring()
@@ -119,7 +98,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         else:
             raise TypeError("argument x (= %s) is of the wrong type" % x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -134,8 +113,8 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             mons = Q.monomial_basis()
             return repr_lincomb(zip(mons, cffs), strip_one=True)
 
-    def _latex_(self):
-        """
+    def _latex_(self) -> str:
+        r"""
         EXAMPLES::
 
             sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
@@ -161,7 +140,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         """
         return self.__vector
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
         Compare two quotient algebra elements; done by comparing the
         underlying vector representatives.
@@ -178,11 +157,11 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             sage: i + j == j + i
             True
         """
-        return richcmp(self.vector(), right.vector(), op)
+        return richcmp(self.vector(), other.vector(), op)
 
     def __neg__(self):
         """
-        Return negative of self.
+        Return negative of ``self``.
 
         EXAMPLES::
 

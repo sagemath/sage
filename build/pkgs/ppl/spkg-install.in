@@ -3,6 +3,8 @@ export CXXFLAGS="$CXXFLAGS -I$SAGE_LOCAL/include"
 
 cd src
 
+cp "$SAGE_ROOT"/config/config.* .
+
 # Enable only what's needed for Sage
 PPL_CONFIGURE="--enable-coefficients=mpz --disable-fpmath $PPL_CONFIGURE"
 

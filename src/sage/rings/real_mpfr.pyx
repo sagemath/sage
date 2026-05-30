@@ -84,9 +84,11 @@ EXAMPLES:
 
 A difficult conversion::
 
-    sage: RR(sys.maxsize)
-    9.22337203685478e18      # 64-bit
-    2.14748364700000e9       # 32-bit
+    sage: r = RR(sys.maxsize)
+    sage: r  # needs 32_bit
+    2.14748364700000e9
+    sage: r  # needs !32_bit
+    9.22337203685478e18
 
 TESTS::
 
@@ -149,8 +151,6 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
-
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -220,17 +220,25 @@ def mpfr_prec_max():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_prec_max
-        sage: mpfr_prec_max()
-        2147483391              # 32-bit
-        9223372036854775551     # 64-bit
+        sage: prec32 = 2147483391
+        sage: prec64 = 9223372036854775551
+        sage: mpfr_prec_max() in [prec32, prec64]
+        True
 
         sage: R = RealField(2^31-257); R
         Real Field with 2147483391 bits of precision
 
-        sage: R = RealField(2^31-256)
-        Traceback (most recent call last):                     # 32-bit
-        ...                                                    # 32-bit
-        ValueError: prec (=...) must be >= 1 and <= ...        # 32-bit
+   This overflows on 32-bit, leading to an invalid argument::
+
+        sage: try:
+        ....:     R = RealField(2^31-256)
+        ....: except ValueError as e:
+        ....:     R = e
+        sage: isinstance(R, ValueError)  # needs 32_bit
+        True
+        sage: isinstance(R, ValueError)  # needs !32_bit
+        False
+
     """
     return MPFR_PREC_MAX
 
@@ -242,12 +250,15 @@ def mpfr_get_exp_min():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_min
-        sage: mpfr_get_exp_min()
-        -1073741823            # 32-bit
-        -4611686018427387903   # 64-bit
-        sage: 0.5 >> (-mpfr_get_exp_min())
-        2.38256490488795e-323228497            # 32-bit
-        8.50969131174084e-1388255822130839284  # 64-bit
+        sage: min32 = -1073741823
+        sage: min64 = -4611686018427387903
+        sage: mpfr_get_exp_min() in [min32, min64]
+        True
+        sage: x = 0.5 >> (-mpfr_get_exp_min())
+        sage: x  # needs 32_bit
+        2.38256490488795e-323228497
+        sage: x  # needs !32_bit
+        8.50969131174084e-1388255822130839284
         sage: 0.5 >> (-mpfr_get_exp_min()+1)
         0.000000000000000
     """
@@ -261,12 +272,15 @@ def mpfr_get_exp_max():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_max
-        sage: mpfr_get_exp_max()
-        1073741823            # 32-bit
-        4611686018427387903   # 64-bit
-        sage: 0.5 << mpfr_get_exp_max()
-        1.04928935823369e323228496            # 32-bit
-        2.93782689455579e1388255822130839282  # 64-bit
+        sage: max32 = 1073741823
+        sage: max64 = 4611686018427387903
+        sage: mpfr_get_exp_max() in [max32, max64]
+        True
+        sage: x = 0.5 << mpfr_get_exp_max()
+        sage: x  # needs 32_bit
+        1.04928935823369e323228496
+        sage: x  # needs !32_bit
+        2.93782689455579e1388255822130839282
         sage: 0.5 << (mpfr_get_exp_max()+1)
         +infinity
     """
@@ -322,9 +336,10 @@ def mpfr_get_exp_min_min():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_min_min, mpfr_set_exp_min
-        sage: mpfr_get_exp_min_min()
-        -1073741823            # 32-bit
-        -4611686018427387903   # 64-bit
+        sage: min32 = -1073741823
+        sage: min64 = -4611686018427387903
+        sage: mpfr_get_exp_min_min() in [min32, min64]
+        True
 
     This is really the minimal value allowed::
 
@@ -343,9 +358,10 @@ def mpfr_get_exp_max_max():
     EXAMPLES::
 
         sage: from sage.rings.real_mpfr import mpfr_get_exp_max_max, mpfr_set_exp_max
-        sage: mpfr_get_exp_max_max()
-        1073741823            # 32-bit
-        4611686018427387903   # 64-bit
+        sage: max32 = 1073741823
+        sage: max64 = 4611686018427387903
+        sage: mpfr_get_exp_max_max() in [max32, max64]
+        True
 
     This is really the maximal value allowed::
 
@@ -386,17 +402,17 @@ cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN):
 
     INPUT:
 
-    - ``prec`` -- (integer) precision; default = 53 prec is
+    - ``prec`` -- integer (default: 53); precision ``prec`` is
       the number of bits used to represent the mantissa of a
       floating-point number. The precision can be any integer between
       :func:`mpfr_prec_min()` and :func:`mpfr_prec_max()`. In the current
       implementation, :func:`mpfr_prec_min()` is equal to 2.
 
-    - ``sci_not`` -- (default: ``False``) if ``True``, always display using
-      scientific notation; if ``False``, display using scientific notation
-      only for very large or very small numbers
+    - ``sci_not`` -- boolean (default: ``False``); if ``True``, always display
+      using scientific notation. If ``False``, display using scientific
+      notation only for very large or very small numbers.
 
-    - ``rnd`` -- (string) the rounding mode:
+    - ``rnd`` -- string; the rounding mode:
 
       - ``'RNDN'`` -- (default) round to nearest (ties go to the even
         number): Knuth says this is the best choice to prevent "floating
@@ -753,8 +769,6 @@ cdef class RealField_class(sage.rings.abc.RealField):
             return QQtoRR(QQ, self)
         elif (S is RDF or S is float) and self._prec <= 53:
             return double_toRR(S, self)
-        elif S is long:
-            return int_toRR(long, self)
         elif S is int:
             return int_toRR(int, self)
         elif isinstance(S, RealField_class) and S.prec() >= self._prec:
@@ -909,16 +923,16 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """
         return 1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a list of generators.
+        Return a tuple of generators.
 
         EXAMPLES::
 
             sage: RR.gens()
-            [1.00000000000000]
+            (1.00000000000000,)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
@@ -966,7 +980,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
     def characteristic(self):
         """
-        Returns 0, since the field of real numbers has characteristic 0.
+        Return 0, since the field of real numbers has characteristic 0.
 
         EXAMPLES::
 
@@ -991,7 +1005,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
     def __hash__(self):
         """
-        Returns a hash function of the field, which takes into account
+        Return a hash function of the field, which takes into account
         the precision and rounding convention.
 
         EXAMPLES::
@@ -1088,7 +1102,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
     def euler_constant(self):
         """
-        Returns Euler's gamma constant to the precision of this field.
+        Return Euler's gamma constant to the precision of this field.
 
         EXAMPLES::
 
@@ -1104,7 +1118,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
     def catalan_constant(self):
         """
-        Returns Catalan's constant to the precision of this field.
+        Return Catalan's constant to the precision of this field.
 
         EXAMPLES::
 
@@ -1238,7 +1252,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         INPUT:
 
-        -  ``status`` -- boolean optional flag
+        - ``status`` -- boolean optional flag
 
         EXAMPLES::
 
@@ -1268,7 +1282,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
     def zeta(self, n=2):
         """
         Return an `n`-th root of unity in the real field, if one
-        exists, or raise a ``ValueError`` otherwise.
+        exists, or raise a :exc:`ValueError` otherwise.
 
         EXAMPLES::
 
@@ -1310,7 +1324,6 @@ cdef class RealField_class(sage.rings.abc.RealField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: k = RealField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial( x )
@@ -1327,7 +1340,6 @@ cdef class RealField_class(sage.rings.abc.RealField):
             (x - 1.0000000000000000000000000000)^3
             sage: k._factor_univariate_polynomial( x^2 - 3 )
             (x - 1.7320508075688772935274463415) * (x + 1.7320508075688772935274463415)
-
         """
         R = f.parent()
         F = list(f._pari_with_name().factor())
@@ -1358,7 +1370,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
     """
     def __cinit__(self, parent, x=None, base=None):
         """
-        Initialize the parent of this element and allocate memory
+        Initialize the parent of this element and allocate memory.
 
         TESTS::
 
@@ -1438,6 +1450,33 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: RealNumber('1_3.1e-32_45')
             1.31000000000000e-3244
+
+        Test conversion from base different from `10`::
+
+            sage: RR('0xabc')
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert '0xabc' to a real number
+            sage: RR("0x123.e1", base=0)  # rel tol 1e-12
+            291.878906250000
+            sage: RR("0x123.@1", base=0)  # rel tol 1e-12
+            4656.00000000000
+            sage: RR("1Xx", base=36)  # rel tol 1e-12
+            2517.00000000000
+            sage: RR("-1Xx@-10", base=62)  # rel tol 1e-12
+            -7.08805492048139e-15
+            sage: RR("1", base=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: base (=1) must be 0 or between 2 and 62
+            sage: RR("1", base=-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: base (=-1) must be 0 or between 2 and 62
+            sage: RR("1", base=63)
+            Traceback (most recent call last):
+            ...
+            ValueError: base (=63) must be 0 or between 2 and 62
         """
         if x is not None:
             self._set(x, base)
@@ -1486,6 +1525,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # Real Numbers are supposed to be immutable.
         cdef RealField_class parent
         parent = self._parent
+        if base != 0 and (base < 2 or base > 62):
+            raise ValueError(f"base (={base}) must be 0 or between 2 and 62")
         if isinstance(x, RealNumber):
             if isinstance(x, RealLiteral):
                 s = (<RealLiteral>x).literal
@@ -1800,7 +1841,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def __hash__(self):
         """
-        Returns the hash of self, which coincides with the python float
+        Return the hash of self, which coincides with the Python float
         (and often int) type.
 
         This has the drawback that two very close high precision numbers
@@ -1872,8 +1913,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         - ``base`` -- (default: 10) base for output
 
-        - ``digits`` -- (default: 0) number of digits to display. When
-          ``digits`` is zero, choose this automatically.
+        - ``digits`` -- (default: 0) number of digits to display; when
+          ``digits`` is zero, choose this automatically
 
         - ``no_sci`` -- if 2, never print using scientific notation; if
           ``True``, use scientific notation only for large or small
@@ -1883,12 +1924,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
         - ``e`` -- symbol used in scientific notation; defaults to 'e' for
           base=10, and '@' otherwise
 
-        - ``truncate`` -- (default: ``False``) if ``True``, round off the
+        - ``truncate`` -- boolean (default: ``False``); if ``True``, round off the
           last digits in base-10 printing to lessen confusing base-2
           roundoff issues. This flag may not be used in other bases or
           when ``digits`` is given.
 
-        - ``skip_zeroes`` -- (default: ``False``) if ``True``, skip
+        - ``skip_zeroes`` -- boolean (default: ``False``); if ``True``, skip
           trailing zeroes in mantissa
 
         EXAMPLES::
@@ -2244,7 +2285,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def fp_rank(self):
         r"""
-        Returns the floating-point rank of this number. That is, if you
+        Return the floating-point rank of this number. That is, if you
         list the floating-point numbers of this precision in order, and
         number them starting with `0.0 \rightarrow 0` and extending
         the list to positive and negative infinity, returns the number
@@ -2258,17 +2299,20 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1
             sage: RR(0).nextbelow().nextbelow().fp_rank()
             -2
-            sage: RR(1).fp_rank()
-            4835703278458516698824705            # 32-bit
-            20769187434139310514121985316880385  # 64-bit
-            sage: RR(-1).fp_rank()
-            -4835703278458516698824705            # 32-bit
-            -20769187434139310514121985316880385  # 64-bit
+            sage: rank32 = 4835703278458516698824705
+            sage: rank64 = 20769187434139310514121985316880385
+            sage: RR(1).fp_rank() in [rank32, rank64]
+            True
+            sage: rank32 = -4835703278458516698824705
+            sage: rank64 = -20769187434139310514121985316880385
+            sage: RR(-1).fp_rank() in [rank32, rank64]
+            True
             sage: RR(1).fp_rank() - RR(1).nextbelow().fp_rank()
             1
-            sage: RR(-infinity).fp_rank()
-            -9671406552413433770278913            # 32-bit
-            -41538374868278621023740371006390273  # 64-bit
+            sage: rank32 = -9671406552413433770278913
+            sage: rank64 = -41538374868278621023740371006390273
+            sage: RR(-infinity).fp_rank() in [rank32, rank64]
+            True
             sage: RR(-infinity).fp_rank() - RR(-infinity).nextabove().fp_rank()
             -1
         """
@@ -2346,9 +2390,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         There are lots of floating-point numbers around 0::
 
-            sage: R2(-1).fp_rank_delta(R2(1))
-            4294967298            # 32-bit
-            18446744073709551618  # 64-bit
+            sage: delta32 = 4294967298
+            sage: delta64 = 18446744073709551618
+            sage: R2(-1).fp_rank_delta(R2(1)) in [delta32, delta64]
+            True
         """
         # We create the API for forward compatibility, because it can have
         # a (somewhat) more efficient implementation than this; but for now,
@@ -2364,19 +2409,17 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) + RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
-        """
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
+       """
         if have_same_parent(left, right):
             return (<RealNumber> left)._add_(right)
         try:
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return right.__add__(left)
         elif isinstance(left, RealNumber):
             return Element.__add__(left, right)
@@ -2388,11 +2431,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(2) - RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._sub_(right)
@@ -2400,7 +2441,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return (-right).__add__(left)
         elif isinstance(left, RealNumber):
             return Element.__sub__(left, right)
@@ -2412,11 +2453,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) * RIF(1)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            1
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._mul_(right)
@@ -2424,7 +2463,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right,RealIntervalFieldElement):
             return right.__mul__(left)
         elif isinstance(left, RealNumber):
             return Element.__mul__(left, right)
@@ -2436,11 +2475,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
         TESTS::
 
             sage: RR(1) / RIF(1/2)
-            doctest:...:
-            DeprecationWarning: automatic conversions from floating-point numbers to intervals are deprecated
-            See https://github.com/sagemath/sage/issues/15114 for details.
-            2
-            sage: import warnings; warnings.resetwarnings()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for /: ...
         """
         if have_same_parent(left, right):
             return (<RealNumber> left)._div_(right)
@@ -2448,7 +2485,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             from sage.rings.real_mpfi import RealIntervalFieldElement
         except ImportError:
             RealIntervalFieldElement = None
-        if type(right) is RealIntervalFieldElement:
+        if isinstance(right, RealIntervalFieldElement):
             return right.__rtruediv__(left)
         elif isinstance(left, RealNumber):
             return Element.__truediv__(left, right)
@@ -2559,7 +2596,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     cpdef _div_(self, right):
         """
-        Divide ``self`` by other, where both are real numbers with the same
+        Divide ``self`` by ``other``, where both are real numbers with the same
         parent.
 
         EXAMPLES::
@@ -2631,7 +2668,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         return x
 
     # Bit shifting
-    def _lshift_(RealNumber self, n):
+    def _lshift_(RealNumber self, Integer n):
         """
         Return ``self * (2^n)`` for an integer ``n``.
 
@@ -2642,6 +2679,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1.5)._lshift_(2)
             6.00000000000000
         """
+        if n < 0:
+            return self._rshift_(-n)
         cdef RealNumber x
         if n > sys.maxsize:
             raise OverflowError("n (=%s) must be <= %s" % (n, sys.maxsize))
@@ -2661,6 +2700,15 @@ cdef class RealNumber(sage.structure.element.RingElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for <<
+
+        TESTS::
+
+            sage: 32r << 2.5
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operands for <<
+            sage: 1.5 << -2
+            0.375000000000000
         """
         if not isinstance(x, RealNumber):
             raise TypeError("unsupported operands for <<")
@@ -2669,7 +2717,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         except TypeError:
             raise TypeError("unsupported operands for <<")
 
-    def _rshift_(RealNumber self, n):
+    def _rshift_(RealNumber self, Integer n):
         """
         Return ``self / (2^n)`` for an integer ``n``.
 
@@ -2680,6 +2728,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(1.5)._rshift_(2)
             0.375000000000000
         """
+        if n < 0:
+            return self._lshift_(-n)
         if n > sys.maxsize:
             raise OverflowError("n (=%s) must be <= %s" % (n, sys.maxsize))
         cdef RealNumber x = self._new()
@@ -2698,6 +2748,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operands for >>
+
+        TESTS::
+
+            sage: 1.5 >> -2
+            6.00000000000000
         """
         if not isinstance(x, RealNumber):
             raise TypeError("unsupported operands for >>")
@@ -2773,7 +2828,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def ulp(self, field=None):
         """
-        Returns the unit of least precision of ``self``, which is the
+        Return the unit of least precision of ``self``, which is the
         weight of the least significant bit of ``self``. This is always
         a strictly positive number. It is also the gap between this
         number and the closest number with larger absolute value that
@@ -2781,8 +2836,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         INPUT:
 
-        - ``field`` -- :class:`RealField` used as parent of the result.
-          If not specified, use ``parent(self)``.
+        - ``field`` -- :class:`RealField` used as parent of the result;
+          if not specified, use ``parent(self)``
 
         .. NOTE::
 
@@ -2813,17 +2868,18 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: (a+b)/2 in [a,b]
             True
 
-        The ulp of zero is the smallest non-zero number::
+        The ulp of zero is the smallest nonzero number::
 
             sage: a = RR(0).ulp()
-            sage: a
-            2.38256490488795e-323228497            # 32-bit
-            8.50969131174084e-1388255822130839284  # 64-bit
+            sage: a  # needs 32_bit
+            2.38256490488795e-323228497
+            sage: a  # needs !32_bit
+            8.50969131174084e-1388255822130839284
             sage: a.fp_rank()
             1
 
         The ulp of very small numbers results in underflow, so the
-        smallest non-zero number is returned instead::
+        smallest nonzero number is returned instead::
 
             sage: a.ulp() == a
             True
@@ -2885,7 +2941,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def epsilon(self, field=None):
         """
-        Returns ``abs(self)`` divided by `2^b` where `b` is the
+        Return ``abs(self)`` divided by `2^b` where `b` is the
         precision in bits of ``self``. Equivalently, return
         ``abs(self)`` multiplied by the :meth:`ulp` of 1.
 
@@ -2895,8 +2951,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         INPUT:
 
-        - ``field`` -- :class:`RealField` used as parent of the result.
-          If not specified, use ``parent(self)``.
+        - ``field`` -- :class:`RealField` used as parent of the result
+          If not specified, use ``parent(self)``
 
         OUTPUT:
 
@@ -2959,7 +3015,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         return x
 
     ###################
-    # Rounding etc
+    # Rounding etc.
     ###################
 
     cpdef _mod_(left, right):
@@ -2989,7 +3045,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
     def round(self):
         """
          Round ``self`` to the nearest representable integer, rounding halfway
-         cases away from zero.
+         cases to even (banker's rounding).
+
+         This matches the behavior of Python's built-in ``round()`` function
+         for floats (Python 3+), and Sage's ``Rational.round()`` with default
+         mode.
 
          .. NOTE::
 
@@ -3000,14 +3060,35 @@ cdef class RealNumber(sage.structure.element.RingElement):
              sage: RR(0.49).round()
              0
              sage: RR(0.5).round()
-             1
+             0
              sage: RR(-0.49).round()
              0
              sage: RR(-0.5).round()
-             -1
+             0
+             sage: RR(1.5).round()
+             2
+             sage: RR(2.5).round()
+             2
+             sage: RR(-1.5).round()
+             -2
+             sage: RR(-2.5).round()
+             -2
+
+         This uses round-to-even (banker's rounding) for tie cases, matching
+         Python 3 behavior and IEEE 754 default rounding::
+
+             sage: [RR(n + 0.5).round() for n in range(-5, 6)]
+             [-4, -4, -2, -2, 0, 0, 2, 2, 4, 4, 6]
+
+         Compare with ``Rational.round()``::
+
+             sage: RR(5/2).round() == QQ(5/2).round()
+             True
+             sage: RR(-7/2).round() == QQ(-7/2).round()
+             True
          """
         cdef RealNumber x = self._new()
-        mpfr_round(x.value, self.value)
+        mpfr_roundeven(x.value, self.value)
         return x.integer_part()
 
     def floor(self):
@@ -3119,9 +3200,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             '1.0000000000000002'
             sage: (1.0).nexttoward(RR('-infinity')).str()
             '0.99999999999999989'
-            sage: RR(infinity).nexttoward(0)
-            2.09857871646739e323228496            # 32-bit
-            5.87565378911159e1388255822130839282  # 64-bit
+            sage: x = RR(infinity).nexttoward(0)
+            sage: x  # needs 32_bit
+            2.09857871646739e323228496
+            sage: x  # needs !32_bit
+            5.87565378911159e1388255822130839282
             sage: RR(pi).str()                                                          # needs sage.symbolic
             '3.1415926535897931'
             sage: RR(pi).nexttoward(22/7).str()                                         # needs sage.symbolic
@@ -3148,12 +3231,16 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: RR('-infinity').nextabove()
-            -2.09857871646739e323228496            # 32-bit
-            -5.87565378911159e1388255822130839282  # 64-bit
-            sage: RR(0).nextabove()
-            2.38256490488795e-323228497            # 32-bit
-            8.50969131174084e-1388255822130839284  # 64-bit
+            sage: x = RR('-infinity').nextabove()
+            sage: x  # needs 32_bit
+            -2.09857871646739e323228496
+            sage: x  # needs !32_bit
+            -5.87565378911159e1388255822130839282
+            sage: x = RR(0).nextabove()
+            sage: x  # needs 32_bit
+            2.38256490488795e-323228497
+            sage: x  # needs !32_bit
+            8.50969131174084e-1388255822130839284
             sage: RR('+infinity').nextabove()
             +infinity
             sage: RR(-sqrt(2)).str()                                                    # needs sage.symbolic
@@ -3176,12 +3263,16 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: RR('-infinity').nextbelow()
             -infinity
-            sage: RR(0).nextbelow()
-            -2.38256490488795e-323228497            # 32-bit
-            -8.50969131174084e-1388255822130839284  # 64-bit
-            sage: RR('+infinity').nextbelow()
-            2.09857871646739e323228496              # 32-bit
-            5.87565378911159e1388255822130839282    # 64-bit
+            sage: x = RR(0).nextbelow()
+            sage: x  # needs 32_bit
+            -2.38256490488795e-323228497
+            sage: x  # needs !32_bit
+            -8.50969131174084e-1388255822130839284
+            sage: x = RR('+infinity').nextbelow()
+            sage: x  # needs 32_bit
+            2.09857871646739e323228496
+            sage: x  # needs !32_bit
+            5.87565378911159e1388255822130839282
             sage: RR(-sqrt(2)).str()                                                    # needs sage.symbolic
             '-1.4142135623730951'
             sage: RR(-sqrt(2)).nextbelow().str()                                        # needs sage.symbolic
@@ -3278,7 +3369,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R = RealField(100)
             sage: R(pi)
             3.1415926535897932384626433833
@@ -3286,7 +3376,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
             3.1415926535 8979323846 26433833
             sage: fricas(R(pi))                         # optional - fricas
             3.1415926535_8979323846_26433833
-
         """
         prec = self.parent().prec()
 
@@ -3312,7 +3401,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Pari does maintain the same 250-bit number on both 32-bit and
         64-bit platforms::
 
-            sage: # needs sage.libs.pari
             sage: RealField(250).pi().__pari__()
             3.14159265358979
             sage: RR(0.0).__pari__()
@@ -3325,9 +3413,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1.41421356237309515
             sage: RR(2.0).sqrt().__pari__().sage().prec()
             64
-            sage: RealField(70)(pi).__pari__().sage().prec()                            # needs sage.symbolic
-            96                                         # 32-bit
-            128                                        # 64-bit
+            sage: prec32 = 96
+            sage: prec64 = 128
+            sage: RealField(70)(pi).__pari__().sage().prec() in [prec32, prec64]        # needs sage.symbolic
+            True
             sage: for i in range(100, 200):
             ....:     assert(RR(i).sqrt() == RR(i).sqrt().__pari__().sage())
 
@@ -3343,7 +3432,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         Check that the largest and smallest exponents representable by
         PARI convert correctly::
 
-            sage: # needs sage.libs.pari
             sage: a = pari(0.5) << (sys.maxsize+1)/4
             sage: RR(a) >> (sys.maxsize+1)/4
             0.500000000000000
@@ -3445,7 +3533,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def exact_rational(self):
         """
-        Returns the exact rational representation of this floating-point
+        Return the exact rational representation of this floating-point
         number.
 
         EXAMPLES::
@@ -3731,7 +3819,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(3/4).nearby_rational(max_denominator=2)
             1
 
-            sage: # needs sage.symbolic
             sage: RR(pi).nearby_rational(max_denominator=120)
             355/113
             sage: RR(pi).nearby_rational(max_denominator=10000)
@@ -4164,12 +4251,12 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
-           square root in a complex field if necessary if ``self`` is negative;
-           otherwise raise a ``ValueError``
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+          square root in a complex field if necessary if ``self`` is negative.
+          Otherwise raise a :exc:`ValueError`.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
-           list of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          list of all square roots
 
         EXAMPLES::
 
@@ -4227,7 +4314,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         Return whether or not this number is a square in this field. For
         the real numbers, this is ``True`` if and only if ``self`` is
-        non-negative.
+        nonnegative.
 
         EXAMPLES::
 
@@ -4387,7 +4474,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
             sage: r = R(NaN); r.log()                                                   # needs sage.symbolic
             NaN
-
         """
         if mpfr_nan_p(self.value):
             return self
@@ -4658,7 +4744,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def eint(self):
         """
-        Returns the exponential integral of this number.
+        Return the exponential integral of this number.
 
         EXAMPLES::
 
@@ -4967,7 +5053,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def sec(self):
         """
-        Returns the secant of this number
+        Return the secant of this number.
 
         EXAMPLES::
 
@@ -5049,9 +5135,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         - ``right`` -- another real number
 
-        OUTPUT:
-
-        - the AGM of ``self`` and ``other``
+        OUTPUT: the AGM of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -5304,7 +5388,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def zeta(self):
         r"""
-        Return the Riemann zeta function evaluated at this real number
+        Return the Riemann zeta function evaluated at this real number.
 
         .. NOTE::
 
@@ -5330,9 +5414,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1.64493406684823
             sage: pari(2).zeta(precision=128).sage().prec()                             # needs sage.libs.pari
             128
-            sage: pari(2).zeta(precision=65).sage().prec()                              # needs sage.libs.pari
-            128                                                # 64-bit
-            96                                                 # 32-bit
+            sage: prec32 = 96
+            sage: prec64 = 128
+            sage: pari(2).zeta(precision=65).sage().prec() in [prec32, prec64]          # needs sage.libs.pari
+            True
 
         Note that the number of bits of precision in the constructor only
         effects the internal precision of the pari number, which is rounded
@@ -5375,24 +5460,22 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: r.algebraic_dependency(5)
             x^2 - 2
         """
-        return sage.arith.misc.algdep(self, n)
+        return sage.arith.misc.algebraic_dependency(self, n)
 
     algdep = algebraic_dependency
 
     def nth_root(self, int n, int algorithm=0):
         r"""
-        Return an `n^{th}` root of ``self``.
+        Return an `n`-th root of ``self``.
 
         INPUT:
 
-        -  ``n`` -- A positive number, rounded down to the
-           nearest integer. Note that `n` should be less than
-           ```sys.maxsize```.
+        - ``n`` -- a positive number, rounded down to the nearest integer;
+          note that `n` should be less than ``sys.maxsize``
 
-        -  ``algorithm`` -- Set this to 1 to call mpfr directly,
-           set this to 2 to use interval arithmetic and logarithms, or leave
-           it at the default of 0 to choose the algorithm which is estimated
-           to be faster.
+        - ``algorithm`` -- set this to 1 to call mpfr directly, set this to 2
+          to use interval arithmetic and logarithms, or leave it at the default
+          of 0 to choose the algorithm which is estimated to be faster
 
         AUTHORS:
 
@@ -5437,7 +5520,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             ...
             ValueError: taking an even root of a negative number
 
-        The `n^{th}` root of 0 is defined to be 0, for any `n`::
+        The `n`-th root of 0 is defined to be 0, for any `n`::
 
             sage: R(0).nth_root(6)
             0.000000000000000
@@ -5656,18 +5739,20 @@ cdef class RealLiteral(RealNumber):
     casting into higher precision rings.
     """
 
-    cdef readonly literal
+    cdef readonly str literal
     cdef readonly int base
 
-    def __init__(self, RealField_class parent, x=0, int base=10):
+    def __init__(self, RealField_class parent, str x, int base=10):
         """
         Initialize ``self``.
+
+        Note that the constructor parameters are first passed to :meth:`RealNumber.__cinit__`.
 
         EXAMPLES::
 
             sage: RealField(200)(float(1.3))
             1.3000000000000000444089209850062616169452667236328125000000
-            sage: RealField(200)(1.3)
+            sage: RealField(200)(1.3)  # implicit doctest
             1.3000000000000000000000000000000000000000000000000000000000
             sage: 1.3 + 1.2
             2.50000000000000
@@ -5675,9 +5760,8 @@ cdef class RealLiteral(RealNumber):
             10000.0000000000
         """
         RealNumber.__init__(self, parent, x, base)
-        if isinstance(x, str):
-            self.base = base
-            self.literal = x.replace('_', '')
+        self.base = base
+        self.literal = x.replace('_', '')
 
     def __neg__(self):
         """
@@ -5690,10 +5774,25 @@ cdef class RealLiteral(RealNumber):
             sage: RealField(300)(-(-1.2))
             1.20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
         """
-        if self.literal is not None and self.literal[0] == '-':
+        if self.literal[0] == '-':
             return RealLiteral(self._parent, self.literal[1:], self.base)
-        else:
-            return RealLiteral(self._parent, '-'+self.literal, self.base)
+        return RealLiteral(self._parent, '-' + self.literal, self.base)
+
+    def __float__(self):
+        """
+        Return a Python float approximating ``self``.
+        This override is needed to avoid issues with rounding twice,
+        thus guaranteeing round-trip.
+
+        TESTS::
+
+            sage: float(1.133759543500045e+153)
+            1.133759543500045e+153
+            sage: for i in range(1000):
+            ....:     x = float(randint(1, 2**53) << randint(1, 200))
+            ....:     assert float(eval(preparse(str(x)))) == x, x
+        """
+        return float(self.numerical_approx(53))
 
     def numerical_approx(self, prec=None, digits=None, algorithm=None):
         """
@@ -5712,9 +5811,7 @@ cdef class RealLiteral(RealNumber):
         If neither ``prec`` nor ``digits`` is given, the default
         precision is 53 bits (roughly 16 digits).
 
-        OUTPUT:
-
-        A ``RealNumber`` with the given precision.
+        OUTPUT: a ``RealNumber`` with the given precision
 
         EXAMPLES::
 
@@ -5738,10 +5835,15 @@ cdef class RealLiteral(RealNumber):
             <class 'sage.rings.real_mpfr.RealLiteral'>
             sage: type(n(1.3))
             <class 'sage.rings.real_mpfr.RealNumber'>
+
+        TESTS::
+
+            sage: n(RealNumber('12', base=16))  # abs tol 1e-14
+            18.0000000000000
         """
         if prec is None:
             prec = digits_to_bits(digits)
-        return RealField(prec)(self.literal)
+        return RealField(prec)(self.literal, self.base)
 
 
 RR = RealField()
@@ -5749,7 +5851,7 @@ RR = RealField()
 RR_min_prec = RealField(MPFR_PREC_MIN)
 
 
-def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
+def create_RealNumber(s, int base=10, int pad=0, rnd='RNDN', int min_prec=53):
     r"""
     Return the real number defined by the string ``s`` as an element of
     ``RealField(prec=n)``, where ``n`` potentially has slightly
@@ -5757,12 +5859,12 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
 
     INPUT:
 
-    - ``s`` -- a string that defines a real number (or
+    - ``s`` -- string that defines a real number (or
       something whose string representation defines a number)
 
-    - ``base`` -- an integer between 2 and 62
+    - ``base`` -- integer between 2 and 62
 
-    - ``pad`` -- an integer >= 0.
+    - ``pad`` -- nonnegative integer
 
     - ``rnd`` -- rounding mode:
 
@@ -5772,7 +5874,7 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
       - ``'RNDU'`` -- round up
 
     - ``min_prec`` -- number will have at least this many
-      bits of precision, no matter what.
+      bits of precision, no matter what
 
     EXAMPLES::
 
@@ -5803,7 +5905,7 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
         14070.0000000000
         sage: RealNumber("aaa", base=37)
         50652.0000000000
-        sage: RealNumber("3.4", base="foo")
+        sage: RealNumber("3.4", base='foo')
         Traceback (most recent call last):
         ...
         TypeError: an integer is required
@@ -5875,26 +5977,6 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
         R = RealField(prec=max(bits + pad, min_prec), rnd=rnd)
 
     return RealLiteral(R, s, base)
-
-
-def is_RealNumber(x):
-    """
-    Return ``True`` if ``x`` is of type :class:`RealNumber`, meaning that it
-    is an element of the MPFR real field with some precision.
-
-    EXAMPLES::
-
-        sage: from sage.rings.real_mpfr import is_RealNumber
-        sage: is_RealNumber(2.5)
-        True
-        sage: is_RealNumber(float(2.3))
-        False
-        sage: is_RealNumber(RDF(2))
-        False
-        sage: is_RealNumber(pi)                                                         # needs sage.symbolic
-        False
-    """
-    return isinstance(x, RealNumber)
 
 
 def __create__RealField_version0(prec, sci_not, rnd):
@@ -6003,7 +6085,7 @@ cdef class QQtoRR(Map):
 cdef class double_toRR(Map):
     cpdef Element _call_(self, x):
         """
-        Takes anything that can be converted to a double.
+        Take anything that can be converted to a double.
 
         EXAMPLES::
 
@@ -6023,7 +6105,7 @@ cdef class double_toRR(Map):
 cdef class int_toRR(Map):
     cpdef Element _call_(self, x):
         """
-        Takes Python int/long instances.
+        Take Python int/long instances.
 
         EXAMPLES::
 

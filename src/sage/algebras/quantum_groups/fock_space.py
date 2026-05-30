@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fock Space
 
@@ -41,7 +40,7 @@ from sage.algebras.quantum_groups.q_numbers import q_factorial
 
 class FockSpaceOptions(GlobalOptions):
     r"""
-    Sets and displays the global options for elements of the Fock
+    Set and display the global options for elements of the Fock
     space classes.  If no parameters are set, then the function
     returns a copy of the options dictionary.
 
@@ -444,7 +443,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default ``True``) if ``True``, prints
+        - ``verbose`` -- boolean (default: ``True``); if ``True``, prints
           the defined shorthands
 
         EXAMPLES::
@@ -749,7 +748,7 @@ class FockSpace(Parent, UniqueRepresentation):
                     return (sum(1 for y in P._addable(la, i) if P._above(x, y))
                             - sum(1 for y in P._removable(la, i) if P._above(x, y)))
                 q = P.realization_of()._q
-                return P.sum_of_terms(( la.remove_cell(*x), c * q**(-N_left(la, x, i)) )
+                return P.sum_of_terms((la.remove_cell(*x), c * q**(-N_left(la, x, i)))
                                       for la,c in self for x in P._removable(la, i))
 
             def e(self, *data):
@@ -759,7 +758,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 
@@ -845,8 +844,8 @@ class FockSpace(Parent, UniqueRepresentation):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
                 q = P.realization_of()._q
-                return P.sum_of_terms( (la.add_cell(*x), c * q**N_right(la, x, i))
-                                       for la,c in self for x in P._addable(la, i) )
+                return P.sum_of_terms((la.add_cell(*x), c * q**N_right(la, x, i))
+                                       for la,c in self for x in P._addable(la, i))
 
             def f(self, *data):
                 r"""
@@ -855,7 +854,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
                 INPUT:
 
-                - ``*data`` -- a list of indices or pairs `(i, p)`
+                - ``*data`` -- list of indices or pairs `(i, p)`
 
                 EXAMPLES::
 
@@ -1325,6 +1324,20 @@ class FockSpace(Parent, UniqueRepresentation):
                 |3> + q*|2, 1>
                 sage: G._G_to_fock_basis(Partition([2,1]))
                 |2, 1> + q*|1, 1, 1>
+
+            TESTS:
+
+            Check that :issue:`41408` is fixed::
+
+                sage: Fock = FockSpace(3, [0, 1])
+                sage: G = Fock.G()
+                sage: la = PartitionTuple([[6], [5,5,1]])
+                sage: v = G._G_to_fock_basis(la)
+                sage: len(v.support())
+                261
+                sage: v
+                |[6], [5, 5, 1]> + q*|[6], [5, 4, 1, 1]> + q*|[6], [5, 3, 3]>
+                 + ... + q^7*|[], [3, 3, 3, 2, 1, 1, 1, 1, 1, 1]>
             """
             # Special case for the empty partition
             if la.size() == 0:
@@ -1354,13 +1367,40 @@ class FockSpace(Parent, UniqueRepresentation):
                 return fock.sum_of_terms((fock._indices([[]]*k + list(pt)), c) for pt,c in cur)
 
             cur = R.A()._A_to_fock_basis(la)
-            s = sorted(cur.support())  # Sort lex, which respects dominance order
-            s.pop()  # Remove the largest
+
+            def domorder_insertion(data, elt):
+                """
+                Add ``elt`` at the largest position of ``data`` such that
+                it dominants all larger entries.
+                """
+                for i in range(len(data)-1, -1, -1):
+                    if not data[i].dominates(elt):
+                        data.insert(i+1, elt)
+                        return
+                data.insert(0, elt)
+
+            # Build the elimination list s so that whenever y.dominates(x),
+            # y appears after x.
+            if len(R._multicharge) == 1:
+                s = [x for x in cur.support() if x in self._indices]
+                s.sort()  # Sort lex, which respects dominance order
+                s.pop()  # Remove the largest
+            else:
+                # In level > 1, the default comparison on PartitionTuples is lexicographic
+                # and does not necessarily refine dominance order.
+                s = []
+                for x in cur.support():
+                    if x == la or x not in self._indices:
+                        continue
+                    domorder_insertion(s, x)
 
             q = R._q
+
             while s:
                 mu = s.pop()
+                # assert mu in self._indices
                 d = cur[mu].denominator()
+
                 k = d.degree()
                 n = cur[mu].numerator()
                 if k != 0 or n.constant_coefficient() != 0:
@@ -1369,14 +1409,13 @@ class FockSpace(Parent, UniqueRepresentation):
                     gamma += n[k]
                     cur -= gamma * self._G_to_fock_basis(mu)
 
-                    # Add any new support elements
                     for x in cur.support():
-                        if x == mu or not mu.dominates(x): # Add only things (strictly) dominated by mu
+                        # Add only new support elements that are (strictly) dominanted by mu
+                        # and correspond to crystal basis elements.
+                        if x == mu or x in s or not mu.dominates(x) or x not in self._indices:
                             continue
-                        for i in reversed(range(len(s))):
-                            if not s[i].dominates(x):
-                                s.insert(i+1, x)
-                                break
+                        domorder_insertion(s, x)
+
             return cur
 
     lower_global_crystal = G
@@ -1384,7 +1423,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
 
 ###############################################################################
-## Bases Category
+# Bases Category
 
 class FockSpaceBases(Category_realization_of_parent):
     r"""
@@ -1605,7 +1644,8 @@ class FockSpaceBases(Category_realization_of_parent):
             return self.monomial(i)
 
 ###############################################################################
-## Truncated Fock space
+# Truncated Fock space
+
 
 class FockSpaceTruncated(FockSpace):
     r"""
@@ -1750,7 +1790,7 @@ class FockSpaceTruncated(FockSpace):
             self._removable = lambda la,i: [x for x in la.corners()
                                             if la.content(*x, multicharge=F._multicharge) == i]
 
-            indices = Partitions(F._n, max_length=F._k)
+            indices = Partitions(max_length=F._k)
             CombinatorialFreeModule.__init__(self, F.base_ring(), indices,
                                              prefix='', bracket=['|', '>'],
                                              latex_bracket=['\\lvert', '\\rangle'],
@@ -1818,7 +1858,7 @@ class FockSpaceTruncated(FockSpace):
 
         INPUT:
 
-        - ``algorithm`` -- (default ``'GW'``) the algorithm to use when
+        - ``algorithm`` -- (default: ``'GW'``) the algorithm to use when
           computing this basis in the Fock space; the possible values are:
 
           * ``'GW'`` -- use the algorithm given by Goodman and Wenzl
@@ -2019,7 +2059,7 @@ class FockSpaceTruncated(FockSpace):
 
             # For non-interior partitions
             # Construct the d's and the partition ``a``
-            a = list(la) + [0]*(k - 1 - len(la)) # Add 0's to get the correct length
+            a = list(la) + [0]*(k - 1 - len(la)) # Add 0s to get the correct length
             a = [a[i] + (k - 1 - i) for i in range(k-1)] # Shift the diagram
             #shifted = list(a) # Make a copy of the shifted partition in case we need it later
             d = [(a[i] - a[i+1]) % n for i in range(k-2)]
@@ -2177,7 +2217,7 @@ class FockSpaceTruncated(FockSpace):
                     mu = _Partitions([p - x for p in la])
 
                     def add_cols(nu):
-                        return _Partitions([ v + x for v in list(nu) + [0]*(k - len(nu)) ])
+                        return _Partitions([v + x for v in list(nu) + [0]*(k - len(nu))])
                     return fock.sum_of_terms((add_cols(nu), c) for nu,c in self._G_to_fock_basis(mu))
 
                 # For critical partitions

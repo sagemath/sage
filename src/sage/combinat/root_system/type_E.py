@@ -374,7 +374,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (1/2, 1/2, 1/2, 1/2, 1/2, 1/2, -1/2, -1/2)]
             sage: e.rho()
             (0, 1, 2, 3, 4, 5, 6, 23)
-
         """
         v = ZZ(1)/ZZ(2)
         # Note that
@@ -415,7 +414,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
                             4: self.root(2,3,4,5,6,7,p4=1,p5=1),
                             5: 2*v3*self.root(7,6,5,p2=1,p3=1)+self.root(3,4),
                             6: v3*self.root(7,6,5,p2=1,p3=1)+self.root(4)})
-        elif self.rank == 7:
+        if self.rank == 7:
             return Family({ 1: self.root(7,6,p2=1),
                             2: v2*self.root(0,1,2,3,4,5)+self.root(6,7,p1=1),
                             3: v2*(self.root(0,1,2,3,4,5,p1=1)+3*self.root(6,7,p1=1)),
@@ -423,7 +422,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
                             5: 3*v2*self.root(6,7,p1=1)+self.root(3,4,5),
                             6: self.root(4,5,6,7,p3=1),
                             7: self.root(5)+v2*self.root(6,7,p1=1)})
-        elif self.rank == 8:
+        if self.rank == 8:
             return Family({ 1: 2*self.root(7),
                             2: v2*(self.root(0,1,2,3,4,5,6)+5*self.root(7)),
                             3: v2*(self.root(0,1,2,3,4,5,6,p1=1)+7*self.root(7)),
@@ -525,7 +524,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type E.
+        Return a Dynkin diagram for type E.
 
         EXAMPLES::
 
@@ -562,7 +561,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
              (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1),
              (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
@@ -638,4 +636,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_E', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_E',
+                           'ambient_space', AmbientSpace)

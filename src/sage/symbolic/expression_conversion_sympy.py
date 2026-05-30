@@ -26,9 +26,11 @@ from sage.symbolic.operators import arithmetic_operators
 #########
 # Sympy #
 #########
+
+
 class SympyConverter(Converter):
     """
-    Converts any expression to SymPy.
+    Convert any expression to SymPy.
 
     EXAMPLES::
 
@@ -52,7 +54,6 @@ class SympyConverter(Converter):
         True
         sage: (x+I)._sympy_()
         x + I
-
     """
     def __init__(self):
         """
@@ -60,7 +61,7 @@ class SympyConverter(Converter):
 
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()  # indirect doctest
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
         """
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -114,16 +115,15 @@ class SympyConverter(Converter):
         ops = [sympy.sympify(self(a), evaluate=False) for a in ex.operands()]
         if operator == "+":
             return sympy.Add(*ops)
-        elif operator == "*":
+        if operator == "*":
             return sympy.Mul(*ops)
-        elif operator == "-":
+        if operator == "-":
             return sympy.Sub(*ops)
-        elif operator == "/":
+        if operator == "/":
             return sympy.Div(*ops)
-        elif operator == "^":
+        if operator == "^":
             return sympy.Pow(*ops)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def symbol(self, ex):
         """
@@ -185,8 +185,7 @@ class SympyConverter(Converter):
         f_sympy = getattr(sympy, f, None)
         if f_sympy:
             return f_sympy(*sympy.sympify(g, evaluate=False))
-        else:
-            return sympy.Function(str(f))(*g, evaluate=False)
+        return sympy.Function(str(f))(*g, evaluate=False)
 
     def tuple(self, ex):
         """
@@ -308,8 +307,7 @@ class SympyConverter(Converter):
         result = f_sympy.diff(*sympy_arg)
         if subs_new:
             return sympy.Subs(result, subs_new, subs_old)
-        else:
-            return result
+        return result
 
 
 sympy_converter = SympyConverter()

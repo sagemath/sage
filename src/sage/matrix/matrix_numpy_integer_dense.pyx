@@ -2,7 +2,6 @@
 r"""
 Dense integer matrices using a NumPy backend
 
-
 EXAMPLES::
 
     sage: from sage.matrix.matrix_numpy_integer_dense import Matrix_numpy_integer_dense
@@ -13,9 +12,8 @@ EXAMPLES::
     sage: M
     [ 0  0  0]
     [ 0  0 47]
-    sage: M.numpy()
-    array([[ 0,  0,  0], [ 0,  0, 47]])               # 64-bit
-    array([[ 0,  0,  0], [ 0,  0, 47]], dtype=int64)  # 32-bit
+    sage: M.numpy(dtype="int8")
+    array([[ 0,  0,  0], [ 0,  0, 47]], dtype=int8)
 """
 
 # ****************************************************************************

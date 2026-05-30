@@ -1,4 +1,4 @@
- pytest | $(PYTHON_TOOLCHAIN) $(PYTHON)
+execnet pytest | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

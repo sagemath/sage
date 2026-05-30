@@ -1,1 +1,1 @@
-python-sphinxcontrib-qthelp
+python3-sphinxcontrib-qthelp

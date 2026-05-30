@@ -11,7 +11,7 @@ Examples of graded connected Hopf algebras with basis
 
 from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.arith.misc import binomial
+from sage.rings.integer import Integer
 from sage.misc.cachefunc import cached_method
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
@@ -20,7 +20,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
     r"""
     This class illustrates an implementation of a graded Hopf algebra
     with basis that has one primitive generator of degree 1 and basis
-    elements indexed by non-negative integers.
+    elements indexed by nonnegative integers.
 
     This Hopf algebra example differs from what topologists refer to as
     a graded Hopf algebra because the twist operation in the tensor rule
@@ -32,7 +32,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
         (\Delta \otimes \Delta) = \Delta \circ \mu
 
     where `\tau(x\otimes y) = y\otimes x`.
-
     """
     def __init__(self, base_ring):
         """
@@ -40,7 +39,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: TestSuite(H).run()
-
         """
         CombinatorialFreeModule.__init__(self, base_ring, NonNegativeIntegers(),
                                          category=GradedHopfAlgebrasWithBasis(base_ring).Connected())
@@ -48,11 +46,9 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
     @cached_method
     def one_basis(self):
         """
-        Returns 0, which index the unit of the Hopf algebra.
+        Return 0, which index the unit of the Hopf algebra.
 
-        OUTPUT:
-
-        - the non-negative integer 0
+        OUTPUT: the nonnegative integer 0
 
         EXAMPLES::
 
@@ -61,40 +57,35 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             0
             sage: H.one()
             P0
-
         """
         return self.basis().keys()(0)
 
     def degree_on_basis(self, i):
         """
-        The degree of a non-negative integer is itself
+        The degree of a nonnegative integer is itself.
 
         INPUT:
 
-        - ``i`` -- a non-negative integer
+        - ``i`` -- nonnegative integer
 
-        OUTPUT:
-
-        - a non-negative integer
+        OUTPUT: nonnegative integer
 
         TESTS::
 
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: H.degree_on_basis(45)
             45
-
         """
         return i
 
     def _repr_(self):
         """
-        Representation of the graded connected Hopf algebra
+        Representation of the graded connected Hopf algebra.
 
         EXAMPLES::
 
             sage: GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             An example of a graded connected Hopf algebra with basis over Rational Field
-
         """
         return "An example of a graded connected Hopf algebra with basis over %s" % self.base_ring()
 
@@ -107,7 +98,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: H._repr_term(45)
             'P45'
-
         """
         return 'P' + repr(i)
 
@@ -120,18 +110,15 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
         INPUT:
 
-        - ``i``, ``j`` -- non-negative integers
+        - ``i``, ``j`` -- nonnegative integers
 
-        OUTPUT:
-
-        - a basis element indexed by ``i+j``
+        OUTPUT: a basis element indexed by ``i+j``
 
         TESTS::
 
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: H.monomial(4) * H.monomial(5)
             P9
-
         """
         return self.monomial(i+j)
 
@@ -145,11 +132,9 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
         INPUT:
 
-        - ``i`` -- a non-negative integer
+        - ``i`` -- nonnegative integer
 
-        OUTPUT:
-
-        - an element of the tensor square of ``self``
+        OUTPUT: an element of the tensor square of ``self``
 
         TESTS::
 
@@ -158,8 +143,8 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             P0 # P3 + 3*P1 # P2 + 3*P2 # P1 + P3 # P0
         """
         return self.sum_of_terms(
-            ((i-j, j), binomial(i, j))
-            for j in range(i+1)
+            ((i - j, j), Integer(i).binomial(j))
+            for j in range(i + 1)
         )
 
 

@@ -27,16 +27,16 @@ from sage.rings.infinity import Infinity, MinusInfinity, PlusInfinity
 
 class IntegerRange(UniqueRepresentation, Parent):
     r"""
-    The class of :class:`Integer <sage.rings.integer.Integer>` ranges
+    The class of :class:`Integer <sage.rings.integer.Integer>` ranges.
 
     Returns an enumerated set containing an arithmetic progression of integers.
 
     INPUT:
 
-    - ``begin``        -- an integer, Infinity or -Infinity
-    - ``end``          -- an integer, Infinity or -Infinity
-    - ``step``         -- a non zero integer (default to 1)
-    - ``middle_point`` -- an integer inside the set (default to ``None``)
+    - ``begin`` -- integer, Infinity or -Infinity
+    - ``end`` -- integer, Infinity or -Infinity
+    - ``step`` -- a nonzero integer (default: 1)
+    - ``middle_point`` -- integer inside the set (default: ``None``)
 
     OUTPUT:
 
@@ -156,7 +156,7 @@ class IntegerRange(UniqueRepresentation, Parent):
         [0, 10, -10, 20, -20, 30, -30, 40, -40, 50, -50, 60, -60, 70, -70, 80, -80, 90, -90, -100]
 
 
-    .. note::
+    .. NOTE::
 
        The input is normalized so that::
 
@@ -263,8 +263,7 @@ class IntegerRange(UniqueRepresentation, Parent):
             sgn = 1 if step > 0 else -1
             end = begin + ((end - begin - sgn) // (step) + 1) * step
             return IntegerRangeFinite(begin, end, step)
-        else:
-            return IntegerRangeInfinite(begin, step)
+        return IntegerRangeInfinite(begin, step)
 
     def _element_constructor_(self, el):
         """
@@ -282,15 +281,14 @@ class IntegerRange(UniqueRepresentation, Parent):
             if not isinstance(el, Integer):
                 return Integer(el)
             return el
-        else:
-            raise ValueError("%s not in %s" % (el, self))
+        raise ValueError("%s not in %s" % (el, self))
 
     element_class = Integer
 
 
 class IntegerRangeEmpty(IntegerRange, FiniteEnumeratedSet):
     r"""
-    A singleton class for empty integer ranges
+    A singleton class for empty integer ranges.
 
     See :class:`IntegerRange` for more details.
     """
@@ -338,7 +336,7 @@ class IntegerRangeFinite(IntegerRange):
 
     def __contains__(self, elt):
         r"""
-        Returns True if ``elt`` is in ``self``.
+        Return ``True`` if ``elt`` is in ``self``.
 
         EXAMPLES::
 
@@ -373,7 +371,7 @@ class IntegerRangeFinite(IntegerRange):
 
     def cardinality(self):
         """
-        Return the cardinality of ``self``
+        Return the cardinality of ``self``.
 
         EXAMPLES::
 
@@ -384,7 +382,7 @@ class IntegerRangeFinite(IntegerRange):
             sage: IntegerRange(123,12,4).cardinality()
             0
         """
-        return (abs((self._end+self._step-self._begin))-1) // abs(self._step)
+        return (abs(self._end+self._step-self._begin)-1) // abs(self._step)
 
     def _repr_(self):
         """
@@ -473,16 +471,15 @@ class IntegerRangeFinite(IntegerRange):
                 raise IndexError("out of range")
             n = (self._end - self._begin)//(self._step)
             return self._begin + (n+i)*self._step
-        else:
-            if i >= self.cardinality():
-                raise IndexError("out of range")
-            return self._begin + i * self._step
+        if i >= self.cardinality():
+            raise IndexError("out of range")
+        return self._begin + i * self._step
 
     unrank = __getitem__
 
     def __iter__(self):
         r"""
-        Returns an iterator over the elements of ``self``
+        Return an iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -507,7 +504,7 @@ class IntegerRangeFinite(IntegerRange):
 
     def _an_element_(self):
         r"""
-        Returns an element of ``self``.
+        Return an element of ``self``.
 
         EXAMPLES::
 
@@ -521,8 +518,7 @@ class IntegerRangeFinite(IntegerRange):
         p = (self._begin + 2*self._step)
         if p in self:
             return p
-        else:
-            return self._begin
+        return self._begin
 
 
 class IntegerRangeInfinite(IntegerRange):
@@ -564,7 +560,7 @@ class IntegerRangeInfinite(IntegerRange):
 
     def __contains__(self, elt):
         r"""
-        Returns True if ``elt`` is in ``self``.
+        Return ``True`` if ``elt`` is in ``self``.
 
         EXAMPLES::
 
@@ -608,7 +604,7 @@ class IntegerRangeInfinite(IntegerRange):
 
     def __getitem__(self, i):
         r"""
-        Returns the ``i``-th element of self.
+        Return the ``i``-th element of ``self``.
 
         EXAMPLES::
 
@@ -633,7 +629,7 @@ class IntegerRangeInfinite(IntegerRange):
 
     def __iter__(self):
         r"""
-        Returns an iterator over the elements of ``self``.
+        Return an iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -654,7 +650,7 @@ class IntegerRangeInfinite(IntegerRange):
 
     def _an_element_(self):
         r"""
-        Returns an element of ``self``.
+        Return an element of ``self``.
 
         EXAMPLES::
 
@@ -725,7 +721,7 @@ class IntegerRangeFromMiddle(IntegerRange):
 
     def __contains__(self, elt):
         r"""
-        Returns True if ``elt`` is in ``self``.
+        Return ``True`` if ``elt`` is in ``self``.
 
         EXAMPLES::
 
@@ -748,8 +744,8 @@ class IntegerRangeFromMiddle(IntegerRange):
             except (TypeError, ValueError):
                 return False
         if abs(self._step).divides(Integer(elt)-self._middle_point):
-            return (self._begin <= elt and elt < self._end) or \
-                   (self._begin >= elt and elt > self._end)
+            return (self._begin <= elt < self._end) or \
+                   (self._begin >= elt > self._end)
         return False
 
     def next(self, elt):
@@ -777,22 +773,20 @@ class IntegerRangeFromMiddle(IntegerRange):
             right = 2*n-elt+self._step
             if right in self:
                 return right
-            else:
-                left = elt-self._step
-                if left in self:
-                    return left
+            left = elt-self._step
+            if left in self:
+                return left
         else:
             left = 2*n-elt
             if left in self:
                 return left
-            else:
-                right = elt+self._step
-                if right in self:
-                    return right
+            right = elt+self._step
+            if right in self:
+                return right
 
     def __iter__(self):
         r"""
-        Returns an iterator over the elements of ``self``.
+        Return an iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -813,7 +807,7 @@ class IntegerRangeFromMiddle(IntegerRange):
 
     def _an_element_(self):
         r"""
-        Returns an element of ``self``.
+        Return an element of ``self``.
 
         EXAMPLES::
 

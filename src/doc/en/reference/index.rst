@@ -51,6 +51,7 @@ Linear Algebra
 * :doc:`Matrices and Spaces of Matrices <matrices/index>`
 * :doc:`Vectors and Modules <modules/index>`
 * :doc:`Tensors on Free Modules of Finite Rank <tensor_free_modules/index>`
+* :doc:`Modules over Ore rings <oremodules/index>`
 
 Calculus and Analysis
 ---------------------
@@ -114,7 +115,6 @@ Number Fields, Function Fields, and Valuations
 * :doc:`Number Fields <number_fields/index>`
 * :doc:`Function Fields <function_fields/index>`
 * :doc:`Discrete Valuations <valuations/index>`
-* :doc:`Drinfeld Modules <drinfeld_modules/index>`
 
 Number Theory
 -------------
@@ -133,6 +133,13 @@ Algebraic and Arithmetic Geometry
 * :doc:`Schemes <schemes/index>`
 * :doc:`Plane and Space Curves <curves/index>`
 * :doc:`Elliptic and Hyperelliptic Curves <arithmetic_curves/index>`
+
+Drinfeld modules and related topics
+-----------------------------------
+
+* :doc:`Drinfeld Modules <drinfeld_modules/index>`
+* :doc:`Anderson Motives <anderson_motives/index>`
+* :doc:`Drinfeld Modular Forms <drinfeld_modular/index>`
 
 Miscellaneous
 -------------

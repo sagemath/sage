@@ -39,7 +39,6 @@ We compute a suborder, which has index a power of 17 in the maximal order::
 AUTHORS:
 
 - William Stein and Robert Bradshaw (2007-09): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C)      2007 Robert Bradshaw <robertwb@gmail.com>
@@ -78,20 +77,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.rings.ring import IntegralDomain
-from sage.structure.sequence import Sequence
-from sage.rings.integer_ring import ZZ
 import sage.rings.abc
-from sage.structure.element import is_Element
-from sage.structure.factory import UniqueFactory
-from .number_field_element import OrderElement_absolute, OrderElement_relative
-
-from .number_field_element_quadratic import OrderElement_quadratic
-
+from sage.categories.integral_domains import IntegralDomains
+from sage.categories.noetherian_rings import NoetherianRings
+from sage.libs.pari import pari
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
 from sage.rings.monomials import monomials
-
-from sage.libs.pari.all import pari
+from sage.rings.number_field.number_field_element import (
+    OrderElement_absolute,
+    OrderElement_relative,
+)
+from sage.rings.number_field.number_field_element_quadratic import (
+    OrderElement_quadratic,
+)
+from sage.structure.element import Element
+from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Parent
+from sage.structure.sequence import Sequence
 
 
 def quadratic_order_class_number(disc):
@@ -117,6 +120,82 @@ def quadratic_order_class_number(disc):
     return ZZ(h)
 
 
+def quadratic_order_approximate_class_number(disc, *, bound=10**4):
+    r"""
+    Return *an approximation of* the class number of
+    the quadratic order of given discriminant.
+
+    Currently only implemented for maximal orders
+    in imaginary-quadratic fields.
+
+    EXAMPLES::
+
+        sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
+        sage: QuadraticField(-419).class_number()
+        9
+        sage: quadratic_order_approximate_class_number(-419)  # rel tol .01
+        9.01653836091712
+
+    ::
+
+        sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
+        sage: d = 100000000000031
+        sage: QuadraticField(-d).class_number(proof=False)
+        14414435
+        sage: round(quadratic_order_approximate_class_number(-d))  # rel tol .01
+        14407657
+        sage: round(quadratic_order_approximate_class_number(-d, bound=10**6))  # rel tol .01
+        14413626
+
+    Test it against the exact class number computed for the CSIDH-512 prime (source: https://eprint.iacr.org/2019/498.pdf)::
+
+        sage: from sage.rings.number_field.order import quadratic_order_approximate_class_number
+        sage: p = 4 * prod(primes(3,374)) * 587 - 1
+        sage: hreal = 84884147409828091725676728670213067387206838101828807864190286991865870575397
+        sage: assert not hreal * BQFClassGroup(-p).random_element()
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**3)); h  # rel tol .01
+        85020334529027955331134025285584937708277525762952749243936367281020276898911
+        sage: RR(h / hreal)  # abs tol .01
+        1.00160438813790
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**4)); h  # rel tol .01
+        84396416322932187013685015858232028818143153418602750494380687212063263982976
+        sage: RR(h / hreal)  # abs tol .01
+        0.994254155790231
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**5)); h  # rel tol .01
+        84823787383264935642168065590216697209124465727576867303448690101681967969348
+        sage: RR(h / hreal)  # abs tol .01
+        0.999288912848806
+        sage: h = round(quadratic_order_approximate_class_number(-p, bound=10**6)); h  # rel tol .01, long time (2s)
+        84884627342209070883738394179700676127184729325091471467872632417652836154863
+        sage: RR(h / hreal)  # abs tol .01, long time (2s)
+        1.00000565396951
+
+    ALGORITHM: Finite approximation of the infinite product given by
+    the analytic class number formula, using primes up to ``bound``.
+    """
+    disc = ZZ(disc)
+    if disc >= 0:
+        raise NotImplementedError('only imaginary-quadratic fields supported')
+    if not disc.is_fundamental_discriminant():
+        raise NotImplementedError('only fundamental discriminants supported')
+
+    from sage.rings.real_mpfr import RealField
+    from sage.arith.misc import primes, kronecker_symbol
+    from sage.symbolic.constants import pi
+
+    w = 6 if disc == -3 else 4 if disc == -4 else 2
+    RR = RealField(max(53, disc.bit_length()))  # wild guess!
+
+    # compute numerator and denominator separately for speed
+    L1 = L2 = RR(1)
+    for ell in primes(bound):
+        L1 *= ell
+        L2 *= ell - kronecker_symbol(disc, ell)
+    L = L1 / L2
+
+    return RR(w * abs(disc).sqrt() * L / (2 * pi))
+
+
 class OrderFactory(UniqueFactory):
     r"""
     Abstract base class for factories creating orders, such as
@@ -127,7 +206,6 @@ class OrderFactory(UniqueFactory):
         sage: from sage.rings.number_field.order import AbsoluteOrder, OrderFactory
         sage: isinstance(AbsoluteOrder, OrderFactory)
         True
-
     """
 
     def get_object(self, version, key, extra_args):
@@ -159,7 +237,6 @@ class OrderFactory(UniqueFactory):
             True
             sage: N._is_maximal_at(3)
             True
-
         """
         is_maximal = extra_args.pop("is_maximal", None)
         is_maximal_at = extra_args.pop("is_maximal_at", {})
@@ -211,7 +288,6 @@ class AbsoluteOrderFactory(OrderFactory):
         Note how the above is lacking the ``is_maximal`` and ``is_maximal_at``
         keywords. These are stripped by :meth:`OrderFactory.get_object` and
         then put back in by :meth:`reduce_data`.
-
         """
         if check:
             if not K.is_absolute():
@@ -239,7 +315,6 @@ class AbsoluteOrderFactory(OrderFactory):
             sage: OK = K.order(i)
             sage: loads(dumps(OK)) is OK
             True
-
         """
         K, module_rep = key
 
@@ -273,7 +348,6 @@ class AbsoluteOrderFactory(OrderFactory):
 
             sage: loads(dumps(N)) is O
             True
-
         """
         reduction = super().reduce_data(order)
         reduction[1][3]["is_maximal"] = order._is_maximal()
@@ -323,7 +397,6 @@ class RelativeOrderFactory(OrderFactory):
         keywords. These are stripped by :meth:`OrderFactory.get_object`. Since
         they are applied to the underlying absolute order, they then get
         pickled when the underlying order is pickled.
-
         """
         return (K, absolute_order), {"is_maximal": is_maximal, "is_maximal_at": {p: True for p in is_maximal_at}}
 
@@ -342,7 +415,6 @@ class RelativeOrderFactory(OrderFactory):
             sage: OK = L.order([i, j])
             sage: loads(dumps(OK)) is OK
             True
-
         """
         K, absolute_order = key
 
@@ -352,26 +424,6 @@ class RelativeOrderFactory(OrderFactory):
 
 
 RelativeOrder = RelativeOrderFactory("sage.rings.number_field.order.RelativeOrder")
-
-
-def is_NumberFieldOrder(R):
-    r"""
-    Return ``True`` if `R` is either an order in a number field or is the ring `\ZZ` of integers.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.order import is_NumberFieldOrder
-        sage: x = polygen(ZZ, 'x')
-        sage: is_NumberFieldOrder(NumberField(x^2 + 1,'a').maximal_order())
-        True
-        sage: is_NumberFieldOrder(ZZ)
-        True
-        sage: is_NumberFieldOrder(QQ)
-        False
-        sage: is_NumberFieldOrder(45)
-        False
-    """
-    return isinstance(R, Order) or R == ZZ
 
 
 def EquationOrder(f, names, **kwds):
@@ -408,7 +460,7 @@ def EquationOrder(f, names, **kwds):
         ...
         ValueError: each generator must be integral
     """
-    from .number_field import NumberField
+    from sage.rings.number_field.number_field import NumberField
     R = ZZ['x']
     if isinstance(f, (list, tuple)):
         for g in f:
@@ -426,7 +478,7 @@ def EquationOrder(f, names, **kwds):
     return K.order(K.gens())
 
 
-class Order(IntegralDomain, sage.rings.abc.Order):
+class Order(Parent, sage.rings.abc.Order):
     r"""
     An order in a number field.
 
@@ -456,6 +508,16 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         Traceback (most recent call last):
         ...
         ValueError: the rank of the span of gens is wrong
+
+    Orders are always Noetherian::
+
+        sage: x = polygen(ZZ, 'x')
+        sage: L.<alpha> = NumberField(x**4 - x**2 + 7)
+        sage: O = L.maximal_order() ; O.is_noetherian()
+        True
+        sage: E.<w> = NumberField(x^2 - x + 2)
+        sage: OE = E.ring_of_integers(); OE.is_noetherian()
+        True
     """
 
     def __init__(self, K):
@@ -478,8 +540,9 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             0.0535229072603327 + 1.20934552493846*I
         """
         self._K = K
-        IntegralDomain.__init__(self, ZZ, names=K.variable_names(),
-                                normalize=False)
+        cat = IntegralDomains() & NoetherianRings()
+        Parent.__init__(self, base=ZZ, names=K.variable_names(),
+                        normalize=False, category=cat)
         self._populate_coercion_lists_(embedding=self.number_field())
         if self.absolute_degree() == 2:
             self.is_maximal()       # cache
@@ -503,21 +566,21 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         Return the integral ideal with given generators.
 
+        .. NOTE::
+
+            This method constructs an ideal of this (not necessarily maximal) order.
+            To construct a fractional ideal in the ambient number field, use
+            :meth:`~sage.rings.number_field.number_field.NumberField_generic.fractional_ideal`.
+
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 7)
             sage: R = K.maximal_order()
-            sage: R.ideal(2/3 + 7*a, a)
-            Traceback (most recent call last):
-            ...
-            ValueError: ideal must be integral;
-            use fractional_ideal to create a non-integral ideal.
-            sage: R.ideal(7*a, 77 + 28*a)
-            Fractional ideal (7)
+            sage: R.ideal([7*a, 77 + 28*a])
+            Ideal (7/2*a + 7/2, 7*a) of Maximal Order generated by 1/2*a + 1/2 in Number Field in a with defining polynomial x^2 + 7
             sage: R = K.order(4*a)
             sage: R.ideal(8)
-            doctest:warning ... FutureWarning: ...
             Ideal (8, 32*a) of Order of conductor 8 generated by 4*a
              in Number Field in a with defining polynomial x^2 + 7
 
@@ -526,36 +589,22 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: R = EquationOrder(x^2 + 2, 'a'); R
             Maximal Order generated by a in Number Field in a with defining polynomial x^2 + 2
             sage: (3,15)*R
-            doctest:warning ... DeprecationWarning: ...
-            Fractional ideal (3)
+            Ideal (3, 3*a) of Maximal Order generated by a in Number Field in a with defining polynomial x^2 + 2
 
         The zero ideal is handled properly::
 
             sage: R.ideal(0)
-            Ideal (0) of Number Field in a with defining polynomial x^2 + 2
+            Ideal (0) of Maximal Order generated by a in Number Field in a with defining polynomial x^2 + 2
         """
-        if kwds.get('future', False) or not self.is_maximal():
-            if 'future' in kwds:
-                del kwds['future']
-            from sage.rings.number_field.order_ideal import NumberFieldOrderIdeal
-            return NumberFieldOrderIdeal(self, *args, **kwds)
-        if kwds.get('warn', True):
-            if 'warn' in kwds:
-                del kwds['warn']
-            from sage.misc.superseded import deprecation
-            deprecation(34198, 'In the future, constructing an ideal of the ring of '
-                               'integers of a number field will use an implementation '
-                               'compatible with ideals of other (non-maximal) orders, '
-                               'rather than returning an integral fractional ideal of '
-                               'its containing number field. Use .fractional_ideal(), '
-                               'together with an .is_integral() check if desired, to '
-                               'emulate the current behavior.\nSet warn=0 to silence '
-                               'this warning, and future=1 to activate the upcoming '
-                               'behavior already.')
-        I = self.number_field().ideal(*args, **kwds)
-        if not I.is_integral():
-            raise ValueError("ideal must be integral; use fractional_ideal to create a non-integral ideal.")
-        return I
+        # these keyword arguments are ignored since there used to be optional
+        # arguments with these names for controlling deprecated/future behavior;
+        # see #34806 and #35762
+        if 'warn' in kwds:
+            del kwds['warn']
+        if 'future' in kwds:
+            del kwds['future']
+        from sage.rings.number_field.order_ideal import NumberFieldOrderIdeal
+        return NumberFieldOrderIdeal(self, *args, **kwds)
 
     def _coerce_map_from_(self, R):
         """
@@ -575,7 +624,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
     def __mul__(self, right):
         """
-        Create an ideal in this order using the syntax ``O * gens``
+        Create an ideal in this order using the syntax ``O * gens``.
 
         EXAMPLES::
 
@@ -587,10 +636,9 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: Ok = k.maximal_order(); Ok
             Maximal Order generated by a in Number Field in a with defining polynomial x^2 + 5077
             sage: Ok * (11, a + 7)
-            doctest:warning ... DeprecationWarning: ...
-            Fractional ideal (11, a + 7)
+            Ideal (8*a + 1, 11*a) of Maximal Order generated by a in Number Field in a with defining polynomial x^2 + 5077
             sage: (11, a + 7) * Ok
-            Fractional ideal (11, a + 7)
+            Ideal (8*a + 1, 11*a) of Maximal Order generated by a in Number Field in a with defining polynomial x^2 + 5077
         """
         return self.ideal(right)
 
@@ -610,11 +658,11 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: (6, 1/2*a + 11/2)*Ok    # random output
             Fractional ideal (6, 1/2*a + 11/2)
             sage: 17*Ok
-            Fractional ideal (17)
+            Ideal (17/2*a + 17/2, 17*a) of Maximal Order generated by 1/2*a + 1/2 in Number Field in a with defining polynomial x^2 + 431
         """
         return self.ideal(left)
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         r"""
         Return ``False`` (because an order is never a field).
 
@@ -629,25 +677,11 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         return False
 
-    def is_noetherian(self):
+    def is_integrally_closed(self) -> bool:
         r"""
-        Return ``True`` (because orders are always Noetherian)
+        Return whether this ring is integrally closed.
 
-        EXAMPLES::
-
-            sage: x = polygen(ZZ, 'x')
-            sage: L.<alpha> = NumberField(x**4 - x**2 + 7)
-            sage: O = L.maximal_order() ; O.is_noetherian()
-            True
-            sage: E.<w> = NumberField(x^2 - x + 2)
-            sage: OE = E.ring_of_integers(); OE.is_noetherian()
-            True
-        """
-        return True
-
-    def is_integrally_closed(self):
-        r"""
-        Return ``True`` if this ring is integrally closed, i.e., is equal
+        This is true if and only if it is equal
         to the maximal order.
 
         EXAMPLES::
@@ -680,7 +714,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: O2.krull_dimension()
             1
         """
-        return ZZ(1)
+        return ZZ.one()
 
     def integral_closure(self):
         r"""
@@ -701,12 +735,11 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         if self.is_maximal():
             return self
-        else:
-            return self.number_field().maximal_order()
+        return self.number_field().maximal_order()
 
     def gen(self, i):
         r"""
-        Return `i`'th module generator of this order.
+        Return `i`-th module generator of this order.
 
         EXAMPLES::
 
@@ -748,6 +781,20 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         return self.absolute_degree()
 
+    def gens(self) -> tuple:
+        """
+        Return the generators as a tuple.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 8)
+            sage: O = K.maximal_order()
+            sage: O.gens()
+            (1, 1/2*a^2 + 1/2*a, a^2)
+        """
+        return tuple(self.gen(i) for i in range(self.absolute_degree()))
+
     def basis(self):  # this must be defined in derived class
         r"""
         Return a basis over `\ZZ` of this order.
@@ -769,7 +816,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         INPUT:
 
-        - ``x`` -- an element of the number field of this order.
+        - ``x`` -- an element of the number field of this order
 
         OUTPUT:
 
@@ -810,7 +857,6 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             (23, -14/3)
             sage: sum([O.basis()[j]*acoords[j] for j in range(2)]) == a
             True
-
         """
         K = self.number_field()
         V, from_V, to_V = K.absolute_vector_space()
@@ -821,7 +867,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             from sage.matrix.constructor import Matrix
             self.__basis_matrix_inverse = Matrix([to_V(b) for b in self.basis()]).inverse()
             M = self.__basis_matrix_inverse
-        return to_V(K(x))*M
+        return to_V(K(x)) * M
 
     def free_module(self):
         r"""
@@ -862,7 +908,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             return self.__free_module
         except AttributeError:
             pass
-        from .number_field_ideal import basis_to_module
+        from sage.rings.number_field.number_field_ideal import basis_to_module
         M = basis_to_module(self.basis(), self.number_field())
         self.__free_module = M
         return M
@@ -910,7 +956,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             gens.append(g)
             n.append(g.absolute_minpoly().degree())
             W = A.span([to_V(x) for x in monomials(gens, n)])
-            remaining = [x for x in remaining if not to_V(x) in W]
+            remaining = [x for x in remaining if to_V(x) not in W]
         return Sequence(gens, immutable=True)
 
     @cached_method
@@ -957,12 +1003,10 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         if not roots_in_self:
             if all:
                 return []
-            else:
-                raise ArithmeticError("there are no %s roots of unity in self" % n.ordinal_str())
+            raise ArithmeticError("there are no %s roots of unity in self" % n.ordinal_str())
         if all:
             return roots_in_self
-        else:
-            return roots_in_self[0]
+        return roots_in_self[0]
 
     def number_field(self):
         """
@@ -1011,13 +1055,11 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
         INPUT:
 
-        - ``prime`` -- a prime ideal of the maximal order in this number field.
-        - ``names`` -- the name of the variable in the residue field.
-        - ``check`` -- whether or not to check the primality of prime.
+        - ``prime`` -- a prime ideal of the maximal order in this number field
+        - ``names`` -- the name of the variable in the residue field
+        - ``check`` -- whether or not to check the primality of prime
 
-        OUTPUT:
-
-        The residue field at this prime.
+        OUTPUT: the residue field at this prime
 
         EXAMPLES::
 
@@ -1094,6 +1136,15 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         r"""
         Return the class number of this order.
 
+        .. NOTE::
+
+            For some applications (e.g., in algorithms for computing
+            class groups) it is required to merely *approximate* the
+            class number. The function
+            :func:`quadratic_order_approximate_class_number`
+            can be used to compute such an approximation (currently
+            restricted to maximal imaginary-quadratic orders).
+
         EXAMPLES::
 
             sage: ZZ[2^(1/3)].class_number()                                            # needs sage.symbolic
@@ -1149,10 +1200,9 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         if self.is_maximal():
             return self.number_field().class_group(proof=proof, names=names)
-        else:
-            raise NotImplementedError('non-maximal orders are not yet supported')
+        raise NotImplementedError('non-maximal orders are not yet supported')
 
-    def is_suborder(self, other):
+    def is_suborder(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are both orders in the
         same ambient number field and ``self`` is a subset of ``other``.
@@ -1330,7 +1380,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: OK = K.ring_of_integers()
             sage: OK.random_element() # random output
             -2*a^2 - a - 2
-            sage: OK.random_element(distribution="uniform") # random output
+            sage: OK.random_element(distribution='uniform') # random output
             -a^2 - 1
             sage: OK.random_element(-10,10) # random output
             -10*a^2 - 9*a - 2
@@ -1376,7 +1426,8 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: A.random_element().parent() is A
             True
         """
-        return sum([ZZ.random_element(*args, **kwds)*a for a in self.basis()])
+        return sum([ZZ.random_element(*args, **kwds) * a
+                    for a in self.basis()])
 
     def absolute_degree(self):
         r"""
@@ -1452,7 +1503,6 @@ class Order(IntegralDomain, sage.rings.abc.Order):
 
             :meth:`NumberField_generic.valuation() <sage.rings.number_field.number_field.NumberField_generic.valuation>`,
             :meth:`pAdicGeneric.valuation() <sage.rings.padics.padic_generic.pAdicGeneric.valuation>`
-
         """
         from sage.rings.padics.padic_valuation import pAdicValuation
         return pAdicValuation(self, p)
@@ -1487,7 +1537,6 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             Maximal Order generated by [] in Number Field in a with defining polynomial t
             sage: Z.some_elements()
             [1, 0, 2, -1, -2, 4]
-
         """
         elements = list(self.basis())
         for a in self.fraction_field().some_elements():
@@ -1495,41 +1544,41 @@ class Order(IntegralDomain, sage.rings.abc.Order):
                 elements.append(self(a))
         return elements
 
-##     def absolute_polynomial(self):
-##         """
-##         Return the absolute polynomial of this order, which is just the absolute polynomial of the number field.
+#     def absolute_polynomial(self):
+#         """
+#         Return the absolute polynomial of this order, which is just the absolute polynomial of the number field.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##         sage: K.<a, b> = NumberField([x^2 + 1, x^3 + x + 1]); OK = K.maximal_order()
-##         Traceback (most recent call last):
-##         ...
-##         NotImplementedError
+#         sage: K.<a, b> = NumberField([x^2 + 1, x^3 + x + 1]); OK = K.maximal_order()
+#         Traceback (most recent call last):
+#         ...
+#         NotImplementedError
 
-##         #sage: OK.absolute_polynomial()
-##         #x^6 + 5*x^4 - 2*x^3 + 4*x^2 + 4*x + 1
-##         """
-##         return self.number_field().absolute_polynomial()
+#         #sage: OK.absolute_polynomial()
+#         #x^6 + 5*x^4 - 2*x^3 + 4*x^2 + 4*x + 1
+#         """
+#         return self.number_field().absolute_polynomial()
 
-##     def polynomial(self):
-##         """
-##         Return the polynomial defining the number field that contains self.
-##         """
-##         return self.number_field().polynomial()
+#     def polynomial(self):
+#         """
+#         Return the polynomial defining the number field that contains self.
+#         """
+#         return self.number_field().polynomial()
 
-##     def polynomial_ntl(self):
-##         """
-##         Return defining polynomial of the parent number field as a
-##         pair, an ntl polynomial and a denominator.
+#     def polynomial_ntl(self):
+#         """
+#         Return defining polynomial of the parent number field as a
+#         pair, an ntl polynomial and a denominator.
 
-##         This is used mainly to implement some internal arithmetic.
+#         This is used mainly to implement some internal arithmetic.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##             sage: NumberField(x^2 + 1,'a').maximal_order().polynomial_ntl()
-##             ([1 0 1], 1)
-##         """
-##         return self.number_field().polynomial_ntl()
+#             sage: NumberField(x^2 + 1,'a').maximal_order().polynomial_ntl()
+#             ([1 0 1], 1)
+#         """
+#         return self.number_field().polynomial_ntl()
 
 
 class Order_absolute(Order):
@@ -1556,7 +1605,6 @@ class Order_absolute(Order):
             sage: loads(dumps(O)) is O
             True
             sage: TestSuite(O).run()
-
         """
         if K.degree() == 2:
             self._element_type = OrderElement_quadratic
@@ -1605,14 +1653,13 @@ class Order_absolute(Order):
             10/3*a^2 + 7/3*a + 1/3
             sage: K([1,2,3])
             3*a^2 + 2*a + 1
-
         """
         if isinstance(x, (tuple, list)):
-            x = sum(xi*gi for xi, gi in zip(x, self.gens()))
-        if not is_Element(x) or x.parent() is not self._K:
+            x = sum(xi * gi for xi, gi in zip(x, self.gens()))
+        if not isinstance(x, Element) or x.parent() is not self._K:
             x = self._K(x)
         V, _, embedding = self._K.vector_space()
-        if not embedding(x) in self._module_rep:
+        if embedding(x) not in self._module_rep:
             raise TypeError("Not an element of the order.")
         return self._element_type(self, x)
 
@@ -1643,7 +1690,7 @@ class Order_absolute(Order):
         if left._is_maximal():
             return left
 
-        elif right._is_maximal():
+        if right._is_maximal():
             return right
 
         return AbsoluteOrder(left._K, left._module_rep + right._module_rep)
@@ -1678,7 +1725,6 @@ class Order_absolute(Order):
             Maximal Order generated by [7/12*z^3 + 3/4*z^2 + 1/12*z + 1/4, 1/6*z^3 + 1/6*z, z^2] in Number Field in z with defining polynomial x^4 - 2*x^2 + 9
             sage: L.maximal_order() & L.absolute_field('z').maximal_order()
             Maximal Order generated by [7/12*z^3 + 3/4*z^2 + 1/12*z + 1/4, 1/6*z^3 + 1/6*z, z^2] in Number Field in z with defining polynomial x^4 - 2*x^2 + 9
-
         """
         if isinstance(right, Order_relative):
             return right & left
@@ -1706,9 +1752,7 @@ class Order_absolute(Order):
 
         - ``magma`` -- a magma interpreter
 
-        OUTPUT:
-
-        a :class:`MagmaElement`, the magma version of this absolute order
+        OUTPUT: a :class:`MagmaElement`, the magma version of this absolute order
 
         EXAMPLES::
 
@@ -1745,31 +1789,40 @@ class Order_absolute(Order):
             sage: L.discriminant() / O.discriminant() == L.index_in(O)^2
             True
 
+
         TESTS::
 
             sage: type(K.order(5*a).discriminant())
             <class 'sage.rings.integer.Integer'>
+
+        This should be fast (:issue:`40770`)::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: f = -10200*x^5 + 3394506606*x^4 + 1499062700037543*x^3 - 399446093061413660294*x^2 - 54234952557577515347321243*x + 2514415152433747751031436303788
+            sage: K.<a> = NumberField(f)
+            sage: easy = [2,3,5,7,11,83,5443,3548737,108743131120471]
+            sage: OK = K.maximal_order(v=easy, assume_maximal=True)
+            sage: OK.discriminant()
+            -2233837184359702514053503341104978970680899423438448397157179110318387386336251895416563127827690136506493208269682596127007739109465589455
+
         """
         try:
             return self.__discriminant
         except AttributeError:
-            if self._is_maximal():
-                D = self._K.discriminant()
-            else:
-                D = ZZ(self._K.discriminant(self.basis()))
+            D = ZZ(self._K.discriminant(self.basis()))
             self.__discriminant = D
             return D
 
     absolute_discriminant = discriminant
 
-    def is_maximal(self, p=None):
+    def is_maximal(self, p=None) -> bool:
         """
         Return whether this is the maximal order.
 
         INPUT:
 
-        - ``p`` -- an integer prime or ``None`` (default: ``None``); if
-          set, return whether this order is maximal at the prime `p`.
+        - ``p`` -- integer prime or ``None`` (default: ``None``); if
+          set, return whether this order is maximal at the prime `p`
 
         EXAMPLES::
 
@@ -1802,7 +1855,6 @@ class Order_absolute(Order):
             sage: O = K.order([3*a, 2*b])
             sage: O.is_maximal()
             False
-
         """
         if self._is_maximal() is True:
             return True
@@ -1811,14 +1863,13 @@ class Order_absolute(Order):
             if self._is_maximal() is None:
                 self._assume_maximal(self.absolute_discriminant() == self._K.absolute_discriminant())
             return self._is_maximal()
-        else:
-            p = ZZ(p).abs()
+        p = ZZ(p).abs()
 
-            if self._is_maximal_at(p) is None:
-                is_maximal = self._K.maximal_order(p, assume_maximal=None).absolute_discriminant().valuation(p) == self.absolute_discriminant().valuation(p)
-                self._assume_maximal(is_maximal, p=p)
+        if self._is_maximal_at(p) is None:
+            is_maximal = self._K.maximal_order(p, assume_maximal=None).absolute_discriminant().valuation(p) == self.absolute_discriminant().valuation(p)
+            self._assume_maximal(is_maximal, p=p)
 
-            return self._is_maximal_at(p)
+        return self._is_maximal_at(p)
 
     def _is_maximal(self):
         r"""
@@ -1835,7 +1886,6 @@ class Order_absolute(Order):
             False
             sage: K.order(1337*t)._is_maximal()
             False
-
         """
         return self.__is_maximal
 
@@ -1870,7 +1920,6 @@ class Order_absolute(Order):
             sage: O = K.maximal_order([13], assume_maximal=None)
             sage: O._is_maximal_at()
             {13: True}
-
         """
         if p is None:
             return dict(self.__is_maximal_at)
@@ -1918,7 +1967,7 @@ class Order_absolute(Order):
             sage: O = K.order(1+i)
             sage: O.is_maximal()
             True
-            sage: N = O._assume_maximal(is_maximal="non-maximal-non-unique")
+            sage: N = O._assume_maximal(is_maximal='non-maximal-non-unique')
             sage: N._assume_maximal(p=2) is N
             True
             sage: N is O
@@ -1929,7 +1978,6 @@ class Order_absolute(Order):
             False
             sage: N.is_maximal(p=2)
             True
-
         """
         if is_maximal is None:
             # No assumption made, return the object unchanged.
@@ -2000,11 +2048,9 @@ class Order_absolute(Order):
 
         INPUT:
 
-        - ``other`` -- another absolute order with the same ambient number field.
+        - ``other`` -- another absolute order with the same ambient number field
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -2082,7 +2128,7 @@ class Order_absolute(Order):
         """
         return self & other
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return print representation of this absolute order.
 
@@ -2207,7 +2253,6 @@ class Order_relative(Order):
             sage: loads(dumps(O)) is O
             True
             sage: TestSuite(O).run()
-
         """
         self._absolute_order = absolute_order
         self._module_rep = absolute_order._module_rep
@@ -2258,7 +2303,7 @@ class Order_relative(Order):
         x = abs_order(to_abs(x))  # will test membership
         return OrderElement_relative(self, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return print representation of this relative order.
 
@@ -2286,9 +2331,10 @@ class Order_relative(Order):
 
         INPUT:
 
-        - ``names`` -- string (default: 'z'); name of generator of absolute extension.
+        - ``names`` -- string (default: ``'z'``); name of generator of absolute
+          extension
 
-        .. note::
+        .. NOTE::
 
            There *is* a default variable name, since this absolute
            order is frequently used for internal algorithms.
@@ -2321,8 +2367,7 @@ class Order_relative(Order):
         """
         if names == 'z' or names == ('z',):
             return self._absolute_order
-        else:
-            return self._absolute_order.change_names(names)
+        return self._absolute_order.change_names(names)
 
     def basis(self):
         r"""
@@ -2413,7 +2458,6 @@ class Order_relative(Order):
 
             sage: (L.maximal_order() & L.maximal_order()).is_maximal()
             True
-
         """
         if isinstance(right, Order_absolute):
             return left._absolute_order & right
@@ -2426,14 +2470,14 @@ class Order_relative(Order):
 
         return RelativeOrder(left._K, left._absolute_order & right._absolute_order, check=False)
 
-    def is_maximal(self, p=None):
+    def is_maximal(self, p=None) -> bool:
         """
         Return whether this is the maximal order.
 
         INPUT:
 
-        - ``p`` -- an integer prime or ``None`` (default: ``None``); if
-          set, return whether this order is maximal at the prime `p`.
+        - ``p`` -- integer prime or ``None`` (default: ``None``); if
+          set, return whether this order is maximal at the prime `p`
 
         EXAMPLES::
 
@@ -2459,7 +2503,6 @@ class Order_relative(Order):
 
             sage: K.order(3*a, b).is_maximal(p=3)
             False
-
         """
         return self._absolute_order.is_maximal(p=p)
 
@@ -2478,7 +2521,6 @@ class Order_relative(Order):
             False
             sage: O._is_maximal()
             False
-
         """
         return self._absolute_order._is_maximal()
 
@@ -2503,7 +2545,6 @@ class Order_relative(Order):
             True
             sage: O._is_maximal_at()
             {2: True, 3: True, 5: True, 7: True}
-
         """
         return self._absolute_order._is_maximal_at(p=p)
 
@@ -2547,7 +2588,7 @@ class Order_relative(Order):
             sage: O = L.maximal_order([2, 3], assume_maximal=None)
             sage: O.is_maximal()
             True
-            sage: N = O._assume_maximal(is_maximal="non-maximal-non-unique")
+            sage: N = O._assume_maximal(is_maximal='non-maximal-non-unique')
             sage: N._assume_maximal(p=2) is N
             True
             sage: N is O
@@ -2558,7 +2599,6 @@ class Order_relative(Order):
             False
             sage: N.is_maximal(p=2)
             True
-
         """
         absolute_order = self._absolute_order._assume_maximal(is_maximal=is_maximal, p=p)
         if absolute_order is not self._absolute_order:
@@ -2571,9 +2611,7 @@ class Order_relative(Order):
         Return the absolute discriminant of ``self``, which is the discriminant
         of the absolute order associated to ``self``.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2588,7 +2626,7 @@ class Order_relative(Order):
         """
         return self.absolute_order().discriminant()
 
-    def is_suborder(self, other):
+    def is_suborder(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subset of the order ``other``.
 
@@ -2621,11 +2659,9 @@ class Order_relative(Order):
 
         INPUT:
 
-        - ``other`` -- another order with the same ambient absolute number field.
+        - ``other`` -- another order with the same ambient absolute number field
 
-        OUTPUT:
-
-        a rational number
+        OUTPUT: a rational number
 
         EXAMPLES::
 
@@ -2667,16 +2703,17 @@ def absolute_order_from_ring_generators(gens, check_is_integral=True,
     """
     INPUT:
 
-    - ``gens`` -- list of integral elements of an absolute order.
-    - ``check_is_integral`` -- bool (default: ``True``), whether to check that each
-      generator is integral.
-    - ``check_rank`` -- bool (default: ``True``), whether to check that the ring
-      generated by ``gens`` is of full rank.
-    - ``is_maximal`` -- bool (or ``None``); set if maximality of the generated order is
-      known
-    - ``allow_subfield`` -- bool (default: ``False``), if ``True`` and the generators do
-      not generate an order, i.e., they generate a subring of smaller rank,
-      instead of raising an error, return an order in a smaller number field.
+    - ``gens`` -- list of integral elements of an absolute order
+    - ``check_is_integral`` -- boolean (default: ``True``); whether to check
+      that each generator is integral
+    - ``check_rank`` -- boolean (default: ``True``); whether to check that the
+      ring generated by ``gens`` is of full rank
+    - ``is_maximal`` -- boolean (or ``None``); set if maximality of the
+      generated order is known
+    - ``allow_subfield`` -- boolean (default: ``False``); if ``True`` and the
+      generators do not generate an order, i.e., they generate a subring of
+      smaller rank, instead of raising an error, return an order in a smaller
+      number field
 
     EXAMPLES::
 
@@ -2739,17 +2776,18 @@ def absolute_order_from_module_generators(gens,
     INPUT:
 
     - ``gens`` -- list of elements of an absolute number field that generates an
-      order in that number field as a `\ZZ`-*module*.
+      order in that number field as a `\ZZ`-*module*
     - ``check_integral`` -- check that each generator is integral
-    - ``check_rank`` -- check that the ``gens`` span a module of the correct rank
+    - ``check_rank`` -- check that the ``gens`` span a module of the correct
+      rank
     - ``check_is_ring`` -- check that the module is closed under multiplication
       (this is very expensive)
-    - ``is_maximal`` -- bool (or ``None``); set if maximality of the generated order is known
-    - ``is_maximal_at`` -- a tuple of primes where this order is known to be maximal
+    - ``is_maximal`` -- boolean (or ``None``); set if maximality of the
+      generated order is known
+    - ``is_maximal_at`` -- tuple of primes where this order is known to be
+      maximal
 
-    OUTPUT:
-
-    an absolute order
+    OUTPUT: an absolute order
 
     EXAMPLES:
 
@@ -2842,7 +2880,7 @@ def absolute_order_from_module_generators(gens,
         raise ValueError("each generator must be integral")
 
     K = gens.universe()
-    if is_NumberFieldOrder(K):
+    if isinstance(K, Order) or K == ZZ:
         K = K.number_field()
     V, from_V, to_V = K.vector_space()
     mod_gens = [to_V(x) for x in gens]
@@ -2891,13 +2929,13 @@ def relative_order_from_ring_generators(gens,
     """
     INPUT:
 
-    - ``gens`` -- list of integral elements of an absolute order.
-    - ``check_is_integral`` -- bool (default: ``True``), whether to check that each
-      generator is integral.
-    - ``check_rank`` -- bool (default: ``True``), whether to check that the ring
-      generated by ``gens`` is of full rank.
-    - ``is_maximal`` -- bool (or ``None``); set if maximality of the generated order is
-      known.
+    - ``gens`` -- list of integral elements of an absolute order
+    - ``check_is_integral`` -- boolean (default: ``True``); whether to check
+      that each generator is integral
+    - ``check_rank`` -- boolean (default: ``True``); whether to check that the
+      ring generated by ``gens`` is of full rank
+    - ``is_maximal`` -- boolean (or ``None``); set if maximality of the
+      generated order is known
 
     EXAMPLES:
 
@@ -2943,7 +2981,7 @@ def relative_order_from_ring_generators(gens,
     return RelativeOrder(K, abs_order, check=False)
 
 
-def GaussianIntegers(names="I", latex_name="i"):
+def GaussianIntegers(names='I', latex_name='i'):
     r"""
     Return the ring of Gaussian integers.
 
@@ -2956,7 +2994,7 @@ def GaussianIntegers(names="I", latex_name="i"):
         sage: ZZI
         Gaussian Integers generated by I in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         sage: factor(3 + I)
-        (-I) * (I + 1) * (2*I + 1)
+        (-2*I - 1) * (I - 1)
         sage: CC(I)
         1.00000000000000*I
         sage: I.minpoly()
@@ -2971,7 +3009,7 @@ def GaussianIntegers(names="I", latex_name="i"):
     return nf.ring_of_integers()
 
 
-def EisensteinIntegers(names="omega"):
+def EisensteinIntegers(names='omega'):
     r"""
     Return the ring of Eisenstein integers.
 
@@ -2987,7 +3025,7 @@ def EisensteinIntegers(names="omega"):
          with defining polynomial x^2 + x + 1
          with omega = -0.50000000000000000? + 0.866025403784439?*I
         sage: factor(3 + omega)
-        (-1) * (-omega - 3)
+        (omega) * (-3*omega - 2)
         sage: CC(omega)
         -0.500000000000000 + 0.866025403784439*I
         sage: omega.minpoly()

@@ -28,14 +28,14 @@ from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 
 
-cdef int mpq_rational_reconstruction(mpq_t answer, mpz_t a, mpz_t m) except -1:
+cdef int mpq_rational_reconstruction(mpq_t answer, mpz_srcptr a, mpz_srcptr m) except -1:
     """
     Set ``answer`` to a rational number which is `a` modulo `m` and
     such that the numerator and denominator of the result is bounded by
     sqrt(m/2).
 
     If `m` is zero, raise :class`ZeroDivisionError`. If the rational
-    reconstruction does not exist, raise :class:`ValueError`.
+    reconstruction does not exist, raise :exc:`ValueError`.
 
     We assume that ``mpq_init`` has been called on ``answer``.
 

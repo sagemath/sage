@@ -8,14 +8,12 @@ Singleton categories
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
+from cpython.type cimport PyType_IsSubtype
 
-from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
 from sage.structure.dynamic_class import DynamicMetaclass
-
-from cpython.type cimport PyType_IsSubtype
 
 # This helper class is used to implement Category_singleton.__contains__
 # In particular, the docstring is what appears upon C.__contains__?
@@ -23,7 +21,7 @@ from cpython.type cimport PyType_IsSubtype
 
 cdef class Category_contains_method_by_parent_class:
     """
-    Returns whether ``x`` is an object in this category.
+    Return whether ``x`` is an object in this category.
 
     More specifically, returns ``True`` if and only if ``x`` has a
     category which is a subcategory of this one.
@@ -61,11 +59,11 @@ cdef class Category_contains_method_by_parent_class:
 
         TESTS:
 
-            The following used to segfault in a preliminary version of the
-            code::
+        The following used to segfault in a preliminary version of the
+        code::
 
-                sage: None in Rings()
-                False
+            sage: None in Rings()
+            False
         """
         if x is None:
             return False
@@ -75,7 +73,7 @@ cdef class Category_contains_method_by_parent_class:
             return PyType_IsSubtype(<type>((y._category or y.category()).parent_class), self._parent_class_of_category)
         except AttributeError:
             return False
-        except TypeError: # this is for objects that aren't CategoryObjects
+        except TypeError:  # this is for objects that are not CategoryObjects
             try:
                 return PyType_IsSubtype(<type>(x.category().parent_class), self._parent_class_of_category)
             except AttributeError:
@@ -84,7 +82,7 @@ cdef class Category_contains_method_by_parent_class:
 
 class Category_singleton(Category):
     """
-    A base class for implementing singleton category
+    A base class for implementing singleton category.
 
     A *singleton* category is a category whose class takes no
     parameters like ``Fields()`` or ``Rings()``. See also the
@@ -217,14 +215,15 @@ class Category_singleton(Category):
              <class 'sage.categories.category_singleton.Category_singleton'>,
              <class 'sage.categories.category.Category'>,
              <class 'sage.structure.unique_representation.UniqueRepresentation'>,
-             <class 'sage.structure.unique_representation.CachedRepresentation'>,
              <class 'sage.misc.fast_methods.WithEqualityById'>,
+             <class 'sage.structure.unique_representation.CachedRepresentation'>,
+             <class 'sage.structure.unique_representation.WithPicklingByInitArgs'>,
              <class 'sage.structure.sage_object.SageObject'>,
              <class '__main__.R.subcategory_class'>,
              <class 'sage.categories.sets_cat.Sets.subcategory_class'>,
              <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.subcategory_class'>,
              <class 'sage.categories.objects.Objects.subcategory_class'>,
-             <... 'object'>]
+             <class 'object'>]
             sage: R() is R()
             True
             sage: R() is R().__class__()
@@ -258,7 +257,6 @@ class Category_singleton(Category):
             False
 
         Oh well; it's not really relevant for those tests.
-
     """
 
     # That is just an optimized constant cached_method
@@ -292,7 +290,8 @@ class Category_singleton(Category):
             sage: Category_singleton()
             Traceback (most recent call last):
             ...
-            AssertionError: <class 'sage.categories.category_singleton.Category_singleton'> is not a direct subclass of <class 'sage.categories.category_singleton.Category_singleton'>
+            AssertionError: <class 'sage.categories.category_singleton.Category_singleton'> is not a direct subclass of
+            <class 'sage.categories.category_singleton.Category_singleton'>
 
         Instantiating a subclass of a subclass of :class:`Category_singleton`
         also triggers an assertion error::
@@ -314,10 +313,12 @@ class Category_singleton(Category):
             ...
             AssertionError: <class '__main__.MySubStuff'> is not a direct subclass of <class 'sage.categories.category_singleton.Category_singleton'>
         """
+        from sage.misc.constant_function import ConstantFunction
+        from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
+
         if isinstance(cls, DynamicMetaclass):  # cls is something like Rings_with_category
             cls = cls.__base__
         # TODO: find a better way to check that cls is an abstract class
-        from sage.categories.category_with_axiom import CategoryWithAxiom_singleton
         assert (cls.__mro__[1] is Category_singleton or cls.__mro__[1] is CategoryWithAxiom_singleton), \
             "{} is not a direct subclass of {}".format(cls, Category_singleton)
         obj = super().__classcall__(cls, *args)

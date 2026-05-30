@@ -25,7 +25,7 @@ surprising for people used to imperative languages like C or Maple. The reason
 is that they are **not variables but names**.
 
 The following explanation is `borrowed from
-David Goodger <http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#python-has-names>`_.
+David Goodger <https://web.archive.org/web/20070928013054/http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#python-has-names>`_.
 
 Other languages have "variables"
 ================================
@@ -368,7 +368,6 @@ define the methods and the attributes of the object.
    variable where information about the object is stored.
 
 
-
 An example: glass of beverage in a restaurant
 ---------------------------------------------
 
@@ -382,9 +381,8 @@ Let's write a small class about glasses in a restaurant::
     ....:     def __repr__(self):
     ....:         if self._content == 0.0:
     ....:             return "An empty glass of size %s"%(self._size)
-    ....:         else:
-    ....:             return "A glass of size %s cl containing %s cl of water"%(
-    ....:                     self._size, self._content)
+    ....:         return "A glass of size %s cl containing %s cl of water"%(
+    ....:                 self._size, self._content)
     ....:     def fill(self):
     ....:         self._content = self._size
     ....:     def empty(self):
@@ -612,9 +610,8 @@ Solutions to the exercises
     ....:     def __repr__(self):
     ....:         if self._content == 0.0:
     ....:             return "An empty glass of size %s"%(self._size)
-    ....:         else:
-    ....:             return "A glass of size %s cl containing %s cl of %s"%(
-    ....:                     self._size, self._content, self._beverage)
+    ....:         return "A glass of size %s cl containing %s cl of %s"%(
+    ....:                 self._size, self._content, self._beverage)
     ....:     def content(self):
     ....:         return self._content
     ....:     def beverage(self):
@@ -722,9 +719,8 @@ Solutions to the exercises
     ....:     def __repr__(self):
     ....:         if self._content == 0.0:
     ....:             return "An empty glass of size %s"%(self._size)
-    ....:         else:
-    ....:             return "A glass of size %s cl containing %s cl of %s"%(
-    ....:                     self._size, self._content, self._beverage)
+    ....:         return "A glass of size %s cl containing %s cl of %s"%(
+    ....:                 self._size, self._content, self._beverage)
     ....:     def beverage(self):
     ....:         return self._beverage
     ....:     def fill(self, beverage = "water"):

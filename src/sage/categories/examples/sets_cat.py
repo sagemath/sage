@@ -105,7 +105,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
 
     def an_element(self):
         """
-        Implements :meth:`Sets.ParentMethods.an_element`.
+        Implement :meth:`Sets.ParentMethods.an_element`.
 
         TESTS::
 
@@ -115,9 +115,9 @@ class PrimeNumbers(UniqueRepresentation, Parent):
             sage: x.parent()
             Integer Ring
         """
-        return self(47) # if speed is needed, call: self.element_class(47)
+        return self(47)  # if speed is needed, call: self.element_class(47)
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -151,6 +151,8 @@ class PrimeNumbers(UniqueRepresentation, Parent):
 
 
 from sage.misc.abstract_method import abstract_method
+
+
 class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
     """
     This class shows how to write a parent while keeping the choice of the
@@ -183,7 +185,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     def an_element(self):
         """
-        Implements :meth:`Sets.ParentMethods.an_element`.
+        Implement :meth:`Sets.ParentMethods.an_element`.
 
         TESTS::
 
@@ -197,7 +199,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, i):
         """
-        Constructs an element of self from an integer, testing that
+        Construct an element of ``self`` from an integer, testing that
         this integer is indeed prime.
 
         EXAMPLES::
@@ -212,13 +214,12 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         """
         if i in self:
             return self._from_integer_(i)
-        else:
-            raise ValueError("%s is not a prime number" % (i))
+        raise ValueError("%s is not a prime number" % (i))
 
     @abstract_method
     def _from_integer_(self, i):
         """
-        Fast construction of an element of self from an integer.
+        Fast construction of an element of ``self`` from an integer.
 
         No prime checking is performed. To be defined.
 
@@ -391,7 +392,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         super().__init__()
         self._populate_coercion_lists_(embedding=IntegerRing())
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -500,7 +501,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         self.mor = Hom(self, IntegerRing())(lambda z: z.value)
         self._populate_coercion_lists_(embedding=self.mor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -509,7 +510,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         """
         return "Set of prime numbers (wrapper implementation)"
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -663,7 +664,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         """
         Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -672,7 +673,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         """
         return "Set of prime numbers (facade implementation)"
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 

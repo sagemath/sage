@@ -14,25 +14,24 @@ AUTHORS:
 REFERENCES:
 
 - [Krumm2016]
-
 """
 
 import itertools
 
 from math import floor
 
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField
-from sage.rings.number_field.unit_group import UnitGroup
-from sage.arith.misc import gcd
 from sage.arith.functions import lcm
-from sage.matrix.constructor import matrix, column_matrix
-from sage.libs.pari.all import pari
-from sage.modules.free_module_element import vector
+from sage.arith.misc import gcd
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.rings.rational_field import QQ
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.libs.pari', 'pari')
+lazy_import('sage.matrix.constructor', ['matrix', 'column_matrix'])
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.rings.number_field.unit_group', 'UnitGroup')
+lazy_import('sage.rings.real_mpfr', 'RealField')
 
 
 def ZZ_points_of_bounded_height(PS, dim, bound):
@@ -44,13 +43,11 @@ def ZZ_points_of_bounded_height(PS, dim, bound):
 
     - ``PS`` -- a projective space
 
-    - ``dim`` -- a positive integer
+    - ``dim`` -- positive integer
 
-    - ``bound`` -- a positive integer
+    - ``bound`` -- positive integer
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES::
 
@@ -99,16 +96,14 @@ def QQ_points_of_bounded_height(PS, dim, bound, normalize=False):
 
     - ``PS`` -- a projective space
 
-    - ``dim`` -- a positive integer
+    - ``dim`` -- positive integer
 
     - ``bound`` -- a real number
 
-    - ``normalize`` -- boolean (optional, default: ``False``); whether to
+    - ``normalize`` -- boolean (default: ``False``); whether to
       normalize the coordinates of returned points
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES::
 
@@ -162,13 +157,11 @@ def IQ_points_of_bounded_height(PS, K, dim, bound):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive interger
+    - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES:
 
@@ -193,7 +186,7 @@ def IQ_points_of_bounded_height(PS, K, dim, bound):
     possible_norm_set = set()
     for i in range(class_number):
         for k in range(1, floor(bound + 1)):
-            possible_norm_set.add(k*class_group_ideal_norms[i])
+            possible_norm_set.add(k * class_group_ideal_norms[i])
 
     coordinate_space = {}
     coordinate_space[0] = [K(0)]
@@ -206,11 +199,9 @@ def IQ_points_of_bounded_height(PS, K, dim, bound):
         a_norm_bound = bound * a_norm
         a_coordinates = []
 
-        for m in coordinate_space:
+        for m, coord_m in coordinate_space.items():
             if m <= a_norm_bound:
-                for x in coordinate_space[m]:
-                    if x in a:
-                        a_coordinates.append(x)
+                a_coordinates.extend(x for x in coord_m if x in a)
 
         points_in_class_a = set()
         t = len(a_coordinates) - 1
@@ -220,7 +211,7 @@ def IQ_points_of_bounded_height(PS, K, dim, bound):
             if a == K.ideal(point_coordinates):
                 for p in itertools.permutations(point_coordinates):
                     for u in unit_tuples:
-                        point = PS([i*j for i, j in zip(u, p)] + [p[dim]])
+                        point = PS([i * j for i, j in zip(u, p)] + [p[dim]])
 
                         if point not in points_in_class_a:
                             points_in_class_a.add(point)
@@ -242,15 +233,13 @@ def points_of_bounded_height(PS, K, dim, bound, prec=53):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive integer
+    - ``dim`` -- positive integer
 
     - ``bound`` -- a real number
 
     - ``prec`` -- (default: 53) a positive integer
 
-    OUTPUT:
-
-    - an iterator of points of bounded height
+    OUTPUT: an iterator of points of bounded height
 
     EXAMPLES::
 
@@ -369,21 +358,18 @@ def points_of_bounded_height(PS, K, dim, bound, prec=53):
         vertex = sum([coefficient_tuple[i]*fund_unit_logs[i] for i in range(r)])
         fund_parallelotope_vertices.append(vertex)
 
-    D_numbers = []
-    for v in range(r + 1):
-        D_numbers.append(max([vertex[v] for vertex in fund_parallelotope_vertices]))
+    D_numbers = [max(vertex[v] for vertex in fund_parallelotope_vertices)
+                 for v in range(r + 1)]
 
-    A_numbers = []
-    for v in range(r + 1):
-        A_numbers.append(min([pr_ideal_gen_logs[y][v] for y in pr_ideal_gen_logs]))
+    A_numbers = [min(pr_ideal_gen_logs[y][v] for y in pr_ideal_gen_logs)
+                 for v in range(r + 1)]
 
-    aux_constant = (1/K_degree) * Reals(norm_bound).log()
+    aux_constant = (1 / K_degree) * Reals(norm_bound).log()
 
-    L_numbers = []
-    for v in range(r1):
-        L_numbers.append(aux_constant + D_numbers[v] - A_numbers[v])
-    for v in range(r1, r + 1):
-        L_numbers.append(2*aux_constant + D_numbers[v] - A_numbers[v])
+    L_numbers = [aux_constant + D_numbers[v] - A_numbers[v]
+                 for v in range(r1)]
+    L_numbers.extend(2 * aux_constant + D_numbers[v] - A_numbers[v]
+                     for v in range(r1, r + 1))
     L_numbers = vector(L_numbers).change_ring(QQ)
 
     T = column_matrix(fund_unit_logs).delete_rows([r]).change_ring(QQ)

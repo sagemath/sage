@@ -17,7 +17,6 @@ EXAMPLES::
 AUTHORS:
 
 - David Kohel (2006-08-04): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
@@ -31,12 +30,12 @@ AUTHORS:
 
 from .db_modular_polynomials import _dbz_to_integers
 
-disc_format = "%07d"  #  disc_length = 7
-level_format = "%03d" #  level_length = 3
+disc_format = "%07d"   # disc_length = 7
+level_format = "%03d"  # level_length = 3
 
 
 class ClassPolynomialDatabase:
-    def _dbpath(self, disc, level=1):
+    def _dbpath(self, disc, level=1) -> str:
         """
         TESTS::
 
@@ -53,7 +52,7 @@ class ClassPolynomialDatabase:
         if level != 1:
             raise NotImplementedError("Level (= %s) > 1 not yet implemented" % level)
         n1 = 5000*((abs(disc)-1)//5000)
-        s1 = disc_format % (n1+1) #_pad_int(n1+1, disc_length)
+        s1 = disc_format % (n1+1)  # _pad_int(n1+1, disc_length)
         s2 = disc_format % (n1+5000)
         subdir = "%s-%s" % (s1, s2)
         discstr = disc_format % abs(disc)
@@ -70,7 +69,7 @@ class ClassPolynomialDatabase:
             sage: db[123913912]
             Traceback (most recent call last):
             ...
-            ValueError: file not found in the Kohel database
+            FileNotFoundError: file not found in the Kohel database
         """
         from sage.rings.integer_ring import ZZ
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -100,12 +99,13 @@ class HilbertClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     model = "Cls"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Hilbert class polynomial database"
 
 ######################################################
 # None of the following are implemented yet.
 ######################################################
+
 
 class AtkinClassPolynomialDatabase(ClassPolynomialDatabase):
     """
@@ -113,7 +113,7 @@ class AtkinClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     model = "Atk"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Atkin class polynomial database"
 
 
@@ -121,7 +121,7 @@ class WeberClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     The database of Weber class polynomials.
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Weber class polynomial database"
 
 
@@ -131,5 +131,5 @@ class DedekindEtaClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     model = "Eta"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Dedekind eta class polynomial database"

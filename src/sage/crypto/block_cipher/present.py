@@ -179,11 +179,11 @@ class PRESENT(SageObject):
 
         INPUT:
 
-        - ``keySchedule`` -- (default: ``80``); the key schedule that will be
+        - ``keySchedule`` -- (default: ``80``) the key schedule that will be
           used for encryption and decryption. Use ``80`` or ``128`` as a
           shortcut for the original key schedules from [BKLPPRSV2007]_.
 
-        - ``rounds``  -- integer (default: ``None``); the number of rounds. If
+        - ``rounds`` -- integer (default: ``None``); the number of rounds. If
           ``None`` the number of rounds of the key schedule is used.
 
         - ``doFinalRound`` -- boolean (default: ``False``); flag to
@@ -299,11 +299,10 @@ class PRESENT(SageObject):
         """
         if algorithm == 'encrypt':
             return self.encrypt(block, key)
-        elif algorithm == 'decrypt':
+        if algorithm == 'decrypt':
             return self.decrypt(block, key)
-        else:
-            raise ValueError('Algorithm must be \'encrypt\' or \'decrypt\' and'
-                             ' not \'%s\'' % algorithm)
+        raise ValueError('Algorithm must be \'encrypt\' or \'decrypt\' and'
+                         ' not \'%s\'' % algorithm)
 
     def __eq__(self, other):
         r"""
@@ -327,8 +326,7 @@ class PRESENT(SageObject):
         """
         if not isinstance(other, PRESENT):
             return False
-        else:
-            return self.__dict__ == other.__dict__
+        return self.__dict__ == other.__dict__
 
     def __repr__(self):
         r"""
@@ -355,7 +353,7 @@ class PRESENT(SageObject):
         INPUT:
 
         - ``plaintext`` -- integer or bit list-like; the plaintext that will be
-          encrypted.
+          encrypted
 
         - ``key`` -- integer or bit list-like; the key
 
@@ -553,7 +551,7 @@ class PRESENT(SageObject):
             :mod:`sage.crypto.sbox` uses big endian by default whereas most of
             Sage uses little endian. So to use the big endian PRESENT Sbox from
             :mod:`sage.crypto.sboxes` :func:`sbox_layer` has to do some endian
-            conversion (i.e. reverse input and ouput of the Sbox). Keep this in
+            conversion (i.e. reverse input and output of the Sbox). Keep this in
             mind if you change the Sbox or :func:`sbox_layer`.
         """
         sbox = self.sbox if not inverse else self.sbox.inverse()
@@ -703,7 +701,7 @@ class PRESENT_KS(SageObject):
         :mod:`sage.crypto.sbox` uses big endian by default whereas most of Sage
         uses little endian. So to use the big endian PRESENT Sbox from
         :mod:`sage.crypto.sboxes` :class:`PRESENT_KS` has to do some endian
-        conversion (i.e. reverse input and ouput of the Sbox). Keep this in
+        conversion (i.e. reverse input and output of the Sbox). Keep this in
         mind if you change the Sbox or :func:`__call__`.
 
     .. automethod:: __init__
@@ -716,10 +714,10 @@ class PRESENT_KS(SageObject):
 
         INPUT:
 
-        - ``keysize`` -- integer (default: ``80``); the size of the keys that
+        - ``keysize`` -- integer (default: 80); the size of the keys that
           will be used in bits. It must be either 80 or 128.
 
-        - ``rounds`` -- integer (default: ``31``); the number of rounds
+        - ``rounds`` -- integer (default: 31); the number of rounds
           ``self`` can create keys for
 
         - ``master_key`` -- integer or bit list-like (default: ``None``); the
@@ -818,8 +816,7 @@ class PRESENT_KS(SageObject):
         """
         if not isinstance(other, PRESENT_KS):
             return False
-        else:
-            return self.__dict__ == other.__dict__
+        return self.__dict__ == other.__dict__
 
     def __repr__(self):
         r"""
@@ -836,14 +833,14 @@ class PRESENT_KS(SageObject):
 
     def __getitem__(self, r):
         r"""
-        Computes the sub key for round ``r`` derived from initial master key.
+        Compute the sub key for round ``r`` derived from initial master key.
 
         The key schedule object has to have been initialised with the
         ``master_key`` argument.
 
         INPUT:
 
-        - ``r`` integer; the round for which the sub key is computed
+        - ``r`` -- integer; the round for which the sub key is computed
 
         EXAMPLES::
 
@@ -885,11 +882,9 @@ def convert_to_vector(I, L):
 
     - ``I`` -- integer or bit list-like
 
-    - ``L`` -- integer; the desired bit length of the ouput
+    - ``L`` -- integer; the desired bit length of the output
 
-    OUTPUT:
-
-    - the ``L``-bit vector representation of ``I``
+    OUTPUT: the ``L``-bit vector representation of ``I``
 
     EXAMPLES::
 

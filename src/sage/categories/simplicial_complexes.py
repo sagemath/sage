@@ -15,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 #from sage.categories.cw_complexes import CWComplexes
 from sage.categories.sets_cat import Sets
 
+
 class SimplicialComplexes(Category_singleton):
     r"""
     The category of abstract simplicial complexes.

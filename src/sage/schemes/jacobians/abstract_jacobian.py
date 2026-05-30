@@ -6,7 +6,6 @@ This module defines the base class of Jacobians as an abstract scheme.
 AUTHORS:
 
 - William Stein (2005)
-
 """
 
 # ****************************************************************************
@@ -21,37 +20,10 @@ AUTHORS:
 
 from sage.categories.schemes import Jacobians
 from sage.categories.fields import Fields
-from sage.schemes.generic.scheme import Scheme, is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.structure.richcmp import richcmp_method, richcmp
 
 _Fields = Fields()
-
-
-def is_Jacobian(J):
-    """
-    Return True if `J` is of type Jacobian_generic.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.jacobians.abstract_jacobian import Jacobian, is_Jacobian
-        sage: P2.<x, y, z> = ProjectiveSpace(QQ, 2)
-        sage: C = Curve(x^3 + y^3 + z^3)
-        sage: J = Jacobian(C)
-        sage: is_Jacobian(J)
-        ...
-        DeprecationWarning: Use Jacobian_generic directly
-        See https://github.com/sagemath/sage/issues/35467 for details.
-        True
-
-    ::
-
-        sage: E = EllipticCurve('37a1')
-        sage: is_Jacobian(E)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35467, "Use Jacobian_generic directly")
-    return isinstance(J, Jacobian_generic)
 
 
 def Jacobian(C):
@@ -102,14 +74,14 @@ class Jacobian_generic(Scheme):
         Note: this is an abstract parent, so we skip element tests::
 
             sage: TestSuite(J).run(skip =["_test_an_element", \
-                                          "_test_zero", \
-                                          "_test_elements", \
-                                          "_test_elements_eq_reflexive", \
-                                          "_test_elements_eq_symmetric", \
-                                          "_test_elements_eq_transitive", \
-                                          "_test_additive_associativity", \
-                                          "_test_elements_neq", \
-                                          "_test_some_elements"])
+            ....:                         "_test_zero", \
+            ....:                         "_test_elements", \
+            ....:                         "_test_elements_eq_reflexive", \
+            ....:                         "_test_elements_eq_symmetric", \
+            ....:                         "_test_elements_eq_transitive", \
+            ....:                         "_test_additive_associativity", \
+            ....:                         "_test_elements_neq", \
+            ....:                         "_test_some_elements"])
 
         ::
 
@@ -133,7 +105,7 @@ class Jacobian_generic(Scheme):
             TypeError: C (=Projective Plane Curve over Ring of integers modulo 6
             defined by x + y + z) must be defined over a field.
         """
-        if not is_Scheme(C):
+        if not isinstance(C, Scheme):
             raise TypeError("Argument (=%s) must be a scheme." % C)
         if C.base_ring() not in _Fields:
             raise TypeError("C (=%s) must be defined over a field." % C)
@@ -142,10 +114,12 @@ class Jacobian_generic(Scheme):
         self.__curve = C
         Scheme.__init__(self, C.base_scheme(), category=Jacobians(C.base_ring()).or_subcategory(category))
 
-    def __richcmp__(self, J, op):
+    def __richcmp__(self, other, op) -> bool:
         """
-        Compare the Jacobian ``self`` to `J`.  If `J` is a Jacobian, then
-        ``self`` and `J` are equal if and only if their curves are equal.
+        Compare the Jacobian ``self`` to ``other``.
+
+        If ``other`` is a Jacobian, then ``self`` and ``other`` are
+        equal if and only if their curves are equal.
 
         EXAMPLES::
 
@@ -164,9 +138,9 @@ class Jacobian_generic(Scheme):
             sage: J1 != J2
             True
         """
-        if not isinstance(J, Jacobian_generic):
+        if not isinstance(other, Jacobian_generic):
             return NotImplemented
-        return richcmp(self.curve(), J.curve(), op)
+        return richcmp(self.curve(), other.curve(), op)
 
     def _repr_(self):
         """
@@ -189,7 +163,7 @@ class Jacobian_generic(Scheme):
 
         OUTPUT:
 
-        This method always raises a :class:`NotImplementedError`; it is
+        This method always raises a :exc:`NotImplementedError`; it is
         only abstract.
 
         EXAMPLES::
@@ -226,9 +200,9 @@ class Jacobian_generic(Scheme):
 
         INPUT:
 
-        - ``R`` -- a field. The new base ring.
+        - ``R`` -- a field; the new base ring
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 
@@ -249,9 +223,9 @@ class Jacobian_generic(Scheme):
 
         INPUT:
 
-        - ``R`` -- a field. The new base field.
+        - ``R`` -- a field; the new base field
 
-        OUTPUT: The Jacobian over the ring `R`.
+        OUTPUT: the Jacobian over the ring `R`
 
         EXAMPLES::
 

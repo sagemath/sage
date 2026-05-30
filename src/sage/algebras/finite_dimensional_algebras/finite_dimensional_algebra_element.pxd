@@ -6,4 +6,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
     cdef Matrix __matrix
     cdef FiniteDimensionalAlgebraElement __inverse
 
+    cpdef dict monomial_coefficients(self, bint copy=*)
+
 cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A, vec, mat)

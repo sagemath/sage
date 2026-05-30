@@ -23,19 +23,16 @@ class JmolDataJar(StaticFile):
             sage: isinstance(JmolDataJar(), JmolDataJar)
             True
         """
-        from sage.env import SAGE_SHARE, JMOL_DIR
+        from sage.env import sage_data_paths, JMOL_DIR
 
-        jmol_search_path = JMOL_DIR or (
-                os.path.join(SAGE_SHARE, "sagemath", "jmol"),
-                os.path.join(SAGE_SHARE, "jmol")
-                )
+        jmol_search_path = JMOL_DIR or list(sage_data_paths('jmol'))
 
         StaticFile.__init__(
-            self, name="jmol",
-            filename="JmolData.jar",
+            self, name='jmol',
+            filename='JmolData.jar',
             search_path=jmol_search_path,
-            spkg="jmol",
-            type="standard",
+            spkg='jmol',
+            type='optional',
             description="Java viewer for chemical structures in 3D")
 
 

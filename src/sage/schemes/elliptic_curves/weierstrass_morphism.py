@@ -32,7 +32,8 @@ from sage.structure.sequence import Sequence
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-class baseWI():
+
+class baseWI:
     r"""
     This class implements the basic arithmetic of isomorphisms between
     Weierstrass models of elliptic curves.
@@ -44,8 +45,8 @@ class baseWI():
 
     INPUT:
 
-    - ``u,r,s,t`` (default `(1,0,0,0)`) -- standard parameters of an
-      isomorphism between Weierstrass models.
+    - ``u``, ``r``, ``s``, ``t`` -- (default: `1`, `0`, `0`, `0`); standard
+      parameters of an isomorphism between Weierstrass models
 
     EXAMPLES::
 
@@ -60,12 +61,12 @@ class baseWI():
     """
     def __init__(self, u=1, r=0, s=0, t=0):
         r"""
-        Constructor: check for valid parameters (defaults to identity)
+        Constructor: check for valid parameters (defaults to identity).
 
         INPUT:
 
-        - ``u,r,s,t`` (default `(1,0,0,0)`) -- standard parameters of an
-          isomorphism between Weierstrass models.
+        - ``u``, ``r``, ``s``, ``t`` -- (default: `1`, `0`, `0`, `0`); standard
+          parameters of an isomorphism between Weierstrass models
 
         EXAMPLES::
 
@@ -179,11 +180,9 @@ class baseWI():
 
         INPUT:
 
-        - ``EorP`` -- either an elliptic curve, or a point on an elliptic curve.
+        - ``EorP`` -- either an elliptic curve, or a point on an elliptic curve
 
-        OUTPUT:
-
-        The transformed curve or point.
+        OUTPUT: the transformed curve or point
 
         EXAMPLES::
 
@@ -222,12 +221,12 @@ class baseWI():
 
 def _isomorphisms(E, F):
     r"""
-    Enumerate all isomorphisms between two elliptic curves,
-    as a generator object.
+    Enumerate all isomorphisms between two elliptic curves, as a generator.
+    Normalized isomorphisms are output before any non-normalized ones.
 
     INPUT:
 
-    - ``E``, ``F`` (EllipticCurve) -- Two elliptic curves.
+    - ``E``, ``F`` -- two elliptic curves
 
     OUTPUT:
 
@@ -295,8 +294,8 @@ def _isomorphisms(E, F):
         sage: all({iso2*iso1 for iso1 in Iso} == set(Aut) for iso2 in F.isomorphisms(E))
         True
     """
-    from .ell_generic import is_EllipticCurve
-    if not is_EllipticCurve(E) or not is_EllipticCurve(F):
+    from .ell_generic import EllipticCurve_generic
+    if not isinstance(E, EllipticCurve_generic) or not isinstance(F, EllipticCurve_generic):
         raise ValueError("arguments are not elliptic curves")
 
     j = E.j_invariant()
@@ -313,10 +312,12 @@ def _isomorphisms(E, F):
 
     char = K.characteristic()
 
+    one_first = lambda vs: [K.one()] * (K.one() in vs) + [v for v in vs if not v.is_one()]
+
     if char == 2:
         if j == 0:
             ulist = (x**3 - a3E/a3F).roots(multiplicities=False)
-            for u in ulist:
+            for u in one_first(ulist):
                 slist = (x**4 + a3E*x + (a2F**2 + a4F)*u**4 + a2E**2 + a4E).roots(multiplicities=False)
                 for s in slist:
                     r = s**2 + a2E + a2F*u**2
@@ -338,7 +339,7 @@ def _isomorphisms(E, F):
     if char == 3:
         if j == 0:
             ulist = (x**4 - b4E/b4F).roots(multiplicities=False)
-            for u in ulist:
+            for u in one_first(ulist):
                 s = a1E - a1F*u
                 t = a3E - a3F*u**3
                 rlist = (x**3 - b4E*x + b6E - b6F*u**6).roots(multiplicities=False)
@@ -346,7 +347,7 @@ def _isomorphisms(E, F):
                     yield (u, r, s, t + r*a1E)
         else:
             ulist = (x**2 - b2E/b2F).roots(multiplicities=False)
-            for u in ulist:
+            for u in one_first(ulist):
                 r = (b4F * u**4 - b4E) / b2E
                 s = a1E - a1F * u
                 t = a3E - a3F * u**3 + a1E * r
@@ -365,7 +366,7 @@ def _isomorphisms(E, F):
     else:
         m, um = 2, (c6E*c4F)/(c6F*c4E)
     ulist = (x**m - um).roots(multiplicities=False)
-    for u in ulist:
+    for u in one_first(ulist):
         s = (a1F*u - a1E)/2
         r = (a2F*u**2 + a1E*s + s**2 - a2E)/3
         t = (a3F*u**3 - a1E*r - a3E)/2
@@ -378,12 +379,12 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
     INPUT:
 
-    - ``E`` -- an ``EllipticCurve``, or ``None`` (see below).
+    - ``E`` -- an ``EllipticCurve``, or ``None`` (see below)
 
     - ``urst`` -- a 4-tuple `(u,r,s,t)`, a :class:`baseWI` object,
-      or ``None`` (see below).
+      or ``None`` (see below)
 
-    - ``F`` -- an ``EllipticCurve``, or ``None`` (see below).
+    - ``F`` -- an ``EllipticCurve``, or ``None`` (see below)
 
     Given two Elliptic Curves ``E`` and ``F`` (represented by Weierstrass
     models as usual), and a transformation ``urst`` from ``E`` to ``F``,
@@ -459,13 +460,13 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: type(iso.degree())                                                    # needs sage.rings.finite_rings
             <class 'sage.rings.integer.Integer'>
         """
-        from .ell_generic import is_EllipticCurve
+        from .ell_generic import EllipticCurve_generic
 
         if E is not None:
-            if not is_EllipticCurve(E):
+            if not isinstance(E, EllipticCurve_generic):
                 raise ValueError("first argument must be an elliptic curve or None")
         if F is not None:
-            if not is_EllipticCurve(F):
+            if not isinstance(F, EllipticCurve_generic):
                 raise ValueError("third argument must be an elliptic curve or None")
         if urst is not None:
             if len(urst) != 4:
@@ -617,7 +618,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         INPUT:
 
-        - ``P`` (Point) -- a point on the domain curve.
+        - ``P`` -- Point; a point on the domain curve
 
         OUTPUT:
 
@@ -737,6 +738,12 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
                 raise ValueError("Domain of first argument must equal codomain of second")
             w = baseWI.__mul__(left, right)
             return WeierstrassIsomorphism(right._domain, w.tuple(), left._codomain)
+
+        if isinstance(left, WeierstrassIsomorphism) and left.is_identity():
+            return right
+
+        if isinstance(right, WeierstrassIsomorphism) and right.is_identity():
+            return left
 
         return NotImplemented
 
@@ -983,7 +990,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: p = 97
             sage: Fp = GF(p)
             sage: E = EllipticCurve(Fp, [1, 28])
-            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws = E.automorphisms()[1]
             sage: ws.is_identity()
             False
 
@@ -993,7 +1000,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: p = 97
             sage: Fp = GF(p)
             sage: E = EllipticCurve(Fp, [1, 28])
-            sage: ws = WeierstrassIsomorphism(E, (1, 0, 0, 0), None)
+            sage: ws = E.automorphisms()[0]
             sage: ws.is_identity()
             True
         """
@@ -1003,9 +1010,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         r"""
         Compute the order of this Weierstrass isomorphism if it is an automorphism.
 
-        A :class:`ValueError` is raised if the domain is not equal to the codomain.
+        A :exc:`ValueError` is raised if the domain is not equal to the codomain.
 
-        A :class:`NotImplementedError` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
+        A :exc:`NotImplementedError` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
 
         EXAMPLES::
 
@@ -1013,7 +1020,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: p = 97
             sage: Fp = GF(p)
             sage: E = EllipticCurve(Fp, [1, 28])
-            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws = E.automorphisms()[1]
             sage: ws.order()
             2
 
@@ -1023,7 +1030,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             sage: p = 97
             sage: Fp = GF(p)
             sage: E = EllipticCurve(Fp, [1, 28])
-            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws = E.automorphisms()[1]
             sage: ws.order()
             2
             sage: E1 = EllipticCurve(Fp, [1, 69])
@@ -1044,7 +1051,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             3
             sage: F2_bar = GF(2).algebraic_closure()
             sage: E = EllipticCurve_from_j(F2_bar(0))
-            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws = E.automorphisms()[8]
             sage: ws.order()
             3
         """
@@ -1073,6 +1080,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         raise NotImplementedError("the order of the endomorphism is not 1, 2, 3, 4 or 6")
 
+
 def identity_morphism(E):
     r"""
     Given an elliptic curve `E`, return the identity morphism
@@ -1089,6 +1097,7 @@ def identity_morphism(E):
     R = E.base_ring()
     zero = R.zero()
     return WeierstrassIsomorphism(E, (R.one(), zero, zero, zero))
+
 
 def negation_morphism(E):
     r"""

@@ -194,6 +194,7 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from collections.abc import Iterator
 
 import weakref
 
@@ -205,7 +206,8 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
 from sage.modular.dirichlet import trivial_character
 from sage.modular.etaproducts import EtaProduct
 from sage.modular.modform.element import ModularFormElement
@@ -243,23 +245,23 @@ def OverconvergentModularForms(prime, weight, radius, base_ring=QQ, prec=20, cha
     INPUT:
 
     - ``prime`` -- a prime number `p`, which must be one of the primes `\{2, 3,
-      5, 7, 13\}`, or the congruence subgroup `\Gamma_0(p)` where `p` is one of these
-      primes.
+      5, 7, 13\}`, or the congruence subgroup `\Gamma_0(p)` where `p` is one of
+      these primes
 
-    - ``weight`` -- an integer (which at present must be 0 or `\ge 2`), the
-      weight.
+    - ``weight`` -- integer (which at present must be 0 or `\ge 2`), the
+      weight
 
     - ``radius`` -- a rational number in the interval `\left( 0, \frac{p}{p+1}
-      \right)`, the radius of overconvergence.
+      \right)`, the radius of overconvergence
 
-    - ``base_ring`` -- (default: `\QQ`), a ring over which to compute. This
-      need not be a `p`-adic ring.
+    - ``base_ring`` -- (default: `\QQ`), a ring over which to compute; this
+      need not be a `p`-adic ring
 
-    - ``prec`` -- an integer (default: 20), the number of `q`-expansion terms to
-      compute.
+    - ``prec`` -- integer (default: 20); the number of `q`-expansion terms to
+      compute
 
-    - ``char`` -- a Dirichlet character modulo `p` or ``None`` (the default).
-      Here ``None`` is interpreted as the trivial character modulo `p`.
+    - ``char`` -- a Dirichlet character modulo `p` or ``None`` (the default);
+      here ``None`` is interpreted as the trivial character modulo `p`
 
     The character `\chi` and weight `k` must satisfy `(-1)^k = \chi(-1)`, and
     the base ring must contain an element `v` such that
@@ -278,7 +280,7 @@ def OverconvergentModularForms(prime, weight, radius, base_ring=QQ, prec=20, cha
         Space of 3-adic 1/2-overconvergent modular forms
          of weight-character (3, 3, [-1]) over Rational Field
     """
-    if is_Gamma0(prime) or is_Gamma1(prime):
+    if isinstance(prime, (Gamma0_class, Gamma1_class)):
         prime = prime.level()
     else:
         prime = ZZ(prime)
@@ -428,7 +430,7 @@ class OverconvergentModularFormsSpace(Module):
     # Boring functions that access internal data #
     ##############################################
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` if elements of this space are represented exactly.
 
@@ -461,13 +463,13 @@ class OverconvergentModularFormsSpace(Module):
         Return the base extension of ``self`` to the given base ring.
 
         There must be a canonical map to this ring from the current
-        base ring, otherwise a :class:`TypeError` will be raised.
+        base ring, otherwise a :exc:`TypeError` will be raised.
 
         EXAMPLES::
 
             sage: M = OverconvergentModularForms(2, 0, 1/2, base_ring=Qp(2))
             sage: x = polygen(ZZ, 'x')
-            sage: M.base_extend(Qp(2).extension(x^2 - 2, names="w"))
+            sage: M.base_extend(Qp(2).extension(x^2 - 2, names='w'))
             Space of 2-adic 1/2-overconvergent modular forms of weight-character 0
              over 2-adic Eisenstein Extension ...
             sage: M.base_extend(QQ)
@@ -478,8 +480,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         if ring.has_coerce_map_from(self.base_ring()):
             return self.change_ring(ring)
-        else:
-            raise TypeError("Base extension of self (over '%s') to ring '%s' not defined." % (self.base_ring(), ring))
+        raise TypeError("Base extension of self (over '%s') to ring '%s' not defined." % (self.base_ring(), ring))
 
     def _an_element_(self):
         r"""
@@ -565,8 +566,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         if not isinstance(other, OverconvergentModularFormsSpace):
             return False
-        else:
-            return self._params() == other._params()
+        return self._params() == other._params()
 
     def __ne__(self, other):
         """
@@ -616,7 +616,6 @@ class OverconvergentModularFormsSpace(Module):
              7-adic Eisenstein Extension Field in w defined by x^2 - 7,
              20,
              Dirichlet character modulo 7 of conductor 1 mapping 3 |--> 1)
-
         """
         return (self.prime(), self.weight().k(), self.radius(), self.base_ring(), self.prec(), self.weight().chi())
 
@@ -636,7 +635,6 @@ class OverconvergentModularFormsSpace(Module):
               7-adic Eisenstein Extension Field in w defined by x^2 - 7,
               20,
               Dirichlet character modulo 7 of conductor 1 mapping 3 |--> 1))
-
         """
         return (OverconvergentModularForms, self._params())
 
@@ -695,7 +693,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         return self._radius
 
-    def gens(self):
+    def gens(self) -> Iterator:
         r"""
         Return a generator object that iterates over the (infinite) set of
         basis vectors of ``self``.
@@ -808,7 +806,7 @@ class OverconvergentModularFormsSpace(Module):
         if isinstance(input, OverconvergentModularFormElement):
             return self._coerce_from_ocmf(input)
 
-        elif isinstance(input, ModularFormElement):
+        if isinstance(input, ModularFormElement):
             if ((input.level() == 1 or input.level().prime_factors() == [self.prime()])
                     and input.weight() == self.weight().k()
                     and input.character().primitive_character() == self.weight().chi().primitive_character()):
@@ -967,11 +965,10 @@ class OverconvergentModularFormsSpace(Module):
 
         if f.parent() is self:
             return self(self.hecke_operator(f.q_expansion(), m))
-        elif isinstance(f, OverconvergentModularFormElement):
+        if isinstance(f, OverconvergentModularFormElement):
             if f.parent() is self.base_extend(f.parent().base_ring()):
                 return f.parent().hecke_operator(f, m)
-            else:
-                raise TypeError("Not an element of this space")
+            raise TypeError("Not an element of this space")
         else:
             return hecke_operator_on_qexp(f, m, self.weight().k(), eps=self.weight().chi())
 
@@ -1133,13 +1130,13 @@ class OverconvergentModularFormsSpace(Module):
 
         INPUT:
 
-        - ``n`` -- integer. The size of the matrix to use.
+        - ``n`` -- integer; the size of the matrix to use
 
         - ``F`` -- either ``None`` or a field over which to calculate eigenvalues. If the
           field is ``None``, the current base ring is used. If the base ring is not
           a `p`-adic ring, an error will be raised.
 
-        - ``exact_arith`` -- ``True`` or ``False`` (default ``True``). If ``True``, use exact
+        - ``exact_arith`` -- boolean (default: ``True``); if ``True``, use exact
           rational arithmetic to calculate the matrix of the `U` operator and its
           characteristic power series, even when the base ring is an inexact
           `p`-adic ring. This is typically slower, but more numerically stable.
@@ -1189,7 +1186,7 @@ class OverconvergentModularFormsSpace(Module):
             F = self.base_ring()
 
         if F.is_exact():
-            # raise TypeError, "cannot calculate eigenfunctions over exact base fields"
+            # raise TypeError("cannot calculate eigenfunctions over exact base fields")
             F = pAdicField(self.prime(), 100)  # noqa:F821
 
         m = self.hecke_matrix(self.prime(), n, use_recurrence=True, exact_arith=exact_arith)
@@ -1313,7 +1310,8 @@ class OverconvergentModularFormsSpace(Module):
 
     def _discover_recurrence_matrix(self, use_smithline=True):
         r"""
-        Does hard work of calculating recurrence matrix, which is cached to avoid doing this every time.
+        Do the hard work of calculating the recurrence matrix, which is cached
+        to avoid doing this every time.
 
         EXAMPLES::
 
@@ -1351,10 +1349,9 @@ class OverconvergentModularFormsSpace(Module):
                 for j in range(self.prime()):
                     r[i, j] = -smallI[i+1, j+1]
             return r
-        else:
-            # compute from U(f^j) for small j via Newton's identities
-            # to be implemented when I can remember Newton's identities!
-            raise NotImplementedError
+        # compute from U(f^j) for small j via Newton's identities
+        # to be implemented when I can remember Newton's identities!
+        raise NotImplementedError
 
     def cps_u(self, n, use_recurrence=False):
         r"""
@@ -1388,7 +1385,7 @@ class OverconvergentModularFormsSpace(Module):
             Uses the Hessenberg form of the Hecke matrix to compute
             the characteristic polynomial.  Because of the use of
             relative precision here this tends to give better
-            precision in the p-adic coefficients.
+            precision in the `p`-adic coefficients.
         """
         m = self.hecke_matrix(self.prime(), n, use_recurrence)
         A = PowerSeriesRing(self.base_ring(), 'T')
@@ -1472,7 +1469,6 @@ class OverconvergentModularFormElement(ModuleElement):
             sage: f = M.0
             sage: 2*f # indirect doctest
             2-adic overconvergent modular form of weight-character 12 with q-expansion 2 - 131040/1414477*q ...
-
         """
         return OverconvergentModularFormElement(self.parent(), gexp=x * self.gexp())
 
@@ -1486,7 +1482,6 @@ class OverconvergentModularFormElement(ModuleElement):
             sage: f = M.0
             sage: f * 3 # indirect doctest
             2-adic overconvergent modular form of weight-character 12 with q-expansion 3 - 196560/1414477*q ...
-
         """
         return OverconvergentModularFormElement(self.parent(), gexp=x * self.gexp())
 
@@ -1503,7 +1498,7 @@ class OverconvergentModularFormElement(ModuleElement):
         """
         return self.gexp().prec()
 
-    def is_eigenform(self):
+    def is_eigenform(self) -> bool:
         r"""
         Return ``True`` if this is an eigenform.
 
@@ -1589,7 +1584,7 @@ class OverconvergentModularFormElement(ModuleElement):
         """
         if prec is None:
             return self._qexp
-        elif prec > self.prec():
+        if prec > self.prec():
             raise ValueError
         else:
             return self._qexp.add_bigoh(prec)
@@ -1670,7 +1665,7 @@ class OverconvergentModularFormElement(ModuleElement):
         self._eigenvalue = eigenvalue
         self._slope = eigenvalue.normalized_valuation()
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Test whether this element has `q`-expansion coefficients that are `p`-adically integral.
 
@@ -1839,8 +1834,7 @@ class OverconvergentModularFormElement(ModuleElement):
         from sage.rings.infinity import Infinity
         if self.is_zero():
             return ZZ(1)
-        else:
-            return Infinity
+        return Infinity
 
     def base_extend(self, R):
         r"""

@@ -1,12 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystals of Modified Nakajima Monomials
-
-AUTHORS:
-
-- Arthur Lubovsky: Initial version
-
-- Ben Salisbury: Initial version
+Crystals of modified Nakajima monomials
 
 Let `Y_{i,k}`, for `i \in I` and `k \in \ZZ`, be a commuting set of
 variables, and let `\boldsymbol{1}` be a new variable which commutes with
@@ -74,6 +68,11 @@ WARNING:
     `C = (c_{ij})_{i\neq j}` satisfying the condition `c_{ij}+c_{ji}=1`.
     We have chosen such integers uniformly such that `c_{ij} = 1` if
     `i < j` and `c_{ij} = 0` if `i>j`.
+
+AUTHORS:
+
+- Arthur Lubovsky: initial version
+- Ben Salisbury: initial version
 """
 
 # *****************************************************************************
@@ -135,7 +134,7 @@ class NakajimaMonomial(Element):
         r"""
         INPUT:
 
-        - ``d`` -- a dictionary of with pairs of the form ``{(i,k): y}``
+        - ``d`` -- dictionary of with pairs of the form ``{(i,k): y}``
 
         EXAMPLES::
 
@@ -461,12 +460,11 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(x[1] for x in d if x[0] == i)
         for a in range(K):
-            if (i,a) in d:
-                continue
-            else:
-                d[(i,a)] = 0
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
-        return max(sum(S[k][1] for k in range(s)) for s in range(1,len(S)+1))
+            if (i, a) not in d:
+                d[(i, a)] = 0
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
+        return max(sum(S[k][1] for k in range(s)) for s in range(1, len(S)+1))
 
     def _ke(self, i):
         r"""
@@ -491,14 +489,13 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(x[1] for x in d if x[0] == i)
         for a in range(K):
-            if (i,a) in d:
-                continue
-            else:
-                d[(i,a)] = 0
+            if (i, a) not in d:
+                d[(i, a)] = 0
         total = ZZ.zero()
         L = []
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
-        for var,exp in S:
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
+        for var, exp in S:
             total += exp
             if total == phi:
                 L.append(var[1])
@@ -526,14 +523,13 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(key[1] for key in d if key[0] == i)
         for a in range(K):
-            if (i,a) in d:
-                continue
-            else:
-                d[(i,a)] = 0
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
+            if (i, a) not in d:
+                d[(i, a)] = 0
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
         sum = 0
         phi = self.phi(i)
-        for var,exp in S:
+        for var, exp in S:
             sum += exp
             if sum == phi:
                 return var[1]
@@ -700,7 +696,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
     where `\{h_i : i \in I\}` and `\{\Lambda_i : i \in I \}` are the simple
     coroots and fundamental weights, respectively.  With a chosen set of
-    non-negative integers `C = (c_{ij})_{i\neq j}` such that
+    nonnegative integers `C = (c_{ij})_{i\neq j}` such that
     `c_{ij} + c_{ji} = 1`, one defines
 
     .. MATH::
@@ -792,12 +788,12 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
             ...
-            ValueError: the c matrix must have 0's on the diagonal
+            ValueError: the c matrix must have 0s on the diagonal
             sage: c = matrix([[0,2],[-1,0]])
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
             ...
-            ValueError: the c matrix must have non-negative entries
+            ValueError: the c matrix must have nonnegative entries
             sage: c = matrix([[0,1],[1,0]])
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
@@ -811,11 +807,11 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         c = MS(c)
         c.set_immutable()
         if any(c[i,i] != 0 for i in range(n)):
-            raise ValueError("the c matrix must have 0's on the diagonal")
+            raise ValueError("the c matrix must have 0s on the diagonal")
         if any(c[i,j] + c[j,i] != 1 for i in range(n) for j in range(i)):
             raise ValueError("transpose entries do not sum to 1")
         if any(c[i,j] < 0 or c[j,i] < 0 for i in range(n) for j in range(i)):
-            raise ValueError("the c matrix must have non-negative entries")
+            raise ValueError("the c matrix must have nonnegative entries")
         return c
 
     @staticmethod
@@ -864,9 +860,9 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``Y`` -- a dictionary whose key is a pair and whose value
+        - ``Y`` -- dictionary whose key is a pair and whose value
           is an integer
-        - ``A`` -- a dictionary whose key is a pair and whose value
+        - ``A`` -- dictionary whose key is a pair and whose value
           is an integer
 
         EXAMPLES::
@@ -892,7 +888,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             hw,path = self.element_class(self, Y, {}).to_highest_weight()
             hw._A = {}
             return hw.f_string(reversed(path))
-        elif Y is None or Y == 0:
+        if Y is None or Y == 0:
             # The Y == 0 check is because the parent's __call__ has that
             #   as the first default value
             ct = self.cartan_type()
@@ -973,8 +969,8 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
         - ``letter`` -- can be one of the following:
 
-          * ``'Y'`` - use `Y_{i,k}`, corresponds to fundamental weights
-          * ``'A'`` - use `A_{i,k}`, corresponds to simple roots
+          * ``'Y'`` -- use `Y_{i,k}`, corresponds to fundamental weights
+          * ``'A'`` -- use `A_{i,k}`, corresponds to simple roots
 
         EXAMPLES::
 

@@ -1,1 +1,1 @@
-python-pygments
+python3-pygments

@@ -23,7 +23,6 @@ EXAMPLES:
 
 Consider Katsura-6 with respect to a ``degrevlex`` ordering. ::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: from sage.rings.polynomial.toy_buchberger import *
     sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))
     sage: I = sage.rings.ideal.Katsura(P, 6)
@@ -33,7 +32,6 @@ Consider Katsura-6 with respect to a ``degrevlex`` ordering. ::
 
 All algorithms actually compute a Groebner basis::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: Ideal(g1).basis_is_groebner()
     True
     sage: Ideal(g2).basis_is_groebner()
@@ -43,13 +41,11 @@ All algorithms actually compute a Groebner basis::
 
 The results are correct::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: Ideal(g1) == Ideal(g2) == Ideal(g3)
     True
 
 If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(1)
     sage: P.<a,b,c> = PolynomialRing(GF(127))
@@ -119,7 +115,6 @@ If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 The original Buchberger algorithm performs 15 useless reductions to
 zero for this example::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: gb = buchberger(I)
     ...
     15 reductions to zero.
@@ -127,7 +122,6 @@ zero for this example::
 The 'improved' Buchberger algorithm in contrast only performs 1 reduction to
 zero::
 
-    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: gb = buchberger_improved(I)
     ...
     1 reductions to zero.
@@ -140,7 +134,6 @@ AUTHORS:
 - Martin Albrecht (2007-05-24): initial version
 
 - Marshall Hampton (2009-07-08): some doctest additions
-
 """
 
 from sage.misc.verbose import get_verbose
@@ -158,7 +151,7 @@ def spol(f, g):
 
     INPUT:
 
-    -  ``f, g`` -- polynomials
+    - ``f``, ``g`` -- polynomials
 
     OUTPUT: the S-polynomial of f and g
 
@@ -302,7 +295,7 @@ def update(G, B, h):
 
     - ``G`` -- an intermediate Groebner basis
 
-    - ``B`` -- a set of critical pairs
+    - ``B`` -- set of critical pairs
 
     - ``h`` -- a polynomial
 
@@ -379,7 +372,7 @@ def select(P):
 
     INPUT:
 
-    - ``P`` -- a list of critical pairs
+    - ``P`` -- list of critical pairs
 
     OUTPUT: an element of P
 
@@ -402,7 +395,7 @@ def inter_reduction(Q):
 
     INPUT:
 
-    - ``Q`` -- a set of polynomials
+    - ``Q`` -- set of polynomials
 
     OUTPUT:
 
@@ -445,5 +438,4 @@ def inter_reduction(Q):
         if Qbar == Q:
             if base_ring.is_field():
                 return set(f.lc()**(-1) * f for f in Qbar)
-            else:
-                return Qbar
+            return Qbar

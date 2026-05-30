@@ -14,6 +14,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.tensor import TensorProductsCategory
 
+
 class FiniteCrystals(CategoryWithAxiom):
     """
     The category of finite crystals.
@@ -58,6 +59,8 @@ class FiniteCrystals(CategoryWithAxiom):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -74,7 +77,7 @@ class FiniteCrystals(CategoryWithAxiom):
 
     def example(self, n=3):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::

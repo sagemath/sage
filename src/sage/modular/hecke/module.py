@@ -30,23 +30,6 @@ from . import element
 from . import hecke_operator
 
 
-def is_HeckeModule(x):
-    r"""
-    Return ``True`` if ``x`` is a Hecke module.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.module import is_HeckeModule
-        sage: is_HeckeModule(ModularForms(Gamma0(7), 4))
-        True
-        sage: is_HeckeModule(QQ^3)
-        False
-        sage: is_HeckeModule(J0(37).homology())
-        True
-    """
-    return isinstance(x, HeckeModule_generic)
-
-
 class HeckeModule_generic(Module):
     r"""
     A very general base class for Hecke modules.
@@ -65,7 +48,7 @@ class HeckeModule_generic(Module):
 
     Element = element.HeckeModuleElement
 
-    def __init__(self, base_ring, level, category=None):
+    def __init__(self, base_ring, level, category=None) -> None:
         r"""
         Create a Hecke module. Not intended to be called directly.
 
@@ -222,12 +205,11 @@ class HeckeModule_generic(Module):
         if len(F) == 1:  # nontrivial prime power case
             return self._compute_hecke_matrix_prime_power(F[0][0], F[0][1], **kwds)
 
-        else:
-            return self._compute_hecke_matrix_general_product(F, **kwds)
+        return self._compute_hecke_matrix_general_product(F, **kwds)
 
     def _compute_hecke_matrix_prime(self, p, **kwds):
         """
-        Compute and return the matrix of the p-th Hecke operator for p prime.
+        Compute and return the matrix of the `p`-th Hecke operator for `p` prime.
 
         Derived classes should overload this function, and they will inherit
         the machinery for calculating general Hecke operators.
@@ -314,7 +296,7 @@ class HeckeModule_generic(Module):
             sage: sage.modular.hecke.module.HeckeModule_generic(QQ, 10).character() is None
             True
         """
-        return None
+        return
 
     def dimension(self):
         r"""
@@ -350,7 +332,7 @@ class HeckeModule_generic(Module):
         """
         return algebra.HeckeAlgebra(self)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this Hecke module has dimension 0.
 
@@ -367,7 +349,7 @@ class HeckeModule_generic(Module):
         """
         return self.dimension() == 0
 
-    def is_full_hecke_module(self):
+    def is_full_hecke_module(self) -> bool:
         """
         Return ``True`` if this space is invariant under all Hecke operators.
 
@@ -398,7 +380,7 @@ class HeckeModule_generic(Module):
         self._is_full_hecke_module = True
         return True
 
-    def is_hecke_invariant(self, n):
+    def is_hecke_invariant(self, n) -> bool:
         """
         Return ``True`` if ``self`` is invariant under the Hecke operator `T_n`.
 
@@ -438,11 +420,9 @@ class HeckeModule_generic(Module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - an arbitrary space of modular symbols
+        - ``ModularSymbols self`` -- an arbitrary space of modular symbols
 
-        OUTPUT:
-
-        -  ``int`` - the level
+        OUTPUT: integer; the level
 
         EXAMPLES::
 
@@ -456,7 +436,7 @@ class HeckeModule_generic(Module):
         r"""
         Return the rank of this module over its base ring.
 
-        This raises a :class:`NotImplementedError`, since this is an
+        This raises a :exc:`NotImplementedError`, since this is an
         abstract base class.
 
         EXAMPLES::
@@ -473,7 +453,7 @@ class HeckeModule_generic(Module):
         Return the submodule of ``self`` corresponding to ``X``.
 
         As this is an abstract base class, this raises a
-        :class:`NotImplementedError`.
+        :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -529,7 +509,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def __getitem__(self, n):
         r"""
-        Return the nth term in the decomposition of ``self``.
+        Return the `n`-th term in the decomposition of ``self``.
 
         See the docstring for :meth:`decomposition` for further information.
 
@@ -553,7 +533,6 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: MS = ModularSymbols(22)
             sage: hash(MS) == hash((MS.weight(), MS.level(), MS.base_ring()))
             True
-
         """
         return hash((self.__weight, self.level(), self.base_ring()))
 
@@ -579,20 +558,15 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: M._eigen_nonzero()
             0
             sage: M.dual_free_module().basis()
-            [
-            (1, 0, 0, 0, 0),
-            (0, 1, 0, 0, 0),
-            (0, 0, 1, 0, 0),
-            (0, 0, 0, 1, 0),
-            (0, 0, 0, 0, 1)
-            ]
+            [(1, 0, 0, 0, 0),
+             (0, 1, 0, 0, 0),
+             (0, 0, 1, 0, 0),
+             (0, 0, 0, 1, 0),
+             (0, 0, 0, 0, 1)]
             sage: M.cuspidal_submodule().minus_submodule()._eigen_nonzero()
             1
             sage: M.cuspidal_submodule().minus_submodule().dual_free_module().basis()
-            [
-            (0, 1, 0, 0, 0),
-            (0, 0, 1, 0, 0)
-            ]
+            [(0, 1, 0, 0, 0), (0, 0, 1, 0, 0)]
         """
         try:
             return self.__eigen_nonzero
@@ -612,7 +586,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return `T_n(x)` where `x` is a sparse modular
         symbol such that the image of `x` is nonzero under the dual
         projection map associated to this space, and `T_n` is the
-        `n^{th}` Hecke operator.
+        `n`-th Hecke operator.
 
         Used in the :meth:`dual_eigenvector` and :meth:`eigenvalue` methods.
 
@@ -652,7 +626,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: M._element_eigenvalue(M.0)
             1
         """
-        if not element.is_HeckeModuleElement(x):
+        if not isinstance(x, element.HeckeModuleElement):
             raise TypeError("x must be a Hecke module element.")
         if x not in self.ambient_hecke_module():
             raise ArithmeticError("x must be in the ambient Hecke module.")
@@ -739,7 +713,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Return the ambient module associated to this module.
 
-        As this is an abstract base class, raise :class:`NotImplementedError`.
+        As this is an abstract base class, raise :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -924,59 +898,49 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``anemic`` - bool (default: True), if True, use only
-           Hecke operators of index coprime to the level.
+        - ``anemic`` -- boolean (default: ``True``); if ``True``, use only
+          Hecke operators of index coprime to the level
 
-        -  ``bound`` - int or None, (default: None). If None,
-           use all Hecke operators up to the Sturm bound, and hence obtain the
-           same result as one would obtain by using every element of the Hecke
-           ring. If a fixed integer, decompose using only Hecke operators
-           `T_p`, with `p` prime, up to bound.
-        -  ``sort_by_basis`` - bool (default: ``False``); If True the resulting
-           decomposition will be sorted as if it was free modules, ignoring the
-           Hecke module structure. This will save a lot of time.
+        - ``bound`` -- integer or ``None`` (default: ``None``); if ``None``,
+          use all Hecke operators up to the Sturm bound, and hence obtain the
+          same result as one would obtain by using every element of the Hecke
+          ring. If a fixed integer, decompose using only Hecke operators
+          `T_p`, with `p` prime, up to bound.
+        - ``sort_by_basis`` -- boolean (default: ``False``); if ``True`` the
+          resulting decomposition will be sorted as if it was free modules,
+          ignoring the Hecke module structure. This will save a lot of time.
 
-        OUTPUT:
-
-        -  ``list`` - a list of subspaces of ``self``.
+        OUTPUT: list of subspaces of ``self``
 
         EXAMPLES::
 
             sage: ModularSymbols(17,2).decomposition()
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 3 for Gamma_0(17) of weight 2 with sign 0 over Rational Field]
             sage: ModularSymbols(Gamma1(10),4).decomposition()
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field]
             sage: ModularSymbols(GammaH(12, [11])).decomposition()
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 5 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 5 of Modular Symbols space of dimension 9 for Congruence Subgroup Gamma_H(12) with H generated by [11] of weight 2 with sign 0 over Rational Field]
 
         TESTS::
 
             sage: M = ModularSymbols(1000,2,sign=1).new_subspace().cuspidal_subspace()
             sage: M.decomposition(3, sort_by_basis = True)
-            [
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 154 for Gamma_0(1000) of weight 2 with sign 1 over Rational Field]
         """
         if not isinstance(anemic, bool):
             raise TypeError("anemic must be of type bool.")
@@ -1080,15 +1044,17 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``name`` -- print name of generator for eigenvalue
-           field.
+        - ``name`` -- print name of generator for eigenvalue
+          field
 
-        -  ``lift`` -- bool (default: ``True``)
+        - ``lift`` -- boolean (default: ``True``)
 
-        -  ``nz`` -- if not ``None``, then normalize vector so dot
-           product with this basis vector of ambient space is 1.
+        - ``nz`` -- if not ``None``, then normalize vector so dot
+          product with this basis vector of ambient space is 1
 
-        OUTPUT: A vector with entries possibly in an extension of the base
+        OUTPUT:
+
+        A vector with entries possibly in an extension of the base
         ring. This vector is an eigenvector for all Hecke operators acting
         via their transpose.
 
@@ -1122,8 +1088,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             w, w_lift = self.__dual_eigenvector[(names, nz)]
             if lift:
                 return w_lift
-            else:
-                return w
+            return w
         except KeyError:
             pass
         except AttributeError:
@@ -1195,12 +1160,11 @@ class HeckeModule_free_module(HeckeModule_generic):
         self.__dual_eigenvector[(names, nz)] = (w, w_lift)
         if lift:
             return w_lift
-        else:
-            return w
+        return w
 
     def dual_hecke_matrix(self, n):
         """
-        Return the matrix of the `n^{th}` Hecke operator acting on the dual
+        Return the matrix of the `n`-th Hecke operator acting on the dual
         embedded representation of ``self``.
 
         EXAMPLES::
@@ -1222,14 +1186,14 @@ class HeckeModule_free_module(HeckeModule_generic):
     def eigenvalue(self, n, name='alpha'):
         r"""
         Assuming that ``self`` is a simple space, return the eigenvalue of the
-        `n^{th}` Hecke operator on ``self``.
+        `n`-th Hecke operator on ``self``.
 
         INPUT:
 
-        -  ``n`` - index of Hecke operator
+        - ``n`` -- index of Hecke operator
 
-        -  ``name`` - print representation of generator of
-           eigenvalue field
+        - ``name`` -- print representation of generator of
+          eigenvalue field
 
         EXAMPLES::
 
@@ -1257,11 +1221,11 @@ class HeckeModule_free_module(HeckeModule_generic):
 
            #. In fact there are `d` systems of eigenvalues
               associated to self, where `d` is the rank of
-              self. Each of the systems of eigenvalues is conjugate
+              ``self``. Each of the systems of eigenvalues is conjugate
               over the base field. This function chooses one of the
               systems and consistently returns eigenvalues from that
               system. Thus these are the coefficients `a_n` for
-              `n\geq 1` of a modular eigenform attached to self.
+              `n\geq 1` of a modular eigenform attached to ``self``.
 
            #. This function works even for Eisenstein subspaces,
               though it will not give the constant coefficient of one
@@ -1351,7 +1315,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         except AttributeError:
             return -1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of basis elements of ``self``.
 
@@ -1364,7 +1328,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def gen(self, n):
         r"""
-        Return the nth basis vector of the space.
+        Return the `n`-th basis vector of the space.
 
         EXAMPLES::
 
@@ -1375,8 +1339,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the `n^{th}` Hecke operator acting on given
-        basis.
+        Return the matrix of the `n`-th Hecke operator acting on given basis.
 
         EXAMPLES::
 
@@ -1399,10 +1362,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - Hecke equivariant space of
-           modular symbols
-
-        -  ``int n`` - an integer at least 1.
+        - ``n`` -- integer at least 1
 
         EXAMPLES::
 
@@ -1454,7 +1414,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def diamond_bracket_operator(self, d):
         r"""
-        Return the diamond bracket operator `\langle d \rangle` on self.
+        Return the diamond bracket operator `\langle d \rangle` on ``self``.
 
         EXAMPLES::
 
@@ -1466,7 +1426,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def T(self, n):
         r"""
-        Return the `n^{th}` Hecke operator `T_n`.
+        Return the `n`-th Hecke operator `T_n`.
 
         This function is a synonym for :meth:`hecke_operator`.
 
@@ -1480,12 +1440,12 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def hecke_polynomial(self, n, var='x'):
         """
-        Return the characteristic polynomial of the `n^{th}` Hecke operator
+        Return the characteristic polynomial of the `n`-th Hecke operator
         acting on this space.
 
         INPUT:
 
-        -  ``n`` - integer
+        - ``n`` -- integer
 
         OUTPUT: a polynomial
 
@@ -1496,12 +1456,12 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         return self.hecke_operator(n).charpoly(var)
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return ``True`` if this space is simple as a module for the
         corresponding Hecke algebra.
 
-        This raises :class:`NotImplementedError`, as this is an abstract base
+        This raises :exc:`NotImplementedError`, as this is an abstract base
         class.
 
         EXAMPLES::
@@ -1513,7 +1473,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         raise NotImplementedError
 
-    def is_splittable(self):
+    def is_splittable(self) -> bool:
         """
         Return ``True`` if and only if only it is possible to split
         off a nontrivial generalized eigenspace of ``self`` as the
@@ -1534,7 +1494,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             self.decomposition(anemic=False)
         return self.__is_splittable
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a submodule of ``other``.
 
@@ -1553,7 +1513,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         return (self.ambient_free_module() == other.ambient_free_module() and
                 self.free_module().is_submodule(other.free_module()))
 
-    def is_splittable_anemic(self):
+    def is_splittable_anemic(self) -> bool:
         """
         Return ``True`` if and only if only it is possible to split off a
         nontrivial generalized eigenspace of ``self`` as the kernel of some
@@ -1593,14 +1553,14 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         ALGORITHM: Let `B` be the matrix whose columns are obtained
         by concatenating together a basis for the factors of the ambient
-        space. Then the projection matrix onto self is the submatrix of
+        space. Then the projection matrix onto ``self`` is the submatrix of
         `B^{-1}` obtained from the rows corresponding to self,
-        i.e., if the basis vectors for self appear as columns `n`
+        i.e., if the basis vectors for ``self`` appear as columns `n`
         through `m` of `B`, then the projection matrix is
         got from rows `n` through `m` of `B^{-1}`.
         This is because projection with respect to the B basis is just
         given by an `m-n+1` row slice `P` of a diagonal
-        matrix D with 1's in the `n` through `m` positions,
+        matrix D with 1s in the `n` through `m` positions,
         so projection with respect to the standard basis is given by
         `P\cdot B^{-1}`, which is just rows `n`
         through `m` of `B^{-1}`.
@@ -1611,10 +1571,8 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: m = ModularSymbols(34); s = m.cuspidal_submodule()
             sage: d = s.decomposition(7)
             sage: d
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field]
             sage: a = d[0]; a
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(34) of weight 2 with sign 0 over Rational Field
             sage: pi = a.projection()
@@ -1667,14 +1625,14 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Assuming that ``self`` is a simple space of modular symbols, return the
         eigenvalues `[a_1, \ldots, a_nmax]` of the Hecke
-        operators on self. See ``self.eigenvalue(n)`` for more
+        operators on ``self``. See ``self.eigenvalue(n)`` for more
         details.
 
         INPUT:
 
-        -  ``n`` - number of eigenvalues
+        - ``n`` -- number of eigenvalues
 
-        -  ``alpha`` - name of generate for eigenvalue field
+        - ``alpha`` -- name of generate for eigenvalue field
 
         EXAMPLES:
 
@@ -1696,7 +1654,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         Next we define a function that does the above::
 
-            sage: def b(N,k=2):
+            sage: def b(N, k=2):
             ....:    S = ModularSymbols(N,k,sign=-1).cuspidal_submodule().new_submodule()
             ....:    for A in S.decomposition():
             ....:        print("{} {}".format(N, A.system_of_eigenvalues(5)))
@@ -1735,11 +1693,9 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``self`` - an arbitrary Hecke module
+        - ``self`` -- an arbitrary Hecke module
 
-        OUTPUT:
-
-        -  ``int`` - the weight
+        OUTPUT: integer; the weight
 
         EXAMPLES::
 

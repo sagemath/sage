@@ -70,17 +70,12 @@ Sageは固有値と固有ベクトルの計算もしてくれる:
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 
 ( ``eigenvectors_left`` の出力は，三つ組タプル(固有値,固有ベクトル,多重度)のリストになっている．)
 
 ``QQ`` または ``RR`` 上の固有値と固有ベクトルはMaximaを使って計算することもできる( 後半の :ref:`section-maxima` 節を参照)．
-
 
 
 :ref:`section-rings` 節で述べたように，行列の性質の中には，その行列がどんな環の上で定義されているかに影響を受けるものがある．
@@ -117,7 +112,6 @@ Sageは固有値と固有ベクトルの計算もしてくれる:
     sage: ACDF.eigenvectors_right()   # abs tol 1e-10
     [(0.881845698329 - 0.820914065343*I, [(0.750560818381, -0.616145932705 + 0.238794153033*I)], 1),
     (3.31815430167 + 0.820914065343*I, [(0.145594698293 + 0.37566908585*I, 0.915245825866)], 1)]
-
 
 
 行列の空間
@@ -254,4 +248,4 @@ Pythonでは，大文字小文字が区別されることに注意:
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'
+    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'...

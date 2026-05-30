@@ -29,24 +29,26 @@ AUTHORS:
 import numpy
 import math
 import bisect
+
 from itertools import product
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
-from sage.rings.cif import CIF
-from sage.rings.cc import CC
-from sage.rings.complex_double import CDF
-from sage.rings.real_double import RDF
-from sage.rings.real_mpfi import RIF
-from sage.rings.real_mpfr import RR
-
-from sage.misc.cachefunc import cached_method
 from sage.arith.functions import lcm
 from sage.arith.misc import factorial
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import log, exp
-from sage.symbolic.ring import SR
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.rings.cc import CC
+from sage.rings.complex_double import CDF
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+
+lazy_import("sage.functions.log", ["log", "exp"])
+lazy_import("sage.rings.cif", "CIF")
+lazy_import("sage.rings.real_mpfi", "RIF")
+lazy_import("sage.symbolic.ring", "SR")
 
 
 class UnionOfIntervals:
@@ -74,7 +76,7 @@ class UnionOfIntervals:
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
         introduced by :issue:`13125`; see :issue:`16063`.
     """
-    def __init__(self, endpoints):
+    def __init__(self, endpoints) -> None:
         r"""
         An union of intervals is initialized by giving an increasing list
         of endpoints, the first of which may be `-\infty` and the last of
@@ -107,7 +109,7 @@ class UnionOfIntervals:
 
     def finite_endpoints(self):
         r"""
-        Returns the finite endpoints of this union of intervals.
+        Return the finite endpoints of this union of intervals.
 
         EXAMPLES::
 
@@ -121,7 +123,7 @@ class UnionOfIntervals:
 
     def intervals(self):
         r"""
-        Returns the intervals in self, as a list of 2-tuples.
+        Return the intervals in self, as a list of 2-tuples.
 
         EXAMPLES::
 
@@ -135,7 +137,7 @@ class UnionOfIntervals:
 
     def is_empty(self):
         r"""
-        Returns whether self is empty.
+        Return whether ``self`` is empty.
 
         EXAMPLES::
 
@@ -153,10 +155,11 @@ class UnionOfIntervals:
         """
         return not self._endpoints
 
-    def __add__(left, right):
+    def __add__(self, other):
         r"""
-        If both left and right are unions of intervals, take their union,
-        otherwise treat the non-union of intervals as a scalar and shift.
+        If both ``self`` and ``other`` are unions of intervals, take their
+        union, otherwise treat the non-union of intervals as a scalar and
+        shift.
 
         EXAMPLES::
 
@@ -170,14 +173,11 @@ class UnionOfIntervals:
             sage: A + UnionOfIntervals([-infinity, -1])
             ([-Infinity, -1] U [0, 1/2] U [2, +Infinity])
         """
-        if not isinstance(left, UnionOfIntervals):
-            left, right = right, left
-        elif not isinstance(right, UnionOfIntervals):
-            return UnionOfIntervals([right + e for e in left._endpoints])
-        else:
-            return left.union([left, right])
+        if not isinstance(other, UnionOfIntervals):
+            return UnionOfIntervals([other + e for e in self._endpoints])
+        return self.union([self, other])
 
-    def __mul__(left, right):
+    def __mul__(self, other):
         r"""
         Scale a union of intervals on the left or right.
 
@@ -193,12 +193,9 @@ class UnionOfIntervals:
             sage: 1.5 * A
             ([0.000000000000000, 0.750000000000000] U [3.00000000000000, +Infinity])
         """
-        if not isinstance(right, UnionOfIntervals):
-            return UnionOfIntervals([e*right for e in left._endpoints])
-        elif not isinstance(left, UnionOfIntervals):
-            return UnionOfIntervals([left*e for e in right._endpoints])
-        else:
-            return NotImplemented
+        if not isinstance(other, UnionOfIntervals):
+            return UnionOfIntervals([e * other for e in self._endpoints])
+        return NotImplemented
 
     def __rmul__(self, other):
         r"""
@@ -230,7 +227,7 @@ class UnionOfIntervals:
 
     def __invert__(self):
         r"""
-        Return the closure of the complement of self.
+        Return the closure of the complement of ``self``.
 
         .. NOTE::
 
@@ -266,10 +263,10 @@ class UnionOfIntervals:
 
         INPUT:
 
-        - ``L`` (list) -- a list of UnionOfIntervals instances
+        - ``L`` -- list of UnionOfIntervals instances
 
-        - ``condition`` (function) -- either ``any`` or ``all``, or
-          some other boolean function of a list of boolean values.
+        - ``condition`` -- function; either ``any`` or ``all``, or
+          some other boolean function of a list of boolean values
 
         OUTPUT:
 
@@ -317,7 +314,7 @@ class UnionOfIntervals:
 
         INPUT:
 
-        - ``L`` (list) -- a list of UnionOfIntervals instances
+        - ``L`` -- list of UnionOfIntervals instances
 
         OUTPUT:
 
@@ -347,7 +344,7 @@ class UnionOfIntervals:
 
         INPUT:
 
-        - ``L`` (list) -- a list of UnionOfIntervals instances
+        - ``L`` -- list of UnionOfIntervals instances
 
         OUTPUT:
 
@@ -379,11 +376,9 @@ class UnionOfIntervals:
 
         INPUT:
 
-        - ``left``, ``right`` (UnionOfIntervals) -- two UnionOfIntervals instances
+        - ``left``, ``right`` -- two UnionOfIntervals instances
 
-        OUTPUT:
-
-        A new UnionOfIntervals instance representing the union of ``left`` and ``right``.
+        OUTPUT: a new UnionOfIntervals instance representing the union of ``left`` and ``right``
 
         EXAMPLES::
 
@@ -403,11 +398,9 @@ class UnionOfIntervals:
 
         INPUT:
 
-        - ``left``, ``right`` (UnionOfIntervals) -- two UnionOfIntervals instances
+        - ``left``, ``right`` -- two UnionOfIntervals instances
 
-        OUTPUT:
-
-        A new UnionOfIntervals instance representing the intersection of ``left`` and ``right``.
+        OUTPUT: a new UnionOfIntervals instance representing the intersection of ``left`` and ``right``
 
         EXAMPLES::
 
@@ -421,17 +414,15 @@ class UnionOfIntervals:
         """
         return left.intersection([left, right])
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
-        Return True if ``x`` is in the UnionOfIntervals.
+        Return ``True`` if ``x`` is in the UnionOfIntervals.
 
         INPUT:
 
-        - ``x`` (real) -- a real number
+        - ``x`` -- real number
 
-        OUTPUT:
-
-        Boolean: True if and only if ``x`` is in the union of intervals.
+        OUTPUT: boolean; ``True`` if and only if `x` is in the union of intervals
 
         EXAMPLES::
 
@@ -447,7 +438,7 @@ class UnionOfIntervals:
         """
         return x in self._endpoints or bisect.bisect_left(self._endpoints, x) % 2 == 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -460,7 +451,7 @@ class UnionOfIntervals:
         """
         return repr(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -475,11 +466,11 @@ class UnionOfIntervals:
 
 def nonneg_region(f):
     r"""
-    Returns the UnionOfIntervals representing the region where ``f`` is non-negative.
+    Return the UnionOfIntervals representing the region where ``f`` is nonnegative.
 
     INPUT:
 
-    - ``f`` (polynomial) -- a univariate polynomial over `\RR`.
+    - ``f`` -- a univariate polynomial over `\RR`
 
     OUTPUT:
 
@@ -518,15 +509,16 @@ def nonneg_region(f):
         sign_changes += [infinity]
     return UnionOfIntervals(sign_changes)
 
+
 def inf_max_abs(f, g, D):
     r"""
-    Returns `\inf_D(\max(|f|, |g|))`.
+    Return `\inf_D(\max(|f|, |g|))`.
 
     INPUT:
 
-    - ``f``, ``g`` (polynomials) -- real univariate polynomials
+    - ``f``, ``g`` -- real univariate polynomials
 
-    - ``D`` (:class:`UnionOfIntervals`) -- a subset of `\RR`
+    - ``D`` -- :class:`UnionOfIntervals`; a subset of `\RR`
 
     OUTPUT:
 
@@ -564,15 +556,15 @@ def inf_max_abs(f, g, D):
 
 def min_on_disk(f, tol, max_iter=10000):
     r"""
-    Returns the minimum of a real-valued complex function on a square.
+    Return the minimum of a real-valued complex function on a square.
 
     INPUT:
 
     - ``f`` -- a function from CIF to RIF
 
-    - ``tol`` (real) -- a positive real number
+    - ``tol`` -- a positive real number
 
-    - ``max_iter`` (integer, default 10000) -- a positive integer
+    - ``max_iter`` -- integer (default: 10000); a positive integer
       bounding the number of iterations to be used
 
     OUTPUT:
@@ -630,14 +622,15 @@ def min_on_disk(f, tol, max_iter=10000):
 
             fs = f(s)
 
-            if fs.upper() < min_max: # we definitely beat the record
+            if fs.upper() < min_max:  # we definitely beat the record
                 min_max = fs.upper()
                 unneeded = bisect.bisect(L, (-min_max,))
                 if unneeded > 100:   # discard the worse entries (if there are many)
                     L = L[unneeded:]
 
-            if fs.lower() < min_max: # we may beat the record, cannot yet tell: insert this region
-                                     # into the list at the appropriate place to maintain sorting
+            if fs.lower() < min_max:
+                # we may beat the record, cannot yet tell: insert this region
+                # into the list at the appropriate place to maintain sorting
                 bisect.insort(L, (-fs.lower(), fs.relative_diameter(), s, s_in_disk))
 
     # If we get here, then even after max_iter iterations the tolerance has not been reached.
@@ -657,9 +650,9 @@ def rat_term_CIF(z, try_strict=True):
 
     INPUT:
 
-    - ``z`` (complex) -- a CIF element
+    - ``z`` -- complex; a CIF element
 
-    - ``try_strict`` (bool) -- flag
+    - ``try_strict`` -- boolean; flag
 
     EXAMPLES::
 
@@ -723,9 +716,9 @@ def eps(err, is_real):
 
     INPUT:
 
-    - ``err`` (real) -- a positive real number, the radius of the interval
+    - ``err`` -- a positive real number; the radius of the interval
 
-    - ``is_real`` (boolean) -- if True, returns a real interval in
+    - ``is_real`` -- boolean; if ``True``, returns a real interval in
       RIF, else a complex interval in CIF
 
     OUTPUT:
@@ -743,8 +736,7 @@ def eps(err, is_real):
     e = RIF(-err, err)
     if is_real:
         return e
-    else:
-        return CIF(e, e)
+    return CIF(e, e)
 
 
 class EllipticCurveCanonicalHeight:
@@ -768,13 +760,13 @@ class EllipticCurveCanonicalHeight:
          Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
 
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Initialize the class with an elliptic curve.
 
         INPUT:
 
-        - `E` -- an elliptic curve defined over a number field
+        - ``E`` -- an elliptic curve defined over a number field
 
         EXAMPLES::
 
@@ -805,8 +797,8 @@ class EllipticCurveCanonicalHeight:
             ValueError: EllipticCurveCanonicalHeight class can only be created
             from an elliptic curve defined over a number field
         """
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(E):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(E, EllipticCurve_generic):
             self.E = E
             from sage.rings.number_field.number_field_base import NumberField
             K = E.base_ring()
@@ -817,7 +809,7 @@ class EllipticCurveCanonicalHeight:
         else:
             raise ValueError("EllipticCurveCanonicalHeight class can only be created from an elliptic curve")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation.
 
@@ -862,11 +854,9 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``P`` -- a point on the elliptic curve.
+        - ``P`` -- a point on the elliptic curve
 
-        OUTPUT:
-
-        The canonical height of ``P``.
+        OUTPUT: the canonical height of ``P``
 
         EXAMPLES::
 
@@ -941,33 +931,32 @@ class EllipticCurveCanonicalHeight:
             min_FG = inf_max_abs(F, G, nonneg_region(F) & I)
             return min(min_fg, min_FG) ** (-1/QQ(3))
 
-        else:
-            # def pair_max(f, g):
-            #     f = f.change_ring(CIF)
-            #     g = g.change_ring(CIF)
-            #     max = type(RIF(0)).max
-            #     def max_f_g(z):
-            #         return max(abs(f(z)), abs(g(z)))
-            #     return max_f_g
-            def pair_max(f, g):
-                f = f.change_ring(CDF)
-                g = g.change_ring(CDF)
-                dfn = [fast_callable(f.derivative(n)/factorial(n), CDF) for n in range(f.degree()+1)]
-                dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
+        # def pair_max(f, g):
+        #     f = f.change_ring(CIF)
+        #     g = g.change_ring(CIF)
+        #     max = type(RIF(0)).max
+        #     def max_f_g(z):
+        #         return max(abs(f(z)), abs(g(z)))
+        #     return max_f_g
+        def pair_max(f, g):
+            f = f.change_ring(CDF)
+            g = g.change_ring(CDF)
+            dfn = [fast_callable(f.derivative(n)/factorial(n), CDF) for n in range(f.degree()+1)]
+            dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
 
-                def max_f_g(s):
-                    (a,b), (c,d) = s.real().endpoints(), s.imag().endpoints()
-                    dx = a - b
-                    dy = c - d
-                    eta = RDF(dx*dx + dy*dy).sqrt()
-                    z = CDF(s.center())
-                    err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
-                    err_g = sum(eta ** n * abs(dg(z)) for n, dg in enumerate(dgn) if n)
-                    return RIF(max(abs(f(z)), abs(g(z)))) + eps(max(err_f, err_g), True)
-                return max_f_g
-            _, min_fg = min_on_disk(pair_max(f, g), tol)
-            _, min_FG = min_on_disk(pair_max(F, G), tol)
-            return min(min_fg, min_FG) ** QQ((-1, 3))
+            def max_f_g(s):
+                (a,b), (c,d) = s.real().endpoints(), s.imag().endpoints()
+                dx = a - b
+                dy = c - d
+                eta = RDF(dx*dx + dy*dy).sqrt()
+                z = CDF(s.center())
+                err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
+                err_g = sum(eta ** n * abs(dg(z)) for n, dg in enumerate(dgn) if n)
+                return RIF(max(abs(f(z)), abs(g(z)))) + eps(max(err_f, err_g), True)
+            return max_f_g
+        _, min_fg = min_on_disk(pair_max(f, g), tol)
+        _, min_FG = min_on_disk(pair_max(F, G), tol)
+        return min(min_fg, min_FG) ** QQ((-1, 3))
 
     @cached_method
     def e_p(self, p):
@@ -976,7 +965,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``p`` -- a prime ideal of `K` (or a prime number if `K=\QQ`).
+        - ``p`` -- a prime ideal of `K` (or a prime number if `K=\QQ`)
 
         OUTPUT:
 
@@ -1031,7 +1020,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``n`` (int) -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT:
 
@@ -1095,9 +1084,9 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``n`` (int) -- a positive integer
+        - ``n`` -- positive integer
 
-        - ``mu`` (real) -- a positive real number
+        - ``mu`` -- positive real number
 
         OUTPUT:
 
@@ -1135,11 +1124,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi`` (real) -- the real x-coordinate of a point on the
+        - ``xi`` -- real; the real x-coordinate of a point on the
           curve in the connected component with respect to a real
-          embedding.
+          embedding
 
-        - ``v`` (embedding) -- a real embedding of the number field.
+        - ``v`` -- a real embedding of the number field
 
         OUTPUT:
 
@@ -1202,9 +1191,9 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
+        - ``xi1``, ``xi2`` -- real numbers with `\xi_1\le\xi_2`
 
-        - ``v`` (embedding) -- a real embedding of the field.
+        - ``v`` -- a real embedding of the field
 
         OUTPUT:
 
@@ -1237,12 +1226,11 @@ class EllipticCurveCanonicalHeight:
         beta = L.elliptic_exponential(w1/2)[0]
         if xi2 < beta:
             return UnionOfIntervals([])
-        elif xi1 < beta <= xi2:
+        if xi1 < beta <= xi2:
             a = self.psi(xi2, v)
             return UnionOfIntervals([1-a, a])
-        else:
-            a, b = self.psi(xi1, v), self.psi(xi2, v)
-            return UnionOfIntervals([1-b, 1-a, a, b])
+        a, b = self.psi(xi1, v), self.psi(xi2, v)
+        return UnionOfIntervals([1-b, 1-a, a, b])
 
     def Sn(self, xi1, xi2, n, v):
         r"""
@@ -1250,11 +1238,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``xi1, xi2`` (real) -- real numbers with `\xi_1\le\xi_2`.
+        - ``xi1``, ``xi2`` -- real numbers with `\xi_1\le\xi_2`
 
-        - ``n`` (integer) -- a positive integer.
+        - ``n`` -- positive integer
 
-        - ``v`` (embedding) -- a real embedding of the field.
+        - ``v`` -- a real embedding of the field
 
         OUTPUT:
 
@@ -1293,17 +1281,17 @@ class EllipticCurveCanonicalHeight:
 
     def real_intersection_is_empty(self, Bk, v):
         r"""
-        Returns True iff an intersection of `S_n^{(v)}` sets is empty.
+        Return ``True`` iff an intersection of `S_n^{(v)}` sets is empty.
 
         INPUT:
 
-        - ``Bk`` (list) -- a list of reals.
+        - ``Bk`` -- list of reals
 
-        - ``v`` (embedding) -- a real embedding of the number field.
+        - ``v`` -- a real embedding of the number field
 
         OUTPUT:
 
-        True or False, according as the intersection of the unions of
+        ``True`` or ``False``, according as the intersection of the unions of
         intervals `S_n^{(v)}(-b,b)` for `b` in the list ``Bk`` is
         empty or not.  When ``Bk`` is the list of `b=B_n(\mu)` for
         `n=1,2,3,\dots` for some `\mu>0` this means that all
@@ -1361,7 +1349,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) -- a real or complex embedding of the number field.
+        - ``v`` -- a real or complex embedding of the number field
 
         OUTPUT:
 
@@ -1383,7 +1371,7 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) -- a real or complex embedding of the number field.
+        - ``v`` -- a real or complex embedding of the number field
 
         OUTPUT:
 
@@ -1422,15 +1410,15 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) -- an embedding of the number field.  If
-          None (default) use the real embedding if the field is `\QQ`
+        - ``v`` -- an embedding of the number field.  If
+          ``None`` (default) use the real embedding if the field is `\QQ`
           and raise an error for other fields.
 
-        - ``N`` (int) -- The number of terms to use in the
-          `q`-expansion of `\wp`.
+        - ``N`` -- integer; the number of terms to use in the
+          `q`-expansion of `\wp`
 
-        - ``domain`` (complex field) -- the model of `\CC` to use, for
-          example ``CDF`` of ``CIF`` (default).
+        - ``domain`` -- (complex field) the model of `\CC` to use, for
+          example ``CDF`` of ``CIF`` (default)
 
         OUTPUT:
 
@@ -1522,16 +1510,16 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) -- an embedding of the number field.  If
-          None (default) use the real embedding if the field is `\QQ`
-          and raise an error for other fields.
+        - ``v`` -- an embedding of the number field; if
+          ``None`` (default) use the real embedding if the field is `\QQ`
+          and raise an error for other fields
 
-        - ``N`` (int, default 20) -- The number of terms to use in the
-          `q`-expansion of `\wp`.
+        - ``N`` -- integer (default: 20); The number of terms to use in the
+          `q`-expansion of `\wp`
 
-        - ``abs_only`` (boolean, default False) -- flag to determine
-          whether (if True) the error adjustment should use the
-          absolute value or (if False) the real and imaginary parts.
+        - ``abs_only``-- boolean (default: ``False``); flag to determine
+          whether (if ``True``) the error adjustment should use the
+          absolute value or (if ``False``) the real and imaginary parts
 
         OUTPUT:
 
@@ -1608,13 +1596,13 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``v`` (embedding) -- an embedding of the number field.
+        - ``v`` -- an embedding of the number field
 
-        - ``N`` (int) -- The number of terms to use in the
-          `q`-expansion of `\wp`.
+        - ``N`` -- integer; the number of terms to use in the
+          `q`-expansion of `\wp`
 
-        - ``half`` (boolean, default False) -- if True, use an array of
-          size `N\times N/2` instead of `N\times N`.
+        - ``half``-- boolean (default: ``False``); if ``True``, use an array of
+          size `N\times N/2` instead of `N\times N`
 
         OUTPUT:
 
@@ -1659,22 +1647,22 @@ class EllipticCurveCanonicalHeight:
 
     def complex_intersection_is_empty(self, Bk, v, verbose=False, use_half=True):
         r"""
-        Returns True iff an intersection of `T_n^{(v)}` sets is empty.
+        Return ``True`` iff an intersection of `T_n^{(v)}` sets is empty.
 
         INPUT:
 
-        - ``Bk`` (list) -- a list of reals.
+        - ``Bk`` -- list of reals
 
-        - ``v`` (embedding) -- a complex embedding of the number field.
+        - ``v`` -- a complex embedding of the number field
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose``-- boolean (default: ``False``); verbosity flag
 
-        - ``use_half`` (boolean, default False) -- if True, use only half
-          the fundamental region.
+        - ``use_half``-- boolean (default: ``False``); if ``True``, use only half
+          the fundamental region
 
         OUTPUT:
 
-        True or False, according as the intersection of the unions of
+        ``True`` or ``False``, according as the intersection of the unions of
         intervals `T_n^{(v)}(-b,b)` for `b` in the list ``Bk`` (see
         [Tho2010]_, section 7) is empty or not.  When ``Bk`` is the list of
         `b=\sqrt{B_n(\mu)}` for `n=1,2,3,\dots` for some `\mu>0` this
@@ -1760,9 +1748,7 @@ class EllipticCurveCanonicalHeight:
                     start, end = z00, z11
                 else:
                     start, end = z01, z10
-                if wp(start) > B and wp(end) > B:
-                    return True
-                return False
+                return wp(start) > B and wp(end) > B
 
             # This step here is the bottleneck.
             while not T.verify(check_line):
@@ -1784,11 +1770,11 @@ class EllipticCurveCanonicalHeight:
 
         INPUT:
 
-        - ``mu`` (real) -- a positive real number
+        - ``mu`` -- positive real number
 
-        - ``N`` (integer) -- upper bound on the multiples to be used.
+        - ``N`` -- integer; upper bound on the multiples to be used
 
-        - ``verbose`` (boolean, default True) -- verbosity flag.
+        - ``verbose``-- boolean (default: ``True``); verbosity flag
 
         OUTPUT:
 
@@ -1881,15 +1867,15 @@ class EllipticCurveCanonicalHeight:
 
     def min_gr(self, tol, n_max, verbose=False):
         r"""
-        Returns a lower bound for points of infinite order with good reduction.
+        Return a lower bound for points of infinite order with good reduction.
 
         INPUT:
 
-        - ``tol`` -- tolerance in output (see below).
+        - ``tol`` -- tolerance in output (see below)
 
-        - ``n_max`` -- how many multiples to use in iteration.
+        - ``n_max`` -- how many multiples to use in iteration
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose``-- boolean (default: ``False``); verbosity flag
 
         OUTPUT:
 
@@ -2007,15 +1993,15 @@ class EllipticCurveCanonicalHeight:
 
     def min(self, tol, n_max, verbose=False):
         r"""
-        Returns a lower bound for all points of infinite order.
+        Return a lower bound for all points of infinite order.
 
         INPUT:
 
-        - ``tol`` -- tolerance in output (see below).
+        - ``tol`` -- tolerance in output (see below)
 
-        - ``n_max`` -- how many multiples to use in iteration.
+        - ``n_max`` -- how many multiples to use in iteration
 
-        - ``verbose`` (boolean, default False) -- verbosity flag.
+        - ``verbose``-- boolean (default: ``False``); verbosity flag
 
         OUTPUT:
 

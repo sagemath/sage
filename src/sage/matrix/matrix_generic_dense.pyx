@@ -12,6 +12,7 @@ from sage.matrix import matrix_dense
 from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
@@ -61,7 +62,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         TESTS:
@@ -69,7 +70,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         We check that the problem related to :issue:`9049` is not an issue any
         more::
 
-            sage: # needs sage.rings.number_field
             sage: S.<t> = PolynomialRing(QQ)
             sage: F.<q> = QQ.extension(t^4 + 1)
             sage: R.<x,y> = PolynomialRing(F)
@@ -99,6 +99,46 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_generic_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(9)
+            sage: m = matrix(K,3,4,[((i%9)//3)*z + i%3 for i in range(12)])
+            sage: m
+            [      0       1       2       z]
+            [  z + 1   z + 2     2*z 2*z + 1]
+            [2*z + 2       0       1       2]
+            sage: m.transpose()
+            [      0   z + 1 2*z + 2]
+            [      1   z + 2       0]
+            [      2     2*z       1]
+            [      z 2*z + 1       2]
+            sage: m.matrix_from_rows([0,2])
+            [      0       1       2       z]
+            [2*z + 2       0       1       2]
+            sage: m.matrix_from_columns([1,3])
+            [      1       z]
+            [  z + 2 2*z + 1]
+            [      0       2]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [  z + 1 2*z + 1]
+            [2*z + 2       2]
+        """
+        cdef Matrix_generic_dense _src = <Matrix_generic_dense>src
+        self._entries[iDst*self._ncols + jDst] = _src._entries[iSrc*_src._ncols + jSrc]
 
     def _reverse_unsafe(self):
         r"""
@@ -152,8 +192,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def __copy__(self):
         """
-        Creates a copy of self, which may be changed without altering
-        self.
+        Create a copy of self, which may be changed without altering
+        ``self``.
 
         EXAMPLES::
 
@@ -215,7 +255,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
@@ -239,7 +278,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
@@ -258,9 +296,9 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.overflowcheck(False)
-    def _multiply_classical(left, matrix.Matrix _right):
+    def _multiply_classical(self, matrix.Matrix _right):
         """
-        Multiply the matrices left and right using the classical
+        Multiply the matrices self and right using the classical
         `O(n^3)` algorithm.
 
         EXAMPLES:
@@ -305,15 +343,14 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
 
-        if left._ncols != right._nrows:
-            raise IndexError("Number of columns of left must equal number of rows of other.")
+        check_matrix_multiplication_sizes(self, right)
 
-        nr = left._nrows
+        nr = self._nrows
         nc = right._ncols
-        snc = left._ncols
+        snc = self._ncols
 
-        R = left.base_ring()
-        cdef list v = [None] * (left._nrows * right._ncols)
+        R = self.base_ring()
+        cdef list v = [None] * (self._nrows * right._ncols)
         zero = R.zero()
         p = 0
         for i in range(nr):
@@ -321,17 +358,17 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
                 z = zero
                 m = i*snc
                 for k in range(snc):
-                    z += left._entries[m+k]._mul_(right._entries[k*nc+j])
+                    z += self._entries[m+k]._mul_(right._entries[k*nc+j])
                 v[p] = z
                 p += 1
 
-        cdef Matrix_generic_dense A = left._new(nr, nc)
+        cdef Matrix_generic_dense A = self._new(nr, nc)
         A._entries = v
         return A
 
     def _list(self):
         """
-        Return reference to list of entries of self.  For internal use
+        Return reference to list of entries of ``self``.  For internal use
         only, since this circumvents immutability.
 
         EXAMPLES::

@@ -66,8 +66,8 @@ AUTHOR:
 
 import operator
 
-from sage.matrix.matrix_space import MatrixSpace, is_MatrixSpace
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.structure.coerce cimport coercion_model
 from sage.categories.homset import Hom, End
 
@@ -100,7 +100,7 @@ cdef class MatrixMulAction(Action):
          over Univariate Polynomial Ring in x over Rational Field
     """
     def __init__(self, G, S, is_left):
-        if not is_MatrixSpace(G):
+        if not isinstance(G, MatrixSpace):
             raise TypeError("Not a matrix space: %s" % G)
         if isinstance(S, SchemeHomset_generic):
             if G.base_ring() is not S.domain().base_ring():
@@ -160,7 +160,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         example is good practice.
     """
     def __init__(self, G, S):
-        if not is_MatrixSpace(S):
+        if not isinstance(S, MatrixSpace):
             raise TypeError("Not a matrix space: %s" % S)
 
         MatrixMulAction.__init__(self, G, S, True)
@@ -211,9 +211,9 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         """
         if self.G.ncols() != self.underlying_set().nrows():
             raise TypeError("incompatible dimensions %s, %s" %
-                    (self.G.ncols(), self.underlying_set().nrows()))
+                            (self.G.ncols(), self.underlying_set().nrows()))
         return MatrixSpace(base, self.G.nrows(), self.underlying_set().ncols(),
-                           sparse = self.G.is_sparse() and self.underlying_set().is_sparse())
+                           sparse=self.G.is_sparse() and self.underlying_set().is_sparse())
 
     cpdef _act_(self, g, s):
         """
@@ -267,7 +267,6 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             [ 5360  7303]
             [ 8168 11143]
             [11056 15077]
-
         """
         cdef Matrix A = <Matrix>g
         cdef Matrix B = <Matrix>s
@@ -280,7 +279,6 @@ cdef class MatrixMatrixAction(MatrixMulAction):
                 B = B.dense_matrix()
             else:
                 A = A.dense_matrix()
-        assert type(A) is type(B), (type(A), type(B))
         prod = A._matrix_times_matrix_(B)
         if A._subdivisions is not None or B._subdivisions is not None:
             Asubs = A.subdivisions()
@@ -304,7 +302,7 @@ cdef class MatrixVectorAction(MatrixMulAction):
             ...
             TypeError: incompatible dimensions 3, 4
             """
-        if not is_FreeModule(S):
+        if not isinstance(S, FreeModule_generic):
             raise TypeError("Not a free module: %s" % S)
         MatrixMulAction.__init__(self, G, S, True)
 
@@ -323,7 +321,7 @@ cdef class MatrixVectorAction(MatrixMulAction):
         """
         if self.G.ncols() != self.underlying_set().degree():
             raise TypeError("incompatible dimensions %s, %s" % (self.G.ncols(),
-                                                                 self.underlying_set().degree()))
+                                                                self.underlying_set().degree()))
         return FreeModule(base, self.G.nrows(), sparse = self.G.is_sparse())
 
     cpdef _act_(self, g, s):
@@ -355,7 +353,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
             ...
             TypeError: incompatible dimensions 5, 3
         """
-        if not is_FreeModule(S):
+        if not isinstance(S, FreeModule_generic):
             raise TypeError("Not a free module: %s" % S)
         MatrixMulAction.__init__(self, G, S, False)
 
@@ -375,7 +373,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
         """
         if self.G.nrows() != self.underlying_set().degree():
             raise TypeError("incompatible dimensions %s, %s" % (self.G.nrows(),
-                                                                 self.underlying_set().degree()))
+                                                                self.underlying_set().degree()))
         return FreeModule(base, self.G.ncols(), sparse = self.G.is_sparse())
 
     cpdef _act_(self, g, s):
@@ -390,7 +388,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
                 v = v.sparse_vector()
             else:
                 v = v.dense_vector()
-        return (<Matrix>A)._vector_times_matrix_(v) # v * A
+        return (<Matrix>A)._vector_times_matrix_(v)  # v * A
 
 cdef class MatrixPolymapAction(MatrixMulAction):
     """
@@ -439,7 +437,7 @@ cdef class MatrixPolymapAction(MatrixMulAction):
 
     cpdef _act_(self, mat, f):
         """
-        Call the action
+        Call the action.
 
         INPUT:
 
@@ -486,7 +484,7 @@ cdef class PolymapMatrixAction(MatrixMulAction):
         """
         if not isinstance(S, SchemeHomset_generic):
             raise TypeError("not a scheme polynomial morphism: %s"% S)
-        MatrixMulAction.__init__(self, G, S, False  )
+        MatrixMulAction.__init__(self, G, S, False)
 
     def _create_codomain(self, base):
         """
@@ -573,8 +571,8 @@ cdef class MatrixSchemePointAction(MatrixMulAction):
             sage: A.codomain()
             Set of rational points of Projective Space of dimension 1 over Rational Field
         """
-        #need to extend the base of the ambient space
-        #and return the set of point over the base
+        # need to extend the base of the ambient space
+        # and return the set of point over the base
         amb = self.underlying_set().codomain()
         return amb.change_ring(base)(base)
 

@@ -1,10 +1,11 @@
 r"""
-Composition Tableaux
+Composition tableaux
 
 AUTHORS:
 
-- Chris Berg, Jeff Ferreira (2012-9): Initial version
+- Chris Berg, Jeff Ferreira (2012-9): initial version
 """
+from collections import Counter
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.family import Family
@@ -13,6 +14,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partition
 from sage.combinat.combinat import CombinatorialElement
 from sage.rings.integer import Integer
@@ -37,7 +39,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
     INPUT:
 
-    - ``t`` -- A list of lists
+    - ``t`` -- list of lists
 
     EXAMPLES::
 
@@ -187,19 +189,16 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
     def weight(self):
         r"""
-        Return a composition where entry `i` is the number of times that `i` appears in
-        ``self``.
+        Return a (weak) composition where entry `i` is the
+        number of times that `i` appears in ``self``.
 
         EXAMPLES::
 
             sage: CompositionTableau([[1],[3,2],[4,4]]).weight()
             [1, 1, 1, 2, 0]
         """
-        w = {i: 0 for i in range(1, self.size() + 1)}
-        for row in self:
-            for i in row:
-                w[i] += 1
-        return Composition([w[i] for i in range(1, self.size()+1)])
+        w = Counter(i for row in self for i in row)
+        return IntegerVectors()([w[i] for i in range(1, self.size() + 1)])
 
     def descent_set(self):
         r"""
@@ -211,10 +210,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             sage: CompositionTableau([[1],[3,2],[4,4]]).descent_set()
             [1, 3]
         """
-        cols = {}
-        for row in self:
-            for col, i in enumerate(row):
-                cols[i] = col
+        cols = {i: col for row in self for col, i in enumerate(row)}
         return sorted(i for i in cols if i + 1 in cols and cols[i + 1] >= cols[i])
 
     def descent_composition(self):
@@ -256,7 +252,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
         """
         return Partition(sorted((len(row) for row in self), reverse=True))
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a standard composition tableau and
         ``False`` otherwise.
@@ -278,16 +274,12 @@ class CompositionTableaux(UniqueRepresentation, Parent):
 
     INPUT:
 
-    Keyword arguments:
-
     - ``size`` -- the size of the composition tableaux
     - ``shape`` -- the shape of the composition tableaux
     - ``max_entry`` -- the maximum entry for the composition tableaux
 
-    Positional arguments:
-
-    - The first argument is interpreted as ``size`` or ``shape`` depending on
-      whether it is an integer or a composition.
+    The first argument is interpreted as ``size`` or ``shape`` depending on
+    whether it is an integer or a composition.
 
     EXAMPLES::
 
@@ -403,7 +395,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             if not isinstance(size, (int, Integer)):
                 raise ValueError("size must be an integer")
             elif size < 0:
-                raise ValueError("size must be non-negative")
+                raise ValueError("size must be nonnegative")
 
         if shape is not None:
             # use in (and not isinstance) below so that lists can be used as
@@ -411,7 +403,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
             if shape not in Compositions():
                 raise ValueError("shape must be a composition")
             if any(i == 0 for i in shape):
-                raise ValueError("shape must have non-zero parts")
+                raise ValueError("shape must have nonzero parts")
             shape = Composition(shape)
 
         if (size is not None) and (shape is not None):
@@ -460,9 +452,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
 
         - ``t`` -- data which can be interpreted as a composition tableau
 
-        OUTPUT:
-
-        - The corresponding CompositionTableau object
+        OUTPUT: the corresponding CompositionTableau object
 
         TESTS::
 
@@ -572,17 +562,15 @@ class CompositionTableaux_size(CompositionTableaux):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer.
-    - ``max_entry`` -- a nonnegative integer. This keyword argument defaults to ``n``.
+    - ``n`` -- nonnegative integer
+    - ``max_entry`` -- nonnegative integer (default: `n`)
 
-    OUTPUT:
-
-    - The class of composition tableaux of size ``n``.
+    OUTPUT: the class of composition tableaux of size `n`
     """
 
     def __init__(self, n, max_entry=None):
         r"""
-        Initializes the class of composition tableaux of size ``n``.
+        Initialize the class of composition tableaux of size `n`.
 
         TESTS::
 
@@ -674,9 +662,8 @@ class CompositionTableaux_shape(CompositionTableaux):
 
     INPUT:
 
-    - ``comp`` -- a composition.
-    - ``max_entry`` -- a nonnegative integer. This keyword argument defaults
-      to the size of ``comp``.
+    - ``comp`` -- a composition
+    - ``max_entry`` -- nonnegative integer (default: size of ``comp``)
     """
     def __init__(self, comp, max_entry=None):
         """
@@ -744,7 +731,7 @@ class CompositionTableaux_shape(CompositionTableaux):
         """
         return "Composition tableaux of shape %s and maximum entry %s" % (str(self.shape), str(self.max_entry))
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of :class:`CompositionTableaux_shape`.
 
@@ -835,7 +822,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
             # We check to make sure that k does not violate the Triple Rule
             if j != 0 and i != 0 and any(k == obj_copy[m][j] for m in range(i)):
                 continue
-            if j != 0 and i != 0 and any(obj_copy[m][j] < k and k <= obj_copy[m][j - 1]
+            if j != 0 and i != 0 and any(obj_copy[m][j] < k <= obj_copy[m][j - 1]
                                          for m in range(i)):
                 continue
 

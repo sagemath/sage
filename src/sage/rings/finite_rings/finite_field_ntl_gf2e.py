@@ -16,9 +16,8 @@ Finite fields of characteristic 2
 #*****************************************************************************
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer import Integer
-from sage.misc.superseded import deprecated_function_alias
 
 
 def late_import():
@@ -53,16 +52,14 @@ class FiniteField_ntl_gf2e(FiniteField):
 
     - ``names`` -- variable used for poly_repr (default: ``'a'``)
 
-    - ``modulus`` -- A minimal polynomial to use for reduction.
+    - ``modulus`` -- a minimal polynomial to use for reduction
 
     - ``repr`` -- controls the way elements are printed to the user:
                  (default: ``'poly'``)
 
-      - ``'poly'``: polynomial representation
+      - ``'poly'`` -- polynomial representation
 
-    OUTPUT:
-
-    Finite field with characteristic 2 and cardinality `2^n`.
+    OUTPUT: finite field with characteristic 2 and cardinality `2^n`
 
     EXAMPLES::
 
@@ -89,7 +86,7 @@ class FiniteField_ntl_gf2e(FiniteField):
         True
     """
 
-    def __init__(self, q, names="a", modulus=None, repr="poly"):
+    def __init__(self, q, names='a', modulus=None, repr='poly'):
         """
         Initialize ``self``.
 
@@ -107,7 +104,7 @@ class FiniteField_ntl_gf2e(FiniteField):
             sage: k2.<a> = GF(2^17)
             sage: k1 == k2
             False
-            sage: k3.<a> = GF(2^16, impl="pari_ffelt")
+            sage: k3.<a> = GF(2^16, implementation="pari_ffelt")
             sage: k1 == k3
             False
 
@@ -169,6 +166,10 @@ class FiniteField_ntl_gf2e(FiniteField):
             sage: k.<a> = GF(2^64)
             sage: k.degree()
             64
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return self._cache.degree()
 
@@ -242,9 +243,9 @@ class FiniteField_ntl_gf2e(FiniteField):
 
         TESTS::
 
-            sage: GF(2, impl='ntl').gen()
+            sage: GF(2, implementation='ntl').gen()
             1
-            sage: GF(2, impl='ntl', modulus=polygen(GF(2)) ).gen()
+            sage: GF(2, implementation='ntl', modulus=polygen(GF(2)) ).gen()
             0
             sage: GF(2^19, 'a').gen(1)
             Traceback (most recent call last):
@@ -277,7 +278,7 @@ class FiniteField_ntl_gf2e(FiniteField):
 
         INPUT:
 
-        - ``number`` -- an integer
+        - ``number`` -- integer
 
         EXAMPLES::
 
@@ -290,8 +291,6 @@ class FiniteField_ntl_gf2e(FiniteField):
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
         """
         return self._cache.fetch_int(number)
-
-    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _pari_modulus(self):
         """

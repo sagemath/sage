@@ -1,5 +1,4 @@
 # sage.doctest: needs sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
-
 """
 Homology and cohomology with a basis
 
@@ -71,7 +70,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     - ``base_ring`` -- must be a field
     - ``cell_complex`` -- the cell complex whose homology we are
       computing
-    - ``cohomology`` -- (default: ``False``) if ``True``, return
+    - ``cohomology`` -- boolean (default: ``False``); if ``True``, return
       the cohomology as a module
     - ``category`` -- (optional) a subcategory of modules with basis
 
@@ -183,7 +182,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         sage: b.cup_product(b)
         h^{2,0}
     """
-    def __init__(self, base_ring, cell_complex, cohomology=False, category=None):
+    def __init__(self, base_ring, cell_complex, cohomology=False,
+                 category=None) -> None:
         """
         Initialize ``self``.
 
@@ -243,9 +243,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         """
         if d is None:
             return Family(self._indices, self.monomial)
-        else:
-            indices = [(d, i) for i in self._graded_indices.get(d, [])]
-            return Family(indices, self.monomial)
+        indices = [(d, i) for i in self._graded_indices.get(d, [])]
+        return Family(indices, self.monomial)
 
     def degree_on_basis(self, i):
         r"""
@@ -312,7 +311,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         """
         return self._complex
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -326,7 +325,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             base = "Homology"
         return base + " module of {} over {}".format(self._complex, self.base_ring())
 
-    def _repr_term(self, i):
+    def _repr_term(self, i) -> str:
         """
         Return ``'h_{i[0],i[1]}'`` for homology, ``'h^{i[0],i[1]}'`` for
         cohomology, for the basis element indexed by ``i``.
@@ -341,7 +340,6 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             sage: co = simplicial_complexes.KleinBottle().cohomology_ring(GF(2))
             sage: co.basis()[1,0] # indirect doctest
             h^{1,0}
-
         """
         sym = '^' if self._cohomology else '_'
         return 'h{}{{{},{}}}'.format(sym, i[0], i[1])
@@ -446,7 +444,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         tester = self._tester(**options)
         dual = self.dual()
         dims = [a[0] for a in self._indices]
-        for dim in range(max(max(dims),  tester._max_runs) + 1):
+        for dim in range(max(*dims, tester._max_runs) + 1):
             n = len(self.basis(dim))
             m = matrix(n, n, [a.eval(b) for a in self.basis(dim) for b in dual.basis(dim)])
             tester.assertEqual(m, 1, f"error in dimension {dim}")
@@ -517,8 +515,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                 return self.base_ring().zero()
             if self.parent()._cohomology:
                 return self.to_cycle().eval(other.to_cycle())
-            else:
-                return other.to_cycle().eval(self.to_cycle())
+            return other.to_cycle().eval(self.to_cycle())
 
 
 class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
@@ -578,7 +575,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
         sage: x4 * Sq(3)
         0
     """
-    def __init__(self, base_ring, cell_complex, category=None):
+    def __init__(self, base_ring, cell_complex, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -609,7 +606,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
 
             INPUT:
 
-            - ``a`` - an element of the mod 2 Steenrod algebra
+            - ``a`` -- an element of the mod 2 Steenrod algebra
             - ``self_on_left`` -- ``True`` if we are computing ``self * a``,
               otherwise ``a * self``
 
@@ -635,7 +632,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
                 = \langle f, \phi_L (a \otimes x) \rangle,
 
             for `f \in H_m`, `a \in A^n`, and `x \in
-            H^{m-n}`. Somewhat more succintly, we define the action `f
+            H^{m-n}`. Somewhat more succinctly, we define the action `f
             \cdot a` by
 
             .. MATH::
@@ -692,10 +689,9 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
             if m <= n:
                 return self.parent().zero()
 
-            if not self_on_left: # i.e., module element on left
+            if not self_on_left:  # i.e., module element on left
                 a = a.antipode()
             P = self.parent()
-            B = list(P.basis(m-n))
             return P._from_dict({x.support()[0]: self.eval(a * x)
                                  for x in sorted(self.parent().dual().basis(m-n))})
 
@@ -734,7 +730,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
         sage: x * x
         -h^{4,0}
     """
-    def __init__(self, base_ring, cell_complex, category=None):
+    def __init__(self, base_ring, cell_complex, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -751,7 +747,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
         HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex, True, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -935,7 +931,6 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
                 sage: a,b = K.cohomology_ring(QQ).basis(2)
                 sage: a**0
                 h^{0,0} + h^{0,1}
-
             """
             return self * other
 
@@ -1008,7 +1003,7 @@ class CohomologyRing_mod2(CohomologyRing):
         sage: x * Sq(3)
         h^{4,0}
     """
-    def __init__(self, base_ring, cell_complex):
+    def __init__(self, base_ring, cell_complex) -> None:
         """
         Initialize ``self``.
 
@@ -1104,7 +1099,7 @@ class CohomologyRing_mod2(CohomologyRing):
                 # Convert cubical complex to simplicial complex, and
                 # convert self to basis element in the new complex's
                 # cohomology ring.
-                scomplex = SimplicialComplex(scomplex, is_mutable=False)
+                scomplex = SimplicialComplex(scomplex, immutable=True)
                 P = scomplex.cohomology_ring(self.base_ring())
                 self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):
@@ -1257,7 +1252,7 @@ class CohomologyRing_mod2(CohomologyRing):
             ret = CombinatorialFreeModule.Element._acted_upon_(self, a, self_on_left)
             if ret is not None:  # did the scalar action
                 return ret
-            if self_on_left: # i.e., module element on left
+            if self_on_left:  # i.e., module element on left
                 a = a.antipode()
             b = a.change_basis('adem')
             ans = self.parent().zero()
@@ -1283,11 +1278,11 @@ class CohomologyRing_mod2(CohomologyRing):
         - ``deg_codomain`` -- the degree of the codomain in the
           cohomology ring
 
-        - ``side`` -- (default ``'left'``) whether we are computing
+        - ``side`` -- (default: ``'left'``) whether we are computing
           the action as a left module action or a right module
 
         We will write this with respect to the left action;
-        for the right action, just switch all of the the tensors.
+        for the right action, just switch all of the tensors.
         Writing `m` for ``deg_domain`` and `n` for ``deg_codomain``, this
         returns `A^{n-m} \otimes H^{m} \to H^{n}`, one single
         component of the map making `H` into an `A`-module.
@@ -1420,7 +1415,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
 
     INPUT:
 
-    - ``k`` -- non-negative integer
+    - ``k`` -- nonnegative integer
     - ``i_k_plus_one`` -- the positive integer `i_{k+1}`
     - ``S_k_plus_one`` -- the integer `S(k+1)`
 
@@ -1438,7 +1433,8 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
             for l in sum_indices(k-1, i_k, S_k)]
 
-def is_GF2(R):
+
+def is_GF2(R) -> bool:
     r"""
     Return ``True`` iff ``R`` is isomorphic to the field `\GF{2}`.
 
@@ -1447,7 +1443,7 @@ def is_GF2(R):
         sage: from sage.homology.homology_vector_space_with_basis import is_GF2
         sage: is_GF2(GF(2))
         True
-        sage: is_GF2(GF(2, impl='ntl'))
+        sage: is_GF2(GF(2, implementation='ntl'))
         True
         sage: is_GF2(GF(3))
         False

@@ -1,10 +1,8 @@
-# -*- encoding: utf-8 -*-
 r"""
 Emacs sage-mode Backend for the Sage Rich Output System
 
 This module defines the Emacs backend for :mod:`sage.repl.rich_output`
 based on the IPython shell version.
-
 """
 
 # ****************************************************************************
@@ -22,7 +20,7 @@ from sage.repl.rich_output.output_catalog import *
 
 class BackendEmacs(BackendIPythonCommandline):
     """
-    Emacs Backend
+    Emacs Backend.
 
     This backend is used by Emacs' sage-mode to have typeset output
     and inline images.
@@ -36,11 +34,9 @@ class BackendEmacs(BackendIPythonCommandline):
 
     def _repr_(self):
         r"""
-        Return string representation of the backend
+        Return string representation of the backend.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -53,7 +49,7 @@ class BackendEmacs(BackendIPythonCommandline):
 
     def default_preferences(self):
         """
-        Return the backend's display preferences
+        Return the backend's display preferences.
 
         Override this method to change the default preferences when
         using your backend.
@@ -79,7 +75,7 @@ class BackendEmacs(BackendIPythonCommandline):
 
     def displayhook(self, plain_text, rich_output):
         r"""
-        Backend implementation of the displayhook
+        Backend implementation of the displayhook.
 
         INPUT:
 
@@ -118,9 +114,9 @@ class BackendEmacs(BackendIPythonCommandline):
 
         if isinstance(rich_output, OutputPlainText):
             return ({'text/plain': rich_output.text.get_str()}, {})
-        elif isinstance(rich_output, OutputAsciiArt):
+        if isinstance(rich_output, OutputAsciiArt):
             return ({'text/plain': rich_output.ascii_art.get_str()}, {})
-        elif isinstance(rich_output, OutputLatex):
+        if isinstance(rich_output, OutputLatex):
             text = "BEGIN_TEXT:" + plain_text.text.get_str() + ":END_TEXT\nBEGIN_LATEX:" + \
                    rich_output.latex.get_str() + ":END_LATEX"
             return ({'text/plain': text}, {})
@@ -128,27 +124,26 @@ class BackendEmacs(BackendIPythonCommandline):
         # TODO: perhaps handle these by returning the data inline,
         # e.g. base64 encoded, so that sage-mode can show inline
         # images for remotely running shells.
-        elif isinstance(rich_output, OutputImagePng):
+        if isinstance(rich_output, OutputImagePng):
             msg = self.launch_viewer(
                 rich_output.png.filename(ext='png'), plain_text.text.get())
             return ({'text/plain': msg}, {})
-        elif isinstance(rich_output, OutputImageGif):
+        if isinstance(rich_output, OutputImageGif):
             msg = self.launch_viewer(
                 rich_output.gif.filename(ext='gif'), plain_text.text.get())
             return ({'text/plain': msg}, {})
-        elif isinstance(rich_output, OutputImagePdf):
+        if isinstance(rich_output, OutputImagePdf):
             msg = self.launch_viewer(
                 rich_output.pdf.filename(ext='pdf'), plain_text.text.get())
             return ({'text/plain': msg}, {})
-        elif isinstance(rich_output, OutputImageDvi):
+        if isinstance(rich_output, OutputImageDvi):
             msg = self.launch_viewer(
                 rich_output.dvi.filename(ext='dvi'), plain_text.text.get())
             return ({'text/plain': msg}, {})
-        elif isinstance(rich_output, OutputSceneJmol):
+        if isinstance(rich_output, OutputSceneJmol):
             msg = self.launch_jmol(rich_output, plain_text.text.get())
             return ({'text/plain': msg}, {})
-        elif isinstance(rich_output, OutputSceneWavefront):
+        if isinstance(rich_output, OutputSceneWavefront):
             msg = self.launch_sage3d(rich_output, plain_text.text.get())
             return ({'text/plain': msg}, {})
-        else:
-            raise TypeError('rich_output type not supported')
+        raise TypeError('rich_output type not supported')

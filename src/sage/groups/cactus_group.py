@@ -78,7 +78,7 @@ class CactusGroup(UniqueRepresentation, Group):
             sage: J3 = groups.misc.Cactus(3)
             sage: it = iter(J3)
             sage: elts = [next(it) for _ in range(100)]
-            sage: TestSuite(J3).run(elements=elts[::7], skip="_test_enumerated_set_contains")
+            sage: TestSuite(J3).run(elements=elts[::7], skip='_test_enumerated_set_contains')
 
         We run this test separately because the words grow very long, very
         quickly. This means the code needs to check a lot of normalizations,
@@ -135,7 +135,7 @@ class CactusGroup(UniqueRepresentation, Group):
         G = Graph([list(range(len(PS))),
                    [[i,j,-1] for j in range(1, len(PS)) for i in range(j)
                     if PS[i] & PS[j] not in [frozenset(), PS[i], PS[j]]]
-                   ], format="vertices_and_edges")
+                   ], format='vertices_and_edges')
         self._subsets = PS
         self._subsets_inv = {X: i for i,X in enumerate(PS)}
         return G
@@ -299,7 +299,7 @@ class CactusGroup(UniqueRepresentation, Group):
         """
         if isinstance(G, CactusGroup):
             return G._n <= self._n
-        elif isinstance(G, PureCactusGroup):
+        if isinstance(G, PureCactusGroup):
             return G.n() <= self._n
         return super()._coerce_map_from_(G)
 
@@ -924,7 +924,7 @@ class PureCactusGroup(KernelSubgroup):
         """
         return self.ambient().n()
 
-    def gen(self, i):
+    def gen(self, i=0):
         r"""
         Return the ``i``-th generator of ``self``.
 

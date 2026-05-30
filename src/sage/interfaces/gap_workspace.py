@@ -17,22 +17,22 @@ import os
 import time
 import hashlib
 import subprocess
-from sage.env import DOT_SAGE, HOSTNAME, GAP_ROOT_PATHS
+from sage.env import DOT_SAGE, HOSTNAME
 
 
-def gap_workspace_file(system="gap", name="workspace", dir=None):
+def gap_workspace_file(system='gap', name='workspace', dir=None):
     r"""
     Return the filename for the GAP workspace.
 
     INPUT:
 
-    - ``system`` -- the name of the system, either ``"gap"`` or
-      ``"libgap"``
+    - ``system`` -- the name of the system, either ``'gap'`` or
+      ``'libgap'``
 
-    - ``name`` -- the kind of workspace, usually ``"workspace"`` but
+    - ``name`` -- the kind of workspace, usually ``'workspace'`` but
       the library interface also uses other files
 
-    - ``dir`` -- the directory where the workspaces should be stored.
+    - ``dir`` -- the directory where the workspaces should be stored
       By default, this is ``DOT_SAGE/gap``
 
     EXAMPLES::
@@ -60,15 +60,8 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    data = f'{GAP_ROOT_PATHS}'
-    for path in GAP_ROOT_PATHS.split(";"):
-        if not path:
-            # If GAP_ROOT_PATHS begins or ends with a semicolon,
-            # we'll get one empty path.
-            continue
-        sysinfo = os.path.join(path, "sysinfo.gap")
-        if os.path.exists(sysinfo):
-            data += subprocess.getoutput(f'. "{sysinfo}" && echo ":$GAP_VERSION:$GAParch"')
+    from sage.libs.gap.util import kernel_info
+    data = ";".join(kernel_info())
     h = hashlib.sha1(data.encode('utf-8')).hexdigest()
     return os.path.join(dir, f'{system}-{name}-{HOSTNAME}-{h}')
 
@@ -79,7 +72,7 @@ def prepare_workspace_dir(dir=None):
 
     INPUT:
 
-    - ``dir`` -- the directory where the workspaces should be stored.
+    - ``dir`` -- the directory where the workspaces should be stored
       By default, this is ``DOT_SAGE/gap``
 
     OUTPUT: the actual workspace directory

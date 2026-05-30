@@ -83,7 +83,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
     - https://ncatlab.org/nlab/show/Hochschild+cohomology
     - [Red2001]_
     """
-    def __init__(self, A, M):
+    def __init__(self, A, M) -> None:
         """
         Initialize ``self``.
 
@@ -105,7 +105,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         Parent.__init__(self, base=A.base_ring(),
                         category=ChainComplexes(A.base_ring()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -113,7 +113,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 3)
             sage: T = SGA.trivial_representation()
-            sage: T.rename("Trivial representation of SGA")
+            sage: T.rename('Trivial representation of SGA')
             sage: SGA.hochschild_complex(T)
             Hochschild complex of Symmetric group algebra of order 3 over Rational Field
              with coefficients in Trivial representation of SGA
@@ -121,7 +121,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         """
         return "Hochschild complex of {} with coefficients in {}".format(self._A, self._M)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -184,7 +184,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
              # Symmetric group algebra of order 3 over Rational Field
         """
         if d < 0:
-            raise ValueError("only defined for non-negative degree")
+            raise ValueError("only defined for nonnegative degree")
         return tensor([self._M] + [self._A] * d)
 
     @cached_method
@@ -570,7 +570,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: H({0: x-y, 2: H.module(2).basis().an_element()})
             Chain with 2 nonzero terms over Integer Ring
         """
-        def __init__(self, parent, vectors):
+        def __init__(self, parent, vectors) -> None:
             """
             Initialize ``self``.
 
@@ -601,7 +601,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             except KeyError:
                 return self.parent().module(degree).zero()
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Print representation.
 
@@ -668,7 +668,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
         def _add_(self, other):
             """
-            Module addition
+            Module addition.
 
             EXAMPLES::
 
@@ -703,7 +703,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
         def _lmul_(self, scalar):
             """
-            Scalar multiplication
+            Scalar multiplication.
 
             EXAMPLES::
 
@@ -725,7 +725,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
                     vectors[d] = vec
             return self.__class__(self.parent(), vectors)
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Rich comparison of ``self`` to ``other``.
 

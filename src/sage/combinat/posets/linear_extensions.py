@@ -1,15 +1,5 @@
 r"""
-Linear Extensions of Posets
-
-This module defines two classes:
-
-- :class:`LinearExtensionOfPoset`
-- :class:`LinearExtensionsOfPoset`
-- :class:`LinearExtensionsOfPosetWithHooks`
-- :class:`LinearExtensionsOfForest`
-
-Classes and methods
--------------------
+Linear extensions of posets
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -26,6 +16,7 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -35,7 +26,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.structure.list_clone import ClonableArray
 from sage.arith.misc import factorial
-from sage.matrix.constructor import matrix
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class LinearExtensionOfPoset(ClonableArray,
@@ -50,7 +42,7 @@ class LinearExtensionOfPoset(ClonableArray,
 
     INPUT:
 
-    - ``linear_extension`` -- a list of the elements of `P`
+    - ``linear_extension`` -- list of the elements of `P`
     - ``poset`` -- the underlying poset `P`
 
     .. SEEALSO:: :class:`~sage.combinat.posets.posets.Poset`, :class:`LinearExtensionsOfPoset`
@@ -91,11 +83,12 @@ class LinearExtensionOfPoset(ClonableArray,
     @staticmethod
     def __classcall_private__(cls, linear_extension, poset):
         r"""
-        Implements the shortcut ``LinearExtensionOfPoset(linear_extension, poset)`` to ``LinearExtensionsOfPoset(poset)(linear_extension)``
+        Implement the shortcut ``LinearExtensionOfPoset(linear_extension, poset)``
+        to ``LinearExtensionsOfPoset(poset)(linear_extension)``.
 
         INPUT:
 
-        - ``linear_extension`` -- a list of elements of ``poset``
+        - ``linear_extension`` -- list of elements of ``poset``
         - ``poset`` -- a finite poset
 
         .. TODO:: check whether this method is still useful
@@ -127,9 +120,9 @@ class LinearExtensionOfPoset(ClonableArray,
             return linear_extension
         return LinearExtensionsOfPoset(poset)(linear_extension)
 
-    def check(self):
+    def check(self) -> None:
         r"""
-        Checks whether ``self`` is indeed a linear extension of the underlying poset.
+        Check whether ``self`` is indeed a linear extension of the underlying poset.
 
         TESTS::
 
@@ -158,7 +151,7 @@ class LinearExtensionOfPoset(ClonableArray,
         """
         return self.parent().poset()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex string for ``self``.
 
@@ -214,12 +207,12 @@ class LinearExtensionOfPoset(ClonableArray,
             True
         """
         P = self.parent().poset()
-        old = [P.unwrap(x) for x in self]
+        old = (P.unwrap(x) for x in self)
         new = [P.unwrap(x) for x in P]
         relabelling = dict(zip(old, new))
         return P.relabel(relabelling).with_linear_extension(new)
 
-    def is_greedy(self):
+    def is_greedy(self) -> bool:
         r"""
         Return ``True`` if the linear extension is greedy.
 
@@ -233,8 +226,8 @@ class LinearExtensionOfPoset(ClonableArray,
 
         EXAMPLES::
 
-            sage: P = posets.PentagonPoset()                                            # optional - sage.modules
-            sage: for l in P.linear_extensions():                                       # optional - sage.modules
+            sage: P = posets.PentagonPoset()                                            # needs sage.modules
+            sage: for l in P.linear_extensions():                                       # needs sage.modules
             ....:     if not l.is_greedy():
             ....:         print(l)
             [0, 2, 1, 3, 4]
@@ -253,7 +246,7 @@ class LinearExtensionOfPoset(ClonableArray,
                         return False
         return True
 
-    def is_supergreedy(self):
+    def is_supergreedy(self) -> bool:
         r"""
         Return ``True`` if the linear extension is supergreedy.
 
@@ -276,15 +269,15 @@ class LinearExtensionOfPoset(ClonableArray,
             sage: X = [0,1,2,3,4,5,6]
             sage: Y = [[0,5],[1,4],[1,5],[3,6],[4,3],[5,6],[6,2]]
             sage: P = Poset((X,Y), cover_relations=True, facade=False)
-            sage: for l in P.linear_extensions():                                       # optional - sage.modules sage.rings.finite_rings
+            sage: for l in P.linear_extensions():                                       # needs sage.modules
             ....:     if l.is_supergreedy():
             ....:         print(l)
             [1, 4, 3, 0, 5, 6, 2]
             [0, 1, 4, 3, 5, 6, 2]
             [0, 1, 5, 4, 3, 6, 2]
 
-            sage: Q = posets.PentagonPoset()                                            # optional - sage.modules
-            sage: for l in Q.linear_extensions():                                       # optional - sage.modules sage.rings.finite_rings
+            sage: Q = posets.PentagonPoset()                                            # needs sage.modules
+            sage: for l in Q.linear_extensions():                                       # needs sage.modules sage.rings.finite_rings
             ....:     if not l.is_supergreedy():
             ....:         print(l)
             [0, 2, 1, 3, 4]
@@ -318,7 +311,8 @@ class LinearExtensionOfPoset(ClonableArray,
 
         INPUT:
 
-        - `i` -- an integer between `1` and `n-1`, where `n` is the cardinality of the poset.
+        - ``i`` -- integer between `1` and `n-1`, where `n` is the
+          cardinality of the poset
 
         The operator `\tau_i` on a linear extension `\pi` of a poset
         `P` interchanges positions `i` and `i+1` if the result is
@@ -333,7 +327,7 @@ class LinearExtensionOfPoset(ClonableArray,
             [1, 2, 3, 4]
             sage: l.tau(1)
             [2, 1, 3, 4]
-            sage: for p in L:                                                           # optional - sage.modules sage.rings.finite_rings
+            sage: for p in L:                                                           # needs sage.modules
             ....:     for i in range(1,4):
             ....:         print("{} {} {}".format(i, p, p.tau(i)))
             1 [1, 2, 3, 4] [2, 1, 3, 4]
@@ -426,7 +420,7 @@ class LinearExtensionOfPoset(ClonableArray,
                 self = self.tau(j)
         return self
 
-    def jump_count(self):
+    def jump_count(self) -> int:
         r"""
         Return the number of jumps in the linear extension.
 
@@ -470,12 +464,12 @@ class LinearExtensionOfPoset(ClonableArray,
 
 class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
     """
-    The set of all linear extensions of a finite poset
+    The set of all linear extensions of a finite poset.
 
     INPUT:
 
     - ``poset`` -- a poset `P` of size `n`
-    - ``facade`` -- a boolean (default: ``False``)
+    - ``facade`` -- boolean (default: ``False``)
 
     .. SEEALSO::
 
@@ -491,7 +485,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
          Finite poset containing 4 elements with distinguished linear extension
         sage: L.cardinality()
         5
-        sage: L.list()                                                                  # optional - sage.modules sage.rings.finite_rings
+        sage: L.list()                                                                  # needs sage.modules
         [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         sage: L.an_element()
         [1, 2, 3, 4]
@@ -531,14 +525,14 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: P = Poset((divisors(15), attrcall("divides")))
             sage: L = P.linear_extensions()
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # needs sage.modules
 
             sage: P = Poset((divisors(15), attrcall("divides")), facade=True)
             sage: L = P.linear_extensions()
-            sage: TestSuite(L).run()
+            sage: TestSuite(L).run()                                                    # needs sage.modules
 
-            sage: L = P.linear_extensions(facade = True)
-            sage: TestSuite(L).run(skip="_test_an_element")
+            sage: L = P.linear_extensions(facade=True)
+            sage: TestSuite(L).run(skip='_test_an_element')                             # needs sage.modules
         """
         self._poset = poset
         self._is_facade = facade
@@ -546,7 +540,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             facade = (list,)
         Parent.__init__(self, category=FiniteEnumeratedSets(), facade=facade)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -623,12 +617,12 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         for x in range(n):
             # Use the existing Jup table to compute all covering
             # relations in J(P) for things that are above loc(x).
-            K = [[loc[x]]]
+            K0 = [[loc[x]]]
             j = 0
-            while K[j]:
-                K.append([b for a in K[j] for b in Jup[a]])
+            while K0[j]:
+                K0.append([b for a in K0[j] for b in Jup[a]])
                 j += 1
-            K = sorted({item for sublist in K for item in sublist})
+            K = sorted({item for sublist in K0 for item in sublist})
             for j in range(len(K)):
                 i = m + j + 1
                 Jup[i] = [m + K.index(a) + 1 for a in Jup[K[j]]]
@@ -658,7 +652,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
     def __iter__(self):
         r"""
-        Iterates through the linear extensions of the underlying poset.
+        Iterate through the linear extensions of the underlying poset.
 
         EXAMPLES::
 
@@ -666,7 +660,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: rels = [[1,3],[1,4],[2,3]]
             sage: P = Poset((elms, rels), linear_extension=True)
             sage: L = P.linear_extensions()
-            sage: list(L)                                                               # optional - sage.modules sage.rings.finite_rings
+            sage: list(L)                                                               # needs sage.modules
             [[1, 2, 3, 4], [2, 1, 3, 4], [2, 1, 4, 3], [1, 4, 2, 3], [1, 2, 4, 3]]
         """
         from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
@@ -699,21 +693,20 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: [p for p in Permutations(list(P)) if list(p) in L]
             [[1, 2, 3, 4, 6, 12], [1, 2, 3, 6, 4, 12], [1, 2, 4, 3, 6, 12], [1, 3, 2, 4, 6, 12], [1, 3, 2, 6, 4, 12]]
-
         """
         if not self._is_facade:
             return super().__contains__(obj)
         return (isinstance(obj, (list, tuple)) and
                 self.poset().is_linear_extension(obj))
 
-    def markov_chain_digraph(self, action='promotion', labeling='identity'):
+    def markov_chain_digraph(self, action='promotion', labeling='identity') -> DiGraph:
         r"""
-        Return the digraph of the action of generalized promotion or tau on ``self``
+        Return the digraph of the action of generalized promotion or tau on ``self``.
 
         INPUT:
 
-        - ``action`` -- 'promotion' or 'tau' (default: 'promotion')
-        - ``labeling`` -- 'identity' or 'source' (default: 'identity')
+        - ``action`` -- 'promotion' or 'tau' (default: ``'promotion'``)
+        - ``labeling`` -- 'identity' or 'source' (default: ``'identity'``)
 
         .. TODO::
 
@@ -799,53 +792,56 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
                 for i in R:
                     child = getattr(x, action)(i + 1)
                     d[x][child] += [i + 1]
-        G = DiGraph(d, format="dict_of_dicts")
+        G = DiGraph(d, format='dict_of_dicts')
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex", edge_labels=True,
+            G.set_latex_options(format='dot2tex', edge_labels=True,
                                 color_by_label={1: "blue", 2: "red",
                                                 3: "green", 4: "yellow"})
         return G
 
     def markov_chain_transition_matrix(self, action='promotion', labeling='identity'):
         r"""
-        Return the transition matrix of the Markov chain for the action of generalized promotion or tau on ``self``
+        Return the transition matrix of the Markov chain for the action of
+        generalized promotion or tau on ``self``.
 
         INPUT:
 
         - ``action`` -- ``'promotion'`` or ``'tau'`` (default: ``'promotion'``)
         - ``labeling`` -- ``'identity'`` or ``'source'`` (default: ``'identity'``)
 
-        This method yields the transition matrix of the Markov chain defined by the action of the generalized
-        promotion operator `\partial_i` (resp. `\tau_i`) on the set of linear extensions of a finite poset.
-        Here the transition from the linear extension `\pi` to `\pi'`, where `\pi' = \pi \partial_i`
-        (resp. `\pi'= \pi \tau_i`) is counted with weight `x_i` (resp. `x_{\pi_i}` if ``labeling`` is set to ``source``).
+        This method yields the transition matrix of the Markov chain defined by
+        the action of the generalized promotion operator `\partial_i` (resp.
+        `\tau_i`) on the set of linear extensions of a finite poset. Here the
+        transition from the linear extension `\pi` to `\pi'`, where
+        `\pi' = \pi \partial_i` (resp. `\pi'= \pi \tau_i`) is counted with
+        weight `x_i` (resp. `x_{\pi_i}` if ``labeling`` is set to ``source``).
 
         EXAMPLES::
 
-            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension = True)
+            sage: P = Poset(([1,2,3,4], [[1,3],[1,4],[2,3]]), linear_extension=True)
             sage: L = P.linear_extensions()
-            sage: L.markov_chain_transition_matrix()                                    # optional - sage.modules
+            sage: L.markov_chain_transition_matrix()                                    # needs sage.modules
             [-x0 - x1 - x2            x2       x0 + x1             0             0]
             [      x1 + x2 -x0 - x1 - x2             0            x0             0]
             [            0            x1      -x0 - x1             0            x0]
             [            0            x0             0 -x0 - x1 - x2       x1 + x2]
             [           x0             0             0       x1 + x2 -x0 - x1 - x2]
 
-            sage: L.markov_chain_transition_matrix(labeling='source')                   # optional - sage.modules
+            sage: L.markov_chain_transition_matrix(labeling='source')                   # needs sage.modules
             [-x0 - x1 - x2            x3       x0 + x3             0             0]
             [      x1 + x2 -x0 - x1 - x3             0            x1             0]
             [            0            x1      -x0 - x3             0            x1]
             [            0            x0             0 -x0 - x1 - x2       x0 + x3]
             [           x0             0             0       x0 + x2 -x0 - x1 - x3]
 
-            sage: L.markov_chain_transition_matrix(action='tau')                        # optional - sage.modules
+            sage: L.markov_chain_transition_matrix(action='tau')                        # needs sage.modules
             [     -x0 - x2            x2             0            x0             0]
             [           x2 -x0 - x1 - x2            x1             0            x0]
             [            0            x1           -x1             0             0]
             [           x0             0             0      -x0 - x2            x2]
             [            0            x0             0            x2      -x0 - x2]
 
-            sage: L.markov_chain_transition_matrix(action='tau', labeling='source')     # optional - sage.modules
+            sage: L.markov_chain_transition_matrix(action='tau', labeling='source')     # needs sage.modules
             [     -x0 - x2            x3             0            x1             0]
             [           x2 -x0 - x1 - x3            x3             0            x1]
             [            0            x1           -x3             0             0]
@@ -853,7 +849,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             [            0            x0             0            x2      -x1 - x3]
 
         .. SEEALSO:: :meth:`markov_chain_digraph`, :meth:`promotion`, :meth:`tau`
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix
@@ -902,11 +897,10 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             lst = list(lst)
         if not isinstance(lst, (list, tuple)):
             raise TypeError("input should be a list or tuple")
-        lst = [self._poset(_) for _ in lst]
+        lst = [self._poset(e) for e in lst]
         if self._is_facade:
             return lst
-        else:
-            return self.element_class(self, lst, check)
+        return self.element_class(self, lst, check)
 
     Element = LinearExtensionOfPoset
 
@@ -924,8 +918,8 @@ class LinearExtensionsOfPosetWithHooks(LinearExtensionsOfPoset):
         EXAMPLES::
 
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: P = Posets.YoungDiagramPoset(Partition([3,2]), dual=True)             # optional - sage.combinat
-            sage: P.linear_extensions().cardinality()                                   # optional - sage.combinat sage.modules
+            sage: P = Posets.YoungDiagramPoset(Partition([3,2]), dual=True)             # needs sage.combinat sage.modules
+            sage: P.linear_extensions().cardinality()                                   # needs sage.combinat sage.modules
             5
         """
         num_elmts = self._poset.cardinality()
@@ -951,11 +945,11 @@ class LinearExtensionsOfForest(LinearExtensionsOfPoset):
             sage: from sage.combinat.posets.forest import ForestPoset
             sage: from sage.combinat.posets.poset_examples import Posets
             sage: P = Poset({0: [2], 1: [2], 2: [3, 4], 3: [], 4: []})
-            sage: P.linear_extensions().cardinality()                                   # optional - sage.modules
+            sage: P.linear_extensions().cardinality()                                   # needs sage.modules
             4
 
             sage: Q = Poset({0: [1], 1: [2, 3], 2: [], 3: [], 4: [5, 6], 5: [], 6: []})
-            sage: Q.linear_extensions().cardinality()                                   # optional - sage.modules
+            sage: Q.linear_extensions().cardinality()                                   # needs sage.modules
             140
         """
         return sum(self.atkinson(self._elements[0]))
@@ -976,18 +970,18 @@ class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
             sage: from sage.combinat.posets.mobile import MobilePoset
             sage: M = MobilePoset(DiGraph([[0,1,2,3,4,5,6,7,8], [(1,0),(3,0),(2,1),(2,3),(4,
             ....: 3), (5,4),(5,6),(7,4),(7,8)]]))
-            sage: M.linear_extensions().cardinality()                                   # optional - sage.modules
+            sage: M.linear_extensions().cardinality()                                   # needs sage.modules
             1098
 
             sage: M1 = posets.RibbonPoset(6, [1,3])
-            sage: M1.linear_extensions().cardinality()                                  # optional - sage.modules
+            sage: M1.linear_extensions().cardinality()                                  # needs sage.modules
             61
 
-            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # optional - sage.combinat
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                  # needs sage.combinat sage.modules
             ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
             ....:                         3: [posets.DoubleTailedDiamond(6)]},
             ....:                        anchor=(4, 2, posets.ChainPoset(6)))
-            sage: P.linear_extensions().cardinality()                                   # optional - sage.combinat sage.modules
+            sage: P.linear_extensions().cardinality()                                   # needs sage.combinat sage.modules
             361628701868606400
         """
         import sage.combinat.posets.d_complete as dc

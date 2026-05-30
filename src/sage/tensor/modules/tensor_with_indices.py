@@ -6,27 +6,27 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Léo Brunswic (2019): add multiple symmetries and multiple contractions
-
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import combinations
+import re
 
 from sage.structure.sage_object import SageObject
-import re
-from itertools import combinations
 
 # Regular expression for the allowed characters in index notation.
 # This includes Unicode word constituents but excludes digits and underscores.
 # Compare with https://docs.python.org/3/reference/lexical_analysis.html#identifiers
 # The dot is special syntax for unnamed index positions.
 _alph_or_dot_pattern = r"([.]|[^\d\W_])"
+
 
 class TensorWithIndices(SageObject):
     r"""
@@ -225,7 +225,7 @@ class TensorWithIndices(SageObject):
         a^μξ
 
     Conventions are checked and non acceptable indices raise
-    :class:`ValueError`, for instance::
+    :exc:`ValueError`, for instance::
 
         sage: a['([..])']  # nested symmetries
         Traceback (most recent call last):
@@ -247,7 +247,6 @@ class TensorWithIndices(SageObject):
         Traceback (most recent call last):
         ...
         ValueError: index conventions not satisfied
-
     """
 
     @staticmethod
@@ -258,19 +257,19 @@ class TensorWithIndices(SageObject):
         indices.
 
         Parse ``indices`` checking usual conventions on repeating indices,
-        wildcard, balanced parentheses/brackets and raises a :class:`ValueError`
+        wildcard, balanced parentheses/brackets and raises a :exc:`ValueError`
         if not. Return a couple contravariant/covariant indices.
 
         INPUT:
 
-        - ``indices`` -- a string of index notation
-        - ``tensor_type`` -- (default : ``None``) a valid tensor type
-          (a couple of non-negative integers). If not ``None``, the indices
+        - ``indices`` -- string of index notation
+        - ``tensor_type`` -- (default: ``None``) a valid tensor type
+          (a couple of nonnegative integers). If not ``None``, the indices
           are checked to have the correct type.
-        - ``allow_contraction`` -- (default : ``True``) Determines if
-          repeated indices are allowed in the index notation.
-        - ``allow_symmetries`` -- (default : ``True``) Determines if
-          symmetries ()/[] are allowed in the index notation.
+        - ``allow_contraction`` -- (default: ``True``) determines if
+          repeated indices are allowed in the index notation
+        - ``allow_symmetries`` -- (default: ``True``) determines if
+          symmetries ()/[] are allowed in the index notation
 
         OUTPUT:
 
@@ -330,36 +329,35 @@ class TensorWithIndices(SageObject):
             Traceback (most recent call last):
             ...
             IndexError: no symmetry allowed
-
         """
         # Suppress all '{' and '}' coming from LaTeX notations:
-        indices = indices.replace('{','').replace('}','')
+        indices = indices.replace('{', '').replace('}', '')
 
         # Check index notation conventions and parse indices
         allowed_pattern = r"(\(" + _alph_or_dot_pattern + r"{2,}\)|\[" + _alph_or_dot_pattern + r"{2,}\]|" + _alph_or_dot_pattern + r"+)*"
         con_then_cov = r"^(\^|)" + allowed_pattern + r"(\_" + allowed_pattern + r"|)$"
         cov_then_con = r"^\_" + allowed_pattern + r"(\^" + allowed_pattern + r"|)$"
-        if (re.match(con_then_cov,indices) is None
-            and re.match(cov_then_con,indices) is None):
+        if (re.match(con_then_cov, indices) is None
+            and re.match(cov_then_con, indices) is None):
             raise ValueError("index conventions not satisfied")
-        elif re.match(con_then_cov,indices):
+        elif re.match(con_then_cov, indices):
             try:
-                con,cov = indices.replace("^","").split("_")
+                con, cov = indices.replace("^", "").split("_")
             except ValueError:
-                con = indices.replace("^","")
+                con = indices.replace("^", "")
                 cov = ""
         else:
             try:
-                cov,con = indices.replace("_","").split("^")
+                cov, con = indices.replace("_", "").split("^")
             except ValueError:
-                cov = indices.replace("_","")
+                cov = indices.replace("_", "")
                 con = ""
         if not allow_contraction:
             for ind in con:
                 if ind != '.' and ind in cov:
                     raise IndexError("no contraction allowed")
-        con_without_sym = (con.replace("(","").replace(")","").replace("[","").replace("]",""))
-        cov_without_sym = (cov.replace("(","").replace(")","").replace("[","").replace("]",""))
+        con_without_sym = (con.replace("(", "").replace(")", "").replace("[", "").replace("]", ""))
+        cov_without_sym = (cov.replace("(", "").replace(")", "").replace("[", "").replace("]", ""))
         if allow_symmetries:
             if len(con_without_sym) != len(set(con_without_sym)) \
                                        + max(con_without_sym.count(".")-1, 0):
@@ -370,9 +368,9 @@ class TensorWithIndices(SageObject):
                 raise ValueError("index conventions not satisfied: "
                                  "repeated indices of same type")
         else:
-            if re.search(r"[()\[\]]",con) is not None:
+            if re.search(r"[()\[\]]", con) is not None:
                 raise IndexError("no symmetry allowed")
-            if re.search(r"[()\[\]]",cov) is not None:
+            if re.search(r"[()\[\]]", cov) is not None:
                 raise IndexError("no symmetry allowed")
         if tensor_type is not None:
             # Check number of (co/contra)variant indices
@@ -382,7 +380,7 @@ class TensorWithIndices(SageObject):
             if len(cov_without_sym) != tensor_type[1]:
                 raise IndexError("number of covavariant indices not compatible "
                                  "with the tensor type")
-        return con,cov
+        return con, cov
 
     def __init__(self, tensor, indices):
         r"""
@@ -396,7 +394,7 @@ class TensorWithIndices(SageObject):
         We need to skip the pickling test because we can't check equality
         unless the tensor was defined w.r.t. a basis::
 
-            sage: TestSuite(ti).run(skip="_test_pickling")
+            sage: TestSuite(ti).run(skip='_test_pickling')
 
         ::
 
@@ -406,7 +404,6 @@ class TensorWithIndices(SageObject):
             ....:         [[19,-20,-21], [-22,23,24], [25,26,-27]]]
             sage: ti = TensorWithIndices(t, 'ab_c')
             sage: TestSuite(ti).run()
-
         """
         self._tensor = tensor # may be changed below
         self._changed = False # indicates whether self contains an altered
@@ -422,15 +419,15 @@ class TensorWithIndices(SageObject):
         # Latex notations '{' and '}' are totally ignored.
         # "^{ijkl}_{ib(cd)}"
 
-        con,cov = self._parse_indices(
+        con, cov = self._parse_indices(
             indices,
             tensor_type=self._tensor.tensor_type()
         )
 
         # Apply (anti)symmetrizations on contravariant indices
         first_sym_regex = r"(\(|\[)" + _alph_or_dot_pattern + r"*[)\]]"
-        while re.search(first_sym_regex,con):
-            first_sym = re.search(first_sym_regex,con)
+        while re.search(first_sym_regex, con):
+            first_sym = re.search(first_sym_regex, con)
             sym1 = first_sym.span()[0]
             sym2 = first_sym.span()[1]-1
             if first_sym.groups()[0] == "(":
@@ -443,13 +440,13 @@ class TensorWithIndices(SageObject):
                     sym1,
                     sym2-1
                 ))
-            self._changed = True # self does no longer contain the original tensor
+            self._changed = True  # self does no longer contain the original tensor
             con = con[:sym1] + con[sym1+1:sym2] + con[sym2+1:]
         self._con = con
 
         # Apply (anti)symmetrizations on covariant indices
-        while re.search(first_sym_regex,cov):
-            first_sym = re.search(first_sym_regex,cov)
+        while re.search(first_sym_regex, cov):
+            first_sym = re.search(first_sym_regex, cov)
             sym1 = first_sym.span()[0]
             sym2 = first_sym.span()[1]-1
             if first_sym.groups()[0] == "(":
@@ -505,7 +502,6 @@ class TensorWithIndices(SageObject):
             sage: ti = TensorWithIndices(t, '_{ij}')
             sage: ti._repr_()
             't_ij'
-
         """
         name = 'X'
         if hasattr(self._tensor, '_name'):
@@ -514,12 +510,10 @@ class TensorWithIndices(SageObject):
         if self._con == '':
             if self._cov == '':
                 return 'scalar'
-            else:
-                return name + '_' + self._cov
-        elif self._cov == '':
+            return name + '_' + self._cov
+        if self._cov == '':
             return name + '^' + self._con
-        else:
-            return name + '^' + self._con + '_' + self._cov
+        return name + '^' + self._con + '_' + self._cov
 
     def update(self):
         r"""
@@ -543,12 +537,8 @@ class TensorWithIndices(SageObject):
             scalar
             sage: a_ind.update()
             15
-
         """
-        if self._changed:
-            return self._tensor
-        else:
-            return self
+        return self if not self._changed else self._tensor
 
     def __eq__(self, other):
         r"""
@@ -569,7 +559,6 @@ class TensorWithIndices(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: no common basis for the comparison
-
         """
         if not isinstance(other, TensorWithIndices):
             return False
@@ -591,7 +580,6 @@ class TensorWithIndices(SageObject):
             False
             sage: ti != TensorWithIndices(t, 'ac_b')
             True
-
         """
         return not self == other
 
@@ -674,7 +662,6 @@ class TensorWithIndices(SageObject):
             X^ij_k
             sage: s._tensor == 3*a
             True
-
         """
         return TensorWithIndices(other*self._tensor,
                                  self._con + '_' + self._cov)
@@ -686,7 +673,7 @@ class TensorWithIndices(SageObject):
         The underlying tensor of the output is the sum of the underlying tensor
         of ``self`` with the underlying tensor of ``other`` whose entries have
         be permuted to respect Einstein summation usual conventions. The
-        indices names of the output are those of self.
+        indices names of the output are those of ``self``.
 
 
         TESTS::
@@ -700,22 +687,21 @@ class TensorWithIndices(SageObject):
             sage: b[:] = [[-1,2,-3], [-4,5,6], [7,-8,9]]
             sage: T = a*a*b*b
             sage: 1/4*(T["ijkl_abcd"] + T["jikl_abcd"] + T["ijkl_abdc"]\
-             + T["jikl_abdc"]) == T["(..).._..(..)"]["ijkl_abcd"]
+            ....: + T["jikl_abdc"]) == T["(..).._..(..)"]["ijkl_abcd"]
             True
-
         """
         # Check tensor types are compatible
         if self._tensor.tensor_type() != other._tensor.tensor_type():
-            raise ValueError("Tensors are not of the same type")
+            raise ValueError("tensors are not of the same type")
         # Check the set of indices are compatible
         if set(self._cov) != set(other._cov):
-            raise ValueError("The covariant Indices sets are not identical")
+            raise ValueError("the covariant Indices sets are not identical")
         if set(self._con) != set(other._con):
-            raise ValueError("The contravariant Indices sets are not identical")
+            raise ValueError("the contravariant Indices sets are not identical")
         self_wild_card_indices = [match.span()[0] for match in re.finditer(r"\.", self._con)]
         other_wild_card_indices = [match.span()[0] for match in re.finditer(r"\.", self._cov)]
         if self_wild_card_indices != other_wild_card_indices:
-            raise ValueError("Ambiguous wildcard notation")
+            raise ValueError("ambiguous wildcard notation")
 
         # Permutation of the components of self
         # -------------------------------------
@@ -745,7 +731,7 @@ class TensorWithIndices(SageObject):
         The underlying tensor of the output is the underlying tensor of
         ``self`` minus the underlying tensor of ``other`` whose entries have
         be permuted to respect Einstein summation usual conventions. The
-        indices names of the output are those of self.
+        indices names of the output are those of ``self``.
 
         EXAMPLES::
 
@@ -779,9 +765,8 @@ class TensorWithIndices(SageObject):
             sage: b[:] = [[-1,2,-3], [-4,5,6], [7,-8,9]]
             sage: T = a*a*b*b
             sage: 1/4*(T["ijkl_abcd"]-T["jikl_abcd"] - T["ijkl_abdc"]\
-                + T["jikl_abdc"] ) == T["[..].._..[..]"]["ijkl_abcd"]
+            ....: + T["jikl_abdc"] ) == T["[..].._..[..]"]["ijkl_abcd"]
             True
-
         """
         return self + (-other)
 
@@ -824,14 +809,12 @@ class TensorWithIndices(SageObject):
             [1 3 5]
             [3 5 7]
             [5 7 9]
-
         """
         if isinstance(args, str):
             result = +self
             result.__init__(self._tensor, args)
             return result
-        else:
-            return self._tensor[args]
+        return self._tensor[args]
 
     def __setitem__(self, args, value):
         r"""
@@ -859,15 +842,14 @@ class TensorWithIndices(SageObject):
             sage: b["ij"] = a["ji"]
             sage: b[:] == a[:].transpose()
             True
-
         """
         if isinstance(args, str):
-            if not isinstance(value,TensorWithIndices):
-                raise ValueError("The tensor provided should be with indices")
+            if not isinstance(value, TensorWithIndices):
+                raise ValueError("the tensor provided should be with indices")
             elif self._tensor.tensor_type() != value._tensor.tensor_type():
-                raise ValueError("The tensors are not of the same type")
+                raise ValueError("the tensors are not of the same type")
             else:
-                con,cov = self._parse_indices(
+                con, cov = self._parse_indices(
                     args,
                     tensor_type=self._tensor.tensor_type(),
                     allow_symmetries=False,
@@ -890,7 +872,7 @@ class TensorWithIndices(SageObject):
             self._tensor[:] = value.permute_indices(permutation)[:]
 
         else:
-            self._tensor.__setitem__(args,value)
+            self._tensor.__setitem__(args, value)
 
     def permute_indices(self, permutation):
         r"""
@@ -949,9 +931,9 @@ class TensorWithIndices(SageObject):
         swap_params = list(combinations(range(self._tensor.tensor_rank()+1), 3))
 
         # The associated permutation is as follows
-        def swap(param,N):
-            i,j,k = param
-            L = list(range(1,N+1))
+        def swap(param, N):
+            i, j, k = param
+            L = list(range(1, N+1))
             L = L[:i] + L[j:k] + L[i:j] + L[k:]
             return L
 
@@ -972,7 +954,7 @@ class TensorWithIndices(SageObject):
             decomposition_as_string = [
                 # Two cases whether the term appear with an exponent or not
                 ("^" in term)*term.split("^") + ("^" not in term)*(term.split("^")+['1'])
-                for term in decomposition_as_string.replace("x","").split("*")
+                for term in decomposition_as_string.replace("x", "").split("*")
             ]
             decomposition = [(swap_params[int(x)-1], int(y)) for x, y in decomposition_as_string]
             decomposition.reverse()  # /!\ The symmetric group acts on the right by default /!\.
@@ -984,7 +966,7 @@ class TensorWithIndices(SageObject):
         # Swap of components
 
         swaped_components = self._tensor.comp(basis)
-        for swap_param,exponent in decomposition:
+        for swap_param, exponent in decomposition:
             if exponent > 0:
                 for i in range(exponent):
                     # Apply the swap given by swap_param
@@ -1013,9 +995,7 @@ class TensorWithIndices(SageObject):
         r"""
         Unary plus operator.
 
-        OUTPUT:
-
-        - an exact copy of ``self``
+        OUTPUT: an exact copy of ``self``
 
         EXAMPLES::
 
@@ -1029,7 +1009,6 @@ class TensorWithIndices(SageObject):
             +a^ij_k
             sage: s._tensor == a
             True
-
         """
         return TensorWithIndices(+self._tensor,
                                  self._con + '_' + self._cov)
@@ -1038,9 +1017,7 @@ class TensorWithIndices(SageObject):
         r"""
         Unary minus operator.
 
-        OUTPUT:
-
-        - negative of ``self``
+        OUTPUT: negative of ``self``
 
         EXAMPLES::
 
@@ -1054,7 +1031,6 @@ class TensorWithIndices(SageObject):
             -a^ij_k
             sage: s._tensor == -a
             True
-
         """
         return TensorWithIndices(-self._tensor,
                                  self._con + '_' + self._cov)

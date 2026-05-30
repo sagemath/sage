@@ -1,2 +1,0 @@
-python3.11
-python3.11-devel

@@ -1,11 +1,11 @@
 name: Lint
 
-on: 
+on:
   push:
     branches:
       - master
       - develop
-  pull_request: 
+  pull_request:
   merge_group:
 
 concurrency:
@@ -23,28 +23,29 @@ jobs:
 
     - name: Merge CI fixes from sagemath/sage
       run: |
-        .ci/merge-fixes.sh
+        .github/workflows/merge-fixes.sh
       env:
         GH_TOKEN: ${{ github.token }}
-        SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-
-    - name: Install dependencies
+    - name: Install prerequisites
       id: deps
-      run: pip install tox
+      run: pip install uv
 
-    - name: Code style check with pycodestyle
-      if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: tox -e pycodestyle-minimal
+    - name: Code style check with ruff
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: |
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --no-preview
+        uv run --frozen --only-group lint -- ruff check --output-format github --config .github/workflows/ruff.toml --preview
 
     - name: Code style check with relint
-      if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: tox -e relint -- src/sage/
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: uv run --frozen --only-group lint -- relint -c src/.relint.yml -- src/sage/
 
     - name: Validate docstring markup as RST
-      if: (success() || failure()) && steps.deps.outcome == 'success'
-      run: tox -e rst
+      if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+      run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/ --config src/tox.ini
+    
+    - name: TOML format check with taplo
+      uses: docker://tamasfe/taplo:0.10.0
+      with:
+        args: format --check --diff pyproject.toml .taplo.toml 

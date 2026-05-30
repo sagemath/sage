@@ -6,7 +6,6 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 - Nick Alexander (2008-01-08)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
@@ -24,24 +23,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-
 import sage.rings.abc
-
-from sage.structure.sequence import Sequence
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.matrix.constructor import Matrix
-
-from sage.quadratic_forms.qfsolve import qfsolve, qfparam
-
-from .con_number_field import ProjectiveConic_number_field
-
-from sage.structure.element import InfinityElement
 
 from sage.arith.functions import lcm
 from sage.arith.misc import hilbert_symbol
+from sage.matrix.constructor import Matrix
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.structure.element import InfinityElement
+from sage.structure.sequence import Sequence
+
+lazy_import('sage.quadratic_forms.qfsolve', ['qfsolve', 'qfparam'])
+
+from .con_number_field import ProjectiveConic_number_field
 
 
 class ProjectiveConic_rational_field(ProjectiveConic_number_field):
@@ -99,16 +96,16 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         The parameter ``algorithm``
         specifies the algorithm to be used:
 
-        - ``'qfsolve'`` -- Use PARI/GP function :pari:`qfsolve`
+        - ``'qfsolve'`` -- use PARI/GP function :pari:`qfsolve`
 
-        - ``'rnfisnorm'`` -- Use PARI's function :pari:`rnfisnorm`
+        - ``'rnfisnorm'`` -- use PARI's function :pari:`rnfisnorm`
           (cannot be combined with ``obstruction = True``)
 
-        - ``'local'`` -- Check if a local solution exists for all primes
+        - ``'local'`` -- check if a local solution exists for all primes
           and infinite places of `\QQ` and apply the Hasse principle
           (cannot be combined with ``point = True``)
 
-        - ``'default'`` -- Use ``'qfsolve'``
+        - ``'default'`` -- use ``'qfsolve'``
 
         - ``'magma'`` (requires Magma to be installed) --
           delegates the task to the Magma computer algebra system.
@@ -161,13 +158,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             if self._rational_point is not None:
                 if point or obstruction:
                     return True, self._rational_point
-                else:
-                    return True
+                return True
             if self._local_obstruction is not None:
                 if point or obstruction:
                     return False, self._local_obstruction
-                else:
-                    return False
+                return False
             if (not point) and self._finite_obstructions == [] and \
                self._infinite_obstructions == []:
                 if obstruction:
@@ -353,14 +348,14 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: # needs sage.libs.pari
             sage: R.<x,y,z> = QQ[]
             sage: C = Curve(7*x^2 + 2*y*z + z^2)
-            sage: (p, i) = C.parametrization(morphism=False); (p, i)
+            sage: p, i = C.parametrization(morphism=False); (p, i)
             ([-2*x*y, x^2 + 7*y^2, -2*x^2], [-1/2*x, 1/7*y + 1/14*z])
             sage: C.defining_polynomial()(p)
             0
             sage: i[0](p) / i[1](p)
             x/y
 
-        A :class:`ValueError` is raised if ``self`` has no rational point ::
+        A :exc:`ValueError` is raised if ``self`` has no rational point ::
 
             sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + 2*y^2 + z^2)
@@ -370,7 +365,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             ValueError: Conic Projective Conic Curve over Rational Field defined
             by x^2 + 2*y^2 + z^2 has no rational points over Rational Field!
 
-        A :class:`ValueError` is raised if ``self`` is not smooth ::
+        A :exc:`ValueError` is raised if ``self`` is not smooth ::
 
             sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + y^2)
@@ -389,7 +384,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                 point = self.rational_point()
             point = Sequence(point)
             Q = PolynomialRing(QQ, 'x,y')
-            [x, y] = Q.gens()
+            x, y = Q.gens()
             gens = self.ambient_space().gens()
             M = self.symmetric_matrix()
             M *= lcm([t.denominator() for t in M.list()])

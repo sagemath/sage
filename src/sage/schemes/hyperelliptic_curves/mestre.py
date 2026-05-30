@@ -13,25 +13,31 @@ AUTHORS:
 - Marco Streng
 
 """
-#*****************************************************************************
-#       Copyright (C) 2011, 2012, 2013
-#                  Florian Bouyer <f.j.s.c.bouyer@gmail.com>
-#                  Marco Streng <marco.streng@gmail.com>
-#
+# *****************************************************************************
+#       Copyright (C) 2011, 2012, 2013 Florian Bouyer <f.j.s.c.bouyer@gmail.com>
+#                                      Marco Streng <marco.streng@gmail.com>
+#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from sage.schemes.plane_conics.constructor import Conic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
+from sage.schemes.hyperelliptic_curves.constructor import (
+    HyperellipticCurve,
+)
+from sage.schemes.plane_conics.constructor import Conic
 
 
-def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
-                                       algorithm='default'):
+# TODO:
+# precision is unused
+def HyperellipticCurve_from_invariants(
+    i, reduced=True, precision=None, algorithm="default"
+):
     r"""
     Returns a hyperelliptic curve with the given Igusa-Clebsch invariants up to
     scaling.
@@ -153,6 +159,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     The output is the hyperelliptic curve `y^2 = f`.
     """
     from sage.structure.sequence import Sequence
+
     i = Sequence(i)
     k = i.universe()
     try:
@@ -164,45 +171,84 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     if k.is_finite():
         reduced = False
 
-    t = k['t'].gen()
+    t = k["t"].gen()
 
-    if algorithm == 'magma':
+    if algorithm == "magma":
         from sage.interfaces.magma import magma
         from sage.misc.sage_eval import sage_eval
-        if MConic.has_rational_point(algorithm='magma'):
-            parametrization = [l.replace('$.1', 't').replace('$.2', 'u')
-               for l in str(magma(MConic).Parametrization()).splitlines()[4:7]]
-            [F1, F2, F3] = [sage_eval(p, locals={'t': t, 'u': 1, 'a': k.gen()})
-                            for p in parametrization]
+
+        if MConic.has_rational_point(algorithm="magma"):
+            parametrization = [
+                l.replace("$.1", "t").replace("$.2", "u")
+                for l in str(magma(MConic).Parametrization()).splitlines()[4:7]
+            ]
+            [F1, F2, F3] = [
+                sage_eval(p, locals={"t": t, "u": 1, "a": k.gen()})
+                for p in parametrization
+            ]
         else:
-            raise ValueError(f"No such curve exists over {k} as there are no "
-                             f"rational points on {MConic}")
+            raise ValueError(
+                f"No such curve exists over {k} as there are no "
+                f"rational points on {MConic}"
+            )
+    elif MConic.has_rational_point():
+        parametrization = MConic.parametrization(morphism=False)[0]
+        [F1, F2, F3] = [p(t, 1) for p in parametrization]
     else:
-        if MConic.has_rational_point():
-            parametrization = MConic.parametrization(morphism=False)[0]
-            [F1, F2, F3] = [p(t, 1) for p in parametrization]
-        else:
-            raise ValueError(f"No such curve exists over {k} as there are no "
-                             f"rational points on {MConic}")
+        raise ValueError(
+            f"No such curve exists over {k} as there are no rational points on {MConic}"
+        )
 
     # setting the cijk from Mestre's algorithm
-    c111 = 12*x*y - 2*y/3 - 4*z
-    c112 = -18*x**3 - 12*x*y - 36*y**2 - 2*z
-    c113 = -9*x**3 - 36*x**2*y - 4*x*y - 6*x*z - 18*y**2
+    c111 = 12 * x * y - 2 * y / 3 - 4 * z
+    c112 = -18 * x**3 - 12 * x * y - 36 * y**2 - 2 * z
+    c113 = -9 * x**3 - 36 * x**2 * y - 4 * x * y - 6 * x * z - 18 * y**2
     c122 = c113
-    c123 = -54*x**4 - 36*x**2*y - 36*x*y**2 - 6*x*z - 4*y**2 - 24*y*z
-    c133 = -27*x**4/2 - 72*x**3*y - 6*x**2*y - 9*x**2*z - 39*x*y**2 - \
-           36*y**3 - 2*y*z
-    c222 = -27*x**4 - 18*x**2*y - 6*x*y**2 - 8*y**2/3 + 2*y*z
-    c223 = 9*x**3*y - 27*x**2*z + 6*x*y**2 + 18*y**3 - 8*y*z
-    c233 = -81*x**5/2 - 27*x**3*y - 9*x**2*y**2 - 4*x*y**2 + 3*x*y*z - 6*z**2
-    c333 = 27*x**4*y/2 - 27*x**3*z/2 + 9*x**2*y**2 + 3*x*y**3 - 6*x*y*z + \
-           4*y**3/3 - 10*y**2*z
+    c123 = (
+        -54 * x**4 - 36 * x**2 * y - 36 * x * y**2 - 6 * x * z - 4 * y**2 - 24 * y * z
+    )
+    c133 = (
+        -27 * x**4 / 2
+        - 72 * x**3 * y
+        - 6 * x**2 * y
+        - 9 * x**2 * z
+        - 39 * x * y**2
+        - 36 * y**3
+        - 2 * y * z
+    )
+    c222 = -27 * x**4 - 18 * x**2 * y - 6 * x * y**2 - 8 * y**2 / 3 + 2 * y * z
+    c223 = 9 * x**3 * y - 27 * x**2 * z + 6 * x * y**2 + 18 * y**3 - 8 * y * z
+    c233 = (
+        -81 * x**5 / 2
+        - 27 * x**3 * y
+        - 9 * x**2 * y**2
+        - 4 * x * y**2
+        + 3 * x * y * z
+        - 6 * z**2
+    )
+    c333 = (
+        27 * x**4 * y / 2
+        - 27 * x**3 * z / 2
+        + 9 * x**2 * y**2
+        + 3 * x * y**3
+        - 6 * x * y * z
+        + 4 * y**3 / 3
+        - 10 * y**2 * z
+    )
 
     # writing out the hyperelliptic curve polynomial
-    f = c111*F1**3 + c112*F1**2*F2 + c113*F1**2*F3 + c122*F1*F2**2 + \
-        c123*F1*F2*F3 + c133*F1*F3**2 + c222*F2**3 + c223*F2**2*F3 + \
-        c233*F2*F3**2 + c333*F3**3
+    f = (
+        c111 * F1**3
+        + c112 * F1**2 * F2
+        + c113 * F1**2 * F3
+        + c122 * F1 * F2**2
+        + c123 * F1 * F2 * F3
+        + c133 * F1 * F3**2
+        + c222 * F2**3
+        + c223 * F2**2 * F3
+        + c233 * F2 * F3**2
+        + c333 * F3**3
+    )
 
     try:
         f = f * f.denominator()  # clear the denominator
@@ -210,14 +256,16 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
         pass
 
     if reduced:
-        raise NotImplementedError("Reduction of hyperelliptic curves not "
-                                  "yet implemented. "
-                                  "See issues #14755 and #14756.")
+        raise NotImplementedError(
+            "Reduction of hyperelliptic curves not "
+            "yet implemented. "
+            "See issues #14755 and #14756."
+        )
 
     return HyperellipticCurve(f)
 
 
-def Mestre_conic(i, xyz=False, names='u,v,w'):
+def Mestre_conic(i, xyz=False, names="u,v,w"):
     r"""
     Return the conic equation from Mestre's algorithm given the Igusa-Clebsch
     invariants.
@@ -229,9 +277,9 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2, I4, I6, I10
-    - ``xyz`` - Boolean (default: ``False``) if ``True``, the algorithm also
-      returns three invariants `x`,`y`,`z` used in Mestre's algorithm
-    - ``names`` (default: ``'u,v,w'``) - the variable names for the conic
+    - ``xyz`` - Boolean (default: False) if True, the algorithm also
+      returns three invariants x,y,z used in Mestre's algorithm
+    - ``names`` (default: 'u,v,w') - the variable names for the conic
 
     OUTPUT:
 
@@ -280,6 +328,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     """
     from sage.structure.sequence import Sequence
+
     k = Sequence(i).universe()
     try:
         k = k.fraction_field()
@@ -288,18 +337,36 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     I2, I4, I6, I10 = i
 
-    #Setting x,y,z as in Mestre's algorithm (Using Lauter and Yang's formulas)
-    x = 8*(1 + 20*I4/(I2**2))/225
-    y = 16*(1 + 80*I4/(I2**2) - 600*I6/(I2**3))/3375
-    z = -64*(-10800000*I10/(I2**5) - 9 - 700*I4/(I2**2) + 3600*I6/(I2**3) +
-              12400*I4**2/(I2**4) - 48000*I4*I6/(I2**5))/253125
+    # Setting x,y,z as in Mestre's algorithm (Using Lauter and Yang's formulas)
+    x = 8 * (1 + 20 * I4 / (I2**2)) / 225
+    y = 16 * (1 + 80 * I4 / (I2**2) - 600 * I6 / (I2**3)) / 3375
+    z = (
+        -64
+        * (
+            -10800000 * I10 / (I2**5)
+            - 9
+            - 700 * I4 / (I2**2)
+            + 3600 * I6 / (I2**3)
+            + 12400 * I4**2 / (I2**4)
+            - 48000 * I4 * I6 / (I2**5)
+        )
+        / 253125
+    )
 
-    L = Matrix([[x+6*y     , 6*x**2+2*y         , 2*z                      ],
-                [6*x**2+2*y, 2*z                , 9*x**3 + 4*x*y + 6*y**2  ],
-                [2*z       , 9*x**3+4*x*y+6*y**2, 6*x**2*y + 2*y**2 + 3*x*z]])
+    L = Matrix(
+        [
+            [x + 6 * y, 6 * x**2 + 2 * y, 2 * z],
+            [6 * x**2 + 2 * y, 2 * z, 9 * x**3 + 4 * x * y + 6 * y**2],
+            [
+                2 * z,
+                9 * x**3 + 4 * x * y + 6 * y**2,
+                6 * x**2 * y + 2 * y**2 + 3 * x * z,
+            ],
+        ]
+    )
 
     try:
-        L = L*L.denominator()  # clears the denominator
+        L = L * L.denominator()  # clears the denominator
     except (AttributeError, TypeError):
         pass
 

@@ -24,7 +24,7 @@ def conway_polynomial(p, n):
     Return the Conway polynomial of degree `n` over ``GF(p)``.
 
     If the requested polynomial is not known, this function raises a
-    ``RuntimeError`` exception.
+    :exc:`RuntimeError` exception.
 
     INPUT:
 
@@ -64,6 +64,7 @@ def conway_polynomial(p, n):
     except KeyError:
         raise RuntimeError("requested Conway polynomial not in database.")
 
+
 def exists_conway_polynomial(p, n):
     """
     Check whether the Conway polynomial of degree `n` over ``GF(p)``
@@ -99,6 +100,7 @@ def exists_conway_polynomial(p, n):
     except ImportError:
         return False
 
+
 class PseudoConwayLattice(WithEqualityById, SageObject):
     r"""
     A pseudo-Conway lattice over a given finite prime field.
@@ -133,7 +135,6 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
         sage: PCL = PseudoConwayLattice(2, use_database=False)
         sage: PCL.polynomial(3)   # random
@@ -161,13 +162,11 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         """
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(3)
             sage: PCL.polynomial(3)  # random
             x^3 + 2*x + 1
 
-            sage: # needs sage.rings.finite_rings
             sage: PCL = PseudoConwayLattice(5, use_database=False)
             sage: PCL.polynomial(12)  # random
             x^12 + 4*x^11 + 2*x^10 + 4*x^9 + 2*x^8 + 2*x^7 + 4*x^6 + x^5 + 2*x^4 + 2*x^2 + x + 2
@@ -199,9 +198,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         - ``n`` -- positive integer
 
-        OUTPUT:
-
-        - a pseudo-Conway polynomial of degree `n` for the prime `p`.
+        OUTPUT: a pseudo-Conway polynomial of degree `n` for the prime `p`
 
         ALGORITHM:
 
@@ -212,7 +209,6 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
             sage: PCL.polynomial(3)   # random
@@ -281,7 +277,6 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
             sage: PCL.check_consistency(6)
@@ -305,25 +300,20 @@ def _find_pow_of_frobenius(p, n, x, y):
     - ``n`` -- positive integer
 
     - ``x`` -- an element of a field `K` of `p^n` elements so that
-      the multiplicative order of `x` is `p^n - 1`.
+      the multiplicative order of `x` is `p^n - 1`
 
-    - ``y`` -- an element of `K` with the same minimal polynomial as
-      `x`.
+    - ``y`` -- an element of `K` with the same minimal polynomial as `x`
 
-    OUTPUT:
-
-    - an element `i` of the integers modulo `n` such that `x = y^{p^i}`.
+    OUTPUT: an element `i` of the integers modulo `n` such that `x = y^{p^i}`
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import _find_pow_of_frobenius
         sage: K.<a> = GF(3^14)
         sage: x = K.multiplicative_generator()
         sage: y = x^27
         sage: _find_pow_of_frobenius(3, 14, x, y)
         11
-
     """
     from .integer_mod import mod
     for i in range(n):
@@ -333,6 +323,7 @@ def _find_pow_of_frobenius(p, n, x, y):
     else:
         raise RuntimeError("No appropriate power of Frobenius found")
     return mod(i, n)
+
 
 def _crt_non_coprime(running, a):
     """
@@ -350,23 +341,22 @@ def _crt_non_coprime(running, a):
         Traceback (most recent call last):
         ...
         AssertionError
-
     """
     g = running.modulus().gcd(a.modulus())
     if g == 1:
         return running.crt(a)
-    else:
-        assert running % g == a % g
-        running_modulus = running.modulus()
-        a_modulus = a.modulus()
-        for qq in g.prime_divisors():
-            a_val_unit = a_modulus.val_unit(qq)
-            running_val_unit = running_modulus.val_unit(qq)
-            if a_val_unit[0] > running_val_unit[0]:
-                running_modulus = running_val_unit[1]
-            else:
-                a_modulus = a_val_unit[1]
-        return (running % running_modulus).crt(a % a_modulus)
+    assert running % g == a % g
+    running_modulus = running.modulus()
+    a_modulus = a.modulus()
+    for qq in g.prime_divisors():
+        a_val_unit = a_modulus.val_unit(qq)
+        running_val_unit = running_modulus.val_unit(qq)
+        if a_val_unit[0] > running_val_unit[0]:
+            running_modulus = running_val_unit[1]
+        else:
+            a_modulus = a_val_unit[1]
+    return (running % running_modulus).crt(a % a_modulus)
+
 
 def _frobenius_shift(K, generators, check_only=False):
     """
@@ -387,16 +377,15 @@ def _frobenius_shift(K, generators, check_only=False):
 
     - ``K`` -- a finite field of degree `n` over its prime field
 
-    - ``generators`` -- a dictionary, indexed by prime divisors `q` of
+    - ``generators`` -- dictionary, indexed by prime divisors `q` of
       `n`, whose entries are elements of `K` satisfying the `n/q`
-      pseudo-Conway polynomial.
+      pseudo-Conway polynomial
 
     - ``check_only`` -- if ``True``, just check that the given
-      generators form a compatible system.
+      generators form a compatible system
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl sage.rings.finite_rings
         sage: R.<x> = GF(2)[]
         sage: f30 = x^30 + x^28 + x^27 + x^25 + x^24 + x^20 + x^19 + x^18 + x^16 + x^15 + x^12 + x^10 + x^7 + x^2 + 1
         sage: f20 = x^20 + x^19 + x^15 + x^13 + x^12 + x^11 + x^9 + x^8 + x^7 + x^4 + x^2 + x + 1
@@ -414,7 +403,6 @@ def _frobenius_shift(K, generators, check_only=False):
         13
         sage: _find_pow_of_frobenius(2, 12, x12, generators[5])
         8
-
     """
     if len(generators) == 1:
         return generators
@@ -433,7 +421,7 @@ def _frobenius_shift(K, generators, check_only=False):
                 q, x = compatible[m].popitem()
             except KeyError:
                 break
-            for qq, xx in compatible[m].items():
+            for xx in compatible[m].values():
                 assert x == xx
         return
     crt = {}
@@ -476,7 +464,7 @@ def _frobenius_shift(K, generators, check_only=False):
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
                     return [j]
-                elif j not in searched:
+                if j not in searched:
                     crt_possibles.append(j)
         for j in crt_possibles:
             path = find_leveller(qindex, level, x, xleveled, searched, j)

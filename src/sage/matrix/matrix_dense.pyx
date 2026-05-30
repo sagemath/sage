@@ -5,7 +5,7 @@ TESTS::
 
     sage: R.<a,b> = QQ[]
     sage: m = matrix(R,2,[0,a,b,b^2])
-    sage: TestSuite(m).run(skip="_test_minpoly")
+    sage: TestSuite(m).run(skip='_test_minpoly')
 """
 
 cimport sage.matrix.matrix as matrix
@@ -13,6 +13,7 @@ cimport sage.matrix.matrix as matrix
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 import sage.matrix.matrix_space
 import sage.structure.sequence
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 cdef class Matrix_dense(matrix.Matrix):
@@ -74,7 +75,6 @@ cdef class Matrix_dense(matrix.Matrix):
 
         Check :issue:`27629`::
 
-            sage: # needs sage.symbolic
             sage: var('x')
             x
             sage: assume(x, 'real')
@@ -97,7 +97,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def transpose(self):
         """
-        Returns the transpose of self, without changing self.
+        Return the transpose of ``self``, without changing ``self``.
 
         EXAMPLES: We create a matrix, compute its transpose, and note that
         the original matrix is not changed.
@@ -114,7 +114,7 @@ cdef class Matrix_dense(matrix.Matrix):
             [1 2]
             [3 4]
 
-        ``.T`` is a convenient shortcut for the transpose::
+        :attr:`~sage.matrix.matrix2.Matrix.T` is a convenient shortcut for the transpose::
 
            sage: A.T
            [1 3]
@@ -138,7 +138,7 @@ cdef class Matrix_dense(matrix.Matrix):
         cdef Py_ssize_t i, j
         for j from 0<= j < nc:
             for i from 0<= i < nr:
-                trans.set_unsafe(j,i,self.get_unsafe(i,j))
+                trans.copy_from_unsafe(j, i, self, i, j)
 
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
@@ -147,7 +147,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def antitranspose(self):
         """
-        Returns the antitranspose of self, without changing self.
+        Return the antitranspose of ``self``, without changing ``self``.
 
         EXAMPLES::
 
@@ -171,19 +171,19 @@ cdef class Matrix_dense(matrix.Matrix):
             [4|1]
             [3|0]
         """
-        (nc, nr) = (self.ncols(), self.nrows())
+        nc, nr = self.ncols(), self.nrows()
         cdef Matrix_dense atrans
-        atrans = self.new_matrix(nrows = nc, ncols = nr,
+        atrans = self.new_matrix(nrows=nc, ncols=nr,
                                  copy=False, coerce=False)
-        cdef Py_ssize_t i,j
-        cdef Py_ssize_t ri,rj # reversed i and j
+        cdef Py_ssize_t i, j
+        cdef Py_ssize_t ri, rj # reversed i and j
         rj = nc
         for j from 0 <= j < nc:
             ri = nr
-            rj = rj-1
+            rj -= 1
             for i from 0 <= i < nr:
-                ri = ri-1
-                atrans.set_unsafe(j , i, self.get_unsafe(ri,rj))
+                ri -= 1
+                atrans.copy_from_unsafe(j, i, self, ri, rj)
 
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
@@ -210,7 +210,7 @@ cdef class Matrix_dense(matrix.Matrix):
                 e2 = self.get_unsafe(nrows - i - 1, ncols - j - 1)
                 self.set_unsafe(i, j, e2)
                 self.set_unsafe(nrows - i - 1, ncols - j - 1, e1)
-        if nrows % 2 == 1:
+        if nrows % 2:
             i = nrows // 2
             for j in range(ncols // 2):
                 e1 = self.get_unsafe(i, j)
@@ -220,7 +220,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def _elementwise_product(self, right):
         r"""
-        Returns the elementwise product of two dense
+        Return the elementwise product of two dense
         matrices with identical base rings.
 
         This routine assumes that ``self`` and ``right``
@@ -256,8 +256,8 @@ cdef class Matrix_dense(matrix.Matrix):
         prod = self.new_matrix(nr, nc, copy=False, coerce=False)
         for r in range(nr):
             for c in range(nc):
-                entry = self.get_unsafe(r,c)*other.get_unsafe(r,c)
-                prod.set_unsafe(r,c,entry)
+                entry = self.get_unsafe(r, c)*other.get_unsafe(r, c)
+                prod.set_unsafe(r, c, entry)
         return prod
 
     def _derivative(self, var=None, R=None):
@@ -275,11 +275,19 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
+
+        TESTS:
+
+        Verify that :issue:`15067` is fixed::
+
+            sage: u = matrix(1, 2, [-1, 1])
+            sage: derivative(u, x)
+            [0 0]
         """
         # We could just use apply_map
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [z.derivative(var) for z in self.list()]
+        v = [sage.calculus.functional.derivative(z, var) for z in self.list()]
         if R is None:
             v = sage.structure.sequence.Sequence(v)
             R = v.universe()
@@ -290,9 +298,9 @@ cdef class Matrix_dense(matrix.Matrix):
             image.subdivide(*self.subdivisions())
         return image
 
-    def _multiply_classical(left, matrix.Matrix right):
+    def _multiply_classical(self, matrix.Matrix right):
         """
-        Multiply the matrices left and right using the classical `O(n^3)`
+        Multiply the matrices self and right using the classical `O(n^3)`
         algorithm.
 
         This method will almost always be overridden either by the
@@ -321,14 +329,13 @@ cdef class Matrix_dense(matrix.Matrix):
             ArithmeticError: number of columns of left must equal number of rows of right
         """
         cdef Py_ssize_t i, j, k
-        if left._ncols != right._nrows:
-            raise ArithmeticError("number of columns of left must equal number of rows of right")
-        zero = left.base_ring().zero()
-        cdef matrix.Matrix res = left.new_matrix(nrows=left._nrows, ncols=right._ncols)
-        for i in range(left._nrows):
+        check_matrix_multiplication_sizes(self, right)
+        zero = self.base_ring().zero()
+        cdef matrix.Matrix res = self.new_matrix(nrows=self._nrows, ncols=right._ncols)
+        for i in range(self._nrows):
             for j in range(right._ncols):
                 dotp = zero
-                for k in range(left._ncols):
-                    dotp += left.get_unsafe(i, k) * right.get_unsafe(k, j)
+                for k in range(self._ncols):
+                    dotp += self.get_unsafe(i, k) * right.get_unsafe(k, j)
                 res.set_unsafe(i, j, dotp)
         return res

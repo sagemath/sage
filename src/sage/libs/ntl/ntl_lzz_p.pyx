@@ -4,7 +4,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_p.pyx
 
@@ -86,51 +85,51 @@ cdef class ntl_zz_p():
         else:
             p_sage = Integer(self.c.p)
 
-        #self.c.restore_c()   ## This was done in __new__
+        # self.c.restore_c()   # This was done in __new__
 
         if isinstance(a, IntegerMod_int):
-            if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
+            if (self.c.p == (<IntegerMod_int>a)._modulus.int32):  # this is slow
                 self.x = (<IntegerMod_int>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_int64):
-            if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
+            if (self.c.p == (<IntegerMod_int64>a)._modulus.int64):  # this is slow
                 self.x = (<IntegerMod_int64>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_gmp):
-            if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
+            if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger):  # this is slow
                 self.x = mpz_get_si((<IntegerMod_gmp>a).value)
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, Integer):
-            self.x = mpz_get_si((<Integer>a).value)%self.c.p
+            self.x = mpz_get_si((<Integer>a).value) % self.c.p
 
         elif isinstance(a, int):
-            ## we're lucky that python int is no larger than long
-            self.x = (<long>a)%self.c.p
+            # we are lucky that python int is no larger than long
+            self.x = (<long>a) % self.c.p
         else:
             a = Integer(a)
-            self.x = mpz_get_si((<Integer>a).value)%self.c.p
+            self.x = mpz_get_si((<Integer>a).value) % self.c.p
 
         return
 
     def __cinit__(self, v=None, modulus=None):
-        #################### WARNING ###################
-        ## Before creating a zz_p, you must create a  ##
-        ## zz_pContext, and restore it.  In Python,   ##
-        ## the error checking in __init__ will prevent##
-        ## you from constructing a zz_p               ##
-        ## inappropriately.  However, from Cython, you##
-        ## could do r = ntl_zz_p.__new__(ntl_zz_p) without
-        ## first restoring a zz_pContext, which could ##
-        ## have unfortunate consequences.  See _new  ##
-        ## defined below for an example of the right  ##
-        ## way to short-circuit __init__ (or just call##
-        ## _new in your own code).                    ##
+        ################### WARNING ####################
+        # Before creating a zz_p, you must create a    #
+        # zz_pContext, and restore it.  In Python,     #
+        # the error checking in __init__ will prevent  #
+        # you from constructing a zz_p                 #
+        # inappropriately.  However, from Cython, you  #
+        # could do r = ntl_zz_p.__new__(ntl_zz_p) without
+        # first restoring a zz_pContext, which could   #
+        # have unfortunate consequences.  See _new     #
+        # defined below for an example of the right    #
+        # way to short-circuit __init__ (or just call  #
+        # _new in your own code).                      #
         ################################################
         if modulus is None:
             return
@@ -179,7 +178,7 @@ cdef class ntl_zz_p():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -260,7 +259,7 @@ cdef class ntl_zz_p():
 
     def __pow__(ntl_zz_p self, long n, ignored):
         """
-        Return the n-th nonnegative power of self.
+        Return the `n`-th nonnegative power of ``self``.
 
         EXAMPLES::
 
@@ -303,7 +302,7 @@ cdef class ntl_zz_p():
 
     def __neg__(self):
         """
-        Return the negative of self.
+        Return the negative of ``self``.
 
         EXAMPLES::
 
@@ -319,7 +318,7 @@ cdef class ntl_zz_p():
 
     def __richcmp__(ntl_zz_p self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -350,7 +349,7 @@ cdef class ntl_zz_p():
 
     def __int__(self):
         """
-        Return self as an int.
+        Return ``self`` as an int.
 
         EXAMPLES::
 
@@ -381,7 +380,7 @@ cdef class ntl_zz_p():
 
     def is_zero(self):
         """
-        Return True exactly if this element is 0.
+        Return ``True`` exactly if this element is 0.
 
         EXAMPLES::
 
@@ -397,7 +396,7 @@ cdef class ntl_zz_p():
 
     def is_one(self):
         """
-        Return True exactly if this element is 1.
+        Return ``True`` exactly if this element is 1.
 
         EXAMPLES::
 

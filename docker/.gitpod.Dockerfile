@@ -6,7 +6,7 @@ RUN apt update && apt-get install -yq --no-install-recommends sudo gpg curl lsb-
 
 # Make Docker available, like the default gitpod image does
 # from https://github.com/gitpod-io/workspace-images/blob/main/chunks/tool-docker/Dockerfile @ 3f0988f2d06768d22d0aa1454ef0e963b0db65f3
-# - removed unneccessary "sudo"
+# - removed unnecessary "sudo"
 # - replaced use of "install-packages" (https://github.com/gitpod-io/workspace-images/blob/main/base/install-packages)
 # https://docs.docker.com/engine/install/ubuntu/
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \

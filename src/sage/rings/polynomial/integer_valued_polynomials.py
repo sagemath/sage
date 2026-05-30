@@ -25,7 +25,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -36,7 +36,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
     The integer-valued polynomial ring over a base ring `R`.
 
     Integer-valued polynomial rings are commutative and associative
-    algebras, with a basis indexed by non-negative integers.
+    algebras, with a basis indexed by nonnegative integers.
 
     There are two natural bases, made of the sequence
     `\binom{x}{n}` for `n \geq 0` (the *binomial basis*) and of
@@ -75,7 +75,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         ...
         TypeError: argument R must be a commutative ring
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -88,7 +88,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         cat = Algebras(R).Commutative().WithBasis()
         Parent.__init__(self, base=R, category=cat.WithRealizations())
 
-    _shorthands = ["B", "S"]
+    _shorthands = ("B", "S")
 
     def _repr_(self) -> str:
         r"""
@@ -189,7 +189,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 Convert a polynomial into the ring of integer-valued polynomials.
 
-                This raises a :class:`ValueError` if this is not possible.
+                This raises a :exc:`ValueError` if this is not possible.
 
                 INPUT:
 
@@ -262,7 +262,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 return self.algebra_generators()[0]
 
             @cached_method
-            def algebra_generators(self):
+            def algebra_generators(self) -> AbstractFamily:
                 r"""
                 Return the generators of this algebra.
 
@@ -331,7 +331,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `j` -- integer (default: 1)
+                - ``j`` -- integer (default: 1)
 
                 In the binomial basis, the shift by 1 corresponds to
                 a summation operator from `0` to `x`.
@@ -456,7 +456,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             sage: 1 - S[2] * S[2] / 2
             S[0] - 1/2*S[2] + 3*S[3] - 3*S[4]
         """
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             Initialize ``self``.
 
@@ -470,7 +470,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, A.base_ring(),
                                              NonNegativeIntegers(),
                                              category=A.Bases(),
-                                             prefix="S",
+                                             prefix='S',
                                              latex_prefix=r"\mathbb{S}")
 
         def _realization_name(self) -> str:
@@ -514,7 +514,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -537,7 +537,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``h`` -- a tuple or vector
+            - ``h`` -- tuple or vector
 
             .. SEEALSO:: :meth:`Element.h_vector`
 
@@ -552,10 +552,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             d = len(h) - 1
             m = matrix(QQ, d + 1, d + 1,
                        lambda j, i: (-1)**(d - j) * binomial(d - i, d - j))
-            v = vector(QQ, [h[i] for i in range(d + 1)])
             R = self.base_ring()
-            return self._from_dict({i: R(c)
-                                    for i, c in enumerate(m * v)})
+            v = vector(R, [h[i] for i in range(d + 1)])
+            return self._from_dict(dict(enumerate(m * v)))
 
         def _element_constructor_(self, x):
             r"""
@@ -692,7 +691,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -700,7 +699,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: F._poly(4)
                 1/24*x^4 + 5/12*x^3 + 35/24*x^2 + 25/12*x + 1
             """
-            x = polygen(QQ, 'x')
+            x = polygen(self.base_ring(), 'x')
             return binomial(x + i, i)
 
         class Element(CombinatorialFreeModule.Element):
@@ -757,7 +756,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `k` -- integer (default: 1)
+                - ``k`` -- integer (default: 1)
 
                 EXAMPLES::
 
@@ -809,7 +808,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 return QQ.sum(c / QQ(i) for i, c in self if i)
 
-            def h_vector(self):
+            def h_vector(self) -> vector:
                 """
                 Return the numerator of the generating series of values.
 
@@ -825,10 +824,11 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: ex.h_vector()
                     (0, 1, 4, 1)
                 """
-                d = max(self.support(), default=-1)
+                d = ZZ(max(self.support(), default=-1))
                 m = matrix(QQ, d + 1, d + 1,
                            lambda j, i: (-1)**(d - j) * (d - i).binomial(d - j))
-                v = vector(QQ, [self.coefficient(i) for i in range(d + 1)])
+                v = vector(self.base_ring(),
+                           [self.coefficient(i) for i in range(d + 1)])
                 return m * v
 
             def h_polynomial(self):
@@ -981,7 +981,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             CombinatorialFreeModule.__init__(self, A.base_ring(),
                                              NonNegativeIntegers(),
-                                             latex_prefix="",
+                                             latex_prefix='',
                                              category=A.Bases())
 
         def _realization_name(self) -> str:
@@ -1026,7 +1026,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -1174,7 +1174,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an integer
+            - ``i`` -- integer
 
             EXAMPLES::
 
@@ -1195,7 +1195,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - `k` -- integer (default: 1)
+                - ``k`` -- integer (default: 1)
 
                 EXAMPLES::
 

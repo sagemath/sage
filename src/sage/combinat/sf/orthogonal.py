@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Orthogonal Symmetric Functions
+Orthogonal symmetric functions
 
 AUTHORS:
 
@@ -21,10 +21,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import sfa
-import sage.libs.lrcalc.lrcalc as lrcalc
 from sage.combinat.partition import Partitions
+from sage.libs.lrcalc import lrcalc
 from sage.misc.cachefunc import cached_method
+
+from . import sfa
 
 
 class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
@@ -203,13 +204,14 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
         """
         R = self.base_ring()
         n = sum(lam)
-        return self._s._from_dict({ mu: R.sum( (-1)**j * lrcalc.lrcoef_unsafe(lam, mu, nu)
-                                               for nu in Partitions(2*j)
-                                                   if all(nu.arm_length(i,i) == nu.leg_length(i,i)+1
-                                                          for i in range(nu.frobenius_rank()))
-                                             )
-                                    for j in range(n//2+1) # // 2 for horizontal dominoes
-                                    for mu in Partitions(n-2*j) })
+        return self._s._from_dict(
+            {mu: R.sum((-1)**j * lrcalc.lrcoef_unsafe(lam, mu, nu)
+                       for nu in Partitions(2 * j)
+                       if all(nu.arm_length(i, i) == nu.leg_length(i, i) + 1
+                              for i in range(nu.frobenius_rank()))
+                       )
+             for j in range(n // 2 + 1)  # // 2 for horizontal dominoes
+             for mu in Partitions(n - 2 * j)})
 
     @cached_method
     def _s_to_o_on_basis(self, lam):
@@ -221,9 +223,7 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``s[lam]`` in the orthogonal basis ``self``
+        OUTPUT: the expansion of ``s[lam]`` in the orthogonal basis ``self``
 
         EXAMPLES::
 

@@ -28,6 +28,7 @@ from sage.rings.rational_field import QQ
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
@@ -39,8 +40,9 @@ from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.categories.sets_cat import Sets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.combination import Combinations
+
+lazy_import('sage.combinat.root_system.cartan_type', 'CartanType')
 
 
 class ShiftedPrimedTableau(ClonableArray,
@@ -262,7 +264,7 @@ class ShiftedPrimedTableau(ClonableArray,
             sage: s.is_standard()
             True
         """
-        flattened = set([i for row in self for i in row if i is not None])
+        flattened = {i for row in self for i in row if i is not None}
         if len(flattened) != sum(len(row) - row.count(None) for row in self):
             return False
 
@@ -282,7 +284,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -309,7 +311,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -747,8 +749,7 @@ class ShiftedPrimedTableau(ClonableArray,
         """
         if self._skew is None:
             return Partition(self.restriction_outer_shape(n))
-        else:
-            return SkewPartition([self.restriction_outer_shape(n), self._skew])
+        return SkewPartition([self.restriction_outer_shape(n), self._skew])
 
     def to_chain(self):
         """
@@ -936,9 +937,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
 
         - ``ind`` -- element in the index set of the crystal
 
-        OUTPUT:
-
-        Primed tableau or ``None``.
+        OUTPUT: primed tableau or ``None``
 
         EXAMPLES::
 
@@ -1052,12 +1051,11 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
             if len(ones) == 0:
                 return None
             # otherwise, f_{-1} changes last 1 in first row to 2' (if off diagonal) or 2 (if on diagonal)
-            else:
-                r, c = ones[-1]
-                assert r == 0
-                T[r][c] = PrimedEntry('2p') if r != c else PrimedEntry(2)
-                T = [tuple(elmt for elmt in row if elmt is not None) for row in T]
-                return type(self)(self.parent(), T, check=False, preprocessed=True)
+            r, c = ones[-1]
+            assert r == 0
+            T[r][c] = PrimedEntry('2p') if r != c else PrimedEntry(2)
+            T = [tuple(elmt for elmt in row if elmt is not None) for row in T]
+            return type(self)(self.parent(), T, check=False, preprocessed=True)
 
         read_word = [num for num in self._reading_word_with_positions()
                      if num[1] == ind or num[1] == ind+1]
@@ -1089,7 +1087,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
         h, l = len(T), len(T[0])
 
         if (c+1 == l or T[r][c+1] is None or T[r][c+1] >= ind_plus_one):
-            (tp_r, tp_c) = (r, c)
+            tp_r, tp_c = (r, c)
             while True:
                 if tp_r+1 == h or T[tp_r+1][tp_c] is None or T[tp_r+1][tp_c] > ind_plus_one:
                     break
@@ -1131,9 +1129,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
 
         - ``ind`` -- an element in the index set of the crystal
 
-        OUTPUT:
-
-        Primed tableau or ``None``.
+        OUTPUT: primed tableau or ``None``
 
         EXAMPLES::
 
@@ -1226,8 +1222,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
                 if T[0][0] != PrimedEntry(2):
                     return None
                 # if tableau has no 2' but first diagonal entry is 2, then e_{-1} changes this to 1
-                else:
-                    T[0][0] = PrimedEntry(1)
+                T[0][0] = PrimedEntry(1)
             # if tableau has at least one 2', then e_{-1} changes the first 2' to 1
             else:
                 r, c = two_primes[0]
@@ -1265,7 +1260,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
             r, c = c, r
 
         if (c == 0 or T[r][c-1] is None or T[r][c-1] <= ind_e):
-            (tp_r, tp_c) = (r, c)
+            tp_r, tp_c = (r, c)
             while True:
                 if tp_r == 0 or T[tp_r-1][tp_c] is None or T[tp_r-1][tp_c] < ind_e:
                     break
@@ -1361,7 +1356,7 @@ class PrimedEntry(SageObject):
 
     INPUT:
 
-    - ``entry`` -- a half integer or a string of an integer
+    - ``entry`` -- half integer or string of an integer
       possibly ending in ``p`` or ``'``
     - ``double`` -- the doubled value
     """
@@ -1434,8 +1429,7 @@ class PrimedEntry(SageObject):
         """
         if self.is_unprimed():
             return repr(self._entry // 2)
-        else:
-            return repr((self._entry+1) // 2) + "'"
+        return repr((self._entry+1) // 2) + "'"
 
     def integer(self):
         """
@@ -1535,7 +1529,7 @@ class PrimedEntry(SageObject):
 
     def is_unprimed(self):
         """
-        Checks if ``self`` is an unprimed element.
+        Check if ``self`` is an unprimed element.
 
         TESTS::
 
@@ -1548,7 +1542,7 @@ class PrimedEntry(SageObject):
 
     def is_primed(self):
         """
-        Checks if ``self`` is a primed element.
+        Check if ``self`` is a primed element.
 
         TESTS::
 
@@ -1572,8 +1566,7 @@ class PrimedEntry(SageObject):
         """
         if self.is_unprimed():
             return self
-        else:
-            return PrimedEntry(double=self._entry + 1)
+        return PrimedEntry(double=self._entry + 1)
 
     def primed(self):
         """
@@ -1588,8 +1581,7 @@ class PrimedEntry(SageObject):
         """
         if self.is_unprimed():
             return PrimedEntry(double=self._entry - 1)
-        else:
-            return self
+        return self
 
     def increase_half(self):
         """
@@ -1646,7 +1638,7 @@ class PrimedEntry(SageObject):
 
 class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
     r"""
-    Returns the combinatorial class of shifted primed tableaux subject
+    Return the combinatorial class of shifted primed tableaux subject
     to the constraints given by the arguments.
 
     A primed tableau is a tableau of shifted shape on the alphabet
@@ -1838,17 +1830,15 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
                 if max_entry is not None:
                     raise ValueError("specify shape or weight argument")
                 return ShiftedPrimedTableaux_all(skew=skew, primed_diagonal=primed_diagonal)
-            else:
-                return ShiftedPrimedTableaux_weight(weight, skew=skew, primed_diagonal=primed_diagonal)
-        else:
-            if weight is None:
-                return ShiftedPrimedTableaux_shape(shape, max_entry=max_entry, skew=skew, primed_diagonal=primed_diagonal)
+            return ShiftedPrimedTableaux_weight(weight, skew=skew, primed_diagonal=primed_diagonal)
+        if weight is None:
+            return ShiftedPrimedTableaux_shape(shape, max_entry=max_entry, skew=skew, primed_diagonal=primed_diagonal)
 
-            if (skew is not None and sum(shape) - sum(skew) != sum(weight)
-                    or skew is None and sum(shape) != sum(weight)):
-                raise ValueError("weight and shape are incompatible")
+        if (skew is not None and sum(shape) - sum(skew) != sum(weight)
+                or skew is None and sum(shape) != sum(weight)):
+            raise ValueError("weight and shape are incompatible")
 
-            return ShiftedPrimedTableaux_weight_shape(weight, shape, skew=skew, primed_diagonal=primed_diagonal)
+        return ShiftedPrimedTableaux_weight_shape(weight, shape, skew=skew, primed_diagonal=primed_diagonal)
 
     def __init__(self, skew=None, primed_diagonal=False):
         """
@@ -1871,9 +1861,7 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
 
         - ``T`` -- data which can be interpreted as a primed tableau
 
-        OUTPUT:
-
-        - the corresponding primed tableau object
+        OUTPUT: the corresponding primed tableau object
 
         EXAMPLES::
 
@@ -1987,11 +1975,9 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
                        for j in range(skew[i], len(row)-1)
                        if row[j].is_primed()):
                 return False
-        if not (self._primed_diagonal or all(row[0].is_unprimed()
-                   for i, row in enumerate(T)
-                   if skew[i] == 0)):
-            return False
-        return True
+        return self._primed_diagonal or all(row[0].is_unprimed()
+                                            for i, row in enumerate(T)
+                                            if skew[i] == 0)
 
 
 class ShiftedPrimedTableaux_all(ShiftedPrimedTableaux):
@@ -2720,9 +2706,11 @@ def _add_strip(sub_tab, full_tab, length):
             if sub_tab and len(sub_tab) < len(full_tab):
                 plat_list.append(min(sub_tab[-1] + primed_strip[-2] - 1,
                                      full_tab[len(sub_tab)]))
-            for row in reversed(range(1, len(sub_tab))):
-                plat_list.append(min(sub_tab[row-1]+primed_strip[row-1]-1, full_tab[row])
-                                 - sub_tab[row] - primed_strip[row])
+            plat_list.extend(
+                min(sub_tab[row-1] + primed_strip[row-1] - 1, full_tab[row])
+                - sub_tab[row] - primed_strip[row]
+                for row in reversed(range(1, len(sub_tab))))
+
             if sub_tab:
                 plat_list.append(full_tab[0] - sub_tab[0] - primed_strip[0])
             else:

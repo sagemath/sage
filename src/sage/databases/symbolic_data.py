@@ -58,7 +58,6 @@ EXAMPLES::
 AUTHORS:
 
 - Martin Albrecht (2007-02-19): initial version
-
 """
 
 # ****************************************************************************
@@ -92,12 +91,18 @@ class SymbolicData:
             sage: sd = SymbolicData(); sd # optional - database_symbolic_data
             SymbolicData with 372 ideals
         """
-        from sage.env import SAGE_SHARE
-        path = os.path.join(SAGE_SHARE, 'symbolic_data')
-        self.__intpath = path + "/Data/XMLResources/INTPS/"
-        self.__genpath = path + "/Data/XMLResources/GenPS/"
+        from sage.env import sage_data_paths
+        self.__intpath = self.__genpath = None
+        for path in sage_data_paths('symbolic_data'):
+            intpath = path + "/Data/XMLResources/INTPS/"
+            genpath = path + "/Data/XMLResources/GenPS/"
+            if os.path.exists(intpath) and os.path.exists(genpath):
+                self.__intpath = intpath
+                self.__genpath = genpath
+        if not self.__intpath or not self.__genpath:
+            raise FileNotFoundError('Could not find the SymbolicData database')
 
-    def get_ideal(self, name, base_ring=QQ, term_order="degrevlex"):
+    def get_ideal(self, name, base_ring=QQ, term_order='degrevlex'):
         """
         Return the ideal given by 'name' over the base ring given by
         'base_ring' in a polynomial ring with the term order given by
@@ -131,8 +136,6 @@ class SymbolicData:
             return t
 
         def _dom2ideal(node):
-            """
-            """
             l = []
 
             if str(node.nodeName) in ['vars', 'poly']:
@@ -154,7 +157,7 @@ class SymbolicData:
                 name = self.__genpath + name + ".xml"
                 open(name)
             except OSError:
-                raise AttributeError("No ideal matching '%s' found in database." % orig_name)
+                raise AttributeError(f"no ideal matching '{orig_name}' found in database")
 
         dom = parse(name)
         res = _dom2ideal(dom)
@@ -185,7 +188,7 @@ class SymbolicData:
            sage: sd.Cyclic5 # optional - database_symbolic_data
            Traceback (most recent call last):
            ...
-           AttributeError: No ideal matching 'Cyclic5' found in database.
+           AttributeError: no ideal matching 'Cyclic5' found in database...
 
            sage: sd.Cyclic_5 # optional - database_symbolic_data
            Ideal (v + w + x + y + z,
@@ -221,4 +224,4 @@ class SymbolicData:
             self.__ideals = [s.replace('.', '__') for s in __ideals]
             return self.__ideals
         except OSError:
-            raise AttributeError("Could not find symbolic data, you should perhaps install the optional package")
+            raise AttributeError("Could not find symbolic data")

@@ -33,7 +33,6 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
         sage: K.<a> = NumberField(x^3 - 7)
         sage: P = K.ideal(29).factor()[0][0]
@@ -71,7 +70,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
 
         - ``to_order`` -- the map from a lattice in that vector space to the maximal order
 
-        - ``PB`` -- a matrix used in defining the reduction and lifting maps.
+        - ``PB`` -- a matrix used in defining the reduction and lifting maps
 
         EXAMPLES::
 
@@ -104,11 +103,10 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
         """
         INPUT:
 
-            - ``x`` -- Something to cast into ``self``.
+            - ``x`` -- something to cast into ``self``
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)
             sage: P = K.ideal(61).factor()[0][0]

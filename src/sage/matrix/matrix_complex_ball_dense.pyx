@@ -95,7 +95,7 @@ cdef Matrix_generic_dense acb_mat_to_matrix(acb_mat_t source, Parent CIF):
 
     - ``source`` -- an ``acb_mat_t``
 
-    - ``precision`` -- a positive integer.
+    - ``precision`` -- positive integer
 
     OUTPUT:
 
@@ -181,7 +181,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         EXAMPLES:
@@ -264,7 +264,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         - ``j`` -- column
 
-        - ``x`` -- must be ComplexBall! The value to set self[i,j] to.
+        - ``x`` -- must be ComplexBall! The value to set ``self[i,j]`` to.
 
         EXAMPLES::
 
@@ -306,6 +306,53 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         z._parent = self._base_ring
         acb_set(z.value, acb_mat_entry(self.value, i, j))
         return z
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        .. warning::
+
+           This is very unsafe; it assumes ``iSrc``, ``jSrc``, ``iDst`` and
+           ``jDst`` are in the right range, and that ``src`` is a
+           Matrix_complex_ball_dense with the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a
+                    Matrix_complex_ball_dense with the same base ring as
+                    ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = MatrixSpace(CBF,3,4)(range(12))
+            sage: m
+            [                0 1.000000000000000 2.000000000000000 3.000000000000000]
+            [4.000000000000000 5.000000000000000 6.000000000000000 7.000000000000000]
+            [8.000000000000000 9.000000000000000 10.00000000000000 11.00000000000000]
+            sage: m.transpose()
+            [                0 4.000000000000000 8.000000000000000]
+            [1.000000000000000 5.000000000000000 9.000000000000000]
+            [2.000000000000000 6.000000000000000 10.00000000000000]
+            [3.000000000000000 7.000000000000000 11.00000000000000]
+            sage: m.matrix_from_rows([0,2])
+            [                0 1.000000000000000 2.000000000000000 3.000000000000000]
+            [8.000000000000000 9.000000000000000 10.00000000000000 11.00000000000000]
+            sage: m.matrix_from_columns([1,3])
+            [1.000000000000000 3.000000000000000]
+            [5.000000000000000 7.000000000000000]
+            [9.000000000000000 11.00000000000000]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [4.000000000000000 7.000000000000000]
+            [8.000000000000000 11.00000000000000]
+        """
+        cdef Matrix_complex_ball_dense _src = <Matrix_complex_ball_dense> src
+        acb_set(acb_mat_entry(self.value, iDst, jDst), acb_mat_entry(_src.value, iSrc, jSrc))
 
     cpdef _richcmp_(left, right, int op):
         r"""
@@ -558,11 +605,42 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             [3.000000000000000 6.000000000000000]
             sage: m.transpose().parent()
             Full MatrixSpace of 3 by 2 dense matrices over Complex ball field with 53 bits of precision
+
+        TESTS::
+
+            sage: m = matrix(CBF,2,3,range(6))
+            sage: m.subdivide([1],[2])
+            sage: m
+            [                0 1.000000000000000|2.000000000000000]
+            [-----------------------------------+-----------------]
+            [3.000000000000000 4.000000000000000|5.000000000000000]
+            sage: m.transpose()
+            [                0|3.000000000000000]
+            [1.000000000000000|4.000000000000000]
+            [-----------------+-----------------]
+            [2.000000000000000|5.000000000000000]
+
+            sage: m = matrix(CBF,0,2)
+            sage: m.subdivide([],[1])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
+
+            sage: m = matrix(CBF,2,0)
+            sage: m.subdivide([1],[])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
         """
         cdef Py_ssize_t nc = self._ncols
         cdef Py_ssize_t nr = self._nrows
         cdef Matrix_complex_ball_dense trans = self._new(nc, nr)
         acb_mat_transpose(trans.value, self.value)
+        if self._subdivisions is not None:
+            row_divs, col_divs = self.subdivisions()
+            trans.subdivide(col_divs, row_divs)
         return trans
 
     def _solve_right_nonsingular_square(self, Matrix_complex_ball_dense rhs, check_rank=None):
@@ -650,7 +728,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         TESTS::
 
-            sage: mat.charpoly(algorithm="hessenberg")
+            sage: mat.charpoly(algorithm='hessenberg')
             x^5 + ([-1.8 +/- 0.04...])*x^4 + ([0.3 +/- 0.08...])*x^3
             + ([+/- 0.0...])*x^2 + ([+/- ...e-4])*x + [+/- ...e-6]
             sage: mat.charpoly('y')

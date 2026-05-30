@@ -23,19 +23,22 @@ EXAMPLES::
     sage: J = J0(33)
     sage: C = J.cuspidal_subgroup()
     sage: C
-    Finite subgroup with invariants [10, 10] over QQ of Abelian variety J0(33) of dimension 3
+    Finite subgroup with invariants [10, 10] over QQ
+    of Abelian variety J0(33) of dimension 3
     sage: C.order()
     100
     sage: C.gens()
-    [[(1/10, 0, 1/10, 1/10, 1/10, 3/10)], [(0, 1/5, 1/10, 0, 1/10, 9/10)], [(0, 0, 1/2, 0, 1/2, 1/2)]]
+    ([(1/10, 0, 1/10, 1/10, 1/10, 3/10)], [(0, 1/5, 1/10, 0, 1/10, 9/10)],
+     [(0, 0, 1/2, 0, 1/2, 1/2)])
     sage: C.0 + C.1
     [(1/10, 1/5, 1/5, 1/10, 1/5, 6/5)]
     sage: 10*(C.0 + C.1)
     [(0, 0, 0, 0, 0, 0)]
     sage: G = C.subgroup([C.0 + C.1]); G
-    Finite subgroup with invariants [10] over QQbar of Abelian variety J0(33) of dimension 3
+    Finite subgroup with invariants [10] over QQbar
+    of Abelian variety J0(33) of dimension 3
     sage: G.gens()
-    [[(1/10, 1/5, 1/5, 1/10, 1/5, 1/5)]]
+    ([(1/10, 1/5, 1/5, 1/10, 1/5, 1/5)],)
     sage: G.order()
     10
     sage: G <= C
@@ -47,7 +50,7 @@ We make a table of the order of the cuspidal subgroup for the first
 few levels::
 
     sage: for N in range(11,40):
-    ....:     print("{} {}".format(N, J0(N).cuspidal_subgroup().order()))
+    ....:     print(f"{N} {J0(N).cuspidal_subgroup().order()}")
     11 5
     12 1
     13 1
@@ -81,38 +84,39 @@ few levels::
 TESTS::
 
     sage: G = J0(11).finite_subgroup([[1/3,0], [0,1/5]]); G
-    Finite subgroup with invariants [15] over QQbar of Abelian variety J0(11) of dimension 1
+    Finite subgroup with invariants [15] over QQbar
+    of Abelian variety J0(11) of dimension 1
     sage: loads(dumps(G)) == G
     True
     sage: loads(dumps(G.0)) == G.0
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
 
-from sage.misc.lazy_import import lazy_import
+from sage.arith.functions import lcm
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 from sage.modular.abvar.torsion_point import TorsionPoint
+from sage.modules.free_module import FreeModule_generic
 from sage.modules.module import Module
-from sage.modules.free_module import is_FreeModule
-from sage.structure.gens_py import abelian_iterator
-from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.functions import lcm
-from sage.misc.misc_c import prod
 from sage.structure.element import coercion_model
+from sage.structure.gens_py import abelian_iterator
+from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.sequence import Sequence
 
 
 @richcmp_method
@@ -133,9 +137,8 @@ class FiniteSubgroup(Module):
 
         sage: A = J0(37)
         sage: G = A.torsion_subgroup(3); G
-        Finite subgroup with invariants [3, 3, 3, 3] over QQ of Abelian variety J0(37) of dimension 2
-        sage: type(G)
-        <class 'sage.modular.abvar.finite_subgroup.FiniteSubgroup_lattice_with_category'>
+        Finite subgroup with invariants [3, 3, 3, 3] over QQ
+        of Abelian variety J0(37) of dimension 2
         sage: from sage.modular.abvar.finite_subgroup import FiniteSubgroup
         sage: isinstance(G, FiniteSubgroup)
         True
@@ -143,7 +146,7 @@ class FiniteSubgroup(Module):
 
     Element = TorsionPoint
 
-    def __init__(self, abvar, field_of_definition=QQ):
+    def __init__(self, abvar, field_of_definition=QQ) -> None:
         """
         Initialize ``self``.
 
@@ -157,10 +160,10 @@ class FiniteSubgroup(Module):
         from sage.categories.fields import Fields
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         from sage.categories.modules import Modules
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         if field_of_definition not in Fields():
             raise TypeError("field_of_definition must be a field")
-        if not is_ModularAbelianVariety(abvar):
+        if not isinstance(abvar, ModularAbelianVariety_abstract):
             raise TypeError("abvar must be a modular abelian variety")
         category = Category.join((Modules(ZZ), FiniteEnumeratedSets()))
         Module.__init__(self, ZZ, category=category)
@@ -189,6 +192,7 @@ class FiniteSubgroup(Module):
         """
         raise NotImplementedError
 
+    @cached_method
     def _relative_basis_matrix(self):
         """
         Return matrix of this finite subgroup, but relative to the homology
@@ -207,15 +211,11 @@ class FiniteSubgroup(Module):
             [  0   0   1   0]
             [  0   0   0   1]
         """
-        try:
-            return self.__relative_basis_matrix
-        except AttributeError:
-            M = self.__abvar.lattice().coordinate_module(self.lattice()).basis_matrix()
-            self.__relative_basis_matrix = M
-            return M
+        mod = self.__abvar.lattice().coordinate_module(self.lattice())
+        return mod.basis_matrix()
 
     # General functionality
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -263,10 +263,10 @@ class FiniteSubgroup(Module):
         # order gets reversed in passing to lattices.
         return lx._echelon_matrix_richcmp(rx, op)
 
-    def is_subgroup(self, other):
+    def is_subgroup(self, other) -> bool:
         """
-        Return ``True`` exactly if ``self`` is a subgroup of ``other``, and both are
-        defined as subgroups of the same ambient abelian variety.
+        Return ``True`` exactly if ``self`` is a subgroup of ``other``,
+        and both are defined as subgroups of the same ambient abelian variety.
 
         EXAMPLES::
 
@@ -298,14 +298,15 @@ class FiniteSubgroup(Module):
 
             sage: C = J0(22).cuspidal_subgroup()
             sage: C.gens()
-            [[(1/5, 1/5, 4/5, 0)], [(0, 0, 0, 1/5)]]
+            ([(1/5, 1/5, 4/5, 0)], [(0, 0, 0, 1/5)])
             sage: A = C.subgroup([C.0]); B = C.subgroup([C.1])
             sage: A + B == C
             True
 
         An example where the parent abelian varieties are different::
 
-            sage: A = J0(48); A[0].cuspidal_subgroup() + A[1].cuspidal_subgroup()
+            sage: A = J0(48)
+            sage: A[0].cuspidal_subgroup() + A[1].cuspidal_subgroup()
             Finite subgroup with invariants [2, 4, 4] over QQ of
              Abelian subvariety of dimension 2 of J0(48)
         """
@@ -314,21 +315,24 @@ class FiniteSubgroup(Module):
         A = self.abelian_variety()
         B = other.abelian_variety()
         if not A.in_same_ambient_variety(B):
-            raise ValueError("self and other must be in the same ambient Jacobian")
-        K = coercion_model.common_parent(self.field_of_definition(), other.field_of_definition())
+            raise ValueError("self and other must be in the same "
+                             "ambient Jacobian")
+        K = coercion_model.common_parent(self.field_of_definition(),
+                                         other.field_of_definition())
         lattice = self.lattice() + other.lattice()
         if A != B:
             C = A + B
             lattice += C.lattice()
             return FiniteSubgroup_lattice(C, lattice, field_of_definition=K)
-        else:
-            return FiniteSubgroup_lattice(self.abelian_variety(), lattice, field_of_definition=K)
+        return FiniteSubgroup_lattice(self.abelian_variety(),
+                                      lattice, field_of_definition=K)
 
+    @cached_method
     def exponent(self):
         """
         Return the exponent of this finite abelian group.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -339,12 +343,7 @@ class FiniteSubgroup(Module):
             sage: G.exponent()
             4
         """
-        try:
-            return self.__exponent
-        except AttributeError:
-            e = lcm(self.invariants())
-            self.__exponent = e
-            return e
+        return lcm(self.invariants())
 
     def intersection(self, other):
         """
@@ -352,9 +351,7 @@ class FiniteSubgroup(Module):
 
         INPUT:
 
-
-        -  ``other`` - a finite group
-
+        - ``other`` -- a finite group
 
         OUTPUT: a finite group
 
@@ -410,23 +407,26 @@ class FiniteSubgroup(Module):
             Finite subgroup with invariants [3, 3] over QQ of
              Abelian subvariety of dimension 2 of J0(33)
         """
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         A = self.abelian_variety()
-        if is_ModularAbelianVariety(other):
+        if isinstance(other, ModularAbelianVariety_abstract):
             amb = other
             B = other
             M = B.lattice().scale(Integer(1)/self.exponent())
-            K = coercion_model.common_parent(self.field_of_definition(), other.base_field())
+            K = coercion_model.common_parent(self.field_of_definition(),
+                                             other.base_field())
         else:
             amb = A
             if not isinstance(other, FiniteSubgroup):
                 raise TypeError("only intersection with a finite subgroup or "
-                        "modular abelian variety is defined")
+                                "modular abelian variety is defined")
             B = other.abelian_variety()
             if A.ambient_variety() != B.ambient_variety():
-                raise TypeError("finite subgroups must be in the same ambient product Jacobian")
+                raise TypeError("finite subgroups must be in the same "
+                                "ambient product Jacobian")
             M = other.lattice()
-            K = coercion_model.common_parent(self.field_of_definition(), other.field_of_definition())
+            K = coercion_model.common_parent(self.field_of_definition(),
+                                             other.field_of_definition())
 
         L = self.lattice()
         if A != B:
@@ -440,17 +440,15 @@ class FiniteSubgroup(Module):
 
     def __mul__(self, right):
         """
-        Multiply this subgroup by the rational number right.
+        Multiply this subgroup by the rational number ``right``.
 
-        If right is an integer the result is a subgroup of self. If right
-        is a rational number `n/m`, then this group is first
+        If ``right`` is an integer the result is a subgroup of ``self``. If
+        ``right`` is a rational number `n/m`, then this group is first
         divided by `m` then multiplied by `n`.
 
         INPUT:
 
-
-        -  ``right`` - a rational number
-
+        - ``right`` -- a rational number
 
         OUTPUT: a subgroup
 
@@ -478,8 +476,10 @@ class FiniteSubgroup(Module):
             22500000000
         """
         lattice = self.lattice().scale(right)
-        return FiniteSubgroup_lattice(self.abelian_variety(), lattice,
-                                field_of_definition=self.field_of_definition())
+        return FiniteSubgroup_lattice(
+            self.abelian_variety(), lattice,
+            field_of_definition=self.field_of_definition()
+        )
 
     def __rmul__(self, left):
         """
@@ -494,7 +494,8 @@ class FiniteSubgroup(Module):
             sage: H.order().factor()
             2^4 * 3^2
             sage: 2*G
-            Finite subgroup with invariants [6, 24] over QQ of Abelian variety J0(42) of dimension 5
+            Finite subgroup with invariants [6, 24] over QQ
+            of Abelian variety J0(42) of dimension 5
         """
         return self * left
 
@@ -528,7 +529,7 @@ class FiniteSubgroup(Module):
         """
         return self.__field_of_definition
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this finite subgroup.
 
@@ -536,7 +537,8 @@ class FiniteSubgroup(Module):
 
             sage: J = J0(42)
             sage: G = J.torsion_subgroup(3); G._repr_()
-            'Finite subgroup with invariants [3, 3, 3, 3, 3, 3, 3, 3, 3, 3] over QQ of Abelian variety J0(42) of dimension 5'
+            'Finite subgroup with invariants [3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+            over QQ of Abelian variety J0(42) of dimension 5'
         """
         K = self.__field_of_definition
         if isinstance(K, sage.rings.abc.AlgebraicField):
@@ -545,9 +547,10 @@ class FiniteSubgroup(Module):
             field = "QQ"
         else:
             field = str(K)
-        return "Finite subgroup %sover %s of %s" % (self._invariants_repr(), field, self.__abvar)
+        return "Finite subgroup %sover %s of %s" % (self._invariants_repr(),
+                                                    field, self.__abvar)
 
-    def _invariants_repr(self):
+    def _invariants_repr(self) -> str:
         """
         The string representation of the 'invariants' part of this group.
 
@@ -560,7 +563,7 @@ class FiniteSubgroup(Module):
             sage: J0(42).cuspidal_subgroup()._invariants_repr()
             'with invariants [2, 2, 12, 48] '
         """
-        return 'with invariants %s ' % (self.invariants(), )
+        return f'with invariants {self.invariants()} '
 
     def order(self):
         """
@@ -583,42 +586,41 @@ class FiniteSubgroup(Module):
             self.__order = o
             return o
 
-    def gens(self):
+    @cached_method
+    def gens(self) -> tuple:
         """
-        Return generators for this finite subgroup.
+        Return a tuple of the generators for this finite subgroup.
 
-        EXAMPLES: We list generators for several cuspidal subgroups::
+        EXAMPLES:
+
+        We list generators for several cuspidal subgroups::
 
             sage: J0(11).cuspidal_subgroup().gens()
-            [[(0, 1/5)]]
+            ([(0, 1/5)],)
             sage: J0(37).cuspidal_subgroup().gens()
-            [[(0, 0, 0, 1/3)]]
+            ([(0, 0, 0, 1/3)],)
             sage: J0(43).cuspidal_subgroup().gens()
-            [[(0, 1/7, 0, 6/7, 0, 5/7)]]
+            ([(0, 1/7, 0, 6/7, 0, 5/7)],)
             sage: J1(13).cuspidal_subgroup().gens()
-            [[(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)]]
+            ([(1/19, 0, 9/19, 9/19)], [(0, 1/19, 0, 9/19)])
             sage: J0(22).torsion_subgroup(6).gens()
-            [[(1/6, 0, 0, 0)], [(0, 1/6, 0, 0)], [(0, 0, 1/6, 0)], [(0, 0, 0, 1/6)]]
+            ([(1/6, 0, 0, 0)], [(0, 1/6, 0, 0)], [(0, 0, 1/6, 0)],
+             [(0, 0, 0, 1/6)])
         """
-        try:
-            return self.__gens
-        except AttributeError:
-            pass
-
-        B = [self.element_class(self, v) for v in self.lattice().basis() if v.denominator() > 1]
-        self.__gens = Sequence(B, immutable=True)
-        return self.__gens
+        return tuple([self.element_class(self, v)
+                      for v in self.lattice().basis() if v.denominator() > 1])
 
     def gen(self, n):
         r"""
-        Return `n^{th}` generator of self.
+        Return `n`-th generator of ``self``.
 
         EXAMPLES::
 
             sage: J = J0(23)
             sage: C = J.torsion_subgroup(3)
             sage: C.gens()
-            [[(1/3, 0, 0, 0)], [(0, 1/3, 0, 0)], [(0, 0, 1/3, 0)], [(0, 0, 0, 1/3)]]
+            ([(1/3, 0, 0, 0)], [(0, 1/3, 0, 0)], [(0, 0, 1/3, 0)],
+             [(0, 0, 0, 1/3)])
             sage: C.gen(0)
             [(1/3, 0, 0, 0)]
             sage: C.gen(3)
@@ -626,7 +628,7 @@ class FiniteSubgroup(Module):
             sage: C.gen(4)
             Traceback (most recent call last):
             ...
-            IndexError: list index out of range
+            IndexError: tuple index out of range
 
         Negative indices wrap around::
 
@@ -687,7 +689,6 @@ class FiniteSubgroup(Module):
             Traceback (most recent call last):
             ...
             ValueError: ambient abelian varieties are different
-
         """
         if isinstance(x, TorsionPoint):
             if x.parent().abelian_variety() != self.abelian_variety():
@@ -696,7 +697,7 @@ class FiniteSubgroup(Module):
         x = self.lattice()(x, check=check)
         return self.element_class(self, x, check=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is contained in this finite subgroup.
 
@@ -705,13 +706,15 @@ class FiniteSubgroup(Module):
         We define two distinct finite subgroups of `J_0(27)`::
 
             sage: G1 = J0(27).rational_cusp_subgroup(); G1
-            Finite subgroup with invariants [3] over QQ of Abelian variety J0(27) of dimension 1
+            Finite subgroup with invariants [3] over QQ
+            of Abelian variety J0(27) of dimension 1
             sage: G1.0
             [(1/3, 0)]
             sage: G2 = J0(27).cuspidal_subgroup(); G2
-            Finite subgroup with invariants [3, 3] over QQ of Abelian variety J0(27) of dimension 1
+            Finite subgroup with invariants [3, 3] over QQ
+            of Abelian variety J0(27) of dimension 1
             sage: G2.gens()
-            [[(1/3, 0)], [(0, 1/3)]]
+            ([(1/3, 0)], [(0, 1/3)])
 
         Now we check whether various elements are in `G_1` and `G_2`::
 
@@ -776,12 +779,16 @@ class FiniteSubgroup(Module):
             raise TypeError("gens must be a list or tuple")
         A = self.abelian_variety()
         lattice = A._ambient_lattice().span([self(g).element() for g in gens])
-        return FiniteSubgroup_lattice(self.abelian_variety(), lattice, field_of_definition=QQbar)
+        return FiniteSubgroup_lattice(self.abelian_variety(),
+                                      lattice, field_of_definition=QQbar)
 
-    def invariants(self):
+    @cached_method
+    def invariants(self) -> Sequence:
         r"""
-        Return elementary invariants of this abelian group, by which we
-        mean a nondecreasing (immutable) sequence of integers
+        Return elementary invariants of this abelian group.
+
+        By this, we mean a nondecreasing (immutable) sequence of
+        integers
         `n_i`, `1 \leq i \leq k`, with `n_i`
         dividing `n_{i+1}`, and such that this group is abstractly
         isomorphic to
@@ -823,42 +830,73 @@ class FiniteSubgroup(Module):
             sage: C.invariants()
             [5, 5]
         """
-        try:
-            return self.__invariants
-        except AttributeError:
-            pass
         M = self.lattice().coordinate_module(self.abelian_variety().lattice())
         E = M.basis_matrix().change_ring(ZZ).elementary_divisors()
-        v = [Integer(x) for x in E if x != 1]
-        I = Sequence(v)
-        I.sort()
-        I.set_immutable()
-        self.__invariants = I
-        return I
+        invs = Sequence(sorted(Integer(x) for x in E if x != 1))
+        invs.set_immutable()
+        return invs
 
-    __iter__ = abelian_iterator
+    def __iter__(self):
+        r"""
+        Iterate through the elements of ``self`` exactly once.
+
+        This wraps :func:`~sage.structure.gens_py.abelian_iterator`,
+        which enumerates all combinations of ``gens()``. Since
+        ``gens()`` may be redundant, we filter duplicates.
+
+        EXAMPLES::
+
+            sage: S = J0(33).shimura_subgroup()
+            sage: elems = list(S)
+            sage: len(elems)
+            10
+            sage: len({tuple(x.element()) for x in elems})
+            10
+        """
+        target = self.order()
+        seen = set()
+        for x in abelian_iterator(self):
+            key = tuple(x.element())
+            if key in seen:
+                continue
+            seen.add(key)
+            yield x
+            if len(seen) >= target:
+                return
+
+    def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
+
+        This equals the product of the elementary invariants.
+
+        EXAMPLES::
+
+            sage: S = J0(33).shimura_subgroup()
+            sage: S.cardinality() == prod(S.invariants())
+            True
+        """
+        return self.order()
 
 
 class FiniteSubgroup_lattice(FiniteSubgroup):
-    def __init__(self, abvar, lattice, field_of_definition=None, check=True):
+    def __init__(self, abvar, lattice,
+                 field_of_definition=None, check=True) -> None:
         """
         A finite subgroup of a modular abelian variety that is defined by a
         given lattice.
 
         INPUT:
 
+        - ``abvar`` -- a modular abelian variety
 
-        -  ``abvar`` - a modular abelian variety
+        - ``lattice`` -- a lattice that contains the lattice of abvar
 
-        -  ``lattice`` - a lattice that contains the lattice of
-           abvar
+        - ``field_of_definition`` -- the field of definition
+          of this finite group scheme
 
-        -  ``field_of_definition`` - the field of definition
-           of this finite group scheme
-
-        -  ``check`` - bool (default: True) whether or not to
-           check that lattice contains the abvar lattice.
-
+        - ``check`` -- boolean (default: ``True``); whether or not to
+          check that lattice contains the abvar lattice
 
         EXAMPLES::
 
@@ -870,15 +908,17 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
         if field_of_definition is None:
             from sage.rings.qqbar import QQbar as field_of_definition
         if check:
-            from .abvar import is_ModularAbelianVariety
-            if not is_FreeModule(lattice) or lattice.base_ring() != ZZ:
+            from .abvar import ModularAbelianVariety_abstract
+            if (not isinstance(lattice, FreeModule_generic)
+                    or lattice.base_ring() != ZZ):
                 raise TypeError("lattice must be a free module over ZZ")
-            if not is_ModularAbelianVariety(abvar):
+            if not isinstance(abvar, ModularAbelianVariety_abstract):
                 raise TypeError("abvar must be a modular abelian variety")
             if not abvar.lattice().is_submodule(lattice):
                 lattice += abvar.lattice()
             if lattice.rank() != abvar.lattice().rank():
-                raise ValueError("lattice must contain the lattice of abvar with finite index")
+                raise ValueError("lattice must contain the lattice "
+                                 "of abvar with finite index")
         FiniteSubgroup.__init__(self, abvar, field_of_definition)
         self.__lattice = lattice
 

@@ -11,13 +11,13 @@ atomic memory update operations on a number of architectures.
 License
 -------
 
-- MIT + GPL 2.0+
+- MIT (core library) + GPL 2.0+ (gpl extension library)
 
 
 Upstream Contact
 ----------------
 
-https://github.com/ivmai/libatomic_ops/
+https://github.com/bdwgc/libatomic_ops/
 
 
 Special Update/Build Instructions

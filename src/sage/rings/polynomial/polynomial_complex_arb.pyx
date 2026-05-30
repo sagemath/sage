@@ -1,4 +1,3 @@
-# -*- coding: utf-8
 r"""
 Univariate polynomials over `\CC` with Arb ball coefficients.
 
@@ -20,7 +19,6 @@ TESTS:
     sage: Pol.<x> = CBF[]
     sage: (x+1/2)^3
     x^3 + 1.500000000000000*x^2 + 0.7500000000000000*x + 0.1250000000000000
-
 """
 
 from cysignals.signals cimport sig_on, sig_off
@@ -179,14 +177,14 @@ cdef class Polynomial_complex_arb(Polynomial):
                     acb_poly_set_coeff_acb(self._poly, i, ball.value)
             elif isinstance(x, dict):
                 dct = <dict> x
-                if len(dct) == 0:
+                if not dct:
                     acb_poly_zero(self._poly)
                 else:
                     length = max(int(i) for i in dct) + 1
                     sig_on()
                     acb_poly_fit_length(self._poly, length)
                     sig_off()
-                    for i, c in dct.iteritems():
+                    for i, c in dct.items():
                         ball = Coeff(c)
                         acb_poly_set_coeff_acb(self._poly, i, ball.value)
             else:
@@ -199,7 +197,6 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: Pol.<x> = ComplexBallField(42)[]
             sage: pol = (x + i)/3
             sage: pol2 = loads(dumps(pol))
@@ -385,7 +382,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         r"""
         Compute the Euclidean division of this ball polynomial by ``divisor``.
 
-        Raises a ``ZeroDivisionError`` when the divisor is zero or its leading
+        Raises a :exc:`ZeroDivisionError` when the divisor is zero or its leading
         coefficient contains zero. Returns a pair (quotient, remainder)
         otherwise.
 
@@ -596,8 +593,8 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         INPUT:
 
-        - ``expo`` - non-negative integer exponent
-        - ``n`` - truncation order
+        - ``expo`` -- nonnegative integer exponent
+        - ``n`` -- truncation order
 
         EXAMPLES::
 

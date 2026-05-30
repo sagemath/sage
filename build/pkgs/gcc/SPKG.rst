@@ -6,9 +6,11 @@ Description
 
 This package represents the required C and C++ compilers.
 
-- GCC (GNU Compiler Collection) versions 8.x (>= 8.4.0) to 13.x are supported.
+- Sage's classical build checks for a C compiler that can compile C99 code.
 
-- Clang (LLVM) is also supported.
+- It also checks for a C++ compiler with C++11 support.
+
+- GCC (GNU Compiler Collection) and Clang (LLVM) are both supported.
 
 The required Fortran compiler is represented by the package ``gfortran``.
 
@@ -61,9 +63,9 @@ you need a recent version of Xcode.
 (Installing the
 ``gfortran`` SPKG becomes a no-op in this case.)
 
-Building Sage from source on Apple Silicon (M1/M2) requires the use of
-Apple's Command Line Tools, and those tools include a suitable
-compiler. Sage's ``gcc`` SPKG is not suitable for M1/M2; building it
+Building Sage from source on Apple Silicon (M1, M2, M3, M4; arm64) requires
+the use of Apple's Command Line Tools, and those tools include a suitable
+compiler. Sage's ``gcc`` SPKG is not suitable for Apple Silicon; building it
 will likely fail.
 
 License

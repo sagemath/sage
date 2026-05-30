@@ -4,6 +4,10 @@ Hypergeometric functions
 This module implements manipulation of infinite hypergeometric series
 represented in standard parametric form (as `\,_pF_q` functions).
 
+For a more algebraic treatment of hypergeometric functions
+(including reduction modulo primes and `p`-adic properties),
+we refer to :mod:`sage.functions.hypergeometric_algebraic`.
+
 AUTHORS:
 
 - Fredrik Johansson (2010): initial version
@@ -123,8 +127,8 @@ Conversions::
 
     sage: maxima(hypergeometric([1, 1, 1], [3, 3, 3], x))                               # needs sage.symbolic
     hypergeometric([1,1,1],[3,3,3],_SAGE_VAR_x)
-    sage: hypergeometric((5, 4), (4, 4), 3)._sympy_()                                   # needs sympy sage.symbolic
-    hyper((5, 4), (4, 4), 3)
+    sage: hypergeometric((5,), (4,), 3)._sympy_()                                   # needs sympy sage.symbolic
+    hyper((5,), (4,), 3)
     sage: hypergeometric((5, 4), (4, 4), 3)._mathematica_init_()                        # needs sage.symbolic
     'HypergeometricPFQ[{5,4},{4,4},3]'
 
@@ -270,13 +274,14 @@ class Hypergeometric(BuiltinFunction):
 
     def __call__(self, a, b, z, **kwargs):
         """
-        Return symbolic hypergeometric function expression.
+        Return a hypergeometric function.
 
         INPUT:
 
-        - ``a`` -- a list or tuple of parameters
-        - ``b`` -- a list or tuple of parameters
-        - ``z`` -- a number or symbolic expression
+        - ``a`` -- list or tuple of parameters
+        - ``b`` -- list or tuple of parameters
+        - ``z`` -- number, symbolic expression, generator of a power
+          series or polynomial ring
 
         EXAMPLES::
 
@@ -295,7 +300,41 @@ class Hypergeometric(BuiltinFunction):
         The only simplification that is done automatically is returning 1
         if ``z`` is 0. For other simplifications use the
         ``simplify_hypergeometric`` method.
+
+        When `z` is a generator of a polynomial ring or a power series
+        ring, an algebraic (by contrast with symbolic) object is returned,
+        for which a different set of methods is available::
+
+            sage: S.<z> = QQ[]
+            sage: h = hypergeometric([1/2, 1/2], [1], z)
+            sage: h
+            hypergeometric((1/2, 1/2), (1,), z)
+            sage: h.is_algebraic()
+            False
+
+        Besides, in this case, the additional optional boolean argument
+        ``symbolic_equality`` (default: ``True``) determines whether equality
+        should be checked symbolically (that is, equality of parameters) or
+        algebraically (that is, equality of series).
+
+        We refer to :mod:`sage.functions.hypergeometric_algebraic` for a
+        detailed presentation of the available features.
+
+        TESTS::
+
+            sage: hypergeometric([2, 3, 4], [4, 1], 1)
+            hypergeometric((2, 3, 4), (4, 1), 1)
         """
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        from sage.rings.power_series_ring import PowerSeriesRing_generic
+        from sage.rings.lazy_series_ring import LazySeriesRing
+        if hasattr(z, 'parent'):
+            S = z.parent()
+            if isinstance(S, (PolynomialRing_generic, PowerSeriesRing_generic, LazySeriesRing)):
+                if z != S.gen():
+                    raise NotImplementedError("the argument must be the generator of the polynomial ring")
+                from sage.functions.hypergeometric_algebraic import HypergeometricFunctions
+                return HypergeometricFunctions(S.base_ring(), S.variable_name(), **kwargs)(a, b)
         return BuiltinFunction.__call__(self,
                                         SR._force_pyobject(a),
                                         SR._force_pyobject(b),
@@ -307,7 +346,6 @@ class Hypergeometric(BuiltinFunction):
 
             sage: latex(hypergeometric([1, 1], [2], -1))                                # needs sage.symbolic
             \,_2F_1\left(\begin{matrix} 1,1 \\ 2 \end{matrix} ; -1 \right)
-
         """
         aa = ",".join(latex(c) for c in a)
         bb = ",".join(latex(c) for c in b)
@@ -370,7 +408,6 @@ class Hypergeometric(BuiltinFunction):
             0.693147180559945
             sage: hypergeometric([], [], RealField(100)(1))                             # needs sage.rings.real_mpfr sage.symbolic
             2.7182818284590452353602874714
-
         """
         if not isinstance(a, tuple) or not isinstance(b, tuple):
             raise TypeError("The first two parameters must be of type list")
@@ -403,7 +440,7 @@ class Hypergeometric(BuiltinFunction):
         return (t * derivative(z, diff_param) *
                 hypergeometric([c + 1 for c in a], [c + 1 for c in b], z))
 
-    class EvaluationMethods():
+    class EvaluationMethods:
 
         def _fast_callable_(self, a, b, z, etb):
             """
@@ -460,23 +497,21 @@ class Hypergeometric(BuiltinFunction):
             """
             aa = list(a)  # tuples are immutable
             bb = list(b)
-            p = pp = len(aa)
             q = qq = len(bb)
             i = 0
             while i < qq and aa:
-                bbb = bb[i]
-                if bbb in aa:
-                    aa.remove(bbb)
-                    bb.remove(bbb)
-                    pp -= 1
+                bbi = bb[i]
+                if bbi in aa:
+                    aa.remove(bbi)
+                    bb.remove(bbi)
                     qq -= 1
                 else:
                     i += 1
-            if (pp, qq) != (p, q):
+            if qq != q:
                 return hypergeometric(aa, bb, z)
             return self
 
-        def is_termwise_finite(self, a, b, z):
+        def is_termwise_finite(self, a, b, z) -> bool:
             """
             Determine whether all terms of ``self`` are finite.
 
@@ -518,8 +553,6 @@ class Hypergeometric(BuiltinFunction):
                 return 0 not in b
             if abs(z) == Infinity:
                 return False
-            if abs(z) == Infinity:
-                return False
             for bb in b:
                 if bb in ZZ and bb <= 0:
                     if any((aa in ZZ) and (bb < aa <= 0) for aa in a):
@@ -554,7 +587,7 @@ class Hypergeometric(BuiltinFunction):
                     return self.is_termwise_finite()
             return False
 
-        def is_absolutely_convergent(self, a, b, z):
+        def is_absolutely_convergent(self, a, b, z) -> bool:
             r"""
             Determine whether ``self`` converges absolutely as an infinite
             series. ``False`` is returned if not all terms are finite.
@@ -863,16 +896,15 @@ def closed_form(hyp):
                     return (exp(z) * sum(rf(m - n, k) * (-z) ** k /
                             factorial(k) / rf(m, k) for k in
                             range(n - m + 1)))
-                else:
-                    T = sum(rf(n - m + 1, k) * z ** k /
-                            (factorial(k) * rf(2 - m, k)) for k in
-                            range(m - n))
-                    U = sum(rf(1 - n, k) * (-z) ** k /
-                            (factorial(k) * rf(2 - m, k)) for k in
-                            range(n))
-                    return (factorial(m - 2) * rf(1 - m, n) *
-                            z ** (1 - m) / factorial(n - 1) *
-                            (T - exp(z) * U))
+                T = sum(rf(n - m + 1, k) * z ** k /
+                        (factorial(k) * rf(2 - m, k)) for k in
+                        range(m - n))
+                U = sum(rf(1 - n, k) * (-z) ** k /
+                        (factorial(k) * rf(2 - m, k)) for k in
+                        range(n))
+                return (factorial(m - 2) * rf(1 - m, n) *
+                        z ** (1 - m) / factorial(n - 1) *
+                        (T - exp(z) * U))
 
         if p == 2 and q == 1:
             R12 = QQ((1, 2))
@@ -948,7 +980,7 @@ class Hypergeometric_M(BuiltinFunction):
         zy'' + (b-z)y' - ay = 0.
 
     This is not the same as Kummer's `U`-hypergeometric function, though it
-    satisfies the same DE that `M` does.
+    satisfies the same differential equation that `M` does.
 
     .. warning::
 
@@ -1027,7 +1059,7 @@ class Hypergeometric_M(BuiltinFunction):
         raise NotImplementedError('derivative of hypergeometric function '
                                   'with respect to parameters')
 
-    class EvaluationMethods():
+    class EvaluationMethods:
         def generalized(self, a, b, z):
             """
             Return as a generalized hypergeometric function.
@@ -1038,7 +1070,6 @@ class Hypergeometric_M(BuiltinFunction):
                 (a, b, z)
                 sage: hypergeometric_M(a, b, z).generalized()                           # needs sage.symbolic
                 hypergeometric((a,), (b,), z)
-
             """
             return hypergeometric([a], [b], z)
 
@@ -1134,7 +1165,7 @@ class Hypergeometric_U(BuiltinFunction):
         raise NotImplementedError('derivative of hypergeometric function '
                                   'with respect to parameters')
 
-    class EvaluationMethods():
+    class EvaluationMethods:
         def generalized(self, a, b, z):
             """
             Return in terms of the generalized hypergeometric function.
@@ -1150,7 +1181,6 @@ class Hypergeometric_U(BuiltinFunction):
                 2*hypergeometric((1, -1), (), -2)
                 sage: hypergeometric_U(3, I, 2).generalized()
                 1/8*hypergeometric((3, -I + 4), (), -1/2)
-
             """
             return z ** (-a) * hypergeometric([a, a - b + 1], [], -z ** (-1))
 

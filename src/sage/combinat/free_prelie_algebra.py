@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
-Free Pre-Lie Algebras
+Free pre-Lie algebras
 
 AUTHORS:
 
@@ -227,7 +227,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         cat = MagmaticAlgebras(R).WithBasis().Graded() & LieAlgebras(R).WithBasis().Graded()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -263,7 +263,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: enum = EnumeratedSets().Infinite().example()
             sage: algebras.FreePreLie(QQ, enum)  # indirect doctest
             Free PreLie algebra on generators indexed by An example of an
-            infinite enumerated set: the non negative integers
+            infinite enumerated set: the nonnegative integers
             over Rational Field
         """
         n = self.algebra_generators().cardinality()
@@ -289,7 +289,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -337,7 +337,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - `R` -- a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -373,10 +373,9 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(RT([RT([])]))
             2
         """
-        return t.node_number()
+        return t.number_of_nodes()
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -610,7 +609,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         resu = self.zero()
         for k in range(min_deg, N + 1):   # total degree of (x ; y, y, y, y)
             for mx, coef_x in xx:
-                dx = mx.node_number()
+                dx = mx.number_of_nodes()
                 step = self.zero()
                 for pi in IntegerVectors(k - dx, n, min_part=vy, max_part=max_y):
                     for ly in product(*[y_homog[part] for part in pi]):
@@ -716,7 +715,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         The things that coerce into ``self`` are
 
         - free pre-Lie algebras whose set `E` of labels is
-          a subset of the corresponding self of ``set`, and whose base
+          a subset of the corresponding ``self`` of ``set``, and whose base
           ring has a coercion map into ``self.base_ring()``
 
         EXAMPLES::
@@ -982,12 +981,11 @@ class PreLieFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return PreLieFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], PreLieFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """
@@ -1023,14 +1021,12 @@ class PreLieFunctor(ConstructionFunctor):
                 return self
             ret = list(self.vars)
             cur_vars = set(ret)
-            for v in other.vars:
-                if v not in cur_vars:
-                    ret.append(v)
+            ret.extend(v for v in other.vars if v not in cur_vars)
             return PreLieFunctor(Alphabet(ret))
-        else:
-            return None
 
-    def _repr_(self):
+        return None
+
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1048,8 +1044,8 @@ def tree_from_sortkey(ch, labels=True):
 
     INPUT:
 
-    - ``ch`` -- a list of pairs ``(integer, label)``
-    - ``labels`` -- (default ``True``) whether to use labelled trees
+    - ``ch`` -- list of pairs ``(integer, label)``
+    - ``labels`` -- boolean (default: ``True``); whether to use labelled trees
 
     OUTPUT:
 
@@ -1101,7 +1097,7 @@ def corolla_gen(tx, list_ty, labels=True):
     INPUT:
 
     - ``tx`` -- a tree
-    - ``list_ty`` -- a list of trees
+    - ``list_ty`` -- list of trees
 
     EXAMPLES::
 

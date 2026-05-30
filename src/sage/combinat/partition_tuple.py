@@ -244,7 +244,6 @@ subgroup::
      [(), (12,13), (11,12), (8,9), (6,7), (3,4), (2,3), (1,2)]
     sage: mu.young_subgroup_generators()                                                # needs sage.groups
     [1, 2, 3, 6, 8, 11, 12]
-
 """
 
 # ****************************************************************************
@@ -259,22 +258,30 @@ subgroup::
 
 import itertools
 
-from .combinat import CombinatorialElement
-from .integer_vector import IntegerVectors
-from .partition import (Partition, Partitions, Partitions_n, _Partitions,
-                        RegularPartitions_all, RegularPartitions_n)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.libs.pari.all import pari
+from sage.combinat.combinat import CombinatorialElement
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.partition import (
+    Partition,
+    Partitions,
+    Partitions_n,
+    RegularPartitions_all,
+    RegularPartitions_n,
+    _Partitions,
+)
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer import Integer
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
+lazy_import('sage.libs.pari', 'pari')
 
 # -------------------------------------------------
 # Partition tuple - element class
@@ -340,9 +347,9 @@ class PartitionTuple(CombinatorialElement):
 
     INPUT:
 
-        Anything which can reasonably be interpreted as a tuple of partitions.
-        That is, a list or tuple of partitions or valid input to
-        :class:`Partition`.
+    Anything which can reasonably be interpreted as a tuple of partitions.
+    That is, a list or tuple of partitions or valid input to
+    :class:`Partition`.
 
     EXAMPLES::
 
@@ -440,8 +447,7 @@ class PartitionTuple(CombinatorialElement):
 
         if len(mu) == 1:
             return _Partitions(mu[0])
-        else:
-            return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
+        return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
 
     def __init__(self, parent, mu):
         """
@@ -459,7 +465,6 @@ class PartitionTuple(CombinatorialElement):
             Traceback (most recent call last):
             ...
             ValueError: [[], [], [2, 1, 2, 1]] is not a tuple of Partitions
-
         """
         mu = [_Partitions(nu) for nu in mu]
         CombinatorialElement.__init__(self, parent, mu)
@@ -489,7 +494,6 @@ class PartitionTuple(CombinatorialElement):
 
             sage: len( PartitionTuple([[2,1],[3,2],[1,1,1]]) )
             3
-
         """
         return self.level()
 
@@ -502,36 +506,36 @@ class PartitionTuple(CombinatorialElement):
 
             sage: mu=PartitionTuple(([2,1],[3,2],[1,1,1]))      # indirect doctest
 
-            sage: PartitionTuples.options(display="list"); mu
+            sage: PartitionTuples.options(display='list'); mu
             ([2, 1], [3, 2], [1, 1, 1])
-            sage: PartitionTuples.options(display="diagram"); mu
+            sage: PartitionTuples.options(display='diagram'); mu
             **   ***   *
             *    **    *
             *
-            sage: PartitionTuples.options(display="compact_low"); mu
+            sage: PartitionTuples.options(display='compact_low'); mu
             1,2|2,3|1^3
-            sage: PartitionTuples.options(display="compact_high"); mu
+            sage: PartitionTuples.options(display='compact_high'); mu
             2,1|3,2|1^3
-            sage: PartitionTuples.options(display="exp_low"); mu
+            sage: PartitionTuples.options(display='exp_low'); mu
             1, 2 | 2, 3 | 1^3
-            sage: PartitionTuples.options(display="exp_high"); mu
+            sage: PartitionTuples.options(display='exp_high'); mu
             2, 1 | 3, 2 | 1^3
             sage: PartitionTuples.options._reset()
 
-            sage: Partitions.options(convention="French")
-            sage: PartitionTuples.options(display="diagram"); mu
+            sage: Partitions.options(convention='French')
+            sage: PartitionTuples.options(display='diagram'); mu
             *
             *    **    *
             **   ***   *
-            sage: PartitionTuples.options(display="list"); mu
+            sage: PartitionTuples.options(display='list'); mu
             ([2, 1], [3, 2], [1, 1, 1])
-            sage: PartitionTuples.options(display="compact_low"); mu
+            sage: PartitionTuples.options(display='compact_low'); mu
             1,2|2,3|1^3
-            sage: PartitionTuples.options(display="compact_high"); mu
+            sage: PartitionTuples.options(display='compact_high'); mu
             2,1|3,2|1^3
-            sage: PartitionTuples.options(display="exp_low"); mu
+            sage: PartitionTuples.options(display='exp_low'); mu
             1, 2 | 2, 3 | 1^3
-            sage: PartitionTuples.options(display="exp_high"); mu
+            sage: PartitionTuples.options(display='exp_high'); mu
             2, 1 | 3, 2 | 1^3
             sage: PartitionTuples.options._reset()
         """
@@ -658,7 +662,7 @@ class PartitionTuple(CombinatorialElement):
             \end{array}$}
             }
 
-            sage: PartitionTuples.options(latex="young_diagram", convention="french")
+            sage: PartitionTuples.options(latex='young_diagram', convention='french')
             sage: PartitionTuples.options(latex='exp_high'); latex(mu)      # indirect doctest
             (2,1|1^{3})
             sage: PartitionTuples.options(latex='exp_low'); latex(mu)       # indirect doctest
@@ -784,7 +788,7 @@ class PartitionTuple(CombinatorialElement):
                **    *        *
                               *
                               *
-            sage: PartitionTuples.options(convention="french")
+            sage: PartitionTuples.options(convention='french')
             sage: print(PartitionTuple([[3,2],[2,1],[],[1,1,1,1]]).diagram())
                               *
                               *
@@ -810,14 +814,13 @@ class PartitionTuple(CombinatorialElement):
             diag.append(line.rstrip())
         if PartitionTuples.options('convention') == "English":
             return '\n'.join(map(str, diag))
-        else:
-            return '\n'.join(map(str, diag[::-1]))
+        return '\n'.join(map(str, diag[::-1]))
 
     ferrers_diagram = diagram
 
     def pp(self):
         r"""
-        Pretty prints this partition tuple. See :meth:`diagram`.
+        Pretty print this partition tuple. See :meth:`diagram`.
 
         EXAMPLES::
 
@@ -898,7 +901,6 @@ class PartitionTuple(CombinatorialElement):
             [([1], [3, 1], [1, 1]), ([], [4, 1], [1, 1]), ([], [3, 2], [1, 1]), ([], [3, 1, 1], [1, 1]), ([], [3, 1], [2, 1]), ([], [3, 1], [1, 1, 1])]
             sage: PartitionTuple([[],[],[],[]]).up_list()
             [([1], [], [], []), ([], [1], [], []), ([], [], [1], []), ([], [], [], [1])]
-
         """
         return list(self.up())
 
@@ -913,7 +915,6 @@ class PartitionTuple(CombinatorialElement):
             [([], [2, 1], [1, 1]), ([], [3], [1, 1]), ([], [3, 1], [1])]
             sage: [mu for mu in PartitionTuple([[],[],[]]).down()]
             []
-
         """
         for c in range(len(self)):
             for nu in self[c].down():
@@ -945,9 +946,9 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[2,1],[1],[1,1,1]]).cells()
             [(0, 0, 0), (0, 0, 1), (0, 1, 0), (1, 0, 0), (2, 0, 0), (2, 1, 0), (2, 2, 0)]
         """
-        return [(c,a,b) for c in range(len(self)) for (a,b) in self[c].cells()]
+        return [(c, a, b) for c in range(len(self)) for a, b in self[c].cells()]
 
-    def content(self, k,r,c, multicharge):
+    def content(self, k, r, c, multicharge):
         r"""
         Return the content of the cell.
 
@@ -977,11 +978,10 @@ class PartitionTuple(CombinatorialElement):
             sage: multicharge = [IntegerModRing(3)(c) for c in [0,0,0]]
             sage: PartitionTuple([[2,1],[2],[1,1,1]]).content(0,1,0, multicharge)
             2
-
         """
         return multicharge[k]-r+c
 
-    def content_tableau(self,multicharge):
+    def content_tableau(self, multicharge):
         """
         Return the tableau which has (k,r,c)th entry equal to the content
         ``multicharge[k]-r+c`` of this cell.
@@ -1180,9 +1180,9 @@ class PartitionTuple(CombinatorialElement):
             - :meth:`top_garnir_tableau`
         """
         try:
-            (comp, row,col) = cell
+            comp, row, col = cell
         except ValueError:
-            (comp, row,col) = cell[0]
+            comp, row, col = cell[0]
 
         if comp >= len(self) or row+1 >= len(self[comp]) or col >= self[comp][row+1]:
             raise ValueError('(comp, row+1, col) must be inside the diagram')
@@ -1195,7 +1195,7 @@ class PartitionTuple(CombinatorialElement):
         g._garnir_cell = (comp,row,col)
         return g
 
-    def top_garnir_tableau(self,e,cell):
+    def top_garnir_tableau(self, e, cell):
         r"""
         Return the most dominant *standard* tableau which dominates the
         corresponding Garnir tableau and has the same residue that has shape
@@ -1249,7 +1249,7 @@ class PartitionTuple(CombinatorialElement):
 
             - :meth:`~sage.combinat.partition.Partition_tuple.garnir_tableau`
         """
-        (comp,row,col) = cell
+        comp, row, col = cell
         if comp >= len(self) or row+1 >= len(self[comp]) or col >= self[comp][row+1]:
             raise ValueError('(comp, row+1, col) must be inside the diagram')
 
@@ -1272,19 +1272,17 @@ class PartitionTuple(CombinatorialElement):
         from .tableau_tuple import StandardTableauTuple
         return StandardTableauTuple(t)
 
-    def arm_length(self, k,r,c):
+    def arm_length(self, k, r, c):
         """
         Return the length of the arm of cell ``(k, r, c)`` in ``self``.
 
         INPUT:
 
-        - ``k`` -- The component
-        - ``r`` -- The row
-        - ``c`` -- The cell
+        - ``k`` -- the component
+        - ``r`` -- the row
+        - ``c`` -- the cell
 
-        OUTPUT:
-
-        - The arm length as an integer
+        OUTPUT: the arm length as an integer
 
         The arm of cell ``(k, r, c)`` is the number of cells in the ``k``-th
         component which are to the right of the cell in row ``r`` and column
@@ -1304,19 +1302,17 @@ class PartitionTuple(CombinatorialElement):
         except IndexError:
             raise ValueError("The cell %s is not in the diagram" % ((k,r,c),))
 
-    def leg_length(self, k,r,c):
+    def leg_length(self, k, r, c):
         """
         Return the length of the leg of cell ``(k, r, c)`` in ``self``.
 
         INPUT:
 
-        - ``k`` -- The component
-        - ``r`` -- The row
-        - ``c`` -- The cell
+        - ``k`` -- the component
+        - ``r`` -- the row
+        - ``c`` -- the cell
 
-        OUTPUT:
-
-        - The leg length as an integer
+        OUTPUT: the leg length as an integer
 
         The leg of cell ``(k, r, c)`` is the number of cells in the ``k``-th
         component which are below the node in row ``r`` and column ``c``.
@@ -1351,7 +1347,7 @@ class PartitionTuple(CombinatorialElement):
         """
         return mu.level() <= self.level() and all(self[c].contains(mu[c]) for c in range(len(mu)))
 
-    def hook_length(self, k,r,c):
+    def hook_length(self, k, r, c):
         r"""
         Return the length of the hook of cell ``(k, r, c)`` in the partition.
 
@@ -1383,7 +1379,6 @@ class PartitionTuple(CombinatorialElement):
             ([2], [0, 1], [1, 1])
             sage: PartitionTuple([[1,1],[2,2,2,2],[2,1]]).to_exp()
             ([2], [0, 4], [1, 1])
-
         """
         return tuple(self[c].to_exp(k) for c in range(len(self)))
 
@@ -1400,9 +1395,9 @@ class PartitionTuple(CombinatorialElement):
             [(0, 1, 0), (1, 0, 1), (2, 0, 1), (2, 1, 0)]
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).removable_cells()
             [(0, 1, 0), (1, 0, 3), (1, 1, 2), (2, 0, 1), (2, 2, 0)]
-
         """
-        return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].removable_cells()]
+        return [(k, r, c) for k in range(len(self))
+                for r, c in self[k].removable_cells()]
 
     corners = removable_cells  # for compatibility with partitions
 
@@ -1419,9 +1414,9 @@ class PartitionTuple(CombinatorialElement):
             [(0, 0, 1), (0, 2, 0), (1, 0, 2), (1, 1, 0), (2, 0, 2), (2, 1, 1), (2, 2, 0)]
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).addable_cells()
             [(0, 0, 1), (0, 2, 0), (1, 0, 4), (1, 1, 3), (1, 2, 0), (2, 0, 2), (2, 1, 1), (2, 3, 0)]
-
         """
-        return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].addable_cells()]
+        return [(k, r, c) for k in range(len(self))
+                for r, c in self[k].addable_cells()]
 
     outside_corners = addable_cells  # for compatibility with partitions
 
@@ -1444,8 +1439,7 @@ class PartitionTuple(CombinatorialElement):
             else:
                 mu[k][r] += 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not an addable cell" % ((k, r, c),))
+        raise ValueError("%s is not an addable cell" % ((k, r, c),))
 
     def remove_cell(self, k, r, c):
         """
@@ -1463,8 +1457,7 @@ class PartitionTuple(CombinatorialElement):
             mu = self.to_list()
             mu[k][r] -= 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not a removable cell" % ((k, r, c),))
+        raise ValueError("%s is not a removable cell" % ((k, r, c),))
 
     def to_list(self):
         r"""
@@ -1496,7 +1489,7 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend([(c, c+1) for c in range(m+1, m+row)])
+                gens.extend((c, c + 1) for c in range(m + 1, m + row))
                 m += row
         gens.append(list(range(1, self.size()+1)))  # to ensure we get a subgroup of Sym_n
         return PermutationGroup(gens)
@@ -1515,12 +1508,12 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend(list(range(m + 1, m + row)))
+                gens.extend(range(m + 1, m + row))
                 m += row
         return gens
 
     @cached_method
-    def _initial_degree(self,e,multicharge):
+    def _initial_degree(self, e, multicharge):
         r"""
         Return the Brundan-Kleshchev-Wang degree of the initial tableau
         of shape ``self``.
@@ -1547,9 +1540,9 @@ class PartitionTuple(CombinatorialElement):
             deg = sum(mu._initial_degree(e) for mu in self)
         I = IntegerModRing(e)
         multires = [I(k) for k in multicharge]
-        for (k,r,c) in self.cells():
-            res = I(multicharge[k]-r+c)
-            for l in range(k+1, self.level()):
+        for k, r, c in self.cells():
+            res = I(multicharge[k] - r + c)
+            for l in range(k + 1, self.level()):
                 if res == multires[l]:
                     deg += 1
         return deg
@@ -1570,11 +1563,9 @@ class PartitionTuple(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- an integer `e > 1`
+        - ``e`` -- integer `e > 1`
 
-        OUTPUT:
-
-        A non-negative integer.
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1629,9 +1620,7 @@ class PartitionTuple(CombinatorialElement):
         - ``multicharge`` -- an `l`-tuple of integers, where `l` is
           the :meth:`level` of ``self``
 
-        OUTPUT:
-
-        A non-negative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1665,7 +1654,7 @@ class PartitionTuple(CombinatorialElement):
 
         - ``e`` -- the quantum characteristic
 
-        - ``multicharge`` -- the multicharge (default `(0,)`)
+        - ``multicharge`` -- the multicharge (default: `(0,)`)
 
         OUTPUT:
 
@@ -1710,7 +1699,7 @@ class PartitionTuple(CombinatorialElement):
         """
         block = {}
         Ie = IntegerModRing(e)
-        for (k,r,c) in self.cells():
+        for k, r, c in self.cells():
             i = Ie(multicharge[k] + c - r)
             block[i] = block.get(i, 0) + 1
         return block
@@ -1737,12 +1726,10 @@ class PartitionTuple(CombinatorialElement):
 
         - ``e`` -- the quantum characteristic
 
-        - ``multicharge`` -- the multicharge (default `(0,)`)
+        - ``multicharge`` -- the multicharge (default: `(0,)`)
 
-        OUTPUT:
-
-        - a non-negative integer, which is the defect of the block
-          containing the partition tuple ``self``
+        OUTPUT: a nonnegative integer, which is the defect of the block
+        containing the partition tuple ``self``
 
         EXAMPLES::
 
@@ -1787,9 +1774,9 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
     - ``level`` -- the length of the tuple
 
-    - ``size``  -- the total number of cells
+    - ``size`` -- the total number of cells
 
-    - ``regular`` -- a positive integer or a tuple of non-negative
+    - ``regular`` -- positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1`
 
@@ -1817,6 +1804,11 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
         sage: 1 in PartitionTuples()
         False
+
+    Check pickling::
+
+        sage: loads(dumps( PartitionTuples(7,3) ))
+        Partition tuples of level 7 and size 3
     """
 
     @staticmethod
@@ -1844,7 +1836,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             raise ValueError('the level must be a positive integer')
 
         if size is not None and (not isinstance(size, (int, Integer)) or size < 0):
-            raise ValueError('the size must be a non-negative integer')
+            raise ValueError('the size must be a nonnegative integer')
 
         if isinstance(regular, (list, tuple)):
             if level is None:
@@ -1855,7 +1847,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
                                  level, regular))
         if regular == 0:
             raise ValueError("regular must be a positive integer or a tuple "
-                             "of non-negative integers")
+                             "of nonnegative integers")
         if level is None:
             if size is None:
                 if regular is None:
@@ -1866,7 +1858,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
                 return PartitionTuples_size(size)
             return RegularPartitionTuples_size(size, regular)
 
-        elif level == 1:
+        if level == 1:
             if isinstance(regular, (list, tuple)):
                 regular = regular[0]
             if size is None:
@@ -1901,15 +1893,13 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, mu):
         r"""
-        Constructs an element of :class:`PartitionTuple`.
+        Construct an element of :class:`PartitionTuple`.
 
         INPUT:
 
-        - ``mu`` -- a tuple of partitions
+        - ``mu`` -- tuple of partitions
 
-        OUTPUT:
-
-        - The corresponding :class:`PartitionTuple` object
+        OUTPUT: the corresponding :class:`PartitionTuple` object
 
         TESTS::
 
@@ -2007,7 +1997,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
         """
         if isinstance(r,(int,Integer)):
             return self.unrank(r)
-        elif isinstance(r,slice):
+        if isinstance(r,slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():
@@ -2073,7 +2063,7 @@ class PartitionTuples_all(PartitionTuples):
 
     def __init__(self):
         r"""
-        Initializes the class.
+        Initialize the class.
 
         EXAMPLES::
 
@@ -2146,7 +2136,7 @@ class PartitionTuples_level(PartitionTuples):
 
     def __init__(self, level, category=None):
         r"""
-        Initializes this class.
+        Initialize this class.
 
         EXAMPLES::
 
@@ -2157,7 +2147,7 @@ class PartitionTuples_level(PartitionTuples):
             sage: TestSuite( PartitionTuples(level=4) ).run()                           # needs sage.libs.flint
         """
         if level not in NN:
-            raise ValueError('level must be a non-negative integer')
+            raise ValueError('level must be a nonnegative integer')
         if category is None:
             category = InfiniteEnumeratedSets()
         super().__init__(category=category)
@@ -2263,7 +2253,7 @@ class PartitionTuples_size(PartitionTuples):
             sage: TestSuite( PartitionTuples(size=6) ).run()                            # needs sage.libs.flint
         """
         if size not in NN:
-            raise ValueError('size must be a non-negative integer')
+            raise ValueError('size must be a nonnegative integer')
         super().__init__(category=InfiniteEnumeratedSets())
         self._size = size
 
@@ -2308,7 +2298,7 @@ class PartitionTuples_size(PartitionTuples):
 
     def __iter__(self):
         r"""
-        Iterates through the infinite class of partition tuples of a fixed size.
+        Iterate through the infinite class of partition tuples of a fixed size.
 
         EXAMPLES::
 
@@ -2357,7 +2347,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
     def __init__(self, level, size):
         r"""
-        Initializes this class.
+        Initialize this class.
 
         EXAMPLES::
 
@@ -2365,7 +2355,7 @@ class PartitionTuples_level_size(PartitionTuples):
             sage: TestSuite( PartitionTuples(level=4, size=5) ).run()                   # needs sage.libs.flint sage.libs.pari
         """
         if not (level in NN and size in NN):
-            raise ValueError('n and level must be non-negative integers')
+            raise ValueError('n and level must be nonnegative integers')
         super().__init__(category=FiniteEnumeratedSets())
         self._level = level
         self._size = size
@@ -2413,7 +2403,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
     def __iter__(self):
         r"""
-        Iterates through the finite class of partition tuples of a fixed level
+        Iterate through the finite class of partition tuples of a fixed level
         and a fixed size.
 
         EXAMPLES::
@@ -2492,25 +2482,6 @@ class PartitionTuples_level_size(PartitionTuples):
         eta = pari(f'Ser(x,x,{self.size()})').eta()
         return ZZ((1 / eta**self.level()).polcoef(self.size(), pari('x')))
 
-    def __setstate__(self, state):
-        r"""
-        In order to maintain backwards compatibility and be able to unpickle a
-        old pickle from PartitionTuples_nk we have to override the default
-        ``__setstate__``.
-
-        TESTS::
-
-            sage: loads(b"x\x9cM\x90\xcdN\xc30\x0c\x80\xd5\xc1\x06\xeb\x80\xf1{\xe0\r\xe0\xd2\x0b\x07\x1e\x02)B\x88\x9c-7\xb5\xba\xa8MR')\x12\x07$8p\xe0\xadq\x996q\xb1b\xfb\xb3\xf59\x9f3\x93\xb0\xa5\xca\x04W[\x8f\xb9\x1a0f\x9bm\xf0\xe5\xf3\xee\xf5:\x0e=%\xf0]\xc9\xc5\xfd\x17\xcf>\xf8\xe0N_\x83\xf5\xd2\xc5\x1e\xd0L\x10\xf46e>T\xba\x04r55\x8d\xf5-\xcf\x95p&\xf87\x8a\x19\x1c\xe5Mh\xc0\xa3#^(\xbd\x00\xd3`F>Rz\t\x063\xb5!\xbe\xf3\xf1\xd4\x98\x90\xc4K\xa5\x0b\xbf\xb5\x8b\xb2,U\xd6\x0bD\xb1t\xd8\x11\xec\x12.u\xf1\xf0\xfd\xc2+\xbd\x82\x96<E\xcc!&>Qz\x0e5&\xe2S\xa5\xd70X\xd3\xf5\x04\xe2\x91\xc4\x95\xcf\x9e\n\x11\xa3\x9e\x1c\xf9<\t\xa6\x1cG#\x83\xbcV\xfaf\x7f\xd9\xce\xfc\xef\xb4s\xa5o\xf7#\x13\x01\x03\xa6$!J\x81/~t\xd1m\xc4\xe5Q\\.\xff\xfd\x8e\t\x14\rmW\\\xa9\xb1\xae~\x01/\x8f\x85\x02")
-            Partition tuples of level 7 and size 3
-            sage: loads(dumps( PartitionTuples(7,3) ))  # indirect doctest for unpickling a Tableau element
-            Partition tuples of level 7 and size 3
-        """
-        if isinstance(state, dict):   # for old pickles from Tableau_class
-            parts = PartitionTuples(state['k'], state['n'])
-            self.__class__ = parts.__class__
-            self.__dict__ = parts.__dict__
-        else:
-            super().__setstate__(state)
 
 ###############################################################################
 # Regular partition tuples
@@ -2659,8 +2630,8 @@ class RegularPartitionTuples_level(PartitionTuples_level):
 
     INPUT:
 
-    - ``level`` -- a non-negative Integer; the level
-    - ``regular`` -- a positive integer or a tuple of non-negative
+    - ``level`` -- nonnegative integer; the level
+    - ``regular`` -- positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1` with `0` representing `\infty`-regular
       (equivalently, partitions without restrictions)
@@ -2719,7 +2690,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
             sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         if level not in NN:
-            raise ValueError('level must be a non-negative integer')
+            raise ValueError('level must be a nonnegative integer')
         if not isinstance(regular, tuple):
             # This should not happen if called from RegularPartitionTuples
             regular = (regular,) * level
@@ -2728,7 +2699,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
         else:
             category = FiniteEnumeratedSets()
         if any(r not in NN for r in regular):
-            raise ValueError('regular must be a tuple of non-negative integers')
+            raise ValueError('regular must be a tuple of nonnegative integers')
         if len(regular) != level:
             raise ValueError("regular must be a tuple with length {}".format(level))
         PartitionTuples_level.__init__(self, level, category=category)
@@ -2886,7 +2857,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
             sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         if size not in NN:
-            raise ValueError('size must be a non-negative integer')
+            raise ValueError('size must be a nonnegative integer')
         RegularPartitionTuples.__init__(self, regular, category=InfiniteEnumeratedSets())
         self._size = size
 
@@ -2965,9 +2936,9 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
 
     INPUT:
 
-    - ``level`` -- a non-negative Integer; the level
-    - ``size`` -- a non-negative Integer; the size
-    - ``regular`` -- a positive integer or a tuple of non-negative
+    - ``level`` -- nonnegative integer; the level
+    - ``size`` -- nonnegative integer; the size
+    - ``regular`` -- positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1` with `0` representing `\infty`-regular
       (equivalently, partitions without restrictions)
@@ -3016,7 +2987,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
             sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint sage.libs.pari
         """
         if size not in NN:
-            raise ValueError('size must be a non-negative integer')
+            raise ValueError('size must be a nonnegative integer')
         if not (level in ZZ and level > 0):
             raise ValueError('level must be a positive integer')
         if not isinstance(regular, tuple):
@@ -3025,7 +2996,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
         if len(regular) != level:
             raise ValueError(f'regular must be a list with length {level}')
         if any(i not in NN for i in regular):
-            raise ValueError('regular must be a list of non-negative integers')
+            raise ValueError('regular must be a list of nonnegative integers')
         PartitionTuples_level_size.__init__(self, level, size)
         self._ell = regular
 

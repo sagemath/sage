@@ -28,7 +28,6 @@ in the module.
 AUTHOR:
 
 - Andrew Hou (11/06/2009)
-
 """
 # ***********************************************************************
 #          Copyright (C) 2009, Andrew Hou <amhou@uw.edu>
@@ -39,10 +38,10 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.integer_ring import ZZ
-from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
+from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
+from sage.rings.integer_ring import ZZ
 
 lazy_import("sage.symbolic.constants", "NaN")
 lazy_import("numpy", "ndarray", as_="numpy_ndarray")
@@ -61,25 +60,23 @@ def mean(v):
 
     INPUT:
 
-    - ``v`` -- a list of numbers
+    - ``v`` -- list of numbers
 
-    OUTPUT:
-
-    - a number
+    OUTPUT: a number
 
     EXAMPLES::
 
-        sage: mean([pi, e])                                                             # needs sage.symbolic
+        sage: mean([pi, e])
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.mean is deprecated;
         use numpy.mean or numpy.nanmean instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*pi + 1/2*e
-        sage: mean([])                                                                  # needs sage.symbolic
+        sage: mean([])
         NaN
-        sage: mean([I, sqrt(2), 3/5])                                                   # needs sage.symbolic
+        sage: mean([I, sqrt(2), 3/5])
         1/3*sqrt(2) + 1/3*I + 1/5
-        sage: mean([RIF(1.0103,1.0103), RIF(2)])                                        # needs sage.rings.real_interval_field
+        sage: mean([RIF(1.0103,1.0103), RIF(2)])
         1.5051500000000000?
         sage: mean(range(4))
         3/2
@@ -117,11 +114,9 @@ def mode(v):
 
     INPUT:
 
-    - ``v`` -- a list
+    - ``v`` -- list
 
-    OUTPUT:
-
-    - a list (sorted if possible)
+    OUTPUT: list (sorted if possible)
 
     EXAMPLES::
 
@@ -187,19 +182,16 @@ def std(v, bias=False):
 
     INPUT:
 
-    - ``v`` -- a list of numbers
+    - ``v`` -- list of numbers
 
-    - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+    - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
       ``len(v) - 1`` instead of ``len(v)`` to give a less biased
       estimator (sample) for the standard deviation.
 
-    OUTPUT:
-
-    - a number
+    OUTPUT: a number
 
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: std([1..6], bias=True)
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.std is deprecated;
@@ -228,6 +220,8 @@ def std(v, bias=False):
 
         sage: # needs numpy
         sage: import numpy
+        sage: if int(numpy.version.short_version[0]) > 1:
+        ....:     _ = numpy.set_printoptions(legacy="1.25")
         sage: x = numpy.array([1,2,3,4,5])
         sage: std(x, bias=False)
         1.5811388300841898
@@ -253,8 +247,7 @@ def std(v, bias=False):
         # accounts for numpy arrays
         if bias:
             return v.std()
-        else:
-            return v.std(ddof=1)
+        return v.std(ddof=1)
 
     if not v:
         # standard deviation of empty set defined as NaN
@@ -275,15 +268,13 @@ def variance(v, bias=False):
 
     INPUT:
 
-    - ``v`` -- a list of numbers
+    - ``v`` -- list of numbers
 
-    - ``bias`` -- bool (default: ``False``); if ``False``, divide by
+    - ``bias`` -- boolean (default: ``False``); if ``False``, divide by
       ``len(v) - 1`` instead of ``len(v)`` to give a less biased
       estimator (sample) for the standard deviation.
 
-    OUTPUT:
-
-    - a number
+    OUTPUT: a number
 
     EXAMPLES::
 
@@ -295,16 +286,18 @@ def variance(v, bias=False):
         7/2
         sage: variance([1..6], bias=True)
         35/12
-        sage: variance([e, pi])                                                         # needs sage.symbolic
+        sage: variance([e, pi])
         1/2*(pi - e)^2
         sage: variance([])
         NaN
-        sage: variance([I, sqrt(2), 3/5])                                               # needs sage.symbolic
+        sage: variance([I, sqrt(2), 3/5])
         1/450*(10*sqrt(2) - 5*I - 3)^2 + 1/450*(5*sqrt(2) - 10*I + 3)^2
         + 1/450*(5*sqrt(2) + 5*I - 6)^2
         sage: variance([RIF(1.0103, 1.0103), RIF(2)])
         0.4897530450000000?
         sage: import numpy                                                              # needs numpy
+        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
+        ....:     _ = numpy.set_printoptions(legacy="1.25")                                 # needs numpy
         sage: x = numpy.array([1,2,3,4,5])                                              # needs numpy
         sage: variance(x, bias=False)                                                   # needs numpy
         2.5
@@ -350,8 +343,7 @@ def variance(v, bias=False):
         # accounts for numpy arrays
         if bias:
             return v.var()
-        else:
-            return v.var(ddof=1)
+        return v.var(ddof=1)
     if not v:
         # variance of empty set defined as NaN
         return NaN
@@ -364,20 +356,19 @@ def variance(v, bias=False):
         if isinstance(x, int):
             return x / ZZ(len(v))
         return x / len(v)
-    else:
-        # sample variance
-        if isinstance(x, int):
-            return x / ZZ(len(v)-1)
-        return x / (len(v)-1)
+    # sample variance
+    if isinstance(x, int):
+        return x / ZZ(len(v)-1)
+    return x / (len(v)-1)
 
 
 def median(v):
     """
-    Return the median (middle value) of the elements of `v`
+    Return the median (middle value) of the elements of `v`.
 
     If `v` is empty, we define the median to be NaN, which is
     consistent with NumPy (note that R returns NULL).
-    If `v` is comprised of strings, :class:`TypeError` occurs.
+    If `v` is comprised of strings, :exc:`TypeError` occurs.
     For elements other than numbers, the median is a result of :func:`sorted`.
 
     This function is deprecated.  Use :func:`numpy.median` or :func:`numpy.nanmedian`
@@ -385,11 +376,9 @@ def median(v):
 
     INPUT:
 
-    - ``v`` -- a list
+    - ``v`` -- list
 
-    OUTPUT:
-
-    - median element of `v`
+    OUTPUT: median element of `v`
 
     EXAMPLES::
 
@@ -399,11 +388,11 @@ def median(v):
         use numpy.median or numpy.nanmedian instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         3
-        sage: median([e, pi])                                                           # needs sage.symbolic
+        sage: median([e, pi])
         1/2*pi + 1/2*e
         sage: median(['sage', 'linux', 'python'])
         'python'
-        sage: median([])                                                                # needs sage.symbolic
+        sage: median([])
         NaN
         sage: class MyClass:
         ....:    def median(self):
@@ -422,10 +411,9 @@ def median(v):
     values = sorted(v)
     if len(values) % 2:
         return values[((len(values))+1)//2-1]
-    else:
-        lower = values[(len(values)+1)//2-1]
-        upper = values[len(values)//2]
-        return (lower + upper) / ZZ(2)
+    lower = values[(len(values)+1)//2-1]
+    upper = values[len(values)//2]
+    return (lower + upper) / ZZ(2)
 
 
 def moving_average(v, n):
@@ -440,13 +428,11 @@ def moving_average(v, n):
 
     INPUT:
 
-    - ``v`` -- a list
+    - ``v`` -- list
 
-    - ``n`` -- the number of values used in computing each average.
+    - ``n`` -- the number of values used in computing each average
 
-    OUTPUT:
-
-    - a list of length ``len(v)-n+1``, since we do not fabric any values
+    OUTPUT: list of length ``len(v)-n+1``, since we do not fabric any values
 
     EXAMPLES::
 
@@ -460,7 +446,7 @@ def moving_average(v, n):
         [5/2, 7/2, 9/2, 11/2, 13/2, 15/2, 17/2]
         sage: moving_average([], 1)
         []
-        sage: moving_average([pi, e, I, sqrt(2), 3/5], 2)                               # needs sage.symbolic
+        sage: moving_average([pi, e, I, sqrt(2), 3/5], 2)
         [1/2*pi + 1/2*e, 1/2*e + 1/2*I, 1/2*sqrt(2) + 1/2*I,
          1/2*sqrt(2) + 3/10]
 
@@ -474,7 +460,6 @@ def moving_average(v, n):
         [2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000]
         sage: stats.moving_average(list(a), 3)                                          # needs numpy
         [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
-
     """
     deprecation(29662, 'sage.stats.basic_stats.moving_average is deprecated; use pandas.Series.rolling instead')
 

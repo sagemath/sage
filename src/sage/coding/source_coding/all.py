@@ -1,1 +1,1 @@
-from .huffman import Huffman
+from sage.coding.source_coding.huffman import Huffman

@@ -21,15 +21,16 @@ AUTHORS:
 # *****************************************************************************
 
 from copy import copy
-from sage.rings.ring import CommutativeRing
+
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings, CompleteDiscreteValuationFields
 from sage.structure.category_object import check_default_category
-from sage.structure.parent import Parent
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
+from sage.structure.parent import Parent
 
-class LocalGeneric(CommutativeRing):
+
+class LocalGeneric(Parent):
     def __init__(self, base, prec, names, element_class, category=None):
         r"""
         Initialize ``self``.
@@ -40,7 +41,7 @@ class LocalGeneric(CommutativeRing):
             sage: R.precision_cap()
             20
 
-        In :issue:`14084`, the category framework has been implemented for p-adic rings::
+        In :issue:`14084`, the category framework has been implemented for `p`-adic rings::
 
             sage: TestSuite(R).run()                                                    # needs sage.geometry.polyhedron
             sage: K = Qp(7)
@@ -73,9 +74,10 @@ class LocalGeneric(CommutativeRing):
         category = category.Metric().Complete().Infinite()
         if default_category is not None:
             category = check_default_category(default_category, category)
-        Parent.__init__(self, base, names=(names,), normalize=False, category=category)
+        Parent.__init__(self, base=base, names=(names,),
+                        normalize=False, category=category)
 
-    def is_capped_relative(self):
+    def is_capped_relative(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a capped
         relative fashion.
@@ -100,7 +102,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_capped_absolute(self):
+    def is_capped_absolute(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a
         capped absolute fashion.
@@ -125,7 +127,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_fixed_mod(self):
+    def is_fixed_mod(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a fixed
         modulus fashion.
@@ -152,7 +154,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_floating_point(self):
+    def is_floating_point(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a floating
         point fashion.
@@ -177,7 +179,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_lattice_prec(self):
+    def is_lattice_prec(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision using
         a lattice model.
@@ -206,7 +208,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_relaxed(self):
+    def is_relaxed(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a relaxed
         fashion.
@@ -222,7 +224,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex.
 
@@ -242,14 +244,14 @@ class LocalGeneric(CommutativeRing):
         The following arguments are applied to every ring in the tower:
 
         - ``type`` -- string, the precision type
-        - ``p`` -- the prime of the ground ring.  Defining polynomials
-                   will be converted to the new base rings.
+        - ``p`` -- the prime of the ground ring; defining polynomials
+          will be converted to the new base rings
         - ``print_mode`` -- string
-        - ``print_pos`` -- bool
+        - ``print_pos`` -- boolean
         - ``print_sep`` -- string
-        - ``print_alphabet`` -- dict
-        - ``show_prec`` -- bool
-        - ``check`` -- bool
+        - ``print_alphabet`` -- dictionary
+        - ``show_prec`` -- boolean
+        - ``check`` -- boolean
         - ``label`` -- string (only for lattice precision)
 
         The following arguments are only applied to the top ring in the tower:
@@ -263,19 +265,19 @@ class LocalGeneric(CommutativeRing):
 
         The following arguments have special behavior:
 
-        - ``prec`` -- integer.  If the precision is increased on an extension ring,
+        - ``prec`` -- integer; if the precision is increased on an extension ring,
           the precision on the base is increased as necessary (respecting ramification).
           If the precision is decreased, the precision of the base is unchanged.
 
-        - ``field`` -- bool.  If ``True``, switch to a tower of fields via the fraction field.
-          If False, switch to a tower of rings of integers.
+        - ``field`` -- boolean; if ``True``, switch to a tower of fields via the fraction field
+          If ``False``, switch to a tower of rings of integers
 
-        - ``q`` -- prime power.  Replace the initial unramified extension of `\QQ_p` or `\ZZ_p`
+        - ``q`` -- prime power; replace the initial unramified extension of `\QQ_p` or `\ZZ_p`
           with an unramified extension of residue cardinality `q`.
           If the initial extension is ramified, add in an unramified extension.
 
-        - ``base`` -- ring or field. Use a specific base ring instead of recursively
-          calling :meth:`change` down the tower.
+        - ``base`` -- ring or field; use a specific base ring instead of recursively
+          calling :meth:`change` down the tower
 
         See the :mod:`constructors <sage.rings.padics.factory>` for more details on the
         meaning of these arguments.
@@ -289,7 +291,7 @@ class LocalGeneric(CommutativeRing):
 
         or the precision type::
 
-            sage: Zp(5).change(type="capped-abs")
+            sage: Zp(5).change(type='capped-abs')
             5-adic Ring with capped absolute precision 20
 
         or even the prime::
@@ -310,7 +312,6 @@ class LocalGeneric(CommutativeRing):
 
         Changing print mode to 'digits' works for Eisenstein extensions::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: W.print_mode()
@@ -320,7 +321,6 @@ class LocalGeneric(CommutativeRing):
 
         You can change extensions::
 
-            sage: # needs sage.libs.flint
             sage: K.<a> = QqFP(125, prec=4)
             sage: K.change(q=64)
             2-adic Unramified Extension Field in a defined by x^6 + x^4 + x^3 + x + 1
@@ -335,7 +335,6 @@ class LocalGeneric(CommutativeRing):
 
         and precision::
 
-            sage: # needs sage.libs.flint
             sage: Kup = K.change(prec=8); Kup
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kup.precision_cap()
@@ -345,7 +344,6 @@ class LocalGeneric(CommutativeRing):
 
         If you decrease the precision, the precision of the base stays the same::
 
-            sage: # needs sage.libs.flint
             sage: Kdown = K.change(prec=2); Kdown
             5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
             sage: Kdown.precision_cap()
@@ -355,7 +353,6 @@ class LocalGeneric(CommutativeRing):
 
         Changing the prime works for extensions::
 
-            sage: # needs sage.libs.ntl
             sage: x = polygen(ZZ)
             sage: R.<a> = Zp(5).extension(x^2 + 2)
             sage: S = R.change(p=7)
@@ -369,7 +366,6 @@ class LocalGeneric(CommutativeRing):
 
         ::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(5^3)
             sage: S = R.change(prec=50)
             sage: S.defining_polynomial(exact=True)
@@ -388,7 +384,6 @@ class LocalGeneric(CommutativeRing):
 
         The `secure` attribute for relaxed type is copied::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5, secure=True); R
             5-adic Ring handled with relaxed arithmetics
             sage: K = R.change(field=True); K
@@ -398,7 +393,6 @@ class LocalGeneric(CommutativeRing):
 
         The `check=False` option works for relaxed type::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpER(5) ; R
             5-adic Ring handled with relaxed arithmetics
             sage: K = R.change(field=True, check=False) ; K
@@ -451,7 +445,7 @@ class LocalGeneric(CommutativeRing):
                 kwds['type'] = 'capped-rel'
             elif self._prec_type() == 'fixed-mod':
                 kwds['type'] = 'floating-point'
-                kwds['show_prec'] = False # This can be removed once printing of fixed mod elements is changed.
+                kwds['show_prec'] = False  # This can be removed once printing of fixed mod elements is changed.
 
         # There are two kinds of functors possible:
         # CompletionFunctor and AlgebraicExtensionFunctor
@@ -488,7 +482,7 @@ class LocalGeneric(CommutativeRing):
             # Labels for lattice precision
             if 'label' in kwds:
                 functor.extras['label'] = kwds.pop('label')
-            elif 'label' in functor.extras and functor.type not in ['lattice-cap','lattice-float']:
+            elif 'label' in functor.extras and functor.type not in ['lattice-cap', 'lattice-float']:
                 del functor.extras['label']
             for atr in ('ram_name', 'var_name'):
                 if atr in kwds:
@@ -615,11 +609,9 @@ class LocalGeneric(CommutativeRing):
 
         INPUT:
 
-        - ``self`` -- a p-adic ring.
+        - ``self`` -- a `p`-adic ring
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 
@@ -630,19 +622,17 @@ class LocalGeneric(CommutativeRing):
 
     def defining_polynomial(self, var='x', exact=False):
         r"""
-        Return the defining polynomial of this local ring
+        Return the defining polynomial of this local ring.
 
         INPUT:
 
-        - ``var`` -- string (default: ``'x'``), the name of the variable
+        - ``var`` -- string (default: ``'x'``); the name of the variable
 
-        - ``exact`` -- a boolean (default: ``False``), whether to return the
-          underlying exact  defining polynomial rather than the one with coefficients
-          in the base ring.
+        - ``exact`` -- boolean (default: ``False``); whether to return the
+          underlying exact defining polynomial rather than the one with coefficients
+          in the base ring
 
-        OUTPUT:
-
-        The defining polynomial of this ring as an extension over its ground ring
+        OUTPUT: the defining polynomial of this ring as an extension over its ground ring
 
         EXAMPLES::
 
@@ -659,9 +649,8 @@ class LocalGeneric(CommutativeRing):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if exact:
             from sage.rings.integer_ring import ZZ
-            return PolynomialRing(ZZ,var).gen()
-        else:
-            return PolynomialRing(self,var).gen()
+            return PolynomialRing(ZZ, var).gen()
+        return PolynomialRing(self, var).gen()
 
     def ground_ring(self):
         r"""
@@ -673,9 +662,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a local ring
 
-        OUTPUT:
-
-        The ground ring of ``self``, i.e., itself.
+        OUTPUT: the ground ring of ``self``, i.e., itself
 
         EXAMPLES::
 
@@ -698,9 +685,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a `p`-adic ring
 
-        OUTPUT:
-
-        The ground ring of the tower for ``self``, i.e., itself.
+        OUTPUT: the ground ring of the tower for ``self``, i.e., itself
 
         EXAMPLES::
 
@@ -712,7 +697,7 @@ class LocalGeneric(CommutativeRing):
 
     def absolute_degree(self):
         r"""
-        Return the degree of this extension over the prime p-adic field/ring.
+        Return the degree of this extension over the prime `p`-adic field/ring.
 
         EXAMPLES::
 
@@ -763,8 +748,7 @@ class LocalGeneric(CommutativeRing):
         """
         if self.base_ring().absolute_degree() == 1:
             return self.absolute_degree()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
+        raise NotImplementedError("For a relative p-adic ring or field you must use relative_degree or absolute_degree as appropriate")
 
     def absolute_e(self):
         r"""
@@ -784,8 +768,7 @@ class LocalGeneric(CommutativeRing):
         # Override this in subclasses (if appropriate)
         if self is self.base_ring():
             return ZZ(1)
-        else:
-            return self.base_ring().absolute_e()
+        return self.base_ring().absolute_e()
 
     def absolute_ramification_index(self):
         r"""
@@ -857,8 +840,7 @@ class LocalGeneric(CommutativeRing):
         """
         if self.base_ring().absolute_degree() == 1:
             return self.absolute_e()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_e or absolute_e as appropriate")
+        raise NotImplementedError("For a relative p-adic ring or field you must use relative_e or absolute_e as appropriate")
 
     def ramification_index(self):
         r"""
@@ -898,8 +880,7 @@ class LocalGeneric(CommutativeRing):
         # Override this in subclasses (if appropriate)
         if self is self.base_ring():
             return ZZ(1)
-        else:
-            return self.base_ring().absolute_f()
+        return self.base_ring().absolute_f()
 
     def absolute_inertia_degree(self):
         r"""
@@ -972,8 +953,7 @@ class LocalGeneric(CommutativeRing):
         """
         if self.base_ring().absolute_degree() == 1:
             return self.absolute_f()
-        else:
-            raise NotImplementedError("For a relative p-adic ring or field you must use relative_f or absolute_f as appropriate")
+        raise NotImplementedError("For a relative p-adic ring or field you must use relative_f or absolute_f as appropriate")
 
     def inertia_degree(self):
         r"""
@@ -1002,9 +982,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a local ring
 
-        OUTPUT:
-
-        - the inertia subring of self, i.e., itself
+        OUTPUT: the inertia subring of ``self``, i.e., itself
 
         EXAMPLES::
 
@@ -1022,9 +1000,7 @@ class LocalGeneric(CommutativeRing):
 
         - ``self`` -- a local ring
 
-        OUTPUT:
-
-        - the maximal unramified subextension of ``self``
+        OUTPUT: the maximal unramified subextension of ``self``
 
         EXAMPLES::
 
@@ -1059,7 +1035,8 @@ class LocalGeneric(CommutativeRing):
 
     def uniformiser_pow(self, n):
         r"""
-        Return the `n`th power of the uniformiser of ``self`` (as an element of ``self``).
+        Return the `n`-th power of the uniformiser of ``self`` (as an element
+        of ``self``).
 
         EXAMPLES::
 
@@ -1091,7 +1068,6 @@ class LocalGeneric(CommutativeRing):
 
             sage: K = Qp(3)
             sage: K._test_add_bigoh()
-
         """
         tester = self._tester(**options)
         for x in tester.some_elements():
@@ -1117,7 +1093,7 @@ class LocalGeneric(CommutativeRing):
                 tester.assertLessEqual(y.precision_absolute(), -1)
 
             # make sure that we handle very large values correctly
-            if self._prec_type() not in [ 'lattice-float', 'relaxed' ]:   # no cap in these models
+            if self._prec_type() not in ['lattice-float', 'relaxed']:  # no cap in these models
                 absprec = Integer(2)**1000
                 tester.assertEqual(x.add_bigoh(absprec), x)
 
@@ -1129,7 +1105,6 @@ class LocalGeneric(CommutativeRing):
 
             sage: R = Zp(2)
             sage: R._test_residue()
-
         """
         tester = self._tester(**options)
         tester.assertEqual(self.residue_field().characteristic(), self.residue_characteristic())
@@ -1194,15 +1169,15 @@ class LocalGeneric(CommutativeRing):
         cap = parent.precision_cap()
         n = M.nrows()
         m = M.ncols()
-        shift_rows = n * [ ZZ(0) ]
-        shift_cols = m * [ ZZ(0) ]
+        shift_rows = n * [ZZ.zero()]
+        shift_cols = m * [ZZ.zero()]
         for i in range(n):
-            prec = min(M[i,j].precision_absolute() for j in range(m))
+            prec = min(M[i, j].precision_absolute() for j in range(m))
             if prec is Infinity or prec == cap:
                 continue
             shift_rows[i] = s = cap - prec
             for j in range(m):
-                M[i,j] <<= s
+                M[i, j] <<= s
         for j in range(m):
             prec = min(M[i,j].precision_absolute() for i in range(n))
             if prec is Infinity or prec == cap:
@@ -1220,14 +1195,14 @@ class LocalGeneric(CommutativeRing):
         :meth:`sage.matrix.matrix2.Matrix.smith_form` to compute the Smith
         normal form over local rings and fields.
 
-        The entries of the Smith normal form are normalized such that non-zero
+        The entries of the Smith normal form are normalized such that nonzero
         entries of the diagonal are powers of the distinguished uniformizer.
 
         INPUT:
 
         - ``M`` -- a matrix over this ring
 
-        - ``transformation`` -- a boolean; whether the transformation matrices
+        - ``transformation`` -- boolean; whether the transformation matrices
           are returned
 
         - ``integral`` -- a subring of the base ring or ``True``; the entries
@@ -1235,13 +1210,13 @@ class LocalGeneric(CommutativeRing):
           entries are in the ring of integers of the base ring.
 
         - ``exact`` -- boolean.  If ``True``, the diagonal smith form will
-          be exact, or raise a ``PrecisionError`` if this is not possible.
+          be exact, or raise a :exc:`PrecisionError` if this is not possible
           If ``False``, the diagonal entries will be inexact, but the
           transformation matrices will be exact.
 
         EXAMPLES::
 
-            sage: A = Zp(5, prec=10, print_mode="digits")
+            sage: A = Zp(5, prec=10, print_mode='digits')
             sage: M = matrix(A, 2, 2, [2, 7, 1, 6])
 
             sage: S, L, R = M.smith_form()  # indirect doctest
@@ -1315,6 +1290,10 @@ class LocalGeneric(CommutativeRing):
             sage: M.smith_form(transformation=False, exact=False)  # indirect doctest
             [O(5^10) O(5^10)]
             [O(5^10) O(5^10)]
+
+            sage: A = Zp(5)
+            sage: matrix(A,[1,1]).smith_form(transformation=False, integral=False, exact=False)
+            [1 + O(5^20)     O(5^20)]
         """
         from sage.rings.infinity import infinity
         from .precision_error import PrecisionError
@@ -1326,8 +1305,7 @@ class LocalGeneric(CommutativeRing):
             if transformation:
                 d, u, v = self._matrix_smith_form(M.transpose(), True, integral, exact)
                 return d.transpose(), v.transpose(), u.transpose()
-            else:
-                return self._matrix_smith_form(M.transpose(), False, integral, exact).transpose()
+            return self._matrix_smith_form(M.transpose(), False, integral, exact).transpose()
         smith = M.parent()(0)
         S = copy(M)
         Z = self.integer_ring()
@@ -1471,8 +1449,8 @@ class LocalGeneric(CommutativeRing):
                 if exact:
                     smith[i,i] = self(1)
                 else:
-                    for j in range(n):
-                        smith[i,j] = smith[i,j] >> v
+                    for j in range(m):
+                        smith[i,j] >>= v
             if transformation:
                 for i in range(n):
                     for j in range(n):
@@ -1482,8 +1460,7 @@ class LocalGeneric(CommutativeRing):
                         right[i,j] <<= shift_cols[i]
         if transformation:
             return smith, left, right
-        else:
-            return smith
+        return smith
 
     def _test_matrix_smith(self, **options):
         r"""
@@ -1492,7 +1469,6 @@ class LocalGeneric(CommutativeRing):
         EXAMPLES::
 
             sage: ZpCA(5, 15)._test_matrix_smith()                                      # needs sage.geometry.polyhedron
-
         """
         tester = self._tester(**options)
         tester.assertEqual(self.residue_field().characteristic(), self.residue_characteristic())
@@ -1585,7 +1561,6 @@ class LocalGeneric(CommutativeRing):
             O(5^70)
             O(5^80)
 
-            sage: # needs sage.geometry.polyhedron
             sage: A = random_matrix(Qp(5),4)
             sage: B = random_matrix(Qp(5),4)
             sage: (A*B).det() == A.det()*B.det()
@@ -1634,8 +1609,7 @@ class LocalGeneric(CommutativeRing):
             if S[pivi,pivj] == 0:
                 if track_precision:
                     return R(0, valdet + (n-piv)*val - shift)
-                else:
-                    return R(0)
+                return R(0)
 
             valdet += val
             S.swap_rows(pivi,piv)
@@ -1661,8 +1635,7 @@ class LocalGeneric(CommutativeRing):
                 for j in range(n):
                     prec = min(prec, S[i,j].precision_absolute())
                 prec -= S[i,i].valuation()
-                if prec < relprec:
-                    relprec = prec
+                relprec = min(prec, relprec)
                 if prec < 0:
                     relprec_neg += prec
             if relprec_neg < 0:

@@ -13,7 +13,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -131,7 +130,7 @@ cdef class MatrixStruct:
         INPUT:
 
         - ``partition`` -- an optional list of lists partition of the columns;
-          default is the unit partition.
+          default is the unit partition
 
         EXAMPLES::
 
@@ -170,7 +169,6 @@ cdef class MatrixStruct:
 
         PS_dealloc(part)
 
-
     def automorphism_group(self):
         """
         Return a list of generators of the automorphism group, along with its
@@ -192,9 +190,9 @@ cdef class MatrixStruct:
         cdef Integer order
         if self.output is NULL:
             self.run()
-        generators = []
-        for i in range(self.output.num_gens):
-            generators.append([self.output.generators[i*self.degree + j] for j from 0 <= j < self.degree])
+        generators = [[self.output.generators[i * self.degree + j]
+                       for j in range(self.degree)]
+                      for i in range(self.output.num_gens)]
         order = Integer()
         SC_order(self.output.group, 0, order.value)
         base = [self.output.group.base_orbits[i][0] for i in range(self.output.group.base_size)]
@@ -296,6 +294,7 @@ cdef int compare_matrices(int *gamma_1, int *gamma_2, void *S1, void *S2, int de
 cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0
 
+
 def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_matrix=5, density_range=(.1,.9)):
     """
     Test to make sure that ``C(gamma(M)) == C(M)`` for random permutations ``gamma``
@@ -304,11 +303,11 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
 
     INPUT:
 
-    - n -- run tests on this many matrices
-    - nrows_max -- test matrices with at most this many rows
-    - ncols_max -- test matrices with at most this many columns
-    - perms_per_matrix -- test each matrix with this many random permutations
-    - nsymbols_max -- maximum number of distinct symbols in the matrix
+    - ``n`` -- run tests on this many matrices
+    - ``nrows_max`` -- test matrices with at most this many rows
+    - ``ncols_max`` -- test matrices with at most this many columns
+    - ``perms_per_matrix`` -- test each matrix with this many random permutations
+    - ``nsymbols_max`` -- maximum number of distinct symbols in the matrix
 
     This code generates n random matrices M on at most ncols_max columns and at
     most nrows_max rows. The density of entries in the basis is chosen randomly
@@ -345,7 +344,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
         for i in range(perms_per_matrix):
             perm = [a-1 for a in list(S.random_element())]
             NN = matrix(GF(nsymbols), nrows, ncols)
-            for j from 0 <= j < ncols:
+            for j in range(ncols):
                 NN.set_column(perm[j], MM.column(j))
             N = MatrixStruct(NN)
             # now N is a random permutation of M
@@ -357,7 +356,7 @@ def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_ma
             M_C = matrix(GF(nsymbols), nrows, ncols)
             N_C = matrix(GF(nsymbols), nrows, ncols)
 
-            for j from 0 <= j < ncols:
+            for j in range(ncols):
                 M_C.set_column(M_relab[j], MM.column(j))
                 N_C.set_column(N_relab[j], NN.column(j))
 

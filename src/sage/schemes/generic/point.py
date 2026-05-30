@@ -2,11 +2,11 @@
 Points on schemes
 """
 
-#*******************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2006 William Stein
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
@@ -15,6 +15,7 @@ from sage.structure.richcmp import richcmp
 # Base class for points on a scheme, either topological
 # or defined by a morphism.
 ########################################################
+
 
 class SchemePoint(Element):
     """
@@ -41,7 +42,7 @@ class SchemePoint(Element):
 
     def scheme(self):
         """
-        Return the scheme on which self is a point.
+        Return the scheme on which ``self`` is a point.
 
         EXAMPLES::
 
@@ -68,12 +69,10 @@ class SchemePoint(Element):
         """
         return "Point on %s" % self.__S
 
+
 ########################################################
 # Topological points on a scheme
 ########################################################
-
-def is_SchemeTopologicalPoint(x):
-    return isinstance(x, SchemeTopologicalPoint)
 
 class SchemeTopologicalPoint(SchemePoint):
     """
@@ -170,8 +169,8 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
              the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         R = S.coordinate_ring()
-        from sage.rings.ideal import is_Ideal
-        if not is_Ideal(P):
+        from sage.rings.ideal import Ideal_generic
+        if not isinstance(P, Ideal_generic):
             P = R.ideal(P)
         elif P.ring() is not R:
             P = R.ideal(P.gens())
@@ -183,7 +182,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         SchemeTopologicalPoint.__init__(self, S)
         self.__P = P
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this scheme point.
 
@@ -198,7 +197,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             'Point on Projective Space of dimension 2 over Rational Field defined by the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field'
         """
         return "Point on %s defined by the %s" % (self.scheme(),
-                                                self.prime_ideal())
+                                                  self.prime_ideal())
 
     def prime_ideal(self):
         """
@@ -214,7 +213,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         """
         return self.__P
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` to ``other``.
 

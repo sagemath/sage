@@ -19,7 +19,7 @@ def qsieve(n):
 
     INPUT:
 
-    - ``n`` -- an integer; neither prime nor a perfect power.
+    - ``n`` -- integer; neither prime nor a perfect power
 
     OUTPUT:
 
@@ -43,7 +43,6 @@ def qsieve(n):
         Traceback (most recent call last):
         ...
         ArithmeticError: factorization of 0 is not defined
-
     """
     n = Integer(n)
 

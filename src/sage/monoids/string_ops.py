@@ -7,9 +7,12 @@
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Any
 
-from sage.rings.real_mpfr import RealField
+from sage.misc.lazy_import import lazy_import
 from .string_monoid_element import StringMonoidElement
+
+lazy_import('sage.rings.real_mpfr', 'RealField')
 
 
 def strip_encoding(S) -> str:
@@ -24,7 +27,6 @@ def strip_encoding(S) -> str:
 
     TESTS::
 
-        sage: S = "The cat in the hat."
         sage: strip_encoding(44)
         Traceback (most recent call last):
         ...
@@ -38,7 +40,24 @@ def strip_encoding(S) -> str:
 def frequency_distribution(S, n=1, field=None):
     """
     The probability space of frequencies of n-character substrings of S.
+
+    EXAMPLES::
+
+        sage: frequency_distribution('banana not a nana nor ananas', 2)
+        Discrete probability space defined by {' a': 0.0740740740740741,
+         ' n': 0.111111111111111,
+         'a ': 0.111111111111111,
+         'an': 0.185185185185185,
+         'as': 0.0370370370370370,
+         'ba': 0.0370370370370370,
+         'na': 0.222222222222222,
+         'no': 0.0740740740740741,
+         'or': 0.0370370370370370,
+         'ot': 0.0370370370370370,
+         'r ': 0.0370370370370370,
+         't ': 0.0370370370370370}
     """
+    from sage.probability.random_variable import DiscreteProbabilitySpace
     if isinstance(S, tuple):
         S = list(S)
     elif isinstance(S, (str, StringMonoidElement)):
@@ -46,16 +65,15 @@ def frequency_distribution(S, n=1, field=None):
     if field is None:
         field = RealField()
     if isinstance(S, list):
-        P = {}
+        P: dict[str, Any] = {}
         N = len(S)
-        eps = field(1)/N
+        eps = field.one() / N
         for i in range(N):
             c = S[i]
             if c in P:
                 P[c] += eps
             else:
                 P[c] = eps
-        from sage.probability.random_variable import DiscreteProbabilitySpace
         return DiscreteProbabilitySpace(S, P, field)
     raise TypeError("Argument S (= %s) must be a string, list, or tuple.")
 
@@ -77,7 +95,7 @@ def coincidence_index(S, n=1):
             raise TypeError("Argument S (= %s) must be a string.")
     S = strip_encoding(S)
     N = len(S)-n+1
-    X = {}
+    X: dict[str, int] = {}
     for i in range(N):
         c = S[i:i+n]
         if c in X:
@@ -92,8 +110,8 @@ def coincidence_discriminant(S, n=2):
     """
     INPUT:
 
-    A tuple of strings, e.g. produced as decimation of transposition
-    ciphertext, or a sample plaintext.
+    - ``S`` --tuple of strings; e.g. produced as decimation of transposition
+      ciphertext, or a sample plaintext
 
     OUTPUT:
 

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat
+# sage.doctest: needs sage.combinat
 r"""
 Generating Function of Polyhedron's Integral Points
 
@@ -91,7 +91,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
       The variable names of the Laurent polynomial ring of the output
       are this string followed by an integer.
 
-    - ``names`` -- a list or tuple of names (strings), or a comma separated string
+    - ``names`` -- list or tuple of names (strings), or a comma separated string
 
       ``name`` is extracted from ``names``, therefore ``names`` has to contain
       exactly one variable name, and ``name`` and``names`` cannot be specified
@@ -477,8 +477,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = Factorization([], unit=0)
         if result_as_tuple:
             return (result,)
-        else:
-            return result
+        return result
 
     if polyhedron.base_ring() not in (ZZ, QQ):
         raise TypeError('base ring {} of the polyhedron not '
@@ -507,11 +506,10 @@ def generating_function_of_integral_points(polyhedron, split=False,
         result = _generating_function_of_integral_points_(polyhedron, name=name, **kwds)
         if result_as_tuple:
             return result
-        else:
-            if len(result) != 1:
-                raise ValueError("cannot unpack result "
-                                 "(set 'result_as_tuple=True')")
-            return result[0]
+        if len(result) != 1:
+            raise ValueError("cannot unpack result "
+                             "(set 'result_as_tuple=True')")
+        return result[0]
 
     if d <= 1:
         raise ValueError('cannot do splitting with only '
@@ -535,7 +533,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
 
             ieqs, repr_rhss = zip(*[(ieq(a, b), ieq_repr_rhs(a, b))
                                     for a, b in zip(pi[:-1], pi[1:])])
-            return Polyhedron(ieqs=ieqs),  ieqs_repr_lhs(pi) + ''.join(repr_rhss)
+            return Polyhedron(ieqs=ieqs), ieqs_repr_lhs(pi) + ''.join(repr_rhss)
 
         split = (polyhedron_from_permutation(pi) for pi in Permutations(d))
         parts = ZZ(d).factorial()
@@ -680,11 +678,11 @@ def __generating_function_of_integral_points__(
 
     if sort_factors:
         def key(t):
-            D = t.dict().popitem()[0]
+            D = t.monomial_coefficients().popitem()[0]
             return (-sum(abs(d) for d in D), D)
         terms = sorted(terms, key=key, reverse=True)
     return Factorization([(numerator, 1)] +
-                         list((1-t, -1) for t in terms),
+                         [(1 - t, -1) for t in terms],
                          sort=Factorization_sort,
                          simplify=Factorization_simplify)
 
@@ -697,19 +695,17 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
 
     INPUT:
 
-    - ``inequalities`` -- a list or other iterable of tuples
-      of numbers.
+    - ``inequalities`` -- list or other iterable of tuples
+      of numbers
 
     - ``B`` -- a Laurent polynomial ring
 
-    - ``skip_indices`` -- a list or tuple of indices
+    - ``skip_indices`` -- list or tuple of indices
 
       The variables corresponding to ``skip_indices`` are not handled
       (e.g. because they are determined by an equation).
 
-    OUTPUT:
-
-    A pair of
+    OUTPUT: a pair of
 
     - a Laurent polynomial specifying the numerator and
 
@@ -750,7 +746,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
     logger.debug('terms denominator %s', terms)
 
     def decode_factor(factor):
-        D = factor.dict()
+        D = factor.monomial_coefficients()
         assert len(D) == 1
         exponent, coefficient = next(iter(D.items()))
         return coefficient, exponent
@@ -766,7 +762,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
                       lambda factor: factor[1] == 0)
         other_factors = tuple(factor[0] for factor in other_factors)
         numerator, factors_denominator = \
-            _Omega_(numerator.dict(), tuple(decoded_factors))
+            _Omega_(numerator.monomial_coefficients(), tuple(decoded_factors))
         terms = other_factors + factors_denominator
 
     return _simplify_(numerator, terms)
@@ -780,9 +776,9 @@ class _TransformHrepresentation:
 
     INPUT:
 
-    - ``inequalities`` -- a list of tuples of numbers
+    - ``inequalities`` -- list of tuples of numbers
 
-    - ``equations`` -- a list of tuples of numbers
+    - ``equations`` -- list of tuples of numbers
 
     - ``B`` -- a Laurent polynomial ring
 
@@ -798,7 +794,7 @@ class _TransformHrepresentation:
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.
@@ -854,7 +850,7 @@ class _TransformHrepresentation:
 
         - ``numerator`` -- a Laurent polynomial
 
-        - ``terms`` -- a tuple or other iterable of Laurent polynomials
+        - ``terms`` -- tuple or other iterable of Laurent polynomials
 
           The denominator is the product of factors `1 - t` for each
           `t` in ``terms``.
@@ -887,9 +883,9 @@ class _SplitOffSimpleInequalities(_TransformHrepresentation):
 
     INPUT:
 
-    - ``inequalities`` -- a list of tuples of numbers
+    - ``inequalities`` -- list of tuples of numbers
 
-    - ``equations`` -- a list of tuples of numbers
+    - ``equations`` -- list of tuples of numbers
 
     - ``B`` -- a Laurent polynomial ring
 
@@ -905,7 +901,7 @@ class _SplitOffSimpleInequalities(_TransformHrepresentation):
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.
@@ -1180,8 +1176,8 @@ class _SplitOffSimpleInequalities(_TransformHrepresentation):
                 inequalities_extra.append(tuple(coeffs))
         T = matrix(ZZ, dim, dim, D)
 
-        self.inequalities = (list(tuple(T*vector(ieq))
-                                  for ieq in inequalities_filtered)
+        self.inequalities = ([tuple(T * vector(ieq))
+                              for ieq in inequalities_filtered]
                              + inequalities_extra)
 
         rules_pre = ((y, B({tuple(row[1:]): 1}))
@@ -1197,9 +1193,9 @@ class _EliminateByEquations(_TransformHrepresentation):
 
     INPUT:
 
-    - ``inequalities`` -- a list of tuples of numbers
+    - ``inequalities`` -- list of tuples of numbers
 
-    - ``equations`` -- a list of tuples of numbers
+    - ``equations`` -- list of tuples of numbers
 
     - ``B`` -- a Laurent polynomial ring
 
@@ -1215,7 +1211,7 @@ class _EliminateByEquations(_TransformHrepresentation):
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.
@@ -1325,7 +1321,7 @@ class _EliminateByEquations(_TransformHrepresentation):
         - ``indicesn`` -- a sorted tuple of integers representing column indices
 
           ``indicesn`` contains ``0`` and all indices of the columns of ``E``
-          which are non-zero.
+          which are nonzero.
 
         TESTS::
 
@@ -1365,13 +1361,13 @@ class _TransformMod(_TransformHrepresentation):
 
     INPUT:
 
-    - ``inequalities`` -- a list of tuples of numbers
+    - ``inequalities`` -- list of tuples of numbers
 
-    - ``equations`` -- a list of tuples of numbers
+    - ``equations`` -- list of tuples of numbers
 
     - ``B`` -- a Laurent polynomial ring
 
-    - ``mod`` -- a dictionary mapping an index ``i`` to ``(m, r)``
+    - ``mod`` -- dictionary mapping an index ``i`` to ``(m, r)``
 
       This is one entry of the output tuple of :meth:`generate_mods`.
 
@@ -1387,7 +1383,7 @@ class _TransformMod(_TransformHrepresentation):
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.
@@ -1467,8 +1463,8 @@ class _TransformMod(_TransformHrepresentation):
         self.factor = next(rules_pre)[1]
         self.rules = dict(rules_pre)
 
-        self.inequalities = list(tuple(vector(e)*T) for e in self.inequalities)
-        self.equations = list(tuple(vector(e)*T) for e in self.equations)
+        self.inequalities = [tuple(vector(e) * T) for e in self.inequalities]
+        self.equations = [tuple(vector(e) * T) for e in self.equations]
 
     @staticmethod
     def generate_mods(equations):
@@ -1478,7 +1474,7 @@ class _TransformMod(_TransformHrepresentation):
 
         INPUT:
 
-        - ``equations`` -- a list of tuples
+        - ``equations`` -- list of tuples
 
         OUTPUT:
 
@@ -1531,7 +1527,7 @@ def _compositions_mod(u, m, r=0, multidimensional=False):
 
     - ``m`` -- the modulus as a positive integer
 
-    - ``multidimensional`` -- (default: ``False``) a boolean
+    - ``multidimensional`` -- boolean (default: ``False``)
 
     If ``multidimensional=False``:
 

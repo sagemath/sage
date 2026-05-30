@@ -29,7 +29,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.classcall_metaclass import typecall
@@ -349,11 +349,11 @@ class CartanMatrix(Base, CartanType_abstract,
 
         INPUT:
 
-        - ``nrows`` - number of rows
+        - ``nrows`` -- number of rows
 
-        - ``ncols`` - number of columns
+        - ``ncols`` -- number of columns
 
-        - ``sparse`` - (boolean) sparseness
+        - ``sparse`` -- boolean
 
         EXAMPLES::
 
@@ -376,9 +376,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         if nrows == self.nrows() and ncols == self.ncols() and sparse:
             return self.parent()
-        else:
-            from sage.matrix.matrix_space import MatrixSpace
-            return MatrixSpace(ZZ, nrows, ncols, sparse is None or bool(sparse))
+        from sage.matrix.matrix_space import MatrixSpace
+        return MatrixSpace(ZZ, nrows, ncols, sparse is None or bool(sparse))
 
     def _CM_init(self, cartan_type, index_set, cartan_type_check):
         """
@@ -388,6 +387,14 @@ class CartanMatrix(Base, CartanType_abstract,
 
             sage: C = CartanMatrix(['A',1,1])  # indirect doctest                       # needs sage.graphs
             sage: TestSuite(C).run(skip=["_test_category", "_test_change_ring"])        # needs sage.graphs
+
+        Check that :issue:`37979` is fixed::
+
+            sage: C = CartanMatrix([[2]], index_set=(4,))
+            sage: C.index_set()
+            (4,)
+            sage: CartanType("A3").subtype((2,)) is CartanType("A1").relabel({1:2})
+            True
         """
         self._index_set = index_set
         self.set_immutable()
@@ -396,6 +403,8 @@ class CartanMatrix(Base, CartanType_abstract,
             cartan_type = CartanType(cartan_type)
         elif self.nrows() == 1:
             cartan_type = CartanType(['A', 1])
+            if index_set != (1,):
+                cartan_type = cartan_type.relabel({1: index_set[0]})
         elif cartan_type_check:
             # Placeholder so we don't have to reimplement creating a
             #   Dynkin diagram from a Cartan matrix
@@ -445,7 +454,7 @@ class CartanMatrix(Base, CartanType_abstract,
         """
         return self.root_system().root_space()
 
-    def reflection_group(self, type="matrix"):
+    def reflection_group(self, type='matrix'):
         """
         Return the reflection group corresponding to ``self``.
 
@@ -707,7 +716,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_simply_laced(self):
         """
-        Implements :meth:`CartanType_abstract.is_simply_laced()`.
+        Implement :meth:`CartanType_abstract.is_simply_laced()`.
 
         A Cartan matrix is simply-laced if all non diagonal entries are `0`
         or `-1`.
@@ -727,7 +736,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_crystallographic(self):
         """
-        Implements :meth:`CartanType_abstract.is_crystallographic`.
+        Implement :meth:`CartanType_abstract.is_crystallographic`.
 
         A Cartan matrix is crystallographic if it is symmetrizable.
 
@@ -740,7 +749,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def column_with_indices(self, j):
         """
-        Return the `j^{th}` column `(a_{i,j})_i` of ``self`` as a container
+        Return the `j`-th column `(a_{i,j})_i` of ``self`` as a container
         (or iterator) of tuples `(i, a_{i,j})`
 
         EXAMPLES::
@@ -753,7 +762,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def row_with_indices(self, i):
         """
-        Return the `i^{th}` row `(a_{i,j})_j` of ``self`` as a container
+        Return the `i`-th row `(a_{i,j})_j` of ``self`` as a container
         (or iterator) of tuples `(j, a_{i,j})`
 
         EXAMPLES::
@@ -795,7 +804,7 @@ class CartanMatrix(Base, CartanType_abstract,
         return self._cartan_type.is_finite()
 
     @cached_method
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Return ``True`` if ``self`` is an affine type or ``False`` otherwise.
 
@@ -866,7 +875,7 @@ class CartanMatrix(Base, CartanType_abstract,
             subg = D.subgraph(vertices=l)
             if compact and not subg.is_finite():
                 return False
-            elif not subg.is_finite() and not subg.is_affine():
+            if not subg.is_finite() and not subg.is_affine():
                 return False
         return True
 
@@ -924,7 +933,7 @@ class CartanMatrix(Base, CartanType_abstract,
             sage: M.is_indecomposable()
             False
         """
-        comp_num = self.dynkin_diagram().connected_components_number()
+        comp_num = self.dynkin_diagram().number_of_connected_components()
         # consider the empty matrix to be indecomposable
         return comp_num <= 1
 
@@ -953,7 +962,7 @@ class CartanMatrix(Base, CartanType_abstract,
             sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()
             True
         """
-        scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
+        scalarproducts_to_order = {0: 2, 1: 3, 2: 4, 3: 6}
         from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
         I = self.index_set()
         n = len(I)
@@ -1007,7 +1016,6 @@ class CartanMatrix(Base, CartanType_abstract,
             ]
             sage: M.principal_submatrices(proper=True)                                  # needs sage.graphs
             [[], [2], [2]]
-
         """
         iset = list(range(self.ncols()))
         ret = []
@@ -1064,7 +1072,7 @@ def is_borcherds_cartan_matrix(M):
         sage: is_borcherds_cartan_matrix(O)
         False
     """
-    if not is_Matrix(M):
+    if not isinstance(M, Matrix):
         return False
     if not M.is_square():
         return False
@@ -1077,9 +1085,9 @@ def is_borcherds_cartan_matrix(M):
         for j in range(i+1, n):
             if M[i,j] > 0 or M[j,i] > 0:
                 return False
-            elif M[i,j] == 0 and M[j,i] != 0:
+            if M[i,j] == 0 and M[j,i] != 0:
                 return False
-            elif M[j,i] == 0 and M[i,j] != 0:
+            if M[j,i] == 0 and M[i,j] != 0:
                 return False
     return True
 
@@ -1164,7 +1172,7 @@ def find_cartan_type_from_matrix(CM):
     relabel = []
     for S in CM.dynkin_diagram().connected_components_subgraphs():
         S = DiGraph(S) # We need a simple digraph here
-        n = S.num_verts()
+        n = S.n_vertices()
         # Build the list to test based upon rank
         if n == 1:
             relabel.append({1: S.vertices()[0]})

@@ -38,14 +38,15 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.primes import Primes
 from sage.sets.set import Set
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
 
 def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False, iso_type=False):
     r"""
-    Compute the automorphism group for ``rational_function`` via the method of fixed points
+    Compute the automorphism group for ``rational_function`` via the method of
+    fixed points.
 
     ALGORITHM:
 
@@ -55,13 +56,14 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
 
     - ``rational_function`` -- Rational Function defined over `\ZZ` or `\QQ`
 
-    - ``return_functions`` -- Boolean value; ``True`` will return elements in the automorphism group
-        as linear fractional transformations. ``False`` will return elements as `PGL_2` matrices
+    - ``return_functions`` -- boolean value; ``True`` will return elements in
+      the automorphism group as linear fractional transformations. ``False``
+      will return elements as `PGL_2` matrices.
 
-    - ``iso_type`` -- Boolean; ``True`` will cause the classification of the finite automorphism
-        group to also be returned
+    - ``iso_type`` -- boolean; ``True`` will cause the classification of the
+      finite automorphism group to also be returned
 
-    OUTPUT: a list of automorphisms that make up the automorphism group
+    OUTPUT: list of automorphisms that make up the automorphism group
     of ``rational_function``
 
     EXAMPLES::
@@ -333,6 +335,7 @@ def height_bound(polynomial):
 
     return (6*(L2norm_sq)**3)
 
+
 def PGL_repn(rational_function):
     r"""
     Take a linear fraction transformation and represent it as a 2x2 matrix.
@@ -352,16 +355,16 @@ def PGL_repn(rational_function):
         [-2  1]
         [ 1 -3]
     """
-    if is_Matrix(rational_function):
+    if isinstance(rational_function, Matrix):
         return rational_function
     K = rational_function.parent()
     F = K.base_ring()
     if not K.is_field():
         return matrix(F, 2, [rational_function[1], rational_function[0], 0, 1])
-    else:
-        f = rational_function.numerator()
-        g = rational_function.denominator()
-        return matrix(F, 2, [f[1], f[0], g[1], g[0]])
+    f = rational_function.numerator()
+    g = rational_function.denominator()
+    return matrix(F, 2, [f[1], f[0], g[1], g[0]])
+
 
 def PGL_order(A):
     r"""
@@ -400,6 +403,7 @@ def PGL_order(A):
 
     return n
 
+
 def CRT_helper(automorphisms, moduli):
     r"""
     Lift the given list of automorphisms to `Zmod(M)`.
@@ -410,11 +414,11 @@ def CRT_helper(automorphisms, moduli):
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms over various `Zmod(p^k)`
+    - ``automorphisms`` -- list of lists of automorphisms over various `Zmod(p^k)`
 
     - ``moduli`` -- list of the various `p^k`
 
-    OUTPUT: a list of automorphisms over `Zmod(M)`
+    OUTPUT: list of automorphisms over `Zmod(M)`
 
     EXAMPLES::
 
@@ -447,6 +451,7 @@ def CRT_helper(automorphisms, moduli):
 
     return autos, modulus*moduli[0]
 
+
 def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
     r"""
     Compute a maximal list of automorphisms over `Zmod(M)`.
@@ -459,15 +464,16 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms over various `Zmod(p^k)`
+    - ``automorphisms`` -- list of lists of automorphisms over various `Zmod(p^k)`
 
-    - ``order_elts`` -- a list of lists of the orders of the elements of ``automorphisms``
+    - ``order_elts`` -- list of lists of the orders of the elements of ``automorphisms``
 
-    - ``degree`` -- a positive integer
+    - ``degree`` -- positive integer
 
     - ``moduli`` -- list of prime powers, i.e., `p^k`
 
-    OUTPUT: a list containing a list of automorphisms over `Zmod(M)` and the product of the moduli
+    OUTPUT: list containing a list of automorphisms over `Zmod(M)` and the
+    product of the moduli
 
     EXAMPLES::
 
@@ -492,6 +498,7 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
     # get list of CRT'ed automorphisms
     return CRT_helper(degree_d_autos, moduli)
 
+
 def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
                         return_functions=False):
     r"""
@@ -503,17 +510,17 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms over various `Zmod(p^k)`
+    - ``automorphisms`` -- list of lists of automorphisms over various `Zmod(p^k)`
 
-    - ``rational_function`` -- A one variable rational function
+    - ``rational_function`` -- a one variable rational function
 
-    - ``ht_bound`` -- a positive integer
+    - ``ht_bound`` -- positive integer
 
-    - ``M`` -- a positive integer, a product of prime powers
+    - ``M`` -- positive integer, a product of prime powers
 
-    - ``return_functions`` -- (default: False) boolean
+    - ``return_functions`` -- boolean (default: ``False``)
 
-    OUTPUT: a list of automorphisms over `\ZZ`
+    OUTPUT: list of automorphisms over `\ZZ`
 
     EXAMPLES::
 
@@ -558,15 +565,15 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms
+    - ``automorphisms`` -- list of lists of automorphisms
 
-    - ``order_elts`` -- a list of lists of the orders of the elements of ``automorphisms``
+    - ``order_elts`` -- list of lists of the orders of the elements of ``automorphisms``
 
-    - ``moduli`` -- a list of prime powers
+    - ``moduli`` -- list of prime powers
 
     - ``integral_autos`` -- list of known automorphisms
 
-    OUTPUT: a list of automorphisms
+    OUTPUT: list of automorphisms
 
     EXAMPLES::
 
@@ -592,7 +599,7 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
         for psi in integral_autos:
             #The return_functions boolean determines if the automorphisms
             #are matrices or linear fractional transformations
-            if is_Matrix(psi):
+            if isinstance(psi, Matrix):
                 ppsi = psi.change_ring(GF(p))
                 B = [ppsi[0,0], ppsi[0,1], ppsi[1,0], psi[1,1]]
             else:
@@ -631,10 +638,11 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
     - ``prime_lower_bound`` -- (default: 4) a positive integer; a lower bound for the primes to use for
       the Chinese Remainder Theorem step
 
-    - ``return_functions`` -- (default: ``True``) boolean; ``True`` returns linear fractional transformations
-      False returns elements of `PGL(2,\QQ)`
+    - ``return_functions`` -- boolean (default: ``True``); ``True`` returns
+      linear fractional transformations ``False`` returns elements of `PGL(2,\QQ)`
 
-    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- boolean (default: ``False``); ``True`` returns the
+      isomorphism type of the automorphism group
 
     OUTPUT: a complete list of automorphisms of ``rational_function``
 
@@ -757,67 +765,66 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
             # or if the gcd is equal to the number of automorphisms we have
             if (len(elements) == gcd(orderaut + [24])) or \
                 (gcd(orderaut + [24]) == 24 and
-                (len(elements) == 12 or len(elements) == 8)):
-                    if iso_type:
-                        return elements, which_group(elements)
-                    return elements
-            else:
-                N = gcd(orderaut + [12])  # all orders of elements divide N
-                for order in divisors(N):
-                    if order in badorders:
-                        continue
-                    # range over all orders
-                    # that are possible over QQ such that we haven't already
-                    # found all elements of that order
+                    (len(elements) == 12 or len(elements) == 8)):
+                if iso_type:
+                    return elements, which_group(elements)
+                return elements
+            N = gcd(orderaut + [12])  # all orders of elements divide N
+            for order in divisors(N):
+                if order in badorders:
+                    continue
+                # range over all orders
+                # that are possible over QQ such that we haven't already
+                # found all elements of that order
 
-                    # First count number of elements of particular order
-                    numeltsoffixedorder = []
-                    for L in orderelts:
-                        numeltsoffixedorder.append(L.count(order))
-                    numelts = min(numeltsoffixedorder)
-                    # Have some elts of fixed order mod p for each p
-                    if numelts != 0:
-                        # CRT order d elements together and check if
-                        # they are an automorphism
-                        autos, M = CRT_automorphisms(automorphisms,
-                                orderelts, order, primepowers)
-                        temp = valid_automorphisms(autos, phi, MaxH, M,
-                                            return_functions)
-                        elements.extend(temp)
+                # First count number of elements of particular order
+                numeltsoffixedorder = []
+                for L in orderelts:
+                    numeltsoffixedorder.append(L.count(order))
+                numelts = min(numeltsoffixedorder)
+                # Have some elts of fixed order mod p for each p
+                if numelts != 0:
+                    # CRT order d elements together and check if
+                    # they are an automorphism
+                    autos, M = CRT_automorphisms(automorphisms,
+                            orderelts, order, primepowers)
+                    temp = valid_automorphisms(autos, phi, MaxH, M,
+                                        return_functions)
+                    elements.extend(temp)
 
-                        if (len(elements) == gcd(orderaut + [24])):
-                            #found enough automorphisms
-                                if iso_type:
-                                    return elements, which_group(elements)
-                                return elements
-                        elif numelts <= (len(temp)):
-                            badorders.append(order)
-                            # found all elements of order 'order;
-                        elif len(temp) != 0:
-                            # found some elements of order 'order'
-                            # if an element of Aut_{F_p} has been lifted to QQ
-                            # remove that element from Aut_{F_p} so we don't
-                            # attempt to lift that element again unnecessarily
-                            automorphisms = remove_redundant_automorphisms(automorphisms,
-                                orderelts, primepowers, temp)
-                            if order == 4: #have some elements of order 4
-                                # so possible aut group is Z/4 or D_4
-                                badorders.extend([3, 6])
-                            elif order == 3 or order == 6:#have some elements of
-                                # order 3 or 6 so possible aut groups are Z/3,
-                                # D_3, Z/6, or D_6
-                                badorders.append(4)
-                    else: #no elements of order d in some F_v
-                        for m in divisors(N):
-                            if m % order == 0:
-                                badorders.append(m)
-                                #no elements of that order or any order that
-                                # is a multiple of it
-                if all(order in badorders for order in divisors(N)):
-                    #found all elements of every possible order
+                    if (len(elements) == gcd(orderaut + [24])):
+                        # found enough automorphisms
                         if iso_type:
-                            return (elements, which_group(elements))
+                            return elements, which_group(elements)
                         return elements
+                    if numelts <= len(temp):
+                        badorders.append(order)
+                        # found all elements of order 'order;
+                    elif len(temp) != 0:
+                        # found some elements of order 'order'
+                        # if an element of Aut_{F_p} has been lifted to QQ
+                        # remove that element from Aut_{F_p} so we don't
+                        # attempt to lift that element again unnecessarily
+                        automorphisms = remove_redundant_automorphisms(automorphisms,
+                            orderelts, primepowers, temp)
+                        if order == 4:  # have some elements of order 4
+                            # so possible aut group is Z/4 or D_4
+                            badorders.extend([3, 6])
+                        elif order == 3 or order == 6:#have some elements of
+                            # order 3 or 6 so possible aut groups are Z/3,
+                            # D_3, Z/6, or D_6
+                            badorders.append(4)
+                else:  # no elements of order d in some F_v
+                    for m in divisors(N):
+                        if m % order == 0:
+                            badorders.append(m)
+                            #no elements of that order or any order that
+                            # is a multiple of it
+            if all(order in badorders for order in divisors(N)):
+                # found all elements of every possible order
+                if iso_type:
+                    return (elements, which_group(elements))
+                return elements
             congruence = congruence * p
 
         p = primes.next(p)
@@ -840,14 +847,16 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
     - ``rational_function`` -- a rational function defined over the fraction field
         of a polynomial ring in one variable with finite field coefficients
 
-    - ``absolute``-- (default: ``False``) boolean; ``True`` returns the absolute automorphism group and a field of definition
+    - ``absolute`` -- boolean (default: ``False``); ``True`` returns the
+      absolute automorphism group and a field of definition
 
-    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- boolean (default: ``False``); ``True`` returns the
+      isomorphism type of the automorphism group
 
-    - ``return_functions`` -- (default: ``False``) boolean; ``True`` returns linear fractional transformations
-      False returns elements of `PGL(2)`
+    - ``return_functions`` -- boolean (default: ``False``); ``True`` returns
+      linear fractional transformations ``False`` returns elements of `PGL(2)`
 
-    OUTPUT: a list of automorphisms of ``rational_function``
+    OUTPUT: list of automorphisms of ``rational_function``
 
     EXAMPLES::
 
@@ -893,10 +902,10 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
 
     if not iso_type:
         return G
-    elif not absolute:
+    if not absolute:
         return G, which_group(G)
-    else:
-        return G, which_group(G[1])
+    return G, which_group(G[1])
+
 
 def field_descent(sigma, y):
     r"""
@@ -909,7 +918,7 @@ def field_descent(sigma, y):
 
     INPUT:
 
-    - ``sigma``-- an embedding sigma: `F` -> `E` of fields
+    - ``sigma`` -- an embedding sigma: `F` -> `E` of fields
 
     - ``y`` --an element of the field `E`
 
@@ -941,19 +950,18 @@ def field_descent(sigma, y):
     quotient, remainder = g.quo_rem(f)
     if not remainder.is_constant():
         return
-    else:
-        x = x + F(remainder)
+    x = x + F(remainder)
 
     steps = 1
     while not quotient.is_constant():
         quotient, remainder = quotient.quo_rem(f)
         if not remainder.is_constant():
             return
-        else:
-            x = x + F(remainder)*a**(steps)
-            steps += 1
+        x = x + F(remainder)*a**(steps)
+        steps += 1
 
     return x + F(quotient)*a**(steps)
+
 
 def rational_function_coefficient_descent(rational_function, sigma, poly_ring):
     r"""
@@ -969,9 +977,9 @@ def rational_function_coefficient_descent(rational_function, sigma, poly_ring):
 
     - ``rational_function``--a rational function with coefficients in a field `E`
 
-    - ``sigma``-- a field embedding sigma: `F` -> `E`
+    - ``sigma`` -- a field embedding sigma: `F` -> `E`
 
-    - ``poly_ring``-- a polynomial ring `R` with coefficients in `F`
+    - ``poly_ring`` -- a polynomial ring `R` with coefficients in `F`
 
     OUTPUT: a rational function with coefficients in the fraction field of ``poly_ring``
     if it exists, and otherwise ``None``
@@ -1022,7 +1030,7 @@ def rational_function_coerce(rational_function, sigma, S_polys):
 
     INPUT:
 
-    - ``rational_function``-- rational function with coefficients in `R`
+    - ``rational_function`` -- rational function with coefficients in `R`
 
     - ``sigma`` -- a ring homomorphism sigma: `R` -> ``S_polys``
 
@@ -1050,8 +1058,8 @@ def rational_function_coerce(rational_function, sigma, S_polys):
 
     if g == [R(1)]:
         return S_polys([sigma(a) for a in f]) # allows for coercion of polynomials
-    else:
-        return S_polys([sigma(a) for a in f]) / S_polys([sigma(b) for b in g])
+    return S_polys([sigma(a) for a in f]) / S_polys([sigma(b) for b in g])
+
 
 def rational_function_reduce(rational_function):
     r"""
@@ -1078,6 +1086,7 @@ def rational_function_reduce(rational_function):
     comm_factor = gcd(F,G)
     return (F.quo_rem(comm_factor)[0]) / (G.quo_rem(comm_factor)[0])
 
+
 def three_stable_points(rational_function, invariant_list):
     r"""
     Implementation of Algorithm 1 for automorphism groups from
@@ -1088,7 +1097,7 @@ def three_stable_points(rational_function, invariant_list):
     - ``rational_function`` -- rational function `\phi` defined over finite
       field `E`
 
-    - ``invariant_list`` -- a list of at least `3` points of `\mathbb{P}^1(E)` that
+    - ``invariant_list`` -- list of at least `3` points of `\mathbb{P}^1(E)` that
       is stable under `Aut_{\phi}(E)`
 
     OUTPUT: list of automorphisms
@@ -1150,6 +1159,7 @@ def three_stable_points(rational_function, invariant_list):
             if s(phi(z)) == phi(s(z)) and s not in automorphisms:
                 automorphisms.append(s)
     return automorphisms
+
 
 def automorphism_group_FF_alg2(rational_function):
     r"""
@@ -1381,7 +1391,7 @@ def order_p_automorphisms(rational_function, pre_image):
         if case == 'fix':
             T = [x[0] for x in pre_image]
         elif case == 'F-pre_images':
-            T = [x for x in pre_image[0][1]]
+            T = list(pre_image[0][1])
         else:
             T = []
 
@@ -1390,10 +1400,10 @@ def order_p_automorphisms(rational_function, pre_image):
             pt = guy[0]
             # treat case of multiple F-rational fixed points or
             #     1 F-rational fixed point with F-rational pre-images
-            if T != []:
+            if T:
                 M = [t for t in T if t != pt]
                 m = len(M)
-                if pt == [F(1),F(0)]:
+                if pt == [F(1), F(0)]:
                     for i in range(1, m):
                         s = z + M[i][0] - M[0][0]
                         if s(phi(z)) == phi(s(z)):
@@ -1401,8 +1411,8 @@ def order_p_automorphisms(rational_function, pre_image):
                 else:
                     u = F(1) / (z - pt[0])
                     u_inv = pt[0] + F(1)/z
-                    for i in range(1,m):
-                        if M[0] == [F(1),F(0)]:
+                    for i in range(1, m):
+                        if M[0] == [F(1), F(0)]:
                             uy1 = 0
                         else:
                             uy1 = u(M[0][0])
@@ -1449,6 +1459,7 @@ def order_p_automorphisms(rational_function, pre_image):
 
     return automorphisms_p
 
+
 def automorphisms_fixing_pair(rational_function, pair, quad):
     r"""
     Compute the set of automorphisms with order prime to the characteristic
@@ -1460,7 +1471,7 @@ def automorphisms_fixing_pair(rational_function, pair, quad):
 
     - ``pair`` -- a pair of points of `\mathbb{P}^1(E)`
 
-    - ``quad`` -- Boolean: an indicator if this is a quadratic pair of points
+    - ``quad`` -- boolean; an indicator if this is a quadratic pair of points
 
     OUTPUT: set of automorphisms with order prime to characteristic defined over `E` that fix
     the pair, excluding the identity
@@ -1528,6 +1539,7 @@ def automorphisms_fixing_pair(rational_function, pair, quad):
                     automorphisms_prime_to_p.append(rational_function_reduce(s))
 
     return list(set(automorphisms_prime_to_p))
+
 
 def automorphism_group_FF_alg3(rational_function):
     r"""
@@ -1701,10 +1713,10 @@ def which_group(list_of_elements):
 
     INPUT:
 
-    - ``list_of_elements``-- a finite list of elements of `PGL(2,K)`
+    - ``list_of_elements`` -- a finite list of elements of `PGL(2,K)`
       that we know a priori form a group
 
-    OUTPUT: a string -- the isomorphism type of the group
+    OUTPUT: string; the isomorphism type of the group
 
     EXAMPLES::
 
@@ -1714,7 +1726,7 @@ def which_group(list_of_elements):
         sage: which_group(G)
         'Dihedral of order 6'
     """
-    if is_Matrix(list_of_elements[-1]):
+    if isinstance(list_of_elements[-1], Matrix):
         R = PolynomialRing(list_of_elements[-1].base_ring(),'z')
         z = R.gen(0)
         G = [(t[0,0]*z+t[0,1])/(t[1,0]*z+t[1,1]) for t in list_of_elements]
@@ -1792,10 +1804,9 @@ def which_group(list_of_elements):
     # Treat sporadic cases
     if n == 12:
         return ['A_4']
-    elif n == 24:
+    if n == 24:
         return ['S_4']
-    else:
-        return ['A_5']
+    return ['A_5']
 
 
 def conjugating_set_initializer(f, g):
@@ -1835,7 +1846,7 @@ def conjugating_set_initializer(f, g):
       of which no `n+1` are linearly dependent. Used to specify a possible conjugation
       from `f` to `g`.
 
-    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+    - ``possible_targets`` -- list of tuples of the form (``points``, ``repeated``). ``points``
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
@@ -1902,7 +1913,7 @@ def conjugating_set_initializer(f, g):
         repeated = len(mult_to_point_L[mult_L])
         if mult_L not in mult_to_point_K:
             return []
-        elif len(mult_to_point_K[mult_L]) != repeated:
+        if len(mult_to_point_K[mult_L]) != repeated:
             return []
         if repeated not in repeated_mult_L:
             repeated_mult_L[repeated] = [mult_to_point_L[mult_L]]
@@ -2060,12 +2071,12 @@ def greedy_independence_check(P, repeated_mult, point_to_mult):
 
     - ``P`` -- a projective space
 
-    - ``repeated_mult`` -- a dictionary of integers to lists of points of
+    - ``repeated_mult`` -- dictionary of integers to lists of points of
       the projective space ``P``. The list of points should be conjugation
       invariant. The keys are considered as weights, and this function attempts
       to minimize the total weight
 
-    - ``point_to_mult`` -- a dictionary of points of ``P`` to tuples of the form
+    - ``point_to_mult`` -- dictionary of points of ``P`` to tuples of the form
       (multiplier, level), where multiplier is the characteristic polynomial
       of the multiplier of the point, and level is the number of preimages
       taken to find the point
@@ -2078,9 +2089,9 @@ def greedy_independence_check(P, repeated_mult, point_to_mult):
     Otherwise, a tuple of the form (``source``, ``corresponding``) is returned.
 
     - ``source`` -- the set `U` of the conjugation invariant pair. A set of `n+2` points
-      of the domain of `f`, of which no `n+1` are linearly dependent.
+      of the domain of `f`, of which no `n+1` are linearly dependent
 
-    - ``corresponding`` -- a list of tuples of the form ((multiplier, level), repeat) where the
+    - ``corresponding`` -- list of tuples of the form ((multiplier, level), repeat) where the
       (multiplier, level) pair is the multiplier of a point in ``source`` and repeat
       specifies how many points in source have that (multiplier, level) pair. This
       information specifies the set `V` of the invariant pair.
@@ -2119,6 +2130,7 @@ def greedy_independence_check(P, repeated_mult, point_to_mult):
                 if len(source) == n+2:
                     return source, corresponding
 
+
 def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
     r"""
     Return the set of elements in PGL over the base ring
@@ -2138,14 +2150,14 @@ def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
 
     - ``num_cpus`` -- the number of threads to run in parallel
 
-    - ``source`` -- a list of `n+2` conjugation invariant points, of which
-      no `n+1` are linearly dependent.
+    - ``source`` -- list of `n+2` conjugation invariant points, of which
+      no `n+1` are linearly dependent
 
-    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+    - ``possible_targets`` -- list of tuples of the form (``points``, ``repeated``). ``points``
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
-    OUTPUT: a list of elements of PGL which conjugate ``f`` to ``g``.
+    OUTPUT: list of elements of PGL which conjugate ``f`` to ``g``
 
     EXAMPLES::
 
@@ -2264,6 +2276,7 @@ def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
         Conj = find_conjugations_subset(product(*subset_iterators))
     return Conj
 
+
 def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
     r"""
     Return if ``f`` is conjugate to ``g``.
@@ -2282,14 +2295,14 @@ def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
 
     - ``num_cpus`` -- the number of threads to run in parallel
 
-    - ``source`` -- a list of `n+2` conjugation invariant points, of which
-      no `n+1` are linearly dependent.
+    - ``source`` -- list of `n+2` conjugation invariant points, of which
+      no `n+1` are linearly dependent
 
-    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+    - ``possible_targets`` -- list of tuples of the form (``points``, ``repeated``). ``points``
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
-    OUTPUT: ``True`` if ``f`` is conjugate to ``g``, ``False`` otherwise.
+    OUTPUT: ``True`` if ``f`` is conjugate to ``g``, ``False`` otherwise
 
     EXAMPLES::
 

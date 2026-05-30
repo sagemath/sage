@@ -1,9 +1,16 @@
 r"""
 Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
+
+AUTHORS:
+
+- Matthias Koeppe, Kwankyu Lee (2022): initial version
+- Vincent Macri (2025-09-01): process_docstring_aliases
 """
 
 # ****************************************************************************
 #       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+#                     2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                     2025 Vincent Macri <vincent.macri@ucalgary.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +26,53 @@ from sphinx.ext.doctest import blankline_re
 # The reST default role (used for this markup: `text`) to use for all documents.
 default_role = 'math'
 
+
 def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     """
     Change the docstrings for aliases to point to the original object.
     """
-    basename = name.rpartition('.')[2]
-    if hasattr(obj, '__name__') and obj.__name__ != basename:
-        docstringlines[:] = ['See :obj:`%s`.' % name]
+
+    if what not in ('function', 'method'):
+        # Alias detection doesn't make sense for modules.
+        # Alias handling is implemented for classes in:
+        # src/sage_docbuild/ext/sage_autodoc.py
+
+        # Since sage_autodoc is supposed to be replaced (issue #30893)
+        # we implement function/method alias handling here rather than
+        # where class alias handling is implemented.
+        return
+
+    if not hasattr(obj, '__name__'):
+        # obj has no __name__
+        # This usually happens with factory functions, which should have their
+        # own docstring anyway.
+        return  # Skip alias detection if __name__ is not present
+
+    obj_name = name.rpartition('.')[2]  # Unqualified name
+    original_name = obj.__name__
+
+    if obj_name == original_name or original_name.startswith('_'):
+        # If obj_name == original_name this is not an alias.
+
+        # If original_name starts with '_' then this is a public alias
+        # of a private function/method and so we keep the docstring.
+        return None
+
+    if what == 'method':
+        docstringlines[:] = [f'alias of :meth:`{original_name}`.']
+        return
+
+    # We now have `what == 'function'`
+
+    if original_name != '<lambda>':
+        docstringlines[:] = [f'alias of :func:`{original_name}`.']
+        return
+
+    # If original_name == '<lambda>' then the function is
+    # a lambda expression, hence not an alias of something
+    # with its own docstring.
+    return
+
 
 def process_directives(app, what, name, obj, options, docstringlines):
     """
@@ -35,9 +82,10 @@ def process_directives(app, what, name, obj, options, docstringlines):
     if len(docstringlines) == 0:
         return
     first_line = docstringlines[0]
-    directives = [ d.lower() for d in first_line.split(',') ]
+    directives = [d.lower() for d in first_line.split(',')]
     if 'nodetex' in directives:
         docstringlines.pop(0)
+
 
 def process_docstring_cython(app, what, name, obj, options, docstringlines):
     """
@@ -48,9 +96,10 @@ def process_docstring_cython(app, what, name, obj, options, docstringlines):
 
     first_line = docstringlines[0]
     if first_line.startswith('File:') and '(starting at' in first_line:
-        #Remove the first two lines
+        # Remove the first two lines
         docstringlines.pop(0)
         docstringlines.pop(0)
+
 
 def process_docstring_module_title(app, what, name, obj, options, docstringlines):
     """
@@ -60,19 +109,20 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
     if what != "module":
         return
 
-    #Remove any additional blank lines at the beginning
+    # Remove any additional blank lines at the beginning
     title_removed = False
     while len(docstringlines) > 1 and not title_removed:
         if docstringlines[0].strip() != "":
             title_removed = True
         docstringlines.pop(0)
 
-    #Remove any additional blank lines at the beginning
+    # Remove any additional blank lines at the beginning
     while len(docstringlines) > 1:
         if docstringlines[0].strip() == "":
             docstringlines.pop(0)
         else:
             break
+
 
 def process_dollars(app, what, name, obj, options, docstringlines):
     r"""
@@ -86,6 +136,7 @@ def process_dollars(app, what, name, obj, options, docstringlines):
         lines = s.split("\n")
         for i in range(len(lines)):
             docstringlines[i] = lines[i]
+
 
 def process_inherited(app, what, name, obj, options, docstringlines):
     """
@@ -110,6 +161,7 @@ def process_inherited(app, what, name, obj, options, docstringlines):
     for i in range(len(docstringlines)):
         docstringlines.pop()
 
+
 def skip_TESTS_block(app, what, name, obj, options, docstringlines):
     """
     Skip blocks labeled "TESTS:".
@@ -127,6 +179,7 @@ def skip_TESTS_block(app, what, name, obj, options, docstringlines):
     while len(docstringlines) > len(lines):
         del docstringlines[len(lines)]
 
+
 class SagemathTransform(Transform):
     """
     Transform for code-blocks.
@@ -138,7 +191,7 @@ class SagemathTransform(Transform):
     default_priority = 500
 
     def apply(self):
-        for node in self.document.traverse(nodes.literal_block):
+        for node in self.document.findall(nodes.literal_block):
             if node.get('language') is None and node.astext().startswith('sage:'):
                 node['language'] = 'ipycon'
                 source = node.rawsource
@@ -147,6 +200,8 @@ class SagemathTransform(Transform):
                 node[:] = [nodes.Text(source)]
 
 # This is only used by sage.misc.sphinxify
+
+
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
     app.connect('autodoc-process-docstring', process_directives)
@@ -154,4 +209,5 @@ def setup(app):
     app.connect('autodoc-process-docstring', process_dollars)
     app.connect('autodoc-process-docstring', process_inherited)
     app.connect('autodoc-process-docstring', skip_TESTS_block)
+
     app.add_transform(SagemathTransform)

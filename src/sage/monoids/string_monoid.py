@@ -35,10 +35,10 @@ class StringMonoid_class(FreeMonoid):
 
         INPUT:
 
-        - ``n`` -- Integer
+        - ``n`` -- integer
 
-        - ``alphabet`` -- String or tuple whose characters or elements denote
-          the generators.
+        - ``alphabet`` -- string or tuple whose characters or elements denote
+          the generators
 
         EXAMPLES::
 
@@ -54,10 +54,10 @@ class StringMonoid_class(FreeMonoid):
         FreeMonoid.__init__(self, n)
         self._alphabet = alphabet
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, StringMonoidElement) and x.parent() == self
 
-    def alphabet(self):
+    def alphabet(self) -> tuple:
         return tuple(self._alphabet)
 
     def one(self):
@@ -168,7 +168,7 @@ class BinaryStringMonoid(StringMonoid_class):
         Return ``x`` coerced into this free monoid.
 
         One can create a free binary string monoid element from a
-        Python string of 0's and 1's or list of integers.
+        Python string of 0s and 1s or list of integers.
 
         NOTE: Due to the ambiguity of the second generator '1' with
         the identity element '' of the monoid, the syntax S(1) is not
@@ -187,12 +187,11 @@ class BinaryStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
     def encoding(self, S, padic=False):
         r"""
@@ -288,7 +287,7 @@ class OctalStringMonoid(StringMonoid_class):
         Return ``x`` coerced into this free monoid.
 
         One can create a free octal string monoid element from a
-        Python string of 0's to 7's or list of integers.
+        Python string of 0s to 7s or list of integers.
 
         EXAMPLES::
 
@@ -305,12 +304,11 @@ class OctalStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
 
 OctalStrings = OctalStringMonoid
@@ -373,12 +371,11 @@ class HexadecimalStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
     def encoding(self, S, padic=False):
         r"""
@@ -485,12 +482,11 @@ class Radix64StringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
 
 Radix64Strings = Radix64StringMonoid
@@ -589,14 +585,13 @@ class AlphabeticStringMonoid(StringMonoid_class):
         # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
-        elif isinstance(x, list):
+        if isinstance(x, list):
             return StringMonoidElement(self, x, check)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             return StringMonoidElement(self, x, check)
-        else:
-            raise TypeError("Argument x (= %s) is of the wrong type." % x)
+        raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
-    def characteristic_frequency(self, table_name="beker_piper"):
+    def characteristic_frequency(self, table_name='beker_piper'):
         r"""
         Return a table of the characteristic frequency probability
         distribution of the English alphabet. In written English, various
@@ -630,15 +625,15 @@ class AlphabeticStringMonoid(StringMonoid_class):
 
         INPUT:
 
-        - ``table_name`` -- (default ``"beker_piper"``) the table of
+        - ``table_name`` -- (default: ``'beker_piper'``) the table of
           characteristic frequency probability distribution to use. The
           following tables are supported:
 
-          - ``"beker_piper"`` -- the table of characteristic frequency
+          - ``'beker_piper'`` -- the table of characteristic frequency
             probability distribution by Beker and Piper [BP1982]_. This is
             the default table to use.
 
-          - ``"lewand"`` -- the table of characteristic frequency
+          - ``'lewand'`` -- the table of characteristic frequency
             probability distribution by Lewand as described on page 36
             of [Lew2000]_.
 
@@ -654,7 +649,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         Beker and Piper [BP1982]_::
 
             sage: A = AlphabeticStrings()
-            sage: table = A.characteristic_frequency(table_name="beker_piper")
+            sage: table = A.characteristic_frequency(table_name='beker_piper')
             sage: sorted(table.items())
             <BLANKLINE>
             [('A', 0.0820000000000000),
@@ -687,7 +682,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         The characteristic frequency probability distribution table
         of Lewand [Lew2000]_::
 
-            sage: table = A.characteristic_frequency(table_name="lewand")
+            sage: table = A.characteristic_frequency(table_name='lewand')
             sage: sorted(table.items())
             <BLANKLINE>
             [('A', 0.0816700000000000),
@@ -767,7 +762,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             Traceback (most recent call last):
             ...
             ValueError: Table name must be either 'beker_piper' or 'lewand'.
-            sage: table = A.characteristic_frequency(table_name="none")
+            sage: table = A.characteristic_frequency(table_name='none')
             Traceback (most recent call last):
             ...
             ValueError: Table name must be either 'beker_piper' or 'lewand'.

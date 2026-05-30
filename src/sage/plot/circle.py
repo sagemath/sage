@@ -36,7 +36,7 @@ class Circle(GraphicPrimitive):
 
     - ``r`` -- radius of Circle object
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -59,7 +59,7 @@ class Circle(GraphicPrimitive):
     """
     def __init__(self, x, y, r, options):
         """
-        Initializes base class Circle.
+        Initialize base class Circle.
 
         EXAMPLES::
 
@@ -142,7 +142,7 @@ class Circle(GraphicPrimitive):
             sage: from math import pi
             sage: C = circle((2,pi), 2, edgecolor='black', facecolor='green', fill=True)
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         from sage.plot.misc import get_matplotlib_linestyle
 
         options = self.options()
@@ -172,8 +172,7 @@ class Circle(GraphicPrimitive):
 
         INPUT:
 
-
-        -  ``z`` - optional 3D height above `xy`-plane.
+        - ``z`` -- (optional) 3D height above `xy`-plane
 
         EXAMPLES::
 
@@ -224,9 +223,8 @@ class Circle(GraphicPrimitive):
         if fill:
             from .polygon import Polygon
             return Polygon(xdata, ydata, options).plot3d(z)
-        else:
-            from .line import Line
-            return Line(xdata, ydata, options).plot3d().translate((0,0,z))
+        from .line import Line
+        return Line(xdata, ydata, options).plot3d().translate((0,0,z))
 
 
 @rename_keyword(color='rgbcolor')
@@ -240,27 +238,27 @@ def circle(center, radius, **options):
 
     OPTIONS:
 
-    - ``alpha`` - default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``fill`` - default: False
+    - ``fill`` -- (default: ``False``)
 
-    - ``thickness`` - default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``linestyle`` - default: ``'solid'`` (2D plotting only) The style of the
+    - ``linestyle`` -- (default: ``'solid'``) (2D plotting only) the style of the
       line, which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
-      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
+      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively
 
-    - ``edgecolor`` - default: 'blue' (2D plotting only)
+    - ``edgecolor`` -- (default: ``'blue'``) 2D plotting only
 
-    - ``facecolor`` - default: 'blue' (2D plotting only, useful only
-      if ``fill=True``)
+    - ``facecolor`` -- (default: ``'blue'``) 2D plotting only, useful only
+      if ``fill=True``
 
-    - ``rgbcolor`` - 2D or 3D plotting.  This option overrides
-      ``edgecolor`` and ``facecolor`` for 2D plotting.
+    - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
+      ``edgecolor`` and ``facecolor`` for 2D plotting
 
-    - ``legend_label`` - the label for this item in the legend
+    - ``legend_label`` -- the label for this item in the legend
 
-    - ``legend_color`` - the color for the legend label
+    - ``legend_color`` -- the color for the legend label
 
     EXAMPLES:
 
@@ -409,9 +407,9 @@ def circle(center, radius, **options):
 
     Verify that :issue:`36153` does not arise::
 
-        sage: C = circle((1,1), 1, legend_label="test")
+        sage: C = circle((1,1), 1, legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
 
     # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
     # Otherwise matplotlib complains.
@@ -429,7 +427,7 @@ def circle(center, radius, **options):
         g._legend_colors = [options['legend_color']]
     if len(center) == 2:
         return g
-    elif len(center) == 3:
+    if len(center) == 3:
         return g[0].plot3d(z=center[2])
     raise ValueError('the center of a plotted circle should have '
                      'two or three coordinates')

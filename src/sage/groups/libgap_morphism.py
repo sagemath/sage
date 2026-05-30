@@ -48,8 +48,8 @@ class GroupMorphism_libgap(Morphism):
     - ``homset`` -- the parent
     - ``gap_hom`` -- a :class:`sage.libs.gap.element.GapElement` consisting of
       a group homomorphism
-    - ``check`` -- (default: ``True``) check if the ``gap_hom`` is a group
-      homomorphism; this can be expensive
+    - ``check`` -- boolean (default: ``True``); check if the ``gap_hom`` is a group
+      homomorphism (this can be expensive)
 
     EXAMPLES::
 
@@ -515,7 +515,7 @@ class GroupMorphism_libgap(Morphism):
         phi = self.gap()
         if h.gap() not in phi.Image():
             raise ValueError("{} is not an element of the image of {}".format(h, self))
-        return self.domain()( phi.PreImagesRepresentative(h.gap()) )
+        return self.domain()(phi.PreImagesRepresentative(h.gap()))
 
     def preimage(self, S):
         r"""

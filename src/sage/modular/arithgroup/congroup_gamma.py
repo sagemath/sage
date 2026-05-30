@@ -2,30 +2,30 @@ r"""
 Congruence subgroup `\Gamma(N)`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import gcd
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
+from sage.modular.arithgroup.congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer import GCD_list
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.richcmp import richcmp_method, richcmp
-
-from .congroup_generic import CongruenceSubgroup
-from .congroup_sl2z import SL2Z
-
+from sage.structure.richcmp import richcmp, richcmp_method
 
 _gamma_cache = {}
+
+
 def Gamma_constructor(N):
     r"""
     Return the congruence subgroup `\Gamma(N)`.
@@ -64,9 +64,9 @@ class Gamma_class(CongruenceSubgroup):
     r"""
     The principal congruence subgroup `\Gamma(N)`.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -75,9 +75,9 @@ class Gamma_class(CongruenceSubgroup):
         """
         return "Congruence Subgroup Gamma(%s)" % self.level()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Return the \LaTeX representation of self.
+        Return the \LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -90,7 +90,7 @@ class Gamma_class(CongruenceSubgroup):
 
     def __reduce__(self):
         """
-        Used for pickling self.
+        Used for pickling ``self``.
 
         EXAMPLES::
 
@@ -101,7 +101,7 @@ class Gamma_class(CongruenceSubgroup):
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -116,14 +116,13 @@ class Gamma_class(CongruenceSubgroup):
             sage: Gamma(3) == Gamma(3).as_permutation_group()                           # needs sage.groups
             True
         """
-        if is_Gamma(other):
+        if isinstance(other, Gamma_class):
             return richcmp(self.level(), other.level(), op)
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def index(self):
         r"""
-        Return the index of self in the full modular group. This is given by
+        Return the index of ``self`` in the full modular group. This is given by
 
         .. MATH::
 
@@ -138,7 +137,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         return prod([p**(3*e-2)*(p*p-1) for (p,e) in self.level().factor()])
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         EXAMPLES::
 
@@ -178,7 +177,8 @@ class Gamma_class(CongruenceSubgroup):
 
     def nirregcusps(self):
         r"""
-        Return the number of irregular cusps of self. For principal congruence subgroups this is always 0.
+        Return the number of irregular cusps of ``self``. For principal
+        congruence subgroups this is always 0.
 
         EXAMPLES::
 
@@ -245,7 +245,6 @@ class Gamma_class(CongruenceSubgroup):
 
             sage: Gamma(7).reduce_cusp(Cusp(6,7))
             Infinity
-
         """
         N = self.level()
         c = Cusp(c)
@@ -307,22 +306,7 @@ class Gamma_class(CongruenceSubgroup):
         return MatrixGroup([matrix(Zmod(self.level()), 2, 2, 1)])
 
 
-def is_Gamma(x):
-    r"""
-    Return True if x is a congruence subgroup of type Gamma.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.all import is_Gamma
-        sage: is_Gamma(Gamma0(13))
-        False
-        sage: is_Gamma(Gamma(4))
-        True
-    """
-
-    return isinstance(x, Gamma_class)
-
-def _lift_pair(U,V,N):
+def _lift_pair(U, V, N) -> tuple:
     r"""
     Utility function. Given integers ``U, V, N``, with `N \ge 1` and `{\rm
     gcd}(U, V, N) = 1`, return a pair `(u, v)` congruent to `(U, V) \bmod N`,
@@ -339,6 +323,9 @@ def _lift_pair(U,V,N):
         sage: from sage.modular.arithgroup.congroup_gamma import _lift_pair
         sage: _lift_pair(2,4,7)
         (9, 4)
+
+    TESTS::
+
         sage: _lift_pair(2,4,8) # don't do this
         Traceback (most recent call last):
         ...
@@ -347,12 +334,11 @@ def _lift_pair(U,V,N):
     u = U % N
     v = V % N
     if v == 0:
-        if u == 1 or u == N-1:
-            return (1,0)
-        else:
-            v = N
+        if u == 1 or u == N - 1:
+            return (1, 0)
+        v = N
     while gcd(u, v) > 1:
-        u = u+N
-        if u > N*v:
+        u += N
+        if u > N * v:
             raise ValueError("(U, V, N) must be coprime")
     return (u, v)

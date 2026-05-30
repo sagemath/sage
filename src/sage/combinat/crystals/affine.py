@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Affine Crystals
+Affine crystals
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Brant Jones <brant at math.ucdavis.edu>
@@ -228,12 +228,12 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
         """
         if len(value) == 1 and isinstance(value[0], self.element_class) and value[0].parent() == self:
             return value[0]
-        else:  # Should do sanity checks!  (Including check for inconsistent parent.)
-            return self.retract(self.classical_crystal(*value, **options))
+        # Should do sanity checks!  (Including check for inconsistent parent.)
+        return self.retract(self.classical_crystal(*value, **options))
 
     def __contains__(self, x):
         r"""
-        Checks whether ``x`` is an element of ``self``.
+        Check whether `x` is an element of ``self``.
 
         EXAMPLES::
 
@@ -352,12 +352,10 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.e0()
-        else:
-            x = self.lift().e(i)
-            if (x is None):
-                return None
-            else:
-                return self.parent().retract(x)
+        x = self.lift().e(i)
+        if (x is None):
+            return None
+        return self.parent().retract(x)
 
     def f(self, i):
         r"""
@@ -377,12 +375,10 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.f0()
-        else:
-            x = self.lift().f(i)
-            if (x is None):
-                return None
-            else:
-                return self.parent().retract(x)
+        x = self.lift().f(i)
+        if (x is None):
+            return None
+        return self.parent().retract(x)
 
     def epsilon0(self):
         r"""
@@ -420,8 +416,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.epsilon0()
-        else:
-            return self.lift().epsilon(i)
+        return self.lift().epsilon(i)
 
     def phi0(self):
         r"""
@@ -442,7 +437,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
 
     def phi(self, i):
         r"""
-        Returns the maximal time the crystal operator `f_i` can be applied to self.
+        Return the maximal time the crystal operator `f_i` can be applied to ``self``.
 
         EXAMPLES::
 
@@ -458,8 +453,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
         """
         if i == self.parent()._cartan_type.special_node():
             return self.phi0()
-        else:
-            return self.lift().phi(i)
+        return self.lift().phi(i)
 
     def _richcmp_(self, other, op):
         """
@@ -537,7 +531,7 @@ class AffineCrystalFromClassicalAndPromotion(AffineCrystalFromClassical):
     - ``automorphism, inverse_automorphism`` -- a function on the
       elements of the ``classical_crystal``
 
-    - ``dynkin_node`` -- an integer specifying the classical node in the
+    - ``dynkin_node`` -- integer specifying the classical node in the
       image of the zero node under the automorphism sigma
 
     EXAMPLES::
@@ -678,8 +672,7 @@ class AffineCrystalFromClassicalAndPromotionElement(AffineCrystalFromClassicalEl
         x = self.parent().automorphism(self).e(self.parent().dynkin_node)
         if (x is None):
             return None
-        else:
-            return self.parent().inverse_automorphism(x)
+        return self.parent().inverse_automorphism(x)
 
     def f0(self):
         r"""
@@ -700,8 +693,7 @@ class AffineCrystalFromClassicalAndPromotionElement(AffineCrystalFromClassicalEl
         x = self.parent().automorphism(self).f(self.parent().dynkin_node)
         if (x is None):
             return None
-        else:
-            return self.parent().inverse_automorphism(x)
+        return self.parent().inverse_automorphism(x)
 
     def epsilon0(self):
         r"""

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Hecke Character Basis
+Hecke character basis
 
 The basis of symmetric functions given by characters of the
 Hecke algebra (of type `A`).
@@ -24,7 +24,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.partition import _Partitions, Partitions
+from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
 
 
@@ -176,7 +176,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         self.q = q
         SymmetricFunctionAlgebra_multiplicative.__init__(self, sym,
             basis_name="Hecke character with q={}".format(self.q),
-            prefix="qbar")
+            prefix='qbar')
         self._p = sym.power()
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
@@ -206,11 +206,11 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
     def _p_to_qbar_on_generator(self, n):
         r"""
-        Convert `p_n` to ``self``
+        Convert `p_n` to ``self``.
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -227,9 +227,9 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             return self([1])
         q = self.q
         if q**n == self.base_ring().one():
-            raise ValueError("the parameter q=%s must not be a %s root of unity" % (q,n))
+            raise ValueError("the parameter q=%s must not be a %s root of unity" % (q, n))
         out = n * self([n]) - sum((q**i-1) * self._p_to_qbar_on_generator(i)
-                                  * self([n-i]) for i in range(1,n) if q**i != 1)
+                                  * self([n-i]) for i in range(1, n) if q**i != 1)
         return out*(q-1) / (q**n-1)
 
     def _p_to_qbar_on_basis(self, mu):
@@ -238,7 +238,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``mu`` -- a partition or a list of non-negative integers
+        - ``mu`` -- a partition or a list of nonnegative integers
 
         EXAMPLES::
 
@@ -260,7 +260,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -290,7 +290,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``mu`` -- a partition or a list of non-negative integers
+        - ``mu`` -- a partition or a list of nonnegative integers
 
         EXAMPLES::
 
@@ -331,5 +331,5 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         T = self.tensor_square()
         one = self.base_ring().one()
         q = self.q
-        return T.sum_of_terms(((P(j), P(r-j)), one if j in [0,r] else q-one)
+        return T.sum_of_terms(((P(j), P(r-j)), one if j in [0, r] else q-one)
                               for j in range(r+1))

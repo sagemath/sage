@@ -180,7 +180,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             return module.graded_free_resolution(*args, **kwds)
         return module.free_resolution(*args, **kwds)
 
-    def __init__(self, module, name='S', **kwds):
+    def __init__(self, module, name='S', **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -206,7 +206,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
         self._name = name
         self._module = module
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -224,13 +224,13 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             return f"Free resolution of the row space of the matrix:\n{self._module}"
         return f"Free resolution of {self._module}"
 
-    def _repr_module(self, i):
+    def _repr_module(self, i) -> str:
         r"""
         Return the string form of the `i`-th free module.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -258,7 +258,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
                 r = self._initial_differential.domain().dimension()
             s = f'{self._name}^{r}'
             return s
-        elif i > self._length:
+        if i > self._length:
             s = '0'
         else:
             r = self._maps[i - 1].ncols()
@@ -271,11 +271,11 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
     @abstract_method
     def differential(self, i):
         r"""
-        Return the ``i``-th differential map.
+        Return the `i`-th differential map.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         TESTS::
 
@@ -369,13 +369,13 @@ class FiniteFreeResolution(FreeResolution):
         """
         return len(self._maps)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string form of this resolution.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -409,11 +409,11 @@ class FiniteFreeResolution(FreeResolution):
 
     def __getitem__(self, i):
         r"""
-        Return the ``i``-th free module of this resolution.
+        Return the `i`-th free module of this resolution.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -443,11 +443,11 @@ class FiniteFreeResolution(FreeResolution):
 
     def differential(self, i):
         r"""
-        Return the ``i``-th differential map.
+        Return the `i`-th differential map.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -542,11 +542,11 @@ class FiniteFreeResolution(FreeResolution):
 
     def matrix(self, i):
         r"""
-        Return the matrix representing the ``i``-th differential map.
+        Return the matrix representing the `i`-th differential map.
 
         INPUT:
 
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
         EXAMPLES::
 
@@ -565,10 +565,9 @@ class FiniteFreeResolution(FreeResolution):
         """
         if i <= 0:
             raise IndexError('invalid index')
-        elif i <= self._length:
+        if i <= self._length:
             return self._maps[i - 1]
-        else:
-            return self.differential(i).matrix()
+        return self.differential(i).matrix()
 
     def chain_complex(self):
         r"""
@@ -851,7 +850,7 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
         [-y*z + x*w]
         [ z^2 - y*w]
     """
-    def __init__(self, module, name='S', algorithm='heuristic', **kwds):
+    def __init__(self, module, name='S', algorithm='heuristic', **kwds) -> None:
         r"""
         Initialize ``self``.
 

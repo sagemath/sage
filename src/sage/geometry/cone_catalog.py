@@ -8,6 +8,7 @@ globally-available ``cones`` prefix, to create some common cones:
 - The nonnegative orthant,
 - The rearrangement cone of order ``p``,
 - The Schur cone,
+- The Barker-Foran cone,
 - The trivial cone.
 
 At the moment, only convex rational polyhedral cones are
@@ -72,6 +73,7 @@ individual functions and the references therein.
 # the top-level non-underscore functions defined in this module.
 #
 
+
 def _preprocess_args(ambient_dim, lattice):
     r"""
     Preprocess arguments for cone-constructing functions.
@@ -98,7 +100,7 @@ def _preprocess_args(ambient_dim, lattice):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer; the dimension of the
+    - ``ambient_dim`` -- nonnegative integer; the dimension of the
       ambient space in which the cone will live
 
     - ``lattice`` -- a toric lattice; the lattice in which the cone
@@ -160,6 +162,83 @@ def _preprocess_args(ambient_dim, lattice):
     return (ambient_dim, lattice)
 
 
+def barker_foran(lattice=None):
+    r"""
+    The Barker-Foran cone, an example of a "self-dual" cone with
+    five extreme rays in three dimensions.
+
+    In Sage, every dual cone lives in a distinct dual lattice, but we
+    use the term "self-dual" loosely to indicate that the cone and its
+    dual are equal as sets under a canonical lattice isomorphism.
+
+    INPUT:
+
+    - ``lattice`` -- a toric lattice (default: ``None``) of rank
+      three; the lattice in which the cone will live
+
+    If the ``lattice`` is omitted, then the default lattice of rank
+    three will be used.
+
+    OUTPUT:
+
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` living
+    in ``lattice`` that is self-dual and has five extreme rays.
+
+    A :exc:`ValueError` is raised if the ``lattice`` is of an
+    incompatible rank.
+
+    REFERENCES:
+
+    - [BF1976]_
+
+    EXAMPLES:
+
+    Basic usage; confirm self-duality::
+
+        sage: K = cones.barker_foran()
+        sage: K.nrays()
+        5
+        sage: K.is_proper()  # should be implied by self-duality
+        True
+        sage: K_ext = K.rays().matrix().rows()
+        sage: K_dual_ext = K.dual().rays().matrix().rows()
+        sage: set(K_ext) == set(K_dual_ext)  #  self-dual
+        True
+
+    TESTS:
+
+    If a ``lattice`` was given, it is actually used::
+
+        sage: M = ToricLattice(3, 'M')
+        sage: cones.barker_foran(lattice=M)
+        3-d cone in 3-d lattice M
+
+    Unless it has the wrong rank::
+
+        sage: M = ToricLattice(2, 'M')
+        sage: cones.barker_foran(lattice=M)
+        Traceback (most recent call last):
+        ...
+        ValueError: lattice rank=2 and ambient_dim=3 are incompatible
+
+    """
+    from sage.geometry.cone import Cone
+    from sage.rings.integer_ring import ZZ
+
+    ambient_dim = 3
+    ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
+
+    one = ZZ.one()
+    zero = ZZ.zero()
+    ext = [( one,   one,  one),
+           ( zero,  one,  one),
+           (-one,   zero, one),
+           ( zero, -one,  one),
+           ( one,  -one,  one)]  # noqa: E221
+
+    return Cone(ext, lattice, check=False)
+
+
 def downward_monotone(ambient_dim=None, lattice=None):
     r"""
     The downward-monotone cone in ``ambient_dim`` dimensions, or
@@ -176,7 +255,7 @@ def downward_monotone(ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -186,8 +265,8 @@ def downward_monotone(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a :class:`ValueError` to
+    A :exc:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :exc:`ValueError` to
     specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
@@ -198,7 +277,7 @@ def downward_monotone(ambient_dim=None, lattice=None):
     nonincreasing order. Each generating ray has the integer ring as
     its base ring.
 
-    A :class:`ValueError` can be raised if the inputs are incompatible
+    A :exc:`ValueError` can be raised if the inputs are incompatible
     or insufficient. See the INPUT documentation for details.
 
     .. SEEALSO::
@@ -307,7 +386,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -317,8 +396,8 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a :class:`ValueError` to
+    A :exc:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :exc:`ValueError` to
     specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
@@ -329,7 +408,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
     as its generators. Each generating ray has the integer ring as its
     base ring.
 
-    A :class:`ValueError` can be raised if the inputs are incompatible
+    A :exc:`ValueError` can be raised if the inputs are incompatible
     or insufficient. See the INPUT documentation for details.
 
     REFERENCES:
@@ -412,10 +491,10 @@ def rearrangement(p, ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``p`` -- a nonnegative integer; the number of components to
+    - ``p`` -- nonnegative integer; the number of components to
       "rearrange", between ``1`` and ``ambient_dim`` inclusive
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -425,12 +504,12 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a :class:`ValueError` to
+    A :exc:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :exc:`ValueError` to
     specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
-    It is also a :class:`ValueError` to specify a non-integer ``p``.
+    It is also a :exc:`ValueError` to specify a non-integer ``p``.
 
     OUTPUT:
 
@@ -439,7 +518,7 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     ``lattice``, with ambient dimension ``ambient_dim``. Each
     generating ray has the integer ring as its base ring.
 
-    A :class:`ValueError` can be raised if the inputs are incompatible
+    A :exc:`ValueError` can be raised if the inputs are incompatible
     or insufficient. See the INPUT documentation for details.
 
     ALGORITHM:
@@ -529,7 +608,7 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     cone should sum to a nonnegative number. In other words, the
     generators really are what we think they are::
 
-        sage: def _has_rearrangement_property(v,p):
+        sage: def _has_rearrangement_property(v, p):
         ....:     return sum( sorted(v)[0:p] ) >= 0
         sage: all(
         ....:   _has_rearrangement_property(
@@ -629,14 +708,14 @@ def schur(ambient_dim=None, lattice=None):
     in ``lattice``.
 
     The Schur cone in `n` dimensions induces the majorization
-    preordering on the ambient space. If `\left\{e_{1}, e_{2}, \ldots,
-    e_{n}\right\}` is the standard basis for the space, then its
-    generators are `\left\{e_{i} - e_{i+1}\ |\ 1 \le i \le
-    n-1\right\}`. Its dual is the downward monotone cone.
+    preordering on the :func:`downward_monotone` cone. If
+    `\left\{e_{1}, e_{2}, \ldots, e_{n}\right\}` is the standard basis
+    for the space, then its generators are `\left\{e_{i} - e_{i+1}\ |\
+    1 \le i \le n-1\right\}`. Its dual is the downward monotone cone.
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -646,8 +725,8 @@ def schur(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a :class:`ValueError` to
+    A :exc:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :exc:`ValueError` to
     specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
@@ -658,7 +737,7 @@ def schur(ambient_dim=None, lattice=None):
     dimension ``ambient_dim``.  Each generating ray has the integer
     ring as its base ring.
 
-    A :class:`ValueError` can be raised if the inputs are incompatible
+    A :exc:`ValueError` can be raised if the inputs are incompatible
     or insufficient. See the INPUT documentation for details.
 
     .. SEEALSO::
@@ -679,7 +758,6 @@ def schur(ambient_dim=None, lattice=None):
     generators of the Schur cone and the nonnegative orthant in
     dimension five is `\left(3/4\right)\pi`::
 
-        sage: # needs sage.rings.number_fields
         sage: P = cones.schur(5)
         sage: Q = cones.nonnegative_orthant(5)
         sage: G = ( g.change_ring(QQbar).normalized() for g in P )
@@ -705,18 +783,18 @@ def schur(ambient_dim=None, lattice=None):
         sage: cones.schur(0).is_trivial()
         True
 
-    The Schur cone induces the majorization preordering, as in Iusem
-    and Seeger's [IS2005]_ Example 7.3 or Niezgoda's [Niez1998]_
-    Example 2.2::
+    The Schur cone induces the majorization preordering on the
+    downward-monotone cone, as in Iusem and Seeger's [IS2005]_ Example
+    7.3 or Niezgoda's [Niez1998]_ Example 2.2::
 
         sage: ambient_dim = ZZ.random_element(10)
         sage: V = VectorSpace(QQ, ambient_dim)
         sage: rearrange = lambda z: V(sorted(z.list(),reverse=True))
-        sage: def majorized_by(x,y):
+        sage: def majorized_by(x, y):
         ....:     x = rearrange(x)
         ....:     y = rearrange(y)
         ....:     return (all(sum(x[0:i]) <= sum(y[0:i])
-        ....:                 for i in range(x.degree()-1))
+        ....:                 for i in range(1,x.degree()))
         ....:             and sum(x) == sum(y))
         sage: S = cones.schur(ambient_dim)
         sage: majorized_by(V.zero(), S.random_element())
@@ -754,13 +832,12 @@ def schur(ambient_dim=None, lattice=None):
 
     ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
 
-    def _f(i,j):
+    def _f(i, j):
         if i == j:
             return 1
-        elif j - i == 1:
+        if j - i == 1:
             return -1
-        else:
-            return 0
+        return 0
 
     # The "max" below catches the trivial case where ambient_dim == 0.
     S = matrix(ZZ, max(0, ambient_dim-1), ambient_dim, _f)
@@ -775,7 +852,7 @@ def trivial(ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -785,8 +862,8 @@ def trivial(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a :class:`ValueError` to
+    A :exc:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :exc:`ValueError` to
     specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
@@ -796,7 +873,7 @@ def trivial(ambient_dim=None, lattice=None):
     representing the trivial cone with no nonzero generators living in
     ``lattice``, with ambient dimension ``ambient_dim``.
 
-    A :class:`ValueError` can be raised if the inputs are incompatible
+    A :exc:`ValueError` can be raised if the inputs are incompatible
     or insufficient. See the INPUT documentation for details.
 
     EXAMPLES:

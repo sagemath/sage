@@ -8,15 +8,15 @@ AUTHOR:
     -- Martin Albrecht (2008-10): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -232,7 +232,7 @@ cdef inline int celement_neg(GF2X_c* res, GF2X_c* a, long parent) except -2:
     res[0] = a[0]
 
 cdef inline int celement_mul_scalar(GF2X_c* res, GF2X_c* p, object c,
-        long parent) except -1:
+                                    long parent) except -1:
     """
     TESTS::
 
@@ -348,7 +348,6 @@ cdef inline int celement_pow(GF2X_c* res, GF2X_c* x, long e, GF2X_c *modulus, lo
         x
         sage: pow(x^2+1, 2, x^2+x+1)
         x + 1
-
     """
     cdef GF2XModulus_c mod
     cdef GF2X_c xmod

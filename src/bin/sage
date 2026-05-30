@@ -103,27 +103,22 @@ usage() {
     ####  |.....................--.|...................................................|
     echo
     echo "Running Sage:"
-    if command -v sage-ipython &>/dev/null; then
-        echo
-        echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
-        echo "  -c <cmd>            -- evaluate cmd as sage code"
-        echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
-        echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
-        echo "                         Current default is 'jupyter'"
-        echo "  -n, --notebook      -- shortcut for --notebook=default"
-        echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
-        echo "                         create and use a temporary .sage directory instead"
-        echo "  -t [options] <--all|files|dir>"
-        echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
-        echo "                         selected options:"
-        echo "                           --long - include lines with the phrase 'long time'"
-        echo "                           --verbose - print debugging output during the test"
-        echo "                           --optional - controls which optional tests are run"
-        echo "                           --help - show all testing options"
-    else
-        echo "                         (not installed currently, "
-        echo "                          to install, run sage --pip install sagemath-repl)"
-    fi
+    echo
+    echo "  file.[sage|py|spyx] -- run given .sage, .py or .spyx file"
+    echo "  -c <cmd>            -- evaluate cmd as sage code"
+    echo "  --notebook=[...]    -- start the Sage notebook (valid options are"
+    echo "                         'default', 'jupyter', 'jupyterlab', and 'export')"
+    echo "                         Current default is 'jupyter'"
+    echo "  -n, --notebook      -- shortcut for --notebook=default"
+    echo "  --nodotsage         -- run Sage without using the user's .sage directory:"
+    echo "                         create and use a temporary .sage directory instead"
+    echo "  -t [options] <--all|files|dir>"
+    echo "                      -- test examples in .py, .pyx, .sage, .tex or .rst files"
+    echo "                         selected options:"
+    echo "                           --long - include lines with the phrase 'long time'"
+    echo "                           --verbose - print debugging output during the test"
+    echo "                           --optional - controls which optional tests are run"
+    echo "                           --help - show all testing options"
     echo
     echo "Running external programs:"
     echo
@@ -158,14 +153,8 @@ usage() {
 
 # Determine SAGE_ROOT, SAGE_LOCAL, and SAGE_VENV.
 unset SAGE_VENV
-if [ -x "${SELF}-config" ]; then
-    # optional sage-config console script, installed by sage_conf
-    export SAGE_ROOT=$("${SELF}-config" SAGE_ROOT)
-    export SAGE_LOCAL=$("${SELF}-config" SAGE_LOCAL)
-fi
 if [ -f "${SELF}-src-env-config" ]; then
     # Not installed script, present only in src/bin/
-    SAGE_SRC_ENV_CONFIG=1
     . "${SELF}-src-env-config" >&2
 fi
 if [ -z "$SAGE_VENV" -a -x "${SELF}-venv-config" ]; then
@@ -197,13 +186,33 @@ fi
 # build/bin/sage-site. See #29111; but OTOH #34627.
 
 build_sage() {
-    ( cd "$SAGE_ROOT" && make sagelib-no-deps ) || exit $?
+    # Check for the expected editable meson build directory
+    SCRIPT=$(readlink -f "$0") # this shell script
+    SAGE_ROOT=$(dirname "$SCRIPT")/../..
+    if [ -f "$SAGE_ROOT/build/sage-distro/build.ninja" ]; then
+         echo "Building Sage with ninja..."
+       ninja -C $SAGE_ROOT/build/sage-distro || exit $?
+    else
+        echo "Error: 'sage -b' is for editable sage-distro developer builds." >&2
+        echo "Please use 'make' or 'meson' directly for other builds." >&2
+        exit 1
+    fi
 }
 
 # Check for '-i' etc. before sourcing sage-env: running "make"
 # should be run outside of the Sage shell.
 case "$1" in
     -i|-f|-p)
+        echo "\"sage -i\" is obsolete, and might not work." >&2
+        echo "Please use \"./configure --with-<package name>\" followed by \"make\" to update/install Sage's spkg," >&2
+        echo "and \"./sage --pip install <package name>\" to install external packages." >&2
+
+        if [ -n "$CONDA_PREFIX" ]; then
+            echo "Error: 'sage $1' is not supported in Conda environments." >&2
+            echo "Please use 'conda install' to install packages." >&2
+            exit 1
+        fi
+
         # Delegate further option handling to the non-installed sage-site script.
         # (These options become unavailable if the directory $SAGE_ROOT is removed.)
         if [ -d "$SAGE_ROOT" ]; then
@@ -218,8 +227,10 @@ case "$1" in
         exit 0
         ;;
     -br|--br)
+        echo "Warning: 'sage -br' is deprecated." >&2
+        echo "In an editable install, just run './sage' to use the latest built code." >&2
         build_sage
-        shift; set -- -r "$@"  # delegate to handling of "-r" below, after sourcing sage-env
+        shift; set -- -r "$@"
         ;;
     -bn|--build-and-notebook)
         build_sage
@@ -294,8 +305,8 @@ sage_setup() {
         echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
         echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
         echo >&2 'finished). You should run `make` in the SAGE_ROOT directory first.'
-        echo >&2 'If you did not intend to build Sage from source, you should download'
-        echo >&2 'a binary tarball instead. Read README.txt for more information.'
+        echo >&2 'If you did not intend to build Sage from source, you should read' 
+        echo >&2 'README.md for more information on available installation methods.'
         echo >&2 '************************************************************************'
         exit 1
     fi
@@ -428,9 +439,9 @@ usage_advanced() {
         echo "     --initial        -- only show the first failure per block"
         echo "     --debug          -- drop into PDB after an unexpected error"
         echo "     --failed         -- only test files that failed last test"
-        echo "     --warn-long [timeout] -- warning if doctest is slow"
+        echo "     --warn-long [timeout] -- warn if tests take too much CPU time"
         echo "     --only-errors    -- only output failures, not successes"
-        echo "     --gc=GC          -- control garbarge collection (ALWAYS:"
+        echo "     --gc=GC          -- control garbage collection (ALWAYS:"
         echo "                         collect garbage before every test; NEVER:"
         echo "                         disable gc; DEFAULT: Python default)"
         echo "     --short[=secs]   -- run as many doctests as possible in about 300"
@@ -488,13 +499,6 @@ usage_advanced() {
         echo "  --fixdoctests file.py"
         echo "                      -- Run doctests and replace output of failing doctests"
         echo "                         with actual output."
-        echo "  --fiximports <files|dirs>"
-        echo "                      -- Replace imports from sage.PAC.KAGE.all by specific"
-        echo "                         imports when sage.PAC.KAGE is an implicit namespace"
-        echo "                         package"
-        echo "  --fixdistributions <files|dirs>"
-        echo "                      -- Check or update '# sage_setup: distribution'"
-        echo "                         directives in source files"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"
@@ -512,10 +516,6 @@ usage_advanced() {
     echo "                         (not installed currently, run sage -i rst2ipynb)"
     echo "  --ipynb2rst [...]   -- Generates a reStructuredText source file from"
     echo "                         a Jupyter notebook (.ipynb)."
-    echo "  --sws2rst <sws doc> -- Generates a reStructuredText source file from"
-    echo "                         a Sage worksheet (.sws) document."
-    command -v sage-sws2rst >&/dev/null || \
-    echo "                         (not installed currently, run sage -i sage_sws2rst)"
     echo
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
@@ -586,7 +586,6 @@ fi
 if [ "$1" = '-c' ]; then
     shift
     sage_setup
-    unset TERM  # See Issue #12263
     exec sage-eval "$@"
 fi
 
@@ -862,11 +861,6 @@ if [ "$1" = '-ipynb2rst' -o "$1" = '--ipynb2rst' ]; then
     exec sage-ipynb2rst "$@"
 fi
 
-if [ "$1" = '-sws2rst' -o "$1" = '--sws2rst' ]; then
-    shift
-    exec sage-sws2rst "$@"
-fi
-
 #####################################################################
 # The notebook, grep, building Sage, testing Sage
 #####################################################################
@@ -955,16 +949,6 @@ if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
     exec sage-startuptime.py "$@"
 fi
 
-if [ "$1" = '-fiximports' -o "$1" = '--fiximports' ]; then
-    shift
-    exec sage-python -m sage.misc.replace_dot_all "$@"
-fi
-
-if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
-    shift
-    exec sage-python -m sage.misc.package_dir "$@"
-fi
-
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
     shift
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
@@ -1030,7 +1014,7 @@ if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
     # Redirect stdin from /dev/null. This helps with running TeX which
     # tends to ask interactive questions if something goes wrong. These
     # cause the build to hang. If stdin is /dev/null, TeX just aborts.
-    exec sage-python -m sage_docbuild "$@" </dev/null
+    exec python3 -m sage_docbuild "$@" </dev/null
 fi
 
 #####################################################################
@@ -1065,7 +1049,7 @@ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
         gdb --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
     else
-        sage_dir=$(sage-python -c 'import os, sage; print(os.path.dirname(sage.__file__))')
+        sage_dir=$(python3 -c 'import os, sage; print(os.path.dirname(sage.__file__))')
         cygdb "$sage_dir" "$SAGE_SRC/sage" \
             -- --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
@@ -1134,7 +1118,6 @@ if [ $# -ge 1 ]; then
         exit 1
     fi
     sage_setup
-    unset TERM  # See Issue #12263
     # sage-run rejects all command line options as the first argument.
     exec sage-run "$@"
 fi

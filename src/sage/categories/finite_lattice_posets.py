@@ -1,14 +1,17 @@
 r"""
 Finite lattice posets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.lattice_posets import LatticePosets
+from sage.misc.cachefunc import cached_method
+
 
 class FiniteLatticePosets(CategoryWithAxiom):
     r"""
@@ -20,13 +23,16 @@ class FiniteLatticePosets(CategoryWithAxiom):
         sage: FiniteLatticePosets()
         Category of finite lattice posets
         sage: FiniteLatticePosets().super_categories()
-        [Category of lattice posets, Category of finite posets]
+        [Category of lattice posets,
+         Category of finite posets,
+         Category of bounded posets]
         sage: FiniteLatticePosets().example()
         NotImplemented
 
     .. SEEALSO::
 
-        :class:`FinitePosets`, :class:`LatticePosets`, :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
+        :class:`FinitePosets`, :class:`LatticePosets`,
+        :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
 
     TESTS::
 
@@ -34,8 +40,20 @@ class FiniteLatticePosets(CategoryWithAxiom):
         sage: C is FiniteLatticePosets().Finite()
         True
         sage: TestSuite(C).run()
-
     """
+    @cached_method
+    def extra_super_categories(self):
+        r"""
+        Implement the fact that a finite lattice is a bounded poset.
+
+        EXAMPLES::
+
+            sage: FiniteLatticePosets().super_categories()
+            [Category of lattice posets,
+             Category of finite posets,
+             Category of bounded posets]
+        """
+        return [LatticePosets().Bounded()]
 
     class ParentMethods:
 
@@ -106,7 +124,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
         def meet_irreducibles_poset(self):
             r"""
-            Return the poset of join-irreducible elements of this finite lattice.
+            Return the poset of join-irreducible elements of the lattice.
 
             A *meet-irreducible element* of ``self`` is an element `x`
             that is not maximal and can not be written as the meet of two
@@ -115,7 +133,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                   # needs sage.graphs sage.modules
-                sage: L.join_irreducibles_poset()                                       # needs sage.graphs sage.modules
+                sage: L.meet_irreducibles_poset()                                       # needs sage.graphs sage.modules
                 Finite poset containing 3 elements
 
             .. SEEALSO::
@@ -165,10 +183,10 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 return Poset({self[0]: []})
             return self.subposet(self.join_irreducibles()+self.meet_irreducibles())
 
-        ##########################################################################
+        ######################################################################
         # Lattice morphisms
 
-        def is_lattice_morphism(self, f, codomain):
+        def is_lattice_morphism(self, f, codomain) -> bool:
             r"""
             Return whether ``f`` is a morphism of posets from ``self``
             to ``codomain``.
@@ -233,9 +251,9 @@ class FiniteLatticePosets(CategoryWithAxiom):
             # ensure that this is a poset morphism. It actually may
             # be sufficient to check just joins (or just meets).
             from sage.combinat.subset import Subsets
-            for x,y in Subsets(self,2):
-                if f(self.join(x,y)) != codomain.join(f(x), f(y)):
+            for x, y in Subsets(self, 2):
+                if f(self.join(x, y)) != codomain.join(f(x), f(y)):
                     return False
-                if f(self.meet(x,y)) != codomain.meet(f(x), f(y)):
+                if f(self.meet(x, y)) != codomain.meet(f(x), f(y)):
                     return False
             return True

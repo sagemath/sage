@@ -4,7 +4,6 @@ Graded rings of modular forms for Hecke triangle groups
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -17,8 +16,8 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.algebras.free_algebra import FreeAlgebra
-
 from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
 from sage.rings.fraction_field import FractionField
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
@@ -51,17 +50,15 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: `\Z`).
+        - ``base_ring`` -- the base_ring (default: `\Z`)
 
-        - ``red_hom``    -- If ``True`` then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the (Hecke) forms.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the (Hecke) forms.
 
-        OUTPUT:
-
-        The corresponding abstract (Hecke) forms ring.
+        OUTPUT: the corresponding abstract (Hecke) forms ring
 
         EXAMPLES::
 
@@ -128,8 +125,6 @@ class FormsRing_abstract(Parent):
             sage: latex(QuasiWeakModularFormsRing())
             \mathcal{ QM^! }_{n=3}(\Bold{Z})
         """
-
-        from sage.misc.latex import latex
         return "\\mathcal{{ {} }}_{{n={}}}({})".format(self._analytic_type.latex_space_name(), self._group.n(), latex(self._base_ring))
 
     def _element_constructor_(self, el):
@@ -261,16 +256,17 @@ class FormsRing_abstract(Parent):
     def default_prec(self, prec=None):
         r"""
         Set the default precision ``prec`` for the Fourier expansion.
-        If ``prec=None`` (default) then the current default precision is returned instead.
+        If ``prec=None`` (default) then the current default precision is
+        returned instead.
 
         INPUT:
 
-        - ``prec`` -- An integer.
+        - ``prec`` -- integer
 
-        NOTE:
+        .. NOTE::
 
-        This is also used as the default precision for the Fourier
-        expansion when evaluating forms.
+            This is also used as the default precision for the Fourier
+            expansion when evaluating forms.
 
         EXAMPLES::
 
@@ -409,14 +405,12 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``analytic_type``  -- An ``AnalyticType`` or something which
-                                coerces into it (default: ``None``).
+        - ``analytic_type`` -- an ``AnalyticType`` or something which
+          coerces into it (default: ``None``)
 
-        - ``ring``           -- Whether to extend to a graded ring (default: ``False``).
+        - ``ring`` -- whether to extend to a graded ring (default: ``False``)
 
-        OUTPUT:
-
-        The new extended space.
+        OUTPUT: the new extended space
 
         EXAMPLES::
 
@@ -444,8 +438,7 @@ class FormsRing_abstract(Parent):
 
         if ring or not self.is_homogeneous():
             return FormsRing(analytic_type, group=self.group(), base_ring=self.base_ring(), red_hom=self.has_reduce_hom())
-        else:
-            return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
+        return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
 
     def reduce_type(self, analytic_type=None, degree=None):
         r"""
@@ -455,14 +448,13 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``analytic_type``   -- An ``AnalyticType`` or something which coerces into it (default: ``None``).
+        - ``analytic_type`` -- an ``AnalyticType`` or something which coerces
+          into it (default: ``None``)
 
-        - ``degree``          -- ``None`` (default) or the degree of the homogeneous component to which
-                                 ``self`` should be reduced.
+        - ``degree`` -- ``None`` (default) or the degree of the homogeneous
+          component to which ``self`` should be reduced
 
-        OUTPUT:
-
-        The new reduced space.
+        OUTPUT: the new reduced space
 
         EXAMPLES::
 
@@ -491,13 +483,12 @@ class FormsRing_abstract(Parent):
 
         if degree is None and not self.is_homogeneous():
             return FormsRing(analytic_type, group=self.group(), base_ring=self.base_ring(), red_hom=self.has_reduce_hom())
-        elif degree is None:
+        if degree is None:
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
-        else:
-            weight, ep = degree
-            if self.is_homogeneous() and (weight != self.weight() or ep != self.ep()):
-                analytic_type = self._analytic_type.reduce_to([])
-            return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=weight, ep=ep)
+        weight, ep = degree
+        if self.is_homogeneous() and (weight != self.weight() or ep != self.ep()):
+            analytic_type = self._analytic_type.reduce_to([])
+        return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=weight, ep=ep)
 
     @cached_method
     def contains_coeff_ring(self):
@@ -646,7 +637,7 @@ class FormsRing_abstract(Parent):
 
     def get_d(self, fix_d=False, d_num_prec=None):
         r"""
-        Return the parameter ``d`` of self either as a formal
+        Return the parameter ``d`` of ``self`` either as a formal
         parameter or as a numerical approximation with the specified
         precision (resp. an exact value in the arithmetic cases).
 
@@ -655,18 +646,14 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``fix_d``      -- If ``False`` (default) a formal parameter is
-                            used for ``d``.
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is
+          used for ``d``. If ``True`` then the numerical value of ``d`` is used
+          (or an exact value if the group is arithmetic). Otherwise, the given
+          value is used for ``d``.
 
-                            If ``True`` then the numerical value of
-                            ``d`` is used (or an exact value if the
-                            group is arithmetic).  Otherwise, the given
-                            value is used for ``d``.
-
-        - ``d_num_prec`` -- An integer.  The numerical precision of
-                            ``d``. Default: ``None``, in which case
-                            the default numerical precision of
-                            ``self.parent()`` is used.
+        - ``d_num_prec`` -- integer (default: ``None``); the numerical
+          precision of ``d``. By default, the default numerical precision of
+          ``self.parent()`` is used.
 
         OUTPUT:
 
@@ -718,18 +705,18 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``prec``       -- An integer or ``None`` (default), namely the desired default
-                            precision of the space of power series. If nothing is specified
-                            the default precision of ``self`` is used.
+        - ``prec`` -- an integer or ``None`` (default), namely the desired
+          default precision of the space of power series. If nothing is
+          specified the default precision of ``self`` is used.
 
-        - ``fix_d``      -- If ``False`` (default) a formal parameter is used for ``d``.
-                            If ``True`` then the numerical value of ``d`` is used
-                            (resp. an exact value if the group is arithmetic).
-                            Otherwise the given value is used for ``d``.
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is used for
+          ``d``. If ``True`` then the numerical value of ``d`` is used (resp.
+          an exact value if the group is arithmetic). Otherwise the given value
+          is used for ``d``.
 
-        - ``d_num_prec`` -- The precision to be used if a numerical value for ``d`` is substituted.
-                            Default: ``None`` in which case the default
-                            numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
         OUTPUT:
 
@@ -844,7 +831,7 @@ class FormsRing_abstract(Parent):
             - (self._group.n()-2) / (4*self._group.n()) * (Z**2+X**(self._group.n()-2)) * dZ
 
     @cached_method
-    def has_reduce_hom(self):
+    def has_reduce_hom(self) -> bool:
         r"""
         Return whether the method ``reduce`` should reduce
         homogeneous elements to the corresponding space of homogeneous elements.
@@ -868,10 +855,9 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).graded_ring().has_reduce_hom()
             True
         """
-
         return self._red_hom
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether ``self`` is homogeneous component.
 
@@ -885,10 +871,9 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).is_homogeneous()
             True
         """
-
         return self._weight is not None
 
-    def is_modular(self):
+    def is_modular(self) -> bool:
         r"""
         Return whether ``self`` only contains modular elements.
 
@@ -906,10 +891,9 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(n=7, k=12, base_ring=AA).is_modular()
             True
         """
-
         return not (self.AT("quasi") <= self._analytic_type)
 
-    def is_weakly_holomorphic(self):
+    def is_weakly_holomorphic(self) -> bool:
         r"""
         Return whether ``self`` only contains weakly
         holomorphic modular elements.
@@ -928,10 +912,9 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(n=7, k=12, base_ring=AA).is_weakly_holomorphic()
             True
         """
-
         return (self.AT("weak", "quasi") >= self._analytic_type)
 
-    def is_holomorphic(self):
+    def is_holomorphic(self) -> bool:
         r"""
         Return whether ``self`` only contains holomorphic
         modular elements.
@@ -950,10 +933,9 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(n=7, k=12, base_ring=AA).is_holomorphic()
             True
         """
-
         return (self.AT("holo", "quasi") >= self._analytic_type)
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return whether ``self`` only contains cuspidal elements.
 
@@ -971,10 +953,9 @@ class FormsRing_abstract(Parent):
             sage: QuasiCuspForms(k=12).is_cuspidal()
             True
         """
-
         return (self.AT("cusp", "quasi") >= self._analytic_type)
 
-    def is_zerospace(self):
+    def is_zerospace(self) -> bool:
         r"""
         Return whether ``self`` is the (`0`-dimensional) zero space.
 
@@ -990,7 +971,6 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(k=12).reduce_type([]).is_zerospace()
             True
         """
-
         return (self.AT(["quasi"]) >= self._analytic_type)
 
     def analytic_type(self):
@@ -1020,9 +1000,9 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``k``  -- An integer.
+        - ``k`` -- integer
 
-        - ``ep`` -- `+1` or `-1`.
+        - ``ep`` -- `+1` or `-1`
 
         EXAMPLES::
 
@@ -1093,8 +1073,7 @@ class FormsRing_abstract(Parent):
 
         if self.hecke_n() == infinity:
             return self.extend_type("weak", ring=True)(x/(x-y**2)).reduce()
-        else:
-            return self.extend_type("weak", ring=True)(x**self._group.n()/(x**self._group.n()-y**2)).reduce()
+        return self.extend_type("weak", ring=True)(x**self._group.n()/(x**self._group.n()-y**2)).reduce()
 
     @cached_method
     def j_inv(self):
@@ -1503,8 +1482,7 @@ class FormsRing_abstract(Parent):
         if ZZ(2).divides(self._group.n()):
             x, y, z, d = self._pol_ring.gens()
             return self.extend_type("weak", ring=True)(1/d*y*x**(self._group.n()/ZZ(2))/(x**self._group.n()-y**2)).reduce()
-        else:
-            raise ArithmeticError("g_inv doesn't exist for odd n(={}).".format(self._group.n()))
+        raise ArithmeticError("g_inv doesn't exist for odd n(={}).".format(self._group.n()))
 
     @cached_method
     def E4(self):
@@ -1727,7 +1705,6 @@ class FormsRing_abstract(Parent):
         It is in particular also a generator of the graded ring of
         ``self`` and  the polynomial variable ``z`` exactly corresponds to ``E2``.
 
-
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import QuasiMeromorphicModularFormsRing, QuasiModularFormsRing, CuspFormsRing
@@ -1791,11 +1768,10 @@ class FormsRing_abstract(Parent):
 
         INPUT:
 
-        - ``k``  -- A non-negative even integer, namely the weight.
-
-                    If ``k=None`` (default) then the weight of ``self``
-                    is choosen if ``self`` is homogeneous and the
-                    weight is possible, otherwise ``k=0`` is set.
+        - ``k`` -- a nonnegative even integer, namely the weight.
+          If ``k`` is ``None`` (default) then the weight of ``self`` is chosen if
+          ``self`` is homogeneous and the weight is possible, otherwise ``k``
+          is set to `0`.
 
         OUTPUT:
 
@@ -1894,7 +1870,7 @@ class FormsRing_abstract(Parent):
                 raise TypeError(None)
             k = 2*ZZ(k/2)
         except TypeError:
-            raise TypeError("k={} must be a non-negative even integer!".format(k))
+            raise TypeError("k={} must be a nonnegative even integer!".format(k))
 
         # The case n=infinity is special (there are 2 cusps)
         # Until we/I get confirmation what is what sort of Eisenstein series

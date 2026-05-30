@@ -58,7 +58,7 @@ Modular Forms for Hecke Triangle Groups
    sage/modular/modform_hecketriangle/series_constructor
 
 Quasimodular Forms
----------------------------------------
+------------------
 
 .. toctree::
    :maxdepth: 1
@@ -90,6 +90,8 @@ Miscellaneous Modules (to be sorted)
    sage/modular/quatalg/brandt
    sage/modular/cusps_nf
    sage/modular/hypergeometric_motive
+   sage/modular/hypergeometric_misc
    sage/modular/multiple_zeta
+   sage/modular/modform/l_series_gross_zagier_coeffs
 
 .. include:: ../footer.txt

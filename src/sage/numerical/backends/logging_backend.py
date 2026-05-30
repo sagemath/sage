@@ -7,18 +7,19 @@ backend methods in one of three ways.
 See :class:`LoggingBackendFactory` for more information.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.numerical.backends.generic_backend import GenericBackend
+
 
 def _format_function_call(fn_name, *v, **k):
     """
@@ -30,8 +31,9 @@ def _format_function_call(fn_name, *v, **k):
         sage: _format_function_call('foo', 17, hellooooo='goodbyeeee')
         "foo(17, hellooooo='goodbyeeee')"
     """
-    args = [ repr(a) for a in v ] + [ "%s=%r" % (arg,val) for arg, val in k.items() ]
+    args = [repr(a) for a in v] + ["%s=%r" % (arg, val) for arg, val in k.items()]
     return "{}({})".format(fn_name, ", ".join(args))
+
 
 def _make_wrapper(backend, attr):
     """
@@ -90,8 +92,8 @@ def _make_wrapper(backend, attr):
     update_wrapper(m, getattr(backend, attr))
     return m
 
-class LoggingBackend(GenericBackend):
 
+class LoggingBackend(GenericBackend):
     """
     See :class:`LoggingBackendFactory` for documentation.
 
@@ -159,8 +161,7 @@ class LoggingBackend(GenericBackend):
             # cache it
             setattr(self, attr, _mm)
             return _mm
-        else:
-            return _a
+        return _a
 
     def base_ring(self):
         """
@@ -190,8 +191,7 @@ class LoggingBackend(GenericBackend):
         """
         if self._base_ring is not None:
             return self._base_ring
-        else:
-            return self._backend.base_ring()
+        return self._backend.base_ring()
 
 
 # Override all methods that we inherited from GenericBackend
@@ -225,7 +225,6 @@ r'''
             Traceback (most recent call last):
             ...
             NotImplementedError
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -233,6 +232,7 @@ r'''
 '''.replace("SAGE:", "sage:") # so that the above test does not get picked up by the doctester
 
 from sage.rings.rational_field import QQ
+
 
 def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_method_file=None,
                           test_method=None, base_ring=QQ):
@@ -336,7 +336,6 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         |            Traceback (most recent call last):
         |            ...
         |            NotImplementedError
-        |
         |        ...
         |        p = cls()                         # fresh instance of the backend
         |        if tester is None:
@@ -351,7 +350,6 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
 
     If ``test_method_file`` is not provided, a default output file name
     will be computed from ``test_method``.
-
     """
 
     if test_method is not None:
@@ -359,15 +357,15 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
             # Construct output file name from method name.
             test_method_file = "test_{}.py".format(test_method)
     else:
-        test_method = 'CHANGE'  # Will have to be edited by user in
-                                # generated file.
+        test_method = 'CHANGE'
+        # Will have to be edited by user in generated file.
 
     if doctest_file is not None:
-        doctest = open(doctest_file, "w", 1) #line-buffered
+        doctest = open(doctest_file, "w", 1)  # line-buffered
     else:
         doctest = None
     if test_method_file is not None:
-        test_method_output = open(test_method_file, "w", 1) #line-buffered
+        test_method_output = open(test_method_file, "w", 1)  # line-buffered
     else:
         test_method_output = None
 

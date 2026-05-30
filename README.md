@@ -31,7 +31,6 @@ Table of Contents
 * [Build System](#build-system)
 * [Relocation](#relocation)
 * [Redistribution](#redistribution)
-* [Build System](#build-system)
 * [Changes to Included Software](#changes-to-included-software)
 
 Getting Started
@@ -69,7 +68,7 @@ virtualization).
 
 Detailed information on supported platforms for a specific version of Sage
 can be found in the section _Availability and installation help_ of the
-[release tour](https://wiki.sagemath.org/ReleaseTours) for this version.
+[release tour for this version](https://github.com/sagemath/sage/releases).
 
 We highly appreciate contributions to Sage that fix portability bugs
 and help port Sage to new platforms; let us know at the [sage-devel
@@ -86,13 +85,13 @@ Make sure you allocate WSL sufficient RAM; 5GB is known to work, while
 2GB might be not enough for building Sage from source.
 Then all instructions for installation in Linux apply.
 
-As an alternative, you can also run Linux on Windows using Docker ([see
+As an alternative, you can also run Sage on Windows using Docker ([see
 below](#sagemath-docker-images)) or other virtualization solutions.
 
 [macOS] Preparing the Platform
 ------------------------------
 
-- If your Mac uses the Apple Silicon (M1, M2, M3; arm64) architecture and
+- If your Mac uses the Apple Silicon (M1, M2, M3, M4; arm64) architecture and
   you set up your Mac by transferring files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
   (or other software) for the x86_64 architecture that you may have copied
@@ -210,22 +209,26 @@ in the Installation Guide.
 
 4.  [Linux, WSL] Install the required minimal build prerequisites:
 
-    - Compilers: `gcc`, `gfortran`, `g++` (GCC versions from 8.4.0 to 13.x
-      and recent versions of Clang (LLVM) are supported).
+    - Compilers: `gcc`, `gfortran`, `g++`, or other suitable C, C++, and
+      Fortran compilers. Sage's classical build checks for a C compiler that
+      can compile C99 code and a C++ compiler with C++11 support.
       See [build/pkgs/gcc/SPKG.rst](build/pkgs/gcc/SPKG.rst) and
       [build/pkgs/gfortran/SPKG.rst](build/pkgs/gfortran/SPKG.rst)
       for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
-      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`.
+      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`, `pkgconf` (also known as `pkg-config`).
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
-    - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.9.x, 3.10.x, 3.11.x, 3.12.x, which
-      will avoid having to build Sage's own copy of Python 3.
-      See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
-      for more details.
+    - Python 3.12 or newer with a full standard library installation.
+      Sage no longer builds its own copy of Python; you must provide a
+      system Python or another external Python installation.
+      Sage's `./configure` currently requires Python `>= 3.12` and `< 3.15`,
+      with modules including `sqlite3`, `ctypes`, `math`, `hashlib`,
+      `socket`, `ssl`, `ensurepip`, and `zlib`.
+      See the [installation guide](https://doc.sagemath.org/html/en/installation/source-distro.html#using-an-external-python-installed-by-uv)
+      for details on using a system or `uv`-managed Python.
 
     We have collected lists of system packages that provide these build
     prerequisites. See, in the folder
@@ -334,12 +337,18 @@ in the Installation Guide.
 11. Optional, but highly recommended: Set some environment variables to
     customize the build.
 
-    For example, the `MAKE` environment variable controls whether to
-    run several jobs in parallel.  On a machine with 4 processors, say,
-    typing `export MAKE="make -j4"` will configure the build script to
-    perform a parallel compilation of Sage using 4 jobs. On some
-    powerful machines, you might even consider `-j16`, as building with
-    more jobs than CPU cores can speed things up further.
+    The `MAKEFLAGS` variable controls whether to run several jobs in parallel.
+    To saturate all the execution threads of your CPU, we recommend to run
+    `export MAKEFLAGS="-j$(nproc) -l$(nproc).5"` if you are on Linux, and
+    `export MAKEFLAGS="-j$(sysctl -n hw.ncpu) -l$(sysctl -n hw.ncpu).5"` if you
+    are on macOS.
+
+    Note that the compilation may nonetheless use a different number of
+    processes, e.g., for parts that are built with `ninja` which automatically
+    decides on the amount of parallelity to use. In practice, you might
+    therefore see twice as many processes during the build process than your
+    CPU has execution threads. Unless your system is low on RAM, this should
+    not affect the time the compilation takes substantially.
 
     To reduce the terminal output during the build, type `export V=0`.
     (`V` stands for "verbosity".)
@@ -356,6 +365,20 @@ in the Installation Guide.
 12. Type `./configure`, followed by any options that you wish to use.
     For example, to build Sage with `gf2x` package supplied by Sage,
     use `./configure --with-system-gf2x=no`.
+
+    Sage no longer builds its own copy of Python, so `./configure` must
+    find a suitable external interpreter. If you want to use a Python
+    installed with `uv` instead of your system package manager's Python,
+    Sage's `./configure` check currently expects Python `>= 3.12` and
+    `< 3.15`. On Python 3.12 and newer, it also requires `setuptools`,
+    because the configure test creates a fresh virtual environment from
+    the selected interpreter and builds small extension modules there.
+    For a `uv`-managed Python, one working setup is:
+
+        $ uv python install 3.13
+        $ PYTHON3="$(uv python find --managed-python --resolve-links 3.13)"
+        $ uv pip install --python "$PYTHON3" --break-system-packages setuptools
+        $ ./configure --with-python="$PYTHON3"
 
     At the end of a successful `./configure` run, you may see messages
     recommending to install extra system packages using your package
@@ -405,8 +428,8 @@ in the Installation Guide.
     If there are numerous failures, there was a serious problem with your build.
 
 17. The HTML version of the [documentation](https://doc.sagemath.org/html/en/index.html)
-    is built during the compilation process of Sage and resides in the directory
-    `local/share/doc/sage/html/`. You may want to bookmark it in your browser.
+    can be built by running `make doc-html` and resides in
+    `build/sage-distro/src/doc/`. You may want to bookmark it in your browser.
 
 18. Optional: If you want to build the PDF version of the documentation,
     run `make doc-pdf` (this requires LaTeX to be installed).
@@ -421,76 +444,33 @@ in the Installation Guide.
     having to either type the full path or navigate to the Sage
     directory and type `./sage`. This can be done by running:
 
-        $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
+        $ sudo ln -s $(pwd)/sage /usr/local/bin
 
 21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
     or JupyterLab installation, as described in the section
     [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
     in the Sage Installation Guide.
 
-Alternative Installation using PyPI
----------------
-
-For installing Sage in a Python environment from PyPI, Sage provides the
-`pip`-installable package [sagemath-standard](https://pypi.org/project/sagemath-standard/).
-
-Unless you need to install Sage into a specific existing environment, we recommend
-to create and activate a fresh virtual environment, for example `~/sage-venv/`:
-
-            $ python3 -m venv ~/sage-venv
-            $ source ~/sage-venv/bin/activate
-
-As the first installation step, install [sage_conf](https://pypi.org/project/sage-conf/),
-which builds various prerequisite packages in a subdirectory of `~/.sage/`:
-
-            (sage-venv) $ python3 -m pip install -v sage_conf
-
-After a successful installation, a wheelhouse provides various Python packages.
-You can list the wheels using the command:
-
-            (sage-venv) $ ls $(sage-config SAGE_SPKG_WHEELS)
-
-If this gives an error saying that `sage-config` is not found, check any messages
-that the `pip install` command may have printed. You may need to adjust your `PATH`,
-for example by:
-
-            $ export PATH="$(python3 -c 'import sysconfig; print(sysconfig.get_path("scripts", "posix_user"))'):$PATH"
-
-Now install the packages from the wheelhouse and the [sage_setup](https://pypi.org/project/sage-conf/)
-package, and finally install the Sage library:
-
-            (sage-venv) $ python3 -m pip install $(sage-config SAGE_SPKG_WHEELS)/*.whl sage_setup
-            (sage-venv) $ python3 -m pip install --no-build-isolation -v sagemath-standard
-
-The above instructions install the latest stable release of Sage.
-To install the latest development version instead, add the switch `--pre` to all invocations of
-`python3 -m pip install`.
-
-**NOTE:** PyPI has various other `pip`-installable packages with the word "sage" in their names.
-Some of them are maintained by the SageMath project, some are provided by SageMath users for
-various purposes, and others are entirely unrelated to SageMath. Do not use the packages
-`sage` and `sagemath`. For a curated list of packages, see the chapter
-[Packages and Features](https://doc.sagemath.org/html/en/reference/spkg/index.html) of the
-Sage Reference Manual.
 
 SageMath Docker images
 ----------------------
 
-[![Docker Status](http://dockeri.co/image/sagemath/sagemath)](https://hub.docker.com/r/sagemath/sagemath)
+[![Docker Status](https://img.shields.io/docker/v/sagemath/sagemath?style=for-the-badge&logo=docker)](https://hub.docker.com/r/sagemath/sagemath)
 
 SageMath is available on Docker Hub and can be downloaded by:
+
 ``` bash
 docker pull sagemath/sagemath
 ```
 
-Currently, only stable versions are kept up to date.
+These images provide a simple way for Windows users to run Sage locally (see item C on [SageMath Windows installation](https://github.com/sagemath/sage-windows#welcome-to-the-sagemath-windows-installation)).
 
 Troubleshooting
 ---------------
 
 If you have problems building Sage, check the Sage Installation Guide,
-as well as the version-specific Sage Installation FAQ in the [Sage Release
-Tour](https://wiki.sagemath.org/ReleaseTours) corresponding to the
+as well as the version-specific installation help in the [release
+tour](https://github.com/sagemath/sage/releases) corresponding to the
 version that you are installing.
 
 Please do not hesitate to ask for help in the [SageMath forum
@@ -520,27 +500,11 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
 │       …
-│       └── zlib/
+│       └── zipp/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
-├── pkgs                  Source trees of Python distribution packages
-│   ├── sage-conf
-│   │   ├── sage_conf.py
-│   │   └── setup.py
-│   ├── sage-docbuild
-│   │   ├── sage_docbuild/
-│   │   └── setup.py
-│   ├── sage-setup
-│   │   ├── sage_setup/
-│   │   └── setup.py
-│   ├── sage-sws2rst
-│   │   ├── sage_sws2rst/
-│   │   └── setup.py
-│   └── sagemath-standard
-│       ├── bin/
-│       ├── sage -> ../../src/sage
-│       └── setup.py
 ├── local  (SAGE_LOCAL)   Installation hierarchy for non-Python packages
+│                         and shared runtime files
 │   ├── bin               Executables
 │   ├── include           C/C++ headers
 │   ├── lib               Shared libraries, architecture-dependent data
@@ -551,11 +515,11 @@ SAGE_ROOT                 Root directory (create by git clone)
 │       │   ├── installed/
 │       │   │             Records of installed non-Python packages
 │       │   ├── scripts/  Scripts for uninstalling installed packages
-│       │   └── venv-python3.9  (SAGE_VENV)
+│       │   └── venv-python  (SAGE_VENV)
 │       │       │         Installation hierarchy (virtual environment)
 │       │       │         for Python packages
 │       │       ├── bin/  Executables and installed scripts
-│       │       ├── lib/python3.9/site-packages/
+│       │       ├── lib/python/site-packages/
 │       │       │         Python modules/packages are installed here
 │       │       └── var/lib/sage/
 │       │           └── wheels/
@@ -567,7 +531,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   └── pkgs              Build logs of individual packages
 │       ├── alabaster-0.7.12.log
 │       …
-│       └── zlib-1.2.11.log
+│       └── zipp-3.19.0.log
 ├── m4                    M4 macros for generating the configure script
 │   └── *.m4
 ├── Makefile              Running "make" uses this file
@@ -581,7 +545,7 @@ SAGE_ROOT                 Root directory (create by git clone)
 ├── upstream              Source tarballs of packages
 │   ├── Babel-2.9.1.tar.gz
 │   …
-│   └── zlib-1.2.11.tar.gz
+│   └── zipp-3.19.0-py3-none-any.whl
 ├── venv -> SAGE_VENV     Convenience symlink to the virtual environment
 └── VERSION.txt
 ```
@@ -596,9 +560,13 @@ and its associated user interfaces, and the larger software distribution of
 Sage's main dependencies (for those dependencies not supplied by the user's
 system).
 
-Sage's Python library is built and installed using a `setup.py` script as is
-standard for Python packages (Sage's `setup.py` is non-trivial, but not
-unusual).
+Sage no longer builds its own Python interpreter. Instead, `./configure`
+selects a system or other external Python (`>= 3.12`, `< 3.15`) and uses it
+to create `SAGE_VENV`.
+
+Sage's Python library is built and installed as a standard Python project via
+`pip install .`, using the metadata in `pyproject.toml` and the
+`meson-python` build backend.
 
 Most of the rest of the build system is concerned with building all of Sage's
 dependencies in the correct order in relation to each other.  The dependencies
@@ -622,18 +590,18 @@ The `configure` script itself, if it is not already built, can be generated by
 running the `bootstrap` script (the latter requires _GNU autotools_ being installed).
 The top-level `Makefile` also takes care of this automatically.
 
-To summarize, running a command like `make python3` at the top-level of the
+To summarize, running a command like `make sagelib` at the top-level of the
 source tree goes something like this:
 
-1.  `make python3`
+1.  `make sagelib`
 2.  run `./bootstrap` if `configure` needs updating
 3.  run `./configure` with any previously configured options if `build/make/Makefile`
     needs updating
 4.  change directory into `build/make` and run the `install` script--this is
-    little more than a front-end to running `make -f build/make/Makefile python3`,
+    little more than a front-end to running `make -f build/make/Makefile sagelib`,
     which sets some necessary environment variables and logs some information
-5.  `build/make/Makefile` contains the actual rule for building `python3`; this
-    includes building all of `python3`'s dependencies first (and their
+5.  `build/make/Makefile` contains the actual rule for building `sagelib`; this
+    includes building all of `sagelib`'s dependencies first (and their
     dependencies, recursively); the actual package installation is performed
     with the `sage-spkg` program
 
@@ -679,9 +647,8 @@ information, patches, and build scripts are in the accompanying
 part of the Sage git repository.
 
 <p align="center">
-   Copyright (C) 2005-2024 The Sage Development Team
+   Copyright (C) 2005-2026 The Sage Development Team
 </p>
 <p align="center">
    https://www.sagemath.org
 </p>
-

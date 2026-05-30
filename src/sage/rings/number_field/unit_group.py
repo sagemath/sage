@@ -167,7 +167,7 @@ AUTHOR:
 
 from sage.groups.abelian_gps.values import AbelianGroupWithValues_class
 from sage.structure.proof.proof import get_flag
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 
@@ -235,7 +235,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         INPUT:
 
         - ``number_field`` -- a number field
-        - ``proof`` -- boolean (default ``True``): proof flag
+        - ``proof`` -- boolean (default: ``True``); proof flag
         - ``S`` -- tuple of prime ideals, or an ideal, or a single
           ideal or element from which an ideal can be constructed, in
           which case the support is used.  If ``None``, the global unit
@@ -296,7 +296,6 @@ class UnitGroup(AbelianGroupWithValues_class):
         Conversion from unit group to a number field and back
         gives the right results (:issue:`25874`)::
 
-            sage: # needs sage.libs.linbox
             sage: K = QuadraticField(-3).composite_fields(QuadraticField(2))[0]
             sage: U = K.unit_group()
             sage: tuple(U(K(u)) for u in U.gens()) == U.gens()
@@ -311,8 +310,6 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: K = QuadraticField(d)
             sage: K.unit_group(proof=False)
             Unit group with structure C2 x Z of Number Field in a with defining polynomial x^2 - 12936642 with a = 3596.754370262167?
-
-
         """
         proof = get_flag(proof, "number_field")
         K = number_field
@@ -369,14 +366,14 @@ class UnitGroup(AbelianGroupWithValues_class):
 
     def _element_constructor_(self, u):
         """
-        Returns the abstract group element corresponding to the unit u.
+        Return the abstract group element corresponding to the unit u.
 
         INPUT:
 
-        - ``u`` -- Any object from which an element of the unit group's number
+        - ``u`` -- any object from which an element of the unit group's number
           field `K` may be constructed; an error is raised if an element of `K`
           cannot be constructed from u, or if the element constructed is not a
-          unit.
+          unit
 
         EXAMPLES::
 
@@ -515,7 +512,7 @@ class UnitGroup(AbelianGroupWithValues_class):
 
     def zeta_order(self):
         """
-        Returns the order of the torsion part of the unit group.
+        Return the order of the torsion part of the unit group.
 
         EXAMPLES::
 
@@ -564,7 +561,6 @@ class UnitGroup(AbelianGroupWithValues_class):
             ValueError: n (=3) does not divide order of generator
             sage: U.zeta(3, all=True)
             []
-
         """
         N = self.__ntu
         K = self.number_field()
@@ -574,24 +570,19 @@ class UnitGroup(AbelianGroupWithValues_class):
         if n == 1:
             if all:
                 return [K(1)]
-            else:
-                return K(1)
-        elif n == 2:
+            return K(1)
+        if n == 2:
             if all:
                 return [K(-1)]
-            else:
-                return K(-1)
+            return K(-1)
         if n.divides(N):
             z = self.torsion_generator().value() ** (N//n)
             if all:
                 return [z**i for i in n.coprime_integers(n)]
-            else:
-                return z
-        else:
-            if all:
-                return []
-            else:
-                raise ValueError("n (=%s) does not divide order of generator" % n)
+            return z
+        if all:
+            return []
+        raise ValueError("n (=%s) does not divide order of generator" % n)
 
     def number_field(self):
         """
@@ -631,13 +622,13 @@ class UnitGroup(AbelianGroupWithValues_class):
 
         INPUT:
 
-        - ``u`` -- Any object from which an element of the unit group's number
+        - ``u`` -- any object from which an element of the unit group's number
           field `K` may be constructed; an error is raised if an element of `K`
           cannot be constructed from `u`, or if the element constructed is not a
-          unit.
+          unit
 
-        OUTPUT: a list of integers giving the exponents of `u` with
-        respect to the unit group's basis.
+        OUTPUT: list of integers giving the exponents of `u` with
+        respect to the unit group's basis
 
         EXAMPLES::
 
@@ -678,12 +669,12 @@ class UnitGroup(AbelianGroupWithValues_class):
 
         INPUT:
 
-        - ``u`` -- Any object from which an element of the unit
+        - ``u`` -- any object from which an element of the unit
           group's number field `K` may be constructed; an error is
           raised if an element of `K` cannot be constructed from `u`, or
           if the element constructed is not a unit.
 
-        OUTPUT: a list of integers giving the exponents of `u` with
+        OUTPUT: list of integers giving the exponents of `u` with
         respect to the unit group's basis.
 
         EXAMPLES::

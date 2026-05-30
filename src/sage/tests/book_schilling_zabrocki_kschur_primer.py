@@ -11,7 +11,6 @@ NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE IN THIS CASE
 CONTACT Anne Schilling (anne@math.ucdavis.edu) AND Mike Zabrocki
 (zabrocki@mathstat.yorku.ca) REGARDING THE CHANGES!
 """
-
 """
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 198::
 
@@ -385,9 +384,9 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2382::
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 2487::
 
     sage: Sym = SymmetricFunctions(QQ)
-    sage: ks = Sym.kschur(3,t=1)
+    sage: ks = Sym.kschur(3, t=1)
     sage: h = Sym.homogeneous()
-    sage: for mu in Partitions(7, max_part =3):
+    sage: for mu in Partitions(7, max_part=3):
     ....:     print(h(ks(mu)))
     h[3, 3, 1]
     h[3, 2, 2] - h[3, 3, 1]
@@ -787,6 +786,7 @@ Kks3[] # Kks3[3, 1] - Kks3[1] # Kks3[2] + Kks3[1] # Kks3[2, 1]
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 5588::
 
+sage: # long time
 sage: SymQ3 = Sym.kBoundedQuotient(3,t=1)
 sage: G1 = SymQ3.AffineGrothendieckPolynomial([1],6)
 sage: G2 = SymQ3.AffineGrothendieckPolynomial([2],6)

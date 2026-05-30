@@ -1,9 +1,5 @@
 r"""
-Super Partitions
-
-AUTHORS:
-
-- Mike Zabrocki
+Super partitions
 
 A super partition of size `n` and fermionic sector `m` is a
 pair consisting of a strict partition of some integer `r` of
@@ -62,6 +58,10 @@ EXAMPLES::
 REFERENCES:
 
 - [JL2016]_
+
+AUTHORS:
+
+- Mike Zabrocki
 """
 
 # ****************************************************************************
@@ -121,7 +121,7 @@ class SuperPartition(ClonableArray,
     @staticmethod
     def __classcall_private__(cls, lst):
         r"""
-        Construct a superpartition in the correct parent
+        Construct a superpartition in the correct parent.
 
         EXAMPLES::
 
@@ -149,12 +149,11 @@ class SuperPartition(ClonableArray,
         SPs = SuperPartitions()
         if not lst:
             return SPs([[], []])
-        elif isinstance(lst[0], (list, tuple)):
+        if isinstance(lst[0], (list, tuple)):
             return SPs([[Integer(a) for a in lst[0]],
                         [Integer(a) for a in lst[1]]])
-        else:
-            return SPs([[-a for a in lst if a <= 0],
-                        [a for a in lst if a > 0]])
+        return SPs([[-a for a in lst if a <= 0],
+                    [a for a in lst if a > 0]])
 
     def __init__(self, parent, lst, check=True, immutable=True):
         """
@@ -197,8 +196,7 @@ class SuperPartition(ClonableArray,
         """
         if isinstance(other, SuperPartition):
             return richcmp(list(self), list(other), op)
-        else:
-            return richcmp(list(self), other, op)
+        return richcmp(list(self), other, op)
 
     def _repr_(self) -> str:
         r"""
@@ -236,10 +234,10 @@ class SuperPartition(ClonableArray,
             asp = ', '.join(str(a) for a in self.antisymmetric_part())
             sp = ', '.join(str(a) for a in self.symmetric_part())
             return '[' + asp + '; ' + sp + ']'
-        elif display == "pair":
+        if display == "pair":
             return self._repr_pair()
-        else:  # "list"
-            return self._repr_list()
+        # "list"
+        return self._repr_list()
 
     def _repr_pair(self) -> str:
         r"""
@@ -316,6 +314,11 @@ class SuperPartition(ClonableArray,
 
         - a (possibly weak) composition
 
+        .. TODO::
+
+            :class:`Composition` is for strict compositions, we
+            should use :class:`IntegerVectors` instead.
+
         EXAMPLES::
 
             sage: SuperPartition([[3,1],[2,2,1]]).to_composition()
@@ -323,7 +326,7 @@ class SuperPartition(ClonableArray,
             sage: SuperPartition([[2,1,0],[3,3]]).to_composition()
             [2, 1, 0, 3, 3]
             sage: SuperPartition([[2,1,0],[3,3]]).to_composition().parent()
-            Compositions of non-negative integers
+            Compositions of nonnegative integers
         """
         return Composition(self[0] + self[1])
 
@@ -332,9 +335,7 @@ class SuperPartition(ClonableArray,
         Concatenate and sort the antisymmetric and symmetric parts
         to a partition.
 
-        OUTPUT:
-
-        - a partition
+        OUTPUT: a partition
 
         EXAMPLES::
 
@@ -351,9 +352,7 @@ class SuperPartition(ClonableArray,
         r"""
         The antisymmetric part as a list of strictly decreasing integers.
 
-        OUTPUT:
-
-        - a list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -370,9 +369,7 @@ class SuperPartition(ClonableArray,
         r"""
         The symmetric part as a list of weakly decreasing integers.
 
-        OUTPUT:
-
-        - a list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -392,9 +389,7 @@ class SuperPartition(ClonableArray,
         The *bosonic degree* is the sum of the sizes of the
         antisymmetric and symmetric parts.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -413,9 +408,7 @@ class SuperPartition(ClonableArray,
 
         The *fermionic degree* is the length of the antisymmetric part.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -433,9 +426,7 @@ class SuperPartition(ClonableArray,
         Return the bidegree of ``self``, which is a pair consisting
         of the bosonic and fermionic degree.
 
-        OUTPUT:
-
-        - a tuple of two integers
+        OUTPUT: a tuple of two integers
 
         EXAMPLES::
 
@@ -451,9 +442,7 @@ class SuperPartition(ClonableArray,
         Return the length of ``self``, which is the sum of the
         lengths of the antisymmetric and symmetric part.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -468,9 +457,7 @@ class SuperPartition(ClonableArray,
         r"""
         Return the length of the partition of the symmetric part.
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -485,9 +472,7 @@ class SuperPartition(ClonableArray,
         r"""
         A concatenated partition with an extra cell for each antisymmetric part
 
-        OUTPUT:
-
-        - a partition
+        OUTPUT: a partition
 
         EXAMPLES::
 
@@ -512,11 +497,9 @@ class SuperPartition(ClonableArray,
         INPUT:
 
         - ``shape`` -- a partition or list of integers
-        - ``corners`` -- a list of removable cells of ``shape``
+        - ``corners`` -- list of removable cells of ``shape``
 
-        OUTPUT:
-
-        - a :class:`SuperPartition`
+        OUTPUT: a :class:`SuperPartition`
 
         EXAMPLES::
 
@@ -541,9 +524,7 @@ class SuperPartition(ClonableArray,
         and a list of removable cells of the partition indicating the
         location of the circled cells
 
-        OUTPUT:
-
-        - a list consisting of a partition and a list of pairs of integers
+        OUTPUT: list consisting of a partition and a list of pairs of integers
 
         EXAMPLES::
 
@@ -566,9 +547,7 @@ class SuperPartition(ClonableArray,
         The *conjugate* of a super partition is defined by conjugating
         the circled diagram.
 
-        OUTPUT:
-
-        - a :class:`SuperPartition`
+        OUTPUT: a :class:`SuperPartition`
 
         EXAMPLES::
 
@@ -581,16 +560,14 @@ class SuperPartition(ClonableArray,
         """
         sd = self.to_circled_diagram()
         return SuperPartition.from_circled_diagram(sd[0].conjugate(),
-                                                   [(j, i) for (i, j) in sd[1]])
+                                                   [(j, i) for i, j in sd[1]])
 
     def zee(self) -> Integer:
         r"""
         Return the centralizer size of a permutation of cycle
         type symmetric part of ``self``.
 
-        OUTPUT:
-
-        - a positive integer
+        OUTPUT: a positive integer
 
         EXAMPLES::
 
@@ -608,9 +585,7 @@ class SuperPartition(ClonableArray,
         Return the sign of a permutation of cycle type the
         symmetric part of ``self``.
 
-        OUTPUT:
-
-        - either `1` or `-1`
+        OUTPUT: either `1` or `-1`
 
         EXAMPLES::
 
@@ -659,9 +634,7 @@ class SuperPartition(ClonableArray,
 
         - ``h`` -- number of cells in the horizontal strip
 
-        OUTPUT:
-
-        - a list of super partitions
+        OUTPUT: list of super partitions
 
         EXAMPLES::
 
@@ -707,9 +680,7 @@ class SuperPartition(ClonableArray,
 
         - ``h`` -- number of cells in the horizontal strip
 
-        OUTPUT:
-
-        - a list of super partitions
+        OUTPUT: list of super partitions
 
         EXAMPLES::
 
@@ -783,7 +754,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- an integer (optional: default ``None``)
+    - ``n`` -- integer (default: ``None``)
     - ``m`` -- if ``n`` is specified, an integer (optional: default ``None``)
 
     Super partitions are the indexing set for symmetric functions
@@ -849,10 +820,10 @@ class SuperPartitions(UniqueRepresentation, Parent):
         """
         if n is None:
             return SuperPartitions_all()
-        elif n in ZZ:
+        if n in ZZ:
             if m is None:
                 return SuperPartitions_n(n)
-            elif m in ZZ:
+            if m in ZZ:
                 return SuperPartitions_n_m(n, m)
             raise ValueError("m must be an integer")
         raise ValueError("n must be an integer")
@@ -901,7 +872,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
         """,
         NAME = 'SuperPartition'
         module = 'sage.combinat.superpartition'
-        display = dict(default="default",
+        display = dict(default='default',
                        description="Specifies how the super partitions should "
                                    "be printed",
                        values=dict(list="the super partitions are displayed in "
@@ -941,10 +912,9 @@ class SuperPartitions(UniqueRepresentation, Parent):
         if isinstance(lst[0], (list, tuple)):
             return self.element_class(self, [lst[0], [a for a in lst[1] if a > 0]],
                                       check=check)
-        else:
-            return self.element_class(self, [[-a for a in lst if a <= 0],
-                                             [a for a in lst if a > 0]],
-                                      check=check)
+        return self.element_class(self, [[-a for a in lst if a <= 0],
+                                         [a for a in lst if a > 0]],
+                                  check=check)
 
     def __contains__(self, x) -> bool:
         """
@@ -977,7 +947,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
             sp = [a for a in x if a <= 0]
             return (all(sp[i] > sp[i - 1] for i in range(1, len(sp)))
                     and [a for a in x if a > 0] in _Partitions)
-        elif (len(x) == 2 and
+        if (len(x) == 2 and
               isinstance(x[0], (list, tuple)) and
               isinstance(x[1], (list, tuple))):
             for i in chain(x[0], x[1]):
@@ -988,8 +958,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
             return (all(x[0][i] > x[0][i + 1] for i in range(len(x[0]) - 1))
                     and all(x[1][i] >= x[1][i + 1] for i in range(len(x[1]) - 1))
                     and ((not x[0]) or x[0][-1] >= 0) and ((not x[1]) or x[1][-1] >= 0))
-        else:
-            return False
+        return False
 
 
 class SuperPartitions_n_m(SuperPartitions):
@@ -1050,8 +1019,7 @@ class SuperPartitions_n_m(SuperPartitions):
                 n = sum(abs(a) for a in x)
                 m = len([a for a in x if a <= 0])
             return n == self.n and m == self.m
-        else:
-            return False
+        return False
 
     def __iter__(self):
         r"""
@@ -1123,8 +1091,7 @@ class SuperPartitions_n(SuperPartitions):
             else:
                 n = sum(abs(a) for a in x)
             return n == self.n
-        else:
-            return False
+        return False
 
     def __iter__(self):
         r"""

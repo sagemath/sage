@@ -5,7 +5,6 @@ Elements of graded rings of modular forms for Hecke triangle groups
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -20,6 +19,7 @@ from sage.functions.log import exp
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import vector
 from sage.rings.big_oh import O
@@ -28,7 +28,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
 from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.parent_gens import localvars
-from sage.structure.richcmp import op_NE, op_EQ
+from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import("sage.functions.log", "exp")
@@ -89,11 +89,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``parent`` -- An (non abstract) instance of ``FormsRing_abstract``.
+        - ``parent`` -- (non abstract) instance of ``FormsRing_abstract``
 
-        - ``rat``    -- A rational function in ``parent.rat_field()``, the
-                        fraction field of the polynomial ring in ``x,y,z,d``
-                        over the base ring of ``parent``.
+        - ``rat`` -- a rational function in ``parent.rat_field()``, the
+          fraction field of the polynomial ring in ``x,y,z,d`` over the base
+          ring of ``parent``
 
         OUTPUT:
 
@@ -147,8 +147,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: MeromorphicModularFormsRing(n=3)(x) == MeromorphicModularFormsRing(n=4)(x)
             False
             sage: MeromorphicModularFormsRing()(-1/x) is MeromorphicModularFormsRing()(1/(-x))
-            False
-            sage: MeromorphicModularFormsRing()(-1/x) == MeromorphicModularFormsRing()(1/(-x))
             True
             sage: MeromorphicModularFormsRing(base_ring=CC)(-1/x) == MeromorphicModularFormsRing()(1/(-x))
             True
@@ -225,8 +223,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         # For now the series constructor doesn't behave well for non exact bases... :(
         if (self.group().is_arithmetic() or not self.base_ring().is_exact()):
             return str(self.q_expansion_fixed_d().add_bigoh(self.parent()._disp_prec))
-        else:
-            return str(self.q_expansion().add_bigoh(self.parent()._disp_prec))
+        return str(self.q_expansion().add_bigoh(self.parent()._disp_prec))
 
     def _latex_(self):
         r"""
@@ -246,9 +243,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: latex(QuasiModularFormsRing(n=infinity)(x*(x-y^2)*z))                 # needs sage.symbolic
             -E_{4} f_{i}^{2} E_{2} + E_{4}^{2} E_{2}
         """
-
-        from sage.misc.latex import latex
-
         if (self.hecke_n() == infinity):
             with localvars(self.parent()._pol_ring, "E4, f_i, E2, d"):
                 latex_str = latex(self._rat)
@@ -350,7 +344,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         d = self.parent().get_d(fix_d=True)
         return self.parent()(self._rat.subs(d=d))
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether ``self`` is homogeneous.
 
@@ -368,7 +362,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: QuasiModularFormsRing(n=infinity)(x*(x-y^2)+y^4).is_homogeneous()     # needs sage.symbolic
             True
         """
-
         return self._weight is not None
 
     def weight(self):
@@ -452,10 +445,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         """
         return not (self.AT("quasi") <= self._analytic_type)
 
-    def is_weakly_holomorphic(self):
+    def is_weakly_holomorphic(self) -> bool:
         r"""
-        Return whether ``self`` is weakly holomorphic
-        in the sense that: ``self`` has at most a power of ``f_inf``
+        Return whether ``self`` is weakly holomorphic.
+
+        This means that ``self`` has at most a power of ``f_inf``
         in its denominator.
 
         EXAMPLES::
@@ -478,7 +472,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return self.AT("weak", "quasi") >= self._analytic_type
 
-    def is_holomorphic(self):
+    def is_holomorphic(self) -> bool:
         r"""
         Return whether ``self`` is holomorphic
         in the sense that the denominator of ``self``
@@ -503,10 +497,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return self.AT("holo", "quasi") >= self._analytic_type
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
-        Return whether ``self`` is cuspidal
-        in the sense that ``self`` is holomorphic and ``f_inf``
+        Return whether ``self`` is cuspidal.
+
+        This means that ``self`` is holomorphic and ``f_inf``
         divides the numerator.
 
         EXAMPLES::
@@ -529,7 +524,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         """
         return self.AT("cusp", "quasi") >= self._analytic_type
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return whether ``self`` is the zero function.
 
@@ -1015,7 +1010,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``op`` -- An element of ``self.parent().diff_alg()``.
+        - ``op`` -- an element of ``self.parent().diff_alg()``.
           I.e. an element of the algebra over ``QQ``
           of differential operators generated
           by ``X, Y, Z, dX, dY, DZ``, where e.g. ``X``
@@ -1027,13 +1022,11 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
           should be homogeneous operator (with respect
           to the usual, special grading).
 
-        - ``new_parent``  -- Try to convert the result to the specified
+        - ``new_parent`` -- try to convert the result to the specified
           ``new_parent``. If ``new_parent == None`` (default)
           then the parent is extended to a "quasi meromorphic" ring.
 
-        OUTPUT:
-
-        The new element.
+        OUTPUT: the new element
 
         EXAMPLES::
 
@@ -1392,21 +1385,20 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
                 pass
 
             return order_f
-        else:
-            if tau != infinity:
-                raise NotImplementedError("Only the order at infinity is supported for non-homogeneous or quasi forms!")
+        if tau != infinity:
+            raise NotImplementedError("Only the order at infinity is supported for non-homogeneous or quasi forms!")
 
-            num_val = prec_num_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
-            denom_val = prec_denom_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
+        num_val = prec_num_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
+        denom_val = prec_denom_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
 
-            while (num_val >= prec_num_bound):
-                prec_num_bound *= 2
-                num_val = self.numerator().q_expansion(prec=prec_num_bound, fix_prec=True).valuation()
-            while (denom_val >= prec_denom_bound):
-                prec_denom_bound *= 2
-                denom_val = self.denominator().q_expansion(prec=prec_denom_bound, fix_prec=True).valuation()
+        while (num_val >= prec_num_bound):
+            prec_num_bound *= 2
+            num_val = self.numerator().q_expansion(prec=prec_num_bound, fix_prec=True).valuation()
+        while (denom_val >= prec_denom_bound):
+            prec_denom_bound *= 2
+            denom_val = self.denominator().q_expansion(prec=prec_denom_bound, fix_prec=True).valuation()
 
-            return num_val - denom_val
+        return num_val - denom_val
 
     def as_ring_element(self):
         r"""
@@ -1462,8 +1454,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         if (force or self.parent().has_reduce_hom()) and self.is_homogeneous():
             return self.parent().homogeneous_part(self._weight, self._ep)(self._rat)
-        else:
-            return self
+        return self
 
     def reduced_parent(self):
         r"""
@@ -1495,8 +1486,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         if self.is_homogeneous():
             return FormsSpace(self.analytic_type(), self.group(), self.base_ring(), self.weight(), self.ep())
-        else:
-            return FormsRing(self.analytic_type(), self.group(), self.base_ring(), self.parent().has_reduce_hom())
+        return FormsRing(self.analytic_type(), self.group(), self.base_ring(), self.parent().has_reduce_hom())
 
     def full_reduce(self):
         r"""
@@ -1523,7 +1513,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
     @cached_method
     def _q_expansion_cached(self, prec, fix_d, subs_d, d_num_prec, fix_prec=False):
         """
-        Returns the Fourier expansion of self (cached).
+        Return the Fourier expansion of ``self`` (cached).
         Don't call this function, instead use :meth:`q_expansion`.
         Also see :meth:`q_expansion` for a description of the arguments.
 
@@ -1594,27 +1584,25 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``prec`` -- An integer, the desired output precision O(q^prec).
+        - ``prec`` -- integer, the desired output precision O(q^prec).
           Default: ``None`` in which case the default precision
           of ``self.parent()`` is used.
 
-        - ``fix_d`` -- If ``False`` (default) a formal parameter is used for ``d``.
-          If ``True`` then the numerical value of ``d`` is used
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is used for
+          ``d``. If ``True`` then the numerical value of ``d`` is used
           (resp. an exact value if the group is arithmetic).
           Otherwise the given value is used for ``d``.
 
-        - ``d_num_prec`` -- The precision to be used if a numerical value for ``d`` is substituted.
-          Default: ``None`` in which case the default
-          numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
-        - ``fix_prec`` -- If ``fix_prec`` is not ``False`` (default)
+        - ``fix_prec`` -- if ``fix_prec`` is not ``False`` (default)
           then the precision of the ``MFSeriesConstructor`` is
           increased such that the output has exactly the specified
           precision O(q^prec).
 
-        OUTPUT:
-
-        The Fourier expansion of ``self`` as a ``FormalPowerSeries`` or ``FormalLaurentSeries``.
+        OUTPUT: the Fourier expansion of ``self`` as a ``FormalPowerSeries`` or ``FormalLaurentSeries``
 
         EXAMPLES::
 
@@ -1701,21 +1689,21 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``prec`` -- An integer, the desired output precision O(q^prec).
-          Default: ``None`` in which case the default precision of ``self.parent()`` is used.
+        - ``prec`` -- integer; the desired output precision O(q^prec).
+          Default: ``None``, in which case the default precision of
+          ``self.parent()`` is used.
 
-        - ``d_num_prec`` -- The precision to be used if a numerical value for ``d`` is substituted.
-          Default: ``None`` in which case the default
-          numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
-        - ``fix_prec`` -- If ``fix_prec`` is not ``False`` (default)
+        - ``fix_prec`` -- if ``fix_prec`` is not ``False`` (default)
           then the precision of the ``MFSeriesConstructor`` is
           increased such that the output has exactly the specified
           precision O(q^prec).
 
-        OUTPUT:
-
-        The Fourier expansion of self as a ``FormalPowerSeries`` or ``FormalLaurentSeries``.
+        OUTPUT: the Fourier expansion of ``self`` as a ``FormalPowerSeries`` or
+        ``FormalLaurentSeries``
 
         EXAMPLES::
 
@@ -1760,16 +1748,17 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         INPUT:
 
-        - ``min_exp`` -- An integer, specifying the first coefficient to be
+        - ``min_exp`` -- integer specifying the first coefficient to be
           used for the vector. Default: ``None``, meaning that
           the first non-trivial coefficient is used.
 
-        - ``max_exp`` -- An integer, specifying the last coefficient to be
+        - ``max_exp`` -- integer specifying the last coefficient to be
           used for the vector. Default: ``None``, meaning that
           the default precision + 1 is used.
 
-        - ``prec`` -- An integer, specifying the precision of the underlying
-          Laurent series. Default: ``None``, meaning that ``max_exp + 1`` is used.
+        - ``prec`` -- integer specifying the precision of the underlying
+          Laurent series. Default: ``None``, meaning that ``max_exp + 1`` is
+          used.
 
         OUTPUT:
 
@@ -1846,16 +1835,16 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         - ``tau`` -- ``infinity`` or an element of the upper
           half plane. E.g. with parent ``AA`` or ``CC``.
 
-        - ``prec`` -- An integer, namely the precision used for the
+        - ``prec`` -- integer, namely the precision used for the
           Fourier expansion. If ``prec == None`` (default)
-          then the default precision of ``self.parent()`` is used.
+          then the default precision of ``self.parent()`` is used
 
-        - ``num_prec`` -- An integer, namely the minimal numerical precision
+        - ``num_prec`` -- integer, namely the minimal numerical precision
           used for ``tau`` and ``d``. If ``num_prec == None``
           (default) then the default numerical precision of
           ``self.parent()`` is used.
 
-        - ``check`` -- If ``True`` then the order of ``tau`` is checked.
+        - ``check`` -- if ``True`` then the order of ``tau`` is checked.
           Otherwise the order is only considered for
           ``tau = infinity, i, rho, -1/rho``. Default: ``False``.
 
@@ -1880,7 +1869,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
            #. The evaluation at ``w`` is calculated by
               evaluating the truncated Fourier expansion of
-              self at ``q(w)``.
+              ``self`` at ``q(w)``.
 
            Note that this is much faster and more precise
            than a direct evaluation at ``tau``.
@@ -2158,9 +2147,9 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
                 if order_tau > 0:
                     return ZZ(0)
-                elif (order_tau < 0):
+                if (order_tau < 0):
                     return infinity
-                elif (tau == infinity):
+                if (tau == infinity):
                     return self.q_expansion(prec=1)[0]
         except (TypeError, NotImplementedError):
             pass
@@ -2177,9 +2166,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             aut_factor = self.reduce(force=True).parent().aut_factor(A, w)
             if (type(q_exp) is LaurentSeries):
                 return q_exp.laurent_polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
-            else:
-                return q_exp.polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
-        elif self._rat == z:
+            return q_exp.polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
+        if self._rat == z:
             E2 = self.parent().graded_ring().E2().reduce(force=True)
             (A, w) = self.group().get_FD(tau)
             aut_factor = E2.parent().aut_factor(A, w)
@@ -2189,16 +2177,14 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             else:
                 E2_cor_term = 4 * self.group().lam() / (2 * pi * i).n(num_prec) * self.hecke_n() / (self.hecke_n() - 2) * A.c() * (A.c() * w + A.d())
             return E2_wvalue * aut_factor + E2_cor_term
-        else:
-            f_i = self.parent().graded_ring().f_i()
-            E2 = self.parent().graded_ring().E2()
-            dval = self.parent().group().dvalue().n(num_prec)
-            if (self.hecke_n() == infinity):
-                E4 = self.parent().graded_ring().E4()
-                return self._rat.subs(x=E4(tau), y=f_i(tau), z=E2(tau), d=dval)
-            else:
-                f_rho = self.parent().graded_ring().f_rho()
-                return self._rat.subs(x=f_rho(tau), y=f_i(tau), z=E2(tau), d=dval)
+        f_i = self.parent().graded_ring().f_i()
+        E2 = self.parent().graded_ring().E2()
+        dval = self.parent().group().dvalue().n(num_prec)
+        if (self.hecke_n() == infinity):
+            E4 = self.parent().graded_ring().E4()
+            return self._rat.subs(x=E4(tau), y=f_i(tau), z=E2(tau), d=dval)
+        f_rho = self.parent().graded_ring().f_rho()
+        return self._rat.subs(x=f_rho(tau), y=f_i(tau), z=E2(tau), d=dval)
 
     def __call__(self, tau, prec=None, num_prec=None, check=False):
         r"""

@@ -19,7 +19,6 @@ EXAMPLES::
 AUTHORS:
 
 - William Stein (2005)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -112,10 +111,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
                 and self.ambient_space().dimension() == 1):
             ambient_type, ring = self._repr_type(), latex(self.base_ring())
             return fr"\text{{{ambient_type} line over ${ring}$}}"
-        else:
-            ambient_type, ring = self._repr_type(), latex(self.base_ring())
-            polys = ', '.join(f'${latex(p)}$' for p in self.defining_polynomials())
-            return fr"\text{{{ambient_type} curve over ${ring}$ defined by {polys}}}"
+        ambient_type, ring = self._repr_type(), latex(self.base_ring())
+        polys = ', '.join(f'${latex(p)}$' for p in self.defining_polynomials())
+        return fr"\text{{{ambient_type} curve over ${ring}$ defined by {polys}}}"
 
     def dimension(self):
         r"""
@@ -154,8 +152,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``base_ring`` -- the base ring of the divisor group. Usually, this is
-          `\ZZ` (default) or `\QQ`.
+        - ``base_ring`` -- the base ring of the divisor group; usually, this is
+          `\ZZ` (default) or `\QQ`
 
         OUTPUT: the divisor group of the curve
 
@@ -276,9 +274,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the subscheme of singular points of this curve.
 
-        OUTPUT:
-
-        - a subscheme in the ambient space of this curve.
+        OUTPUT: a subscheme in the ambient space of this curve
 
         EXAMPLES::
 
@@ -316,10 +312,10 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``F`` -- (default: None) field over which to find the singular
+        - ``F`` -- (default: ``None``) field over which to find the singular
           points; if not given, the base ring of this curve is used
 
-        OUTPUT: a list of points in the ambient space of this curve
+        OUTPUT: list of points in the ambient space of this curve
 
         EXAMPLES::
 
@@ -354,7 +350,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         X = self.singular_subscheme()
         return [self.point(p, check=False) for p in X.rational_points(F=F)]
 
-    def is_singular(self, P=None):
+    def is_singular(self, P=None) -> bool:
         r"""
         Return whether ``P`` is a singular point of this curve, or if no point
         is passed, whether this curve is singular or not.
@@ -363,13 +359,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve
+        - ``P`` -- (default: ``None``) a point on this curve
 
         OUTPUT:
 
-        A boolean. If a point ``P`` is provided, and if ``P`` lies on this
-        curve, returns True if ``P`` is a singular point of this curve, and
-        False otherwise. If no point is provided, returns True or False
+        boolean; if a point ``P`` is provided, and if ``P`` lies on this
+        curve, returns ``True`` if ``P`` is a singular point of this curve, and
+        ``False`` otherwise. If no point is provided, returns ``True`` or False
         depending on whether this curve is or is not singular, respectively.
 
         EXAMPLES::
@@ -396,9 +392,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``C`` -- a curve in the same ambient space as this curve.
+        - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``P`` -- a point in the ambient space of this curve.
+        - ``P`` -- a point in the ambient space of this curve
 
         EXAMPLES::
 
@@ -451,11 +447,11 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``F`` -- (default: None); field over which to compute the
+        - ``F`` -- (default: ``None``) field over which to compute the
           intersection points; if not specified, the base ring of this curve is
           used
 
-        OUTPUT: a list of points in the ambient space of this curve
+        OUTPUT: list of points in the ambient space of this curve
 
         EXAMPLES::
 
@@ -497,9 +493,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             F = self.base_ring()
         if X.dimension() == 0 or F in FiniteFields():
             return X.rational_points(F=F)
-        else:
-            raise NotImplementedError("the intersection must have dimension "
-                                      "zero or (={}) must be a finite field".format(F))
+        raise NotImplementedError("the intersection must have dimension "
+                                  "zero or (={}) must be a finite field".format(F))
 
     def change_ring(self, R):
         r"""

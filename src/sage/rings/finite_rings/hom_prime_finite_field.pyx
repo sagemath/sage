@@ -79,7 +79,6 @@ cdef class FiniteFieldHomomorphism_prime(FiniteFieldHomomorphism_generic):
         """
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
             sage: k = GF(3)
             sage: K.<t> = GF(3^5)
@@ -117,9 +116,9 @@ cdef class FrobeniusEndomorphism_prime(FrobeniusEndomorphism_finite_field):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
-        It is always right, since self is always identity because
+        It is always ``right``, since ``self`` is always identity because
         the domain is a prime field.
         """
         return right

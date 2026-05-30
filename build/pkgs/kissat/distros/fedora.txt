@@ -1,1 +1,2 @@
 kissat
+kissat-devel

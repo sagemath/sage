@@ -41,12 +41,12 @@ Classes and Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_by_eq_and_lt
 from sage.structure.unique_representation import UniqueRepresentation
-import sage.rings.abc
 
 
 class AbstractArgument(MultiplicativeGroupElement):
@@ -61,7 +61,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     - ``element`` -- an element of parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -108,7 +108,7 @@ class AbstractArgument(MultiplicativeGroupElement):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         INPUT:
 
@@ -262,7 +262,7 @@ class AbstractArgument(MultiplicativeGroupElement):
             sage: _.parent()
             Symbolic Ring
         """
-        from sage.symbolic.ring import SymbolicRing, SR
+        from sage.symbolic.ring import SR, SymbolicRing
 
         P = other.parent()
         S = P if isinstance(P, SymbolicRing) else SR
@@ -396,13 +396,13 @@ class UnitCirclePoint(AbstractArgument):
 
     - ``exponent`` -- a number (of a subset of the reals)
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     @staticmethod
     def _normalize_(exponent):
         r"""
-        Normalizes the given exponent so that it is in `[0,1)`.
+        Normalize the given exponent so that it is in `[0,1)`.
 
         INPUT:
 
@@ -721,8 +721,8 @@ class UnitCircleGroup(AbstractArgumentGroup):
             sage: U(exponent=5/2, normalize=False)
             zeta2^5
         """
-        from sage.groups.generic import discrete_log
         import sage.rings.abc
+        from sage.groups.generic import discrete_log
         from sage.rings.asymptotic.misc import combine_exceptions
         from sage.rings.rational_field import QQ
 
@@ -769,7 +769,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
                 raise ValueError('{} is not in {}'.format(data, self))
 
         elif not isinstance(data, int) or data != 0:
-            raise ValueError('input is ambigous: '
+            raise ValueError('input is ambiguous: '
                              '{} as well as exponent={} '
                              'specified'.format(data, exponent))
 
@@ -1006,7 +1006,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
             Rational Field
         """
         from sage.rings.rational_field import QQ
-        return super().__init__(base=QQ, category=category)
+        super().__init__(base=QQ, category=category)
 
     def _repr_(self):
         r"""
@@ -1043,7 +1043,7 @@ class ArgumentByElement(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1064,7 +1064,7 @@ class ArgumentByElement(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`ArgumentByElement`.
 
@@ -1172,7 +1172,7 @@ class ArgumentByElement(AbstractArgument):
             sage: a.parent()
             Symbolic Ring
         """
-        from sage.rings.abc import SymbolicRing
+        from sage.symbolic.ring import SymbolicRing
 
         element = self._element_ ** exponent
         parent = element.parent()
@@ -1380,7 +1380,7 @@ class Sign(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1402,7 +1402,7 @@ class Sign(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`Sign`.
 
@@ -1461,9 +1461,22 @@ class Sign(AbstractArgument):
             1
             sage: S(-1)^3  # indirect doctest
             -1
+
+        Check that the results may live in other parents too::
+
+            sage: x = SR.var('x')
+            sage: elem = S(-1)^x; elem  # indirect doctest
+            (-1)^x
+            sage: elem.parent()
+            Symbolic Ring
+
         """
+        result = self._element_ ** exponent
         P = self.parent()
-        return P.element_class(P, self._element_ ** exponent)
+        try:
+            return P.element_class(P, result)
+        except (ValueError, TypeError):
+            return result
 
     def __invert__(self):
         r"""
@@ -1613,7 +1626,7 @@ class SignGroup(AbstractArgumentGroup):
             sage: S.base()  # indirect doctest
             <class 'int'>
         """
-        return super().__init__(base=int, category=category)
+        super().__init__(base=int, category=category)
 
     def _repr_(self):
         r"""
@@ -1697,7 +1710,7 @@ class ArgumentGroupFactory(UniqueFactory):
       The factory will analyze ``data`` and interpret it as
       ``specification`` or ``domain``.
 
-    - ``specification`` -- a string
+    - ``specification`` -- string
 
       The following is possible:
 
@@ -1713,12 +1726,12 @@ class ArgumentGroupFactory(UniqueFactory):
         a string representing a SageMath parent which is interpreted as
         ``domain``
 
-    - ``domain`` -- a SageMath parent representing a subset of the complex plane.
-      An instance of :class:`ArgumentByElementGroup` will be created with the given
-      ``domain``.
+    - ``domain`` -- a SageMath parent representing a subset of the complex plane;
+      an instance of :class:`ArgumentByElementGroup` will be created with the given
+      ``domain``
 
-    - ``exponents`` -- a SageMath parent representing a subset of the reals.
-      An instance of :class`UnitCircleGroup` will be created with the given
+    - ``exponents`` -- a SageMath parent representing a subset of the reals;
+      an instance of :class`UnitCircleGroup` will be created with the given
       ``exponents``
 
     Exactly one of ``data``, ``specification``, ``exponents`` has to be provided.
@@ -1747,7 +1760,7 @@ class ArgumentGroupFactory(UniqueFactory):
         Sign Group
         sage: ArgumentGroup('Arg_RR')                                                   # needs sage.rings.number_field
         Sign Group
-        sage: ArgumentGroup(RIF)                                                        # needs sage.rings.real_interval_field
+        sage: ArgumentGroup(RIF)
         Sign Group
         sage: ArgumentGroup(RBF)
         Sign Group
@@ -1794,8 +1807,8 @@ class ArgumentGroupFactory(UniqueFactory):
             sage: ArgumentGroup('Arg_CC') is ArgumentGroup(domain=CC)  # indirect doctest
             True
         """
-        from sage.rings.integer_ring import ZZ
         from sage.misc.misc import exactly_one_is_true
+        from sage.rings.integer_ring import ZZ
         from sage.rings.qqbar import AA
         from sage.rings.rational_field import QQ
 
@@ -1805,7 +1818,7 @@ class ArgumentGroupFactory(UniqueFactory):
                  domain is not None,
                  exponents is not None)):
             raise ValueError(
-                'input ambigous: ' +
+                'input ambiguous: ' +
                 ', '.join('{}={}'.format(s, v) for s, v in
                           [('data', data), ('specification', specification),
                            ('domain', domain), ('exponents', exponents)]
@@ -1822,7 +1835,7 @@ class ArgumentGroupFactory(UniqueFactory):
                 return (RootsOfUnityGroup, ()), kwds
             if specification == 'Signs':
                 return (SignGroup, ()), kwds
-            elif specification.startswith('UU_'):
+            if specification.startswith('UU_'):
                 from sage.rings.asymptotic.misc import repr_short_to_parent
                 exponents = repr_short_to_parent(specification[3:])
             elif specification.startswith('Arg_') or specification.startswith('arg_'):
@@ -1837,20 +1850,18 @@ class ArgumentGroupFactory(UniqueFactory):
                                       sage.rings.abc.RealIntervalField,
                                       sage.rings.abc.RealBallField)):
                 return (SignGroup, ()), kwds
-            elif isinstance(domain, (sage.rings.abc.ComplexField,
+            if isinstance(domain, (sage.rings.abc.ComplexField,
                                      sage.rings.abc.ComplexIntervalField,
                                      sage.rings.abc.ComplexBallField)):
                 return (UnitCircleGroup, (domain._real_field(),)), kwds
-            else:
-                return (ArgumentByElementGroup, (domain,)), kwds
+            return (ArgumentByElementGroup, (domain,)), kwds
 
-        elif exponents is not None:
+        if exponents is not None:
             if exponents == ZZ:
                 return (SignGroup, ()), kwds
-            elif exponents == QQ:
+            if exponents == QQ:
                 return (RootsOfUnityGroup, ()), kwds
-            else:
-                return (UnitCircleGroup, (exponents,)), kwds
+            return (UnitCircleGroup, (exponents,)), kwds
 
     def create_object(self, version, key, **kwds):
         r"""

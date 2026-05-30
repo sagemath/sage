@@ -12,11 +12,6 @@ unique polynomial ``P(q)`` of order < `n` such that the triple (`S`,
 AUTHORS:
 
 - Christian Stump
-
-REFERENCES:
-
-.. [RSW2004] Reiner, Stanton, White - *The cyclic sieving phenomenon*,
-             Journal of Combinatorial Theory A 108 (2004)
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Christian Stump christian.stump@univie.ac.at
@@ -42,14 +37,14 @@ def CyclicSievingPolynomial(L, cyc_act=None, order=None, get_order=False):
     - ``L`` -- if ``cyc_act`` is ``None``: list of orbit sizes,
       otherwise list of objects
 
-    - ``cyc_act`` -- (default:``None``) bijective function from ``L`` to ``L``
+    - ``cyc_act`` -- (default: ``None``) bijective function from ``L`` to ``L``
 
-    - ``order`` -- (default:``None``) if set to an integer, this
+    - ``order`` -- (default: ``None``) if set to an integer, this
         cyclic order of ``cyc_act`` is used (must be an integer multiple
         of the order of ``cyc_act``) otherwise, the order of ``cyc_action`` is
         used
 
-    - ``get_order`` -- (default:``False``) if ``True``, a tuple ``[p,n]``
+    - ``get_order`` -- (default: ``False``) if ``True``, a tuple ``[p,n]``
       is returned where ``p`` is as above, and ``n`` is the order
 
     EXAMPLES::
@@ -132,9 +127,9 @@ def CyclicSievingCheck(L, cyc_act, f, order=None) -> bool:
     - ``L`` -- if ``cyc_act`` is ``None``: list of orbit sizes,
       otherwise list of objects
 
-    - ``cyc_act`` -- (default:``None``) bijective function from ``L`` to ``L``
+    - ``cyc_act`` -- (default: ``None``) bijective function from ``L`` to ``L``
 
-    - ``order`` -- (default:``None``) if set to an integer, this
+    - ``order`` -- (default: ``None``) if set to an integer, this
         cyclic order of ``cyc_act`` is used (must be an integer
         multiple of the order of ``cyc_act``) otherwise, the order of
         ``cyc_action`` is used
@@ -173,9 +168,7 @@ def orbit_decomposition(L, cyc_act) -> list[list]:
 
     - ``cyc_act`` -- bijective function from ``L`` to ``L``
 
-    OUTPUT:
-
-    - a list of lists, the orbits under the cyc_act acting on ``L``
+    OUTPUT: list of lists, the orbits under the cyc_act acting on ``L``
 
     EXAMPLES::
 

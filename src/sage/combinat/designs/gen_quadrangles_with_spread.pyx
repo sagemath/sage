@@ -30,7 +30,6 @@ REFERENCES:
 AUTHORS:
 
 - Ivo Maffei (2020-07-26): initial version
-
 """
 
 # ****************************************************************************
@@ -51,7 +50,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised quadrangle
+    - ``s``, ``t`` -- integers; order of the generalised quadrangle
 
     - ``existence`` -- boolean;
 
@@ -66,6 +65,11 @@ def generalised_quadrangle_with_spread(const int s, const int t,
 
     EXAMPLES::
 
+        sage: t = designs.generalised_quadrangle_with_spread(2, 2)
+        sage: t[0]
+        Incidence structure with 15 points and 15 blocks
+        sage: len(t[1])
+        5
         sage: t = designs.generalised_quadrangle_with_spread(3, 9)
         sage: t[0]
         Incidence structure with 112 points and 280 blocks
@@ -83,6 +87,10 @@ def generalised_quadrangle_with_spread(const int s, const int t,
 
     TESTS::
 
+        sage: from sage.combinat.designs.gen_quadrangles_with_spread import is_GQ_with_spread
+        sage: GQ, S = designs.generalised_quadrangle_with_spread(2, 2)
+        sage: is_GQ_with_spread(GQ, S, s=2, t=2)                                        # needs networkx
+        True
         sage: GQ, S = designs.generalised_quadrangle_with_spread(2, 4)
         sage: GQ
         Incidence structure with 27 points and 45 blocks
@@ -92,7 +100,6 @@ def generalised_quadrangle_with_spread(const int s, const int t,
         RuntimeError: Sage can't build a GQ of order (3, 4) with a spread
         sage: designs.generalised_quadrangle_with_spread(3, 4, existence=True)
         Unknown
-
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     from sage.misc.unknown import Unknown
@@ -109,10 +116,15 @@ def generalised_quadrangle_with_spread(const int s, const int t,
         D = IncidenceStructure([[0, 1], [1, 2], [2, 3], [3, 0]])
         return (D, [[0, 1], [2, 3]])
 
+    if is_prime_power(s) and t == s:
+        if existence:
+            return True
+        return generalised_quadrangle_symplectic_with_spread(s, check=check)
+
     if is_prime_power(s) and t == s * s:
         if existence:
             return True
-        (GQ, S) = dual_GQ_ovoid(*generalised_quadrangle_hermitian_with_ovoid(s))
+        GQ, S = dual_GQ_ovoid(*generalised_quadrangle_hermitian_with_ovoid(s))
         if check:
             if not is_GQ_with_spread(GQ, S, s=s, t=t):
                 raise RuntimeError("Sage built a wrong GQ with spread")
@@ -137,7 +149,7 @@ def is_GQ_with_spread(GQ, S, s=None, t=None):
     - ``S`` -- iterable; the spread of ``GQ`` as an
       iterable of the blocks of ``GQ``
 
-    - ``s, t`` -- integers (optional); if `(s,t)` are given, then we check that
+    - ``s``, ``t`` -- integers (optional); if `(s,t)` are given, then we check that
       ``GQ`` has order `(s,t)`
 
     EXAMPLES::
@@ -188,9 +200,7 @@ def dual_GQ_ovoid(GQ, O):
 
     - ``O`` -- iterable; the iterable of blocks we want to compute the dual
 
-    OUTPUT:
-
-    A pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
+    OUTPUT: a pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
     ``S`` is the dual of ``O``
 
     EXAMPLES::
@@ -203,9 +213,8 @@ def dual_GQ_ovoid(GQ, O):
         sage: t = dual_GQ_ovoid(*t)
         sage: t[0].is_generalized_quadrangle(parameters=True)
         (3, 9)
-        sage: all([x in t[0] for x in t[1]])
+        sage: all(x in t[0] for x in t[1])
         True
-
 
     TESTS::
 
@@ -216,13 +225,12 @@ def dual_GQ_ovoid(GQ, O):
         (2, 4)
         sage: is_GQ_with_spread(*t)
         True
-
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
 
     # GQ.ground_set()[i] becomes newBlocks[i]
     # GQ.blocks()[i] becomes i
-    newBlocks = [[] for _ in range(GQ.num_points())]
+    newBlocks = [[] for _ in range(GQ.n_points())]
     pointsToInt = {p: i for i, p in enumerate(GQ.ground_set())}
 
     for i, b in enumerate(GQ.blocks()):
@@ -233,6 +241,135 @@ def dual_GQ_ovoid(GQ, O):
 
     D = IncidenceStructure(newBlocks)
     return (D, S)
+
+
+def _normalize_projective_point(coords):
+    r"""
+    Return the normalized representative of a projective point.
+
+    INPUT:
+
+    - ``coords`` -- iterable of field elements; a nonzero vector
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.gen_quadrangles_with_spread import _normalize_projective_point
+        sage: F = GF(5)
+        sage: _normalize_projective_point((F(0), F(2), F(4), F(1)))
+        (0, 1, 2, 3)
+        sage: _normalize_projective_point((F(0), F(0), F(0), F(0)))
+        Traceback (most recent call last):
+        ...
+        ValueError: the zero vector does not define a projective point
+    """
+    for c in coords:
+        if c:
+            inv = ~c
+            return tuple(inv * x for x in coords)
+    raise ValueError("the zero vector does not define a projective point")
+
+
+def _symplectic_form(point1, point2, s):
+    r"""
+    Return the value of the alternating form used for `GQ(q, q)`.
+
+    The form is defined on `F_q^4` by
+
+    .. MATH::
+
+        \langle (x_0, x_1, y_0, y_1), (x'_0, x'_1, y'_0, y'_1) \rangle =
+        x_0 y'_0 + s x_1 y'_1 - y_0 x'_0 - s y_1 x'_1.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.gen_quadrangles_with_spread import _symplectic_form
+        sage: F = GF(5)
+        sage: s = F(2)
+        sage: p = (F(1), F(0), F(0), F(0))
+        sage: q = (F(0), F(0), F(1), F(0))
+        sage: _symplectic_form(p, q, s)
+        1
+        sage: _symplectic_form(p, p, s)
+        0
+        sage: _symplectic_form(p, q, s) + _symplectic_form(q, p, s)
+        0
+    """
+    return (point1[0] * point2[2] + s * point1[1] * point2[3]
+            - point1[2] * point2[0] - s * point1[3] * point2[1])
+
+
+def generalised_quadrangle_symplectic_with_spread(const int q, check=True):
+    r"""
+    Construct the symplectic generalised quadrangle `W(3,q)` with a spread.
+
+    The GQ has order `(q,q)`.
+
+    INPUT:
+
+    - ``q`` -- integer; a prime power
+
+    - ``check`` -- boolean; if ``True``, then Sage checks that the object built
+      is correct. (default: ``True``)
+
+    OUTPUT:
+
+    A pair ``(GQ, S)`` where ``GQ`` is an ``IncidenceStructure`` representing
+    `W(3,q)` and ``S`` is a list of blocks of ``GQ`` representing a spread.
+
+    EXAMPLES::
+
+        sage: GQ, S = designs.generalised_quadrangle_symplectic_with_spread(2)
+        sage: GQ
+        Incidence structure with 15 points and 15 blocks
+        sage: len(S)
+        5
+        sage: GQ.is_generalized_quadrangle(parameters=True)                             # needs networkx
+        (2, 2)
+    """
+    from sage.arith.misc import is_prime_power
+    from sage.combinat.designs.block_design import ProjectiveGeometryDesign
+    from sage.combinat.designs.incidence_structures import IncidenceStructure
+    from sage.rings.finite_rings.finite_field_constructor import FiniteField
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+    if not is_prime_power(q):
+        raise ValueError("q must be a prime power")
+
+    F = FiniteField(q, 'x')
+    R = PolynomialRing(F, 'z')
+    p = R.irreducible_element(2)
+    r = -p[1]
+    s = -p[0]
+
+    PG = ProjectiveGeometryDesign(3, 1, F, point_coordinates=True, check=False)
+    point_lookup = {_normalize_projective_point(point): point
+                    for point in PG.ground_set()}
+    lines = [block for block in PG.blocks()
+             if _symplectic_form(block[0], block[1], s) == 0]
+
+    spread = []
+    one = F.one()
+    zero = F.zero()
+    for a0 in F:
+        for a1 in F:
+            line = [point_lookup[_normalize_projective_point((one,
+                                                              lam,
+                                                              a0 + lam * a1 * s,
+                                                              a1 + lam * (a0 + a1 * r)))]
+                    for lam in F]
+            line.append(point_lookup[_normalize_projective_point((zero, one,
+                                                                  a1 * s,
+                                                                  a0 + a1 * r))])
+            spread.append(line)
+
+    spread.append([point_lookup[_normalize_projective_point((zero, zero, one, lam))]
+                   for lam in F] +
+                  [point_lookup[_normalize_projective_point((zero, zero, zero, one))]])
+
+    GQ = IncidenceStructure(PG.ground_set(), lines)
+    if check and not is_GQ_with_spread(GQ, spread, s=q, t=q):
+        raise RuntimeError("Sage built a wrong GQ with spread")
+    return (GQ, spread)
 
 
 def generalised_quadrangle_hermitian_with_ovoid(const int q):
@@ -249,7 +386,7 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
 
     A pair ``(D, O)`` where ``D`` is an IncidenceStructure representing the
     generalised quadrangle and ``O`` is a list of points of ``D`` which
-    constitute an ovoid of ``D``
+    constitute an ovoid of ``D``.
 
     EXAMPLES::
 
@@ -272,7 +409,7 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     TESTS::
 
         sage: from sage.combinat.designs.gen_quadrangles_with_spread import \
-              is_GQ_with_spread, dual_GQ_ovoid
+        ....: is_GQ_with_spread, dual_GQ_ovoid
         sage: t = designs.generalised_quadrangle_hermitian_with_ovoid(3)
         sage: t = dual_GQ_ovoid(*t)
         sage: is_GQ_with_spread(*t, s=3, t=9)

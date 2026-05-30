@@ -39,11 +39,11 @@ class ModularFormsSubmodule(ModularFormsSpace,
         """
         INPUT:
 
-        - ambient_module -- ModularFormsSpace
-        - submodule -- a submodule of the ambient space.
-        - dual_module -- (default: None) ignored
-        - check -- (default: False) whether to check that the
-                   submodule is Hecke equivariant
+        - ``ambient_module`` -- ModularFormsSpace
+        - ``submodule`` -- a submodule of the ambient space
+        - ``dual_module`` -- (default: ``None``) ignored
+        - ``check`` -- boolean (default: ``False``); whether to check that the
+          submodule is Hecke equivariant
 
         EXAMPLES::
 
@@ -51,7 +51,6 @@ class ModularFormsSubmodule(ModularFormsSpace,
           Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
           sage: M.eisenstein_subspace()
           Eisenstein subspace of dimension 11 of Modular Forms space of dimension 13 for Congruence Subgroup Gamma1(13) of weight 2 over Rational Field
-
         """
         A = ambient_module
         sage.modular.hecke.submodule.HeckeSubmodule.__init__(self, A, submodule, check=check)
@@ -69,7 +68,7 @@ class ModularFormsSubmodule(ModularFormsSpace,
 
     def _compute_coefficients(self, element, X):
         """
-        Compute all coefficients of the modular form element in self for
+        Compute all coefficients of the modular form element in ``self`` for
         indices in X.
 
         TODO: Implement this function.
@@ -86,7 +85,8 @@ class ModularFormsSubmodule(ModularFormsSpace,
 
     def _compute_q_expansion_basis(self, prec):
         """
-        Compute q_expansions to precision prec for each element in self.basis().
+        Compute ``q_expansions`` to precision ``prec`` for each element in
+        ``self.basis()``.
 
         EXAMPLES::
 

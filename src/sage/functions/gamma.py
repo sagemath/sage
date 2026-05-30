@@ -359,7 +359,7 @@ class Function_gamma_inc(BuiltinFunction):
 
             sage: var('t')                                                              # needs sage.symbolic
             t
-            sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas, needs sage.symbolic
+            sage: integrate(-exp(-x)*x^(t-1), x, algorithm='fricas')            # optional - fricas, needs sage.symbolic
             gamma(t, x)
 
         .. SEEALSO::
@@ -484,8 +484,7 @@ class Function_gamma_inc(BuiltinFunction):
             v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, y, parent=R))
         if v.is_real():
             return R(v)
-        else:
-            return C(v)
+        return C(v)
 
 
 # shorter alias
@@ -575,12 +574,11 @@ class Function_gamma_inc_lower(BuiltinFunction):
             return 0
         if x == 0:
             return Infinity
-        elif x == 1:
+        if x == 1:
             return 1 - exp(-y)
-        elif (2 * x).is_integer():
+        if (2 * x).is_integer():
             return self(x, y, hold=True)._sympy_()
-        else:
-            return None
+        return None
 
     def _evalf_(self, x, y, parent=None, algorithm='mpmath'):
         """
@@ -816,7 +814,7 @@ class Function_psi1(GinacFunction):
 class Function_psi2(GinacFunction):
     def __init__(self):
         r"""
-        Derivatives of the digamma function `\psi(x)`. T
+        Derivatives of the digamma function `\psi(x)`.
 
         EXAMPLES::
 
@@ -979,7 +977,7 @@ class Function_beta(GinacFunction):
 
         GiNaC is used to compute `\operatorname{B}(p,q)`.  However, complex inputs
         are not yet handled in general.  When GiNaC raises an error on
-        such inputs, we raise a NotImplementedError.
+        such inputs, we raise a :exc:`NotImplementedError`.
 
         If either input is 1, GiNaC returns the reciprocal of the
         other.  In other cases, GiNaC uses one of the following
@@ -1005,10 +1003,9 @@ class Function_beta(GinacFunction):
 
         INPUT:
 
-        -  ``p`` -- number or symbolic expression
+        - ``p`` -- number or symbolic expression
 
-        -  ``q`` -- number or symbolic expression
-
+        - ``q`` -- number or symbolic expression
 
         OUTPUT: number or symbolic expression (if input is symbolic)
 

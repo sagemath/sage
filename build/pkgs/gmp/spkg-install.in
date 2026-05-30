@@ -98,10 +98,16 @@ if [ "$SAGE_FAT_BINARY" = "yes" ]; then
     esac
 fi
 
+# Make configure tests use our own libstdc++ if it is available
+# See https://github.com/sagemath/sage/issues/38085
+CXXFLAGS_CONFIGURE="-Wl,-rpath -Wl,$SAGE_LOCAL/lib"
 
 # Pre-configure GMP to get the settings it would use if CFLAGS were empty:
 echo "Checking what CFLAGS GMP would use if they were empty..."
-(unset CFLAGS CPPFLAGS CXXFLAGS && ./configure $GMP_CONFIGURE) &>configure-empty.log
+(
+    unset CFLAGS CPPFLAGS CXXFLAGS &&
+    CXXFLAGS=$CXXFLAGS_CONFIGURE ./configure $GMP_CONFIGURE
+) &>configure-empty.log
 if [ $? -ne 0 ]; then
     # Output the log of the failed configure run
     cat configure-empty.log
@@ -163,7 +169,7 @@ echo "You can set GMP_CONFIGURE to pass additional parameters."
 # Clear the cache of the previous configure run
 find . -name config.cache -exec rm -f {} \;
 
-./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $GMP_CONFIGURE
+CXXFLAGS=$CXXFLAGS_CONFIGURE ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" $GMP_CONFIGURE
 if [ $? -ne 0 ]; then
     echo >&2 "Error configuring GMP. (See above for the options passed to it.)"
     exit 1

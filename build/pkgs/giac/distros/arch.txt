@@ -1,2 +1,1 @@
-libgiac
 giac

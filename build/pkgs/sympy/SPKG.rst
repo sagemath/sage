@@ -24,16 +24,5 @@ New BSD: http://www.opensource.org/licenses/bsd-license.php
 Upstream Contact
 ----------------
 
-sympy mailinglist: http://groups.google.com/group/sympy
+https://pypi.org/project/sympy/
 
-Dependencies
-------------
-
--  Python 2.5 or later
-
-
-Special Update/Build Instructions
----------------------------------
-
--  A simple script can be used to ease the updating of the SPKG. See the
-   README.

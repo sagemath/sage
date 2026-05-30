@@ -40,7 +40,8 @@ REFERENCES:
 # ****************************************************************************
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.rng cimport *
+from sage.libs.gsl.random cimport *
 import sage.misc.prandom as random
 import sage.rings.real_double
 from sage.modules.free_module_element import vector
@@ -101,7 +102,7 @@ cdef class ProbabilityDistribution:
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         OUTPUT:
 
@@ -115,19 +116,19 @@ cdef class ProbabilityDistribution:
             sage: from sage.probability.probability_distribution import GeneralDiscreteDistribution
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: h, b = X.generate_histogram_data(bins=10)                             # needs sage.plot
-            sage: h  # rel tol 1e-08                                                    # needs sage.plot
-            [1.6299999999999999,
+            sage: h, b = X.generate_histogram_data(bins=10)
+            sage: h  # rel tol 1e-08
+            [1.445,
              0.0,
              0.0,
              0.0,
              0.0,
-             1.9049999999999985,
+             2.044999999999998,
              0.0,
              0.0,
              0.0,
-             1.4650000000000003]
-            sage: b                                                                     # needs sage.plot
+             1.5100000000000002]
+            sage: b
             [0.0,
              0.2,
              0.4,
@@ -140,6 +141,9 @@ cdef class ProbabilityDistribution:
              1.8,
              2.0]
         """
+        import numpy as np
+        if int(np.version.short_version[0]) > 1:
+            np.set_printoptions(legacy="1.25")
         import pylab
         ell = [float(self.get_random_element()) for _ in range(num_samples)]
         S = pylab.hist(ell, bins, density=True)
@@ -152,13 +156,13 @@ cdef class ProbabilityDistribution:
 
         INPUT:
 
-        - ``name`` -- file to save the histogram plot (as a PNG).
+        - ``name`` -- file to save the histogram plot (as a PNG)
 
         - ``num_samples`` -- (optional) number of times to sample from
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         EXAMPLES:
 
@@ -168,7 +172,7 @@ cdef class ProbabilityDistribution:
             sage: import tempfile
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: with tempfile.NamedTemporaryFile() as f:                              # needs sage.plot
+            sage: with tempfile.NamedTemporaryFile() as f:
             ....:     X.generate_histogram_plot(f.name)
         """
         import pylab
@@ -213,7 +217,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
     """
 
     cdef gsl_rng *r
-    cdef gsl_rng_type *T
+    cdef const gsl_rng_type *T
     cdef long int seed
     cdef Py_ssize_t dimension
     cdef double* vec
@@ -566,9 +570,8 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: Xs = [RealDistribution('gaussian', 1).get_random_element() for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
         True
-
     """
-    cdef gsl_rng_type *T
+    cdef const gsl_rng_type *T
     cdef gsl_rng *r
     cdef int distribution_type
     cdef double* parameters
@@ -682,7 +685,6 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: T = RealDistribution('gaussian', 1, seed=0)
             sage: T.get_random_element()  # rel tol 4e-16
             0.13391860811867587
-
         """
         cdef double result
         if self.distribution_type == uniform:
@@ -1023,7 +1025,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         EXAMPLES::
 
             sage: T = RealDistribution('uniform', [0, 2])
-            sage: P = T.plot()                                                          # needs sage.plot
+            sage: P = T.plot()
         """
         from sage.plot.plot import plot
         return plot(self.distribution_function, *args, **kwds)
@@ -1035,19 +1037,17 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
     INPUT:
 
-    - ``P`` -- list of probabilities. The list will automatically be
-      normalised if ``sum(P)`` is not equal to 1.
+    - ``P`` -- list of probabilities; the list will automatically be
+      normalised if ``sum(P)`` is not equal to 1
 
-    - ``rng`` -- (optional) random number generator to use. May be
-      one of ``'default'``, ``'luxury'``, or ``'taus'``.
+    - ``rng`` -- (optional) random number generator to use; may be
+      one of ``'default'``, ``'luxury'``, or ``'taus'``
 
     - ``seed`` -- (optional) seed to use with the random number
-      generator.
+      generator
 
-    OUTPUT:
-
-    - a probability distribution where the probability of selecting
-      ``x`` is ``P[x]``.
+    OUTPUT: a probability distribution where the probability of selecting
+    ``x`` is ``P[x]``.
 
     EXAMPLES:
 
@@ -1090,14 +1090,14 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         sage: len(set(Xs)) > 2^^32
         True
 
-    The distribution probabilities must be non-negative::
+    The distribution probabilities must be nonnegative::
 
         sage: GeneralDiscreteDistribution([0.1, -0.1])
         Traceback (most recent call last):
         ...
-        ValueError: The distribution probabilities must be non-negative
+        ValueError: The distribution probabilities must be nonnegative
     """
-    cdef gsl_rng_type * T
+    cdef const gsl_rng_type * T
     cdef gsl_rng * r
     cdef gsl_ran_discrete_t *dist
     cdef long seed
@@ -1160,7 +1160,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         for i in range(n):
             if P[i] < 0:
                 raise ValueError("The distribution probabilities must "
-                                 "be non-negative")
+                                 "be nonnegative")
             P_vec[i] = P[i]
 
         self.dist = gsl_ran_discrete_preproc(n, P_vec)

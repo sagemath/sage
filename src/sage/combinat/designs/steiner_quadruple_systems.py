@@ -1,5 +1,5 @@
 r"""
-Steiner Quadruple Systems
+Steiner quadruple systems
 
 A Steiner Quadruple System on `n` points is a family `SQS_n \subset \binom {[n]}
 4` of `4`-sets, such that any set `S\subset [n]` of size three is a subset of
@@ -64,13 +64,15 @@ from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 
 # Construction 1
+
+
 def two_n(B):
     r"""
     Return a Steiner Quadruple System on `2n` points.
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -80,9 +82,8 @@ def two_n(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
         ....:             print("Something is wrong !")
-
     """
-    n = B.num_points()
+    n = B.n_points()
     Y = []
 
     # Line 1
@@ -101,13 +102,15 @@ def two_n(B):
     return IncidenceStructure(2*n,Y,check=False,copy=False)
 
 # Construction 2
+
+
 def three_n_minus_two(B):
     """
     Return a Steiner Quadruple System on `3n-2` points.
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -118,7 +121,7 @@ def three_n_minus_two(B):
         ....:         if not three_n_minus_two(sqs).is_t_design(3,3*n-2,4,1):
         ....:             print("Something is wrong !")
     """
-    n = B.num_points()
+    n = B.n_points()
     A = n-1
     Y = []
     # relabel function
@@ -156,13 +159,15 @@ def three_n_minus_two(B):
     return IncidenceStructure(3*n-2,Y,check=False,copy=False)
 
 # Construction 3
+
+
 def three_n_minus_eight(B):
     r"""
     Return a Steiner Quadruple System on `3n-8` points.
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -172,9 +177,8 @@ def three_n_minus_eight(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
         ....:             print("Something is wrong !")
-
     """
-    n = B.num_points()
+    n = B.n_points()
 
     if (n % 12) != 2:
         raise ValueError("n must be equal to 2 mod 12")
@@ -216,14 +220,16 @@ def three_n_minus_eight(B):
     return IncidenceStructure(3*n-8,Y,check=False,copy=False)
 
 # Construction 4
+
+
 def three_n_minus_four(B):
     r"""
     Return a Steiner Quadruple System on `3n-4` points.
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points where `n\equiv
-      10\pmod{12}`.
+    - ``B`` -- a Steiner Quadruple System on `n` points where `n\equiv
+      10\pmod{12}`
 
     EXAMPLES::
 
@@ -233,9 +239,8 @@ def three_n_minus_four(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
         ....:             print("Something is wrong !")
-
     """
-    n = B.num_points()
+    n = B.n_points()
 
     if n % 12 != 10:
         raise ValueError("n must be equal to 10 mod 12")
@@ -281,13 +286,15 @@ def three_n_minus_four(B):
     return IncidenceStructure(3*n-4,Y,check=False,copy=False)
 
 # Construction 5
+
+
 def four_n_minus_six(B):
     """
     Return a Steiner Quadruple System on `4n-6` points.
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -297,9 +304,8 @@ def four_n_minus_six(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not four_n_minus_six(sqs).is_t_design(3,4*n-6,4,1):
         ....:             print("Something is wrong !")
-
     """
-    n = B.num_points()
+    n = B.n_points()
     f = n-2
     r = lambda i,ii,x : (2*(i % 2)+(ii % 2))*(n-2)+(x) % (n-2)
 
@@ -353,13 +359,15 @@ def four_n_minus_six(B):
     return IncidenceStructure(4*n-6,Y,check=False,copy=False)
 
 # Construction 6
+
+
 def twelve_n_minus_ten(B):
     """
     Return a Steiner Quadruple System on `12n-6` points.
 
     INPUT:
 
-    - ``B`` -- A Steiner Quadruple System on `n` points.
+    - ``B`` -- a Steiner Quadruple System on `n` points
 
     EXAMPLES::
 
@@ -369,9 +377,8 @@ def twelve_n_minus_ten(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not twelve_n_minus_ten(sqs).is_t_design(3,12*n-10,4,1):
         ....:             print("Something is wrong !")
-
     """
-    n = B.num_points()
+    n = B.n_points()
     B14 = steiner_quadruple_system(14)
     r = lambda i,x : i % (n-1)+(x % 12)*(n-1)
 
@@ -451,13 +458,14 @@ def twelve_n_minus_ten(B):
                         Y.append([r(x,a), r(y,aa), r(z,aaa), r(t,aaaa)])
     return IncidenceStructure(12*n-10,Y,check=False,copy=False)
 
+
 def relabel_system(B):
     r"""
-    Relabels the set so that `\{n-4, n-3, n-2, n-1\}` is in `B`.
+    Relabel the set so that `\{n-4, n-3, n-2, n-1\}` is in `B`.
 
     INPUT:
 
-    - ``B`` -- a list of 4-uples on `0,...,n-1`.
+    - ``B`` -- list of 4-uples on `0,...,n-1`
 
     EXAMPLES::
 
@@ -466,7 +474,7 @@ def relabel_system(B):
         sage: relabel_system(SQS8)
         Incidence structure with 8 points and 14 blocks
     """
-    n = B.num_points()
+    n = B.n_points()
     B0 = B._blocks[0]
 
     label = {
@@ -479,17 +487,17 @@ def relabel_system(B):
     def get_label(x):
         if x in label:
             return label[x]
-        else:
-            total = len(label)-4
-            label[x] = total
-            return total
+        total = len(label)-4
+        label[x] = total
+        return total
 
     B = [[get_label(_) for _ in s] for s in B]
     return IncidenceStructure(n,B)
 
+
 def P(alpha, m):
     r"""
-    Return the collection of pairs `P_{\alpha}(m)`
+    Return the collection of pairs `P_{\alpha}(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -506,31 +514,27 @@ def P(alpha, m):
             if alpha % 2 == 0:
                 b = alpha // 2
                 return [(2*a, (2*a + 2*b + 1) % (2*m)) for a in range(m)]
-            else:
-                b = (alpha-1) // 2
-                return [(2*a, (2*a - 2*b - 1) % (2*m)) for a in range(m)]
-        else:
-            y = alpha - m
-            pairs = [(b,(2*y-b) % (2*m)) for b in range(y)]
-            pairs += [(c,(2*m+2*y-c-2) % (2*m)) for c in range(2*y+1,m+y-1)]
-            pairs += [(2*m+int(-1.5-.5*(-1)**y),y),(2*m+int(-1.5+.5*(-1)**y),m+y-1)]
-            return pairs
-    else:
-        if alpha < m-1:
-            if alpha % 2 == 0:
-                b = alpha // 2
-                return [(2*a,(2*a+2*b+1) % (2*m)) for a in range(m)]
-            else:
-                b = (alpha-1) // 2
-                return [(2*a,(2*a-2*b-1) % (2*m)) for a in range(m)]
-        else:
-            y = alpha-m+1
-            pairs = [(b,2*y-b) for b in range(y)]
-            pairs += [(c,2*m+2*y-c) for c in range(2*y+1,m+y)]
-            pairs += [(y,m+y)]
-            return pairs
+            b = (alpha-1) // 2
+            return [(2*a, (2*a - 2*b - 1) % (2*m)) for a in range(m)]
+        y = alpha - m
+        pairs = [(b,(2*y-b) % (2*m)) for b in range(y)]
+        pairs += [(c,(2*m+2*y-c-2) % (2*m)) for c in range(2*y+1,m+y-1)]
+        pairs += [(2*m+int(-1.5-.5*(-1)**y),y),(2*m+int(-1.5+.5*(-1)**y),m+y-1)]
+        return pairs
+    if alpha < m-1:
+        if alpha % 2 == 0:
+            b = alpha // 2
+            return [(2*a,(2*a+2*b+1) % (2*m)) for a in range(m)]
+        b = (alpha-1) // 2
+        return [(2*a,(2*a-2*b-1) % (2*m)) for a in range(m)]
+    y = alpha-m+1
+    pairs = [(b,2*y-b) for b in range(y)]
+    pairs += [(c,2*m+2*y-c) for c in range(2*y+1,m+y)]
+    pairs += [(y,m+y)]
+    return pairs
 
-def _missing_pair(n,l):
+
+def _missing_pair(n, l):
     r"""
     Return the smallest `(x,x+1)` that is not contained in `l`.
 
@@ -552,7 +556,7 @@ def _missing_pair(n,l):
 
 def barP(eps, m):
     r"""
-    Return the collection of pairs `\overline P_{\alpha}(m)`
+    Return the collection of pairs `\overline P_{\alpha}(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -564,10 +568,11 @@ def barP(eps, m):
     """
     return barP_system(m)[eps]
 
+
 @cached_function
 def barP_system(m):
     r"""
-    Return the 1-factorization of `K_{2m}` `\overline P(m)`
+    Return the 1-factorization of `K_{2m}` `\overline P(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -676,6 +681,7 @@ def barP_system(m):
 
     return pairs
 
+
 @cached_function
 def steiner_quadruple_system(n, check=False):
     r"""
@@ -683,10 +689,10 @@ def steiner_quadruple_system(n, check=False):
 
     INPUT:
 
-    - ``n`` -- an integer such that `n\equiv 2,4\pmod 6`
+    - ``n`` -- integer such that `n\equiv 2,4\pmod 6`
 
-    - ``check`` (boolean) -- whether to check that the system is a Steiner
-      Quadruple System before returning it (`False` by default)
+    - ``check`` -- boolean (default: ``False``); whether to check that the
+      system is a Steiner Quadruple System before returning it
 
     EXAMPLES::
 
@@ -743,6 +749,7 @@ def steiner_quadruple_system(n, check=False):
 
     return sqs
 
+
 def _SQS14():
     r"""
     Return a Steiner Quadruple System on 14 points.
@@ -775,6 +782,7 @@ def _SQS14():
             [5, 7, 9, 11], [5, 8, 11, 13], [5, 10, 12, 13], [6, 7, 8, 9], [6, 7, 10, 11],
             [6, 8, 10, 12], [6, 9, 11, 12], [7, 8, 10, 13], [7, 8, 11, 12], [7, 9, 10, 12],
             [8, 9, 10, 11]]
+
 
 def _SQS38():
     r"""

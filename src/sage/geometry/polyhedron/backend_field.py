@@ -7,7 +7,6 @@ allows you to define polyhedra.
 
 EXAMPLES::
 
-    sage: # needs sage.rings.number_field
     sage: p0 = (0, 0)
     sage: p1 = (1, 0)
     sage: p2 = (1/2, AA(3).sqrt()/2)
@@ -37,13 +36,13 @@ from .base import Polyhedron_base
 
 class Polyhedron_field(Polyhedron_base):
     """
-    Polyhedra over all fields supported by Sage
+    Polyhedra over all fields supported by Sage.
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -59,7 +58,6 @@ class Polyhedron_field(Polyhedron_base):
 
     Check that :issue:`19013` is fixed::
 
-        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
         sage: K.<phi> = NumberField(x^2 - x - 1, embedding=1.618)
         sage: P1 = Polyhedron([[0,1], [1,1], [1,-phi+1]])
@@ -79,11 +77,9 @@ class Polyhedron_field(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -101,11 +97,9 @@ class Polyhedron_field(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -123,11 +117,9 @@ class Polyhedron_field(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -173,21 +165,21 @@ class Polyhedron_field(Polyhedron_base):
 
         INPUT:
 
-        - ``vertices`` -- list of points. Each point can be specified
-           as any iterable container of ``internal_base_ring`` elements.
+        - ``vertices`` -- list of points; each point can be specified
+          as any iterable container of ``internal_base_ring`` elements
 
-        - ``rays`` -- list of rays. Each ray can be specified as any
-          iterable container of ``internal_base_ring`` elements.
+        - ``rays`` -- list of rays; each ray can be specified as any
+          iterable container of ``internal_base_ring`` elements
 
-        - ``lines`` -- list of lines. Each line can be specified asinternal_base_ring
-          any iterable container of ``internal_base_ring`` elements.
+        - ``lines`` -- list of lines; each line can be specified asinternal_base_ring
+          any iterable container of ``internal_base_ring`` elements
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
-        - ``internal_base_ring`` -- the base ring of the generators' components.
-          Default is ``None``, in which case, it is set to
-          :meth:`~sage.geometry.polyhedron.base.base_ring`.
+        - ``internal_base_ring`` -- the base ring of the generators' components;
+          default is ``None``, in which case, it is set to
+          :meth:`~sage.geometry.polyhedron.base.base_ring`
 
         EXAMPLES::
 
@@ -212,18 +204,18 @@ class Polyhedron_field(Polyhedron_base):
 
         INPUT:
 
-        - ``ieqs`` -- list of inequalities. Each line can be specified
-          as any iterable container of ``internal_base_ring`` elements.
+        - ``ieqs`` -- list of inequalities; each line can be specified
+          as any iterable container of ``internal_base_ring`` elements
 
-        - ``eqns`` -- list of equalities. Each line can be specified
-          as any iterable container of ``internal_base_ring`` elements.
+        - ``eqns`` -- list of equalities; each line can be specified
+          as any iterable container of ``internal_base_ring`` elements
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
-        - ``internal_base_ring`` -- the base ring of the generators' components.
-          Default is ``None``, in which case, it is set to
-          :meth:`~sage.geometry.polyhedron.base.base_ring`.
+        - ``internal_base_ring`` -- the base ring of the generators' components;
+          default is ``None``, in which case, it is set to
+          :meth:`~sage.geometry.polyhedron.base.base_ring`
 
         TESTS::
 
@@ -335,7 +327,7 @@ class Polyhedron_field(Polyhedron_base):
 
     def _init_empty_polyhedron(self):
         """
-        Initializes an empty polyhedron.
+        Initialize an empty polyhedron.
 
         TESTS::
 

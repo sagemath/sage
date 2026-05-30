@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Elementary Crystals
+Elementary crystals
 
 Let `\lambda` be a weight. The crystals `T_{\lambda}`, `R_{\lambda}`, `B_i`,
 and `C` are important objects in the tensor category of crystals.
@@ -162,7 +162,7 @@ class AbstractSingleCrystalElement(Element):
 
         INPUT:
 
-        - ``i`` -- An element of the index set
+        - ``i`` -- an element of the index set
 
         EXAMPLES::
 
@@ -181,7 +181,7 @@ class AbstractSingleCrystalElement(Element):
 
         INPUT:
 
-        - ``i`` -- An element of the index set
+        - ``i`` -- an element of the index set
 
         EXAMPLES::
 
@@ -216,9 +216,9 @@ class TCrystal(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``cartan_type`` -- A Cartan type
+    - ``cartan_type`` -- a Cartan type
 
-    - ``weight`` -- An element of the weight lattice of type ``cartan_type``
+    - ``weight`` -- an element of the weight lattice of type ``cartan_type``
 
     EXAMPLES::
 
@@ -300,7 +300,7 @@ class TCrystal(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``weight`` -- An element of the weight lattice
+        - ``weight`` -- an element of the weight lattice
 
         EXAMPLES::
 
@@ -387,7 +387,7 @@ class TCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -406,7 +406,7 @@ class TCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -474,7 +474,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
     - ``cartan_type`` -- a Cartan type
     - ``weight`` -- an element of the weight lattice of type ``cartan_type``
-    - ``dual`` -- (default: ``False``) boolean
+    - ``dual`` -- boolean (default: ``False``)
 
     EXAMPLES:
 
@@ -563,7 +563,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``weight`` -- An element of the weight lattice
+        - ``weight`` -- an element of the weight lattice
 
         EXAMPLES::
 
@@ -658,7 +658,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -675,10 +675,9 @@ class RCrystal(UniqueRepresentation, Parent):
             """
             if self.parent()._dual:
                 return ZZ.zero()
-            else:
-                P = self.parent().weight_lattice_realization()
-                h = P.simple_coroots()
-                return -P(self.weight()).scalar(h[i])
+            P = self.parent().weight_lattice_realization()
+            h = P.simple_coroots()
+            return -P(self.weight()).scalar(h[i])
 
         def phi(self, i):
             r"""
@@ -686,7 +685,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -705,8 +704,7 @@ class RCrystal(UniqueRepresentation, Parent):
                 P = self.parent().weight_lattice_realization()
                 h = P.simple_coroots()
                 return P(self.weight()).scalar(h[i])
-            else:
-                return ZZ.zero()
+            return ZZ.zero()
 
         def weight(self):
             r"""
@@ -827,7 +825,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``m`` -- An integer
+        - ``m`` -- integer
 
         EXAMPLES::
 
@@ -952,7 +950,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -965,8 +963,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return self.__class__(self.parent(), self._m + 1)
-            else:
-                return None
+            return None
 
         def f(self, i):
             r"""
@@ -974,7 +971,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -987,8 +984,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return self.__class__(self.parent(), self._m - 1)
-            else:
-                return None
+            return None
 
         def epsilon(self, i):
             r"""
@@ -996,7 +992,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -1010,8 +1006,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return -self._m
-            else:
-                return float("-inf")
+            return float("-inf")
 
         def phi(self, i):
             r"""
@@ -1019,7 +1014,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -1033,8 +1028,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             if i == self.parent()._i:
                 return self._m
-            else:
-                return float("-inf")
+            return float("-inf")
 
         def weight(self):
             r"""
@@ -1208,7 +1202,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -1225,7 +1219,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 

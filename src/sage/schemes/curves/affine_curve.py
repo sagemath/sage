@@ -114,7 +114,6 @@ AUTHORS:
 - Grayson Jorgenson (2016-08)
 
 - Kwankyu Lee (2019-05): added integral affine curves
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -125,33 +124,31 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.rings.abc
-
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.cachefunc import cached_method
-
-from sage.arith.misc import binomial
-from sage.interfaces.singular import singular
 from builtins import sum as add
 
+import sage.rings.abc
+
+from sage.arith.misc import binomial
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.homset import Hom, End, hom
 from sage.categories.number_fields import NumberFields
-
 from sage.matrix.constructor import matrix
-
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
-
-from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
-from sage.rings.number_field.number_field import NumberField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
 from sage.rings.infinity import infinity
+from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import RationalField
 
-from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
                                                   AlgebraicScheme_subscheme_affine_field)
+
+lazy_import('sage.interfaces.singular', 'singular')
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 from .curve import Curve_generic
 
@@ -164,8 +161,6 @@ from .point import (AffineCurvePoint_field,
                     IntegralAffinePlaneCurvePoint_finite_field)
 
 from .closed_point import IntegralAffineCurveClosedPoint
-
-lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 
 class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
@@ -189,7 +184,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
         Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
     """
 
-    def __init__(self, A, X):
+    def __init__(self, A, X) -> None:
         r"""
         Initialize.
 
@@ -209,12 +204,12 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
             sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
         """
-        if not is_AffineSpace(A):
+        if not isinstance(A, AffineSpace_generic):
             raise TypeError("A (={}) must be an affine space".format(A))
 
         Curve_generic.__init__(self, A, X)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
@@ -233,13 +228,13 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
 
         INPUT:
 
-        - ``i`` -- (default: 0) the index of the affine coordinate chart of the projective space that the affine
-          ambient space of this curve embeds into.
+        - ``i`` -- (default: 0) the index of the affine coordinate chart of the
+          projective space that the affine ambient space of this curve embeds into
 
-        - ``PP`` -- (default: None) ambient projective space to compute the projective closure in. This is
-          constructed if it is not given.
+        - ``PP`` -- (default: ``None``) ambient projective space to compute the
+          projective closure in; this is constructed if it is not given
 
-        OUTPUT: A curve in projective space.
+        OUTPUT: a curve in projective space
 
         EXAMPLES::
 
@@ -282,7 +277,7 @@ class AffinePlaneCurve(AffineCurve):
     Affine plane curves.
     """
 
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         Initialize.
 
@@ -299,12 +294,12 @@ class AffinePlaneCurve(AffineCurve):
             Affine Plane Curve over Complex Field with 53 bits of precision defined
             by x^2 + y^2
         """
-        if not (is_AffineSpace(A) and A.dimension != 2):
+        if not (isinstance(A, AffineSpace_generic) and A.dimension != 2):
             raise TypeError("Argument A (= %s) must be an affine plane." % A)
 
         super().__init__(A, [f])
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
@@ -317,19 +312,19 @@ class AffinePlaneCurve(AffineCurve):
         """
         return "Affine Plane"
 
-    def divisor_of_function(self, r):
+    def divisor_of_function(self, r) -> list:
         """
         Return the divisor of a function on a curve.
 
-        INPUT: r is a rational function on X
+        INPUT:
+
+        - ``r`` -- a rational function on X
 
         OUTPUT:
 
-
-        -  ``list`` - The divisor of r represented as a list of
-           coefficients and points. (TODO: This will change to a more
-           structural output in the future.)
-
+        - ``list`` -- the divisor of r represented as a list of coefficients
+          and points. (TODO: This will change to a more structural output in
+          the future.)
 
         EXAMPLES::
 
@@ -373,15 +368,12 @@ class AffinePlaneCurve(AffineCurve):
         Behaviour is flaky - some choices of `n` are worst that
         others.
 
-
         INPUT:
 
+        - ``pt`` -- an F-rational point on X which is not a
+          point of ramification for the projection (x,y) - x
 
-        -  ``pt`` - an F-rational point on X which is not a
-           point of ramification for the projection (x,y) - x.
-
-        -  ``n`` - the number of terms desired
-
+        - ``n`` -- the number of terms desired
 
         OUTPUT: x = x0 + t y = y0 + power series in t
 
@@ -408,7 +400,7 @@ class AffinePlaneCurve(AffineCurve):
         vars0 = R0.gens()
         t = vars0[2]
         yt = y0*t**0+add([vars0[i]*t**(i-2) for i in range(3, 2*n+2)])
-        xt = x0+t
+        xt = x0 + t
         ft = f(xt, yt)
         S = singular
         S.eval('ring s = '+str(p)+','+str(R0.gens())+',lp;')
@@ -446,11 +438,10 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
-        -  ``*args`` - optional tuples (variable, minimum, maximum) for
-           plotting dimensions
+        - ``*args`` -- (optional) tuples (variable, minimum, maximum) for
+          plotting dimensions
 
-        -  ``**kwds`` - optional keyword arguments passed on to
-           ``implicit_plot``
+        - ``**kwds`` -- optional keyword arguments passed on to ``implicit_plot``
 
         EXAMPLES:
 
@@ -464,7 +455,7 @@ class AffinePlaneCurve(AffineCurve):
         A 5-nodal curve of degree 11.  This example also illustrates
         some of the optional arguments::
 
-            sage: # needs sage.plot()
+            sage: # needs sage.plot
             sage: R.<x, y> = ZZ[]
             sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9
             ....:            - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
@@ -482,7 +473,7 @@ class AffinePlaneCurve(AffineCurve):
         Id = self.defining_ideal()
         return Id.plot(*args, **kwds)
 
-    def is_transverse(self, C, P):
+    def is_transverse(self, C, P) -> bool:
         r"""
         Return whether the intersection of this curve with the curve ``C`` at the point ``P`` is transverse.
 
@@ -491,11 +482,11 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
-        - ``C`` -- a curve in the ambient space of this curve.
+        - ``C`` -- a curve in the ambient space of this curve
 
-        - ``P`` -- a point in the intersection of both curves.
+        - ``P`` -- a point in the intersection of both curves
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -549,9 +540,9 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
-        - ``P`` -- a point in the ambient space of this curve.
+        - ``P`` -- a point in the ambient space of this curve
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -586,7 +577,7 @@ class AffinePlaneCurve(AffineCurve):
             TypeError: (=(1, 1)) is not a point on (=Affine Plane Curve over
             Rational Field defined by x^6 - x^3 + y^3)
         """
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("curve must be defined over a field")
 
         # Check whether P is a point on this curve
@@ -603,7 +594,7 @@ class AffinePlaneCurve(AffineCurve):
         # nonzero terms
         return min([g.degree() for g in f.monomials()])
 
-    def tangents(self, P, factor=True):
+    def tangents(self, P, factor=True) -> list:
         r"""
         Return the tangents of this affine plane curve at the point ``P``.
 
@@ -613,12 +604,12 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point on this curve
 
-        - ``factor`` -- (default: True) whether to attempt computing the
+        - ``factor`` -- boolean (default: ``True``); whether to attempt computing the
           polynomials of the individual tangent lines over the base field of this
           curve, or to just return the polynomial corresponding to the union of
           the tangent lines (which requires fewer computations)
 
-        OUTPUT: A list of polynomials in the coordinate ring of the ambient space.
+        OUTPUT: list of polynomials in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -706,10 +697,9 @@ class AffinePlaneCurve(AffineCurve):
                     roots = T.univariate_polynomial().roots()
                     fact.extend([vars[1] - roots[i][0]*vars[0] for i in range(len(roots))])
             return [ff(coords) for ff in fact]
-        else:
-            return [ll[0](coords) for ll in T.factor()]
+        return [ll[0](coords) for ll in T.factor()]
 
-    def is_ordinary_singularity(self, P):
+    def is_ordinary_singularity(self, P) -> bool:
         r"""
         Return whether the singular point ``P`` of this affine plane curve is
         an ordinary singularity.
@@ -768,8 +758,7 @@ class AffinePlaneCurve(AffineCurve):
         # use resultants to determine if there is a higher multiplicity tangent
         if T.degree(vars[0]) > 0:
             return T.resultant(T.derivative(vars[0]), vars[0]) != 0
-        else:
-            return T.resultant(T.derivative(vars[1]), vars[1]) != 0
+        return T.resultant(T.derivative(vars[1]), vars[1]) != 0
 
     def rational_parameterization(self):
         r"""
@@ -782,9 +771,8 @@ class AffinePlaneCurve(AffineCurve):
         The rational parameterization may have coefficients in a quadratic extension of the rational
         field.
 
-        OUTPUT:
-
-        - a birational map between `\mathbb{A}^{1}` and this curve, given as a scheme morphism.
+        OUTPUT: a birational map between `\mathbb{A}^{1}` and this curve, given
+        as a scheme morphism
 
         EXAMPLES::
 
@@ -832,7 +820,7 @@ class AffinePlaneCurve(AffineCurve):
         # affine patch corresponding to the first coordinate being nonzero. Thus para[0] will not be
         # the zero polynomial, and dehomogenization won't change this
         H = Hom(A_line, C)
-        return H([para[1]/para[0], para[2]/para[0]])
+        return H([para[1] / para[0], para[2] / para[0]])
 
 
 class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
@@ -841,7 +829,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
     """
     _point = AffineCurvePoint_field
 
-    def __init__(self, A, X):
+    def __init__(self, A, X) -> None:
         r"""
         Initialize.
 
@@ -860,13 +848,24 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: A.<x,y,z> = AffineSpace(GF(7), 3)
             sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
+
+        TESTS::
+
+            sage: K.<x,y,z,t> = QQ[]
+            sage: t1 = x^2*z^2 + y*t
+            sage: t2 = y*z^2 + x^2*t
+            sage: C = Curve([x^4 - y^2 - 19, z^4 - t^2 - 23, t1^2 - t2^2 - 19*23])
+            Traceback (most recent call last):
+            ...
+            ValueError: defining equations (=[x^4 - y^2 - 19, z^4 - t^2 - 23,
+            x^4*z^4 - y^2*z^4 - x^4*t^2 + y^2*t^2 - 437]) define a scheme of dimension 2 != 1
         """
         super().__init__(A, X)
 
-        if not A.base_ring() in Fields():
+        if A.base_ring() not in Fields():
             raise TypeError("curve not defined over a field")
 
-        d = self.dimension()
+        d = super(Curve_generic, self).dimension()
         if d != 1:
             raise ValueError("defining equations (={}) define a scheme of dimension {} != 1".format(X, d))
 
@@ -877,7 +876,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``indices`` -- a list or tuple of distinct integers specifying the
+        - ``indices`` -- list or tuple of distinct integers specifying the
           indices of the coordinates to use in the projection. Can also be a list
           or tuple consisting of variables of the coordinate ring of the ambient
           space of this curve. If integers are used to specify the coordinates, 0
@@ -885,12 +884,12 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
           two and one less than the dimension of the ambient space of this curve,
           inclusive.
 
-        - ``AS`` -- (default: None) the affine space the projected curve will
+        - ``AS`` -- (default: ``None``) the affine space the projected curve will
           be defined in. This space must be defined over the same base field as
           this curve, and must have dimension equal to the length of ``indices``.
           This space is constructed if not specified.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a scheme morphism from this curve to affine space of dimension equal
           to the number of coordinates specified in ``indices``
@@ -928,7 +927,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                To:   Affine Space of dimension 3 over Rational Field
                Defn: Defined on coordinates by sending (x, y, z, w) to
                      (x, y, z),
-             Affine Curve over Rational Field defined by c - 1, b - 3, a - 2)
+             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+               c - 1,
+               b - 3,
+               a - 2)
 
         ::
 
@@ -998,7 +1000,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         if len(set(indices)) < len(indices):
             raise ValueError("(=%s) must be a list or tuple of distinct indices or variables" % indices)
         if AS is not None:
-            if not is_AffineSpace(AS):
+            if not isinstance(AS, AffineSpace_generic):
                 raise TypeError("(=%s) must be an affine space" % AS)
             if AS.dimension_relative() != len(indices):
                 raise TypeError("(=%s) must have dimension (=%s)" % (AS, len(indices)))
@@ -1028,7 +1030,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             removecoords.pop(indices[i])
         J = self.defining_ideal().elimination_ideal(removecoords)
         K = Hom(AA.coordinate_ring(), AA2.coordinate_ring())
-        ll = [0]*(n)
+        ll = [0] * n
         for i in range(len(indices)):
             ll[indices[i]] = AA2.gens()[i]
         phi = K(ll)
@@ -1046,12 +1048,12 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``AP`` -- (default: None) the affine plane to project this curve
+        - ``AP`` -- (default: ``None``) the affine plane to project this curve
           into. This space must be defined over the same base field as this
           curve, and must have dimension two. This space will be constructed if
           not specified.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a scheme morphism from this curve into an affine plane
 
@@ -1113,21 +1115,21 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve at which to blow up;
-          if ``None``, then ``P`` is taken to be the origin.
+        - ``P`` -- (default: ``None``) a point on this curve at which to blow up;
+          if ``None``, then ``P`` is taken to be the origin
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a tuple of curves in affine space of the same dimension as the
           ambient space of this curve, which define the blow up in each affine
           chart.
 
-        - a tuple of tuples such that the jth element of the ith tuple is the
-          transition map from the ith affine patch to the jth affine patch.
+        - a tuple of tuples such that the j-th element of the i-th tuple is the
+          transition map from the i-th affine patch to the j-th affine patch.
 
         - a tuple consisting of the restrictions of the projection map from the
           blow up back to the original curve, restricted to each affine patch.
-          There the ith element will be the projection from the ith affine patch.
+          There the i-th element will be the projection from the i-th affine patch.
 
         EXAMPLES::
 
@@ -1227,7 +1229,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve((y - 3/2)^3 - (x + 2)^5 - (x + 2)^6)
             sage: Q = A([-2,3/2])
-            sage: C.blowup(Q)
+            sage: Bl = C.blowup(Q); Bl # random - depends on version of singular
             ((Affine Plane Curve over Rational Field
                defined by x^3 - s1^3 + 7*x^2 + 16*x + 12,
               Affine Plane Curve over Rational Field
@@ -1273,6 +1275,13 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                                  - 320*x^2 - 9/2*y^2 - 272*x + 27/4*y - 795/8
                 Defn: Defined on coordinates by sending (y, s0) to
                       (y*s0 - 3/2*s0 - 2, y)))
+            sage: [P/P.lc() for curve in Bl[0] for P in curve.defining_ideal().gens()]
+            [x^3 - s1^3 + 7*x^2 + 16*x + 12,
+              y^3*s0^6 - 9/2*y^2*s0^6 + y^2*s0^5 + 27/4*y*s0^6 - 3*y*s0^5 - 27/8*s0^6 + 9/4*s0^5 - 1]
+            sage: [m.defining_polynomials() for chart in Bl[1] for m in chart]
+            [(x, s1), (x*s1 + 2*s1 + 3/2, 1/s1), (y*s0 - 3/2*s0 - 2, 1/s0), (y, s0)]
+            sage: [m.defining_polynomials() for m in Bl[2]]
+            [(x, x*s1 + 2*s1 + 3/2), (y*s0 - 3/2*s0 - 2, y)]
 
         ::
 
@@ -1309,12 +1318,12 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         A = self.ambient_space()
         n = A.dimension_relative()
         if P is None:
-            P = A([0]*n)
+            P = A([0] * n)
         try:
             self(P)
         except TypeError:
             raise TypeError("(=%s) must be a point on this curve" % P)
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("the base ring of this curve must be a field")
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")
@@ -1420,26 +1429,26 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``extend`` -- (default: False) specifies whether to extend the base
-          field when necessary to find all singular points when this curve is
-          defined over a number field. If ``extend`` is ``False``, then only
-          singularities with coordinates in the base field of this curve will be
-          resolved. However, setting ``extend`` to ``True`` will slow down
-          computations.
+        - ``extend`` -- boolean (default: ``False``); specifies whether to
+          extend the base field when necessary to find all singular points when
+          this curve is defined over a number field. If ``extend`` is
+          ``False``, then only singularities with coordinates in the base field
+          of this curve will be resolved. However, setting ``extend`` to
+          ``True`` will slow down computations.
 
-        OUTPUT: A tuple of
+        OUTPUT: a tuple of
 
         - a tuple of curves in affine space of the same dimension as the
           ambient space of this curve, which represent affine patches of the
           resolution of singularities.
 
-        - a tuple of tuples such that the jth element of the ith tuple is the
-          transition map from the ith patch to the jth patch.
+        - a tuple of tuples such that the j-th element of the i-th tuple is the
+          transition map from the i-th patch to the j-th patch.
 
         - a tuple consisting of birational maps from the patches back to the
           original curve that were created by composing the projection maps
-          generated from the blow up computations. There the ith element will be
-          a map from the ith patch.
+          generated from the blow up computations. There the i-th element will
+          be a map from the i-th patch.
 
         EXAMPLES::
 
@@ -1478,7 +1487,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: K.<a> = QuadraticField(3)
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: C = A.curve(x^4 + 2*x^2 + a*y^3 + 1)
-            sage: C.resolution_of_singularities(extend=True)[0]         # long time (2 s)
+            sage: RS = C.resolution_of_singularities(extend=True)[0]; RS        # long time (2 s) # random - depends on version of singular
             (Affine Plane Curve over Number Field in a0
               with defining polynomial y^4 - 4*y^2 + 16
               defined by 24*x^2*ss1^3 + 24*ss1^3 + (a0^3 - 8*a0),
@@ -1488,6 +1497,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
              Affine Plane Curve over Number Field in a0
               with defining polynomial y^4 - 4*y^2 + 16
               defined by 8*y^2*s0^4 + (4*a0^3)*y*s0^3 - 32*s0^2 + (a0^3 - 8*a0)*y)
+            sage: [P/P.lc() for curve in RS for P in curve.defining_ideal().gens()]  # long time
+            [x^2*ss1^3 + ss1^3 + (1/24*a0^3 - 1/3*a0),
+              s1^2*ss0 + (1/24*a0^3 - 1/3*a0)*ss0^2 + (-1/4*a0^3)*s1,
+              y^2*s0^4 + (1/2*a0^3)*y*s0^3 - 4*s0^2 + (1/8*a0^3 - a0)*y]
 
         ::
 
@@ -1549,15 +1562,13 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
             K = number_field_elements_from_algebraics(L)[0]
-            if is_RationalField(K):
+            if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
-            else:
-                if is_RationalField(F):
-                    return F.embeddings(K)[0]
-                else:
-                    # make sure the defining polynomial variable names are the same for K, N
-                    N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
-                    return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
+            if isinstance(F, RationalField):
+                return F.embeddings(K)[0]
+            # make sure the defining polynomial variable names are the same for K, N
+            N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
+            return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
         # find the set of singular points of this curve
         # in the case that the base field is a number field, extend it as needed (if extend == True)
         C = self
@@ -1587,10 +1598,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         t = 0
         # loop through the patches and blow up each until no patch has singular points
         while not_resolved:
-            [BC, t_maps, pi, pts] = [res[t][0], res[t][1], res[t][2], res[t][3]]
+            BC, t_maps, pi, pts = res[t][0], res[t][1], res[t][2], res[t][3]
             # check if there are any singular points in this patch
             if not pts:
-                t = t + 1
+                t += 1
                 if t == len(res):
                     not_resolved = False
                 continue
@@ -1739,14 +1750,13 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         Tp = self.tangent_space(p)
 
         if Tp.dimension() > 1:
-            raise ValueError("the curve is not smooth at {}".format(p))
+            raise ValueError(f"the curve is not smooth at {p}")
 
         from sage.schemes.curves.constructor import Curve
 
         # translate to p
-        I0 = []
-        for poly in Tp.defining_polynomials():
-            I0.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
+        I0 = [poly.subs({x: x - c for x, c in zip(gens, p)})
+              for poly in Tp.defining_polynomials()]
 
         return Curve(I0, A)
 
@@ -1757,7 +1767,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def has_vertical_asymptote(self):
+    def has_vertical_asymptote(self) -> bool:
         """
         Check if the curve is not a line and has vertical asymptotes.
 
@@ -1777,7 +1787,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         dxy = f.coefficient({y: dy}).degree()
         return dxy > 0 and f.degree() > 1
 
-    def is_vertical_line(self):
+    def is_vertical_line(self) -> bool:
         """
         Check if the curve is a vertical line.
 
@@ -1805,11 +1815,11 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         INPUT:
 
-        - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
+        - ``simplified`` -- boolean (default: ``True``); to simplify the presentation
 
-        - ``puiseux`` -- (default: ``True``) boolean to decide if the
+        - ``puiseux`` -- boolean (default: ``True``); to decide if the
           presentation is constructed in the classical way or using Puiseux
-          shortcut.
+          shortcut
 
         OUTPUT:
 
@@ -1885,7 +1895,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         OUTPUT:
 
         A list of braids. The braids correspond to paths based in the same point;
-        each of this paths is the conjugated of a loop around one of the points
+        each of these paths is the conjugated of a loop around one of the points
         in the discriminant of the projection of ``self``.
 
         .. NOTE::
@@ -1913,7 +1923,6 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             Traceback (most recent call last):
             ...
             NotImplementedError: the base field must have an embedding to the algebraic field
-
         """
         from sage.schemes.curves.zariski_vankampen import braid_monodromy
         F = self.base_ring()
@@ -1926,9 +1935,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
     def riemann_surface(self, **kwargs):
         r"""
-        Return the complex Riemann surface determined by this curve
+        Return the complex Riemann surface determined by this curve.
 
-        OUTPUT: A :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object.
+        OUTPUT: a :class:`~sage.schemes.riemann_surfaces.riemann_surface.RiemannSurface` object
 
         EXAMPLES::
 
@@ -1952,7 +1961,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
 
     # CHECK WHAT ASSUMPTIONS ARE MADE REGARDING AFFINE VS. PROJECTIVE MODELS!!!
     # THIS IS VERY DIRTY STILL -- NO DATASTRUCTURES FOR DIVISORS.
-    def riemann_roch_basis(self, D):
+    def riemann_roch_basis(self, D) -> list:
         r"""
         Return a basis of the Riemann-Roch space of the divisor ``D``.
 
@@ -1969,7 +1978,7 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
           divisor `Div = d_1P_1 + \dots + d_nP_n`, where `X(F) = \{P_1, \dots,
           P_n\}`.  The ordering is that dictated by ``places_on_curve``.
 
-        OUTPUT: A basis of `L(Div)`.
+        OUTPUT: a basis of `L(Div)`.
 
         EXAMPLES::
 
@@ -2001,13 +2010,13 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
 
         return [g[1].sage() / g[2].sage() for g in G.BrillNoether(P)]
 
-    def rational_points(self, algorithm="enum"):
+    def rational_points(self, algorithm='enum') -> list:
         r"""
         Return sorted list of all rational points on this curve.
 
         INPUT:
 
-        -  ``algorithm`` -- possible choices:
+        - ``algorithm`` -- possible choices:
 
            +  ``'enum'`` -- use *very* naive point enumeration to find all
               rational points on this curve over a finite field.
@@ -2019,8 +2028,8 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
 
         .. NOTE::
 
-           The Brill-Noether package does not always work. When it fails, a
-           RuntimeError exception is raised.
+            The Brill-Noether package does not always work. When it fails, a
+            :exc:`RuntimeError` exception is raised.
 
         EXAMPLES::
 
@@ -2087,14 +2096,13 @@ class AffinePlaneCurve_finite_field(AffinePlaneCurve_field):
             # remove multiple points
             return sorted(set(pnts))
 
-        elif algorithm == "all":
-            S_enum = self.rational_points(algorithm="enum")
-            S_bn = self.rational_points(algorithm="bn")
+        if algorithm == "all":
+            S_enum = self.rational_points(algorithm='enum')
+            S_bn = self.rational_points(algorithm='bn')
             if S_enum != S_bn:
                 raise RuntimeError("Bug in rational_points -- different algorithms give different answers for curve %s!" % self)
             return S_enum
-        else:
-            raise ValueError("No algorithm '%s' known" % algorithm)
+        raise ValueError("No algorithm '%s' known" % algorithm)
 
 
 class IntegralAffineCurve(AffineCurve_field):
@@ -2201,7 +2209,7 @@ class IntegralAffineCurve(AffineCurve_field):
         - ``f`` -- an element of the fraction field of the coordinate ring of
           the ambient space or the coordinate ring of the curve
 
-        OUTPUT: An element of the function field of this curve.
+        OUTPUT: an element of the function field of this curve
 
         EXAMPLES::
 
@@ -2249,7 +2257,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         INPUT:
 
-        -  ``f`` -- an element of the function field
+        - ``f`` -- an element of the function field
 
         OUTPUT:
 
@@ -2653,7 +2661,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         return self._closed_point(self, prime, len(basis))
 
-    def places_at_infinity(self):
+    def places_at_infinity(self) -> list:
         """
         Return the places of the curve at infinity.
 
@@ -2682,7 +2690,7 @@ class IntegralAffineCurve(AffineCurve_field):
         """
         return list({p for f in self._coordinate_functions if f for p in f.poles()})
 
-    def places_on(self, point):
+    def places_on(self, point) -> list:
         """
         Return the places on the closed point.
 
@@ -2690,7 +2698,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         - ``point`` -- a closed point of the curve
 
-        OUTPUT: A list of the places of the function field of the curve.
+        OUTPUT: list of the places of the function field of the curve
 
         EXAMPLES::
 
@@ -2740,11 +2748,8 @@ class IntegralAffineCurve(AffineCurve_field):
         gs = [phi(g) for g in point.prime_ideal().gens()]
         fs = [g for g in gs if not g.is_zero()]
         f = fs.pop()
-        places = []
-        for p in f.zeros():
-            if all(f.valuation(p) > 0 for f in fs):
-                places.append(p)
-        return places
+        return [p for p in f.zeros()
+                if all(f.valuation(p) > 0 for f in fs)]
 
     def parametric_representation(self, place, name=None):
         """
@@ -2857,13 +2862,13 @@ class IntegralAffineCurve_finite_field(IntegralAffineCurve):
         return F.places(degree)
 
     @cached_method(do_pickle=True)
-    def closed_points(self, degree=1):
+    def closed_points(self, degree=1) -> list:
         """
         Return a list of the closed points of ``degree`` of the curve.
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         EXAMPLES::
 

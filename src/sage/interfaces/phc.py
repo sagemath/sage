@@ -18,7 +18,6 @@ AUTHORS:
 - Marshall Hampton -- second version of interface to PHC
 
 - Marshall Hampton and Alex Jokela -- third version, path tracking
-
 """
 
 # ****************************************************************************
@@ -53,12 +52,10 @@ def get_solution_dicts(output_file_contents, input_ring, get_failures=True):
 
     INPUT:
 
-    - output_file_contents -- phc solution output as a string
-    - input_ring -- a PolynomialRing that variable names can be coerced into
+    - ``output_file_contents`` -- phc solution output as a string
+    - ``input_ring`` -- a PolynomialRing that variable names can be coerced into
 
-    OUTPUT:
-
-    a list of dictionaries of solutions
+    OUTPUT: list of dictionaries of solutions
 
     EXAMPLES::
 
@@ -104,12 +101,10 @@ def get_classified_solution_dicts(output_file_contents, input_ring, get_failures
 
     INPUT:
 
-    - output_file_contents -- phc solution output as a string
-    - input_ring -- a PolynomialRing that variable names can be coerced into
+    - ``output_file_contents`` -- phc solution output as a string
+    - ``input_ring`` -- a PolynomialRing that variable names can be coerced into
 
-    OUTPUT:
-
-    - a dictionary of lists if dictionaries of solutions, classifies by type
+    OUTPUT: a dictionary of lists if dictionaries of solutions, classifies by type
 
     EXAMPLES::
 
@@ -190,8 +185,8 @@ class PHC_Object:
 
         INPUT:
 
-        - output_file_contents: the string output of PHCpack
-        - input_ring: for coercion of the variables into the desired ring.
+        - ``output_file_contents`` -- the string output of PHCpack
+        - ``input_ring`` -- for coercion of the variables into the desired ring
 
         EXAMPLES::
 
@@ -270,9 +265,7 @@ class PHC_Object:
 
         - None
 
-        OUTPUT:
-
-        - A dictionary of lists of dictionaries of solutions
+        OUTPUT: a dictionary of lists of dictionaries of solutions
 
         EXAMPLES::
 
@@ -298,10 +291,9 @@ class PHC_Object:
 
         INPUT:
 
-        - self -- for access to self_out_file_contents, the string
-          of raw PHCpack output.
-
-        - get_failures (optional) -- a boolean.  The default (False)
+        - ``self`` -- for access to self_out_file_contents, the string
+          of raw PHCpack output
+        - ``get_failures`` -- boolean (default: ``False``); the default
           is to not process failed homotopies.  These either lie on
           positive-dimensional components or at infinity.
 
@@ -341,15 +333,13 @@ class PHC_Object:
 
         INPUT:
 
-        - self -- for access to self_out_file_contents, the string
-          of raw PHCpack output.
-        - get_failures (optional) -- a boolean.  The default (False)
+        - ``self`` -- for access to self_out_file_contents, the string
+          of raw PHCpack output
+        - ``get_failures`` -- boolean (default: ``False``); the default
           is to not process failed homotopies.  These either lie on
           positive-dimensional components or at infinity.
 
-        OUTPUT:
-
-        - solutions: a list of lists of ComplexField-valued solutions.
+        OUTPUT: solutions: a list of lists of ComplexField-valued solutions
 
         EXAMPLES::
 
@@ -428,12 +418,10 @@ class PHC:
 
         INPUT:
 
-        - command_list -- a list of commands to phc
-        - polys -- a polynomial system as a list of polynomials
+        - ``command_list`` -- list of commands to phc
+        - ``polys`` -- a polynomial system as a list of polynomials
 
-        OUTPUT:
-
-        - an output string from phc
+        OUTPUT: an output string from phc
 
         EXAMPLES::
 
@@ -487,12 +475,11 @@ class PHC:
 
         INPUT:
 
-        - polys -- a list of polynomials in a Sage polynomial ring
+        - ``polys`` -- list of polynomials in a Sage polynomial ring
           over a field that embeds into the complex numbers
 
-        OUTPUT:
-
-        a PHC input file (as a text string) that describes these polynomials
+        OUTPUT: a PHC input file (as a text string) that describes these
+        polynomials
 
         EXAMPLES::
 
@@ -511,18 +498,16 @@ class PHC:
 
     def _parse_path_file(self, input_filename, verbose=False):
         """
-        Takes a phpack output file containing path tracking information
+        Take a phpack output file containing path tracking information
         and parses it into a list of lists of dictionaries - i.e. a
         list of solutions paths, where each solution path is a list of
         dictionaries of variable and homotopy parameter values.
 
         INPUT:
 
-        - input_filename -- file must have path-tracking information
+        - ``input_filename`` -- file must have path-tracking information
 
-        OUTPUT:
-
-        - a list of lists of dictionaries, described above
+        OUTPUT: list of lists of dictionaries, described above
 
         EXAMPLES::
 
@@ -582,7 +567,7 @@ class PHC:
                         t_val = CC(m.group(2), m.group(3))
                         temp_dict = {}
                         temp_dict["t"] = t_val
-                        for i in range(0, count):
+                        for i in range(count):
                             a_line = fh.readline()
                             m = sols_regex.match(a_line)
                             if m:
@@ -640,21 +625,23 @@ class PHC:
 
     def path_track(self, start_sys, end_sys, input_ring, c_skew=.001, saved_start=None):
         """
-        This function computes homotopy paths between the solutions of start_sys and end_sys.
+        This function computes homotopy paths between the solutions of
+        ``start_sys`` and ``end_sys``.
 
         INPUT:
 
-        - start_sys -- a square polynomial system, given as a list of polynomials
-        - end_sys -- same type as start_sys
-        - input_ring -- for coercion of the variables into the desired ring.
-        - c_skew -- optional. the imaginary part of homotopy multiplier; nonzero values
-          are often necessary to avoid intermediate path collisions
-        - saved_start -- optional.  A phc output file.  If not given, start system solutions
-          are computed via the phc.blackbox function.
+        - ``start_sys`` -- a square polynomial system, given as a list of
+          polynomials
+        - ``end_sys`` -- same type as ``start_sys``
+        - ``input_ring`` -- for coercion of the variables into the desired ring
+        - ``c_skew`` -- (optional) the imaginary part of homotopy multiplier;
+          nonzero values are often necessary to avoid intermediate path
+          collisions
+        - ``saved_start`` -- (optional) a phc output file; if not given, start
+          system solutions are computed via the ``phc.blackbox`` function
 
-        OUTPUT:
-
-        - a list of paths as dictionaries, with the keys variables and t-values on the path.
+        OUTPUT: list of paths as dictionaries, with the keys variables and
+        t-values on the path
 
         EXAMPLES::
 
@@ -682,18 +669,19 @@ class PHC:
 
         INPUT:
 
-        - start_sys -- a square polynomial system, given as a list of polynomials
-        - end_sys -- same type as start_sys
-        - input_ring -- for coercion of the variables into the desired ring.
-        - c_skew -- optional. the imaginary part of homotopy multiplier; nonzero values
-          are often necessary to avoid intermediate path collisions
-        - endpoints -- optional.  Whether to draw in the ends of paths as points.
-        - saved_start -- optional.  A phc output file.  If not given, start system solutions
-          are computed via the phc.blackbox function.
+        - ``start_sys`` -- a square polynomial system, given as a list of
+          polynomials
+        - ``end_sys`` -- same type as start_sys
+        - ``input_ring`` -- for coercion of the variables into the desired ring
+        - ``c_skew`` -- (optional) the imaginary part of homotopy multiplier;
+          nonzero values are often necessary to avoid intermediate path
+          collisions
+        - ``endpoints`` -- (optional) whether to draw in the ends of paths as
+          points
+        - ``saved_start`` -- (optional) a phc output file; if not given, start
+          system solutions are computed via the ``phc.blackbox`` function
 
-        OUTPUT:
-
-        - lines and points of solution paths
+        OUTPUT: lines and points of solution paths
 
         EXAMPLES::
 
@@ -734,8 +722,7 @@ class PHC:
                     sol_pts.append(point([a_sol[0][var_name].real(), a_sol[0][var_name].imag()]))
                     sol_pts.append(point([a_sol[-1][var_name].real(), a_sol[-1][var_name].imag()]))
             return sum(sol_pts) + sum(path_lines)
-        else:
-            return sum(path_lines)
+        return sum(path_lines)
 
     def mixed_volume(self, polys, verbose=False):
         """
@@ -743,13 +730,11 @@ class PHC:
 
         INPUT:
 
-        - polys -- a list of multivariate polynomials (elements of a multivariate
+        - ``polys`` -- list of multivariate polynomials (elements of a multivariate
           polynomial ring).
-        - verbose -- print lots of verbose information about what this function does.
+        - ``verbose`` -- print lots of verbose information about what this function does
 
-        OUTPUT:
-
-        - The mixed volume.
+        OUTPUT: the mixed volume
 
         EXAMPLES::
 
@@ -784,19 +769,17 @@ class PHC:
 
         INPUT:
 
-        - start_filename_or_string -- the filename for a phcpack start system,
+        - ``start_filename_or_string`` -- the filename for a phcpack start system,
           or the contents of such a file as a string.  Variable names must match
           the inputring variables.  The value of the homotopy variable t should
           be 1, not 0.
-        - polys -- a list of multivariate polynomials (elements of a multivariate
+        - ``polys`` -- list of multivariate polynomials (elements of a multivariate
           polynomial ring).
         - input_ring: for coercion of the variables into the desired ring.
         - path_track_file: whether to save path-tracking information
-        - verbose -- print lots of verbose information about what this function does.
+        - ``verbose`` -- print lots of verbose information about what this function does
 
-        OUTPUT:
-
-        - A solution in the form of a PHCObject.
+        OUTPUT: a solution in the form of a PHCObject
 
         EXAMPLES::
 
@@ -888,14 +871,12 @@ class PHC:
 
         INPUT:
 
-        - polys -- a list of multivariate polynomials (elements of a multivariate
+        - ``polys`` -- list of multivariate polynomials (elements of a multivariate
           polynomial ring).
-        - input_ring -- for coercion of the variables into the desired ring.
-        - verbose -- print lots of verbose information about what this function does.
+        - ``input_ring`` -- for coercion of the variables into the desired ring
+        - ``verbose`` -- print lots of verbose information about what this function does
 
-        OUTPUT:
-
-        - a PHC_Object object containing the phcpack output string.
+        OUTPUT: a PHC_Object object containing the phcpack output string
 
         EXAMPLES::
 
@@ -935,10 +916,9 @@ class PHC:
 
         # Was there an error?
         if e:
-            from sage.misc.sage_ostools import have_program
-            if not have_program('phc'):
-                print(str(os.system('which phc')) + '  PHC needs to be installed and in your path')
-                raise RuntimeError
+            from sage.features import Executable
+            phc_executable = Executable(name='phc', executable='phc')
+            phc_executable.require()
             # todo -- why? etc.
             with open(log_filename) as f:
                 msg = f.read()

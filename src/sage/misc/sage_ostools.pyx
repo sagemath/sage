@@ -9,25 +9,29 @@ import os
 import contextlib
 
 
-def have_program(program, path=None):
+def have_program(program, path=None) -> bool:
     """
     Return ``True`` if a ``program`` executable is found in the path
     given by ``path``.
 
     INPUT:
 
-    - ``program`` - a string, the name of the program to check.
+    - ``program`` -- string, the name of the program to check
 
-    - ``path`` - string or None. Paths to search for ``program``,
+    - ``path`` -- string or ``None``. Paths to search for ``program``,
       separated by ``os.pathsep``. If ``None``, use the :envvar:`PATH`
       environment variable.
 
-    OUTPUT: bool
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: from sage.misc.sage_ostools import have_program
         sage: have_program('ls')
+        doctest:warning
+        ...
+        DeprecationWarning: have_program is deprecated; use shutil.which instead
+        See https://github.com/sagemath/sage/issues/32957 for details.
         True
         sage: have_program('there_is_not_a_program_with_this_name')
         False
@@ -38,6 +42,8 @@ def have_program(program, path=None):
         sage: have_program('there_is_not_a_program_with_this_name', "/bin")
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32957, "have_program is deprecated; use shutil.which instead")
     if path is None:
         path = os.environ.get('PATH', "")
     for p in path.split(os.pathsep):
@@ -85,7 +91,7 @@ cdef file_and_fd(x, int* fd):
     If ``x`` is a file, return ``x`` and set ``*fd`` to its file
     descriptor. If ``x`` is an integer, return ``None`` and set
     ``*fd`` to ``x``. Otherwise, set ``*fd = -1`` and raise a
-    ``TypeError``.
+    :exc:`TypeError`.
     """
     fd[0] = -1
     try:
@@ -116,7 +122,7 @@ cdef class redirection:
 
     - ``dest`` -- where the source file should be redirected to
 
-    - ``close`` -- (boolean, default: ``True``) whether to close the
+    - ``close`` -- boolean (default: ``True``); whether to close the
       destination file upon exiting the context. This is only supported
       if ``dest`` is a Python file.
 

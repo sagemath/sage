@@ -13,7 +13,6 @@ AUTHORS:
 
 - Volker Braun (2012-11) port to new Parent base. Use tuples for immutables.
 
-
 EXAMPLES:
 
 Recall an example from abelian groups::
@@ -45,24 +44,6 @@ Recall an example from abelian groups::
 ###########################################################################
 
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
-
-
-def is_AbelianGroupElement(x):
-    """
-    Return ``True`` if ``x`` is an abelian group element, i.e., an element of
-    type :class:`AbelianGroupElement`.
-
-    EXAMPLES: Though the integer 3 is in the integers, and the integers
-    have an abelian group structure, 3 is not an AbelianGroupElement::
-
-        sage: from sage.groups.abelian_gps.abelian_group_element import is_AbelianGroupElement
-        sage: is_AbelianGroupElement(3)
-        False
-        sage: F = AbelianGroup(5, [3,4,5,8,7], 'abcde')
-        sage: is_AbelianGroupElement(F.0)
-        True
-    """
-    return isinstance(x, AbelianGroupElement)
 
 
 class AbelianGroupElement(AbelianGroupElementBase):
@@ -97,7 +78,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(3, [2,3,4], names="abc"); G
+            sage: G = AbelianGroup(3, [2,3,4], names='abc'); G
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = G.gens()
             sage: Gp = G.permutation_group(); Gp                                        # needs sage.groups
@@ -141,7 +122,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
         EXAMPLES::
 
             sage: # needs sage.libs.gap
-            sage: G = AbelianGroup(2, [2,3], names="xy")
+            sage: G = AbelianGroup(2, [2,3], names='xy')
             sage: x,y = G.gens()
             sage: x.word_problem([x,y])
             [[x, 1]]

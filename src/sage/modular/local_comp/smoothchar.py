@@ -98,7 +98,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
 
     def _check_level(self):
         r"""
-        Checks that this character has the level it claims to have, and if not,
+        Check that this character has the level it claims to have, and if not,
         decrement the level appropriately. This is called by :meth:`__init__`.
 
         EXAMPLES::
@@ -182,8 +182,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
         """
         if self._values_on_gens[-1].multiplicative_order() == Infinity:
             return Infinity
-        else:
-            return lcm([x.multiplicative_order() for x in self._values_on_gens])
+        return lcm([x.multiplicative_order() for x in self._values_on_gens])
 
     def level(self):
         r"""
@@ -266,7 +265,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
 
     def _mul_(self, other):
         r"""
-        Product of self and other.
+        Product of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -287,7 +286,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
 
     def __invert__(self):
         r"""
-        Multiplicative inverse of self.
+        Multiplicative inverse of ``self``.
 
         EXAMPLES::
 
@@ -379,7 +378,7 @@ class SmoothCharacterGroupGeneric(Parent):
         r"""
         Construct an element of this group from ``x`` (possibly noncanonically).
         This only works if ``x`` is a character of a field containing the field of
-        self, whose values lie in a field that can be converted into self.
+        ``self``, whose values lie in a field that can be converted into ``self``.
 
         EXAMPLES::
 
@@ -404,8 +403,7 @@ class SmoothCharacterGroupGeneric(Parent):
         if (isinstance(P, SmoothCharacterGroupGeneric)
                 and P.number_field().has_coerce_map_from(self.number_field())):
             return self.character(x.level(), [x(v) for v in self.unit_gens(x.level())])
-        else:
-            raise TypeError
+        raise TypeError
 
     def __eq__(self, other):
         r"""
@@ -495,7 +493,6 @@ class SmoothCharacterGroupGeneric(Parent):
             sage: G = SmoothCharacterGroupUnramifiedQuadratic(3, QQ)
             sage: G.character(0, [1]).base_extend(K)
             Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 0, mapping 3 |--> 1
-
         """
         return (isinstance(other, SmoothCharacterGroupGeneric)
                 and other.number_field() == self.number_field()
@@ -547,7 +544,6 @@ class SmoothCharacterGroupGeneric(Parent):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Ring of integers modulo 3
-
         """
         if not ring.has_coerce_map_from(self.base_ring()):
             ring.coerce(self.base_ring().an_element())
@@ -558,7 +554,7 @@ class SmoothCharacterGroupGeneric(Parent):
     @abstract_method
     def _field_name(self):
         r"""
-        A string representing the name of the p-adic field of which this is the
+        A string representing the name of the `p`-adic field of which this is the
         character group. To be overridden by derived subclasses.
 
         EXAMPLES::
@@ -573,7 +569,7 @@ class SmoothCharacterGroupGeneric(Parent):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -587,7 +583,7 @@ class SmoothCharacterGroupGeneric(Parent):
     def ideal(self, level):
         r"""
         Return the ``level``-th power of the maximal ideal of the ring of
-        integers of the p-adic field. Since we approximate by using number
+        integers of the `p`-adic field. Since we approximate by using number
         field arithmetic, what is actually returned is an ideal in a number
         field.
 
@@ -684,14 +680,14 @@ class SmoothCharacterGroupGeneric(Parent):
 
         INPUT:
 
-        - ``level`` (integer) an integer `\ge 0`
-        - ``values_on_gens`` (sequence) a sequence of elements of length equal
+        - ``level`` -- integer an integer `\ge 0`
+        - ``values_on_gens`` -- sequence a sequence of elements of length equal
           to the length of ``self.unit_gens(level)``. The values should be
           convertible (that is, possibly noncanonically) into the base ring of self; they
           should all be units, and all but the last must be roots of unity (of
           the orders given by ``self.exponents(level)``.
 
-        .. note::
+        .. NOTE::
 
             The character returned may have level less than ``level`` in general.
 
@@ -738,9 +734,9 @@ class SmoothCharacterGroupGeneric(Parent):
         n = self.exponents(level)
         for i in range(len(S)):
             if n[i] != 0 and not S[i]**n[i] == 1:
-                raise ValueError( "value on generator %s (=%s) should be a root of unity of order %s" % (self.unit_gens(level)[i], S[i], n[i]) )
+                raise ValueError("value on generator %s (=%s) should be a root of unity of order %s" % (self.unit_gens(level)[i], S[i], n[i]))
             elif n[i] == 0 and not S[i].is_unit():
-                raise ValueError( "value on uniformiser %s (=%s) should be a unit" % (self.unit_gens(level)[i], S[i]) )
+                raise ValueError("value on uniformiser %s (=%s) should be a unit" % (self.unit_gens(level)[i], S[i]))
         return self.element_class(self, level, S)
 
     def norm_character(self):
@@ -919,8 +915,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         if level == 0:
             return [QQ(self.prime())]
-        else:
-            return [QQ(x) for x in Zmod(self.prime()**level).unit_gens()] + [QQ(self.prime())]
+        return [QQ(x) for x in Zmod(self.prime()**level).unit_gens()] + [QQ(self.prime())]
 
     def exponents(self, level):
         r"""
@@ -943,7 +938,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         Return the group of characters of the same field but with values in a
         different ring. This need not have anything to do with the original
         base ring, and in particular there won't generally be a coercion map
-        from self to the new group -- use
+        from ``self`` to the new group -- use
         :meth:`~SmoothCharacterGroupGeneric.base_extend` if you want this.
 
         EXAMPLES::
@@ -1013,7 +1008,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         x = self.number_field().coerce(x)
         if x == 0:
-            raise ValueError( "cannot evaluate at zero" )
+            raise ValueError("cannot evaluate at zero")
         s = x.valuation(self.prime())
         return Zmod(self.prime()**level)(x / self.prime()**s).generalised_log() + [s]
 
@@ -1024,7 +1019,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
 
         INPUT:
 
-        - ``c`` (integer) an integer `\ge 1`
+        - ``c`` -- integer `\ge 1`
 
         EXAMPLES::
 
@@ -1045,10 +1040,9 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         if level == 0:
             raise ValueError
-        elif level == 1:
+        if level == 1:
             return self.unit_gens(level)[:-1]
-        else:
-            return [1 + self.prime()**(level - 1)]
+        return [1 + self.prime()**(level - 1)]
 
     def from_dirichlet(self, chi):
         r"""
@@ -1105,6 +1099,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         nr = self.character(0, [-1])
         return sorted([nr] + list(ram) + [f*nr for f in ram])
 
+
 class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
     r"""
     The group of smooth characters of `E^\times`, where `E` is a quadratic extension of `\QQ_p`.
@@ -1152,36 +1147,34 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         """
         x = self.number_field().coerce(x)
         if x == 0:
-            raise ValueError( "cannot evaluate at zero" )
+            raise ValueError("cannot evaluate at zero")
         if gens is None:
             n1 = x.valuation(self.ideal(1))
             x1 = x / self.unit_gens(0)[-1] ** n1
             if level == 0:
                 return [n1]
-            else:
-                return self.ideal(level).ideallog(x1, self.unit_gens(level)[:-1]) + [n1]
-        else:
-            P = self.ideal(1)
-            I = self.ideal(level)
-            gens = [self.number_field().coerce(g) for g in gens]
-            i = min(i for i in range(len(gens)) if gens[i].valuation(P) == 1) # lazy!
-            pi = gens[i]
-            genvals = []
-            genunits = []
-            for g in gens:
-                genvals.append(g.valuation(P))
-                gu = g / pi**genvals[-1]
-                gu *= gu.denominator_ideal().element_1_mod(I)
-                genunits.append(I.reduce(gu))
-            xunit = x / pi**x.valuation(P)
-            xunit = I.reduce(xunit * xunit.denominator_ideal().element_1_mod(I))
-            verbose("computing log of %s in basis %s" % (xunit, genunits), level=1)
-            dl = I.ideallog(xunit, genunits)
-            pi_term = x.valuation(P) - sum(dl[j] * genvals[j] for j in range(len(gens)))
-            dl[i] += pi_term
-            X = prod(gens[j] ** dl[j] for j in range(len(gens)))
-            assert (X/x - 1).valuation(P) >= level
-            return dl
+            return self.ideal(level).ideallog(x1, self.unit_gens(level)[:-1]) + [n1]
+        P = self.ideal(1)
+        I = self.ideal(level)
+        gens = [self.number_field().coerce(g) for g in gens]
+        i = min(i for i in range(len(gens)) if gens[i].valuation(P) == 1) # lazy!
+        pi = gens[i]
+        genvals = []
+        genunits = []
+        for g in gens:
+            genvals.append(g.valuation(P))
+            gu = g / pi**genvals[-1]
+            gu *= gu.denominator_ideal().element_1_mod(I)
+            genunits.append(I.reduce(gu))
+        xunit = x / pi**x.valuation(P)
+        xunit = I.reduce(xunit * xunit.denominator_ideal().element_1_mod(I))
+        verbose("computing log of %s in basis %s" % (xunit, genunits), level=1)
+        dl = I.ideallog(xunit, genunits)
+        pi_term = x.valuation(P) - sum(dl[j] * genvals[j] for j in range(len(gens)))
+        dl[i] += pi_term
+        X = prod(gens[j] ** dl[j] for j in range(len(gens)))
+        assert (X/x - 1).valuation(P) >= level
+        return dl
 
     @cached_method
     def quotient_gens(self, n):
@@ -1228,8 +1221,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         if n == 0:
             if self.ideal(1).norm().is_prime():
                 return [self.unit_gens(0), [2]]
-            else:
-                return [[], []]
+            return [[], []]
 
         p = self.prime()
         I = self.ideal(n)
@@ -1259,8 +1251,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         if len(qgs) == 2:
             x, y = qgs
             return [x * y, y]
-        else:
-            return qgs
+        return qgs
 
     def _reduce_Qp(self, level, x):
         r"""
@@ -1305,16 +1296,16 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
 
         INPUT:
 
-        - ``chi``: a smooth character of `\QQ_p`, where `p` is the residue
-          characteristic of `F`, with values in the base ring of self (or some
+        - ``chi`` -- a smooth character of `\QQ_p`, where `p` is the residue
+          characteristic of `F`, with values in the base ring of ``self`` (or some
           other ring coercible to it)
-        - ``level``: the level of the new character (which should be at least
+        - ``level`` -- the level of the new character (which should be at least
           the level of ``chi``)
-        - ``vals``: a list of elements of the base ring of self (or some other
+        - ``vals`` -- a list of elements of the base ring of ``self`` (or some other
           ring coercible to it), specifying values on the quotients returned by
-          :meth:`quotient_gens`.
+          :meth:`quotient_gens`
 
-        A :class:`ValueError` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
+        A :exc:`ValueError` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
         is the smallest integer such that `\alpha^t` is congruent modulo
         `p^{\rm level}` to an element of `\QQ_p`.
 
@@ -1393,6 +1384,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
             raise ValueError("Invalid values for extension")
         return chiE
 
+
 class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
     r"""
     The group of smooth characters of `\QQ_{p^2}^\times`, where `\QQ_{p^2}` is
@@ -1432,7 +1424,7 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
         Return the character group of the same field, but with values in a
         different coefficient ring. This need not have anything to do with the
         original base ring, and in particular there won't generally be a
-        coercion map from self to the new group -- use
+        coercion map from ``self`` to the new group -- use
         :meth:`~SmoothCharacterGroupGeneric.base_extend` if you want this.
 
         EXAMPLES::
@@ -1544,13 +1536,12 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
 
         if c == 0:
             return [K(p)]
-        elif c == 1:
+        if c == 1:
             return [a, K(p)]
-        elif p == 2:
+        if p == 2:
             if c == 2:
                 return [a, 1 + 2*a, K(-1), K(2)]
-            else:
-                return [a, 1 + 2*a, 1 + 4*a, K(-1), K(2)]
+            return [a, 1 + 2*a, 1 + 4*a, K(-1), K(2)]
 
         # general case
 
@@ -1579,12 +1570,11 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
         p = self.prime()
         if c == 0:
             return [0]
-        elif c == 1:
+        if c == 1:
             return [p**2 - 1, 0]
-        elif p == 2 and c >= 3:
+        if p == 2 and c >= 3:
             return [p**2 - 1, p**(c-1), p**(c-2), 2, 0]
-        else:
-            return [p**2 - 1, p**(c-1), p**(c-1), 0]
+        return [p**2 - 1, p**(c-1), p**(c-1), 0]
 
     def subgroup_gens(self, level):
         r"""
@@ -1604,10 +1594,9 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         if level == 0:
             raise ValueError
-        elif level == 1:
+        if level == 1:
             return self.unit_gens(level)[:-1]
-        else:
-            return [1 + self.prime()**(level - 1), 1 + self.prime()**(level - 1) * self.number_field().gen()]
+        return [1 + self.prime()**(level - 1), 1 + self.prime()**(level - 1) * self.number_field().gen()]
 
 
 class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
@@ -1621,10 +1610,10 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
 
         INPUT:
 
-        - ``prime`` -- a prime integer
+        - ``prime`` -- prime integer
         - ``flag`` -- either 0 or 1
         - ``base_ring`` -- a ring
-        - ``names`` -- a variable name (default ``s``)
+        - ``names`` -- a variable name (default: ``'s'``)
 
         If ``flag`` is 0, return the group of characters of the multiplicative
         group of the field `\QQ_p(\sqrt{p})`. If ``flag`` is 1, use the
@@ -1653,7 +1642,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         prime = ZZ(prime)
         if prime == 2:
-            raise NotImplementedError( "Wildly ramified extensions not supported" )
+            raise NotImplementedError("Wildly ramified extensions not supported")
         SmoothCharacterGroupGeneric.__init__(self, prime, base_ring)
         self._name = names
         if flag not in [0, 1]:
@@ -1665,7 +1654,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
             if (not a % prime) or (not ZZ(a).is_squarefree()) or ((a * prime) % 4 == 1):
                 continue
             if (flag == 0 and Zmod(prime)(a).is_square()) or \
-                (flag == 1 and not Zmod(prime)(a).is_square()):
+                    (flag == 1 and not Zmod(prime)(a).is_square()):
                 self._unif_sqr = a * prime
                 break
         else:
@@ -1676,7 +1665,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         Return the character group of the same field, but with values in a
         different coefficient ring. This need not have anything to do with the
         original base ring, and in particular there won't generally be a
-        coercion map from self to the new group -- use
+        coercion map from ``self`` to the new group -- use
         :meth:`~SmoothCharacterGroupGeneric.base_extend` if you want this.
 
         EXAMPLES::
@@ -1764,15 +1753,14 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
             return [s]
         if c == 1:
             return zpgens + [s]
-        elif p > 3 or self._unif_sqr == 3 or c <= 3:
+        if p > 3 or self._unif_sqr == 3 or c <= 3:
             return zpgens + [1 + s, s]
-        else:
-            # Awkward case: K = Q_3(sqrt(-3)). Here the exponential map doesn't
-            # converge on 1 + P, and the quotient (O_K*) / (Zp*) isn't
-            # topologically cyclic. I don't know an explicit set of good
-            # generators here, so we let Pari do the work and put up with the
-            # rather arbitrary (nondeterministic?) results.
-            return list(self.ideal(c).idealstar(2).gens_values()) + [s]
+        # Awkward case: K = Q_3(sqrt(-3)). Here the exponential map doesn't
+        # converge on 1 + P, and the quotient (O_K*) / (Zp*) isn't
+        # topologically cyclic. I don't know an explicit set of good
+        # generators here, so we let Pari do the work and put up with the
+        # rather arbitrary (nondeterministic?) results.
+        return list(self.ideal(c).idealstar(2).gens_values()) + [s]
 
     def exponents(self, c):
         r"""
@@ -1794,14 +1782,13 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         p = self.prime()
         if c == 0:
             return (0,)
-        elif c == 1:
+        if c == 1:
             return (p - 1, 0)
-        elif p > 3 or self._unif_sqr == 3 or c <= 3:
+        if p > 3 or self._unif_sqr == 3 or c <= 3:
             d = (c + 1) // 2
             return (p**(d - 1) * (p - 1), p**(c // 2), 0)
-        else:
-            # awkward case, see above
-            return self.ideal(c).idealstar(2).gens_orders() + (0,)
+        # awkward case, see above
+        return self.ideal(c).idealstar(2).gens_orders() + (0,)
 
     def subgroup_gens(self, level):
         r"""
@@ -1818,7 +1805,6 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         if level == 0:
             raise ValueError
-        elif level == 1:
+        if level == 1:
             return self.unit_gens(level)[:-1]
-        else:
-            return [1 + self.number_field().gen()**(level - 1)]
+        return [1 + self.number_field().gen()**(level - 1)]

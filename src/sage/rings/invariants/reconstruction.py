@@ -26,10 +26,10 @@ def binary_quadratic_coefficients_from_invariants(discriminant, invariant_choice
 
     INPUT:
 
-    - ``discriminant`` -- The value of the discriminant of the
-      binary quadratic.
+    - ``discriminant`` -- the value of the discriminant of the
+      binary quadratic
 
-    - ``invariant_choice`` -- The type of invariants provided. The accepted
+    - ``invariant_choice`` -- the type of invariants provided. The accepted
       options are ``'discriminant'`` and ``'default'``, which are the same. No
       other options are implemented.
 
@@ -54,11 +54,10 @@ def binary_quadratic_coefficients_from_invariants(discriminant, invariant_choice
                          'quadratic'.format(invariant_choice))
     if discriminant == 0:
         return (1, 0, 0)
-    else:
-        try:
-            return (1, 0, -discriminant/4)
-        except ZeroDivisionError:
-            return (0, 1, 0)
+    try:
+        return (1, 0, -discriminant/4)
+    except ZeroDivisionError:
+        return (0, 1, 0)
 
 
 def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='default'):
@@ -67,10 +66,10 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
 
     INPUT:
 
-    - ``discriminant`` -- The value of the discriminant of the
-      binary cubic.
+    - ``discriminant`` -- the value of the discriminant of the
+      binary cubic
 
-    - ``invariant_choice`` -- The type of invariants provided. The accepted
+    - ``invariant_choice`` -- the type of invariants provided. The accepted
       options are ``'discriminant'`` and ``'default'``, which are the same. No
       other options are implemented.
 
@@ -113,17 +112,17 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
 
     INPUT:
 
-    - ``invariants`` -- A list or tuple of values of the three or four
+    - ``invariants`` -- list or tuple of values of the three or four
       invariants. The default option requires the Clebsch invariants `A`, `B`,
       `C` and `R` of the binary quintic.
 
-    - ``K`` -- The field over which the quintic is defined.
+    - ``K`` -- the field over which the quintic is defined
 
-    - ``invariant_choice`` -- The type of invariants provided. The accepted
+    - ``invariant_choice`` -- the type of invariants provided. The accepted
       options are ``'clebsch'`` and ``'default'``, which are the same. No
       other options are implemented.
 
-    - ``scaling`` -- How the coefficients should be scaled. The accepted
+    - ``scaling`` -- how the coefficients should be scaled. The accepted
       values are ``'none'`` for no scaling, ``'normalized'`` to scale in such
       a way that the resulting coefficients are independent of the scaling of
       the input invariants and ``'coprime'`` which scales the input invariants
@@ -136,7 +135,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
 
     EXAMPLES:
 
-    First we check the general case, where the invariant `M` is non-zero::
+    First we check the general case, where the invariant `M` is nonzero::
 
         sage: R.<x0, x1> = QQ[]
         sage: p = 3*x1^5 + 6*x1^4*x0 + 3*x1^3*x0^2 + 4*x1^2*x0^3 - 5*x1*x0^4 + 4*x0^5
@@ -186,7 +185,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     If the invariant `M` vanishes, then the coefficients are computed in a
     different way::
 
-        sage: [A,B,C] = [3,1,2]
+        sage: A, B, C = 3, 1, 2
         sage: M = 2*A*B - 3*C
         sage: M
         0
@@ -265,7 +264,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     M = 2*A*B - 3*C
     N = K(2)**-1 * (A*C-B**2)
     R2 = -K(2)**-1 * (A*N**2-2*B*M*N+C*M**2)
-    scale = [1,1,1,1,1,1]
+    scale = [1, 1, 1, 1, 1, 1]
     from sage.arith.misc import binomial
     from sage.misc.functional import sqrt
     if len(invariants) == 3:
@@ -274,8 +273,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         else:
             # if R2 is not a square, we scale the invariants in a suitable way
             # so that the 'new' R2 is a square
-            [A, B, C] = [R2*A, R2**2*B, R2**3*C]
-            [M, N] = [R2**3*M, R2**4*N]
+            A, B, C = R2 * A, R2**2 * B, R2**3 * C
+            M, N = R2**3 * M, R2**4 * N
             R = R2**5
     elif len(invariants) == 4:
         if invariants[3]**2 != R2:
@@ -292,38 +291,36 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
                                  'quintics with a treefold linear factor')
             else:
                 if B == 0:
-                    return (1,0,0,0,0,1)
-                else:
-                    return (0,1,0,0,1,0)
+                    return (1, 0, 0, 0, 0, 1)
+                return (0, 1, 0, 0, 1, 0)
         else:
             # case corresponding to using alpha and gamma as coordinates
             if A == 0:
-                return (1,0,0,0,1,0)
-            else:
-                if scaling == 'normalized':
-                    # scaling z by (R/A**3)
-                    scale = [ (-N)**-5*A**6*(R/A**3)**i for i in range(6) ]
-                D = -N
-                Delta = C
-                a = [0]
-                a.append((2*K(3)**-1*A**2-B)*N*B*K(2)**-1 - N**2*K(2)**-1)
-                B0 = 2*K(3)**-1*A*R
-                B1 = A*N*B*K(3)**-1
-                C0 = 2*K(3)**-1*R
-                C1 = B*N
+                return (1, 0, 0, 0, 1, 0)
+            if scaling == 'normalized':
+                # scaling z by (R/A**3)
+                scale = [(-N)**-5*A**6*(R/A**3)**i for i in range(6)]
+            D = -N
+            Delta = C
+            a = [0]
+            a.append((2*K(3)**-1*A**2-B)*N*B*K(2)**-1 - N**2*K(2)**-1)
+            B0 = 2*K(3)**-1*A*R
+            B1 = A*N*B*K(3)**-1
+            C0 = 2*K(3)**-1*R
+            C1 = B*N
     else:
         # case corresponding to using alpha and beta as coordinates
         if R == 0:
             if A == 0:
                 return (1,0,10,0,-15,0)
-            elif scaling == 'normalized':
+            if scaling == 'normalized':
                 # scaling x by A and z by sqrt(A)
                 scale = [ (-M)**(-5)*sqrt(A)**(12+i) for i in range(6) ]
         else:
             if A == 0:
                 if B == 0:
                     return (1,0,0,1,0,0)
-                elif scaling == 'normalized':
+                if scaling == 'normalized':
                     # scaling y by R/B**2
                     scale = [ (-M)**(-3)*(R/B**2)**i for i in range(6) ]
             elif scaling == 'normalized':
@@ -347,8 +344,7 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     if scaling == 'coprime':
         from sage.arith.misc import gcd
         return tuple([coeffs[i]/gcd(coeffs) for i in range(6)])
-    else:
-        return coeffs
+    return coeffs
 
 
 ######################################################################
@@ -363,9 +359,9 @@ def _reduce_invariants(invariants, weights):
 
     INPUT:
 
-    - ``invariants`` -- The values of the invariants.
+    - ``invariants`` -- the values of the invariants
 
-    - ``weights`` -- The respective weights of the invariants.
+    - ``weights`` -- the respective weights of the invariants
 
     OUTPUT:
 

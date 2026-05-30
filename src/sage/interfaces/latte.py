@@ -21,13 +21,13 @@ from sage.features.latte import Latte_count, Latte_integrate
 
 def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False, raw_output=False, verbose=False, **kwds):
     r"""
-    Call to the program count from LattE integrale
+    Call to the program count from LattE integrale.
 
     INPUT:
 
     - ``arg`` -- a cdd or LattE description string
 
-    - ``ehrhart_polynomial``, ``multivariate_generating_function``  -- to
+    - ``ehrhart_polynomial``, ``multivariate_generating_function`` -- to
       compute Ehrhart polynomial or multivariate generating function instead of
       just counting points
 
@@ -185,35 +185,32 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         if raw_output:
             tempd.cleanup()
             return ans
-        else:
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.rings.rational_field import QQ
-            R = PolynomialRing(QQ, 't')
-            tempd.cleanup()
-            return R(ans)
-    elif multivariate_generating_function:
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.rational_field import QQ
+        R = PolynomialRing(QQ, 't')
+        tempd.cleanup()
+        return R(ans)
+    if multivariate_generating_function:
         with open(filename + '.rat') as f:
             ans = f.read()
         if raw_output:
             tempd.cleanup()
             return ans
-        else:
-            raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
+        raise NotImplementedError("there is no Sage object to handle multivariate series from LattE, use raw_output=True")
     else:
         if ans:  # Sometimes (when LattE's preproc does the work), no output appears on stdout.
             ans = ans.splitlines()[-1]
         if not ans:
             # opening a file is slow (30e-6s), so we read the file
             # numOfLatticePoints only in case of a IndexError above
-            with open(tempd.name + '/numOfLatticePoints', 'r') as f:
+            with open(tempd.name + '/numOfLatticePoints') as f:
                 ans = f.read()
 
         if raw_output:
             tempd.cleanup()
             return ans
-        else:
-            tempd.cleanup()
-            return Integer(ans)
+        tempd.cleanup()
+        return Integer(ans)
 
 
 def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, verbose=False, **kwds):
@@ -222,23 +219,21 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
 
     INPUT:
 
-    - ``arg`` -- a cdd or LattE description string.
+    - ``arg`` -- a cdd or LattE description string
 
-    - ``polynomial`` -- multivariate polynomial or valid LattE polynomial description string.
-      If given, the valuation parameter of LattE is set to integrate, and is set to volume otherwise.
+    - ``polynomial`` -- multivariate polynomial or valid LattE polynomial description string
+      If given, the valuation parameter of LattE is set to integrate, and is set to volume otherwise
 
-    - ``algorithm`` -- (default: 'triangulate') the integration method. Use 'triangulate' for
-      polytope triangulation or 'cone-decompose' for tangent cone decomposition method.
+    - ``algorithm`` -- (default: ``'triangulate'``) the integration method; use 'triangulate' for
+      polytope triangulation or 'cone-decompose' for tangent cone decomposition method
 
-    - ``raw_output`` -- if ``True`` then return directly the output string from LattE.
+    - ``raw_output`` -- if ``True`` then return directly the output string from LattE
 
-    - ``verbose`` -- if ``True`` then return directly verbose output from LattE.
+    - ``verbose`` -- if ``True`` then return directly verbose output from LattE
 
-    - For all other options of the integrate program, consult the LattE manual.
+    - For all other options of the integrate program, consult the LattE manual
 
-    OUTPUT:
-
-    Either a string (if ``raw_output`` if set to ``True``) or a rational.
+    OUTPUT: either a string (if ``raw_output`` if set to ``True``) or a rational
 
     EXAMPLES::
 
@@ -415,8 +410,7 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
     tempd.cleanup()
     if raw_output:
         return ans
-    else:
-        return Rational(ans)
+    return Rational(ans)
 
 
 def to_latte_polynomial(polynomial):
@@ -425,11 +419,9 @@ def to_latte_polynomial(polynomial):
 
     INPUT:
 
-    - ``polynomial`` -- a multivariate polynomial.
+    - ``polynomial`` -- a multivariate polynomial
 
-    OUTPUT:
-
-    A string that describes the monomials list and exponent vectors.
+    OUTPUT: string that describes the monomials list and exponent vectors
 
     TESTS:
 

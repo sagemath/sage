@@ -21,15 +21,15 @@ AUTHORS:
 - Jeroen Demeyer (2015-03-02): move from ``c_lib`` to Cython (:issue:`17881`)
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2011-2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 from cysignals.signals cimport sig_error
@@ -44,7 +44,7 @@ cdef extern from "Python.h":
 
 cdef void alloc_error(size_t size) noexcept nogil:
     """
-    Jump back to ``sig_on()``, raising a :class:`MemoryError`.
+    Jump back to ``sig_on()``, raising a :exc:`MemoryError`.
     """
     with gil:
         PyErr_Format(MemoryError, "failed to allocate %zu bytes", size)
@@ -92,5 +92,6 @@ def init_memory_functions():
         sage: init_memory_functions()
     """
     mp_set_memory_functions(sage_sig_malloc, sage_sig_realloc, sage_sig_free)
+
 
 init_memory_functions()

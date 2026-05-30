@@ -61,7 +61,7 @@ Lift an MSymbol to a matrix in `SL(2, R)`:
 
     sage: alpha = MSymbol(N, a + 2, 3*a^2)
     sage: alpha.lift_to_sl2_Ok()
-    [-1, 4*a^2 - 13*a + 23, a + 2, 5*a^2 + 3*a - 3]
+    [-a - 1, 15*a^2 - 38*a + 86, a + 2, -a^2 + 9*a - 19]
     sage: Ok = k.ring_of_integers()
     sage: M = Matrix(Ok, 2, alpha.lift_to_sl2_Ok())
     sage: det(M)
@@ -122,16 +122,18 @@ class MSymbol(SageObject):
 
     INPUT:
 
-    -  ``N`` -- integral ideal (the modulus or level).
+    - ``N`` -- integral ideal (the modulus or level)
 
     - ``c`` -- integral element of the underlying number field or an MSymbol of
-      level N.
+      level N
 
     - ``d`` -- (optional) when present, it must be an integral element such
-      that `\langle c\rangle + \langle d\rangle + N = R`, where `R` is the corresponding ring of integers.
+      that `\langle c\rangle + \langle d\rangle + N = R`, where `R` is the
+      corresponding ring of integers
 
-    - ``check`` -- bool (default ``True``). If ``check=False`` the constructor does
-      not check the condition `\langle c\rangle + \langle d\rangle + N = R`.
+    - ``check`` -- boolean (default: ``True``); if ``check=False`` the
+      constructor does not check the condition
+      `\langle c\rangle + \langle d\rangle + N = R`
 
     OUTPUT:
 
@@ -232,7 +234,7 @@ class MSymbol(SageObject):
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -384,7 +386,7 @@ class MSymbol(SageObject):
 
         INPUT:
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -431,19 +433,16 @@ class MSymbol(SageObject):
         if self.__c in N:
             if with_scalar:
                 return N.reduce(self.d), MSymbol(N, 0, 1)
-            else:
-                return MSymbol(N, 0, 1)
+            return MSymbol(N, 0, 1)
         if self.d in N:
             if with_scalar:
                 return N.reduce(self.c), MSymbol(N, 1, 0)
-            else:
-                return MSymbol(N, 1, 0)
+            return MSymbol(N, 1, 0)
         if N.is_coprime(self.c):
             cinv = R(self.c).inverse_mod(N)
             if with_scalar:
                 return N.reduce(self.c), MSymbol(N, 1, N.reduce(self.d*cinv))
-            else:
-                return MSymbol(N, 1, N.reduce(self.d*cinv))
+            return MSymbol(N, 1, N.reduce(self.d*cinv))
 
         if N in _level_cache:
             Lfacs, Lxs = _level_cache[N]
@@ -467,8 +466,7 @@ class MSymbol(SageObject):
             c = R(1)
         if with_scalar:
             return u.inverse_mod(N), MSymbol(N, c, d)
-        else:
-            return MSymbol(N, c, d)
+        return MSymbol(N, c, d)
 
 
 # ************************************************************************
@@ -484,7 +482,7 @@ class P1NFList(SageObject):
 
     INPUT:
 
-    -  ``N`` - integral ideal (the modulus or level).
+    - ``N`` -- integral ideal (the modulus or level)
 
     OUTPUT:
 
@@ -618,12 +616,12 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the underlying number field, or an
-          MSymbol.
+          MSymbol
 
         - ``d`` -- (optional) when present, it must be an integral element of
-          the number field such that `(c, d)` defines an M-symbol of level `N`.
+          the number field such that `(c, d)` defines an M-symbol of level `N`
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -690,18 +688,18 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the corresponding number field, or an
-          :class:`MSymbol`.
+          :class:`MSymbol`
 
         - ``d`` -- (optional) when present, it must be an integral element of
-          the number field such that `(c, d)` defines an M-symbol of level `N`.
+          the number field such that `(c, d)` defines an M-symbol of level `N`
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default: ``False``)
 
         OUTPUT:
 
-        - ``u`` - the normalizing scalar (only if ``with_scalar=True``)
+        - ``u`` -- the normalizing scalar (only if ``with_scalar=True``)
 
-        - ``i`` - the index of `(c, d)` in the list.
+        - ``i`` -- the index of `(c, d)` in the list
 
         EXAMPLES::
 
@@ -762,8 +760,7 @@ class P1NFList(SageObject):
         if t:
             if with_scalar:
                 return u, i
-            else:
-                return i
+            return i
         return False
 
     def index_of_normalized_pair(self, c, d=None):
@@ -774,15 +771,13 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the corresponding number field, or a
-          normalized :class:`MSymbol`.
+          normalized :class:`MSymbol`
 
         - ``d`` -- (optional) when present, it must be an integral element of
           the number field such that `(c, d)` defines a normalized M-symbol of
-          level `N`.
+          level `N`
 
-        OUTPUT:
-
-        - ``i`` - the index of `(c, d)` in the list.
+        OUTPUT: ``i`` -- the index of `(c, d)` in the list
 
         EXAMPLES::
 
@@ -916,19 +911,19 @@ class P1NFList(SageObject):
 
     def apply_T_alpha(self, i, alpha=1):
         r"""
-        Applies the matrix `T_{alpha}` = [1, `alpha`, 0, 1] to the `i`-th M-Symbol of
-        the list.
+        Applies the matrix `T_{alpha}` = [1, `alpha`, 0, 1] to the `i`-th
+        M-Symbol of the list.
 
         INPUT:
 
         - ``i`` -- integer
 
-        - ``alpha`` -- (default 1) element of the corresponding ring of integers
+        - ``alpha`` -- (default: 1) element of the corresponding ring of integers
 
         OUTPUT:
 
         integer -- the index of the M-Symbol obtained by the right action of
-        the matrix `T_{alpha}` = [1, `alpha`, 0, 1] on the i-th M-Symbol.
+        the matrix `T_{alpha}` = [1, `alpha`, 0, 1] on the `i`-th M-Symbol.
 
         EXAMPLES::
 
@@ -963,7 +958,7 @@ class P1NFList(SageObject):
 
         - ``e1`` -- unit
 
-        - ``e2`` -- unit (default 1)
+        - ``e2`` -- unit (default: 1)
 
         OUTPUT:
 
@@ -977,11 +972,11 @@ class P1NFList(SageObject):
             sage: N = k.ideal(5, a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, -2*a^2 - 4*a + 1]
+            [-1, 2*a^2 + 4*a - 1]
             sage: P.apply_J_epsilon(4, -1)
             2
             sage: P.apply_J_epsilon(4, u[0], u[1])
-            5
+            1
 
         ::
 
@@ -1013,7 +1008,7 @@ def p1NFlist(N):
 
     INPUT:
 
-    -  ``N`` - integral ideal (the level or modulus).
+    - ``N`` -- integral ideal (the level or modulus)
 
     EXAMPLES::
 
@@ -1073,7 +1068,6 @@ def lift_to_sl2_Ok(N, c, d):
     a `2\times 2` matrix with determinant 1. The lower two entries are congruent to
     `c`, `d` modulo the ideal `N`.
 
-
     EXAMPLES::
 
         sage: from sage.modular.modsym.p1list_nf import lift_to_sl2_Ok
@@ -1123,7 +1117,7 @@ def lift_to_sl2_Ok(N, c, d):
         sage: M = Matrix(Ok, 2, lift_to_sl2_Ok(N, 0, 7))
         Traceback (most recent call last):
         ...
-        ValueError: <0> + <7> and the Fractional ideal (7, a) are not coprime.
+        ValueError: <0> + <7> and the Fractional ideal (7, -4/7*a^3 + 13/7*a^2 + 39/7*a - 19) are not coprime.
     """
     k = N.number_field()
     # check the input
@@ -1198,16 +1192,15 @@ def make_coprime(N, c, d):
     k = N.number_field()
     if k.ideal(c).is_coprime(d):
         return c, d
-    else:
-        q = k.ideal(c).prime_to_idealM_part(d)
-        it = k.primes_of_degree_one_iter()
-        r = k.ideal(1)
-        qN = q*N
-        while not (r.is_coprime(c) and (r*qN).is_principal()):
-            r = next(it)
-        m = (r*qN).gens_reduced()[0]
-        d1 = d + m
-        return c, d1
+    q = k.ideal(c).prime_to_idealM_part(d)
+    it = k.primes_of_degree_one_iter()
+    r = k.ideal(1)
+    qN = q*N
+    while not (r.is_coprime(c) and (r*qN).is_principal()):
+        r = next(it)
+    m = (r*qN).gens_reduced()[0]
+    d1 = d + m
+    return c, d1
 
 
 def psi(N):

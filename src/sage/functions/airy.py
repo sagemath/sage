@@ -62,11 +62,11 @@ lazy_import('mpmath', ['airyai', 'airybi'],
 class FunctionAiryAiGeneral(BuiltinFunction):
     def __init__(self):
         r"""
-        The generalized derivative of the Airy Ai function
+        The generalized derivative of the Airy Ai function.
 
         INPUT:
 
-        - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+        - ``alpha`` -- return the `\alpha`-th order fractional derivative with
           respect to `z`.
           For `\alpha = n = 1,2,3,\ldots` this gives the derivative
           `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -78,7 +78,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
 
             f_n(z) = \int_0^z f_{n-1}(t) dt
 
-        - ``x`` -- The argument of the function
+        - ``x`` -- the argument of the function
 
         EXAMPLES::
 
@@ -137,8 +137,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
                 return airy_ai_prime(x)
             if alpha == 2:
                 return x*airy_ai_simple(x)
-        else:
-            return None
+        return None
 
     def _evalf_(self, alpha, x, parent=None, algorithm=None):
         """
@@ -241,7 +240,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[0]
                 if parent is None:
@@ -251,10 +250,9 @@ class FunctionAiryAiSimple(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             return _mpmath_utils_call(_mpmath_airyai, x, parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 class FunctionAiryAiPrime(BuiltinFunction):
@@ -341,7 +339,7 @@ class FunctionAiryAiPrime(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[1]
                 if parent is None:
@@ -351,11 +349,10 @@ class FunctionAiryAiPrime(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             return _mpmath_utils_call(_mpmath_airyai, x, derivative=1,
                                      parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 airy_ai_general = FunctionAiryAiGeneral()
@@ -365,7 +362,7 @@ airy_ai_prime = FunctionAiryAiPrime()
 
 def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
     r"""
-    The Airy Ai function
+    The Airy Ai function.
 
     The Airy Ai function `\operatorname{Ai}(x)` is (along with
     `\operatorname{Bi}(x)`) one of the two linearly independent standard
@@ -387,7 +384,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
     INPUT:
 
-    - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+    - ``alpha`` -- return the `\alpha`-th order fractional derivative with
       respect to `z`.
       For `\alpha = n = 1,2,3,\ldots` this gives the derivative
       `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -399,9 +396,9 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
         f_n(z) = \int_0^z f_{n-1}(t) dt
 
-    - ``x`` -- The argument of the function
+    - ``x`` -- the argument of the function
 
-    - ``hold_derivative`` -- Whether or not to stop from returning higher
+    - ``hold_derivative`` -- whether or not to stop from returning higher
       derivatives in terms of `\operatorname{Ai}(x)` and
       `\operatorname{Ai}'(x)`
 
@@ -478,11 +475,11 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
         return airy_ai_general(alpha, x, **kwds)
     if hold_derivative:
         return airy_ai_general(alpha, x, **kwds)
-    elif alpha == 0:
+    if alpha == 0:
         return airy_ai_simple(x, **kwds)
-    elif alpha == 1:
+    if alpha == 1:
         return airy_ai_prime(x, **kwds)
-    elif alpha > 1:
+    if alpha > 1:
         # We use a different variable here because if x is a
         # particular value, we would be differentiating a constant
         # which would return 0. What we want is the value of
@@ -490,8 +487,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
         # a particular value of the function.
         v = SR.symbol()
         return derivative(airy_ai_simple(v, **kwds), v, alpha).subs({v: x})
-    else:
-        return airy_ai_general(alpha, x, **kwds)
+    return airy_ai_general(alpha, x, **kwds)
 
 ########################################################################
 ########################################################################
@@ -504,7 +500,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
 
         INPUT:
 
-        - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+        - ``alpha`` -- return the `\alpha`-th order fractional derivative with
           respect to `z`.
           For `\alpha = n = 1,2,3,\ldots` this gives the derivative
           `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -516,7 +512,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
 
             f_n(z) = \int_0^z f_{n-1}(t) dt
 
-        - ``x`` -- The argument of the function
+        - ``x`` -- the argument of the function
 
         EXAMPLES::
 
@@ -581,7 +577,6 @@ class FunctionAiryBiGeneral(BuiltinFunction):
             sage: from sage.functions.airy import airy_bi_general
             sage: airy_bi_general(-2, 1.0)                                              # needs mpmath
             0.388621540699059
-
         """
         parent = kwargs.get('parent')
         import mpmath
@@ -681,7 +676,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[2]
                 if parent is None:
@@ -691,12 +686,11 @@ class FunctionAiryBiSimple(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             import mpmath
             from sage.libs.mpmath import utils as mpmath_utils
             return _mpmath_utils_call(_mpmath_airybi, x, parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 class FunctionAiryBiPrime(BuiltinFunction):
@@ -783,7 +777,7 @@ class FunctionAiryBiPrime(BuiltinFunction):
             from sage.rings.real_mpfr import RR
             from sage.rings.cc import CC
             from sage.functions.other import real, imag
-            from scipy.special import airy as airy
+            from scipy.special import airy
             if x in RR:
                 y = airy(real(x))[3]
                 if parent is None:
@@ -793,11 +787,10 @@ class FunctionAiryBiPrime(BuiltinFunction):
                 if parent is None:
                     return CC(y)
             return parent(y)
-        elif algorithm == 'mpmath':
+        if algorithm == 'mpmath':
             return _mpmath_utils_call(_mpmath_airybi, x, derivative=1,
                                      parent=parent)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
 
 airy_bi_general = FunctionAiryBiGeneral()
@@ -807,7 +800,7 @@ airy_bi_prime = FunctionAiryBiPrime()
 
 def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
     r"""
-    The Airy Bi function
+    The Airy Bi function.
 
     The Airy Bi function `\operatorname{Bi}(x)` is (along with
     `\operatorname{Ai}(x)`) one of the two linearly independent standard
@@ -830,7 +823,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
     INPUT:
 
-    - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+    - ``alpha`` -- return the `\alpha`-th order fractional derivative with
       respect to `z`.
       For `\alpha = n = 1,2,3,\ldots` this gives the derivative
       `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -842,11 +835,11 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
         f_n(z) = \int_0^z f_{n-1}(t) dt
 
-    - ``x`` -- The argument of the function
+    - ``x`` -- the argument of the function
 
-    - ``hold_derivative`` -- Whether or not to stop from returning higher
-      derivatives in terms of `\operatorname{Bi}(x)` and
-      `\operatorname{Bi}'(x)`
+    - ``hold_derivative`` -- boolean (default: ``True``); whether or not to
+      stop from returning higher derivatives in terms of `\operatorname{Bi}(x)`
+      and `\operatorname{Bi}'(x)`
 
     .. SEEALSO:: :func:`airy_ai`
 
@@ -921,11 +914,11 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
         return airy_bi_general(alpha, x, **kwds)
     if hold_derivative:
         return airy_bi_general(alpha, x, **kwds)
-    elif alpha == 0:
+    if alpha == 0:
         return airy_bi_simple(x, **kwds)
-    elif alpha == 1:
+    if alpha == 1:
         return airy_bi_prime(x, **kwds)
-    elif alpha > 1:
+    if alpha > 1:
         # We use a different variable here because if x is a
         # particular value, we would be differentiating a constant
         # which would return 0. What we want is the value of
@@ -933,5 +926,4 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
         # a particular value of the function.
         v = SR.symbol()
         return derivative(airy_bi_simple(v, **kwds), v, alpha).subs({v: x})
-    else:
-        return airy_bi_general(alpha, x, **kwds)
+    return airy_bi_general(alpha, x, **kwds)

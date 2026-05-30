@@ -14,9 +14,9 @@ from itertools import product
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.rational_field import RationalField
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.categories.map import Map
 from sage.categories.fields import Fields
@@ -36,23 +36,6 @@ from sage.schemes.affine.affine_point import (SchemeMorphism_point_affine,
 from sage.misc.persist import register_unpickle_override
 
 _Fields = Fields()
-
-
-def is_AffineSpace(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is an affine space.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.affine.affine_space import is_AffineSpace
-        sage: is_AffineSpace(AffineSpace(5, names='x'))
-        True
-        sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
-        True
-        sage: is_AffineSpace(Spec(ZZ))
-        False
-    """
-    return isinstance(x, AffineSpace_generic)
 
 
 def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
@@ -104,7 +87,7 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         ...
         NameError: variable names passed to AffineSpace conflict with names in ring
     """
-    if (is_MPolynomialRing(n) or is_PolynomialRing(n)) and R is None:
+    if isinstance(n, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         R = n
         if names is not None:
             # Check for the case that the user provided a variable name
@@ -133,9 +116,8 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         if isinstance(R, FiniteField):
             return AffineSpace_finite_field(n, R, names,
                                             ambient_projective_space, default_embedding_index)
-        else:
-            return AffineSpace_field(n, R, names,
-                                     ambient_projective_space, default_embedding_index)
+        return AffineSpace_field(n, R, names,
+                                 ambient_projective_space, default_embedding_index)
     return AffineSpace_generic(n, R, names, ambient_projective_space, default_embedding_index)
 
 
@@ -228,8 +210,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def ngens(self):
         """
-        Return the number of generators of self, i.e. the number of
-        variables in the coordinate ring of self.
+        Return the number of generators of ``self``, i.e. the number of
+        variables in the coordinate ring of ``self``.
 
         EXAMPLES::
 
@@ -242,8 +224,8 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
     def rational_points(self, F=None):
         """
-        Return the list of ``F``-rational points on the affine space self,
-        where ``F`` is a given finite field, or the base ring of self.
+        Return the list of ``F``-rational points on the affine space ``self``,
+        where ``F`` is a given finite field, or the base ring of ``self``.
 
         EXAMPLES::
 
@@ -271,7 +253,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             if not isinstance(self.base_ring(), FiniteField):
                 raise TypeError("base ring (= %s) must be a finite field" % self.base_ring())
             return list(self)
-        elif not isinstance(F, FiniteField):
+        if not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return list(self.base_extend(F))
 
@@ -327,14 +309,14 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         EXAMPLES::
 
             sage: print(latex(AffineSpace(1, ZZ, 'x')))
-            \mathbf{A}_{\Bold{Z}}^1
+            \mathbf{A}_{\Bold{Z}}^{1}
 
         TESTS::
 
-            sage: AffineSpace(3, Zp(5), 'y')._latex_()                                  # needs sage.rings.padics
-            '\\mathbf{A}_{\\Bold{Z}_{5}}^3'
+            sage: AffineSpace(11, Zp(5), 'y')._latex_()                                 # needs sage.rings.padics
+            '\\mathbf{A}_{\\Bold{Z}_{5}}^{11}'
         """
-        return "\\mathbf{A}_{%s}^%s" % (latex(self.base_ring()), self.dimension_relative())
+        return "\\mathbf{A}_{%s}^{%s}" % (latex(self.base_ring()), self.dimension_relative())
 
     def _morphism(self, *args, **kwds):
         """
@@ -480,7 +462,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
     def _check_satisfies_equations(self, v):
         """
         Return ``True`` if ``v`` defines a point on the scheme ``self``; raise a
-        :class:`TypeError` otherwise.
+        :exc:`TypeError` otherwise.
 
         EXAMPLES::
 
@@ -521,11 +503,9 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``m`` -- integer.
+        - ``m`` -- integer
 
-        OUTPUT:
-
-        - affine ambient space.
+        OUTPUT: affine ambient space
 
         EXAMPLES::
 
@@ -554,9 +534,9 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``right`` - an affine space or subscheme.
+        - ``right`` -- an affine space or subscheme
 
-        OUTPUT: an affine space.= or subscheme.
+        OUTPUT: an affine space.= or subscheme
 
         EXAMPLES::
 
@@ -616,9 +596,9 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``R`` -- commutative ring or morphism.
+        - ``R`` -- commutative ring or morphism
 
-        OUTPUT: An affine space over ``R``.
+        OUTPUT: an affine space over ``R``
 
         .. NOTE::
 
@@ -643,8 +623,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         if isinstance(R, Map):
             return AffineSpace(self.dimension_relative(), R.codomain(), self.variable_names())
-        else:
-            return AffineSpace(self.dimension_relative(), R, self.variable_names())
+        return AffineSpace(self.dimension_relative(), R, self.variable_names())
 
     def coordinate_ring(self):
         """
@@ -670,18 +649,16 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
     def _validate(self, polynomials):
         """
         If ``polynomials`` is a tuple of valid polynomial functions on the affine space,
-        return ``polynomials``, otherwise raise :class:`TypeError`.
+        return ``polynomials``, otherwise raise :exc:`TypeError`.
 
         Since this is an affine space, all polynomials are valid.
 
         INPUT:
 
         - ``polynomials`` -- tuple of polynomials in the coordinate ring of
-          this space.
+          this space
 
-        OUTPUT:
-
-        - tuple of polynomials in the coordinate ring of this space.
+        OUTPUT: tuple of polynomials in the coordinate ring of this space
 
         EXAMPLES::
 
@@ -698,15 +675,12 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
+        - ``i`` -- integer (default: dimension of self = last coordinate)
+          determines which projective embedding to compute. The embedding is
+          that which has a 1 in the `i`-th coordinate, numbered from 0.
 
-        -  ``i`` -- integer (default: dimension of self = last
-           coordinate) determines which projective embedding to compute. The
-           embedding is that which has a 1 in the i-th coordinate, numbered
-           from 0.
-
-        -  ``PP`` -- (default: None) ambient projective space, i.e.,
-           codomain of morphism; this is constructed if it is not
-           given.
+        - ``PP`` -- (default: ``None``) ambient projective space, i.e.,
+          codomain of morphism; this is constructed if it is not given.
 
         EXAMPLES::
 
@@ -795,7 +769,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        -  ``X`` - a list or tuple of equations.
+        - ``X`` -- list or tuple of equations
 
         EXAMPLES::
 
@@ -869,13 +843,13 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer.
+        - ``n`` -- nonnegative integer
 
-        - ``kind`` -- ``first`` or ``second`` specifying which kind of chebyshev the user would like
-          to generate. Defaults to ``first``.
+        - ``kind`` -- ``'first'`` (default) or ``'second'`` specifying which
+          kind of Chebyshev the user would like to generate
 
-        - ``monic`` -- ``True`` or ``False`` specifying if the polynomial defining the system
-          should be monic or not. Defaults to ``False``.
+        - ``monic`` -- boolean (default: ``False``) specifying if the
+          polynomial defining the system should be monic or not
 
         OUTPUT: :class:`DynamicalSystem_affine`
 
@@ -907,7 +881,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             sage: A.chebyshev_polynomial(-4, 'second')
             Traceback (most recent call last):
             ...
-            ValueError: first parameter 'n' must be a non-negative integer
+            ValueError: first parameter 'n' must be a nonnegative integer
 
         ::
 
@@ -937,7 +911,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             raise TypeError("affine space must be of dimension 1")
         n = ZZ(n)
         if n < 0:
-            raise ValueError("first parameter 'n' must be a non-negative integer")
+            raise ValueError("first parameter 'n' must be a nonnegative integer")
 
         from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
         from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
@@ -951,7 +925,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
                 f = f.dehomogenize(1)
                 return f
             return DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
-        elif kind == 'second':
+        if kind == 'second':
             if monic and self.base().characteristic() != 2:
                 f = DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
                 f = f.homogenize(1)
@@ -959,8 +933,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
                 f = f.dehomogenize(1)
                 return f
             return DynamicalSystem_affine([chebyshev_U(n, self.gen(0))], domain=self)
-        else:
-            raise ValueError("keyword 'kind' must have a value of either 'first' or 'second'")
+        raise ValueError("keyword 'kind' must have a value of either 'first' or 'second'")
 
     def origin(self):
         """
@@ -1025,19 +998,15 @@ class AffineSpace_field(AffineSpace_generic):
         slightly larger than the bound may be returned. This can be controlled
         by lowering the tolerance.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- a real number
 
-        - ``bound`` - a real number
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm algorithm-4
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields
 
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields
-
-        OUTPUT:
-
-        - an iterator of points in self
+        OUTPUT: an iterator of points in self
 
         EXAMPLES::
 
@@ -1058,7 +1027,7 @@ class AffineSpace_field(AffineSpace_generic):
             sage: len(list(A.points_of_bounded_height(bound=2, tolerance=0.1)))         # needs sage.rings.number_field
             529
         """
-        if is_RationalField(self.base_ring()):
+        if isinstance(self.base_ring(), RationalField):
             ftype = False  # stores whether field is a number field or the rational field
         elif self.base_ring() in NumberFields():  # true for rational field as well, so check is_RationalField first
             ftype = True
@@ -1103,7 +1072,7 @@ class AffineSpace_field(AffineSpace_generic):
         If the field is a finite field, then this computes
         the Weil restriction to the prime subfield.
 
-        OUTPUT: Affine space of dimension ``d * self.dimension_relative()``
+        OUTPUT: affine space of dimension ``d * self.dimension_relative()``
         over the base field of ``self.base_ring()``.
 
         EXAMPLES::
@@ -1219,7 +1188,6 @@ class AffineSpace_field(AffineSpace_generic):
                     (x + 3, y + 3, z + 3)
             sage: psi * phi == A.translation(p, q)
             True
-
         """
         gens = self.gens()
 

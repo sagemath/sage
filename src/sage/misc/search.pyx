@@ -33,13 +33,11 @@ cpdef search(object v, object x):
 
     INPUT:
 
-    - v -- a list, which is assumed sorted
+    - ``v`` -- list; which is assumed sorted
 
-    - x -- Python object
+    - ``x`` -- Python object
 
-    OUTPUT:
-
-    bool, int
+    OUTPUT: boolean, integer
 
     This is implemented using the built-in ``bisect`` module.
 

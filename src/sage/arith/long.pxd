@@ -30,9 +30,9 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
     r"""
     Given a Python object ``x`` cast it quickly to a C long.
 
-    A :class:`TypeError` is raised if the input cannot be converted to
+    A :exc:`TypeError` is raised if the input cannot be converted to
     an integer or
-    an :class:`OverflowError` is raised if it does not fit into a C long.
+    an :exc:`OverflowError` is raised if it does not fit into a C long.
 
     TESTS:
 
@@ -50,8 +50,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
         sage: a^(2**258)
         Traceback (most recent call last):
         ...
-        OverflowError: exponent must be at most 2147483647           # 32-bit
-        OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+        OverflowError: exponent must be at most ...
 
     See :issue:`22319`::
 
@@ -95,18 +94,18 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
 
     Possible errors when returning ``True``:
 
-    - ``0``: ``x`` was successfully converted to a C long and its value
-      is stored in ``*value``.
+    - ``0`` -- ``x`` was successfully converted to a C long and its value
+      is stored in ``*value``
 
-    - ``ERR_OVERFLOW``: ``x`` is an integer type but too large to store
-      in a C long.
+    - ``ERR_OVERFLOW`` -- ``x`` is an integer type but too large to store
+      in a C long
 
     Possible errors when returning ``False``:
 
-    - ``ERR_TYPE``: ``x`` is not an integer type of any kind.
+    - ``ERR_TYPE`` -- ``x`` is not an integer type of any kind
 
-    - ``ERR_INDEX``: ``x`` implements ``__index__`` but a :class:`TypeError`
-      was raised calling ``__index__()``.
+    - ``ERR_INDEX`` -- ``x`` implements ``__index__`` but a :exc:`TypeError`
+      was raised calling ``__index__()``
 
     - Other exceptions in ``__index__`` are simply propagated. This is
       the only way this function can raise an exception.
@@ -224,7 +223,7 @@ cdef inline long dig(const digit* D, int n) noexcept:
 
 cdef inline bint integer_check_long_py(x, long* value, int* err) noexcept:
     """
-    Return whether ``x`` is a python object of type ``int``.
+    Return whether ``x`` is a Python object of type ``int``.
 
     If possible, compute the value of this integer as C long and store
     it in ``*value``.
@@ -234,15 +233,15 @@ cdef inline bint integer_check_long_py(x, long* value, int* err) noexcept:
 
     Possible errors when returning ``True``:
 
-    - ``0``: ``x`` was successfully converted to a C long and its value
-      is stored in ``*value``.
+    - ``0`` -- ``x`` was successfully converted to a C long and its value
+      is stored in ``*value``
 
-    - ``ERR_OVERFLOW``: ``x`` is a python object of type ``int`` but
-      too large to store in a C long.
+    - ``ERR_OVERFLOW`` -- ``x`` is a Python object of type ``int`` but
+      too large to store in a C long
 
     Possible errors when returning ``False``:
 
-    - ``ERR_TYPE``: ``x`` is not a python object of type ``int``.
+    - ``ERR_TYPE`` -- ``x`` is not a Python object of type ``int``
 
     EXAMPLES:
 
@@ -272,15 +271,18 @@ cdef inline bint integer_check_long_py(x, long* value, int* err) noexcept:
         sage: L += [-x for x in L] + [0, long_min()]
         sage: for v in L:
         ....:     assert check_long_py(int(v)) == v
-        sage: check_long_py(int(2^60))
-        1152921504606846976                 # 64-bit
-        'Overflow (...)'                    # 32-bit
-        sage: check_long_py(int(2^61))
-        2305843009213693952                 # 64-bit
-        'Overflow (...)'                    # 32-bit
-        sage: check_long_py(int(2^62))
-        4611686018427387904                 # 64-bit
-        'Overflow (...)'                    # 32-bit
+        sage: check_long_py(int(2^60))  # needs 32_bit
+        'Overflow (...)'
+        sage: check_long_py(int(2^60))  # needs !32_bit
+        1152921504606846976
+        sage: check_long_py(int(2^61))  # needs 32_bit
+        'Overflow (...)'
+        sage: check_long_py(int(2^61))  # needs !32_bit
+        2305843009213693952
+        sage: check_long_py(int(2^62))  # needs 32_bit
+        'Overflow (...)'
+        sage: check_long_py(int(2^62))  # needs !32_bit
+        4611686018427387904
         sage: check_long_py(int(2^63))
         'Overflow (...)'
         sage: check_long_py(int(2^100))

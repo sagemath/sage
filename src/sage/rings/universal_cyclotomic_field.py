@@ -160,7 +160,6 @@ AUTHORS:
 - Vincent Delecroix (2015): completed rewriting using libgap (see :issue:`18152`)
 - Sebastian Oehms (2018): deleted the method is_finite since it returned the wrong result (see :issue:`25686`)
 - Sebastian Oehms (2019): added :meth:`_factor_univariate_polynomial` (see :issue:`28631`)
-
 """
 
 import sage.rings.abc
@@ -582,7 +581,6 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         Using a non-standard embedding::
 
-            sage: # needs sage.symbolic
             sage: CF = CyclotomicField(5, embedding=CC(exp(4*pi*i/5)))
             sage: x = E(5)
             sage: CC(x)
@@ -630,8 +628,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         coeffs = self._obj.CoeffsCyc(k).sage()
         if k == 1:
             return hash(coeffs[0])
-        else:
-            return hash((k,) + tuple(coeffs))
+        return hash((k,) + tuple(coeffs))
 
     def _algebraic_(self, R):
         r"""
@@ -643,7 +640,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: AA(UCF.gen(5))
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with non-zero imaginary
+            ValueError: Cannot coerce algebraic number with nonzero imaginary
             part to algebraic real
         """
         return R(QQbar(self))
@@ -1006,8 +1003,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
                 return self ** num
             if den == 2 and self._obj.IsRat():
                 return self.sqrt() ** num
-            else:
-                raise NotImplementedError("no powering implemented beyond square root of rationals")
+            raise NotImplementedError("no powering implemented beyond square root of rationals")
 
         raise NotImplementedError("no powering implemented for non-rational exponents")
 
@@ -1048,13 +1044,13 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if ``True``, might return a
-           square root in the algebraic closure of the rationals. If false,
-           return a square root in the universal cyclotomic field or raises
-           an error.
+        - ``extend`` -- boolean (default: ``True``); if ``True``, might return
+          a square root in the algebraic closure of the rationals. If
+          ``False``, return a square root in the universal cyclotomic field or
+          raises an error.
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return a
-           list of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          list of all square roots
 
         EXAMPLES::
 
@@ -1108,9 +1104,8 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
             if self._obj.IsInt():
                 return UCF_sqrt_int(D, UCF)
-            else:
-                return UCF_sqrt_int(D.numerator(), UCF) / \
-                    UCF_sqrt_int(D.denominator(), UCF)
+            return UCF_sqrt_int(D.numerator(), UCF) / \
+                UCF_sqrt_int(D.denominator(), UCF)
 
         # root of unity
         k = self._obj.Conductor()
@@ -1124,8 +1119,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         # no method to construct square roots yet...
         if extend:
             return QQbar(self).sqrt()
-        else:
-            raise NotImplementedError("sqrt() not fully implemented for elements of Universal Cyclotomic Field")
+        raise NotImplementedError("sqrt() not fully implemented for elements of Universal Cyclotomic Field")
 
     def conjugate(self):
         r"""
@@ -1250,7 +1244,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         INPUT:
 
-        - ``var`` -- (optional, default 'x') the name of the variable to use.
+        - ``var`` -- (default: ``'x'``) the name of the variable to use
 
         EXAMPLES::
 
@@ -1335,8 +1329,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         if n == 1:
             return (self.gen,)
-        else:
-            raise ValueError("This ring has only a single generator method.")
+        raise ValueError("This ring has only a single generator method.")
 
     def an_element(self):
         r"""
@@ -1520,9 +1513,9 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         if isinstance(elt, (Integer, Rational)):
             return self.element_class(self, libgap(elt))
-        elif isinstance(elt, (GapElement_Integer, GapElement_Rational, GapElement_Cyclotomic)):
+        if isinstance(elt, (GapElement_Integer, GapElement_Rational, GapElement_Cyclotomic)):
             return self.element_class(self, elt)
-        elif not elt:
+        if not elt:
             return self.zero()
 
         obj = None
@@ -1587,8 +1580,8 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         OUTPUT:
 
-        - A factorization of ``f`` over self into a unit and monic irreducible
-          factors
+        A factorization of ``f`` over ``self`` into a unit and monic
+        irreducible factors.
 
         .. NOTE::
 
@@ -1621,7 +1614,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
             (x - 2) * (x - 2*E(3)) * (x - 2*E(3)^2)
 
         In most situations, the factorization will fail with a
-        :class:`NotImplementedError`::
+        :exc:`NotImplementedError`::
 
             sage: (x^3 - 2).factor()
             Traceback (most recent call last):
@@ -1657,7 +1650,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         if f.degree() == 1:
             return Factorization([(f, 1)], unit)
 
-        # From now on, we restrict to polynomial with rational cofficients. The
+        # From now on, we restrict to polynomial with rational coefficients. The
         # factorization is provided only in the case it is a product of
         # cyclotomic polynomials and quadratic polynomials. In this situation
         # the roots belong to UCF and the polynomial factorizes as a product of

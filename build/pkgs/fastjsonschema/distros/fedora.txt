@@ -1,1 +1,1 @@
-python-fastjsonschema
+python3-fastjsonschema

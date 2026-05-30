@@ -135,9 +135,8 @@ class PermutationGroupMorphism(Morphism):
             J = PermutationGroup([J])
             G = self._libgap_().Image(J)
             return H.subgroup(gap_group=G).gens()[0]
-        else:
-            G = self._libgap_().Image(J)
-            return H.subgroup(gap_group=G)
+        G = self._libgap_().Image(J)
+        return H.subgroup(gap_group=G)
 
     def __call__(self, g):
         r"""
@@ -247,8 +246,8 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         r"""
         Some python code for wrapping GAP's ``GroupHomomorphismByImages``
         function but only for permutation groups. Can be expensive if G is
-        large. This returns "fail" if gens does not generate self or if the map
-        does not extend to a group homomorphism, self - other.
+        large. This returns "fail" if gens does not generate ``self`` or if the map
+        does not extend to a group homomorphism, ``self`` - ``other``.
 
         EXAMPLES::
 
@@ -308,19 +307,3 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
             [ (1,2,3,4) ] -> [ (1,2,3,4) ]
         """
         return self.domain()._libgap_().GroupHomomorphismByImages(self.codomain(), self.domain().gens(), self._images)
-
-
-def is_PermutationGroupMorphism(f) -> bool:
-    r"""
-    Return ``True`` if the argument ``f`` is a :class:`PermutationGroupMorphism`.
-
-    EXAMPLES::
-
-        sage: from sage.groups.perm_gps.permgroup_morphism import is_PermutationGroupMorphism
-        sage: G = CyclicPermutationGroup(4)
-        sage: H = DihedralGroup(4)
-        sage: phi = PermutationGroupMorphism_im_gens(G, H, map(H, G.gens()))
-        sage: is_PermutationGroupMorphism(phi)
-        True
-    """
-    return isinstance(f, PermutationGroupMorphism)

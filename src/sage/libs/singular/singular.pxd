@@ -42,10 +42,10 @@ cpdef tuple si2sa_resolution_graded(Resolution res, tuple degrees)
 # Conversion from Sage to Singular types
 # ======================================
 
-cdef number *sa2si_QQ(Rational ,ring (*)) noexcept
+cdef number *sa2si_QQ(Rational, ring (*)) noexcept
 cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept
 
-cdef number *sa2si_GFqGivaro(int exp ,ring (*)) noexcept
+cdef number *sa2si_GFqGivaro(int exp, ring (*)) noexcept
 cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept
 cdef number *sa2si_GFq_generic(object vector, ring *_ring) noexcept
 cdef number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept
@@ -54,6 +54,13 @@ cdef number *sa2si_NF(object element, ring *_ring) noexcept
 
 # dispatches to all the above.
 cdef number *sa2si(Element elem, ring * _ring) noexcept
+
+# ==============
+# Error handling
+# ==============
+
+cdef int start_catch_error() except -1
+cdef object check_error()
 
 # ==============
 # Initialisation

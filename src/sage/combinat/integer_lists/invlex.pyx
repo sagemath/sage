@@ -62,64 +62,64 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     INPUT:
 
-    - ``min_sum`` -- a nonnegative integer (default: 0):
-      a lower bound on ``sum(l)``.
+    - ``min_sum`` -- nonnegative integer (default: 0);
+      a lower bound on ``sum(l)``
 
-    - ``max_sum`` -- a nonnegative integer or `\infty` (default: `\infty`):
-      an upper bound on ``sum(l)``.
+    - ``max_sum`` -- nonnegative integer or `\infty` (default: `\infty`);
+      an upper bound on ``sum(l)``
 
-    - ``n`` -- a nonnegative integer (optional): if specified, this
-      overrides ``min_sum`` and ``max_sum``.
+    - ``n`` -- nonnegative integer (optional); if specified, this
+      overrides ``min_sum`` and ``max_sum``
 
-    - ``min_length`` -- a nonnegative integer (default: `0`): a lower
-      bound on ``len(l)``.
+    - ``min_length`` -- nonnegative integer (default: `0`); a lower
+      bound on ``len(l)``
 
-    - ``max_length`` -- a nonnegative integer or `\infty` (default:
-      `\infty`): an upper bound on ``len(l)``.
+    - ``max_length`` -- nonnegative integer or `\infty` (default:
+      `\infty`); an upper bound on ``len(l)``
 
-    - ``length`` -- an integer (optional); overrides ``min_length``
-      and ``max_length`` if specified;
+    - ``length`` -- integer (optional); overrides ``min_length``
+      and ``max_length`` if specified
 
-    - ``min_part`` -- a nonnegative integer: a lower bounds on all
-       parts: ``min_part <= l[i]`` for ``0 <= i < len(l)``.
+    - ``min_part`` -- nonnegative integer; a lower bounds on all
+      parts: ``min_part <= l[i]`` for ``0 <= i < len(l)``
 
-    - ``floor`` -- a list of nonnegative integers or a function: lower
-      bounds on the individual parts `l[i]`.
+    - ``floor`` -- list of nonnegative integers or a function; lower
+      bounds on the individual parts `l[i]`
 
       If ``floor`` is a list of integers, then ``floor<=l[i]`` for ``0
       <= i < min(len(l), len(floor)``. Similarly, if ``floor`` is a
       function, then ``floor(i) <= l[i]`` for ``0 <= i < len(l)``.
 
-    - ``max_part`` -- a nonnegative integer or `\infty`: an upper
-      bound on all parts: ``l[i] <= max_part`` for ``0 <= i < len(l)``.
+    - ``max_part`` -- nonnegative integer or `\infty`; an upper
+      bound on all parts: ``l[i] <= max_part`` for ``0 <= i < len(l)``
 
     - ``ceiling`` -- upper bounds on the individual parts ``l[i]``;
       this takes the same type of input as ``floor``, except that
       `\infty` is allowed in addition to integers, and the default
       value is `\infty`.
 
-    - ``min_slope`` -- an integer or `-\infty` (default: `-\infty`):
+    - ``min_slope`` -- integer or `-\infty` (default: `-\infty`);
       a lower bound on the slope between consecutive parts:
       ``min_slope <= l[i+1]-l[i]`` for ``0 <= i < len(l)-1``
 
-    - ``max_slope`` -- an integer or `+\infty` (defaults: `+\infty`)
+    - ``max_slope`` -- integer or `+\infty` (defaults: `+\infty`);
       an upper bound on the slope between consecutive parts:
       ``l[i+1]-l[i] <= max_slope`` for ``0 <= i < len(l)-1``
 
     - ``category`` -- a category (default: :class:`FiniteEnumeratedSets`)
 
-    - ``check`` -- boolean (default: ``True``): whether to display the
+    - ``check`` -- boolean (default: ``True``); whether to display the
       warnings raised when functions are given as input to ``floor``
       or ``ceiling`` and the errors raised when there is no proper
       enumeration.
 
-    - ``name`` -- a string or ``None`` (default: ``None``) if set,
+    - ``name`` -- string or ``None`` (default: ``None``); if set,
       this will be passed down to :meth:`Parent.rename` to specify the
       name of ``self``. It is recommended to use rename method directly
       because this feature may become deprecated.
 
     - ``element_constructor`` -- a function (or callable) that creates
-      elements of ``self`` from a list. See also :class:`Parent`.
+      elements of ``self`` from a list. See also :class:`Parent`
 
     - ``element_class`` -- a class for the elements of ``self``
       (default: `ClonableArray`). This merely sets the attribute
@@ -508,7 +508,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         sage: m = [3,1,2]
         sage: def term(exponents):
         ....:     return x^exponents[0] * y^exponents[1] * z^exponents[2]
-        sage: list( IntegerListsLex(4, length=len(m), ceiling=m, element_constructor=term) )
+        sage: list(IntegerListsLex(4, length=len(m), ceiling=m, element_constructor=term))
         [x^3*y, x^3*z, x^2*y*z, x^2*z^2, x*y*z^2]
 
     Note the use of the ``element_constructor`` option to specify how
@@ -860,14 +860,18 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
         OUTPUT:
 
-        ``None`` if this method finds a proof that there
+        ``True`` if this method finds a proof that there
         exists an upper bound on the length. Otherwise a
-        :class:`ValueError` is raised.
+        :exc:`ValueError` is raised.
+
+        Note that :func:`cached_method` does not work with methods
+        returning ``None``, so ``True`` is returned instead.
 
         EXAMPLES::
 
             sage: L = IntegerListsLex(4, max_length=4)
             sage: L._check_finiteness()
+            True
 
         The following example is infinite::
 
@@ -1002,20 +1006,20 @@ If you know what you are doing, you can set check=False to skip this warning."""
         """
         # Trivial cases
         if self.max_length < Infinity:
-            return
+            return True
         if self.max_sum < self.min_sum:
-            return
+            return True
         if self.min_slope > self.max_slope:
-            return
+            return True
         if self.max_slope < 0:
-            return
+            return True
         if self.ceiling.limit() < self.floor.limit():
-            return
+            return True
         if self.ceiling.limit() == 0:
             # This assumes no trailing zeroes
-            return
+            return True
         if self.min_slope > 0 and self.ceiling.limit() < Infinity:
-            return
+            return True
 
         # Compute a lower bound on the sum of floor(i) for i=1 to infinity
         if self.floor.limit() > 0 or self.min_slope > 0:
@@ -1028,24 +1032,24 @@ If you know what you are doing, you can set check=False to skip this warning."""
             floor_sum_lower_bound = Infinity
 
         if self.max_sum < floor_sum_lower_bound:
-            return
+            return True
         if self.max_sum == floor_sum_lower_bound and self.max_sum < Infinity:
             # This assumes no trailing zeroes
-            return
+            return True
 
         # Variant on ceiling.limit() ==0 where we actually discover that the ceiling limit is 0
-        if ( self.max_slope == 0 and
-             (self.max_sum < Infinity or
-              (self.ceiling.limit_start() < Infinity and
-               any(self.ceiling(i) == 0 for i in range(self.ceiling.limit_start()+1)))
-             ) ):
-            return
+        if (self.max_slope == 0 and
+            (self.max_sum < Infinity or
+             (self.ceiling.limit_start() < Infinity and
+              any(self.ceiling(i) == 0 for i in range(self.ceiling.limit_start()+1)))
+             )):
+            return True
 
         limit_start = max(self.ceiling.limit_start(), self.floor.limit_start())
         if limit_start < Infinity:
             for i in range(limit_start+1):
                 if self.ceiling(i) < self.floor(i):
-                    return
+                    return True
 
         raise ValueError("could not prove that the specified constraints yield a finite set")
 
@@ -1066,11 +1070,11 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
 # Constants for IntegerListsLexIter._next_state
 LOOKAHEAD = 5
-PUSH      = 4
-ME        = 3
-DECREASE  = 2
-POP       = 1
-STOP      = 0
+PUSH = 4
+ME = 3
+DECREASE = 2
+POP = 1
+STOP = 0
 
 
 class IntegerListsLexIter(builtins.object):
@@ -1101,8 +1105,8 @@ class IntegerListsLexIter(builtins.object):
 
     - ``_current_sum`` -- the sum of the parts of ``_current_list``;
 
-    - ``_search_ranges`` -- a list of same length as
-      ``_current_list``: the range for each part.
+    - ``_search_ranges`` -- list of same length as
+      ``_current_list``: the range for each part
 
     Furthermore, we assume that there is no obvious contradiction
     in the constraints:
@@ -1177,7 +1181,7 @@ class IntegerListsLexIter(builtins.object):
         The push may fail if it is discovered that
         ``self._current_list`` cannot be extended in a valid way.
 
-        OUTPUT: a boolean: whether the push succeeded
+        OUTPUT: boolean; whether the push succeeded
 
         EXAMPLES::
 
@@ -1377,9 +1381,9 @@ class IntegerListsLexIter(builtins.object):
         mu = self._current_list
         nu = self._current_sum
         l = self._j + 1
-        return (nu >= p.min_sum and nu <= p.max_sum # Good sum
-                 and l >= p.min_length and l <= p.max_length # Good length
-                 and (l <= max(p.min_length,0) or mu[-1] != 0)) # No trailing zeros
+        return (p.min_sum <= nu <= p.max_sum  # Good sum
+                and p.min_length <= l <= p.max_length  # Good length
+                and (l <= max(p.min_length, 0) or mu[-1] != 0))  # No trailing zeros
 
     def _m_interval(self, i, max_sum, prev=None):
         r"""
@@ -1388,11 +1392,11 @@ class IntegerListsLexIter(builtins.object):
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer (position)
+        - ``i`` -- nonnegative integer (position)
 
-        - ``max_sum`` -- a nonnegative integer or ``+oo``
+        - ``max_sum`` -- nonnegative integer or ``+oo``
 
-        - ``prev`` -- a nonnegative integer or ``None``
+        - ``prev`` -- nonnegative integer or ``None``
 
         Return coarse lower and upper bounds for the value ``m``
         of the part at position ``i`` so that there could exists
@@ -1459,7 +1463,7 @@ class IntegerListsLexIter(builtins.object):
             lower_bound = max(lower_bound, prev + p.min_slope)
             upper_bound = min(upper_bound, prev + p.max_slope)
 
-        ## check for infinite upper bound, in case max_sum is infinite
+        # check for infinite upper bound, in case max_sum is infinite
         if p.check and upper_bound == Infinity:
             # This assumes that there exists a valid list (which
             # is not yet always guaranteed). Then we just
@@ -1594,8 +1598,8 @@ class IntegerListsLexIter(builtins.object):
 
         # Beware that without slope conditions, the functions below
         # currently forget about the value m at k!
-        lower_envelope = self.backend.floor.adapt(m,j)
-        upper_envelope = self.backend.ceiling.adapt(m,j)
+        lower_envelope = self.backend.floor.adapt(m, j)
+        upper_envelope = self.backend.ceiling.adapt(m, j)
         lower = 0    # The lower bound `l_k`
         upper = 0    # The upper bound `u_k`
 
@@ -1614,7 +1618,7 @@ class IntegerListsLexIter(builtins.object):
             # There could exist a valid list `v_j,\dots,v_{min_length-1}`
             return True
 
-        k = max(p.min_length-1,j)
+        k = max(p.min_length-1, j)
         # Check if any of the intervals intersect the target interval
         while k < p.max_length:
             lo = m if k == j else lower_envelope(k)
@@ -1630,8 +1634,8 @@ class IntegerListsLexIter(builtins.object):
                 # There cannot exist a valid list `v_j,\dots,v_l` with l>=k
                 return False
 
-            if ( (p.max_slope <= 0 and up <= 0)
-                 or (p.ceiling.limit() == 0 and k > p.ceiling.limit_start()) ):
+            if ((p.max_slope <= 0 and up <= 0) or
+                    (p.ceiling.limit() == 0 and k > p.ceiling.limit_start())):
                 # This implies v_l=0 for l>=k: that is we would be generating
                 # a list with trailing zeroes
                 return False

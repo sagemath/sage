@@ -84,6 +84,9 @@ obtained by modding out the commutator subgroup of the free group::
     sage: G = FreeGroup(2)
     sage: G_ab = G / [G([1, 2, -1, -2])];  G_ab
     Finitely presented group < x0, x1 | x0*x1*x0^-1*x1^-1 >
+    sage: k = G_ab.rewriting_system()
+    sage: k.make_confluent()
+    sage: G_ab.set_confluent_rewriting_system(k)
     sage: a,b = G_ab.gens()
     sage: g =  a * b
     sage: M1 = matrix([[1,0],[0,2]])
@@ -130,7 +133,6 @@ AUTHOR:
 
 from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
-from sage.functions.generalized import sign
 from sage.groups.free_group import FreeGroup
 from sage.groups.free_group import FreeGroupElement
 from sage.groups.group import Group
@@ -143,7 +145,8 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.unique_representation import CachedRepresentation
 
 
 class GroupMorphismWithGensImages(SetMorphism):
@@ -283,8 +286,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         # computing that an element is actually one can be very expensive
         if self.Tietze() == ():
             return '1'
-        else:
-            return self.gap()._repr_()
+        return str(self.gap())
 
     @cached_method
     def Tietze(self):
@@ -313,13 +315,117 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         tl = self.gap().UnderlyingElement().TietzeWordAbstractWord()
         return tuple(tl.sage())
 
+    def __hash__(self):
+        r"""
+        Return a hash for this group element.
+
+        For free groups (no relations), hashing is based on the Tietze word.
+        For finite groups, the element is converted to a permutation group
+        element which has a well-defined hash.
+        For infinite non-free groups with a confluent rewriting system,
+        hashing is based on the canonical reduced form.
+        For general infinite finitely presented groups without a confluent
+        rewriting system, hashing is not supported because the word problem
+        is undecidable.
+
+        .. WARNING::
+
+            Computing a confluent rewriting system via Knuth-Bendix
+            completion is not guaranteed to terminate, since the word
+            problem for finitely presented groups is undecidable in
+            general. The call to ``make_confluent()`` may run forever
+            for some groups.
+
+        EXAMPLES:
+
+        Free groups support hashing::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: H = F / []  # trivial quotient = free group
+            sage: hash(H([1,2])) == hash(H([1,2]))
+            True
+
+        Finite groups support hashing::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^3, a*b*a^-1*b^-1]
+            sage: H.inject_variables()
+            Defining a, b
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(H.one())  # equal elements have equal hashes
+            True
+
+        Infinite groups with a confluent rewriting system support hashing::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: D = F / [x^2, y^2]  # infinite dihedral group
+            sage: k = D.rewriting_system()
+            sage: k.make_confluent()
+            sage: D.set_confluent_rewriting_system(k)
+            sage: a, b = D.gens()
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(D.one())  # a^2 = 1
+            True
+            sage: hash(a*b) != hash(b*a)  # different elements
+            True
+
+        Infinite groups without a confluent rewriting system raise an error;
+        use :meth:`~FinitelyPresentedGroup.set_confluent_rewriting_system`
+        to enable hashing::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*b*a^-1*b^-2]  # Baumslag-Solitar group, infinite
+            sage: hash(G([1]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: hashing requires a confluent rewriting system
+            for infinite non-free finitely presented groups;
+            first compute one via k = G.rewriting_system(); k.make_confluent();
+            G.set_confluent_rewriting_system(k)
+
+        TESTS:
+
+        Check that :issue:`40549` is fixed::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: G.order()
+            52
+            sage: cg = G.cayley_graph()
+            sage: cg.num_verts()
+            52
+        """
+        G = self.parent()
+        # Free groups (no relations) - hash by Tietze word
+        if len(G.relations()) == 0:
+            return hash(self.Tietze())
+        # Confluent rewriting system - hash by canonical reduced form
+        rws = G._confluent_rewriting_system
+        if rws is not None:
+            return hash(rws.reduce(self).Tietze())
+        # Finite groups - hash by permutation representation
+        phi = G._perm_isomorphism()
+        if phi is None:
+            raise NotImplementedError(
+                "hashing requires a confluent rewriting system\n"
+                "for infinite non-free finitely presented groups;\n"
+                "first compute one via "
+                "k = G.rewriting_system(); k.make_confluent();\n"
+                "G.set_confluent_rewriting_system(k)"
+            )
+        perm_elem = libgap.Image(phi, self.gap())
+        return hash(perm_elem)
+
     def __call__(self, *values, **kwds):
         """
         Replace the generators of the free group with ``values``.
 
         INPUT:
 
-        - ``*values`` -- a list/tuple/iterable of the same length as
+        - ``*values`` -- list/tuple/iterable of the same length as
           the number of generators
 
         - ``check=True`` -- boolean keyword (default: ``True``); whether to
@@ -340,6 +446,9 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         The generator `b` can be eliminated using the relation `a=b`. Any
         values that you plug into a word must satisfy this relation::
 
+            sage: k = H.rewriting_system()
+            sage: k.make_confluent()
+            sage: H.set_confluent_rewriting_system(k)
             sage: A, B = H.gens()
             sage: w = A^2 * B
             sage: w(2,2)
@@ -350,8 +459,8 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             Traceback (most recent call last):
             ...
             ValueError: the values do not satisfy all relations of the group
-            sage: w(1, 2, check=False)    # result depends on presentation of the group element
-            2
+            sage: w(1, 2, check=False)   # result depends on presentation of the group element
+            8
         """
         values = list(values)
         if kwds.get('check', True):
@@ -360,50 +469,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
         return super().__call__(values)
-
-
-def wrap_FpGroup(libgap_fpgroup):
-    """
-    Wrap a GAP finitely presented group.
-
-    This function changes the comparison method of
-    ``libgap_free_group`` to comparison by Python ``id``. If you want
-    to put the LibGAP free group into a container ``(set, dict)`` then you
-    should understand the implications of
-    :meth:`~sage.libs.gap.element.GapElement._set_compare_by_id`. To
-    be safe, it is recommended that you just work with the resulting
-    Sage :class:`FinitelyPresentedGroup`.
-
-    INPUT:
-
-    - ``libgap_fpgroup`` -- a LibGAP finitely presented group
-
-    OUTPUT: a Sage :class:`FinitelyPresentedGroup`
-
-    EXAMPLES:
-
-    First construct a LibGAP finitely presented group::
-
-        sage: F = libgap.FreeGroup(['a', 'b'])
-        sage: a_cubed = F.GeneratorsOfGroup()[0] ^ 3
-        sage: P = F / libgap([ a_cubed ]);   P
-        <fp group of size infinity on the generators [ a, b ]>
-        sage: type(P)
-        <class 'sage.libs.gap.element.GapElement'>
-
-    Now wrap it::
-
-        sage: from sage.groups.finitely_presented import wrap_FpGroup
-        sage: wrap_FpGroup(P)
-        Finitely presented group < a, b | a^3 >
-    """
-    assert libgap_fpgroup.IsFpGroup()
-    libgap_fpgroup._set_compare_by_id()
-    from sage.groups.free_group import wrap_FreeGroup
-    free_group = wrap_FreeGroup(libgap_fpgroup.FreeGroupOfFpGroup())
-    relations = tuple(free_group(rel.UnderlyingElement())
-                      for rel in libgap_fpgroup.RelatorsOfFpGroup())
-    return FinitelyPresentedGroup(free_group, relations)
 
 
 class RewritingSystem:
@@ -509,7 +574,7 @@ class RewritingSystem:
 
     def free_group(self):
         """
-        The free group after which the rewriting system is defined
+        The free group after which the rewriting system is defined.
 
         EXAMPLES::
 
@@ -730,7 +795,8 @@ class RewritingSystem:
             raise ValueError('could not make the system confluent')
 
 
-class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, ParentLibGAP):
+@richcmp_method
+class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
 
@@ -739,7 +805,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         You should use
         :meth:`~sage.groups.free_group.FreeGroup_class.quotient` to
         construct finitely presented groups as quotients of free
-        groups.
+        groups. Any class inheriting this one should define
+        ``__reduce__ = CachedRepresentation.__reduce__``
+        after importing ``CachedRepresentation``.
 
     EXAMPLES::
 
@@ -770,7 +838,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
     """
     Element = FinitelyPresentedGroupElement
 
-    def __init__(self, free_group, relations, category=None):
+    def __init__(self, free_group, relations, category=None, libgap_fpgroup=None):
         """
         The Python constructor.
 
@@ -786,6 +854,25 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: J is H
             True
 
+            sage: A5 = libgap(AlternatingGroup(5))
+            sage: A5gapfp = A5.IsomorphismFpGroup().Range()
+            sage: A5gapfp
+            <fp group of size 60 on the generators [ A_5.1, A_5.2 ]>
+            sage: A5sage = A5gapfp.sage(); A5sage;
+            Finitely presented group < A_5.1, A_5.2 | A_5.1^5*A_5.2^-5, A_5.1^5*(A_5.2^-1*A_5.1^-1)^2, (A_5.1^-2*A_5.2^2)^2 >
+            sage: A5sage.inject_variables()
+            Traceback (most recent call last):
+            ...
+            ValueError: variable names have not yet been set using self._assign_names(...)
+
+        Check that pickling works::
+
+            sage: G = FreeGroup(2) / [2 * (1, 2, -1, -2)]
+            sage: loads(dumps(G))
+            Finitely presented group < x0, x1 | (x0*x1*x0^-1*x1^-1)^2 >
+            sage: G.__reduce__()[1][1]
+            (Free Group on generators {x0, x1}, ((x0*x1*x0^-1*x1^-1)^2,))
+
             sage: TestSuite(H).run()
             sage: TestSuite(J).run()
         """
@@ -794,12 +881,49 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         assert isinstance(relations, tuple)
         self._free_group = free_group
         self._relations = relations
-        self._assign_names(free_group.variable_names())
-        parent_gap = free_group.gap() / libgap([rel.gap() for rel in relations])
-        ParentLibGAP.__init__(self, parent_gap)
+        try:
+            self._assign_names(free_group.variable_names())
+        except ValueError:
+            pass
+        if libgap_fpgroup is None:
+            libgap_fpgroup = free_group.gap() / libgap([rel.gap() for rel in relations])
+        ParentLibGAP.__init__(self, libgap_fpgroup)
         Group.__init__(self, category=category)
+        self._confluent_rewriting_system = None
 
-    def _repr_(self):
+    def __hash__(self):
+        """
+        Make hashable.
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(2) / [(1, 2, 2, 1)]
+            sage: G.__hash__() == hash((G.free_group(), G.relations()))
+            True
+        """
+        return hash((self._free_group, self._relations))
+
+    def __richcmp__(self, other, op):
+        """
+        Rich comparison of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: G1 = FreeGroup(2) / [(1, 2, 2, 1, 2, 1)]
+            sage: G2 = libgap(G1).sage()
+            sage: G1 == G2
+            True
+            sage: G1 is G2
+            False
+        """
+        if not isinstance(other, self.__class__):
+            from sage.structure.richcmp import op_NE
+            return (op == op_NE)
+        self_data = (self._free_group, self._relations)
+        other_data = (other._free_group, other._relations)
+        return richcmp(self_data, other_data, op)
+
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -812,8 +936,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: H._repr_()
             'Finitely presented group < a, b | a, b^3 >'
         """
-        gens = ', '.join(self.variable_names())
-        rels = ', '.join([str(r) for r in self.relations()])
+        gens = ', '.join(self._free_group._gen_names)
+        rels = ', '.join(str(r) for r in self.relations())
         return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
@@ -843,6 +967,22 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
                 r = r+' , '
         r = r+'\\rangle'
         return r
+
+    def _regina_(self, regina):
+        r"""
+        Return the string used to construct the object in Regina.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(3)
+            sage: regina(B)        # optional regina
+            <regina.GroupPresentation: < a b | a b a b^-1 a^-1 b^-1 >>
+        """
+        F = regina(self._free_group)
+        new = F.__deepcopy__()
+        for r in self.relations():
+            new.addRelation(regina(r))
+        return new
 
     def free_group(self):
         """
@@ -879,6 +1019,32 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             True
         """
         return self._relations
+
+    @cached_method
+    def _perm_isomorphism(self):
+        r"""
+        Return a permutation representation isomorphism, if available.
+
+        OUTPUT:
+
+        A GAP isomorphism from ``self`` to a permutation group, or ``None``
+        if ``libgap.IsomorphismPermGroup`` returns ``fail``.
+
+        EXAMPLES::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: H = F / [a^2, b^3, a*b*a^-1*b^-1]
+            sage: H._perm_isomorphism() is not None
+            True
+
+            sage: G = F / [a*b*a^-1*b^-2]
+            sage: G._perm_isomorphism() is None
+            True
+        """
+        phi = libgap.IsomorphismPermGroup(self.gap())
+        if str(phi) == 'fail':
+            return None
+        return phi
 
     @cached_method
     def cardinality(self, limit=4096000):
@@ -945,7 +1111,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         A Sage
         :func:`~sage.groups.perm_gps.permgroup.PermutationGroup`. If
         the number of cosets exceeds the given ``limit``, a
-        :class:`ValueError` is returned.
+        :exc:`ValueError` is returned.
 
         EXAMPLES::
 
@@ -1003,10 +1169,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``H`` -- a finitely presented group
 
-        - ``reduced`` -- (default: ``False``) boolean; if ``True``, then
+        - ``reduced`` -- boolean (default: ``False``); if ``True``, then
           attempt to reduce the presentation of the product group
 
-        - ``new_names`` -- (default: ``True``) boolean; If ``True``, then
+        - ``new_names`` -- boolean (default: ``True``); if ``True``, then
           lexicographical variable names are assigned to the generators of
           the group to be returned. If ``False``, the group to be returned
           keeps the generator names of the two groups forming the direct
@@ -1066,7 +1232,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: C7 = G / [G.0**7]; C6 =  G / [G.0**6]
             sage: C14 = G / [G.0**14]; C3 =  G / [G.0**3]
             sage: C7.direct_product(C6).is_isomorphic(C14.direct_product(C3))
-            #I  Forcing finiteness test
             True
             sage: F = FreeGroup(2); D = F / [F([1,1,1,1,1]),F([2,2]),F([1,2])**2]
             sage: D.direct_product(D).as_permutation_group().is_isomorphic(
@@ -1115,23 +1280,23 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``H`` -- Finitely presented group which is implicitly acted on
+        - ``H`` -- finitely presented group which is implicitly acted on
           by ``self`` and can be naturally embedded as a normal subgroup
-          of the semidirect product.
+          of the semidirect product
 
-        - ``hom`` -- Homomorphism from ``self`` to the automorphism group
+        - ``hom`` -- homomorphism from ``self`` to the automorphism group
           of ``H``. Given as a pair, with generators of ``self`` in the
           first slot and the images of the corresponding generators in the
           second. These images must be automorphisms of ``H``, given again
           as a pair of generators and images.
 
-        - ``check`` -- Boolean (default ``True``). If ``False`` the defining
+        - ``check`` -- boolean (default: ``True``); if ``False`` the defining
           homomorphism and automorphism images are not tested for validity.
           This test can be costly with large groups, so it can be bypassed
           if the user is confident that his morphisms are valid.
 
-        - ``reduced`` -- Boolean (default ``False``). If ``True`` then the
-          method attempts to reduce the presentation of the output group.
+        - ``reduced`` -- boolean (default: ``False``); if ``True`` then the
+          method attempts to reduce the presentation of the output group
 
         OUTPUT:
 
@@ -1160,7 +1325,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: alpha = (Q.gens(), [a,b])
             sage: S2 = C2.semidirect_product(Q, ([C2.0],[alpha]))
             sage: S1.is_isomorphic(S2)
-            #I  Forcing finiteness test
             True
 
         Dihedral groups can be constructed as semidirect products
@@ -1219,8 +1383,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: Se2 =  D.semidirect_product(C ,id2)
             sage: Dp1 = C.direct_product(D)
             sage: Dp1.is_isomorphic(Se1), Dp1.is_isomorphic(Se2)
-            #I  Forcing finiteness test
-            #I  Forcing finiteness test
             (True, True)
 
         Most checks for validity of input are left to GAP to handle::
@@ -1344,8 +1506,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: H = G.quotient([g1^2, g2*g1*g2^(-1)*g1^(-1), g1*g3^(-2), g0^4])
             sage: H.abelianization_map()
             Group morphism:
-                From: Finitely presented group  < g0, g1, g2, g3 | g1^2, g2*g1*g2^-1*g1^-1, g1*g3^-2, g0^4 >
-                To:   Finitely presented group  < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4, f3^-1*f4^-1*f3*f4, f2^4, f3^4 >
+              From: Finitely presented group < g0, g1, g2, g3 | g1^2, g2*g1*g2^-1*g1^-1, g1*g3^-2, g0^4 >
+              To:   Finitely presented group < f1, f2, f3 | f1^4, f2^-1*f1^-1*f2*f1, f2^4, f3^-1*f1^-1*f3*f1, f3^-1*f2^-1*f3*f2 >
             sage: g = FreeGroup(0) / []
             sage: g.abelianization_map()
             Group endomorphism of Finitely presented group  <  |  >
@@ -1357,7 +1519,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         hom_ab_fp = ab_libgap.IsomorphismFpGroup()
         ab_libgap_fp = hom_ab_fp.Range()
         hom_simply = ab_libgap_fp.IsomorphismSimplifiedFpGroup()
-        ab = wrap_FpGroup(hom_simply.Range())
+        ab = hom_simply.Range().sage()
         images = []
         for f in self.gens():
             f0 = hom_ab_libgap.Image(f)
@@ -1365,7 +1527,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             f2 = hom_simply.Image(f1)
             L = f2.UnderlyingElement().LetterRepAssocWord()
             images.append(ab([int(j) for j in L]))
-        return self.hom(codomain=ab, im_gens=images)
+        return self.hom(codomain=ab, im_gens=images, check=False)
 
     @cached_method
     def abelianization_to_algebra(self, ring=QQ):
@@ -1375,17 +1537,17 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``ring`` -- (default: ``QQ``); the base ring for
+        - ``ring`` -- (default: ``QQ``) the base ring for
           the group algebra of ``self``
 
         OUTPUT:
 
         - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
-          with a minimal number `n` of generators.
-        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``.
-        - ``ideal`` -- a list of generators of an ideal ``I`` in ``R`` such that ``R/I``
+          with a minimal number `n` of generators
+        - ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``
+        - ``ideal`` -- list of generators of an ideal ``I`` in ``R`` such that ``R/I``
           is the group algebra of the abelianization over ``ring``
-        - ``image`` -- a list  with the images of the generators of ``self`` in ``R/I``
+        - ``image`` -- list  with the images of the generators of ``self`` in ``R/I``
 
         EXAMPLES::
 
@@ -1394,10 +1556,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             Defining g0, g1, g2, g3
             sage: H = G.quotient([g1^2, g2*g1*g2^(-1)*g1^(-1), g1*g3^(-2), g0^4])
             sage: H.abelianization_to_algebra()
-            (Finitely presented group  < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4,
-                                                      f3^-1*f4^-1*f3*f4, f2^4, f3^4 >,
-             Multivariate Laurent Polynomial Ring in f2, f3, f4 over Rational Field,
-             [f2^4 - 1, f3^4 - 1], [f2^-1*f3^-2, f3^-2, f4, f3])
+            (Finitely presented group < f1, f2, f3 | f1^4, f2^-1*f1^-1*f2*f1, f2^4, f3^-1*f1^-1*f3*f1, f3^-1*f2^-1*f3*f2 >,
+             Multivariate Laurent Polynomial Ring in f1, f2, f3 over Rational Field,
+             [f1^4 - 1, f2^4 - 1],
+             [f1^3*f2^2, f2^2, f3, f2])
             sage: g=FreeGroup(0) / []
             sage: g.abelianization_to_algebra()
             (Finitely presented group  <  |  >, Rational Field, [], [])
@@ -1438,12 +1600,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: H = G / [a*b*c, a*b^2, c*b/c^2]
             sage: I = H.simplification_isomorphism()
             sage: I
-            Generic morphism:
+            Group morphism:
               From: Finitely presented group < a, b, c | a*b*c, a*b^2, c*b*c^-2 >
               To:   Finitely presented group < b |  >
-              Defn: a |--> b^-2
-                    b |--> b
-                    c |--> b
             sage: I(a)
             b^-2
             sage: I(b)
@@ -1455,21 +1614,26 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
             sage: F = FreeGroup(1)
             sage: G = F.quotient([F.0])
-            sage: G.simplification_isomorphism()
-            Generic morphism:
+            sage: h = G.simplification_isomorphism(); h
+            Group morphism:
               From: Finitely presented group < x | x >
               To:   Finitely presented group <  |  >
-              Defn: x |--> 1
+            sage: h(G.gen(0))
+            1
 
         ALGORITHM:
 
         Uses GAP.
         """
         II = self.gap().IsomorphismSimplifiedFpGroup()
-        codomain = wrap_FpGroup(II.Range())
-        phi = lambda x: codomain(II.ImageElm(x.gap()))
-        HS = self.Hom(codomain)
-        return GroupMorphismWithGensImages(HS, phi)
+        cod = II.Range().sage()
+        phi = [cod(II.ImageElm(x)) for x in self.gap().GeneratorsOfGroup()]
+        return self.hom(codomain=cod, im_gens=phi, check=False)
+        # II = self.gap().IsomorphismSimplifiedFpGroup()
+        # codomain = II.Range().sage()
+        # phi = lambda x: codomain(II.ImageElm(x.gap()))
+        # HS = self.Hom(codomain)
+        # return GroupMorphismWithGensImages(HS, phi)
 
     def simplified(self):
         """
@@ -1543,48 +1707,44 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             sage: F = FreeGroup(3)
             sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
             sage: H = AlternatingGroup(3)
-            sage: G.epimorphisms(H)
-            [Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> ()
-                     x1 |--> (1,3,2)
-                     x2 |--> (1,2,3),
-             Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> (1,3,2)
-                     x1 |--> ()
-                     x2 |--> (1,2,3),
-             Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> (1,3,2)
-                     x1 |--> (1,2,3)
-                     x2 |--> (),
-             Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
-               To:   Alternating group of order 3!/2 as a permutation group
-               Defn: x0 |--> (1,2,3)
-                     x1 |--> (1,2,3)
-                     x2 |--> (1,2,3)]
+            sage: for quo in G.epimorphisms(H):
+            ....:   for a in G.gens():
+            ....:       print(a, "|-->", quo(a))
+            ....:   print("-----")
+            x0 |--> ()
+            x1 |--> (1,3,2)
+            x2 |--> (1,2,3)
+            -----
+            x0 |--> (1,3,2)
+            x1 |--> ()
+            x2 |--> (1,2,3)
+            -----
+            x0 |--> (1,3,2)
+            x1 |--> (1,2,3)
+            x2 |--> ()
+            -----
+            x0 |--> (1,2,3)
+            x1 |--> (1,2,3)
+            x2 |--> (1,2,3)
+            -----
 
         ALGORITHM:
 
         Uses libgap's GQuotients function.
         """
-        from sage.misc.misc_c import prod
-        HomSpace = self.Hom(H)
+        # from sage.misc.misc_c import prod
+        # HomSpace = self.Hom(H)
         Gg = libgap(self)
         Hg = libgap(H)
         gquotients = Gg.GQuotients(Hg)
         res = []
         # the following closure is needed to attach a specific value of quo to
         # each function in the different morphisms
-        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
+        # fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
         for quo in gquotients:
-            tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
-            fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
+            # tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
+            # fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
+            fhom = self.hom(codomain=H, im_gens=[H(quo.ImageElm(a.gap())) for a in self.gens()])
             res.append(fhom)
         return res
 
@@ -1592,7 +1752,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         Return the Alexander matrix of the group.
 
-        This matrix is given by the fox derivatives of the relations
+        This matrix is given by the Fox derivatives of the relations
         with respect to the generators.
 
         - ``im_gens`` -- (optional) the images of the generators
@@ -1673,7 +1833,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             []
             sage: G = FreeGroup(3)/[(2, 1, 1), (1, 2, 2, 3, 3)]
             sage: A, ideal = G.abelian_alexander_matrix(simplified=True); A
-            [-f3^2 - f3^4 - f3^6         f3^3 + f3^6]
+            [-f1^2 - f1^4 - f1^6         f1^3 + f1^6]
             sage: g = FreeGroup(1) / []
             sage: g.abelian_alexander_matrix()
             ([], [])
@@ -1736,7 +1896,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         INPUT:
 
         - ``ring`` -- (default: ``QQ``) the base ring of the group algebra
-        - ``groebner`` -- boolean (default: ``False``); If set to
+        - ``groebner`` -- boolean (default: ``False``); if set to
           ``True`` the minimal associated primes of the ideals and their
           groebner bases are computed; ignored if the base ring
           is not a field
@@ -1773,11 +1933,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
              3: Ideal (1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring}
             sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
             sage: G.characteristic_varieties()
-            {0: Ideal (0) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             1: Ideal (-1 + 2*f2 - 2*f2^2 + f2^3) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
-             2: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
+            {0: Ideal (0) of Univariate Laurent Polynomial Ring in f1 over Rational Field,
+             1: Ideal (-1 + 2*f1 - 2*f1^2 + f1^3) of Univariate Laurent Polynomial Ring in f1 over Rational Field,
+             2: Ideal (1) of Univariate Laurent Polynomial Ring in f1 over Rational Field}
             sage: G.characteristic_varieties(groebner=True)
-            {0: [0], 1: [-1 + f2, 1 - f2 + f2^2], 2: []}
+            {0: [0], 1: [-1 + f1, 1 - f1 + f1^2], 2: []}
             sage: G = FreeGroup(2)/[3 * (1, ), 2 * (2, )]
             sage: G.characteristic_varieties(groebner=True)
             {0: [-1 + F1, 1 + F1, 1 - F1 + F1^2, 1 + F1 + F1^2], 1: [1 - F1 + F1^2],  2: []}
@@ -1883,5 +2043,50 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             a*b
         """
         return RewritingSystem(self)
+
+    def set_confluent_rewriting_system(self, rws):
+        r"""
+        Store a confluent rewriting system for use by element hashing.
+
+        For infinite non-free finitely presented groups, elements cannot
+        be hashed by default because the word problem is undecidable.
+        However, if the user has computed a confluent rewriting system
+        (via Knuth-Bendix completion), the canonical reduced forms
+        provide a valid basis for hashing.
+
+        INPUT:
+
+        - ``rws`` -- a :class:`RewritingSystem` that is confluent
+
+        EXAMPLES::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: D = F / [x^2, y^2]  # infinite dihedral group
+            sage: k = D.rewriting_system()
+            sage: k.make_confluent()
+            sage: D.set_confluent_rewriting_system(k)
+            sage: a, b = D.gens()
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(D.one())
+            True
+
+        The rewriting system must be confluent::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a^2, b^3]
+            sage: k = G.rewriting_system()
+            sage: G.set_confluent_rewriting_system(k)
+            Traceback (most recent call last):
+            ...
+            ValueError: the rewriting system must be confluent
+        """
+        if not isinstance(rws, RewritingSystem):
+            raise TypeError("expected a RewritingSystem")
+        if not rws.is_confluent():
+            raise ValueError("the rewriting system must be confluent")
+        if rws.finitely_presented_group() is not self:
+            raise ValueError("the rewriting system must belong to this group")
+        self._confluent_rewriting_system = rws
 
     from sage.groups.generic import structure_description

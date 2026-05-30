@@ -11,7 +11,8 @@ Mutability Cython Implementation
 #                  https://www.gnu.org/licenses/
 ##########################################################################
 
-from sage.misc.decorators import sage_wraps
+from sage.misc.decorators import rename_keyword, sage_wraps
+
 
 cdef class Mutability:
     r"""
@@ -44,10 +45,9 @@ cdef class Mutability:
         ValueError: object is immutable; please change a copy instead
         sage: hash(a)
         6
-
     """
-
-    def __init__(self, is_immutable=False):
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
+    def __init__(self, immutable=False):
         r"""
         TESTS::
 
@@ -61,10 +61,9 @@ cdef class Mutability:
             ....:         self._require_immutable()
             ....:         return hash(self._val)
             sage: a = A(4)
-            sage: TestSuite(a).run(skip ="_test_pickling")
-
+            sage: TestSuite(a).run(skip ='_test_pickling')
         """
-        self._is_immutable = is_immutable
+        self._is_immutable = immutable
 
     cpdef _require_mutable(self):
         r"""
@@ -87,7 +86,6 @@ cdef class Mutability:
             Traceback (most recent call last):
             ...
             ValueError: object is immutable; please change a copy instead
-
         """
         if self._is_immutable:
             raise ValueError("object is immutable; please change a copy instead")
@@ -112,7 +110,6 @@ cdef class Mutability:
             Traceback (most recent call last):
             ...
             ValueError: object is mutable; please make it immutable first
-
         """
         if not self._is_immutable:
             raise ValueError("object is mutable; please make it immutable first")
@@ -203,7 +200,6 @@ cdef class Mutability:
               <class 'sage.structure.sage_object.SageObject'>,
               <sage.structure.sage_object.SageObject object at ...>),
              {'_is_immutable': False, '_val': 4})
-
         """
         state = getattr(self, '__dict__', {})
         state['_is_immutable'] = self._is_immutable
@@ -236,14 +232,14 @@ cdef class Mutability:
             True
             sage: a.__getstate__()
             {'_is_immutable': True, '_val': 4}
-
         """
         if hasattr(self, '__dict__'):
             self.__dict__ = state
         self._is_immutable = state['_is_immutable']
 
+
 ##########################################################################
-## Method decorators for mutating methods resp. methods that assume immutability
+# Method decorators for mutating methods resp. methods that assume immutability
 
 def require_mutable(f):
     """
@@ -343,7 +339,7 @@ def require_immutable(f):
     """
     @sage_wraps(f)
     def new_f(self, *args, **kwds):
-        if not getattr(self,'_is_immutable',False):
+        if not getattr(self, '_is_immutable', False):
             raise ValueError("{} instance is mutable, {} must not be called".format(type(self), repr(f)))
         return f(self, *args, **kwds)
     return new_f

@@ -9,7 +9,6 @@ Ariki-Koike algebras below for such an application.
 
 EXAMPLES::
 
-    sage: # needs sage.modules
     sage: LZ = Localization(ZZ, (5,11))
     sage: m = matrix(LZ, [[5, 7], [0,11]])
     sage: m.parent()
@@ -35,14 +34,13 @@ three elements::
     sage: I = S.cartesian_product(S)
     sage: add_units = u + [q, q + 1] + [ui - uj for ui, uj in I if ui != uj]
     sage: add_units += [q*ui - uj for ui, uj in I if ui != uj]
-    sage: L = R.localization(tuple(add_units)); L                                       # needs sage.libs.pari
+    sage: L = R.localization(tuple(add_units)); L
     Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
-     (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
-      u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+    (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0,
+     u1*q - u2, u0*q - u1, u0*q - u2)
 
 Define the representation matrices (of one of the three dimensional irreducible representations)::
 
-    sage: # needs sage.libs.pari sage.modules
     sage: m1 = matrix(L, [[u1, 0, 0], [0, u0, 0], [0, 0, u0]])
     sage: m2 = matrix(L, [[(u0*q - u0)/(u0 - u1), (u0*q - u1)/(u0 - u1), 0],
     ....:                 [(-u1*q + u0)/(u0 - u1), (-u1*q + u1)/(u0 - u1), 0],
@@ -55,7 +53,6 @@ Define the representation matrices (of one of the three dimensional irreducible 
 
 Check relations of the Ariki-Koike algebra::
 
-    sage: # needs sage.libs.pari sage.modules
     sage: m1*m2*m1*m2 == m2*m1*m2*m1
     True
     sage: m2*m3*m2 == m3*m2*m3
@@ -77,13 +74,12 @@ Check relations of the Ariki-Koike algebra::
 
 Obtain specializations in positive characteristic::
 
-    sage: # needs sage.libs.pari sage.modules
     sage: Fp = GF(17)
     sage: f = L.hom((3,5,7,11), codomain=Fp); f
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
-            (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1, u2*q - u1, u2*q - u0,
-             u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+            (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0, u2*q - u1,
+             u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Finite Field of size 17
       Defn: u0 |--> 3
             u1 |--> 5
@@ -106,19 +102,17 @@ Obtain specializations in positive characteristic::
 
 Obtain specializations in characteristic 0::
 
-    sage: # needs sage.libs.pari
     sage: fQ = L.hom((3,5,7,11), codomain=QQ); fQ
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
-            localized at (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1,
-            u2*q - u1, u2*q - u0, u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+            localized at (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0,
+            u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Rational Field
       Defn: u0 |--> 3
             u1 |--> 5
             u2 |--> 7
             q |--> 11
 
-    sage: # needs sage.libs.pari sage.modules sage.rings.finite_rings
     sage: mQ1 = matrix({k: fQ(v) for k, v in m1.dict().items()}); mQ1
     [5 0 0]
     [0 3 0]
@@ -134,31 +128,30 @@ Obtain specializations in characteristic 0::
     [     0 -15/26  11/26]
     [     0 301/26 275/26]
 
-    sage: # needs sage.libs.pari sage.libs.singular
     sage: S.<x, y, z, t> = QQ[]
     sage: T = S.quo(x + y + z)
     sage: F = T.fraction_field()
     sage: fF = L.hom((x, y, z, t), codomain=F); fF
     Ring morphism:
       From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
-            localized at (q, q + 1, u2, u1, u1 - u2, u0, u0 - u2, u0 - u1,
-            u2*q - u1, u2*q - u0, u1*q - u2, u1*q - u0, u0*q - u2, u0*q - u1)
+            localized at (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0,
+            u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Fraction Field of Quotient of Multivariate Polynomial Ring in x, y, z, t
             over Rational Field by the ideal (x + y + z)
       Defn: u0 |--> -ybar - zbar
             u1 |--> ybar
             u2 |--> zbar
             q |--> tbar
-    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1                   # needs sage.modules
+    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1
     [        ybar            0            0]
     [           0 -ybar - zbar            0]
     [           0            0 -ybar - zbar]
-    sage: mF1.base_ring() == F                                                          # needs sage.modules
+    sage: mF1.base_ring() == F
     True
 
 TESTS::
 
-    sage: TestSuite(L).run()                                                            # needs sage.libs.pari sage.libs.singular sage.modules
+    sage: TestSuite(L).run()
 
 AUTHORS:
 
@@ -180,7 +173,7 @@ AUTHORS:
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.integral_domains import IntegralDomains
-from sage.rings.ring import IntegralDomain
+from sage.structure.parent import Parent
 from sage.structure.element import IntegralDomainElement
 
 
@@ -193,13 +186,12 @@ def normalize_extra_units(base_ring, add_units, warning=True):
 
     INPUT:
 
-    - ``base_ring`` -- an instance of :class:`IntegralDomain`
+    - ``base_ring`` -- a ring in the category of :class:`IntegralDomains`
     - ``add_units`` -- list of elements from base ring
-    - ``warning`` -- (optional, default: True) to suppress a warning which is thrown if no normalization was possible
+    - ``warning`` -- boolean (default: ``True``); to suppress a warning which
+      is thrown if no normalization was possible
 
-    OUTPUT:
-
-    List of all prime factors of the elements of the given list.
+    OUTPUT: list of all prime factors of the elements of the given list
 
     EXAMPLES::
 
@@ -215,7 +207,6 @@ def normalize_extra_units(base_ring, add_units, warning=True):
         ....:                       [3*x, z*y**2, 2*z, 18*(x*y*z)**2, x*z, 6*x*z, 5])
         [z, y, x]
 
-        sage: # needs sage.libs.singular
         sage: R.<x, y> = ZZ[]
         sage: Q.<a, b> = R.quo(x**2 - 5)
         sage: p = b**2 - 5
@@ -251,17 +242,16 @@ def normalize_extra_units(base_ring, add_units, warning=True):
 
 class LocalizationElement(IntegralDomainElement):
     """
-    Element class for localizations of integral domains
+    Element class for localizations of integral domains.
 
     INPUT:
 
     - ``parent`` -- instance of :class:`Localization`
-    - ``x`` -- instance of :class:`FractionFieldElement` whose parent is the fraction
-       field of the parent's base ring
+    - ``x`` -- instance of :class:`FractionFieldElement` whose parent is the
+      fraction field of the parent's base ring
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
         sage: from sage.rings.localization import LocalizationElement
         sage: P.<x,y,z> = GF(5)[]
         sage: L = P.localization((x, y*z - x))
@@ -294,7 +284,6 @@ class LocalizationElement(IntegralDomainElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: from sage.rings.localization import LocalizationElement
             sage: P.<x> = CC[]
             sage: L = Localization(P, x**2 + x + 1)
@@ -462,7 +451,6 @@ class LocalizationElement(IntegralDomainElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari sage.singular
             sage: P.<x,y,z> = QQ[]
             sage: L = P.localization((x, y*z))
             sage: L(y*z).is_unit()
@@ -496,7 +484,6 @@ class LocalizationElement(IntegralDomainElement):
         """
         EXAMPLES::
 
-           sage: # needs sage.libs.singular
            sage: P.<x,y,z> = GF(7)[]
            sage: L = Localization(P, (x, y, z))
            sage: L(1/x) < L(3/(x*y*z)**3)
@@ -527,9 +514,7 @@ class LocalizationElement(IntegralDomainElement):
 
         This is only possible if its base ring is the ring of integers.
 
-        OUTPUT:
-
-        A rational.
+        OUTPUT: a rational
 
         TESTS::
 
@@ -550,9 +535,7 @@ class LocalizationElement(IntegralDomainElement):
         This is only possible if its base ring is the ring of integers and
         the denominator of ``self`` is one.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -566,34 +549,39 @@ class LocalizationElement(IntegralDomainElement):
         return self._value._integer_(Z=Z)
 
 
-class Localization(IntegralDomain, UniqueRepresentation):
+class Localization(Parent, UniqueRepresentation):
     r"""
-    The localization generalizes the construction of the field of fractions of an integral domain to
-    an arbitrary ring. Given a (not necessarily commutative) ring `R` and a subset `S` of `R`,
-    there exists a ring `R[S^{-1}]` together with the ring homomorphism `R \longrightarrow R[S^{-1}]`
-    that "inverts" `S`; that is, the homomorphism maps elements in `S` to unit elements in `R[S^{-1}]`
-    and, moreover, any ring homomorphism from `R` that "inverts" `S` uniquely factors through `R[S^{-1}]`.
+    The localization generalizes the construction of the field of fractions of
+    an integral domain to an arbitrary ring. Given a (not necessarily
+    commutative) ring `R` and a subset `S` of `R`, there exists a ring
+    `R[S^{-1}]` together with the ring homomorphism `R \longrightarrow R[S^{-1}]`
+    that "inverts" `S`; that is, the homomorphism maps elements in `S` to unit
+    elements in `R[S^{-1}]` and, moreover, any ring homomorphism from `R` that
+    "inverts" `S` uniquely factors through `R[S^{-1}]`.
 
-    The ring `R[S^{-1}]` is called the *localization* of `R` with respect to `S`. For example, if `R` is
-    a commutative ring and `f` an element in `R`, then the localization consists of elements of the form
-    `r/f, r\in R, n \geq 0` (to be precise, `R[f^{-1}] = R[t]/(ft-1)`.
+    The ring `R[S^{-1}]` is called the *localization* of `R` with respect to
+    `S`. For example, if `R` is a commutative ring and `f` an element in `R`,
+    then the localization consists of elements of the form
+    `r/f, r\in R, n \geq 0` (to be precise, `R[f^{-1}] = R[t]/(ft-1)`).
 
-    The above text is taken from `Wikipedia`. The construction here used for this class relies on the
-    construction of the field of fraction and is therefore restricted to integral domains.
+    The above text is taken from `Wikipedia`. The construction here used for
+    this class relies on the construction of the field of fraction and is
+    therefore restricted to integral domains.
 
-    Accordingly, this class is inherited from :class:`IntegralDomain` and can only be used in that context.
-    Furthermore, the base ring should support :meth:`sage.structure.element.CommutativeRingElement.divides` and
-    the exact division operator `//` (:meth:`sage.structure.element.Element.__floordiv__`) in order to guarantee
-    a successful application.
+    Accordingly, the base ring must be in the category of ``IntegralDomains``.
+    Furthermore, the base ring should support
+    :meth:`sage.structure.element.CommutativeRingElement.divides` and the exact
+    division operator ``//`` (:meth:`sage.structure.element.Element.__floordiv__`)
+    in order to guarantee a successful application.
 
     INPUT:
 
-    - ``base_ring`` -- an instance of :class:`Ring` allowing the construction of :meth:`fraction_field` (that is an integral domain)
-    - ``extra_units`` -- tuple of elements of ``base_ring`` which should be turned into units
-    - ``names`` -- passed to :class:`IntegralDomain`
-    - ``normalize`` -- (optional, default: True) passed to :class:`IntegralDomain`
-    - ``category`` -- (optional, default: None) passed to :class:`IntegralDomain`
-    - ``warning`` -- (optional, default: True) to suppress a warning which is thrown if self cannot be represented uniquely
+    - ``base_ring`` -- a ring in the category of ``IntegralDomains``
+    - ``extra_units`` -- tuple of elements of ``base_ring`` which should be
+      turned into units
+    - ``category`` -- (default: ``None``) passed to :class:`Parent`
+    - ``warning`` -- boolean (default: ``True``); to suppress a warning which
+      is thrown if ``self`` cannot be represented uniquely
 
     REFERENCES:
 
@@ -623,7 +611,6 @@ class Localization(IntegralDomain, UniqueRepresentation):
         ValueError: all given elements are invertible in
         7-adic Ring with capped relative precision 20
 
-        sage: # needs sage.libs.pari
         sage: R.<x> = ZZ[]
         sage: L = R.localization(x**2 + 1)
         sage: s = (x+5)/(x**2+1)
@@ -682,9 +669,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
             sage: L = R.localization(x**2 + 1)                                          # needs sage.libs.pari
             sage: TestSuite(L).run()
         """
-        if type(extra_units) is tuple:
+        if isinstance(extra_units, tuple):
             extra_units = list(extra_units)
-        if not type(extra_units) is list:
+        elif not isinstance(extra_units, list):
             extra_units = [extra_units]
 
         from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
@@ -709,7 +696,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
             # since by construction the base ring must contain non units self must be infinite
             category = IntegralDomains().Infinite()
 
-        IntegralDomain.__init__(self, base_ring, names=names, normalize=normalize, category=category)
+        Parent.__init__(self, base=base_ring, names=names, normalize=normalize, category=category)
         self._extra_units = tuple(extra_units)
         self._fraction_field = base_ring.fraction_field()
         self._populate_coercion_lists_()
@@ -752,13 +739,13 @@ class Localization(IntegralDomain, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: L = Localization(R, x**2 + 1)                                         # needs sage.libs.pari
-            sage: L.hom([5])   # indirect doctest                                       # needs sage.libs.pari
+            sage: L = Localization(R, x**2 + 1)
+            sage: L.hom([5])   # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: images of some localized elements fail to be units
 
-            sage: L.hom([5], codomain=Localization(ZZ, 26))   # indirect doctest        # needs sage.libs.pari
+            sage: L.hom([5], codomain=Localization(ZZ, 26))   # indirect doctest
             Ring morphism:
               From: Univariate Polynomial Ring in x over Integer Ring
                     localized at (x^2 + 1,)
@@ -767,7 +754,6 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: phi = R.hom([5])
             sage: L._is_valid_homomorphism_(ZZ, [3], base_map=phi)
             Traceback (most recent call last):
@@ -798,13 +784,12 @@ class Localization(IntegralDomain, UniqueRepresentation):
             if not all(base_map(au).is_unit() for au in self._extra_units):
                 raise ValueError('images of some localized elements fail to be units')
             return B._is_valid_homomorphism_(codomain, im_gens, base_map=None)
-        else:
-            if B._is_valid_homomorphism_(codomain, im_gens, base_map=base_map):
-                phi = B.hom(im_gens, base_map=base_map)
-                if not all(phi(au).is_unit() for au in self._extra_units):
-                    raise ValueError('images of some localized elements fail to be units')
-                return True
-            return False
+        if B._is_valid_homomorphism_(codomain, im_gens, base_map=base_map):
+            phi = B.hom(im_gens, base_map=base_map)
+            if not all(phi(au).is_unit() for au in self._extra_units):
+                raise ValueError('images of some localized elements fail to be units')
+            return True
+        return False
 
     def ngens(self):
         """
@@ -814,7 +799,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x, y> = ZZ[]
-            sage: Localization(R, (x**2 + 1, y - 1)).ngens()                            # needs sage.libs.pari
+            sage: Localization(R, (x**2 + 1, y - 1)).ngens()
             2
 
             sage: Localization(ZZ, 2).ngens()
@@ -830,7 +815,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x, y> = ZZ[]
-            sage: R.localization((x**2 + 1, y - 1)).gen(0)                              # needs sage.libs.pari
+            sage: R.localization((x**2 + 1, y - 1)).gen(0)
             x
 
             sage: ZZ.localization(2).gen(0)
@@ -838,7 +823,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
         """
         return self(self.base_ring().gen(i))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple whose entries are the generators for this
         object, in order.
@@ -846,7 +831,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x, y> = ZZ[]
-            sage: Localization(R, (x**2 + 1, y - 1)).gens()                             # needs sage.libs.pari
+            sage: Localization(R, (x**2 + 1, y - 1)).gens()
             (x, y)
 
             sage: Localization(ZZ, 2).gens()
@@ -870,10 +855,10 @@ class Localization(IntegralDomain, UniqueRepresentation):
         EXAMPLES::
 
             sage: P.<x,y,z> = QQ[]
-            sage: L = Localization(P, (x, y*z))                                         # needs sage.libs.pari
-            sage: L._cut_off_extra_units_from_base_ring_element(x*y*z)                  # needs sage.libs.pari
+            sage: L = Localization(P, (x, y*z))
+            sage: L._cut_off_extra_units_from_base_ring_element(x*y*z)
             1
-            sage: L._cut_off_extra_units_from_base_ring_element(x*z)                    # needs sage.libs.pari
+            sage: L._cut_off_extra_units_from_base_ring_element(x*z)
             1
 
         TESTS:
@@ -899,20 +884,17 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
     def _fraction_to_element(self, x):
         """
-        Checks if the given element of the fraction field is contained in ``self``
-        and construct it as an element of self in case the answer is true.
+        Check if the given element of the fraction field is contained in ``self``
+        and construct it as an element of ``self`` in case the answer is true.
 
         INPUT:
 
         - ``x`` -- an element of the fraction field of the base ring
 
-        OUTPUT:
-
-        An instance of the element class of self representing `x`.
+        OUTPUT: an instance of the element class of ``self`` representing `x`
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari sage.libs.singular
             sage: P.<x,y,z> = QQ[]
             sage: d = x**2 + y**2 + z**2
             sage: L = Localization(P, d)
@@ -939,7 +921,6 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari sage.libs.singular
             sage: P.<x,y,z> = QQ[]
             sage: L = Localization(P, y*z)
             sage: M = Localization(P, (x, y, z))
@@ -961,9 +942,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
         """
         if S is self.base_ring():
             return True
-        elif self.base_ring().has_coerce_map_from(S):
+        if self.base_ring().has_coerce_map_from(S):
             return True
-        elif isinstance(S, Localization):
+        if isinstance(S, Localization):
             return all(self(p).is_unit() for p in S._extra_units)
 
     def fraction_field(self):
@@ -972,7 +953,6 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: R.<a> = GF(5)[]
             sage: L = Localization(R, (a**2 - 3, a))
             sage: L.fraction_field()
@@ -988,7 +968,6 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: R.<a> = GF(5)[]
             sage: L = R.localization((a**2 - 3, a))
             sage: L.characteristic()
@@ -1019,15 +998,15 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         INPUT:
 
-        - ``proof`` -- (default: ``True``) Determines what to do in unknown
-          cases
+        - ``proof`` -- boolean (default: ``True``); determines what to do in
+          unknown cases
 
         ALGORITHM:
 
         If the parameter ``proof`` is set to ``True``, the returned value is
         correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns True if it can establish that self is
-        a field and False otherwise.
+        to ``False``, the method returns ``True`` if it can establish that
+        ``self`` is a field and ``False`` otherwise.
 
         EXAMPLES::
 

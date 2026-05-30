@@ -477,24 +477,25 @@ Or we can do it using number fields. ::
     sage: d
     a^3*b^2*c - a^2*b^3*c - a^3*b*c^2 + a*b^3*c^2 + a^2*b*c^3 - a*b^2*c^3 - a^3*b^2*d + a^2*b^3*d + a^3*c^2*d - b^3*c^2*d - a^2*c^3*d + b^2*c^3*d + a^3*b*d^2 - a*b^3*d^2 - a^3*c*d^2 + b^3*c*d^2 + a*c^3*d^2 - b*c^3*d^2 - a^2*b*d^3 + a*b^2*d^3 + a^2*c*d^3 - b^2*c*d^3 - a*c^2*d^3 + b*c^2*d^3
     sage: d.factor()
-    (-1) * (c - d) * (-b + c) * (b - d) * (-a + c) * (-a + b) * (a - d)
+    (-1) * (-a + c) * (-a + b) * (-b + c) * (c - d) * (b - d) * (a - d)
 
 ::
 
     sage: # (YES) Find the eigenvalues of a 3x3 integer matrix.
     sage: m = matrix(QQ, 3, [5,-3,-7, -2,1,2, 2,-3,-4])
     sage: m.eigenspaces_left()
-    [
-    (3, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [ 1  0 -1]),
-    (1, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [ 1  1 -1]),
-    (-2, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [0 1 1])
-    ]
+    [(3,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [ 1  0 -1]),
+     (1,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [ 1  1 -1]),
+     (-2,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [0 1 1])]
 
 ::
 
@@ -591,7 +592,7 @@ Or we can do it using number fields. ::
     sage: f = sin(y) + cos(y)
     sage: g = f.taylor(y, 0, 10)
     sage: h = g.power_series(QQ)
-    sage: k = (h - 1).reverse()
+    sage: k = (h - 1).revert()
     sage: k
     y + 1/2*y^2 + 2/3*y^3 + y^4 + 17/10*y^5 + 37/12*y^6 + 41/7*y^7 + 23/2*y^8 + 1667/72*y^9 + 3803/80*y^10 + O(y^11)
 

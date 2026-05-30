@@ -16,7 +16,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
 class AffineWeylGroups(Category_singleton):
     """
-    The category of affine Weyl groups
+    The category of affine Weyl groups.
 
     .. TODO:: add a description of this category
 
@@ -124,18 +124,18 @@ class AffineWeylGroups(Category_singleton):
 
             def succ(pair):
                 u, length = pair
-                for i in u.descents(positive=True, side="left"):
+                for i in u.descents(positive=True, side='left'):
                     u1 = u.apply_simple_reflection(i, "left")
-                    if (length < k and i == u1.first_descent(side="left") and
+                    if (length < k and i == u1.first_descent(side='left') and
                             u1.is_affine_grassmannian()):
                         yield (u1, length + 1)
-                return
+
             return RecursivelyEnumeratedSet_forest(((self.one(), 0),), succ, algorithm='breadth',
                                                    category=FiniteEnumeratedSets(),
                                                    post_process=select_length)
 
     class ElementMethods:
-        def is_affine_grassmannian(self):
+        def is_affine_grassmannian(self) -> bool:
             """
             Test whether ``self`` is affine Grassmannian.
 
@@ -219,9 +219,7 @@ class AffineWeylGroups(Category_singleton):
 
             - ``self`` is affine Grassmannian element of the affine Weyl group of type `A_k^{(1)}` (i.e. all reduced words end in 0)
 
-            OUTPUT:
-
-            - `k`-bounded partition
+            OUTPUT: `k`-bounded partition
 
             .. SEEALSO:: :meth:`affine_grassmannian_to_core`
 

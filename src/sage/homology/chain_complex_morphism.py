@@ -58,36 +58,11 @@ from sage.categories.homset import Hom
 from sage.categories.chain_complexes import ChainComplexes
 
 
-def is_ChainComplexMorphism(x):
-    """
-    Return ``True`` if and only if ``x`` is a chain complex morphism.
-
-    EXAMPLES::
-
-        sage: # needs sage.graphs
-        sage: from sage.homology.chain_complex_morphism import is_ChainComplexMorphism
-        sage: S = simplicial_complexes.Sphere(14)
-        sage: H = Hom(S,S)
-        sage: i = H.identity()                  # long time (8s on sage.math, 2011)
-        sage: S = simplicial_complexes.Sphere(6)
-        sage: H = Hom(S,S)
-        sage: i = H.identity()
-        sage: x = i.associated_chain_complex_morphism()
-        sage: x # indirect doctest
-        Chain complex morphism:
-          From: Chain complex with at most 7 nonzero terms over Integer Ring
-          To: Chain complex with at most 7 nonzero terms over Integer Ring
-        sage: is_ChainComplexMorphism(x)
-        True
-    """
-    return isinstance(x, ChainComplexMorphism)
-
-
 class ChainComplexMorphism(Morphism):
     """
     An element of this class is a morphism of chain complexes.
     """
-    def __init__(self, matrices, C, D, check=True):
+    def __init__(self, matrices, C, D, check=True) -> None:
         """
         Create a morphism from a dictionary of matrices.
 
@@ -238,7 +213,7 @@ class ChainComplexMorphism(Morphism):
 
         INPUT:
 
-        - ``deg`` -- (optional, default ``None``) the degree
+        - ``deg`` -- (default: ``None``) the degree
 
         EXAMPLES::
 
@@ -323,7 +298,6 @@ class ChainComplexMorphism(Morphism):
                 [ 0 -1  0  0]
                 [ 0  0 -1  0]
                 [ 0  0  0 -1]}
-
         """
         f = dict()
         for i in self._matrix_dictionary.keys():
@@ -423,7 +397,7 @@ class ChainComplexMorphism(Morphism):
             [2]
 
         Before :issue:`19065`, the following multiplication produced a
-        :class:`KeyError` because `f` was not explicitly defined in degree 2::
+        :exc:`KeyError` because `f` was not explicitly defined in degree 2::
 
             sage: C0 = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
             sage: C1 = ChainComplex({1: zero_matrix(ZZ, 0, 1)})
@@ -508,14 +482,14 @@ class ChainComplexMorphism(Morphism):
         """
         return self + (-x)
 
-    def __eq__(self, x):
+    def __eq__(self, x) -> bool:
         """
         Return ``True`` if and only if ``self == x``.
 
         EXAMPLES::
 
             sage: # needs sage.graphs
-            sage: S = SimplicialComplex(is_mutable=False)
+            sage: S = SimplicialComplex(immutable=True)
             sage: H = Hom(S,S)
             sage: i = H.identity()
             sage: x = i.associated_chain_complex_morphism(); x
@@ -541,7 +515,7 @@ class ChainComplexMorphism(Morphism):
         EXAMPLES::
 
             sage: # needs sage.graphs
-            sage: S = SimplicialComplex(is_mutable=False)
+            sage: S = SimplicialComplex(immutable=True)
             sage: H = Hom(S,S)
             sage: i = H.identity()
             sage: x = i.associated_chain_complex_morphism()
@@ -574,7 +548,7 @@ class ChainComplexMorphism(Morphism):
         m = self.to_matrix()
         return m.rank() == m.nrows()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` if this map is injective.
 
@@ -597,7 +571,7 @@ class ChainComplexMorphism(Morphism):
         """
         return self.to_matrix().right_nullity() == 0
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         TESTS::
 
@@ -609,7 +583,7 @@ class ChainComplexMorphism(Morphism):
         """
         return hash(self.domain()) ^ hash(self.codomain()) ^ hash(tuple(self._matrix_dictionary.items()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 

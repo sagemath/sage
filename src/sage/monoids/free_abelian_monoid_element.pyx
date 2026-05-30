@@ -41,22 +41,6 @@ from sage.rings.integer cimport Integer, _Integer_from_mpz
 from sage.libs.gmp.mpz cimport *
 
 
-def is_FreeAbelianMonoidElement(x):
-    r"""
-    Queries whether ``x`` is an object of type ``FreeAbelianMonoidElement``.
-
-    INPUT:
-
-    - ``x`` -- an object.
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is an object of type ``FreeAbelianMonoidElement``;
-      ``False`` otherwise.
-    """
-    return isinstance(x, FreeAbelianMonoidElement)
-
-
 cdef class FreeAbelianMonoidElement(MonoidElement):
     cdef int _init(self, Py_ssize_t n, Parent parent) except -1:
         """

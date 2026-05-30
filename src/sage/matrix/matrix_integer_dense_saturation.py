@@ -1,7 +1,6 @@
 """
 Saturation over ZZ
 """
-
 from copy import copy
 
 from sage.arith.misc import binomial, GCD as gcd
@@ -17,9 +16,9 @@ def p_saturation(A, p, proof=True):
     """
     INPUT:
 
-    - A -- a matrix over ZZ
-    - p -- a prime
-    - proof -- bool (default: True)
+    - ``A`` -- a matrix over ZZ
+    - ``p`` -- a prime
+    - ``proof`` -- boolean (default: ``True``)
 
     OUTPUT:
 
@@ -29,7 +28,8 @@ def p_saturation(A, p, proof=True):
     EXAMPLES::
 
         sage: from sage.matrix.matrix_integer_dense_saturation import p_saturation
-        sage: A = matrix(ZZ, 2, 2, [3,2,3,4]); B = matrix(ZZ, 2,3,[1,2,3,4,5,6])
+        sage: A = matrix(ZZ, 2, 2, [3,2,3,4])
+        sage: B = matrix(ZZ, 2, 3, [1,2,3,4,5,6])
         sage: A.det()
         6
         sage: C = A*B; C
@@ -68,16 +68,15 @@ def p_saturation(A, p, proof=True):
         H = H.stack(C).hermite_form(include_zero_rows=False, proof=proof)
     verbose("done saturating", tm)
 
-def random_sublist_of_size(k, n):
+
+def random_sublist_of_size(k, n) -> list:
     """
     INPUT:
 
-    - k -- an integer
-    - n -- an integer
+    - ``k`` -- integer
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    a randomly chosen sublist of range(k) of size n.
+    OUTPUT: a randomly chosen sublist of ``range(k)`` of size `n`
 
     EXAMPLES::
 
@@ -119,22 +118,21 @@ def random_sublist_of_size(k, n):
 
 def solve_system_with_difficult_last_row(B, A):
     """
-    Solve the matrix equation B*Z = A when the last row of `B`
+    Solve the matrix equation ``B*Z = A`` when the last row of `B`
     contains huge entries.
 
     INPUT:
 
-    - B -- a square n x n nonsingular matrix with painful big bottom row.
-    - A -- an n x k matrix.
+    - ``B`` -- a square n x n nonsingular matrix with painful big bottom row
+    - ``A`` -- an n x k matrix
 
-    OUTPUT:
-
-    the unique solution to B*Z = A.
+    OUTPUT: the unique solution to ``B*Z = As``
 
     EXAMPLES::
 
         sage: from sage.matrix.matrix_integer_dense_saturation import solve_system_with_difficult_last_row
-        sage: B = matrix(ZZ, 3, [1,2,3, 3,-1,2,939239082,39202803080,2939028038402834]); A = matrix(ZZ,3,2,[1,2,4,3,-1,0])
+        sage: B = matrix(ZZ, 3, [1,2,3, 3,-1,2,939239082,39202803080,2939028038402834])
+        sage: A = matrix(ZZ,3,2,[1,2,4,3,-1,0])
         sage: X = solve_system_with_difficult_last_row(B, A); X
         [  290668794698843/226075992027744         468068726971/409557956572]
         [-226078357385539/1582531944194208       1228691305937/2866905696004]
@@ -142,11 +140,12 @@ def solve_system_with_difficult_last_row(B, A):
         sage: B*X == A
         True
     """
-    # See the comments in the function of the same name in matrix_integer_dense_hnf.py.
+    # See the comments in the function of the same name in
+    # matrix_integer_dense_hnf.py.
     # This function is just a generalization of that one to A a matrix.
     C = copy(B)
     while True:
-        C[C.nrows()-1] = random_matrix(ZZ,1,C.ncols()).row(0)
+        C[C.nrows()-1] = random_matrix(ZZ, 1, C.ncols()).row(0)
         try:
             X = C.solve_right(A)
         except ValueError:
@@ -185,27 +184,27 @@ def solve_system_with_difficult_last_row(B, A):
     verbose("Done getting linear combinations.", tm)
     return X
 
+
 def saturation(A, proof=True, p=0, max_dets=5):
-    """
-    Compute a saturation matrix of A.
+    r"""
+    Compute a saturation matrix of `A`.
 
     INPUT:
 
-    - A     -- a matrix over ZZ
-    - proof -- bool (default: True)
-    - p     -- int (default: 0); if not 0 only guarantees that output is
-      p-saturated
-    - max_dets -- int (default: 4) max number of dets of submatrices to
-      compute.
+    - ``A`` -- a matrix over `\ZZ`
+    - ``proof`` -- boolean (default: ``True``)
+    - ``p`` -- integer (default: 0); if not 0 only guarantees that output is
+      `p`-saturated
+    - ``max_dets`` -- integer (default: 4); max number of dets of
+      submatrices to compute
 
-    OUTPUT:
-
-    matrix -- saturation of the matrix A.
+    OUTPUT: matrix; saturation of the matrix `A`
 
     EXAMPLES::
 
         sage: from sage.matrix.matrix_integer_dense_saturation import saturation
-        sage: A = matrix(ZZ, 2, 2, [3,2,3,4]); B = matrix(ZZ, 2,3,[1,2,3,4,5,6]); C = A*B
+        sage: A = matrix(ZZ, 2, 2, [3,2,3,4])
+        sage: B = matrix(ZZ, 2,3,[1,2,3,4,5,6]); C = A*B
         sage: C
         [11 16 21]
         [19 26 33]
@@ -266,28 +265,32 @@ def saturation(A, proof=True, p=0, max_dets=5):
             return A._insert_zero_columns(zero_cols)
 
         # Factor and p-saturate at each p.
-        # This is not a good algorithm, because all the HNF's in it are really slow!
-        #
-        #tm = verbose('factoring gcd %s of determinants'%d)
-        #limit = 2**31-1
-        #F = d.factor(limit = limit)
-        #D = [p for p, e in F if p <= limit]
-        #B = [n for n, e in F if n > limit]  # all big factors -- there will only be at most one
-        #assert len(B) <= 1
-        #C = B[0]
-        #for p in D:
-        #    A = p_saturation(A, p=p, proof=proof)
+        # This is not a good algorithm, because all the HNF's in it
+        # are really slow!
+
+        # tm = verbose('factoring gcd %s of determinants'%d)
+        # limit = 2**31-1
+        # F = d.factor(limit = limit)
+        # D = [p for p, e in F if p <= limit]
+        # B = [n for n, e in F if n > limit]  # all big factors -- there will only be at most one
+        # assert len(B) <= 1
+        # C = B[0]
+        # for p in D:
+        #     A = p_saturation(A, p=p, proof=proof)
 
     # This is a really simple but powerful algorithm.
-    # FACT: If A is a matrix of full rank, then hnf(transpose(A))^(-1)*A is a saturation of A.
-    # To make this practical we use solve_system_with_difficult_last_row, since the
-    # last column of HNF's are typically the only really big ones.
+    # FACT: If A is a matrix of full rank, then
+    # hnf(transpose(A))^(-1)*A is a saturation of A.
+    # To make this practical we use
+    # solve_system_with_difficult_last_row, since the last column of
+    # HNF's are typically the only really big ones.
     B = A.transpose().hermite_form(include_zero_rows=False, proof=proof)
     B = B.transpose()
 
     # Now compute B^(-1) * A
     C = solve_system_with_difficult_last_row(B, A)
     return C.change_ring(ZZ)._insert_zero_columns(zero_cols)
+
 
 def index_in_saturation(A, proof=True):
     r"""
@@ -299,14 +302,13 @@ def index_in_saturation(A, proof=True):
 
     - ``proof`` -- boolean (``True`` or ``False``)
 
-    OUTPUT:
-
-    An integer
+    OUTPUT: integer
 
     EXAMPLES::
 
         sage: from sage.matrix.matrix_integer_dense_saturation import index_in_saturation
-        sage: A = matrix(ZZ, 2, 2, [3,2,3,4]); B = matrix(ZZ, 2,3,[1,2,3,4,5,6]); C = A*B; C
+        sage: A = matrix(ZZ, 2, 2, [3,2,3,4])
+        sage: B = matrix(ZZ, 2,3,[1,2,3,4,5,6]); C = A*B; C
         [11 16 21]
         [19 26 33]
         sage: index_in_saturation(C)

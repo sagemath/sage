@@ -1,5 +1,5 @@
 r"""
-Frieze Patterns
+Frieze patterns
 
 This implements the original frieze patterns due to Conway and Coxeter.
 Such a frieze pattern is considered as a sequence of nonnegative
@@ -253,8 +253,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         """
         if self[1] == 1 and self[-2] == 1:
             return len(self)
-        else:
-            return None
+        return None
 
     def is_positive(self):
         r"""
@@ -363,9 +362,9 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
         The option ``model`` must be one of
 
-        * ``'UHP'`` - (default) for the upper half plane model
-        * ``'PD'`` - for the Poincare disk model
-        * ``'KM'`` - for the Klein model
+        * ``'UHP'`` -- (default) for the upper half plane model
+        * ``'PD'`` -- for the Poincare disk model
+        * ``'KM'`` -- for the Klein model
 
         The hyperboloid model is not an option as this does not implement
         boundary points.
@@ -430,8 +429,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
         """
         if R.has_coerce_map_from(self.parent().base_ring()):
             return FriezePattern(list(self), field=R)
-        else:
-            raise TypeError("no base extension defined")
+        raise TypeError("no base extension defined")
 
 
 class FriezePatterns(PathTableaux):

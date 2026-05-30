@@ -10,7 +10,7 @@ AUTHORS:
 - Jon Hanke
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 from sage.misc.misc_c import prod
 
 
@@ -69,7 +69,6 @@ def _is_finite(L, fallback=True):
         sage: from itertools import product
         sage: _is_finite(product([1],[1])) # does not provide is_finite() or __len__()
         True
-
     """
     try:
         return L.is_finite()
@@ -86,9 +85,7 @@ def _is_finite(L, fallback=True):
         return fallback
 
     from sage.rings.infinity import infinity
-    if n is infinity:
-        return False
-    return True
+    return n is not infinity
 
 
 def _xmrange_iter(iter_list, typ=list):
@@ -106,7 +103,7 @@ def _xmrange_iter(iter_list, typ=list):
         sage: l1 is l2
         False
 
-    However, if you would like to re-use the list object::
+    However, if you would like to reuse the list object::
 
         sage: iter = sage.misc.mrange._xmrange_iter( [[1,2],[1,3]], lambda x: x )
         sage: l1 = next(iter)
@@ -182,16 +179,16 @@ def mrange_iter(iter_list, typ=list):
     More precisely, return the iterator over all objects of type ``typ`` of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     INPUT:
 
-    -  ``iter_list`` - a finite iterable of finite iterables
+    - ``iter_list`` -- a finite iterable of finite iterables
 
-    -  ``typ`` - (default: list) a type or class; more
-       generally, something that can be called with a list as input.
+    - ``typ`` -- (default: list) a type or class; more
+      generally, something that can be called with a list as input
 
-    OUTPUT: a list
+    OUTPUT: list
 
     EXAMPLES::
 
@@ -228,24 +225,24 @@ class xmrange_iter:
     Return the multirange iterate derived from the given iterators and
     type.
 
-    .. note::
+    .. NOTE::
 
        This basically gives you the Cartesian product of sets.
 
     More precisely, return the iterator over all objects of type typ of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     Use :func:`mrange_iter` for the non-iterator form.
 
     INPUT:
 
-    - ``iter_list`` - a list of objects usable as iterators (possibly
-       lists)
+    - ``iter_list`` -- list of objects usable as iterators (possibly
+      lists)
 
-    - ``typ`` - (default: list) a type or class; more generally,
-       something that can be called with a list as input.
+    - ``typ`` -- (default: list) a type or class; more generally,
+      something that can be called with a list as input
 
     OUTPUT: a generator
 
@@ -324,10 +321,9 @@ class xmrange_iter:
         self.typ = typ
 
     def __repr__(self):
-        if self.typ == list:
+        if self.typ is list:
             return 'xmrange_iter(%s)' % self.iter_list
-        else:
-            return 'xmrange_iter(%s, %s)' % (self.iter_list, self.typ)
+        return 'xmrange_iter(%s, %s)' % (self.iter_list, self.typ)
 
     def __iter__(self):
         return _xmrange_iter(self.iter_list, self.typ)
@@ -336,7 +332,7 @@ class xmrange_iter:
         """
         Return the cardinality of this iterator as an int.
 
-        This raises a :class:`TypeError` if the cardinality does not fit
+        This raises a :exc:`TypeError` if the cardinality does not fit
         into a Python int.
 
         EXAMPLES::
@@ -387,14 +383,13 @@ class xmrange_iter:
                 n = Integer(len(L))
             if n == 0:
                 return Integer(0)
-            elif n is infinity:
+            if n is infinity:
                 found_infinity = True
             elif not found_infinity:
                 ans *= n
         if found_infinity:
             return infinity
-        else:
-            return ans
+        return ans
 
 
 def _xmrange(sizes, typ=list):
@@ -433,16 +428,16 @@ def mrange(sizes, typ=list):
     More precisely, return the iterator over all objects of type typ of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     INPUT:
 
-    -  ``sizes`` - a list of nonnegative integers
+    - ``sizes`` -- list of nonnegative integers
 
-    -  ``typ`` - (default: list) a type or class; more
-       generally, something that can be called with a list as input.
+    - ``typ`` -- (default: list) a type or class; more
+      generally, something that can be called with a list as input
 
-    OUTPUT: a list
+    OUTPUT: list
 
     EXAMPLES::
 
@@ -483,18 +478,16 @@ class xmrange:
     More precisely, return the iterator over all objects of type typ of
     n-tuples of Python ints with entries between 0 and the integers in
     the sizes list. The iterator is empty if sizes is empty or contains
-    any non-positive integer.
+    any nonpositive integer.
 
     Use mrange for the non-iterator form.
 
     INPUT:
 
+    - ``sizes`` -- list of nonnegative integers
 
-    -  ``sizes`` - a list of nonnegative integers
-
-    -  ``typ`` - (default: list) a type or class; more
-       generally, something that can be called with a list as input.
-
+    - ``typ`` -- (default: list) a type or class; more
+      generally, something that can be called with a list as input
 
     OUTPUT: a generator
 
@@ -579,10 +572,9 @@ class xmrange:
         self.typ = typ
 
     def __repr__(self):
-        if self.typ == list:
+        if self.typ is list:
             return 'xmrange(%s)' % self.sizes
-        else:
-            return 'xmrange(%s, %s)' % (self.sizes, self.typ)
+        return 'xmrange(%s, %s)' % (self.sizes, self.typ)
 
     def __len__(self):
         sizes = self.sizes
@@ -604,7 +596,7 @@ def cartesian_product_iterator(X):
 
     INPUT:
 
-    -  ``X`` - list or tuple of lists
+    - ``X`` -- list or tuple of lists
 
     OUTPUT: iterator over the Cartesian product of the elements of X
 
@@ -639,7 +631,7 @@ def cantor_product(*args, **kwds):
     - a certain number of iterables
 
     - ``repeat`` -- an optional integer. If it is provided, the input is
-      repeated ``repeat`` times.
+      repeated ``repeat`` times
 
     Other keyword arguments are passed to
     :class:`sage.combinat.integer_lists.invlex.IntegerListsLex`.

@@ -38,13 +38,10 @@ documentation for the \sage interface rather than for QEPCAD.  As
 such, it does not cover several issues that are very important to use
 QEPCAD efficiently, such as variable ordering, the efficient use of
 the alternate quantifiers and ``_root_`` expressions, the
-``measure-zero-error`` command, etc.  For more information on
-QEPCAD, see the online documentation at
-\url{http://www.cs.usna.edu/~qepcad/B/QEPCAD.html} and Chris Brown's
-tutorial handout and slides from
-\url{http://www.cs.usna.edu/~wcbrown/research/ISSAC04/Tutorial.html}.
-(Several of the examples in this documentation came from these
-sources.)
+``measure-zero-error`` command, etc.  For more information on QEPCAD,
+see the `online documentation <https://www.usna.edu/Users/cs/wcbrown/qepcad/B/QEPCAD.html>`_
+and Chris Brown's `tutorial handout <https://www.usna.edu/Users/cs/wcbrown/research/ISSAC04/Tutorial.html>`_.
+(Several of the examples in this documentation came from these sources.)
 
 The examples below require that the optional qepcad package is installed.
 
@@ -596,6 +593,7 @@ AUTHORS:
 
 - Carl Witty (2008-03): initial version
 - Thierry Monteil (2015-07) repackaging + noncommutative doctests.
+
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
@@ -606,19 +604,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
-from sage.env import SAGE_LOCAL
-import pexpect
 import re
 import sys
 
+import pexpect
+
 from sage.cpython.string import bytes_to_str
+from sage.env import SAGE_LOCAL
+from sage.interfaces.expect import Expect, ExpectFunction
+from sage.interfaces.interface import AsciiArtString
+from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.flatten import flatten
+from sage.misc.instancedoc import instancedoc
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
-from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.misc.instancedoc import instancedoc
-from .expect import Expect, ExpectFunction
-from sage.interfaces.interface import AsciiArtString
 
 
 def _qepcad_atoms(formula):
@@ -627,7 +626,7 @@ def _qepcad_atoms(formula):
 
     INPUT:
 
-    - `formula` (string) - a quantifier-free formula.
+    - ``formula`` -- string; a quantifier-free formula
 
     .. NOTE::
 
@@ -773,7 +772,7 @@ class Qepcad_expect(ExtraTabCompletion, Expect):
             Qepcad
         """
         Expect.__init__(self,
-                        name="QEPCAD",
+                        name='QEPCAD',
                         # yuck: when QEPCAD first starts,
                         # it doesn't give prompts
                         prompt="\nEnter an .*:\r",
@@ -809,7 +808,7 @@ class Qepcad:
 
         A logfile can be specified with ``logfile``.
         If ``verbose=True`` is given, then the logfile is automatically
-        set to ``sys.stdout``, so all QEPCAD interaction is echoed to
+        set to ``sys.stdout.buffer``, so all QEPCAD interaction is echoed to
         the terminal.
 
         You can set the amount of memory that QEPCAD allocates with
@@ -830,16 +829,16 @@ class Qepcad:
 
             sage: (x, y, z) = var('x, y, z')
             sage: conds = [-z < 0, -y + z < 0, x^2 + x*y + 2*x*z + 2*y*z - x < 0, \
-                           x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
-                           -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
-                           x + 3*y + 3*z - 1 < 0]
+            ....:          x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
+            ....:          -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
+            ....:          x + 3*y + 3*z - 1 < 0]
             sage: qepcad(conds, memcells=3000000) # optional - qepcad
             2 x - 1 > 0 /\ z > 0 /\ z - y < 0 /\ 3 z + 3 y + x - 1 < 0
         """
         self._cell_cache = {}
 
         if verbose:
-            logfile = sys.stdout
+            logfile = sys.stdout.buffer
 
         varlist = None
         if vars is not None:
@@ -864,7 +863,7 @@ class Qepcad:
                 # and ensure they match up with the variables in the formula.
                 if frozenset(varlist) != (fvars | frozenset(fqvars)):
                     raise ValueError("specified vars don't match vars in formula")
-                if len(fqvars) and varlist[-len(fqvars):] != fqvars:
+                if fqvars and varlist[-len(fqvars):] != fqvars:
                     raise ValueError("specified vars don't match quantified vars")
             free_vars = len(fvars)
             formula = repr(formula)
@@ -926,7 +925,7 @@ class Qepcad:
         """
         if not isinstance(assume, str):
             assume = qepcad_formula.formula(assume)
-            if len(assume.qvars):
+            if assume.qvars:
                 raise ValueError("assumptions cannot be quantified")
             if not assume.vars.issubset(frozenset(self._varlist[:self._free_vars])):
                 raise ValueError("assumption contains variables not "
@@ -934,7 +933,7 @@ class Qepcad:
             assume = repr(assume)
         assume = assume.replace('_', '')
         result = self._eval_line("assume [%s]" % assume)
-        if len(result):
+        if result:
             return AsciiArtString(result)
 
     def solution_extension(self, kind):
@@ -1020,7 +1019,7 @@ class Qepcad:
         if loc >= 0:
             result = result[loc + len(tagline):]
         result = result.strip()
-        if len(result):
+        if result:
             return AsciiArtString(result)
 
     def set_truth_value(self, index, nv):
@@ -1072,8 +1071,7 @@ class Qepcad:
         match = self._qex.expect().match
         if match == pexpect.EOF:
             return 'EXITED'
-        else:
-            return bytes_to_str(match.group(1))
+        return bytes_to_str(match.group(1))
 
     def _parse_answer_stats(self):
         r"""
@@ -1101,8 +1099,7 @@ class Qepcad:
 
         if match:
             return (match.group(1).strip(), match.group(2))
-        else:
-            return (final, '')
+        return (final, '')
 
     def answer(self):
         r"""
@@ -1188,10 +1185,9 @@ class Qepcad:
         index_str = _format_cell_index(index)
         if index_str in self._cell_cache:
             return self._cell_cache[index_str]
-        else:
-            c = self.make_cells(self.d_cell(index))[0]
-            self._cell_cache[index_str] = c
-            return c
+        c = self.make_cells(self.d_cell(index))[0]
+        self._cell_cache[index_str] = c
+        return c
 
     def make_cells(self, text):
         r"""
@@ -1329,7 +1325,7 @@ class Qepcad:
         pre_phase = self.phase()
         result = self._eval_line('{} {}'.format(name, ' '.join(args)))
         post_phase = self.phase()
-        if len(result) and post_phase != 'EXITED':
+        if result and post_phase != 'EXITED':
             return AsciiArtString(result)
         if pre_phase != post_phase:
             if post_phase == 'EXITED' and name != 'quit':
@@ -1365,12 +1361,11 @@ def _format_cell_index(a):
         '(5)'
     """
     a = flatten([a])
-    if len(a) and isinstance(a[0], QepcadCell):
+    if a and isinstance(a[0], QepcadCell):
         a[0:1] = a[0].index()
     if len(a) == 1:
         return '(%s)' % a[0]
-    else:
-        return str(tuple(a))
+    return str(tuple(a))
 
 
 @instancedoc
@@ -1528,7 +1523,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         sage: qepcad(qf.all_but_finitely_many(x, a*x^2 + b*x + c != 0))    # not tested (random order)
         b /= 0 \/ a /= 0 \/ c /= 0
 
-    The non-zeroes are continuous iff there are no zeroes or if
+    The nonzeroes are continuous iff there are no zeroes or if
     the polynomial is zero. ::
 
         sage: qepcad(qf.connected_subset(x, a*x^2 + b*x + c != 0))         # not tested (random order)
@@ -1630,7 +1625,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
     use_witness = False
     if solution == 'any-point':
         formula = qepcad_formula.formula(formula)
-        if len(formula.qvars) == 0:
+        if not formula.qvars:
             if vars is None:
                 vars = sorted(formula.vars)
             formula = qepcad_formula.exists(vars, formula)
@@ -1644,44 +1639,42 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         if solution is not None:
             print("WARNING: 'solution=' is ignored for interactive use")
         return qe
-    else:
-        qe.go()
-        qe.go()
-        qe.go()
-        if solution is None:
-            qe.finish()
-            return qe.answer()
-        elif solution == 'geometric':
-            s = qe.solution_extension('G')
-            qe.quit()
-            return s
-        elif solution == 'extended':
-            s = qe.solution_extension('E')
-            qe.quit()
-            return s
-        elif solution == 'any-point':
-            if use_witness:
-                cells = qe.make_cells(qe.d_witness_list())
-            else:
-                cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            if len(cells) == 0:
-                raise ValueError("input formula is false everywhere")
-            return cells[0].sample_point_dict()
-        elif solution == 'cell-points':
-            cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            return [c.sample_point_dict() for c in cells]
-        elif solution == 'all-points':
-            cells = qe.make_cells(qe.d_true_cells())
-            qe.quit()
-            for c in cells:
-                if c._dimension > 0:
-                    raise ValueError("input formula is true for "
-                                     "infinitely many points")
-            return [c.sample_point_dict() for c in cells]
+    qe.go()
+    qe.go()
+    qe.go()
+    if solution is None:
+        qe.finish()
+        return qe.answer()
+    if solution == 'geometric':
+        s = qe.solution_extension('G')
+        qe.quit()
+        return s
+    if solution == 'extended':
+        s = qe.solution_extension('E')
+        qe.quit()
+        return s
+    if solution == 'any-point':
+        if use_witness:
+            cells = qe.make_cells(qe.d_witness_list())
         else:
-            raise ValueError(f"Unknown solution type ({solution})")
+            cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        if not cells:
+            raise ValueError("input formula is false everywhere")
+        return cells[0].sample_point_dict()
+    if solution == 'cell-points':
+        cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        return [c.sample_point_dict() for c in cells]
+    if solution == 'all-points':
+        cells = qe.make_cells(qe.d_true_cells())
+        qe.quit()
+        for c in cells:
+            if c._dimension > 0:
+                raise ValueError("input formula is true for "
+                                 "infinitely many points")
+        return [c.sample_point_dict() for c in cells]
+    raise ValueError(f"Unknown solution type ({solution})")
 
 
 def qepcad_console(memcells=None):
@@ -1871,12 +1864,12 @@ class qepcad_formula_factory:
 
         INPUT:
 
-        - ``formulas`` -- a list of unquantified formulas
+        - ``formulas`` -- list of unquantified formulas
 
         OUTPUT:
 
-        - form_strs -- a list of formulas as strings
-        - vars -- a frozenset of all variables in the formulas
+        - ``form_strs`` -- list of formulas as strings
+        - ``vars`` -- frozenset of all variables in the formulas
 
         EXAMPLES::
 
@@ -1891,7 +1884,7 @@ class qepcad_formula_factory:
         vars = frozenset()
         for f in formulas:
             vars = vars | f.vars
-            if len(f.qvars):
+            if f.qvars:
                 raise ValueError("QEPCAD formulas must be in prenex"
                                  " (quantifiers outermost) form")
         return formula_strs, vars
@@ -1947,7 +1940,7 @@ class qepcad_formula_factory:
 
     def formula(self, formula):
         r"""
-        Constructs a QEPCAD formula from the given input.
+        Construct a QEPCAD formula from the given input.
 
         INPUT:
 
@@ -1969,8 +1962,7 @@ class qepcad_formula_factory:
         """
         if isinstance(formula, (list, tuple)):
             return self.and_(formula)
-        else:
-            return self.atomic(formula)
+        return self.atomic(formula)
 
     def and_(self, *formulas):
         r"""
@@ -2296,9 +2288,8 @@ class qepcad_formula_factory:
         if allow_multi and isinstance(v, (list, tuple)):
             if not v:
                 return formula
-            else:
-                return self.quantifier(kind, v[0],
-                                       self.quantifier(kind, v[1:], formula))
+            return self.quantifier(kind, v[0],
+                                   self.quantifier(kind, v[1:], formula))
 
         form_str = str(formula)
         if form_str[-1] != ']':
@@ -2338,10 +2329,10 @@ def _eval_qepcad_algebraic(text):
         sage: 8*x^2 - 8*x - 29 == 0
         True
     """
-    from sage.rings.rational_field import QQ
     from sage.rings.polynomial.polynomial_ring import polygen
-    from sage.rings.real_mpfi import RealIntervalField
     from sage.rings.qqbar import AA
+    from sage.rings.rational_field import QQ
+    from sage.rings.real_mpfi import RealIntervalField
 
     match = _qepcad_algebraic_re.match(text)
 
@@ -2576,7 +2567,7 @@ class QepcadCell:
             ind = '(%s)' % ind[0]
         else:
             ind = str(ind)
-        return ('QEPCAD cell %s' % ind)
+        return f'QEPCAD cell {ind}'
 
     def index(self):
         r"""

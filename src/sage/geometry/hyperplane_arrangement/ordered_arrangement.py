@@ -44,7 +44,6 @@ We see the differences in :meth:`~sage.geometry.hyperplane_arrangement.arrangeme
 
 Also in meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.cone`::
 
-    sage: # needs sage.combinat
     sage: a.<x,y,z> = hyperplane_arrangements.semiorder(3)
     sage: H.<x,y,z> = OrderedHyperplaneArrangements(QQ)
     sage: a1 = H(a)
@@ -54,7 +53,6 @@ Also in meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrang
 
 And in :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.restriction`::
 
-    sage: # needs sage.graphs
     sage: A.<u, x, y, z> = hyperplane_arrangements.braid(4)
     sage: L.<u, x, y, z> = OrderedHyperplaneArrangements(QQ)
     sage: A1 = L(A)
@@ -115,9 +113,9 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         - ``parent`` -- the parent :class:`OrderedHyperplaneArrangements`
 
-        - ``hyperplanes`` -- a tuple of hyperplanes
+        - ``hyperplanes`` -- tuple of hyperplanes
 
-        - ``check`` -- boolean (default ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check input
 
         - ``backend`` -- string (default: ``None``); the backend to
@@ -142,7 +140,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         INPUT:
 
-        - ``proj`` -- (default: ``True``); if the
+        - ``proj`` -- (default: ``True``) if the
           ambient space is affine or projective
 
         OUTPUT:
@@ -158,7 +156,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             ...
             TypeError: the arrangement is not projective
 
-            sage: # needs sage.graphs
             sage: A0.<u,x,y,z> = hyperplane_arrangements.braid(4); A0
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
             sage: L.<u,x,y,z> = OrderedHyperplaneArrangements(QQ)
@@ -177,7 +174,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: T1.isomorphism(M2)
             {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
 
-            sage: # needs sage.combinat
             sage: a0 = hyperplane_arrangements.semiorder(3); a0
             Arrangement of 6 hyperplanes of dimension 3 and rank 2
             sage: L.<t0, t1, t2> = OrderedHyperplaneArrangements(QQ)
@@ -224,7 +220,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             mat_rows = mat.rows()[:-1]
             H1b = A1(mat_rows)
             return H1b
-        P = self.intersection_poset(element_label="subspace")
+        P = self.intersection_poset(element_label='subspace')
         center = P.maximal_elements()[0].linear_part()
         n1 = center.dimension()
         U = []
@@ -250,9 +246,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         hyperplane arrangement in `\CC^n` whose equations have
         coefficients in a subfield of `\QQbar`.
 
-        OUTPUT:
-
-        A finitely presented fundamental group.
+        OUTPUT: a finitely presented fundamental group
 
         .. NOTE::
 
@@ -340,9 +334,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         Return the meridians of each hyperplane (including the one at infinity).
 
-        OUTPUT:
-
-        A dictionary
+        OUTPUT: a dictionary
 
         .. NOTE::
 
@@ -398,22 +390,19 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
-                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
                                    x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
                                    x3^-1*x1^-1*x3*x1 >
             sage: G3.abelian_invariants()
             (0, 0, 0, 0, 0)
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))
-            sage: G4 = H.projective_fundamental_group(); G4.sorted_presentation()
+            sage: G4 = H.projective_fundamental_group(); G4.sorted_presentation()  # long time (:issue:`39569`)
             Finitely presented group
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
-                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
-                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
-                                   x3^-1*x1^-1*x3*x1 >
-            sage: G4.abelian_invariants()
+                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2, x3^-1*x1^-1*x3*x1 >
+            sage: G4.abelian_invariants()  # long time (:issue:`39569`)
             (0, 0, 0, 0, 0)
 
             sage: # needs sirocco
@@ -479,9 +468,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         Return the meridian of each hyperplane.
 
-        OUTPUT:
-
-        A dictionary
+        OUTPUT: a dictionary
 
         .. NOTE::
 
@@ -503,7 +490,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
              1: [x3], 2: [x4], 3: [x1], 4: [x2], 5: [x0]}
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))
-            sage: H.projective_meridians()
+            sage: H.projective_meridians()  # long time
             {0: [x2^-1*x0^-1*x4^-1*x3^-1*x1^-1], 1: [x3],
              2: [x4], 3: [x0], 4: [x2], 5: [x1]}
 
@@ -558,7 +545,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
           preserve signs of hyperplane equations
 
         - ``check`` -- boolean (default: ``True``); whether to
-          perform argument checking.
+          perform argument checking
 
         EXAMPLES::
 
@@ -637,9 +624,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 

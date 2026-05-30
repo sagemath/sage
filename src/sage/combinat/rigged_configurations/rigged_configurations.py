@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Rigged Configurations
+Rigged configurations
 
 AUTHORS:
 
-- Travis Scrimshaw (2010-09-26): Initial version
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
 # ****************************************************************************
@@ -30,7 +30,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.combinat.misc import IterableFunctionCall
-import sage.combinat.tableau as tableau
+from sage.combinat import tableau
 from sage.rings.rational_field import QQ
 from sage.categories.loop_crystals import KirillovReshetikhinCrystals
 from sage.combinat.root_system.cartan_type import CartanType
@@ -123,7 +123,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
     :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`
     of non-exceptional affine types where the list `B` corresponds to the
     tensor factors `B^{r,s}`. The bijection has been proven in types `A_n^{(1)}`
-    and `D_n^{(1)}` and when the only non-zero entries of `L_i^{(a)}` are either
+    and `D_n^{(1)}` and when the only nonzero entries of `L_i^{(a)}` are either
     only `L_1^{(a)}` or only `L_i^{(1)}` (corresponding to single columns or
     rows respectively) [RigConBijection]_, [BijectionLRT]_, [BijectionDn]_.
 
@@ -146,7 +146,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
     - ``cartan_type`` -- a Cartan type
 
-    - ``B`` -- a list of positive integer tuples `(r,s)` corresponding to the
+    - ``B`` -- list of positive integer tuples `(r,s)` corresponding to the
       tensor factors in the bijection with tensor product of
       Kirillov-Reshetikhin tableaux or equivalently the sequence of width `s`
       and height `r` rectangles
@@ -391,7 +391,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets and displays the options for rigged configurations.
+        Set and display the options for rigged configurations.
         If no parameters are set, then the function returns a copy of
         the options dictionary.
 
@@ -414,7 +414,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
             <BLANKLINE>
             -1[ ]-1
             <BLANKLINE>
-            sage: RiggedConfigurations.options(display="horizontal", convention="french")
+            sage: RiggedConfigurations.options(display='horizontal', convention='french')
             sage: elt
             -1[ ]-1         1[ ][ ][ ]1   -1[ ]-1
             -3[ ][ ][ ]-3
@@ -437,7 +437,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         """
         NAME = 'RiggedConfigurations'
         module = 'sage.combinat.rigged_configurations.rigged_configurations'
-        display = dict(default="vertical",
+        display = dict(default='vertical',
                      description='Specifies how rigged configurations should be printed',
                      values=dict(vertical='displayed vertically',
                                  horizontal='displayed horizontally'),
@@ -597,9 +597,9 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
             C = itertools.product(*L)
             for curBlocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(curBlocks[:]),
-                                         vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                        self._blocks_to_values(curBlocks[:]),
+                                        vac_nums[:]]))
 
         return tuple(module_gens)
 
@@ -612,7 +612,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``container`` -- a list of widths of the rows of the container
+        - ``container`` -- list of widths of the rows of the container
 
         TESTS::
 
@@ -1271,8 +1271,8 @@ class RCNonSimplyLaced(RiggedConfigurations):
 
             C = itertools.product(*L)
             for cur_blocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(cur_blocks[:]), vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                         self._blocks_to_values(cur_blocks[:]), vac_nums[:]]))
 
         return tuple(module_gens)
 
@@ -1791,8 +1791,8 @@ class RCTypeA2Dual(RCTypeA2Even):
 
             C = itertools.product(*L)
             for curBlocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(curBlocks[:]), vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                        self._blocks_to_values(curBlocks[:]), vac_nums[:]]))
 
         return tuple(module_gens)
 
@@ -1806,7 +1806,7 @@ class RCTypeA2Dual(RCTypeA2Even):
 
         INPUT:
 
-        - ``container`` -- a list the widths of the rows of the container
+        - ``container`` -- list the widths of the rows of the container
 
         TESTS::
 

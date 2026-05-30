@@ -31,11 +31,11 @@ def plot_step_function(v, vertical_lines=True, **kwds):
 
     - ``v`` -- list of pairs (a,b)
 
-    - ``vertical_lines`` -- bool (default: ``True``) if ``True``, draw
+    - ``vertical_lines`` -- boolean (default: ``True``); if ``True``, draw
       vertical risers at each step of this step function.
       Technically these vertical lines are not part of the graph
       of this function, but they look very nice in the plot, so we
-      include them by default
+      include them by default.
 
     EXAMPLES:
 
@@ -80,5 +80,4 @@ def plot_step_function(v, vertical_lines=True, **kwds):
             if i+1 < len(v):
                 w.append((v[i+1][0], v[i][1]))
         return line(w, **kwds)
-    else:
-        return sum(line([v[i], (v[i+1][0], v[i][1])], **kwds) for i in range(len(v)-1))
+    return sum(line([v[i], (v[i+1][0], v[i][1])], **kwds) for i in range(len(v)-1))

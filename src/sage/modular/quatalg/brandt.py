@@ -96,7 +96,7 @@ if there exists an element `\alpha \in I \overline{J}` such
 ``is_right_equivalent(I,J)`` returns true if `I` and `J` are equivalent. This
 method first compares the theta series of `I` and `J`. If they are the
 same, it computes the theta series of the lattice `I\overline(J)`. It
-returns true if the `n^{th}` coefficient of this series is nonzero
+returns true if the `n`-th coefficient of this series is nonzero
 where `n=N(J)N(I)`.
 
 The theta series of a lattice `L` over the quaternion algebra `A` is
@@ -117,19 +117,19 @@ The Hecke structure defined on the Brandt module is given by the
 Brandt matrices which can be computed using the definition of the
 Hecke operators given earlier.
 
-``hecke_matrix_from_defn(self,n)`` returns the matrix of the n-th Hecke
+``hecke_matrix_from_defn(self,n)`` returns the matrix of the `n`-th Hecke
 operator `B_{0}(n)` acting on self, computed directly from the
 definition.
 
 However, one can efficiently compute Brandt matrices using theta
 series. In fact, let `\{I_{1},.....,I_{h}\}` be a set of right
 `\mathcal{O}`-ideal class representatives. The (i,j) entry in the
-Brandt matrix `B_{0}(n)` is the product of the `n^{th}` coefficient in
+Brandt matrix `B_{0}(n)` is the product of the `n`-th coefficient in
 the theta series of the lattice `I_{i}\overline{I_{j}}` and the first
 coefficient in the theta series of the lattice
 `I_{i}\overline{I_{i}}`.
 
-``compute_hecke_matrix_brandt(self,n)`` returns the n-th Hecke matrix,
+``compute_hecke_matrix_brandt(self,n)`` returns the `n`-th Hecke matrix,
 computed using theta series.
 
 EXAMPLES::
@@ -140,7 +140,9 @@ EXAMPLES::
     Order of Quaternion Algebra (-1, -23) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
 
     sage: B.right_ideals()
-    (Fractional ideal (2 + 2*j, 2*i + 2*k, 4*j, 4*k), Fractional ideal (2 + 2*j, 2*i + 6*k, 8*j, 8*k), Fractional ideal (2 + 10*j + 8*k, 2*i + 8*j + 6*k, 16*j, 16*k))
+    (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
+         Fractional ideal (8, 8*i, 2 + 2*j, 6*i + 2*k),
+         Fractional ideal (16, 16*i, 10 + 8*i + 2*j, 8 + 6*i + 2*k))
 
     sage: B.hecke_matrix(2)
     [1 2 0]
@@ -167,11 +169,9 @@ We decompose a Brandt module over both `\ZZ` and `\QQ`. ::
     Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring
     sage: D = B.decomposition()
     sage: D
-    [
-    Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
-    Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
-    Subspace of dimension 2 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring
-    ]
+    [Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
+     Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
+     Subspace of dimension 2 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring]
     sage: D[0].basis()
     ((0, 0, 1, -1),)
     sage: D[1].basis()
@@ -235,15 +235,13 @@ def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
 
     INPUT:
 
-    - `N` -- a product of primes with odd exponents
-    - `M` -- an integer coprime to `q` (default: 1)
-    - ``weight`` -- an integer that is at least 2 (default: 2)
+    - ``N`` -- a product of primes with odd exponents
+    - ``M`` -- integer coprime to `q` (default: 1)
+    - ``weight`` -- integer that is at least 2 (default: 2)
     - ``base_ring`` -- the base ring (default: ``QQ``)
     - ``use_cache`` -- whether to use the cache (default: ``True``)
 
-    OUTPUT:
-
-    a Brandt module
+    OUTPUT: a Brandt module
 
     EXAMPLES::
 
@@ -322,13 +320,11 @@ def class_number(p, r, M):
 
     INPUT:
 
-    - `p` -- a prime
-    - `r` -- an odd positive integer (default: 1)
-    - `M` -- an integer coprime to `q` (default: 1)
+    - ``p`` -- a prime
+    - ``r`` -- an odd positive integer (default: 1)
+    - ``M`` -- integer coprime to `q` (default: 1)
 
-    OUTPUT:
-
-    Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -351,136 +347,8 @@ def class_number(p, r, M):
     return Integer(h)
 
 
-def maximal_order(A):
-    """
-    Return a maximal order in the quaternion algebra ramified
-    at `p` and infinity.
-
-    This is an implementation of Proposition 5.2 of [Piz1980]_.
-
-    INPUT:
-
-    - `A` -- quaternion algebra ramified precisely at `p` and infinity
-
-    OUTPUT:
-
-    a maximal order in `A`
-
-    EXAMPLES::
-
-        sage: A = BrandtModule(17).quaternion_algebra()
-
-        sage: sage.modular.quatalg.brandt.maximal_order(A)
-        doctest:...:  DeprecationWarning: The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
-
-        sage: A = QuaternionAlgebra(17,names='i,j,k')
-        sage: A.maximal_order()
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras")
-    return A.maximal_order()
-
-
-def basis_for_left_ideal(R, gens):
-    """
-    Return a basis for the left ideal of `R` with given generators.
-
-    INPUT:
-
-    - `R` -- quaternion order
-    - ``gens`` -- list of elements of `R`
-
-    OUTPUT:
-
-    list of four elements of `R`
-
-    EXAMPLES::
-
-        sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
-        sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i+j,i-j,2*k,A(3)])
-        doctest:...:  DeprecationWarning: The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
-        sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
-        [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras")
-    return R._left_ideal_basis(gens)
-
-
-def right_order(R, basis):
-    """
-    Given a basis for a left ideal `I`, return the right order in the
-    quaternion order `R` of elements `x` such that `I x` is contained in `I`.
-
-    INPUT:
-
-    - `R` -- order in quaternion algebra
-    - ``basis`` -- basis for an ideal `I`
-
-    OUTPUT:
-
-    order in quaternion algebra
-
-    EXAMPLES:
-
-    We do a consistency check with the ideal equal to a maximal order::
-
-        sage: B = BrandtModule(17); basis = B.maximal_order()._left_ideal_basis([1])
-        sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        doctest:...:  DeprecationWarning: The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
-        sage: basis
-        [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
-
-        sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
-        sage: basis = B.maximal_order()._left_ideal_basis([i*j - j])
-        sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras")
-    return R._right_order_from_ideal_basis(basis)
-
-
-def quaternion_order_with_given_level(A, level):
-    """
-    Return an order in the quaternion algebra A with given level.
-
-    This is implemented only when the base field is the rational numbers.
-
-    INPUT:
-
-    - ``level`` -- The level of the order to be returned. Currently this
-      is only implemented when the level is divisible by at
-      most one power of a prime that ramifies in this quaternion algebra.
-
-    EXAMPLES::
-
-        sage: from sage.modular.quatalg.brandt import quaternion_order_with_given_level, maximal_order
-        sage: A.<i,j,k> = QuaternionAlgebra(5)
-        sage: level = 2 * 5 * 17
-        sage: O = quaternion_order_with_given_level(A, level)
-        doctest:...:  DeprecationWarning: The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        sage: M = A.maximal_order()
-        sage: L = O.free_module()
-        sage: N = M.free_module()
-        sage: L.index_in(N) == level/5  #check that the order has the right index in the maximal order
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras")
-    return A.order_with_level(level)
-
-
 class BrandtSubmodule(HeckeSubmodule):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this Brandt submodule.
 
@@ -493,7 +361,7 @@ class BrandtSubmodule(HeckeSubmodule):
 
 
 class BrandtModuleElement(HeckeModuleElement):
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         EXAMPLES::
 
@@ -507,7 +375,7 @@ class BrandtModuleElement(HeckeModuleElement):
             x = x.element()
         HeckeModuleElement.__init__(self, parent, parent.free_module()(x))
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         EXAMPLES::
 
@@ -624,10 +492,10 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         INPUT:
 
-        - N -- ramification number (coprime to M)
-        - M -- auxiliary level
-        - weight -- integer 2
-        - base_ring -- the base ring
+        - ``N`` -- ramification number (coprime to M)
+        - ``M`` -- auxiliary level
+        - ``weight`` -- integer 2
+        - ``base_ring`` -- the base ring
 
         EXAMPLES::
 
@@ -800,8 +668,8 @@ class BrandtModule_class(AmbientHeckeModule):
 
         INPUT:
 
-        - `I` -- ideal I in R = self.order_of_level_N()
-        - `p` -- prime `p` coprime to self.level()
+        - ``I`` -- ideal `I` in ``R = self.order_of_level_N()``
+        - ``p`` -- prime `p` coprime to ``self.level()``
 
         OUTPUT:
 
@@ -813,14 +681,14 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B = BrandtModule(11)
             sage: I = B.order_of_level_N().unit_ideal()
             sage: B.cyclic_submodules(I, 2)
-            [Fractional ideal (1/2 + 3/2*j + k, 1/2*i + j + 1/2*k, 2*j, 2*k),
-             Fractional ideal (1/2 + 1/2*i + 1/2*j + 1/2*k, i + k, j + k, 2*k),
-             Fractional ideal (1/2 + 1/2*j + k, 1/2*i + j + 3/2*k, 2*j, 2*k)]
+            [Fractional ideal (2, 2*i, 3/2 + i + 1/2*j, 1 + 1/2*i + 1/2*k),
+             Fractional ideal (2, 1 + i, 1 + j, 1/2 + 1/2*i + 1/2*j + 1/2*k),
+             Fractional ideal (2, 2*i, 1/2 + i + 1/2*j, 1 + 3/2*i + 1/2*k)]
             sage: B.cyclic_submodules(I, 3)
-            [Fractional ideal (1/2 + 1/2*j, 1/2*i + 5/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 3/2*j + 2*k, 1/2*i + 2*j + 3/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 3/2*j + k, 1/2*i + j + 3/2*k, 3*j, 3*k),
-             Fractional ideal (1/2 + 5/2*j, 1/2*i + 1/2*k, 3*j, 3*k)]
+            [Fractional ideal (3, 3*i, 1/2 + 1/2*j, 5/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 3/2 + 2*i + 1/2*j, 2 + 3/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 3/2 + i + 1/2*j, 1 + 3/2*i + 1/2*k),
+             Fractional ideal (3, 3*i, 5/2 + 1/2*j, 1/2*i + 1/2*k)]
             sage: B.cyclic_submodules(I, 11)
             Traceback (most recent call last):
             ...
@@ -883,16 +751,17 @@ class BrandtModule_class(AmbientHeckeModule):
 
         # right multiplication by X changes something to be written
         # in terms of the basis for I.
-        Y = I.basis_matrix()
-        X = Y**(-1)
+        basis = basis_for_quaternion_lattice(I.basis(), reverse=False)
+        Y = matrix(map(list, basis))
+        X = ~Y
 
         # Compute the matrix of right multiplication by alpha acting on
         # our fixed choice of basis for this ideal.
 
         M_alpha = (matrix([(i * alpha).coefficient_tuple()
-                           for i in I.basis()]) * X).change_ring(GF(p))
+                           for i in basis]) * X).change_ring(GF(p))
         M_beta = (matrix([(i * beta).coefficient_tuple()
-                          for i in I.basis()]) * X).change_ring(GF(p))
+                          for i in basis]) * X).change_ring(GF(p))
 
         # step 2: Find j such that if f=I[j], then mod 2 we have span(I[0],alpha*I[i])
         #         has trivial intersection with span(I[j],alpha*I[j]).
@@ -946,25 +815,25 @@ class BrandtModule_class(AmbientHeckeModule):
 
         INPUT:
 
-        - `n` -- integer
+        - ``n`` -- integer
 
-        - ``algorithm`` -- string (default: 'default')
+        - ``algorithm`` -- string (default: ``'default'``)
 
-           - 'default' -- let Sage guess which algorithm is best
+           - ``'default'`` -- let Sage guess which algorithm is best
 
-           - 'direct' -- use cyclic subideals (generally much
+           - ``'direct'`` -- use cyclic subideals (generally much
              better when you want few Hecke operators and the
              dimension is very large); uses 'theta' if n divides
              the level.
 
-           - 'brandt' -- use Brandt matrices (generally much
+           - ``'brandt'`` -- use Brandt matrices (generally much
              better when you want many Hecke operators and the
              dimension is very small; bad when the dimension
              is large)
 
-        - ``sparse`` -- bool (default: ``False``)
+        - ``sparse`` -- boolean (default: ``False``)
 
-        - `B` -- integer or ``None`` (default: ``None``); in direct
+        - ``B`` -- integer or ``None`` (default: ``None``); in direct
           algorithm, use theta series to this precision as an initial
           check for equality of ideal classes.
 
@@ -1015,18 +884,18 @@ class BrandtModule_class(AmbientHeckeModule):
 
     def _compute_hecke_matrix_prime(self, p, sparse=False, B=None):
         """
-        Return matrix of the `p`-th Hecke operator on self.  The matrix
+        Return matrix of the `p`-th Hecke operator on ``self``.  The matrix
         is always computed using the direct algorithm.
 
         INPUT:
 
-        - `p` -- prime number
+        - ``p`` -- prime number
 
-        - `B` -- integer or None (default: None); in direct algorithm,
+        - ``B`` -- integer or ``None`` (default: ``None``); in direct algorithm,
           use theta series to this precision as an initial check for
           equality of ideal classes.
 
-        - ``sparse`` -- bool (default: False); whether matrix should be sparse
+        - ``sparse`` -- boolean (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1045,15 +914,15 @@ class BrandtModule_class(AmbientHeckeModule):
     def _compute_hecke_matrix_directly(self, n, B=None, sparse=False):
         """
         Given an integer `n` coprime to the level, return the matrix of
-        the n-th Hecke operator on self, computed on our fixed basis
+        the `n`-th Hecke operator on ``self``, computed on our fixed basis
         by directly using the definition of the Hecke action in terms
         of fractional ideals.
 
         INPUT:
 
-        - `n` -- integer, coprime to level
+        - ``n`` -- integer, coprime to level
 
-        - ``sparse`` -- bool (default: False); whether matrix should be sparse
+        - ``sparse`` -- boolean (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1153,16 +1022,14 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         Return a dictionary from theta series vectors of degree `B` to
         list of integers `i`, where the key is the vector of
-        coefficients of the normalized theta series of the `i`th right
+        coefficients of the normalized theta series of the `i`-th right
         ideal, as indexed by ``self.right_ideals()``.
 
         INPUT:
 
-        - `B` -- positive integer, precision of theta series vectors
+        - ``B`` -- positive integer, precision of theta series vectors
 
-        OUTPUT:
-
-        dictionary
+        OUTPUT: dictionary
 
         EXAMPLES:
 
@@ -1193,18 +1060,18 @@ class BrandtModule_class(AmbientHeckeModule):
 
     def _compute_hecke_matrix_brandt(self, n, sparse=False):
         """
-        Return the n-th Hecke matrix, computed using Brandt matrices
+        Return the `n`-th Hecke matrix, computed using Brandt matrices
         (theta series).
 
-        When the n-th Hecke operator is requested, we computed theta
+        When the `n`-th Hecke operator is requested, we computed theta
         series to precision `2n+20`, since it only takes slightly
         longer, and this means that any Hecke operator `T_m` can
         quickly be computed, for `m<2n+20`.
 
         INPUT:
 
-        - n -- integer, coprime to level
-        - sparse -- bool (default: ``False``); whether matrix should be sparse
+        - ``n`` -- integer, coprime to level
+        - ``sparse`` -- boolean (default: ``False``); whether matrix should be sparse
 
         EXAMPLES::
 
@@ -1221,7 +1088,6 @@ class BrandtModule_class(AmbientHeckeModule):
             [0 2 2 2]
             sage: B._compute_hecke_matrix_brandt(5).fcp()
             (x - 6) * (x - 3) * (x^2 - 3*x - 2)
-
         """
         # we go out to 2*n+20 for efficiency, since it takes only a
         # little longer, but saves a lot of time if one computes
@@ -1258,17 +1124,15 @@ class BrandtModule_class(AmbientHeckeModule):
         Return sorted tuple of representatives for the equivalence
         classes of right ideals in ``self``.
 
-        OUTPUT:
-
-        sorted tuple of fractional ideals
+        OUTPUT: sorted tuple of fractional ideals
 
         EXAMPLES::
 
             sage: B = BrandtModule(23)
             sage: B.right_ideals()
-            (Fractional ideal (2 + 2*j, 2*i + 2*k, 4*j, 4*k),
-             Fractional ideal (2 + 2*j, 2*i + 6*k, 8*j, 8*k),
-             Fractional ideal (2 + 10*j + 8*k, 2*i + 8*j + 6*k, 16*j, 16*k))
+            (Fractional ideal (4, 4*i, 2 + 2*j, 2*i + 2*k),
+             Fractional ideal (8, 8*i, 2 + 2*j, 6*i + 2*k),
+             Fractional ideal (16, 16*i, 10 + 8*i + 2*j, 8 + 6*i + 2*k))
 
         TESTS::
 
@@ -1338,27 +1202,25 @@ class BrandtModule_class(AmbientHeckeModule):
 
         INPUT:
 
-        - ``diagonal_only`` -- bool (default: ``False``) if ``True`` returns
+        - ``diagonal_only`` -- boolean (default: ``False``); if ``True`` returns
           only the diagonal ideal products
 
-        OUTPUT:
-
-        list of ideals
+        OUTPUT: list of ideals
 
         EXAMPLES::
 
             sage: B = BrandtModule(37)
             sage: B._ideal_products()
-            [[Fractional ideal (8 + 8*j + 8*k, 4*i + 8*j + 4*k, 16*j, 16*k)],
-             [Fractional ideal (8 + 24*j + 8*k, 4*i + 8*j + 4*k, 32*j, 32*k),
-              Fractional ideal (16 + 16*j + 48*k, 4*i + 8*j + 36*k, 32*j + 32*k, 64*k)],
-             [Fractional ideal (8 + 24*j + 24*k, 4*i + 24*j + 4*k, 32*j, 32*k),
-              Fractional ideal (8 + 4*i + 16*j + 28*k, 8*i + 16*j + 8*k, 32*j, 64*k),
-              Fractional ideal (16 + 16*j + 16*k, 4*i + 24*j + 4*k, 32*j + 32*k, 64*k)]]
+            [[Fractional ideal (16, 16*i, 8 + 8*i + 8*j, 8 + 12*i + 4*k)],
+             [Fractional ideal (32, 32*i, 8 + 24*i + 8*j, 24 + 12*i + 4*k),
+              Fractional ideal (32, 64*i, 16 + 48*i + 16*j, 36*i + 8*j + 4*k)],
+             [Fractional ideal (32, 32*i, 8 + 8*i + 8*j, 8 + 12*i + 4*k),
+              Fractional ideal (64, 32 + 32*i, 16 + 16*i + 16*j, 40 + 12*i + 4*k),
+              Fractional ideal (32, 64*i, 16 + 16*i + 16*j, 16 + 52*i + 8*j + 4*k)]]
             sage: B._ideal_products(diagonal_only=True)
-            [Fractional ideal (8 + 8*j + 8*k, 4*i + 8*j + 4*k, 16*j, 16*k),
-             Fractional ideal (16 + 16*j + 48*k, 4*i + 8*j + 36*k, 32*j + 32*k, 64*k),
-             Fractional ideal (16 + 16*j + 16*k, 4*i + 24*j + 4*k, 32*j + 32*k, 64*k)]
+            [Fractional ideal (16, 16*i, 8 + 8*i + 8*j, 8 + 12*i + 4*k),
+             Fractional ideal (32, 64*i, 16 + 48*i + 16*j, 36*i + 8*j + 4*k),
+             Fractional ideal (32, 64*i, 16 + 16*i + 16*j, 16 + 52*i + 8*j + 4*k)]
         """
         L = self.right_ideals()
         n = len(L)
@@ -1449,9 +1311,7 @@ class BrandtModule_class(AmbientHeckeModule):
         - ``prec`` -- positive integer
         - ``var`` -- string (default: `q`)
 
-        OUTPUT:
-
-        matrix of power series with coefficients in `\QQ`
+        OUTPUT: matrix of power series with coefficients in `\QQ`
 
         EXAMPLES::
 
@@ -1585,7 +1445,7 @@ def benchmark_magma(levels, silent=False):
 
     - ``levels`` -- list of pairs `(p,M)` where `p` is a prime not
       dividing `M`
-    - ``silent`` -- bool, default ``False``; if ``True`` suppress
+    - ``silent`` -- boolean (default: ``False``); if ``True`` suppress
       printing during computation
 
     OUTPUT:
@@ -1625,7 +1485,7 @@ def benchmark_sage(levels, silent=False):
 
     - ``levels`` -- list of pairs `(p,M)` where `p` is a prime
       not dividing `M`
-    - ``silent`` -- bool, default ``False``; if ``True`` suppress
+    - ``silent`` -- boolean (default: ``False``); if ``True`` suppress
       printing during computation
 
     OUTPUT:

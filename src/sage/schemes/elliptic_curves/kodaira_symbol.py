@@ -7,7 +7,7 @@ Kodaira symbols encode the type of reduction of an elliptic curve at a
 The standard notation for Kodaira Symbols is as a string which is one
 of `\rm{I}_m`, `\rm{II}`, `\rm{III}`, `\rm{IV}`, `\rm{I}^*_m`,
 `\rm{II}^*`, `\rm{III}^*`, `\rm{IV}^*`, where `m` denotes a
-non-negative integer.  These have been encoded by single integers by
+nonnegative integer.  These have been encoded by single integers by
 different people.  For convenience we give here the conversion table
 between strings, the eclib coding and the PARI encoding.
 
@@ -41,7 +41,6 @@ AUTHORS:
 - David Roe       <roed@math.harvard.edu>
 
 - John Cremona
-
 """
 
 # ****************************************************************************
@@ -81,7 +80,7 @@ class KodairaSymbol_class(SageObject):
 
         INPUT:
 
-        - ``symbol`` (string or integer) -- The string should be a
+        - ``symbol`` -- string or integer; the string should be a
           standard string representation (e.g. III*) of a Kodaira
           symbol, which will be parsed.  Alternatively, use the PARI
           encoding of Kodaira symbols as integers.
@@ -157,7 +156,7 @@ class KodairaSymbol_class(SageObject):
             self._starred = (n < 0)
             self._pari = n
             return
-        elif not symbol:
+        if not symbol:
             raise TypeError("symbol must be a nonempty string")
         if symbol[0] == "I":
             symbol = symbol[1:]
@@ -285,8 +284,7 @@ class KodairaSymbol_class(SageObject):
             if (self._n == "generic" and other._n is not None) or (other._n == "generic" and self._n is not None):
                 return richcmp(self._starred, other._starred, op)
             return richcmp(self._str, other._str, op)
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def _pari_code(self):
         """
@@ -317,7 +315,9 @@ def KodairaSymbol(symbol):
 
     INPUT:
 
-    - ``symbol`` (string or integer) -- Either a string of the form "I0", "I1", ..., "In", "II", "III", "IV", "I0*", "I1*", ..., "In*", "II*", "III*", or "IV*", or an integer encoding a Kodaira symbol using PARI's conventions.
+    - ``symbol`` -- string or integer; either a string of the form
+      "I0", "I1", ..., "In", "II", "III", "IV", "I0*", "I1*", ..., "In*", "II*", "III*", or "IV*",
+      or an integer encoding a Kodaira symbol using PARI's conventions
 
     OUTPUT:
 

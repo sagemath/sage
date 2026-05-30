@@ -43,8 +43,9 @@ finished::
 import os
 import time
 
-from .sage0 import Sage, SageElement
 from pexpect import ExceptionPexpect
+
+from sage.interfaces.sage0 import Sage, SageElement
 
 number = 0
 
@@ -72,7 +73,6 @@ class PSage(Sage):
             sage: from sage.interfaces.psage import PSage
             sage: PSage()                                   # indirect doctest
             A running non-blocking (parallel) instance of Sage (number ...)
-
         """
         return 'A running non-blocking (parallel) instance of Sage (number %s)' % (self._number)
 
@@ -123,7 +123,7 @@ class PSage(Sage):
         except OSError:
             pass
 
-        if not (self._expect is None):
+        if self._expect is not None:
             cmd = 'kill -9 %s' % self._expect.pid
             os.system(cmd)
 

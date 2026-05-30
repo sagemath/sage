@@ -49,7 +49,7 @@ def module_feature(module_name):
 
     - ``module_name`` -- string
 
-    OUTPUT: a :class:`Feature` or ``None``.
+    OUTPUT: a :class:`Feature` or ``None``
 
     EXAMPLES::
 
@@ -92,7 +92,7 @@ def name_feature(name, toplevel=None):
 
     - ``toplevel`` -- a module or other namespace
 
-    OUTPUT: a :class:`Feature` or ``None``.
+    OUTPUT: a :class:`Feature` or ``None``
 
     EXAMPLES::
 
@@ -116,7 +116,7 @@ def name_feature(name, toplevel=None):
     except AttributeError:
         return None
 
-    from sage.misc.dev_tools import find_object_modules
+    from sage.misc.sageinspect import find_object_modules
 
     for module, names in find_object_modules(obj).items():
         if name in names and (feature := module_feature(module)):

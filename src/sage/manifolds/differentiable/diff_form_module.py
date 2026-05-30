@@ -25,7 +25,6 @@ REFERENCES:
 
 - [KN1963]_
 - [Lee2013]_
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015-2021 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -39,14 +38,14 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
 from sage.tensor.modules.reflexive_module import ReflexiveModule_abstract
 
 
@@ -143,7 +142,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
         sage: z is A.zero()
         True
 
-    while non-zero elements are constructed by providing their components in a
+    while nonzero elements are constructed by providing their components in a
     given vector frame::
 
         sage: a = A([[0,3*x],[-3*x,0]], frame=eU, name='a') ; a
@@ -255,7 +254,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
          manifold M
         sage: a_U.display(eU)
         a = 3*x dx∧dy
-
     """
     Element = DiffForm
 
@@ -285,7 +283,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
         In the above test suite, ``_test_elements`` is skipped because of the
         ``_test_pickling`` error of the elements (to be fixed in
         :class:`sage.manifolds.differentiable.tensorfield.TensorField`)
-
         """
         domain = vector_field_module._domain
         dest_map = vector_field_module._dest_map
@@ -334,7 +331,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
             a = x*y dx∧dy
             sage: A(0) is A.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -348,9 +344,8 @@ class DiffFormModule(UniqueRepresentation, Parent):
                    and self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {} ".format(comp) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         if isinstance(comp, TensorField):
             # coercion of a tensor of type (0,1) to a linear form
             tensor = comp # for readability
@@ -361,9 +356,8 @@ class DiffFormModule(UniqueRepresentation, Parent):
                 for dom, rst in tensor._restrictions.items():
                     resu._restrictions[dom] = dom.diff_form_module(1)(rst)
                 return resu
-            else:
-                raise TypeError("cannot convert the {} ".format(tensor) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot convert the {} ".format(tensor) +
+                            "to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -387,7 +381,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
             sage: A = M.diff_form_module(2)
             sage: A._an_element_()
             2-form on the 2-dimensional differentiable manifold M
-
         """
         resu = self.element_class(self._vmodule, self._degree)
         for oc in self._domain.open_covers(trivial=False):
@@ -419,7 +412,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
             True
             sage: A2._coerce_map_from_(A2U)
             False
-
         """
         if isinstance(other, (DiffFormModule, DiffFormFreeModule)):
             # coercion by domain restriction
@@ -446,7 +438,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
             sage: A2 = M.diff_form_module(2)
             sage: A2.zero()
             2-form zero on the 3-dimensional differentiable manifold M
-
         """
         zero = self._element_constructor_(name='zero', latex_name='0')
         for frame in self._domain._frames:
@@ -470,7 +461,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
             sage: A2
             Module Omega^2(M) of 2-forms on
              the 3-dimensional differentiable manifold M
-
         """
         description = "Module "
         if self._name is not None:
@@ -495,12 +485,10 @@ class DiffFormModule(UniqueRepresentation, Parent):
             '\\Omega^{2}\\left(\\mathcal{M}\\right)'
             sage: latex(A2)  # indirect doctest
             \Omega^{2}\left(\mathcal{M}\right)
-
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def base_module(self):
         r"""
@@ -531,7 +519,6 @@ class DiffFormModule(UniqueRepresentation, Parent):
             sage: A2U.base_module()
             Module X(U) of vector fields on the Open subset U of the
              3-dimensional differentiable manifold M
-
         """
         return self._vmodule
 
@@ -564,9 +551,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
         r"""
         Return the degree of the differential forms in ``self``.
 
-        OUTPUT:
-
-        - integer `p` such that ``self`` is a set of `p`-forms
+        OUTPUT: integer `p` such that ``self`` is a set of `p`-forms
 
         EXAMPLES::
 
@@ -577,11 +562,11 @@ class DiffFormModule(UniqueRepresentation, Parent):
             2
             sage: M.diff_form_module(3).degree()
             3
-
         """
         return self._degree
 
 # *****************************************************************************
+
 
 class DiffFormFreeModule(ExtPowerDualFreeModule):
     r"""
@@ -666,7 +651,7 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
         sage: A(0) is A.zero()
         True
 
-    while non-zero elements are constructed by providing their components
+    while nonzero elements are constructed by providing their components
     in a given vector frame::
 
         sage: comp = [[0,3*x,-z],[-3*x,0,4],[z,-4,0]]
@@ -742,7 +727,6 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
          manifold M
         sage: a_U.display()
         a = 3*x dx∧dy - z dx∧dz + 4 dy∧dz
-
     """
 
     Element = DiffFormParal
@@ -760,7 +744,6 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             Free module Omega^2(M) of 2-forms on
              the 3-dimensional differentiable manifold M
             sage: TestSuite(A).run()
-
         """
         domain = vector_field_module._domain
         dest_map = vector_field_module._dest_map
@@ -807,7 +790,6 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             sage: f = M.scalar_field(x)
             sage: f in A
             False
-
         """
         try:
             if comp.is_trivial_zero():
@@ -821,9 +803,8 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
                     and self._domain.is_subset(comp._domain)
                     and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise TypeError("cannot convert the {} ".format(comp) +
-                                "to a differential form in {}".format(self))
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to a differential form in {}".format(self))
         if isinstance(comp, TensorFieldParal):
             # coercion of a tensor of type (0,1) to a linear form
             tensor = comp # for readability
@@ -834,9 +815,8 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
                 for frame, comp in tensor._components.items():
                     resu._components[frame] = comp.copy()
                 return resu
-            else:
-                raise TypeError("cannot convert the {} ".format(tensor) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot convert the {} ".format(tensor) +
+                            "to an element of {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -871,7 +851,6 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             True
             sage: A1._coerce_map_from_(M.tensor_field_module((1,0)))
             False
-
         """
         if isinstance(other, (DiffFormModule, DiffFormFreeModule)):
             # coercion by domain restriction
@@ -879,7 +858,9 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
                     and self._domain.is_subset(other._domain)
                     and self._ambient_domain.is_subset(other._ambient_domain))
 
-        from sage.manifolds.differentiable.tensorfield_module import TensorFieldFreeModule
+        from sage.manifolds.differentiable.tensorfield_module import (
+            TensorFieldFreeModule,
+        )
         if isinstance(other, TensorFieldFreeModule):
             # coercion of a type-(0,1) tensor to a linear form
             return (self._fmodule is other._fmodule and self._degree == 1
@@ -900,7 +881,6 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             sage: A
             Free module Omega^2(M) of 2-forms on
              the 3-dimensional differentiable manifold M
-
         """
         description = "Free module "
         if self._name is not None:
@@ -995,7 +975,7 @@ class VectorFieldDualFreeModule(DiffFormFreeModule):
         sage: A(0) is A.zero()
         True
 
-    while non-zero elements are constructed by providing their components
+    while nonzero elements are constructed by providing their components
     in a given vector frame::
 
         sage: comp = [3*x,-z,4]
@@ -1057,7 +1037,6 @@ class VectorFieldDualFreeModule(DiffFormFreeModule):
             sage: A = M.vector_field_module().dual(); A
             Free module Omega^1(M) of 1-forms on the 3-dimensional differentiable manifold M
             sage: TestSuite(A).run()
-
         """
         DiffFormFreeModule.__init__(self, vector_field_module, 1)
 
@@ -1073,6 +1052,5 @@ class VectorFieldDualFreeModule(DiffFormFreeModule):
             Free module Omega^1(M) of 1-forms on the 3-dimensional differentiable manifold M
             sage: A.tensor_type()
             (0, 1)
-
         """
         return (0, 1)

@@ -192,7 +192,6 @@ def HighestWeightCrystal(dominant_weight, model=None):
         ....:             C1 = crystals.HighestWeight(wt.to_ambient().to_weight_space(ZZ), model=model)
         ....:             C2 = crystals.HighestWeight(wt, model=model)
         ....:             assert C1 == C2
-
     """
     cartan_type = dominant_weight.parent().cartan_type()
     if model is None:
@@ -225,7 +224,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
             raise ValueError("only for finite type E")
         if cartan_type.rank() == 6:
             return FiniteDimensionalHighestWeightCrystal_TypeE6(dominant_weight)
-        elif cartan_type.rank() == 7:
+        if cartan_type.rank() == 7:
             return FiniteDimensionalHighestWeightCrystal_TypeE7(dominant_weight)
         raise NotImplementedError
 
@@ -310,8 +309,8 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
 
     def module_generator(self):
         """
-        This yields the module generator (or highest weight element) of the classical
-        crystal of given dominant weight in self.
+        Yield the module generator (or highest weight element) of the classical
+        crystal of given dominant weight in ``self``.
 
         EXAMPLES::
 

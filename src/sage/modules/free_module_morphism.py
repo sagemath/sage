@@ -20,7 +20,7 @@ TESTS::
     True
 """
 
-####################################################################################
+##########################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,15 +32,15 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-####################################################################################
+#                  https://www.gnu.org/licenses/
+##########################################################################
 
 # A matrix morphism is a morphism that is defined by multiplication by a
 # matrix.  Elements of domain must either have a method "vector()" that
 # returns a vector that the defining matrix can hit from the left, or
 # be coercible into vector space of appropriate dimension.
 
-import sage.modules.free_module as free_module
+from sage.modules import free_module
 
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
@@ -48,40 +48,17 @@ from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.structure.sequence import Sequence
 
 
-def is_FreeModuleMorphism(x):
-    """
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: V = ZZ^2; f = V.hom([V.1, -2*V.0])
-        sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(f)
-        doctest:warning...
-        DeprecationWarning: is_FreeModuleMorphism is deprecated;
-        use isinstance(..., FreeModuleMorphism) or categories instead
-        See https://github.com/sagemath/sage/issues/37731 for details.
-        True
-        sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(0)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37731,
-                "is_FreeModuleMorphism is deprecated; "
-                "use isinstance(..., FreeModuleMorphism) or categories instead")
-    return isinstance(x, FreeModuleMorphism)
-
-
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
-    def __init__(self, parent, A, side="left"):
+    def __init__(self, parent, A, side='left'):
         """
         INPUT:
 
-            -  ``parent`` - a homspace in a (sub) category of free modules
+            - ``parent`` -- a homspace in a (sub) category of free modules
 
-            -  ``A`` - matrix
+            - ``A`` -- matrix
 
-            - side -- side of the vectors acted on by the matrix  (default: ``"left"``)
+            - ``side`` -- side of the vectors acted on by the matrix  (default: ``'left'``)
 
         EXAMPLES::
 
@@ -90,7 +67,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: type(phi)
             <class 'sage.modules.free_module_morphism.FreeModuleMorphism'>
         """
-        if not free_module_homspace.is_FreeModuleHomspace(parent):
+        if not isinstance(parent, free_module_homspace.FreeModuleHomspace):
             raise TypeError("parent (=%s) must be a free module hom space" % parent)
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
@@ -128,7 +105,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: phi(2*W.1)
             (6, 0, 8/3)
         """
-        if free_module.is_FreeModule(x):
+        if isinstance(x, free_module.FreeModule_generic):
             V = self.domain().submodule(x)
             return self.restrict_domain(V).image()
         raise TypeError("`pushforward` is only defined for submodules")
@@ -181,7 +158,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             [1 0 0]
             Domain:   Ambient free module of rank 3 over the principal ideal domain Integer Ring
             Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
-            sage: h2 = V.hom([V.1, V.2, V.0], side="right"); h2
+            sage: h2 = V.hom([V.1, V.2, V.0], side='right'); h2
             Free module morphism defined as left-multiplication by the matrix
             [0 0 1]
             [1 0 0]
@@ -248,7 +225,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         """
         Given a submodule V of the codomain of self, return the
         inverse image of V under self, i.e., the biggest submodule of
-        the domain of self that maps into V.
+        the domain of ``self`` that maps into V.
 
         EXAMPLES:
 
@@ -320,7 +297,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = ZZ^2
             sage: m = matrix(2, [1, 1, 0, 1])
-            sage: h = V.hom(m, side="right")
+            sage: h = V.hom(m, side='right')
             sage: h
             Free module morphism defined as left-multiplication by the matrix
             [1 1]
@@ -453,7 +430,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ::
 
             sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").lift(V.0 + V.1)
+            sage: V.hom(m, side='right').lift(V.0 + V.1)
             (0, 1)
             sage: V.hom(m).lift(V.0 + V.1)
             (1, 0)
@@ -488,12 +465,12 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
     def eigenvalues(self, extend=True):
         r"""
-        Returns a list with the eigenvalues of the endomorphism of vector spaces.
+        Return a list with the eigenvalues of the endomorphism of vector spaces.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: True) decides if base field
-          extensions should be considered or not.
+        - ``extend`` -- boolean (default: ``True``); decides if base field
+          extensions should be considered or not
 
         EXAMPLES:
 
@@ -516,19 +493,18 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         if self.base_ring().is_field():
             if self.is_endomorphism():
                 return self.matrix().eigenvalues(extend=extend)
-            else:
-                raise TypeError("not an endomorphism")
+            raise TypeError("not an endomorphism")
         else:
             raise NotImplementedError("module must be a vector space")
 
     def eigenvectors(self, extend=True):
         """
-        Computes the subspace of eigenvectors of a given eigenvalue.
+        Compute the subspace of eigenvectors of a given eigenvalue.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: True) decides if base field
-          extensions should be considered or not.
+        - ``extend`` -- boolean (default: ``True``); decides if base field
+          extensions should be considered or not
 
         OUTPUT:
 
@@ -542,27 +518,25 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: V = (QQ^4).subspace([[0,2,1,4], [1,2,5,0], [1,1,1,1]])
             sage: H = (V.Hom(V))(matrix(QQ, [[0,1,0], [-1,0,0], [0,0,3]]))
             sage: H.eigenvectors()
-            [(3,    [ (0, 0, 1, -6/7) ], 1),
-             (-1*I, [ (1,  1*I, 0, -0.571428571428572? + 2.428571428571429?*I) ], 1),
-             (1*I,  [ (1, -1*I, 0, -0.571428571428572? - 2.428571428571429?*I) ], 1)]
+            [(3, [(0, 0, 1, -6/7)], 1),
+             (-1*I, [(1, 1*I, 0, -0.571428571428572? + 2.428571428571429?*I)], 1),
+             (1*I, [(1, -1*I, 0, -0.571428571428572? - 2.428571428571429?*I)], 1)]
             sage: H.eigenvectors(extend=False)
-            [(3, [ (0, 0, 1, -6/7) ], 1)]
+            [(3, [(0, 0, 1, -6/7)], 1)]
             sage: H1 = (V.Hom(V))(matrix(QQ, [[2,1,0],[0,2,0],[0,0,3]]))
             sage: H1.eigenvectors()
-            [(3, [ (0, 0, 1, -6/7) ], 1),
-             (2, [ (0, 1, 0, 17/7) ], 2)]
+            [(3, [(0, 0, 1, -6/7)], 1), (2, [(0, 1, 0, 17/7)], 2)]
             sage: H1.eigenvectors(extend=False)
-            [(3, [ (0, 0, 1, -6/7) ], 1),
-             (2, [ (0, 1, 0, 17/7) ], 2)]
+            [(3, [(0, 0, 1, -6/7)], 1), (2, [(0, 1, 0, 17/7)], 2)]
 
         ::
 
             sage: V = QQ^2
             sage: m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenvectors()                                 # needs sage.rings.number_field
-            [(1, [ (1, 0) ], 2)]
+            sage: V.hom(m, side='right').eigenvectors()                                 # needs sage.rings.number_field
+            [(1, [(1, 0)], 2)]
             sage: V.hom(m).eigenvectors()                                               # needs sage.rings.number_field
-            [(1, [ (0, 1) ], 2)]
+            [(1, [(0, 1)], 2)]
         """
         if self.base_ring().is_field():
             if self.is_endomorphism():
@@ -576,8 +550,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
                     svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
                     resu.append((i[0], svectors, i[2]))
                 return resu
-            else:
-                raise TypeError("not an endomorphism")
+            raise TypeError("not an endomorphism")
         else:
             raise NotImplementedError("module must be a vector space")
 
@@ -587,12 +560,10 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         INPUT:
 
-        - ``extend`` -- (default: ``True``) determines if field
+        - ``extend`` -- boolean (default: ``True``); determines if field
           extensions should be considered
 
-        OUTPUT:
-
-        - a list of pairs ``(eigenvalue, eigenspace)``
+        OUTPUT: a list of pairs ``(eigenvalue, eigenspace)``
 
         EXAMPLES::
 
@@ -634,7 +605,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ::
 
             sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenspaces()                                  # needs sage.rings.number_field
+            sage: V.hom(m, side='right').eigenspaces()                                  # needs sage.rings.number_field
             [(1, Vector space of degree 2 and dimension 1 over Rational Field
                   Basis matrix:
                   [1 0])]
@@ -662,7 +633,7 @@ class BaseIsomorphism1D(Morphism):
                 Multivariate Polynomial Ring in x, y over Rational Field
           To:   Multivariate Polynomial Ring in x, y over Rational Field
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -673,7 +644,7 @@ class BaseIsomorphism1D(Morphism):
         """
         return "Isomorphism"
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -684,7 +655,7 @@ class BaseIsomorphism1D(Morphism):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -706,18 +677,17 @@ class BaseIsomorphism1D(Morphism):
         """
         if isinstance(other, BaseIsomorphism1D):
             return richcmp(self._basis, other._basis, op)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
 
 class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
     """
-    An isomorphism from a ring to its 1-dimensional free module
+    An isomorphism from a ring to its 1-dimensional free module.
 
     INPUT:
 
     - ``parent`` -- the homset
-    - ``basis`` -- (default 1) an invertible element of the ring
+    - ``basis`` -- (default: 1) an invertible element of the ring
 
     EXAMPLES::
 
@@ -769,12 +739,12 @@ class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
 
 class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
     """
-    An isomorphism to a ring from its 1-dimensional free module
+    An isomorphism to a ring from its 1-dimensional free module.
 
     INPUT:
 
     - ``parent`` -- the homset
-    - ``basis`` -- (default 1) an invertible element of the ring
+    - ``basis`` -- (default: 1) an invertible element of the ring
 
     EXAMPLES::
 

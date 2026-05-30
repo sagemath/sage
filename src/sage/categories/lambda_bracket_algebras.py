@@ -33,15 +33,14 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
     This is an abstract base category for Lie conformal algebras and
     super Lie conformal algebras.
-
     """
     @staticmethod
     def __classcall_private__(cls, R, check=True):
         r"""
         INPUT:
 
-        - `R` -- a commutative ring
-        - ``check`` -- a boolean (default: ``True``); whether to check
+        - ``R`` -- a commutative ring
+        - ``check`` -- boolean (default: ``True``); whether to check
           that `R` is a commutative ring
 
         EXAMPLES::
@@ -55,7 +54,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
         """
         if check:
             if R not in _CommutativeRings:
-                    raise ValueError("base must be a commutative ring got {}".format(R))
+                raise ValueError(f"base must be a commutative ring got {R}")
         return super().__classcall__(cls, R)
 
     @cached_method
@@ -240,8 +239,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             """
             if n >= 0:
                 return self.bracket(rhs).get(n,self.parent().zero())
-            else:
-                raise NotImplementedError("vertex algebras are not implemented")
+            raise NotImplementedError("vertex algebras are not implemented")
 
         @abstract_method
         def T(self, n=1):
@@ -250,7 +248,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``n`` -- integer (default:``1``); how many times
+            - ``n`` -- integer (default: `1`); how many times
               to apply `T` to this element
 
             OUTPUT:

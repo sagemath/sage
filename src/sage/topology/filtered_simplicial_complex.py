@@ -101,7 +101,7 @@ class FilteredSimplicialComplex(SageObject):
     INPUT:
 
     - ``simplices`` -- list of simplices and filtration values
-    - ``verbose`` -- (default: ``False``) if ``True``, any change to
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, any change to
       the filtration value of a simplex will be printed
 
     ``simplices`` should be a list of tuples ``(l, v)``, where
@@ -203,8 +203,7 @@ class FilteredSimplicialComplex(SageObject):
         """
         if s in self._filtration_dict:
             return self._filtration_dict[s]
-        else:
-            return None
+        return None
 
     __call__ = _get_value
     __getitem__ = _get_value
@@ -339,8 +338,7 @@ class FilteredSimplicialComplex(SageObject):
         s = Simplex(s)
         if filtration_value is None:
             return self._get_value(s)
-        else:
-            self._insert(s, filtration_value)
+        self._insert(s, filtration_value)
 
     def prune(self, threshold):
         r"""
@@ -381,9 +379,9 @@ class FilteredSimplicialComplex(SageObject):
 
         - ``field`` -- (default: 2) prime number modulo which the homology
           is computed
-        - ``strict`` -- (default: ``True``) if ``False``, takes into account
+        - ``strict`` -- boolean (default: ``True``); if ``False``, takes into account
             intervals of persistence 0
-        - ``verbose`` -- (default: ``False``) if ``True``, prints the
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, prints the
           progress of computation
 
         This method is called whenever Betti numbers or intervals are
@@ -582,7 +580,7 @@ class FilteredSimplicialComplex(SageObject):
 
         # Reduce d until it is empty or until the simplex
         # with maximum index in the complex among all
-        # non-zero terms is not in T.
+        # nonzero terms is not in T.
         while d != 0:
             max_index = self._max_index(d)
             t = simplices[max_index]
@@ -620,8 +618,7 @@ class FilteredSimplicialComplex(SageObject):
         currmax = -1
         for s, x_s in d:
             j = self._index_of_simplex[s]
-            if j > currmax:
-                currmax = j
+            currmax = max(j, currmax)
         return currmax
 
     def persistence_intervals(self, dimension, field=2, strict=True, verbose=None):
@@ -634,7 +631,7 @@ class FilteredSimplicialComplex(SageObject):
           return intervals
         - ``field`` -- prime number (default: 2); modulo which persistent
           homology is computed
-        - ``strict`` -- (default: ``True``) if ``False``, takes into account
+        - ``strict`` -- boolean (default: ``True``); if ``False``, takes into account
           intervals of persistence 0
         - ``verbose`` -- (optional) if ``True``, print the steps of the
           persistent homology computation; the default is the verbosity
@@ -651,8 +648,7 @@ class FilteredSimplicialComplex(SageObject):
         intervals = self._persistent_homology(field, strict, verbose=verbose)
         if dimension < len(intervals):
             return intervals[dimension][:]
-        else:
-            return []
+        return []
 
     def betti_number(self, k, a, b, field=2, strict=True, verbose=None):
         r"""
@@ -665,7 +661,7 @@ class FilteredSimplicialComplex(SageObject):
         - ``b`` -- the size of the interval
         - ``field`` -- prime number (default: 2); modulo which persistent
           homology is computed
-        - ``strict`` -- (default: ``True``) if ``False``, takes into account
+        - ``strict`` -- boolean (default: ``True``); if ``False``, takes into account
           intervals of persistence 0
         - ``verbose`` -- (optional) if ``True``, print the steps of the
           persistent homology computation; the default is the verbosity

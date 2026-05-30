@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Lie Conformal Algebra
 
@@ -34,8 +33,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .lie_conformal_algebra_with_structure_coefs import \
-    LieConformalAlgebraWithStructureCoefficients
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefs import (
+    LieConformalAlgebraWithStructureCoefficients,
+)
 from sage.matrix.special import identity_matrix
 from sage.structure.indexed_generators import standardize_names_index_set
 
@@ -47,16 +47,15 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     INPUT:
 
     - ``R`` -- a commutative ring; the base ring of this Lie
-      conformal algebra.
-    - ``ngens``: an even positive Integer (default `2`); The number
-      of non-central generators of this Lie conformal algebra.
-    - ``gram_matrix``: a matrix (default: ``None``); A non-singular
-      skew-symmetric square matrix with coefficients in `R`.
-    - ``names`` -- a list or tuple of ``str``; alternative names
+      conformal algebra
+    - ``ngens`` -- an even positive Integer (default: `2`); the number
+      of non-central generators of this Lie conformal algebra
+    - ``gram_matrix`` -- a matrix (default: ``None``); a non-singular
+      skew-symmetric square matrix with coefficients in `R`
+    - ``names`` -- list or tuple of strings; alternative names
       for the generators
     - ``index_set`` -- an enumerated set; alternative indexing set
       for the generators
-
 
     OUTPUT:
 
@@ -117,14 +116,14 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         sage: lie_conformal_algebras.Weyl(ZZ, gram_matrix=identity_matrix(ZZ,3))
         Traceback (most recent call last):
         ...
-        ValueError: The gram_matrix should be a non degenerate skew-symmetric 3 x 3 matrix, got [1 0 0]
+        ValueError: the Gram_matrix should be a non degenerate skew-symmetric 3 x 3 matrix, got [1 0 0]
         [0 1 0]
         [0 0 1]
     """
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -143,11 +142,12 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             try:
                 assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
-                raise ValueError("The gram_matrix should be a skew-symmetric "
-                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+                raise ValueError("the Gram_matrix should be a "
+                                 "skew-symmetric {0} x {0} matrix, got {1}"
+                                 .format(ngens, gram_matrix))
             if (not gram_matrix.is_skew_symmetric() or
                     gram_matrix.is_singular()):
-                raise ValueError("The gram_matrix should be a non degenerate "
+                raise ValueError("the Gram_matrix should be a non degenerate "
                                  "skew-symmetric {0} x {0} matrix, got {1}"
                                  .format(ngens, gram_matrix))
         elif gram_matrix is None:
@@ -163,8 +163,8 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             latex_names = tuple(r'\alpha_{%d}' % i
                                 for i in range(ngens)) + ('K',)
         names, index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
+                                                       index_set=index_set,
+                                                       ngens=ngens)
         weyldict = {(i, j): {0: {('K', 0): gram_matrix[index_set.rank(i),
                                                        index_set.rank(j)]}}
                     for i in index_set for j in index_set}
@@ -175,7 +175,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
                          central_elements=('K',))
         self._gram_matrix = gram_matrix
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 

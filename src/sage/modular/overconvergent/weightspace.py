@@ -85,9 +85,11 @@ lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 
 
 _wscache = {}
+
+
 def WeightSpace_constructor(p, base_ring=None):
     r"""
-    Construct the p-adic weight space for the given prime p.
+    Construct the `p`-adic weight space for the given prime p.
 
     A `p`-adic weight
     is a continuous character `\ZZ_p^\times \to \CC_p^\times`.
@@ -206,15 +208,13 @@ class WeightSpace_class(Parent):
         if isinstance(arg1, WeightCharacter):
             if arg1.parent() is self:
                 return arg1
-            elif arg1.parent().prime() == self.prime():
+            if arg1.parent().prime() == self.prime():
                 return self._coerce_in_wtchar(arg1)
-            else:
-                raise TypeError("Incompatible type!")
+            raise TypeError("Incompatible type!")
 
         if algebraic:
             return AlgebraicWeight(self, arg1, arg2)
-        else:
-            return ArbitraryWeight(self, arg1, arg2)
+        return ArbitraryWeight(self, arg1, arg2)
 
     @cached_method
     def zero(self):
@@ -260,8 +260,7 @@ class WeightSpace_class(Parent):
         """
         if R.has_coerce_map_from(self.base_ring()):
             return WeightSpace_constructor(self.prime(), R)
-        else:
-            raise TypeError("No coercion map from '%s' to '%s' is defined" % (self.base_ring(), R))
+        raise TypeError("No coercion map from '%s' to '%s' is defined" % (self.base_ring(), R))
 
     def _coerce_map_from_(self, other):
         r"""
@@ -281,8 +280,8 @@ class WeightSpace_class(Parent):
 
     def _coerce_in_wtchar(self, x):
         r"""
-        Convert in a weight-character whose parent is different from self (with
-        has the prime, but possibly different base ring).
+        Convert in a weight-character whose parent is different from ``self``
+        (with has the prime, but possibly different base ring).
 
         EXAMPLES::
 
@@ -294,13 +293,12 @@ class WeightSpace_class(Parent):
         """
         if isinstance(x, AlgebraicWeight):
             return AlgebraicWeight(self, x.k(), x.chi().change_ring(self.base_ring()))
-        else:
-            return ArbitraryWeight(self, self.base_ring()(x.w()), x.teichmuller_type())
+        return ArbitraryWeight(self, self.base_ring()(x.w()), x.teichmuller_type())
 
 
 class WeightCharacter(Element):
     r"""
-    Abstract base class representing an element of the p-adic weight space
+    Abstract base class representing an element of the `p`-adic weight space
     `Hom(\ZZ_p^\times, \CC_p^\times)`.
     """
 
@@ -336,7 +334,7 @@ class WeightCharacter(Element):
 
     def is_even(self) -> bool:
         r"""
-        Return True if this weight-character sends -1 to +1.
+        Return ``True`` if this weight-character sends -1 to +1.
 
         EXAMPLES::
 
@@ -353,7 +351,7 @@ class WeightCharacter(Element):
 
     def pAdicEisensteinSeries(self, ring, prec=20):
         r"""
-        Calculate the q-expansion of the p-adic Eisenstein series of given
+        Calculate the `q`-expansion of the `p`-adic Eisenstein series of given
         weight-character, normalised so the constant term is 1.
 
         EXAMPLES::
@@ -393,7 +391,7 @@ class WeightCharacter(Element):
 
     def is_trivial(self) -> bool:
         r"""
-        Return True if and only if this is the trivial character.
+        Return ``True`` if and only if this is the trivial character.
 
         EXAMPLES::
 
@@ -424,7 +422,7 @@ class WeightCharacter(Element):
 
     def Lvalue(self):
         r"""
-        Return the value of the p-adic L-function of `\QQ`, which can be
+        Return the value of the `p`-adic `L`-function of `\QQ`, which can be
         regarded as a rigid-analytic function on weight space, evaluated at
         this character.
 
@@ -440,10 +438,10 @@ class WeightCharacter(Element):
 
     def one_over_Lvalue(self):
         r"""
-        Return the reciprocal of the p-adic L-function evaluated at this
+        Return the reciprocal of the `p`-adic `L`-function evaluated at this
         weight-character.
 
-        If the weight-character is odd, then the L-function
+        If the weight-character is odd, then the `L`-function
         is zero, so an error will be raised.
 
         EXAMPLES::
@@ -463,8 +461,7 @@ class WeightCharacter(Element):
         """
         if self.is_trivial():
             return ZZ(0)
-        else:
-            return 1 / self.Lvalue()
+        return 1 / self.Lvalue()
 
 
 class AlgebraicWeight(WeightCharacter):
@@ -526,7 +523,7 @@ class AlgebraicWeight(WeightCharacter):
             sage: kappa(13 + 4*29 + 11*29^2 + O(29^3))
             9 + 21*29 + 27*29^2 + O(29^3)
 
-        When the character chi is defined over a p-adic field, the results returned are inexact::
+        When the character chi is defined over a `p`-adic field, the results returned are inexact::
 
             sage: kappa = pAdicWeightSpace(29)(13, DirichletGroup(29, Qp(29)).0^14)
             sage: kappa(1)
@@ -581,7 +578,7 @@ class AlgebraicWeight(WeightCharacter):
         """
         return self._chi
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -591,10 +588,9 @@ class AlgebraicWeight(WeightCharacter):
         """
         if self._chi.is_trivial():
             return hash(self._k)
-        else:
-            return hash( (self._k,self._chi.modulus(),self._chi) )
+        return hash((self._k, self._chi.modulus(), self._chi))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -609,8 +605,7 @@ class AlgebraicWeight(WeightCharacter):
         """
         if self._chi.is_trivial():
             return "%s" % self._k
-        else:
-            return "(%s, %s, %s)" % (self._k, self._chi.modulus(), self._chi._repr_short_())
+        return "(%s, %s, %s)" % (self._k, self._chi.modulus(), self._chi._repr_short_())
 
     def teichmuller_type(self):
         r"""
@@ -636,8 +631,7 @@ class AlgebraicWeight(WeightCharacter):
         if self._p == 2:
             if self.is_even():
                 return IntegerModRing(2).zero()
-            else:
-                return IntegerModRing(2).one()
+            return IntegerModRing(2).one()
         m = IntegerModRing(self._p).multiplicative_generator()
         x = [y for y in IntegerModRing(self._chi.modulus()) if y == m and y**(self._p - 1) == 1]
         if len(x) != 1:
@@ -648,13 +642,13 @@ class AlgebraicWeight(WeightCharacter):
 
     def Lvalue(self):
         r"""
-        Return the value of the p-adic L-function of `\QQ` evaluated at
+        Return the value of the `p`-adic `L`-function of `\QQ` evaluated at
         this weight-character.
 
         If the character is `x \mapsto x^k \chi(x)`
         where `k > 0` and `\chi` has conductor a power of `p`, this is an
         element of the number field generated by the values of `\chi`, equal to
-        the value of the complex L-function `L(1-k, \chi)`. If `\chi` is
+        the value of the complex `L`-function `L(1-k, \chi)`. If `\chi` is
         trivial, it is equal to `(1 - p^{k-1})\zeta(1-k)`.
 
         At present this is not implemented in any other cases, except the
@@ -681,18 +675,17 @@ class AlgebraicWeight(WeightCharacter):
             return -self._chi.bernoulli(self._k) / self._k
         if self.is_trivial():
             return Infinity
-        else:
-            raise NotImplementedError("Don't know how to compute value of this L-function")
+        raise NotImplementedError("Don't know how to compute value of this L-function")
 
 
 class ArbitraryWeight(WeightCharacter):
 
     def __init__(self, parent, w, t):
         r"""
-        Create the element of p-adic weight space in the given component
+        Create the element of `p`-adic weight space in the given component
         mapping 1 + p to w.
 
-        Here w must be an element of a p-adic field, with finite
+        Here w must be an element of a `p`-adic field, with finite
         precision.
 
         EXAMPLES::

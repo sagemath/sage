@@ -60,7 +60,7 @@ The arguments in the definition must be symbolic variables (:issue:`10747`)::
     ...
     SyntaxError: can...t assign to function call...
 """
-import sage.rings.abc
+from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 from sage.structure.factory import UniqueFactory
@@ -146,10 +146,9 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
     def unify_arguments(self, x):
         r"""
-        Takes the variable list from another
-        ``CallableSymbolicExpression`` object and compares it with the
-        current ``CallableSymbolicExpression`` object's variable list,
-        combining them according to the following rules:
+        Take the variable list from another ``CallableSymbolicExpression``
+        object and compare it with the current ``CallableSymbolicExpression``
+        object's variable list, combining them according to the following rules:
 
         Let ``a`` be ``self``'s variable list, let ``b`` be ``y``'s
         variable list.
@@ -176,9 +175,9 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        -  ``x`` - A CallableSymbolicExpression
+        - ``x`` -- a ``CallableSymbolicExpression``
 
-        OUTPUT: A tuple of variables.
+        OUTPUT: a tuple of variables
 
         EXAMPLES::
 
@@ -214,18 +213,18 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         temp = set()
         # Sorting remaining variables.
         for j in range(i, len(a)):
-            if not a[j] in temp:
+            if a[j] not in temp:
                 temp.add(a[j])
 
         for j in range(i, len(b)):
-            if not b[j] in temp:
+            if b[j] not in temp:
                 temp.add(b[j])
 
         new_list.extend(sorted(temp, key=repr))
         return tuple(new_list)
 
 
-class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.CallableSymbolicExpressionRing):
+class CallableSymbolicExpressionRing_class(SymbolicRing):
     def __init__(self, arguments):
         """
         EXAMPLES:
@@ -260,10 +259,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         """
         if isinstance(R, CallableSymbolicExpressionRing_class):
             args = self.arguments()
-            if all(a in args for a in R.arguments()):
-                return True
-            else:
-                return False
+            return all(a in args for a in R.arguments())
         return SymbolicRing._coerce_map_from_(self, R)
 
     def construction(self):
@@ -311,10 +307,9 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         """
         if len(self._arguments) == 0:
             return "Callable function ring with no named arguments"
-        elif len(self._arguments) == 1:
+        if len(self._arguments) == 1:
             return "Callable function ring with argument {}".format(self._arguments[0])
-        else:
-            return "Callable function ring with arguments {}".format(self._arguments)
+        return "Callable function ring with arguments {}".format(self._arguments)
 
     def arguments(self):
         """
@@ -348,15 +343,13 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             (y, x) |--> x + y
             sage: f.parent()
             Callable function ring with arguments (y, x)
-
         """
         args = self.arguments()
         repr_x = SymbolicRing._repr_element_(self, x)
         if len(args) == 1:
             return "%s |--> %s" % (args[0], repr_x)
-        else:
-            args = ", ".join(map(str, args))
-            return "(%s) |--> %s" % (args, repr_x)
+        args = ", ".join(map(str, args))
+        return "(%s) |--> %s" % (args, repr_x)
 
     def _latex_element_(self, x):
         r"""
@@ -378,9 +371,8 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         latex_x = SymbolicRing._latex_element_(self, x)
         if len(args) == 1:
             return r"%s \ {\mapsto}\ %s" % (args[0], latex_x)
-        else:
-            vars = ", ".join(args)
-            return r"\left( %s \right) \ {\mapsto} \ %s" % (vars, latex_x)
+        vars = ", ".join(args)
+        return r"\left( %s \right) \ {\mapsto} \ %s" % (vars, latex_x)
 
     def _call_element_(self, _the_element, *args, **kwds):
         """

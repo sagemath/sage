@@ -442,16 +442,16 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``Nb`` -- The block length of this instantiation. Must be between 4
-          and 8.
+        - ``Nb`` -- the block length of this instantiation. Must be between 4
+          and 8
 
-        - ``Nk`` -- The key length of this instantiation. Must be between 4 and 8.
+        - ``Nk`` -- the key length of this instantiation. Must be between 4 and 8
 
-        - ``state_chr`` -- The variable name for polynomials representing
-          elements from state matrices.
+        - ``state_chr`` -- the variable name for polynomials representing
+          elements from state matrices
 
-        - ``key_chr`` -- The variable name for polynomials representing
-          elements of the key schedule.
+        - ``key_chr`` -- the variable name for polynomials representing
+          elements of the key schedule
 
         EXAMPLES::
 
@@ -575,19 +575,17 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``text`` -- A plaintext to encrypt or a ciphertext to decrypt.
+        - ``text`` -- a plaintext to encrypt or a ciphertext to decrypt
 
-        - ``key`` -- The key to encrypt/decrypt ``text`` with.
+        - ``key`` -- the key to encrypt/decrypt ``text`` with
 
-        - ``algorithm`` -- Whether to encrypt or decrypt ``text``. Flag for
-          encryption is "encrypt", flag for decryption is "decrypt".
+        - ``algorithm`` -- whether to encrypt or decrypt ``text``. Flag for
+          encryption is "encrypt", flag for decryption is "decrypt"
 
-        - ``format`` -- The format of ``text`` and ``key``, either "hex" or
+        - ``format`` -- the format of ``text`` and ``key``, either "hex" or
           "binary"
 
-        OUTPUT:
-
-        - The encrypted or decrypted message ``text`` with key ``key``.
+        OUTPUT: the encrypted or decrypted message ``text`` with key ``key``
 
         EXAMPLES::
 
@@ -612,11 +610,10 @@ class RijndaelGF(SageObject):
 
         if algorithm == 'encrypt':
             return self.encrypt(text, key, format)
-        elif algorithm == 'decrypt':
+        if algorithm == 'decrypt':
             return self.decrypt(text, key, format)
-        else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+        raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                         "or 'decrypt'")
 
     def __repr__(self):
         r"""
@@ -679,11 +676,11 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``H`` -- A hex string where every two hex characters correspond to a
+        - ``H`` -- a hex string where every two hex characters correspond to a
           single element in `\GF{2^8}`
 
-        - ``matrix`` -- (default: ``True``) Return a list if ``False``;
-          return a state matrix if ``True``.
+        - ``matrix`` -- boolean (default: ``True``); return a list if ``False``.
+          Return a state matrix if ``True``
 
         OUTPUT:
 
@@ -719,8 +716,7 @@ class RijndaelGF(SageObject):
         result = [hx_to_gf(h) for h in hexes]
         if matrix:
             return column_matrix(len(result) // 4, 4, result)
-        else:
-            return result
+        return result
 
     def _GF_to_hex(self, GF):
         r"""
@@ -728,7 +724,7 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``GF`` -- Either a state matrix over `\GF{2^8}`, a list of elements
+        - ``GF`` -- either a state matrix over `\GF{2^8}`, a list of elements
           from `\GF{2^8}`, or a single element from `\GF{2^8}`
 
         OUTPUT:
@@ -775,19 +771,18 @@ class RijndaelGF(SageObject):
                 raise TypeError(msg.format(self._F))
             return ''.join([self._GF_to_hex(el)
                             for col in GF.columns() for el in col])
-        elif isinstance(GF, list):
+        if isinstance(GF, list):
             if not all(g.parent().is_field() and g.parent().is_finite() and
                        g.parent().order() == 2**8 for g in GF):
                 msg = "The elements of keyword 'GF' must all be from {0}"
                 raise TypeError(msg.format(self._F))
             return ''.join([self._GF_to_hex(el) for el in GF])
-        else:
-            if not GF.parent().is_field() or \
-               not GF.parent().is_finite() or \
-               not GF.parent().order() == 2**8:
-                msg = "keyword 'GF' must be in"
-                raise TypeError(msg.format(self._F))
-            return hex(GF.to_integer())[2:].zfill(2)
+        if not GF.parent().is_field() or \
+           not GF.parent().is_finite() or \
+           not GF.parent().order() == 2**8:
+            msg = "keyword 'GF' must be in"
+            raise TypeError(msg.format(self._F))
+        return hex(GF.to_integer())[2:].zfill(2)
 
     def _bin_to_GF(self, B, matrix=True):
         r"""
@@ -795,11 +790,11 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``B`` -- A binary string where every eight bits correspond to a
+        - ``B`` -- a binary string where every eight bits correspond to a
           single element in `\GF{2^8}`
 
-        - ``matrix`` -- (default: ``True``) Return a list if ``False``.
-          Return a state matrix over `\GF{2^8}` if ``True``.
+        - ``matrix`` -- boolean (default: ``True``); return a list if ``False``.
+          Return a state matrix over `\GF{2^8}` if ``True``
 
         OUTPUT:
 
@@ -846,8 +841,7 @@ class RijndaelGF(SageObject):
         result = [bn_to_gf(b) for b in bins]
         if matrix:
             return column_matrix(len(result) // 4, 4, result)
-        else:
-            return result
+        return result
 
     def _GF_to_bin(self, GF):
         r"""
@@ -855,7 +849,7 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``GF`` -- Either a state matrix over `\GF{2^8}`, a list of elements
+        - ``GF`` -- either a state matrix over `\GF{2^8}`, a list of elements
           from `\GF{2^8}`, or a single element from `\GF{2^8}`
 
         OUTPUT:
@@ -900,19 +894,18 @@ class RijndaelGF(SageObject):
                 raise TypeError(msg.format(self._F))
             return ''.join([self._GF_to_bin(el)
                             for col in GF.columns() for el in col])
-        elif isinstance(GF, list):
+        if isinstance(GF, list):
             if not all(g.parent().is_field() and g.parent().is_finite() and
                        g.parent().order() == 2**8 for g in GF):
                 msg = "The elements of keyword 'GF' must all be from {0}"
                 raise TypeError(msg.format(self._F))
             return ''.join([self._GF_to_bin(el) for el in GF])
-        else:
-            if not GF.parent().is_field() or \
-               not GF.parent().is_finite() or \
-               not GF.parent().order() == 2**8:
-                msg = "keyword 'GF' must be in"
-                raise TypeError(msg.format(self._F))
-            return bin(GF.to_integer())[2:].zfill(8)
+        if not GF.parent().is_field() or \
+           not GF.parent().is_finite() or \
+           not GF.parent().order() == 2**8:
+            msg = "keyword 'GF' must be in"
+            raise TypeError(msg.format(self._F))
+        return bin(GF.to_integer())[2:].zfill(8)
 
     def encrypt(self, plain, key, format='hex'):
         r"""
@@ -920,16 +913,14 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``plain`` -- The plaintext to be encrypted.
+        - ``plain`` -- the plaintext to be encrypted
 
-        - ``key`` -- The key to encrypt ``plain`` with.
+        - ``key`` -- the key to encrypt ``plain`` with
 
-        - ``format`` -- (default: ``hex``) The string format of ``key`` and
-          ``plain``, either "hex" or "binary".
+        - ``format`` -- (default: ``hex``) the string format of ``key`` and
+          ``plain``, either "hex" or "binary"
 
-        OUTPUT:
-
-        - A string of the plaintext ``plain`` encrypted with the key ``key``.
+        OUTPUT: string of the plaintext ``plain`` encrypted with the key ``key``
 
         EXAMPLES::
 
@@ -985,8 +976,8 @@ class RijndaelGF(SageObject):
             key_state = self._bin_to_GF(key)
             roundKeys = self.expand_key(key_state)
         else:
-            raise ValueError(("'format' keyword must be either 'hex' or "
-                             "'binary'"))
+            raise ValueError("'format' keyword must be either 'hex' or "
+                             "'binary'")
 
         state = self.add_round_key(state, roundKeys[0])
         for r in range(self._Nr-1):
@@ -1000,8 +991,7 @@ class RijndaelGF(SageObject):
 
         if format == 'hex':
             return self._GF_to_hex(state)
-        else:
-            return self._GF_to_bin(state)
+        return self._GF_to_bin(state)
 
     def decrypt(self, ciphertext, key, format='hex'):
         r"""
@@ -1009,12 +999,12 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``ciphertext`` -- The ciphertext to be decrypted.
+        - ``ciphertext`` -- the ciphertext to be decrypted
 
-        - ``key`` -- The key to decrypt ``ciphertext`` with.
+        - ``key`` -- the key to decrypt ``ciphertext`` with
 
-        - ``format`` -- (default: ``hex``) The string format that both
-          ``ciphertext`` and ``key`` must be in, either "hex" or "binary".
+        - ``format`` -- (default: ``hex``) the string format that both
+          ``ciphertext`` and ``key`` must be in, either "hex" or "binary"
 
         OUTPUT:
 
@@ -1061,8 +1051,8 @@ class RijndaelGF(SageObject):
         elif format == 'binary':
             if not isinstance(ciphertext, str) or \
                any(c not in '01' for c in ciphertext):
-                raise TypeError(("'ciphertext' keyword must be a binary "
-                                 "string"))
+                raise TypeError("'ciphertext' keyword must be a binary "
+                                 "string")
             if len(ciphertext) != 32 * self._Nb:
                 msg = "'ciphertext' keyword's length must be {0}, not {1}"
                 raise ValueError(msg.format(32 * self._Nb, len(ciphertext)))
@@ -1076,8 +1066,8 @@ class RijndaelGF(SageObject):
             key_state = self._bin_to_GF(key)
             roundKeys = self.expand_key(key_state)
         else:
-            raise ValueError(("'format' keyword must be either \'hex\' or "
-                             "'binary'"))
+            raise ValueError("'format' keyword must be either \'hex\' or "
+                             "'binary'")
 
         state = self.add_round_key(state, roundKeys[self._Nr])
         state = self.shift_rows(state, algorithm='decrypt')
@@ -1091,8 +1081,7 @@ class RijndaelGF(SageObject):
 
         if format == 'hex':
             return self._GF_to_hex(state)
-        else:
-            return self._GF_to_bin(state)
+        return self._GF_to_bin(state)
 
     def _check_valid_PRmatrix(self, PRm, keyword):
         r"""
@@ -1100,13 +1089,13 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``PRm`` -- If ``PRm`` is a `4 \times Nb` matrix with entries from
+        - ``PRm`` -- if ``PRm`` is a `4 \times Nb` matrix with entries from
           the multivariate PolynomialRing ``_all_PR``, this method does nothing
           `\GF{2^8}`, this method does nothing. Otherwise, this method raises
           an error. Note that a matrix of elements from `\GF{2^8}` is regarded
           as a matrix with entries from ``_all_PR`` and will pass this test.
 
-        - ``keyword`` -- The name of the keyword ``PRm`` from where this
+        - ``keyword`` -- the name of the keyword ``PRm`` from where this
           method was called, for the potential error message. For example, if
           called from ``sub_bytes``, ``keyword`` would be "state".
 
@@ -1164,8 +1153,8 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``key`` -- The key to build a key schedule from. Must be a matrix
-          over `\GF{2^8}` of dimensions `4 \times N_k`.
+        - ``key`` -- the key to build a key schedule from. Must be a matrix
+          over `\GF{2^8}` of dimensions `4 \times N_k`
 
         OUTPUT:
 
@@ -1232,11 +1221,11 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``row`` -- The row position of the element represented by this
-          polynomial.
+        - ``row`` -- the row position of the element represented by this
+          polynomial
 
-        - ``col`` -- The column position of the element represented by this
-          polynomial.
+        - ``col`` -- the column position of the element represented by this
+          polynomial
 
         OUTPUT:
 
@@ -1291,30 +1280,28 @@ class RijndaelGF(SageObject):
         key_col = round * self._Nb + col
         if key_col < self._Nk:
             return self.key_vrs[row, key_col]
-        else:
-            if key_col % self._Nk == 0 or \
-               (self._Nk > 6 and col % self._Nk == 4):
-                # Apply non-linear transformation to key_col - 1
-                recur_r = int((key_col - 1)/self._Nb)
-                recur_j = (key_col - 1) - (recur_r * self._Nb)
-                non_linear = self.expand_key_poly((row+1) % 4,
-                                                  recur_j, recur_r)
-                non_linear = self._srd(non_linear)
-                non_linear += self._F.gen() ** (int(key_col / self._Nk) - 1)
-                # Identify key_col - Nk
-                recur_r = int((key_col - self._Nk)/self._Nb)
-                recur_j = (key_col - self._Nk) - (recur_r * self._Nb)
-                return self.expand_key_poly(row, recur_j, recur_r) + non_linear
-            else:
-                # Identify key_col - Nk
-                recur_r = int((key_col - self._Nk)/self._Nb)
-                recur_j = (key_col - self._Nk) - (recur_r * self._Nb)
-                result = self.expand_key_poly(row, recur_j, recur_r)
-                # Identify key_col - 1
-                recur_r = int((key_col - 1)/self._Nb)
-                recur_j = (key_col - 1) - (recur_r * self._Nb)
-                return result + \
-                       self.expand_key_poly(row, recur_j, recur_r)
+        if key_col % self._Nk == 0 or \
+           (self._Nk > 6 and col % self._Nk == 4):
+            # Apply non-linear transformation to key_col - 1
+            recur_r = int((key_col - 1)/self._Nb)
+            recur_j = (key_col - 1) - (recur_r * self._Nb)
+            non_linear = self.expand_key_poly((row+1) % 4,
+                                              recur_j, recur_r)
+            non_linear = self._srd(non_linear)
+            non_linear += self._F.gen() ** (int(key_col / self._Nk) - 1)
+            # Identify key_col - Nk
+            recur_r = int((key_col - self._Nk)/self._Nb)
+            recur_j = (key_col - self._Nk) - (recur_r * self._Nb)
+            return self.expand_key_poly(row, recur_j, recur_r) + non_linear
+        # Identify key_col - Nk
+        recur_r = int((key_col - self._Nk)/self._Nb)
+        recur_j = (key_col - self._Nk) - (recur_r * self._Nb)
+        result = self.expand_key_poly(row, recur_j, recur_r)
+        # Identify key_col - 1
+        recur_r = int((key_col - 1)/self._Nb)
+        recur_j = (key_col - 1) - (recur_r * self._Nb)
+        return result + \
+               self.expand_key_poly(row, recur_j, recur_r)
 
     def apply_poly(self, state, poly_constr, algorithm='encrypt', keys=None,
                    poly_constr_attr=None):
@@ -1323,24 +1310,24 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``state`` -- The state matrix over `\GF{2^8}` to which
-          ``poly_method`` is applied to.
+        - ``state`` -- the state matrix over `\GF{2^8}` to which
+          ``poly_method`` is applied to
 
-        - ``poly_constr`` -- The ``Round_Component_Poly_Constr`` object to
-          build polynomials during evaluation.
+        - ``poly_constr`` -- the ``Round_Component_Poly_Constr`` object to
+          build polynomials during evaluation
 
-        - ``algorithm`` -- (default: "encrypt") Passed directly to
-          ``rcpc`` to select encryption or decryption. The
-          encryption flag is "encrypt" and the decrypt flag is "decrypt".
+        - ``algorithm`` -- (default: ``'encrypt'``) passed directly to
+          ``rcpc`` to select encryption or decryption; the
+          encryption flag is "encrypt" and the decrypt flag is "decrypt"
 
-        - ``keys`` -- (default: None) An array of `N_r` subkey matrices to
+        - ``keys`` -- (default: ``None``) an array of `N_r` subkey matrices to
           replace any key variables in any polynomials returned by
           ``poly_method``. Must be identical to the format returned by
           ``expand_key``. If any polynomials have key variables and ``keys``
           is not supplied, the key variables will remain as-is.
 
-        - ``poly_constr_attr`` -- (default:None) A dictionary of keyword
-          attributes to pass to ``rcpc`` when it is called.
+        - ``poly_constr_attr`` -- (default: ``None``) a dictionary of keyword
+          attributes to pass to ``rcpc`` when it is called
 
         OUTPUT:
 
@@ -1448,25 +1435,25 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``f`` -- A ``Round_Component_Poly_Constr`` object corresponding to
-          a round component function `f`.
+        - ``f`` -- a ``Round_Component_Poly_Constr`` object corresponding to
+          a round component function `f`
 
-        - ``g`` -- A ``Round_Component_Poly_Constr`` object corresponding to
+        - ``g`` -- a ``Round_Component_Poly_Constr`` object corresponding to
           a round component function `g` or a polynomial output of this
           object's ``__call__`` method.
 
-        - ``algorithm`` -- (default: "encrypt") Whether ``f`` and ``g``
+        - ``algorithm`` -- (default: ``'encrypt'``) whether ``f`` and ``g``
           should use their encryption transformations or their decryption
           transformations. Does nothing if ``g`` is a
           ``Round_Component_Poly_Constr`` object. The encryption flag is
           "encrypt" and the decryption flag is "decrypt".
 
-        - ``f_attr`` -- (default: None) A dictionary of keyword attributes to
-          pass to ``f`` when it is called.
+        - ``f_attr`` -- (default: ``None``) a dictionary of keyword attributes to
+          pass to ``f`` when it is called
 
-        - ``g_attr`` -- (default: None) A dictionary of keyword attributes to
-          pass to ``g`` when it is called. Does nothing if ``g`` is a
-          polynomial.
+        - ``g_attr`` -- (default: ``None``) a dictionary of keyword attributes to
+          pass to ``g`` when it is called; does nothing if ``g`` is a
+          polynomial
 
         OUTPUT:
 
@@ -1576,16 +1563,14 @@ class RijndaelGF(SageObject):
                           for i in range(4) for j in range(self._Nb)]
             if g in self._state_PR:
                 return g(f_vals)
-            else:
-                return g(f_vals + self.subkey_vrs_list)
+            return g(f_vals + self.subkey_vrs_list)
+        if isinstance(g_attr, dict):
+            lm = lambda i, j, alg='encrypt': \
+            self.compose(f, g(i, j, alg, **g_attr), alg, f_attr, g_attr)
         else:
-            if isinstance(g_attr, dict):
-                lm = lambda i, j, alg='encrypt': \
-                self.compose(f, g(i, j, alg, **g_attr), alg, f_attr, g_attr)
-            else:
-                lm = lambda i, j, alg='encrypt': \
-                     self.compose(f, g(i, j, alg), alg, f_attr, g_attr)
-            return RijndaelGF.Round_Component_Poly_Constr(lm, self)
+            lm = lambda i, j, alg='encrypt': \
+                 self.compose(f, g(i, j, alg), alg, f_attr, g_attr)
+        return RijndaelGF.Round_Component_Poly_Constr(lm, self)
 
     def add_round_key_poly_constr(self):
         r"""
@@ -1646,18 +1631,18 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``row`` -- The row number of the entry represented by this method's
-          output.
+        - ``row`` -- the row number of the entry represented by this method's
+          output
 
-        - ``col`` -- The column number of the entry represented by this
-          method's output.
+        - ``col`` -- the column number of the entry represented by this
+          method's output
 
-        - ``algorithm`` -- (default: "encrypt") Whether to return the
-          polynomial as an encryption or as a decryption. The encryption flag
-          is "encrypt" and the decryption  flag is "decrypt".
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to return the
+          polynomial as an encryption or as a decryption; the encryption flag
+          is "encrypt" and the decryption  flag is "decrypt"
 
-        - ``round`` -- (default: 0) The round number of the entry represented
-          by this method's output.
+        - ``round`` -- (default: 0) the round number of the entry represented
+          by this method's output
 
         OUTPUT:
 
@@ -1693,9 +1678,9 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``state`` -- The state matrix to have ``round_key`` added to.
+        - ``state`` -- the state matrix to have ``round_key`` added to
 
-        - ``round_key`` -- The round key to add to ``state``.
+        - ``round_key`` -- the round key to add to ``state``
 
         OUTPUT:
 
@@ -1804,20 +1789,20 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``row`` -- The row number of the entry represented by this method's
-          output.
+        - ``row`` -- the row number of the entry represented by this method's
+          output
 
-        - ``col`` -- The column number of the entry represented by this
-          method's output.
+        - ``col`` -- the column number of the entry represented by this
+          method's output
 
-        - ``algorithm`` -- (default: "encrypt") Whether to return the
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to return the
           polynomial as an encryption or as a decryption. The encryption flag
           is "encrypt" and the decryption  flag is "decrypt".
 
-        - ``no_inversion`` -- (default: ``False``) Don't perform the inversion
-          step, only perform the affine transformation. Primarily intended
-          to increase performance during decryption, as is shown in the
-          below example.
+        - ``no_inversion`` -- boolean (default: ``False``); don't perform the
+          inversion step, only perform the affine transformation. Primarily
+          intended to increase performance during decryption, as is shown in
+          the below example.
 
         OUTPUT:
 
@@ -1865,21 +1850,18 @@ class RijndaelGF(SageObject):
             if no_inversion:
                 return sum([coeffs[i] * (var**(2**i))
                             for i in range(8)]) + self._F("x^6 + x^5 + x + 1")
-            else:
-                return sum([coeffs[i] * (var**(255 - 2**i))
-                            for i in range(8)]) + self._F("x^6 + x^5 + x + 1")
-        elif algorithm == 'decrypt':
+            return sum([coeffs[i] * (var**(255 - 2**i))
+                        for i in range(8)]) + self._F("x^6 + x^5 + x + 1")
+        if algorithm == 'decrypt':
             var = self.state_vrs[row, col]
             coeffs = self._sb_D_coeffs
             result = (sum([coeffs[i] * var**(2**i) for i in range(8)]) +
                       self._F("x^2 + 1"))
             if no_inversion:
                 return result
-            else:
-                return result ** 254
-        else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            return result ** 254
+        raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                         "or 'decrypt'")
 
     def _srd(self, el, algorithm='encrypt'):
         r"""
@@ -1887,17 +1869,15 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``el`` -- An element of `\GF{2^8}`.
+        - ``el`` -- an element of `\GF{2^8}`
 
-        - ``algorithm`` -- (default: "encrypt") Whether to perform the
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to perform the
           encryption transformation or the decryption transformation.
           The encryption flag is "encrypt" and the decryption flag is
           "decrypt".
 
-        OUTPUT:
-
-        - The result of the application of the non-linear transformation
-          SubBytes to ``el``.
+        OUTPUT: the result of the application of the non-linear transformation
+        SubBytes to ``el``.
 
         EXAMPLES::
 
@@ -1911,13 +1891,12 @@ class RijndaelGF(SageObject):
             p = self._sub_bytes_rcpc(0, 0, algorithm)
             state = [el] + [self._F.zero()]*((4 * self._Nb)-1)
             return p(state)
-        elif algorithm == 'decrypt':
+        if algorithm == 'decrypt':
             p = self._sub_bytes_rcpc(0, 0, algorithm, no_inversion=True)
             state = [el] + [self._F.zero()]*((4 * self._Nb)-1)
             return p(state) ** 254
-        else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+        raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                         "or 'decrypt'")
 
     def sub_bytes(self, state, algorithm='encrypt'):
         r"""
@@ -1925,16 +1904,14 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``state`` -- The state matrix to apply SubBytes to.
+        - ``state`` -- the state matrix to apply SubBytes to
 
-        - ``algorithm`` -- (default: "encrypt") Whether to apply the
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to apply the
           encryption step of SubBytes or its decryption inverse. The encryption
           flag is "encrypt" and the decryption flag is "decrypt".
 
-        OUTPUT:
-
-        - The state matrix over `\GF{2^8}` where SubBytes has been applied
-          to every entry of ``state``.
+        OUTPUT: the state matrix over `\GF{2^8}` where SubBytes has been
+        applied to every entry of ``state``
 
         EXAMPLES::
 
@@ -1980,21 +1957,19 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``row`` -- The row number of the entry represented by this method's
-          output.
+        - ``row`` -- the row number of the entry represented by this method's
+          output
 
-        - ``col`` -- The column number of the entry represented by this
-          method's output.
+        - ``col`` -- the column number of the entry represented by this
+          method's output
 
-        - ``algorithm`` -- (default: "encrypt") Whether to perform the
-          encryption transformation or the decryption transformation. The
-          encryption flag is "encrypt" and the decryption flag is "decrypt".
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to perform the
+          encryption transformation or the decryption transformation; the
+          encryption flag is "encrypt" and the decryption flag is "decrypt"
 
-        OUTPUT:
-
-        - A polynomial in terms of entries of the input state matrix which
-          represents the ``row,col`` th entry of the output matrix after
-          MixColumns has been applied to it.
+        OUTPUT: a polynomial in terms of entries of the input state matrix
+        which represents the ``row,col`` th entry of the output matrix after
+        MixColumns has been applied to it
 
         EXAMPLES::
 
@@ -2020,8 +1995,8 @@ class RijndaelGF(SageObject):
         elif algorithm == 'decrypt':
             coeffs = self._mixcols_D
         else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                             "or 'decrypt'")
         return sum([coeffs[row,k] * self.state_vrs[k,col] for k in range(4)])
 
     def mix_columns(self, state, algorithm='encrypt'):
@@ -2030,16 +2005,14 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``state`` -- The state matrix to apply MixColumns to.
+        - ``state`` -- the state matrix to apply MixColumns to
 
-        - ``algorithm`` -- (default: "encrypt") Whether to perform the
-          encryption version of MixColumns, or its decryption inverse. The
-          encryption flag is "encrypt" and the decryption flag is "decrypt".
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to perform the
+          encryption version of MixColumns, or its decryption inverse; the
+          encryption flag is "encrypt" and the decryption flag is "decrypt"
 
-        OUTPUT:
-
-        - The state matrix over `\GF{2^8}` which is the result of applying
-          MixColumns to ``state``.
+        OUTPUT: the state matrix over `\GF{2^8}` which is the result of
+        applying MixColumns to ``state``
 
         EXAMPLES::
 
@@ -2082,21 +2055,19 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``row`` -- The row number of the entry represented by this method's
-          output.
+        - ``row`` -- the row number of the entry represented by this method's
+          output
 
-        - ``col`` -- The column number of the entry represented by this
-          method's output.
+        - ``col`` -- the column number of the entry represented by this
+          method's output
 
-        - ``algorithm`` -- (default: "encrypt") Whether to perform ShiftRows'
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to perform ShiftRows'
           encryption step or its decryption inverse. The encryption flag is
           "encrypt" and the decryption flag is "decrypt".
 
-        OUTPUT:
-
-        - A polynomial in terms of entries of the input state matrix which
-          represents the ``row,col`` th entry of the output matrix after
-          ShiftRows has been applied to it.
+        OUTPUT: a polynomial in terms of entries of the input state matrix
+        which represents the ``row,col`` th entry of the output matrix after
+        ShiftRows has been applied to it
 
         EXAMPLES::
 
@@ -2123,8 +2094,8 @@ class RijndaelGF(SageObject):
         elif algorithm == 'decrypt':
             offs = self._shiftrows_offsets_D
         else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                             "or 'decrypt'")
         return self.state_vrs[row, (col + offs[4 - self._Nb][row]) % 4]
 
     def shift_rows(self, state, algorithm='encrypt'):
@@ -2133,17 +2104,15 @@ class RijndaelGF(SageObject):
 
         INPUT:
 
-        - ``state`` -- A state matrix over `\GF{2^8}` to which ShiftRows is
-          applied to.
+        - ``state`` -- a state matrix over `\GF{2^8}` to which ShiftRows is
+          applied to
 
-        - ``algorithm`` -- (default: "encrypt") Whether to perform the
-          encryption version of ShiftRows or its decryption inverse. The
-          encryption flag is "encrypt" and the decryption flag is "decrypt".
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to perform the
+          encryption version of ShiftRows or its decryption inverse; the
+          encryption flag is "encrypt" and the decryption flag is "decrypt"
 
-        OUTPUT:
-
-        - A state matrix over `\GF{2^8}` which is the application of ShiftRows
-          to ``state``.
+        OUTPUT: a state matrix over `\GF{2^8}` which is the application of
+        ShiftRows to ``state``
 
         EXAMPLES::
 
@@ -2169,7 +2138,7 @@ class RijndaelGF(SageObject):
 
             INPUT:
 
-            - ``polynomial_constr`` -- A function which takes an index
+            - ``polynomial_constr`` -- a function which takes an index
               ``row,col`` and returns a polynomial representing the ``row,col``
               th entry of a matrix after a specific round component function
               has been applied to it. This polynomial must be in terms of
@@ -2179,12 +2148,12 @@ class RijndaelGF(SageObject):
               algorithm='encrypt', **kwargs)`` and  must be able to be called
               as ``polynomial_constr(row, col)``.
 
-            - ``rgf`` -- The RijndaelGF object whose state entries are
-              represented by polynomials returned from ``polynomial_constr``.
+            - ``rgf`` -- the RijndaelGF object whose state entries are
+              represented by polynomials returned from ``polynomial_constr``
 
-            - ``round_component_name`` -- The name of the round component
-              function this object corresponds to as a string. Used solely
-              for display purposes.
+            - ``round_component_name`` -- the name of the round component
+              function this object corresponds to as a string; used solely
+              for display purposes
 
             EXAMPLES::
 
@@ -2293,16 +2262,16 @@ class RijndaelGF(SageObject):
 
             INPUT:
 
-            - ``row`` -- The row number to pass to ``polynomial_constr``.
+            - ``row`` -- the row number to pass to ``polynomial_constr``
 
-            - ``col`` -- The column number to pass to ``polynomial_constr``.
+            - ``col`` -- the column number to pass to ``polynomial_constr``
 
-            - ``algorithm`` -- (default: 'encrypt') The algorithm keyword
-              to pass to ``polynomial_constr``.
+            - ``algorithm`` -- (default: ``'encrypt'``) the algorithm keyword
+              to pass to ``polynomial_constr``
 
-            - ``**kwargs`` -- Keyword arguments to pass to
+            - ``**kwargs`` -- keyword arguments to pass to
               ``polynomial_constr``. Keyword arguments will vary depending
-              on ``polynomial_constr``.
+              on ``polynomial_constr``
 
             OUTPUT:
 
@@ -2355,6 +2324,5 @@ class RijndaelGF(SageObject):
             if self._rc_name is None:
                 msg = "A polynomial constructor of a round component of {0}"
                 return msg.format(self._rgf_name)
-            else:
-                msg = "A polynomial constructor for the function '{0}' of {1}"
-                return msg.format(self._rc_name, self._rgf_name)
+            msg = "A polynomial constructor for the function '{0}' of {1}"
+            return msg.format(self._rc_name, self._rgf_name)

@@ -244,7 +244,7 @@ class ResidueSequence(ClonableArray,
         The ``multicharge`` is the optional argument which, if omitted,
         defaults to ``(0,)``. On the other hand, the ``residue`` must
         always be specified so, below, we check to see whether or note
-        ``residues`` is `None` and adjust accordingly in this case.
+        ``residues`` is ``None`` and adjust accordingly in this case.
 
         EXAMPLES::
 
@@ -269,7 +269,7 @@ class ResidueSequence(ClonableArray,
 
     def check(self):
         r"""
-        Raise a :class:`ValueError` if ``self`` is not a residue sequence.
+        Raise a :exc:`ValueError` if ``self`` is not a residue sequence.
 
         EXAMPLES::
 
@@ -433,11 +433,11 @@ class ResidueSequence(ClonableArray,
     def swap_residues(self, i, j):
         r"""
         Return the *new* residue sequence obtained by swapping the residues
-        for ``i`` and `j``.
+        for ``i`` and ``j``.
 
         INPUT:
 
-        - ``i`` and ``j`` -- two integers between `1` and the length of
+        - ``i``, ``j`` -- two integers between `1` and the length of
           the residue sequence
 
         If residue sequence ``self`` is of the form `(r_1, \ldots, r_n)`, and
@@ -500,9 +500,8 @@ class ResidueSequence(ClonableArray,
         """
         if shape is None:
             return StandardTableaux_residue(residue=self)
-        else:
-            return StandardTableaux_residue_shape(residue=self,
-                                                  shape=PartitionTuple(shape))
+        return StandardTableaux_residue_shape(residue=self,
+                                              shape=PartitionTuple(shape))
 
     def row_standard_tableaux(self, shape=None):
         r"""
@@ -533,8 +532,7 @@ class ResidueSequence(ClonableArray,
         """
         if shape is None:
             return RowStandardTableauTuples_residue(residue=self)
-        else:
-            return RowStandardTableauTuples_residue_shape(residue=self, shape=PartitionTuple(shape))
+        return RowStandardTableauTuples_residue_shape(residue=self, shape=PartitionTuple(shape))
 
     def negative(self):
         r"""
@@ -718,7 +716,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
             sage: ResidueSequences(e=0, multicharge=(0,1,2)) == ResidueSequences(e=3, multicharge=(0,1,2))
             False
 
-        The TestSuite fails ``_test_pickling` because ``__getitem__`` does
+        The TestSuite fails ``_test_pickling`` because ``__getitem__`` does
         not support slices, so we skip this::
 
             sage: R = ResidueSequences(e=0, multicharge=(0,1,2))
@@ -746,7 +744,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         return '{}-residue sequences with multicharge {}'.format(self._quantum_characteristic,
                                                                  self._multicharge)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of ``self``.
 
@@ -792,8 +790,8 @@ class ResidueSequences(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``r`` and ``c`` -- the row and column indices in level one
-        - ``k``, ``r`` and ``c`` -- the component, row and column indices
+        - ``r``, ``c`` -- the row and column indices in level one
+        - ``k``, ``r``, ``c`` -- the component, row and column indices
           in higher levels
 
         EXAMPLES::
@@ -832,8 +830,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         # used by the iterators for the corresponding standard tableaux classes.
         if len(self._multicharge) == 1:
             return self._cell_residue_level_one
-        else:
-            return self._cell_residue_higher_levels
+        return self._cell_residue_higher_levels
 
     def check_element(self, element):
         r"""

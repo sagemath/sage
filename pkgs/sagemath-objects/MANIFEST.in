@@ -74,7 +74,6 @@ include sage/rings/integer_fake.*
 graft sage/libs/gmp
 
 
-
 ## What we do not want:
 # sage/misc/latex         -- this should really go to another package
 

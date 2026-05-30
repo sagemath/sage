@@ -16,9 +16,9 @@ AUTHORS:
 FUNCTIONS:
 
 - ``FormalSums(ring)`` -- create the module of formal finite sums with
-  coefficients in the given ring.
+  coefficients in the given ring
 
-- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum.
+- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum
 
 EXAMPLES::
 
@@ -64,19 +64,68 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from sage.misc.repr import repr_lincomb
 import operator
 from collections import OrderedDict
 
+from sage.misc.persist import register_unpickle_override
+from sage.misc.repr import repr_lincomb
 from sage.modules.module import Module
 from sage.structure.element import ModuleElement
-from sage.structure.richcmp import richcmp
+from sage.structure.richcmp import op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE
 from sage.rings.integer_ring import ZZ
 from sage.structure.parent import Parent
 from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
 from sage.categories.action import PrecomposedAction
 from sage.structure.unique_representation import UniqueRepresentation
+
+
+def _compare_formal_sums(self_data, other_data, zero, op) -> bool:
+    r"""
+    Compare two formal sums given by their coefficient dictionaries.
+
+    Formal sums are partially ordered coefficientwise: ``self_data`` is at most
+    ``other_data`` if and only if every coefficient of ``self_data`` is at most
+    the corresponding coefficient of ``other_data``, where terms missing from a
+    dictionary are taken to have coefficient ``zero``.
+
+    INPUT:
+
+    - ``self_data``, ``other_data`` -- dictionaries mapping terms to their
+      (nonzero) coefficients
+
+    - ``zero`` -- the zero of the coefficient ring; used as the coefficient of
+      terms absent from one of the dictionaries
+
+    - ``op`` -- a comparison operator (see :mod:`sage.structure.richcmp`)
+
+    EXAMPLES::
+
+        sage: from sage.structure.formal_sum import _compare_formal_sums
+        sage: from sage.structure.richcmp import op_EQ, op_LE, op_LT
+        sage: _compare_formal_sums({'a': 1, 'b': 2}, {'a': 3, 'b': 2}, 0, op_LT)
+        True
+        sage: _compare_formal_sums({'a': 3}, {'a': 3}, 0, op_LE)
+        True
+        sage: _compare_formal_sums({'a': 1}, {'b': 1}, 0, op_EQ)
+        False
+    """
+    if op == op_EQ:
+        return self_data == other_data
+    if op == op_NE:
+        return self_data != other_data
+
+    support = self_data.keys() | other_data.keys()
+    if op == op_LE:
+        return all(self_data.get(x, zero) <= other_data.get(x, zero) for x in support)
+    if op == op_GE:
+        return all(self_data.get(x, zero) >= other_data.get(x, zero) for x in support)
+    if op == op_LT:
+        return (self_data != other_data
+                and all(self_data.get(x, zero) <= other_data.get(x, zero) for x in support))
+    if op == op_GT:
+        return (self_data != other_data
+                and all(self_data.get(x, zero) >= other_data.get(x, zero) for x in support))
+    raise ValueError(f"unknown comparison operator {op}")
 
 
 class FormalSum(ModuleElement):
@@ -89,11 +138,16 @@ class FormalSum(ModuleElement):
 
         - ``x`` -- object
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
-        - ``check`` -- bool (default: ``True``) if ``False``, might not coerce
-          coefficients into base ring, which can speed
-          up constructing a formal sum.
-        - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, might not coerce
+          coefficients into base ring, which can speed up constructing a formal sum
+        - ``reduce`` -- boolean (default: ``True``); if ``False``, do not
           combine common terms
+
+        .. WARNING::
+
+            Setting ``reduce`` to ``False`` can cause methods that inspect
+            raw terms, such as iteration and representation, to reflect
+            unreduced data.
 
         EXAMPLES::
 
@@ -196,7 +250,7 @@ class FormalSum(ModuleElement):
         r"""
         EXAMPLES::
 
-            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))
+            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))                          # needs sage.rings.real_mpfr
             2 + 5\cdot \frac{8}{9} - 3\cdot 7
         """
         from sage.misc.latex import repr_lincomb
@@ -207,7 +261,7 @@ class FormalSum(ModuleElement):
         # sage.misc.misc.repr_lincomb and use instead:
         # return repr_lincomb([[t,c] for c,t in self], is_latex=True)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -230,8 +284,33 @@ class FormalSum(ModuleElement):
             True
             sage: a == 0          # 0 is coerced into a.parent()(0)
             False
+
+        TESTS::
+
+            sage: a = FormalSum([(1, 3), (2, 5)])
+            sage: b = FormalSum([(2, 5), (1, 3)])
+            sage: a == b
+            True
+            sage: b == a
+            True
+            sage: f1 = FormalSum([(1, 'a'), (2, 'b')])
+            sage: f2 = FormalSum([(3, 'a')])
+            sage: f2 > f1
+            False
+            sage: f2 - f1 > 0
+            False
+            sage: FormalSum([(3, 'a'), (2, 'b')]) > f1
+            True
         """
-        return richcmp(self._data, other._data, op)
+        zero = self.parent().base_ring().zero()
+
+        def coefficients(formal_sum):
+            data = {}
+            for c, x in formal_sum._data:
+                data[x] = data.get(x, zero) + c
+            return {x: c for x, c in data.items() if c}
+
+        return _compare_formal_sums(coefficients(self), coefficients(other), zero, op)
 
     def _neg_(self):
         """
@@ -324,7 +403,6 @@ class FormalSums(UniqueRepresentation, Module):
     TESTS::
 
         sage: TestSuite(FormalSums(QQ)).run()
-
     """
     Element = FormalSum
 
@@ -353,15 +431,15 @@ class FormalSums(UniqueRepresentation, Module):
 
     def _element_constructor_(self, x, check=True, reduce=True):
         """
-        Make a formal sum in self from x.
+        Make a formal sum in ``self`` from x.
 
         INPUT:
 
         - ``x`` -- formal sum, list or number
 
-        - ``check`` -- bool (default: True)
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``reduce`` -- bool (default: True); whether to combine terms
+        - ``reduce`` -- boolean (default: ``True``); whether to combine terms
 
         EXAMPLES::
 
@@ -373,18 +451,19 @@ class FormalSums(UniqueRepresentation, Module):
             P = x.parent()
             if P is self:
                 return x
-            else:
-                x = x._data
+            x = x._data
         if isinstance(x, list):
-            return self.element_class(x, check=check,reduce=reduce,parent=self)
+            return self.element_class(x, check=check,
+                                      reduce=reduce, parent=self)
         if x == 0:
-            return self.element_class([], check=False, reduce=False, parent=self)
-        else:
-            return self.element_class([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
+            return self.element_class([], check=False,
+                                      reduce=False, parent=self)
+        return self.element_class([(self.base_ring()(1), x)],
+                                  check=False, reduce=False, parent=self)
 
     def _coerce_map_from_(self, X):
         r"""
-        Return whether there is a coercion from ``X``
+        Return whether there is a coercion from ``X``.
 
         EXAMPLES::
 
@@ -397,7 +476,7 @@ class FormalSums(UniqueRepresentation, Module):
               From: Abelian Group of all Formal Finite Sums over Integer Ring
               To:   Abelian Group of all Formal Finite Sums over Rational Field
         """
-        if isinstance(X,FormalSums):
+        if isinstance(X, FormalSums):
             if self.base_ring().has_coerce_map_from(X.base_ring()):
                 return True
         return False
@@ -416,14 +495,14 @@ class FormalSums(UniqueRepresentation, Module):
         """
         if self.base_ring().has_coerce_map_from(R):
             return self
-        elif R.has_coerce_map_from(self.base_ring()):
+        if R.has_coerce_map_from(self.base_ring()):
             return FormalSums(R)
 
     def _get_action_(self, other, op, self_is_left):
         """
         EXAMPLES::
 
-            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
+            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest          # needs sage.rings.real_mpfr
             Right scalar multiplication by Real Field with 53 bits of precision
              on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision
 
@@ -459,7 +538,7 @@ class FormalSums(UniqueRepresentation, Module):
             1/2
         """
         return self.element_class([(self.base_ring().an_element(), 1)],
-                         check=check, reduce=reduce, parent=self)
+                                  check=check, reduce=reduce, parent=self)
 
 
 formal_sums = FormalSums()
@@ -467,5 +546,4 @@ formal_sums = FormalSums()
 # Formal sums now derives from UniqueRepresentation, which makes the
 # factory function unnecessary. This is why the name was changed from
 # class FormalSums_generic to class FormalSums.
-from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.structure.formal_sum', 'FormalSums_generic', FormalSums)

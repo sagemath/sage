@@ -1,3 +1,5 @@
 # ffmpeg is not in the standard Fedora repository
 # Need "RPM Fusion Free"
 #ffmpeg
+ffmpeg-free
+ffmpeg-free-devel

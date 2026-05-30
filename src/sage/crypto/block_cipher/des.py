@@ -155,8 +155,9 @@ class DES(SageObject):
 
     TESTS:
 
-    Test test vectors from [KeSm1998]_ pp. 125-136::
+    Test a random subset of the test vectors in [KeSm1998]_ pp. 125-136::
 
+        sage: # long time
         sage: from sage.crypto.block_cipher.des import DES
         sage: test = \
         ....: [[0x0101010101010101, 0x8000000000000000, 0x95F8A5E5DD31D900],
@@ -331,10 +332,10 @@ class DES(SageObject):
         ....:  [0x018310DC409B26D6, 0x1D9D5C5018F728C2, 0x5F4C038ED12B2E41],
         ....:  [0x1C587F1C13924FEF, 0x305532286D6F295A, 0x63FAC0D034D9F793]]
         sage: des = DES()
-        sage: for K, P, C in test: # long time
-        ....:    if des.encrypt(P, K) != C or des.decrypt(C, K) != P:
-        ....:        print("DES tests failed for K=0x%s, P=0x%s, C=0x%s" %
-        ....:              (K.hex(), P.hex(), C.hex()))
+        sage: from random import sample
+        sage: all( des.encrypt(P,K) == C and des.decrypt(C,K) == P
+        ....:      for (K,P,C) in sample(test,5) )
+        True
 
     .. automethod:: __init__
     .. automethod:: __call__
@@ -346,14 +347,14 @@ class DES(SageObject):
 
         INPUT:
 
-        - ``rounds``  -- integer (default: ``None``); the number of rounds. If
+        - ``rounds`` -- integer (default: ``None``); the number of rounds. If
           ``None`` the number of rounds of the key schedule is used.
 
-        - ``keySchedule`` -- (default: ``'DES_KS'``); the key schedule that
+        - ``keySchedule`` -- (default: ``'DES_KS'``) the key schedule that
           will be used for encryption and decryption. If ``'DES_KS'`` the
           default DES key schedule is used.
 
-        - ``keySize`` -- (default: ``64``); the key length in bits. Must be
+        - ``keySize`` -- (default: ``64``) the key length in bits. Must be
           ``56`` of ``64``. In the latter case the key contains 8 parity bits.
 
         - ``doFinalRound`` -- boolean (default: ``True``); if ``False`` a swap
@@ -432,11 +433,10 @@ class DES(SageObject):
         """
         if algorithm == 'encrypt':
             return self.encrypt(block, key)
-        elif algorithm == 'decrypt':
+        if algorithm == 'decrypt':
             return self.decrypt(block, key)
-        else:
-            raise ValueError('Algorithm must be \'encrypt\' or \'decrypt\' and'
-                             ' not \'%s\'' % algorithm)
+        raise ValueError('Algorithm must be \'encrypt\' or \'decrypt\' and'
+                         ' not \'%s\'' % algorithm)
 
     def __eq__(self, other):
         r"""
@@ -459,8 +459,7 @@ class DES(SageObject):
         """
         if not isinstance(other, DES):
             return False
-        else:
-            return self.__dict__ == other.__dict__
+        return self.__dict__ == other.__dict__
 
     def __repr__(self):
         r"""
@@ -484,7 +483,7 @@ class DES(SageObject):
         INPUT:
 
         - ``plaintext`` -- integer or bit list-like; the plaintext that will be
-          encrypted.
+          encrypted
 
         - ``key`` -- integer or bit list-like; the key
 
@@ -652,7 +651,7 @@ class DES(SageObject):
             (0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
              0, 1, 1, 0, 1, 1, 1, 0, 1, 1)
         """
-        return self._permutaion(self.sbox_layer(self._expand(right)+subkey))
+        return self._permutation(self.sbox_layer(self._expand(right)+subkey))
 
     def _expand(self, right):
         r"""
@@ -704,7 +703,7 @@ class DES(SageObject):
                                           for i, b in enumerate(block)]))
         return vector(GF(2), 32, block)
 
-    def _permutaion(self, block):
+    def _permutation(self, block):
         r"""
         Apply the permutation function to ``block``.
 
@@ -714,7 +713,7 @@ class DES(SageObject):
             sage: des = DES()
             sage: B = vector(GF(2), 32, [0,1,0,1,1,1,0,0,1,0,0,0,0,0,1,0,1,0,1,
             ....:                        1,0,1,0,1,1,0,0,1,0,1,1,1])
-            sage: des._permutaion(B)
+            sage: des._permutation(B)
             (0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
              0, 1, 1, 0, 1, 1, 1, 0, 1, 1)
         """
@@ -794,7 +793,7 @@ class DES_KS(SageObject):
 
         INPUT:
 
-        - ``rounds`` -- integer (default: ``16``); the number of rounds
+        - ``rounds`` -- integer (default: `16`); the number of rounds
           ``self`` can create keys for
 
         - ``masterKey`` -- integer or bit list-like (default: ``None``); the
@@ -898,8 +897,7 @@ class DES_KS(SageObject):
         """
         if not isinstance(other, DES_KS):
             return False
-        else:
-            return self.__dict__ == other.__dict__
+        return self.__dict__ == other.__dict__
 
     def __repr__(self):
         r"""
@@ -915,14 +913,14 @@ class DES_KS(SageObject):
 
     def __getitem__(self, r):
         r"""
-        Computes the sub key for round ``r`` derived from initial master key.
+        Compute the sub key for round ``r`` derived from initial master key.
 
         The key schedule object has to have been initialised with the
         `masterKey` argument.
 
         INPUT:
 
-        - ``r`` integer; the round for which the sub key is computed
+        - ``r`` -- integer; the round for which the sub key is computed
 
         EXAMPLES::
 
@@ -1041,11 +1039,9 @@ def convert_to_vector(I, L):
 
     - ``I`` -- integer or bit list-like
 
-    - ``L`` -- integer; the desired bit length of the ouput
+    - ``L`` -- integer; the desired bit length of the output
 
-    OUTPUT:
-
-    - the ``L``-bit vector representation of ``I``
+    OUTPUT: the ``L``-bit vector representation of ``I``
 
     EXAMPLES::
 

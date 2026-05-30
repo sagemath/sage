@@ -48,6 +48,8 @@ Laurent Polynomials
    sage/rings/polynomial/laurent_polynomial_ring_base
    sage/rings/polynomial/laurent_polynomial_ring
    sage/rings/polynomial/laurent_polynomial
+   sage/rings/polynomial/laurent_polynomial_mpair
+   sage/rings/polynomial/laurent_polynomial_ideal
    sage/rings/polynomial/omega
 
 Infinite Polynomial Rings
@@ -62,14 +64,22 @@ Infinite Polynomial Rings
    sage/rings/polynomial/symmetric_ideal
    sage/rings/polynomial/symmetric_reduction
 
+Tropical Polynomials
+--------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/rings/semirings/tropical_polynomial
+   sage/rings/semirings/tropical_mpolynomial
+   sage/rings/semirings/tropical_variety
+
 Boolean Polynomials
 -------------------
 
-.. ONLY:: feature_sage_rings_polynomial_pbori
+.. toctree::
+   :maxdepth: 1
 
-   .. toctree::
-      :maxdepth: 1
-
-      sage/rings/polynomial/pbori/pbori
+   sage/rings/polynomial/pbori/pbori
 
 .. include:: ../footer.txt

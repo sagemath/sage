@@ -31,12 +31,10 @@ def sidon_sets(N, g=1):
 
     INPUT:
 
-    - `N` -- A positive integer.
-    - `g` -- A positive integer (default: `1`).
+    - ``N`` -- positive integer
+    - ``g`` -- positive integer (default: `1`)
 
-    OUTPUT:
-
-    - A Sage set with categories whose element are also set of integers.
+    OUTPUT: a Sage set with categories whose element are also set of integers
 
     EXAMPLES::
 
@@ -97,9 +95,9 @@ def sidon_sets(N, g=1):
         ValueError: g must be a positive integer
     """
     if not isinstance(N, (int, Integer)) or N < 1:
-        raise ValueError( "N must be a positive integer" )
+        raise ValueError("N must be a positive integer")
     elif not isinstance(g, (int, Integer)) or g < 1:
-        raise ValueError( "g must be a positive integer" )
+        raise ValueError("g must be a positive integer")
     return sidon_sets_rec(N, g=g)
 
 
