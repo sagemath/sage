@@ -137,6 +137,7 @@ TESTS::
 
 ::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: EllipticCurveHom_frobenius(EllipticCurve('11a1'))
     Traceback (most recent call last):
     ...
@@ -193,6 +194,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurveHom_frobenius(EllipticCurve('11a1'))
             Traceback (most recent call last):
             ...

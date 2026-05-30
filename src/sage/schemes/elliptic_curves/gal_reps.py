@@ -38,6 +38,7 @@ For the classification of the representation
 
 EXAMPLES::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('196a1')
     sage: rho = E.galois_representation()
     sage: rho.is_irreducible(7)
@@ -66,6 +67,7 @@ EXAMPLES::
 For semi-stable curve it is known that the representation is
 surjective if and only if it is irreducible::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('11a1')
     sage: rho = E.galois_representation()
     sage: rho.non_surjective()
@@ -76,6 +78,7 @@ surjective if and only if it is irreducible::
 For cm curves it is not true that there are only finitely many primes for which the
 Galois representation mod p is surjective onto `GL_2(\GF{p})`::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('27a1')
     sage: rho = E.galois_representation()
     sage: rho.non_surjective()
@@ -173,6 +176,7 @@ class GaloisRepresentation(SageObject):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: rho = EllipticCurve('11a1').galois_representation()
         sage: rho
         Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -184,6 +188,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('11a1').galois_representation()
             sage: loads(rho.dumps()) == rho
             True
@@ -211,6 +216,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('11a1').galois_representation()
             sage: rho2 = EllipticCurve('11a2').galois_representation()
             sage: rho == rho
@@ -239,6 +245,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: rho = E.galois_representation()
             sage: rho.elliptic_curve() == E
@@ -268,6 +275,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('121a').galois_representation()
             sage: rho.is_reducible(7)
             False
@@ -317,6 +325,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('37b').galois_representation()
             sage: rho.is_irreducible(2)
             True
@@ -337,6 +346,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('225a').galois_representation()
             sage: rho.reducible_primes()
             [3]
@@ -381,6 +391,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('37b').galois_representation()
             sage: rho.is_surjective(2)
             True
@@ -389,6 +400,7 @@ class GaloisRepresentation(SageObject):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('121a1').galois_representation()
             sage: rho.non_surjective()
             [11]
@@ -397,6 +409,7 @@ class GaloisRepresentation(SageObject):
             sage: rho.is_surjective(11)
             False
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('121d1').galois_representation()
             sage: rho.is_surjective(5)
             False
@@ -449,6 +462,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('37b').galois_representation()
             sage: rho._is_surjective(7,100)
             True
@@ -457,6 +471,7 @@ class GaloisRepresentation(SageObject):
 
         Test for :issue:`8451`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('648a1')
             sage: rho = E.galois_representation()
             sage: rho._is_surjective(5,1000)
@@ -643,6 +658,7 @@ class GaloisRepresentation(SageObject):
             sage: rho.non_surjective()
             [2]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('324b1')
             sage: rho = E.galois_representation()
             sage: rho.non_surjective()
@@ -713,16 +729,19 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: rho = E.galois_representation()
             sage: rho.image_type(5)
             'The image is all of GL_2(F_5).'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: rho = E.galois_representation()
             sage: rho.image_type(5)
             'The image is meta-cyclic inside a Borel subgroup as there is a 5-torsion point on the curve.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('27a1').galois_representation().image_type(5)
             'The image is contained in the normalizer of a non-split Cartan group. (cm)'
             sage: EllipticCurve('30a1').galois_representation().image_type(5)
@@ -736,9 +755,11 @@ class GaloisRepresentation(SageObject):
             sage: rho.image_type(5)
             'The image is contained in the normalizer of a split Cartan group.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('49a1').galois_representation().image_type(7)
             'The image is contained in a Borel subgroup as there is a 7-isogeny.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('121c1').galois_representation().image_type(11)
             'The image is contained in a Borel subgroup as there is a 11-isogeny.'
             sage: EllipticCurve('121d1').galois_representation().image_type(11)
@@ -769,41 +790,50 @@ class GaloisRepresentation(SageObject):
 
         For `p=2`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: rho = E.galois_representation()
             sage: rho.image_type(2)
             'The image is all of GL_2(F_2), i.e. a symmetric group of order 6.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('14a1').galois_representation()
             sage: rho.image_type(2)
             'The image is cyclic of order 2 as there is exactly one rational 2-torsion point.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('15a1').galois_representation()
             sage: rho.image_type(2)
             'The image is trivial as all 2-torsion points are rational.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('196a1').galois_representation()
             sage: rho.image_type(2)
             'The image is cyclic of order 3.'
 
         `p=3`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('33a1').galois_representation()
             sage: rho.image_type(3)
             'The image is all of GL_2(F_3).'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('30a1').galois_representation()
             sage: rho.image_type(3)
             'The image is meta-cyclic inside a Borel subgroup as there is a 3-torsion point on the curve.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('50b1').galois_representation()
             sage: rho.image_type(3)
             'The image is contained in a Borel subgroup as there is a 3-isogeny.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('3840h1').galois_representation()
             sage: rho.image_type(3)
             'The image is contained in a dihedral group of order 8.'
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('32a1').galois_representation()
             sage: rho.image_type(3)
             'The image is a semi-dihedral group of order 16, gap.SmallGroup([16,8]).'
@@ -1111,11 +1141,13 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: rho = E.galois_representation()
             sage: rho.image_classes(5)
             [0.2095, 0.1516, 0.2445, 0.1728, 0.2217]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: rho = E.galois_representation()
             sage: rho.image_classes(5)
@@ -1123,6 +1155,7 @@ class GaloisRepresentation(SageObject):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('27a1').galois_representation().image_classes(5)
             [0.5839, 0.1645, 0.0000, 0.1702, 0.08143]
             sage: EllipticCurve('30a1').galois_representation().image_classes(5)
@@ -1138,16 +1171,19 @@ class GaloisRepresentation(SageObject):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('784h1').galois_representation().image_classes(7)
             [0.5049, 0.0000, 0.0000, 0.0000, 0.4951, 0.0000, 0.0000]
             sage: EllipticCurve('49a1').galois_representation().image_classes(7)
             [0.5045, 0.0000, 0.0000, 0.0000, 0.4955, 0.0000, 0.0000]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('121c1').galois_representation().image_classes(11)
             [0.1001, 0.0000, 0.0000, 0.0000, 0.1017, 0.1953, 0.1993, 0.0000, 0.0000, 0.2010, 0.2026]
             sage: EllipticCurve('121d1').galois_representation().image_classes(11)
             [0.08869, 0.07974, 0.08706, 0.08137, 0.1001, 0.09439, 0.09764, 0.08218, 0.08625, 0.1017, 0.1009]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('441f1').galois_representation().image_classes(13)
             [0.08232, 0.1663, 0.1663, 0.1663, 0.08232, 0.0000, 0.1549, 0.0000, 0.0000, 0.0000, 0.0000, 0.1817, 0.0000]
 
@@ -1246,6 +1282,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('20a3').galois_representation()
             sage: rho.is_unramified(5,7)
             True
@@ -1279,6 +1316,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('120a1').galois_representation()
             sage: rho.is_unipotent(2,5)
             True
@@ -1316,6 +1354,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('11a3').galois_representation()
             sage: rho.is_quasi_unipotent(11,13)
             True
@@ -1346,6 +1385,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('11a3').galois_representation()
             sage: rho.is_ordinary(11)
             True
@@ -1374,6 +1414,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('64a1').galois_representation()
             sage: rho.is_crystalline(5)
             True
@@ -1399,6 +1440,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('37b1').galois_representation()
             sage: rho.is_potentially_crystalline(37)
             False
@@ -1423,6 +1465,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('20a3').galois_representation()
             sage: rho.is_semistable(2)
             False
@@ -1449,6 +1492,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: rho = EllipticCurve('27a2').galois_representation()
             sage: rho.is_potentially_semistable(3)
             True

@@ -1655,8 +1655,9 @@ def rank(x):
 
     We compute the rank of an elliptic curve::
 
-        sage: E = EllipticCurve([0,0,1,-1,0])                                           # needs sage.schemes
-        sage: rank(E)                                                                   # needs sage.schemes
+        sage: # needs database_cremona_mini_ellcurve
+        sage: E = EllipticCurve([0,0,1,-1,0])  # needs sage.schemes
+        sage: rank(E)  # needs sage.schemes
         1
     """
     return x.rank()
@@ -1668,10 +1669,11 @@ def regulator(x):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: x = polygen(ZZ, 'x')
-        sage: regulator(NumberField(x^2 - 2, 'a'))                                      # needs sage.rings.number_field
+        sage: regulator(NumberField(x^2 - 2, 'a'))  # needs sage.rings.number_field
         0.881373587019543
-        sage: regulator(EllipticCurve('11a'))                                           # needs sage.schemes
+        sage: regulator(EllipticCurve('11a'))  # needs sage.schemes
         1.00000000000000
     """
     return x.regulator()

@@ -546,6 +546,7 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.databases.cremona import cremona_to_lmfdb, lmfdb_to_cremona
         sage: cremona_to_lmfdb('990j1')
         '990.h3'
@@ -554,6 +555,7 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
 
     TESTS::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: for label in ['5077a1','66a3','102b','420c2']:
         ....:     assert(lmfdb_to_cremona(cremona_to_lmfdb(label)) == label)
         sage: for label in ['438.c2','306.b','462.f3']:
@@ -602,6 +604,7 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.databases.cremona import cremona_to_lmfdb, lmfdb_to_cremona
         sage: lmfdb_to_cremona('990.h3')
         '990j1'
@@ -638,6 +641,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: c = CremonaDatabase()
         sage: c.allcurves(11)
         {'a1': [[0, -1, 1, -10, -20], 0, 5],
@@ -652,6 +656,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase('cremona mini')
             sage: c.name
             'cremona mini'
@@ -680,6 +685,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: it = CremonaDatabase().__iter__()
             sage: next(it).label()
             '11a1'
@@ -712,6 +718,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c[11]['allcurves']['a2']
             [[0, -1, 1, -7820, -263580], 0, 1]
@@ -744,6 +751,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase('cremona mini')
             sage: c.__repr__()
             "Cremona's database of elliptic curves with conductor at most 9999"
@@ -763,6 +771,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.allcurves(11)['a3']
             [[0, -1, 1, 0, 0], 0, 5]
@@ -793,17 +802,20 @@ class MiniCremonaDatabase(SQLDatabase):
 
         Optimal curves of conductor 37::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: CremonaDatabase().curves(37)
             {'a1': [[0, 0, 1, -1, 0], 1, 1], 'b1': [[0, 1, 1, -23, -50], 0, 3]}
 
         Note the 'h3', which is the unique case in the tables where
         the optimal curve doesn't have label ending in 1::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: sorted(CremonaDatabase().curves(990))
             ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h3', 'i1', 'j1', 'k1', 'l1']
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.curves(12001)['a1']   # optional - database_cremona_ellcurve
             [[1, 0, 0, -101, 382], 1, 1]
@@ -826,6 +838,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c, d = CremonaDatabase().coefficients_and_data('144b1')
             sage: c
             [0, 0, 0, 6, 7]
@@ -896,6 +909,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: d = CremonaDatabase().data_from_coefficients([1, -1, 1, 31, 128])
             sage: d['conductor']
             1953
@@ -955,6 +969,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.elliptic_curve_from_ainvs([0, -1, 1, -10, -20])
             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -993,6 +1008,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.elliptic_curve('11a1')
             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -1024,6 +1040,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: [e.cremona_label() for e in CremonaDatabase().iter([11..15])]
             ['11a1', '11a2', '11a3', '14a1', '14a2', '14a3', '14a4', '14a5',
              '14a6', '15a1', '15a2', '15a3', '15a4', '15a5', '15a6', '15a7', '15a8']
@@ -1043,6 +1060,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.isogeny_classes(11)
             [[[[0, -1, 1, -10, -20], 0, 5],
@@ -1080,6 +1098,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.isogeny_class('11a1')
             [Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field,
@@ -1108,11 +1127,13 @@ class MiniCremonaDatabase(SQLDatabase):
 
         We list optimal curves with conductor up to 20::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: [e.cremona_label() for e in CremonaDatabase().iter_optimal([11..20])]
             ['11a1', '14a1', '15a1', '17a1', '19a1', '20a1']
 
         Note the unfortunate 990h3 special case::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: [e.cremona_label() for e in CremonaDatabase().iter_optimal([990])]
             ['990a1', '990b1', '990c1', '990d1', '990e1', '990f1', '990g1', '990h3', '990i1', '990j1', '990k1', '990l1']
         """
@@ -1142,6 +1163,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: CremonaDatabase().list([37])
             [Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field,
              Elliptic Curve defined by y^2 + y = x^3 + x^2 - 23*x - 50 over Rational Field,
@@ -1163,6 +1185,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: CremonaDatabase().list_optimal([37])
             [Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field,
              Elliptic Curve defined by y^2 + y = x^3 + x^2 - 23*x - 50 over Rational Field]
@@ -1177,6 +1200,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase('cremona mini')
             sage: c.largest_conductor()
             9999
@@ -1203,6 +1227,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: CremonaDatabase().smallest_conductor()
             1
         """
@@ -1217,6 +1242,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase('cremona mini')
             sage: c.conductor_range()
             (1, 10000)
@@ -1241,6 +1267,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.number_of_curves(11)
             3
@@ -1282,6 +1309,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.number_of_isogeny_classes(11)
             1
@@ -1306,6 +1334,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: CremonaDatabase().random() # random -- depends on database installed
             Elliptic Curve defined by y^2 + x*y  = x^3 - x^2 - 224*x + 3072 over Rational Field
         """
@@ -1465,6 +1494,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.allbsd(12)            # optional - database_cremona_ellcurve
             {}
@@ -1493,6 +1523,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.allgens(12)            # optional - database_cremona_ellcurve
             {}
@@ -1520,6 +1551,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: c = CremonaDatabase()
             sage: c.degphi(11)            # optional - database_cremona_ellcurve
             {'a1': 1}
@@ -1662,6 +1694,7 @@ def CremonaDatabase(name=None, mini=None):
 
     TESTS::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: c = CremonaDatabase()
         sage: isinstance(c, sage.databases.cremona.MiniCremonaDatabase)
         True

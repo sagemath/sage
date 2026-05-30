@@ -215,6 +215,7 @@ class HeckeModuleElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularForms(2, 22); M.0.is_cuspidal()
             True
             sage: (M.0 + M.4).is_cuspidal()
@@ -249,6 +250,7 @@ class HeckeModuleElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: CuspForms(2,8).0.is_eisenstein()
             False
             sage: M = ModularForms(2,8);(M.0  + M.1).is_eisenstein()

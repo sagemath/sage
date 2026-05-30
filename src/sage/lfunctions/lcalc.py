@@ -234,6 +234,7 @@ class LCalc(SageObject):
         Sometimes warnings are printed (by lcalc) when this command is
         run::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: values = E.lseries().values_along_line(0.5, 3, 5)
             sage: values[0][0] # abs tol 1e-8
@@ -398,6 +399,7 @@ class LCalc(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: lcalc.analytic_rank(E)
             1

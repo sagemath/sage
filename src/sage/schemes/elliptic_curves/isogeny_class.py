@@ -61,6 +61,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: cls = EllipticCurve('1011b1').isogeny_class()
             sage: print("\n".join(repr(E) for E in cls.curves))
             Elliptic Curve defined by y^2 + x*y = x^3 - 8*x - 9 over Rational Field
@@ -77,6 +78,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a')
             sage: len(E.isogeny_class()) # indirect doctest
             8
@@ -89,6 +91,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a')
             sage: all(C.conductor() == 15 for C in E.isogeny_class()) # indirect doctest
             True
@@ -101,6 +104,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('990j1')
             sage: iso = E.isogeny_class(order='lmfdb') # orders lexicographically on a-invariants
             sage: iso[2] == E # indirect doctest
@@ -123,6 +127,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('990j1')
             sage: iso = E.isogeny_class(order='lmfdb') # orders lexicographically on a-invariants
             sage: iso.index(E.short_weierstrass_model())
@@ -150,6 +155,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('990j1')
             sage: EE = EllipticCurve('990j4')
             sage: E.isogeny_class() == EE.isogeny_class() # indirect doctest
@@ -167,6 +173,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('990j1')
             sage: C = E.isogeny_class()
             sage: hash(C) == hash(tuple(sorted([curve.a_invariants() for curve in C.curves]))) # indirect doctest
@@ -195,6 +202,7 @@ class IsogenyClass_EC(SageObject):
         If the curve is constructed from an LMFDB label then that
         label is used::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('462.f3')
             sage: E.isogeny_class() # indirect doctest
             Elliptic curve isogeny class 462.f
@@ -202,6 +210,7 @@ class IsogenyClass_EC(SageObject):
         If the curve is constructed from a Cremona label then that
         label is used::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('990j1')
             sage: E.isogeny_class()
             Elliptic curve isogeny class 990j
@@ -246,6 +255,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: cls = EllipticCurve('15a3').isogeny_class()
             sage: E = EllipticCurve('15a7'); E in cls
             True
@@ -270,6 +280,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: isocls = EllipticCurve('15a3').isogeny_class()
             sage: isocls.matrix()
             [ 1  2  2  2  4  4  8  8]
@@ -357,6 +368,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: isocls = EllipticCurve('15a3').isogeny_class()
             sage: f = isocls.isogenies()[0][1]; f
             Isogeny of degree 2
@@ -394,6 +406,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: isocls = EllipticCurve('15a3').isogeny_class()
             sage: G = isocls.graph()
             sage: sorted(G._pos.items())
@@ -521,6 +534,7 @@ class IsogenyClass_EC(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: isocls = EllipticCurve('15a1').isogeny_class()
             sage: print("\n".join(repr(C) for C in isocls.curves))
             Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
@@ -974,6 +988,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: isocls = EllipticCurve('1225h1').isogeny_class('database')
             sage: isocls._mat
             sage: isocls._compute_matrix(); isocls._mat
@@ -986,6 +1001,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a1')
             sage: isocls = E.isogeny_class()
             sage: maps = isocls.isogenies() # indirect doctest
@@ -1025,6 +1041,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: isocls = EllipticCurve('389a1').isogeny_class(); isocls
             Elliptic curve isogeny class 389a
             sage: E = EllipticCurve([0, 0, 0, 0, 1001]) # conductor 108216108
@@ -1044,6 +1061,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: C = E.isogeny_class()
             sage: C2 = C.copy()
@@ -1068,6 +1086,7 @@ class IsogenyClass_EC_Rational(IsogenyClass_EC_NumberField):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: isocls = EllipticCurve('48a1').isogeny_class('sage').copy()
             sage: isocls._mat
             sage: isocls._compute(); isocls._mat
@@ -1387,6 +1406,7 @@ def possible_isogeny_degrees(E, algorithm='Billerey', max_l=None,
     Galois representation is reducible, i.e. contained in a Borel
     subgroup::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.isogeny_class import possible_isogeny_degrees
         sage: E = EllipticCurve('11a1')
         sage: possible_isogeny_degrees(E)

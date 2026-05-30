@@ -71,6 +71,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: Z = LFunctionZeroSum(EllipticCurve("389a"))
             sage: Z.ncpus()
             1
@@ -106,6 +107,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("389a")
             sage: Z = LFunctionZeroSum(E)
             sage: Z.level()
@@ -122,6 +124,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("389a")
             sage: Z = LFunctionZeroSum(E)
             sage: Z.weight()
@@ -147,6 +150,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("389a")
             sage: Z = LFunctionZeroSum(E)
             sage: Z.C0() # tol 1.0e-13
@@ -185,6 +189,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a")
             sage: Z = LFunctionZeroSum(E)
             sage: cnlist = Z.cnlist(11)
@@ -234,6 +239,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: Z = LFunctionZeroSum(EllipticCurve("37a"))
             sage: Z.digamma(3.2) # tol 1.0e-13
             0.9988388912865993
@@ -525,6 +531,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("389a"); E.rank()
             2
             sage: Z = LFunctionZeroSum(E)
@@ -613,6 +620,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a"); E.rank()
             1
             sage: Z = LFunctionZeroSum(E)
@@ -727,6 +735,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a"); E.rank()
             1
             sage: Z = LFunctionZeroSum(E)
@@ -817,6 +826,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a")
             sage: zeros = E.lseries().zeros(2)
             sage: zeros[0] # abs tol 1e-8
@@ -913,6 +923,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.lfunctions.zero_sums import LFunctionZeroSum_EllipticCurve
             sage: E = EllipticCurve([1,0,0,3,-4])
             sage: Z = LFunctionZeroSum_EllipticCurve(E); Z
@@ -951,6 +962,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: Z = LFunctionZeroSum(EllipticCurve("37a")); Z
             Zero sum estimator for L-function attached to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         """
@@ -1009,6 +1021,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a")
             sage: Z = LFunctionZeroSum(E)
             sage: for n in range(12): print((n, Z.cn(n))) # tol 1.0e-13
@@ -1136,6 +1149,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a")
             sage: Z = LFunctionZeroSum(E)
             sage: print((E.rank(),Z._zerosum_sincsquared_fast(Delta=1))) # tol 1.0e-13
@@ -1271,6 +1285,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a"); Z = LFunctionZeroSum(E)
             sage: Z._get_residue_data(8)
             ([2, 3, 5, 7],
@@ -1418,6 +1433,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a"); print(E.rank())
             1
             sage: Z = LFunctionZeroSum(E)
@@ -1616,6 +1632,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a")
             sage: E.rank()
             0
@@ -1623,6 +1640,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
             sage: Z.analytic_rank_upper_bound(max_Delta=1,ncpus=1)
             0
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([-39,123])
             sage: E.rank()
             1
@@ -1653,6 +1671,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("974b1")
             sage: r = E.rank(); r
             0
@@ -1818,6 +1837,7 @@ def LFunctionZeroSum(X, *args, **kwds):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve("389a")
         sage: Z = LFunctionZeroSum(E); Z
         Zero sum estimator for L-function attached to Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field

@@ -121,6 +121,7 @@ Sageの楕円曲線部門にはPARIの楕円曲線機能の大部分が取り込
     sage: EllipticCurve([1,2])
     Elliptic Curve defined by y^2  = x^3 + x + 2 over Rational Field
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: EllipticCurve('37a')
     Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
 
@@ -214,6 +215,7 @@ Sageでは， :math:`j` -不変量を以下のようにして計算する:
 
 ::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve("37b2")
     sage: E
     Elliptic Curve defined by y^2 + y = x^3 + x^2 - 1873*x - 31833 over Rational
@@ -232,6 +234,7 @@ Cremonaのデータベースへ直接にアクセスすることも可能だ．
 
 ::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: db = sage.databases.cremona.CremonaDatabase()
     sage: db.curves(37)
     {'a1': [[0, 0, 1, -1, 0], 1, 1], 'b1': [[0, 1, 1, -23, -50], 0, 3]}

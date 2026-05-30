@@ -51,6 +51,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries()
             sage: L.elliptic_curve ()
@@ -76,6 +77,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries()
             sage: L.taylor_series(series_prec=3)   # abs tol 1e-14
@@ -90,6 +92,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.lseries()
             sage: L._repr_()
@@ -129,6 +132,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.lseries().dokchitser()
             sage: L(2)
@@ -147,6 +151,7 @@ class Lseries_ell(SageObject):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.lseries().dokchitser(algorithm="zweistein")
             Traceback (most recent call last):
@@ -190,6 +195,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: a = E.lseries().sympow(2,16)   # not tested - requires precomputing "sympow('-new_data 2')"
             sage: a                              # not tested
@@ -224,6 +230,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: print(E.lseries().sympow_derivs(1,16,2))    # not tested -- requires precomputing "sympow('-new_data 2')"
             sympow 1.018 RELEASE  (c) Mark Watkins --- see README and COPYING for details
@@ -258,6 +265,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.lseries().zeros(2)
             [0.000000000, 5.00317001]
@@ -295,6 +303,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.lseries().zeros_in_interval(6, 10, 0.1)      # long time
             [(6.87039122, 0.248922780), (8.01433081, -0.140168533), (9.93309835, -0.129943029)]
@@ -326,6 +335,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.lseries().values_along_line(1, 0.5 + 20*I, 5)
             [(0.500000000, ...),
@@ -363,6 +373,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: vals = E.lseries().twist_values(1, -12, -4)
             sage: vals[0][0]
@@ -417,6 +428,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.lseries().twist_zeros(3, -4, -3)         # long time
             {-4: [1.60813783, 2.96144840, 3.89751747], -3: [2.06170900, 3.48216881, 4.45853219]}
@@ -476,6 +488,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L, err = EllipticCurve('11a1').lseries().at1()
             sage: L, err
             (0.253804, 0.000181444)
@@ -498,6 +511,7 @@ class Lseries_ell(SageObject):
 
         Rank 1 through 3 elliptic curves::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E.lseries().at1()
             (0.0000000, 0.000000)
@@ -625,12 +639,13 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
-            sage: E.lseries().deriv_at1()                                               # needs sage.symbolic
+            sage: E.lseries().deriv_at1()  # needs sage.symbolic
             (0.3059866, 0.000801045)
-            sage: E.lseries().deriv_at1(100)                                            # needs sage.symbolic
+            sage: E.lseries().deriv_at1(100)  # needs sage.symbolic
             (0.3059997738340523018204836833216764744526377745903, 1.52493e-45)
-            sage: E.lseries().deriv_at1(1000)                                           # needs sage.symbolic
+            sage: E.lseries().deriv_at1(1000)  # needs sage.symbolic
             (0.305999773834052301820483683321676474452637774590771998..., 2.75031e-449)
 
         With less numerical precision, the error is bounded by numerical accuracy::
@@ -646,13 +661,14 @@ class Lseries_ell(SageObject):
 
         Rank 2 and rank 3 elliptic curves::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a1')
-            sage: E.lseries().deriv_at1()                                               # needs sage.symbolic
+            sage: E.lseries().deriv_at1()  # needs sage.symbolic
             (0.0000000, 0.000000)
             sage: E = EllipticCurve((1, 0, 1, -131, 558))  # curve 59450i1
-            sage: E.lseries().deriv_at1()                                               # needs sage.symbolic
+            sage: E.lseries().deriv_at1()  # needs sage.symbolic
             (-0.00010911444, 0.142428)
-            sage: E.lseries().deriv_at1(4000)                                           # needs sage.symbolic
+            sage: E.lseries().deriv_at1(4000)  # needs sage.symbolic
             (6.990...e-50, 1.31318e-43)
         """
         sqrtN = sqrt(self.__E.conductor())
@@ -900,6 +916,7 @@ class Lseries_ell(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("5077a")
             sage: E.lseries().zero_sums()
             Zero sum estimator for L-function attached to

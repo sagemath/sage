@@ -76,6 +76,7 @@ class GaloisRepresentation(SageObject):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x**2 + 1, 'a')
         sage: E = EllipticCurve('11a1').change_ring(K)
@@ -92,6 +93,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 + 1, 'a')
             sage: E = EllipticCurve('11a1').change_ring(K)
@@ -111,6 +113,7 @@ class GaloisRepresentation(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 + 1, 'a')
             sage: E = EllipticCurve('11a1').change_ring(K)
@@ -516,6 +519,7 @@ def Frobenius_filter(E, L, patience=100):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1') # has a 5-isogeny
         sage: sage.schemes.elliptic_curves.gal_reps_number_field.Frobenius_filter(E,primes(40))  # long time
         [5]

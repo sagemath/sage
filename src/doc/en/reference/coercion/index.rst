@@ -46,6 +46,7 @@ members. Parents are first-class objects.  Most things in Sage are
 either parents or have a parent. Typically whenever one sees the word
 *Parent* one can think *Set*. Here are some examples::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: parent(1)
     Integer Ring
     sage: parent(1) is ZZ

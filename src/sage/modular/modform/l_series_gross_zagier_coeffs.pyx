@@ -116,6 +116,7 @@ def gross_zagier_L_series(an_list, Q, long N, long u, var=None):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.modular.modform.l_series_gross_zagier_coeffs import gross_zagier_L_series
         sage: E = EllipticCurve('37a')
         sage: N = 37

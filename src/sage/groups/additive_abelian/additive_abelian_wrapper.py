@@ -10,7 +10,7 @@ EXAMPLES:
 
 We create a toy example based on the Mordell-Weil group of an elliptic curve over `\QQ`::
 
-    sage: # needs sage.schemes
+    sage: # needs database_cremona_mini_ellcurve sage.schemes
     sage: E = EllipticCurve('30a2')
     sage: pts = [E(4,-7,1), E(7/4, -11/8, 1), E(3, -2, 1)]
     sage: M = AdditiveAbelianGroupWrapper(pts[0].parent(), pts, [3, 2, 2]); M
@@ -68,13 +68,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import additive_abelian_group as addgp
-from sage.rings.integer_ring import ZZ
 from sage.categories.morphism import Morphism
-from sage.structure.element import parent
-from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp_method
 from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import parent
+from sage.structure.richcmp import richcmp_method
+from sage.structure.sequence import Sequence
+
+from . import additive_abelian_group as addgp
 
 
 class UnwrappingMorphism(Morphism):
@@ -100,7 +101,7 @@ class UnwrappingMorphism(Morphism):
         r"""
         TESTS::
 
-            sage: # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve sage.schemes
             sage: E = EllipticCurve("65a1")
             sage: G = E.torsion_subgroup()
             sage: isinstance(G, sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper)
@@ -145,11 +146,12 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
         EXAMPLES::
 
-            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)                    # needs sage.schemes
-            sage: T; type(T)                                                            # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve
+            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)  # needs sage.schemes
+            sage: T; type(T)  # needs sage.schemes
             (0 : 0 : 1)
             <class 'sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup_with_category.element_class'>
-            sage: T.element(); type(T.element())                                        # needs sage.schemes
+            sage: T.element(); type(T.element())  # needs sage.schemes
             (0 : 0 : 1)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_number_field'>
         """
@@ -163,8 +165,9 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
         EXAMPLES::
 
-            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)                    # needs sage.schemes
-            sage: repr(T)  # indirect doctest                                           # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve
+            sage: T = EllipticCurve('65a').torsion_subgroup().gen(0)  # needs sage.schemes
+            sage: repr(T)  # indirect doctest  # needs sage.schemes
             '(0 : 0 : 1)'
         """
         return repr(self.element())
@@ -371,7 +374,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             # test if generating set of G is contained in H
             return all(g.element() in H for g in G.gens())
 
-        from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GE, op_GT
+        from sage.structure.richcmp import op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE
         if op == op_LE:
             return leq(self, other)
         if op == op_GE:
@@ -532,7 +535,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ::
 
-            sage: # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve sage.schemes
             sage: E = EllipticCurve('574i1')
             sage: pts = [E(103,172), E(61,18)]
             sage: assert pts[0].order() == 7 and pts[1].order() == infinity

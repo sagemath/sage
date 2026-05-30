@@ -131,6 +131,7 @@ def curve_key(E1):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_egros import curve_key
         sage: E = EllipticCurve_from_j(1728)
         sage: curve_key(E)
@@ -170,6 +171,7 @@ def egros_from_j_1728(S=[]):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_from_j_1728
         sage: egros_from_j_1728([])
         []
@@ -214,6 +216,7 @@ def egros_from_j_0(S=[]):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_from_j_0
         sage: egros_from_j_0([])
         []
@@ -264,6 +267,7 @@ def egros_from_j(j, S=[]):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_from_j
         sage: [e.label() for e in egros_from_j(0,[3])]
         ['27a1', '27a3', '243a1', '243a2', '243b1', '243b2']
@@ -319,6 +323,7 @@ def egros_from_jlist(jlist, S=[]):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_get_j, egros_from_jlist
         sage: jlist=egros_get_j([3])
         sage: elist=egros_from_jlist(jlist,[3])
@@ -371,6 +376,7 @@ def egros_get_j(S=[], proof=None, verbose=False):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_get_j
         sage: egros_get_j([])
         [1728]

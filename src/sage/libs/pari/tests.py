@@ -139,8 +139,9 @@ Some more exotic examples::
     sage: pari(K)
     [y^3 - 2, [1, 1], -108, 1, [[1, 1.25992104989487, 1.58740105196820; 1, -0.629960524947437 + 1.09112363597172*I, -0.793700525984100 - 1.37472963699860*I], [1, 1.25992104989487, 1.58740105196820; 1, 0.461163111024285, -2.16843016298270; 1, -1.72108416091916, 0.581029111014503], [16, 20, 25; 16, 7, -35; 16, -28, 9], [3, 0, 0; 0, 0, 6; 0, 6, 0], [6, 0, 0; 0, 6, 0; 0, 0, 3], [2, 0, 0; 0, 0, 1; 0, 1, 0], [2, [0, 0, 2; 1, 0, 0; 0, 1, 0]], [2, 3]], [1.25992104989487, -0.629960524947437 + 1.09112363597172*I], [1, y, y^2], [1, 0, 0; 0, 1, 0; 0, 0, 1], [1, 0, 0, 0, 0, 2, 0, 2, 0; 0, 1, 0, 1, 0, 0, 0, 0, 2; 0, 0, 1, 0, 1, 0, 1, 0, 0]]
 
-    sage: E = EllipticCurve('37a1')                                                     # needs sage.schemes
-    sage: pari(E)                                                                       # needs sage.schemes
+    sage: # needs database_cremona_mini_ellcurve
+    sage: E = EllipticCurve('37a1')  # needs sage.schemes
+    sage: pari(E)  # needs sage.schemes
     [0, 0, 1, -1, 0, 0, -2, 1, -1, 48, -216, 37, 110592/37, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
 
 Deprecation checks::
@@ -1252,7 +1253,7 @@ Elliptic curves::
     sage: e.ellglobalred()
     [20144, [1, -2, 0, -1], 1, [2, 4; 1259, 1], [[4, 2, 0, 1], [1, 5, 0, 1]]]
 
-    sage: # needs sage.schemes
+    sage: # needs database_cremona_mini_ellcurve sage.schemes
     sage: e = pari(EllipticCurve('17a').a_invariants()).ellinit()
     sage: e.ellglobalred()
     [17, [1, 0, 0, 0], 4, Mat([17, 1]), [[1, 8, 0, 4]]]
@@ -1271,9 +1272,9 @@ Elliptic curves::
     sage: e.ellak(0)
     0
 
-    sage: # needs sage.schemes
+    sage: # needs database_cremona_mini_ellcurve sage.schemes
     sage: E = EllipticCurve('389a1')
-    sage: pari(E).ellanalyticrank()                                                     # needs sage.rings.number_field
+    sage: pari(E).ellanalyticrank()  # needs sage.rings.number_field
     [2, 1.51863300057685]
 
     sage: e = pari([0, -1, 1, -10, -20]).ellinit()
@@ -1312,7 +1313,7 @@ Elliptic curves::
     sage: om.elleisnum(100)
     2.15314248576078 E50
 
-    sage: # needs sage.schemes
+    sage: # needs database_cremona_mini_ellcurve sage.schemes
     sage: e = pari([0,0,0,0,1]).ellinit()
     sage: e.elllocalred(7)
     [0, 1, [1, 0, 0, 0], 1]
@@ -1353,7 +1354,7 @@ Elliptic curves::
     sage: e.elllocalred(3)
     [2, -10, [1, 0, 0, 0], 4]
 
-    sage: # needs sage.schemes
+    sage: # needs database_cremona_mini_ellcurve sage.schemes
     sage: e = pari(EllipticCurve('65a1').a_invariants()).ellinit()
     sage: e.ellorder([0,0])
     2

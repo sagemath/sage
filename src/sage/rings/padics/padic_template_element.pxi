@@ -536,6 +536,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         Check to see that :issue:`10292` is resolved::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: R = E.padic_regulator(7)
             sage: len(R.expansion())

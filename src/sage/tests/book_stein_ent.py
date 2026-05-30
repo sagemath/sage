@@ -619,14 +619,19 @@ sage: T([-4,0])
 sage: T([-1386747, 368636886])
 (2, 8)
 sage: r = lambda v: EllipticCurve(v).rank()
+sage: # needs database_cremona_mini_ellcurve
 sage: r([-5,4])
 1
+sage: # needs database_cremona_mini_ellcurve
 sage: r([0,1])
 0
+sage: # needs database_cremona_mini_ellcurve
 sage: r([-3024, 46224])
 2
+sage: # needs database_cremona_mini_ellcurve
 sage: r([-112, 400])
 3
+sage: # needs database_cremona_mini_ellcurve
 sage: r([-102627, 12560670])
 4
 sage: def cong(n):
@@ -634,12 +639,16 @@ sage: def cong(n):
 ....:     if len(G) == 0: return False
 ....:     x,y,_ = G[0]
 ....:     return ((n^2-x^2)/y,-2*x*n/y,(n^2+x^2)/y)
+sage: # needs database_cremona_mini_ellcurve
 sage: cong(6)
 (3, 4, 5)
+sage: # needs database_cremona_mini_ellcurve
 sage: cong(5)
 (3/2, 20/3, 41/6)
+sage: # needs database_cremona_mini_ellcurve
 sage: cong(1)
 False
+sage: # needs database_cremona_mini_ellcurve
 sage: cong(13)
 (323/30, 780/323, 106921/9690)
 sage: (323/30 * 780/323)/2

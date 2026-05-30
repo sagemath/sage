@@ -28,7 +28,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.parent_gens import localvars
 
-
 simon_dir = Path(SAGE_EXTCODE) / 'pari' / 'simon'
 
 
@@ -43,6 +42,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: import sage.schemes.elliptic_curves.gp_simon
         sage: E = EllipticCurve('389a1')
         sage: sage.schemes.elliptic_curves.gp_simon.simon_two_descent(E)
@@ -53,7 +53,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
 
     TESTS::
 
-        sage: # needs sage.rings.number_field
+        sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
         sage: E = EllipticCurve('37a1').change_ring(QuadraticField(-11,'x'))
         sage: E.simon_two_descent()
         (1, 1, [(0 : 0 : 1)])

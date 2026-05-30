@@ -32,6 +32,7 @@ class GrossZagierLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.modular.modform.l_series_gross_zagier import GrossZagierLseries
             sage: e = EllipticCurve('37a')
             sage: K.<a> = QuadraticField(-40)
@@ -90,6 +91,7 @@ class GrossZagierLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('37a')
             sage: K.<a> = QuadraticField(-40)
             sage: A = K.class_group().gen(0)
@@ -114,6 +116,7 @@ class GrossZagierLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('37a')
             sage: K.<a> = QuadraticField(-40)
             sage: A = K.class_group().gen(0)

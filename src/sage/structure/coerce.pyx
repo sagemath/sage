@@ -35,9 +35,10 @@ On failure, a :exc:`TypeError` is always raised.
 Some arithmetic operations (such as multiplication) can indicate an action
 rather than arithmetic in a common parent. For example::
 
-    sage: E = EllipticCurve('37a')                                                      # needs sage.schemes
-    sage: P = E(0,0)                                                                    # needs sage.schemes
-    sage: 5*P                                                                           # needs sage.schemes
+    sage: # needs database_cremona_mini_ellcurve
+    sage: E = EllipticCurve('37a')  # needs sage.schemes
+    sage: P = E(0,0)  # needs sage.schemes
+    sage: 5*P  # needs sage.schemes
     (1/4 : -5/8 : 1)
 
 where there is action of `\ZZ` on the points of `E` given by the additive

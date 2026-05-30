@@ -10,6 +10,7 @@ provides basic arithmetic and right action of matrices.
 
 EXAMPLES::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('11a')
     sage: phi = E.pollack_stevens_modular_symbol()
     sage: phi
@@ -778,6 +779,7 @@ class ManinMap:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -829,6 +831,7 @@ class ManinMap:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: f = phi._map

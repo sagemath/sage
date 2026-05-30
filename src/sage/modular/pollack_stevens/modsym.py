@@ -5,6 +5,7 @@ This is the class of elements in the spaces of Pollack-Steven's modular symbols 
 
 EXAMPLES::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('11a')
     sage: phi = E.pollack_stevens_modular_symbol(); phi
     Modular symbol of level 11 with values in Sym^0 Q^2
@@ -81,6 +82,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('57a')
         sage: p = 5
         sage: prec = 4
@@ -121,6 +123,7 @@ class PSModSymAction(Action):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: g = phi._map._codomain._act._Sigma0(matrix(ZZ,2,2,[1,2,3,4]))
@@ -136,6 +139,7 @@ class PSModSymAction(Action):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: g = phi._map._codomain._act._Sigma0(matrix(ZZ,2,2,[2,1,5,-1]))
@@ -153,6 +157,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: phi = E.pollack_stevens_modular_symbol()
         """
@@ -168,6 +173,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi._repr_()
@@ -183,6 +189,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: Set([x.moment(0) for x in phi.dict().values()]) == Set([-1/5, 1, 0])
@@ -202,6 +209,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.weight()
@@ -217,6 +225,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -237,6 +246,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi._normalize()
@@ -256,6 +266,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi == phi
@@ -280,6 +291,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -297,6 +309,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -314,6 +327,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -331,6 +345,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -411,6 +426,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -433,6 +449,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -473,6 +490,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -507,6 +525,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+           sage: # needs database_cremona_mini_ellcurve
            sage: E = EllipticCurve('11a')
            sage: phi = E.pollack_stevens_modular_symbol()
            sage: phi.values()
@@ -547,6 +566,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -579,6 +599,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -625,6 +646,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -692,6 +714,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.is_ordinary(2)
@@ -752,12 +775,14 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('17a1')
             sage: L = E.padic_lseries(5, implementation='pollackstevens', precision=4) #long time
             sage: D = L.quadratic_twist()          # long time
             sage: L.symbol().evaluate_twisted(1,D) # long time
             (1 + 5 + 3*5^2 + 5^3 + O(5^4), 5^2 + O(5^3), 1 + O(5^2), 2 + O(5))
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('40a4')
             sage: L = E.padic_lseries(7, implementation='pollackstevens', precision=4) #long time
             sage: D = L.quadratic_twist()          # long time
@@ -768,6 +793,7 @@ class PSModularSymbolElement(ModuleElement):
 
         Check for :issue:`32878`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: L = E.padic_lseries(3, implementation='pollackstevens', precision=4)
             sage: D = 5
@@ -798,6 +824,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi._consistency_check()
@@ -882,6 +909,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: p = 5
             sage: M = 10
@@ -992,6 +1020,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: p = 5
             sage: prec = 4
@@ -1148,6 +1177,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
             sage: g = f.lift(11,4,algorithm='stevens',eigensymbol=True)
@@ -1165,6 +1195,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         Another example, which showed precision loss in an earlier version of the code::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: p = 5
             sage: prec = 4
@@ -1175,6 +1206,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         Another example::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('37a')
             sage: p = 5
@@ -1187,6 +1219,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         Examples using Greenberg's algorithm::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: Phi = phi.lift(11,8,algorithm='greenberg',eigensymbol=True)
@@ -1281,6 +1314,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
             sage: f._lift_to_OMS(11,4,Qp(11,4))
@@ -1360,6 +1394,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
             sage: f._find_aq(5,10,True)
@@ -1406,6 +1441,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: p = 5
             sage: M = 10
@@ -1471,6 +1507,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
             sage: g = f.p_stabilize_and_lift(3,10)  # long time
@@ -1575,6 +1612,7 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: L = phi.lift(37, M=6, eigensymbol=True).padic_lseries(); L  # long time

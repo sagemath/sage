@@ -27,6 +27,7 @@ class EllipticCurveFormalGroup(SageObject):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: F = E.formal_group(); F
             Formal Group associated to the Elliptic Curve
@@ -42,6 +43,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('35a')
             sage: F1 = E.formal_group()
             sage: F2 = E.formal_group()
@@ -59,6 +61,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('35a')
             sage: F1 = E.formal_group()
             sage: F2 = E.formal_group()
@@ -73,6 +76,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('43a')
             sage: F = E.formal_group()
             sage: F._repr_()
@@ -86,6 +90,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a")
             sage: F = E.formal_group()
             sage: F.curve()
@@ -480,6 +485,7 @@ class EllipticCurveFormalGroup(SageObject):
             sage: e.formal_group().group_law(6)
             t1 + t2 - 2*t1^4*t2 - 4*t1^3*t2^2 - 4*t1^2*t2^3 - 2*t1*t2^4 + O(t1, t2)^6
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('14a1')
             sage: ehat = e.formal()
             sage: ehat.group_law(3)
@@ -618,6 +624,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         It's quite fast::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a"); F = E.formal_group()
             sage: F.mult_by_n(100, 20)
             100*t - 49999950*t^4 + 3999999960*t^5 + 14285614285800*t^7 - 2999989920000150*t^8 + 133333325333333400*t^9 - 3571378571674999800*t^10 + 1402585362624965454000*t^11 - 146666057066712847999500*t^12 + 5336978000014213190385000*t^13 - 519472790950932256570002000*t^14 + 93851927683683567270392002800*t^15 - 6673787211563812368630730325175*t^16 + 320129060335050875009191524993000*t^17 - 45670288869783478472872833214986000*t^18 + 5302464956134111125466184947310391600*t^19 + O(t^20)
@@ -733,6 +740,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a')
             sage: F = E.formal_group()
             sage: F.sigma(5)

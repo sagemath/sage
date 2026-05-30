@@ -798,7 +798,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         An elliptic curve::
 
-            sage: # needs sage.plot
+            sage: # needs database_cremona_mini_ellcurve sage.plot
             sage: E = EllipticCurve('101a')
             sage: C = Curve(E)
             sage: C.plot()

@@ -24,10 +24,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.groups.additive_abelian.additive_abelian_wrapper as groups
 from sage.misc.cachefunc import cached_method
 from sage.rings.rational_field import RationalField
-import sage.groups.additive_abelian.additive_abelian_wrapper as groups
-from sage.structure.richcmp import richcmp_method, richcmp
+from sage.structure.richcmp import richcmp, richcmp_method
 
 
 @richcmp_method
@@ -70,6 +70,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     Constructing points from the torsion subgroup::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('14a1')
         sage: T = E.torsion_subgroup()
         sage: [E(t) for t in T]
@@ -89,6 +90,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     An example where the torsion subgroup is trivial::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a1')
         sage: T = E.torsion_subgroup()
         sage: T
@@ -99,7 +101,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
     Examples over other Number Fields::
 
-        sage: # needs sage.rings.number_field
+        sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
         sage: E = EllipticCurve('11a1')
         sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)
@@ -110,10 +112,11 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
          Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
           over Number Field in i with defining polynomial x^2 + 1
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
-        sage: K.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
-        sage: EK = E.change_ring(K)                                                     # needs sage.rings.number_field
-        sage: T = EK.torsion_subgroup()                                                 # needs sage.rings.number_field
+        sage: K.<i> = NumberField(x^2 + 1)  # needs sage.rings.number_field
+        sage: EK = E.change_ring(K)  # needs sage.rings.number_field
+        sage: T = EK.torsion_subgroup()  # needs sage.rings.number_field
         sage: T.ngens()
         1
         sage: T.gen(0)
@@ -145,12 +148,13 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.ell_torsion import EllipticCurveTorsionSubgroup
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(ZZ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: EK = E.change_ring(K)                                                 # needs sage.rings.number_field
-            sage: EllipticCurveTorsionSubgroup(EK)                                      # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)  # needs sage.rings.number_field
+            sage: EK = E.change_ring(K)  # needs sage.rings.number_field
+            sage: EllipticCurveTorsionSubgroup(EK)  # needs sage.rings.number_field
             Torsion Subgroup isomorphic to Z/5 associated to the
              Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
               over Number Field in i with defining polynomial x^2 + 1
@@ -218,11 +222,12 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(ZZ, 'x')
-            sage: K.<i> = NumberField(x^2 + 1)                                          # needs sage.rings.number_field
-            sage: EK = E.change_ring(K)                                                 # needs sage.rings.number_field
-            sage: T = EK.torsion_subgroup(); T._repr_()                                 # needs sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)  # needs sage.rings.number_field
+            sage: EK = E.change_ring(K)  # needs sage.rings.number_field
+            sage: T = EK.torsion_subgroup(); T._repr_()  # needs sage.rings.number_field
             'Torsion Subgroup isomorphic to Z/5 associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in i with defining polynomial x^2 + 1'
         """
         return "Torsion Subgroup isomorphic to %s associated to the %s" % (self.short_name(), self.__E)
@@ -233,6 +238,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: tor = E.torsion_subgroup()
             sage: tor == tor
@@ -248,7 +254,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
@@ -309,6 +315,7 @@ def torsion_bound(E, number_of_places=20):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: CDB = CremonaDatabase()
         sage: from sage.schemes.elliptic_curves.ell_torsion import torsion_bound
         sage: [torsion_bound(E) for E in CDB.iter([14])]
@@ -340,8 +347,8 @@ def torsion_bound(E, number_of_places=20):
         sage: E.torsion_subgroup().invariants()
         (4, 4)
     """
-    from sage.rings.integer_ring import ZZ
     from sage.rings.finite_rings.finite_field_constructor import GF
+    from sage.rings.integer_ring import ZZ
     from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
     K = E.base_field()

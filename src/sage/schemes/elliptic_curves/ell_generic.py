@@ -367,10 +367,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
-            sage: E._symbolic_(SR)                                                      # needs sage.symbolic
+            sage: E._symbolic_(SR)  # needs sage.symbolic
             y^2 + y == x^3 - x^2 - 10*x - 20
-            sage: E.torsion_subgroup().gens()                                           # needs sage.symbolic
+            sage: E.torsion_subgroup().gens()  # needs sage.symbolic
             ((5 : 5 : 1),)
 
         We find the corresponding symbolic equality::
@@ -542,20 +543,22 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Another example involving `p`-adics::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: P = E([0,0]); P
             (0 : 0 : 1)
-            sage: R = pAdicField(3, 20)                                                 # needs sage.rings.padics
-            sage: Ep = E.base_extend(R); Ep                                             # needs sage.rings.padics
+            sage: R = pAdicField(3, 20)  # needs sage.rings.padics
+            sage: Ep = E.base_extend(R); Ep  # needs sage.rings.padics
             Elliptic Curve defined by
             y^2 + (1+O(3^20))*y = x^3 + (2+2*3+2*3^2+2*3^3+2*3^4+2*3^5+2*3^6+2*3^7+2*3^8+2*3^9+2*3^10+2*3^11+2*3^12+2*3^13+2*3^14+2*3^15+2*3^16+2*3^17+2*3^18+2*3^19+O(3^20))*x
             over 3-adic Field with capped relative precision 20
-            sage: Ep(P)                                                                 # needs sage.rings.padics
+            sage: Ep(P)  # needs sage.rings.padics
             (0 : 0 : 1 + O(3^20))
 
         Constructing points from the torsion subgroup (which is an abstract
         abelian group)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: T = E.torsion_subgroup()
             sage: [E(t) for t in T]
@@ -575,6 +578,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: T = E.torsion_subgroup()
             sage: [E(t) for t in T]
@@ -666,6 +670,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); E
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: E.is_x_coord(1)
@@ -696,6 +701,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a1')
             sage: [x for x in srange(-10,10) if E.is_x_coord (x)]
             [-3, -2, -1, 0, 1, 2, 3, 4, 8]
@@ -762,6 +768,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); E
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: E.lift_x(1)
@@ -818,6 +825,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         We can perform these operations over finite fields too::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a').change_ring(GF(17)); E
             Elliptic Curve defined by y^2 + y = x^3 + 16*x over Finite Field of size 17
             sage: E.lift_x(7)
@@ -838,20 +846,21 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         value is in an extension of the base, note that the point
         returned is on the base-extended curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
-            sage: P = E.lift_x(pAdicField(17, 5)(6)); P                                 # needs sage.rings.padics
+            sage: P = E.lift_x(pAdicField(17, 5)(6)); P  # needs sage.rings.padics
             (6 + O(17^5) : 14 + O(17^5) : 1 + O(17^5))
-            sage: P.curve()                                                             # needs sage.rings.padics
+            sage: P.curve()  # needs sage.rings.padics
             Elliptic Curve defined by
             y^2 + (1+O(17^5))*y = x^3 + (16+16*17+16*17^2+16*17^3+16*17^4+O(17^5))*x
             over 17-adic Field with capped relative precision 5
             sage: K.<t> = PowerSeriesRing(QQ, 't', 5)
             sage: P = E.lift_x(1 + t); P
             (1 + t : -1 - 2*t + t^2 - 5*t^3 + 21*t^4 + O(t^5) : 1)
-            sage: K.<a> = GF(16)                                                        # needs sage.rings.finite_rings
-            sage: P = E.change_ring(K).lift_x(a^3); P                                   # needs sage.rings.finite_rings
+            sage: K.<a> = GF(16)  # needs sage.rings.finite_rings
+            sage: P = E.change_ring(K).lift_x(a^3); P  # needs sage.rings.finite_rings
             (a^3 : a^3 + a : 1)
-            sage: P.curve()                                                             # needs sage.rings.finite_rings
+            sage: P.curve()  # needs sage.rings.finite_rings
             Elliptic Curve defined by y^2 + y = x^3 + x over Finite Field in a of size 2^4
 
         We can extend the base field to include the associated `y` value(s)::
@@ -888,6 +897,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
             sage: E.lift_x(3, all=True)
             []
@@ -905,6 +915,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Check python types::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
             sage: E.lift_x(int(7), all=True)
             [(7 : 3 : 1), (7 : 14 : 1)]
@@ -1488,6 +1499,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: R.<a1,a2,a3,a4,a6> = QQ[]
             sage: E = EllipticCurve([a1,a2,a3,a4,a6])
             sage: E.gens()
@@ -1755,6 +1767,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a")
             sage: E.division_polynomial_0(1)
             1
@@ -1820,6 +1833,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         The roots of the polynomial are the `x`-coordinates of the points `P`
         such that `mP=0` but `2P\not=0`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: T = E.torsion_subgroup()
             sage: [n*T.0 for n in range(6)]
@@ -1900,13 +1914,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a1')
             sage: E.two_division_polynomial()
             4*x^3 - 28*x + 25
-            sage: E = EllipticCurve(GF(3^2,'a'), [1,1,1,1,1])                           # needs sage.rings.finite_rings
-            sage: E.two_division_polynomial()                                           # needs sage.rings.finite_rings
+            sage: E = EllipticCurve(GF(3^2,'a'), [1,1,1,1,1])  # needs sage.rings.finite_rings
+            sage: E.two_division_polynomial()  # needs sage.rings.finite_rings
             x^3 + 2*x^2 + 2
-            sage: E.two_division_polynomial().roots()                                   # needs sage.rings.finite_rings
+            sage: E.two_division_polynomial().roots()  # needs sage.rings.finite_rings
             [(2, 1), (2*a, 1), (a + 2, 1)]
         """
         return self.division_polynomial_0(-1,x)
@@ -2025,6 +2040,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Check that :issue:`33164` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a3')
             sage: R.<X> = QQ[]
             sage: S.<Y> = R.quotient(X^2)
@@ -2171,6 +2187,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a")
             sage: P = E.gens()[0]
             sage: x = P[0]
@@ -2195,6 +2212,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         An example where cancellation occurs::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("88a1")
             sage: P = E([2,2])   # fixed choice of generator
             sage: n = E._multiple_x_numerator(11, P[0]); n
@@ -2210,6 +2228,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Check that the results are cached::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("88a1")
             sage: E._multiple_x_numerator(11) is E._multiple_x_numerator(11)
             True
@@ -2293,6 +2312,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("43a")
             sage: P = E.gens()[0]
             sage: x = P[0]
@@ -2307,6 +2327,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         Check that the results are cached::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("88a1")
             sage: E._multiple_x_denominator(11) is E._multiple_x_denominator(11)
             True
@@ -2560,6 +2581,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('77a1')
             sage: m = E.scalar_multiplication(-7); m
             Scalar-multiplication endomorphism [-7]
@@ -2574,6 +2596,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: E.scalar_multiplication(7)
             Scalar-multiplication endomorphism [7]
@@ -2596,6 +2619,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('99.a1')
             sage: E.scalar_multiplication(5)
             Scalar-multiplication endomorphism [5]
@@ -2650,6 +2674,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve(j=42)
             sage: E.identity_morphism()
             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
@@ -2682,6 +2707,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: F = E.short_weierstrass_model()
             sage: w = E.isomorphism_to(F); w
@@ -2818,6 +2844,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve_from_j(QQ(0)) # a curve with j=0 over QQ
             sage: F = EllipticCurve('27a3') # should be the same one
             sage: E.isomorphisms(F)
@@ -2874,6 +2901,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: F = E.change_weierstrass_model([2,3,4,5]); F
             Elliptic Curve defined by y^2 + 4*x*y + 11/8*y = x^3 - 3/2*x^2 - 13/16*x
@@ -2910,6 +2938,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a')
             sage: F1 = E.change_weierstrass_model([1/2,0,0,0]); F1
             Elliptic Curve defined by y^2 + 2*x*y + 8*y = x^3 + 4*x^2 - 160*x - 640
@@ -3052,8 +3081,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(QQbar, '11a1')                                      # needs sage.rings.number_field
-            sage: E.montgomery_model()                                                  # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve
+            sage: E = EllipticCurve(QQbar, '11a1')  # needs sage.rings.number_field
+            sage: E.montgomery_model()  # needs sage.rings.number_field
             Elliptic Curve defined by y^2 = x^3 + (-1.953522420987248?)*x^2 + x
             over Algebraic Field
 
@@ -3273,13 +3303,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([0, -1])
-            sage: plot(E, rgbcolor=hue(0.7))                                            # needs sage.plot
+            sage: plot(E, rgbcolor=hue(0.7))  # needs sage.plot
             Graphics object consisting of 1 graphics primitive
             sage: E = EllipticCurve('37a')
-            sage: plot(E)                                                               # needs sage.plot
+            sage: plot(E)  # needs sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: plot(E, xmin=25, xmax=26)                                             # needs sage.plot
+            sage: plot(E, xmin=25, xmax=26)  # needs sage.plot
             Graphics object consisting of 2 graphics primitives
 
         With :issue:`12766` we added the components keyword::
@@ -3294,8 +3325,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         If there is only one component then specifying
         components='bounded' raises a ValueError::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('9990be2')
-            sage: E.plot(components='bounded')                                          # needs sage.plot
+            sage: E.plot(components='bounded')  # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: no bounded component for this curve
@@ -3445,6 +3477,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a")
             sage: E.formal_group()
             Formal Group associated to the Elliptic Curve
@@ -3484,6 +3517,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: E._p_primary_torsion_basis(5)
             [[(5 : -6 : 1), 1]]
@@ -3735,8 +3769,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
-            sage: pari(E)                                                               # needs sage.libs.pari
+            sage: pari(E)  # needs sage.libs.pari
             [0, -1, 1, -10, -20, -4, -20, -79, -21, 496, 20008, -161051, -122023936/161051, Vecsmall([1]), [Vecsmall([64, -1])], [0, 0, 0, 0, 0, 0, 0, 0]]
 
         Over a finite field::

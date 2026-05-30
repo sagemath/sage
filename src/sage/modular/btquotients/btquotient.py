@@ -3684,6 +3684,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('21a1')
             sage: X = BruhatTitsQuotient(7,3)
             sage: f = X.harmonic_cocycle_from_elliptic_curve(E,10)

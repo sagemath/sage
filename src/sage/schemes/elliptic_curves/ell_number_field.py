@@ -121,6 +121,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         A curve from the database of curves over `\QQ`, but over a larger field::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<i> = NumberField(x^2 + 1)
             sage: EllipticCurve(K,'389a1')
             Elliptic Curve defined by y^2 + y = x^3 + x^2 + (-2)*x
@@ -143,6 +144,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a3')
             sage: K = QuadraticField(-5, 'a')
             sage: E.base_extend(K)
@@ -152,6 +154,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         Check that non-torsion points are remembered when extending
         the base field (see :issue:`16034`)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([1, 0, 1, -1751, -31352])
             sage: K.<d> = QuadraticField(5)
             sage: E.gens()
@@ -223,6 +226,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23, 'a')
             sage: E = EllipticCurve(K, '37')
@@ -252,6 +256,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         A curve with 2-torsion::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<a> = NumberField(x^2 + 7)
             sage: E = EllipticCurve(K, '15a')
             sage: E.simon_two_descent()  # long time (3s on sage.math, 2013), points can vary
@@ -272,6 +277,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E1.rank()  # long time (about 5 s)
             0
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K = CyclotomicField(43).subfields(3)[0][0]
             sage: E = EllipticCurve(K, '37')
             sage: E.simon_two_descent()  # long time (4s on sage.math, 2013)
@@ -329,12 +335,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([0, 0, 1, -1, 0])
             sage: E.height_pairing_matrix()
             [0.0511114082399688]
 
         For rank 0 curves, the result is a valid 0x0 matrix::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('11a').height_pairing_matrix()
             []
             sage: E = EllipticCurve('5077a1')
@@ -343,6 +351,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             [ -1.3095767070865761992624519454   2.7173593928122930896610589220   1.0998184305667292139777571432]
             [-0.63486715783715592064475542573   1.0998184305667292139777571432  0.66820516565192793503314205089]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a1')
             sage: E = EllipticCurve('389a1')
             sage: P, Q = E.point([-1,1,1]), E.point([0,-1,1])
@@ -420,6 +429,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: P = E(0,0)
             sage: Q = E(1,0)
@@ -430,6 +440,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a1')
             sage: points = [E.lift_x(x) for x in [-2,-7/4,1]]
             sage: E.regulator_of_points(points)
@@ -439,6 +450,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: E.regulator_of_points()
             1.00000000000000
@@ -473,6 +485,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(QQ)
             sage: K.<t> = NumberField(x^2 + 47)
@@ -490,6 +503,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a1')
             sage: P,Q = E.gens()
             sage: E.regulator_of_points([P,Q])
@@ -1068,6 +1082,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.has_good_reduction(p)) for p in prime_range(15)]
             [(2, False), (3, True), (5, True), (7, False), (11, True), (13, True)]
@@ -1102,6 +1117,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.has_bad_reduction(p)) for p in prime_range(15)]
             [(2, True), (3, False), (5, False), (7, True), (11, False), (13, False)]
@@ -1137,6 +1153,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.has_multiplicative_reduction(p)) for p in prime_range(15)]
             [(2, True), (3, False), (5, False), (7, True), (11, False), (13, False)]
@@ -1166,6 +1183,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.has_split_multiplicative_reduction(p)) for p in prime_range(15)]
             [(2, False), (3, False), (5, False), (7, True), (11, False), (13, False)]
@@ -1196,6 +1214,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.has_nonsplit_multiplicative_reduction(p)) for p in prime_range(15)]
             [(2, True), (3, False), (5, False), (7, False), (11, False), (13, False)]
@@ -1226,6 +1245,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('27a1')
             sage: [(p, E.has_additive_reduction(p)) for p in prime_range(15)]
             [(2, False), (3, True), (5, False), (7, False), (11, False), (13, False)]
@@ -1256,6 +1276,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 5)
             sage: E = EllipticCurve([20, 225, 750, 625*a + 6875, 31250*a + 46875])
@@ -1280,6 +1301,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('30a1')
             sage: e.tamagawa_numbers()
             [2, 3, 1]
@@ -1310,6 +1332,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<a> = NumberField(x^2 - 5)
             sage: E = EllipticCurve([20, 225, 750, 625*a + 6875, 31250*a + 46875])
             sage: [E.tamagawa_exponent(P) for P in E.discriminant().support()]
@@ -1351,6 +1374,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         An example over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('30a')
             sage: E.tamagawa_product()
             6
@@ -1404,6 +1428,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         An example where the Neron model changes over K::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<t> = NumberField(x^5 - 10*x^3 + 5*x^2 + 10*x + 1)
             sage: E = EllipticCurve(K, '75a1')
             sage: E.tamagawa_product_bsd()
@@ -1414,6 +1439,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         An example over `\QQ` (:issue:`9413`)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('30a')
             sage: E.tamagawa_product_bsd()
             6
@@ -1454,6 +1480,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<a> = NumberField(x^2 - 5)
             sage: E = EllipticCurve([20, 225, 750, 625*a + 6875, 31250*a + 46875])
             sage: bad_primes = E.discriminant().support(); bad_primes
@@ -1967,6 +1994,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('11a').torsion_subgroup()
             Torsion Subgroup isomorphic to Z/5 associated to the
              Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -1994,6 +2022,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(ZZ, 'x')
             sage: K.<t> = NumberField(x^4 + x^3 + 11*x^2 + 41*x + 101)
@@ -2008,6 +2037,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a1')
             sage: K.<t> = NumberField(x^2 + 2*x + 10)
             sage: EK = E.base_extend(K)
@@ -2018,6 +2048,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('19a1')
             sage: K.<t> = NumberField(x^9-3*x^8-4*x^7+16*x^6-3*x^5-21*x^4+5*x^3+7*x^2-7*x+1)
             sage: EK = E.base_extend(K)
@@ -2061,6 +2092,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: x = polygen(ZZ, 'x')
             sage: K.<t> = NumberField(x^4 + x^3 + 11*x^2 + 41*x + 101)
@@ -2070,6 +2102,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a1')
             sage: K.<t> = NumberField(x^2 + 2*x + 10)
             sage: EK = E.base_extend(K)
@@ -2078,6 +2111,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('19a1')
             sage: K.<t> = NumberField(x^9 - 3*x^8 - 4*x^7 + 16*x^6 - 3*x^5 - 21*x^4 + 5*x^3 + 7*x^2 - 7*x + 1)
             sage: EK = E.base_extend(K)
@@ -2101,6 +2135,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: E.torsion_points()
             [(0 : 1 : 0), (5 : -6 : 1), (5 : 5 : 1), (16 : -61 : 1), (16 : 60 : 1)]
@@ -2136,6 +2171,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a1')
             sage: K.<t> = NumberField(x^2 + 2*x + 10)
             sage: EK = E.base_extend(K)
@@ -2211,6 +2247,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23, 'a')
             sage: E = EllipticCurve(K, '37')
@@ -2230,6 +2267,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         2-descent will not be able to determine the rank, but can only
         give bounds::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("15a5")
             sage: K.<t> = NumberField(x^2 - 6)
             sage: EK = E.base_extend(K)
@@ -2291,6 +2329,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23, 'a')
             sage: E = EllipticCurve(K, '37')
@@ -2303,6 +2342,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         so here the bounds given by the algorithm do not uniquely
         determine the rank::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("15a5")
             sage: K.<t> = NumberField(x^2 - 6)
             sage: EK = E.base_extend(K)
@@ -2367,6 +2407,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23, 'a')
             sage: E = EllipticCurve(K,[0,0,0,101,0])
@@ -2396,6 +2437,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Here is a curve of rank 2::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<t> = NumberField(x^2 - 17)
             sage: E = EllipticCurve(K, [-4, 0])
             sage: E.gens()
@@ -2405,6 +2447,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Test that points of finite order are not included (see :issue:`13593`)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("17a3")
             sage: K.<t> = NumberField(x^2 + 3)
             sage: EK = E.base_extend(K)
@@ -2551,6 +2594,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 5)
             sage: E = EllipticCurve(K, '11a3')
@@ -3118,6 +3162,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(QQ, 'x')
             sage: F = NumberField(x^2 - 2, 's'); F
             Number Field in s with defining polynomial x^2 - 2
@@ -3264,6 +3309,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = QQ['x'].0
             sage: F = NumberField(x^2 - 2, 's'); F
             Number Field in s with defining polynomial x^2 - 2
@@ -3279,6 +3325,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E1.isogeny_degree(E5)  # long time
             6
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: [E2.label() for E2 in cremona_curves([11..20]) if E.isogeny_degree(E2)]
             ['11a1', '11a2', '11a3']
@@ -3408,6 +3455,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Some examples over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([0, 1, 1, -2, 42])
             sage: Pi = E.gens(); Pi
             [(-4 : 1 : 1), (-3 : 5 : 1), (-11/4 : 43/8 : 1), (-2 : 6 : 1)]
@@ -3457,6 +3505,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         An example to show the explicit use of the height pairing matrix::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([0, 1, 1, -2, 42])
             sage: Pi = E.gens()
             sage: H = E.height_pairing_matrix(Pi,3)
@@ -3518,6 +3567,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = polygen(ZZ, 'x')
             sage: K = NumberField(x**2 + 1, 'a')
             sage: E = EllipticCurve('11a1').change_ring(K)
@@ -3556,6 +3606,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve(j=0).cm_discriminant()
             -3
             sage: EllipticCurve(j=1).cm_discriminant()
@@ -3606,6 +3657,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve(j=0).has_cm()
             True
             sage: EllipticCurve(j=1).has_cm()
@@ -3784,6 +3836,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: cert
             {'CM': 0, 'N': 1, 'core_poly': x, 'r': 0, 'rho': 0}
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve(j=8000)
             sage: flag, cert = E.is_Q_curve(certificate=True)
             sage: flag
@@ -3915,6 +3968,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve('389a1')
             sage: EK = E.change_ring(K)
@@ -3945,6 +3999,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Another number field::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a1')
             sage: K.<a> = NumberField(x^3 - x + 1)
             sage: EK = E.change_ring(K)
@@ -3958,6 +4013,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         A different curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<a> = QuadraticField(3)
             sage: E = EllipticCurve('37a1')
             sage: EK = E.change_ring(K)
@@ -3988,6 +4044,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve('389a1')
             sage: EK = E.change_ring(K)
@@ -4091,6 +4148,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([1,2,3,40,50])
             sage: E.conductor()
             2123582
@@ -4101,9 +4159,11 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK.gens_quadratic()
             [(5 : 17 : 1), (-13 : 48*i + 5 : 1)]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E.change_ring(QuadraticField(3, 'a')).gens_quadratic()
             [(5 : 17 : 1), (-1 : 2*a - 1 : 1), (11/4 : 33/4*a - 23/8 : 1)]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: K.<a> = QuadraticField(-7)
             sage: E = EllipticCurve([0,0,0,197,0])
             sage: E.conductor()
@@ -4160,6 +4220,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.rational_points(bound=8) # long time
             [(-1 : -1 : 1),
@@ -4176,6 +4237,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         Check that :issue:`26677` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a1")
             sage: E.rational_points(bound=5)
             [(0 : 1 : 0), (5 : 5 : 1)]

@@ -25,6 +25,7 @@ EXAMPLES::
     sage: ConwayPolynomials()
     Frank Lübeck's database of Conway polynomials
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: CremonaDatabase()
     Cremona's database of elliptic curves with conductor...
 

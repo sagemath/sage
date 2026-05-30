@@ -221,6 +221,7 @@ def bench7() -> tuple[str, float]:
 
     BENCHMARK::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.misc.benchmark import *
         sage: print(bench7()[0])
         Compute the Mordell-Weil group of y^2 = x^3 + 37*x - 997.

@@ -85,16 +85,16 @@ AUTHORS:
   documentation and tests, equality testing
 """
 
-from sage.structure.richcmp import op_EQ
-from sage.misc.cachefunc import cached_method
-from sage.structure.sequence import Sequence
-
 from sage.arith.misc import prod
-
+from sage.misc.cachefunc import cached_method
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
-from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
-from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism, identity_morphism
+from sage.schemes.elliptic_curves.weierstrass_morphism import (
+    WeierstrassIsomorphism,
+    identity_morphism,
+)
+from sage.structure.richcmp import op_EQ
+from sage.structure.sequence import Sequence
 
 
 def _eval_factored_isogeny(phis, P):
@@ -338,7 +338,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         The given kernel generators need not be independent::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - x - 5)
             sage: E = EllipticCurve('210.b6').change_ring(K)
@@ -470,6 +470,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('4730k1')
             sage: EllipticCurveHom_composite.from_factors([], E) == E.scalar_multiplication(1)
             True
@@ -513,7 +514,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         TESTS::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - x - 5)

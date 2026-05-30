@@ -13,20 +13,20 @@ This module defines the class :class:`EllipticCurve_field`, based on
 # *****************************************************************************
 
 import sage.rings.abc
-from sage.categories.number_fields import NumberFields
 from sage.categories.finite_fields import FiniteFields
+from sage.categories.number_fields import NumberFields
+from sage.misc.misc_c import prod
+from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.rational_field import QQ
-from sage.misc.misc_c import prod
-from sage.rings.infinity import Infinity as oo
-from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
+from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 
+from . import ell_generic
 from .constructor import EllipticCurve
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
-from . import ell_generic
 
 
 class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
@@ -234,27 +234,30 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: E.two_torsion_rank()
             0
-            sage: K.<alpha> = QQ.extension(E.division_polynomial(2).monic())            # needs sage.rings.number_field
-            sage: E.base_extend(K).two_torsion_rank()                                   # needs sage.rings.number_field
+            sage: K.<alpha> = QQ.extension(E.division_polynomial(2).monic())  # needs sage.rings.number_field
+            sage: E.base_extend(K).two_torsion_rank()  # needs sage.rings.number_field
             1
             sage: E.reduction(53).two_torsion_rank()
             2
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: E.two_torsion_rank()
             1
             sage: f = E.division_polynomial(2).monic().factor()[1][0]
-            sage: K.<alpha> = QQ.extension(f)                                           # needs sage.rings.number_field
-            sage: E.base_extend(K).two_torsion_rank()                                   # needs sage.rings.number_field
+            sage: K.<alpha> = QQ.extension(f)  # needs sage.rings.number_field
+            sage: E.base_extend(K).two_torsion_rank()  # needs sage.rings.number_field
             2
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('15a1').two_torsion_rank()
             2
         """
@@ -376,6 +379,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Et = E.quadratic_twist(-24)
             sage: E.is_quadratic_twist(Et)
@@ -718,7 +722,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Check that :issue:`16456` is fixed::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: K.<a> = NumberField(x^3 - 2)
             sage: E = EllipticCurve('11a1').quadratic_twist(2)
             sage: EK = E.change_ring(K)
@@ -852,7 +856,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         The 2-division field is the same as the splitting field of
         the 2-division polynomial (therefore, it has degree 1, 2, 3 or 6)::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('15a1')
             sage: K.<b> = E.division_field(2); K
             Number Field in b with defining polynomial x
@@ -871,7 +875,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         field of the `n`-division polynomial, or a quadratic extension
         of it. ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('50a1')
             sage: F.<a> = E.division_polynomial(3).splitting_field(simplify_all=True); F
             Number Field in a
@@ -906,7 +910,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         Some higher-degree examples::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('11a1')
             sage: K.<b> = E.division_field(2); K
             Number Field in b with defining polynomial
@@ -922,7 +926,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
              over Number Field in b with defining polynomial x^4 - x^3 + x^2 - x + 1
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('27a1')
             sage: K.<b> = E.division_field(3); K
             Number Field in b with defining polynomial x^2 + 3*x + 9
@@ -1104,6 +1108,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('90c3')
             sage: E.torsion_subgroup(5, algorithm='divpoly').invariants()
             ()
@@ -1134,6 +1139,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('30a2')
             sage: E.torsion_subgroup(5, algorithm='divpoly').invariants()
             ()
@@ -1332,8 +1338,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                         z = F.primitive_element()**(q//l)
                         profile = lambda U: tuple(B.tate_pairing(U, l, 1, q=q).log(z, order=l) for B in (Pl, Ql))
 
-                        from sage.rings.finite_rings.integer_mod_ring import Zmod
                         from sage.matrix.constructor import matrix
+                        from sage.rings.finite_rings.integer_mod_ring import Zmod
 
                         while P._order < l**m:
                             mat = matrix(Zmod(l), [profile(R) for R in (P, Q)])
@@ -1375,7 +1381,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             gens = list(filter(bool, [accP, accQ]))
 
-            from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+            from sage.groups.additive_abelian.additive_abelian_wrapper import (
+                AdditiveAbelianGroupWrapper,
+            )
             return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt.order() for pt in gens])
 
         raise ValueError(f'unknown algorithm {algorithm!r}')
@@ -1413,6 +1421,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: P, Q = E.torsion_gens(2, extend=True); (P.order(), Q.order())
             (2, 2)
@@ -1445,6 +1454,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a1')
             sage: E.torsion_basis(2)
             ((-13/4 : 9/8 : 1), (-1 : 0 : 1))
@@ -1494,6 +1504,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a2')
             sage: E.torsion_subgroup()
             Torsion Subgroup isomorphic to Trivial group
@@ -1683,6 +1694,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: P = E.torsion_points()[1]
             sage: E.isogeny(P)
@@ -1839,10 +1851,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if algorithm is not None and degree is not None:
             raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
         if algorithm == "velusqrt":
-            from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
+            from sage.schemes.elliptic_curves.hom_velusqrt import (
+                EllipticCurveHom_velusqrt,
+            )
             return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
         if algorithm == "factored":
-            from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            from sage.schemes.elliptic_curves.hom_composite import (
+                EllipticCurveHom_composite,
+            )
             return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
         if algorithm == "traditional":
             return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
@@ -1851,7 +1867,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             # Check for multiple points or point of known order
             kernel_is_list = isinstance(kernel, (list, tuple))
             if kernel_is_list and kernel[0] in self and len(kernel) > 1:
-                from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+                from sage.schemes.elliptic_curves.hom_composite import (
+                    EllipticCurveHom_composite,
+                )
                 return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
 
             if not kernel_is_list or (len(kernel) == 1 and kernel[0] in self):
@@ -1863,15 +1881,21 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
                 if known_order and kernel._order.is_pseudoprime():
                     if not velu_sqrt_bound:
-                        from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
+                        from sage.schemes.elliptic_curves.hom_velusqrt import (
+                            _velu_sqrt_bound,
+                        )
                         velu_sqrt_bound = _velu_sqrt_bound.get()
 
                     if kernel._order > velu_sqrt_bound:
-                        from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
+                        from sage.schemes.elliptic_curves.hom_velusqrt import (
+                            EllipticCurveHom_velusqrt,
+                        )
                         return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
                     # Otherwise fall back to the standard case
                 elif known_order:
-                    from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+                    from sage.schemes.elliptic_curves.hom_composite import (
+                        EllipticCurveHom_composite,
+                    )
                     return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
         try:
             return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
@@ -1895,6 +1919,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('17a1')
             sage: R.<x> = QQ[]
             sage: E2 = E.isogeny_codomain(x - 11/4); E2
@@ -2184,7 +2209,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if not f.degree().divides(l//2):
             raise ValueError(f'given polynomial does not define a rational {l}-isogeny')
 
-        from sage.schemes.elliptic_curves.isogeny_small_degree import _least_semi_primitive
+        from sage.schemes.elliptic_curves.isogeny_small_degree import (
+            _least_semi_primitive,
+        )
         a = _least_semi_primitive(l)
 
         def mul_a(x):
@@ -2736,6 +2763,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: E.weierstrass_p(prec=10)
             z^-2 + 31/15*z^2 + 2501/756*z^4 + 961/675*z^6 + 77531/41580*z^8 + O(z^10)
@@ -2985,6 +3013,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             ['0', '0*', '1', '1*']
         """
         from warnings import warn
+
         from sage.matrix.constructor import Matrix
 
         # warn users if things are getting big

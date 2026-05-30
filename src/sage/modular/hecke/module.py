@@ -1567,6 +1567,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('34a')
             sage: m = ModularSymbols(34); s = m.cuspidal_submodule()
             sage: d = s.decomposition(7)

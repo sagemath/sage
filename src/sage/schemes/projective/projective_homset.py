@@ -48,7 +48,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
-from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
+from sage.schemes.generic.homset import SchemeHomset_generic, SchemeHomset_points
 
 lazy_import('sage.rings.cc', 'CC')
 lazy_import('sage.rings.real_mpfr', 'RR')
@@ -247,11 +247,10 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
                                     S.normalize_coordinates()
                                     if all(g(list(S)) < zero_tol for g in X.defining_polynomials()):
                                         rat_points.add(S)
-                            else:
-                                if len(points[i]) == N + 1 and I.subs(points[i]) == I0:
-                                    S = X([points[i][R.gen(j)] for j in range(N + 1)])
-                                    S.normalize_coordinates()
-                                    rat_points.add(S)
+                            elif len(points[i]) == N + 1 and I.subs(points[i]) == I0:
+                                S = X([points[i][R.gen(j)] for j in range(N + 1)])
+                                S.normalize_coordinates()
+                                rat_points.add(S)
 
                 # remove duplicate element using tolerance
                 if numerical:
@@ -277,15 +276,21 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             if isinstance(X, AlgebraicScheme_subscheme): # sieve should only be called for subschemes
                 from sage.schemes.projective.projective_rational_point import sieve
                 return sieve(X, B)
-            from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
+            from sage.schemes.projective.projective_rational_point import (
+                enum_projective_rational_field,
+            )
             return enum_projective_rational_field(self, B)
         if R in NumberFields():
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
-            from sage.schemes.projective.projective_rational_point import enum_projective_number_field
+            from sage.schemes.projective.projective_rational_point import (
+                enum_projective_number_field,
+            )
             return enum_projective_number_field(self, bound=B, tolerance=tol, precision=prec)
         if isinstance(R, FiniteField):
-            from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
+            from sage.schemes.projective.projective_rational_point import (
+                enum_projective_finite_field,
+            )
             return enum_projective_finite_field(self.extended_codomain())
         raise TypeError("unable to enumerate points over %s" % R)
 
@@ -521,7 +526,9 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
         if R == ZZ:
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
-            from sage.schemes.projective.projective_rational_point import enum_projective_rational_field
+            from sage.schemes.projective.projective_rational_point import (
+                enum_projective_rational_field,
+            )
             return enum_projective_rational_field(self,B)
         raise TypeError("unable to enumerate points over %s" % R)
 
@@ -575,7 +582,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
     The bug reported at :issue:`1785` is fixed::
 
-        sage: # needs sage.rings.number_field sage.schemes
+        sage: # needs database_cremona_mini_ellcurve sage.rings.number_field sage.schemes
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 + x - (3^3-3))
         sage: E = EllipticCurve('37a')
@@ -623,7 +630,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve sage.schemes
             sage: E = EllipticCurve('37a')
             sage: X = E(QQ)
             sage: P = X([0,1,0]);  P
@@ -650,9 +657,10 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a')                                              # needs sage.schemes
-            sage: X = E(QQ)                                                             # needs sage.schemes
-            sage: X._repr_()                                                            # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve
+            sage: E = EllipticCurve('37a')  # needs sage.schemes
+            sage: X = E(QQ)  # needs sage.schemes
+            sage: X._repr_()  # needs sage.schemes
             'Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
         """
         s = 'Abelian group of points on ' + str(self.extended_codomain())
@@ -671,7 +679,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         EXAMPLES::
 
-            sage: # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve sage.schemes
             sage: E = EllipticCurve('37a')
             sage: Hom = E.point_homset();  Hom
             Abelian group of points on Elliptic Curve defined
@@ -708,6 +716,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
 
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.schemes.generic.homset',
                            'SchemeHomsetModule_abelian_variety_coordinates_field',
                            SchemeHomset_points_abelian_variety_field)

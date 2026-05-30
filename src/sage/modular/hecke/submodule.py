@@ -314,6 +314,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbols(15, 6).cuspidal_subspace()
             sage: M.complement()
             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 20 for Gamma_0(15) of weight 6 with sign 0 over Rational Field
@@ -491,6 +492,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         We test that :issue:`5080` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('128a').congruence_number()
             32
         """

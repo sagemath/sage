@@ -60,6 +60,7 @@ The most likely usage for the code is through the functions
 ``modular_symbol`` with implementation set to "num" and through
 ``modular_symbol_numerical``::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve("5077a1")
     sage: M = E.modular_symbol(implementation='num')
     sage: M(0)
@@ -74,6 +75,7 @@ In more details. A numerical modular symbols ``M`` is created from an
 elliptic curve with a chosen ``sign`` (though the other sign will also be
 accessible, too)::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve([101,103])
     sage: E.conductor()
     35261176
@@ -126,6 +128,7 @@ example, a seemingly harmless command like ``M(1/2)`` would take a very
 very long time to return a value. However it is possible to compute them
 for smaller conductors::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve("664a1")
     sage: M = E.modular_symbol(implementation='num')
     sage: M(1/2)
@@ -134,6 +137,7 @@ for smaller conductors::
 The problem with non-unitary cusps is dealt with rather easily when one
 can twist to a semistable curve, like in this example::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: C = EllipticCurve("11a1")
     sage: E = C.quadratic_twist(101)
     sage: M = E.modular_symbol(implementation='num')
@@ -701,6 +705,7 @@ cdef class ModularSymbolNumerical:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve("5077a1")
         sage: M = E.modular_symbol(implementation='num')
         sage: M(0)
@@ -713,6 +718,7 @@ cdef class ModularSymbolNumerical:
         sage: M(2/7)
         2
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.mod_sym_num \
         ....: import ModularSymbolNumerical
         sage: M = ModularSymbolNumerical(EllipticCurve("11a1"))
@@ -749,6 +755,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([1,-1])
             sage: M = E.modular_symbol(implementation='num')
             sage: M(12/11) # indirect doctest
@@ -769,6 +776,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("27a1")
             sage: M = E. modular_symbol(implementation='num')
             sage: M(1/9)
@@ -819,6 +827,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("14a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M
@@ -833,6 +842,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("15a4")
             sage: M = E.modular_symbol(implementation='num')
             sage: M.elliptic_curve()
@@ -860,6 +870,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("36a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M(2/5)
@@ -867,6 +878,7 @@ cdef class ModularSymbolNumerical:
             sage: M(2/5, -1)
             1/2
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("54a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M(5/9)
@@ -927,6 +939,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("5077a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M.approximative_value(123/567)  # abs tol 1e-11
@@ -934,6 +947,7 @@ cdef class ModularSymbolNumerical:
             sage: M.approximative_value(123/567,prec=2) # abs tol 1e-9
             -4.00002815242902
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([11,88])
             sage: E.conductor()
             1715296
@@ -999,6 +1013,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("20a2")
             sage: M = E.modular_symbol(implementation='num') #indirect doctest
         """
@@ -1020,6 +1035,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("240b3")
             sage: M = E.modular_symbol(implementation='num') #indirect doctest
         """
@@ -1155,6 +1171,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("63a2")
             sage: M = E.modular_symbol(implementation='num')
             sage: M(3/4, use_twist=True) # indirect doctest
@@ -1222,6 +1239,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("11a1"))
@@ -1271,6 +1289,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([-11,13])
             sage: M = E.modular_symbol(implementation='num') #indirect doctest
         """
@@ -1301,6 +1320,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("11a1"))
@@ -1354,6 +1374,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M(0)
@@ -1390,6 +1411,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: I = ComplexField(53).0
@@ -1459,6 +1481,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("17a1"))
@@ -1517,6 +1540,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("37b2"))
@@ -1590,6 +1614,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from  sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: E = EllipticCurve([1,0,-1064,-1,0])
@@ -1668,6 +1693,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("11a2"))
@@ -1780,6 +1806,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("43a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M._kappa(3,4) # abs tol 1e-11
@@ -1889,6 +1916,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: E = EllipticCurve("37a1")
@@ -1900,6 +1928,7 @@ cdef class ModularSymbolNumerical:
             sage: m._from_ioo_to_r_approx(0/1,0.001)  # abs tol 1e-11
             -2.77555756156289e-17
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37b1")
             sage: m = ModularSymbolNumerical(E)
             sage: m._from_ioo_to_r_approx(0/1,0.01)  # abs tol 1e-11
@@ -2033,6 +2062,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("11a1"))
@@ -2176,6 +2206,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("11a1"))
@@ -2186,6 +2217,7 @@ cdef class ModularSymbolNumerical:
             sage: M._from_r_to_rr_approx(0/1,2/5,0.001, "both", use_partials=1) # abs tol 1e-11
             1.90381395641933 - 1.45881661693850*I
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M._from_r_to_rr_approx(1/11,1/7,0.001) # abs tol 1e-11
             -0.888446512995687 + 1.45881661693850*I
             sage: M._from_r_to_rr_approx(0/1,44/98761,0.001) # abs tol 1e-11
@@ -2193,6 +2225,7 @@ cdef class ModularSymbolNumerical:
             sage: M._from_r_to_rr_approx(0/1,123/456,0.0000001) # abs tol 1e-11
             1.26920930437008 - 2.91763323391590*I
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbolNumerical(EllipticCurve("389a1"))
             sage: M._from_r_to_rr_approx(0/1,1/5,0.0001, "both") # abs tol 1e-5
             -4.98042489791268 - 6.06124058444291e-8*I
@@ -2208,6 +2241,7 @@ cdef class ModularSymbolNumerical:
             sage: M._from_r_to_rr_approx(0/1, -7/3179, 0.001) # abs tol 1e-5 # long time
             -6.22753195853020 - 5.92219314384901*I
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([91,127])
             sage: M = ModularSymbolNumerical(E)
             sage: M._from_r_to_rr_approx(7/11,14/75,0.01,"direct")
@@ -2345,6 +2379,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("11a1"))
@@ -2371,6 +2406,7 @@ cdef class ModularSymbolNumerical:
 
         This goes via i `\infty`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbolNumerical(EllipticCurve("5077a1"))
             sage: M._transportable_approx(0/1, -35/144, 0.001) # abs tol 1e-11
             -6.22753189644996 + 3.23405342839145e-7*I
@@ -2486,6 +2522,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: E = EllipticCurve("11a1")
@@ -2548,6 +2585,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: E = EllipticCurve("57a1")
@@ -2563,6 +2601,7 @@ cdef class ModularSymbolNumerical:
             sage: M._value_r_to_rr(174/179,-53/91,-1)
             -1
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([91,127])
             sage: E.conductor()
             55196272
@@ -2613,11 +2652,13 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M.transportable_symbol(0/1,-2/7)
             -1/2
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("37a1")
             sage: M = E.modular_symbol(implementation='num')
             sage: M.transportable_symbol(0/1,-1/19)
@@ -2677,6 +2718,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("49a1"))
@@ -2741,6 +2783,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: E = EllipticCurve('37a1')
@@ -2869,6 +2912,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: M = E.modular_symbol(implementation='num')
             sage: M.manin_symbol(1,3)
@@ -2998,6 +3042,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: E = EllipticCurve('5077a1')
@@ -3009,17 +3054,20 @@ cdef class ModularSymbolNumerical:
             sage: M._evaluate(-1/4112)
             3
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: M = ModularSymbolNumerical(E)
             sage: M._evaluate(1/99999)
             -4/5
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbolNumerical(EllipticCurve("32a1"))
             sage: M._evaluate(3/5)
             -1/4
 
         Non-unitary examples::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbolNumerical(EllipticCurve("20a1"))
             sage: M._evaluate(1/2)
             -1/6
@@ -3134,6 +3182,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a1')
             sage: M = E.modular_symbol(implementation='num')
             sage: M.all_values_for_one_denominator(7)
@@ -3143,6 +3192,7 @@ cdef class ModularSymbolNumerical:
             sage: M.all_values_for_one_denominator(3,-1)
             {1/3: 4, 2/3: -4}
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: M = E.modular_symbol(implementation='num')
             sage: M.all_values_for_one_denominator(12)
@@ -3233,6 +3283,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("735e4")
             sage: M = E.modular_symbol(implementation='num')
             sage: M(1/19, sign=-1, use_twist=False) #indirect doctest
@@ -3286,6 +3337,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: E = EllipticCurve('5077a1')
@@ -3295,6 +3347,7 @@ cdef class ModularSymbolNumerical:
             sage: m._evaluate_approx(1/17,0.000001) # abs tol 1e-11
             -9.01145713605445e-10 + 7.40274134212215*I
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbolNumerical(EllipticCurve([-12,79]))
             sage: M.elliptic_curve().conductor()
             287280
@@ -3388,12 +3441,14 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.mod_sym_num \
             ....: import ModularSymbolNumerical
             sage: M = ModularSymbolNumerical(EllipticCurve("20a1"))
             sage: M._symbol_non_unitary_approx(1/2,0.0001) # abs tol 1e-11
             -0.470729190326520 + 2.59052039079203e-16*I
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbolNumerical(EllipticCurve("49a1"))
             sage: M._symbol_non_unitary_approx(2/7,0.000000001) # abs tol 1e-11
             -0.483327926404308 + 0.548042354981878*I
@@ -3463,6 +3518,7 @@ cdef class ModularSymbolNumerical:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("735e4")
             sage: M = E.modular_symbol(implementation='num')
             sage: M.approximative_value(1/19, sign=-1, prec=20, use_twist=False) # indirect doctest abs tol 1e-11
@@ -3529,6 +3585,7 @@ def _test_init(E):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.mod_sym_num import _test_init
         sage: _test_init(EllipticCurve("11a1")) # abs tol 1e-11
         ({1: 1, 11: -1}, [1, -2, -1, -15, -12], [10, 2, 10, 2],
@@ -3549,6 +3606,7 @@ def _test_init(E):
         0.06346046521397768,
         0.7294083084692478])
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: _test_init(EllipticCurve("14a6")) # abs tol 1e-11
         ({1: 1, 2: 1, 7: -1, 14: -1},
          [1, -1, -2, 18, 0],
@@ -3558,6 +3616,7 @@ def _test_init(E):
           0.16511182967224025,
           0.6627456198412432])
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: _test_init(EllipticCurve("20a1")) # abs tol 1e-11
         ({1: 1, 2: -1, 4: -1, 5: 1, 10: -1, 20: -1},
         [1, 0, -2, -6, 0], [48, 48, 12, 2],
@@ -3572,6 +3631,7 @@ def _test_init(E):
         1.4967293231159797,
         0.6128473454966975])
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve([91,127])
         sage: E.conductor().factor()
         2^4 * 3449767
@@ -3630,6 +3690,7 @@ def _test_integration(E, a, b, T):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.mod_sym_num \
         ....: import _test_integration
         sage: E = EllipticCurve("11a1")
@@ -3671,6 +3732,7 @@ def _test_integration_via_partials(E, y, m, T):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.mod_sym_num \
         ....: import _test_integration_via_partials
         sage: E = EllipticCurve("11a1")

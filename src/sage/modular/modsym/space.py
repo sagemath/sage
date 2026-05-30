@@ -2165,6 +2165,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         where the torsion subgroup of the optimal quotients (which are
         all elliptic curves) are all cuspidal::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbols(37).cuspidal_subspace().new_subspace()
             sage: D = M.decomposition()
             sage: [(A.abvarquo_rational_cuspidal_subgroup().invariants(), A.T(19)[0,0]) for A in D]
@@ -2175,6 +2176,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         Next we consider level 54, where the rational cuspidal
         subgroups of the quotients are also cuspidal::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbols(54).cuspidal_subspace().new_subspace()
             sage: D = M.decomposition()
             sage: [A.abvarquo_rational_cuspidal_subgroup().invariants() for A in D]
@@ -2188,6 +2190,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         in the quotient is a nontrivial subgroup of `E(\QQ)_{tor}`.
         Thus not all torsion in the quotient is cuspidal!::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = ModularSymbols(66).cuspidal_subspace().new_subspace()
             sage: D = M.decomposition()
             sage: [(A.abvarquo_rational_cuspidal_subgroup().invariants(), A.T(19)[0,0]) for A in D]

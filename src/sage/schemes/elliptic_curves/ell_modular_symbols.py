@@ -33,6 +33,7 @@ Modular symbols are used to compute `p`-adic `L`-functions.
 
 EXAMPLES::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve("19a1")
     sage: m = E.modular_symbol()
     sage: m(0)
@@ -126,6 +127,7 @@ def modular_symbol_space(E, sign, base_ring, bound=None):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_modular_symbols import modular_symbol_space
         sage: E = EllipticCurve('11a1')
         sage: M = modular_symbol_space(E, -1, GF(37))
@@ -170,6 +172,7 @@ class ModularSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol()
             sage: m.sign()
             1
@@ -185,6 +188,7 @@ class ModularSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol()
             sage: m.elliptic_curve()
             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -197,6 +201,7 @@ class ModularSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol()
             sage: m.base_ring()
             Rational Field
@@ -209,6 +214,7 @@ class ModularSymbol(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol()
             sage: m
             Modular symbol with sign 1 over Rational Field attached to
@@ -245,6 +251,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.ell_modular_symbols import ModularSymbolECLIB
             sage: E = EllipticCurve('11a1')
             sage: M = ModularSymbolECLIB(E,+1)
@@ -260,6 +267,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         This is a rank 1 case with vanishing positive twists::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('121b1')
             sage: M = ModularSymbolECLIB(E,+1)
             sage: M(0)
@@ -267,16 +275,19 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: M(1/7)
             1/2
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = EllipticCurve('121d1').modular_symbol(implementation='eclib')
             sage: M(0)
             2
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a1')
             sage: [C.modular_symbol(implementation='eclib')(0) for C in E.isogeny_class()]
             [1/4, 1/8, 1/4, 1/2, 1/8, 1/16, 1/2, 1]
 
         Since :issue:`10256`, the interface for negative modular symbols in eclib is available::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Mplus = E.modular_symbol(+1); Mplus
             Modular symbol with sign 1 over Rational Field attached to
@@ -291,6 +302,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         The scaling factor relative to eclib's normalization is 1/2 for curves of negative discriminant::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: [E.discriminant() for E in cremona_curves([14])]
             [-21952, 941192, -1835008, -28, 25088, 98]
             sage: [E.modular_symbol()._scaling for E in cremona_curves([14])]
@@ -300,6 +312,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         For :issue:`10236`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: m = E.modular_symbol(implementation='eclib')
             sage: m(1/7)
@@ -312,6 +325,7 @@ class ModularSymbolECLIB(ModularSymbol):
         v20210310 the value of ``nap`` is increased automatically by
         ``eclib``::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.ell_modular_symbols import ModularSymbolECLIB
             sage: E = EllipticCurve('1590g1')
             sage: m = ModularSymbolECLIB(E, sign=+1, nap=300)
@@ -348,6 +362,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol(implementation='eclib')
             sage: m._call_with_caching(0)
             1/5
@@ -367,6 +382,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol(implementation='eclib')
             sage: m(0)
             1/5
@@ -402,6 +418,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: from sage.schemes.elliptic_curves.ell_modular_symbols import ModularSymbolSage
             sage: M = ModularSymbolSage(E, +1)
@@ -421,6 +438,7 @@ class ModularSymbolSage(ModularSymbol):
         This is a rank 1 case with vanishing positive twists.
         The modular symbol is adjusted by -2::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('121b1')
             sage: M = ModularSymbolSage(E, -1, normalize='L_ratio')
             sage: M(1/3)
@@ -428,6 +446,7 @@ class ModularSymbolSage(ModularSymbol):
             sage: M._scaling
             1
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: M = EllipticCurve('121d1').modular_symbol(implementation='sage')
             sage: M(0)
             2
@@ -436,6 +455,7 @@ class ModularSymbolSage(ModularSymbol):
             sage: M(0)
             1
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a1')
             sage: [C.modular_symbol(implementation='sage', normalize='L_ratio')(0)
             ....:  for C in E.isogeny_class()]
@@ -487,6 +507,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol(implementation='sage')
             sage: m._scaling
             1/5
@@ -514,6 +535,7 @@ class ModularSymbolSage(ModularSymbol):
 
         Some harder cases fail::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('121b1').modular_symbol(implementation='sage')
             Warning : Could not normalize the modular symbols, maybe all further results will be multiplied by -1 and a power of 2
             sage: m._scaling
@@ -611,6 +633,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: m = E.modular_symbol(sign=+1, implementation='sage')
             sage: m.__lalg__(1)
@@ -651,6 +674,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: m = sage.schemes.elliptic_curves.ell_modular_symbols.ModularSymbolSage(E,+1,normalize='period')
             sage: m._e
@@ -666,12 +690,14 @@ class ModularSymbolSage(ModularSymbol):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('19a1')
             sage: m = E.modular_symbol(sign=+1, implementation='sage', normalize='none')
             sage: m._find_scaling_period()
             sage: m._scaling
             1
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('19a2')
             sage: m = E.modular_symbol(sign=+1, implementation='sage', normalize='none')
             sage: m._scaling
@@ -716,6 +742,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol(implementation='sage')
             sage: m._call_with_caching(0)
             1/5
@@ -737,6 +764,7 @@ class ModularSymbolSage(ModularSymbol):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: m = EllipticCurve('11a1').modular_symbol(implementation='sage')
             sage: m(0)
             1/5

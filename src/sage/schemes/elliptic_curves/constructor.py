@@ -100,6 +100,7 @@ class EllipticCurveFactory(UniqueFactory):
 
     We create a curve from a Cremona label::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('37b2')
         Elliptic Curve defined by y^2 + y = x^3 + x^2 - 1873*x - 31833 over Rational Field
         sage: EllipticCurve('5077a')
@@ -109,11 +110,13 @@ class EllipticCurveFactory(UniqueFactory):
 
     Old Cremona labels are allowed::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('2400FF')
         Elliptic Curve defined by y^2 = x^3 + x^2 + 2*x + 8 over Rational Field
 
     Unicode labels are allowed::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve(u'389a')
         Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
 
@@ -177,6 +180,7 @@ class EllipticCurveFactory(UniqueFactory):
 
     We can explicitly specify the `j`-invariant::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve(j=1728); E; E.j_invariant(); E.label()
         Elliptic Curve defined by y^2 = x^3 - x over Rational Field
         1728
@@ -195,6 +199,7 @@ class EllipticCurveFactory(UniqueFactory):
     coefficients are identical, even when they are constructed in
     different ways (see :issue:`11474`)::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('11a3') is EllipticCurve(QQ, [0, -1, 1, 0, 0])
         True
 
@@ -336,6 +341,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve.create_key_and_extra_args(j=8000)
             ((Rational Field, (0, 1, 0, -3, 1)), {})
 
@@ -343,6 +349,7 @@ class EllipticCurveFactory(UniqueFactory):
         label, the invariants from the database are returned as
         ``extra_args``::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: key, data = EllipticCurve.create_key_and_extra_args('389.a1')
             sage: key
             (Rational Field, (0, 1, 1, -2, 0))
@@ -367,6 +374,7 @@ class EllipticCurveFactory(UniqueFactory):
         database, which can be used to specify an alternative set of
         generators for the Mordell-Weil group::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: key, data = EllipticCurve.create_key_and_extra_args('5077a1', gens=[[1, -1], [-2, 3], [4, -7]])
             sage: data['gens']
             [[1, -1], [-2, 3], [4, -7]]
@@ -380,6 +388,7 @@ class EllipticCurveFactory(UniqueFactory):
         A consequence of this is that passing keyword arguments only
         works when constructing an elliptic curve the first time::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('433a1', gens=[[-1, 1], [3, 4]])
             sage: E.gens()
             [(-1 : 1 : 1), (3 : 4 : 1)]
@@ -486,6 +495,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         ``names`` is ignored at the moment, however it is used to support a convenient way to get a generator::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E.<P> = EllipticCurve(QQ, [1, 3])
             sage: P
             (-1 : 1 : 1)
@@ -723,11 +733,13 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve_from_j(0); E; E.j_invariant(); E.label()
         Elliptic Curve defined by y^2 + y = x^3 over Rational Field
         0
         '27a3'
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve_from_j(1728); E; E.j_invariant(); E.label()
         Elliptic Curve defined by y^2 = x^3 - x over Rational Field
         1728
@@ -918,6 +930,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     First we find that the Fermat cubic is isomorphic to the curve
     with Cremona label 27a1::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: R.<x,y,z> = QQ[]
         sage: cubic = x^3 + y^3 + z^3
         sage: P = [1,-1,0]
@@ -1025,6 +1038,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     points on the cubic.  First we find the preimages of multiples of
     the generator::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = f.codomain()
         sage: E.label()
         '720e2'
@@ -1554,6 +1568,7 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurves_with_good_reduction_outside_S([])
         []
         sage: elist = EllipticCurves_with_good_reduction_outside_S([2])

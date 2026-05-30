@@ -18,9 +18,9 @@ Line plots
 #
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
-from sage.plot.primitive import GraphicPrimitive_xydata
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
+from sage.plot.primitive import GraphicPrimitive_xydata
 
 
 class Line(GraphicPrimitive_xydata):
@@ -131,8 +131,9 @@ class Line(GraphicPrimitive_xydata):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()                   # needs sage.schemes
-            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)                # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve
+            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()  # needs sage.schemes
+            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)  # needs sage.schemes
             sage: E + F                         # long time (5s on sage.math, 2012), needs sage.schemes
             Graphics3d Object
 
@@ -572,7 +573,7 @@ def line2d(points, **options):
 
     A purple plot of the Hasse-Weil `L`-function `L(E, 1 + it)`, `-1 < t < 10`::
 
-        sage: # needs sage.schemes
+        sage: # needs database_cremona_mini_ellcurve sage.schemes
         sage: E = EllipticCurve('37a')
         sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100)  # critical line
         sage: L = [(z[1].real(), z[1].imag()) for z in vals]

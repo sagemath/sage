@@ -91,6 +91,7 @@ Furthermore, the implementation is restricted to finite fields,
 since this appears to be the most relevant application for the
 square-root Vélu algorithm::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('26b1')
     sage: P = E(1,0)
     sage: P.order()
