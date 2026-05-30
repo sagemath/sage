@@ -5436,8 +5436,7 @@ class Stream_infinite_operator(Stream):
             if other._is_sparse:
                 return any(self[i] != other[i] for i in other._cache
                            if self._approximate_order <= i < self._cur_order)
-            else:
-                deg = other._approximate_order + len(other._cache)
+            deg = other._approximate_order + len(other._cache)
         elif isinstance(other, Stream_infinite_operator):
             deg = other._cur_order
         else:

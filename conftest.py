@@ -179,7 +179,7 @@ def pytest_collect_file(
         # Normally, Cython files are filtered out already by pytest and we only
         # hit this here if someone explicitly runs `pytest some_file.pyx`.
         return IgnoreCollector.from_parent(parent)
-    elif file_path.suffix == ".py":
+    if file_path.suffix == ".py":
         if parent.config.option.doctest:
             if file_path.name == "__main__.py" or file_path.name == "setup.py":
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).

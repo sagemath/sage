@@ -688,3 +688,47 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
         Q = self._eval(P)
         return order_from_multiple(Q, p**m)
+
+    def xEVAL(self, xP):
+        r"""
+        For other :class:`EllipticCurveHom` implementations, the method of this name
+        returns the `x`-coordinate of `\varphi(P)` given the `x`-coordinate of `P`.
+
+        In the case of :class:`EllipticCurveHom_sum` objects, this method fails with
+        a :class:`NotImplementedError`: This is because implementing it would require
+        taking a square root anyway, which defeats the purpose of `x`-only arithmetic.
+        Users who need this are likely better off using "full" points `(x,y)` on the
+        curve for their computations.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES:
+
+        The following example shows that square roots are inherently required for
+        implementing this method::
+
+            sage: E = EllipticCurve(GF((2^31-1, 2)), [1, 0])
+            sage: iota = E.automorphisms()[-1]
+            sage: pi = E.frobenius_isogeny()
+            sage: phi = iota + pi
+            sage: phi(E.lift_x(42)).x()
+            692203532*z2 + 445237135
+            sage: phi.xEVAL(42)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)
+            sage: phi.xEVAL((42, 1))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)
+        """
+        raise NotImplementedError('x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)')

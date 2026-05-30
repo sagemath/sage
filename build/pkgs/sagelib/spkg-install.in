@@ -75,7 +75,7 @@ else
     sdh_pip_install --no-build-isolation . --config-setting=build-dir="build/sage-distro" \
         --config-setting=setup-args="-DSAGE_LOCAL=$SAGE_LOCAL" \
         --config-setting=setup-args="-Dbuild-docs=$SAGE_BUILD_DOCS" \
-        --config-settings=setup-args="-Ddefer_feature_checks=true"
+        --config-setting=setup-args="-Ddefer_feature_checks=true"
 fi
 
 # Remove (potentially invalid) star import caches.

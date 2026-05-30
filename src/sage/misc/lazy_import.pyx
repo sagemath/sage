@@ -255,25 +255,33 @@ cdef class LazyImport():
         if self._object is not None:
             return self._object
 
+        try:
+            self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
+        except ImportError as e:
+            if self._feature:
+                # Avoid warnings from static type checkers by explicitly importing FeatureNotPresentError.
+                from sage.features import FeatureNotPresentError
+                raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
+            raise
+
+        if self._feature:
+            # for the case that the feature is hidden
+            self._feature.require()
+
+        # Warn if the at_startup parameter looks incorrect. This
+        # method short-circuits (returns the cached response) only
+        # when self._object is not None. If the lazy import is backed
+        # by a missing feature, or if the import refers to a
+        # module/function that simply does not exist, an error will be
+        # raised above and self._object will remain None. The check
+        # below is not meant to be re-run (it will print spurious
+        # warnings times 2 through N with at_startup=True); to avoid
+        # that, we run it only after the import/feature test.
         if startup_guard and not self._at_startup:
             warn(f"Resolving lazy import {self._name} during startup")
         elif self._at_startup and not startup_guard:
             if finish_startup_called:
                 warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
-
-        feature = self._feature
-        try:
-            self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
-        except ImportError as e:
-            if feature:
-                # Avoid warnings from static type checkers by explicitly importing FeatureNotPresentError.
-                from sage.features import FeatureNotPresentError
-                raise FeatureNotPresentError(feature, reason=f'Importing {self._name} failed: {e}')
-            raise
-
-        if feature:
-            # for the case that the feature is hidden
-            feature.require()
 
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation_cython as deprecation

@@ -155,10 +155,11 @@ class UnionOfIntervals:
         """
         return not self._endpoints
 
-    def __add__(left, right):
+    def __add__(self, other):
         r"""
-        If both left and right are unions of intervals, take their union,
-        otherwise treat the non-union of intervals as a scalar and shift.
+        If both ``self`` and ``other`` are unions of intervals, take their
+        union, otherwise treat the non-union of intervals as a scalar and
+        shift.
 
         EXAMPLES::
 
@@ -172,14 +173,11 @@ class UnionOfIntervals:
             sage: A + UnionOfIntervals([-infinity, -1])
             ([-Infinity, -1] U [0, 1/2] U [2, +Infinity])
         """
-        if not isinstance(left, UnionOfIntervals):
-            left, right = right, left
-        elif not isinstance(right, UnionOfIntervals):
-            return UnionOfIntervals([right + e for e in left._endpoints])
-        else:
-            return left.union([left, right])
+        if not isinstance(other, UnionOfIntervals):
+            return UnionOfIntervals([other + e for e in self._endpoints])
+        return self.union([self, other])
 
-    def __mul__(left, right):
+    def __mul__(self, other):
         r"""
         Scale a union of intervals on the left or right.
 
@@ -195,10 +193,8 @@ class UnionOfIntervals:
             sage: 1.5 * A
             ([0.000000000000000, 0.750000000000000] U [3.00000000000000, +Infinity])
         """
-        if not isinstance(right, UnionOfIntervals):
-            return UnionOfIntervals([e*right for e in left._endpoints])
-        if not isinstance(left, UnionOfIntervals):
-            return UnionOfIntervals([left*e for e in right._endpoints])
+        if not isinstance(other, UnionOfIntervals):
+            return UnionOfIntervals([e * other for e in self._endpoints])
         return NotImplemented
 
     def __rmul__(self, other):
