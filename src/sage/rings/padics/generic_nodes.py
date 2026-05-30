@@ -1005,9 +1005,9 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         one = self.one()
         L = [self.zero(), one, p, a, (one+p+p).inverse_of_unit(), p-p**2]
         if self.is_field():
-            L.extend([~(p-p-a),p**(-20)])
+            L.extend([~(p-p-a), p**(-20)])
         if not unbounded:
-            L = [ x.at_precision_absolute() for x in L ]
+            return [x.at_precision_absolute() for x in L]
         return L
 
     def unknown(self, start_val=0, digits=None):

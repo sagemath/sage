@@ -24,7 +24,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.element import Matrix
 from sage.modules.free_module import FreeModule
 from sage.matrix.constructor import matrix
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 
 
 class JordanAlgebra(UniqueRepresentation, Parent):
@@ -326,7 +326,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
         return self.element_class(self, self._A.an_element())
 
     @cached_method
-    def basis(self) -> Family:
+    def basis(self) -> AbstractFamily:
         """
         Return the basis of ``self``.
 
@@ -805,7 +805,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         return self._generic_coerce_map(self.base_ring())
 
     @cached_method
-    def basis(self) -> Family:
+    def basis(self) -> AbstractFamily:
         """
         Return a basis of ``self``.
 
@@ -1350,7 +1350,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
                     tester.assertEqual(val.imag_part(), zerO)
 
     @cached_method
-    def basis(self) -> Family:
+    def basis(self) -> AbstractFamily:
         r"""
         Return a basis of ``self``.
 

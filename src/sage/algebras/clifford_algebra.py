@@ -36,7 +36,7 @@ from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.matrix.constructor import Matrix
 from sage.matrix.args import MatrixArgs
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -801,7 +801,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return self._from_dict({FrozenBitset((i,)): self.base_ring().one()}, remove_zeros=False)
 
-    def algebra_generators(self) -> Family:
+    def algebra_generators(self) -> AbstractFamily:
         """
         Return the algebra generators of ``self``.
 

@@ -418,7 +418,7 @@ class Order:
     pass
 
 
-class pAdicRing(CommutativeRing):
+class pAdicRing(Ring):
     r"""
     Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicRingGeneric`.
 

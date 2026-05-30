@@ -107,7 +107,7 @@ class InformationSetAlgorithm(SageObject):
         ....:     def __init__(self, code, decoding_interval):
         ....:         super().__init__(code, decoding_interval, "MinimalISD")
         ....:     def calibrate(self):
-        ....:         self._parameters = { } # calibrate parameters here
+        ....:         self._parameters = {}  # calibrate parameters here
         ....:         self._time_estimate = 10.0  # calibrated time estimate
         ....:     def decode(self, r):
         ....:         # decoding algorithm here

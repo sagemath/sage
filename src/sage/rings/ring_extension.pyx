@@ -121,7 +121,6 @@ from sage.structure.element cimport Element
 from sage.structure.category_object import normalize_names
 from sage.categories.map cimport Map
 from sage.categories.commutative_rings import CommutativeRings
-from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
@@ -592,7 +591,7 @@ cdef class RingExtension_generic(Parent):
         # Some checks
         if (base not in CommutativeRings()
          or ring not in CommutativeRings()
-         or not defining_morphism.category_for().is_subcategory(Rings())):
+         or not defining_morphism.category_for().is_subcategory(CommutativeRings())):
             raise TypeError("only commutative rings are accepted")
         f = ring.Hom(ring).identity()
         b = self

@@ -119,8 +119,7 @@ since if we are not careful we will get results in `\ZZ` instead of `\QQ`::
     ....:     if self.denominator() == 1:
     ....:         if coerced:
     ....:             return sib.int(self.numerator())
-    ....:         else:
-    ....:             return sib.name('QQ')(sib.int(self.numerator()))
+    ....:         return sib.name('QQ')(sib.int(self.numerator()))
     ....:     return sib(self.numerator())/sib.int(self.denominator())
 
 We see that the \method{name} method gives an SIE representing a \sage
@@ -2639,8 +2638,7 @@ class SIE_unary(SageInputExpression):
             sage: def mk_CC(b):
             ....:     if b._sie_is_negation():
             ....:         return -sib.name('CC')(b._sie_operand)
-            ....:     else:
-            ....:         return sib.name('CC')(b)
+            ....:     return sib.name('CC')(b)
 
             sage: mk_CC(x)
             {call: {atomic:CC}({atomic:x})}
