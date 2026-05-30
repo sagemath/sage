@@ -653,8 +653,8 @@ class UnitCircleGroup(AbstractArgumentGroup):
             sage: UnitCircleGroup(RR)._repr_short_()
             'UU_RR'
         """
-        from sage.rings.asymptotic.misc import parent_to_repr_short
-        s = parent_to_repr_short(self.base())
+        from sage.misc.repr_short import repr_short
+        s = repr_short(self.base())
         if ' ' in s:
             s = '({})'.format(s)
         return 'UU_{}'.format(s)
@@ -1242,8 +1242,9 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
             sage: ArgumentByElementGroup(CC)._repr_short_()
             'Arg_CC'
         """
-        from sage.rings.asymptotic.misc import parent_to_repr_short, repr_op
-        return repr_op('Arg', '_', parent_to_repr_short(self.base()))
+        from sage.rings.asymptotic.misc import repr_op
+        from sage.misc.repr_short import repr_short
+        return repr_op('Arg', '_', repr_short(self.base()))
 
     def _element_constructor_(self, data, **kwds):
         r"""
