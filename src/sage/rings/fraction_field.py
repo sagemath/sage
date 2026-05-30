@@ -311,6 +311,18 @@ class FractionField_generic(ring.Field):
               To:   Fraction Field of Univariate Polynomial Ring in x over Integer Ring
             sage: f(L(1/7)) == 1/7
             True
+
+        Test coercion from Frac(QQ[x]) to Frac(ZZ[x]) (see :issue:`41337`)::
+
+            sage: R_ZZ = Frac(ZZ['x,y'])
+            sage: R_QQ = Frac(QQ['x,y'])
+            sage: R_ZZ.has_coerce_map_from(R_QQ)
+            True
+            sage: el = R_QQ('x/3 + y/2')
+            sage: R_ZZ(el)
+            (2*x + 3*y)/6
+            sage: R_ZZ(el).parent()
+            Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
         """
         from sage.rings.number_field.number_field_base import NumberField
         from sage.rings.polynomial.laurent_polynomial_ring_base import (
@@ -354,9 +366,25 @@ class FractionField_generic(ring.Field):
                 return self._element_class(self, xnum * yden, xden * ynum)
             return CallableConvertMap(S, self, converter, parent_as_first_arg=False)
 
-        if (isinstance(S, FractionField_generic) and
-                self._R.has_coerce_map_from(S.ring())):
-            return CallableConvertMap(S, self, wrapper, parent_as_first_arg=False)
+        if isinstance(S, FractionField_generic):
+            # Standard case: If base ring S.ring() coerces to self._R
+            if self._R.has_coerce_map_from(S.ring()):
+                return CallableConvertMap(S, self, wrapper, parent_as_first_arg=False)
+
+            #check if self is over ZZ and S is over QQ, and the rings are otherwise identical.
+            if (self._R.base_ring() is ZZ and S.base_ring() is QQ and
+                    self._R.change_ring(QQ) == S.ring()):
+
+                def clear_denom_converter(x):
+                    num = x.numerator()
+                    den = x.denominator()
+                    d_num = num.denominator()
+                    d_den = den.denominator()
+                    new_num = (num * d_num).change_ring(ZZ)
+                    new_den = (den * d_den).change_ring(ZZ)
+                    return self._element_class(self, new_num * d_den, new_den * d_num)
+
+                return CallableConvertMap(S, self, clear_denom_converter, parent_as_first_arg=False)
 
         if self._R.has_coerce_map_from(S):
             return CallableConvertMap(S, self, self._element_class,

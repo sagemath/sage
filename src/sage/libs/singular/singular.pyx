@@ -1611,7 +1611,7 @@ cdef object si2sa(number *n, ring *_ring, object base):
     elif isinstance(base, NumberField) and base.is_absolute():
         return si2sa_NF(n, _ring, base)
 
-    elif isinstance(base, FractionField_generic) and isinstance(base.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base.base_ring(), RationalField):
+    elif isinstance(base, FractionField_generic) and isinstance(base.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base.base_ring(), (RationalField, IntegerRing_class)):
         return si2sa_transext_QQ(n, _ring, base)
 
     elif isinstance(base, FractionField_generic) and isinstance(base.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base.base_ring(), FiniteField_prime_modn):
@@ -1686,7 +1686,7 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
         im = <RealDoubleElement>z.imag()
         return <number*><void*>new gmp_complex(re._value, im._value)
     elif isinstance(elem._parent, FractionField_generic) and isinstance(elem._parent.base(), (MPolynomialRing_libsingular, PolynomialRing_field)):
-        if isinstance(elem._parent.base().base_ring(), RationalField):
+        if isinstance(elem._parent.base().base_ring(), (RationalField, IntegerRing_class)):
             return sa2si_transext_QQ(elem, _ring)
         elif isinstance(elem._parent.base().base_ring(), FiniteField_prime_modn):
             return sa2si_transext_FF(elem, _ring)

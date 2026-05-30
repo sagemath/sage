@@ -302,6 +302,13 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         Traceback (most recent call last):
         ...
         TypeError: characteristic must be <= 2147483647.
+
+    Check that fraction fields over ZZ are supported::
+
+        sage: K = PolynomialRing(ZZ, 's,t').fraction_field()
+        sage: P = PolynomialRing(K, 'z', implementation='singular')
+        sage: P
+        Multivariate Polynomial Ring in z over Fraction Field of Multivariate Polynomial Ring in s, t over Integer Ring
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -429,7 +436,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _ring = rDefault(characteristic, nvars, _names, nblcks,
                          _order, _block0, _block1, _wvhdl)
 
-    elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), RationalField):
+    elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), (RationalField, IntegerRing_class)):
         characteristic = 1
         k = PolynomialRing(RationalField(),
                            names=base_ring.variable_names(), order='lex',
