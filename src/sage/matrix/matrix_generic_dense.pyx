@@ -13,6 +13,7 @@ from sage.matrix.args cimport MatrixArgs_init
 from sage.structure.element cimport Element
 
 cimport sage.matrix.matrix as matrix
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
@@ -296,9 +297,9 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.overflowcheck(False)
-    def _multiply_classical(left, matrix.Matrix _right):
+    def _multiply_classical(self, matrix.Matrix _right):
         """
-        Multiply the matrices left and right using the classical
+        Multiply the matrices self and right using the classical
         `O(n^3)` algorithm.
 
         EXAMPLES:
@@ -343,32 +344,28 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
 
-        if left._ncols != right._nrows:
-            raise IndexError("Number of columns of left must equal number of rows of other.")
+        check_matrix_multiplication_sizes(self, right)
 
-        nr = left._nrows
+        nr = self._nrows
         nc = right._ncols
-        snc = left._ncols
+        snc = self._ncols
 
-        R = left.base_ring()
-        cdef list left_entries = left._entries
+        R = self.base_ring()
+        cdef list left_entries = self._entries
         cdef list right_entries = right._entries
-        cdef list v = [None] * (left._nrows * right._ncols)
+        cdef list v = [None] * (self._nrows * right._ncols)
         zero = R.zero()
         p = 0
         for i in range(nr):
             m = i*snc
             for j in range(nc):
-                if snc:
-                    z = (<Element>left_entries[m])._mul_(right_entries[j])
-                    for k in range(1, snc):
-                        z = (<Element>z)._add_((<Element>left_entries[m+k])._mul_(right_entries[k*nc+j]))
-                else:
-                    z = zero
+                z = zero
+                for k in range(snc):
+                    z += (<Element>left_entries[m+k])._mul_(<Element>right_entries[k*nc+j])
                 v[p] = z
                 p += 1
 
-        cdef Matrix_generic_dense A = left._new(nr, nc)
+        cdef Matrix_generic_dense A = self._new(nr, nc)
         A._entries = v
         return A
 

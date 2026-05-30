@@ -25,7 +25,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -262,7 +262,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 return self.algebra_generators()[0]
 
             @cached_method
-            def algebra_generators(self) -> Family:
+            def algebra_generators(self) -> AbstractFamily:
                 r"""
                 Return the generators of this algebra.
 

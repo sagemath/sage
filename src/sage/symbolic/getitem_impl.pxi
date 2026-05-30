@@ -62,6 +62,7 @@ def normalize_index_for_doctests(arg, nops):
     """
     return normalize_index(arg, nops, "some error message")
 
+
 cdef class OperandsWrapper(SageObject):
     """
     Operands wrapper for symbolic expressions.
@@ -138,13 +139,14 @@ cdef class OperandsWrapper(SageObject):
                     raise ValueError("step value must be an integer")
             else:
                 step = 1
-            return [new_Expression_from_GEx(self._expr._parent,
+            return [new_Expression_from_GEx(
+                self._expr._parent,
                 self._expr._gobj.op(ind)) for ind in range(bind, eind, step)]
 
         ind_err_msg = "index should either be a slice object, an integer or a list of integers"
         if isinstance(arg, (list, tuple)):
             # handle nested index
-            if len(arg) == 0: # or not all(lambda x: x in ZZ for t in args):
+            if not arg:  # or not all(lambda x: x in ZZ for t in args):
                 raise TypeError(ind_err_msg)
             cur_ex = GEx(self._expr._gobj)
             for x in arg:
@@ -157,7 +159,7 @@ cdef class OperandsWrapper(SageObject):
 
         ind = normalize_index(arg, self._expr._gobj.nops(), ind_err_msg)
         return new_Expression_from_GEx(self._expr._parent,
-                self._expr._gobj.op(ind))
+                                       self._expr._gobj.op(ind))
 
     def _repr_(self):
         """

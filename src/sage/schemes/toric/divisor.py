@@ -1290,18 +1290,27 @@ class ToricDivisor_generic(Divisor_generic):
             sage: M = dP6.fan().dual_lattice()
             sage: D._sheaf_complex( M(1,0) )
             Simplicial complex with vertex set (0, 1, 3) and facets {(3,), (0, 1)}
+
+        A non-simplicial cone can contribute a simplex that is not a face of
+        the fan::
+
+            sage: cone = Cone([(1,1,1), (1,-1,1), (-1,1,1), (-1,-1,1)])
+            sage: X = ToricVariety(Fan([cone]))
+            sage: N = X.fan().lattice()
+            sage: D = -X.divisor(N(1,1,1)) - X.divisor(N(-1,-1,1))
+            sage: M = X.fan().dual_lattice()
+            sage: D._sheaf_complex(M(0,0,0))
+            Simplicial complex with vertex set (0, 3) and facets {(0, 3)}
+            sage: D._sheaf_cohomology(_)
+            (0, 0, 0, 0)
         """
         fan = self.parent().scheme().fan()
         ray_is_negative = [m * ray + self.coefficient(i) < 0
                            for i, ray in enumerate(fan.rays())]
 
-        def cone_is_negative(cone):  # and non-trivial
-            if cone.is_trivial():
-                return False
-            return all(ray_is_negative[i] for i in cone.ambient_ray_indices())
-
-        negative_cones = [cone for cone in flatten(fan.cones()) if cone_is_negative(cone)]
-        return SimplicialComplex([c.ambient_ray_indices() for c in negative_cones])
+        simplicial_faces = [[i for i in cone.ambient_ray_indices()
+                             if ray_is_negative[i]] for cone in fan]
+        return SimplicialComplex(simplicial_faces)
 
     def _sheaf_cohomology(self, cplx):
         """
@@ -1531,6 +1540,21 @@ class ToricDivisor_generic(Divisor_generic):
             False
             sage: K.cohomology(dim=True)
             (0, 0, 0, 1)
+
+        A non-simplicial example::
+
+            sage: r0, r1, r2, r3, r4 = [(0,0,-1), (1,1,1), (1,-1,1),
+            ....:                       (-1,1,1), (-1,-1,1)]
+            sage: c0 = Cone([r1, r2, r3, r4])
+            sage: c1 = Cone([r0, r1, r2])
+            sage: c2 = Cone([r0, r1, r3])
+            sage: c3 = Cone([r0, r4, r2])
+            sage: c4 = Cone([r0, r4, r3])
+            sage: X = ToricVariety(Fan([c0, c1, c2, c3, c4]))
+            sage: N = X.fan().lattice()
+            sage: D = -X.divisor(N(r1)) - X.divisor(N(r4))
+            sage: D.cohomology(dim=True)
+            (0, 0, 0, 0)
         """
         if '_cohomology_vector' in self.__dict__ and weight is None:
             # cache the cohomology but not the individual weight pieces

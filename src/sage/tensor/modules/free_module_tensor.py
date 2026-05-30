@@ -2555,8 +2555,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         resu_comp = self._components[basis].trace(pos1, pos2)
         if self._tensor_rank == 2:  # result is a scalar
             return resu_comp
-        return self._fmodule.tensor_from_comp((k_con-1, l_cov-1),
-                                              resu_comp)
+        return self._fmodule.tensor_from_comp((k_con-1, l_cov-1), resu_comp)
 
     def contract(self, *args):
         r"""
