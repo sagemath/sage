@@ -429,16 +429,10 @@ equilibrium values::
 It is also possible to generate a Normal form game from a gambit Game::
 
     sage: # optional - gambit
-    sage: from gambit import Game
-    sage: gambitgame= Game.new_table([2, 2])
-    sage: gambitgame[int(0), int(0)][int(0)] = int(8)
-    sage: gambitgame[int(0), int(0)][int(1)] = int(8)
-    sage: gambitgame[int(0), int(1)][int(0)] = int(2)
-    sage: gambitgame[int(0), int(1)][int(1)] = int(10)
-    sage: gambitgame[int(1), int(0)][int(0)] = int(10)
-    sage: gambitgame[int(1), int(0)][int(1)] = int(2)
-    sage: gambitgame[int(1), int(1)][int(0)] = int(5)
-    sage: gambitgame[int(1), int(1)][int(1)] = int(5)
+    sage: import numpy as np
+    sage: from pygambit import Game
+    sage: gambitgame = Game.from_arrays(np.array([[8., 2.], [10., 5.]]),
+    ....:                               np.array([[8., 10.], [2., 5.]]))
     sage: g = NormalFormGame(gambitgame); g
     Normal Form Game with the following utilities: {(0, 0): [8.0, 8.0],
      (0, 1): [2.0, 10.0],
@@ -648,12 +642,14 @@ from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.cpython.string import bytes_to_str
 
 try:
-    from gambit import Game
-    from gambit.nash import ExternalLPSolver, ExternalLCPSolver
+    import numpy as np
+    from pygambit import Game
+    from pygambit.nash import lp_solve, lcp_solve
 except ImportError:
+    np = None
     Game = None
-    ExternalLPSolver = None
-    ExternalLCPSolver = None
+    lp_solve = None
+    lcp_solve = None
 
 
 class NormalFormGame(SageObject, MutableMapping):
@@ -714,16 +710,10 @@ class NormalFormGame(SageObject, MutableMapping):
         Can initialise a game from a gambit game object::
 
             sage: # optional - gambit
-            sage: from gambit import Game
-            sage: gambitgame= Game.new_table([2, 2])
-            sage: gambitgame[int(0), int(0)][int(0)] = int(5)
-            sage: gambitgame[int(0), int(0)][int(1)] = int(8)
-            sage: gambitgame[int(0), int(1)][int(0)] = int(2)
-            sage: gambitgame[int(0), int(1)][int(1)] = int(11)
-            sage: gambitgame[int(1), int(0)][int(0)] = int(10)
-            sage: gambitgame[int(1), int(0)][int(1)] = int(7)
-            sage: gambitgame[int(1), int(1)][int(0)] = int(5)
-            sage: gambitgame[int(1), int(1)][int(1)] = int(5)
+            sage: import numpy as np
+            sage: from pygambit import Game
+            sage: gambitgame = Game.from_arrays(np.array([[5., 2.], [10., 5.]]),
+            ....:                               np.array([[8., 11.], [7., 5.]]))
             sage: g = NormalFormGame(gambitgame); g
             Normal Form Game with the following utilities: {(0, 0): [5.0, 8.0],
              (0, 1): [2.0, 11.0],
@@ -974,16 +964,10 @@ class NormalFormGame(SageObject, MutableMapping):
         TESTS::
 
             sage: # optional - gambit
-            sage: from gambit import Game
-            sage: testgame = Game.new_table([2, 2])
-            sage: testgame[int(0), int(0)][int(0)] = int(8)
-            sage: testgame[int(0), int(0)][int(1)] = int(8)
-            sage: testgame[int(0), int(1)][int(0)] = int(2)
-            sage: testgame[int(0), int(1)][int(1)] = int(10)
-            sage: testgame[int(1), int(0)][int(0)] = int(10)
-            sage: testgame[int(1), int(0)][int(1)] = int(2)
-            sage: testgame[int(1), int(1)][int(0)] = int(5)
-            sage: testgame[int(1), int(1)][int(1)] = int(5)
+            sage: import numpy as np
+            sage: from pygambit import Game
+            sage: testgame = Game.from_arrays(np.array([[8., 2.], [10., 5.]]),
+            ....:                             np.array([[8., 10.], [2., 5.]]))
             sage: g = NormalFormGame()
             sage: g._gambit_game(testgame); g
             Normal Form Game with the following utilities: {(0, 0): [8.0, 8.0],
@@ -997,7 +981,8 @@ class NormalFormGame(SageObject, MutableMapping):
             num_strategies = len(player.strategies)
             self.add_player(num_strategies)
         for strategy_profile in self.utilities:
-            utility_vector = [float(game[strategy_profile][i]) for i in range(len(self.players))]
+            utility_vector = [float(game[strategy_profile][game.players[i]])
+                              for i in range(len(self.players))]
             self.utilities[strategy_profile] = utility_vector
 
     def _gambit_(self, as_integer=False, maximization=True):
@@ -1015,41 +1000,20 @@ class NormalFormGame(SageObject, MutableMapping):
         TESTS::
 
             sage: # optional - gambit
-            sage: from gambit import Game
             sage: A = matrix([[2, 1], [1, 2.5]])
             sage: g = NormalFormGame([A])
-            sage: gg = g._gambit_(); gg
-            NFG 1 R "" { "1" "2" }
-            <BLANKLINE>
-            { { "1" "2" }
-            { "1" "2" }
-            }
-            ""
-            <BLANKLINE>
-            {
-            { "" 2, -2 }
-            { "" 1, -1 }
-            { "" 1, -1 }
-            { "" 2.5, -2.5 }
-            }
-            1 2 3 4
-            <BLANKLINE>
-            sage: gg = g._gambit_(as_integer=True); gg
-            NFG 1 R "" { "1" "2" }
-            <BLANKLINE>
-            { { "1" "2" }
-            { "1" "2" }
-            }
-            ""
-            <BLANKLINE>
-            {
-            { "" 2, -2 }
-            { "" 1, -1 }
-            { "" 1, -1 }
-            { "" 2, -2 }
-            }
-            1 2 3 4
-            <BLANKLINE>
+            sage: gg = g._gambit_()
+            sage: float(gg[0, 0][gg.players[0]])
+            2.0
+            sage: float(gg[1, 1][gg.players[0]])
+            2.5
+            sage: float(gg[0, 0][gg.players[1]])
+            -2.0
+            sage: gg_int = g._gambit_(as_integer=True)
+            sage: int(gg_int[0, 0][gg_int.players[0]])
+            2
+            sage: int(gg_int[1, 1][gg_int.players[0]])
+            2
 
         ::
 
@@ -1057,38 +1021,14 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: A = matrix([[2, 1], [1, 2.5]])
             sage: B = matrix([[3, 2], [5.5, 4]])
             sage: g = NormalFormGame([A, B])
-            sage: gg = g._gambit_(); gg
-            NFG 1 R "" { "1" "2" }
-            <BLANKLINE>
-            { { "1" "2" }
-            { "1" "2" }
-            }
-            ""
-            <BLANKLINE>
-            {
-            { "" 2, 3 }
-            { "" 1, 5.5 }
-            { "" 1, 2 }
-            { "" 2.5, 4 }
-            }
-            1 2 3 4
-            <BLANKLINE>
-            sage: gg = g._gambit_(as_integer = True); gg
-            NFG 1 R "" { "1" "2" }
-            <BLANKLINE>
-            { { "1" "2" }
-            { "1" "2" }
-            }
-            ""
-            <BLANKLINE>
-            {
-            { "" 2, 3 }
-            { "" 1, 5 }
-            { "" 1, 2 }
-            { "" 2, 4 }
-            }
-            1 2 3 4
-            <BLANKLINE>
+            sage: gg = g._gambit_()
+            sage: float(gg[0, 0][gg.players[0]])
+            2.0
+            sage: float(gg[0, 1][gg.players[1]])
+            5.5
+            sage: gg_int = g._gambit_(as_integer=True)
+            sage: int(gg_int[0, 1][gg_int.players[1]])
+            5
 
         ::
 
@@ -1121,45 +1061,26 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: threegame[1, 1, 1][0] = 2
             sage: threegame[1, 1, 1][1] = 6
             sage: threegame[1, 1, 1][2] = 4
-            sage: threegame._gambit_(as_integer = True)
-            NFG 1 R "" { "1" "2" "3" }
-            <BLANKLINE>
-            { { "1" "2" }
-            { "1" "2" }
-            { "1" "2" }
-            }
-            ""
-            <BLANKLINE>
-            {
-            { "" 3, 1, 4 }
-            { "" 9, 7, 9 }
-            { "" 2, 6, 5 }
-            { "" 8, 4, 6 }
-            { "" 1, 5, 9 }
-            { "" 3, 2, 3 }
-            { "" 3, 5, 8 }
-            { "" 2, 6, 4 }
-            }
-            1 2 3 4 5 6 7 8
-            <BLANKLINE>
+            sage: gg = threegame._gambit_(as_integer=True)
+            sage: int(gg[0, 0, 0][gg.players[0]])
+            3
+            sage: int(gg[1, 0, 0][gg.players[1]])
+            7
+            sage: int(gg[0, 0, 1][gg.players[2]])
+            9
         """
-        from decimal import Decimal
+        sgn = 1 if maximization else -1
         strategy_sizes = [p.num_strategies for p in self.players]
-        g = Game.new_table(strategy_sizes)
+        n_players = len(strategy_sizes)
+        dtype = int if as_integer else float
 
-        sgn = 1
-        if not maximization:
-            sgn = -1
+        arrays = [np.zeros(strategy_sizes, dtype=dtype) for _ in range(n_players)]
+        for sp in self.utilities:
+            for i in range(n_players):
+                val = self.utilities[sp][i]
+                arrays[i][sp] = sgn * (int(val) if as_integer else float(val))
 
-        players = len(strategy_sizes)
-
-        for strategy_profile in self.utilities:
-            for i in range(players):
-                if as_integer:
-                    g[strategy_profile][i] = sgn * int(self.utilities[strategy_profile][i])
-                else:
-                    g[strategy_profile][i] = sgn * Decimal(float(self.utilities[strategy_profile][i]))
-        return g
+        return Game.from_arrays(*arrays)
 
     def is_constant_sum(self):
         r"""
@@ -1786,8 +1707,10 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0.0, 1.0), (0.0, 1.0)]]
         """
         g = self._gambit_(maximization)
-        output = ExternalLCPSolver().solve(g)
-        nasheq = Parser(output).format_gambit(g)
+        result = lcp_solve(g, rational=False)
+        nasheq = [[tuple(float(eq[s]) for s in player.strategies)
+                   for player in g.players]
+                  for eq in result.equilibria]
         return sorted(nasheq)
 
     def _solve_gambit_LP(self, maximization=True):
@@ -1814,8 +1737,10 @@ class NormalFormGame(SageObject, MutableMapping):
         if Game is None:
             raise NotImplementedError("gambit is not installed")
         g = self._gambit_(maximization=maximization)
-        output = ExternalLPSolver().solve(g)
-        nasheq = Parser(output).format_gambit(g)
+        result = lp_solve(g, rational=False)
+        nasheq = [[tuple(float(eq[s]) for s in player.strategies)
+                   for player in g.players]
+                  for eq in result.equilibria]
         return sorted(nasheq)
 
     def _solve_LP(self, solver='glpk', maximization=True):
