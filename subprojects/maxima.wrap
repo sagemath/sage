@@ -1,8 +1,8 @@
 [wrap-file]
-source_url = https://sourceforge.net/projects/maxima/files/Maxima-source/5.47.0-source/maxima-5.47.0.tar.gz/download
-source_hash = 9104021b24fd53e8c03a983509cb42e937a925e8c0c85c335d7709a14fd40f7a
-source_filename = maxima-5.47.0.tar.gz
-directory = maxima-5.47.0
+source_url = https://sourceforge.net/projects/maxima/files/Maxima-source/5.49.0-source/maxima-5.49.0.tar.gz/download
+source_hash = 6d401a4aa307cd3a5a9cadca4fa96c4ef0e24ff95a18bb6a8f803e3d2114adee
+source_filename = maxima-5.49.0.tar.gz
+directory = maxima-5.49.0
 patch_directory = maxima
 diff_files = maxima/configure.patch, maxima/infodir.patch, maxima/maxima_prefix_bin.patch
 

@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([maxima], [
-  m4_pushdef([SAGE_MAXIMA_MINVER],[5.45.0])dnl this version and higher allowed
+  m4_pushdef([SAGE_MAXIMA_MINVER],[5.48.0])dnl this version and higher allowed
   SAGE_SPKG_DEPCHECK([ecl], [
     dnl First check for the "maxima" executable in the user's PATH, because
     dnl we still use pexpect to communicate with it in a few places.

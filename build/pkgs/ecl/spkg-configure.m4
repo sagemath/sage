@@ -15,7 +15,7 @@ SAGE_SPKG_CONFIGURE([ecl], [
       AC_RUN_IFELSE([AC_LANG_PROGRAM([[
         #include <ecl/config.h>
       ]],[[
-        if (ECL_VERSION_NUMBER < 210201) { return 1; }
+        if (ECL_VERSION_NUMBER < 260327) { return 1; }
       ]])],
       [
         sage_spkg_install_ecl=no

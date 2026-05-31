@@ -7,11 +7,24 @@ if not sirocco.found()
     disabler: true,
   )
 endif
-# cannot be found via pkg-config
-ecl = cc.find_library('ecl', required: false, disabler: true)
-if not ecl.found() and not is_windows
-  ecl_proj = subproject('ecl')
-  ecl = ecl_proj.get_variable('ecl_dep')
+# ECL cannot be found via pkg-config; use ecl-config for the matching
+# compiler and linker flags. ECL's Makefile expands the rpath placeholder
+# in ecl-config to the installed libdir.
+if is_windows
+  ecl = disabler()
+else
+  ecl_config = find_program('ecl-config', required: false)
+  if ecl_config.found()
+    ecl_cflags = run_command(ecl_config, '--cflags', check: true)
+    ecl_libs = run_command(ecl_config, '--libs', check: true)
+    ecl = declare_dependency(
+      compile_args: ecl_cflags.stdout().strip().split(),
+      link_args: ecl_libs.stdout().strip().split(),
+    )
+  else
+    ecl_proj = subproject('ecl')
+    ecl = ecl_proj.get_variable('ecl_dep')
+  endif
 endif
 ecl_bin = find_program('ecl', required: false)
 if ecl_bin.found()

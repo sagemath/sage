@@ -1,5 +1,5 @@
 [wrap-git]
 url = https://gitlab.com/embeddable-common-lisp/ecl.git
-revision = 26.3.27
+revision = 26.5.5
 depth = 1
 patch_directory = ecl

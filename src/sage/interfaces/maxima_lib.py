@@ -113,6 +113,7 @@ in ``DOT_SAGE`` since we expect it to have more latency than ``/tmp``.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
+import re
 
 import sage.rings.real_double
 import sage.symbolic.expression
@@ -159,18 +160,106 @@ except RuntimeError:
     # subject to the same race condition and since `*maxima-objdir*`
     # has multiple components this is quite plausible to happen.
     maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
-    import os
     os.makedirs(maxima_objdir, exist_ok=True)
     # Call `(set-pathnames)` again to complete its job.
     ecl_eval("(set-pathnames)")
+
+# Always ensure *maxima-objdir* exists using Python's os.makedirs,
+# which is more robust than ECL's ensure-directories-exist on some
+# platforms (see :issue:`26968`).
+maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
+os.makedirs(maxima_objdir, exist_ok=True)
+
+
+def _recover_from_ecl_file_error(error, objdir=None):
+    r"""
+    Try to recover from an ECL file-open failure in Maxima's object cache.
+
+    Used only from the ``init_code`` loop below, before any user
+    computation has run.  Two failure modes are addressed:
+
+    - ECL's ``ensure-directories-exist`` occasionally fails to create
+      subdirectories of ``*maxima-objdir*`` (see :issue:`26968`); we
+      create the missing directory with Python and let the caller retry.
+    - A stale ``.fas`` in ``*maxima-objdir*`` may reference a companion
+      ``.data`` that is no longer present; we remove the stale ``.fas``
+      so that Maxima falls back to the source on the next attempt.
+
+    Note that ``*maxima-objdir*`` (typically
+    ``$DOT_SAGE/maxima/binary/...``) is the per-user ECL compile cache,
+    not the read-only Maxima install tree.
+
+    TESTS:
+
+    A stale ECL ``.fas`` file may refer to a companion ``.data`` file
+    which is not present.  In that case, remove the stale compiled file
+    so that Maxima falls back to the source on the next attempt::
+
+        sage: from sage.interfaces.maxima_lib import _recover_from_ecl_file_error
+        sage: import os, tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     stale = os.path.join(d, 'share', 'linearalgebra', 'mring.fas')
+        ....:     missing = os.path.splitext(stale)[0] + '.data'
+        ....:     os.makedirs(os.path.dirname(stale))
+        ....:     with open(stale, 'w'):
+        ....:         pass
+        ....:     _ = _recover_from_ecl_file_error(
+        ....:         RuntimeError(f'ECL says: Cannot open #P"{missing}".'), objdir=d)
+        ....:     os.path.exists(stale), os.path.isdir(os.path.dirname(missing))
+        (False, True)
+    """
+    m = re.search(r'Cannot open #P"([^"]+)"', str(error))
+    if not m:
+        return False
+
+    path = m.group(1)
+    dirname = os.path.dirname(path)
+    if dirname:
+        os.makedirs(dirname, exist_ok=True)
+
+    objdir = maxima_objdir if objdir is None else objdir
+    try:
+        in_objdir = (os.path.commonpath([os.path.abspath(path),
+                                         os.path.abspath(objdir)])
+                     == os.path.abspath(objdir))
+    except ValueError:
+        in_objdir = False
+
+    if in_objdir and os.path.splitext(path)[1] == ".data":
+        compiled_path = os.path.splitext(path)[0] + ".fas"
+        try:
+            os.remove(compiled_path)
+        except FileNotFoundError:
+            pass
+
+    return True
+
 
 ecl_eval("(initialize-runtime-globals)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval(r"(defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
-ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
+ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not *pcprntd*) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
+
+# Replace Maxima's `loadfile` with a version that does not swallow the
+# underlying CL error.  Stock `loadfile` wraps the load in `(errset ...)`,
+# discards whatever the load actually signalled, and reports the generic
+# "loadfile: failed to load X" -- making CI failures undiagnosable.
+# Letting the original condition propagate gives us the real cause.
+ecl_eval(r"""
+(defun loadfile (file findp printp)
+  (and findp (member $loadprint '(nil $loadfile) :test #'equal) (setq printp nil))
+  (if printp (format t (intl:gettext "loadfile: loading ~A.~%") file))
+  (let* ((path (pathname file))
+         (*package* (find-package :maxima))
+         ($load_pathname path)
+         (*read-base* 10.))
+    #-sbcl (load (pathname file))
+    #+sbcl (with-compilation-unit nil (load (pathname file)))
+    (namestring path)))
+""")
 
 # The following is an adaptation of the "retrieve" function in maxima
 # itself. This routine is normally responsible for displaying a
@@ -233,7 +322,13 @@ init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'ke
 # See trac # 6818.
 init_code.append('nolabels : true')
 for l in init_code:
-    ecl_eval("#$%s$" % l)
+    try:
+        ecl_eval("#$%s$" % l)
+    except RuntimeError as e:
+        if _recover_from_ecl_file_error(e):
+            ecl_eval("#$%s$" % l)
+        else:
+            raise
 # To get more debug information uncomment the next line
 # should allow to do this through a method
 # ecl_eval("(setf *standard-output* original-standard-output)")
@@ -1227,6 +1322,8 @@ sage_op_dict = {
     sage.functions.error.erf: "%ERF",
     sage.functions.gamma.gamma_inc: "%GAMMA_INCOMPLETE",
     sage.functions.other.conjugate: "$CONJUGATE",
+    sage.functions.other.imag_part: "%IMAGPART",
+    sage.functions.other.real_part: "%REALPART",
 }
 # we compile the dictionary
 sage_op_dict = {k: EclObject(sage_op_dict[k]) for k in sage_op_dict}
