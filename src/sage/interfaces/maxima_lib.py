@@ -268,61 +268,7 @@ def _maxima_share_subdirs(sharedir=None):
             subdirs.append(rel.replace(os.sep, "/"))
     return sorted(subdirs)
 
-
-def _ensure_maxima_objdir_subdirectories(subdirs, objdir=None):
-    r"""
-    Create Maxima package subdirectories in the ECL object cache.
-
-    ECL writes compiler intermediates such as ``.c``, ``.eclh`` and
-    ``.data`` next to the target ``.fas`` while compiling Maxima share
-    packages.  Maxima's ``mk:defsystem`` calls ECL's
-    ``ensure-directories-exist`` for those target directories, but that
-    call is the unreliable part of :issue:`26968`.  Creating the expected
-    share package directories with Python before Maxima starts loading
-    packages prevents ECL from reaching the failing file-open path in the
-    first place.
-
-    The ``.data`` file here is a compiler-generated input to the C
-    compiler, not a reliable long-lived sidecar for the final ``.fas``.
-    Some valid ECL ``.fas`` files mention the temporary ``.data`` pathname
-    even when the temporary file has already been deleted, so the
-    prevention must be directory creation rather than compiled-file
-    invalidation.
-
-    INPUT:
-
-    - ``subdirs`` -- iterable of strings; Maxima share package
-      subdirectories (see :func:`_maxima_share_subdirs`).
-
-    - ``objdir`` -- string or ``None`` (default: ``None``); Maxima object
-      directory in which to create the subdirectories.  When ``None``, use
-      ``*maxima-objdir*``.
-
-    TESTS::
-
-        sage: from sage.interfaces.maxima_lib import _ensure_maxima_objdir_subdirectories
-        sage: import os, tempfile
-        sage: with tempfile.TemporaryDirectory() as d:
-        ....:     _ensure_maxima_objdir_subdirectories(
-        ....:         ['linearalgebra', 'contrib/diffequations'], objdir=d)
-        ....:     os.path.isdir(os.path.join(d, 'share', 'linearalgebra'))
-        ....:     os.path.isdir(os.path.join(d, 'share', 'contrib', 'diffequations'))
-        True
-        True
-    """
-    objdir = maxima_objdir if objdir is None else objdir
-
-    for subdir in subdirs:
-        os.makedirs(os.path.join(objdir, "share", subdir), exist_ok=True)
-
-
-# Pre-create every share-package directory in the ECL object cache before
-# Maxima starts compiling packages, working around the unreliable
-# ``ensure-directories-exist`` of :issue:`26968`.  The list mirrors the
-# installed Maxima share tree, so it stays correct across Maxima versions.
 _maxima_share_packages = _maxima_share_subdirs()
-_ensure_maxima_objdir_subdirectories(_maxima_share_packages)
-
 
 ecl_eval("(initialize-runtime-globals)")
 ecl_eval("(setq $nolabels t))")
