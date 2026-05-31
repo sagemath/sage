@@ -27,4 +27,15 @@ fi
 ### http://scipy.github.io/devdocs/building/index.html
 
 
-sdh_pip_install .
+# numpy's meson build autodetects BLAS/LAPACK via pkg-config and, by default,
+# prefers MKL ahead of OpenBLAS.  On systems with a (possibly broken) system
+# MKL installed -- e.g. Debian/Ubuntu's intel-mkl, whose
+# mkl-dynamic-lp64-iomp.pc links -liomp5 without shipping libiomp5 -- the build
+# would pick MKL and fail to link.  Sage always depends on OpenBLAS (see the
+# openblas DEPCHECK in spkg-configure.m4), so pin the provider explicitly
+# instead of autodetecting.
+if [ "$SAGE_DARWIN_ACCELERATE" = yes ]; then
+    sdh_pip_install .
+else
+    sdh_pip_install . -Csetup-args=-Dblas=openblas -Csetup-args=-Dlapack=openblas
+fi
