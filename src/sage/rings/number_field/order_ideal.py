@@ -755,6 +755,11 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         assert Q.discriminant() == O.discriminant()
         return (Q, (alpha, -beta)) if basis else Q
 
+    def is_invertible(self):
+        r"""
+        Return ``True`` if this ideal is invertible.
+        """
+        return self.quadratic_form().is_primitive()
 
 def _random_for_testing():
     r"""
