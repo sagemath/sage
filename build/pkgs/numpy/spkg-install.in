@@ -8,7 +8,12 @@ set -e
 export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 
 if [ "$SAGE_FAT_BINARY" = "yes" ]; then
-    export NUMPY_FCONFIG="--cpu-baseline=NONE"
+    # Portable build: require no CPU features beyond the architecture default so
+    # the binary runs on the oldest CPUs.  Runtime dispatch is kept, so optimized
+    # kernels are still selected when the host supports them.  This is the meson
+    # replacement for the old numpy.distutils "--cpu-baseline=NONE"; see
+    # https://numpy.org/doc/stable/reference/simd/build-options.html
+    export NUMPY_FCONFIG="-Csetup-args=-Dcpu-baseline=none"
 else
     export NUMPY_FCONFIG=""
 fi
@@ -35,7 +40,7 @@ fi
 # openblas DEPCHECK in spkg-configure.m4), so pin the provider explicitly
 # instead of autodetecting.
 if [ "$SAGE_DARWIN_ACCELERATE" = yes ]; then
-    sdh_pip_install .
+    sdh_pip_install . ${NUMPY_FCONFIG}
 else
-    sdh_pip_install . -Csetup-args=-Dblas=openblas -Csetup-args=-Dlapack=openblas
+    sdh_pip_install . -Csetup-args=-Dblas=openblas -Csetup-args=-Dlapack=openblas ${NUMPY_FCONFIG}
 fi
