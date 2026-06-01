@@ -211,7 +211,6 @@ class KleshchevPartition(Partition):
             return {i: conormal_cells[i][-1] for i in conormal_cells}
         if not conormal_cells:
             return None
-
         return conormal_cells[-1]
 
     def normal_cells(self, i=None):
@@ -318,7 +317,6 @@ class KleshchevPartition(Partition):
             return {j: normal_cells[j][0] for j in normal_cells}
         if not normal_cells:
             return None
-
         return normal_cells[0]
 
     def good_residue_sequence(self):
@@ -607,7 +605,6 @@ class KleshchevPartitionTuple(PartitionTuple):
             return {j: conormal_cells[j][-1] for j in conormal_cells}
         if not conormal_cells:
             return None
-
         return conormal_cells[-1]
 
     def normal_cells(self, i=None):
@@ -727,7 +724,6 @@ class KleshchevPartitionTuple(PartitionTuple):
             return {j: normal_cells[j][0] for j in normal_cells}
         if not normal_cells:
             return None
-
         return normal_cells[0]
 
     def good_residue_sequence(self):

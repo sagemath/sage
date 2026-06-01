@@ -46,7 +46,6 @@ py.install_sources(
   'parent_base.pxd',
   'parent_base.pyi',
   'parent_base.pyx',
-  'parent_gens.pxd',
   'parent_gens.pyi',
   'parent_gens.pyx',
   'parent_old.pxd',

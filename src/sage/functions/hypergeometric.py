@@ -4,6 +4,10 @@ Hypergeometric functions
 This module implements manipulation of infinite hypergeometric series
 represented in standard parametric form (as `\,_pF_q` functions).
 
+For a more algebraic treatment of hypergeometric functions
+(including reduction modulo primes and `p`-adic properties),
+we refer to :mod:`sage.functions.hypergeometric_algebraic`.
+
 AUTHORS:
 
 - Fredrik Johansson (2010): initial version
@@ -270,13 +274,14 @@ class Hypergeometric(BuiltinFunction):
 
     def __call__(self, a, b, z, **kwargs):
         """
-        Return symbolic hypergeometric function expression.
+        Return a hypergeometric function.
 
         INPUT:
 
         - ``a`` -- list or tuple of parameters
         - ``b`` -- list or tuple of parameters
-        - ``z`` -- number or symbolic expression
+        - ``z`` -- number, symbolic expression, generator of a power
+          series or polynomial ring
 
         EXAMPLES::
 
@@ -296,11 +301,40 @@ class Hypergeometric(BuiltinFunction):
         if ``z`` is 0. For other simplifications use the
         ``simplify_hypergeometric`` method.
 
+        When `z` is a generator of a polynomial ring or a power series
+        ring, an algebraic (by contrast with symbolic) object is returned,
+        for which a different set of methods is available::
+
+            sage: S.<z> = QQ[]
+            sage: h = hypergeometric([1/2, 1/2], [1], z)
+            sage: h
+            hypergeometric((1/2, 1/2), (1,), z)
+            sage: h.is_algebraic()
+            False
+
+        Besides, in this case, the additional optional boolean argument
+        ``symbolic_equality`` (default: ``True``) determines whether equality
+        should be checked symbolically (that is, equality of parameters) or
+        algebraically (that is, equality of series).
+
+        We refer to :mod:`sage.functions.hypergeometric_algebraic` for a
+        detailed presentation of the available features.
+
         TESTS::
 
             sage: hypergeometric([2, 3, 4], [4, 1], 1)
             hypergeometric((2, 3, 4), (4, 1), 1)
         """
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        from sage.rings.power_series_ring import PowerSeriesRing_generic
+        from sage.rings.lazy_series_ring import LazySeriesRing
+        if hasattr(z, 'parent'):
+            S = z.parent()
+            if isinstance(S, (PolynomialRing_generic, PowerSeriesRing_generic, LazySeriesRing)):
+                if z != S.gen():
+                    raise NotImplementedError("the argument must be the generator of the polynomial ring")
+                from sage.functions.hypergeometric_algebraic import HypergeometricFunctions
+                return HypergeometricFunctions(S.base_ring(), S.variable_name(), **kwargs)(a, b)
         return BuiltinFunction.__call__(self,
                                         SR._force_pyobject(a),
                                         SR._force_pyobject(b),

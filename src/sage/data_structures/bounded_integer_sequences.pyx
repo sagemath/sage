@@ -111,7 +111,7 @@ from sage.data_structures.bitset_base cimport *
 
 from cpython.long cimport PyLong_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
-from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
+from sage.libs.flint.longlong cimport FLINT_BIT_COUNT as BIT_COUNT
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 cimport cython
