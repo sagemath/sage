@@ -2327,11 +2327,16 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         except MIPSolverException:
             return True
 
+    # The objective function is a sum of booleans, but they get summed
+    # before conversion. This can lead to an objective value that is
+    # very close to, but not actually, an integer. So instead of
+    # querying the objective value directly, we (re)compute it from
+    # the optimal booleans, post-conversion, taking the integrality
+    # tolerance into consideration.
     p.set_objective(p.sum(in_set[1, v] for v in g))
-
-    val = p.solve(log=verbose)
-
+    p.solve(log=verbose)
     in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+    val = sum(in_set[1, v] for v in g)
 
     if value_only:
         return sum(1 for v in g if in_set[1, v])

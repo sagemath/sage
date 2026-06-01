@@ -70,6 +70,7 @@ import sage.rings.complex_double
 
 from sage.structure.element cimport Vector
 from sage.matrix.constructor import matrix
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 cimport sage.structure.element
 
 cimport numpy as cnumpy
@@ -248,8 +249,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             [0.0 0.0 0.0]
             [0.0 0.0 0.0]
         """
-        if self._ncols != right._nrows:
-            raise IndexError("Number of columns of self must equal number of rows of right")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_double_dense M, _right, _left
 

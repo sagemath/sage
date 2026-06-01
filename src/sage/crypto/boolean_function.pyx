@@ -506,8 +506,8 @@ cdef class BooleanFunction(SageObject):
         bitset_init(anf, <mp_bitcnt_t> (1<<self._nvariables))
         bitset_copy(anf, self._truth_table)
         reed_muller(anf.bits, ZZ(anf.limbs).exact_log(2))
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
-        R = BooleanPolynomialRing(self._nvariables, "x")
+        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor
+        R = BooleanPolynomialRing_constructor(self._nvariables, 'x')
         G = R.gens()
         P = R(0)
 
