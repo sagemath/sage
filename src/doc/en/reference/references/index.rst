@@ -1024,7 +1024,7 @@ REFERENCES:
 .. [BK1992] \U. Brehm and W. Kuhnel, *15-vertex triangulations of an
             8-manifold*, Math. Annalen 294 (1992), no. 1, 167-193.
 
-.. [BK2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
+.. [BanKil2001] \J. Bandlow, K. Killpatrick -- *An area-to_inv bijection
             between Dyck paths and 312-avoiding permutations*, Electronic
             Journal of Combinatorics, Volume 8, Issue 1 (2001).
 

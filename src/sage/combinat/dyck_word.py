@@ -2083,7 +2083,7 @@ class DyckWord_complete(DyckWord):
     def to_312_avoiding_permutation(self) -> Permutation:
         r"""
         Convert ``self`` to a `312`-avoiding permutation using the bijection
-        by Bandlow and Killpatrick in [BK2001]_.
+        by Bandlow and Killpatrick in [BanKil2001]_.
 
         This sends the area to the inversion number.
 
