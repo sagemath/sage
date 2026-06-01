@@ -205,6 +205,15 @@ def _maxima_share_subdirs(sharedir=None):
         ....:     os.path.isdir(os.path.join(d, 'share', 'contrib', 'diffequations'))
         True
         True
+
+    On startup, all discovered Maxima share package directories are
+    mirrored under ``*maxima-objdir*/share``::
+
+        sage: from sage.interfaces.maxima_lib import _maxima_share_packages, maxima_objdir
+        sage: missing = [subdir for subdir in _maxima_share_packages
+        ....:            if not os.path.isdir(os.path.join(maxima_objdir, 'share', subdir))]
+        sage: missing
+        []
     """
     if sharedir is None:
         sharedir = ecl_eval("*maxima-sharedir*").python()[1:-1]
