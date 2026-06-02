@@ -4394,7 +4394,7 @@ class PermutationGroup_generic(FiniteGroup):
             True
             sage: G = AbelianGroup([2, 3, 0])
             sage: H = PermutationGroup([(1, 2, 3), (4, 5)])
-            sage: H.is_isomorphic(G)
+            sage: H.is_isomorphic(G) # needs sage.libs.gap  # optional - gap_package_polycyclic
             False
         """
         if not isinstance(right, Group):

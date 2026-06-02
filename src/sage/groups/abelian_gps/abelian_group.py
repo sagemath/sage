@@ -580,17 +580,17 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             True
             sage: G = AbelianGroup([2, 3, 0])
             sage: H = PermutationGroup([(1, 2, 3), (4, 5)])
-            sage: G.is_isomorphic(H)
+            sage: G.is_isomorphic(H) # needs sage.libs.gap  # optional - gap_package_polycyclic
             False
             sage: G = AbelianGroup([0])
             sage: H = FreeGroup(1)
-            sage: G.is_isomorphic(H)
+            sage: G.is_isomorphic(H) # needs sage.libs.gap  # optional - gap_package_polycyclic
             Traceback (most recent call last):
             ...
             sage.libs.gap.util.GAPError: Error, cannot test isomorphism of infinite groups
             sage: G = AbelianGroup([2, 3, 0])
             sage: H = FreeGroup(1)
-            sage: G.is_isomorphic(H)
+            sage: G.is_isomorphic(H) # needs sage.libs.gap  # optional - gap_package_polycyclic
             Traceback (most recent call last):
             ...
             sage.libs.gap.util.GAPError: Error, cannot test isomorphism of infinite groups
