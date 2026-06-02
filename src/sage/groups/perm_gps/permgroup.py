@@ -4398,7 +4398,7 @@ class PermutationGroup_generic(FiniteGroup):
             False
         """
         if not isinstance(right, Group):
-            raise TypeError("right must be a group")
+            raise TypeError("right must be a Sage group supported by GAP/libgap")
         iso = self._libgap_().IsomorphismGroups(right)
         return str(iso) != 'fail'
 

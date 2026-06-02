@@ -597,7 +597,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         from sage.libs.gap.libgap import libgap
         if not isinstance(right, Group):
-            raise TypeError("right must be a group")
+            raise TypeError("right must be a Sage group supported by GAP/libgap")
         if not isinstance(right, AbelianGroup_class):
             iso = left._libgap_().IsomorphismGroups(right)
             return iso != libgap.eval('fail')
