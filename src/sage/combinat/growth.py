@@ -5560,7 +5560,7 @@ class RuleRightCompositions(RuleCompositions):
         return None
 
     def is_P_edge(self, v, w):
-        return self.rank(v) + 1 == self.rank(w) and self.is_P_edge_aux(v, w) is not None
+        return self.rank(v) + 1 == self.rank(w) and self._is_P_edge_aux(v, w) is not None
 
     def _d_operator(self, i, alpha):
         """
@@ -5608,8 +5608,8 @@ class RuleRightCompositions(RuleCompositions):
         if content not in (0, 1):
             raise ValueError("content must be 0 or 1")
 
-        i = 0 if y == t else self.is_P_edge_aux(t, y)
-        j = 0 if x == t else self.is_Q_edge_aux(t, x)
+        i = 0 if y == t else self._is_P_edge_aux(t, y)
+        j = 0 if x == t else self._is_Q_edge_aux(t, x)
 
         if i is None or j is None:
             raise ValueError(f"invalid local configuration: y={y}, t={t}, x={x}")
@@ -5656,8 +5656,8 @@ class RuleRightCompositions(RuleCompositions):
             p = q > 1   -> (d_{p-1}(x), 0)
             p = q = 1   -> (x, 1)
         """
-        p = 0 if z == x else self.is_P_edge_aux(x, z)
-        q = 0 if z == y else self.is_Q_edge_aux(y, z)
+        p = 0 if z == x else self._is_P_edge_aux(x, z)
+        q = 0 if z == y else self._is_Q_edge_aux(y, z)
 
         if p is None or q is None:
             raise ValueError(f"invalid local configuration: y={y}, z={z}, x={x}")
@@ -5691,7 +5691,7 @@ class RuleRightCompositions(RuleCompositions):
             raise NotImplementedError("P_symbol currently expects a chain starting at []")
         labels = []
         for a, b in zip(P_chain, P_chain[1:]):
-            i = self.is_P_edge_aux(a, b)
+            i = self._is_P_edge_aux(a, b)
             if i is None:
                 raise ValueError(f"not an Rc-chain step: {a} -> {b}")
             labels.append(i)
