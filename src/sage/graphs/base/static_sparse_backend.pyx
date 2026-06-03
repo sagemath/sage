@@ -39,6 +39,7 @@ cimport cython
 from cysignals.memory cimport check_calloc, sig_free
 
 from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
+                                                   init_short_digraph_from_data,
                                                    init_reverse,
                                                    out_degree,
                                                    has_edge,
@@ -52,6 +53,88 @@ from sage.data_structures.bitset_base cimport *
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
 
+
+def _direct_static_sparse_backend_from_edges(initial_vertices, edges, directed,
+                                             loops_allowed, multiedges_allowed,
+                                             sort_vertices):
+    """
+    Build a :class:`StaticSparseBackend` directly from raw constructor data.
+
+    This helper centralizes the direct immutable-construction logic used by
+    :class:`~sage.graphs.graph.Graph` and :class:`~sage.graphs.digraph.DiGraph`
+    for simple input formats. Original vertex labels are preserved through
+    ``vertex_list`` and the backend mapping dictionaries.
+    """
+    directed = bool(directed)
+
+    vertices = []
+    vertex_to_id = {}
+    next_auto_vertex = 0
+
+    def add_or_get_vertex(v):
+        nonlocal next_auto_vertex
+        if v is None:
+            while next_auto_vertex in vertex_to_id:
+                next_auto_vertex += 1
+            v = next_auto_vertex
+            next_auto_vertex += 1
+        if v not in vertex_to_id:
+            vertex_to_id[v] = len(vertices)
+            vertices.append(v)
+        return v, vertex_to_id[v]
+
+    for v in initial_vertices:
+        add_or_get_vertex(v)
+
+    has_labels = False
+    if multiedges_allowed:
+        edge_data = []
+        for e in edges:
+            if len(e) == 3:
+                u, v, l = e
+            else:
+                u, v = e
+                l = None
+            u, _ = add_or_get_vertex(u)
+            v, _ = add_or_get_vertex(v)
+            if u == v and not loops_allowed:
+                raise ValueError(f"cannot add edge from {u!r} to {v!r} in graph without loops")
+            has_labels = has_labels or l is not None
+            edge_data.append((u, v, l))
+    else:
+        edge_map = {}
+        for e in edges:
+            if len(e) == 3:
+                u, v, l = e
+            else:
+                u, v = e
+                l = None
+            u, u_id = add_or_get_vertex(u)
+            v, v_id = add_or_get_vertex(v)
+            if u == v and not loops_allowed:
+                raise ValueError(f"cannot add edge from {u!r} to {v!r} in graph without loops")
+            if directed:
+                key = (u_id, v_id)
+            else:
+                key = (u_id, v_id) if u_id <= v_id else (v_id, u_id)
+            old = edge_map.get(key)
+            if old is not None and old[2] == l:
+                continue
+            edge_map[key] = (u, v, l)
+            has_labels = has_labels or l is not None
+        edge_data = edge_map.values()
+
+    return StaticSparseBackend(
+        vertex_list=vertices,
+        edges=edge_data,
+        directed=directed,
+        edge_labelled=has_labels,
+        loops=loops_allowed,
+        multiedges=multiedges_allowed,
+        sort=sort_vertices,
+    )
+
+
 cdef class StaticSparseCGraph(CGraph):
     """
     :mod:`CGraph <sage.graphs.base.c_graph>` class based on the sparse graph
@@ -59,15 +142,30 @@ cdef class StaticSparseCGraph(CGraph):
     <sage.graphs.base.static_sparse_graph>`.
     """
 
-    def __cinit__(self, G, vertex_list=None):
+    def __cinit__(self, G=None, vertex_list=None, edges=None, directed=None,
+                  edge_labelled=False):
         r"""
         Cython constructor.
 
         INPUT:
 
-        - ``G`` -- a :class:`Graph` object
+        - ``G`` -- a :class:`Graph` or :class:`DiGraph` object, or ``None``
+          (default: ``None``)
 
-        - ``vertex_list`` -- (optional) list of all vertices of ``G``
+        - ``vertex_list`` -- (optional) list of vertices; when ``G`` is not
+          ``None``, it must contain all vertices of ``G`` in the desired order.
+          When ``G`` is ``None``, this argument is mandatory and defines the
+          vertex order directly.
+
+        - ``edges`` -- (optional) iterable of edges/arcs in the form
+          ``(u, v)`` or ``(u, v, label)``; used only when ``G`` is ``None``
+
+        - ``directed`` -- boolean (default: ``None``); mandatory when ``G`` is
+          ``None``
+
+        - ``edge_labelled`` -- boolean (default: ``False``); whether labels are
+          stored when ``G`` is ``None``. When ``G`` is not ``None``, labels are
+          detected from ``G``.
 
         The optional argument ``vertex_list`` is assumed to be a list of all
         vertices of the graph ``G`` in some order.
@@ -104,21 +202,74 @@ cdef class StaticSparseCGraph(CGraph):
             Traceback (most recent call last):
             ...
             ValueError: vertex_list has wrong length
+
+        Direct initialization from raw vertices/edges::
+
+            sage: g = StaticSparseCGraph(G=None,
+            ....:                      vertex_list=['b', 'a', 'c'],
+            ....:                      edges=[('b', 'a'), ('c', 'a')],
+            ....:                      directed=True)
+            sage: (g.has_arc(0, 1), g.has_arc(2, 1), g.has_arc(1, 0))
+            (True, True, False)
+
+        Error cases for raw initialization::
+
+            sage: StaticSparseCGraph(G=None, vertex_list=[0], directed=None)
+            Traceback (most recent call last):
+            ...
+            TypeError: missing required argument 'directed'
+            sage: StaticSparseCGraph(G=None, directed=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: missing required argument 'vertex_list'
+            sage: StaticSparseCGraph(G=None, vertex_list=[0, 0], edges=[], directed=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex_list has duplicates
+            sage: StaticSparseCGraph(G=None, vertex_list=[0], edges=[(0, 1)], directed=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: edge contains a vertex not in vertex_list
         """
         cdef int i, j, tmp
-        has_labels = any(l is not None for _, _, l in G.edge_iterator())
-        self._directed = G.is_directed()
+        cdef bint has_loops = False
+        cdef bint has_labels
 
-        if vertex_list is not None and len(vertex_list) != G.order():
-            raise ValueError('vertex_list has wrong length')
+        if G is None:
+            if directed is None:
+                raise TypeError("missing required argument 'directed'")
+            if vertex_list is None:
+                raise TypeError("missing required argument 'vertex_list'")
+            if edges is None:
+                edges = []
 
-        init_short_digraph(self.g, G, edge_labelled=has_labels,
-                           vertex_list=vertex_list)
+            self._directed = bool(directed)
+            init_short_digraph_from_data(self.g, vertex_list, edges,
+                                         isdigraph=self._directed,
+                                         edge_labelled=edge_labelled)
+            for i in range(self.g.n):
+                for tmp in range(out_degree(self.g, i)):
+                    if self.g.neighbors[i][tmp] == i:
+                        has_loops = True
+                        break
+                if has_loops:
+                    break
+        else:
+            if vertex_list is not None and len(vertex_list) != G.order():
+                raise ValueError('vertex_list has wrong length')
+
+            has_labels = any(l is not None for _, _, l in G.edge_iterator())
+            self._directed = G.is_directed()
+
+            init_short_digraph(self.g, G, edge_labelled=has_labels,
+                               vertex_list=vertex_list)
+            has_loops = G.has_loops()
+
         if self._directed:
             init_reverse(self.g_rev, self.g)
 
         # Store the number of loops for undirected graphs
-        elif not G.has_loops():
+        elif not has_loops:
             self.number_of_loops = NULL
         else:
             try:
@@ -427,10 +578,37 @@ cdef class StaticSparseCGraph(CGraph):
 
 cdef class StaticSparseBackend(CGraphBackend):
 
-    def __init__(self, G, loops=False, multiedges=False, sort=True):
+    def __init__(self, G=None, loops=False, multiedges=False, sort=True,
+                 vertex_list=None, edges=None, directed=None,
+                 edge_labelled=False):
         """
         A graph :mod:`backend <sage.graphs.base.graph_backends>` for static
         sparse graphs.
+
+        INPUT:
+
+        - ``G`` -- a :class:`Graph` or :class:`DiGraph` object, or ``None``
+          (default: ``None``)
+
+        - ``loops`` -- boolean (default: ``False``); whether loops are allowed
+
+        - ``multiedges`` -- boolean (default: ``False``); whether multiple
+          edges are allowed
+
+        - ``sort`` -- boolean (default: ``True``); whether vertices are sorted
+          before building the backend
+
+        - ``vertex_list`` -- (optional) list of vertices; used when ``G`` is
+          ``None`` to define vertex order explicitly
+
+        - ``edges`` -- (optional) iterable of edges/arcs used when ``G`` is
+          ``None``
+
+        - ``directed`` -- boolean (default: ``None``); mandatory when ``G`` is
+          ``None``
+
+        - ``edge_labelled`` -- boolean (default: ``False``); whether labels are
+          stored when ``G`` is ``None``
 
         EXAMPLES::
 
@@ -510,19 +688,70 @@ cdef class StaticSparseBackend(CGraphBackend):
 
             sage: DiGraph({1: {2: ['a', 'b'], 3: ['c']}, 2: {3: ['d']}}, immutable=True).is_directed_acyclic()
             True
+
+        Direct initialization from raw vertices/edges::
+
+            sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+            sage: b = StaticSparseBackend(vertex_list=['b', 'a'],
+            ....:                        edges=[('b', 'a')],
+            ....:                        directed=False, sort=False)
+            sage: list(b.iterator_edges(['b'], True))
+            [('b', 'a', None)]
+
+            sage: b = StaticSparseBackend(vertex_list=['d', 'b', 'a', 'c'],
+            ....:                        edges=[('d', 'a', 3), ('b', 'a', 2), ('c', 'a', 1)],
+            ....:                        directed=True, edge_labelled=True, sort=False)
+            sage: list(b.iterator_in_edges(['a'], True))
+            [('d', 'a', 3), ('b', 'a', 2), ('c', 'a', 1)]
+
+        Error cases for direct initialization::
+
+            sage: StaticSparseBackend(vertex_list=[0], edges=[])
+            Traceback (most recent call last):
+            ...
+            TypeError: missing required argument 'directed'
+            sage: StaticSparseBackend(vertex_list=[0, 0], edges=[], directed=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex_list has duplicates
+            sage: StaticSparseBackend(vertex_list=[0], edges=[(0, 1)], directed=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: edge contains a vertex not in vertex_list
         """
-        vertices = list(G)
-        if sort:
-            try:
-                vertices.sort()
-            except TypeError:
-                pass
-        cdef StaticSparseCGraph cg = <StaticSparseCGraph> StaticSparseCGraph(G, vertices)
+        cdef StaticSparseCGraph cg
+
+        if G is None:
+            if directed is None:
+                raise TypeError("missing required argument 'directed'")
+            if vertex_list is None:
+                vertex_list = []
+            vertices = list(vertex_list)
+            if sort:
+                try:
+                    vertices.sort()
+                except TypeError:
+                    pass
+            cg = <StaticSparseCGraph> StaticSparseCGraph(
+                G=None,
+                vertex_list=vertices,
+                edges=edges,
+                directed=directed,
+                edge_labelled=edge_labelled,
+            )
+            self._order = len(vertices)
+        else:
+            vertices = list(G)
+            if sort:
+                try:
+                    vertices.sort()
+                except TypeError:
+                    pass
+            cg = <StaticSparseCGraph> StaticSparseCGraph(G, vertices)
+            self._order = G.order()
         self._cg = cg
 
         self._directed = cg._directed
-
-        self._order = G.order()
 
         # Does it allow loops/multiedges ?
         self._loops = loops

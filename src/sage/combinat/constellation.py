@@ -380,7 +380,6 @@ class Constellation_class(Element):
             ...
             ValueError: not connected
         """
-        d = self.degree()
         Sd = self.parent()._sym
 
         if prod(self._g, Sd.one()) != Sd.one():
@@ -1129,7 +1128,6 @@ class Constellations_ld(UniqueRepresentation, Parent):
             return self([Sd.one()], mutable=mutable)
 
         if self._connected:
-            d = self._degree
             while True:
                 g = [Sd.random_element() for _ in range(l - 1)]
                 if perms_are_connected(g):

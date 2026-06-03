@@ -2119,8 +2119,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: def g(s, i):
             ....:     if i < 0:
             ....:         return 1
-            ....:     else:
-            ....:         return s.coefficient(i - 1) + i
+            ....:     return s.coefficient(i - 1) + i
             sage: e = L.series(g, -5); e
             z^-5 + z^-4 + z^-3 + z^-2 + z^-1 + 1 + 2*z + O(z^2)
             sage: f = e^-1; f
@@ -3999,7 +3998,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         elif base_ring in Rings().Commutative():
             category = category.Commutative()
         category = category.Infinite()
-        Parent.__init__(self, base=base_ring, names=names,
+        Parent.__init__(self, base=base_ring, names=names, normalize=False,
                         category=category)
 
     def _repr_(self):
