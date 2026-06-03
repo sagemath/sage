@@ -224,6 +224,10 @@ if [ -z "$ECM_CONFIGURE" ]; then
 fi
 echo
 
+# libecm (src/sage/libs/libecm.pyx) links only -lecm, so disable GMP-ECM's
+# libprimesieve auto-detection or dlopen of libecm fails on macOS.  See gh-42249.
+export ac_cv_lib_primesieve_primesieve_init=no
+
 sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
 
 ###############################################################################
