@@ -203,6 +203,13 @@ ec = dependency(
   disabler: true,
 )
 ecm = cc.find_library('ecm', required: false, disabler: true)
+# GMP-ECM >= 7.0.7 optionally uses libprimesieve (HAVE_LIBPRIMESIEVE) for its
+# prime generator, so libecm references primesieve symbols and the Cython
+# wrapper must link it too (otherwise dlopen fails on macOS, see PR #42249).
+primesieve = dependency('primesieve', required: false)
+if not primesieve.found()
+  primesieve = cc.find_library('primesieve', required: false)
+endif
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
   'fflas-ffpack',
