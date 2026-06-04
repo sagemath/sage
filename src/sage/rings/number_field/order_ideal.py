@@ -757,7 +757,22 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
 
     def is_invertible(self):
         r"""
-        Return ``True`` if this ideal is invertible.
+        Return ``True`` if this ideal is invertible as fractional O ideal.
+        EXAMPLES::
+
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^2+1)
+            sage: O = K.order(2*a)
+            sage: I = O.ideal(2)
+            sage: I.is_invertible() # every principal ideal is invertible
+            True
+            sage: I = O.ideal([2,2*a])
+            sage: I.is_invertible() # but ideals that divide the conductor are not
+            False
+
+        REFERENCES:
+
+        This is proven in [Coh1993]_, Proposition 5.2.5.
         """
         return self.quadratic_form().is_primitive()
 
