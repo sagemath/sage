@@ -6020,14 +6020,12 @@ REFERENCES:
 
 **R**
 
-<<<<<<< HEAD
 .. [Rad1979] David E. Radford, *A natural ring basis for the shuffle algebra
              and an application to group schemes*, J. Algebra **58** (1979), 432-454.
-=======
+
 .. [R17] Ramaré, O., *Rationality of the zeta function of the subgroups of
          abelian p-groups*. Publ. Math. Debrecen 90.1-2.
          :doi:`10.5486/PMD.2017.7466`
->>>>>>> 5d2211f971a (Move local references from dyck_word.py and similarity_class_type.py to master bibliography)
 
 .. [Rai2012] Alexander Raichev.  *Leinartas's partial fraction
              decomposition*.  :arxiv:`1206.4740`.
