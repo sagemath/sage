@@ -2165,7 +2165,7 @@ class DyckWord_complete(DyckWord):
     @combinatorial_map(name='to 321 avoiding permutation')
     def to_321_avoiding_permutation(self) -> Permutation:
         r"""
-        Use the bijection (pp. 60-61 of [Knu1973]_ or section 3.1 of [CK2008]_)
+        Use the bijection (pp. 60-61 of [Knu1973]_ or section 3.1 of [ClKi2008]_)
         to send ``self`` to a `321`-avoiding permutation.
 
         It is shown in [EP2004]_ that it sends the number of centered tunnels
