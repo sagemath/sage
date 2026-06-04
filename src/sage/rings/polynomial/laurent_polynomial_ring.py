@@ -537,6 +537,30 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
     def monomial(self, arg):
         r"""
         Return the monomial with the given exponent.
+
+        INPUT:
+
+        - ``arg`` -- integer; the exponent of the monomial
+
+        EXAMPLES::
+
+            sage: L.<x> = LaurentPolynomialRing(QQ)
+            sage: L.monomial(3)
+            x^3
+            sage: L.monomial(0)
+            1
+
+        Unlike for ordinary polynomials, the exponent may be negative::
+
+            sage: L.monomial(-2)
+            x^-2
+            sage: L.monomial(-1) == ~x
+            True
+
+        TESTS::
+
+            sage: L.monomial(5) == x^5
+            True
         """
         return self.element_class(self, {arg: self.base_ring().one()})
 
