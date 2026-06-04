@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([ecm], [dnl CHECK - test whether the package is already installed
     m4_pushdef([SAGE_ECM_MINVER],[7.0.4])
-    SAGE_SPKG_DEPCHECK([gmp], [
+    SAGE_SPKG_DEPCHECK([gmp primesieve], [
         AC_CHECK_HEADER(ecm.h, [
             AX_ABSOLUTE_HEADER([ecm.h])
             if test x$gl_cv_absolute_ecm_h = x; then
