@@ -10,7 +10,6 @@ from cpython.ref cimport *
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.matrix import matrix_dense
 from sage.matrix.args cimport MatrixArgs_init
-from sage.structure.element cimport Element
 
 cimport sage.matrix.matrix as matrix
 from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
@@ -340,6 +339,34 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
+
+        TESTS:
+
+        Multiplication also works when the entries use multiplication
+        through the ``*`` operator rather than the ``_mul_`` protocol
+        (:issue:`39648`)::
+
+            sage: Ext = ExteriorAlgebra(QQ, ['p'])
+            sage: Ext.inject_variables(verbose=False)
+            sage: Mp = matrix(1, 1, [[p]])
+            sage: Mp[0, 0] * Mp[0, 0]
+            0
+            sage: Mp * Mp
+            [0]
+
+        We can multiply matrices whose entries are themselves matrices
+        (:issue:`42134`)::
+
+            sage: # needs sage.modules
+            sage: MS = MatrixSpace(MatrixSpace(ZZ, 2, 2), 2, 2)
+            sage: A = MS([matrix(ZZ, 2, [n, 0, 0, n]) for n in range(1, 5)])
+            sage: B = A * A
+            sage: B[0, 0]
+            [7 0]
+            [0 7]
+            sage: B[1, 1]
+            [22  0]
+            [ 0 22]
         """
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
@@ -351,8 +378,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         snc = self._ncols
 
         R = self.base_ring()
-        cdef list left_entries = self._entries
-        cdef list right_entries = right._entries
         cdef list v = [None] * (self._nrows * right._ncols)
         zero = R.zero()
         p = 0
@@ -361,7 +386,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             for j in range(nc):
                 z = zero
                 for k in range(snc):
-                    z += (<Element>left_entries[m+k])._mul_(<Element>right_entries[k*nc+j])
+                    z += self._entries[m+k] * right._entries[k*nc+j]
                 v[p] = z
                 p += 1
 
