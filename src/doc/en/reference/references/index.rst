@@ -4328,15 +4328,13 @@ REFERENCES:
 
 .. [KnotAtlas] The Knot atlas. http://katlas.org/wiki/Main_Page
 
-<<<<<<< HEAD
 .. [Knu1970] Donald E. Knuth.
-             *Permutations, matrices, and generalized Young tableaux*.
-             Pacific J. Math. Volume 34, Number 3 (1970), pp. 709-727.
-             http://projecteuclid.org/euclid.pjm/1102971948
-=======
+            *Permutations, matrices, and generalized Young tableaux*.
+            Pacific J. Math. Volume 34, Number 3 (1970), pp. 709-727.
+            http://projecteuclid.org/euclid.pjm/1102971948
+
 .. [Knu1973] \D. Knuth. *The Art of Computer Programming, Vol. III*.
              Addison-Wesley. Reading, MA. 1973.
->>>>>>> 5d2211f971a (Move local references from dyck_word.py and similarity_class_type.py to master bibliography)
 
 .. [Knu1995] Donald E. Knuth, *Overlapping Pfaffians*,
              :arxiv:`math/9503234v1`.
