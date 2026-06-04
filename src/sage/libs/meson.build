@@ -172,7 +172,7 @@ foreach name, pyx : extension_data
     deps += [homfly]
   elif name == 'libecm'
     deps += [ecm]
-    if primesieve.found()
+    if ecm_uses_primesieve
       deps += [primesieve]
     endif
   endif

@@ -203,12 +203,27 @@ ec = dependency(
   disabler: true,
 )
 ecm = cc.find_library('ecm', required: false, disabler: true)
-# GMP-ECM >= 7.0.7 optionally uses libprimesieve (HAVE_LIBPRIMESIEVE) for its
-# prime generator, so libecm references primesieve symbols and the Cython
-# wrapper must link it too (otherwise dlopen fails on macOS, see PR #42249).
-primesieve = dependency('primesieve', required: false)
-if not primesieve.found()
-  primesieve = cc.find_library('primesieve', required: false)
+# GMP-ECM >= 7.0.7 can use libprimesieve (HAVE_LIBPRIMESIEVE) for its prime
+# generator. Sage links the *static* libecm, so primesieve symbols pulled in by
+# ecm end up as undefined references in the Cython wrapper, which must then link
+# primesieve too (otherwise the module fails to dlopen on macOS, see PR #42249).
+# Earlier ecm releases do not reference primesieve, so gate on the version.
+ecm_uses_primesieve = false
+if ecm.found()
+  ecm_version = cc.get_define(
+    'ECM_VERSION',
+    prefix: '#include <ecm.h>',
+    dependencies: [gmp],
+  ).strip('"')
+  ecm_uses_primesieve = ecm_version != '' and ecm_version.version_compare(
+    '>=7.0.7',
+  )
+endif
+if ecm_uses_primesieve
+  primesieve = dependency('primesieve', required: false)
+  if not primesieve.found()
+    primesieve = cc.find_library('primesieve', required: true)
+  endif
 endif
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
