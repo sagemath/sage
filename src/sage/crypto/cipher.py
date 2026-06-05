@@ -154,28 +154,8 @@ class PublicKeyCipher(Cipher):
     Public key cipher class
     """
     def __init__(self, parent, key, public=True):
-        r"""
+        """
         Create a public key cipher.
-
-        INPUT:
-
-        - ``parent`` -- the parent cryptosystem of this cipher
-
-        - ``key`` -- the key used for this cipher
-
-        - ``public`` -- boolean (default: ``True``); whether ``key`` is the
-          public key (``True``) or the private key (``False``)
-
-        TESTS:
-
-        ``PublicKeyCipher`` is a base class that is not currently used by any
-        cryptosystem in Sage, so we exercise the constructor directly::
-
-            sage: from sage.crypto.cipher import PublicKeyCipher
-            sage: P = ShiftCryptosystem(AlphabeticStrings())
-            sage: E = PublicKeyCipher(P, 3)
-            sage: E.key()
-            3
         """
         Cipher.__init__(self, parent, key)
         self._public = public
