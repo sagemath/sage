@@ -3010,6 +3010,13 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
         ...
         ValueError: invalid choice of q
 
+    The value of `q` must satisfy `q < p/4`::
+
+        sage: special_supersingular_curve(GF(11^2), q=5)
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid choice of q
+
     If ``maximal_order`` is set to ``True``, the function also returns
     a quaternion maximal order which corresponds to the endomorphism ring::
 
@@ -3131,7 +3138,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
 
     Also try it when `q` is given:
 
-        sage: p = random_prime(300, lbound=10)
+        sage: p = random_prime(300, lbound=50)
         sage: k = ZZ(randrange(1, 5))
         sage: while True:
         ....:     q = randrange(1, p//4)
@@ -3161,7 +3168,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
     Also try it when `q` is given and ``maximal_order`` is requested::
 
         sage: while True:
-        ....:     q = ZZ(randrange(1, min(50, p)))
+        ....:     q = ZZ(randrange(1, min(50, p//4+1)))
         ....:     if QuaternionAlgebra(-q, -p).discriminant() != p:
         ....:         continue
         ....:     E = special_supersingular_curve(F, q)
@@ -3212,7 +3219,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
             q += 1
     else:
         q = ZZ(q)
-        if p.divides(q) or hilbert_conductor(-q, -p) != p:
+        if 4*q >= p or p.divides(q) or hilbert_conductor(-q, -p) != p:
             raise ValueError('invalid choice of q')
 
     from sage.arith.misc import fundamental_discriminant
@@ -3294,8 +3301,11 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
 
             while l.divides(Quat.quaternion_order(lgens).discriminant()):
                 mat = matrix(matrix_of_quat(gen, tors).list() for gen in lgens)
+                ker = mat.left_kernel_matrix().change_ring(ZZ)
+                if not ker.nrows():
+                    raise RuntimeError('could not saturate quaternion order; this is likely an invalid choice of q')
 
-                for vec in mat.left_kernel_matrix().change_ring(ZZ):
+                for vec in ker:
                     gen = sum(c * g for c, g in zip(vec, lgens)) / l
                     lgens.append(gen)
 

@@ -3486,27 +3486,26 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 assert lc != 1 or val != 0
                 temp /= lc
                 return P(BR(lc**n) * LazyModuleElement.__pow__(temp, n).shift(new_val))
-            else:
-                lc = self[val]
-                lcp = P._laurent_poly_ring(lc ** n)
-                offset = ZZ(val*n)
+            lc = self[val]
+            lcp = P._laurent_poly_ring(lc ** n)
+            offset = ZZ(val*n)
 
-                # Since arity > 1, the exact case will be handled above.
-                sparse = P._sparse
-                if isinstance(cs, Stream_exact):
-                    cs = Stream_exact(cs._initial_coefficients[1:], order=0, constant=0)
-                else:
-                    cs = Stream_truncated(cs, -val, 1)
-                lci = ~lc
-                # We unroll the construction from LazyModuleElement.__pow__().
-                # This is done because we want elements in the fraction field of _Laurent_poly_ring
-                f = Stream_function(lambda k: prod(n - i for i in range(k)) * lci**k / ZZ(k).factorial(),
-                                    is_sparse=P._sparse, approximate_order=0)
-                cs = Stream_cauchy_compose(f, cs, is_sparse=sparse)
-                if lcp != 1:
-                    cs = Stream_rmul(cs, lcp, is_sparse=sparse)
-                cs = Stream_shift(cs, offset)  # to get the correct valuation
-                return P.element_class(P, cs)
+            # Since arity > 1, the exact case will be handled above.
+            sparse = P._sparse
+            if isinstance(cs, Stream_exact):
+                cs = Stream_exact(cs._initial_coefficients[1:], order=0, constant=0)
+            else:
+                cs = Stream_truncated(cs, -val, 1)
+            lci = ~lc
+            # We unroll the construction from LazyModuleElement.__pow__().
+            # This is done because we want elements in the fraction field of _Laurent_poly_ring
+            f = Stream_function(lambda k: prod(n - i for i in range(k)) * lci**k / ZZ(k).factorial(),
+                                is_sparse=P._sparse, approximate_order=0)
+            cs = Stream_cauchy_compose(f, cs, is_sparse=sparse)
+            if lcp != 1:
+                cs = Stream_rmul(cs, lcp, is_sparse=sparse)
+            cs = Stream_shift(cs, offset)  # to get the correct valuation
+            return P.element_class(P, cs)
 
         return super().__pow__(n)
 
