@@ -758,7 +758,6 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
     def is_invertible(self):
         r"""
         Return ``True`` if this ideal is invertible as fractional O ideal.
-        
         EXAMPLES::
 
             sage: x = polygen(ZZ)
