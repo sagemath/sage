@@ -77,6 +77,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing import List
 import sage.rings.abc
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.noetherian_rings import NoetherianRings
@@ -1352,6 +1353,27 @@ class Order(Parent, sage.rings.abc.Order):
             sage: type(K.order(5*t).conductor())
             <class 'sage.rings.integer.Integer'>
         """
+
+        # this was first implemented by @kevinywlui: https://github.com/kevinywlui/sage/tree/order
+        O = self
+        OK = self.integral_closure()
+        n = O.rank()
+
+        OK_basis = OK.basis()
+
+        from sage.matrix.all import block_matrix, matrix
+        def Bj(j):
+            return matrix([O.coordinates(x * OK_basis[j]) for x in OK_basis]).transpose()
+
+        from sage.modules.free_module_element import vector
+        M = block_matrix(n, 1, [Bj(j) for j in range(n)])
+        d = M.denominator()
+        dM = (d * M).change_ring(ZZ)
+        H = dM.hermite_form(include_zero_rows=False)
+        Hinv = H.inverse()
+        generators = vector(O.basis()) * d * Hinv
+        return self.number_field().ideal(*generators)
+
         if not isinstance(self._K, sage.rings.abc.NumberField_quadratic):
             raise NotImplementedError('not implemented for number fields of degree != 2')
         D = self.discriminant()
