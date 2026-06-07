@@ -48,7 +48,7 @@ Polytopes::
 
     sage: points = random_matrix(ZZ, 6, 3, x=7).rows()                                  # needs sage.modules
     sage: L = LatticePolytope(points)                                                   # needs sage.geometry.polyhedron sage.modules
-    sage: L.npoints(); L.plot3d()                           # random                    # needs sage.geometry.polyhedron sage.modules sage.plot
+    sage: L.n_points(); L.plot3d()                           # random                    # needs sage.geometry.polyhedron sage.modules sage.plot
 
 :ref:`Root systems, Coxeter and Weyl groups <sage.combinat.root_system.all>`::
 

@@ -83,7 +83,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
         sage: K.<a> = GF(5^2).over()
         sage: L.<b> = GF(5^4).over(K)
         sage: phi = L.hom([b^5, a^5]); phi
@@ -166,8 +165,8 @@ cdef class RingExtensionHomomorphism(RingMap):
                     gens += base.gens()
                     base = base.base_ring()
             # We construct the backend morphism
-            im_gens = [ codomain(x) for x in defn ]
-            backend_bases = [ backend_domain ]
+            im_gens = [codomain(x) for x in defn]
+            backend_bases = [backend_domain]
             b = backend_domain.base_ring()
             while b is not b.base_ring():
                 backend_bases.append(b)
@@ -175,7 +174,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             backend_bases.reverse()
             current_morphism = None
             for current_domain in backend_bases:
-                current_im_gens = [ ]
+                current_im_gens = []
                 for x in current_domain.gens():
                     pol = domain(backend_domain(x)).polynomial(base)
                     if base_map is not None:
@@ -237,7 +236,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
             sage: A.<sqrt2> = QQ.extension(x^2 - 2)
             sage: K.<sqrt2> = A.over()
@@ -330,7 +328,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^2).over()   # over GF(5)
             sage: L.<b> = GF(5^6).over(K)
             sage: FrobK = K.hom([a^5])
@@ -353,7 +350,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^2).over()   # over GF(5)
             sage: FrobK = K.hom([a^5])
             sage: FrobK.is_identity()
@@ -363,7 +359,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         Coercion maps are not considered as identity morphisms::
 
-            sage: # needs sage.rings.finite_rings
             sage: L.<b> = GF(5^6).over(K)
             sage: iota = L.defining_morphism(); iota
             Ring morphism:
@@ -383,7 +378,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(5^10).over(GF(5^5))
             sage: iota = K.defining_morphism(); iota
             Ring morphism:
@@ -411,7 +405,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K = GF(5^10).over(GF(5^5))
             sage: iota = K.defining_morphism(); iota
             Ring morphism:
@@ -442,7 +435,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^2).over()   # over GF(5)
             sage: L.<b> = GF(5^6).over(K)
             sage: FrobL = L.hom([b^5, a^5])  # absolute Frobenius
@@ -455,7 +447,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         s = ""
         gens = self.domain().gens()
         if self._im_gens is None:
-            self._im_gens = [ self(x) for x in gens ]
+            self._im_gens = [self(x) for x in gens]
         for i in range(len(gens)):
             s += "%s |--> %s\n" % (gens[i], self._im_gens[i])
         if self.base_map() is not None:
@@ -473,7 +465,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: A.<sqrt5> = QQ.extension(x^2 - 5)
             sage: K.<sqrt5> = A.over()
@@ -499,7 +490,6 @@ cdef class RingExtensionHomomorphism(RingMap):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^2).over()   # over GF(5)
             sage: f = K.hom([a^5])
             sage: g = copy(f)    # indirect doctest
@@ -534,7 +524,6 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
         sage: K = GF(11^9).over(GF(11^3))
         sage: f = K.coerce_map_from(GF(11^9)); f
         Coercion morphism:
@@ -623,7 +612,6 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
         sage: K = GF(11^9).over(GF(11^3))
         sage: f = GF(11^9).convert_map_from(K); f
         Canonical morphism:
@@ -736,7 +724,8 @@ cdef class MapFreeModuleToRelativeRing(Map):
               To:   Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
         """
         self._degree = E.degree(K)
-        self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
+        self._basis = [(<RingExtensionElement>x)._backend
+                       for x in E.basis_over(K)]
         self._f = backend_morphism(E.defining_morphism(K), forget='codomain')
         domain = K ** self._degree
         parent = domain.Hom(E)
@@ -824,7 +813,8 @@ cdef class MapRelativeRingToFreeModule(Map):
         cdef Parent L, base
 
         self._degree = (<RingExtensionWithBasis>E)._degree_over(K)
-        self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
+        self._basis = [(<RingExtensionElement>x)._backend
+                       for x in E.basis_over(K)]
         f = backend_morphism(E.defining_morphism(K), forget='codomain')
         codomain = K ** self._degree
         Map.__init__(self, E.Hom(codomain))
@@ -910,7 +900,7 @@ cdef class MapRelativeRingToFreeModule(Map):
             sage: j(a + 2*a^2)   # indirect doctest                                     # needs sage.rings.finite_rings
             (0, 1, 2)
         """
-        cdef list coeffs = [ ]
+        cdef list coeffs = []
         dK = self._dimK
         w = (self._jL(x._backend) * self._matrix).list()
         for i in range(self._degree):

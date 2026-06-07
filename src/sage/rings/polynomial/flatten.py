@@ -37,12 +37,12 @@ import itertools
 from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.misc.cachefunc import cached_method
-from .polynomial_ring_constructor import PolynomialRing
-from .polynomial_ring import PolynomialRing_generic
-from .multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polydict import ETuple
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 class FlatteningMorphism(Morphism):
@@ -110,7 +110,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<v> = NumberField(x^3 - 2)
             sage: R = K['x','y']['a','b']
@@ -121,7 +120,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R = QQbar['x','y']['a','b']
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)
@@ -130,7 +128,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQbar, 1)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)
@@ -140,7 +137,6 @@ class FlatteningMorphism(Morphism):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: R.<z> = PolynomialRing(QQbar)
             sage: from sage.rings.polynomial.flatten import FlatteningMorphism
             sage: f = FlatteningMorphism(R)

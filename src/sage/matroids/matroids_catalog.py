@@ -184,6 +184,5 @@ lazy_import(
     ),
 )
 lazy_import("sage.matroids", "catalog")
-lazy_import("sage.matroids", "named_matroids")
 
 del lazy_import  # delete so it doesn't appear under tab completion

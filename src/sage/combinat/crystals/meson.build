@@ -23,27 +23,31 @@ py.install_sources(
   'kirillov_reshetikhin.py',
   'kyoto_path_model.py',
   'letters.pxd',
+  'letters.pyx',
   'littelmann_path.py',
   'monomial_crystals.py',
   'multisegments.py',
   'mv_polytopes.py',
   'pbw_crystal.py',
   'pbw_datum.pxd',
+  'pbw_datum.pyx',
   'polyhedral_realization.py',
   'spins.pxd',
+  'spins.pyx',
   'star_crystal.py',
   'subcrystal.py',
   'tensor_product.py',
   'tensor_product_element.pxd',
+  'tensor_product_element.pyx',
   'virtual_crystal.py',
   subdir: 'sage/combinat/crystals',
 )
 
 extension_data = {
-  'letters' : files('letters.pyx'),
-  'pbw_datum' : files('pbw_datum.pyx'),
-  'spins' : files('spins.pyx'),
-  'tensor_product_element' : files('tensor_product_element.pyx'),
+  'letters': files('letters.pyx'),
+  'pbw_datum': files('pbw_datum.pyx'),
+  'spins': files('spins.pyx'),
+  'tensor_product_element': files('tensor_product_element.pyx'),
 }
 
 foreach name, pyx : extension_data

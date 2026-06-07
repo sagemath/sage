@@ -1,14 +1,8 @@
 # interfaces to other interpreters
 
-# import problems
-try:
-    # from maxima_lib import maxima_lib
-    from sage.interfaces.maxima import maxima, Maxima
-except ImportError:
-    pass
-
 from sage.misc.lazy_import import lazy_import
 
+lazy_import('sage.interfaces.maxima', 'maxima')
 lazy_import('sage.interfaces.sage0', ['sage0', 'sage0_version', 'Sage'])
 lazy_import('sage.interfaces.axiom', ['Axiom', 'axiom'])
 lazy_import('sage.interfaces.ecm', ['ECM', 'ecm'])
@@ -23,7 +17,7 @@ lazy_import('sage.interfaces.giac', ['giac', 'Giac'])
 lazy_import('sage.interfaces.gnuplot', 'gnuplot')
 lazy_import('sage.interfaces.gp', ['gp', 'gp_version', 'Gp'])
 lazy_import('sage.interfaces.kash', ['kash', 'kash_version', 'Kash'])
-lazy_import('sage.interfaces.khoca', ['khoca', 'Khoca'])
+lazy_import('sage.interfaces.khoca', ['Khoca'])
 lazy_import('sage.interfaces.lie', ['lie', 'LiE'])
 lazy_import('sage.interfaces.lisp', ['lisp', 'Lisp'])
 lazy_import('sage.interfaces.macaulay2', ['macaulay2', 'Macaulay2'])

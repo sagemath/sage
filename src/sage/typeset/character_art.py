@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Base Class for Character-Based Art
 
@@ -103,8 +102,7 @@ class CharacterArt(SageObject):
             sage: from sage.typeset.ascii_art import AsciiArt
             sage: AsciiArt.empty()
         """
-        empty_string = cls._string_type()
-        return cls([empty_string])
+        return cls([''])
 
     def __getitem__(self, key):
         r"""
@@ -145,7 +143,6 @@ class CharacterArt(SageObject):
             '  *  \n * * \n*****'
         """
         # Compute the max length of a draw
-        global MAX_WIDTH
         if MAX_WIDTH is not None:
             hsize = MAX_WIDTH
         else:
@@ -167,7 +164,7 @@ class CharacterArt(SageObject):
             sage: format(unicode_art(M))                                                # needs sage.modules
             '\u239b1 2\u239e\n\u239d3 4\u23a0'
         """
-        return format(self._string_type(self), fmt)
+        return format(str(self), fmt)
 
     def get_baseline(self):
         r"""

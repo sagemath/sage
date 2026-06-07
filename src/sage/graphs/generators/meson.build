@@ -1,23 +1,28 @@
 py.install_sources(
   '__init__.py',
+  'luw_graphs.py',
   'all.py',
   'basic.py',
   'chessboard.py',
   'classical_geometries.py',
   'degree_sequence.py',
+  'distance_regular.pyx',
   'families.py',
+  'generators_test.py',
   'intersection.py',
   'platonic_solids.py',
   'random.py',
+  'shortened_000_111_extended_binary_Golay_code_graph.pickle.xz',
   'smallgraphs.py',
   'trees.pxd',
+  'trees.pyx',
   'world_map.py',
   subdir: 'sage/graphs/generators',
 )
 
 extension_data = {
-  'distance_regular' : files('distance_regular.pyx'),
-  'trees' : files('trees.pyx'),
+  'distance_regular': files('distance_regular.pyx'),
+  'trees': files('trees.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -30,4 +35,3 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
-

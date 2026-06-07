@@ -29,6 +29,6 @@ sys-apps/which
 sys-apps/diffutils
 sys-devel/patch
 app-arch/bzip2
-sys-devel/patch
 dev-util/pkgconf
 sys-libs/zlib
+dev-libs/boost

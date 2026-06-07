@@ -666,12 +666,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         # make the denominator monic
         c = t0.leading_coefficient()
-        t0 = t0.monic()
-        t1 = t1/c
-
-        return t1, t0
-
-    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
+        return t1 / c, t0.monic()
 
     @cached_method
     def is_irreducible(self):

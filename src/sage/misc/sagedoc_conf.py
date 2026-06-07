@@ -191,7 +191,7 @@ class SagemathTransform(Transform):
     default_priority = 500
 
     def apply(self):
-        for node in self.document.traverse(nodes.literal_block):
+        for node in self.document.findall(nodes.literal_block):
             if node.get('language') is None and node.astext().startswith('sage:'):
                 node['language'] = 'ipycon'
                 source = node.rawsource

@@ -28,24 +28,24 @@ AUTHORS:
 #              https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from itertools import accumulate
+
 from collections.abc import Sequence
+from itertools import accumulate
 
-from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.additive_monoids import AdditiveMonoids
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.rings.integer_ring import ZZ
-from .combinat import CombinatorialElement
 from sage.categories.cartesian_product import cartesian_product
-
-from .integer_lists import IntegerListsLex
-from sage.rings.integer import Integer
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.misc.persist import register_unpickle_override
-
+from sage.combinat.integer_lists import IntegerListsLex
 from sage.misc.lazy_import import lazy_import
+from sage.misc.persist import register_unpickle_override
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 lazy_import("sage.combinat.partition", "Partition")
 
 
@@ -174,15 +174,13 @@ class Composition(CombinatorialElement):
             if isinstance(descents, tuple):
                 return Compositions().from_descents(descents[0],
                                                     nps=descents[1])
-            else:
-                return Compositions().from_descents(descents)
-        elif code is not None:
+            return Compositions().from_descents(descents)
+        if code is not None:
             return Compositions().from_code(code)
-        elif from_subset is not None:
+        if from_subset is not None:
             return Compositions().from_subset(*from_subset)
-        elif isinstance(co, Composition):
+        if isinstance(co, Composition):
             return co
-
         return Compositions()(co)
 
     def __init__(self, parent, lst):
@@ -245,23 +243,15 @@ class Composition(CombinatorialElement):
 
     def __setstate__(self, state):
         r"""
-        In order to maintain backwards compatibility and be able to unpickle a
-        old pickle from ``Composition_class`` we have to override the default
-        ``__setstate__``.
+        Set state from pickling.
 
         EXAMPLES::
 
-            sage: loads(b"x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\x011\n\xf2\x8b3K2\xf3\xf3\xb8\x9c\x11\xec\xf8\xe4\x9c\xc4\xe2b\xaeBF\xcd\xc6B\xa6\xdaBf\x8dP\xd6\xf8\x8c\xc4\xe2\x8cB\x16? +'\xb3\xb8\xa4\x905\xb6\x90M\x03bZQf^z\xb1^f^Ijzj\x11Wnbvj<\x8cS\xc8\x1e\xcah\xd8\x1aT\xc8\x91\x01d\x18\x01\x19\x9c\x19P\x11\xae\xd4\xd2$=\x00eW0g")
-            [1, 2, 1]
             sage: loads(dumps( Composition([1,2,1]) ))  # indirect doctest
             [1, 2, 1]
         """
-        if isinstance(state, dict):   # for old pickles from Composition_class
-            self._set_parent(Compositions())
-            self.__dict__ = state
-        else:
-            self._set_parent(state[0])
-            self.__dict__ = state[1]
+        self._set_parent(state[0])
+        self.__dict__ = state[1]
 
     @combinatorial_map(order=2, name='conjugate')
     def conjugate(self) -> Composition:
@@ -831,8 +821,7 @@ class Composition(CombinatorialElement):
         """
         if not self:
             return FiniteEnumeratedSet([self])
-        else:
-            return cartesian_product([Compositions(i) for i in self]).map(Composition.sum)
+        return cartesian_product([Compositions(i) for i in self]).map(Composition.sum)
 
     def is_finer(self, co2) -> bool:
         """
@@ -1340,9 +1329,8 @@ class Composition(CombinatorialElement):
             from sage.combinat.shuffle import ShuffleProduct_overlapping
             return ShuffleProduct_overlapping(self, other,
                                               Compositions())
-        else:
-            from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
-            return ShuffleProduct_w1w2(self, other)
+        from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
+        return ShuffleProduct_w1w2(self, other)
 
     def wll_gt(self, co2) -> bool:
         """
@@ -1395,7 +1383,7 @@ class Composition(CombinatorialElement):
         co1 = self
         if sum(co1) > sum(co2):
             return True
-        elif sum(co1) < sum(co2):
+        if sum(co1) < sum(co2):
             return False
         if len(co1) > len(co2):
             return True
@@ -1404,7 +1392,7 @@ class Composition(CombinatorialElement):
         for i in range(len(co1)):
             if co1[i] > co2[i]:
                 return True
-            elif co1[i] < co2[i]:
+            if co1[i] < co2[i]:
                 return False
         return False
 
@@ -1714,41 +1702,39 @@ class Compositions(UniqueRepresentation, Parent):
             if kwargs:
                 raise ValueError("incorrect number of arguments")
             return Compositions_all()
+        if not kwargs:
+            if isinstance(n, (int, Integer)):
+                return Compositions_n(n)
+            raise ValueError("n must be an integer")
         else:
-            if not kwargs:
-                if isinstance(n, (int, Integer)):
-                    return Compositions_n(n)
+            # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
+            txt = "Compositions of the integer %s satisfying constraints %s"
+            kwargs['name'] = txt % (n, ", ".join(f"{key}={kwargs[key]}"
+                                                 for key in sorted(kwargs)))
+            kwargs['element_class'] = Composition
+            if 'min_part' not in kwargs:
+                kwargs['min_part'] = 1
+            elif kwargs['min_part'] == 0:
+                raise ValueError("setting min_part=0 is not allowed for Compositions")
+
+            if 'outer' in kwargs:
+                kwargs['ceiling'] = list(kwargs['outer'])
+                if 'max_length' in kwargs:
+                    kwargs['max_length'] = min(len(kwargs['outer']), kwargs['max_length'])
                 else:
-                    raise ValueError("n must be an integer")
-            else:
-                # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
-                txt = "Compositions of the integer %s satisfying constraints %s"
-                kwargs['name'] = txt % (n, ", ".join(f"{key}={kwargs[key]}"
-                                                     for key in sorted(kwargs)))
-                kwargs['element_class'] = Composition
-                if 'min_part' not in kwargs:
-                    kwargs['min_part'] = 1
-                elif kwargs['min_part'] == 0:
-                    raise ValueError("setting min_part=0 is not allowed for Compositions")
+                    kwargs['max_length'] = len(kwargs['outer'])
+                del kwargs['outer']
 
-                if 'outer' in kwargs:
-                    kwargs['ceiling'] = list(kwargs['outer'])
-                    if 'max_length' in kwargs:
-                        kwargs['max_length'] = min(len(kwargs['outer']), kwargs['max_length'])
-                    else:
-                        kwargs['max_length'] = len(kwargs['outer'])
-                    del kwargs['outer']
-
-                if 'inner' in kwargs:
-                    inner = list(kwargs['inner'])
-                    kwargs['floor'] = inner
-                    del kwargs['inner']
-                    # Should this be handled by integer lists lex?
-                    if 'min_length' in kwargs:
-                        kwargs['min_length'] = max(len(inner), kwargs['min_length'])
-                    else:
-                        kwargs['min_length'] = len(inner)
-                return IntegerListsLex(n, **kwargs)
+            if 'inner' in kwargs:
+                inner = list(kwargs['inner'])
+                kwargs['floor'] = inner
+                del kwargs['inner']
+                # Should this be handled by integer lists lex?
+                if 'min_length' in kwargs:
+                    kwargs['min_length'] = max(len(inner), kwargs['min_length'])
+                else:
+                    kwargs['min_length'] = len(inner)
+            return IntegerListsLex(n, **kwargs)
 
     def __init__(self, is_infinite=False, category=None):
         """
@@ -1804,15 +1790,14 @@ class Compositions(UniqueRepresentation, Parent):
         """
         if isinstance(x, (Composition, Partition)):
             return True
-        elif isinstance(x, list):
+        if isinstance(x, list):
             for i in x:
                 if (not isinstance(i, (int, Integer))) and i not in ZZ:
                     return False
                 if i < 0:
                     return False
             return True
-        else:
-            return False
+        return False
 
     def from_descents(self, descents, nps=None) -> Composition:
         """
@@ -1883,8 +1868,7 @@ class Compositions(UniqueRepresentation, Parent):
         if not d:
             if n == 0:
                 return self.element_class(self, [])
-            else:
-                return self.element_class(self, [n])
+            return self.element_class(self, [n])
 
         if n <= d[-1]:
             raise ValueError("S (=%s) is not a subset of {1, ..., %s}"
@@ -2108,10 +2092,9 @@ class Compositions_n(Compositions):
         """
         if self.n >= 1:
             return ZZ(2)**(self.n - 1)
-        elif self.n == 0:
+        if self.n == 0:
             return ZZ.one()
-        else:
-            return ZZ.zero()
+        return ZZ.zero()
 
     def random_element(self) -> Composition:
         r"""

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 The Unknown truth value
 
@@ -31,10 +30,9 @@ EXAMPLES::
     sage: def func(n):
     ....:     if n > 0:
     ....:         return True
-    ....:     elif n < 0:
+    ....:     if n < 0:
     ....:         return False
-    ....:     else:
-    ....:         return Unknown
+    ....:     return Unknown
 
 Using direct identification::
 
@@ -164,10 +162,9 @@ class UnknownClass(UniqueRepresentation):
         """
         if other is False:
             return False
-        elif other is True or other is Unknown:
+        if other is True or other is Unknown:
             return self
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __or__(self, other):
         """
@@ -187,10 +184,9 @@ class UnknownClass(UniqueRepresentation):
         """
         if other is True:
             return True
-        elif other is False or other is Unknown:
+        if other is False or other is Unknown:
             return self
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __richcmp__(self, other, op):
         """
@@ -215,8 +211,7 @@ class UnknownClass(UniqueRepresentation):
             return NotImplemented
         if other:
             return rich_to_bool(op, -1)
-        else:
-            return rich_to_bool(op, +1)
+        return rich_to_bool(op, +1)
 
 
 Unknown = UnknownClass()

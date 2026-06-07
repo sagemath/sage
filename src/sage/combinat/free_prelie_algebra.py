@@ -373,7 +373,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(RT([RT([])]))
             2
         """
-        return t.node_number()
+        return t.number_of_nodes()
 
     def _an_element_(self):
         """
@@ -609,7 +609,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         resu = self.zero()
         for k in range(min_deg, N + 1):   # total degree of (x ; y, y, y, y)
             for mx, coef_x in xx:
-                dx = mx.node_number()
+                dx = mx.number_of_nodes()
                 step = self.zero()
                 for pi in IntegerVectors(k - dx, n, min_part=vy, max_part=max_y):
                     for ly in product(*[y_homog[part] for part in pi]):
@@ -981,12 +981,11 @@ class PreLieFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return PreLieFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], PreLieFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """

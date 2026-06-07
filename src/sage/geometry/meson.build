@@ -1,5 +1,6 @@
 py.install_sources(
   '__init__.py',
+  'abc.pyx',
   'all.py',
   'cone.py',
   'cone_catalog.py',
@@ -10,26 +11,31 @@ py.install_sources(
   'fan_morphism.py',
   'hasse_diagram.py',
   'integral_points.py',
+  'integral_points_generic_dense.pyx',
+  'integral_points_integer_dense.pyx',
   'lattice_polytope.py',
   'linear_expression.py',
   'newton_polygon.py',
+  'palp_normal_form.pyx',
+  'point_collection.pyx',
   'polyhedral_complex.py',
   'pseudolines.py',
   'relative_interior.py',
   'ribbon_graph.py',
   'toric_lattice.py',
+  'toric_lattice_element.pyx',
   'toric_plotter.py',
   'voronoi_diagram.py',
   subdir: 'sage/geometry',
 )
 
 extension_data = {
-  'abc' : files('abc.pyx'),
-  'integral_points_generic_dense' : files('integral_points_generic_dense.pyx'),
-  'integral_points_integer_dense' : files('integral_points_integer_dense.pyx'),
-  'palp_normal_form' : files('palp_normal_form.pyx'),
-  'point_collection' : files('point_collection.pyx'),
-  'toric_lattice_element' : files('toric_lattice_element.pyx'),
+  'abc': files('abc.pyx'),
+  'integral_points_generic_dense': files('integral_points_generic_dense.pyx'),
+  'integral_points_integer_dense': files('integral_points_integer_dense.pyx'),
+  'palp_normal_form': files('palp_normal_form.pyx'),
+  'point_collection': files('point_collection.pyx'),
+  'toric_lattice_element': files('toric_lattice_element.pyx'),
 }
 
 foreach name, pyx : extension_data

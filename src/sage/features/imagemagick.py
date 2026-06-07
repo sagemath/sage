@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``imagemagick``
 
@@ -88,7 +87,8 @@ class Magick(Executable):
                 '-loop', '0', filename_png, filename_gif]
 
         try:
-            result = run(cmd, cwd=base, capture_output=True, text=True)
+            result = run(cmd, cwd=base, capture_output=True, text=True,
+                         check=False)
         except OSError as e:
             return FeatureTestResult(self, False, reason='Running command "{}" '
                         'raised an OSError "{}" '.format(' '.join(cmd), e))

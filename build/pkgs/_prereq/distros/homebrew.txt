@@ -9,3 +9,4 @@
 #
 pkgconf
 zlib
+boost

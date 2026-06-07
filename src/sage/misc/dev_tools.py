@@ -64,10 +64,11 @@ def runsnake(command):
         - :class:`Profiler`
     """
     import cProfile
-    from sage.misc.temporary_file import tmp_filename
+
     from sage.misc.misc import get_main_globals
-    from sage.repl.preparse import preparse
     from sage.misc.superseded import deprecation
+    from sage.misc.temporary_file import tmp_filename
+    from sage.repl.preparse import preparse
 
     deprecation(39274, "just use the runsnake program directly")
 
@@ -111,28 +112,26 @@ def import_statement_string(module, names, lazy):
                 if name is None:
                     raise ValueError("cannot lazy import modules")
                 return "lazy_import('%s', '%s')" % (module, name)
-            else:
-                return "lazy_import('%s', '%s', '%s')" % (module, name, alias)
+            return "lazy_import('%s', '%s', '%s')" % (module, name, alias)
         obj_names = "[" + ", ".join("'" + name[0] + "'" for name in names) + "]"
         obj_aliases = "[" + ", ".join("'" + name[1] + "'" for name in names) + "]"
         return "lazy_import('%s', %s, %s)" % (module, obj_names, obj_aliases)
-    else:
-        import_module = False
-        name_list = []
-        for name, alias in names:
-            if name == alias:
-                if name is None:
-                    import_module = True
-                    continue
-                name_list.append(name)
-            else:
-                name_list.append("%s as %s" % (name, alias))
-        res = []
-        if import_module:
-            res.append("import %s" % module)
-        if name_list:
-            res.append("from %s import %s" % (module, ', '.join(name_list)))
-        return "\n".join(res)
+    import_module = False
+    name_list = []
+    for name, alias in names:
+        if name == alias:
+            if name is None:
+                import_module = True
+                continue
+            name_list.append(name)
+        else:
+            name_list.append("%s as %s" % (name, alias))
+    res = []
+    if import_module:
+        res.append("import %s" % module)
+    if name_list:
+        res.append("from %s import %s" % (module, ', '.join(name_list)))
+    return "\n".join(res)
 
 
 def load_submodules(module=None, exclude_pattern=None):
@@ -165,19 +164,19 @@ def load_submodules(module=None, exclude_pattern=None):
     The second argument allows to exclude a pattern::
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry, "database$|lattice")
-        load sage.geometry.cone... succeeded
-        load sage.geometry.cone_catalog... succeeded
+        load sage.geometry...
+        ...
         load sage.geometry.fan_isomorphism... succeeded
         ...
-        load sage.geometry.riemannian_manifolds.surface3d_generators... succeeded
 
         sage: sage.misc.dev_tools.load_submodules(sage.geometry)
         load sage.geometry.polyhedron.lattice_euclidean_group_element... succeeded
         load sage.geometry.polyhedron.palp_database... succeeded
         load sage.geometry.polyhedron.ppl_lattice_polygon... succeeded
     """
-    from .package_dir import walk_packages
     import importlib
+
+    from .package_dir import walk_packages
 
     if module is None:
         import sage
@@ -275,8 +274,12 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     """
     from sage.misc.lazy_import import LazyImport
 
+    # Create a copy to avoid errors if the sys.modules dict changes
+    # while we are iterating over it.
+    mods = sys.modules.copy()
+
     obj = []
-    for smodule_name, smodule in sys.modules.items():
+    for smodule_name, smodule in mods.items():
         if module_name and not smodule_name.startswith(module_name):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
@@ -462,8 +465,9 @@ def import_statements(*objects, **kwds):
         detect deprecated stuff). So, if you use it, double check the answer and
         report weird behaviors.
     """
-    import itertools
     import inspect
+    import itertools
+
     from sage.misc.lazy_import import LazyImport
 
     answer = defaultdict(list)
@@ -576,7 +580,7 @@ def import_statements(*objects, **kwds):
                 """
                 return all(ord(c) < 128 for c in s)
             if any(is_ascii(s)
-                   for (module_name, obj_names) in modules.items()
+                   for obj_names in modules.values()
                    for s in obj_names):
                 for module_name, obj_names in list(modules.items()):
                     if any(not is_ascii(s) for s in obj_names):
@@ -660,5 +664,4 @@ def import_statements(*objects, **kwds):
 
     if answer_as_str:
         return '\n'.join(res)
-    else:
-        print('\n'.join(res))
+    print('\n'.join(res))

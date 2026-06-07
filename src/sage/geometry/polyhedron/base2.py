@@ -189,8 +189,8 @@ class Polyhedron_base2(Polyhedron_base1):
             from sage.arith.misc import integer_floor as floor
             vertices = []
             for v in self.vertex_generator():
-                vbox = [ set([floor(x), ceil(x)]) for x in v ]
-                vertices.extend( itertools.product(*vbox) )
+                vbox = [set([floor(x), ceil(x)]) for x in v]
+                vertices.extend(itertools.product(*vbox))
 
         # construct the (enveloping) lattice polytope
         from sage.geometry.lattice_polytope import LatticePolytope
@@ -346,7 +346,8 @@ class Polyhedron_base2(Polyhedron_base1):
         r"""
         Return the number of integral points in the polyhedron.
 
-        This generic version of this method simply calls :meth:`integral_points`.
+        This generic version of this method simply calls
+        :meth:`integral_points`.
 
         EXAMPLES::
 
@@ -382,6 +383,8 @@ class Polyhedron_base2(Polyhedron_base1):
             NotImplementedError: ...
         """
         return len(self.integral_points())
+
+    n_points = integral_points_count
 
     def integral_points(self, threshold=100000):
         r"""
@@ -484,6 +487,14 @@ class Polyhedron_base2(Polyhedron_base1):
             Traceback (most recent call last):
             ...
             ValueError: can only enumerate points in a compact polyhedron
+
+        Test for immutability in :issue:`41571`::
+
+            sage: V = ZZ^6
+            sage: e = V.basis()
+            sage: vertices =[V.zero()] + [6*e[i] for i in range(6)]
+            sage: P = Polyhedron(vertices, base_ring=ZZ)
+            sage: S = set(P.integral_points())
         """
         from sage.misc.misc_c import prod
         if not self.is_compact():
@@ -517,10 +528,7 @@ class Polyhedron_base2(Polyhedron_base1):
         points = set()
         for simplex in triangulation:
             triang_vertices = [self.Vrepresentation(i) for i in simplex]
-            new_points = simplex_points(triang_vertices)
-            for p in new_points:
-                p.set_immutable()
-            points.update(new_points)
+            points.update(simplex_points(triang_vertices))
         # assert all(self.contains(p) for p in points)   # slow
         return tuple(points)
 
@@ -768,7 +776,6 @@ class Polyhedron_base2(Polyhedron_base1):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P2 = (Polyhedron(ieqs=[(0, 0, 0, 1), (0, 0, 1, 0), (0, 1, 0, -1)]),
             ....:       Polyhedron(ieqs=[(0, -1, 0, 1), (0, 1, 0, 0), (0, 0, 1, 0)]))
             sage: P2[0].generating_function_of_integral_points(sort_factors=True)
@@ -785,7 +792,6 @@ class Polyhedron_base2(Polyhedron_base1):
         The number of integer partitions
         `1 \leq r_0 \leq r_1 \leq r_2 \leq r_3 \leq r_4`::
 
-            sage: # needs sage.combinat
             sage: P = Polyhedron(ieqs=[(-1, 1, 0, 0, 0, 0), (0, -1, 1, 0, 0, 0),
             ....:                      (0, 0, -1, 1, 0, 0), (0, 0, 0, -1, 1, 0),
             ....:                      (0, 0, 0, 0, -1, 1)])

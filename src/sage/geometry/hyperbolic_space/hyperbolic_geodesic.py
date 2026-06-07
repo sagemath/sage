@@ -80,28 +80,28 @@ the same::
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
+from sage.functions.hyperbolic import sinh, cosh, arcsinh
+from sage.functions.log import exp
+from sage.functions.other import real, imag
+from sage.functions.trig import arccos
+from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
+from sage.matrix.constructor import matrix
+from sage.misc.functional import sqrt
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
+from sage.rings.cc import CC
+from sage.rings.infinity import infinity
+from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 from sage.symbolic.constants import I
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.rings.infinity import infinity
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
-from sage.misc.lazy_import import lazy_import
+from sage.symbolic.constants import pi
+from sage.symbolic.ring import SR
+
 lazy_import("sage.plot.arc", "arc")
 lazy_import("sage.plot.line", "line")
 lazy_import("sage.plot.arc", "arc")
 lazy_import("sage.plot.bezier_path", "bezier_path")
-from sage.symbolic.constants import pi
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
-from sage.functions.other import real, imag
-from sage.misc.functional import sqrt
-from sage.functions.trig import arccos
-from sage.functions.log import exp
-from sage.functions.hyperbolic import sinh, cosh, arcsinh
-from sage.symbolic.ring import SR
-from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
-
 lazy_import('sage.geometry.hyperbolic_space.hyperbolic_isometry',
             'moebius_transform')
 
@@ -857,12 +857,12 @@ class HyperbolicGeodesic(SageObject):
 
         if self == other:
             return self
-        elif self.is_parallel(other):
+        if self.is_parallel(other):
             raise ValueError("geodesics don't intersect")
         inters = self._cached_geodesic.intersection(other)
         if len(inters) == 2:
             return self
-        elif len(inters) == 1:
+        if len(inters) == 1:
             return [self._model(inters[0])]
         return []
 
@@ -1073,7 +1073,6 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             [ 1  0]
             [ 0 -1]
         """
-
         x, y = (real(k.coordinates()) for k in self.ideal_endpoints())
         if x == infinity:
             M = matrix([[1, -2*y], [0, -1]])
@@ -1173,28 +1172,27 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
                 bd_pic = self._model.get_background_graphic(**bd_dict)
                 pic += bd_pic
             return pic
-        else:
-            center = (bd_1 + bd_2) / 2  # Circle center
-            radius = abs(bd_1 - bd_2) / 2
-            theta1 = CC(end_1 - center).arg()
-            theta2 = CC(end_2 - center).arg()
-            if abs(theta1 - theta2) < EPSILON:
-                theta2 += pi
-            pic = arc((real(center), imag(center)), radius,
-                      sector=(theta1, theta2), **opts)
-            if boundary:
-                # We want to draw a segment of the real line.  The
-                # computations below compute the projection of the
-                # geodesic to the real line, and then draw a little
-                # to the left and right of the projection.
-                shadow_1, shadow_2 = (real(k) for k in [end_1, end_2])
-                midpoint = (shadow_1 + shadow_2)/2
-                length = abs(shadow_1 - shadow_2)
-                bd_dict = {'bd_min': midpoint - length, 'bd_max': midpoint +
-                           length}
-                bd_pic = self._model.get_background_graphic(**bd_dict)
-                pic += bd_pic
-            return pic
+        center = (bd_1 + bd_2) / 2  # Circle center
+        radius = abs(bd_1 - bd_2) / 2
+        theta1 = CC(end_1 - center).arg()
+        theta2 = CC(end_2 - center).arg()
+        if abs(theta1 - theta2) < EPSILON:
+            theta2 += pi
+        pic = arc((real(center), imag(center)), radius,
+                  sector=(theta1, theta2), **opts)
+        if boundary:
+            # We want to draw a segment of the real line.  The
+            # computations below compute the projection of the
+            # geodesic to the real line, and then draw a little
+            # to the left and right of the projection.
+            shadow_1, shadow_2 = (real(k) for k in [end_1, end_2])
+            midpoint = (shadow_1 + shadow_2)/2
+            length = abs(shadow_1 - shadow_2)
+            bd_dict = {'bd_min': midpoint - length, 'bd_max': midpoint +
+                       length}
+            bd_pic = self._model.get_background_graphic(**bd_dict)
+            pic += bd_pic
+        return pic
 
     def ideal_endpoints(self):
         r"""
@@ -1471,54 +1469,45 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
                     end_1, end_2 = end_2, end_1
                 if end_1 == start_2:
                     return [UHP.get_point(end_1)]
-                elif end_1.real().is_infinity() and end_2.real().is_infinity():
+                if end_1.real().is_infinity() and end_2.real().is_infinity():
                     return UHP.get_geodesic(start_2, end_2)
-                elif end_1.imag() < start_2.imag():
+                if end_1.imag() < start_2.imag():
                     return []
-                else:
-                    return UHP.get_geodesic(start_2, end_1)
-            else:
-                # Neither geodesic is vertical
-                # make sure always start_1.real() <= start_2.real()
-                if start_2.real() < start_1.real():
-                    start_1, start_2 = start_2, start_1
-                    end_1, end_2 = end_2, end_1
-                if end_1 == start_2:
-                    return [UHP.get_point(end_1)]
-                elif end_1.real() < start_2.real():
-                    return []
-                else:
-                    return UHP.get_geodesic(start_2, end_1)
-        else:
-            # Both segments do not have the same complete geodesic
+                return UHP.get_geodesic(start_2, end_1)
+            # Neither geodesic is vertical
             # make sure always start_1.real() <= start_2.real()
             if start_2.real() < start_1.real():
                 start_1, start_2 = start_2, start_1
                 end_1, end_2 = end_2, end_1
-            if self.is_asymptotically_parallel(other):
-                # asymptotic parallel
-                if start_1 == start_2:
-                    return [UHP.get_point(start_1)]
-                elif end_1 == start_2 or end_1 == end_2:
-                    return [UHP.get_point(end_1)]
-                else:
-                    return []
-            else:
-                A = self.reflection_involution()
-                B = other.reflection_involution()
-                C = A * B
-                if C.classification() in ['hyperbolic', 'parabolic']:
-                    return []
-                else:
-                    # the fixed point needs not to lie in both segments of geodesic
-                    if end_1 == start_2:
-                        return [UHP().get_point(end_1)]
-                    else:
-                        P = CC(C.fixed_point_set()[0].coordinates())
-                        if start_1.real() <= P.real() <= end_1.real() and start_2.real() <= P.real() <= end_2.real():
-                            return C.fixed_point_set()
-                        else:
-                            return []
+            if end_1 == start_2:
+                return [UHP.get_point(end_1)]
+            if end_1.real() < start_2.real():
+                return []
+            return UHP.get_geodesic(start_2, end_1)
+        # Both segments do not have the same complete geodesic
+        # make sure always start_1.real() <= start_2.real()
+        if start_2.real() < start_1.real():
+            start_1, start_2 = start_2, start_1
+            end_1, end_2 = end_2, end_1
+        if self.is_asymptotically_parallel(other):
+            # asymptotic parallel
+            if start_1 == start_2:
+                return [UHP.get_point(start_1)]
+            if end_1 == start_2 or end_1 == end_2:
+                return [UHP.get_point(end_1)]
+            return []
+        A = self.reflection_involution()
+        B = other.reflection_involution()
+        C = A * B
+        if C.classification() in ['hyperbolic', 'parabolic']:
+            return []
+        # the fixed point needs not to lie in both segments of geodesic
+        if end_1 == start_2:
+            return [UHP().get_point(end_1)]
+        P = CC(C.fixed_point_set()[0].coordinates())
+        if start_1.real() <= P.real() <= end_1.real() and start_2.real() <= P.real() <= end_2.real():
+            return C.fixed_point_set()
+        return []
 
     def perpendicular_bisector(self):  # UHP
         r"""
@@ -2056,7 +2045,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             Full MatrixSpace of 2 by 2 dense matrices over Complex Field
             with 53 bits of precision
         """
-        s, e = [k.coordinates() for k in self.complete().endpoints()]
+        s, e = (k.coordinates() for k in self.complete().endpoints())
         B = HyperbolicGeodesicUHP._get_B(p)
         # outmat below will be returned after we normalize the determinant.
         outmat = B * HyperbolicGeodesicUHP._crossratio_matrix(s, p, e)
@@ -2106,9 +2095,9 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         if p0 == infinity:
             return matrix([[0, -(p1 - p2)], [-1, p2]])
-        elif p1 == infinity:
+        if p1 == infinity:
             return matrix([[1, -p0], [1, -p2]])
-        elif p2 == infinity:
+        if p2 == infinity:
             return matrix([[1, -p0], [0, p1 - p0]])
         return matrix([[p1 - p2, (p1 - p2)*(-p0)],
                        [p1 - p0, (p1 - p0)*(-p2)]])

@@ -60,7 +60,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def leg(self, i, j):
         """
-        Return the leg of the box ``(i,j)`` in ``self``.
+        Return the leg of the box ``(i, j)`` in ``self``.
 
         EXAMPLES::
 
@@ -72,7 +72,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def arm_left(self, i, j):
         """
-        Return the left arm of the box ``(i,j)`` in ``self``.
+        Return the left arm of the box ``(i, j)`` in ``self``.
 
         EXAMPLES::
 
@@ -84,7 +84,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def arm_right(self, i, j):
         """
-        Return the right arm of the box ``(i,j)`` in ``self``.
+        Return the right arm of the box ``(i, j)`` in ``self``.
 
         EXAMPLES::
 
@@ -97,7 +97,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def arm(self, i, j):
         """
-        Return the arm of the box ``(i,j)`` in ``self``.
+        Return the arm of the box ``(i, j)`` in ``self``.
 
         EXAMPLES::
 
@@ -121,7 +121,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def a(self, i, j):
         """
-        Return the length of the arm of the box ``(i,j)`` in ``self``.
+        Return the length of the arm of the box ``(i, j)`` in ``self``.
 
         EXAMPLES::
 
@@ -144,9 +144,11 @@ class LatticeDiagram(CombinatorialObject):
         return sum(self._list)
 
     def flip(self):
-        """
-        Return the flip of ``self``, where flip is defined as follows. Let
-        ``r = max(self)``. Then ``self.flip()[i] = r - self[i]``.
+        r"""
+        Return the flip of ``self``.
+
+        The flip map is defined as follows. Let ``r = max(self)``.
+        Then ``self.flip()[i] = r - self[i]``.
 
         EXAMPLES::
 
@@ -243,24 +245,26 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
                                for i in range(1, len(self) + 1)])
 
     def __contains__(self, ij):
-        """
-        Return ``True`` if the box ``(i,j) (= ij)`` is in ``self``. Note that this
-        does not include the basement row.
+        r"""
+        Return ``True`` if the box ``(i, j) (= ij)`` is in ``self``.
+
+        Note that this does not include the basement row.
 
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
-            sage: (1,1) in a
+            sage: (1, 1) in a
             True
-            sage: (1,0) in a
+            sage: (1, 0) in a
             False
         """
         i, j = ij
         return 0 < i <= len(self) and 0 < j <= len(self[i])
 
     def are_attacking(self, i, j, ii, jj):
-        """
-        Return ``True`` if the boxes ``(i,j)`` and ``(ii,jj)`` in ``self`` are attacking.
+        r"""
+        Return ``True`` if the boxes ``(i, j)`` and ``(ii, jj)`` in ``self``
+        are attacking.
 
         EXAMPLES::
 
@@ -476,24 +480,30 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         return res
 
     def _inv_aux(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
             sage: a._inv_aux()
             7
+
+            sage: data = [[1,6],[],[3,4,2],[5,5]]
+            sage: [AugmentedLatticeDiagramFilling(data, pi=pi)._inv_aux()
+            ....:  for pi in Permutations(4)]
+            [4, 4, 3, 3, 2, 2, 4, 4, 2, 2, 1, 1,
+             3, 3, 2, 2, 0, 0, 2, 2, 1, 1, 0, 0]
         """
         res = 0
         shape = self.shape()
         for i in range(1, len(self) + 1):
-            for j in range(i + 1, len(self) + 1):
-                if shape[i] <= shape[j]:
-                    res += 1
+            a = self._list[i-1][0]
+            res += sum(1 for j in range(i + 1, len(self) + 1)
+                       if shape[i] <= shape[j] and a < self._list[j-1][0])
         return res
 
     def inv(self):
-        """
-        Return ``self``'s inversion statistic.
+        r"""
+        Return the inversion statistic of ``self``.
 
         EXAMPLES::
 
@@ -508,7 +518,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
 
     def coinv(self):
         """
-        Return ``self``'s co-inversion statistic.
+        Return the co-inversion statistic of ``self``.
 
         EXAMPLES::
 
@@ -520,10 +530,10 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         return sum(shape.a(i, j) for i, j in shape.boxes()) - self.inv()
 
     def coeff(self, q, t):
-        """
+        r"""
         Return the coefficient in front of ``self`` in the HHL formula for the
         expansion of the non-symmetric Macdonald polynomial
-        E(self.shape()).
+        ``E(self.shape())``.
 
         EXAMPLES::
 
@@ -532,19 +542,15 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.coeff(q,t)                                                          # needs sage.symbolic
             (t - 1)^4/((q^2*t^3 - 1)^2*(q*t^2 - 1)^2)
         """
-        res = 1
         shape = self.shape()
-        for i, j in shape.boxes():
-            if self[i, j] != self[i, j - 1]:
-                res *= (1 - t) / (1 - q**(shape.l(i, j) + 1)
-                                  * t**(shape.a(i, j) + 1))
-        return res
+        return prod((1 - t) / (1 - q**(shape.l(i, j) + 1) * t**(shape.a(i, j) + 1))
+                    for i, j in shape.boxes() if self[i, j] != self[i, j - 1])
 
     def coeff_integral(self, q, t):
-        """
+        r"""
         Return the coefficient in front of ``self`` in the HHL formula for the
         expansion of the integral non-symmetric Macdonald polynomial
-        E(self.shape())
+        ``E(self.shape())``.
 
         EXAMPLES::
 
@@ -565,24 +571,26 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
 
     def permuted_filling(self, sigma):
         """
+        Return the filling given by permuting the entries of ``self``
+        by ``sigma``.
+
         EXAMPLES::
 
-            sage: pi=Permutation([2,1,4,3]).to_permutation_group_element()
-            sage: fill=[[2],[1,2,3],[],[3,1]]
+            sage: pi = Permutation([2,1,4,3]).to_permutation_group_element()
+            sage: fill = [[2],[1,2,3],[],[3,1]]
             sage: AugmentedLatticeDiagramFilling(fill).permuted_filling(pi)
             [[2, 1], [1, 2, 1, 4], [4], [3, 4, 2]]
         """
         new_filling = []
         for col in self:
-            nc = [sigma(x) for x in col]
-            nc.pop(0)
+            nc = [sigma(x) for x in col[1:]]
             new_filling.append(nc)
         return AugmentedLatticeDiagramFilling(new_filling, sigma)
 
 
 def NonattackingFillings(shape, pi=None):
     """
-    Returning the finite set of nonattacking fillings of a
+    Return the finite set of nonattacking fillings of a
     given shape.
 
     EXAMPLES::
@@ -617,17 +625,16 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
         """
         self.pi = pi
         self._shape = LatticeDiagram(shape)
-        self._name = "Nonattacking fillings of %s" % list(shape)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __repr__(self):
+    def _repr_(self):
         """
         EXAMPLES::
 
             sage: NonattackingFillings([0,1,2])
             Nonattacking fillings of [0, 1, 2]
         """
-        return self._name
+        return "Nonattacking fillings of %s" % list(self._shape)
 
     def flip(self):
         """
@@ -830,7 +837,7 @@ def _check_muqt(mu, q, t, pi=None):
 
 
 def E(mu, q=None, t=None, pi=None):
-    """
+    r"""
     Return the non-symmetric Macdonald polynomial in type A
     corresponding to a shape ``mu``, with basement permuted according to
     ``pi``.
@@ -872,9 +879,24 @@ def E(mu, q=None, t=None, pi=None):
         x0^2 + (q*t - q)/(q*t - 1)*x0*x1 + (q*t - q)/(q*t - 1)*x0*x2
         sage: E([0,2,0])
         (t - 1)/(q^2*t^2 - 1)*x0^2 + (q^2*t^3 - q^2*t^2 + q*t^2 - 2*q*t + q - t + 1)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x1 + x1^2 + (q*t^2 - 2*q*t + q)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x2 + (q*t - q)/(q*t - 1)*x1*x2
+
+        sage: [E([1,0,1], pi=pi) for pi in Permutations(3)]
+        [(t - 1)/(q*t^2 - 1)*x0*x1 + x0*x2,
+         x0*x1 + (q*t^2 - q*t)/(q*t^2 - 1)*x0*x2,
+         (t^2 - t)/(q*t^2 - 1)*x0*x1 + x1*x2,
+         x0*x1 + (q*t - q)/(q*t^2 - 1)*x1*x2,
+         (t - 1)/(q*t^2 - 1)*x0*x2 + x1*x2,
+         x0*x2 + (q*t^2 - q*t)/(q*t^2 - 1)*x1*x2]
+
+    TESTS::
+
+        sage: from sage.combinat.sf.ns_macdonald import E
+        sage: E([]).parent()
+        Multivariate Polynomial Ring in no variables over Fraction Field
+         of Multivariate Polynomial Ring in q, t over Rational Field
     """
     P, q, t, n, R, x = _check_muqt(mu, q, t, pi)
-    res = 0
+    res = R.zero()
     for a in n:
         weight = a.weight()
         res += q**a.maj() * t**a.coinv() * a.coeff(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
@@ -882,11 +904,11 @@ def E(mu, q=None, t=None, pi=None):
 
 
 def E_integral(mu, q=None, t=None, pi=None):
-    """
+    r"""
     Return the integral form for the non-symmetric Macdonald
     polynomial in type A corresponding to a shape mu.
 
-    Note that if both q and t are specified, then they must have the
+    Note that if both `q` and `t` are specified, then they must have the
     same parent.
 
     REFERENCE:
@@ -916,9 +938,24 @@ def E_integral(mu, q=None, t=None, pi=None):
         (t^2 - 2*t + 1)*x0^2 + (q^2*t^2 - q^2*t - q*t + q)*x0*x1 + (q^2*t^2 - q^2*t - q*t + q)*x0*x2
         sage: E_integral([0,2,0])
         (q^2*t^3 - q^2*t^2 - t + 1)*x0^2 + (q^4*t^3 - q^3*t^2 - q^2*t + q*t^2 - q*t + q - t + 1)*x0*x1 + (t^2 - 2*t + 1)*x1^2 + (q^4*t^3 - q^3*t^2 - q^2*t + q)*x0*x2 + (q^2*t^2 - q^2*t - q*t + q)*x1*x2
+
+        sage: [E_integral([1,0,1], pi=pi) for pi in Permutations(3)]
+        [(q*t^3 - q*t^2 - t + 1)*x0*x1 + (t^2 - 2*t + 1)*x0*x2,
+         (t^2 - 2*t + 1)*x0*x1 + (q^2*t^4 - q^2*t^3 - q*t^2 + q*t)*x0*x2,
+         (q*t^4 - q*t^3 - t^2 + t)*x0*x1 + (t^2 - 2*t + 1)*x1*x2,
+         (t^2 - 2*t + 1)*x0*x1 + (q^2*t^3 - q^2*t^2 - q*t + q)*x1*x2,
+         (q*t^3 - q*t^2 - t + 1)*x0*x2 + (t^2 - 2*t + 1)*x1*x2,
+         (t^2 - 2*t + 1)*x0*x2 + (q^2*t^4 - q^2*t^3 - q*t^2 + q*t)*x1*x2]
+
+    TESTS::
+
+        sage: from sage.combinat.sf.ns_macdonald import E_integral
+        sage: E_integral([]).parent()
+        Multivariate Polynomial Ring in no variables over Fraction Field
+         of Multivariate Polynomial Ring in q, t over Rational Field
     """
     P, q, t, n, R, x = _check_muqt(mu, q, t, pi)
-    res = 0
+    res = R.zero()
     for a in n:
         weight = a.weight()
         res += q**a.maj() * t**a.coinv() * a.coeff_integral(q, t) * prod(x[i]**weight[i] for i in range(len(weight)))
@@ -926,7 +963,7 @@ def E_integral(mu, q=None, t=None, pi=None):
 
 
 def Ht(mu, q=None, t=None, pi=None):
-    """
+    r"""
     Return the symmetric Macdonald polynomial using the Haiman,
     Haglund, and Loehr formula.
 
@@ -951,9 +988,16 @@ def Ht(mu, q=None, t=None, pi=None):
         x0^2 + (q + 1)*x0*x1 + x1^2 + (q + 1)*x0*x2 + (q + 1)*x1*x2 + x2^2
         sage: HHt([2]).expand(3)
         x0^2 + (q + 1)*x0*x1 + x1^2 + (q + 1)*x0*x2 + (q + 1)*x1*x2 + x2^2
+
+    TESTS::
+
+        sage: from sage.combinat.sf.ns_macdonald import Ht
+        sage: Ht([]).parent()
+        Multivariate Polynomial Ring in no variables over Fraction Field
+         of Multivariate Polynomial Ring in q, t over Rational Field
     """
     P, q, t, n, R, x = _check_muqt(mu, q, t, pi)
-    res = 0
+    res = R.zero()
     for a in n:
         weight = a.weight()
         res += q**a.maj() * t**a.inv() * prod(x[i]**weight[i] for i in range(len(weight)))

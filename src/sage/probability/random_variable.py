@@ -23,43 +23,6 @@ from sage.rings.rational_field import RationalField
 from sage.sets.set import Set
 from pprint import pformat
 
-################################################################################
-################################################################################
-
-
-def is_ProbabilitySpace(S):
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_ProbabilitySpace is deprecated; "
-                "use 'isinstance(..., ProbabilitySpace_generic)' instead.")
-    return isinstance(S, ProbabilitySpace_generic)
-
-
-def is_DiscreteProbabilitySpace(S):
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_DiscreteProbabilitySpace is deprecated; "
-                "use 'isinstance(..., DiscreteProbabilitySpace)' instead.")
-    return isinstance(S, DiscreteProbabilitySpace)
-
-
-def is_RandomVariable(X):
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_RandomVariable is deprecated; "
-                "use 'isinstance(..., RandomVariable_generic)' instead.")
-    return isinstance(X, RandomVariable_generic)
-
-
-def is_DiscreteRandomVariable(X):
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_DiscreteRandomVariable is deprecated; "
-                "use 'isinstance(..., DiscreteRandomVariable)' instead.")
-    return isinstance(X, DiscreteRandomVariable)
-
-################################################################################
-################################################################################
 
 # We could inherit from a functions class here but use Parent
 
@@ -347,7 +310,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
             sage: X.set()
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-            sage: X.entropy().n()                                                       # needs sage.libs.pari
+            sage: X.entropy().n()
             1.99993896484375
 
         A probability space can be defined on any list of elements::
@@ -358,7 +321,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             sage: X = DiscreteProbabilitySpace(S,P)
             sage: X
             Discrete probability space defined by {'A': 1/2, 'B': 1/4, 'C': 1/4}
-            sage: X.entropy().n()                                                       # needs sage.libs.pari
+            sage: X.entropy().n()
             1.50000000000000
         """
         if codomain is None:
@@ -404,7 +367,6 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         def neg_xlog2x(p):
             if p == 0:
                 return 0
-            else:
-                return -p*log(p,2)
+            return -p*log(p,2)
         p = self.function()
         return sum([neg_xlog2x(p[x]) for x in p])

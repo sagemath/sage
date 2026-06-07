@@ -1034,7 +1034,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             'I_{FY}(\\text{\\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}})'
         """
         from sage.misc.latex import latex
-        return 'I_{{FY}}({})'.format((latex(self._matroid)))
+        return 'I_{{FY}}({})'.format(latex(self._matroid))
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""

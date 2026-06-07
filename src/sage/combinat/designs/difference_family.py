@@ -901,14 +901,13 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
     if t == 1:
         return radical_difference_set(K, k, l, existence=existence, check=check)
 
-    elif l == (k-1):
+    if l == (k-1):
         if existence:
             return True
-        else:
-            return K.cyclotomic_cosets(x**((v-1)//k))[1:]
+        return K.cyclotomic_cosets(x**((v-1)//k))[1:]
 
     # all the other cases below concern the case l == 1
-    elif l != 1:
+    if l != 1:
         if existence:
             return Unknown
         raise NotImplementedError("No radical families implemented for l > 2")
@@ -1569,7 +1568,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
 
     INPUT:
 
-    - ``R`` -- list; the relative diffeence set of length `k`
+    - ``R`` -- list; the relative difference set of length `k`
     - ``G`` -- an additive abelian group of order `mn`
     - ``H`` -- list; a submodule of ``G`` of order `n`
     - ``params`` -- tuple in the form `(m, n, k, d)`
@@ -3268,9 +3267,10 @@ def complementary_difference_setsIII(n, check=True):
     r"""
     Construct complementary difference sets in a group of order `n = 2m + 1`, where `4m + 3` is a prime power.
 
-    Consider a finite field `G` of order `n` and let `\rho` be a primite element
-    of this group. Now let `Q` be the set of nonzero quadratic residues in `G`,
-    and let `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
+    Consider a finite field `G` of order `n` and let `\rho` be a
+    primitive element of this group. Now let `Q` be the set of nonzero
+    quadratic residues in `G`, and let
+    `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
     Then `A` and `B = Q \setminus B'` are complementary difference sets over the ring
     of integers modulo `n`. For more details, see [Sz1969]_.
 
@@ -3728,7 +3728,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     if (v,k,l) in DF:
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "The database contains a ({},{},{})-difference family".format(v,k,l)
 
         vv, blocks = next(iter(DF[v,k,l].items()))
@@ -3750,10 +3750,10 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
         return G,df
 
-    elif l == 1 and k in EDS and v in EDS[k]:
+    if l == 1 and k in EDS and v in EDS[k]:
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "The database contains a ({},{})-evenly distributed set".format(v,k)
 
         from sage.rings.finite_rings.finite_field_constructor import GF
@@ -3797,7 +3797,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     if k == (v-1) and l == (v-2):
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Trivial difference family"
 
         from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -3812,60 +3812,54 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     if are_mcfarland_1973_parameters(v,k,l):
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "McFarland 1973 construction"
-        else:
-            _, (q,s) = are_mcfarland_1973_parameters(v,k,l,True)
-            G,D = mcfarland_1973_construction(q,s)
+        _, (q,s) = are_mcfarland_1973_parameters(v,k,l,True)
+        G,D = mcfarland_1973_construction(q,s)
 
     elif are_hyperplanes_in_projective_geometry_parameters(v,k,l):
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Singer difference set"
-        else:
-            _, (q,d) = are_hyperplanes_in_projective_geometry_parameters(v,k,l,True)
-            G,D = singer_difference_set(q,d)
+        _, (q,d) = are_hyperplanes_in_projective_geometry_parameters(v,k,l,True)
+        G,D = singer_difference_set(q,d)
 
     elif are_hadamard_difference_set_parameters(v,k,l) and k-2*l == 3:
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Turyn 1965 construction"
-        else:
-            G,D = turyn_1965_3x3xK(4)
+        G,D = turyn_1965_3x3xK(4)
 
     elif are_hadamard_difference_set_parameters(v,k,l) and hadamard_difference_set_product_parameters(k-2*l):
         N1,N2 = hadamard_difference_set_product_parameters(k-2*l)
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Hadamard difference set product from N1={} and N2={}".format(N1,N2)
-        else:
-            v1 = 4*N1*N1
-            v2 = 4*N2*N2
-            k1 = 2*N1*N1 - N1
-            k2 = 2*N2*N2 - N2
-            l1 = N1*N1 - N1
-            l2 = N2*N2 - N2
-            G1, D1 = difference_family(v1,k1,l1)
-            G2, D2 = difference_family(v2,k2,l2)
-            G, D = hadamard_difference_set_product(G1,D1,G2,D2)
+        v1 = 4*N1*N1
+        v2 = 4*N2*N2
+        k1 = 2*N1*N1 - N1
+        k2 = 2*N2*N2 - N2
+        l1 = N1*N1 - N1
+        l2 = N2*N2 - N2
+        G1, D1 = difference_family(v1,k1,l1)
+        G2, D2 = difference_family(v2,k2,l2)
+        G, D = hadamard_difference_set_product(G1,D1,G2,D2)
 
     elif are_hadamard_difference_set_parameters(v,k,l) and (k-2*l).is_prime():
         if existence:
             return False
-        else:
-            raise EmptySetError("by McFarland 1989 such difference family does not exist")
+        raise EmptySetError("by McFarland 1989 such difference family does not exist")
 
     elif len(factorization) == 1 and radical_difference_family(K, k, l, existence=True) is True:
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Radical difference family on a finite field"
-        else:
-            D = radical_difference_family(K,k,l)
-            G = K
+        D = radical_difference_family(K,k,l)
+        G = K
 
     elif (len(factorization) == 1
         and l == 1
@@ -3873,11 +3867,10 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         and df_q_6_1(K, existence=True) is True):
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Wilson 1972 difference family made from the union of two cyclotomic cosets"
-        else:
-            D = df_q_6_1(K)
-            G = K
+        D = df_q_6_1(K)
+        G = K
 
     elif (k == (v-1)//2 and
           l == (k-1)//2 and
@@ -3889,23 +3882,21 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         #      lambda = (k-1)/2 (ie 2l+1 = k)
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Twin prime powers difference family"
-        else:
-            p = pow(*factorization[0])
-            q = pow(*factorization[1])
-            if p > q:
-                p,q = q,p
-            G,D = twin_prime_powers_difference_set(p,check=False)
+        p = pow(*factorization[0])
+        q = pow(*factorization[1])
+        if p > q:
+            p,q = q,p
+        G,D = twin_prime_powers_difference_set(p,check=False)
 
     elif (v-1)//2 == k and (v-1)//2-1 == l and complementary_difference_sets(v, existence=True):
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "Complementary difference sets"
-        else:
-            G, A, B = complementary_difference_sets(v)
-            D = [A, B]
+        G, A, B = complementary_difference_sets(v)
+        D = [A, B]
 
     else:
         if existence:

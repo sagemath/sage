@@ -1,0 +1,75 @@
+diff --git a/src/kernel/gmp++/gmp++_int_misc.C b/src/kernel/gmp++/gmp++_int_misc.C
+index 28f41a44..01b96a24 100644
+--- a/src/kernel/gmp++/gmp++_int_misc.C
++++ b/src/kernel/gmp++/gmp++_int_misc.C
+@@ -430,9 +430,20 @@ namespace Givaro {
+ 
+     Integer::operator std::string () const
+     {
++#if defined(__GIVARO_GMP_NO_CXX) || defined(_LIBCPP_VERSION)
++        // Use C functions for libc++ to avoid GMP C++ iostream issues
++        char * str = NULL;
++        str = mpz_get_str(NULL, 10, (mpz_srcptr)&gmp_rep);
++        std::string result(str);
++        void (*freefunc)(void *, size_t);
++        mp_get_memory_functions(NULL, NULL, &freefunc);
++        freefunc(str, strlen(str) + 1);
++        return result;
++#else
+         std::ostringstream o ;
+         print(o);
+         return o.str();
++#endif
+     }
+ 
+     Integer::operator Integer::vect_t () const
+diff --git a/src/kernel/recint/rrint.h b/src/kernel/recint/rrint.h
+index a99d58ea..4e37a7a9 100644
+--- a/src/kernel/recint/rrint.h
++++ b/src/kernel/recint/rrint.h
+@@ -117,17 +117,6 @@ namespace RecInt
+ 
+ }
+ 
+-namespace std
+-{
+-    template <size_t K> struct make_signed<RecInt::rint<K>> {
+-        typedef RecInt::rint<K> type;
+-    };
+-    template <size_t K> struct make_signed<RecInt::ruint<K>> {
+-        typedef RecInt::rint<K> type;
+-    };
+-
+-}
+-
+ #endif
+ 
+ /* -*- mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+diff --git a/src/kernel/ring/modular-general.inl b/src/kernel/ring/modular-general.inl
+index 8b001cd1..a6c0863c 100644
+--- a/src/kernel/ring/modular-general.inl
++++ b/src/kernel/ring/modular-general.inl
+@@ -46,6 +46,23 @@ typename std::enable_if<std::is_floating_point<T>::value>::type> {
+     typedef typename IntType<std::is_same<T,float>::value>::type type;
+ };
+ 
++// Specializations for RecInt types
++// RecInt::ruint<K> -> RecInt::rint<K> (unsigned to signed)
++template<size_t K>
++struct make_signed_int<RecInt::ruint<K>, void> {
++    typedef RecInt::rint<K> type;
++};
++
++// RecInt::rint<K> -> RecInt::rint<K> (already signed)
++template<size_t K>
++struct make_signed_int<RecInt::rint<K>, void> {
++    typedef RecInt::rint<K> type;
++};
++
++// Convenience alias template (C++14 and later)
++template<typename T>
++using make_signed_int_t = typename make_signed_int<T>::type;
++
+ template<typename> struct is_ruint : std::false_type {};
+ template<size_t K> struct is_ruint<RecInt::ruint<K>> : std::true_type {};
+ 

@@ -3,7 +3,7 @@ r"""
 Drinfeld module morphisms
 
 This module provides the class
-:class:`sage.rings.function_fields.drinfeld_module.morphism.DrinfeldModuleMorphism`.
+:class:`sage.rings.function_field.drinfeld_modules.morphism.DrinfeldModuleMorphism`.
 
 AUTHORS:
 - Antoine Leudière (2022-04)
@@ -186,7 +186,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             raise ValueError('Ore polynomial does not define a morphism')
         return cls.__classcall__(cls, parent, ore_pol)
 
-    def __init__(self, parent, ore_pol):
+    def __init__(self, parent, ore_pol) -> None:
         r"""
         Initialize ``self``.
 
@@ -217,7 +217,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         self._codomain = parent.codomain()
         self._ore_polynomial = ore_pol
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the morphism.
 
@@ -235,7 +235,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return f'{latex(self._ore_polynomial)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the morphism.
 
@@ -256,16 +256,15 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         if self.is_identity():
             return f'Identity morphism of {self._domain}'
-        elif self.is_endomorphism():
+        if self.is_endomorphism():
             return f'Endomorphism of {self._domain}\n' \
                    f'  Defn: {self._ore_polynomial}'
-        else:
-            return f'Drinfeld Module morphism:\n' \
+        return f'Drinfeld Module morphism:\n' \
                    f'  From: {self._domain}\n'  \
                    f'  To:   {self._codomain}\n' \
                    f'  Defn: {self._ore_polynomial}'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of ``self``.
 
@@ -283,7 +282,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return hash((self._domain, self._codomain, self._ore_polynomial))
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` whether the morphism is the zero morphism.
 
@@ -307,7 +306,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial.is_zero()
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return ``True`` whether the morphism is the identity morphism.
 
@@ -331,7 +330,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial == 1
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isogeny.
 
@@ -367,7 +366,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return not self.is_zero()
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isomorphism.
 
@@ -606,7 +605,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             ...
             ValueError: the two morphisms must have the same domain
 
-        SEEALSO::
+        .. SEEALSO::
 
             :meth:`left_lcm`
         """
@@ -654,7 +653,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             ...
             ValueError: the two morphisms must have the same domain
 
-        SEEALSO::
+        .. SEEALSO::
 
             :meth:`right_gcd`
         """
@@ -695,7 +694,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         # The first row:
         # we write u = u0 + u1*phiT + u2*phiT^2 + ...
         u = self.ore_polynomial()
-        us = [ ]
+        us = []
         while not u.is_zero():
             u, ui = u.right_quo_rem(phiT)
             us.append(ui)
@@ -711,8 +710,8 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         T = KT.gen()
         for i in range(1, r):
             twist = [c.map_coefficients(Frob) for c in row]
-            row = [(inv*T - B[0]) * twist[-1]]
-            row += [twist[j-1] - B[j]*twist[-1] for j in range(1, r)]
+            row = [(inv * T - B[0]) * twist[-1]]
+            row += [twist[j - 1] - B[j] * twist[-1] for j in range(1, r)]
             rows.append(row)
 
         return matrix(KT, rows)
@@ -776,10 +775,9 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         if ideal:
             nu = A([c.in_base() for c in nu.monic().list()])
             return A.ideal(nu)
-        elif self.domain() is self.codomain():
+        if self.domain() is self.codomain():
             return A([c.in_base() for c in nu.list()])
-        else:
-            raise ValueError("norm is defined as an actual element only for endomorphisms")
+        raise ValueError("norm is defined as an actual element only for endomorphisms")
 
     def dual_isogeny(self):
         r"""
@@ -930,3 +928,62 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Y^3 + (T + 1)*Y^2 + (2*T + 3)*Y + 2*T^3 + T + 1
         """
         return self.characteristic_polynomial(var)
+
+    def anderson_motive(self, names_domain=None, names_codomain=None):
+        r"""
+        Return the morphism giving the action of this morphism on
+        the Anderson motives.
+
+        INPUT:
+
+        - ``names_domain`` -- a string of a list of strings (default:
+          ``None``), the names of the vector of the canonical basis
+          of the Anderson motive of the domain of this isogeny; if
+          ``None``, elements are represented as row vectors
+
+        - ``names_codomain`` -- a string of a list of strings (default:
+          ``None``), the same with the codomain
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 1)
+            sage: f = u.anderson_motive()
+            sage: f
+            Morphism:
+              From: Anderson motive of Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^3 + (3*z^2 + 2*z + 2)*τ^2 + (2*z^2 + 3*z + 4)*τ + z
+              To:   Anderson motive of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+            sage: f.matrix()
+            [                1                 1                 0]
+            [                0                 1                 1]
+            [(3*z^2 + 4)*T + 4                 0         2*z^2 + 2]
+
+        We underline that this construction is contravariant: the domain
+        of `f` is the Anderson motive of the codomain of `u` and vice versa::
+
+            sage: psi = u.codomain()
+            sage: f.domain() is psi.anderson_motive()
+            True
+            sage: f.codomain() is phi.anderson_motive()
+            True
+
+        An example with given names::
+
+            sage: f = u.anderson_motive(names_domain='a', names_codomain='b')
+            sage: f
+            Morphism:
+              From: Anderson motive <b0, b1, b2> of Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*τ^3 + (3*z^2 + 2*z + 2)*τ^2 + (2*z^2 + 3*z + 4)*τ + z
+              To:   Anderson motive <a0, a1, a2> of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+
+        .. SEEALSO::
+
+            :mod:`sage.rings.function_field.drinfeld_modules.anderson_motive`
+        """
+        M = self.domain().anderson_motive(names=names_domain)
+        N = self.codomain().anderson_motive(names=names_codomain)
+        H = N.Hom(M)
+        return H(self)

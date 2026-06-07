@@ -134,7 +134,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         #set-up the elimination for the segre embedding
         mapping = []
         k = AS.ngens()
-        index = AS.num_components()*[0]
+        index = AS.n_components()*[0]
         for count in range(M + 1):
             mapping.append(R.gen(k+count)-prod([CR(AS[i].gen(index[i])) for i in range(len(index))]))
             for i in range(len(index)-1, -1, -1):
@@ -168,7 +168,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         #create embedding for points
         mapping = []
-        index = AS.num_components()*[0]
+        index = AS.n_components()*[0]
         for count in range(M + 1):
             mapping.append(prod([CR(AS[i].gen(index[i])) for i in range(len(index))]))
             for i in range(len(index)-1, -1, -1):
@@ -236,13 +236,13 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
                        for PS in PP.components()):
                     self.__dimension = -1
                 else:
-                    self.__dimension = I.dimension() - PP.num_components()
+                    self.__dimension = I.dimension() - PP.n_components()
             except TypeError:  #cannot compute radical for this base ring
                 phi = self.segre_embedding()
                 self.__dimension = phi.codomain().defining_ideal().dimension() - 1
             return self.__dimension
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 
@@ -309,8 +309,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         try:
             if return_embedding:
                 return self.__affine_patches[I]
-            else:
-                return self.__affine_patches[I][0]
+            return self.__affine_patches[I][0]
         except AttributeError:
             self.__affine_patches = {}
         except KeyError:
@@ -331,8 +330,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         self.__affine_patches.update({I:(U,phi)})
         if return_embedding:
             return U,phi
-        else:
-            return U
+        return U
 
     def intersection_multiplicity(self, X, P):
         r"""
@@ -394,7 +392,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         # find an affine chart of the ambient space of this subscheme that contains P
         indices = []
         aff_pt = []
-        for i in range(PP.num_components()):
+        for i in range(PP.n_components()):
             Q = P[i]
             j = 0
             while Q[j] == 0:
@@ -452,7 +450,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         # find an affine chart of the ambient space of this subscheme that contains P
         indices = []
         aff_pt = []
-        for i in range(PP.num_components()):
+        for i in range(PP.n_components()):
             Q = P[i]
             j = 0
             while Q[j] == 0:

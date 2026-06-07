@@ -1942,7 +1942,7 @@ class HypergeometricData:
                 ans = ans.truncate(deg + 1)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
-        elif (t - 1) % p == 0:
+        if (t - 1) % p == 0:
             typ = "mult"
             d = self.degree() - 1
             if d % 2:

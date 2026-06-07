@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # Compile this with -Os because it works around a bug with
 # GCC-4.7.3 + Cython 0.19 on Itanium, see Issue #14452. Moreover, it
 # actually results in faster code than -O3.
@@ -310,7 +309,7 @@ from sage.misc.lazy_format import LazyFormat
 from sage.arith.long cimport integer_check_long_py
 from sage.arith.power cimport generic_power as arith_generic_power
 from sage.arith.numerical_approx cimport digits_to_bits
-from sage.misc.decorators import sage_wraps
+from sage.misc.decorators import rename_keyword, sage_wraps
 from sage.misc.superseded import deprecation
 
 
@@ -625,7 +624,7 @@ cdef class Element(SageObject):
             D = self.__dict__
         except AttributeError:
             return res
-        for k, v in D.iteritems():
+        for k, v in D.items():
             try:
                 setattr(res, k, v)
             except AttributeError:
@@ -1158,13 +1157,6 @@ cdef class Element(SageObject):
         if op == Py_NE:
             return True
         return NotImplemented
-
-    cpdef int _cmp_(left, right) except -2:
-        """
-        This was the old comparison framework. Now deprecated. Do not use.
-        """
-        deprecation(30130, "please use _richcmp_ for comparison methods")
-        raise NotImplementedError("__cmp__ and _cmp_ are deprecated")
 
     ##################################################
     # Arithmetic using the coercion model
@@ -2463,8 +2455,8 @@ cdef class ModuleElementWithMutability(ModuleElement):
     """
     Generic element of a module with mutability.
     """
-
-    def __init__(self, parent, is_immutable=False):
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
+    def __init__(self, parent, immutable=False):
         """
         EXAMPLES::
 
@@ -2473,7 +2465,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
             <class 'sage.modules.free_module_element.FreeModuleElement'>
         """
         self._parent = parent
-        self._is_immutable = is_immutable
+        self._is_immutable = immutable
 
     def set_immutable(self):
         """
@@ -3215,7 +3207,7 @@ cdef class CommutativeRingElement(RingElement):
         return I.reduce(self)
 
 
-    ##############################################
+##############################################
 
 cdef class Expression(CommutativeRingElement):
 
@@ -4579,7 +4571,6 @@ def coerce_binop(method):
         TypeError: algorithm 1 not supported
     """
     @sage_wraps(method)
-    @cython.binding(True)
     def new_method(self, other, *args, **kwargs):
         if have_same_parent(self, other):
             return method(self, other, *args, **kwargs)

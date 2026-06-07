@@ -2,12 +2,13 @@ py.install_sources(
   '__init__.py',
   'abc.py',
   'all.py',
-  'all__sagemath_polyhedra.py',
   'axiom.py',
   'ecm.py',
   'expect.py',
   'four_ti_2.py',
   'fricas.py',
+  'fricas.spad',
+  'fricas_translator.py',
   'frobby.py',
   'gap.py',
   'gap3.py',
@@ -42,9 +43,9 @@ py.install_sources(
   'polymake.py',
   'povray.py',
   'process.pxd',
+  'process.pyx',
   'psage.py',
   'qepcad.py',
-  'qsieve.py',
   'quit.py',
   'r.py',
   'read_data.py',
@@ -52,20 +53,20 @@ py.install_sources(
   'rubik.py',
   'sage-maxima.lisp',
   'sage0.py',
+  'sagespawn.pyx',
   'scilab.py',
   'singular.py',
   'sympy.py',
   'sympy_wrapper.py',
   'tab_completion.py',
   'tachyon.py',
-  'tests.py',
   'tides.py',
   subdir: 'sage/interfaces',
 )
 
 extension_data = {
-  'process' : files('process.pyx'),
-  'sagespawn' : files('sagespawn.pyx'),
+  'process': files('process.pyx'),
+  'sagespawn': files('sagespawn.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -83,4 +84,3 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, gmp],
   )
 endforeach
-

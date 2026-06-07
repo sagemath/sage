@@ -54,9 +54,10 @@ Test hashing::
     ...
     TypeError: mutable matrices are unhashable
     sage: m.set_immutable()
-    sage: hash(m)
-    2212268000387745777  # 64-bit
-    1997752305           # 32-bit
+    sage: hash32 = 1997752305
+    sage: hash64 = 2212268000387745777
+    sage: hash(m) in [hash32, hash64]
+    True
 """
 
 # ****************************************************************************
@@ -108,6 +109,7 @@ from sage.rings.rational cimport Rational
 from sage.matrix.matrix cimport Matrix
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense, _lift_crt
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 from sage.structure.element cimport Element, Vector
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ, IntegerRing_class
@@ -1074,7 +1076,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             return poly.change_variable_name(var)
 
         if algorithm is None:
-            algorithm = 'flint' if self._nrows <= 40 else 'linbox'
+            algorithm = 'flint'
 
         if algorithm == 'flint' or algorithm == 'linbox':
             A, denom = self._clear_denom()
@@ -1604,6 +1606,43 @@ cdef class Matrix_rational_dense(Matrix_dense):
             ....:      _ = a._clear_denom() # fills the cache
             ....:      a.echelonize(algorithm=algo)
             ....:      assert sorted(a._cache.keys()) == ['echelon_form', 'in_echelon_form', 'pivots', 'rank'], (algo, a._cache.keys())
+
+        Check that :issue:`41267` is fixed::
+
+            sage: Parallelism().set(nproc=2)
+            sage: M = matrix(QQ, [
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-70,0,0,0,0,28,-28,0,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,70,0,0,0,0,-28,28,0,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-14,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-35,0,0,0,0,7,-21,0,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,0,0,-21,7,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-14,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-15,0,0,0,0,0,-15,1,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,-14,1,-1,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,-10,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-5,0,0,0,0,0,-10,3,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,-7,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,-6,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-6,6,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,10,-3,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-3,10,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-5,0,0,0,0,7,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,0,15,-1,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-15,0,0,0,0,14,-1,1,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,0,0,-7,21,0,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-35,0,0,0,0,21,-7,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,70,0,0,0,0,-28,28,0,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-70,0,0,0,0,28,-28,0,0,0,0,0,-1,1]])
+            sage: Mf = copy(M)
+            sage: M.echelonize(algorithm='multimodular')
+            sage: Mf.echelonize(algorithm='flint:multimodular')
+            sage: assert(M == Mf)
+            sage: Parallelism().set(nproc=1)
         """
         if self.fetch('in_echelon_form'):
             return  # already known to be in echelon form
@@ -2184,7 +2223,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 #          v = V.random_element()
 #          num_iterates = max([squarefree_degree - g.degree() for g in G]) + 1
 
-#          S = [ ]
+#          S = []
 
 #          F.sort()
 #          for i in range(len(F)):
@@ -2863,9 +2902,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: matrix(ZZ, 0, 0) * matrix(QQ, 0, 5)
             []
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("self must be a square matrix")
-        if not self._ncols*self._nrows or not right._ncols*right._nrows:
+        check_matrix_multiplication_sizes(self, right)
+        if self._ncols == 0 or self._nrows == 0 or right._ncols == 0:
+            # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
             # pari doesn't work in case of 0 rows or columns
             # This case is easy, since the answer must be the 0 matrix.
             return self.matrix_space(self._nrows, right._ncols).zero_matrix().__copy__()

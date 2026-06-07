@@ -10,13 +10,14 @@ py.install_sources(
   'cuspidal_submodule.py',
   'defaults.py',
   'eis_series.py',
+  'eis_series_cython.pyx',
   'eisenstein_submodule.py',
   'element.py',
-  'find_generators.py',
   'half_integral.py',
   'hecke_operator_on_qexp.py',
   'j_invariant.py',
   'l_series_gross_zagier.py',
+  'l_series_gross_zagier_coeffs.pyx',
   'notes.py',
   'numerical.py',
   'periods.py',
@@ -31,8 +32,8 @@ py.install_sources(
 )
 
 extension_data = {
-  'eis_series_cython' : files('eis_series_cython.pyx'),
-  'l_series_gross_zagier_coeffs' : files('l_series_gross_zagier_coeffs.pyx'),
+  'eis_series_cython': files('eis_series_cython.pyx'),
+  'l_series_gross_zagier_coeffs': files('l_series_gross_zagier_coeffs.pyx'),
 }
 
 foreach name, pyx : extension_data

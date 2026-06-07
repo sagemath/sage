@@ -4,10 +4,11 @@ py.install_sources(
   'hexad.py',
   'quantumino.py',
   'sudoku.py',
+  'sudoku_backtrack.pyx',
   subdir: 'sage/games',
 )
 
-extension_data = {'sudoku_backtrack' : files('sudoku_backtrack.pyx')}
+extension_data = {'sudoku_backtrack': files('sudoku_backtrack.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

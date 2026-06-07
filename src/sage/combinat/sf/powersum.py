@@ -2,7 +2,7 @@
 """
 Power sum symmetric functions
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -16,12 +16,11 @@ Power sum symmetric functions
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.arith.misc import divisors
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -72,7 +71,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         Pi = Partition([i])
         P0 = Partition([])
         T = self.tensor_square()
-        return T.sum_of_monomials( [(Pi, P0), (P0, Pi)] )
+        return T.sum_of_monomials([(Pi, P0), (P0, Pi)])
 
     def antipode_on_basis(self, partition):
         r"""
@@ -371,8 +370,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             p = self.parent()
             if 1 not in part:
                 return p.zero()
-            else:
-                return len([i for i in part if i == 1]) * p(part[:-1])
+            return len([i for i in part if i == 1]) * p(part[:-1])
 
         def _derivative_with_respect_to_p1(self):
             """
@@ -496,10 +494,6 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                    for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
-        frobenius = deprecated_function_alias(36396, adams_operator)
-
-        adams_operation = deprecated_function_alias(36396, adams_operator)
-
         def verschiebung(self, n):
             r"""
             Return the image of the symmetric function ``self`` under the
@@ -619,7 +613,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             p_coords_of_self = self.monomial_coefficients().items()
             dct = {Partition([i // n for i in lam]): coeff * (n ** len(lam))
                    for (lam, coeff) in p_coords_of_self
-                   if all( i % n == 0 for i in lam )}
+                   if all(i % n == 0 for i in lam)}
             result_in_p_basis = parent._from_dict(dct)
             return parent(result_in_p_basis)
 

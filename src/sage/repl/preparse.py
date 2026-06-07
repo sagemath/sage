@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 The Sage Preparser
 
@@ -1355,8 +1354,7 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
     code = ''.join(new_code)
     if extract:
         return code, literals
-    else:
-        return code
+    return code
 
 
 def strip_prompts(line):

@@ -40,10 +40,12 @@ Utilities
 from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package
 install_doc(__package__, __doc__)
+del install_doc
 
 # install modules quickref and tutorial to the containing package
 from sage.combinat import quickref, tutorial
 install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
+del install_dict
 del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
@@ -74,6 +76,7 @@ from sage.combinat.debruijn_sequence import DeBruijnSequences
 
 from sage.combinat.schubert_polynomial import SchubertPolynomialRing
 lazy_import('sage.combinat.key_polynomial', 'KeyPolynomialBasis', as_='KeyPolynomials')
+lazy_import('sage.combinat.key_polynomial', 'AtomPolynomialBasis', as_='AtomPolynomials')
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
 from sage.combinat.symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
 from sage.combinat.yang_baxter_graph import YangBaxterGraph
@@ -288,3 +291,8 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 
 # Bijectionist
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
+
+# TamariBlossomingTree
+lazy_import('sage.combinat.tamari_blossoming_tree',
+            ['TamariBlossomingTree', 'TamariBlossomingTrees'])
+del lazy_import

@@ -782,8 +782,8 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: g = G.exp(L.basis().list()[0]); g
             exp(X_1)
             sage: Ad_g = G.adjoint(g); Ad_g
-            Lie algebra endomorphism of Free Nilpotent Lie algebra on 5
-            generators (X_1, X_2, X_12, X_112, X_122) over Rational Field
+            Lie algebra endomorphism of Free Nilpotent Lie algebra
+             of rank 2 and step 3 over Rational Field
               Defn: X_1 |--> X_1
                     X_2 |--> X_2 + X_12 + 1/2*X_112
                     X_12 |--> X_12 + X_112
@@ -807,7 +807,8 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             sage: g = G.point([0, 0, var('a')]); g
             exp(a*X_12)
             sage: G.adjoint(g)
-            Lie algebra endomorphism of Free Nilpotent Lie algebra on 3 generators (X_1, X_2, X_12) over Rational Field
+            Lie algebra endomorphism of Free Nilpotent Lie algebra
+             of rank 2 and step 2 over Rational Field
               Defn: X_1 |--> X_1
                     X_2 |--> X_2
                     X_12 |--> X_12

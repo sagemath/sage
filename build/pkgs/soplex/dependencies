@@ -1,1 +1,1 @@
-$(MP_LIBRARY) mpfr boost_cropped papilo | cmake
+$(MP_LIBRARY) mpfr papilo | cmake

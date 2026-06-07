@@ -52,6 +52,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.RandomPoset` | Return a random poset on `n` elements.
     :meth:`~Posets.RibbonPoset` | Return a ribbon on `n` elements with descents at `descents`.
     :meth:`~Posets.RestrictedIntegerPartitions` | Return the poset of integer partitions of `n`, ordered by restricted refinement.
+    :meth:`~Posets.Sashes` | Return the lattice of sashes of `n`.
     :meth:`~Posets.SetPartitions` | Return the poset of set partitions of the set `\{1,\dots,n\}`.
     :meth:`~Posets.ShardPoset` | Return the shard intersection order.
     :meth:`~Posets.ShufflePoset` | Return the Shuffle lattice for `(m,n)`.
@@ -97,12 +98,13 @@ Constructions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
-from sage.combinat.posets import bubble_shuffle, hochschild_lattice
+from sage.combinat.posets import bubble_shuffle, hochschild_lattice, sashes
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -281,7 +283,7 @@ class Posets(metaclass=ClasscallMetaclass):
                          for y in range(n) if v & (1 << y) == 0]
                      for v in range(2**n)})
         return FiniteLatticePoset(hasse_diagram=D,
-                                  category=FiniteLatticePosets(),
+                                  category=FiniteLatticePosets().Stone(),
                                   facade=facade)
 
     BubblePoset = staticmethod(bubble_shuffle.BubblePoset)
@@ -289,6 +291,8 @@ class Posets(metaclass=ClasscallMetaclass):
     ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
 
     HochschildLattice = staticmethod(hochschild_lattice.hochschild_lattice)
+
+    Sashes = staticmethod(sashes.lattice_of_sashes)
 
     @staticmethod
     def ChainPoset(n, facade=None):
@@ -332,7 +336,7 @@ class Posets(metaclass=ClasscallMetaclass):
         D = DiGraph([range(n), [[x, x + 1] for x in range(n - 1)]],
                     format='vertices_and_edges')
         return FiniteLatticePoset(hasse_diagram=D,
-                                  category=FiniteLatticePosets(),
+                                  category=FiniteLatticePosets().Stone(),
                                   facade=facade)
 
     @staticmethod
@@ -413,7 +417,8 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.DiamondPoset(5).is_distributive()
             False
         """
-        return LatticePoset([[1, 2], [4], [3], [4], []], facade=facade)
+        return LatticePoset([[1, 2], [4], [3], [4], []], facade=facade,
+                            category=FiniteLatticePosets().CongruenceUniform())
 
     @staticmethod
     def DiamondPoset(n, facade=None):
@@ -439,8 +444,10 @@ class Posets(metaclass=ClasscallMetaclass):
         c[0] = list(range(1, n - 1))
         c[n - 1] = []
         D = DiGraph({v: c[v] for v in range(n)}, format='dict_of_lists')
-        return FiniteLatticePoset(hasse_diagram=D,
-                                  category=FiniteLatticePosets(),
+        cat = FiniteLatticePosets().ChainGraded()
+        if n <= 4:
+            cat = cat.Stone()
+        return FiniteLatticePoset(hasse_diagram=D, category=cat,
                                   facade=facade)
 
     @staticmethod
@@ -543,9 +550,9 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite poset containing 0 elements
         """
         n = len(H)
-        if not all(max(i+1, H[i-1]) <= H[i] for i in range(1, n)) or 0 < n < H[-1]:
+        if not all(max(i + 1, H[i - 1]) <= H[i] for i in range(1, n)) or 0 < n < H[-1]:
             raise ValueError(f"{H} is not a Hessenberg function")
-        return Poset((tuple(range(1, n+1)), lambda i, j: H[i-1] < j))
+        return Poset((tuple(range(1, n + 1)), lambda i, j: H[i - 1] < j))
 
     @staticmethod
     def IntegerCompositions(n):
@@ -567,8 +574,9 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         from sage.combinat.composition import Compositions
         C = Compositions(n)
+        cat = FiniteLatticePosets().ChainGraded()
         return Poset((C, [[c, d] for c in C for d in C if d.is_finer(c)]),
-                     cover_relations=False)
+                     cover_relations=False, category=cat)
 
     @staticmethod
     def IntegerPartitions(n):
@@ -606,8 +614,9 @@ class Posets(metaclass=ClasscallMetaclass):
                         lc.append(tup)
             return lc
         from sage.combinat.partition import Partitions
-        H = DiGraph(dict([[tuple(p), lower_covers(p)] for p in Partitions(n)]))
-        return Poset(H.reverse())
+        H = DiGraph({tuple(p): lower_covers(p) for p in Partitions(n)})
+        cat = FiniteLatticePosets().ChainGraded()
+        return Poset(H.reverse(), cover_relations=True, category=cat)
 
     @staticmethod
     def RestrictedIntegerPartitions(n):
@@ -645,8 +654,8 @@ class Posets(metaclass=ClasscallMetaclass):
                             lc.append(tup)
             return lc
         from sage.combinat.partition import Partitions
-        H = DiGraph(dict([[tuple(p), lower_covers(p)] for p in Partitions(n)]))
-        return Poset(H.reverse())
+        H = DiGraph({tuple(p): lower_covers(p) for p in Partitions(n)})
+        return Poset(H.reverse(), cover_relations=True)
 
     @staticmethod
     def IntegerPartitionsDominanceOrder(n):
@@ -777,7 +786,8 @@ class Posets(metaclass=ClasscallMetaclass):
 
         def compare(a, b):
             return all(x <= y for x, y in zip(a, b))
-        return LatticePoset([elements, compare], facade=facade)
+        return LatticePoset([elements, compare], facade=facade,
+                            category=FiniteLatticePosets().Distributive())
 
     @staticmethod
     def RandomPoset(n, p):
@@ -803,7 +813,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: set_random_seed(0)  # Results are reproducible
             sage: P = posets.RandomPoset(5, 0.3)
             sage: P.cover_relations()
-            [[5, 4], [4, 2], [1, 2]]
+            [[3, 2], [2, 5], [1, 5]]
 
         .. SEEALSO:: :meth:`RandomLattice`
 
@@ -881,7 +891,17 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: L = posets.RandomLattice(8, 0.995); L
             Finite lattice containing 8 elements
             sage: L.cover_relations()
-            [[7, 6], [7, 3], [7, 1], ..., [5, 4], [2, 4], [1, 4], [0, 4]]
+            [[3, 5],
+             [3, 7],
+             [3, 0],
+             [5, 6],
+             [5, 4],
+             [5, 1],
+             [6, 2],
+             [7, 4],
+             [4, 2],
+             [1, 2],
+             [0, 2]]
             sage: L = posets.RandomLattice(10, 0, properties=['dismantlable'])
             sage: L.is_dismantlable()
             True
@@ -908,7 +928,6 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.RandomLattice(0, 0.5)
             Finite lattice containing 0 elements
         """
-        from copy import copy
         n = check_int(n)
         try:
             p = float(p)
@@ -1003,8 +1022,9 @@ class Posets(metaclass=ClasscallMetaclass):
                     L.pop(j)
                     yield S(L)
 
+        cat = FiniteLatticePosets().ChainGraded()
         return LatticePoset({x: list(covers(x)) for x in S},
-                            cover_relations=True)
+                            cover_relations=True, category=cat)
 
     @staticmethod
     def SSTPoset(s, f=None):
@@ -1115,8 +1135,10 @@ class Posets(metaclass=ClasscallMetaclass):
         if n < 10:
             element_labels = {s: "".join(str(x) for x in s)
                               for s in Permutations(n)}
+
+        cat = FiniteLatticePosets().ChainGraded()
         return Poset({s: s.bruhat_succ() for s in Permutations(n)},
-                     element_labels)
+                     element_labels, category=cat)
 
     @staticmethod
     def SymmetricGroupBruhatIntervalPoset(start, end):
@@ -1161,7 +1183,8 @@ class Posets(metaclass=ClasscallMetaclass):
                            if succ_perm.bruhat_lequal(end)]
             unseen.extend(succ_perm for succ_perm in nodes[perm]
                           if succ_perm not in nodes)
-        return Poset(nodes)
+        cat = FiniteLatticePosets().ChainGraded()
+        return Poset(nodes, category=cat)
 
     @staticmethod
     def SymmetricGroupWeakOrderPoset(n, labels='permutations', side='right'):
@@ -1178,14 +1201,14 @@ class Posets(metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: posets.SymmetricGroupWeakOrderPoset(4)
-            Finite poset containing 24 elements
+            Finite lattice containing 24 elements
         """
         if n < 10 and labels == "permutations":
-            element_labels = dict([[s, "".join(map(str, s))]
-                                   for s in Permutations(n)])
+            element_labels = {s: "".join(map(str, s))
+                              for s in Permutations(n)}
         if n < 10 and labels == "reduced_words":
-            element_labels = dict([[s, "".join(map(str, s.reduced_word_lexmin()))]
-                                   for s in Permutations(n)])
+            element_labels = {s: "".join(map(str, s.reduced_word_lexmin()))
+                              for s in Permutations(n)}
         if side == "left":
 
             def weak_covers(s):
@@ -1196,6 +1219,7 @@ class Posets(metaclass=ClasscallMetaclass):
                 return [v for v in s.bruhat_succ() if
                         s.length() + (s.inverse().right_action_product(v)).length() == v.length()]
         else:
+
             def weak_covers(s):
                 r"""
                 Nested function for computing the covers of elements in the
@@ -1203,8 +1227,11 @@ class Posets(metaclass=ClasscallMetaclass):
                 """
                 return [v for v in s.bruhat_succ() if
                         s.length() + (s.inverse().left_action_product(v)).length() == v.length()]
-        return Poset(dict([[s, weak_covers(s)] for s in Permutations(n)]),
-                     element_labels)
+        return LatticePoset(
+            {s: weak_covers(s) for s in Permutations(n)},
+            element_labels, check=False,
+            category=FiniteLatticePosets().ChainGraded().Semidistributive()
+        )
 
     @staticmethod
     def TetrahedralPoset(n, *colors, **labels):
@@ -1273,10 +1300,7 @@ class Posets(metaclass=ClasscallMetaclass):
         elem_labels = {}
         if 'labels' in labels:
             if labels['labels'] == 'integers':
-                labelcount = 0
-                for i, j, k in elem:
-                    elem_labels[(i, j, k)] = labelcount
-                    labelcount += 1
+                elem_labels.update({ijk: labelcount for labelcount, ijk in enumerate(elem)})
         for c in colors:
             for i, j, k in elem:
                 if i + j + k < n - 1:
@@ -1639,7 +1663,7 @@ class Posets(metaclass=ClasscallMetaclass):
         edges.extend([(n, n + 1), (n, n + 2), (n + 1, n + 3), (n + 2, n + 3)])
         edges.extend((i, i + 1) for i in range(n + 3, 2 * n + 2))
         p = DiGraph([list(range(1, 2 * n + 3)), edges])
-        return DCompletePoset(p)
+        return DCompletePoset(p, category=FiniteLatticePosets().Distributive())
 
     @staticmethod
     def PermutationPattern(n):
@@ -1993,7 +2017,7 @@ def _random_dismantlable_lattice(n):
         sage: D = sage.combinat.posets.poset_examples._random_dismantlable_lattice(10); D
         Digraph on 10 vertices
         sage: D.neighbors_in(8)
-        [0]
+        [1]
 
     ALGORITHM::
 
@@ -2092,7 +2116,6 @@ def _random_distributive_lattice(n):
     Repeat.
     """
     from sage.combinat.posets.hasse_diagram import HasseDiagram
-    from copy import copy
     from sage.combinat.subset import Subsets
     from sage.graphs.digraph_generators import digraphs
 
@@ -2123,7 +2146,7 @@ def _random_distributive_lattice(n):
     return D
 
 
-def _random_stone_lattice(n):
+def _random_stone_lattice(n) -> DiGraph:
     """
     Return a random Stone lattice on `n` elements.
 
@@ -2150,10 +2173,10 @@ def _random_stone_lattice(n):
     from sage.arith.misc import factor
     from sage.combinat.partition import Partitions
     from sage.misc.misc_c import prod
-    from copy import copy
+    from sage.misc.prandom import shuffle
 
     factors = sum([[f[0]] * f[1] for f in factor(n)], [])
-    sage.misc.prandom.shuffle(factors)
+    shuffle(factors)
 
     part_lengths = list(Partitions(len(factors)).random_element())
     parts = []

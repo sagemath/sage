@@ -28,6 +28,7 @@ Constructors and databases
    sage/graphs/graph_generators_pyx
    sage/graphs/graph_database
    sage/graphs/strongly_regular_db
+   sage/graphs/generators/luw_graphs
    sage/graphs/generators/basic
    sage/graphs/generators/chessboard
    sage/graphs/generators/classical_geometries
@@ -90,6 +91,7 @@ Libraries of algorithms
    sage/graphs/pq_trees
    sage/graphs/matching
    sage/graphs/matchpoly
+   sage/graphs/morphisms
    sage/graphs/genus
    sage/graphs/lovasz_theta
    sage/graphs/schnyder
@@ -126,5 +128,3 @@ Libraries of algorithms
    sage/graphs/cycle_enumeration
 
 .. include:: ../footer.txt
-
-        

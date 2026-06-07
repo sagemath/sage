@@ -768,8 +768,7 @@ def SelectiveFormatter(formatter, skip_values):
                 """
                 if x in self.skip_values:
                     return ''
-                else:
-                    return self.formatter(x, *args, **kwds)
+                return self.formatter(x, *args, **kwds)
 
     return _SelectiveFormatterClass(formatter, skip_values)
 
@@ -2764,10 +2763,9 @@ def parametric_plot(funcs, *args, **kwargs):
     if num_funcs == 2 and num_ranges == 1:
         kwargs['parametric'] = True
         return plot(funcs, *args, **kwargs)
-    elif (num_funcs == 3 and num_ranges <= 2):
+    if (num_funcs == 3 and num_ranges <= 2):
         return sage.plot.plot3d.parametric_plot3d.parametric_plot3d(funcs, *args, **kwargs)
-    else:
-        raise ValueError("the number of functions and the number of variable ranges is not a supported combination for a 2d or 3d parametric plots")
+    raise ValueError("the number of functions and the number of variable ranges is not a supported combination for a 2d or 3d parametric plots")
 
 
 @options(aspect_ratio=1.0)
@@ -3170,8 +3168,7 @@ def list_plot(data, plotjoined=False, **kwargs):
     try:
         if plotjoined:
             return line(data, **kwargs)
-        else:
-            return point(data, **kwargs)
+        return point(data, **kwargs)
     except (TypeError, IndexError):
         # Assume we have complex-valued input and plot real and imaginary parts.
         # Need to catch IndexError because if data is, say, [(0, 1), (1, I)],
@@ -3185,8 +3182,7 @@ def list_plot(data, plotjoined=False, **kwargs):
             data = [(z.real(), z.imag()) for z in [CC(z) for z in data]]
         if plotjoined:
             return line(data, **kwargs)
-        else:
-            return point(data, **kwargs)
+        return point(data, **kwargs)
 
 # ------------------------ Graphs on log scale ---------------------------
 

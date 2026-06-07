@@ -51,7 +51,7 @@ jobs:
 
       - name: Download live doc
         id: download-doc
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: livedoc
           github-token: ${{ secrets.GITHUB_TOKEN }}

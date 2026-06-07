@@ -34,11 +34,12 @@ The default domain of a symbolic variable is the complex plane::
 
 Here is the list of acceptable features::
 
+    sage: from sage.interfaces.maxima_lib import maxima
     sage: ", ".join(map(str, maxima("features")._sage_()))
     'integer, noninteger, even, odd, rational, irrational, real, imaginary,
     complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
     constant, commutative, lassociative, rassociative, symmetric,
-    antisymmetric, integervalued'
+    antisymmetric, integervalued, one_to_one'
 
 Set positive domain using a relation::
 
@@ -71,10 +72,10 @@ Assumptions are added and in some cases checked for consistency::
     ValueError: Assumption is inconsistent
     sage: forget()
 """
+from sage.rings.cc import CC
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
 from sage.structure.element import Expression
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -116,11 +117,12 @@ class GenericDeclaration(UniqueRepresentation):
 
     Here is the list of acceptable features::
 
+        sage: from sage.interfaces.maxima_lib import maxima
         sage: ", ".join(map(str, maxima("features")._sage_()))
         'integer, noninteger, even, odd, rational, irrational, real, imaginary,
         complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
         constant, commutative, lassociative, rassociative, symmetric,
-        antisymmetric, integervalued'
+        antisymmetric, integervalued, one_to_one'
 
     Test unique representation behavior::
 
@@ -155,11 +157,12 @@ class GenericDeclaration(UniqueRepresentation):
 
         Here is the list of acceptable features::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: ", ".join(map(str, maxima("features")._sage_()))
             'integer, noninteger, even, odd, rational, irrational, real,
             imaginary, complex, analytic, increasing, decreasing, oddfun,
             evenfun, posfun, constant, commutative, lassociative, rassociative,
-            symmetric, antisymmetric, integervalued'
+            symmetric, antisymmetric, integervalued, one_to_one'
         """
         self._var = var
         self._assumption = assumption
@@ -209,7 +212,6 @@ class GenericDeclaration(UniqueRepresentation):
             ValueError: bougie not a valid assumption, must be one of ['analytic', ... 'symmetric']
         """
         from sage.calculus.calculus import maxima
-        global _valid_feature_strings
         if self._assumption in _valid_feature_strings:
             return
         # We get the list here because features may be added with time.
@@ -384,21 +386,21 @@ class GenericDeclaration(UniqueRepresentation):
             return False
         if self._assumption == 'integer':
             return value not in ZZ
-        elif self._assumption == 'noninteger':
+        if self._assumption == 'noninteger':
             return value in ZZ
-        elif self._assumption == 'even':
+        if self._assumption == 'even':
             return value not in ZZ or bool(ZZ(value) % 2)
-        elif self._assumption == 'odd':
+        if self._assumption == 'odd':
             return value not in ZZ or not (ZZ(value) % 2)
-        elif self._assumption == 'rational':
+        if self._assumption == 'rational':
             return value not in QQ
-        elif self._assumption == 'irrational':
+        if self._assumption == 'irrational':
             return value in QQ
-        elif self._assumption == 'real':
+        if self._assumption == 'real':
             return value not in RR
-        elif self._assumption == 'imaginary':
+        if self._assumption == 'imaginary':
             return value not in CC or CC(value).real() != 0
-        elif self._assumption == 'complex':
+        if self._assumption == 'complex':
             return value not in CC
 
 
@@ -979,6 +981,5 @@ class assuming:
         if self.replace:
             forget(assumptions())
             assume(self.OldAss)
-        else:
-            if len(self.Ass) > 0:
-                forget(self.Ass)
+        elif len(self.Ass) > 0:
+            forget(self.Ass)

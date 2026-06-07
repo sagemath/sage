@@ -2,8 +2,8 @@
 r"""
 `q`-expansion of `j`-invariant
 """
-from .eis_series import eisenstein_series_qexp
-from .vm_basis import delta_qexp
+from sage.modular.modform.eis_series import eisenstein_series_qexp
+from sage.modular.modform.vm_basis import delta_qexp
 from sage.rings.rational_field import QQ
 
 
@@ -38,8 +38,7 @@ def j_invariant_qexp(prec=10, K=QQ):
     j = (g6*g6) * (~Delta) + 1728
     if K != QQ:
         return j.change_ring(K)
-    else:
-        return j
+    return j
 
 
 # NOTE: this needs to be sped up.  The pari code src/basemath/trans3.c is

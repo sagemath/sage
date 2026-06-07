@@ -33,7 +33,7 @@ You can also obtain the character table (in LaTeX format) in Sage:
 ::
 
     sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
-    sage: latex(G.character_table())
+    sage: latex(G.character_table()) # random
     \left(\begin{array}{rrrr}
     1 & 1 & 1 & 1 \\
     1 & -\zeta_{3} - 1 & \zeta_{3} & 1 \\

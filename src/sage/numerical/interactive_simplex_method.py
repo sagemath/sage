@@ -410,14 +410,13 @@ def variable(R, v):
         if len(matches) > 1:
             raise ValueError("the given index is ambiguous")
         return matches[0]
-    else:
-        try:
-            v = R(v)
-            if v in R.gens():
-                return v
-        except TypeError:
-            pass
-        raise ValueError("cannot interpret given data as a variable")
+    try:
+        v = R(v)
+        if v in R.gens():
+            return v
+    except TypeError:
+        pass
+    raise ValueError("cannot interpret given data as a variable")
 
 
 available_styles = {
@@ -875,7 +874,7 @@ class InteractiveLPProblem(SageObject):
         A, b, c, x = self._Abcx
         if F.n_vertices() == 0:
             return (None, None)
-        elif c.is_zero():
+        if c.is_zero():
             M, S = 0, F.vertices()[0]
         elif self._problem_type == "max":
             if any(c * vector(R, ray) > 0 for ray in F.rays()) or \
@@ -1184,11 +1183,11 @@ class InteractiveLPProblem(SageObject):
             R = QQ
         else:
             R = RDF
-            ieqs = [[R(_) for _ in ieq] for ieq in ieqs]
-            eqns = [[R(_) for _ in eqn] for eqn in eqns]
+            ieqs = [[R(v) for v in ieq] for ieq in ieqs]
+            eqns = [[R(v) for v in eqn] for eqn in eqns]
         return Polyhedron(ieqs=ieqs, eqns=eqns, base_ring=R)
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         r"""
         Check if ``self`` is bounded.
 
@@ -1214,7 +1213,7 @@ class InteractiveLPProblem(SageObject):
         """
         return self.optimal_solution() is not None or not self.is_feasible()
 
-    def is_feasible(self, *x):
+    def is_feasible(self, *x) -> bool:
         r"""
         Check if ``self`` or given solution is feasible.
 
@@ -1251,7 +1250,7 @@ class InteractiveLPProblem(SageObject):
             return self.feasible_set().contains(self._solution(x))
         return self.optimal_value() is not None
 
-    def is_negative(self):
+    def is_negative(self) -> bool:
         r"""
         Return ``True`` when the problem is of type ``'-max'`` or ``'-min'``.
 
@@ -1269,7 +1268,7 @@ class InteractiveLPProblem(SageObject):
         """
         return self._is_negative
 
-    def is_primal(self):
+    def is_primal(self) -> bool:
         r"""
         Check if we consider this problem to be primal or dual.
 
@@ -1290,7 +1289,7 @@ class InteractiveLPProblem(SageObject):
         """
         return self._is_primal
 
-    def is_optimal(self, *x):
+    def is_optimal(self, *x) -> bool:
         r"""
         Check if given solution is feasible.
 
@@ -2723,10 +2722,9 @@ class LPAbstractDictionary(SageObject):
         leaving = "Leaving: ${}$. ".format(latex(self.leaving()))
         if direction == "primal":
             return HtmlFragment(entering + leaving)
-        elif direction == "dual":
+        if direction == "dual":
             return HtmlFragment(leaving + entering)
-        else:
-            raise ValueError("direction must be either primal or dual")
+        raise ValueError("direction must be either primal or dual")
 
     def _repr_(self):
         r"""
@@ -3058,7 +3056,7 @@ class LPAbstractDictionary(SageObject):
                              "its coefficients")
         return self.column_coefficients(self._entering)
 
-    def is_dual_feasible(self):
+    def is_dual_feasible(self) -> bool:
         r"""
         Check if ``self`` is dual feasible.
 
@@ -3082,7 +3080,7 @@ class LPAbstractDictionary(SageObject):
         """
         return all(ci <= 0 for ci in self.objective_coefficients())
 
-    def is_feasible(self):
+    def is_feasible(self) -> bool:
         r"""
         Check if ``self`` is feasible.
 
@@ -3106,7 +3104,7 @@ class LPAbstractDictionary(SageObject):
         """
         return all(bi >= 0 for bi in self.constant_terms())
 
-    def is_optimal(self):
+    def is_optimal(self) -> bool:
         r"""
         Check if ``self`` is optimal.
 
@@ -4642,10 +4640,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
         m, n = P.m(), P.n()
         if k == 0:
             return vector(R, [-1] * m)
-        elif k <= n:
+        if k <= n:
             return P.A().column(k - 1)
-        else:
-            return identity_matrix(R, m).column(k - n - 1)
+        return identity_matrix(R, m).column(k - n - 1)
 
     def A_N(self):
         r"""
@@ -4937,10 +4934,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
             c_B = vector(R, P.m())
             c_B[BB.index(0)] = -1
             return c_B
-        else:
-            c_D = P.c()
-            n = P.n()
-            return vector(R, [c_D[k - 1] if k <= n else 0 for k in BB])
+        c_D = P.c()
+        n = P.n()
+        return vector(R, [c_D[k - 1] if k <= n else 0 for k in BB])
 
     def c_N(self):
         r"""
@@ -4963,10 +4959,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
         R = P.base_ring()
         if 0 in self.basic_indices():
             return vector(R, n + 1)
-        else:
-            c_D = P.c()
-            return vector(R, (c_D[k - 1] if k <= n else 0
-                              for k in self.nonbasic_indices()))
+        c_D = P.c()
+        return vector(R, (c_D[k - 1] if k <= n else 0
+                          for k in self.nonbasic_indices()))
 
     def column_coefficients(self, v):
         r"""

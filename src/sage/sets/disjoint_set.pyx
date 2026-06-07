@@ -115,6 +115,17 @@ cpdef DisjointSet(arg):
         sage: DisjointSet(SP) == DisjointSet(5)
         True
 
+    The parts of the set partition are preserved (see :issue:`39714`)::
+
+        sage: s = SetPartition([[0, 1, 2, 3]])
+        sage: DisjointSet(s)
+        {{0, 1, 2, 3}}
+        sage: SetPartition(DisjointSet(s)) == s
+        True
+        sage: s = SetPartition([[1, 3], [2, 5], [4]])
+        sage: SetPartition(DisjointSet(s)) == s
+        True
+
     TESTS::
 
         sage: DisjointSet(0)
@@ -143,14 +154,23 @@ cpdef DisjointSet(arg):
         sage: DisjointSet([{}, {}])
         Traceback (most recent call last):
         ...
-        TypeError: unhashable type: 'dict'
+        TypeError: ...unhashable type: 'dict'...
     """
     if isinstance(arg, (Integer, int)):
         if arg < 0:
             raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
     elif isinstance(arg, SetPartition):
-        return DisjointSet(arg.base_set())
+        d = DisjointSet_of_hashables(arg.base_set())
+        for part in arg:
+            it = iter(part)
+            try:
+                first = next(it)
+            except StopIteration:
+                continue
+            for x in it:
+                d.union(first, x)
+        return d
     else:
         return DisjointSet_of_hashables(arg)
 
@@ -186,7 +206,7 @@ cdef class DisjointSet_class(SageObject):
             '{{0}, {1}, {2, 4}, {3}}'
         """
         res = []
-        for l in (<dict?>self.root_to_elements_dict()).itervalues():
+        for l in (<dict?>self.root_to_elements_dict()).values():
             l.sort()
             res.append('{%s}' % ', '.join(repr(u) for u in l))
         res.sort()
@@ -206,7 +226,7 @@ cdef class DisjointSet_class(SageObject):
             sage: sorted(d)
             [['a'], ['b'], ['c']]
         """
-        return iter((<dict?>self.root_to_elements_dict()).itervalues())
+        return iter((<dict?>self.root_to_elements_dict()).values())
 
     def __richcmp__(self, other, int op):
         r"""

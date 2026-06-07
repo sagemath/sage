@@ -79,7 +79,7 @@ from sage.rings.infinity import Infinity
 
 
 class InfiniteWord_class(Word_class):
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -92,7 +92,6 @@ class InfiniteWord_class(Word_class):
             sage: Word(lambda x:x%3)._repr_()
             'word: 0120120120120120120120120120120120120120...'
         """
-        global word_options
         if word_options['old_repr']:
             return "Infinite word over %s" % str(self.parent().alphabet())[17:]
         return word_options['identifier'] + self.string_rep()

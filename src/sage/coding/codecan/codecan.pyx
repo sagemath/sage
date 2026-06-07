@@ -292,7 +292,7 @@ cdef class InnerGroup:
 
             d, _ = self.minimize_by_row_mult(factor * act_col)
             d.pop(first_nz_rep)
-            if len(d):  # there is at least one more multiplication
+            if d:  # there is at least one more multiplication
                 group_changed[0] = True
                 for i in range(self.rank):
                     factor = d.get(self.get_rep(i))

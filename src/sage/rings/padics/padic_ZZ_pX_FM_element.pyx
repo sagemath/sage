@@ -84,7 +84,6 @@ An Eisenstein extension::
 
 An unramified extension::
 
-    sage: # needs sage.libs.flint
     sage: g = x^3 + 3*x + 3
     sage: A.<a> = R.ext(g)
     sage: z = (1+a)^5; z
@@ -98,7 +97,6 @@ An unramified extension::
 
 Different printing modes::
 
-    sage: # needs sage.libs.flint
     sage: R = ZpFM(5, print_mode='digits'); S.<x> = R[]; f = x^5 + 75*x^3 - 15*x^2 + 125*x -5; W.<w> = R.ext(f)
     sage: z = (1+w)^5; repr(z)
     '...4110403113210310442221311242000111011201102002023303214332011214403232013144001400444441030421100001'
@@ -190,7 +188,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         Check that :issue:`13612` has been fixed::
 
-            sage: # needs sage.libs.flint
             sage: R = ZpFM(3)
             sage: S.<a> = R[]
             sage: W.<a> = R.extension(a^2 + 1)
@@ -225,10 +222,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 x = Rational(x)
             elif x.type() == 't_POLMOD' or x.type == 't_POL':
                 # This code doesn't check to see if the primes are the same.
-                L = []
                 x = x.lift().lift()
-                for i from 0 <= i <= x.poldegree():
-                    L.append(Integer(x.polcoef(i)))
+                L = [Integer(x.polcoef(i)) for i in range(x.poldegree() + 1)]
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
@@ -970,7 +965,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: ZZ(ZqFM(125,names='a')(-1))  # indirect doctest
             95367431640624
             sage: R = ZpFM(5); S.<x> = ZZ[]; f = x^5 + 25*x^3 - 5; W.<w> = R.ext(f)
@@ -1323,7 +1317,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + w^20 + 2*w^21 + 3*w^22 + w^23 + w^24
             sage: g = x^3 + 3*x + 3
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = R.ext(g)
             sage: y = 75 + 45*a + 1200*a^2; y
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4
@@ -1395,7 +1388,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: R.<a> = ZqFM(5^4,4)
             sage: E = a.teichmuller_expansion(); E
             5-adic expansion of a (teichmuller)
@@ -1499,7 +1491,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: y^5 == y
             True
 
-            sage: # needs sage.libs.flint
             sage: g = x^3 + 3*x + 3
             sage: A.<a> = R.ext(g)
             sage: b = A.teichmuller(1 + 2*a - a^2); b
@@ -1706,7 +1697,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + w^20 + 2*w^21 + 3*w^22 + w^23 + w^24
             sage: g = x^3 + 3*x + 3
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = R.ext(g)
             sage: y = 75 + 45*a + 1200*a^2; y
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4

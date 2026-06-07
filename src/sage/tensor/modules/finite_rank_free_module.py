@@ -527,8 +527,7 @@ The components on the basis are returned by the square bracket operator for
 # ******************************************************************************
 from __future__ import annotations
 
-from typing import Optional
-from collections.abc import Generator
+from typing import Optional, TYPE_CHECKING
 
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
@@ -548,6 +547,9 @@ from sage.tensor.modules.reflexive_module import (
     ReflexiveModule_base,
     ReflexiveModule_dual,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstract):
@@ -615,8 +617,7 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
         """
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def rank(self) -> int:
         r"""
@@ -2032,6 +2033,8 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
               running ._test_new() . . . pass
               running ._test_not_implemented_methods() . . . pass
               running ._test_pickling() . . . pass
+              running ._test_random() . . . pass
+              running ._test_rank() . . . pass
               running ._test_some_elements() . . . pass
         """
         from sage.misc.sage_unittest import TestSuite
@@ -2109,9 +2112,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         # Special cases:
         if tensor_type == (1,0):
             return self.element_class(self, name=name, latex_name=latex_name)
-        elif tensor_type == (0,1):
+        if tensor_type == (0,1):
             return self.linear_form(name=name, latex_name=latex_name)
-        elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
+        if tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
             if len(antisym[0]) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
                                              latex_name=latex_name)
@@ -3486,9 +3489,8 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
                 for basis, comp in tensor._components.items():
                     resu._components[basis] = comp.copy()
                 return resu
-            else:
-                raise TypeError("cannot coerce the {} ".format(tensor) +
-                                "to an element of {}".format(self))
+            raise TypeError("cannot coerce the {} ".format(tensor) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._fmodule, 1, name=name, latex_name=latex_name)
         if comp:

@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -18,7 +18,7 @@
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
@@ -61,7 +61,7 @@ def ntl_ZZ_p_random_element(v):
 
     cdef ntl_ZZ_p y
     v = ntl_ZZ_pContext(v)
-    y = ntl_ZZ_p(0,v)
+    y = ntl_ZZ_p(0, v)
     sig_on()
     ZZ_p_random(y.x)
     sig_off()
@@ -255,7 +255,7 @@ cdef class ntl_ZZ_p():
         cdef ntl_ZZ_p y
         cdef ntl_ZZ_p r = self._new()
         if not isinstance(other, ntl_ZZ_p):
-            other = ntl_ZZ_p(other,self.c)
+            other = ntl_ZZ_p(other, self.c)
         elif self.c is not (<ntl_ZZ_p>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
@@ -274,7 +274,7 @@ cdef class ntl_ZZ_p():
             3
         """
         if not isinstance(other, ntl_ZZ_p):
-            other = ntl_ZZ_p(other,self.c)
+            other = ntl_ZZ_p(other, self.c)
         elif self.c is not (<ntl_ZZ_p>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_p r = self._new()
@@ -293,7 +293,7 @@ cdef class ntl_ZZ_p():
         cdef ntl_ZZ_p y
         cdef ntl_ZZ_p r = ntl_ZZ_p(modulus=self.c)
         if not isinstance(other, ntl_ZZ_p):
-            other = ntl_ZZ_p(other,modulus=self.c)
+            other = ntl_ZZ_p(other, modulus=self.c)
         elif self.c is not (<ntl_ZZ_p>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
@@ -432,7 +432,7 @@ cdef class ntl_ZZ_p():
         """
         cdef ntl_ZZ r = ntl_ZZ()
         self.c.restore_c()
-        ZZ_p_modulus( &r.x, &self.x )
+        ZZ_p_modulus(&r.x, &self.x)
         return r
 
     def lift_centered(self):

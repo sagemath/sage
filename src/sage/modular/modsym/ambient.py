@@ -71,42 +71,44 @@ factor `x`.
 ################################################################################
 
 import sage.modular.arithgroup.all as arithgroup
-
-from sage.arith.misc import is_prime, divisors, number_of_divisors, crt
+from sage.arith.misc import crt, divisors, is_prime, number_of_divisors
+from sage.categories.fields import Fields
 from sage.categories.homset import Hom
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.modular.arithgroup.arithgroup_element import M2Z
+from sage.modular.cusps import Cusp
 from sage.modular.dirichlet import DirichletCharacter, TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
-from sage.modular.cusps import Cusp
+from sage.modular.modsym import (
+    boundary,
+    element,
+    heilbronn,
+    modsym,
+    modular_symbols,
+    p1list,
+    relation_matrix,
+    subspace,
+)
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
-from sage.modular.modsym.manin_symbol_list import (ManinSymbolList_gamma0,
-                                                   ManinSymbolList_gamma1,
-                                                   ManinSymbolList_gamma_h,
-                                                   ManinSymbolList_character)
+from sage.modular.modsym.manin_symbol_list import (
+    ManinSymbolList_character,
+    ManinSymbolList_gamma0,
+    ManinSymbolList_gamma1,
+    ManinSymbolList_gamma_h,
+)
+from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.rational_field import QQ
-from sage.categories.fields import Fields
 from sage.structure.factorization import Factorization
 from sage.structure.formal_sum import FormalSum
-
-from . import boundary
-from . import element
-from . import heilbronn
-from . import modular_symbols
-from . import modsym
-from . import p1list
-from . import relation_matrix
-from .space import ModularSymbolsSpace
-from . import subspace
 
 
 class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
@@ -442,26 +444,25 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                                 f"dimension {self.dimension()}")
             return self.element_class(self, x)
 
-        elif isinstance(x, (ManinSymbol, element.ModularSymbolsElement)):
+        if isinstance(x, (ManinSymbol, element.ModularSymbolsElement)):
             return self.element(x)
 
-        elif isinstance(x, modular_symbols.ModularSymbol):
+        if isinstance(x, modular_symbols.ModularSymbol):
             return self(x.manin_symbol_rep())
 
-        elif isinstance(x, (int, Integer)) and x == 0:
+        if isinstance(x, (int, Integer)) and x == 0:
             return self.element_class(self, self.free_module()(0))
 
-        elif isinstance(x, tuple):
+        if isinstance(x, tuple):
             return self.manin_symbol(x)
 
-        elif isinstance(x, FormalSum):
+        if isinstance(x, FormalSum):
             return sum([c * self(y) for c, y in x], self(0))
 
-        elif isinstance(x, list):
+        if isinstance(x, list):
             if len(x) == 3 and isinstance(x[0], MPolynomial):
                 return self.modular_symbol_sum(x)
-            else:
-                return self.modular_symbol(x)
+            return self.modular_symbol(x)
 
         raise TypeError("No coercion of %s into %s defined." % (x, self))
 
@@ -493,8 +494,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         """
         if self.character() is None:
             return modsym.ModularSymbols(self.group(), self.weight(), self.sign(), R)
-        else:
-            return modsym.ModularSymbols(self.character(), self.weight(), self.sign(), R)
+        return modsym.ModularSymbols(self.character(), self.weight(), self.sign(), R)
 
     def _action_on_modular_symbols(self, g):
         r"""
@@ -1434,11 +1434,10 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         """
         if t == 1:
             return self._degeneracy_raising_matrix_1(M)
-        else:
-            # use Hecke operator and t=1 case.
-            d1 = self.degeneracy_map(M, 1).matrix()
-            T = M.hecke_matrix(t)
-            return (~self.base_ring()(t)) * d1 * T
+        # use Hecke operator and t=1 case.
+        d1 = self.degeneracy_map(M, 1).matrix()
+        T = M.hecke_matrix(t)
+        return (~self.base_ring()(t)) * d1 * T
 
     def _degeneracy_raising_matrix_1(self, M):
         r"""
@@ -1575,15 +1574,14 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                 v = self.manin_gens_to_basis().row(t)
             return self.element_class(self, v)
 
-        elif isinstance(x, element.ModularSymbolsElement):
+        if isinstance(x, element.ModularSymbolsElement):
             M = x.parent()
             if M.ambient_hecke_module() != self:
                 # TODO -- sometimes do something more sophisticated here.
                 raise TypeError("Modular symbol (%s) does not lie in this space." % x)
             return self(x.element())
 
-        else:
-            raise ValueError("Cannot create element of %s from %s." % (x, self))
+        raise ValueError("Cannot create element of %s from %s." % (x, self))
 
     def dual_star_involution_matrix(self):
         """
@@ -2566,12 +2564,10 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
                 return None
             if k % 2:
                 return 0
-            elif k > 2:
+            if k > 2:
                 return 2 * self.group().dimension_cusp_forms(k) + self.group().ncusps()
-            else:
-                return 2*self.group().dimension_cusp_forms(k) + self.group().ncusps() - 1
-        else:
-            raise NotImplementedError
+            return 2*self.group().dimension_cusp_forms(k) + self.group().ncusps() - 1
+        raise NotImplementedError
 
     def _repr_(self):
         r"""
@@ -2606,8 +2602,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             else:
                 m = 1
             return m * self.group().dimension_cusp_forms(k)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _degeneracy_raising_matrix_1(self, M):
         r"""
@@ -2686,8 +2681,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
             else:
                 m = 1
             return m * self.group().dimension_new_cusp_forms(k)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def boundary_space(self):
         r"""
@@ -2858,8 +2852,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             if self.sign() != 0:
                 return None
             return 2*self.group().dimension_cusp_forms(2) + self.group().ncusps() - 1
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _cuspidal_submodule_dimension_formula(self):
         r"""
@@ -2879,8 +2872,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             else:
                 m = 1
             return m * self.group().dimension_cusp_forms(2)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _cuspidal_new_submodule_dimension_formula(self):
         r"""
@@ -2900,8 +2892,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             else:
                 m = 1
             return m * self.group().dimension_new_cusp_forms(2)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def _compute_hecke_matrix_prime(self, p, rows=None):
         r"""

@@ -5,14 +5,17 @@ py.install_sources(
   'assigned_names.py',
   'context_managers.py',
   'element.pxd',
+  'element.pyx',
   'gap_functions.py',
   'gap_globals.py',
   'gap_includes.pxd',
+  'libgap.pyx',
   'gap_test.py',
   'operations.py',
   'sage.gaprc',
   'saved_workspace.py',
   'util.pxd',
+  'util.pyx',
   subdir: 'sage/libs/gap',
 )
 
@@ -20,9 +23,9 @@ py.install_sources(
 fs.copyfile('sage.gaprc')
 
 extension_data = {
-  'element' : files('element.pyx'),
-  'libgap' : files('libgap.pyx'),
-  'util' : files('util.pyx'),
+  'element': files('element.pyx'),
+  'libgap': files('libgap.pyx'),
+  'util': files('util.pyx'),
 }
 
 foreach name, pyx : extension_data

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Modules With Basis
 
@@ -9,13 +8,13 @@ AUTHORS:
 - Christian Stump (2010): :issue:`9648` module_morphism's to a wider class
   of codomains
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.lazy_attribute import lazy_attribute
@@ -178,7 +177,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg, x, self))
         return M
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether this category is abelian.
 
@@ -573,17 +572,15 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         domain=self, on_basis=on_basis,
                         triangular=triangular, unitriangular=unitriangular,
                         **keywords)
-                else:
-                    return TriangularModuleMorphismFromFunction(
-                        domain=self, function=function,
-                        triangular=triangular, unitriangular=unitriangular,
-                        **keywords)
+                return TriangularModuleMorphismFromFunction(
+                    domain=self, function=function,
+                    triangular=triangular, unitriangular=unitriangular,
+                    **keywords)
             if on_basis is not None:
                 return ModuleMorphismByLinearity(
                     domain=self, on_basis=on_basis, **keywords)
-            else:
-                return ModuleMorphismFromFunction(  # Or just SetMorphism?
-                    domain=self, function=function, **keywords)
+            return ModuleMorphismFromFunction(  # Or just SetMorphism?
+                domain=self, function=function, **keywords)
 
         _module_morphism = module_morphism
 
@@ -1270,12 +1267,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 mc = x.monomial_coefficients(copy=False)
                 return codomain.linear_combination((on_basis(key), coeff)
                                                    for key, coeff in mc.items())
-            else:
-                return_sum = codomain.zero()
-                mc = x.monomial_coefficients(copy=False)
-                for key, coeff in mc.items():
-                    return_sum += coeff * on_basis(key)
-                return return_sum
+            return_sum = codomain.zero()
+            mc = x.monomial_coefficients(copy=False)
+            for key, coeff in mc.items():
+                return_sum += coeff * on_basis(key)
+            return return_sum
 
         def _apply_module_endomorphism(self, x, on_basis):
             """
@@ -1431,12 +1427,22 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             indices = self.basis().keys()
-            a = self.zero()
-            if not indices.is_empty():
-                for i in range(n):
-                    a += self.term(indices.random_element(),
-                                   self.base_ring().random_element())
-            return a
+            if not indices:
+                return self.zero()
+
+            # Some container types (list, tuple, etc.) won't have
+            # a random_element() method.
+            if hasattr(indices, "random_element"):
+                random_element = lambda c: c.random_element()
+            else:
+                from random import choice
+                random_element = choice
+
+            return self.sum(
+                self.term(random_element(indices),
+                          self.base_ring().random_element())
+                for _ in range(n)
+            )
 
     class ElementMethods:
         # TODO: Define the appropriate element methods here (instead of in
@@ -1538,8 +1544,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             res = self.monomial_coefficients(copy=False).get(m)
             if res is None:
                 return self.base_ring().zero()
-            else:
-                return res
+            return res
 
         def coefficient(self, m):
             """
@@ -1816,7 +1821,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             zero = self.parent().base_ring().zero()
             mc = self.monomial_coefficients(copy=False)
             if not sort:
-                return [value for key, value in mc.items() if value != zero]
+                return [value for value in mc.values() if value != zero]
 
             v = sorted([(key, value) for key, value in mc.items()
                         if value != zero])
@@ -1844,8 +1849,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if len(self) == 1:
                 return self.support()[0]
-            else:
-                raise ValueError("{} is not a single term".format(self))
+            raise ValueError("{} is not a single term".format(self))
 
         def leading_support(self, *args, **kwds):
             r"""
@@ -2768,11 +2772,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     return codomain.linear_combination((f(*[module.monomial(t)
                                                             for module, t in zip(modules, m)]), c)
                                                        for m, c in self.items())
-                else:
-                    return sum((c * f(*[module.monomial(t)
-                                        for module, t in zip(modules, m)])
-                                for m, c in self.items()),
-                               codomain.zero())
+                return sum((c * f(*[module.monomial(t)
+                                    for module, t in zip(modules, m)])
+                            for m, c in self.items()),
+                           codomain.zero())
 
     class DualObjects(DualObjectsCategory):
 

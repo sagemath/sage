@@ -23,11 +23,11 @@ cdef int allocate_mpz_vector(mpz_vector* v, Py_ssize_t num_nonzero) except -1:
     v.entries = <mpz_t *>sig_malloc(num_nonzero*sizeof(mpz_t))
     if v.entries == NULL:
         raise MemoryError("Error allocating memory")
-    for i from 0 <= i < num_nonzero:
+    for i in range(num_nonzero):
         mpz_init(v.entries[i])
     v.positions = <Py_ssize_t*>sig_malloc(num_nonzero*sizeof(Py_ssize_t))
     if v.positions == NULL:
-        for i from 0 <= i < num_nonzero:
+        for i in range(num_nonzero):
             mpz_clear(v.entries[i])
         sig_free(v.entries)
         v.entries = NULL
@@ -45,7 +45,7 @@ cdef int mpz_vector_init(mpz_vector* v, Py_ssize_t degree, Py_ssize_t num_nonzer
 cdef void mpz_vector_clear(mpz_vector* v) noexcept:
     cdef Py_ssize_t i
     # Free all mpz objects allocated in creating v
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         mpz_clear(v.entries[i])
     # Free entries and positions of those entries.
     # These were allocated from the Python heap.
@@ -202,7 +202,7 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
                 mpz_set(v.entries[i], e[i])
                 mpz_clear(e[i])
                 v.positions[i] = pos[i]
-            for i from m < i < v.num_nonzero:
+            for i in range(m + 1, v.num_nonzero):
                 # v.entries[i-1] = e[i]
                 mpz_set(v.entries[i-1], e[i])
                 mpz_clear(e[i])
@@ -233,7 +233,7 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
         # v.entries[ins] = x
         mpz_set(v.entries[ins], x)
         v.positions[ins] = n
-        for i from ins < i < v.num_nonzero:
+        for i in range(ins + 1, v.num_nonzero):
             mpz_set(v.entries[i], e[i-1])
             mpz_clear(e[i-1])
             v.positions[i] = pos[i-1]
@@ -345,7 +345,7 @@ cdef int add_mpz_vector_init(mpz_vector* sum,
             j = j + 1
         # end if
     # end while
-    for i from k <= i < z.num_nonzero:
+    for i in range(k, z.num_nonzero):
         mpz_clear(z.entries[i])
     z.num_nonzero = k
     mpz_clear(tmp)
@@ -383,7 +383,7 @@ cdef int mpz_vector_scalar_multiply(mpz_vector* v, mpz_vector* w, mpz_t scalar) 
             raise MemoryError("error allocating rational sparse vector positions")
         v.num_nonzero = w.num_nonzero
         v.degree = w.degree
-        for i from 0 <= i < v.num_nonzero:
+        for i in range(v.num_nonzero):
             mpz_init(v.entries[i])
             mpz_mul(v.entries[i], w.entries[i], scalar)
             v.positions[i] = w.positions[i]
@@ -396,7 +396,7 @@ cdef int mpz_vector_cmp(mpz_vector* v, mpz_vector* w) noexcept:
         return 1
     cdef Py_ssize_t i
     cdef int c
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         c = mpz_cmp(v.entries[i], w.entries[i])
         if c < 0:
             return -1

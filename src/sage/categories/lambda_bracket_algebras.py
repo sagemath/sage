@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Lambda Bracket Algebras
 
@@ -240,8 +239,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             """
             if n >= 0:
                 return self.bracket(rhs).get(n,self.parent().zero())
-            else:
-                raise NotImplementedError("vertex algebras are not implemented")
+            raise NotImplementedError("vertex algebras are not implemented")
 
         @abstract_method
         def T(self, n=1):

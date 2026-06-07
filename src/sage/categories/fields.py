@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Fields
 """
@@ -62,7 +61,7 @@ class Fields(CategoryWithAxiom):
         """
         return [EuclideanDomains(), NoetherianRings()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -147,11 +146,12 @@ class Fields(CategoryWithAxiom):
         TESTS::
 
             sage: # needs sage.libs.pari
-            sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2 + 2)
+            sage: Q = Zmod(13)
             sage: Q.category()
-            Category of commutative no zero divisors quotients of algebras
-             over (number fields and quotient fields and metric spaces)
+            Join of Category of finite commutative rings
+             and Category of subquotients of monoids
+             and Category of quotients of semigroups
+             and Category of finite enumerated sets
             sage: F = Fields()
             sage: F._contains_helper(Q)
             False
@@ -529,7 +529,7 @@ class Fields(CategoryWithAxiom):
                     return (zero, zero, zero)
                 c = ~a.leading_coefficient()
                 return (c * a, R(c), zero)
-            elif not a:
+            if not a:
                 c = ~b.leading_coefficient()
                 return (c * b, zero, R(c))
             u, d, v1, v3 = (R.one(), a, zero, b)
@@ -558,8 +558,7 @@ class Fields(CategoryWithAxiom):
             """
             if self.characteristic() == 0:
                 return True
-            else:
-                raise NotImplementedError
+            raise NotImplementedError
 
         def _test_characteristic_fields(self, **options):
             """
@@ -692,6 +691,13 @@ class Fields(CategoryWithAxiom):
                 sage: f = QQbar['x'](1)                                                 # needs sage.rings.number_field
                 sage: f.squarefree_decomposition()                                      # needs sage.rings.number_field
                 1
+
+            .. NOTE::
+
+                Currently factorization over non-finite fields with positive characteristic
+                is not implemented, it would be useful to port the algorithm in
+                :meth:`sage.rings.finite_rings.finite_field_base.FiniteField._squarefree_decomposition_univariate_polynomial`
+                here.
             """
             from sage.structure.factorization import Factorization
             if f.degree() == 0:

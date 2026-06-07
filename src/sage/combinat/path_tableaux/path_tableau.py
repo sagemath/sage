@@ -142,7 +142,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         P = self.parent()
         for i in range(self.size()):
             L = list(P(L).promotion())
-            result.append( L.pop() )
+            result.append(L.pop())
         result.reverse()
         return P(result)
 
@@ -607,7 +607,7 @@ class CylindricalDiagram(SageObject):
         D = self.diagram
         m = len(D[-1])
         result = "\\begin{array}{"+"c"*m + "}\n"
-        result += "\\\\ \n".join( " & ".join(latex(a) for a in x) for x in D )
+        result += "\\\\ \n".join(" & ".join(latex(a) for a in x) for x in D)
         result += "\n \\end{array}\n"
         return result
 

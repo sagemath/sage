@@ -83,9 +83,10 @@ class Lisp(Expect):
                         # The capitalized version of this is used for printing.
                         name='Lisp',
 
-                        # This is regexp of the input prompt.  If you can change
-                        # it to be very obfuscated that would be better.   Even
-                        # better is to use sequence numbers.
+                        # This is regexp of the input prompt.  If you
+                        # can change it to be very obfuscated that
+                        # would be better.  Even better is to use
+                        # sequence numbers.
                         prompt='> ',
 
                         # This is the command that starts up your program
@@ -418,10 +419,9 @@ class LispElement(RingElement, ExpectElement):
 
         if P.eval('(= %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, 0)
-        elif P.eval('(< %s %s)' % (self.name(), other.name())) == P._true_symbol():
+        if P.eval('(< %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, -1)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     def __bool__(self):
         """
@@ -524,24 +524,6 @@ class LispFunction(ExpectFunction):
         """
         M = self._parent
         return M.help(self._name)
-
-
-def is_LispElement(x):
-    """
-    EXAMPLES::
-
-        sage: from sage.interfaces.lisp import is_LispElement
-        sage: is_LispElement(2)
-        doctest:...: DeprecationWarning: the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_LispElement(lisp(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_LispElement is deprecated; use isinstance(x, sage.interfaces.abc.LispElement) instead")
-
-    return isinstance(x, LispElement)
 
 
 # An instance

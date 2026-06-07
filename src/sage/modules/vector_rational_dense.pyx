@@ -146,7 +146,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("entries must be a list of length %s" % self._degree)
-            for i from 0 <= i < self._degree:
+            for i in range(self._degree):
                 z = Rational(x[i])
                 mpq_set(self._entries[i], z.value)
             return
@@ -251,7 +251,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
     def __reduce__(self):
         return (unpickle_v1, (self._parent, self.list(), self._degree,
-                              not self._is_immutable))
+                              self._is_immutable))
 
     cpdef _add_(self, right):
         cdef Vector_rational_dense z, r
@@ -290,7 +290,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         mpq_init(t)
         mpq_set_si(z.value, 0, 1)
         cdef Py_ssize_t i
-        for i from 0 <= i < self._degree:
+        for i in range(self._degree):
             mpq_mul(t, self._entries[i], r._entries[i])
             mpq_add(z.value, z.value, t)
         mpq_clear(t)
@@ -373,7 +373,7 @@ def unpickle_v0(parent, entries, degree):
     return v
 
 
-def unpickle_v1(parent, entries, degree, is_mutable):
+def unpickle_v1(parent, entries, degree, immutable):
     cdef Vector_rational_dense v
     v = Vector_rational_dense.__new__(Vector_rational_dense)
     v._init(degree, parent)
@@ -382,5 +382,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v

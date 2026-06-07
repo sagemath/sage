@@ -139,9 +139,14 @@ AUTHORS:
 from builtins import sum as add
 
 from sage.categories.fields import Fields
-from sage.categories.homset import hom, Hom, End
+from sage.categories.homset import End, Hom, hom
 from sage.categories.number_fields import NumberFields
-from sage.libs.singular.function import singular_function, lib as singular_lib, get_printlevel, set_printlevel
+from sage.libs.singular.function import (
+    get_printlevel,
+    set_printlevel,
+    singular_function,
+)
+from sage.libs.singular.function import lib as singular_lib
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -150,27 +155,34 @@ from sage.misc.persist import register_unpickle_override
 from sage.misc.sage_eval import sage_eval
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
+from sage.rings.polynomial.multi_polynomial_element import (
+    degree_lowest_rational_function,
+)
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
-from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subscheme_projective,
-                                                          AlgebraicScheme_subscheme_projective_field)
+from sage.schemes.projective.projective_space import (
+    ProjectiveSpace,
+    ProjectiveSpace_ring,
+)
+from sage.schemes.projective.projective_subscheme import (
+    AlgebraicScheme_subscheme_projective,
+    AlgebraicScheme_subscheme_projective_field,
+)
 
 lazy_import('sage.interfaces.singular', 'singular')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
-from .curve import Curve_generic
-
-from .point import (ProjectiveCurvePoint_field,
-                    ProjectivePlaneCurvePoint_field,
-                    ProjectivePlaneCurvePoint_finite_field,
-                    IntegralProjectiveCurvePoint,
-                    IntegralProjectiveCurvePoint_finite_field,
-                    IntegralProjectivePlaneCurvePoint,
-                    IntegralProjectivePlaneCurvePoint_finite_field)
-
 from .closed_point import IntegralProjectiveCurveClosedPoint
+from .curve import Curve_generic
+from .point import (
+    IntegralProjectiveCurvePoint,
+    IntegralProjectiveCurvePoint_finite_field,
+    IntegralProjectivePlaneCurvePoint,
+    IntegralProjectivePlaneCurvePoint_finite_field,
+    ProjectiveCurvePoint_field,
+    ProjectivePlaneCurvePoint_field,
+    ProjectivePlaneCurvePoint_finite_field,
+)
 
 
 class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
@@ -795,19 +807,6 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
-
-        A hyperelliptic curve::
-
-            sage: # needs sage.plot
-            sage: P.<x> = QQ[]
-            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
-            sage: C = HyperellipticCurve(f)
-            sage: C.plot()
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)
-            Graphics object consisting of 1 graphics primitive
         """
         # if user has not specified a favorite affine patch, take the
         # one avoiding "infinity", i.e. the one corresponding to the
@@ -817,7 +816,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         C = Curve(self.affine_patch(patch))
         return C.plot(*args, **kwds)
 
-    def is_singular(self, P=None):
+    def is_singular(self, P=None) -> bool:
         r"""
         Return whether this curve is singular or not, or if a point ``P`` is
         provided, whether ``P`` is a singular point of this curve.
@@ -894,8 +893,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         if P is None:
             poly = self.defining_polynomial()
             return poly.parent().ideal(poly.gradient()+[poly]).dimension() > 0
-        else:
-            return not self.is_smooth(P)
+        return not self.is_smooth(P)
 
     def degree(self):
         r"""
@@ -992,7 +990,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         phi = H(G)
         return [phi(g).homogenize(x) for g in L]
 
-    def is_ordinary_singularity(self, P):
+    def is_ordinary_singularity(self, P) -> bool:
         r"""
         Return whether the singular point ``P`` of this projective plane curve is an ordinary singularity.
 
@@ -1449,7 +1447,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                       + (1/16*a + 1/16)*x*y*z^2 + (3/16*a + 3/16)*y^2*z^2
                       + (-3/16*a - 1/4)*y*z^3 + (1/16*a + 3/32)*z^4)
         """
-        from sage.rings.qqbar import number_field_elements_from_algebraics, QQbar
+        from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 
         def extension(self):
             # helper function for extending the base field
@@ -1459,13 +1457,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             K = number_field_elements_from_algebraics(L)[0]
             if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
-            else:
-                if isinstance(F, RationalField):
-                    return F.embeddings(K)[0]
-                else:
-                    # make sure the defining polynomial variable names are the same for K, N
-                    N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
-                    return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
+            if isinstance(F, RationalField):
+                return F.embeddings(K)[0]
+            # make sure the defining polynomial variable names are the same for K, N
+            N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
+            return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
         if self.base_ring() not in NumberFields():
             raise NotImplementedError("the base ring of this curve must be a number field")
         if not self.is_irreducible():
@@ -1523,7 +1519,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                         pts.append(pt)
         return phi
 
-    def is_transverse(self, C, P):
+    def is_transverse(self, C, P) -> bool:
         r"""
         Return whether the intersection of this curve with the curve ``C`` at the point ``P`` is transverse.
 
@@ -1623,7 +1619,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x^2 + y^2)
-            sage: C.genus()  # indirect test
+            sage: C.genus()  # indirect doctest
             -1
         """
         return self.defining_ideal().genus()
@@ -1652,7 +1648,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         """
         return 1 - self.defining_ideal().hilbert_polynomial()(0)
 
-    def is_complete_intersection(self):
+    def is_complete_intersection(self) -> bool:
         r"""
         Return whether this projective curve is a complete intersection.
 
@@ -1824,8 +1820,8 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         f = ring(self.affine_patch(2).defining_polynomial())
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
-        else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
-            return fundamental_group(f, projective=False)
+        # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
+        return fundamental_group(f, projective=False)
 
     def rational_parameterization(self):
         r"""
@@ -2121,6 +2117,19 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             sage: C.riemann_roch_basis(D)
             [(-2*x + y)/(x + y), (-x + z)/(x + y)]
 
+        TESTS:
+
+        We check that issue:`41793` is fixed:
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: C.riemann_roch_basis(G)
+            [1, Z/X, Y*Z/X^2, Z^2/X^2]
+
         .. NOTE::
 
             Currently this only works over prime field and divisors
@@ -2367,15 +2376,21 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         Sampling from points on a hyperelliptic curve::
 
-            sage: R.<x,y> = GF(13)[]
-            sage: C = HyperellipticCurve(y^2 + 3*x^2*y - (x^5 + x + 1))
-            sage: P = C.random_element(); P  # random
+            sage: R.<x> = GF(13)[]
+            sage: f = x^5 + x + 1
+            sage: h = 3*x^2
+            sage: C = HyperellipticCurve(f, h)
+            sage: P = C.random_point(); P  # random
             (0 : 1 : 0)
             sage: P in C
             True
         """
-        from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
-        from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
+        from sage.schemes.elliptic_curves.ell_finite_field import (
+            EllipticCurve_finite_field,
+        )
+        from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import (
+            HyperellipticCurve_finite_field,
+        )
         if not isinstance(self, (EllipticCurve_finite_field, HyperellipticCurve_finite_field)):
             raise NotImplementedError("only implemented for elliptic and hyperelliptic curves over finite fields")
 
@@ -2417,16 +2432,56 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             True
         """
         super().__init__(A, f)
-
         ideal = self.defining_ideal()
         gs = self.ambient_space().gens()
         for i in range(self.ngens()):
             if gs[i] not in ideal:
-                self._open_affine = self.affine_patch(i)
                 self._open_affine_index = i
                 break
         else:
             raise ValueError("no projective curve defined")
+
+    @lazy_attribute
+    def _open_affine(self):
+        r"""
+        An affine patch of the curve.
+
+        TESTS::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C._open_affine
+            Affine Plane Curve over Finite Field of size 7 defined by -y^2*z - 2*z^3 + 1
+        """
+        return self.affine_patch(self._open_affine_index)
+
+    def __getstate__(self):
+        r"""
+        Remove some attributes that cause issues before pickling.
+        These are easily recomputed anyway.
+
+        TESTS:
+
+        Make sure that pickling and unpickling works after
+        accessing attributes. See :issue:`41265`::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C._open_affine is not None
+            True
+            sage: C._map_from_function_field is not None
+            True
+            sage: loaded = loads(dumps(C))
+            sage: loaded == C
+            True
+            sage: loaded._open_affine == C._open_affine
+            True
+        """
+        state = super().__getstate__()
+        # We don't use del in case these properties haven't been accessed and cached yet
+        state.pop('_open_affine', None)
+        state.pop('_map_from_function_field', None)
+        return state
 
     def function_field(self):
         """
@@ -2868,7 +2923,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         return [p for p in f.zeros()
                 if all(f.valuation(p) > 0 for f in fs)]
 
-    def jacobian(self, model, base_div=None):
+    def jacobian(self, model, base_div=None, **kwargs):
         """
         Return the Jacobian of this curve.
 
@@ -2878,11 +2933,15 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         - ``base_div`` -- an effective divisor for the model
 
+        -- ``kwargs`` -- passed on to :meth:`sage.rings.function_field.function_field.FunctionField.jacobian`
+
         The degree of the base divisor should satisfy certain degree condition
         corresponding to the model used. The following table lists these
         conditions. Let `g` be the geometric genus of the curve.
 
         - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``unique_hess``: ideal-based arithmetic; requires base place of degree 1
 
         - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
           degree at least `2g + 1`
@@ -2906,7 +2965,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: J.base_divisor().degree() == C.genus()
             True
         """
-        return self.function_field().jacobian(model, base_div, curve=self)
+        return self.function_field().jacobian(model, base_div, curve=self, **kwargs)
 
 
 class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):

@@ -26,7 +26,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from sage.arith.misc import bernoulli
 from sage.categories.rings import Rings
@@ -42,6 +41,10 @@ from sage.rings.integer_ring import ZZ
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.infinity import Infinity
 from sage.modules.free_module_element import vector
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def W_Odds(start=3):

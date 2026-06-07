@@ -30,29 +30,6 @@ from . import element
 from . import hecke_operator
 
 
-def is_HeckeModule(x):
-    r"""
-    Return ``True`` if ``x`` is a Hecke module.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.module import is_HeckeModule
-        sage: is_HeckeModule(ModularForms(Gamma0(7), 4))
-        doctest:warning...
-        DeprecationWarning: the function is_HeckeModule is deprecated;
-        use 'isinstance(..., HeckeModule_generic)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_HeckeModule(QQ^3)
-        False
-        sage: is_HeckeModule(J0(37).homology())
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_HeckeModule is deprecated; use 'isinstance(..., HeckeModule_generic)' instead")
-    return isinstance(x, HeckeModule_generic)
-
-
 class HeckeModule_generic(Module):
     r"""
     A very general base class for Hecke modules.
@@ -71,7 +48,7 @@ class HeckeModule_generic(Module):
 
     Element = element.HeckeModuleElement
 
-    def __init__(self, base_ring, level, category=None):
+    def __init__(self, base_ring, level, category=None) -> None:
         r"""
         Create a Hecke module. Not intended to be called directly.
 
@@ -228,8 +205,7 @@ class HeckeModule_generic(Module):
         if len(F) == 1:  # nontrivial prime power case
             return self._compute_hecke_matrix_prime_power(F[0][0], F[0][1], **kwds)
 
-        else:
-            return self._compute_hecke_matrix_general_product(F, **kwds)
+        return self._compute_hecke_matrix_general_product(F, **kwds)
 
     def _compute_hecke_matrix_prime(self, p, **kwds):
         """
@@ -1112,8 +1088,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             w, w_lift = self.__dual_eigenvector[(names, nz)]
             if lift:
                 return w_lift
-            else:
-                return w
+            return w
         except KeyError:
             pass
         except AttributeError:
@@ -1185,8 +1160,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         self.__dual_eigenvector[(names, nz)] = (w, w_lift)
         if lift:
             return w_lift
-        else:
-            return w
+        return w
 
     def dual_hecke_matrix(self, n):
         """

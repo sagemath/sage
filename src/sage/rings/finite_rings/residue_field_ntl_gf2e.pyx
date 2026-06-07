@@ -34,7 +34,6 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
         sage: K.<a> = NumberField(x^3 - 7)
         sage: P = K.ideal(29).factor()[0][0]
@@ -114,7 +113,6 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)
             sage: P = K.ideal(61).factor()[0][0]

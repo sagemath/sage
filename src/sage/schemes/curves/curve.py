@@ -111,10 +111,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
                 and self.ambient_space().dimension() == 1):
             ambient_type, ring = self._repr_type(), latex(self.base_ring())
             return fr"\text{{{ambient_type} line over ${ring}$}}"
-        else:
-            ambient_type, ring = self._repr_type(), latex(self.base_ring())
-            polys = ', '.join(f'${latex(p)}$' for p in self.defining_polynomials())
-            return fr"\text{{{ambient_type} curve over ${ring}$ defined by {polys}}}"
+        ambient_type, ring = self._repr_type(), latex(self.base_ring())
+        polys = ', '.join(f'${latex(p)}$' for p in self.defining_polynomials())
+        return fr"\text{{{ambient_type} curve over ${ring}$ defined by {polys}}}"
 
     def dimension(self):
         r"""
@@ -351,7 +350,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         X = self.singular_subscheme()
         return [self.point(p, check=False) for p in X.rational_points(F=F)]
 
-    def is_singular(self, P=None):
+    def is_singular(self, P=None) -> bool:
         r"""
         Return whether ``P`` is a singular point of this curve, or if no point
         is passed, whether this curve is singular or not.
@@ -494,9 +493,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             F = self.base_ring()
         if X.dimension() == 0 or F in FiniteFields():
             return X.rational_points(F=F)
-        else:
-            raise NotImplementedError("the intersection must have dimension "
-                                      "zero or (={}) must be a finite field".format(F))
+        raise NotImplementedError("the intersection must have dimension "
+                                  "zero or (={}) must be a finite field".format(F))
 
     def change_ring(self, R):
         r"""

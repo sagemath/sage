@@ -27,6 +27,7 @@ py.install_sources(
   'nf.py',
   'parallel.py',
   'pbori.pxd',
+  'pbori.pyx',
   'randompoly.py',
   'rank.py',
   'specialsets.py',
@@ -61,3 +62,6 @@ foreach name, pyx : extension_data_cpp
   )
 endforeach
 
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('BRIAL_ENABLED', brial.found() and brial_groebner.found())

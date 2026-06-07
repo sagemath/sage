@@ -16,7 +16,7 @@ EXAMPLES::
     Boolean function with 8 variables
     sage: B.nonlinearity()
     112
-    sage: B.algebraic_immunity()                                                        # needs sage.rings.polynomial.pbori
+    sage: B.algebraic_immunity()                                                        # needs brial
     4
 
 AUTHOR:
@@ -31,7 +31,6 @@ from cysignals.signals cimport sig_check
 from libc.string cimport memcpy
 
 from sage.data_structures.bitset_base cimport *
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer cimport Integer
@@ -89,7 +88,7 @@ cdef long yellow_code(unsigned long a) noexcept:
 
     EXAMPLES::
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: from sage.crypto.boolean_function import BooleanFunction
         sage: R.<x,y,z> = BooleanPolynomialRing(3)
         sage: P = x*y
@@ -122,7 +121,7 @@ cdef reed_muller(mp_limb_t* f, int ldn):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: from sage.crypto.boolean_function import BooleanFunction
         sage: R.<x,y,z> = BooleanPolynomialRing(3)
         sage: P = x*y
@@ -192,9 +191,9 @@ cdef class BooleanFunction(SageObject):
 
     from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
 
-        sage: R.<x,y,z> = BooleanPolynomialRing(3)                                      # needs sage.rings.polynomial.pbori
-        sage: P = x*y                                                                   # needs sage.rings.polynomial.pbori
-        sage: BooleanFunction(P)                                                        # needs sage.rings.polynomial.pbori
+        sage: R.<x,y,z> = BooleanPolynomialRing(3)                                      # needs brial
+        sage: P = x*y                                                                   # needs brial
+        sage: BooleanFunction(P)                                                        # needs brial
         Boolean function with 3 variables
 
     from a polynomial over a binary field::
@@ -261,9 +260,9 @@ cdef class BooleanFunction(SageObject):
 
         from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
 
-            sage: R.<x,y,z> = BooleanPolynomialRing(3)                                  # needs sage.rings.polynomial.pbori
-            sage: P = x*y                                                               # needs sage.rings.polynomial.pbori
-            sage: BooleanFunction(P)                                                    # needs sage.rings.polynomial.pbori
+            sage: R.<x,y,z> = BooleanPolynomialRing(3)                                  # needs brial
+            sage: P = x*y                                                               # needs brial
+            sage: BooleanFunction(P)                                                    # needs brial
             Boolean function with 3 variables
 
         from a polynomial over a binary field::
@@ -351,7 +350,7 @@ cdef class BooleanFunction(SageObject):
     def __dealloc__(self):
         bitset_free(self._truth_table)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -394,8 +393,8 @@ cdef class BooleanFunction(SageObject):
 
         it also corresponds to the addition of algebraic normal forms::
 
-            sage: S = A.algebraic_normal_form() + B.algebraic_normal_form()             # needs sage.rings.polynomial.pbori
-            sage: (A+B).algebraic_normal_form() == S                                    # needs sage.rings.polynomial.pbori
+            sage: S = A.algebraic_normal_form() + B.algebraic_normal_form()             # needs brial
+            sage: (A+B).algebraic_normal_form() == S                                    # needs brial
             True
 
         TESTS::
@@ -426,8 +425,8 @@ cdef class BooleanFunction(SageObject):
 
         it also corresponds to the multiplication of algebraic normal forms::
 
-            sage: P = A.algebraic_normal_form() * B.algebraic_normal_form()             # needs sage.rings.polynomial.pbori
-            sage: (A*B).algebraic_normal_form() == P                                    # needs sage.rings.polynomial.pbori
+            sage: P = A.algebraic_normal_form() * B.algebraic_normal_form()             # needs brial
+            sage: (A*B).algebraic_normal_form() == P                                    # needs brial
             True
 
         TESTS::
@@ -497,9 +496,9 @@ cdef class BooleanFunction(SageObject):
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction([0,1,1,0,1,0,1,1])
-            sage: P = B.algebraic_normal_form(); P                                      # needs sage.rings.polynomial.pbori
+            sage: P = B.algebraic_normal_form(); P                                      # needs brial
             x0*x1*x2 + x0 + x1*x2 + x1 + x2
-            sage: [P(*ZZ(i).digits(base=2, padto=3)) for i in range(8)]                 # needs sage.rings.polynomial.pbori
+            sage: [P(*ZZ(i).digits(base=2, padto=3)) for i in range(8)]                 # needs brial
             [0, 1, 1, 0, 1, 0, 1, 1]
         """
         cdef bitset_t anf
@@ -507,8 +506,8 @@ cdef class BooleanFunction(SageObject):
         bitset_init(anf, <mp_bitcnt_t> (1<<self._nvariables))
         bitset_copy(anf, self._truth_table)
         reed_muller(anf.bits, ZZ(anf.limbs).exact_log(2))
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
-        R = BooleanPolynomialRing(self._nvariables, "x")
+        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor
+        R = BooleanPolynomialRing_constructor(self._nvariables, 'x')
         G = R.gens()
         P = R(0)
 
@@ -554,7 +553,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x,y,z> = BooleanPolynomialRing(3)
             sage: B = BooleanFunction(x*y*z + z + y + 1)
@@ -565,10 +564,10 @@ cdef class BooleanFunction(SageObject):
             sage: B.truth_table(format='hex')
             '43'
 
-            sage: BooleanFunction('00ab').truth_table(format='hex')                     # needs sage.rings.polynomial.pbori
+            sage: BooleanFunction('00ab').truth_table(format='hex')                     # needs brial
             '00ab'
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: H = '0abbacadabbacad0'
             sage: len(H)
             16
@@ -612,7 +611,7 @@ cdef class BooleanFunction(SageObject):
         """
         return 2**self._nvariables
 
-    def __richcmp__(BooleanFunction self, other, int op):
+    def __richcmp__(BooleanFunction self, other, int op) -> bool:
         """
         Boolean functions are considered to be equal if the number of
         input variables is the same, and all the values are equal.
@@ -745,15 +744,16 @@ cdef class BooleanFunction(SageObject):
             {8: 64}
         """
         d = {}
-        cdef long i
+        cdef long i, a
         for i in self.walsh_hadamard_transform():
-            if abs(i) in d:
-                d[abs(i)] += 1
+            a = abs(i)
+            if a in d:
+                d[a] += 1
             else:
-                d[abs(i)] = 1
+                d[a] = 1
         return d
 
-    def is_balanced(self):
+    def is_balanced(self) -> bool:
         """
         Return ``True`` if the function takes the value ``True`` half of the time.
 
@@ -769,7 +769,7 @@ cdef class BooleanFunction(SageObject):
         """
         return self.walsh_hadamard_transform()[0] == 0
 
-    def is_symmetric(self):
+    def is_symmetric(self) -> bool:
         """
         Return ``True`` if the function is symmetric, i.e. invariant under
         permutation of its input bits.
@@ -821,7 +821,7 @@ cdef class BooleanFunction(SageObject):
                 ((1<<self._nvariables) - max(abs(w) for w in self.walsh_hadamard_transform())) >> 1
         return self._nonlinearity
 
-    def is_bent(self):
+    def is_bent(self) -> bool:
         """
         Return ``True`` if the function is bent.
 
@@ -851,12 +851,22 @@ cdef class BooleanFunction(SageObject):
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
             sage: B.correlation_immunity()
             2
+
+        TESTS:
+
+        Check if :issue:`28001` is fixed::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = [False, False, True, False, False, True, False, False]
+            sage: f = BooleanFunction(f)
+            sage: f.correlation_immunity()
+            1
         """
         cdef long c, i
         if self._correlation_immunity is None:
             c = self._nvariables
             W = self.walsh_hadamard_transform()
-            for i in range(len(W)):
+            for i in range(1, len(W)):
                 sig_check()
                 if W[i]:
                     c = min(c, hamming_weight(i))
@@ -928,12 +938,13 @@ cdef class BooleanFunction(SageObject):
             [(0, 33), (8, 58), (16, 28), (24, 6), (32, 2), (128, 1)]
         """
         d = {}
-        cdef long i
+        cdef long i, a
         for i in self.autocorrelation():
-            if abs(i) in d:
-                d[abs(i)] += 1
+            a = abs(i)
+            if a in d:
+                d[a] += 1
             else:
-                d[abs(i)] = 1
+                d[a] = 1
         return d
 
     def absolute_indicator(self):
@@ -949,23 +960,12 @@ cdef class BooleanFunction(SageObject):
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
             sage: B.absolute_indicator()
             32
-
-        The old method's name contained a typo, it is deprecated::
-
-            sage: B.absolut_indicator()
-            doctest:warning
-            ...
-            DeprecationWarning: absolut_indicator is deprecated. Please use absolute_indicator instead.
-            See https://github.com/sagemath/sage/issues/28001 for details.
-            32
         """
         cdef long a
         if self._absolute_indicator is None:
             D = self.autocorrelation()
             self._absolute_indicator = max([abs(a) for a in D[1:]])
         return self._absolute_indicator
-
-    absolut_indicator = deprecated_function_alias(28001, absolute_indicator)
 
     def sum_of_square_indicator(self):
         """
@@ -1003,10 +1003,10 @@ cdef class BooleanFunction(SageObject):
 
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: f = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
-            sage: f.annihilator(1) is None                                              # needs sage.rings.polynomial.pbori
+            sage: f.annihilator(1) is None                                              # needs brial
             True
-            sage: g = BooleanFunction(f.annihilator(3))                                 # needs sage.rings.polynomial.pbori
-            sage: set(fi*g(i) for i,fi in enumerate(f))                                 # needs sage.rings.polynomial.pbori
+            sage: g = BooleanFunction(f.annihilator(3))                                 # needs brial
+            sage: set(fi*g(i) for i,fi in enumerate(f))                                 # needs brial
             {0}
         """
         # NOTE: this is a toy implementation
@@ -1067,7 +1067,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x0,x1,x2,x3,x4,x5> = BooleanPolynomialRing(6)
             sage: B = BooleanFunction(x0*x1 + x1*x2 + x2*x3 + x3*x4 + x4*x5)
@@ -1077,7 +1077,7 @@ cdef class BooleanFunction(SageObject):
             sage: B.algebraic_immunity()
             2
 
-            sage: # needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: # needs sage.rings.finite_rings brial
             sage: R.<x> = GF(2^8,'a')[]
             sage: B = BooleanFunction(x^31)
             sage: B.algebraic_immunity()
@@ -1106,7 +1106,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B.<x0, x1, x2, x3> = BooleanPolynomialRing()
             sage: f = BooleanFunction(x1*x2 + x1*x2*x3 + x1)
@@ -1126,7 +1126,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: R.<x0, x1, x2, x3> = BooleanPolynomialRing()
             sage: f = BooleanFunction(x0*x1 + x2 + x3)
@@ -1289,7 +1289,7 @@ cdef class BooleanFunction(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: f = BooleanFunction([0,1,0,1,0,1,0,1])
             sage: f.derivative(1).algebraic_normal_form()
