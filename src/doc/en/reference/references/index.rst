@@ -4435,6 +4435,11 @@ REFERENCES:
 .. [KoSt08] \C. Koukouvinos, S. Stylianou, *On skew-Hadamard matrices*,
             Discrete Math. **308** (2008) 2723-2731
 
+.. [KP2005] \J. Klüners, S. Pauli, *Computing residue class rings 
+            and picard groups of orders*, Journal of Algebra, 
+            Volume 292, Issue 1, 2005, 47-64, ISSN 0021-8693,
+            https://doi.org/10.1016/j.jalgebra.2005.04.013
+
 .. [KP2002] Volker Kaibel and Marc E. Pfetsch, *Computing the Face
             Lattice of a Polytope from its Vertex-Facet Incidences*,
             Computational Geometry: Theory and Applications, Volume
