@@ -1372,13 +1372,7 @@ class Order(Parent, sage.rings.abc.Order):
         H = dM.hermite_form(include_zero_rows=False)
         Hinv = H.inverse()
         generators = vector(O.basis()) * d * Hinv
-        return self.number_field().ideal(*generators)
-
-        if not isinstance(self._K, sage.rings.abc.NumberField_quadratic):
-            raise NotImplementedError('not implemented for number fields of degree != 2')
-        D = self.discriminant()
-        D0 = self._K.discriminant()
-        return (D // D0).sqrt()
+        return self.ideal([*generators])
 
     def random_element(self, *args, **kwds):
         r"""
@@ -2182,9 +2176,6 @@ class Order_absolute(Order):
                     s = "Gaussian Integers"
         else:
             s = "Order"
-            if self.number_field().absolute_degree() == 2:
-                f = self.conductor()
-                s += f' of conductor {f}'
         try:
             gens = self.ring_generators()
         except TypeError:
