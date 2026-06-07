@@ -145,6 +145,8 @@ from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTa
 from sage.combinat.ribbon_shaped_tableau import RibbonShapedTableau, RibbonShapedTableaux, StandardRibbonShapedTableaux
 from sage.combinat.ribbon_tableau import RibbonTableaux, RibbonTableau, MultiSkewTableaux, MultiSkewTableau, SemistandardMultiSkewTableaux
 from sage.combinat.composition_tableau import CompositionTableau, CompositionTableaux
+from sage.combinat.quasi_ribbon_tableau import QuasiRibbonTableau, QuasiRibbonTableaux
+from sage.combinat.hypoplactic import HypoplacticMonoid, krob_thibon_insertion
 
 lazy_import('sage.combinat.tableau_tuple',
             ['TableauTuple', 'StandardTableauTuple', 'RowStandardTableauTuple',
