@@ -91,6 +91,8 @@ from sage.rings.number_field.number_field_element import (
 from sage.rings.number_field.number_field_element_quadratic import (
     OrderElement_quadratic,
 )
+from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+from sage.rings.number_field.order_ideal import NumberFieldOrderIdeal_generic
 from sage.structure.element import Element
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Parent
@@ -1731,6 +1733,11 @@ class Order_absolute(Order):
 
         if left.number_field() != right.number_field():
             raise TypeError("number fields do not match")
+
+        if isinstance(right, NumberFieldOrderIdeal_generic) or isinstance(right, NumberFieldIdeal):
+            # we are intersecting the order with another ideal
+            basis = left.free_module().intersection(right.free_module()).gens()
+            return left.ideal(basis)
 
         is_maximal = None
 
