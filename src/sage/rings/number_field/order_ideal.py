@@ -65,6 +65,7 @@ from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring import polygens
 from sage.rings.ideal import Ideal_generic
+from sage.structure.factorization import Factorization
 
 import sage.rings.number_field.order
 
@@ -141,6 +142,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         _, from_V, to_V = O.number_field().absolute_vector_space()
         span = [to_V(a*g) for a in O.basis() for g in gens]
         self._module = O.free_module().submodule(span)
+        self._K = O.number_field()
         basis = [O(from_V(v)) for v in self._module.basis()]
 
         super().__init__(O, basis, coerce=False)
@@ -259,6 +261,24 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         """
         return self.free_module().index_in(self.ring().free_module())
 
+    def number_field(self):
+        return self._K
+
+    def factor(self):
+        try:
+            return self.__factorization
+        except AttributeError:
+            O = self.ring()
+            K = self.number_field()
+            lift = K.ideal(self.gens())
+            F = K.pari_nf().idealfactor(lift.pari_hnf())
+            A = []
+            for j in range(len(F[0])):
+                I = self.number_field().ideal(F[j,0])
+                projection = O.intersection(I)
+                A.append((projection,ZZ(F[j,1])))
+            self.__factorization = Factorization(A)
+            return self.__factorization
 
 def _positive_sqrt(R, D):
     r"""
