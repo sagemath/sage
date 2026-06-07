@@ -368,7 +368,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
         return False
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether ``self`` is simply laced.
 

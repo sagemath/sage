@@ -46,7 +46,8 @@ class CoxeterType_Hyperbolic(CoxeterType):
             self._position = tuple(data[1])
 
             if self._position not in hyperbolic_coxeter_matrices:
-                raise ValueError(f"position {self._position} is not a valid")
+                raise ValueError(f"position {self._position} is not referring to "
+                                 f"an existing hyperbolic Coxeter type in Humphreys' book.")
 
             if self._position in mcmullen_notation:
                 self._prefix = mcmullen_notation[self._position][0]
