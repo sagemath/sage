@@ -241,7 +241,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
 
     lower_central_series = derived_series
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``False`` as ``self`` is semisimple.
 

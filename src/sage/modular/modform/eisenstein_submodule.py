@@ -165,8 +165,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         char = self._parameters_character()
         if char is None:
             return eis_series.compute_eisenstein_params(self.level(), self.weight())
-        else:
-            return eis_series.compute_eisenstein_params(char, self.weight())
+        return eis_series.compute_eisenstein_params(char, self.weight())
 
     def new_submodule(self, p=None):
         r"""
@@ -339,8 +338,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         X = [R(f.list(), prec) for f in W.basis()]
         if not new:
             return X + [R(0,prec)]*(self.dimension() - len(X))
-        else:
-            return X
+        return X
 
     def _q_expansion(self, element, prec):
         """
@@ -613,9 +611,8 @@ def cyclotomic_restriction(L, K):
             """
             return f(M(x))
         return g, euler_phi(M.zeta_order())//euler_phi(K.zeta_order())
-    else:
-        return cyclotomic_restriction_tower(L,K), \
-               euler_phi(L.zeta_order())//euler_phi(K.zeta_order())
+    return cyclotomic_restriction_tower(L,K), \
+           euler_phi(L.zeta_order())//euler_phi(K.zeta_order())
 
 
 def cyclotomic_restriction_tower(L, K):

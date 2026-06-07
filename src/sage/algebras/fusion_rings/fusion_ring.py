@@ -1081,7 +1081,7 @@ class FusionRing(WeylCharacterRing):
             return ret
         return self._basecoer(ret)
 
-    def is_multiplicity_free(self):
+    def is_multiplicity_free(self) -> bool:
         r"""
         Return ``True`` if the fusion multiplicities
         :meth:`Nk_ij` are bounded by 1.
@@ -1172,9 +1172,8 @@ class FusionRing(WeylCharacterRing):
             if len(top_row) == 2:
                 m1, m2 = top_row
                 return [[]] if fr.Nk_ij(m1, m2, root) else []
-            else:
-                m1, m2 = top_row[:2]
-                return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
+            m1, m2 = top_row[:2]
+            return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
 
         comp_basis = []
         for top in product((a*a).monomials(), repeat=n_strands//2):
@@ -1414,7 +1413,7 @@ class FusionRing(WeylCharacterRing):
         """
         A class for FusionRing elements.
         """
-        def is_simple_object(self):
+        def is_simple_object(self) -> bool:
             r"""
             Determine whether ``self`` is a simple object of the fusion ring.
 

@@ -29,32 +29,6 @@ import sage.misc.latex as latex
 import sage.misc.superseded
 
 
-def is_FractionFieldElement(x) -> bool:
-    """
-    Return whether or not ``x`` is a :class:`FractionFieldElement`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.fraction_field_element import is_FractionFieldElement
-        sage: R.<x> = ZZ[]
-        sage: is_FractionFieldElement(x/2)
-        doctest:warning...
-        DeprecationWarning: The function is_FractionFieldElement is deprecated;
-        use 'isinstance(..., FractionFieldElement)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        False
-        sage: is_FractionFieldElement(2/x)
-        True
-        sage: is_FractionFieldElement(1/3)
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_FractionFieldElement is deprecated; "
-                       "use 'isinstance(..., FractionFieldElement)' instead.")
-    return isinstance(x, FractionFieldElement)
-
-
 cdef class FractionFieldElement(FieldElement):
     """
     EXAMPLES::
@@ -154,7 +128,6 @@ cdef class FractionFieldElement(FieldElement):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: cc = K.hom([-i])
@@ -706,7 +679,6 @@ cdef class FractionFieldElement(FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<t> = Frac(GF(7)['t'])
             sage: a = t/(1+t)
             sage: b = 3/t
@@ -870,11 +842,10 @@ cdef class FractionFieldElement(FieldElement):
             3/2
 
             sage: x = polygen(QQ)
-            sage: A.<u> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: A((x+3) / (2*x - 1))                                                  # needs sage.rings.number_field
+            sage: A.<u> = NumberField(x^3 - 2)
+            sage: A((x+3) / (2*x - 1))
             14/15*u^2 + 7/15*u + 11/15
 
-            sage: # needs sage.rings.number_field
             sage: B = A['y'].fraction_field()
             sage: A(B(u))
             u
@@ -995,7 +966,6 @@ cdef class FractionFieldElement(FieldElement):
         """
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<t> = Frac(GF(7)['t'])
             sage: t/t == 1
             True
@@ -1166,7 +1136,6 @@ cdef class FractionFieldElement(FieldElement):
 
         Check that inexact elements are treated correctly::
 
-            sage: # needs sage.rings.padics
             sage: K = Qp(2, 5)
             sage: R.<x> = K[]
             sage: L = R.fraction_field()

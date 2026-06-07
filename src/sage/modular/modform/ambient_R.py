@@ -112,7 +112,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         if c == 0:
             B = self.__M.q_expansion_basis(prec)
             return [R(f) for f in B]
-        elif c.is_prime_power():
+        if c.is_prime_power():
             K = self.base_ring()
             p = K.characteristic().prime_factors()[0]
             from sage.rings.finite_rings.finite_field_constructor import GF
@@ -132,14 +132,13 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
                 raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements" % (self.dimension(), len(newB)))
             lst = [R(f) for f in newB]
             return [f/f[f.valuation()] for f in lst]
-        else:
-            # this returns a basis of q-expansions, without guaranteeing that
-            # the first vectors form a basis of the cuspidal subspace
-            # TODO: bring this in line with the other cases
-            # simply using the above code fails because free modules over
-            # general rings do not have a .span() method
-            B = self.__M.q_integral_basis(prec)
-            return [R(f) for f in B]
+        # this returns a basis of q-expansions, without guaranteeing that
+        # the first vectors form a basis of the cuspidal subspace
+        # TODO: bring this in line with the other cases
+        # simply using the above code fails because free modules over
+        # general rings do not have a .span() method
+        B = self.__M.q_integral_basis(prec)
+        return [R(f) for f in B]
 
     def cuspidal_submodule(self):
         r"""

@@ -1199,12 +1199,10 @@ class QuiverRepHom(CallMorphism):
         if return_maps:
             if pinch == 'domain':
                 return (result, c_incl, c_proj)
-            elif pinch == 'codomain':
+            if pinch == 'codomain':
                 return (result, d_incl, d_proj)
-            else:
-                return (result, d_incl, d_proj, c_incl, c_proj)
-        else:
-            return result
+            return (result, d_incl, d_proj, c_incl, c_proj)
+        return result
 
     def lift(self, x):
         """

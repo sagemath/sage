@@ -197,8 +197,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
             vn = v[1].e(i)
             if vn is None:
                 return None
-            else:
-                return self.parent()(tuple([v[0],vn]))
+            return self.parent()(tuple([v[0],vn]))
 
         def f(self, i):
             r"""
@@ -215,8 +214,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
             vn = v[1].f(i)
             if vn is None:
                 return None
-            else:
-                return self.parent()(tuple([v[0],vn]))
+            return self.parent()(tuple([v[0],vn]))
 
         def weight(self):
             r"""

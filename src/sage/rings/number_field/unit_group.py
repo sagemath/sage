@@ -296,7 +296,6 @@ class UnitGroup(AbelianGroupWithValues_class):
         Conversion from unit group to a number field and back
         gives the right results (:issue:`25874`)::
 
-            sage: # needs sage.libs.linbox
             sage: K = QuadraticField(-3).composite_fields(QuadraticField(2))[0]
             sage: U = K.unit_group()
             sage: tuple(U(K(u)) for u in U.gens()) == U.gens()
@@ -571,24 +570,19 @@ class UnitGroup(AbelianGroupWithValues_class):
         if n == 1:
             if all:
                 return [K(1)]
-            else:
-                return K(1)
-        elif n == 2:
+            return K(1)
+        if n == 2:
             if all:
                 return [K(-1)]
-            else:
-                return K(-1)
+            return K(-1)
         if n.divides(N):
             z = self.torsion_generator().value() ** (N//n)
             if all:
                 return [z**i for i in n.coprime_integers(n)]
-            else:
-                return z
-        else:
-            if all:
-                return []
-            else:
-                raise ValueError("n (=%s) does not divide order of generator" % n)
+            return z
+        if all:
+            return []
+        raise ValueError("n (=%s) does not divide order of generator" % n)
 
     def number_field(self):
         """

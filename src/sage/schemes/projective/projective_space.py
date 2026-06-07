@@ -246,9 +246,8 @@ def ProjectiveSpace(n, R=None, names=None):
             return ProjectiveSpace_finite_field(n, R, names)
         if isinstance(R, RationalField):
             return ProjectiveSpace_rational_field(n, R, names)
-        else:
-            return ProjectiveSpace_field(n, R, names)
-    elif R in _CommRings:
+        return ProjectiveSpace_field(n, R, names)
+    if R in _CommRings:
         return ProjectiveSpace_ring(n, R, names)
     raise TypeError("R (=%s) must be a commutative ring" % R)
 
@@ -543,11 +542,11 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         if isinstance(right, ProductProjectiveSpaces_ring):
             return ProductProjectiveSpaces([self] + right.components())
-        elif isinstance(right, ProjectiveSpace_ring):
+        if isinstance(right, ProjectiveSpace_ring):
             if self is right:
                 return self.__pow__(2)
             return ProductProjectiveSpaces([self, right])
-        elif isinstance(right, AlgebraicScheme_subscheme):
+        if isinstance(right, AlgebraicScheme_subscheme):
             AS = self * right.ambient_space()
             CR = AS.coordinate_ring()
             n = self.ambient_space().coordinate_ring().ngens()
@@ -555,8 +554,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             phi = self.ambient_space().coordinate_ring().hom(list(CR.gens()[:n]), CR)
             psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
             return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
-        else:
-            raise TypeError('%s must be a projective space, product of projective spaces, or subscheme' % right)
+        raise TypeError('%s must be a projective space, product of projective spaces, or subscheme' % right)
 
     def _latex_(self):
         r"""
@@ -903,9 +901,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if isinstance(R, Map):
             return ProjectiveSpace(self.dimension_relative(), R.codomain(),
                                self.variable_names())
-        else:
-            return ProjectiveSpace(self.dimension_relative(), R,
-                               self.variable_names())
+        return ProjectiveSpace(self.dimension_relative(), R,
+                           self.variable_names())
 
     def is_projective(self):
         """
@@ -1190,8 +1187,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 return IQ_points_of_bounded_height(self, R, dim, bound)
 
             return points_of_bounded_height(self, R, dim, bound, prec)
-        else:
-            return QQ_points_of_bounded_height(self, dim, bound)
+        return QQ_points_of_bounded_height(self, dim, bound)
 
     def affine_patch(self, i, AA=None):
         r"""
@@ -2165,8 +2161,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         # coefficients are polys in zs which are the chow equations for the chow form
         if n - dim - 1 > 0:
             return self.subscheme(ch.coefficients())
-        else:
-            return self.subscheme(ch)
+        return self.subscheme(ch)
 
     def curve(self, F):
         r"""
@@ -2323,7 +2318,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
         """
         if F is None:
             return list(self)
-        elif not isinstance(F, FiniteField):
+        if not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return list(self.base_extend(F))
 

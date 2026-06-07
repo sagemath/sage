@@ -69,13 +69,11 @@ def BullGraph(immutable=False):
     `x` is a variable, `A` the adjacency matrix of the graph, and `I`
     the identity matrix of the same dimensions as `A`::
 
-        sage: # needs sage.libs.flint
         sage: chrompoly = g.chromatic_polynomial()
         sage: x = chrompoly.parent()('x')
         sage: x * (x - 2) * (x - 1)^3 == chrompoly
         True
 
-        sage: # needs sage.libs.flint sage.modules
         sage: charpoly = g.characteristic_polynomial()
         sage: M = g.adjacency_matrix(); M
         [0 1 1 0 0]
@@ -414,7 +412,6 @@ def CompleteGraph(n, immutable=False):
     We view many Complete graphs with a Sage Graphics Array, first with this
     constructor (i.e., the position dictionary filled)::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -1426,7 +1423,6 @@ def LadderGraph(n, immutable=False):
 
     Create several ladder graphs in a Sage graphics array::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -1501,7 +1497,6 @@ def MoebiusLadderGraph(n, immutable=False):
 
     Create several Möbius ladder graphs in a Sage graphics array::
 
-        sage: # needs sage.plots
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -1721,7 +1716,6 @@ def StarGraph(n, immutable=False):
 
     ::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):

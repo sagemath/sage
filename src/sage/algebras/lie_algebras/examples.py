@@ -593,8 +593,7 @@ def so(R, n, representation='bracket'):
         from sage.algebras.lie_algebras.classical_lie_algebra import LieAlgebraChevalleyBasis
         if n % 2 == 0:
             return LieAlgebraChevalleyBasis(R, ['D', n//2])
-        else:
-            return LieAlgebraChevalleyBasis(R, ['B', (n-1)//2])
+        return LieAlgebraChevalleyBasis(R, ['B', (n-1)//2])
     if representation == 'matrix':
         from sage.algebras.lie_algebras.classical_lie_algebra import so as so_matrix
         return so_matrix(R, n)

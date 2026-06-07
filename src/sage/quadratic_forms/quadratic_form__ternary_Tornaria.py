@@ -28,8 +28,7 @@ from sage.rings.integer_ring import ZZ
 #  def __call__(self, v, w=None):
 #    if w is None:
 #        return half(v * self._matrix_() * v)
-#    else:
-#      return v * self._matrix_() * w
+#    return v * self._matrix_() * w
 
 
 def disc(self):
@@ -158,8 +157,7 @@ def antiadjoint(self):
         d = R(self.disc()**(ZZ.one() / (n - 1)))
         if is_odd(n):
             return self.adjoint().scale_by_factor(R.one() / 4 / d**(n - 2))
-        else:
-            return self.adjoint().scale_by_factor(R.one() / d**(n - 2))
+        return self.adjoint().scale_by_factor(R.one() / d**(n - 2))
     except TypeError:
         raise ValueError("not an adjoint")
 

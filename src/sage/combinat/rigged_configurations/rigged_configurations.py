@@ -30,7 +30,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.combinat.misc import IterableFunctionCall
-import sage.combinat.tableau as tableau
+from sage.combinat import tableau
 from sage.rings.rational_field import QQ
 from sage.categories.loop_crystals import KirillovReshetikhinCrystals
 from sage.combinat.root_system.cartan_type import CartanType
@@ -597,9 +597,9 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
             C = itertools.product(*L)
             for curBlocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(curBlocks[:]),
-                                         vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                        self._blocks_to_values(curBlocks[:]),
+                                        vac_nums[:]]))
 
         return tuple(module_gens)
 
@@ -1271,8 +1271,8 @@ class RCNonSimplyLaced(RiggedConfigurations):
 
             C = itertools.product(*L)
             for cur_blocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(cur_blocks[:]), vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                         self._blocks_to_values(cur_blocks[:]), vac_nums[:]]))
 
         return tuple(module_gens)
 
@@ -1791,8 +1791,8 @@ class RCTypeA2Dual(RCTypeA2Even):
 
             C = itertools.product(*L)
             for curBlocks in C:
-                module_gens.append( self.element_class(self, KT_constructor=[shapes[:],
-                                         self._blocks_to_values(curBlocks[:]), vac_nums[:]]) )
+                module_gens.append(self.element_class(self, KT_constructor=[shapes[:],
+                                        self._blocks_to_values(curBlocks[:]), vac_nums[:]]))
 
         return tuple(module_gens)
 
