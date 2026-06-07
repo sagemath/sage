@@ -1354,6 +1354,13 @@ class Order(Parent, sage.rings.abc.Order):
             <class 'sage.rings.integer.Integer'>
         """
 
+        if isinstance(self._K, sage.rings.abc.NumberField_quadratic):
+            from sage.misc.superseded import deprecation
+            deprecation(42314, "For orders in quadratic fields, the conductor method used to return an integer. This will be deprecated in favor of returning an ideal instead.")
+            D = self.discriminant()
+            D0 = self._K.discriminant()
+            return (D // D0).sqrt()
+
         # this was first implemented by @kevinywlui: https://github.com/kevinywlui/sage/tree/order
         O = self
         OK = self.integral_closure()
