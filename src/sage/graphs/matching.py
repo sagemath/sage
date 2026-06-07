@@ -51,6 +51,10 @@ from __future__ import annotations
 import itertools
 from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.graphs.graph import Graph
 
 
 def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
@@ -144,14 +148,14 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
                                       algorithm=algorithm)
-    elif algorithm == "LP_matching":
+    if algorithm == "LP_matching":
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
                                       algorithm='LP',
                                       solver=solver,
                                       verbose=verbose,
                                       integrality_tolerance=integrality_tolerance)
-    elif algorithm == "LP":
+    if algorithm == "LP":
         from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
@@ -413,8 +417,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     if G.order() == 2:
         if G.is_connected():
             return (True, None) if coNP_certificate else True
-        else:
-            return (False, None) if coNP_certificate else False
+        return (False, None) if coNP_certificate else False
 
     # The graph must have an even number of vertices
     if G.order() % 2:
@@ -444,7 +447,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
             if u is not None and not len(component) % 2:
                 v = component[0]
                 return (False, {u, v})
-            elif len(component) == 1:
+            if len(component) == 1:
                 u = component[0]
 
     # Bipartite graphs of order at least three are not bicritical
@@ -1257,8 +1260,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
     def weight(x):
         if x in RR:
             return x
-        else:
-            return 1
+        return 1
 
     W = {}
     L = {}
@@ -1290,7 +1292,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
                                format='list_of_edges'))
 
-    elif algorithm == "LP":
+    if algorithm == "LP":
         g = G
         from sage.numerical.mip import MixedIntegerLinearProgram
         # returns the weight of an edge considering it may not be
@@ -1319,9 +1321,9 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 for u, v in L if b[frozenset((u, v))]],
                                format='list_of_edges'))
 
-    elif algorithm == "Micali-Vazirani":
+    if algorithm == "Micali-Vazirani":
         if use_edge_labels:
-            raise ValueError("Micali-Vazirani algorithm does not '" \
+            raise ValueError("Micali-Vazirani algorithm does not '"
                 "support edge labels or weights")
 
         micali_vazirani_matching = MicaliVaziraniMatching(G.to_simple())
@@ -1329,9 +1331,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
         return len(M) if value_only else M
 
-    else:
-        raise ValueError('algorithm must be set to one of the following: '
-                     '\'Edmonds,\' \'LP,\' or \'Micali-Vazirani\'')
+    raise ValueError('algorithm must be set to one of the following: '
+                 '\'Edmonds,\' \'LP,\' or \'Micali-Vazirani\'')
 
 
 def perfect_matchings(G, labels=False):
@@ -1693,9 +1694,9 @@ class MicaliVaziraniMatching:
     unweighted graph using the Micali-Vazirani algorithm.
     """
     from dataclasses import dataclass
-    from typing import Any, List, Tuple, Set, Dict, Optional
+    from typing import Any, Optional
 
-    Edge = Tuple[int, int, Any]
+    Edge = tuple[int, int, Any]
 
     @dataclass
     class Petal:
@@ -1709,7 +1710,7 @@ class MicaliVaziraniMatching:
             raise ValueError("The input must be a graph")
 
         if G.has_loops() or G.has_multiple_edges():
-            raise ValueError("Micali-Vazirani algorithm is only applicable '" \
+            raise ValueError("Micali-Vazirani algorithm is only applicable '"
                 "to simple undirected graphs")
 
         # ******************************
@@ -1741,7 +1742,7 @@ class MicaliVaziraniMatching:
         self.successor: List[List[int]] = [[] for _ in range(self.N)]
         self.color: List[int] = [None] * self.N
         self.search_level_vertices: List[int] = list(range(self.N))
-        self.edge_scanned: Dict[int, int] = {self.edge_to_index(u, v): -1 \
+        self.edge_scanned: Dict[int, int] = {self.edge_to_index(u, v): -1
                 for (u, v) in self.G.edge_iterator(labels=False)}
         self.prop_edges: Set[int] = set()
 
@@ -1772,7 +1773,6 @@ class MicaliVaziraniMatching:
         and removing that vertex, its matched neighbour from the graph.  The goal
         is to reduce the number of augmenting phases required by the main algorithm.
         """
-        from sage.graphs.graph import Graph
 
         # Make a copy J of G for the greedy matching process
         J: Graph = self.G.copy(immutable=False)
@@ -1919,7 +1919,7 @@ class MicaliVaziraniMatching:
                         # thus we know which level the bridge will be processed
                         if tenacity < self.INFINITY:
                             if tenacity >= len(self.tenacity_bridges_map):
-                                self.tenacity_bridges_map.extend([] \
+                                self.tenacity_bridges_map.extend([]
                                     for _ in range(tenacity - len(self.tenacity_bridges_map) + 1))
                             self.tenacity_bridges_map[tenacity].append(edge_index)
 
@@ -1971,7 +1971,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Label vertices after forming a blossom
     # ******************************
-    def label_max(self, support: List[int], search_level: int) -> None:
+    def label_max(self, support: list[int], search_level: int) -> None:
         next_search_level_vertices: List[int] = []
         for vertex in support:
             self.max_level[vertex] = 2 * search_level + 1 - self.min_level[vertex]
@@ -1994,7 +1994,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Double DFS to locate augmenting paths
     # ******************************
-    def DDFS(self, source_red_vertex: int, source_green_vertex: int) -> Tuple[List[int], List[int], Optional[int], bool]:
+    def DDFS(self, source_red_vertex: int, source_green_vertex: int) -> tuple[list[int], list[int], Optional[int], bool]:
         encountered_deleted_vertex = False
 
         # Set the starting point for each of red and green DFS's
@@ -2088,7 +2088,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Auxiliary Subroutine: advance DFS along predecessors
     # ******************************
-    def advance_DFS(self, vertex: int, predecessor_list: List[int], stack: List[Tuple[int, List[int]]], support: List[int], label: Tuple[int, int]) -> Tuple[int, List[int], bool]:
+    def advance_DFS(self, vertex: int, predecessor_list: list[int], stack: list[tuple[int, list[int]]], support: list[int], label: tuple[int, int]) -> tuple[int, list[int], bool]:
         reverse_check = False
         if predecessor_list:
             next_vertex = self.get_bud(predecessor_list.pop())
@@ -2112,7 +2112,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Auxiliary Subroutine: backtrack in DFS stack
     # ******************************
-    def reverse_DFS(self, vertex: int, predecessor_list: List[int], stack: List[Tuple[int, List[int]]], support: List[int]) -> Tuple[int, List[int], bool]:
+    def reverse_DFS(self, vertex: int, predecessor_list: list[int], stack: list[tuple[int, list[int]]], support: list[int]) -> tuple[int, list[int], bool]:
         failure = False
         if stack:
             previous_vertex = stack.pop()
@@ -2130,7 +2130,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Contract a blossom (petal)
     # ******************************
-    def form_blossom(self, left_support: List[int], right_support: List[int], bud: int, bridge: Edge) -> None:
+    def form_blossom(self, left_support: list[int], right_support: list[int], bud: int, bridge: Edge) -> None:
         """
         Create a new blossom centered at 'bud' with supports from both sides.
         """
@@ -2138,7 +2138,7 @@ class MicaliVaziraniMatching:
         self.form_petal(left_support, bud, petal, 0)
         self.form_petal(right_support, bud, petal, 1)
 
-    def form_petal(self, support: List[int], bud: int, petal: Petal, direction: int) -> None:
+    def form_petal(self, support: list[int], bud: int, petal: Petal, direction: int) -> None:
         """
         Assign each vertex in support to the given petal and direction.
         """
@@ -2158,7 +2158,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Unfold a blossom (petal)
     # ******************************
-    def unfold_petal(self, vertex: int, target: int) -> List[int]:
+    def unfold_petal(self, vertex: int, target: int) -> list[int]:
         """
         Unfolds a petal to get the path from the vertex that is part of the petal to the bud
         """
@@ -2188,12 +2188,11 @@ class MicaliVaziraniMatching:
                     return []
         if bud == target:
             return path
-        else:
-            path.pop()
-            petal_path = self.unfold_petal(bud, target)
-            return path + petal_path
+        path.pop()
+        petal_path = self.unfold_petal(bud, target)
+        return path + petal_path
 
-    def unfold_path_in_petal(self, start_vertex: int, end_vertex: int, petal: Petal) -> List[int]:
+    def unfold_path_in_petal(self, start_vertex: int, end_vertex: int, petal: Petal) -> list[int]:
         if start_vertex == end_vertex:
             return [start_vertex]
         if self.vertex_petal_map[start_vertex] != petal:
@@ -2269,7 +2268,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Augment along a found path
     # ******************************
-    def augment(self, left_support: List[int], right_support: List[int], bridge: Edge) -> bool:
+    def augment(self, left_support: list[int], right_support: list[int], bridge: Edge) -> bool:
         """
         Augment the matching M with the agumenting path found.
         """
@@ -2311,7 +2310,7 @@ class MicaliVaziraniMatching:
         return True
 
     # Procedure to find path after discovering an augmenting path via DDFS
-    def get_path(self, support: List[int], peak: int) -> List[int]:
+    def get_path(self, support: list[int], peak: int) -> list[int]:
         """
         Build the vertex sequence of an augmenting path.
         """
