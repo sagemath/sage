@@ -45,7 +45,7 @@ class DrinfeldModules(Category_over_base_ring):
     by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
     The extension `K/\GF{q}[T]` (represented as an instance of
-    the class :class:`sage.rings.ring_extension.RingExtension`) is the
+    the class :class:`sage.rings.ring_extension.RingExtension_generic`) is the
     *base field* of the category; its defining morphism `\gamma` is
     called the *base morphism*.
 
@@ -198,7 +198,6 @@ class DrinfeldModules(Category_over_base_ring):
         ...
         TypeError: function ring base must be a finite field
     """
-
     def __init__(self, base_morphism, name='τ'):
         r"""
         Initialize ``self``.
@@ -253,6 +252,7 @@ class DrinfeldModules(Category_over_base_ring):
         tau = K.frobenius_endomorphism(d)
         self._ore_polring = OrePolynomialRing(K, tau, names=name,
                                               polcast=False)
+        self._ore_variable_name = name
         # Create constant coefficient
         self._constant_coefficient = base_morphism(T)
         # Create characteristic
@@ -354,7 +354,7 @@ class DrinfeldModules(Category_over_base_ring):
         viewed as an algebra over the function ring `A`.
 
         This is an instance of the class
-        :class:`sage.rings.ring_extension.RingExtension`.
+        :class:`sage.rings.ring_extension.RingExtension_generic`.
 
         .. NOTE::
 
@@ -590,7 +590,7 @@ class DrinfeldModules(Category_over_base_ring):
             viewed as an algebra over the function ring `A`.
 
             This is an instance of the class
-            :class:`sage.rings.ring_extension.RingExtension`.
+            :class:`sage.rings.ring_extension.RingExtension_generic`.
 
             .. NOTE::
 
@@ -631,6 +631,8 @@ class DrinfeldModules(Category_over_base_ring):
             # should we add a deprecation?
             return self.category().base()
 
+        base_ring = base
+
         def base_morphism(self):
             r"""
             Return the base morphism of this Drinfeld module.
@@ -664,7 +666,7 @@ class DrinfeldModules(Category_over_base_ring):
             field `\GF{q}`.
 
             This is an instance of the class
-            :class:`sage.rings.ring_extension.RingExtension`.
+            :class:`sage.rings.ring_extension.RingExtension_generic`.
 
             EXAMPLES::
 

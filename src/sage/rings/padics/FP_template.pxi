@@ -296,9 +296,9 @@ cdef class FPElement(pAdicTemplateElement):
         """
         return unpickle_fpe_v2, (self.__class__, self.parent(), cpickle(self.unit, self.prime_pow), self.ordp)
 
-#    def __richcmp__(self, right, int op):
+#    def __richcmp__(self, other, int op):
 #        """
-#        Compare this element to ``right`` using the comparison operator ``op``.
+#        Compare this element to ``other`` using the comparison operator ``op``.
 #
 #        TESTS::
 #
@@ -310,7 +310,7 @@ cdef class FPElement(pAdicTemplateElement):
 #            sage: a < b
 #            True
 #        """
-#        return (<Element>self)._richcmp(right, op)
+#        return (<Element>self)._richcmp(other, op)
 
     cpdef _neg_(self):
         r"""

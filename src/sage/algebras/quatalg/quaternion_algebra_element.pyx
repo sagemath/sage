@@ -384,7 +384,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return self._do_print(self[0], self[1], self[2], self[3])
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         Comparing elements.
 
@@ -407,7 +407,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         cdef int i
         for i in range(4):
-            res = richcmp_item(self[i], right[i], op)
+            res = richcmp_item(self[i], other[i], op)
             if res is not NotImplemented:
                 return res
         return rich_to_bool(op, 0)
@@ -986,7 +986,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         """
         return bool(mpz_sgn(self.x) or mpz_sgn(self.y) or mpz_sgn(self.z) or mpz_sgn(self.w))
 
-    cpdef _richcmp_(self, _right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare two quaternions.
 
@@ -1006,7 +1006,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: Q.one() != -Q.one()
             True
         """
-        cdef QuaternionAlgebraElement_rational_field right = _right
+        cdef QuaternionAlgebraElement_rational_field right = other
         cdef int i
         i = mpz_cmp(self.d, right.d)
         if i:

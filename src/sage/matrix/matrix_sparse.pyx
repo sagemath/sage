@@ -369,7 +369,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         Rich comparison.
 
@@ -384,17 +384,17 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: M != Mp
             True
         """
-        other = <Matrix_sparse>right
+        _other = <Matrix_sparse>other
         if op == Py_EQ:
-            return self._dict() == other._dict()
+            return self._dict() == _other._dict()
         if op == Py_NE:
-            return self._dict() != other._dict()
+            return self._dict() != _other._dict()
         cdef Py_ssize_t i, j
         # Parents are equal, so dimensions of self and other are equal
         for i in range(self._nrows):
             for j in range(self._ncols):
                 lij = self.get_unsafe(i, j)
-                rij = other.get_unsafe(i, j)
+                rij = _other.get_unsafe(i, j)
                 r = richcmp_item(lij, rij, op)
                 if r is not NotImplemented:
                     return bool(r)

@@ -554,7 +554,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F
             Algebraic closure of Finite Field of size 5
         """
-        Field.__init__(self, base_ring=base_ring, names=name,
+        Field.__init__(self, base_ring, names=name,
                        normalize=False, category=category)
 
     def __eq__(self, other):

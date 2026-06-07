@@ -24,7 +24,7 @@ The algorithm used in this file comes from
 
 from sage.arith.misc import divisors, euler_phi, factorial, gcd
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.composition import Composition
+from sage.combinat.integer_vector import IntegerVector, IntegerVectors
 from sage.combinat.misc import DoublyLinkedList
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
@@ -87,8 +87,8 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
             sage: Necklaces([2,1,1]) is Necklaces(Composition([2,1,1]))
             True
         """
-        if not isinstance(content, Composition):
-            content = Composition(content)
+        if not isinstance(content, IntegerVector):
+            content = IntegerVectors()(content)
         return super().__classcall__(cls, content)
 
     def __init__(self, content):
@@ -103,7 +103,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
             sage: T = Necklaces([2,1])
             sage: TestSuite(T).run()
         """
-        self._content = content
+        self._content = list(content)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def content(self):

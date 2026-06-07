@@ -4269,7 +4269,7 @@ def _AHE_coefficients(p, N, prec):
          10 + 60*101 + 7*101^2,
          77 + 32*101 + 89*101^2,
          31 + 37*101 + 32*101^2]
-        sage: L == [ 1/factorial(i) for i in range(10) ]
+        sage: L == [1/factorial(i) for i in range(10)]
         True
 
     We check the parent::
@@ -4306,13 +4306,13 @@ def _AHE_coefficients(p, N, prec):
         sage: S.<x> = PowerSeriesRing(QQ, 513)
         sage: AH = exp(sum(x^(2^i) / 2^i for i in range(10)))
         sage: R = ZpFM(2, 1)
-        sage: [ R(c) for c in L ] == [ R(c) for c in AH.list() ]
+        sage: [R(c) for c in L] == [R(c) for c in AH.list()]
         True
 
     But it is not modulo `2^{10}`::
 
         sage: R = ZpFM(2, 10)
-        sage: [ R(c) for c in L ] == [ R(c) for c in AH.list() ]
+        sage: [R(c) for c in L] == [R(c) for c in AH.list()]
         False
     """
     from sage.rings.padics.factory import ZpFM

@@ -144,13 +144,12 @@ from sage import categories
 from sage.categories.morphism import IdentityMorphism
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
-from sage.misc.superseded import deprecation
 from sage.rings import rational_field
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing, Ring
+from sage.rings.ring import Ring
 from sage.structure.category_object import check_default_category
 from sage.structure.element import Element, RingElement
 
@@ -1053,7 +1052,7 @@ class PolynomialRing_generic(Ring):
 
         return PolynomialRing(R, names=self.variable_name(), sparse=self.is_sparse())
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         r"""
         Return the polynomial ring in variable ``var`` over the same base
         ring.
@@ -1062,12 +1061,14 @@ class PolynomialRing_generic(Ring):
 
             sage: R.<x> = ZZ[]; R
             Univariate Polynomial Ring in x over Integer Ring
-            sage: R.change_var('y')
+            sage: R.change_variable_name('y')
             Univariate Polynomial Ring in y over Integer Ring
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         return PolynomialRing(self.base_ring(), names=var, sparse=self.is_sparse())
+
+    change_var = change_variable_name
 
     def extend_variables(self, added_names, order='degrevlex'):
         r"""
@@ -1827,6 +1828,20 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
         return DifferentialWeylAlgebra(self)
 
+    def _fricas_init_(self) -> str:
+        """
+        Return a string that yields a representation of ``self`` in FriCAS.
+
+        EXAMPLES::
+
+            sage: F = GF(3, 2)
+            sage: P.<x> = F[]
+            sage: fricas(P)     # indirect doctest  # optional - fricas
+            UnivariatePolynomial(x,FiniteField(3,2))
+        """
+        v = self.variable_name()
+        return f'UnivariatePolynomial({v},{self.base_ring()._fricas_init_()})'
+
     def _roots_univariate_polynomial(self, p, ring=None, multiplicities=True, algorithm=None, degree_bound=None):
         """
         Return the list of roots of ``p``.
@@ -1877,9 +1892,9 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         return roots
 
 
-class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, CommutativeRing):
+class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, Ring):
     def __init__(self, base_ring, name='x', sparse=False, implementation=None,
-            element_class=None, category=None):
+                 element_class=None, category=None):
         """
         TESTS::
 

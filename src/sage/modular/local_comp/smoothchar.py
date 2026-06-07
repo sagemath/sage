@@ -1040,10 +1040,9 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         if level == 0:
             raise ValueError
-        elif level == 1:
+        if level == 1:
             return self.unit_gens(level)[:-1]
-        else:
-            return [1 + self.prime()**(level - 1)]
+        return [1 + self.prime()**(level - 1)]
 
     def from_dirichlet(self, chi):
         r"""
@@ -1595,10 +1594,9 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         if level == 0:
             raise ValueError
-        elif level == 1:
+        if level == 1:
             return self.unit_gens(level)[:-1]
-        else:
-            return [1 + self.prime()**(level - 1), 1 + self.prime()**(level - 1) * self.number_field().gen()]
+        return [1 + self.prime()**(level - 1), 1 + self.prime()**(level - 1) * self.number_field().gen()]
 
 
 class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
@@ -1807,7 +1805,6 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         if level == 0:
             raise ValueError
-        elif level == 1:
+        if level == 1:
             return self.unit_gens(level)[:-1]
-        else:
-            return [1 + self.number_field().gen()**(level - 1)]
+        return [1 + self.number_field().gen()**(level - 1)]

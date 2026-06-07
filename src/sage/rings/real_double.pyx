@@ -217,9 +217,9 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             return True
         return super()._repr_option(key)
 
-    def __richcmp__(self, x, op):
+    def __richcmp__(self, other, op):
         """
-        Compare ``self`` to ``x``.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -228,7 +228,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             sage: loads(dumps(RDF)) == RDF
             True
         """
-        if isinstance(x, RealDoubleField_class):
+        if isinstance(other, RealDoubleField_class):
             return rich_to_bool(op, 0)
         if op == Py_NE:
             return True

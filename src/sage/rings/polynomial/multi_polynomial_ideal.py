@@ -4071,7 +4071,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         s_gens = self.gens()
         o_gens = other_new.gens()
         try:
-            if (s_gens == o_gens) or (set(s_gens) == set(o_gens)):
+            if s_gens == o_gens or set(s_gens) == set(o_gens):
                 # the first clause works in the non-hashable case
                 return rich_to_bool(op, 0)
         except TypeError:
@@ -4085,10 +4085,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                 # first check whether the GB is cached already
                 if other_new.groebner_basis.is_in_cache():
                     r = other_new.groebner_basis()
-                elif len(other_new._gb_by_ordering):
+                elif other_new._gb_by_ordering:
                     o, r = next(iter(other_new._gb_by_ordering.items()))
                     l = self.change_ring(R.change_ring(order=o)).gens()
-                else: # use easy GB otherwise
+                else:  # use easy GB otherwise
                     newR = R.change_ring(order='degrevlex')
                     l = self.change_ring(newR).gens()
                     r = other_new.change_ring(newR).groebner_basis()

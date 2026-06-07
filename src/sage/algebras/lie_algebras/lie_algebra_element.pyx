@@ -1647,7 +1647,7 @@ cdef class LieGenerator(LieObject):
         """
         return hash(self._name)
 
-    def __richcmp__(self, rhs, int op):
+    def __richcmp__(self, other, int op):
         """
         Compare equals.
 
@@ -1669,7 +1669,7 @@ cdef class LieGenerator(LieObject):
             sage: x < z
             True
         """
-        if isinstance(rhs, LieBracket):
+        if isinstance(other, LieBracket):
             if op == Py_NE:
                 return True
             if op == Py_EQ:
@@ -1681,8 +1681,8 @@ cdef class LieGenerator(LieObject):
             # (Python automatically tries to check ``rhs > self``
             # when the comparison ``self < rhs`` returns a
             # NotImplemented error.)
-        if isinstance(rhs, LieGenerator):
-            return richcmp(self._index_word[0], <LieGenerator>(rhs)._index_word[0], op)
+        if isinstance(other, LieGenerator):
+            return richcmp(self._index_word[0], <LieGenerator>(other)._index_word[0], op)
         return op == Py_NE
 
     def _im_gens_(self, codomain, im_gens, names):
@@ -1830,7 +1830,7 @@ cdef class LieBracket(LieObject):
             return self._right
         raise IndexError("must be either 0 or 1")
 
-    def __richcmp__(self, rhs, int op):
+    def __richcmp__(self, other, int op):
         """
         Check equality.
 
@@ -1860,14 +1860,14 @@ cdef class LieBracket(LieObject):
             True
         """
         cdef LieBracket right
-        if isinstance(rhs, LieBracket):
-            right = <LieBracket>(rhs)
+        if isinstance(other, LieBracket):
+            right = <LieBracket>(other)
             return richcmp([self._left, self._right], [right._left, right._right], op)
-        if isinstance(rhs, LieGenerator):
+        if isinstance(other, LieGenerator):
             # Check this is right as in LieGenerator.__richcmp__
             return op == Py_NE or op == Py_GT or op == Py_GE
-        if isinstance(rhs, list):
-            return richcmp([self._left, self._right], rhs, op)
+        if isinstance(other, list):
+            return richcmp([self._left, self._right], other, op)
         return op == Py_NE
 
     def __hash__(self):
@@ -1998,7 +1998,7 @@ cdef class GradedLieBracket(LieBracket):
         """
         return (type(self), (self._left, self._right, self._grade))
 
-    def __richcmp__(self, rhs, int op):
+    def __richcmp__(self, other, int op):
         """
         Check less than.
 
@@ -2021,12 +2021,12 @@ cdef class GradedLieBracket(LieBracket):
             False
         """
         cdef GradedLieBracket right
-        if isinstance(rhs, GradedLieBracket):
-            right = <GradedLieBracket>(rhs)
+        if isinstance(other, GradedLieBracket):
+            right = <GradedLieBracket>(other)
             if self._grade != right._grade:
                 return richcmp_not_equal(self._grade, right._grade, op)
             return richcmp([self._left, self._right], [right._left, right._right], op)
-        if isinstance(rhs, LieGenerator):
+        if isinstance(other, LieGenerator):
             return op == Py_NE or op == Py_GT or op == Py_GE
         return op == Py_NE
 
@@ -2059,7 +2059,7 @@ cdef class LyndonBracket(GradedLieBracket):
     (This is also true if one or both of `l` and `r` is a
     :class:`LieGenerator`.)
     """
-    def __richcmp__(self, rhs, op):
+    def __richcmp__(self, other, int op):
         """
         Compare ``self`` and ``rhs``.
 
@@ -2070,9 +2070,9 @@ cdef class LyndonBracket(GradedLieBracket):
             sage: LyndonBracket(x, LyndonBracket(y, z, 2), 3) < LyndonBracket(LyndonBracket(y, z, 2), x, 3)
             True
         """
-        if not isinstance(rhs, LieObject):
+        if not isinstance(other, LieObject):
             return op == Py_NE
-        return richcmp(self._index_word, <LieObject>(rhs)._index_word, op)
+        return richcmp(self._index_word, <LieObject>(other)._index_word, op)
 
     def __hash__(self):
         """

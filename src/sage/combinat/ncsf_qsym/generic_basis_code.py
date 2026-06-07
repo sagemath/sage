@@ -116,13 +116,15 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 This could possibly be shared with Sym, FQSym, and
                 other algebras with bases indexed by list-like objects
             """
-            if isinstance(c, Composition):
-                assert len(rest) == 0
-            else:
-                if len(rest) > 0 or isinstance(c, (int, Integer)):
-                    c = self._indices([c] + list(rest))
+            if isinstance(c, (int, Integer)):
+                if c:
+                    c = self._indices([c] + [e for e in rest if e])
                 else:
-                    c = self._indices(list(c))
+                    c = self._indices([e for e in rest if e])
+            else:
+                assert not rest
+                if not isinstance(c, Composition):
+                    c = self._indices([e for e in c if e])
             return self.monomial(c)
 
         # could go to Algebras(...).Graded().Connected() or Modules(...).Graded().Connected()

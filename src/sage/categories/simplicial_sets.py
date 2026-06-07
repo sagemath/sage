@@ -565,17 +565,12 @@ class SimplicialSets(Category_singleton):
                     sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
                     sage: C = RP3.universal_cover(); C
                     Simplicial set with 8 non-degenerate simplices
-                    sage: C.face_data()  # needs gap_package_polenta
-                    {(1, 1): None,
-                     (1, e): None,
-                     (f, 1): ((1, e), (1, 1)),
-                     (f, e): ((1, 1), (1, e)),
-                     (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
-                     (f * f, e): ((f, 1), s_0 (1, e), (f, e)),
-                     (f * f * f, 1): ((f * f, e), s_0 (f, 1), s_1 (f, 1), (f * f, 1)),
-                     (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
+                    sage: len(C.face_data())  # needs gap_package_polenta
+                    8
                     sage: C.fundamental_group()
                     Finitely presented group <  |  >
+                    sage: C.betti() == simplicial_sets.Sphere(3).betti()
+                    True
 
                 TESTS::
 

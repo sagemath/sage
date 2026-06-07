@@ -119,8 +119,7 @@ since if we are not careful we will get results in `\ZZ` instead of `\QQ`::
     ....:     if self.denominator() == 1:
     ....:         if coerced:
     ....:             return sib.int(self.numerator())
-    ....:         else:
-    ....:             return sib.name('QQ')(sib.int(self.numerator()))
+    ....:         return sib.name('QQ')(sib.int(self.numerator()))
     ....:     return sib(self.numerator())/sib.int(self.denominator())
 
 We see that the \method{name} method gives an SIE representing a \sage
@@ -483,10 +482,10 @@ class SageInputBuilder:
             # floats could often have prettier output,
             # but I think they're rare enough in Sage that it's not
             # worth the effort.
-            from math import inf
+            from math import inf, isnan
             if x == inf:
                 return self.name('float')(self.name('infinity'))
-            if x != x:
+            if isnan(x):
                 return self.name('float')(self.name('NaN'))
             if x == -inf:
                 return -self.name('float')(self.name('infinity'))
@@ -1079,7 +1078,7 @@ class SageInputBuilder:
                     factors[i:i + 1] = []
                 else:
                     i += 1
-            if len(factors) == 0:
+            if not factors:
                 factors.append(SIE_literal_stringrep(self, '1'))
 
         prod = factors[0]
@@ -1125,7 +1124,7 @@ class SageInputBuilder:
                     terms[i:i + 1] = []
                 else:
                     i += 1
-            if len(terms) == 0:
+            if not terms:
                 terms.append(SIE_literal_stringrep(self, '0'))
 
         sum = terms[0]
@@ -1165,17 +1164,16 @@ class SageInputBuilder:
 
         e._sie_prepare(sif)
 
-        s = sif.format(e, 0)
+        sif.format(e, 0)
 
         locals = self._locals
-        if len(locals):
+        if locals:
             return SageInputAnswer(sif._commands, sif.format(e, 0), locals)
         return SageInputAnswer(sif._commands, sif.format(e, 0))
 
 
-# Python's precedence levels.  Hand-transcribed from section 5.14 of
-# the Python 2 reference manual.  In the Python 3 reference manual
-# this is section 6.16.
+# Python's precedence levels.  Hand-transcribed from section 6.16 of
+# the Python 3 reference manual.
 # See https://docs.python.org/3/reference/expressions.html
 _prec_lambda = 2
 _prec_or = 4
@@ -2640,8 +2638,7 @@ class SIE_unary(SageInputExpression):
             sage: def mk_CC(b):
             ....:     if b._sie_is_negation():
             ....:         return -sib.name('CC')(b._sie_operand)
-            ....:     else:
-            ....:         return sib.name('CC')(b)
+            ....:     return sib.name('CC')(b)
 
             sage: mk_CC(x)
             {call: {atomic:CC}({atomic:x})}
@@ -3488,7 +3485,7 @@ def verify_same(a, b):
         # If this case occurs, then a and b do not compare equal to
         # itself. In that case, we compare the string representations of
         # a and b.
-        if not (a == a) and not (b == b):
+        if not (a == a) and not (b == b):  # noqa: PLR0124
             if repr(a) == repr(b):
                 return  # Good!
         raise AssertionError("Expected %r == %r" % (a, b))
@@ -3584,7 +3581,7 @@ class SageInputAnswer(tuple):
             return tuple.__new__(cls, (cmds, expr, locals))
         return tuple.__new__(cls, (cmds, expr))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation for a :class:`SageInputAnswer`,
         such that if you evaluate this :class:`SageInputAnswer` at the

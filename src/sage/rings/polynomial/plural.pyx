@@ -137,7 +137,6 @@ from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_
 from sage.rings.polynomial.multi_polynomial_ideal import NCPolynomialIdeal
 
 from sage.rings.polynomial.polydict import ETuple
-from sage.rings.ring import CommutativeRing
 from sage.structure.category_object cimport check_default_category
 from sage.structure.element cimport CommutativeRingElement, Element, RingElement
 from sage.structure.factory import UniqueFactory
@@ -179,7 +178,7 @@ class G_AlgFactory(UniqueFactory):
         """
         # key = (base_ring,names, c,d, order, category)
         # extra args: check
-        base_ring,names, c, d, order, category = key
+        base_ring, names, c, d, order, category = key
         check = extra_args.get('check')
         return NCPolynomialRing_plural(base_ring, names, c, d, order,
                                        category, check)
@@ -238,7 +237,7 @@ class G_AlgFactory(UniqueFactory):
         # Extra arg
         if check is None:
             return (base_ring, names, c, d, order, category), {}
-        return (base_ring, names, c, d, order, category), {'check':check}
+        return (base_ring, names, c, d, order, category), {'check': check}
 
 
 g_Algebra = G_AlgFactory('sage.rings.polynomial.plural.g_Algebra')
@@ -548,20 +547,20 @@ cdef class NCPolynomialRing_plural(Ring):
                 if isinstance(base_ring, FiniteField_prime_modn):
                     _p = p_ISet(int(element) % _ring.cf.ch, _ring)
                 else:
-                    _n = sa2si(element,_ring)
+                    _n = sa2si(element, _ring)
                     _p = p_NSet(_n, _ring)
 
             # also accepting ZZ
             elif isinstance(element.parent(), IntegerRing_class):
                 if isinstance(base_ring, FiniteField_prime_modn):
-                    _p = p_ISet(int(element),_ring)
+                    _p = p_ISet(int(element), _ring)
                 else:
-                    _n = sa2si(base_ring(element),_ring)
+                    _n = sa2si(base_ring(element), _ring)
                     _p = p_NSet(_n, _ring)
             else:
                 # fall back to base ring
                 element = base_ring.coerce(element)
-                _n = sa2si(element,_ring)
+                _n = sa2si(element, _ring)
                 _p = p_NSet(_n, _ring)
 
         elif isinstance(element, RingElement):
@@ -855,11 +854,11 @@ cdef class NCPolynomialRing_plural(Ring):
             raise ValueError("Generator not defined.")
 
         rChangeCurrRing(_ring)
-        _p = p_ISet(1,_ring)
+        _p = p_ISet(1, _ring)
         p_SetExp(_p, n+1, 1, _ring)
         p_Setm(_p, _ring)
 
-        return new_NCP(self,_p)
+        return new_NCP(self, _p)
 
     def algebra_generators(self):
         r"""
@@ -912,7 +911,8 @@ cdef class NCPolynomialRing_plural(Ring):
             gens = [gens]
         if coerce:
             gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return NCPolynomialIdeal(self, gens, coerce=False, side=kwds.get('side','left'))
+        return NCPolynomialIdeal(self, gens, coerce=False,
+                                 side=kwds.get('side', 'left'))
 
     def _list_to_ring(self, L):
         """
@@ -1200,7 +1200,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         pLcm(f._poly, g._poly, m)
         p_Setm(m, self._ring)
-        return new_NCP(self,m)
+        return new_NCP(self, m)
 
     def monomial_reduce(self, NCPolynomial_plural f, G):
         """
@@ -1263,7 +1263,7 @@ cdef class NCPolynomialRing_plural(Ring):
                 if p_LmDivisibleBy(h._poly, m, r):
                     flt = pMDivide(f._poly, h._poly)
                     p_SetCoeff(flt, n_Init(1, r.cf), r)
-                    return (new_NCP(self,flt), h)
+                    return (new_NCP(self, flt), h)
         return (self._zero_element, self._zero_element)
 
     def monomial_pairwise_prime(self, NCPolynomial_plural g, NCPolynomial_plural h):
@@ -1377,7 +1377,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         while not p_ExpVectorEqual(tempvector, maxvector, _ring):
             tempvector = addwithcarry(tempvector, maxvector, pos, _ring)
-            M.append(new_NCP(self, p_Copy(tempvector,_ring)))
+            M.append(new_NCP(self, p_Copy(tempvector, _ring)))
         return M
 
 
@@ -1397,27 +1397,27 @@ def unpickle_NCPolynomial_plural(NCPolynomialRing_plural R, d):
     cdef poly *m
     cdef poly *p
     cdef int _i, _e
-    p = p_ISet(0,r)
+    p = p_ISet(0, r)
     rChangeCurrRing(r)
     for mon, c in d.items():
         m = p_Init(r)
-        for i,e in mon.sparse_iter():
+        for i, e in mon.sparse_iter():
             _i = i
             if _i >= r.N:
-                p_Delete(&p,r)
-                p_Delete(&m,r)
+                p_Delete(&p, r)
+                p_Delete(&m, r)
                 raise TypeError("variable index too big")
             _e = e
             if _e <= 0:
-                p_Delete(&p,r)
-                p_Delete(&m,r)
+                p_Delete(&p, r)
+                p_Delete(&m, r)
                 raise TypeError("exponent too small")
             overflow_check(_e, r)
-            p_SetExp(m, _i+1,_e, r)
+            p_SetExp(m, _i+1, _e, r)
         p_SetCoeff(m, sa2si(c, r), r)
-        p_Setm(m,r)
-        p = p_Add_q(p,m,r)
-    return new_NCP(R,p)
+        p_Setm(m, r)
+        p = p_Add_q(p, m, r)
+    return new_NCP(R, p)
 
 
 cdef class NCPolynomial_plural(RingElement):
@@ -1598,7 +1598,7 @@ cdef class NCPolynomial_plural(RingElement):
             return (<NCPolynomialRing_plural>self._parent)._zero_element
         cdef poly *_p
         singular_polynomial_rmul(&_p, self._poly, left, _ring)
-        return new_NCP((<NCPolynomialRing_plural>self._parent),_p)
+        return new_NCP((<NCPolynomialRing_plural>self._parent), _p)
 
     cpdef _mul_(left, right):
         """
@@ -1633,7 +1633,7 @@ cdef class NCPolynomial_plural(RingElement):
         singular_polynomial_mul(&_p, left._poly,
                                 (<NCPolynomial_plural>right)._poly,
                                 (<NCPolynomialRing_plural>left._parent)._ring)
-        return new_NCP((<NCPolynomialRing_plural>left._parent),_p)
+        return new_NCP((<NCPolynomialRing_plural>left._parent), _p)
 
     cpdef _div_(left, right):
         """
@@ -1669,7 +1669,7 @@ cdef class NCPolynomial_plural(RingElement):
             else:
                 return left.change_ring(left.base_ring().fraction_field())/right
         else:
-            return (<NCPolynomialRing_plural>left._parent).fraction_field()(left,right)
+            return (<NCPolynomialRing_plural>left._parent).fraction_field()(left, right)
 
     def __pow__(NCPolynomial_plural self, exp, mod):
         """
@@ -1766,7 +1766,7 @@ cdef class NCPolynomial_plural(RingElement):
         cdef ring *_ring = (<NCPolynomialRing_plural>self._parent)._ring
         cdef poly *_p
         singular_polynomial_pow(&_p, self._poly, exp, _ring)
-        return new_NCP((<NCPolynomialRing_plural>self._parent),_p)
+        return new_NCP((<NCPolynomialRing_plural>self._parent), _p)
 
     def __neg__(self):
         """
@@ -1835,14 +1835,14 @@ cdef class NCPolynomial_plural(RingElement):
                 pass
             I = I.gens()
 
-        _I = idInit(len(I),1)
+        _I = idInit(len(I), 1)
         for f in I:
             if not (isinstance(f, NCPolynomial_plural)
                     and <NCPolynomialRing_plural>(<NCPolynomial_plural>f)._parent is parent):
                 try:
                     f = parent.coerce(f)
                 except TypeError as msg:
-                    id_Delete(&_I,r)
+                    id_Delete(&_I, r)
                     raise TypeError(msg)
 
             _I.m[i] = p_Copy((<NCPolynomial_plural>f)._poly, r)
@@ -1851,7 +1851,7 @@ cdef class NCPolynomial_plural(RingElement):
         # the second parameter would be qring!
         res = kNF(_I, NULL, self._poly)
         id_Delete(&_I, r)
-        return new_NCP(parent,res)
+        return new_NCP(parent, res)
 
     def _repr_(self):
         """
@@ -1974,7 +1974,7 @@ cdef class NCPolynomial_plural(RingElement):
         cdef ring *r = (<NCPolynomialRing_plural>self._parent)._ring
         cdef poly *p = self._poly
         if not x:
-            return singular_polynomial_deg(p,NULL,r)
+            return singular_polynomial_deg(p, NULL, r)
 
         # TODO: we can do this faster
         if x not in self._parent.gens():
@@ -2025,7 +2025,7 @@ cdef class NCPolynomial_plural(RingElement):
         """
         cdef poly *p = self._poly
         cdef ring *r = (<NCPolynomialRing_plural>self._parent)._ring
-        return singular_polynomial_deg(p,NULL,r)
+        return singular_polynomial_deg(p, NULL, r)
 
     def degrees(self):
         """
@@ -2054,7 +2054,7 @@ cdef class NCPolynomial_plural(RingElement):
         cdef list d = [0 for _ in range(r.N)]
         while p:
             for i from 0 <= i < r.N:
-                d[i] = max(d[i],p_GetExp(p, i+1, r))
+                d[i] = max(d[i], p_GetExp(p, i+1, r))
             p = pNext(p)
         return tuple(d)
 
@@ -2136,16 +2136,16 @@ cdef class NCPolynomial_plural(RingElement):
         cdef int flag
         cdef int gens = self._parent.ngens()
         cdef int *exps = <int*>sig_malloc(sizeof(int)*gens)
-        for i from 0<=i<gens:
+        for i in range(gens):
             exps[i] = -1
 
         if isinstance(degrees, NCPolynomial_plural) and self._parent is (<NCPolynomial_plural>degrees)._parent:
             _degrees = (<NCPolynomial_plural>degrees)._poly
             if pLength(_degrees) != 1:
                 raise TypeError("degrees must be a monomial")
-            for i from 0<=i<gens:
-                if p_GetExp(_degrees,i+1,r)!=0:
-                    exps[i] = p_GetExp(_degrees,i+1,r)
+            for i in range(gens):
+                if p_GetExp(_degrees, i+1, r)!=0:
+                    exps[i] = p_GetExp(_degrees, i+1, r)
         elif type(degrees) is list:
             for i from 0<=i<gens:
                 if degrees[i] is None:
@@ -2155,7 +2155,7 @@ cdef class NCPolynomial_plural(RingElement):
         elif type(degrees) is dict:
             # Extract the ordered list of degree specifications from the dictionary
             poly_vars = self.parent().gens()
-            for i from 0<=i<gens:
+            for i in range(gens):
                 try:
                     exps[i] = degrees[poly_vars[i]]
                 except KeyError:
@@ -2166,22 +2166,22 @@ cdef class NCPolynomial_plural(RingElement):
         # Extract the monomials that match the specifications
         while p:
             flag = 0
-            for i from 0<=i<gens:
-                if exps[i] != -1 and p_GetExp(p,i+1,r)!=exps[i]:
+            for i in range(gens):
+                if exps[i] != -1 and p_GetExp(p, i+1, r) != exps[i]:
                     flag = 1
             if flag == 0:
-                newptemp = p_LmInit(p,r)
-                p_SetCoeff(newptemp,n_Copy(p_GetCoeff(p,r),r.cf),r)
+                newptemp = p_LmInit(p, r)
+                p_SetCoeff(newptemp, n_Copy(p_GetCoeff(p, r), r.cf), r)
                 for i from 0<=i<gens:
                     if exps[i] != -1:
-                        p_SetExp(newptemp,i+1,0,r)
-                p_Setm(newptemp,r)
-                newp = p_Add_q(newp,newptemp,r)
+                        p_SetExp(newptemp, i+1, 0, r)
+                p_Setm(newptemp, r)
+                newp = p_Add_q(newp, newptemp, r)
             p = pNext(p)
 
         sig_free(exps)
 
-        return new_NCP(self.parent(),newp)
+        return new_NCP(self.parent(), newp)
 
     def monomial_coefficient(self, NCPolynomial_plural mon):
         """
@@ -2381,7 +2381,7 @@ cdef class NCPolynomial_plural(RingElement):
                 # I omit gen,exp pairs where the exponent is zero.
                 result_mon = c_hash
                 for v from 1 <= v <= r.N:
-                    n = p_GetExp(p,v,r)
+                    n = p_GetExp(p, v, r)
                     if n!=0:
                         result_mon = (1000003 * result_mon) ^ var_name_hash[v-1]
                         result_mon = (1000003 * result_mon) ^ n
@@ -2439,7 +2439,7 @@ cdef class NCPolynomial_plural(RingElement):
         if len(x) != (<NCPolynomialRing_plural>self._parent)._ngens:
             raise TypeError("x must have length self.ngens()")
 
-        m = p_ISet(1,r)
+        m = p_ISet(1, r)
         i = 1
         for e in x:
             overflow_check(e, r)
@@ -2449,11 +2449,11 @@ cdef class NCPolynomial_plural(RingElement):
 
         while p:
             if p_ExpVectorEqual(p, m, r) == 1:
-                p_Delete(&m,r)
+                p_Delete(&m, r)
                 return si2sa(p_GetCoeff(p, r), r, (<NCPolynomialRing_plural>self._parent)._base)
             p = pNext(p)
 
-        p_Delete(&m,r)
+        p_Delete(&m, r)
         return (<NCPolynomialRing_plural>self._parent)._base._zero_element
 
     def exponents(self, as_ETuples=True):
@@ -2525,7 +2525,7 @@ cdef class NCPolynomial_plural(RingElement):
         cdef ring *_ring = (<NCPolynomialRing_plural>self._parent)._ring
         if _ring != currRing:
             rChangeCurrRing(_ring)
-        return bool(p_IsHomogeneous(self._poly,_ring))
+        return bool(p_IsHomogeneous(self._poly, _ring))
 
     def is_monomial(self):
         """
@@ -2563,7 +2563,7 @@ cdef class NCPolynomial_plural(RingElement):
         _p = p_Head(self._poly, _ring)
         _n = p_GetCoeff(_p, _ring)
 
-        ret = bool((not self._poly.next) and _ring.cf.cfIsOne(_n,_ring.cf))
+        ret = bool((not self._poly.next) and _ring.cf.cfIsOne(_n, _ring.cf))
 
         p_Delete(&_p, _ring)
         return ret
@@ -2632,7 +2632,7 @@ cdef class NCPolynomial_plural(RingElement):
         while p:
             t = pNext(p)
             p.next = NULL
-            p_SetCoeff(p, n_Init(1,_ring.cf), _ring)
+            p_SetCoeff(p, n_Init(1, _ring.cf), _ring)
             p_Setm(p, _ring)
             l.append(new_NCP(parent, p))
             p = t
@@ -2736,8 +2736,8 @@ cdef class NCPolynomial_plural(RingElement):
         if self._poly == NULL:
             return (<NCPolynomialRing_plural>self._parent)._zero_element
         _p = p_Head(self._poly, _ring)
-        p_SetCoeff(_p, n_Init(1,_ring.cf), _ring)
-        p_Setm(_p,_ring)
+        p_SetCoeff(_p, n_Init(1, _ring.cf), _ring)
+        p_Setm(_p, _ring)
         return new_NCP((<NCPolynomialRing_plural>self._parent), _p)
 
     def lc(NCPolynomial_plural self):
