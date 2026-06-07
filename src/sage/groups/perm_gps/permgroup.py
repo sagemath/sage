@@ -3651,7 +3651,12 @@ class PermutationGroup_generic(FiniteGroup):
         Return a complete list of representatives of conjugacy classes in
         a permutation group `G`.
 
-        The ordering is that given by GAP.
+        The ordering is that given by GAP. Neither the ordering nor the
+        choice of representatives is guaranteed to be deterministic: this
+        method wraps GAP's ``Representative`` function, which is free to
+        return a different representative of a conjugacy class on different
+        calls, so the result may vary between systems and between repeated
+        calls.
 
         EXAMPLES::
 
