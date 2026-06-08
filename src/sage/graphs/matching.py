@@ -1326,7 +1326,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
     if algorithm == "Micali-Vazirani":
         if use_edge_labels:
-            raise ValueError("Micali-Vazirani algorithm does not '"
+            raise ValueError("Micali-Vazirani algorithm does not "
                 "support edge labels or weights")
 
         micali_vazirani_matching = MicaliVaziraniMatching(G.to_simple())
@@ -1794,24 +1794,23 @@ class MicaliVaziraniMatching:
             raise ValueError("The input must be a graph")
 
         if G.has_loops() or G.has_multiple_edges():
-            raise ValueError("Micali-Vazirani algorithm is only applicable '"
+            raise ValueError("Micali-Vazirani algorithm is only applicable "
                 "to simple undirected graphs")
 
         # ******************************
         # Set up global state containers
         # ******************************
         self.G = G.copy(immutable=False)
-        self.N = G.order()
 
-        # relabel vertices of G to 0..N‑1
-        for vertex in self.G:
-            if not self.G.degree(vertex):
-                self.G.delete_vertex(vertex)
+        # Isolated vertices cannot be matched, so drop them.
+        self.G.delete_vertices([v for v in self.G if not self.G.degree(v)])
+        self.N = self.G.order()
 
-        # indexing the vertices
-        self.index_to_vertex = list(G)
+        # Relabel the remaining vertices to 0, 1, ..., N - 1, keeping the
+        # original labels in ``index_to_vertex`` so that the final matching
+        # can be mapped back to them (see :meth:`get_matching`).
+        self.index_to_vertex = list(self.G)
         self.vertex_to_index = {u: i for i, u in enumerate(self.index_to_vertex)}
-        self.vertex_to_index = self.G.relabel(inplace=True, return_map=True)
         self.G.relabel(perm=self.vertex_to_index, inplace=True)
 
         self.tenacity_bridges_map: List[List[int]] = [[] for _ in range(2 * self.N + 2)]
@@ -1826,6 +1825,12 @@ class MicaliVaziraniMatching:
         self.successor: List[List[int]] = [[] for _ in range(self.N)]
         self.color: List[int] = [None] * self.N
         self.search_level_vertices: List[int] = list(range(self.N))
+
+        # Edge indexing must be set up before ``edge_scanned``, which is keyed
+        # by ``edge_to_index`` (and therefore needs ``_edge_to_index``).
+        self.index_to_edge = list(self.G.edges(labels=False, sort_vertices=True))
+        self._edge_to_index = {e: i for i, e in enumerate(self.index_to_edge)}
+
         self.edge_scanned: Dict[int, int] = {self.edge_to_index(u, v): -1
                 for (u, v) in self.G.edge_iterator(labels=False)}
         self.prop_edges: Set[int] = set()
@@ -1835,9 +1840,6 @@ class MicaliVaziraniMatching:
         self.phase_index = 0
         self.num_augmentations = 0
         self.INFINITY = float('inf')
-
-        self.index_to_edge = list(self.G.edges(labels=False, sort_vertices=True))
-        self._edge_to_index = {e: i for i, e in enumerate(self.index_to_edge)}
 
     # indexing the edges
     def edge_to_index(self, i: int, j: int) -> int:
@@ -2069,9 +2071,16 @@ class MicaliVaziraniMatching:
                 for neighbor in self.G.neighbor_iterator(vertex):
                     edge_index = self.edge_to_index(vertex, neighbor)
 
-                    # In the case were the tenacity of a tenacity_bridges_map was not yet found
+                    # File the bridge under its tenacity, but only once that
+                    # tenacity is determined (a neighbour whose even level is
+                    # still infinite leaves it unknown for now).
                     if edge_index not in self.prop_edges:
-                        self.tenacity_bridges_map[self.max_level[vertex] + self.level[neighbor][0] + 1].append(edge_index)
+                        tenacity = self.max_level[vertex] + self.level[neighbor][0] + 1
+                        if tenacity < self.INFINITY:
+                            if tenacity >= len(self.tenacity_bridges_map):
+                                self.tenacity_bridges_map.extend([]
+                                    for _ in range(tenacity - len(self.tenacity_bridges_map) + 1))
+                            self.tenacity_bridges_map[tenacity].append(edge_index)
 
         self.search_level_vertices += next_search_level_vertices
 
