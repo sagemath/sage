@@ -1997,6 +1997,27 @@ class MicaliVaziraniMatching:
     # Start a new phase
     # ******************************
     def start_new_phase(self) -> None:
+        r"""
+        Reset the per-phase search state before a new phase.
+
+        Every matched vertex is given infinite levels; every unmatched (free)
+        vertex is put at minlevel `0` and becomes a root of the next
+        breadth-first search. Predecessor/successor lists, petal and bud maps,
+        colours, scanned-edge marks and the tenacity buckets are all cleared.
+
+        EXAMPLES:
+
+        On a freshly constructed instance the matching is empty, so every
+        vertex is free and starts at level `0`::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
+            sage: MV.start_new_phase()
+            sage: MV.min_level
+            [0, 0, 0, 0]
+            sage: sorted(MV.search_level_vertices)
+            [0, 1, 2, 3]
+        """
         self.search_level_vertices = []
 
         for u in self.G:
