@@ -1873,6 +1873,30 @@ class MicaliVaziraniMatching:
 
     # indexing the edges
     def edge_to_index(self, i: int, j: int) -> int:
+        r"""
+        Return the integer index assigned to the edge `\{i, j\}`.
+
+        Edges are numbered `0, 1, \ldots, |E| - 1` so that edge-indexed arrays
+        can be used. The lookup is symmetric: the endpoints may be given in
+        either order.
+
+        INPUT:
+
+        - ``i`` -- integer; one endpoint (an internal vertex label in
+          `\{0, \ldots, n - 1\}`)
+        - ``j`` -- integer; the other endpoint
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+            sage: MV.edge_to_index(0, 1)
+            0
+            sage: MV.edge_to_index(2, 1)
+            1
+            sage: MV.edge_to_index(1, 2) == MV.edge_to_index(2, 1)
+            True
+        """
         if i > j:
             i, j = j, i
         return self._edge_to_index[(i, j)]
