@@ -1788,6 +1788,36 @@ class MicaliVaziraniMatching:
         peaks: Tuple[int, int]
 
     def __init__(self, G) -> None:
+        r"""
+        Set up the per-instance state for the Micali--Vazirani algorithm.
+
+        INPUT:
+
+        - ``G`` -- a :class:`~sage.graphs.graph.Graph`; a simple undirected
+          graph. A mutable copy is taken, isolated vertices are dropped, and
+          the remaining vertices are relabelled to `0, 1, \ldots, n - 1`. Loops
+          and multiple edges raise a :exc:`ValueError`; edge labels are ignored.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PetersenGraph())
+            sage: MV.N
+            10
+            sage: MV.M.size()
+            0
+
+        TESTS::
+
+            sage: MicaliVaziraniMatching(graphs.PetersenGraph().to_directed())
+            Traceback (most recent call last):
+            ...
+            ValueError: The input must be a graph
+            sage: MicaliVaziraniMatching(Graph([(0, 0)], loops=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: Micali-Vazirani algorithm is only applicable to simple undirected graphs
+        """
         from sage.graphs.graph import Graph
 
         if not isinstance(G, Graph):
