@@ -2143,7 +2143,7 @@ class MicaliVaziraniMatching:
         Assign each vertex in support to the given petal and direction.
         """
         for vertex in support:
-            self.vertex_bud_map[vertex] = get_bud(bud)
+            self.vertex_bud_map[vertex] = self.get_bud(bud)
             self.vertex_petal_map[vertex] = petal
             self.color[vertex] = direction
 
@@ -2214,9 +2214,9 @@ class MicaliVaziraniMatching:
                         current_vertex = vertex
                         path.append(end_vertex)
                         break
-                    elif self.vertex_petal_map[vertex] == petal and self.color[current_vertex] == color[vertex]:
+                    elif self.vertex_petal_map[vertex] == petal and self.color[current_vertex] == self.color[vertex]:
                         next_petal_vertex = vertex
-                    elif self.vertex_petal_map[vertex] == petal and self.color[current_vertex] != color[vertex]:
+                    elif self.vertex_petal_map[vertex] == petal and self.color[current_vertex] != self.color[vertex]:
                         wrong_petal_vertex = vertex
                     else:
                         new_petal = vertex
