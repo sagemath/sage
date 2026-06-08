@@ -401,6 +401,18 @@ class QuasiRibbonTableaux_all(UniqueRepresentation, Parent):
         """
         return self.element_class(self, [list(r) for r in rows])
 
+    def _an_element_(self):
+        r"""
+        Return a sample element (the empty quasi-ribbon tableau).
+
+        EXAMPLES::
+
+            sage: from sage.combinat.quasi_ribbon_tableau import QuasiRibbonTableaux
+            sage: QuasiRibbonTableaux().an_element()
+            []
+        """
+        return self.element_class(self, [])
+
     Element = QuasiRibbonTableau
 
 

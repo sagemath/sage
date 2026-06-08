@@ -120,7 +120,7 @@ def krob_thibon_insertion(word):
         sage: P
         [[1, 2], [3, 4]]
         sage: Q
-        [[1, 3], [2, 4]]
+        [[1, 2], [3, 4]]
         sage: sum(len(r) for r in Q) == 4
         True
     """
@@ -138,12 +138,16 @@ def krob_thibon_insertion(word):
         new_shape = [len(r) for r in p_rows]
 
         # Find which cell was added: the unique position where new_shape > old_shape.
-        # The new rows list may have one more row than the old one (new bottom row)
-        # or an existing row may have grown by one cell.
+        # The new rows list may have one more row than the old one, either at the
+        # bottom (j==0 prepend case: new_shape[1:] == old_shape) or at the top
+        # (bump-to-empty-upper case: new_shape[:-1] == old_shape).
         if len(new_shape) > len(old_shape):
-            # A new row was added at the bottom.
-            # Shift Q rows up by one and prepend a new row [step].
-            q_rows = [[step]] + q_rows
+            if new_shape[1:] == old_shape:
+                # New row prepended at the bottom.
+                q_rows = [[step]] + q_rows
+            else:
+                # New row appended at the top.
+                q_rows = q_rows + [[step]]
         else:
             # An existing row grew by one cell.
             for i, (old_len, new_len) in enumerate(zip(old_shape, new_shape)):
