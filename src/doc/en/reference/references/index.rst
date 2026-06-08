@@ -343,6 +343,7 @@ REFERENCES:
 .. [Arn2002] \P. Arnoux, *Sturmian sequences*, in Substitutions in Dynamics,
              \N. Pytheas Fogg (Ed.), Arithmetics, and Combinatorics (Lecture
              Notes in Mathematics, Vol. 1794), 2002.
+
 .. [ARVT2005] Michael Artin, Fernando Rodriguez-Villegas, John Tate,
               *On the Jacobians of plane cubics*,
               Advances in Mathematics 198 (2005) 1, pp. 366--382
@@ -1320,7 +1321,6 @@ REFERENCES:
 .. [Br2000] Kenneth S. Brown, *Semigroups, rings, and Markov chains*,
             :arxiv:`math/0006145v1`.
 
-
 .. [BR2000a] \P. Barreto and V. Rijmen,
              *The ANUBIS Block Cipher*; in
              First Open NESSIE Workshop, (2000).
@@ -1346,7 +1346,6 @@ REFERENCES:
 
 .. [Br2016] *Bresenham's Line Algorithm*, Python, 26 December 2016.
             http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
-
 
 .. [Bra2011] Volker Braun,
              Toric Elliptic Fibrations and F-Theory Compactifications,
@@ -2815,7 +2814,6 @@ REFERENCES:
 .. [Fel2001] Yves Felix, Stephen Halperin and J.-C. Thomas. *Rational homotopy
              theory*, Graduate texts in mathematics 201, Springer, 2001.
 
-
 .. [Feng2014] Gang Feng, *Finding k shortest simple paths in directed
             graphs: A node classification algorithm*. Networks, 64(1),
             6-17, 2014. :doi:`10.1002/net.21552`
@@ -3078,7 +3076,6 @@ REFERENCES:
 
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187-203, 1991.
-
 
 .. [Gek2001] \E.-U. Gekeler. Invariants of some algebraic curves related to
               Drinfeld modular curves. Journal of Number Theory 90, No. 1, 166-183, 2001.
@@ -3898,7 +3895,6 @@ REFERENCES:
 
 .. [Huy2005] \D. Huybrechts : *Complex Geometry*, Springer (Berlin)
              (2005).
-
 
 .. [HX2010] \W. Haemers and Q. Xiang,
             Strongly regular graphs with parameters `(4m^4,2m^4+m^2,m^4+m^2,m^4+m^2)`
@@ -4956,7 +4952,6 @@ REFERENCES:
              Ideal Lattices and Learning with Errors over Rings. in
              Advances in Cryptology --
              EUROCRYPT 2010. Springer 2010. :doi:`10.1007/978-3-642-13190-5_1`
-
 
 .. [LR0102066] Jean-Louis Loday and Maria O. Ronco.
                Order structure on the algebra of permutations
@@ -6132,6 +6127,7 @@ REFERENCES:
               Math. Proc. Camb. Phil. Soc. (1999), 127, 383-402
 
 .. _ref-Q:
+
 .. _ref-R:
 
 **R**
