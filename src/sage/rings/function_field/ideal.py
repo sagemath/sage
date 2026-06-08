@@ -94,6 +94,7 @@ AUTHORS:
 from sage.categories.monoids import Monoids
 from sage.combinat.subset import powerset
 from sage.misc.latex import latex
+from sage.misc.misc_c import prod
 from sage.rings.ideal import Ideal_generic
 from sage.structure.element import Element
 from sage.structure.factorization import Factorization
@@ -239,7 +240,7 @@ class FunctionFieldIdeal(Element):
         """
         return self * ~other
 
-    def gens_reduced(self):
+    def gens_reduced(self) -> tuple:
         r"""
         Return reduced generators.
 
@@ -263,12 +264,14 @@ class FunctionFieldIdeal(Element):
         gens = self.gens()
         if len(gens) == 1:
             return gens
+
+        # this is probably terribly slow
         candidate_gensets = [genset for genset in powerset(gens)
                              if self.parent()(genset) == self]
         candidate_gensets.sort(key=lambda item: (len(item),
                                                  len(repr(item)),
                                                  item))
-        return candidate_gensets[0]
+        return tuple(candidate_gensets[0])
 
     def ring(self):
         """
@@ -682,6 +685,64 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
             True
         """
         return self._module
+
+    def norm(self):
+        r"""
+        Return the norm of this fractional ideal.
+
+        This is the generator of the fractional index ideal of this ideal
+        in its order, over the maximal order of the base field. Equivalently,
+        if `B_I` and `B_O` are the basis matrices of the underlying modules
+        of the ideal and of the order in the ambient vector space, this is
+        `\det(B_I) / \det(B_O)`.
+
+        In particular, for a principal ideal this agrees with the field norm
+        of a generator and does not depend on the chosen order.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: O = L.equation_order()
+            sage: O.ideal(x).norm()
+            x^2
+            sage: O.ideal(y).norm()
+            -x^3 - 1
+
+        The determinant is computed relative to the order lattice. Thus the
+        division by the determinant of the order basis accounts for orders
+        whose basis is not the ambient power basis::
+
+            sage: O = L.order(x*y)
+            sage: O.free_module().basis_matrix().det()
+            x
+            sage: O.ideal(x).norm()
+            x^2
+            sage: O.ideal(x*y).norm()
+            -x^5 - x^2
+            sage: O.ideal(x*y).norm() == (x*y).norm()
+            True
+
+        TESTS:
+
+        Check that ideals of equation orders compute their norm, instead of
+        falling back to the generic ideal implementation and returning the
+        ideal itself (:issue:`42215`)::
+
+            sage: q = 3
+            sage: Fq = GF(q)
+            sage: F.<S> = FunctionField(Fq)
+            sage: R.<x> = F[]
+            sage: K.<x> = F.extension(x^3 + x^2 + (2*S + 1)*x + 2*S^2)
+            sage: O = K.equation_order()
+            sage: O.ideal(x).norm()
+            S^2
+        """
+        if self.is_zero():
+            return self.ring().function_field().base_field().zero()
+
+        return (prod(self.module().basis_matrix().diagonal())
+                / prod(self.ring().free_module().basis_matrix().diagonal()))
 
     def gens(self) -> tuple:
         """

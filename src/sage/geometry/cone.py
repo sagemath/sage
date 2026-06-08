@@ -3489,7 +3489,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         responses.) By testing it here, we "guarantee" that it is a
         safe assumption to make in user code::
 
-            sage: K = random_cone()
+            sage: K = random_cone(max_ambient_dim=12, max_rays=10)
             sage: V = K.lattice().vector_space()
             sage: L = [V(l) for l in K.lines()]
             sage: all( L[i].inner_product(L[j]).is_zero()
@@ -3499,7 +3499,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             True
 
             sage: K = random_cone(strictly_convex=False,
-            ....:                 min_ambient_dim=4)
+            ....:                 min_ambient_dim=4,
+            ....:                 max_ambient_dim=12,
+            ....:                 max_rays=15)
             sage: V = K.lattice().vector_space()
             sage: L = [V(l) for l in K.lines()]
             sage: all( L[i].inner_product(L[j]).is_zero()
@@ -3510,7 +3512,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
             sage: K = random_cone(strictly_convex=False,
             ....:                 min_ambient_dim=8,
-            ....:                 min_rays=4)
+            ....:                 max_ambient_dim=12,
+            ....:                 min_rays=4, max_rays=15)
             sage: V = K.lattice().vector_space()
             sage: L = [V(l) for l in K.lines()]
             sage: all( L[i].inner_product(L[j]).is_zero()
@@ -6935,6 +6938,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     Or one that isn't strictly convex::
 
         sage: K = random_cone(min_ambient_dim=5, min_rays=2,
+        ....:                 max_ambient_dim=8, max_rays=10,
         ....:                 strictly_convex=False)
         sage: K.is_strictly_convex()
         False

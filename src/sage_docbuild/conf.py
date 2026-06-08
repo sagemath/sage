@@ -821,7 +821,7 @@ def find_sage_dangling_links(app, env, node, contnode):
     if not matches:
         debug_inf(app, "?? no matching doc for %s" % newtarget)
         return call_intersphinx(app, env, node, contnode)
-    elif len(matches) > 1:
+    if len(matches) > 1:
         env.warn(target_module,
                  'more than one target found for cross-reference '
                  '%r: %s' % (newtarget,

@@ -79,6 +79,44 @@ braiding = dependency(
   required: false,
   disabler: true,
 )
+
+# HiGHS optimization solver (used by sage.numerical.backends.highs_backend)
+# The HiGHS C API headers use relative includes like
+# "lp_data/HighsCallbackStruct.h", so the "highs" subdirectory must be on the
+# include path. This should come from highs.pc's Cflags automatically. Some
+# Debian/Ubuntu packages have a broken includedir such as /usr/usr/include/highs,
+# so fall back to reconstructing it from the correct pkg-config prefix.
+highs_dep = dependency(
+  'highs',
+  version: '>=1.12.0',
+  method: 'pkg-config',
+  required: false,
+)
+if highs_dep.found()
+  highs_header = 'interfaces/highs_c_api.h'
+  if cc.has_header(highs_header, dependencies: highs_dep)
+    highs = highs_dep
+  else
+    highs_prefix = highs_dep.get_variable(pkgconfig: 'prefix', default_value: '')
+    highs_includedir = highs_prefix / 'include' / 'highs'
+    highs = declare_dependency(
+      dependencies: [highs_dep],
+      compile_args: ['-I' + highs_includedir],
+    )
+    cc.has_header(highs_header, dependencies: highs, required: true)
+  endif
+else
+  highs_proj = subproject(
+    'highs',
+    default_options: [
+      'do_install=false',
+      'highsint64=false',
+      'with_pybind11=false',
+      'with_tests=false',
+    ],
+  )
+  highs = highs_proj.get_variable('highs_dep')
+endif
 gc = dependency(
   ['bdw-gc-threaded', 'bdw-gc'],
   version: '>=7.6.4',
@@ -169,6 +207,12 @@ foreach name, pyx : extension_data_cpp
   )
 endforeach
 
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('LIBHOMFLY_ENABLED', homfly.found())
+conf_data.set10('MEATAXE_ENABLED', mtx.found())
+conf_data.set10('SIROCCO_ENABLED', sirocco.found())
+
 subdir('arb')
 subdir('coxeter3')
 install_subdir('cremona', install_dir: sage_install_dir / 'libs')
@@ -179,6 +223,7 @@ install_subdir('giac', install_dir: sage_install_dir / 'libs')
 subdir('glpk')
 subdir('gmp')
 subdir('gsl')
+subdir('highs')
 subdir('lcalc')
 subdir('linbox')
 install_subdir('linkages', install_dir: sage_install_dir / 'libs')

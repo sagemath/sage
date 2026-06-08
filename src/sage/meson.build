@@ -159,6 +159,12 @@ configure_file(
   configuration: kernel_data,
 )
 
+# Record what build-time features (e.g. external package support) were
+# enabled or disabled, and whether or not we should defer detection to
+# runtime.
+conf_data.set10('DEFER_FEATURE_CHECKS', get_option('defer_feature_checks'))
+conf_data.set10('ECLIB_ENABLED', ec.found())
+
 # Write config file
 # Should be last so that subdir calls can modify the config data
 config_file = configure_file(

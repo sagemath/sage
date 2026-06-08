@@ -410,8 +410,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         self._prec = precision
         real_field = RealBallField(self._prec)
         Field.__init__(self,
-                base_ring=real_field,
-                category=sage.categories.fields.Fields().Infinite())
+                       real_field,
+                       category=sage.categories.fields.Fields().Infinite())
         from sage.rings.rational_field import QQ
         self._populate_coercion_lists_([ZZ, QQ], convert_method_name='_acb_')
 

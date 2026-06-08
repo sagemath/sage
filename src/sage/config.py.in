@@ -55,6 +55,18 @@ THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
 
+# build-time feature flags
+defer_feature_checks = @DEFER_FEATURE_CHECKS@
+bliss_enabled = @BLISS_ENABLED@
+brial_enabled = @BRIAL_ENABLED@
+coxeter3_enabled = @COXETER3_ENABLED@
+eclib_enabled = @ECLIB_ENABLED@
+libhomfly_enabled = @LIBHOMFLY_ENABLED@
+mcqd_enabled = @MCQD_ENABLED@
+meataxe_enabled = @MEATAXE_ENABLED@
+rankwidth_enabled = @RANKWIDTH_ENABLED@
+sirocco_enabled = @SIROCCO_ENABLED@
+tdlib_enabled = @TDLIB_ENABLED@
 
 def is_editable_install() -> bool:
     """
