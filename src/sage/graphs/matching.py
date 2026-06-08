@@ -32,6 +32,9 @@ AUTHORS:
   :meth:`~is_bicritical` and
   :meth:`~is_matching_covered`
 
+- Janmenjaya Panda (2025-05-12): implemented the Micali-Vazirani maximum
+  cardinality matching algorithm (:class:`MicaliVaziraniMatching`)
+
 
 Methods
 -------
@@ -1690,8 +1693,70 @@ def M_alternating_even_mark(G, vertex, matching):
 
 class MicaliVaziraniMatching:
     r"""
-    Class for computing maximum cardinality matching in a simple undirected
-    unweighted graph using the Micali-Vazirani algorithm.
+    Compute a maximum cardinality matching (in a simple undirected unweighted
+    graph) with the Micali--Vazirani algorithm.
+
+    Given a simple undirected (unweighted) graph `G = (V, E)`, this class
+    computes a matching of maximum cardinality using the algorithm of Micali
+    and Vazirani [MV1980]_, whose correctness rests on the theory of
+    alternating paths and blossoms developed in [Vaz1994]_. The algorithm runs
+    in `O(\sqrt{|V|}\,|E|)` time.
+
+    The computation proceeds in *phases* (see :meth:`search`). Each phase runs
+    a breadth-first search from the currently unmatched vertices that assigns
+    to every vertex a *minlevel* and a *maxlevel* -- the lengths of a shortest
+    even- and odd-length alternating path from a free vertex -- and classifies
+    every edge as either a *prop* (an edge of a minlevel path) or a *bridge*.
+    Bridges are bucketed by their *tenacity* and processed by a double
+    depth-first search (:meth:`DDFS`), which either reports a *bottleneck*
+    around which an odd structure is contracted into a blossom (stored as a
+    :class:`Petal`), or returns two vertex-disjoint paths forming a shortest
+    augmenting path. A phase augments along a maximal set of vertex-disjoint
+    shortest augmenting paths before the next phase begins; `O(\sqrt{|V|})`
+    phases suffice. Seeding the search with a greedy maximal matching (see
+    :meth:`compute_initial_maximal_matching`) reduces the number of phases.
+
+    INPUT:
+
+    - ``G`` -- a :class:`~sage.graphs.graph.Graph`; a simple undirected graph.
+      Vertices are relabelled internally to `0, 1, \ldots, n - 1`, isolated
+      vertices are discarded, and edge labels (weights) are ignored. Loops and
+      multiple edges are not allowed.
+
+    EXAMPLES:
+
+    The Petersen graph has a perfect matching, of cardinality `5`::
+
+        sage: from sage.graphs.matching import MicaliVaziraniMatching
+        sage: G = graphs.PetersenGraph()
+        sage: len(MicaliVaziraniMatching(G).get_matching())
+        5
+
+    The result is a maximum matching, so it agrees in size with Edmonds'
+    blossom algorithm::
+
+        sage: G = graphs.CompleteGraph(9)
+        sage: mv = len(MicaliVaziraniMatching(G).get_matching())
+        sage: mv == len(G.matching(algorithm='Edmonds'))
+        True
+
+    Normally the class is reached through the ``algorithm`` keyword of
+    :func:`matching`::
+
+        sage: graphs.PetersenGraph().matching(value_only=True,
+        ....:                                 algorithm='Micali-Vazirani')
+        5
+
+    .. SEEALSO::
+
+        - :func:`matching`
+        - :func:`has_perfect_matching`
+
+    REFERENCES:
+
+    - [MV1980]_
+    - [Vaz1994]_
+    - [HS2017]_
     """
     from dataclasses import dataclass
     from typing import Any, Optional
@@ -1700,6 +1765,25 @@ class MicaliVaziraniMatching:
 
     @dataclass
     class Petal:
+        r"""
+        A contracted blossom found during a phase.
+
+        A petal records an odd structure that the double depth-first search
+        collapses around a single vertex. Following [Vaz1994]_ and the
+        implementation of Huang and Stein [HS2017]_, it stores:
+
+        - ``base`` -- the *bud*: the highest bottleneck vertex at which the two
+          (red and green) depth-first searches of :meth:`DDFS` collide;
+        - ``peaks`` -- the pair of endpoints (the red and green roots) of the
+          *bridge* whose double depth-first search created the petal.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: p = MicaliVaziraniMatching.Petal(base=0, peaks=(1, 2))
+            sage: p.base, p.peaks
+            (0, (1, 2))
+        """
         base: int
         peaks: Tuple[int, int]
 

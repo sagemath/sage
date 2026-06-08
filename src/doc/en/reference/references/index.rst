@@ -3804,6 +3804,13 @@ REFERENCES:
             Set-Valued and Variational Analysis, 18(3-4):483-511, 2010.
             :doi:`10.1007/s11228-010-0150-z`.
 
+.. [HS2017] Michael Huang and Clifford Stein. *Extending Search Phases in the
+            Micali-Vazirani Algorithm*. 16th International Symposium on
+            Experimental Algorithms (SEA 2017), Leibniz International
+            Proceedings in Informatics (LIPIcs), vol. 75, pp. 10:1-10:19,
+            Schloss Dagstuhl -- Leibniz-Zentrum für Informatik, 2017.
+            :doi:`10.4230/LIPIcs.SEA.2017.10`.
+
 .. [HS2018] \B. Hutz, M. Stoll. *Smallest representatives of*
             `SL(2,\ZZ)`-*orbits of binary forms and endomorphisms of P1*,
             :arxiv:`1805.08579`, 2018.
@@ -5572,6 +5579,11 @@ REFERENCES:
         *Moments of q-Laguerre polynomials and the Foata-Zeilberger
         bijection*, Adv. Appl. Math. **15** (1994), No. 3, 262-304.
 
+.. [MV1980] \S. Micali and V. V. Vazirani. *An* `O(\sqrt{|V|}\cdot|E|)`
+            *algorithm for finding maximum matching in general graphs*.
+            21st Annual Symposium on Foundations of Computer Science (FOCS),
+            pp. 17-27, 1980. :doi:`10.1109/SFCS.1980.12`.
+
 .. [MV2010] \D. Micciancio, P. Voulgaris. *A Deterministic Single
             Exponential Time Algorithm for Most Lattice Problems based
             on Voronoi Cell Computations*. Proceedings of the 42nd ACM
@@ -7138,6 +7150,11 @@ REFERENCES:
              Mathematics, 102. Springer-Verlag, New York, 1984.
 
 .. [Vat2008] \D. Vatne, *The mutation class of* `D_n` *quivers*, :arxiv:`0810.4789v1`.
+
+.. [Vaz1994] \V. V. Vazirani. *A theory of alternating paths and blossoms for
+             proving correctness of the* `O(\sqrt{V}E)` *general graph maximum
+             matching algorithm*. Combinatorica **14** (1994), no. 1, 71-109.
+             :doi:`10.1007/BF01305952`.
 
 .. [Vazirani2002] Monica Vazirani. *Parameterizing Hecek algebra modules:
                   Bernstein-Zelevinsky multisegments, Kleshchev
