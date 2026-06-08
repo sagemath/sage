@@ -2332,6 +2332,27 @@ class MicaliVaziraniMatching:
     # Path compression: find the bud of a vertex
     # ******************************
     def get_bud(self, vertex: int) -> int:
+        r"""
+        Return the bud of ``vertex`` (with path compression).
+
+        Each vertex contracted into a blossom points, through
+        ``vertex_bud_map``, towards the *bud* (base) of that blossom. This is a
+        union-find structure: the method follows the chain to the
+        representative bud and compresses the path on the way back, like the
+        *find* operation of union-find. A vertex that lies in no blossom is its
+        own bud.
+
+        INPUT:
+
+        - ``vertex`` -- integer; an internal vertex label
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
+            sage: MV.get_bud(2)
+            2
+        """
         if vertex != self.vertex_bud_map[vertex]:
             self.vertex_bud_map[vertex] = self.get_bud(self.vertex_bud_map[vertex])
         return self.vertex_bud_map[vertex]
