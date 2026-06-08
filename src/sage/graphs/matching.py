@@ -1904,14 +1904,27 @@ class MicaliVaziraniMatching:
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
     # *************************************
-    def compute_initial_maximal_matching(self) -> EdgesView:
-        """
-        Compute a greedy maximal matching to seed the main algorithm.
+    def compute_initial_maximal_matching(self) -> None:
+        r"""
+        Seed ``self.M`` with a greedy maximal matching.
 
-        This routine builds an initial matching by repeatedly selecting a vertex of
-        minimum (positive) degree, matching it with a neighbour of minimum degree,
-        and removing that vertex, its matched neighbour from the graph.  The goal
-        is to reduce the number of augmenting phases required by the main algorithm.
+        The matching is built by repeatedly selecting a vertex of minimum
+        (positive) degree, matching it with one of its neighbours of minimum
+        degree, and removing both endpoints from a working copy of the graph.
+        Starting from a maximal matching reduces the number of augmenting
+        phases the main algorithm has to run; it does not, on its own, give a
+        maximum matching.
+
+        EXAMPLES:
+
+        Every maximal matching of `K_4` is perfect, so the greedy seed already
+        has two edges::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.CompleteGraph(4))
+            sage: MV.compute_initial_maximal_matching()
+            sage: MV.M.size()
+            2
         """
 
         # Make a copy J of G for the greedy matching process
