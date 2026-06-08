@@ -2454,9 +2454,12 @@ class Rule(UniqueRepresentation, SageObject):
                 # 4a. both degenerate, a != 0
                 for a in self.allowed_contents:
                     g, z, h = fwd(t, z_edge, t, z_edge, t, a)
-                    if not (is_P(t, h, z) and is_Q(t, g, z)):
+                    if not is_P(t, h, z):
                         raise ValueError(f"forward rule for degenerate edges at {t} "
-                                         f"yields non-edge {t, h, z} or {t, g, z}")
+                                         f"yields non-P-edge {t, h, z}")
+                    if not is_Q(t, g, z):
+                        raise ValueError(f"forward rule for degenerate edges at {t} "
+                                         f"yields non-Q-edge {t, g, z}")
 
                     if has_bwd:
                         e2, t2, f2, a2 = bwd(t, g, z, h, t)
@@ -2470,9 +2473,12 @@ class Rule(UniqueRepresentation, SageObject):
             for _, y, e in P_edges:
                 for _, x, f in Q_edges:
                     g, z, h = fwd(y, e, t, f, x, 0)
-                    if not (is_P(x, h, z) and is_Q(y, g, z)):
+                    if not is_P(x, h, z):
                         raise ValueError(f"forward rule for {y, e, t, f, x, 0} "
-                                         f"yields non-edge {x, h, z} or {y, g, z}")
+                                         f"yields non-P-edge {x, h, z}")
+                    if not is_Q(y, g, z):
+                        raise ValueError(f"forward rule for {y, e, t, f, x, 0} "
+                                         f"yields non-Q-edge {y, g, z}")
 
                     if has_bwd:
                         e2, t2, f2, a2 = bwd(y, g, z, h, x)
@@ -3625,6 +3631,211 @@ class RuleBinaryWord(Rule):
             return (x, 1)
         return (x[:-1], 0)
 
+
+class RuleHypoplactic(Rule):
+    r"""
+    A rule modelling a Krob-Thibon insertion, according to
+    Nzeutchap [Nze2007]_.
+
+    This is closely related to :class:`RuleBinaryWord`.  The main
+    difference is that the P- and the Q-graphs are interchanged.
+
+    EXAMPLES::
+
+        sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+        sage: GrowthDiagram(Hypoplactic, [3,1,2])
+        0  1  0
+        0  0  1
+        1  0  0
+
+    TESTS::
+
+        sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+        sage: TestSuite(Hypoplactic).run()
+
+    """
+    zero = Word([], alphabet=[0,1])
+
+    def normalize_vertex(self, v):
+        r"""
+        Return ``v`` as a binary word.
+
+        EXAMPLES::
+
+            sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+            sage: Hypoplactic.normalize_vertex([0,1]).parent()
+            Finite words over {0, 1}
+        """
+        return Word(v, alphabet=[0,1])
+
+    def vertices(self, n):
+        r"""
+        Return the vertices of the dual graded graph on level ``n``.
+
+        EXAMPLES::
+
+            sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+            sage: Hypoplactic.vertices(3)
+            [word: 100, word: 101, word: 110, word: 111]
+        """
+        if n < 0:
+            return []
+        if n == 0:
+            return [self.zero]
+        w1 = Word([1], [0,1])
+        return [w1 + w for w in Words([0,1], n-1)]
+
+    def rank(self, v):
+        r"""
+        Return the rank of ``v``: number of letters of the word.
+
+        EXAMPLES::
+
+            sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+            sage: Hypoplactic.rank(Hypoplactic.vertices(3)[0])
+            3
+        """
+        return len(v)
+
+    def is_P_edge(self, v, w):
+        r"""
+        Return whether ``(v, w)`` is a `P`-edge of ``self``.
+
+        ``(w, v)`` is an edge if ``w`` is obtained from ``v`` by
+        appending a letter.
+
+        EXAMPLES::
+
+            sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+            sage: v = Hypoplactic.vertices(2)[0]; v
+            word: 10
+            sage: [w for w in Hypoplactic.vertices(3) if Hypoplactic.is_P_edge(v, w)]
+            [word: 100, word: 101]
+            sage: [w for w in Hypoplactic.vertices(4) if Hypoplactic.is_P_edge(v, w)]
+            []
+        """
+        return w[:-1] == v
+
+    def is_Q_edge(self, v, w):
+        r"""
+        Return whether ``(v, w)`` is a `Q`-edge of ``self``.
+
+        ``(v, w)`` is an edge if ``v`` is obtained from ``w`` by
+        deleting a letter.
+
+        EXAMPLES::
+
+            sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+            sage: v = Hypoplactic.vertices(2)[1]; v
+            word: 11
+            sage: [w for w in Hypoplactic.vertices(3) if Hypoplactic.is_Q_edge(v, w)]
+            [word: 101, word: 110, word: 111]
+            sage: [w for w in Hypoplactic.vertices(4) if Hypoplactic.is_Q_edge(v, w)]
+            []
+        """
+        return len(w) == len(v) + 1 and v.is_subword_of(w)
+
+    def forward_rule(self, y, t, x, content):
+        r"""
+        Return the output shape given three shapes and the content.
+
+        See [Nze2007]_, page 5.
+
+        INPUT:
+
+        - ``y``, ``t``, ``x`` -- three binary words from a cell in a growth
+          diagram, labelled as::
+
+              t x
+              y
+
+        - ``content`` -- `0` or `1`; the content of the cell
+
+        OUTPUT:
+
+        The fourth binary word ``z`` according to Nzeutchap's
+        bijection [Nze2007]_.
+
+        EXAMPLES::
+
+            sage: Hypoplactic = GrowthDiagram.rules.Hypoplactic()
+
+            sage: Hypoplactic.forward_rule([], [], [], 1)
+            word: 1
+
+            sage: Hypoplactic.forward_rule([1], [1], [1], 1)
+            word: 10
+
+        if ``x != y`` append last letter of ``y`` to ``x``::
+
+            sage: Hypoplactic.forward_rule([1,0], [1], [1,1], 0)
+            word: 110
+
+        if ``x == y != t`` append ``1`` to ``y``::
+
+            sage: Hypoplactic.forward_rule([1,1], [1], [1,1], 0)
+            word: 111
+        """
+        if x == t == y:
+            if content == 0:
+                z = x
+            elif content == 1:
+                if y:
+                    z = Word(list(y) + [0], alphabet=[0,1])
+                else:
+                    z = Word([1], alphabet=[0,1])
+            else:
+                raise NotImplementedError
+        elif content != 0:
+            raise ValueError("for y=%s, t=%s, x=%s, the content should be 0 but is %s"
+                             % (y, t, x, content))
+        elif x != t == y:
+            z = x
+        elif x == t != y:
+            z = y
+        else:
+            if x != y:
+                z = Word(list(x) + [y[-1]], alphabet=[0,1])
+            elif x == y != t:
+                z = Word(list(y) + [1], alphabet=[0,1])
+            else:
+                raise NotImplementedError
+        return z
+
+    def backward_rule(self, y, z, x):
+        if x == y == z:
+            return (x, 0)
+
+        if x == z != y:
+            return (y, 0)
+
+        if y == z != x:
+            return (x, 0)
+
+        # insertion
+        if x == y:
+            if len(x) == 0:
+                if list(z) == [1]:
+                    return (x, 1)
+            elif len(z) == len(x)+1 and z[:-1] == x and z[-1] == 0:
+                return (x, 1)
+
+        # growth branch x==y!=t
+        if x == y:
+            if len(z) == len(x)+1 and z[:-1] == x and z[-1] == 1:
+                return (x[:-1], 0)
+
+        # growth branch x!=y
+        if len(z) == len(x)+1 and z[:-1] == x:
+
+            # locate the deletion turning z into y
+            for i in range(1, len(z)):      # first letter may not be deleted
+                cand = z[:i] + z[i+1:]
+                if cand == y:
+                    t = x[:i] + x[i+1:]
+                    return (t, 0)
+
+        raise ValueError
 
 class RuleSylvester(Rule):
     r"""
@@ -5596,6 +5807,7 @@ class Rules:
     ShiftedShapes = RuleShiftedShapes
     LLMS = RuleLLMS
     BinaryWord = RuleBinaryWord
+    Hypoplactic = RuleHypoplactic
     Sylvester = RuleSylvester
     YoungFibonacci = RuleYoungFibonacci
     RSK = RuleRSK
