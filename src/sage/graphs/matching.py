@@ -2055,6 +2055,37 @@ class MicaliVaziraniMatching:
     # Primary Subroutine: Find min_level of vertices
     # ******************************
     def MIN(self, search_level: int) -> bool:
+        r"""
+        Run one breadth-first step of the minlevel search.
+
+        From the vertices currently at ``search_level``, scan the
+        appropriate-parity edges (unmatched edges from even levels, matched
+        edges from odd levels). A neighbour reached for the first time is
+        assigned minlevel ``search_level + 1``, the scanned edge becomes a
+        *prop* and the current vertex is recorded as its predecessor; an edge
+        to an already-levelled vertex is a *bridge* and is filed under its
+        tenacity for :meth:`MAX` to process.
+
+        INPUT:
+
+        - ``search_level`` -- integer; the current search level
+
+        OUTPUT: ``True`` if the search is exhausted (no vertices remain to
+        explore), otherwise ``False``
+
+        EXAMPLES:
+
+        With an empty matching every vertex is free at level `0`, so the first
+        minlevel step finds no new levels to assign::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+            sage: MV.start_new_phase()
+            sage: MV.MIN(0)
+            False
+            sage: MV.min_level
+            [0, 0, 0]
+        """
         next_search_level_vertices = []
         parity = search_level % 2
 
