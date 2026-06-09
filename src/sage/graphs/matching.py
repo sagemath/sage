@@ -2861,9 +2861,31 @@ class MicaliVaziraniMatching:
     # This is the main loop that finds and aguments phases (a maximal set of minimum length disjoin augmenting paths) and erase those vertices judiciously.
     # ******************************
     def search(self) -> bool:
-        """
-        Perform one complete search phase to find and augment any disjoint augmenting paths.
-        Returns True if any augmentation was found.
+        r"""
+        Run one phase, augmenting along shortest vertex-disjoint paths.
+
+        A phase grows the search level by level: at each level :meth:`MIN`
+        extends the breadth-first structure by one tenacity step and
+        :meth:`MAX` processes the bridges discovered so far, running the double
+        DFS and augmenting along every minimum-length augmenting path it finds.
+        The phase stops as soon as augmentations occur at some level, or when
+        :meth:`MIN` reports that the search structure is exhausted.
+
+        INPUT: none
+
+        OUTPUT: boolean; ``True`` if the phase may be followed by another (the
+        search structure was not exhausted without augmenting), ``False`` when
+        the phase finds no augmenting path, signalling that the matching is
+        already maximum
+
+        EXAMPLES:
+
+        Triggered while computing a matching::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 2)])
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            2
         """
         search_level = 0
         augmentation_found = False
@@ -2881,8 +2903,32 @@ class MicaliVaziraniMatching:
     # Algorithm execution flow
     # ******************************
     def get_matching(self) -> EdgesView:
-        """
-        Return an `EdgesView` of the maximum cardinality matching in `G`
+        r"""
+        Return a maximum cardinality matching of `G`.
+
+        This is the entry point of the algorithm. A greedy maximal matching is
+        computed first, then phases are run repeatedly with :meth:`search`: each
+        phase augments along a maximal set of minimum-length vertex-disjoint
+        augmenting paths. Phases continue until one finds no augmenting path or
+        a perfect matching is reached, after which the internal `0, 1, \ldots,
+        n - 1` vertex labels are mapped back to the original labels of `G`.
+
+        OUTPUT: an :class:`~sage.graphs.views.EdgesView` of a maximum
+        cardinality matching of `G`
+
+        EXAMPLES:
+
+        The Petersen graph has a perfect matching::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = graphs.PetersenGraph()
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            5
+
+        An empty graph has an empty matching::
+
+            sage: MicaliVaziraniMatching(Graph()).get_matching()
+            []
         """
         if not self.G.size():
             return EdgesView(self.M)
