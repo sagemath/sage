@@ -2140,6 +2140,39 @@ class MicaliVaziraniMatching:
     # Primary Subroutine: Find max_level of vertices
     # ******************************
     def MAX(self, search_level: int) -> bool:
+        r"""
+        Process the bridges of tenacity ``2 * search_level + 1``.
+
+        Each such bridge is explored by a double depth-first search
+        (:meth:`DDFS`). If the two searches reach distinct free vertices the
+        bridge yields a shortest augmenting path, which is augmented
+        (:meth:`augment`); otherwise they collapse to a *bottleneck* and the
+        enclosed odd structure is contracted into a blossom
+        (:meth:`form_blossom`) whose vertices are given their maxlevels
+        (:meth:`label_max`).
+
+        INPUT:
+
+        - ``search_level`` -- integer; the current search level
+
+        OUTPUT: ``True`` if an augmentation was performed at this level,
+        otherwise ``False``
+
+        EXAMPLES:
+
+        With an empty matching on a 4-cycle, the level-0 bridges are all of
+        tenacity `1`, and :meth:`MAX` augments a maximum set of them::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.CycleGraph(4))
+            sage: MV.start_new_phase()
+            sage: MV.MIN(0)
+            False
+            sage: MV.MAX(0)
+            True
+            sage: MV.M.size()
+            2
+        """
         is_augmented = False
 
         for edge_index in self.tenacity_bridges_map[2 * search_level + 1]:
@@ -2177,6 +2210,31 @@ class MicaliVaziraniMatching:
     # Label vertices after forming a blossom
     # ******************************
     def label_max(self, support: list[int], search_level: int) -> None:
+        r"""
+        Assign maxlevels to the vertices of a freshly formed blossom.
+
+        For every vertex of ``support`` the maxlevel is set to
+        ``2 * search_level + 1 - min_level``; vertices that thereby acquire an
+        even maxlevel can open further bridges, which are filed under their
+        tenacity (once finite) for later levels.
+
+        INPUT:
+
+        - ``support`` -- list of integers; the vertices of the blossom found
+          by :meth:`DDFS`
+        - ``search_level`` -- integer; the current search level
+
+        EXAMPLES:
+
+        This is exercised whenever a blossom forms during a full run; the
+        result agrees in size with Edmonds' algorithm::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = graphs.CompleteGraph(9)
+            sage: M = MicaliVaziraniMatching(G).get_matching()
+            sage: len(M) == len(G.matching(algorithm='Edmonds'))
+            True
+        """
         next_search_level_vertices: List[int] = []
         for vertex in support:
             self.max_level[vertex] = 2 * search_level + 1 - self.min_level[vertex]
