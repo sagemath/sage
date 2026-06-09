@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Freely Generated Lie Conformal Algebras
 
@@ -17,12 +16,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from .lie_conformal_algebra_with_basis import LieConformalAlgebraWithBasis
-from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_basis import (
+    LieConformalAlgebraWithBasis,
+)
 from sage.categories.cartesian_product import cartesian_product
 from sage.rings.integer import Integer
-from sage.sets.family import Family
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.family import Family, AbstractFamily
+from sage.sets.non_negative_integers import NonNegativeIntegers
 
 
 class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
@@ -88,7 +89,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
             return tuple(F)
         return F
 
-    def central_elements(self) -> Family:
+    def central_elements(self) -> AbstractFamily:
         """
         The central generators of this Lie conformal algebra.
 

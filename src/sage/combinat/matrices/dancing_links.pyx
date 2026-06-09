@@ -1023,10 +1023,10 @@ cdef class dancing_linksWrapper:
               one 1 in 2-th column: 1.0 <= x_0 + x_1 <= 1.0
               one 1 in 3-th column: 1.0 <= x_3 <= 1.0
             Variables:
-              x_0 is a boolean variable (min=0.0, max=1.0)
-              x_1 is a boolean variable (min=0.0, max=1.0)
-              x_2 is a boolean variable (min=0.0, max=1.0)
-              x_3 is a boolean variable (min=0.0, max=1.0)
+              x_0 is a... variable (min=0.0, max=1.0)
+              x_1 is a... variable (min=0.0, max=1.0)
+              x_2 is a... variable (min=0.0, max=1.0)
+              x_3 is a... variable (min=0.0, max=1.0)
 
         Using some optional MILP solvers::
 

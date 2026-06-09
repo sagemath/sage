@@ -30,7 +30,6 @@ operations with them::
 
 Polynomials are aware of embeddings of the underlying field::
 
-    sage: # needs sage.rings.padics
     sage: x = polygen(ZZ, 'x')
     sage: Q7 = Qp(7)
     sage: r1 = Q7(3 + 7 + 2*7^2 + 6*7^3 + 7^4 + 2*7^5 + 7^6 + 2*7^7 + 4*7^8
@@ -44,7 +43,6 @@ Polynomials are aware of embeddings of the underlying field::
 
 We can also construct polynomials over relative number fields::
 
-    sage: # needs sage.symbolic
     sage: N.<i, s2> = QQ[I, sqrt(2)]
     sage: K.<x> = N[]
     sage: f = x - s2
@@ -191,11 +189,10 @@ class Polynomial_absolute_number_field_dense(Polynomial_generic_dense_field):
         if self.is_zero():
             if other.is_zero():
                 return self
-            else:
-                return other.monic()
-        elif other.is_zero():
+            return other.monic()
+        if other.is_zero():
             return self.monic()
-        elif self.degree() == 0 or other.degree() == 0:
+        if self.degree() == 0 or other.degree() == 0:
             return self.parent().one()
 
         # If the extension is of degree one, use the gcd from QQ[x]
@@ -268,7 +265,6 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: N = QQ[sqrt(2), sqrt(3)]
             sage: s2, s3 = N.gens()
             sage: x = polygen(N)
@@ -307,7 +303,6 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
 
         Test for hardcoded variables::
 
-            sage: # needs sage.symbolic
             sage: R = N['sqrt2sqrt3']
             sage: x = R.gen()
             sage: f = x^2 - 2
@@ -321,11 +316,10 @@ class Polynomial_relative_number_field_dense(Polynomial_generic_dense_field):
         if self.is_zero():
             if other.is_zero():
                 return self
-            else:
-                return other.monic()
-        elif other.is_zero():
+            return other.monic()
+        if other.is_zero():
             return self.monic()
-        elif self.degree() == 0 or other.degree() == 0:
+        if self.degree() == 0 or other.degree() == 0:
             return self.parent().one()
 
         L = self.parent()

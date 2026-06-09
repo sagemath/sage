@@ -1010,8 +1010,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                             b = R(t)[1]
                         energy += b.energy_function()  # D contribution
                     return energy
-                else:
-                    raise ValueError("invalid algorithm")
+                raise ValueError("invalid algorithm")
 
             def affine_grading(self):
                 r"""

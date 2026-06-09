@@ -875,9 +875,9 @@ class MoebiusStrip(ParametricSurface):
             sage: N.eval(-1,0)
             (4.0, 0.0, -0.0)
         """
-        return ( (self.r + u*self.width*cos(self.twists*v/2)) * cos(v),
-                 (self.r + u*self.width*cos(self.twists*v/2)) * sin(v),
-                 u*self.width*sin(self.twists*v/2) )
+        return ((self.r + u * self.width * cos(self.twists*v/2)) * cos(v),
+                (self.r + u * self.width * cos(self.twists*v/2)) * sin(v),
+                u * self.width * sin(self.twists*v/2) )
 
 
 cdef double* to_double_array(py_list) except NULL:

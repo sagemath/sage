@@ -739,10 +739,9 @@ def ring_to_gfan_format(input_ring) -> str:
     gens = str(input_ring.gens()).replace('(', '[').replace(')', ']')
     if input_ring.base_ring() is QQ:
         return 'Q' + gens
-    elif input_ring.base_ring() is ZZ:
+    if input_ring.base_ring() is ZZ:
         return 'Z' + gens
-    else:
-        return 'Z/{}Z'.format(input_ring.characteristic()) + gens
+    return 'Z/{}Z'.format(input_ring.characteristic()) + gens
 
 
 def ideal_to_gfan_format(input_ring, polys) -> str:

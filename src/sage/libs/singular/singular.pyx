@@ -1413,8 +1413,9 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     cdef number *n1
     cdef number *n2
     cdef number *a
-    cdef number *nlCoeff
     cdef number *naCoeff
+    cdef number *cfnum
+    cdef number *cfden
     cdef number *apow1
     cdef number *apow2
 
@@ -1426,29 +1427,12 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     a = _ring.cf.cfParameter(1, _ring.cf)
     apow1 = _ring.cf.cfInit(1, _ring.cf)
 
-    cdef char *_name
-
-    # the result of nlInit2gmp() is in a plain polynomial ring over QQ (not an extension ring!),
-    # so we have to get/create one:
-    #
-    # todo: reuse qqr/ get an existing Singular polynomial ring over Q.
-    _name = omStrDup("a")
-    cdef char **_ext_names
-    _ext_names = <char**>omAlloc0(sizeof(char*))
-    _ext_names[0] = omStrDup(_name)
-    qqr = rDefault( 0, 1, _ext_names)
-    rComplete(qqr,1)
-    qqr.ShortOut = 0
-
-    assert _ring.cf.type == n_algExt  # if false naSetMap will segmentation fault (should never happen)
-    cdef nMapFunc nMapFuncPtr = naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
-    if nMapFuncPtr is NULL:
-        raise RuntimeError("Failed to determine nMapFuncPtr")
-    cdef poly *_p
     for i from 0 <= i < len(elem):
-        nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )
-        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf, _ring.cf)
-        nlDelete(&nlCoeff, _ring.cf)
+        cfnum = _ring.cf.cfInitMPZ(mpq_numref((<Rational>elem[i]).value), _ring.cf)
+        cfden = _ring.cf.cfInitMPZ(mpq_denref((<Rational>elem[i]).value), _ring.cf)
+        naCoeff = _ring.cf.cfDiv(cfnum, cfden, _ring.cf)
+        _ring.cf.cfDelete(&cfnum, _ring.cf)
+        _ring.cf.cfDelete(&cfden, _ring.cf)
 
         # faster would be to assign the coefficient directly
         apow2 = _ring.cf.cfMult(naCoeff, apow1,_ring.cf)
@@ -1772,14 +1756,23 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     which in both cases makes a maximal default exponent of
     2^16-1.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    This overflows only on 32-bit systems::
 
         sage: P.<x,y> = QQ[]
-        sage: y^(2^30)
-        Traceback (most recent call last):             # 32-bit
-        ...                                            # 32-bit
-        OverflowError: exponent overflow (1073741824)  # 32-bit
-        y^1073741824  # 64-bit
+        sage: try:
+        ....:     result = y^(2^30)
+        ....: except OverflowError as e:
+        ....:     # 32 bit
+        ....:     result = e
+        sage: isinstance(result, OverflowError)  # needs 32_bit
+        True
+        sage: result  # needs !32_bit
+        y^1073741824
+
+    This one always overflows::
+
         sage: y^2^32
         Traceback (most recent call last):
         ...

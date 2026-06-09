@@ -1,7 +1,9 @@
 import argparse
 import os
-import sys
 import shlex
+import sys
+
+import pytest
 
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
@@ -159,6 +161,10 @@ def _make_parser():
 
 
 def main():
+    from importlib.util import find_spec
+    from sage.doctest.control import DocTestController
+    from sage.env import SAGE_SRC
+
     parser = _make_parser()
     # custom treatment to separate properly
     # one or several file names at the end
@@ -182,6 +188,13 @@ def main():
         print('either use --new, --all, --all-except=..., --installed, or some filenames')
         return 2
 
+    # The number of processes to use for pytest, if pytest-xdist is
+    # installed.  The doctest controller can change the value of
+    # args.threads, but we need to know the initial value because "0"
+    # has a special meaning for pytest that differs somewhat from
+    # that for the doctest runner.
+    pytest_nprocs = args.nthreads
+
     # Limit the number of threads to 2 to save system resources.
     # See Issue #23713, #23892, #30351
     if sys.platform == 'darwin':
@@ -191,44 +204,69 @@ def main():
 
     os.environ["SAGE_NUM_THREADS"] = "2"
 
-    from sage.doctest.control import DocTestController
     DC = DocTestController(args, args.filenames)
     err = DC.run()
 
-    # Issue #33521: Do not run pytest if the pytest configuration is not available.
-    # This happens when the source tree is not available and SAGE_SRC falls back
-    # to SAGE_LIB.
-    from sage.env import SAGE_SRC
-    if not all(os.path.isfile(os.path.join(SAGE_SRC, f))
-               for f in ["conftest.py", "tox.ini"]):
-        return err
+    exit_code_pytest = 0
 
-    try:
-        exit_code_pytest = 0
-        import pytest
-        pytest_options = []
-        if args.verbose:
-            pytest_options.append("-v")
+    # Never run "long long" tests via sage -t (or python -m
+    # sage.doctest) to avoid catching users by surprise with
+    # tests that run for several minutes.
+    pytest_markers = "not longlong"
+    if not args.long:
+        # Multiple "-m" flags cannot be combined,
+        #
+        #   https://github.com/pytest-dev/pytest/issues/7229
+        #
+        # so we construct one big compound statement instead.
+        pytest_markers += " and not long"
+    pytest_options = ["-m", pytest_markers]
 
-        # #35999: no filename in arguments defaults to "src"
-        if not args.filenames:
-            filenames = [SAGE_SRC]
-        else:
-            # #31924: Do not run pytest on individual Python files unless
-            # they match the pytest file pattern.  However, pass names
-            # of directories. We use 'not os.path.isfile(f)' for this so that
-            # we do not silently hide typos.
-            filenames = [f for f in args.filenames
-                         if f.endswith("_test.py") or not os.path.isfile(f)]
-        if filenames:
-            print(f"Running pytest on {filenames} with options {pytest_options}")
-            exit_code_pytest = pytest.main(filenames + pytest_options)
-            if exit_code_pytest == 5:
-                # Exit code 5 means there were no test files, pass in this case
-                exit_code_pytest = 0
+    if pytest_nprocs != 1 and not find_spec("xdist"):
+        # The default is "1", so anything else is an explicit request
+        # that we should warn about if we are unable to comply.
+        from pytest import PytestWarning
+        from warnings import warn
+        warn("pytest-xdist not found, pytest will run sequentially",
+             PytestWarning)
+        pytest_nprocs = 1
 
-    except ModuleNotFoundError:
-        print("pytest is not installed in the venv, skip checking tests that rely on it")
+    # pytest-xdist is now guaranteed to be available in these cases
+    if pytest_nprocs == 0:
+        pytest_options += ["-n", "auto"]
+    elif pytest_nprocs > 1:
+        pytest_options += ["-n", f"{pytest_nprocs}"]
+
+    if args.warn_long > 0:
+        # Show all test durations...
+        pytest_options.append("--durations=0")
+
+        # But then limit the list to the ones that exceed the
+        # warn-long limit.
+        pytest_options.append(f"--durations-min={args.warn_long}")
+
+    if args.verbose:
+        pytest_options.append("-v")
+
+    # #35999: no filename in arguments defaults to "src"
+    if not args.filenames:
+        filenames = [SAGE_SRC]
+    else:
+        # #31924: Do not run pytest on individual Python files unless
+        # they match the pytest file pattern.  However, pass names
+        # of directories. We use 'not os.path.exists(f)' for this so that
+        # we do not silently hide typos.
+        filenames = [
+            f
+            for f in args.filenames
+            if f.endswith("_test.py") or os.path.isdir(f) or not os.path.exists(f)
+        ]
+    if filenames:
+        print(f"Running pytest on {filenames} with options {pytest_options}")
+        exit_code_pytest = pytest.main(filenames + pytest_options)
+        if exit_code_pytest == 5:
+            # Exit code 5 means there were no test files, pass in this case
+            exit_code_pytest = 0
 
     if err == 0:
         return exit_code_pytest

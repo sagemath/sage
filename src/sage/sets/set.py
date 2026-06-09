@@ -190,10 +190,9 @@ def Set(X=None, category=None):
     elif isinstance(X, CategoryObject):
         if isinstance(X, Set_generic) and category is None:
             return X
-        elif X in Sets().Finite():
+        if X in Sets().Finite():
             return Set_object_enumerated(X, category=category)
-        else:
-            return Set_object(X, category=category)
+        return Set_object(X, category=category)
 
     if isinstance(X, Element) and not isinstance(X, Set_base):
         raise TypeError("Element has no defined underlying set")
@@ -634,12 +633,12 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         """
         return x in self.__object
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
-        If ``right`` is not a :class:`Set_object`, return ``NotImplemented``.
-        If ``right`` is also a :class:`Set_object`, returns comparison
+        If ``other`` is not a :class:`Set_object`, return ``NotImplemented``.
+        If ``other`` is also a :class:`Set_object`, returns comparison
         on the underlying objects.
 
         .. NOTE::
@@ -658,9 +657,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: Primes() == Set(QQ)
             False
         """
-        if not isinstance(right, Set_object):
+        if not isinstance(other, Set_object):
             return NotImplemented
-        return richcmp(self.__object, right.__object, op)
+        return richcmp(self.__object, other.__object, op)
 
     def cardinality(self):
         """
@@ -1292,7 +1291,8 @@ class Set_object_enumerated(Set_object):
             sage: sEmpty.is_empty                                                       # needs sympy
             True
         """
-        from sympy import Set, EmptySet
+        from sympy import EmptySet, Set
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         if self.is_empty():
@@ -1463,9 +1463,9 @@ class Set_object_union(Set_object_binary):
         """
         return self._X.is_finite() and self._Y.is_finite()
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -1492,12 +1492,12 @@ class Set_object_union(Set_object_binary):
             sage: Set(ZZ).union(Set(QQ)) == Set(QQ)
             False
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_union):
+        if not isinstance(other, Set_object_union):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y or \
-           self._X == right._Y and self._Y == right._X:
+        if self._X == other._X and self._Y == other._Y or \
+           self._X == other._Y and self._Y == other._X:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
@@ -1563,6 +1563,7 @@ class Set_object_union(Set_object_binary):
             Union(Integers, Set(1/2))
         """
         from sympy import Union
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Union(self._X._sympy_(), self._Y._sympy_())
@@ -1663,13 +1664,13 @@ class Set_object_intersection(Set_object_binary):
         """
         if self._X.is_finite():
             return True
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return True
         raise NotImplementedError
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -1695,12 +1696,12 @@ class Set_object_intersection(Set_object_binary):
             sage: Set(ZZ).intersection(Set(QQ)) == Set(QQ)
             False
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_intersection):
+        if not isinstance(other, Set_object_intersection):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y or \
-           self._X == right._Y and self._Y == right._X:
+        if self._X == other._X and self._Y == other._Y or \
+           self._X == other._Y and self._Y == other._X:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
@@ -1777,6 +1778,7 @@ class Set_object_intersection(Set_object_binary):
             Range(2, 6, 1)
         """
         from sympy import Intersection
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Intersection(self._X._sympy_(), self._Y._sympy_())
@@ -1837,13 +1839,13 @@ class Set_object_difference(Set_object_binary):
         """
         if self._X.is_finite():
             return True
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return False
         raise NotImplementedError
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -1873,11 +1875,11 @@ class Set_object_difference(Set_object_binary):
             sage: X == Set(QQ).difference(Set(ZZ))
             True
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_difference):
+        if not isinstance(other, Set_object_difference):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y:
+        if self._X == other._X and self._Y == other._Y:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
@@ -1924,7 +1926,7 @@ class Set_object_difference(Set_object_binary):
             False
             sage: sqrt(2) in X     # since sqrt(2) is not a numerical approx            # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is a numerical approx           # needs sage.rings.real_interval_field
+            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is a numerical approx
             True
             sage: 5/2 in X
             True
@@ -1957,6 +1959,7 @@ class Set_object_difference(Set_object_binary):
             EmptySet
         """
         from sympy import Complement
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return Complement(self._X._sympy_(), self._Y._sympy_())
@@ -2013,13 +2016,13 @@ class Set_object_symmetric_difference(Set_object_binary):
         """
         if self._X.is_finite():
             return self._Y.is_finite()
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return False
         raise NotImplementedError
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -2038,12 +2041,12 @@ class Set_object_symmetric_difference(Set_object_binary):
             sage: Y == X
             True
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_symmetric_difference):
+        if not isinstance(other, Set_object_symmetric_difference):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y or \
-           self._X == right._Y and self._Y == right._X:
+        if self._X == other._X and self._Y == other._Y or \
+           self._X == other._Y and self._Y == other._X:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
@@ -2096,7 +2099,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             False
             sage: sqrt(2) in X      # since sqrt(2) is currently symbolic               # needs sage.symbolic
             False
-            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is currently approximated       # needs sage.rings.real_interval_field
+            sage: sqrt(RR(2)) in X  # since sqrt(RR(2)) is currently approximated
             True
             sage: pi in X                                                               # needs sage.symbolic
             False
@@ -2124,6 +2127,7 @@ class Set_object_symmetric_difference(Set_object_binary):
                   Complement(Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3), Integers))
         """
         from sympy import SymmetricDifference
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         return SymmetricDifference(self._X._sympy_(), self._Y._sympy_())

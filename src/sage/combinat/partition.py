@@ -284,36 +284,33 @@ from copy import copy
 from itertools import accumulate
 
 from sage.arith.misc import binomial, factorial, gcd, multinomial
-from sage.structure.global_options import GlobalOptions
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.combinat import composition, permutation, tableau
+from sage.combinat.combinat import CombinatorialElement
+from sage.combinat.combinat_cython import conjugate
+from sage.combinat.combinatorial_map import combinatorial_map
+from sage.combinat.integer_lists import IntegerListsLex
+from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
+from sage.combinat.integer_vector_weighted import (
+    iterator_fast as weighted_iterator_fast,
+)
+from sage.combinat.partitions import ZS1_iterator, ZS1_iterator_nk, ZS1_next, ZS2_next
+from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randrange
-from sage.misc.cachefunc import cached_method, cached_function
-
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-
-from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
-
-from .combinat import CombinatorialElement
-from . import tableau
-from . import permutation
-from . import composition
-from sage.combinat.partitions import ZS1_iterator, ZS1_iterator_nk, ZS1_next, ZS2_next
-from sage.combinat.integer_lists import IntegerListsLex
-from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
-from sage.combinat.integer_vector_weighted import iterator_fast as weighted_iterator_fast
-from sage.combinat.combinat_cython import conjugate
-from sage.combinat.combinatorial_map import combinatorial_map
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.structure.global_options import GlobalOptions
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.combinat.skew_partition', 'SkewPartition')
 lazy_import('sage.combinat.partition_tuple', 'PartitionTuple')
@@ -485,11 +482,11 @@ class Partition(CombinatorialElement):
         if l == 1:
             if 'beta_numbers' in keyword:
                 return _Partitions.from_beta_numbers(keyword['beta_numbers'])
-            elif 'exp' in keyword:
+            if 'exp' in keyword:
                 return _Partitions.from_exp(keyword['exp'])
-            elif 'frobenius_coordinates' in keyword:
+            if 'frobenius_coordinates' in keyword:
                 return _Partitions.from_frobenius_coordinates(keyword['frobenius_coordinates'])
-            elif 'zero_one' in keyword:
+            if 'zero_one' in keyword:
                 return _Partitions.from_zero_one(keyword['zero_one'])
 
         if l == 2 and 'core' in keyword and 'quotient' in keyword:
@@ -498,23 +495,15 @@ class Partition(CombinatorialElement):
 
     def __setstate__(self, state):
         r"""
-        In order to maintain backwards compatibility and be able to unpickle a
-        old pickle from ``Partition_class`` we have to override the default
-        ``__setstate__``.
+        Set state from pickling.
 
         EXAMPLES::
 
-            sage: loads(b'x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1+H,*\xc9,\xc9\xcc\xcf\xe3\n\x80\xb1\xe2\x93s\x12\x8b\x8b\xb9\n\x195\x1b\x0b\x99j\x0b\x995BY\xe33\x12\x8b3\nY\xfc\x80\xac\x9c\xcc\xe2\x92B\xd6\xd8B6\r\x88IE\x99y\xe9\xc5z\x99y%\xa9\xe9\xa9E\\\xb9\x89\xd9\xa9\xf10N!{(\xa3qkP!G\x06\x90a\x04dp\x82\x18\x86@\x06Wji\x92\x1e\x00x0.\xb5')
-            [3, 2, 1]
             sage: loads(dumps( Partition([3,2,1]) ))  # indirect doctest
             [3, 2, 1]
         """
-        if isinstance(state, dict):   # for old pickles from Partition_class
-            self._set_parent(_Partitions)
-            self.__dict__ = state
-        else:
-            self._set_parent(state[0])
-            self.__dict__ = state[1]
+        self._set_parent(state[0])
+        self.__dict__ = state[1]
 
     def __init__(self, parent, mu):
         """
@@ -1027,6 +1016,26 @@ class Partition(CombinatorialElement):
             sage: Partitions.options._reset()
         """
         print(self.ferrers_diagram())
+
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Conversion to Macaulay2.
+
+        EXAMPLES::
+
+            sage: # optional - macaulay2
+            sage: P = Partition([4,3,1])
+            sage: m2 = macaulay2
+            sage: p = m2(P); p  # indirect doctest
+            Partition{4, 3, 1}
+            sage: p.conjugate()
+            Partition{3, 2, 2, 1}
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+
+        return macaulay2.new_from("Partition", list(self))
 
     def __truediv__(self, p):
         """
@@ -1571,8 +1580,7 @@ class Partition(CombinatorialElement):
         assert k >= 0
         if self.is_empty():
             return True
-        else:
-            return self[0] <= k
+        return self[0] <= k
 
     def is_k_reducible(self, k):
         r"""
@@ -1727,7 +1735,7 @@ class Partition(CombinatorialElement):
                     next_p[r] += 1
                     break
                 return None
-            elif (max is None or p[r] < max[r]) and condition(p[r], p[r-1]):
+            if (max is None or p[r] < max[r]) and condition(p[r], p[r-1]):
                 next_p[r] += 1
                 break
             next_p[r] = min[r]
@@ -2368,8 +2376,7 @@ class Partition(CombinatorialElement):
         """
         if i < len(self._list):
             return self._list[i]
-        else:
-            return default
+        return default
 
     @combinatorial_map(name="partition to minimal Dyck word")
     def to_dyck_word(self, n=None):
@@ -3123,8 +3130,7 @@ class Partition(CombinatorialElement):
         """
         if e == 0:
             return ZZ.zero()
-        else:
-            return sum(m // e for m in self)
+        return sum(m // e for m in self)
 
     def degree(self, e):
         r"""
@@ -3450,8 +3456,7 @@ class Partition(CombinatorialElement):
         P = Partitions_n(n)
         if rows:
             return [P(x) for x in ZS1_iterator_nk(n, rows) if self.dominates(x)]
-        else:
-            return [P(x) for x in ZS1_iterator(n) if self.dominates(x)]
+        return [P(x) for x in ZS1_iterator(n) if self.dominates(x)]
 
     def contains(self, x):
         """
@@ -4657,8 +4662,7 @@ class Partition(CombinatorialElement):
 
         if self[i] == 1:
             return Partition(self[:-1])
-        else:
-            return Partition(self[:i] + [self[i:i+1][0] - 1] + self[i+1:])
+        return Partition(self[:i] + [self[i:i+1][0] - 1] + self[i+1:])
 
     def k_irreducible(self, k):
         r"""
@@ -5236,17 +5240,16 @@ class Partition(CombinatorialElement):
         """
         if self == []:
             return []
-        elif k < self[0]:
+        if k < self[0]:
             return []
-        else:
-            res = []
-            part = list(self)
-            while part and part[0] + len(part) - 1 >= k:
-                p = k - part[0]
-                res.append(part[:p + 1])
-                part = part[p + 1:]
-            if part:
-                res.append(part)
+        res = []
+        part = list(self)
+        while part and part[0] + len(part) - 1 >= k:
+            p = k - part[0]
+            res.append(part[:p + 1])
+            part = part[p + 1:]
+        if part:
+            res.append(part)
         return res
 
     def jacobi_trudi(self):
@@ -5722,8 +5725,8 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2,1]).garsia_procesi_module(GF(3))
             Garsia-Procesi module of shape [3, 2, 1] over Finite Field of size 3
         """
-        from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
         if base_ring is None:
             from sage.rings.rational_field import QQ
             base_ring = QQ
@@ -6163,6 +6166,33 @@ class Partitions(UniqueRepresentation, Parent):
             sage: P = Partitions(5, min_slope=0)
             sage: list(P)
             [[5], [1, 1, 1, 1, 1]]
+
+        Check that :issue:`21268` is fixed::
+
+            sage: P = Partitions(5, min_slope=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the minimum slope must be nonpositive
+
+            sage: P = Partitions(min_slope=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the minimum slope must be nonpositive
+
+            sage: P = Partitions(5, min_slope=x^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the minimum slope must be an integer or coercible to an integer
+
+            sage: P = Partitions(3, min_slope=-1.0)
+            sage: list(P)
+            [[3], [2, 1], [1, 1, 1]]
+            sage: P = Partitions(3, min_slope=0)
+            sage: list(P)
+            [[3], [1, 1, 1]]
+            sage: P = Partitions(3, min_slope=-oo)
+            sage: P
+            Partitions of the integer 3
         """
         if n is infinity:
             raise ValueError("n cannot be infinite")
@@ -6173,6 +6203,18 @@ class Partitions(UniqueRepresentation, Parent):
             del kwargs['min_part']
         if 'max_slope' in kwargs and not kwargs['max_slope']:
             del kwargs['max_slope']
+        if 'min_slope' in kwargs:
+            if kwargs['min_slope'] == -infinity:
+                del kwargs['min_slope']
+            # ensure that min_slope is a nonpositive integer
+            else:
+                try:
+                    min_slope = ZZ(kwargs['min_slope'])
+                except (TypeError, ValueError):
+                    raise ValueError("the minimum slope must be an integer or coercible to an integer")
+                if min_slope > 0:
+                    raise ValueError("the minimum slope must be nonpositive")
+
         # preprocess for UniqueRepresentation
         if 'outer' in kwargs and not isinstance(kwargs['outer'], Partition):
             m = infinity
@@ -6221,15 +6263,12 @@ class Partitions(UniqueRepresentation, Parent):
                 if 'restricted' in kwargs:
                     return RestrictedPartitions_n(n, kwargs['restricted'])
 
-            else:
-                if ('parts_in' in kwargs or
-                    'starting' in kwargs or
-                    'ending' in kwargs or
-                    'regular' in kwargs or
-                    'restricted' in kwargs):
-                    raise ValueError("the parameters 'parts_in', 'starting', "
-                                     + "'ending', 'regular' and 'restricted' "
-                                     + "cannot be combined with anything else")
+            elif ('parts_in' in kwargs or
+                'starting' in kwargs or
+                'ending' in kwargs or
+                'regular' in kwargs or
+                'restricted' in kwargs):
+                raise ValueError("the parameters 'parts_in', 'starting', 'ending', 'regular' and 'restricted' cannot be combined with anything else")
 
             if set(kwargs).issubset(['length', 'min_part', 'max_part',
                                      'min_length', 'max_length']):
@@ -6268,9 +6307,6 @@ class Partitions(UniqueRepresentation, Parent):
 
             # max_slope is at most 0, and it is 0 by default
             kwargs['max_slope'] = min(0, kwargs.get('max_slope', 0))
-
-            if kwargs.get('min_slope', -float('inf')) > 0:
-                raise ValueError("the minimum slope must be nonnegative")
 
             if 'outer' in kwargs:
                 kwargs['ceiling'] = tuple(kwargs['outer'])
@@ -7152,11 +7188,11 @@ class Partitions_n(Partitions):
         if algorithm == 'flint':
             return cached_number_of_partitions(self.n)
 
-        elif algorithm == 'gap':
+        if algorithm == 'gap':
             from sage.libs.gap.libgap import libgap
             return ZZ(libgap.NrPartitions(ZZ(self.n)))
 
-        elif algorithm == 'pari':
+        if algorithm == 'pari':
             return ZZ(pari(ZZ(self.n)).numbpart())
 
         raise ValueError("unknown algorithm '%s'" % algorithm)
@@ -7184,10 +7220,9 @@ class Partitions_n(Partitions):
         """
         if measure == 'uniform':
             return self.random_element_uniform()
-        elif measure == 'Plancherel':
+        if measure == 'Plancherel':
             return self.random_element_plancherel()
-        else:
-            raise ValueError("Unknown measure: %s" % measure)
+        raise ValueError("Unknown measure: %s" % measure)
 
     def random_element_uniform(self):
         """
@@ -7782,14 +7817,13 @@ class Partitions_parts_in(Partitions):
         """
         if n == 0:
             return []
-        else:
-            while parts:
-                p = parts.pop()
-                for k in range(n.quo_rem(p)[0], 0, -1):
-                    try:
-                        return k * [p] + self._findfirst(n - k * p, parts[:])
-                    except TypeError:
-                        pass
+        while parts:
+            p = parts.pop()
+            for k in range(n.quo_rem(p)[0], 0, -1):
+                try:
+                    return k * [p] + self._findfirst(n - k * p, parts[:])
+                except TypeError:
+                    pass
 
     def last(self):
         """
@@ -7855,20 +7889,19 @@ class Partitions_parts_in(Partitions):
         """
         if n < 0:
             return None
-        elif n == 0:
+        if n == 0:
             return []
-        elif parts:
+        if parts:
             p = parts[0]
             q, r = n.quo_rem(p)
             if r == 0:
                 return [p] * q
             # If the smallest part doesn't divide n, try using the next
             # largest part
-            else:
-                for i, p in enumerate(parts[1:]):
-                    rest = self._findlast(n - p, parts[:i + 2])
-                    if rest is not None:
-                        return [p] + rest
+            for i, p in enumerate(parts[1:]):
+                rest = self._findlast(n - p, parts[:i + 2])
+                if rest is not None:
+                    return [p] + rest
         # If we get to here, nothing ever worked, so there's no such
         # partitions, and we return None.
         return None
@@ -8312,19 +8345,18 @@ class PartitionsInBox(Partitions):
         w = self.w
         if h == 0:
             return [self.element_class(self, [])]
-        else:
-            l = [[i] for i in range(w + 1)]
+        l = [[i] for i in range(w + 1)]
 
-            def add(x):
-                return [x + [i] for i in range(x[-1] + 1)]
+        def add(x):
+            return [x + [i] for i in range(x[-1] + 1)]
 
-            for i in range(h-1):
-                new_list = []
-                for element in l:
-                    new_list += add(element)
-                l = new_list
+        for i in range(h-1):
+            new_list = []
+            for element in l:
+                new_list += add(element)
+            l = new_list
 
-            return [self.element_class(self, [x for x in p if x != 0]) for p in l]
+        return [self.element_class(self, [x for x in p if x != 0]) for p in l]
 
     def cardinality(self):
         """
@@ -8351,30 +8383,6 @@ class PartitionsInBox(Partitions):
             True
         """
         return binomial(self.h + self.w, self.w)
-
-
-class Partitions_constraints(IntegerListsLex):
-    """
-    For unpickling old constrained ``Partitions_constraints`` objects created
-    with sage <= 3.4.1. See :class:`Partitions`.
-    """
-
-    def __setstate__(self, data):
-        r"""
-        TESTS::
-
-            sage: dmp = b'x\x9ck`J.NLO\xd5K\xce\xcfM\xca\xccK,\xd1+H,*\xc9,\xc9\xcc\xcf\xe3\n\x80\xb1\x8a\xe3\x93\x81DIQbf^I1W!\xa3fc!Sm!\xb3F(7\x92x!Km!k(GnbE<\xc8\x88B6\x88\xb9E\x99y\xe9\xc5z@\x05\xa9\xe9\xa9E\\\xb9\x89\xd9\xa9\xf10N!{(\xa3QkP!Gq(c^\x06\x90c\x0c\xe4p\x96&\xe9\x01\x00\xc2\xe53\xfd'
-            sage: sp = loads(dmp); sp
-            Integer lists of sum 3 satisfying certain constraints
-            sage: sp.list()
-            [[2, 1], [1, 1, 1]]
-        """
-        n = data['n']
-        self.__class__ = Partitions_with_constraints
-        constraints = {'max_slope': 0,
-                       'min_part': 1}
-        constraints.update(data['constraints'])
-        self.__init__(n, **constraints)
 
 
 class Partitions_with_constraints(IntegerListsLex):
@@ -10006,17 +10014,9 @@ _Partitions = Partitions()
 # number_of_partitions functions which is currently using FLINT.
 # AM issue #13072
 try:
-    from sage.libs.flint.arith_sage import number_of_partitions as flint_number_of_partitions
+    from sage.libs.flint.arith_sage import (
+        number_of_partitions as flint_number_of_partitions,
+    )
     cached_number_of_partitions = cached_function(flint_number_of_partitions)
 except ImportError:
     pass
-
-# October 2012: fixing outdated pickles which use classes being deprecated
-from sage.misc.persist import register_unpickle_override
-from sage.combinat.partition_tuple import PartitionTuples_level_size
-register_unpickle_override('sage.combinat.partition', 'PartitionTuples_nk', PartitionTuples_level_size)
-register_unpickle_override('sage.combinat.partition', 'Partition_class', Partition)
-register_unpickle_override('sage.combinat.partition', 'OrderedPartitions_nk', OrderedPartitions)
-register_unpickle_override('sage.combinat.partition', 'PartitionsInBox_hw', PartitionsInBox)
-register_unpickle_override('sage.combinat.partition', 'PartitionsGreatestLE_nk', PartitionsGreatestLE)
-register_unpickle_override('sage.combinat.partition', 'PartitionsGreatestEQ_nk', PartitionsGreatestEQ)

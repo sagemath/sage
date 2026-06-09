@@ -429,7 +429,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
             if not arg0:
                 from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
                 return AbelianLieAlgebra(R, names, index_set)
-            elif isinstance(next(iter(arg0.keys())), (list, tuple)):
+            if isinstance(next(iter(arg0.keys())), (list, tuple)):
                 # We assume it is some structure coefficients
                 arg1, arg0 = arg0, arg1
 
@@ -465,7 +465,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
                 from sage.algebras.lie_algebras.nilpotent_lie_algebra import FreeNilpotentLieAlgebra
                 del kwds["step"]
                 return FreeNilpotentLieAlgebra(R, arg1, step, names=names, **kwds)
-            elif nilpotent:
+            if nilpotent:
                 raise ValueError("free nilpotent Lie algebras must have a"
                                  " 'step' parameter given")
 
@@ -605,7 +605,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
                 if x[1] in LieAlgebras:
                     return x[0].product_space(x[1])
                 return x[0].ideal(x[1])
-            elif x[1] in LieAlgebras:
+            if x[1] in LieAlgebras:
                 return x[1].ideal(x[0])
             # Otherwise it is the bracket of two elements
             return self(x[0])._bracket_(self(x[1]))
@@ -653,7 +653,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
                 M = self.module()
                 if R is M:
                     return self.from_vector
-                elif M.has_coerce_map_from(R):
+                if M.has_coerce_map_from(R):
                     return self._coerce_map_via([M], R)
             return False
 

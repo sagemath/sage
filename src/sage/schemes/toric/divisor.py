@@ -192,41 +192,6 @@ from sage.structure.element import Vector
 lazy_import('sage.topology.simplicial_complex', 'SimplicialComplex')
 
 
-def is_ToricDivisor(x):
-    r"""
-    Test whether ``x`` is a toric divisor.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT:
-
-    - ``True`` if ``x`` is an instance of :class:`ToricDivisor_generic` and
-      ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.toric.divisor import is_ToricDivisor
-        sage: is_ToricDivisor(1)
-        doctest:warning...
-        DeprecationWarning: The function is_ToricDivisor is deprecated;
-        use 'isinstance(..., ToricDivisor_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38277 for details.
-        False
-        sage: P2 = toric_varieties.P2()
-        sage: D = P2.divisor(0); D
-        V(x)
-        sage: is_ToricDivisor(D)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38277,
-                "The function is_ToricDivisor is deprecated; "
-                "use 'isinstance(..., ToricDivisor_generic)' instead.")
-    return isinstance(x, ToricDivisor_generic)
-
-
 # ********************************************************
 def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
     r"""
@@ -641,7 +606,7 @@ class ToricDivisor_generic(Divisor_generic):
         self._m[cone] = m
         return m
 
-    def is_Weil(self):
+    def is_Weil(self) -> bool:
         """
         Return whether the divisor is a Weil-divisor.
 
@@ -662,7 +627,7 @@ class ToricDivisor_generic(Divisor_generic):
         except TypeError:
             return False
 
-    def is_QQ_Weil(self):
+    def is_QQ_Weil(self) -> bool:
         r"""
         Return whether the divisor is a `\QQ`-Weil-divisor.
 
@@ -683,7 +648,7 @@ class ToricDivisor_generic(Divisor_generic):
         """
         return True
 
-    def is_Cartier(self):
+    def is_Cartier(self) -> bool:
         r"""
         Return whether the divisor is a Cartier-divisor.
 
@@ -714,7 +679,7 @@ class ToricDivisor_generic(Divisor_generic):
             self._is_Cartier = all(self.m(c) in M for c in fan)
         return self._is_Cartier
 
-    def is_QQ_Cartier(self):
+    def is_QQ_Cartier(self) -> bool:
         r"""
         Return whether the divisor is a `\QQ`-Cartier divisor.
 
@@ -745,7 +710,7 @@ class ToricDivisor_generic(Divisor_generic):
             self._is_QQ_Cartier = False
         return self._is_QQ_Cartier
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Return whether the coefficients of the divisor are all integral.
 
@@ -908,7 +873,7 @@ class ToricDivisor_generic(Divisor_generic):
         return sum(self.coefficient(i) * A(cone_1d)
                    for i, cone_1d in enumerate(fan(dim=1)))
 
-    def is_ample(self):
+    def is_ample(self) -> bool:
         r"""
         Return whether a `\QQ`-Cartier divisor is ample.
 
@@ -989,7 +954,7 @@ class ToricDivisor_generic(Divisor_generic):
         self._is_ample = Kc.relative_interior_contains(self.divisor_class())
         return self._is_ample
 
-    def is_nef(self):
+    def is_nef(self) -> bool:
         r"""
         Return whether a `\QQ`-Cartier divisor is nef.
 
@@ -1325,18 +1290,27 @@ class ToricDivisor_generic(Divisor_generic):
             sage: M = dP6.fan().dual_lattice()
             sage: D._sheaf_complex( M(1,0) )
             Simplicial complex with vertex set (0, 1, 3) and facets {(3,), (0, 1)}
+
+        A non-simplicial cone can contribute a simplex that is not a face of
+        the fan::
+
+            sage: cone = Cone([(1,1,1), (1,-1,1), (-1,1,1), (-1,-1,1)])
+            sage: X = ToricVariety(Fan([cone]))
+            sage: N = X.fan().lattice()
+            sage: D = -X.divisor(N(1,1,1)) - X.divisor(N(-1,-1,1))
+            sage: M = X.fan().dual_lattice()
+            sage: D._sheaf_complex(M(0,0,0))
+            Simplicial complex with vertex set (0, 3) and facets {(0, 3)}
+            sage: D._sheaf_cohomology(_)
+            (0, 0, 0, 0)
         """
         fan = self.parent().scheme().fan()
         ray_is_negative = [m * ray + self.coefficient(i) < 0
                            for i, ray in enumerate(fan.rays())]
 
-        def cone_is_negative(cone):  # and non-trivial
-            if cone.is_trivial():
-                return False
-            return all(ray_is_negative[i] for i in cone.ambient_ray_indices())
-
-        negative_cones = [cone for cone in flatten(fan.cones()) if cone_is_negative(cone)]
-        return SimplicialComplex([c.ambient_ray_indices() for c in negative_cones])
+        simplicial_faces = [[i for i in cone.ambient_ray_indices()
+                             if ray_is_negative[i]] for cone in fan]
+        return SimplicialComplex(simplicial_faces)
 
     def _sheaf_cohomology(self, cplx):
         """
@@ -1566,6 +1540,21 @@ class ToricDivisor_generic(Divisor_generic):
             False
             sage: K.cohomology(dim=True)
             (0, 0, 0, 1)
+
+        A non-simplicial example::
+
+            sage: r0, r1, r2, r3, r4 = [(0,0,-1), (1,1,1), (1,-1,1),
+            ....:                       (-1,1,1), (-1,-1,1)]
+            sage: c0 = Cone([r1, r2, r3, r4])
+            sage: c1 = Cone([r0, r1, r2])
+            sage: c2 = Cone([r0, r1, r3])
+            sage: c3 = Cone([r0, r4, r2])
+            sage: c4 = Cone([r0, r4, r3])
+            sage: X = ToricVariety(Fan([c0, c1, c2, c3, c4]))
+            sage: N = X.fan().lattice()
+            sage: D = -X.divisor(N(r1)) - X.divisor(N(r4))
+            sage: D.cohomology(dim=True)
+            (0, 0, 0, 0)
         """
         if '_cohomology_vector' in self.__dict__ and weight is None:
             # cache the cohomology but not the individual weight pieces
@@ -1590,16 +1579,13 @@ class ToricDivisor_generic(Divisor_generic):
         if dim:
             if deg is None:
                 return HH
-            else:
-                return HH[deg]
-        else:
-            from sage.modules.free_module import VectorSpace
-            vectorspaces = {k: VectorSpace(self.scheme().base_ring(), HH[k])
-                            for k in range(len(HH))}
-            if deg is None:
-                return vectorspaces
-            else:
-                return vectorspaces[deg]
+            return HH[deg]
+        from sage.modules.free_module import VectorSpace
+        vectorspaces = {k: VectorSpace(self.scheme().base_ring(), HH[k])
+                        for k in range(len(HH))}
+        if deg is None:
+            return vectorspaces
+        return vectorspaces[deg]
 
     def cohomology_support(self):
         r"""
@@ -1816,8 +1802,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         if isinstance(x, ToricDivisor_generic):
             if x.parent() is self:
                 return x
-            else:
-                x = x._data
+            x = x._data
         return ToricDivisor(self.scheme(), x, self.base_ring(), check, reduce)
 
     def base_extend(self, R):

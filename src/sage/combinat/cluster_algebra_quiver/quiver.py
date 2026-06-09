@@ -517,9 +517,10 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',5])
-            sage: hash(Q)  # indirect doctest
-            7654921743699262111  # 64-bit
-            -1264862561          # 32-bit
+            sage: hash32 = -1264862561
+            sage: hash64 = 7654921743699262111
+            sage: hash(Q) in [hash32, hash64]  # indirect doctest
+            True
         """
         return hash(self._M)
 
@@ -1185,8 +1186,7 @@ class ClusterQuiver(SageObject):
                 Q._mutation_type = QuiverMutationType(Q._mutation_type)
         if certificate:
             return Q, iso
-        else:
-            return Q
+        return Q
 
     def is_acyclic(self) -> bool:
         """
@@ -1760,17 +1760,13 @@ class ClusterQuiver(SageObject):
         """
         if data_type == 'path':
             return_paths = False
-        if data_type == "dig6":
-            return_dig6 = True
-        else:
-            return_dig6 = False
 
         # jump to the standard labelling convention
         dg = ClusterQuiver(self._M).digraph()
         frozen = list(range(self._n, self._n + self._m))
 
         MC_iter = _mutation_class_iter(dg, self._n, self._m, depth=depth,
-                                       return_dig6=return_dig6,
+                                       return_dig6=(data_type == "dig6"),
                                        show_depth=show_depth,
                                        up_to_equivalence=up_to_equivalence,
                                        sink_source=sink_source)

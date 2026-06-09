@@ -33,7 +33,7 @@ MAKE="${MAKE:-make}"
 
 
 bootstrap () {
-    for pkgname in cypari cysignals cython gmpy2 jupyter_core memory_allocator numpy pkgconfig pplpy setuptools wheel; do
+    for pkgname in cypari cysignals cython gmpy2 jupyter_core memory_allocator meson numpy pkgconfig pplpy setuptools wheel; do
         # Write the version_requirements.txt files for dependencies declared in pyproject.toml
         target=build/pkgs/${pkgname}/version_requirements.txt
         if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
@@ -227,8 +227,6 @@ save () {
 	configure real_configure configure_wrapper \
 	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
-	src/doc/en/installation/*.txt \
-	$(find src/doc/en/reference/spkg -maxdepth 1 -name index.rst -prune -o -name "*.rst" -print) \
 	environment-3.1[0-9]-*.yml \
 	pyproject.toml \
 	build/pkgs/cypari/version_requirements.txt \

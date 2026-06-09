@@ -221,11 +221,10 @@ class InterfaceMagic:
         def line_magic(line):
             if line:
                 return self._interface(line)
+            if terminal:
+                self._interface.interact()
             else:
-                if terminal:
-                    self._interface.interact()
-                else:
-                    raise SyntaxError('{0} command required'.format(self._name))
+                raise SyntaxError('{0} command required'.format(self._name))
         line_magic.__doc__ = LINE_DOCSTRING.format(name=self._name)
         return line_magic
 

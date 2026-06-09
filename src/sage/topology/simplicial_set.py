@@ -1086,9 +1086,8 @@ def AbstractSimplex(dim, degeneracies=(), underlying=None,
                                      underlying=underlying,
                                      name=name,
                                      latex_name=latex_name)
-    else:
-        return NonDegenerateSimplex(dim, name=name,
-                                    latex_name=latex_name)
+    return NonDegenerateSimplex(dim, name=name,
+                                latex_name=latex_name)
 
 
 ########################################################################
@@ -1184,8 +1183,7 @@ class SimplicialSet_arbitrary(Parent):
         if simplex.is_nondegenerate():
             if self.is_finite():
                 return self.face_data()[simplex]
-            else:
-                return self.n_skeleton(dim).face_data()[simplex]
+            return self.n_skeleton(dim).face_data()[simplex]
         underlying = simplex.nondegenerate()
         faces = []
         for J, t in [face_degeneracies(m, simplex.degeneracies())
@@ -2024,8 +2022,7 @@ class SimplicialSet_arbitrary(Parent):
                     min_dim = min(dim)
                     H = GenericCellComplex.homology(space, **kwds)
                     return {n: H[n] for n in H if min_dim <= n <= max_dim}
-                else:
-                    max_dim = dim
+                max_dim = dim
             space = self.n_skeleton(max_dim+1)
         else:
             space = self
@@ -2176,8 +2173,7 @@ class SimplicialSet_arbitrary(Parent):
         n_cells = tuple(self.n_cells(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
-        else:
-            return Chains(self, n, n_cells, base_ring)
+        return Chains(self, n, n_cells, base_ring)
 
     def quotient(self, subcomplex, vertex_name='*'):
         """
@@ -2296,9 +2292,8 @@ class SimplicialSet_arbitrary(Parent):
         if self.is_finite():
             return QuotientOfSimplicialSet_finite(subcomplex.inclusion_map(),
                                                   vertex_name=vertex_name)
-        else:
-            return QuotientOfSimplicialSet(subcomplex.inclusion_map(),
-                                           vertex_name=vertex_name)
+        return QuotientOfSimplicialSet(subcomplex.inclusion_map(),
+                                       vertex_name=vertex_name)
 
     def disjoint_union(self, *others):
         """
@@ -2359,8 +2354,7 @@ class SimplicialSet_arbitrary(Parent):
             DisjointUnionOfSimplicialSets_finite
         if all(space.is_finite() for space in [self] + list(others)):
             return DisjointUnionOfSimplicialSets_finite((self,) + others)
-        else:
-            return DisjointUnionOfSimplicialSets((self,) + others)
+        return DisjointUnionOfSimplicialSets((self,) + others)
 
     def coproduct(self, *others):
         """
@@ -2529,8 +2523,7 @@ class SimplicialSet_arbitrary(Parent):
             ProductOfSimplicialSets_finite
         if self.is_finite() and all(X.is_finite() for X in others):
             return ProductOfSimplicialSets_finite((self,) + others)
-        else:
-            return ProductOfSimplicialSets((self,) + others)
+        return ProductOfSimplicialSets((self,) + others)
 
     cartesian_product = product
 
@@ -2645,8 +2638,7 @@ class SimplicialSet_arbitrary(Parent):
             return PushoutOfSimplicialSets_finite()
         if all(f.codomain().is_finite() for f in maps):
             return PushoutOfSimplicialSets_finite(maps)
-        else:
-            return PushoutOfSimplicialSets(maps)
+        return PushoutOfSimplicialSets(maps)
 
     def pullback(self, *maps):
         r"""
@@ -2745,8 +2737,7 @@ class SimplicialSet_arbitrary(Parent):
             return PullbackOfSimplicialSets_finite()
         if self.is_finite() and all(f.domain().is_finite() for f in maps):
             return PullbackOfSimplicialSets_finite(maps)
-        else:
-            return PullbackOfSimplicialSets(maps)
+        return PullbackOfSimplicialSets(maps)
 
     # Ideally, this would be defined at the category level and only
     # for pointed simplicial sets, but the abstract_method "wedge" in
@@ -2825,8 +2816,7 @@ class SimplicialSet_arbitrary(Parent):
             WedgeOfSimplicialSets_finite
         if all(space.is_finite() for space in [self] + list(others)):
             return WedgeOfSimplicialSets_finite((self,) + others)
-        else:
-            return WedgeOfSimplicialSets((self,) + others)
+        return WedgeOfSimplicialSets((self,) + others)
 
     def cone(self):
         r"""
@@ -2886,12 +2876,10 @@ class SimplicialSet_arbitrary(Parent):
         if self.is_pointed():
             if self.is_finite():
                 return ReducedConeOfSimplicialSet_finite(self)
-            else:
-                return ReducedConeOfSimplicialSet(self)
+            return ReducedConeOfSimplicialSet(self)
         if self.is_finite():
             return ConeOfSimplicialSet_finite(self)
-        else:
-            return ConeOfSimplicialSet(self)
+        return ConeOfSimplicialSet(self)
 
     def suspension(self, n=1):
         """
@@ -3269,13 +3257,11 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             """
             if sigma.is_nondegenerate():
                 return data[sigma][i]
-            else:
-                underlying = sigma.nondegenerate()
-                J, t = face_degeneracies(i, sigma.degeneracies())
-                if t is None:
-                    return underlying.apply_degeneracies(*J)
-                else:
-                    return data[underlying][t].apply_degeneracies(*J)
+            underlying = sigma.nondegenerate()
+            J, t = face_degeneracies(i, sigma.degeneracies())
+            if t is None:
+                return underlying.apply_degeneracies(*J)
+            return data[underlying][t].apply_degeneracies(*J)
 
         if isinstance(data, GenericCellComplex):
             # Construct new data appropriately.
@@ -3408,10 +3394,9 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                     and other.is_pointed()
                     and sorted(self._data) == sorted(other._data)
                     and self.base_point() == other.base_point())
-        else:
-            return (isinstance(other, SimplicialSet_finite)
-                    and not other.is_pointed()
-                    and sorted(self._data) == sorted(other._data))
+        return (isinstance(other, SimplicialSet_finite)
+                and not other.is_pointed()
+                and sorted(self._data) == sorted(other._data))
 
     def __ne__(self, other) -> bool:
         """
@@ -3459,8 +3444,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         """
         if self.is_pointed():
             return hash(self._data) ^ hash(self.base_point())
-        else:
-            return hash(self._data)
+        return hash(self._data)
 
     def __copy__(self):
         """
@@ -3696,8 +3680,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                 # Return the empty chain complex.
                 if cochain:
                     return ChainComplex(base_ring=base_ring, degree=1)
-                else:
-                    return ChainComplex(base_ring=base_ring, degree=-1)
+                return ChainComplex(base_ring=base_ring, degree=-1)
 
         differentials = {}
         # Convert the tuple self._data to a dictionary indexed by the

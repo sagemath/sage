@@ -135,7 +135,6 @@ cdef class PowerSeries_pari(PowerSeries):
 
         TESTS::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<q> = PowerSeriesRing(CC, implementation='pari')
             sage: TestSuite(q).run()
             sage: f = q - q^3 + O(q^10)
@@ -339,7 +338,6 @@ cdef class PowerSeries_pari(PowerSeries):
 
         Substituting `p`-adic numbers::
 
-            sage: # needs sage.rings.padics
             sage: f(100 + O(5^7))
             5^4 + 3*5^5 + 4*5^6 + 2*5^7 + 2*5^8 + O(5^9)
             sage: ff = PowerSeriesRing(pAdicRing(5), 't', implementation='pari')(f)
@@ -390,7 +388,7 @@ cdef class PowerSeries_pari(PowerSeries):
         if len(kwds) >= 1:
             name = self._parent.variable_name()
             if name in kwds:  # the series variable is specified by a keyword
-                if len(x):
+                if x:
                     raise ValueError("must not specify %s keyword and positional argument" % name)
                 x = [kwds[name]]
                 del kwds[name]
@@ -645,7 +643,6 @@ cdef class PowerSeries_pari(PowerSeries):
             sage: f.list()
             [1, 0, 0, -5, 0, 1]
 
-            sage: # needs sage.rings.padics
             sage: S.<u> = PowerSeriesRing(pAdicRing(5), implementation='pari')
             sage: (2 + u).list()
             [2 + O(5^20), 1 + O(5^20)]
@@ -837,6 +834,127 @@ cdef class PowerSeries_pari(PowerSeries):
             var = self._parent.variable_name()
         return construct_from_pari(self._parent, self.g.intformal(var))
 
+    def revert(self, precision=None):
+        r"""
+        Return the reversion of this power series.
+
+        The reversion of a power series `f` is the power series `g` such
+        that `g(f(x)) = x`.  This exists if and only if the valuation
+        of ``self`` is exactly 1 and the coefficient of `x` is a unit.
+
+        If the optional argument ``precision`` is given, the reversion
+        is returned with this precision.  If ``f`` has infinite
+        precision and the argument ``precision`` is not given, then
+        the reversion is returned with the default precision of
+        ``f.parent()``.
+
+        The method ``compositional_inverse`` is an alias of ``revert``.
+
+        ..WARNING::
+
+            This implementation can only handle some rings of positive characteristic.
+
+        EXAMPLES::
+
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
+            sage: f = 2*x + 3*x^2 - x^4 + O(x^5)
+            sage: g = f.revert()
+            sage: g
+            1/2*x - 3/8*x^2 + 9/16*x^3 - 131/128*x^4 + O(x^5)
+            sage: f(g)
+            x + O(x^5)
+            sage: g(f)
+            x + O(x^5)
+
+            sage: A.<t> = PowerSeriesRing(ZZ, implementation='pari')
+            sage: a = t - t^2 - 2*t^4 + t^5 + O(t^6)
+            sage: b = a.revert(); b
+            t + t^2 + 2*t^3 + 7*t^4 + 25*t^5 + O(t^6)
+            sage: a(b)
+            t + O(t^6)
+            sage: b(a)
+            t + O(t^6)
+
+            sage: B.<b,c> = PolynomialRing(ZZ)
+            sage: A.<t> = PowerSeriesRing(B, implementation='pari')
+            sage: f = t + b*t^2 + c*t^3 + O(t^4)
+            sage: g = f.revert(); g
+            t - b*t^2 + (2*b^2 - c)*t^3 + O(t^4)
+            sage: f(g)
+            t + O(t^4)
+            sage: g(f)
+            t + O(t^4)
+
+            sage: A.<t> = PowerSeriesRing(ZZ, implementation='pari')
+            sage: B.<x> = PowerSeriesRing(A, implementation='pari')
+            sage: f = (1 - 3*t + 4*t^3 + O(t^4))*x + (2 + t + t^2 + O(t^3))*x^2 + O(x^3)
+            sage: g = f.revert(); g
+            (1 + 3*t + 9*t^2 + 23*t^3 + O(t^4))*x
+             + (-2 - 19*t - 118*t^2 + O(t^3))*x^2 + O(x^3)
+
+        The optional argument ``precision`` sets the precision of the output::
+
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
+            sage: f = 2*x + 3*x^2 - 7*x^3 + x^4 + O(x^5)
+            sage: g = f.revert(precision=3); g
+            1/2*x - 3/8*x^2 + O(x^3)
+            sage: f(g)
+            x + O(x^3)
+            sage: g(f)
+            x + O(x^3)
+
+        If the input series has infinite precision, the precision of the
+        output is automatically set to the default precision of the parent
+        ring::
+
+            sage: R.<x> = PowerSeriesRing(QQ, default_prec=20, implementation='pari')
+            sage: (x - x^2).revert()  # get some Catalan numbers
+            x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + 42*x^6 + 132*x^7 + 429*x^8
+             + 1430*x^9 + 4862*x^10 + 16796*x^11 + 58786*x^12 + 208012*x^13
+             + 742900*x^14 + 2674440*x^15 + 9694845*x^16 + 35357670*x^17
+             + 129644790*x^18 + 477638700*x^19 + O(x^20)
+            sage: (x - x^2).revert(precision=3)
+            x + x^2 + O(x^3)
+
+        We can handle some rings of positive characteristic::
+
+            sage: R.<t> = PowerSeriesRing(GF(5), implementation='pari')
+            sage: f = t + t^2 + t^3 + O(t^4)
+            sage: g = f.revert(); g
+            t + 4*t^2 + t^3 + O(t^4)
+            sage: f(g) == g(f) == t
+            True
+
+            sage: k.<a> = GF(3**2)
+            sage: R.<t> = PowerSeriesRing(k, implementation='pari')
+            sage: f = a*t + (1-a)*t^2 + (1+a)*t^3 + O(t^4)
+            sage: f.revert()
+            Traceback (most recent call last):
+            ...
+            PariError: impossible inverse in Fl_inv: Mod(0, 3)
+
+        TESTS::
+
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
+            sage: f = 1 + 2*x + 3*x^2 - x^4 + O(x^5)
+            sage: f.revert()
+            Traceback (most recent call last):
+            ...
+            PariError: domain error in serreverse: valuation != 1
+        """
+        cdef PowerSeries_pari f
+        if self._prec is infinity:
+            if precision is None:
+                precision = self._parent.default_prec()
+            f = self.add_bigoh(precision)
+        else:
+            if precision is None:
+                precision = self._prec
+            f = self
+        return PowerSeries_pari(self._parent, f.g.serreverse(), precision)
+
+    compositional_inverse = revert
+
     def reverse(self, precision=None):
         r"""
         Return the reverse of ``self``.
@@ -855,79 +973,16 @@ cdef class PowerSeries_pari(PowerSeries):
 
             sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
             sage: f = 2*x + 3*x^2 - x^4 + O(x^5)
-            sage: g = f.reverse()
-            sage: g
+            sage: g = f.reverse(); g
+            doctest:warning...
+            DeprecationWarning: reverse is deprecated; use revert instead
+            See https://github.com/sagemath/sage/issues/40576 for details.
             1/2*x - 3/8*x^2 + 9/16*x^3 - 131/128*x^4 + O(x^5)
             sage: f(g)
             x + O(x^5)
             sage: g(f)
             x + O(x^5)
-
-            sage: A.<t> = PowerSeriesRing(ZZ, implementation='pari')
-            sage: a = t - t^2 - 2*t^4 + t^5 + O(t^6)
-            sage: b = a.reverse(); b
-            t + t^2 + 2*t^3 + 7*t^4 + 25*t^5 + O(t^6)
-            sage: a(b)
-            t + O(t^6)
-            sage: b(a)
-            t + O(t^6)
-
-            sage: B.<b,c> = PolynomialRing(ZZ)
-            sage: A.<t> = PowerSeriesRing(B, implementation='pari')
-            sage: f = t + b*t^2 + c*t^3 + O(t^4)
-            sage: g = f.reverse(); g
-            t - b*t^2 + (2*b^2 - c)*t^3 + O(t^4)
-            sage: f(g)
-            t + O(t^4)
-            sage: g(f)
-            t + O(t^4)
-
-            sage: A.<t> = PowerSeriesRing(ZZ, implementation='pari')
-            sage: B.<x> = PowerSeriesRing(A, implementation='pari')
-            sage: f = (1 - 3*t + 4*t^3 + O(t^4))*x + (2 + t + t^2 + O(t^3))*x^2 + O(x^3)
-            sage: g = f.reverse(); g
-            (1 + 3*t + 9*t^2 + 23*t^3 + O(t^4))*x + (-2 - 19*t - 118*t^2 + O(t^3))*x^2 + O(x^3)
-
-        The optional argument ``precision`` sets the precision of the output::
-
-            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
-            sage: f = 2*x + 3*x^2 - 7*x^3 + x^4 + O(x^5)
-            sage: g = f.reverse(precision=3); g
-            1/2*x - 3/8*x^2 + O(x^3)
-            sage: f(g)
-            x + O(x^3)
-            sage: g(f)
-            x + O(x^3)
-
-        If the input series has infinite precision, the precision of the
-        output is automatically set to the default precision of the parent
-        ring::
-
-            sage: R.<x> = PowerSeriesRing(QQ, default_prec=20, implementation='pari')
-            sage: (x - x^2).reverse()  # get some Catalan numbers
-            x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + 42*x^6 + 132*x^7 + 429*x^8
-             + 1430*x^9 + 4862*x^10 + 16796*x^11 + 58786*x^12 + 208012*x^13
-             + 742900*x^14 + 2674440*x^15 + 9694845*x^16 + 35357670*x^17
-             + 129644790*x^18 + 477638700*x^19 + O(x^20)
-            sage: (x - x^2).reverse(precision=3)
-            x + x^2 + O(x^3)
-
-        TESTS::
-
-            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
-            sage: f = 1 + 2*x + 3*x^2 - x^4 + O(x^5)
-            sage: f.reverse()
-            Traceback (most recent call last):
-            ...
-            PariError: domain error in serreverse: valuation != 1
         """
-        cdef PowerSeries_pari f
-        if self._prec is infinity:
-            if precision is None:
-                precision = self._parent.default_prec()
-            f = self.add_bigoh(precision)
-        else:
-            if precision is None:
-                precision = self._prec
-            f = self
-        return PowerSeries_pari(self._parent, f.g.serreverse(), precision)
+        from sage.misc.superseded import deprecation_cython
+        deprecation_cython(40576, 'reverse is deprecated; use revert instead')
+        return self.revert(precision)
