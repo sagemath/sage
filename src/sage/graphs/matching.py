@@ -2265,6 +2265,36 @@ class MicaliVaziraniMatching:
     # Double DFS to locate augmenting paths
     # ******************************
     def DDFS(self, source_red_vertex: int, source_green_vertex: int) -> tuple[list[int], list[int], Optional[int], bool]:
+        r"""
+        Run the double depth-first search from the two ends of a bridge.
+
+        Two depth-first searches, the *red* one rooted at ``source_red_vertex``
+        and the *green* one at ``source_green_vertex``, descend along
+        predecessors while staying as deep as possible. They either reach two
+        distinct free vertices along vertex-disjoint paths -- certifying a
+        shortest augmenting path -- or collapse onto a single *bottleneck*
+        vertex, the base of a new blossom.
+
+        INPUT:
+
+        - ``source_red_vertex`` -- integer; one endpoint of the bridge
+        - ``source_green_vertex`` -- integer; the other endpoint
+
+        OUTPUT: a tuple ``(red_support, green_support, bottleneck,
+        encountered_deleted_vertex)``. ``bottleneck`` is ``None`` when an
+        augmenting path is found, otherwise the bottleneck vertex; the two
+        supports are the vertices visited by each search.
+
+        EXAMPLES:
+
+        Exercised by any run that processes a bridge; here augmentation passes
+        through a triangle blossom on a stem::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 2)])
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            2
+        """
         encountered_deleted_vertex = False
 
         # Set the starting point for each of red and green DFS's
@@ -2359,6 +2389,36 @@ class MicaliVaziraniMatching:
     # Auxiliary Subroutine: advance DFS along predecessors
     # ******************************
     def advance_DFS(self, vertex: int, predecessor_list: list[int], stack: list[tuple[int, list[int]]], support: list[int], label: tuple[int, int]) -> tuple[int, list[int], bool]:
+        r"""
+        Take one forward step of a depth-first search in :meth:`DDFS`.
+
+        Move to the bud of the next predecessor of ``vertex``, pushing the
+        current position onto ``stack`` and appending the new vertex to
+        ``support``. If ``vertex`` has no predecessors left, backtrack via
+        :meth:`reverse_DFS`.
+
+        INPUT:
+
+        - ``vertex`` -- integer; the current vertex of this search
+        - ``predecessor_list`` -- list of integers; the unexplored
+          predecessors of ``vertex``
+        - ``stack`` -- list; the backtracking stack of this search
+        - ``support`` -- list of integers; the vertices visited by this search
+        - ``label`` -- a pair identifying the current ``DDFS`` (for marking
+          visited vertices)
+
+        OUTPUT: a tuple ``(next_vertex, predecessor_list, collided)`` where
+        ``collided`` is ``True`` if the step reached a vertex already visited
+        by this ``DDFS``.
+
+        EXAMPLES:
+
+        Exercised through :meth:`DDFS` during a run that forms a blossom::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
+            2
+        """
         reverse_check = False
         if predecessor_list:
             next_vertex = self.get_bud(predecessor_list.pop())
@@ -2383,6 +2443,32 @@ class MicaliVaziraniMatching:
     # Auxiliary Subroutine: backtrack in DFS stack
     # ******************************
     def reverse_DFS(self, vertex: int, predecessor_list: list[int], stack: list[tuple[int, list[int]]], support: list[int]) -> tuple[int, list[int], bool]:
+        r"""
+        Backtrack one step of a depth-first search in :meth:`DDFS`.
+
+        Pop the most recently visited position off ``stack``, restoring the
+        previous vertex and its predecessor list and removing the dead-end
+        vertex from ``support``.
+
+        INPUT:
+
+        - ``vertex`` -- integer; the current (dead-end) vertex
+        - ``predecessor_list`` -- list of integers; predecessors of ``vertex``
+        - ``stack`` -- list; the backtracking stack of this search
+        - ``support`` -- list of integers; the vertices visited by this search
+
+        OUTPUT: a tuple ``(vertex, predecessor_list, failure)`` where
+        ``failure`` is ``True`` if the stack was empty (nothing to backtrack
+        to).
+
+        EXAMPLES:
+
+        Exercised through :meth:`DDFS` during a run that forms a blossom::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
+            2
+        """
         failure = False
         if stack:
             previous_vertex = stack.pop()
