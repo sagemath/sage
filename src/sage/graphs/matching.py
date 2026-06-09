@@ -696,7 +696,8 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
                         even.add(a)
                         odd.discard(a)
                         Q.put(a)
-            else:  # y has not been visited yet
+            else:
+                # y has not been visited yet
                 z = next(M.neighbor_iterator(y))
                 odd.add(y)
                 even.add(z)
@@ -1050,7 +1051,8 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
 
         # Check if H is strongly connected using Kosaraju's algorithm
         def dfs(v, visited, neighbor_iterator):
-            stack = [v]  # a stack of vertices
+            # a stack of vertices
+            stack = [v]
 
             while stack:
                 v = stack.pop()
@@ -2297,13 +2299,16 @@ class MicaliVaziraniMatching:
         """
         encountered_deleted_vertex = False
 
+        # Stack saves previously traversed vertices
+        red_stack, green_stack = [], []
         # Set the starting point for each of red and green DFS's
-        red_stack, green_stack = [], []  # Stack saves previously traversed vertices
-        red_vertex, green_vertex = self.get_bud(source_red_vertex), self.get_bud(source_green_vertex)  # Set the initial point for both DFS's
+        red_vertex, green_vertex = self.get_bud(source_red_vertex), self.get_bud(source_green_vertex)
 
+        # Copy predecessor list over for the current vertex
         red_predecessors, green_predecessors = \
-            self.predecessor[red_vertex][:], self.predecessor[green_vertex][:]  # Copy predecessor list over for the current vertex
-        red_support, green_support = [red_vertex], [green_vertex]  # the lists holding the support of the current bridge
+            self.predecessor[red_vertex][:], self.predecessor[green_vertex][:]
+        # the lists holding the support of the current bridge
+        red_support, green_support = [red_vertex], [green_vertex]
 
         # Following is used to save the data for DFS's for when they backtrack in the case a bottleneck is reached
         previous_red_support, previous_green_support = [red_vertex], [green_vertex]
