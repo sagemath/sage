@@ -2574,8 +2574,30 @@ class MicaliVaziraniMatching:
     # Unfold a blossom (petal)
     # ******************************
     def unfold_petal(self, vertex: int, target: int) -> list[int]:
-        """
-        Unfolds a petal to get the path from the vertex that is part of the petal to the bud
+        r"""
+        Reconstruct the alternating path through a blossom.
+
+        When an augmenting path enters a contracted blossom, the actual path
+        inside it is recovered by expanding the petal: the segment from
+        ``vertex`` up to ``target`` (the bud, possibly recursing through nested
+        petals) is rebuilt using the petal's peaks and the predecessor links.
+
+        INPUT:
+
+        - ``vertex`` -- integer; a vertex lying in a petal
+        - ``target`` -- integer; the endpoint up to which the path is unfolded
+
+        OUTPUT: the list of vertices of the path inside the blossom (empty if
+        it cannot be reconstructed)
+
+        EXAMPLES:
+
+        Triggered when an augmenting path runs through a blossom on a stem::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 2)])
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            2
         """
         path = list()
         petal = self.vertex_petal_map[vertex]
@@ -2608,6 +2630,31 @@ class MicaliVaziraniMatching:
         return path + petal_path
 
     def unfold_path_in_petal(self, start_vertex: int, end_vertex: int, petal: Petal) -> list[int]:
+        r"""
+        Trace one segment of the alternating path inside a petal.
+
+        Helper for :meth:`unfold_petal`: it walks from ``start_vertex`` to
+        ``end_vertex`` within ``petal`` along predecessor links, recursing into
+        any nested petals encountered on the way.
+
+        INPUT:
+
+        - ``start_vertex`` -- integer; where the segment starts
+        - ``end_vertex`` -- integer; where the segment ends
+        - ``petal`` -- the :class:`Petal` whose interior is being traced
+
+        OUTPUT: the list of vertices from ``start_vertex`` to ``end_vertex``
+        (empty if it cannot be reconstructed)
+
+        EXAMPLES:
+
+        Triggered through :meth:`unfold_petal` on a blossom on a stem::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 1)])
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            3
+        """
         if start_vertex == end_vertex:
             return [start_vertex]
         if self.vertex_petal_map[start_vertex] != petal:
