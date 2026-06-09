@@ -2487,16 +2487,54 @@ class MicaliVaziraniMatching:
     # Contract a blossom (petal)
     # ******************************
     def form_blossom(self, left_support: list[int], right_support: list[int], bud: int, bridge: Edge) -> None:
-        """
-        Create a new blossom centered at 'bud' with supports from both sides.
+        r"""
+        Contract a new blossom rooted at ``bud``.
+
+        A :class:`Petal` with base ``bud`` and peaks the two endpoints of
+        ``bridge`` is created, and the two supports returned by :meth:`DDFS`
+        are attached to it (one per side) via :meth:`form_petal`.
+
+        INPUT:
+
+        - ``left_support`` -- list of integers; the red side of the blossom
+        - ``right_support`` -- list of integers; the green side of the blossom
+        - ``bud`` -- integer; the base (bottleneck) of the blossom
+        - ``bridge`` -- the bridge edge ``(u, v, label)`` that formed it
+
+        EXAMPLES:
+
+        Triggered whenever a blossom forms, e.g. on an odd cycle::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
+            2
         """
         petal = self.Petal(base=bud, peaks=(bridge[0], bridge[1]))
         self.form_petal(left_support, bud, petal, 0)
         self.form_petal(right_support, bud, petal, 1)
 
     def form_petal(self, support: list[int], bud: int, petal: Petal, direction: int) -> None:
-        """
-        Assign each vertex in support to the given petal and direction.
+        r"""
+        Attach one side of a blossom to its petal.
+
+        Every vertex of ``support`` is pointed at the blossom's bud, assigned
+        the given ``petal`` and coloured by ``direction`` (`0` for the red
+        side, `1` for the green side).
+
+        INPUT:
+
+        - ``support`` -- list of integers; the vertices on this side
+        - ``bud`` -- integer; the base of the blossom
+        - ``petal`` -- the :class:`Petal` being built
+        - ``direction`` -- `0` (red) or `1` (green)
+
+        EXAMPLES:
+
+        Triggered through :meth:`form_blossom` when a blossom forms::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
+            2
         """
         for vertex in support:
             self.vertex_bud_map[vertex] = self.get_bud(bud)
