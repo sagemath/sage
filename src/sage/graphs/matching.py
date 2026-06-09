@@ -2731,8 +2731,37 @@ class MicaliVaziraniMatching:
     # Augment along a found path
     # ******************************
     def augment(self, left_support: list[int], right_support: list[int], bridge: Edge) -> bool:
-        """
-        Augment the matching M with the agumenting path found.
+        r"""
+        Augment the current matching along a discovered augmenting path.
+
+        The two halves of the augmenting path meet at ``bridge``. Each half is
+        reconstructed from its support with :meth:`get_path`, the left half is
+        reversed, and the two are spliced into a single free-to-free path. Every
+        edge along that path is toggled (matched edges become unmatched and vice
+        versa), increasing the matching size by one. Finally the path vertices,
+        together with any predecessors that become unreachable, are erased from
+        the current phase's search structures so that further augmenting paths
+        found in the same phase remain vertex-disjoint.
+
+        INPUT:
+
+        - ``left_support`` -- list of integers; the buds tracing the left half
+          of the path down to a free vertex
+        - ``right_support`` -- list of integers; the buds tracing the right half
+        - ``bridge`` -- the :class:`Edge` whose endpoints are the two peaks
+          where the halves meet
+
+        OUTPUT: boolean; ``True`` if the matching was augmented, ``False`` if a
+        valid augmenting path could not be reconstructed
+
+        EXAMPLES:
+
+        Triggered while computing a matching on a triangle with a pendant path::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 2)])
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            2
         """
         left_path = self.get_path(left_support, bridge[0])
         right_path = self.get_path(right_support, bridge[1])
@@ -2773,8 +2802,33 @@ class MicaliVaziraniMatching:
 
     # Procedure to find path after discovering an augmenting path via DDFS
     def get_path(self, support: list[int], peak: int) -> list[int]:
-        """
-        Build the vertex sequence of an augmenting path.
+        r"""
+        Reconstruct one half of an augmenting path from a peak to a free vertex.
+
+        Starting at ``peak``, the predecessor links are followed downwards using
+        ``support`` -- the sequence of buds produced by the double DFS -- as a
+        guide: for each bud the predecessors are popped until the matching bud
+        is reached. Whenever a vertex lies inside a contracted blossom, the
+        corresponding segment is expanded with :meth:`unfold_petal` so that the
+        returned sequence is a genuine alternating path in the original graph.
+
+        INPUT:
+
+        - ``support`` -- list of integers; the buds tracing the path, as
+          recorded during the double DFS
+        - ``peak`` -- integer; the bridge endpoint from which to start tracing
+
+        OUTPUT: the list of vertices from ``peak`` down to the free vertex
+        (empty if the path cannot be reconstructed)
+
+        EXAMPLES:
+
+        Triggered while computing a matching on a blossom sitting on a stem::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 1)])
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            3
         """
         path = []
         current_vertex = peak
