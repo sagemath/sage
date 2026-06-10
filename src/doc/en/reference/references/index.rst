@@ -2745,10 +2745,6 @@ REFERENCES:
            *The Kazhdan-Lusztig polynomial of a matroid*. 2014.
            :arxiv:`1412.7408`.
 
-.. _ref-F:
-
-**F**
-
 .. [ER1959] Paul Erd\H{o}s and Alfr\'ed R\'enyi. *On Random Graphs*,
             Publicationes Mathematicae. 6: 290-297, 1959.
 
@@ -2782,6 +2778,10 @@ REFERENCES:
 
 .. [EZ1950] \S. Eilenberg and J. Zilber, *Semi-Simplicial Complexes
             and Singular Homology*, Ann. Math. (2) 51 (1950), 499-513.
+
+.. _ref-F:
+
+**F**
 
 .. [Fag1983] Fagin, Ronald. *Degrees of acyclicity for hypergraphs and
              relational database schemes.* Journal of the ACM (JACM) 30.3
@@ -6382,16 +6382,16 @@ REFERENCES:
             Analytic Combinatorics.  Issue 6,
             (2011). :arxiv:`1009.5715`.
 
-.. _ref-S:
-
-**S**
-
 .. [Ryom2015] Steen Ryom-Hansen. *Projective modules for the symmetric group and
               Young's seminormal form*. J. Algebra **439** (2015) pp. 515-541.
 
 .. [Rüt2014] Julian Rüth, *Models of Curves and Valuations*. Open Access
              Repositorium der Universität Ulm. Dissertation (2014).
              :doi:`10.18725/OPARU-3275`
+
+.. _ref-S:
+
+**S**
 
 .. [Saa2011] \M-J. O. Saarinen,
              *Cryptographic Analysis of All 4 x 4-Bit S-Boxes*; in
@@ -7180,10 +7180,6 @@ REFERENCES:
              *Data Encryption Standard*, (1999).
              https://csrc.nist.gov/CSRC/media/Publications/fips/46/3/archive/1999-10-25/documents/fips46-3.pdf
 
-.. _ref-V:
-
-**V**
-
 .. [UDCIKMP2011] \M. Ullrich, C. De Canniere, S. Indesteege, Ö. Kücük, N. Mouha, and
                  \B. Preenel, *Finding Optimal Bitsliced Implementations of 4 x 4-bit
                  S-boxes*; in SKEW, (2011).
@@ -7193,6 +7189,10 @@ REFERENCES:
 
 .. [UNITTEST] unittest -- Unit testing framework --
               https://docs.python.org/library/unittest.html
+
+.. _ref-V:
+
+**V**
 
 .. [Vai1994] \I. Vaisman, *Lectures on the Geometry of Poisson
              Manifolds*, Springer Basel AG (Basel) (1994);
