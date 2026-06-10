@@ -36,16 +36,6 @@ AUTHORS:
 
  - Nils Bruin, Sohrab Ganjian (2021-09-08): initial version
 
-REFERENCES:
-
-.. [DHBvHS2004] \Bernard Deconinck, Matthias Heil, Alexander Bobenko, Mark van Hoeij, Marcus Schmies,
-        Computing Riemann Theta functions,
-        Math. Comp. 73-247 (2004): 1417-1442.
-
-.. [AC2019] \Daniele Agostini, Lynn Chua,
-        Computing theta functions with Julia,
-        Journal of Software for Algebra and Geometry 11 (2021): 41-51
-
 """
 # ****************************************************************************
 #       Copyright (C) 2021 Nils Bruin <nbruin@sfu.ca>

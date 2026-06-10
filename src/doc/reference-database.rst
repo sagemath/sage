@@ -59,6 +59,10 @@
          *Coxeter submodular functions and deformations of Coxeter permutahedra*,
          Advances in Mathematics, Volume 365, 13 May 2020.
 
+.. [AC2019] \Daniele Agostini, Lynn Chua,
+            Computing theta functions with Julia,
+            Journal of Software for Algebra and Geometry 11 (2021): 41-51
+
 .. [ACFLSS04] \F. N. Abu-Khzam, R. L. Collins, M. R. Fellows, M. A.  Langston,
               \W. H. Suters, and C. T. Symons: Kernelization Algorithm for the
               Vertex Cover Problem: Theory and Experiments. *SIAM
@@ -2443,14 +2447,17 @@
             *Two classes of Hadamard matrices of Goethals-Seidel type*
             :arxiv:`2404.14375`
 
-.. [DJP2001] \X. Droubay, J. Justin, G. Pirillo, *Episturmian words
-             and some constructions of de Luca and Rauzy*,
-             Theoret. Comput. Sci.  255 (2001) 539--553.
+.. [DHBvHS2004] \Bernard Deconinck, Matthias Heil, Alexander Bobenko, Mark van Hoeij, Marcus Schmies,
+                Computing Riemann Theta functions, Math. Comp. 73-247 (2004): 1417-1442.
 
 .. [DJP2014] Luca De Feo, David Jao and Jérôme Plût: Towards quantum-resistant
              cryptosystems from supersingular elliptic curve isogenies. Journal
              of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
              https://eprint.iacr.org/2011/506.pdf
+
+.. [DJP2001] \X. Droubay, J. Justin, G. Pirillo, *Episturmian words
+             and some constructions of de Luca and Rauzy*,
+             Theoret. Comput. Sci.  255 (2001) 539--553.
 
 .. [DJS2003] \M. Davis, T. Januszkiewicz, and R. Scott.
              *Fundamental groups of blow-ups*. Selecta Math.,
