@@ -1239,6 +1239,13 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: h.is_isomorphic(k)                                                    # needs networkx
         True
 
+    Loops and multiple edges are accepted and simplified away (a maximum
+    matching of the simple graph is one of ``G``)::
+
+        sage: g = Graph([(0, 0), (0, 1), (0, 1), (1, 2)], loops=True, multiedges=True)
+        sage: g.matching(algorithm='Micali-Vazirani', value_only=True)
+        1
+
     TESTS:
 
     If ``algorithm`` is set to anything different from ``'Edmonds'``, ``'LP'``,
@@ -1331,7 +1338,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
             raise ValueError("Micali-Vazirani algorithm does not "
                 "support edge labels or weights")
 
-        micali_vazirani_matching = MicaliVaziraniMatching(G.to_simple())
+        micali_vazirani_matching = MicaliVaziraniMatching(G)
         M = micali_vazirani_matching.get_matching()
 
         return len(M) if value_only else M
@@ -1720,10 +1727,11 @@ class MicaliVaziraniMatching:
 
     INPUT:
 
-    - ``G`` -- a :class:`~sage.graphs.graph.Graph`; a simple undirected graph.
+    - ``G`` -- a :class:`~sage.graphs.graph.Graph`; an undirected graph.
       Vertices are relabelled internally to `0, 1, \ldots, n - 1`, isolated
       vertices are discarded, and edge labels (weights) are ignored. Loops and
-      multiple edges are not allowed.
+      multiple edges are removed (a maximum matching of the resulting simple
+      graph is a maximum matching of ``G``).
 
     EXAMPLES:
 
@@ -1795,10 +1803,11 @@ class MicaliVaziraniMatching:
 
         INPUT:
 
-        - ``G`` -- a :class:`~sage.graphs.graph.Graph`; a simple undirected
-          graph. A mutable copy is taken, isolated vertices are dropped, and
-          the remaining vertices are relabelled to `0, 1, \ldots, n - 1`. Loops
-          and multiple edges raise a :exc:`ValueError`; edge labels are ignored.
+        - ``G`` -- a :class:`~sage.graphs.graph.Graph`; an undirected graph.
+          Loops and multiple edges are removed (a maximum matching of the
+          resulting simple graph is a maximum matching of ``G``), isolated
+          vertices are dropped, and the remaining vertices are relabelled to
+          `0, 1, \ldots, n - 1`. Edge labels are ignored.
 
         EXAMPLES::
 
@@ -1815,27 +1824,38 @@ class MicaliVaziraniMatching:
             Traceback (most recent call last):
             ...
             ValueError: The input must be a graph
-            sage: MicaliVaziraniMatching(Graph([(0, 0)], loops=True))
-            Traceback (most recent call last):
-            ...
-            ValueError: Micali-Vazirani algorithm is only applicable to simple undirected graphs
+            sage: MicaliVaziraniMatching(Graph([(0, 0)], loops=True)).N
+            0
+            sage: MV = MicaliVaziraniMatching(Graph([(0, 1), (0, 1)], multiedges=True))
+            sage: MV.N, MV.G.size()
+            (2, 1)
+            sage: G = Graph([(0, 0), (0, 1), (0, 1), (1, 2)], loops=True, multiedges=True)
+            sage: M = MicaliVaziraniMatching(G).get_matching()
+            sage: len(M) == len(G.to_simple().matching(algorithm='Edmonds'))
+            True
         """
         from sage.graphs.graph import Graph
 
         if not isinstance(G, Graph):
             raise ValueError("The input must be a graph")
 
-        if G.has_loops() or G.has_multiple_edges():
-            raise ValueError("Micali-Vazirani algorithm is only applicable "
-                "to simple undirected graphs")
-
         # ******************************
         # Set up global state containers
         # ******************************
-        self.G = G.copy(immutable=False)
+        # Loops and multiple edges are removed: a maximum matching of the
+        # underlying simple graph is a maximum matching of ``G`` (a loop can
+        # never be matched, and parallel edges are redundant for the unweighted
+        # matching computed here). ``to_simple`` also clears the loops/multiedge
+        # flags, so the downstream code may safely mutate ``self.G``; copy
+        # explicitly only when ``G`` is already simple.
+        if G.allows_loops() or G.allows_multiple_edges():
+            self.G = G.to_simple(immutable=False)
+        else:
+            self.G = G.copy(immutable=False)
 
         # Isolated vertices cannot be matched, so drop them.
-        self.G.delete_vertices([v for v in self.G if not self.G.degree(v)])
+        self.G.delete_vertices(v for v, d in self.G.degree_iterator(labels=True)
+                               if not d)
         self.N = self.G.order()
 
         # Relabel the remaining vertices to 0, 1, ..., N - 1, keeping the
