@@ -2736,19 +2736,18 @@ class MicaliVaziraniMatching:
                         current_vertex = vertex
                         path.append(end_vertex)
                         break
-                    elif self.vertex_petal_map[vertex] == petal and \
-                         self.color[current_vertex] == self.color[vertex]:
+                    if self.vertex_petal_map[vertex] == petal and \
+                       self.color[current_vertex] == self.color[vertex]:
                         next_petal_vertex = vertex
                     elif self.vertex_petal_map[vertex] == petal and \
                          self.color[current_vertex] != self.color[vertex]:
                         wrong_petal_vertex = vertex
                     else:
                         new_petal = vertex
-                else:
-                    if vertex == petal.base:
-                        current_vertex = vertex
-                        path.append(end_vertex)
-                        break
+                elif vertex == petal.base:
+                    current_vertex = vertex
+                    path.append(end_vertex)
+                    break
 
             if previous_vertex == current_vertex:
                 if next_petal_vertex is not None:
