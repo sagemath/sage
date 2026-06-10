@@ -216,10 +216,9 @@ def siegel_reduction(M):
         omega = numerical_inverse(big_omega_hat[:, :g]) * big_omega_hat[:, g:]
         return omega, gamma_matrix
 
-    elif 2 * g == n:
+    if 2 * g == n:
         return _siegel_big_period_matrix(M)
 
-    else:
-        raise ValueError(
-            "Input matrix should either be a gxg Riemann matrix or a gx2g big period matrix"
-        )
+    raise ValueError(
+        "Input matrix should either be a gxg Riemann matrix or a gx2g big period matrix"
+    )
