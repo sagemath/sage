@@ -264,6 +264,15 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
     def number_field(self):
         r"""
         Return the number field that this is an ideal in.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^2 - 5); K
+            Number Field in a with defining polynomial x^2 - 5
+            sage: O = K.order(a)
+            sage: O.ideal(2).number_field()
+            Number Field in a with defining polynomial x^2 - 5
         """
         return self._K
 
