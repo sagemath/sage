@@ -105,3 +105,11 @@ It supports two modes of operation:
   ```bash
   uv run tools/update_typestubs.py write <path to Cython file.pyx>
   ```
+
+## Sort references
+
+The Python script `tools/sort-references.py` can be used to sort in-place the
+references in `src/doc/en/reference/references/index.rst`, or to check for
+disorder (with the `-c` flag). This check runs automatically before each
+commit, if there are staged changes in the reference file, and if the hook
+`git-hooks/pre-commit` is enabled.
