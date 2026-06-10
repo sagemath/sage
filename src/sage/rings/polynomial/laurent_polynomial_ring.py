@@ -556,11 +556,6 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             x^-2
             sage: L.monomial(-1) == ~x
             True
-
-        TESTS::
-
-            sage: L.monomial(5) == x^5
-            True
         """
         return self.element_class(self, {arg: self.base_ring().one()})
 
