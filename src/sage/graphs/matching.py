@@ -1927,6 +1927,44 @@ class MicaliVaziraniMatching:
             sage: MV.compute_initial_maximal_matching()
             sage: MV.M.size()
             2
+
+        TESTS:
+
+        The seed is a valid matching (every vertex is covered at most once)
+        and is maximal (no edge has both endpoints free)::
+
+            sage: def seed_is_maximal(G):
+            ....:     MV = MicaliVaziraniMatching(G)
+            ....:     MV.compute_initial_maximal_matching()
+            ....:     if max(MV.M.degree(), default=0) > 1:
+            ....:         return False
+            ....:     matched = {v for v in MV.M if MV.M.degree(v)}
+            ....:     return not any(u not in matched and v not in matched
+            ....:                    for u, v in MV.G.edge_iterator(labels=False))
+            sage: all(seed_is_maximal(G) for G in [graphs.PetersenGraph(),
+            ....:                                   graphs.CompleteGraph(9),
+            ....:                                   graphs.CompleteBipartiteGraph(7, 9)])
+            True
+
+        Seeding only reduces the number of phases; it never changes the size of
+        the final maximum matching, which agrees with Edmonds' blossom
+        algorithm::
+
+            sage: graph_list = [graphs.PetersenGraph(), graphs.CompleteGraph(9),
+            ....:               graphs.CompleteGraph(11),
+            ....:               graphs.CompleteBipartiteGraph(7, 9)]
+            sage: all(len(MicaliVaziraniMatching(G).get_matching())
+            ....:     == len(G.matching(algorithm='Edmonds')) for G in graph_list)
+            True
+
+        The same holds over many random graphs::
+
+            sage: set_random_seed(0)
+            sage: all(len(MicaliVaziraniMatching(G).get_matching())             # long time
+            ....:     == len(G.matching(algorithm='Edmonds'))
+            ....:     for G in (graphs.RandomGNP(randint(2, 40), random())
+            ....:               for _ in range(100)))
+            True
         """
 
         # Make a copy J of G for the greedy matching process
@@ -1936,17 +1974,14 @@ class MicaliVaziraniMatching:
         degree: List[int] = [J.degree(v) for v in range(self.N)]
         minimum_degree, maximum_degree = min(degree), max(degree)
 
-        # Create a list of buckets, where bucket[i] contains the set of vertices of degree i
+        # Create a list of buckets, where bucket[i] holds the set of
+        # vertices of degree i
         buckets: List[set] = [set() for _ in range(maximum_degree + 1)]
         for v, d in enumerate(degree):
             buckets[d].add(v)
 
-        # Main loop: continue while there is a non-empty bucket of degrees
-        while minimum_degree < len(buckets):
-
-            # If J has at most one vertex, exit the loop
-            if J.order() <= 1:
-                break
+        # Main loop: while J has more than one vertex and a bucket remains
+        while J.order() > 1 and minimum_degree < len(buckets):
 
             # If there are no vertices with the current minimum degree, advance
             if not buckets[minimum_degree]:
@@ -1956,17 +1991,16 @@ class MicaliVaziraniMatching:
             # Pop a vertex u of minimum degree
             u = buckets[minimum_degree].pop()
 
-            # Choose the neighbor v of u with minimum degree
-            neighbors = list(J.neighbors(u))
-
-            if not neighbors:
-                degree[u] -= 1
-
-                # Remove isolated vertex and continue
+            # If u is isolated in J it cannot be matched: tombstone its
+            # degree (-1, as for matched vertices below) and drop it.
+            if not degree[u]:
+                degree[u] = -1
                 J.delete_vertex(u)
                 continue
 
-            # choose neighbor v with minimum degree (ties broken by smallest index)
+            # Choose the neighbor v of u with minimum degree (ties broken
+            # by smallest index)
+            neighbors = J.neighbors(u)
             v = min(neighbors, key=lambda x: degree[x])
 
             # Add the edge (u, v) to the matching M with its label
@@ -1988,12 +2022,19 @@ class MicaliVaziraniMatching:
             # Remove u and v from the graph J
             J.delete_vertices([u, v])
 
-            # Remove these vertices from the bucket lists and update the degree in degree list
+            # Remove v from its bucket and tombstone both degrees (-1)
             buckets[degree[v]].discard(v)
             degree[u], degree[v] = -1, -1
 
-            # Reset minimum_degree to find the next smallest bucket
-            minimum_degree = 0
+            # Vertices that just became isolated can never be matched;
+            # remove them now so the next scan can start from degree 1.
+            for w in list(buckets[0]):
+                buckets[0].discard(w)
+                degree[w] = -1
+                J.delete_vertex(w)
+
+            # Bucket 0 is now empty, so resume scanning from degree 1
+            minimum_degree = 1
 
     # ******************************
     # Start a new phase
