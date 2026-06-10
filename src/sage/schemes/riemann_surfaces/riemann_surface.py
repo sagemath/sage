@@ -655,6 +655,7 @@ class RiemannSurface:
         self._CCw = PolynomialRing(self._CC, [self._R.gen(1)])
         self._RRz = PolynomialRing(self._RR, [self._R.gen(0)])
         self._curve = None
+        self.RT = None
         self.f = f
         if differentials is not None:
             self._differentials = [self._R(a) for a in differentials]
@@ -3950,6 +3951,51 @@ class RiemannSurface:
                 )
             )
         return dl
+
+    def theta(self, z=None, char=None, derivs=[], tol=None):
+        r"""
+        Evaluate Riemann theta function with characteristic and derivatives.
+
+        INPUT:
+
+        - ``z`` -- vector; optional (default 0). Point to evaluate theta function at.
+        - ``char`` -- list or vector; optional (default 0). Characteristic.
+            The characteristic can either be specified as a list
+            ``[[eps_1, ...,eps_g],[delta_1, ..., delta_g],N]``, where ``N`` is the level
+            of the characteristic and the ``eps_i, delta_j`` are integers describing the
+            characteristic, or as a ``2*g`-dimensional vector over ``ZZ/ N*ZZ``. In the latter case,
+            the level ``N`` is read off from the base ring and the vector is taken to be
+            ``[eps_1, ..., eps_g, delta_1, ..., delta_g]``.
+        - ``derivs`` -- list; optional (default []). Derivatives. It can be a list
+            of integers ``[i_1,...,i_n]``, in which case it is taken to mean the derivative of
+            order ``n``, obtained by taking the partial derivative with respect to
+            ``z[i_1], ..., z[i_n]``. Alternatively, it can be a list of lists of integers,
+            in which case the values of the derivatives indicated by the members of the list
+            are returned as a tuple, in order.
+        - ``tol`` -- real number; optional. Tolerance allowed in approximation. The default is
+            the tolerance indicated by the precision of the base ring. Note that the tolerance
+            controlled is the tolerance in the approximation of the periodic part of the Riemann
+            Theta function (see [DHBvHS2004]_). Furthermore, floating point rounding in iterated
+            summations may perturb the lower bits.
+
+        OUTPUT: A complex number of a tuple of them; the value(s) of the indicated Riemann
+        Theta function(s).
+
+        EXAMPLES::
+
+            sage: x = polygen(QQ)
+            sage: E = HyperellipticCurve(x^3-x)
+            sage: S = E.riemann_surface(prec=100)
+            sage: even = [v for v in GF(2)^2 if v[:1]*v[1:] == 0]
+            sage: P = [S.theta(char=c) for c in even]
+            sage: (P[1]/P[0]).algdep(4), (P[2]/P[0]).algdep(4)
+            (x^4 + 1, x^4 - 2)
+
+        """
+        if self.RT is None:
+            from sage.numerical.riemann_theta import RiemannTheta
+            self.RT = RiemannTheta(self.riemann_matrix())
+        return self.RT(z, char, derivs, tol)
 
 
 def integer_matrix_relations(M1, M2, b=None, r=None):
