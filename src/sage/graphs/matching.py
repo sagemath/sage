@@ -2207,9 +2207,7 @@ class MicaliVaziraniMatching:
 
         if is_augmented:
             self.num_augmentations += 1
-            is_augmented = False
-
-        return is_augmented
+        return False
 
     # After identifying support, we assign the vertex its max level label.
     # Note: This step is skipped during augmentation, as max levels are reset regardless.
@@ -2325,7 +2323,7 @@ class MicaliVaziraniMatching:
         previous_red_support, previous_green_support = [red_vertex], [green_vertex]
 
         # Boolean variables are initiated
-        no_augmentation_found = False if not self.min_level[red_vertex] and not self.min_level[green_vertex] else True
+        no_augmentation_found = bool(self.min_level[red_vertex] or self.min_level[green_vertex])
         collision = red_vertex == green_vertex
 
         # Returns nothing if there is no support for the petal
