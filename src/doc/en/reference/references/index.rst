@@ -1838,7 +1838,7 @@ REFERENCES:
             between `321`- and `132`- avoiding permutations*. Séminaire
             Lotharingien de Combinatoire **60** 2008. :arxiv:`0805.1325`.
 
-.. [ClKi2008] Derek G. Corneil and Richard M. Krueger, *A Unified View
+.. [CK2008] Derek G. Corneil and Richard M. Krueger, *A Unified View
             of Graph Searching*, SIAM Journal on Discrete Mathematics,
             22(4), 1259--1276, 2008.
             :doi:`10.1137/050623498`
