@@ -1901,7 +1901,7 @@ class MicaliVaziraniMatching:
         """
         if i > j:
             i, j = j, i
-        return self._edge_to_index[(i, j)]
+        return self._edge_to_index[i, j]
 
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
@@ -1911,7 +1911,7 @@ class MicaliVaziraniMatching:
         Seed ``self.M`` with a greedy maximal matching.
 
         The matching is built by repeatedly selecting a vertex of minimum
-        (positive) degree, matching it with one of its neighbours of minimum
+        (positive) degree, matching it with one of its neighbors of minimum
         degree, and removing both endpoints from a working copy of the graph.
         Starting from a maximal matching reduces the number of augmenting
         phases the main algorithm has to run; it does not, on its own, give a
@@ -1956,23 +1956,23 @@ class MicaliVaziraniMatching:
             # Pop a vertex u of minimum degree
             u = buckets[minimum_degree].pop()
 
-            # Choose the neighbour v of u with minimum degree
-            neighbours = list(J.neighbors(u))
+            # Choose the neighbor v of u with minimum degree
+            neighbors = list(J.neighbors(u))
 
-            if not neighbours:
+            if not neighbors:
                 degree[u] -= 1
 
                 # Remove isolated vertex and continue
                 J.delete_vertex(u)
                 continue
 
-            # choose neighbour v with minimum degree (ties broken by smallest index)
-            v = min(neighbours, key=lambda x: degree[x])
+            # choose neighbor v with minimum degree (ties broken by smallest index)
+            v = min(neighbors, key=lambda x: degree[x])
 
             # Add the edge (u, v) to the matching M with its label
             self.M.add_edge(u, v, J.edge_label(u, v))
 
-            # Update the degree of neighbours and relocate them to new buckets
+            # Update the degree of neighbors and relocate them to new buckets
             # the degrees will decrease by at most 2 after deletion
             # since J is free of multiple edges
 
@@ -2023,9 +2023,10 @@ class MicaliVaziraniMatching:
         self.search_level_vertices = []
 
         for u in self.G:
-            # A vertex is considered matched if it is incident to an edge in the current matching M.
-            # Checking `u in M` only tests whether u is a vertex of M, so use degree instead.
-            if self.M.degree(u) > 0:
+            # A vertex is considered matched if it is incident to an edge in
+            # the current matching M. Checking `u in M` only tests whether u
+            # is a vertex of M, so use degree instead.
+            if self.M.degree(u):
                 # Matched vertices start with infinite levels
                 self.min_level[u] = self.INFINITY
                 self.max_level[u] = self.INFINITY
@@ -2062,7 +2063,7 @@ class MicaliVaziraniMatching:
 
         From the vertices currently at ``search_level``, scan the
         appropriate-parity edges (unmatched edges from even levels, matched
-        edges from odd levels). A neighbour reached for the first time is
+        edges from odd levels). A neighbor reached for the first time is
         assigned minlevel ``search_level + 1``, the scanned edge becomes a
         *prop* and the current vertex is recorded as its predecessor; an edge
         to an already-levelled vertex is a *bridge* and is filed under its
@@ -2088,14 +2089,15 @@ class MicaliVaziraniMatching:
             sage: MV.min_level
             [0, 0, 0]
         """
-        next_search_level_vertices = []
-        parity = search_level % 2
-
         if not self.search_level_vertices or search_level > self.G.order():
             return True
 
+        next_search_level_vertices = []
+        parity = search_level % 2
+
         for u in self.search_level_vertices:
-            if self.level[u][parity] != search_level and self.level[u][parity] < self.INFINITY:
+            if self.level[u][parity] != search_level and \
+               self.level[u][parity] < self.INFINITY:
                 next_search_level_vertices.append(u)
                 continue
 
@@ -2131,7 +2133,8 @@ class MicaliVaziraniMatching:
                             self.tenacity_bridges_map[tenacity].append(edge_index)
 
                         # The case where tenacity is not yet known
-                        # (possibly due to the even/ odd level of the blossom not yet labeled
+                        # (possibly due to the even/ odd level of
+                        # the blossom not yet labeled)
                         else:
                             self.prop_edges.discard(edge_index)
 
@@ -2184,12 +2187,14 @@ class MicaliVaziraniMatching:
                self.deletion_phase[v] == self.phase_index:
                 continue
 
-            left_support, right_support, bottleneck, encountered_deleted_vertex = self.DDFS(u, v)
+            (left_support, right_support, bottleneck,
+             encountered_deleted_vertex) = self.DDFS(u, v)
 
             # if the bridge has been augmented
             if bottleneck is None:
                 if not encountered_deleted_vertex:
-                    augmentation_success = self.augment(left_support, right_support, (u, v, l))
+                    augmentation_success = self.augment(
+                        left_support, right_support, (u, v, l))
                     if augmentation_success:
                         is_augmented = True
                         if self.M.size() == self.G.order() // 2:
@@ -2251,7 +2256,7 @@ class MicaliVaziraniMatching:
                     edge_index = self.edge_to_index(vertex, neighbor)
 
                     # File the bridge under its tenacity, but only once that
-                    # tenacity is determined (a neighbour whose even level is
+                    # tenacity is determined (a neighbor whose even level is
                     # still infinite leaves it unknown for now).
                     if edge_index not in self.prop_edges:
                         tenacity = self.max_level[vertex] + self.level[neighbor][0] + 1
@@ -2266,7 +2271,11 @@ class MicaliVaziraniMatching:
     # ******************************
     # Double DFS to locate augmenting paths
     # ******************************
-    def DDFS(self, source_red_vertex: int, source_green_vertex: int) -> tuple[list[int], list[int], Optional[int], bool]:
+    def DDFS(
+        self,
+        source_red_vertex: int,
+        source_green_vertex: int,
+    ) -> tuple[list[int], list[int], Optional[int], bool]:
         r"""
         Run the double depth-first search from the two ends of a bridge.
 
@@ -2302,7 +2311,8 @@ class MicaliVaziraniMatching:
         # Stack saves previously traversed vertices
         red_stack, green_stack = [], []
         # Set the starting point for each of red and green DFS's
-        red_vertex, green_vertex = self.get_bud(source_red_vertex), self.get_bud(source_green_vertex)
+        red_vertex, green_vertex = \
+            self.get_bud(source_red_vertex), self.get_bud(source_green_vertex)
 
         # Copy predecessor list over for the current vertex
         red_predecessors, green_predecessors = \
@@ -2310,7 +2320,8 @@ class MicaliVaziraniMatching:
         # the lists holding the support of the current bridge
         red_support, green_support = [red_vertex], [green_vertex]
 
-        # Following is used to save the data for DFS's for when they backtrack in the case a bottleneck is reached
+        # Following is used to save the data for DFS's for when they backtrack
+        # in the case a bottleneck is reached
         previous_red_support, previous_green_support = [red_vertex], [green_vertex]
 
         # Boolean variables are initiated
@@ -2332,22 +2343,27 @@ class MicaliVaziraniMatching:
                 # The the levels of the vertices are the same, we reverse the green DFS
                 if self.min_level[red_vertex] == self.min_level[green_vertex]:
                     previous_green_support = green_support[:]
-                    green_vertex, green_predecessors, reverse_check = self.reverse_DFS(green_vertex, green_predecessors, green_stack, green_support)
+                    green_vertex, green_predecessors, reverse_check = self.reverse_DFS(
+                        green_vertex, green_predecessors, green_stack, green_support)
 
                     if reverse_check:
                         previous_red_support, red_bottleneck = red_support[:], red_vertex
-                        red_vertex, red_predecessors, reverse_check = self.reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
+                        red_vertex, red_predecessors, reverse_check = self.reverse_DFS(
+                            red_vertex, red_predecessors, red_stack, red_support)
 
                 elif self.min_level[red_vertex] > self.min_level[green_vertex]:
-                    red_vertex, red_predecessors, collision = self.reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
+                    red_vertex, red_predecessors, collision = self.reverse_DFS(
+                        red_vertex, red_predecessors, red_stack, red_support)
 
                 elif self.min_level[red_vertex] < self.min_level[green_vertex]:
-                    green_vertex, green_predecessors, collision = self.reverse_DFS(green_vertex, green_predecessors, green_stack, green_support)
+                    green_vertex, green_predecessors, collision = self.reverse_DFS(
+                        green_vertex, green_predecessors, green_stack, green_support)
 
                 if red_vertex == green_vertex:
                     previous_red_support.pop()
                     green_support.pop()
-                    return previous_red_support, green_support, red_vertex, encountered_deleted_vertex
+                    return (previous_red_support, green_support,
+                            red_vertex, encountered_deleted_vertex)
 
                 collision = False
 
@@ -2355,37 +2371,47 @@ class MicaliVaziraniMatching:
             elif self.min_level[red_vertex] >= self.min_level[green_vertex]:
 
                 # Advance the red DFS, will reverse if no vertices to travel to
-                red_vertex, red_predecessors, collision = self.advance_DFS(red_vertex, red_predecessors, red_stack, red_support, label)
+                red_vertex, red_predecessors, collision = self.advance_DFS(
+                    red_vertex, red_predecessors, red_stack, red_support, label)
 
                 # If stack is cleared and no vertices left to explore, bottleneck is found
                 if not red_stack and not red_predecessors:
                     previous_red_support.pop()
                     green_support.pop()
-                    return previous_red_support, green_support, green_vertex, encountered_deleted_vertex
+                    return (previous_red_support, green_support,
+                            green_vertex, encountered_deleted_vertex)
 
             # Case where green DFS advances in search
             else:
                 # Advance the green DFS, will reverse if no vertices to travel to
-                green_vertex, green_predecessors, collision = self.advance_DFS(green_vertex, green_predecessors, green_stack, green_support, label)
+                green_vertex, green_predecessors, collision = self.advance_DFS(
+                    green_vertex, green_predecessors, green_stack, green_support, label)
 
                 # If stack is clearned and no vertices left to explore, reverse red DFS
                 if not green_stack and not green_predecessors:
                     green_support = previous_green_support
-                    previous_green_support, green_vertex, green_predecessors = [green_vertex], red_vertex, red_predecessors[:]
+                    previous_green_support, green_vertex, green_predecessors = \
+                        [green_vertex], red_vertex, red_predecessors[:]
                     previous_red_support, red_bottleneck = red_support[:], red_vertex
-                    red_vertex, red_predecessors, reverse_check = self.reverse_DFS(red_vertex, red_predecessors, red_stack, red_support)
+                    red_vertex, red_predecessors, reverse_check = self.reverse_DFS(
+                        red_vertex, red_predecessors, red_stack, red_support)
 
                     if reverse_check:
                         previous_red_support.pop()
                         green_support.pop()
-                        return previous_red_support, green_support, red_bottleneck, encountered_deleted_vertex
+                        return (previous_red_support, green_support,
+                                red_bottleneck, encountered_deleted_vertex)
 
-            # Checks if vertex was removed in previous augmentation during current search_level
-            if self.deletion_phase[red_vertex] == self.phase_index or self.deletion_phase[green_vertex] == self.phase_index:
+            # Checks if vertex was removed in previous augmentation during
+            # current search_level
+            if self.deletion_phase[red_vertex] == self.phase_index or \
+               self.deletion_phase[green_vertex] == self.phase_index:
                 encountered_deleted_vertex = True
 
             # Checks if augmenting path has been found
-            if not self.min_level[red_vertex] and not self.min_level[green_vertex] and red_vertex != green_vertex:
+            if not self.min_level[red_vertex] and \
+               not self.min_level[green_vertex] and \
+               red_vertex != green_vertex:
                 no_augmentation_found = False
 
         return red_support, green_support, None, encountered_deleted_vertex
@@ -2393,7 +2419,14 @@ class MicaliVaziraniMatching:
     # ******************************
     # Auxiliary Subroutine: advance DFS along predecessors
     # ******************************
-    def advance_DFS(self, vertex: int, predecessor_list: list[int], stack: list[tuple[int, list[int]]], support: list[int], label: tuple[int, int]) -> tuple[int, list[int], bool]:
+    def advance_DFS(
+        self,
+        vertex: int,
+        predecessor_list: list[int],
+        stack: list[tuple[int, list[int]]],
+        support: list[int],
+        label: tuple[int, int],
+    ) -> tuple[int, list[int], bool]:
         r"""
         Take one forward step of a depth-first search in :meth:`DDFS`.
 
@@ -2441,13 +2474,20 @@ class MicaliVaziraniMatching:
 
         # If next vertex not found reverse path
         else:
-            next_vertex, predecessor_list, reverse_check = self.reverse_DFS(vertex, predecessor_list, stack, support)
+            next_vertex, predecessor_list, reverse_check = self.reverse_DFS(
+                vertex, predecessor_list, stack, support)
         return next_vertex, predecessor_list, reverse_check
 
     # ******************************
     # Auxiliary Subroutine: backtrack in DFS stack
     # ******************************
-    def reverse_DFS(self, vertex: int, predecessor_list: list[int], stack: list[tuple[int, list[int]]], support: list[int]) -> tuple[int, list[int], bool]:
+    def reverse_DFS(
+        self,
+        vertex: int,
+        predecessor_list: list[int],
+        stack: list[tuple[int, list[int]]],
+        support: list[int],
+    ) -> tuple[int, list[int], bool]:
         r"""
         Backtrack one step of a depth-first search in :meth:`DDFS`.
 
@@ -2491,7 +2531,13 @@ class MicaliVaziraniMatching:
     # ******************************
     # Contract a blossom (petal)
     # ******************************
-    def form_blossom(self, left_support: list[int], right_support: list[int], bud: int, bridge: Edge) -> None:
+    def form_blossom(
+        self,
+        left_support: list[int],
+        right_support: list[int],
+        bud: int,
+        bridge: Edge,
+    ) -> None:
         r"""
         Contract a new blossom rooted at ``bud``.
 
@@ -2518,7 +2564,13 @@ class MicaliVaziraniMatching:
         self.form_petal(left_support, bud, petal, 0)
         self.form_petal(right_support, bud, petal, 1)
 
-    def form_petal(self, support: list[int], bud: int, petal: Petal, direction: int) -> None:
+    def form_petal(
+        self,
+        support: list[int],
+        bud: int,
+        petal: Petal,
+        direction: int,
+    ) -> None:
         r"""
         Attach one side of a blossom to its petal.
 
@@ -2634,7 +2686,12 @@ class MicaliVaziraniMatching:
         petal_path = self.unfold_petal(bud, target)
         return path + petal_path
 
-    def unfold_path_in_petal(self, start_vertex: int, end_vertex: int, petal: Petal) -> list[int]:
+    def unfold_path_in_petal(
+        self,
+        start_vertex: int,
+        end_vertex: int,
+        petal: Petal,
+    ) -> list[int]:
         r"""
         Trace one segment of the alternating path inside a petal.
 
@@ -2681,9 +2738,11 @@ class MicaliVaziraniMatching:
                         current_vertex = vertex
                         path.append(end_vertex)
                         break
-                    elif self.vertex_petal_map[vertex] == petal and self.color[current_vertex] == self.color[vertex]:
+                    elif self.vertex_petal_map[vertex] == petal and \
+                         self.color[current_vertex] == self.color[vertex]:
                         next_petal_vertex = vertex
-                    elif self.vertex_petal_map[vertex] == petal and self.color[current_vertex] != self.color[vertex]:
+                    elif self.vertex_petal_map[vertex] == petal and \
+                         self.color[current_vertex] != self.color[vertex]:
                         wrong_petal_vertex = vertex
                     else:
                         new_petal = vertex
@@ -2700,8 +2759,10 @@ class MicaliVaziraniMatching:
 
                 elif wrong_petal_vertex is not None:
                     current_vertex = vertex
-                    if self.vertex_petal_map[vertex] != petal and self.vertex_petal_map[vertex] is not None:
-                        petal_path = self.unfold_petal(current_vertex, self.vertex_petal_map[vertex].base)
+                    if self.vertex_petal_map[vertex] != petal and \
+                       self.vertex_petal_map[vertex] is not None:
+                        petal_path = self.unfold_petal(
+                            current_vertex, self.vertex_petal_map[vertex].base)
                         path += petal_path
                         current_vertex = path[-1]
                     else:
@@ -2710,24 +2771,34 @@ class MicaliVaziraniMatching:
                     return []
 
                 else:
-                    if not self.M.has_edge(current_vertex, new_petal, self.G.edge_label(current_vertex, new_petal)):
-                        path_addition = self.unfold_petal(new_petal, self.vertex_petal_map[new_petal].base)
+                    if not self.M.has_edge(
+                            current_vertex, new_petal,
+                            self.G.edge_label(current_vertex, new_petal)):
+                        path_addition = self.unfold_petal(
+                            new_petal, self.vertex_petal_map[new_petal].base)
                         if not path_addition:
                             return []
 
                         path += path_addition
                         current_vertex = self.vertex_petal_map[new_petal].base
-                        while self.vertex_petal_map[current_vertex] != petal and current_vertex != end_vertex:
+                        while self.vertex_petal_map[current_vertex] != petal and \
+                              current_vertex != end_vertex:
                             # digging deeper into the petal
                             path.pop()
                             if self.vertex_petal_map[current_vertex]:
-                                path += self.unfold_petal(current_vertex, self.vertex_petal_map[current_vertex].base)
-                                current_vertex = self.vertex_petal_map[current_vertex].base
+                                path += self.unfold_petal(
+                                    current_vertex,
+                                    self.vertex_petal_map[current_vertex].base)
+                                current_vertex = \
+                                    self.vertex_petal_map[current_vertex].base
                             else:
                                 # bud failure
                                 return []
                     else:
-                        path += self.unfold_path_in_petal(new_petal, self.vertex_petal_map[new_petal].base, self.vertex_petal_map[new_petal])
+                        path += self.unfold_path_in_petal(
+                            new_petal,
+                            self.vertex_petal_map[new_petal].base,
+                            self.vertex_petal_map[new_petal])
                         current_vertex = self.vertex_petal_map[new_petal].base
 
         return path
@@ -2735,7 +2806,12 @@ class MicaliVaziraniMatching:
     # ******************************
     # Augment along a found path
     # ******************************
-    def augment(self, left_support: list[int], right_support: list[int], bridge: Edge) -> bool:
+    def augment(
+        self,
+        left_support: list[int],
+        right_support: list[int],
+        bridge: Edge,
+    ) -> bool:
         r"""
         Augment the current matching along a discovered augmenting path.
 
@@ -2774,7 +2850,8 @@ class MicaliVaziraniMatching:
             # Could not construct a valid augmenting path
             return False
 
-        # The left path needs to be reversed to go from the free vertex to the bridge vertex
+        # The left path needs to be reversed to go from the free vertex to the
+        # bridge vertex
         left_path.reverse()
         path = left_path + right_path
 
@@ -2844,7 +2921,8 @@ class MicaliVaziraniMatching:
 
             # Do a search following the trail given by the support
             while self.get_bud(current_vertex) != vertex:
-                # If it is not the correct vertex pop the next vertex in the predecessor list
+                # If it is not the correct vertex pop the next vertex
+                # in the predecessor list
                 current_vertex = predecessor_list.pop()
 
             predecessor_list = self.predecessor[current_vertex][:]
@@ -2853,7 +2931,8 @@ class MicaliVaziraniMatching:
             if self.vertex_petal_map[current_vertex] is None:
                 path.append(current_vertex)
             else:
-                petal_path = self.unfold_petal(current_vertex, self.get_bud(current_vertex))
+                petal_path = self.unfold_petal(
+                    current_vertex, self.get_bud(current_vertex))
                 if not petal_path:
                     return []
                 path += petal_path
@@ -2863,7 +2942,9 @@ class MicaliVaziraniMatching:
 
     # ******************************
     # Main: search phases
-    # This is the main loop that finds and aguments phases (a maximal set of minimum length disjoin augmenting paths) and erase those vertices judiciously.
+    # This is the main loop that finds and aguments phases (a maximal set of
+    # minimum length disjoin augmenting paths) and erase those vertices
+    # judiciously.
     # ******************************
     def search(self) -> bool:
         r"""
