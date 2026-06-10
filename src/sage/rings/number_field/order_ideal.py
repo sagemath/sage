@@ -262,6 +262,9 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         return self.free_module().index_in(self.ring().free_module())
 
     def number_field(self):
+        r"""
+        Return the number field that this is an ideal in.
+        """
         return self._K
 
     def factor(self):
