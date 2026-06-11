@@ -149,7 +149,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing, Ring
+from sage.rings.ring import Ring
 from sage.structure.category_object import check_default_category
 from sage.structure.element import Element, RingElement
 
@@ -1052,7 +1052,7 @@ class PolynomialRing_generic(Ring):
 
         return PolynomialRing(R, names=self.variable_name(), sparse=self.is_sparse())
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         r"""
         Return the polynomial ring in variable ``var`` over the same base
         ring.
@@ -1061,12 +1061,14 @@ class PolynomialRing_generic(Ring):
 
             sage: R.<x> = ZZ[]; R
             Univariate Polynomial Ring in x over Integer Ring
-            sage: R.change_var('y')
+            sage: R.change_variable_name('y')
             Univariate Polynomial Ring in y over Integer Ring
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         return PolynomialRing(self.base_ring(), names=var, sparse=self.is_sparse())
+
+    change_var = change_variable_name
 
     def extend_variables(self, added_names, order='degrevlex'):
         r"""
@@ -1890,9 +1892,9 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         return roots
 
 
-class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, CommutativeRing):
+class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, Ring):
     def __init__(self, base_ring, name='x', sparse=False, implementation=None,
-            element_class=None, category=None):
+                 element_class=None, category=None):
         """
         TESTS::
 

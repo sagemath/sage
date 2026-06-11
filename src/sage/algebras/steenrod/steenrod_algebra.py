@@ -457,7 +457,7 @@ from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 
 ######################################################
 # the main class
@@ -2635,7 +2635,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return sum(self._profile)
         return sum(self._profile[0]) + len([a for a in self._profile[1] if a == 2])
 
-    def gens(self) -> Family:
+    def gens(self) -> AbstractFamily:
         r"""
         Family of generators for this algebra.
 

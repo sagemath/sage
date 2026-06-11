@@ -2327,11 +2327,16 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         except MIPSolverException:
             return True
 
+    # The objective function is a sum of booleans, but they get summed
+    # before conversion. This can lead to an objective value that is
+    # very close to, but not actually, an integer. So instead of
+    # querying the objective value directly, we (re)compute it from
+    # the optimal booleans, post-conversion, taking the integrality
+    # tolerance into consideration.
     p.set_objective(p.sum(in_set[1, v] for v in g))
-
-    val = p.solve(log=verbose)
-
+    p.solve(log=verbose)
     in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+    val = sum(in_set[1, v] for v in g)
 
     if value_only:
         return sum(1 for v in g if in_set[1, v])
@@ -3197,16 +3202,16 @@ def spqr_tree(G, algorithm='Hopcroft_Tarjan', solver=None, verbose=0,
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 15), ('R', 1), ('S', 15)]
         sage: T = G.spqr_tree(algorithm='cleave')                                       # needs sage.numerical.mip
-        sage: sorted(Counter(u[0] for u in T).items())                                  # needs sage.numerical.mip
-        [('P', 15), ('R', 1), ('S', 15)]
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))                                    # needs sage.numerical.mip
+        True
         sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm='Hopcroft_Tarjan')
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 60), ('R', 1), ('S', 75)]
         sage: T = G.spqr_tree(algorithm='cleave')       # long time                     # needs sage.numerical.mip
-        sage: sorted(Counter(u[0] for u in T).items())  # long time                     # needs sage.numerical.mip
-        [('P', 60), ('R', 1), ('S', 75)]
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))    # long time                     # needs sage.numerical.mip
+        True
 
     TESTS::
 

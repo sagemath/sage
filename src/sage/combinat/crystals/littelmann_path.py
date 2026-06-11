@@ -1176,8 +1176,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                     #if a.is_short_root():
                     #    if cartan_dual.type() == 'G':
                     #        return 3*a
-                    #    else:
-                    #        return 2*a
+                    #    return 2*a
                     #return a
 
             paths = [G.shortest_path(L[i+1],L[i]) for i in range(len(L)-1)]
