@@ -174,6 +174,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("pkg:generic/sagemath-graphs", "sagemath-db-graphs")
         .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
+        .replace("pkg:generic/highs", "highs")
         .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
         for req in all_requirements
     }

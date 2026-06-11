@@ -148,7 +148,7 @@ class sage__combinat(JoinFeature):
         JoinFeature.__init__(self, 'sage.combinat',
                              [PythonModule('sage.combinat'),                        # namespace package
                               PythonModule('sage.combinat.tableau'),                # representative
-                             ],
+                              ],
                              spkg='sagemath_combinat', type='standard')
 
 
@@ -192,7 +192,7 @@ class sage__geometry__polyhedron(JoinFeature):
                               PythonModule('sage.geometry.polyhedron'),             # representative
                               PythonModule('sage.schemes.toric'),                   # namespace package
                               PythonModule('sage.schemes.toric.variety'),           # representative
-                             ],
+                              ],
                              spkg='sagemath_polyhedra', type='standard')
 
 
@@ -274,7 +274,7 @@ class sage__graphs(JoinFeature):
                               PythonModule('sage.combinat.posets.posets'),          # representative
                               PythonModule('sage.topology'),                        # namespace package
                               PythonModule('sage.topology.simplicial_complex'),     # representative
-                             ],
+                              ],
                              spkg='sagemath_graphs', type='standard')
 
 
@@ -538,7 +538,6 @@ class sage__libs__giac(JoinFeature):
                              spkg='sagemath_giac', type='optional')
 
 
-
 class sage__libs__pari(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.pari`.
@@ -682,7 +681,7 @@ class sage__modules(JoinFeature):
                               PythonModule('sage.homology.chain_complex'),          # representative
                               PythonModule('sage.matroids'),                        # namespace package
                               PythonModule('sage.matroids.matroid'),                # representative
-                             ],
+                              ],
                              spkg='sagemath_modules', type='standard')
 
 
@@ -916,7 +915,6 @@ class sage__rings__padics(JoinFeature):
                              type='standard')
 
 
-
 class sage__rings__real_double(PythonModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_double`.
@@ -969,7 +967,7 @@ class sage__rings__real_mpfr(JoinFeature):
         JoinFeature.__init__(self, 'sage.rings.real_mpfr',
                              [PythonModule('sage.rings.real_mpfr'),
                               PythonModule('sage.rings.complex_mpfr'),
-                             ],
+                              ],
                              spkg='sagemath_modules', type='standard')
 
 
@@ -1073,7 +1071,7 @@ class sage__symbolic(JoinFeature):
                               PythonModule('sage.interfaces.qepcad'),
                               PythonModule('sage.interfaces.sympy'),
                               PythonModule('sage.interfaces.sympy_wrapper'),
-                             ], spkg='sagemath_symbolics', type='standard')
+                              ], spkg='sagemath_symbolics', type='standard')
 
 
 def all_features():
