@@ -2424,7 +2424,7 @@ class DocTestWorker(multiprocessing.Process):
             subprocess.
         """
         try:
-            self.result = self.result_queue.get(block=False)
+            self.result = self.result_queue.get(block=True, timeout=10)
         except Empty:
             self.result = (0, DictAsObject({'err': 'noresult'}))
         del self.result_queue
@@ -2664,7 +2664,7 @@ class DocTestTask:
             result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
 
         if result_queue is not None:
-            result_queue.put(result, False)
+            result_queue.put(result, block=True, timeout=10)
 
         return result
 
