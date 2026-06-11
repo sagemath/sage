@@ -72,8 +72,7 @@ jobs:
             upstream
           name: release_dist
 
-  sdists:
-
+  make_sdist:
     runs-on: ubuntu-latest
     env:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
@@ -98,7 +97,7 @@ jobs:
           python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -112,7 +111,7 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
 
   release:
-    needs: [release_dist, sdists]
+    needs: [release_dist, make_sdist]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     permissions:
@@ -157,115 +156,52 @@ jobs:
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
 
   build_wheels:
-    # Temporarily disabled due to build errors
-    if: false
-    name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
+    name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: sdists
     strategy:
       fail-fast: false
       matrix:
-        os:      [ubuntu-latest]
-        arch:    [x86_64, i686, aarch64]
-        build:   [manylinux, musllinux]
-        include:
-          - os: macos-13
-            arch: x86_64
-            build: macosx
-          - os: macos-14
-            arch: arm64
-            build: macosx
-    env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
-      # SPKGs to install as system packages
-      SPKGS: _bootstrap _prereq
-      # Non-Python packages to install as spkgs
-      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco tdlib
-      CIBW_BUILD: "*${{ matrix.build }}*"
-      # Disable building PyPy wheels on all platforms
-      CIBW_SKIP: "pp*"
-      #
-      CIBW_ARCHS: ${{ matrix.arch }}
-      # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
-      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.12, <3.13"
-      # Environment during wheel build
-      CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
-      # Use 'build', not 'pip wheel'
-      CIBW_BUILD_FRONTEND: build
+        os:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
-        uses: docker/setup-qemu-action@v3
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.1
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
         with:
-          platforms: all
+          name: release-wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl
 
-      - uses: actions/download-artifact@v6
-        with:
-          name: dist
-          path: dist
-
-      - uses: actions/setup-python@v5
-        # As of 2024-02-03, the macOS M1 runners do not have preinstalled python or pipx.
-        # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
-        id: python
-        with:
-          python-version: "3.12 - 3.13"
-          update-environment: false
-
-      - name: Bootstrap
-        run: |
-          export PATH=$(pwd)/build/bin:$PATH
-          eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap _prereq)
-          ./bootstrap
-
-      - name: Unpack and prepare
-        # We build the wheels from the sdists so that MANIFEST filtering becomes effective.
-        # But we must run cibuildwheel with the unpacked source directory, not a tarball,
-        # so that SAGE_ROOT is copied into the build containers.
-        #
-        # In the CIBW_BEFORE_ALL phase, we install libraries using the Sage distribution.
-        # https://cibuildwheel.readthedocs.io/en/stable/options/#before-all
-        # For Linux, this is repeated for each of the packages that we build wheels for
-        # because CIBW starts with a fresh container on each invocation.
-        # Therefore we cache it in a directory mounted from the host: /host
-        # https://cibuildwheel.pypa.io/en/stable/faq/#linux-builds-in-containers
-        #
-        # omit sagemath-{meataxe,sirocco} for now -- needs sagemath-modules
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m pip install cibuildwheel==3.0.1
-          export PATH=build/bin:$PATH
-          echo CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || $(sage-print-system-package-command alpine --yes --no-install-recommends install $(sage-get-system-packages alpine $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt" >> "$GITHUB_ENV"
-          mkdir -p unpacked
-          for sdist in dist/$pkg*.tar.gz; do
-              (cd unpacked && tar xfz - ) < $sdist
-          done
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
-          path: ./wheelhouse/*.whl
-
-  upload_wheels:
+  pypi-publish:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
-    needs: build_wheels
+    name: Upload wheels to PyPI
+    needs: [build_wheels, make_sdist]
     runs-on: ubuntu-latest
-    env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+    permissions:
+      id-token: write
+      attestations: write
+      contents: read
     steps:
-
       - uses: actions/download-artifact@v6
         with:
-          pattern: "*-*-*-wheels"
-          path: wheelhouse
+          pattern: release-*
+          path: dist
           merge-multiple: true
+      
+      - name: List files
+        run: ls -l -R dist
 
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
-          packages-dir: wheelhouse/
-          skip-existing: true
           verbose: true
-        if: env.CAN_DEPLOY == 'true'
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')

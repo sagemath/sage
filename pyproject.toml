@@ -251,6 +251,28 @@ docs = [
 lint = ["flake8-rst-docstrings", "pycodestyle", "relint", "ruff"]
 test = ["coverage", "pytest"]
 
+[tool.cibuildwheel]
+before-all = "bash -x {package}/tools/cibw-before-all.sh"
+build-frontend = "build[uv]"
+build-verbosity = 1
+environment-pass = [
+  "CI",
+  "GITHUB_ACTIONS",
+]
+skip = ["*-win32"]
+test-command = "python -m sage.doctest --installed"
+test-groups = ["test"]
+test-sources = ["pyproject.toml"]
+[tool.cibuildwheel.environment]
+CPATH = "/project/local/include:$CPATH"
+LD_LIBRARY_PATH = "/project/local/lib:$LD_LIBRARY_PATH"
+LIBRARY_PATH = "/project/local/lib:$LIBRARY_PATH"
+PATH = "/project/local/bin:$PATH"
+PKG_CONFIG_PATH = "/project/local/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+[tool.cibuildwheel.config-settings]
+setup-args = "-DSAGE_LOCAL=/project/local"
+
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
 
