@@ -1109,9 +1109,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             sage: F.merge(F)
             MPoly[x,y]
         """
-        if self == other:
-            return self
-        return None
+        return self if self == other else None
 
     def expand(self):
         """
@@ -3788,8 +3786,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         ....:             if g(0) == 1:
         ....:                 if g(2) == 2:
         ....:                     return x.transpose()
-        ....:                 else:
-        ....:                     return -x.transpose()
+        ....:                 return -x.transpose()
         ....:             else:
         ....:                 return x
         ....:         raise NotImplementedError

@@ -11,21 +11,24 @@ Features for testing the presence of ``mcqd``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from . import PythonModule
-from .join_feature import JoinFeature
+from sage.config import mcqd_enabled
+from sage.features import PythonModule
+from sage.features.build_feature import BuildFeature
 
-
-class Mcqd(JoinFeature):
+class Mcqd(BuildFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the :mod:`~sage.graphs.mcqd` module,
-    which is the SageMath interface to the :ref:`mcqd <spkg_mcqd>` library
+    A :class:`~sage.features.Feature` describing the presence of
+    the :mod:`~sage.graphs.mcqd` module, which is the SageMath
+    interface to the :ref:`mcqd <spkg_mcqd>` library
 
     EXAMPLES::
 
         sage: from sage.features.mcqd import Mcqd
-        sage: Mcqd().is_present()  # optional - mcqd
+        sage: Mcqd().is_present()  # needs mcqd
         FeatureTestResult('mcqd', True)
+
     """
+    _enabled_in_build = mcqd_enabled
 
     def __init__(self):
         """
@@ -34,11 +37,26 @@ class Mcqd(JoinFeature):
             sage: from sage.features.mcqd import Mcqd
             sage: isinstance(Mcqd(), Mcqd)
             True
-        """
-        JoinFeature.__init__(self, 'mcqd',
-                             [PythonModule('sage.graphs.mcqd',
-                                           spkg='mcqd')])
 
+        """
+        super().__init__("mcqd", spkg="mcqd")
+
+    def is_present_at_runtime(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features import FeatureTestResult
+            sage: from sage.features.mcqd import Mcqd
+            sage: result = Mcqd().is_present_at_runtime()
+            sage: isinstance(result, FeatureTestResult)
+            True
+            sage: result  # needs mcqd
+            FeatureTestResult('mcqd', True)
+
+        """
+        result = PythonModule("sage.graphs.mcqd")._is_present()
+        result.feature = self
+        return result
 
 def all_features():
     return [Mcqd()]

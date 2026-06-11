@@ -759,8 +759,7 @@ class Components(SageObject):
             return self._ring.zero()
         if format_type is None:
             return self._output_formatter(self._ring.zero())
-        return self._output_formatter(self._ring.zero(),
-                                      format_type)
+        return self._output_formatter(self._ring.zero(), format_type)
 
     def _get_list(self, ind_slice, no_format=True, format_type=None):
         r"""
@@ -4833,8 +4832,7 @@ class CompFullySym(CompWithSym):
             return self._ring.zero()
         if format_type is None:
             return self._output_formatter(self._ring.zero())
-        return self._output_formatter(self._ring.zero(),
-                                      format_type)
+        return self._output_formatter(self._ring.zero(), format_type)
 
     def __setitem__(self, args, value) -> None:
         r"""

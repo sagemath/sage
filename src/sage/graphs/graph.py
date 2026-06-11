@@ -9194,7 +9194,7 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Leftovers")
-    def folded_graph(self, check=False):
+    def folded_graph(self, check=False, immutable=None):
         r"""
         Return the antipodal fold of this graph.
 
@@ -9212,6 +9212,10 @@ class Graph(GenericGraph):
         - ``check`` -- boolean (default: ``False``); whether to check if the
           graph is antipodal. If ``check`` is ``True`` and the graph is not
           antipodal, then return ``False``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its folded graph will behave the same way.
 
         OUTPUT: this function returns a new graph and ``self`` is not touched
 
@@ -9262,6 +9266,19 @@ class Graph(GenericGraph):
             sage: G = Graph(1)
             sage: G.folded_graph()
             Folded Graph: Graph on 1 vertex
+
+        Check the bahavior of parameter ``immutable``::
+
+            sage: G = Graph(5)
+            sage: G.folded_graph().is_immutable()
+            False
+            sage: G.folded_graph(immutable=True).is_immutable()
+            True
+            sage: G = Graph(5, immutable=True)
+            sage: G.folded_graph().is_immutable()
+            True
+            sage: G.folded_graph(immutable=False).is_immutable()
+            False
         """
         G = self.antipodal_graph()
 
@@ -9287,10 +9304,11 @@ class Graph(GenericGraph):
                    itertools.product(newVertices[i], newVertices[j])):
                 edges.append((i, j))
 
-        H = Graph([range(numCliques), edges], format='vertices_and_edges')
+        if immutable is None:
+            immutable = self.is_immutable()
         name = self.name() if self.name() != "" else "Graph"
-        H.name(f"Folded {name}")
-        return H
+        return Graph([range(numCliques), edges], format='vertices_and_edges',
+                     name=f"Folded {name}", immutable=immutable)
 
     @doc_index("Leftovers")
     def antipodal_graph(self):
@@ -9476,9 +9494,11 @@ class Graph(GenericGraph):
         dictionary from :meth:`~Graph.minor`::
 
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
-            sage: K44.is_projective_planar(return_map=True)
-            (False,
-             {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]})
+            sage: is_planar, minor_map = K44.is_projective_planar(return_map=True)
+            sage: is_planar
+            False
+            sage: sorted(tuple(v) for v in minor_map.values())
+            [(0,), (1,), (2,), (3,), (4,), (5,), (6,), (7,)]
 
         .. SEEALSO::
 
@@ -9518,7 +9538,8 @@ class Graph(GenericGraph):
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
     chromatic_polynomial = LazyImport('sage.graphs.chrompoly', 'chromatic_polynomial', at_startup=True)
-    rank_decomposition = LazyImport('sage.graphs.graph_decompositions.rankwidth', 'rank_decomposition', at_startup=True)
+    from sage.features.rankwidth import RankWidth
+    rank_decomposition = LazyImport('sage.graphs.graph_decompositions.rankwidth', 'rank_decomposition', at_startup=True, feature=RankWidth())
     from sage.graphs.graph_decompositions.tree_decomposition import treewidth
     from sage.graphs.graph_decompositions.vertex_separation import pathwidth
     from sage.graphs.graph_decompositions.tree_decomposition import treelength

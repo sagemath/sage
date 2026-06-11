@@ -128,7 +128,6 @@ from sage.misc.cachefunc import cached_function
 from sage.categories.map cimport Map
 from sage.categories.morphism cimport Morphism
 
-from sage.misc.superseded import deprecation_cython as deprecation
 from sage.misc.cachefunc import cached_method
 
 
@@ -2470,11 +2469,6 @@ cdef class Polynomial(CommutativePolynomial):
           are assumed to have degree ``degree``. Note that ``degree``
           must be set.
 
-        .. WARNING::
-
-            Negative degree input will be deprecated. Instead use
-            ``assume_equal_deg``.
-
         .. NOTE::
 
             For finite fields, ``any_root()`` is non-deterministic when
@@ -2647,14 +2641,9 @@ cdef class Polynomial(CommutativePolynomial):
             #       this will be the most performant
             return f.roots(ring, multiplicities=False)[0]
 
-        # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
-        # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
-        # ensure that the degree is positive.
         degree = ZZ(degree)
         if degree < 0:
-            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_equal_deg`.")
-            degree = -degree
-            assume_equal_deg = True
+            raise ValueError('degree must be positive')
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
         # use this to compute a field extension and return the generator as root of this polynomial
