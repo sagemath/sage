@@ -87,7 +87,7 @@ cdef int number_of_integer_rings = 0
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
 
-cdef class IntegerRing_class(CommutativeRing):
+cdef class IntegerRing_class(Ring):
     r"""
     The ring of integers.
 
@@ -405,7 +405,7 @@ cdef class IntegerRing_class(CommutativeRing):
             K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
-        return CommutativeRing.__getitem__(self, x)
+        return Ring.__getitem__(self, x)
 
     def range(self, start, end=None, step=None):
         """

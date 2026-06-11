@@ -127,7 +127,6 @@ from cpython.weakref cimport PyWeakref_NewRef
 from cpython.ref cimport Py_INCREF
 from sage.cpython.dict_del_by_value cimport *
 
-from sage.misc.superseded import deprecation
 
 cdef extern from "Python.h":
     PyObject* Py_None

@@ -1143,7 +1143,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             if x.imag().is_zero():
                 return x.real()
             raise ValueError("Cannot coerce algebraic number with nonzero imaginary part to algebraic real")
-        elif hasattr(x, '_algebraic_'):
+        if hasattr(x, '_algebraic_'):
             return x._algebraic_(AA)
         return AlgebraicReal(x)
 

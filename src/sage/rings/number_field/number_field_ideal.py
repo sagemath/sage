@@ -754,7 +754,7 @@ class NumberFieldIdeal(Ideal_generic):
         gens = self.__elements_from_hnf(hnf)
         return K.ideal(gens)
 
-    def gens_reduced(self, proof=None):
+    def gens_reduced(self, proof=None) -> tuple:
         r"""
         Express this ideal in terms of at most two generators, and one
         if possible.
