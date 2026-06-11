@@ -5401,7 +5401,7 @@ class Graph(GenericGraph):
     # Constructors
 
     @doc_index("Basic methods")
-    def to_directed(self, data_structure=None, sparse=None):
+    def to_directed(self, data_structure=None, sparse=None, immutable=None):
         """
         Return a directed version of the graph.
 
@@ -5417,6 +5417,19 @@ class Graph(GenericGraph):
           alias for ``data_structure="sparse"``, and ``sparse=False`` is an
           alias for ``data_structure="dense"``.
 
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable digraph. Only used when ``data_structure=None``.
+
+          * ``immutable=None`` (default) means that the graph and its directed
+            version will behave the same way.
+
+          * ``immutable=True`` is a shortcut for
+            ``data_structure='static_sparse'``
+
+          * ``immutable=False`` means that the created digraph is mutable. When
+            used with an immutable graph, the data structure used is
+            ``'sparse'`` unless anything else is specified.
+
         EXAMPLES::
 
             sage: graphs.PetersenGraph().to_directed()
@@ -5424,10 +5437,31 @@ class Graph(GenericGraph):
 
         TESTS:
 
-        Immutable graphs yield immutable graphs::
+        Immutable graphs yield immutable graphs by default::
 
             sage: Graph([[1, 2]], immutable=True).to_directed()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph([[1, 2]], immutable=False)
+            sage: G.to_directed().is_immutable()
+            False
+            sage: G.to_directed(immutable=True).is_immutable()
+            True
+            sage: G.to_directed(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_directed(data_structure='sparse', immutable=True).is_immutable()
+            False
+            sage: G = Graph([[1, 2]], immutable=True)
+            sage: G.to_directed().is_immutable()
+            True
+            sage: G.to_directed(immutable=False).is_immutable()
+            False
+            sage: G.to_directed(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_directed(data_structure='sparse', immutable=True).is_immutable()
+            False
 
         :issue:`17005`::
 
@@ -5458,20 +5492,45 @@ class Graph(GenericGraph):
         from itertools import chain
         edges = chain(self.edge_iterator(),
                       ((v, u, l) for u, v, l in self.edge_iterator()))
+        if data_structure is not None:
+            # parameter immutable is not used when data_structure is not None
+            immutable = None
         return _initialize_digraph(self, edges, name=self.name(),
-                                   data_structure=data_structure, sparse=sparse)
+                                   data_structure=data_structure, sparse=sparse,
+                                   immutable=immutable)
 
     @doc_index("Basic methods")
-    def to_undirected(self):
+    def to_undirected(self, immutable=None):
         """
         Since the graph is already undirected, simply returns a copy of itself.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and the returned copy behave the same way.
 
         EXAMPLES::
 
             sage: graphs.PetersenGraph().to_undirected()
             Petersen graph: Graph on 10 vertices
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph(1, immutable=False)
+            sage: G.to_undirected().is_immutable()
+            False
+            sage: G.to_undirected(immutable=True).is_immutable()
+            True
+            sage: G = Graph(1, immutable=True)
+            sage: G.to_undirected().is_immutable()
+            True
+            sage: G.to_undirected(immutable=False).is_immutable()
+            False
         """
-        return self.copy()
+        return self.copy(immutable=immutable)
 
     @doc_index("Basic methods")
     def join(self, other, labels='pairs', immutable=None):

@@ -1080,18 +1080,39 @@ class DiGraph(GenericGraph):
         """
         return self._backend.is_directed_acyclic(certificate=certificate)
 
-    def to_directed(self):
+    def to_directed(self, immutable=None):
         """
         Since the graph is already directed, simply returns a copy of itself.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          digraph and the returned copy behave the same way.
 
         EXAMPLES::
 
             sage: DiGraph({0: [1, 2, 3], 4: [5, 1]}).to_directed()
             Digraph on 6 vertices
-        """
-        return self.copy()
 
-    def to_undirected(self, data_structure=None, sparse=None):
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = DiGraph(1, immutable=False)
+            sage: G.to_undirected().is_immutable()
+            False
+            sage: G.to_undirected(immutable=True).is_immutable()
+            True
+            sage: G = DiGraph(1, immutable=True)
+            sage: G.to_undirected().is_immutable()
+            True
+            sage: G.to_undirected(immutable=False).is_immutable()
+            False
+        """
+        return self.copy(immutable=immutable)
+
+    def to_undirected(self, data_structure=None, sparse=None, immutable=None):
         """
         Return an undirected version of the graph.
 
@@ -1106,6 +1127,19 @@ class DiGraph(GenericGraph):
         - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
           alias for ``data_structure="sparse"``, and ``sparse=False`` is an
           alias for ``data_structure="dense"``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable digraph. Only used when ``data_structure=None``.
+
+          * ``immutable=None`` (default) means that the graph and its directed
+            version will behave the same way.
+
+          * ``immutable=True`` is a shortcut for
+            ``data_structure='static_sparse'``
+
+          * ``immutable=False`` means that the created digraph is mutable. When
+            used with an immutable graph, the data structure used is
+            ``'sparse'`` unless anything else is specified.
 
         EXAMPLES::
 
@@ -1123,6 +1157,27 @@ class DiGraph(GenericGraph):
             sage: DiGraph([[1, 2]], immutable=True).to_undirected()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
 
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = DiGraph([[1, 2]], immutable=False)
+            sage: G.to_undirected().is_immutable()
+            False
+            sage: G.to_undirected(immutable=True).is_immutable()
+            True
+            sage: G.to_undirected(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_undirected(data_structure='sparse', immutable=True).is_immutable()
+            False
+            sage: G = DiGraph([[1, 2]], immutable=True)
+            sage: G.to_undirected().is_immutable()
+            True
+            sage: G.to_undirected(immutable=False).is_immutable()
+            False
+            sage: G.to_undirected(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_undirected(data_structure='sparse', immutable=True).is_immutable()
+            False
+
         Vertex labels will be retained (:issue:`14708`)::
 
             sage: D.set_vertex(0, 'foo')
@@ -1131,6 +1186,7 @@ class DiGraph(GenericGraph):
             {0: 'foo', 1: None, 2: None}
             sage: G.get_vertices()
             {0: 'foo', 1: None, 2: None}
+        """
         """
         if sparse is not None:
             if data_structure is not None:
@@ -1166,6 +1222,61 @@ class DiGraph(GenericGraph):
             G = G.copy(data_structure=data_structure)
 
         return G
+        """
+        # Which data structure should be used ?
+        if data_structure is not None:
+            # data_structure is already defined so there is nothing left to do.
+            # Parameter immutable is ignored
+            immutable = None
+            # Parameter sprse should not be set
+            if sparse is not None:
+                raise ValueError("the 'sparse' argument is an alias for "
+                                 "'data_structure'. Please do not define both")
+        # At this point, data_structure is None.
+        elif immutable is True:
+            data_structure = 'static_sparse'
+            if sparse is False:
+                raise ValueError("there is no dense immutable backend"
+                                 " at the moment")
+        elif immutable is False:
+            # If the user requests a mutable graph and input is
+            # immutable, we choose the 'sparse' cgraph backend. Unless
+            # the user explicitly asked for something different.
+            if self.is_immutable():
+                data_structure = 'dense' if sparse is False else 'sparse'
+        # At this point, data_structure and immutable are None.
+        elif sparse is True:
+            data_structure = "sparse"
+        elif sparse is False:
+            data_structure = "dense"
+
+        if data_structure is None:
+            from sage.graphs.base.dense_graph import DenseGraphBackend
+            from sage.graphs.base.sparse_graph import SparseGraphBackend
+            if isinstance(self._backend, DenseGraphBackend):
+                data_structure = "dense"
+            elif isinstance(self._backend, SparseGraphBackend):
+                data_structure = "sparse"
+            else:
+                data_structure = "static_sparse"
+
+        from sage.graphs.graph import Graph
+        G = Graph(data=[self, self.edge_iterator()],
+                  format='vertices_and_edges',
+                  data_structure=data_structure,
+                  multiedges=self.allows_multiple_edges(),
+                  loops=self.allows_loops(),
+                  weighted=self.weighted(),
+                  pos=copy(self.get_pos()),
+                  hash_labels=self._hash_labels)
+
+        # Copy attributes '_assoc' and '_embedding' if set
+        G._copy_attribute_from(self, '_assoc')
+        G._copy_attribute_from(self, '_embedding')
+        G.set_vertices(self.get_vertices())
+
+        return G
+
 
     # Edge Handlers
 
