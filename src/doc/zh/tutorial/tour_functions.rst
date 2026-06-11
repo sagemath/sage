@@ -113,8 +113,7 @@
        sage: def h(x):
        ....:     if x<2:
        ....:         return 0
-       ....:     else:
-       ....:         return x-2
+       ....:     return x - 2
 
 
 问题： ``plot(h(x), 0, 4)`` 绘制的是直线 `y=x-2`，而不是由 ``h`` 定义的分段函数。

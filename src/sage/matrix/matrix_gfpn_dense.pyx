@@ -57,6 +57,7 @@ from sage.matrix.args cimport MatrixArgs_init
 from libc.string cimport memset, memcpy
 
 cimport sage.matrix.matrix0
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 # The following import is just to ensure that meataxe_init() is called.
 import sage.libs.meataxe
@@ -1341,7 +1342,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         # asymptotically faster. So, we used it by default.
         return 0
 
-    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right) noexcept:
+    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right):
         """
         Multiplication using the cubic school book multiplication algorithm.
 
@@ -1357,10 +1358,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             True
         """
         "multiply two meataxe matrices by the school book algorithm"
-        if self.Data == NULL or right.Data == NULL:
+        if self.Data == NULL or right.Data == NULL
             raise ValueError("The matrices must not be empty")
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
         sig_on()
         try:
             mat = MatDup(self.Data)
@@ -1369,7 +1369,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0) noexcept:
+    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0):
         """
         Matrix multiplication using the asymptotically fast Strassen-Winograd algorithm.
 
@@ -1393,8 +1393,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         """
         if self.Data == NULL or right.Data == NULL:
             raise ValueError("The matrices must not be empty")
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
         StrassenSetCutoff(cutoff // sizeof(long))
         sig_on()
         try:
