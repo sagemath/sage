@@ -54,8 +54,6 @@ from sage.rings.real_mpfr cimport RealNumber, RealField_class, RealField
 from sage.libs.mpfr.types cimport mpfr_rnd_t, mpfr_t, mpfr_prec_t
 from sage.libs.mpfr cimport *
 from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
-from sage.modules.vector_real_double_dense cimport Vector_real_double_dense
-from sage.matrix.matrix_real_double_dense cimport Matrix_real_double_dense
 from sage.rings.complex_mpc cimport *
 from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.libs.mpc cimport *
