@@ -17,9 +17,15 @@ compute equilibria of these games:
 
  * ``'lrs'`` - A solver interfacing with the 'lrslib' library.
 
+ * ``'gnm'`` - An interface with the 'gambit' solver's implementation
+   of the global Newton method. Unlike the other algorithms, this one
+   is able to solve games with more than 2 players.
+
 The architecture for the class is based on the gambit architecture to
-ensure an easy transition between gambit and Sage.  At present the
-algorithms for the computation of equilibria only solve 2 player games.
+ensure an easy transition between gambit and Sage.  Most of the
+algorithms for the computation of equilibria only solve 2 player games;
+the ``'gnm'`` algorithm (which requires gambit) is able to solve games
+with an arbitrary number of players.
 
 A very simple and well known example of normal form game is referred
 to as the 'Battle of the Sexes' in which two players Amy and Bob
@@ -232,10 +238,14 @@ currently available:
 
 * ``'LCP'``: Linear complementarity program algorithm for 2 player games.
   This algorithm uses the open source game theory package:
-  `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_. At present this is
-  the only gambit algorithm available in sage but further development will
-  hope to implement more algorithms
-  (in particular for games with more than 2 players).
+  `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_.
+
+* ``'gnm'``: Global Newton method for games with an arbitrary number of
+  players. This algorithm also uses the open source game theory package
+  `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_ and is, in
+  particular, able to solve games with more than 2 players. Being a
+  numerical method, it returns floating point approximations of a sample
+  of the equilibria.
 
 * ``'enumeration'``: Support enumeration for 2 player games. This
   algorithm is hard coded in Sage and checks through all potential
@@ -262,9 +272,10 @@ Note that if no algorithm argument is passed then the default will be
 selected according to the following order (if the corresponding package is
 installed):
 
-1. ``'lp'`` (if the game is constant-sum; uses the solver chosen by Sage)
-2. ``'lrs'`` (requires 'lrslib')
-3. ``'enumeration'``
+1. ``'gnm'`` (if the game has more than 2 players; requires 'gambit')
+2. ``'lp'`` (if the game is constant-sum; uses the solver chosen by Sage)
+3. ``'lrs'`` (requires 'lrslib')
+4. ``'enumeration'``
 
 Here is a game being constructed using gambit syntax (note that a
 ``NormalFormGame`` object acts like a dictionary with pure strategy tuples as
@@ -397,18 +408,17 @@ utility function::
      (1, 1, 0): [0, 2, 4],
      (1, 1, 1): [0, 3, 6]}
 
-At present no algorithm has been implemented in Sage for games with
-more than 2 players::
+Games with more than 2 players can be solved using the ``'gnm'``
+algorithm, which interfaces with gambit's implementation of the global
+Newton method (this is also the algorithm selected by default for such
+games)::
 
-    sage: threegame.obtain_nash()
-    Traceback (most recent call last):
-    ...
-    NotImplementedError: Nash equilibrium for games with more than 2 players
-     have not been implemented yet. Please see the gambit website
-     (http://gambit.sourceforge.net/) that has a variety of available algorithms
+    sage: threegame.obtain_nash(algorithm='gnm')  # optional - gambit
+    [[(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)]]
 
-There are however a variety of such algorithms available in gambit,
-further compatibility between Sage and gambit is actively being developed:
+Note that ``'gnm'`` is a numerical algorithm and so returns floating
+point approximations of a sample of the equilibria. Further compatibility
+between Sage and gambit is actively being developed:
 https://github.com/tturocy/gambit/tree/sage_integration.
 
 It can be shown that linear scaling of the payoff matrices conserves the
@@ -644,12 +654,13 @@ from sage.cpython.string import bytes_to_str
 try:
     import numpy as np
     from pygambit import Game
-    from pygambit.nash import lp_solve, lcp_solve
+    from pygambit.nash import lp_solve, lcp_solve, gnm_solve
 except ImportError:
     np = None
     Game = None
     lp_solve = None
     lcp_solve = None
+    gnm_solve = None
 
 
 class NormalFormGame(SageObject, MutableMapping):
@@ -699,13 +710,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: threegame[1, 1, 1][0] = 2
             sage: threegame[1, 1, 1][1] = 6
             sage: threegame[1, 1, 1][2] = 4
-            sage: threegame.obtain_nash()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Nash equilibrium for games with more than
-             2 players have not been implemented yet. Please see the gambit
-             website (http://gambit.sourceforge.net/) that has a variety of
-             available algorithms
+            sage: threegame.obtain_nash(algorithm='gnm')  # optional - gambit
+            [[(0.0, 1.0), (1.0, 0.0), (1.0, 0.0)]]
 
         Can initialise a game from a gambit game object::
 
@@ -1328,6 +1334,13 @@ class NormalFormGame(SageObject, MutableMapping):
           * ``'LCP'`` -- this algorithm is only suited for 2 player games.
             See the gambit web site (http://gambit.sourceforge.net/).
 
+          * ``'gnm'`` -- this algorithm is suited for games with an arbitrary
+            number of players (in particular for games with more than 2
+            players) and uses the global Newton method implemented in gambit.
+            It is a numerical algorithm and so returns floating point
+            approximations of a sample of the equilibria. See the gambit web
+            site (http://gambit.sourceforge.net/).
+
           * ``'lp'`` -- this algorithm is only suited for 2 player
             constant sum games. Uses MILP solver determined by the
             ``solver`` argument.
@@ -1586,48 +1599,51 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g.obtain_nash(algorithm='invalid')
             Traceback (most recent call last):
             ...
-            ValueError: 'algorithm' should be set to 'enumeration', 'LCP', 'lp' or 'lrs'
+            ValueError: 'algorithm' should be set to 'enumeration', 'LCP', 'lp', 'lrs' for 2 player games or 'gnm' for more players
             sage: g.obtain_nash(algorithm='lp', solver='invalid')
             Traceback (most recent call last):
             ...
             ValueError: 'solver' should be set to 'GLPK', ..., None
              (in which case the default one is used), or a callable.
         """
-        if len(self.players) > 2:
-            raise NotImplementedError("Nash equilibrium for games with more "
-                                      "than 2 players have not been "
-                                      "implemented yet. Please see the gambit "
-                                      "website (http://gambit.sourceforge.net/) that has a variety of "
-                                      "available algorithms")
-
         if not self._is_complete():
             raise ValueError("utilities have not been populated")
 
         from sage.features.lrs import LrsNash
         if not algorithm:
-            if self.is_constant_sum():
+            if len(self.players) > 2:
+                # Only the gambit GNM solver handles games with more than
+                # two players.
+                algorithm = "gnm"
+            elif self.is_constant_sum():
                 algorithm = "lp"
             elif LrsNash().is_present():
                 algorithm = "lrs"
             else:
                 algorithm = "enumeration"
+        
+        if len(self.players) < 3:
+            if algorithm == "lrs":
+                LrsNash().require()
+                return self._solve_lrs(maximization)
 
-        if algorithm == "lrs":
-            LrsNash().require()
-            return self._solve_lrs(maximization)
+            if algorithm == "LCP":
+                if Game is None:
+                    raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
+                return self._solve_LCP(maximization)
 
-        if algorithm == "LCP":
+            if algorithm.startswith('lp'):
+                return self._solve_LP(solver=solver, maximization=maximization)
+
+            if algorithm == "enumeration":
+                return self._solve_enumeration(maximization)
+
+        if algorithm == "gnm":
             if Game is None:
                 raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
-            return self._solve_LCP(maximization)
+            return self._solve_gnm(maximization)
 
-        if algorithm.startswith('lp'):
-            return self._solve_LP(solver=solver, maximization=maximization)
-
-        if algorithm == "enumeration":
-            return self._solve_enumeration(maximization)
-
-        raise ValueError("'algorithm' should be set to 'enumeration', 'LCP', 'lp' or 'lrs'")
+        raise ValueError("'algorithm' should be set to 'enumeration', 'LCP', 'lp', 'lrs' for 2 player games or 'gnm' for more players")
 
     def _solve_lrs(self, maximization=True):
         r"""
@@ -1694,6 +1710,86 @@ class NormalFormGame(SageObject, MutableMapping):
         nasheq = Parser(lrs_output).format_lrs()
         return sorted(nasheq)
 
+    def _extract_gambit_equilibria(self, equilibria):
+        r"""
+        Convert a pygambit equilibria collection to a list of strategy profiles.
+        """
+        return [[tuple(float(eq[s]) for s in player.strategies)
+                 for player in eq.game.players]
+                for eq in equilibria]
+
+    def _solve_gnm(self, maximization=True):
+        r"""
+        Solve a :class:`NormalFormGame` using Gambit's GNM algorithm.
+
+        This uses the global Newton method implemented in
+        `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_ to compute
+        a sample Nash equilibrium of the game.  Unlike the ``'lrs'``,
+        ``'LCP'``, ``'lp'`` and ``'enumeration'`` solvers, GNM is **not**
+        restricted to two player games: it can compute a Nash equilibrium
+        for a game with an arbitrary number of players.  Note however that
+        GNM is a numerical algorithm and so, in general, returns
+        floating point approximations of (and not necessarily all of) the
+        equilibria.
+
+        EXAMPLES:
+
+        A two player game::
+
+            sage: A = matrix([[1, 2], [3, 4]])
+            sage: B = matrix([[3, 3], [1, 4]])
+            sage: C = NormalFormGame([A, B])
+            sage: C._solve_gnm()  # optional - gambit
+            [[(0.0, 1.0), (0.0, 1.0)]]
+
+        GNM can also solve games with more than two players, which none of
+        the other solvers are able to do.  Here is a three player game::
+
+            sage: threegame = NormalFormGame()
+            sage: threegame.add_player(2)  # Adding first player with 2 strategies
+            sage: threegame.add_player(2)  # Adding second player with 2 strategies
+            sage: threegame.add_player(2)  # Adding third player with 2 strategies
+            sage: threegame[0, 0, 0][0] = 3
+            sage: threegame[0, 0, 0][1] = 1
+            sage: threegame[0, 0, 0][2] = 4
+            sage: threegame[0, 0, 1][0] = 1
+            sage: threegame[0, 0, 1][1] = 5
+            sage: threegame[0, 0, 1][2] = 9
+            sage: threegame[0, 1, 0][0] = 2
+            sage: threegame[0, 1, 0][1] = 6
+            sage: threegame[0, 1, 0][2] = 5
+            sage: threegame[0, 1, 1][0] = 3
+            sage: threegame[0, 1, 1][1] = 5
+            sage: threegame[0, 1, 1][2] = 8
+            sage: threegame[1, 0, 0][0] = 9
+            sage: threegame[1, 0, 0][1] = 7
+            sage: threegame[1, 0, 0][2] = 9
+            sage: threegame[1, 0, 1][0] = 3
+            sage: threegame[1, 0, 1][1] = 2
+            sage: threegame[1, 0, 1][2] = 3
+            sage: threegame[1, 1, 0][0] = 8
+            sage: threegame[1, 1, 0][1] = 4
+            sage: threegame[1, 1, 0][2] = 6
+            sage: threegame[1, 1, 1][0] = 2
+            sage: threegame[1, 1, 1][1] = 6
+            sage: threegame[1, 1, 1][2] = 4
+            sage: threegame._solve_gnm()  # optional - gambit
+            [[(0.0, 1.0), (1.0, 0.0), (1.0, 0.0)]]
+
+        Players can also be set to minimize their utility, here using the
+        Prisoner's Dilemma where players minimize time spent in prison::
+
+            sage: A = matrix([[2, 5], [0, 4]])
+            sage: B = matrix([[2, 0], [5, 4]])
+            sage: prisoners_dilemma = NormalFormGame([A, B])
+            sage: prisoners_dilemma._solve_gnm(maximization=False)  # optional - gambit
+            [[(0.0, 1.0), (0.0, 1.0)]]
+        """
+        g = self._gambit_(maximization=maximization)
+        result = gnm_solve(g)
+        nasheq = self._extract_gambit_equilibria(result.equilibria)
+        return sorted(nasheq)
+
     def _solve_LCP(self, maximization):
         r"""
         Solve a :class:`NormalFormGame` using Gambit's LCP algorithm.
@@ -1706,11 +1802,9 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: c._solve_LCP(maximization=True)  # optional - gambit
             [[(0.0, 1.0), (0.0, 1.0)]]
         """
-        g = self._gambit_(maximization)
+        g = self._gambit_(maximization=maximization)
         result = lcp_solve(g, rational=False)
-        nasheq = [[tuple(float(eq[s]) for s in player.strategies)
-                   for player in g.players]
-                  for eq in result.equilibria]
+        nasheq = self._extract_gambit_equilibria(result.equilibria)
         return sorted(nasheq)
 
     def _solve_gambit_LP(self, maximization=True):
@@ -1738,9 +1832,7 @@ class NormalFormGame(SageObject, MutableMapping):
             raise NotImplementedError("gambit is not installed")
         g = self._gambit_(maximization=maximization)
         result = lp_solve(g, rational=False)
-        nasheq = [[tuple(float(eq[s]) for s in player.strategies)
-                   for player in g.players]
-                  for eq in result.equilibria]
+        nasheq = self._extract_gambit_equilibria(result.equilibria)
         return sorted(nasheq)
 
     def _solve_LP(self, solver='glpk', maximization=True):
