@@ -1198,7 +1198,7 @@ Functions are defined using the *def* statement, and values are
 returned using the *return* keyword::
 
     sage: def f(x):
-    ....:     return x*x
+    ....:     return x * x
 
 ::
 
@@ -1210,8 +1210,7 @@ Functions can be recursive::
     sage: def fib(n):
     ....:     if n <= 1:
     ....:         return 1
-    ....:     else:
-    ....:         return fib(n-1) + fib(n-2)
+    ....:     return fib(n - 1) + fib(n - 2)
 
 ::
 

@@ -707,7 +707,6 @@ def _find_all_ternary_qf_by_level_disc(long long N, long long d):
     cdef long long m
     cdef long long g
     cdef long long u
-    cdef long long v
     cdef long long g1
     cdef long long m_q
     cdef double a_max
@@ -728,7 +727,7 @@ def _find_all_ternary_qf_by_level_disc(long long N, long long d):
     a_max = (d/2.)**(1/3.)
     while a <= a_max:
 
-        g, u, v = xgcd(4*a, m)
+        g, u, _ = xgcd(4*a, m)
         g1 = (ZZ(g).squarefree_part()*g).sqrtrem()[0]
         t = 0
         while t <= a:
@@ -837,7 +836,6 @@ def _find_a_ternary_qf_by_level_disc(long long N, long long d):
     cdef long long m
     cdef long long g
     cdef long long u
-    cdef long long v
     cdef long long g1
     cdef long long m_q
     cdef double a_max
@@ -856,7 +854,7 @@ def _find_a_ternary_qf_by_level_disc(long long N, long long d):
     a_max = (d/2.)**(1/3.)
     while a <= a_max:
 
-        g, u, v = xgcd(4*a, m)
+        g, u, _ = xgcd(4*a, m)
         g1 = (ZZ(g).squarefree_part()*g).sqrtrem()[0]
         t = 0
         while t <= a:

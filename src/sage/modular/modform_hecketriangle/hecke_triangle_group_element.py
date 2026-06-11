@@ -2721,10 +2721,9 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             ....:     d = ComplexField(num_prec)(gamma.d())
             ....:     if c == 0:
             ....:         return 0
-            ....:     elif a + d == 0:
+            ....:     if a + d == 0:
             ....:         return log(-i.n(num_prec)*(c*z + d)*sign(c))
-            ....:     else:
-            ....:         return log((c*z+d)*sign(a+d))
+            ....:     return log((c*z+d)*sign(a+d))
 
             sage: def num_linking_number(A, z, n=3, prec=10, num_prec=53):
             ....:     z = z.n(num_prec)

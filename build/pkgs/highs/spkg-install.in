@@ -1,0 +1,14 @@
+cd src
+mkdir -p build
+cd build
+sdh_cmake -DBUILD_SHARED_LIBS=ON \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_TESTING=OFF \
+          -DBUILD_CXX=ON \
+          -DZLIB=ON \
+          -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DCMAKE_INSTALL_LIBDIR=lib \
+          ..
+sdh_make
+sdh_make_install
+
