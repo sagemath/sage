@@ -181,7 +181,6 @@ class Composition(CombinatorialElement):
             return Compositions().from_subset(*from_subset)
         if isinstance(co, Composition):
             return co
-
         return Compositions()(co)
 
     def __init__(self, parent, lst):
