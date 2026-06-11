@@ -1455,9 +1455,15 @@ class BipartiteGraph(Graph):
         """
         return (self.left, self.right)
 
-    def project_left(self):
+    def project_left(self, immutable=None):
         r"""
         Project ``self`` onto left vertices. Edges are 2-paths in the original.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          bipartite graph and its projection will behave the same way.
 
         EXAMPLES::
 
@@ -1465,17 +1471,41 @@ class BipartiteGraph(Graph):
             sage: G = B.project_left()
             sage: G.order(), G.size()
             (10, 10)
-        """
-        G = Graph()
-        G.add_vertices(self.left)
-        for v in G:
-            for u in self.neighbor_iterator(v):
-                G.add_edges(((v, w) for w in self.neighbor_iterator(u)), loops=False)
-        return G
 
-    def project_right(self):
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: B = BipartiteGraph(graphs.CycleGraph(4))
+            sage: B.project_left().is_immutable()
+            False
+            sage: B.project_left(immutable=True).is_immutable()
+            True
+            sage: B = BipartiteGraph(graphs.CycleGraph(4), immutable=True)
+            sage: B.project_left().is_immutable()
+            True
+            sage: B.project_left(immutable=False).is_immutable()
+            False
+        """
+        if immutable is None:
+            immutable = self.is_immutable()
+        edges = ((v, w)
+                 for v in self.left
+                 for u in self.neighbor_iterator(v)
+                 for w in self.neighbor_iterator(u)
+                 if v != w)
+        return Graph([self.left, edges], format="vertices_and_edges",
+                     immutable=immutable)
+
+    def project_right(self, immutable=None):
         r"""
         Project ``self`` onto right vertices. Edges are 2-paths in the original.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          bipartite graph and its projection will behave the same way.
 
         EXAMPLES::
 
@@ -1493,13 +1523,29 @@ class BipartiteGraph(Graph):
             [0, 2, 4]
             sage: B.project_right().vertices(sort=True)
             [1, 3, 5]
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: B = BipartiteGraph(graphs.CycleGraph(4))
+            sage: B.project_right().is_immutable()
+            False
+            sage: B.project_right(immutable=True).is_immutable()
+            True
+            sage: B = BipartiteGraph(graphs.CycleGraph(4), immutable=True)
+            sage: B.project_right().is_immutable()
+            True
+            sage: B.project_right(immutable=False).is_immutable()
+            False
         """
-        G = Graph()
-        G.add_vertices(self.right)
-        for v in G:
-            for u in self.neighbor_iterator(v):
-                G.add_edges(((v, w) for w in self.neighbor_iterator(u)), loops=False)
-        return G
+        if immutable is None:
+            immutable = self.is_immutable()
+        edges = ((v, w)
+                 for v in self.right
+                 for u in self.neighbor_iterator(v)
+                 for w in self.neighbor_iterator(u)
+                 if v != w)
+        return Graph([self.right, edges], format="vertices_and_edges",
+                     immutable=immutable)
 
     def plot(self, *args, **kwds):
         r"""

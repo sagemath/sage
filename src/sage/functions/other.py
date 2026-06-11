@@ -888,19 +888,13 @@ class Function_real_nth_root(BuiltinFunction):
             else:
                 raise ValueError("exponent cannot be complex")
         exp = ZZ(exp)
-
         negative = base < 0
-
         if negative:
             if exp.mod(2) == 0:
                 raise ValueError('no real nth root of negative real number with even n')
             base = -base
-
         r = base**(1/exp)
-
-        if negative:
-            return -r
-        return r
+        return r if not negative else -r
 
     def _eval_(self, base, exp):
         """
@@ -1046,13 +1040,13 @@ class Function_arg(BuiltinFunction):
             sage: arg(sqrt(2)+i)
             arg(sqrt(2) + I)
         """
-        if isinstance(x,Expression):
+        if isinstance(x, Expression):
             if x.is_trivial_zero():
                 return x
-        elif not x:
+            return None
+        if not x:
             return x
-        else:
-            return arctan2(imag_part(x),real_part(x))
+        return arctan2(imag_part(x), real_part(x))
 
     def _evalf_(self, x, parent=None, algorithm=None):
         """

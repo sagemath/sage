@@ -56,7 +56,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class PrefixClosedSet:
-    def __init__(self, words) ->  None:
+    def __init__(self, words) -> None:
         r"""
         A prefix-closed set.
 
@@ -1943,7 +1943,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         one = R.one()
         zero = R.zero()
         return self.element_class(self,
-                                  len(self.alphabet())*[Matrix([[zero]])],
+                                  len(self.alphabet()) * [Matrix([[zero]])],
                                   vector([one]),
                                   vector([one]))
 

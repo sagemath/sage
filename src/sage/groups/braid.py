@@ -2119,10 +2119,9 @@ class Braid(FiniteTypeArtinGroupElement):
             ....:     v = q if 'p' in gen_str else 1/q
             ....:     if 'b' in gen_str:
             ....:         return v
-            ....:     elif 'a' in gen_str:
+            ....:     if 'a' in gen_str:
             ....:         return 1 - v
-            ....:     else:
-            ....:         return 1
+            ....:     return 1
             sage: db_base = db.parent().base_ring()
             sage: q = db_base.base_ring().gen()
             sage: db_simp = db.subs({gen: subs_gen(gen, q)
