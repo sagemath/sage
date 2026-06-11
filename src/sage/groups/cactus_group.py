@@ -924,7 +924,7 @@ class PureCactusGroup(KernelSubgroup):
         """
         return self.ambient().n()
 
-    def gen(self, i):
+    def gen(self, i=0):
         r"""
         Return the ``i``-th generator of ``self``.
 

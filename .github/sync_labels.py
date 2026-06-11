@@ -315,8 +315,7 @@ class GhLabelSynchronizer:
                 return AuthorAssociation(ass).is_valid()
             info('Actor %s did not create latest review' % self._actor)
             return False
-        else:
-            return self.is_auth_team_member(self._actor)
+        return self.is_auth_team_member(self._actor)
 
     def query_multi_pages(self, path_args, since=None):
         r"""

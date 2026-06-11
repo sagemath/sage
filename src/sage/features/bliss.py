@@ -13,9 +13,9 @@ Features for testing the presence of ``bliss``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from . import CythonFeature, PythonModule
-from .join_feature import JoinFeature
-
+from sage.config import bliss_enabled
+from sage.features import CythonFeature, PythonModule
+from sage.features.build_feature import BuildFeature
 
 TEST_CODE = """
 # distutils: language=c++
@@ -57,16 +57,19 @@ class BlissLibrary(CythonFeature):
                                url='http://www.tcs.hut.fi/Software/bliss/')
 
 
-class Bliss(JoinFeature):
+class Bliss(BuildFeature):
     r"""
-    A :class:`~sage.features.Feature` which describes whether the :mod:`sage.graphs.bliss`
-    module is available in this installation of Sage.
+    A :class:`~sage.features.Feature` which describes whether the
+    :mod:`sage.graphs.bliss` module is available in this installation
+    of Sage.
 
     EXAMPLES::
 
         sage: from sage.features.bliss import Bliss
-        sage: Bliss().require()  # optional - bliss
+        sage: Bliss().require()  # needs bliss
     """
+    _enabled_in_build = bliss_enabled
+
     def __init__(self):
         r"""
         TESTS::
@@ -74,11 +77,27 @@ class Bliss(JoinFeature):
             sage: from sage.features.bliss import Bliss
             sage: Bliss()
             Feature('bliss')
-        """
-        JoinFeature.__init__(self, "bliss",
-                             [PythonModule("sage.graphs.bliss", spkg='bliss',
-                                           url='http://www.tcs.hut.fi/Software/bliss/')])
 
+        """
+        super().__init__("bliss",
+                         url='http://www.tcs.hut.fi/Software/bliss/')
+
+    def is_present_at_runtime(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features import FeatureTestResult
+            sage: from sage.features.bliss import Bliss
+            sage: result = Bliss().is_present_at_runtime()
+            sage: isinstance(result, FeatureTestResult)
+            True
+            sage: result  # needs bliss
+            FeatureTestResult('bliss', True)
+
+        """
+        result = PythonModule("sage.graphs.bliss")._is_present()
+        result.feature = self
+        return result
 
 def all_features():
     return [Bliss()]

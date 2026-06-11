@@ -1511,28 +1511,58 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: G = SymmetricGroup(5)
-            sage: hash32 = -1203337681
-            sage: hash64 = -1527414595000039889
-            sage: hash(G([2,1,5,3,4])) in [hash32, hash64]
+            sage: g = G([2,1,5,3,4])
+            sage: hash(g) == hash(g)
+            True
+
+        The hash is compatible with equality of permutations from
+        different parents::
+
+            sage: from sage.groups.perm_gps.constructor import PermutationGroupElement
+            sage: h = PermutationGroupElement('(1,3,2)')
+            sage: k = PermutationGroupElement('(1,2,3)(4,5)')^2
+            sage: h == k
+            True
+            sage: hash(h) == hash(k)
+            True
+
+        Distinct cycles are not identified::
+
+            sage: a = PermutationGroupElement('(1,2,3)')
+            sage: b = PermutationGroupElement('(1,3,2)')
+            sage: a != b
+            True
+            sage: len({a, b})
+            2
+            sage: set([a]) != set([b])
             True
 
         Check that the hash looks reasonable::
 
-            sage: s = set()
-            sage: s.update(map(hash,SymmetricGroup(0)))
-            sage: s.update(map(hash,SymmetricGroup(1)))
-            sage: s.update(map(hash,SymmetricGroup(2)))
-            sage: s.update(map(hash,SymmetricGroup(3)))
-            sage: s.update(map(hash,SymmetricGroup(4)))
-            sage: s.update(map(hash,SymmetricGroup(5)))
-            sage: len(s) == 1 + 1 + 2 + 6 + 24 + 120
+            sage: len(set(map(hash, SymmetricGroup(5)))) == 120
+            True
+
+        TESTS:
+
+        Check that :issue:`40041` is fixed::
+
+            sage: # needs sage.graphs
+            sage: pete = graphs.PetersenGraph()
+            sage: autpete = pete.automorphism_group()
+            sage: pointstabilizers = [[g for g in autpete if g(x) == x]
+            ....:                     for x in pete.vertices()]
+            sage: subgroup_check = [PermutationGroup(pointstabilizers[i])
+            ....:                   for i in range(len(pointstabilizers))]
+            sage: all(set(subgroup_check[i]) == set(pointstabilizers[i])
+            ....:     for i in range(10))
             True
         """
         cdef size_t i
-        cdef long ans = self.n
-        for i in range(self.n):
-            ans = (ans ^ (self.perm[i])) * 1000003L
-        return ans
+        from_gap = self._parent._domain_from_gap
+        moved_pairs = [(from_gap[i + 1], from_gap[self.perm[i] + 1])
+                       for i in range(self.n)
+                       if self.perm[i] != i]
+        return hash(frozenset(moved_pairs))
 
     def tuple(self):
         r"""
