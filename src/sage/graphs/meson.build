@@ -183,6 +183,11 @@ py.extension_module(
   dependencies: [py_dep, cysignals, mcqd],
 )
 
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('BLISS_ENABLED', bliss.found())
+conf_data.set10('MCQD_ENABLED', mcqd.found())
+
 subdir('base')
 subdir('generators')
 subdir('graph_decompositions')

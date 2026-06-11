@@ -161,6 +161,7 @@ def _make_parser():
 
 
 def main():
+    from importlib.util import find_spec
     from sage.doctest.control import DocTestController
     from sage.env import SAGE_SRC
 
@@ -187,6 +188,13 @@ def main():
         print('either use --new, --all, --all-except=..., --installed, or some filenames')
         return 2
 
+    # The number of processes to use for pytest, if pytest-xdist is
+    # installed.  The doctest controller can change the value of
+    # args.threads, but we need to know the initial value because "0"
+    # has a special meaning for pytest that differs somewhat from
+    # that for the doctest runner.
+    pytest_nprocs = args.nthreads
+
     # Limit the number of threads to 2 to save system resources.
     # See Issue #23713, #23892, #30351
     if sys.platform == 'darwin':
@@ -200,7 +208,43 @@ def main():
     err = DC.run()
 
     exit_code_pytest = 0
-    pytest_options = []
+
+    # Never run "long long" tests via sage -t (or python -m
+    # sage.doctest) to avoid catching users by surprise with
+    # tests that run for several minutes.
+    pytest_markers = "not longlong"
+    if not args.long:
+        # Multiple "-m" flags cannot be combined,
+        #
+        #   https://github.com/pytest-dev/pytest/issues/7229
+        #
+        # so we construct one big compound statement instead.
+        pytest_markers += " and not long"
+    pytest_options = ["-m", pytest_markers]
+
+    if pytest_nprocs != 1 and not find_spec("xdist"):
+        # The default is "1", so anything else is an explicit request
+        # that we should warn about if we are unable to comply.
+        from pytest import PytestWarning
+        from warnings import warn
+        warn("pytest-xdist not found, pytest will run sequentially",
+             PytestWarning)
+        pytest_nprocs = 1
+
+    # pytest-xdist is now guaranteed to be available in these cases
+    if pytest_nprocs == 0:
+        pytest_options += ["-n", "auto"]
+    elif pytest_nprocs > 1:
+        pytest_options += ["-n", f"{pytest_nprocs}"]
+
+    if args.warn_long > 0:
+        # Show all test durations...
+        pytest_options.append("--durations=0")
+
+        # But then limit the list to the ones that exceed the
+        # warn-long limit.
+        pytest_options.append(f"--durations-min={args.warn_long}")
+
     if args.verbose:
         pytest_options.append("-v")
 

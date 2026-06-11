@@ -1852,6 +1852,176 @@ class EllipticCurveHom(Morphism):
             return R.one()
         return alpha.minpoly()
 
+    def xEVAL(self, xP):
+        r"""
+        Return the `x`-coordinate of `\varphi(P)` given the `x`-coordinate of `P`.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES:
+
+        Example for :class:`WeierstrassIsomorphism`::
+
+            sage: E = EllipticCurve(GF(101), [1,1,1,1,1])
+            sage: iso = E.isomorphism_to(E.short_weierstrass_model())
+            sage: iso(E.lift_x(42)).x()
+            12
+            sage: iso.xEVAL(42)
+            12
+            sage: iso.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = seq((16, 10), E.base_field())
+            sage: iso.xEVAL(xP)
+            (19, 10)
+            sage: iso.xEVAL((1, 0))
+            (1, 0)
+
+        Example for :class:`EllipticCurveIsogeny` (Vélu)::
+
+            sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
+            sage: K = (E.cardinality() // 11) * E.gens()[0]
+            sage: phi = E.isogeny(K, algorithm='velu', model='montgomery'); phi
+            Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2 to Elliptic Curve defined by y^2 = x^3 + 40*x^2 + x over Finite Field in z2 of size 101^2
+            sage: phi(E.lift_x(42)).x()
+            5
+            sage: phi.xEVAL(42)
+            5
+            sage: phi.xEVAL((2*K).x())
+            +Infinity
+            sage: phi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = seq((16, 10), E.base_field())
+            sage: phi.xEVAL(xP)
+            (48, 50)
+            sage: xK2 = (2*K)[0]*5, (2*K)[2]*5
+            sage: phi.xEVAL(xK2)
+            (1, 0)
+            sage: phi.xEVAL((1, 0))
+            (1, 0)
+
+        Example for :class:`EllipticCurveIsogeny` (Kohel)::
+
+            sage: x = polygen(E.base_field())
+            sage: h = x^5 + 5*x^4 + 98*x^3 + 43*x^2 + 12*x + 23
+            sage: psi = E.isogeny(h, algorithm='kohel', model='montgomery'); psi
+            Isogeny of degree 11 from Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2 to Elliptic Curve defined by y^2 = x^3 + 40*x^2 + x over Finite Field in z2 of size 101^2
+            sage: psi(E.lift_x(42)).x()
+            5
+            sage: psi.xEVAL(42)
+            5
+            sage: psi.xEVAL((2*K).x())
+            +Infinity
+            sage: psi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = seq((16, 10), E.base_field())
+            sage: psi.xEVAL(xP)
+            (48, 50)
+            sage: xK2 = (2*K)[0]*5, (2*K)[2]*5
+            sage: psi.xEVAL(xK2)
+            (1, 0)
+            sage: psi.xEVAL((1, 0))
+            (1, 0)
+
+        Example for :class:`EllipticCurveHom_frobenius`::
+
+            sage: pi = E.frobenius_isogeny(); pi
+            Frobenius endomorphism of degree 101:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+            sage: E.base_field().inject_variables()
+            Defining z2
+            sage: pi(E.lift_x(z2-1)).x()
+            100*z2 + 3
+            sage: pi.xEVAL(z2-1)
+            100*z2 + 3
+            sage: pi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = (3*z2 - 2, z2)
+            sage: pi.xEVAL(xP)
+            (98*z2 + 10, 100*z2 + 4)
+            sage: pi.xEVAL((1, 0))
+            (1, 0)
+
+        Example for :class:`EllipticCurveHom_fractional`::
+
+            sage: pi = E.frobenius_isogeny()
+            sage: chi = (1 + pi) / 2; chi
+            Fractional elliptic-curve morphism of degree 22:
+              Numerator:   Sum morphism:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              Via:  (Scalar-multiplication endomorphism [1] of Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2, Frobenius endomorphism of degree 101:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2)
+              Denominator: 2
+            sage: chi(E.lift_x(z2-1)).x()
+            100*z2 + 1
+            sage: chi.xEVAL(z2-1)
+            100*z2 + 1
+            sage: chi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = (3*z2 - 2, z2)
+            sage: chi.xEVAL(xP)
+            (64*z2 + 54, 84*z2 + 88)
+            sage: chi.xEVAL((1, 0))
+            (1, 0)
+
+        .. TODO ::
+
+            For (at least) :class:`EllipticCurveHom_fractional`,
+            a specialized implementation could be (much) faster.
+        """
+        from sage.rings.infinity import Infinity as oo
+        proj = isinstance(xP, (tuple, list))
+        if proj:
+            if not xP[1]:
+                return xP
+        elif xP == oo:
+            return oo
+        xmap = self.x_rational_map()
+        n = xmap.numerator()
+        d = xmap.denominator()
+        if proj:
+            m = max(n.degree(), d.degree())
+            x,z = n.parent().base_ring()['x,z'].gens()
+            n = n(x=x).homogenize('z') * z**(m - n.degree())
+            d = d(x=x).homogenize('z') * z**(m - d.degree())
+            dx = d(xP[0], xP[1])
+        else:
+            dx = d(xP)
+        if not dx:
+            if proj:
+                return d.parent().one(), dx
+            return oo
+        nx = n(xP[0], xP[1]) if proj else n(xP)
+        if proj:
+            return nx, dx
+        return nx / dx
+
 
 def compare_via_evaluation(left, right):
     r"""
