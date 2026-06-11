@@ -464,7 +464,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
 
             To find a generator, use :meth:`gens_reduced`.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: K.<a> = QuadraticField(-163)
             sage: O = K.order(7*a)

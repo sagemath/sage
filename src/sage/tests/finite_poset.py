@@ -64,14 +64,15 @@ dual_elements = [
  ['meet_primes', 'join_primes']
 ]
 
-two_to_one = [ ['distributive', 'dismantlable', 'planar'],
-               ['upper_semimodular', 'lower_semimodular', 'modular'],
-               ['meet_distributive', 'join_distributive', 'distributive'],
-               ['meet_semidistributive', 'join_semidistributive', 'semidistributive'],
-               ['lower_semimodular', 'meet_semidistributive', 'distributive'],
-               ['upper_semimodular', 'join_semidistributive', 'distributive'],
-               ['complemented', 'modular', 'relatively_complemented'],
-             ]
+two_to_one = [
+    ['distributive', 'dismantlable', 'planar'],
+    ['upper_semimodular', 'lower_semimodular', 'modular'],
+    ['meet_distributive', 'join_distributive', 'distributive'],
+    ['meet_semidistributive', 'join_semidistributive', 'semidistributive'],
+    ['lower_semimodular', 'meet_semidistributive', 'distributive'],
+    ['upper_semimodular', 'join_semidistributive', 'distributive'],
+    ['complemented', 'modular', 'relatively_complemented'],
+]
 
 mutually_exclusive = [
  ['doubling_any', 'simple'],

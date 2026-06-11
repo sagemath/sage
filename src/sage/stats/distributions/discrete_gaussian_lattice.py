@@ -142,7 +142,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(identity_matrix(2), 3.0)
         sage: S = [D() for _ in range(2^12)]
         sage: l = [vector(v.list() + [S.count(v)]) for v in set(S)]
-        sage: list_plot3d(l, point_list=True, interpolation='nn')                       # needs sage.plot
+        sage: list_plot3d(l, point_list=True, interpolation='nn')
         Graphics3d Object
 
     REFERENCES:
@@ -447,7 +447,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: n = 2; sigma = 3.0
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
             sage: f = D.f
-            sage: nf = D._normalisation_factor_zz(); nf                                 # needs sage.symbolic
+            sage: nf = D._normalisation_factor_zz(); nf
             56.5486677646...
 
             sage: from collections import defaultdict
@@ -461,7 +461,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: v = vector(ZZ, n, (-3, -3))
             sage: v.set_immutable()
             sage: while v not in counter: add_samples(1000)
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:
             ....:     add_samples(1000)
 
             sage: counter = defaultdict(Integer); m = 0
@@ -469,7 +469,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: v.set_immutable()
             sage: while v not in counter:
             ....:     add_samples(1000)
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:
             ....:     add_samples(1000)
 
         Spherical covariance are automatically handled::
@@ -505,7 +505,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             ....:     add_samples(1000)
             sage: sum(counter.values())  # random
             3000
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:  # long time, needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:  # long time
             ....:     add_samples(1000)
 
         If the covariance provided is not positive definite, an error is thrown::
