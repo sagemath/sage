@@ -73,7 +73,7 @@ cdef class FiniteField(Field):
         """
         if category is None:
             category = FiniteFields()
-        Field.__init__(self, base, names, normalize, category)
+        Field.__init__(self, base, names, normalize, category=category)
 
     # The methods __hash__ and __richcmp__ below were copied from
     # sage.misc.fast_methods.WithEqualityById; we cannot inherit from

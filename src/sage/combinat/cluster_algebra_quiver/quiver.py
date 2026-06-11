@@ -1760,17 +1760,13 @@ class ClusterQuiver(SageObject):
         """
         if data_type == 'path':
             return_paths = False
-        if data_type == "dig6":
-            return_dig6 = True
-        else:
-            return_dig6 = False
 
         # jump to the standard labelling convention
         dg = ClusterQuiver(self._M).digraph()
         frozen = list(range(self._n, self._n + self._m))
 
         MC_iter = _mutation_class_iter(dg, self._n, self._m, depth=depth,
-                                       return_dig6=return_dig6,
+                                       return_dig6=(data_type == "dig6"),
                                        show_depth=show_depth,
                                        up_to_equivalence=up_to_equivalence,
                                        sink_source=sink_source)

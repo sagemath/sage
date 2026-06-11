@@ -67,7 +67,6 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
-
 class PlaneCurveArrangementElement(Element):
     """
     An ordered plane curve arrangement.
@@ -853,6 +852,16 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             Finitely presented group
             < x0, x1, x2 | x2*x0*x1*x0^-1*x2^-1*x1^-1,
                            x1*(x2*x0)^2*x2^-1*x1^-1*x0^-1*x2^-1*x0^-1 >
+
+        TESTS:
+
+        We check :issue:`42006` is fixed::
+
+            sage: # needs sirocco
+            sage: P.<u, v, w> = ProjectivePlaneCurveArrangements(QQ)
+            sage: C = P(u * v - w^2)
+            sage: C.fundamental_group()
+            Finitely presented group < x | x^2 >
         """
         if simplified:
             computed = self._fundamental_group_simpl
@@ -891,11 +900,14 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
                 C = H(C.curves()[:j] + (h, ) + C.curves()[j + 1:])
                 break
         affine = AffinePlaneCurveArrangements(K, names=('u', 'v'))
+        affine_ring = affine.coordinate_ring()
         u, v = affine.gens()
-        affines = [f.defining_polynomial().subs({x: u, y: v, z: 1}) for f in C]
+        dehom = R.hom(codomain=affine_ring, im_gens=[u, v, 1])
+        affines = [dehom(f.defining_polynomial()) for f in C]
         changes = any(g.degree(v) < g.degree() > 1 for g in affines)
+        turn = affine_ring.hom(codomain=affine_ring, im_gens=[u + v, v])
         while changes:
-            affines = [f.subs({u: u + v}) for f in affines]
+            affines = [turn(f) for f in affines]
             changes = any(g.degree(v) < g.degree() > 1 for g in affines)
         C_affine = affine(affines)
         proj = not (infinity_divides or infinity_in_C)

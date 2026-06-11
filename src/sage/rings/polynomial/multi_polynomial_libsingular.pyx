@@ -2054,6 +2054,76 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: S.<y> = PolynomialRing(k, 1)
             sage: f(y).parent()
             Multivariate Polynomial Ring in y over Finite Field in a of size 2^4
+
+        Check that substitution and evaluation do not leak (:issue:`27261`)::
+
+            sage: import gc
+            sage: import resource
+            sage: R = PolynomialRing(ZZ, 'x', 50)
+            sage: d = {str(g): g for g in R.gens()}
+            sage: p = sum(d.values())
+            sage: S.<x, y> = ZZ[]
+            sage: q = (x + y)**100
+            sage: def leak_27261():
+            ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     gc.collect()
+            ....:     for _ in range(50):
+            ....:         _ = p.subs(**d)
+            ....:     for _ in range(20):
+            ....:         _ = q(x + y, y)
+            ....:         _ = q(1, 2)
+            ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+            sage: zeros = 0
+            sage: for i in range(30):  # long time
+            ....:     n = leak_27261()
+            ....:     print("Leaked {} bytes".format(n))
+            ....:     if n == 0:
+            ....:         zeros += 1
+            ....:         if zeros >= 6:
+            ....:             break
+            ....:     else:
+            ....:         zeros = 0
+            Leaked...
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+
+        Check that evaluating and adding polynomials over number fields does
+        not leak (:issue:`32604`)::
+
+            sage: import gc
+            sage: import resource
+            sage: K.<a> = QuadraticField(-1)
+            sage: R.<x> = PolynomialRing(K, 1)
+            sage: def leak(N):
+            ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     gc.collect()
+            ....:     for _ in range(N):
+            ....:         _ = x(1)
+            ....:         _ = x + 1
+            ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+            sage: zeros = 0
+            sage: for i in range(30):  # long time
+            ....:     n = leak(10000)
+            ....:     print("Leaked {} bytes".format(n))
+            ....:     if n == 0:
+            ....:         zeros += 1
+            ....:         if zeros >= 6:
+            ....:             break
+            ....:     else:
+            ....:         zeros = 0
+            Leaked...
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
         """
         cdef Element sage_res
 
@@ -3735,7 +3805,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             res_id = fast_map_common_subexp(from_id, _ring, to_id, _ring)
             _p = res_id.m[0]
 
-            from_id.m[0] = NULL
+            p_Delete(&from_id.m[0], _ring)
             res_id.m[0] = NULL
 
             id_Delete(&from_id, _ring)
