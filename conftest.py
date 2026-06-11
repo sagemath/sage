@@ -113,7 +113,7 @@ class SageDoctestModule(DoctestModule):
                     root=self.config.rootpath,
                     consider_namespace_packages=True,
                 )
-            except ImportError as exception:
+            except ImportError:
                 if self.config.getvalue("doctest_ignore_import_errors"):
                     pytest.skip(f"unable to import module {self.path}: {exception}")
                 else:
@@ -182,12 +182,11 @@ def pytest_collect_file(
                 # Fails with "Fatal Python error"
                 return IgnoreCollector.from_parent(parent)
             return SageDoctestModule.from_parent(parent, path=file_path)
-        else:
-            # We don't allow pytests to be defined in Cython files.
-            # Normally, Cython files are filtered out already by pytest and we only
-            # hit this here if someone explicitly runs `pytest some_file.pyx`.
-            return IgnoreCollector.from_parent(parent)
-    elif file_path.suffix == ".py":
+        # We don't allow pytests to be defined in Cython files.
+        # Normally, Cython files are filtered out already by pytest and we only
+        # hit this here if someone explicitly runs `pytest some_file.pyx`.
+        return IgnoreCollector.from_parent(parent)
+    if file_path.suffix == ".py":
         if parent.config.option.doctest:
             if file_path.name in {"__main__.py", "setup.py"}:
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).

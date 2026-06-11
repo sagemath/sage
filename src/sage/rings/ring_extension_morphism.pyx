@@ -165,8 +165,8 @@ cdef class RingExtensionHomomorphism(RingMap):
                     gens += base.gens()
                     base = base.base_ring()
             # We construct the backend morphism
-            im_gens = [ codomain(x) for x in defn ]
-            backend_bases = [ backend_domain ]
+            im_gens = [codomain(x) for x in defn]
+            backend_bases = [backend_domain]
             b = backend_domain.base_ring()
             while b is not b.base_ring():
                 backend_bases.append(b)
@@ -174,7 +174,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             backend_bases.reverse()
             current_morphism = None
             for current_domain in backend_bases:
-                current_im_gens = [ ]
+                current_im_gens = []
                 for x in current_domain.gens():
                     pol = domain(backend_domain(x)).polynomial(base)
                     if base_map is not None:
@@ -447,7 +447,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         s = ""
         gens = self.domain().gens()
         if self._im_gens is None:
-            self._im_gens = [ self(x) for x in gens ]
+            self._im_gens = [self(x) for x in gens]
         for i in range(len(gens)):
             s += "%s |--> %s\n" % (gens[i], self._im_gens[i])
         if self.base_map() is not None:
@@ -724,7 +724,8 @@ cdef class MapFreeModuleToRelativeRing(Map):
               To:   Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
         """
         self._degree = E.degree(K)
-        self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
+        self._basis = [(<RingExtensionElement>x)._backend
+                       for x in E.basis_over(K)]
         self._f = backend_morphism(E.defining_morphism(K), forget='codomain')
         domain = K ** self._degree
         parent = domain.Hom(E)
@@ -812,7 +813,8 @@ cdef class MapRelativeRingToFreeModule(Map):
         cdef Parent L, base
 
         self._degree = (<RingExtensionWithBasis>E)._degree_over(K)
-        self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
+        self._basis = [(<RingExtensionElement>x)._backend
+                       for x in E.basis_over(K)]
         f = backend_morphism(E.defining_morphism(K), forget='codomain')
         codomain = K ** self._degree
         Map.__init__(self, E.Hom(codomain))
@@ -898,7 +900,7 @@ cdef class MapRelativeRingToFreeModule(Map):
             sage: j(a + 2*a^2)   # indirect doctest                                     # needs sage.rings.finite_rings
             (0, 1, 2)
         """
-        cdef list coeffs = [ ]
+        cdef list coeffs = []
         dK = self._dimK
         w = (self._jL(x._backend) * self._matrix).list()
         for i in range(self._degree):

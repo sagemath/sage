@@ -1,6 +1,7 @@
 from typing import Any
 from collections.abc import Callable
 
+
 def verify_no_leak(callback: Callable[[], Any],
                    repeat: int = 10000,
                    fuzzy: int = 10,

@@ -3067,6 +3067,7 @@ cdef class CachedSpecialMethod(CachedMethod):
             D[name] = Caller
         return Caller
 
+
 @decorator_keywords
 def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedMethod:
     """

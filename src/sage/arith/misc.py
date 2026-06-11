@@ -6093,8 +6093,7 @@ def sort_complex_numbers_for_display(nums):
         sage: def truncate(n):
         ....:     if n.real() < 1e-10:
         ....:         return 0
-        ....:     else:
-        ....:         return n.real().n(digits=9)
+        ....:     return n.real().n(digits=9)
         sage: for i in range(first_non_real, len(nums)-1):
         ....:     assert truncate(nums[i]) <= truncate(nums[i + 1])
         ....:     if truncate(nums[i]) == truncate(nums[i + 1]):

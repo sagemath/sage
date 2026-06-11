@@ -704,10 +704,9 @@ class GaloisGroup_v2(GaloisGroup_perm):
         ramdata = self._ramgroups(P)
         if v < -1:
             raise ValueError("v must be at least -1")
-        elif v + 1 >= len(ramdata):
+        if v + 1 >= len(ramdata):
             return self.subgroup([])
-        else:
-            return self.subgroup(ramdata[v + 1][0])
+        return self.subgroup(ramdata[v + 1][0])
 
     def inertia_group(self, P):
         """

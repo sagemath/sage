@@ -182,9 +182,9 @@ jobs:
           # The output also includes a long list of modules together with the number of tests in each module.
           # This can be ignored.
           if [[ "${{ matrix.os }}" == "windows" ]]; then
-            pytest -qq --doctest --collect-only || true
+            pytest -n 4 -qq --doctest --collect-only || true
           else
-            pytest -qq --doctest --collect-only
+            pytest -n 4 -qq --doctest --collect-only
           fi
 
       - name: Check for cyclic imports
