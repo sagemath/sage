@@ -323,8 +323,7 @@ class Category_over_base(CategoryWithParameters):
 #         from sage.categories.homset import Homset, HomsetWithBase
 #         if X._base is not X and X._base is not None: # does this ever fail?
 #             return HomsetWithBase(X, Y, self)
-#         else:
-#             return Homset(X, Y, self)
+#         return Homset(X, Y, self)
 
 #############################################################
 # Category of objects over some base ring

@@ -217,16 +217,14 @@ We check that :issue:`17990` is fixed::
 from __future__ import annotations
 
 from sys import maxsize
-from typing import TYPE_CHECKING, Literal, NoReturn
-
-from typing_extensions import Self
+from typing import TYPE_CHECKING, Literal, NoReturn, Self
 
 import sage.rings.abc
 from sage.categories.rings import Rings
 from sage.categories.semirings import Semirings
 from sage.misc.fast_methods import Singleton
 from sage.misc.lazy_import import lazy_import
-from sage.rings.ring import CommutativeRing
+from sage.rings.ring import Ring
 from sage.structure.element import InfinityElement, RingElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import rich_to_bool, richcmp
@@ -983,11 +981,11 @@ class SignError(ArithmeticError):
     pass
 
 
-class InfinityRing_class(Singleton, CommutativeRing):
+class InfinityRing_class(Singleton, Ring):
     _gen0: PlusInfinity | None = None
     _gen1: MinusInfinity | None = None
 
-    def __init__(self) -> None -> None:
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -1003,7 +1001,8 @@ class InfinityRing_class(Singleton, CommutativeRing):
             sage: InfinityRing == UnsignedInfinityRing
             False
         """
-        CommutativeRing.__init__(self, self, names=('oo',), normalize=False)
+        Ring.__init__(self, self, names=('oo',),
+                      normalize=False, category=Rings().Commutative())
 
     def fraction_field(self) -> NoReturn:
         """

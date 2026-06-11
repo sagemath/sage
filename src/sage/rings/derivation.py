@@ -321,15 +321,15 @@ class RingDerivationModule(Module, UniqueRepresentation):
         if twist is not None:
             self.Element = RingDerivationWithTwist_generic
             if domain.is_field():
-                self._gens = [ 1 ]
-                self._basis = [ 1 ]
+                self._gens = [1]
+                self._basis = [1]
         elif (domain is ZZ or domain in NumberFields() or domain in FiniteFields()
               or isinstance(domain, IntegerModRing_generic)
               or (isinstance(domain, pAdicGeneric) and (domain.is_field() or domain.absolute_e() == 1))):
             self.Element = RingDerivationWithoutTwist_zero
-            self._gens = [ ]
-            self._basis = [ ]
-            self._dual_basis = [ ]
+            self._gens = []
+            self._basis = []
+            self._dual_basis = []
             self._constants = (domain, True)
         elif (isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base, PowerSeriesRing_generic, LaurentSeriesRing))
               or (isinstance(domain, FractionField_generic)
@@ -1166,7 +1166,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         p = parent.domain().characteristic()
         if not p.is_prime():
             raise TypeError("the domain of the derivation must have positive and prime characteristic")
-        arg = [ ]
+        arg = []
         for x in parent.dual_basis():
             res = x
             for _ in range(p):
@@ -1802,7 +1802,9 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
         domain = parent.domain()
         codomain = parent.codomain()
         defining_morphism = parent.defining_morphism()
-        if isinstance(domain, FractionField_generic):
+        if self._base_derivation == 0:
+            res = codomain.zero()
+        elif isinstance(domain, FractionField_generic):
             num = x.numerator()
             den = x.denominator()
             u = defining_morphism(num)

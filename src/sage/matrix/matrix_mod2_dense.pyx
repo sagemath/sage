@@ -109,6 +109,7 @@ from cysignals.signals cimport sig_on, sig_str, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init, MA_ENTRIES_NDARRAY
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 from libc.stdio cimport *
 from sage.structure.element cimport (Matrix, Vector)
 from sage.modules.free_module_element cimport FreeModuleElement
@@ -834,8 +835,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         - [AKF1970]_
         - [Bar2006]_
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         if get_verbose() >= 2:
             verbose('m4rm multiply of %s x %s matrix by %s x %s matrix' % (
@@ -845,6 +845,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         ans = self.new_matrix(nrows = self._nrows, ncols = right._ncols)
         if self._nrows == 0 or self._ncols == 0 or right._ncols == 0:
+            # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
             return ans
         sig_on()
         ans._entries = mzd_mul_m4rm(ans._entries, self._entries, right._entries, k)
@@ -895,11 +896,13 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A._multiply_classical(B)
             []
         """
+        # Why don't we check the sizes of the matrices here?
+        # It doesn't segfault when there is a size mismatch, so we leave it as-is.
         cdef Matrix_mod2_dense A
         A = self.new_matrix(nrows = self._nrows, ncols = right._ncols)
-        if self._nrows == 0 or self._ncols == 0 or right._ncols == 0:
+        if self._nrows == 0 or self._ncols == 0 or right._nrows == 0 or right._ncols == 0:
             return A
-        A._entries = mzd_mul_naive(A._entries, self._entries,(<Matrix_mod2_dense>right)._entries)
+        A._entries = mzd_mul_naive(A._entries, self._entries, (<Matrix_mod2_dense>right)._entries)
         return A
 
     cpdef Matrix_mod2_dense _multiply_strassen(Matrix_mod2_dense self, Matrix_mod2_dense right, int cutoff):
@@ -966,14 +969,14 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         ALGORITHM: Uses Strassen-Winograd matrix multiplication with
         M4RM as base case as implemented in the M4RI library.
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_mod2_dense ans
         #ans = self.new_matrix(nrows = self._nrows, ncols = right._ncols)
         # The following is a little faster:
         ans = self.matrix_space(self._nrows, right._ncols, sparse=False).zero_matrix().__copy__()
-        if self._nrows == 0 or self._ncols == 0 or right._ncols == 0:
+        if self._nrows == 0 or self._ncols == 0 or right._nrows == 0:
+            # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
             return ans
 
         sig_on()
