@@ -10,6 +10,7 @@ py.install_sources(
   'lattice.py',
   'lfsr.py',
   'lwe.py',
+  'playfair.py',
   'sbox.pyx',
   'sboxes.py',
   'stream.py',
