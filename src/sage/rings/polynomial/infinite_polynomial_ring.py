@@ -261,7 +261,7 @@ import operator
 import re
 from functools import reduce
 
-from sage.rings.ring import CommutativeRing
+from sage.rings.ring import Ring
 from sage.categories.rings import Rings
 from sage.structure.sage_object import SageObject
 from sage.structure.element import parent
@@ -620,7 +620,7 @@ class GenDictWithBasering:
 ##############################################################
 #  The sparse implementation
 
-class InfinitePolynomialRing_sparse(CommutativeRing):
+class InfinitePolynomialRing_sparse(Ring):
     r"""
     Sparse implementation of Infinite Polynomial Rings.
 
@@ -754,7 +754,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         from sage.categories.cartesian_product import cartesian_product
         from sage.combinat.free_module import CombinatorialFreeModule
         category = polynomial_default_category(R.category(), Infinity)
-        CommutativeRing.__init__(self, R, category=category)
+        Ring.__init__(self, R, category=category)
         self._indices = cartesian_product([CombinatorialFreeModule(ZZ,
                                                                    basis_keys=NN,
                                                                    prefix=v)

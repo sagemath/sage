@@ -2207,7 +2207,8 @@ def is_classical_parameters_graph(list array):
     return (d, b, alpha, beta, gamma)
 
 
-def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
+def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma,
+                                    immutable=False):
     r"""
     Return the graph with the classical parameters given.
 
@@ -2224,6 +2225,9 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
       graph; ``d`` and ``b`` must be integers
 
     - ``gamma`` -- element of the enum ``ClassicalParametersGraph``
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2287,59 +2291,59 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
         beta = int(beta)
 
     if gamma == ClassicalParametersGraph.Johnson:
-        return JohnsonGraph(beta + d, d)
+        return JohnsonGraph(beta + d, d, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.Hamming:
-        return HammingGraph(d, beta + 1)
+        return HammingGraph(d, beta + 1, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.HalvedCube:
         a = 0 if beta == 2*d + 1 else 1
-        return HalfCube(beta + a)
+        return HalfCube(beta + a, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.UnitaryDualPolar:
-        return UnitaryDualPolarGraph(2 * d, -b)
+        return UnitaryDualPolarGraph(2 * d, -b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.HermitianForms:
-        return HermitianFormsGraph(d, (-b)**2)
+        return HermitianFormsGraph(d, (-b)**2, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.GeneralisedHexagon:
         q = -b
-        return GeneralisedHexagonGraph(q, q**3)
+        return GeneralisedHexagonGraph(q, q**3, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.Grassmann:
         n = int(log((beta + 1) * (b - 1) + 1, b)) + d - 1
-        return GrassmannGraph(b, n, d)
+        return GrassmannGraph(b, n, d, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.OrthogonalDualPolar1:
-        return OrthogonalDualPolarGraph(1, d, b)
+        return OrthogonalDualPolarGraph(1, d, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.SymplecticDualPolar:
-        return SymplecticDualPolarGraph(2 * d, b)
+        return SymplecticDualPolarGraph(2 * d, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.OrthogonalDualPolar2:
-        return OrthogonalDualPolarGraph(-1, d, b)
+        return OrthogonalDualPolarGraph(-1, d, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.UnitaryDualPolar1:
         r = int(sqrt(b))
-        return UnitaryDualPolarGraph(2*d + 1, r)
+        return UnitaryDualPolarGraph(2*d + 1, r, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.UnitaryDualPolar2:
         r = int(sqrt(b))
-        return UnitaryDualPolarGraph(2 * d, r)
+        return UnitaryDualPolarGraph(2 * d, r, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.Ustimenko:
         q = int(sqrt(b))
         m = int(log((beta+1) * (q-1) + 1, q)) - 1
-        UstimenkoGraph(m, q)
+        return UstimenkoGraph(m, q, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.BilinearForms:
         e = int(log(beta + 1, b))
-        return BilinearFormsGraph(d, e, b)
+        return BilinearFormsGraph(d, e, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.AlternatingForms:
         q = int(sqrt(b))
         a = 0 if beta + 1 == q**(2*d - 1) else 1
-        return AlternatingFormsGraph(2*d + a, q)
+        return AlternatingFormsGraph(2*d + a, q, immutable=immutable)
 
     elif (gamma == ClassicalParametersGraph.LieE77 or
           gamma == ClassicalParametersGraph.AffineE6):
@@ -2433,7 +2437,7 @@ def is_pseudo_partition_graph(list arr):
     return False
 
 
-def pseudo_partition_graph(int m, int a):
+def pseudo_partition_graph(int m, int a, immutable=False):
     r"""
     Return a pseudo partition graph with the given parameters.
 
@@ -2446,6 +2450,9 @@ def pseudo_partition_graph(int m, int a):
     INPUT:
 
     - ``m``, ``a`` -- integers; parameters of the graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2487,11 +2494,11 @@ def pseudo_partition_graph(int m, int a):
     from sage.graphs.bipartite_graph import BipartiteGraph
 
     if a == 0:
-        return FoldedCubeGraph(m)
+        return FoldedCubeGraph(m, immutable=immutable)
     elif a == 1:
-        return JohnsonGraph(2 * m, m).folded_graph()
+        return JohnsonGraph(2 * m, m, immutable=immutable).folded_graph()
     elif a == 2:
-        return BipartiteGraph(FoldedCubeGraph(2 * m)).project_left()
+        return BipartiteGraph(FoldedCubeGraph(2 * m), immutable=immutable).project_left()
 
     raise ValueError("No known graph exists")
 
@@ -2650,7 +2657,7 @@ def is_near_polygon(array):
     return False
 
 
-def near_polygon_graph(family, params):
+def near_polygon_graph(family, params, immutable=False):
     r"""
     Return the near polygon graph with the given parameters.
 
@@ -2663,6 +2670,9 @@ def near_polygon_graph(family, params):
 
     - ``params`` -- integer or tuple; the parameters needed to construct a graph
       of the family ``family``
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2690,7 +2700,7 @@ def near_polygon_graph(family, params):
         sage: near_polygon_graph((0, 12))
         Traceback (most recent call last):
         ...
-        TypeError: ...near_polygon_graph() takes exactly 2 positional arguments (1 given)
+        TypeError: ...near_polygon_graph() takes at least 2 positional arguments (1 given)
         sage: near_polygon_graph(0, 12)
         Cycle graph: Graph on 12 vertices
         sage: near_polygon_graph(*is_near_polygon([8, 7, 6, 5, 1, 2, 3, 8]))
@@ -2699,34 +2709,34 @@ def near_polygon_graph(family, params):
 
     if family == NearPolygonGraph.RegularPolygon:
         from sage.graphs.generators.basic import CycleGraph
-        return CycleGraph(params)
+        return CycleGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.GeneralisedPolygon:
         d, s, t = params
         if d == 3:
-            return GeneralisedHexagonGraph(s, t)
+            return GeneralisedHexagonGraph(s, t, immutable=immutable)
         if d == 4:
-            return GeneralisedOctagonGraph(s, t)
+            return GeneralisedOctagonGraph(s, t, immutable=immutable)
         if d == 6:
-            return GeneralisedDodecagonGraph(s, t)
+            return GeneralisedDodecagonGraph(s, t, immutable=immutable)
 
     if family == NearPolygonGraph.OddGraph:
         from sage.graphs.generators.families import OddGraph
-        return OddGraph(params)
+        return OddGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.DoubleOdd:
-        return DoubleOddGraph(params)
+        return DoubleOddGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.DoubleGrassmann:
-        return DoubleGrassmannGraph(*params)
+        return DoubleGrassmannGraph(*params, immutable=immutable)
 
     if family == NearPolygonGraph.FoldedCube:
         from sage.graphs.generators.families import FoldedCubeGraph
-        return FoldedCubeGraph(params)
+        return FoldedCubeGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.HammingGraph:
         from sage.graphs.generators.families import HammingGraph
-        return HammingGraph(*params)
+        return HammingGraph(*params, immutable=immutable)
 
     if family == NearPolygonGraph.DualPolarGraph:
         from sage.graphs.generators.classical_geometries import (
@@ -2736,15 +2746,15 @@ def near_polygon_graph(family, params):
 
         d, q, e = params
         if e == 0:
-            return OrthogonalDualPolarGraph(1, d, q)
+            return OrthogonalDualPolarGraph(1, d, q, immutable=immutable)
         if e == 0.5:
-            return UnitaryDualPolarGraph(2 * d, int(q**0.5))
+            return UnitaryDualPolarGraph(2 * d, int(q**0.5), immutable=immutable)
         if e == 1:
-            return SymplecticDualPolarGraph(2 * d, q)
+            return SymplecticDualPolarGraph(2 * d, q, immutable=immutable)
         if e == 1.5:
-            return UnitaryDualPolarGraph(2*d + 1, int(q**0.5))
+            return UnitaryDualPolarGraph(2*d + 1, int(q**0.5), immutable=immutable)
         if e == 2:
-            return OrthogonalDualPolarGraph(-1, d, q)
+            return OrthogonalDualPolarGraph(-1, d, q, immutable=immutable)
 
     raise ValueError("No known near polygons with the given parameters")
 
