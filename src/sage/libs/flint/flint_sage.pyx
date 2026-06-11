@@ -1,7 +1,11 @@
 # distutils: extra_compile_args = -D_XPG6
 
 # WARNING: src/sage/libs/flint/flint_sage.pyx is generated from
+<<<<<<<< HEAD:tools/autogen/flint/templates/flint_sage.pyx.template
+# tools/autogen/flint/templates/flint_sage.pyx.template;
+========
 # tools/flint-autogen/flint/templates/flint_sage.pyx.template;
+>>>>>>>> upstream/develop:tools/flint-autogen/flint/templates/flint_sage.pyx.template
 # please make sure that you are modifying the correct file!
 """
 Flint imports
@@ -32,7 +36,6 @@ from .acb_hypgeom cimport *
 from .acb_mat cimport *
 from .acb_modular cimport *
 from .acb_poly cimport *
-from .acb_theta cimport *
 from .acf cimport *
 from .aprcl cimport *
 from .arb cimport *
@@ -119,7 +122,6 @@ from .gr cimport *
 from .gr_generic cimport *
 from .gr_mat cimport *
 from .gr_mpoly cimport *
-from .gr_ore_poly cimport *
 from .gr_poly cimport *
 from .gr_series cimport *
 from .gr_special cimport *
@@ -152,7 +154,6 @@ from .qadic cimport *
 from .qfb cimport *
 from .qqbar cimport *
 from .qsieve cimport *
-from .radix cimport *
 from .thread_pool cimport *
 from .ulong_extras cimport *
 

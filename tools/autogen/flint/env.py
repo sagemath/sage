@@ -10,11 +10,10 @@
 
 import os
 
-
 AUTOGEN_DIR = os.path.dirname(os.path.realpath(__file__))
 FLINT_GIT_DIR = os.environ.get('FLINT_GIT_DIR', '')
 FLINT_INCLUDE_DIR = os.path.join(FLINT_GIT_DIR, 'src')
 FLINT_DOC_DIR = os.path.join(FLINT_GIT_DIR, 'doc/source')
 
 if not os.path.isdir(FLINT_GIT_DIR) or not os.path.isdir(FLINT_INCLUDE_DIR) or not os.path.isdir(FLINT_DOC_DIR):
-    raise ValueError('FLINT_GIT_DIR (={}) environment variable must be set to the location of flint sources'.format(FLINT_GIT_DIR))
+    raise ValueError(f'FLINT_GIT_DIR (={FLINT_GIT_DIR}) environment variable must be set to the location of flint sources')

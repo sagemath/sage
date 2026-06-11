@@ -259,7 +259,6 @@ def pytest_ignore_collect(
     root = config.rootpath
     if (
         is_subpath(collection_path, root / "src" / "sage_docbuild")
-        or is_subpath(collection_path, root / "src" / "sage_setup")
         or collection_path == root / "src" / "build-docs.py"
     ):
         # Fails to import with Meson

@@ -23,10 +23,10 @@ interpreters = custom_target(
     'interp_rr.c',
     '__init__.py',
   ],
-  input: '../../../sage_setup/autogen/interpreters/internal/__init__.py',
+  input: '../../../../tools/autogen/interpreters/internal/__init__.py',
   command: [
     py,
-    files('../../../sage_setup/autogen/interpreters/__main__.py'),
+    files('../../../../tools/autogen/interpreters/__main__.py'),
     '@OUTDIR@',
   ],
   # Manually install the generated files instead of using install_sources

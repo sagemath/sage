@@ -91,7 +91,7 @@ jobs:
           - "src/sage/[a-f]*"
           - "src/sage/[g-o]*"
           - "src/sage/[p-z]*"
-          - "src/doc src/sage_docbuild src/sage_setup build/pkgs/sagelib/tests"
+          - "src/doc src/sage_docbuild build/pkgs/sagelib/tests"
     steps:
       - name: Maximize build disk space
         uses: jlumbroso/free-disk-space@main
