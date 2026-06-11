@@ -1775,6 +1775,10 @@ cdef class MPolynomial_rational_flint(MPolynomial_flint_base):
         if kwds and args:
             raise TypeError("cannot mix positional and keyword arguments")
 
+        # allow f((a, b, c)) as a shortcut for f(a, b, c)
+        if len(args) == 1 and isinstance(args[0], (list, tuple)):
+            args = tuple(args[0])
+
         names = R.variable_names()
         if args:
             if len(args) != n:
