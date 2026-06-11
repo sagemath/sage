@@ -1187,42 +1187,6 @@ class DiGraph(GenericGraph):
             sage: G.get_vertices()
             {0: 'foo', 1: None, 2: None}
         """
-        """
-        if sparse is not None:
-            if data_structure is not None:
-                raise ValueError("the 'sparse' argument is an alias for "
-                                 "'data_structure'. Please do not define both")
-            data_structure = "sparse" if sparse else "dense"
-
-        if data_structure is None:
-            from sage.graphs.base.dense_graph import DenseGraphBackend
-            from sage.graphs.base.sparse_graph import SparseGraphBackend
-            if isinstance(self._backend, DenseGraphBackend):
-                data_structure = "dense"
-            elif isinstance(self._backend, SparseGraphBackend):
-                data_structure = "sparse"
-            else:
-                data_structure = "static_sparse"
-        from sage.graphs.graph import Graph
-        G = Graph(name=self.name(),
-                  pos=self._pos,
-                  multiedges=self.allows_multiple_edges(),
-                  loops=self.allows_loops(),
-                  data_structure=(data_structure if data_structure != "static_sparse"
-                                  else "sparse"))  # we need a mutable copy first
-
-        G.add_vertices(self.vertex_iterator())
-        G.set_vertices(self.get_vertices())
-        G.add_edges(self.edge_iterator())
-        G._copy_attribute_from(self, '_assoc')
-        G._copy_attribute_from(self, '_embedding')
-        G._weighted = self._weighted
-
-        if data_structure == "static_sparse":
-            G = G.copy(data_structure=data_structure)
-
-        return G
-        """
         # Which data structure should be used ?
         if data_structure is not None:
             # data_structure is already defined so there is nothing left to do.
