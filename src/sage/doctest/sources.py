@@ -27,19 +27,20 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
-import sys
-import re
-import random
 import doctest
+import os
+import random
+import re
+
 from sage.cpython.string import bytes_to_str
-from sage.repl.load import load
+from sage.env import SAGE_LIB, SAGE_SRC
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
+from sage.repl.load import load
+from sage.structure.dynamic_class import dynamic_class
+
 from .parsing import SageDocTestParser
 from .util import NestedName
-from sage.structure.dynamic_class import dynamic_class
-from sage.env import SAGE_SRC, SAGE_LIB
 
 # Python file parsing
 triple_quotes = re.compile(r"\s*[rRuU]*((''')|(\"\"\"))")
@@ -306,7 +307,6 @@ class DocTestSource:
         if tab_okay is None:
             tab_okay = isinstance(self, TexSource)
         self._init()
-        self.line_shift = 0
         self.parser = SageDocTestParser(self.options.optional,
                                         self.options.long,
                                         probed_tags=self.options.probe,
@@ -358,7 +358,6 @@ class DocTestSource:
                             start = lineno
                             doc = []
                     else:
-                        self.line_shift = 0
                         start = lineno
                         doc = []
         # In ReST files we can end the file without decreasing the indentation level.

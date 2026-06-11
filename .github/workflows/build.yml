@@ -245,7 +245,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       # Building
-
       - name: Generate Dockerfile
         # From docker.yml
         run: |
@@ -283,6 +282,7 @@ jobs:
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
                      --workdir $(pwd) \
                      ${{ env.BUILD_IMAGE }} /bin/sh
+
 
       # Combining
 
