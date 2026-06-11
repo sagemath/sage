@@ -722,7 +722,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             s += ";" + twist
         return s + "\\right]"
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         r"""
         Return the Ore polynomial ring in variable ``var`` with the same base
         ring, twisting morphism and twisting derivation as ``self``.
@@ -737,9 +737,9 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             sage: Frob = k.frobenius_endomorphism()
             sage: R.<x> = OrePolynomialRing(k,Frob); R
             Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
-            sage: Ry = R.change_var('y'); Ry
+            sage: Ry = R.change_variable_name('y'); Ry
             Ore Polynomial Ring in y over Finite Field in t of size 5^3 twisted by t |--> t^5
-            sage: Ry is R.change_var('y')
+            sage: Ry is R.change_variable_name('y')
             True
         """
         if self._derivation is None:
@@ -748,6 +748,8 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             twist = self._derivation
         return OrePolynomialRing(self.base_ring(), twist, names=var,
                                  sparse=self.__is_sparse, polcast=False)
+
+    change_var = change_variable_name
 
     def characteristic(self):
         r"""

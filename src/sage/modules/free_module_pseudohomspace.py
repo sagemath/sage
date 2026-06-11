@@ -224,7 +224,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: H.ore_ring('y')
             Ore Polynomial Ring in y over Finite Field in z of size 7^3 twisted by z |--> z^7
         """
-        return self._ore.change_var(var)
+        return self._ore.change_variable_name(var)
 
     def matrix_space(self):
         r"""

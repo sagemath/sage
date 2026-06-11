@@ -1320,6 +1320,71 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         pt = (~self._pre_iso)(self._P)
         return AdditiveAbelianGroupWrapper(pt.parent(), [pt], [self._degree])
 
+    def xEVAL(self, xP):
+        r"""
+        Return the `x`-coordinate of `\varphi(P)` given the `x`-coordinate of `P`.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
+            sage: K = (E.cardinality() // 11) * E.gens()[0]
+            sage: phi = E.isogeny(K, algorithm='velusqrt', model='montgomery'); phi
+            Elliptic-curve isogeny (using square-root Vélu) of degree 11:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 61*x^2 + x over Finite Field in z2 of size 101^2
+            sage: phi(E.lift_x(42)).x()
+            96
+            sage: phi.xEVAL(42)
+            96
+            sage: phi.xEVAL(K.x())
+            +Infinity
+            sage: phi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = seq((16, 10), E.base_field())
+            sage: phi.xEVAL(xP)
+            (96, 1)
+            sage: xK = K[0]*5, K[2]*5
+            sage: phi.xEVAL(xK)
+            (1, 0)
+            sage: phi.xEVAL((1, 0))
+            (1, 0)
+        """
+        from sage.rings.infinity import Infinity as oo
+        proj = isinstance(xP, (tuple, list))
+        if proj:
+            #TODO This implementation currently does everything in affine coordinates.
+            # It would not be very difficult to properly support projective coordinates
+            # as well; mainly this would require some minor adjustments in ._raw_eval().
+            xP = xP[0] / xP[1] if xP[1] else oo
+            R = self.codomain().base_ring()
+            inf = R.one(), R.zero()
+        else:
+            inf = oo
+        xP = self._pre_iso.xEVAL(xP)
+        if xP == oo:
+            return inf
+        xP = self._raw_eval(xP)
+        if xP == ():
+            return inf
+        xP = self._post_iso.xEVAL(xP)
+        if proj:
+            return xP, R.one()
+        return xP
+
 
 def _random_example_for_testing():
     r"""

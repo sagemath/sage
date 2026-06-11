@@ -351,7 +351,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None,
         set_random_seed(seed)
 
     complement = False
-    if d1 > n2/2 or d2 > n1/2:
+    if 2 * d1 > n2 or 2 * d2 > n1:
         # We build the complement graph instead
         complement = True
         d1 = n2 - d1
@@ -1718,7 +1718,6 @@ def RandomPartialKTree(n, k, x, seed=None, immutable=False):
     # Build an immutable graph without the x first edges
     return Graph([g, edges[x:]], format="vertices_and_edges",
                  name=f"Random partial {k}-tree", immutable=True)
-
 
 
 def RandomRegular(d, n, seed=None, immutable=False):

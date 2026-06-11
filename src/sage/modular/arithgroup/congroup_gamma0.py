@@ -19,6 +19,7 @@ from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
 from sage.modular.cusps import Cusp
 from sage.modular.modsym.p1list import P1List, lift_to_sl2z
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 
@@ -37,8 +38,19 @@ def Gamma0_constructor(N):
         True
         sage: G is Gamma0(51)
         True
+
+    The construction also works when `N` is a polynomial over a finite field
+    (see :mod:`sage.modular.drinfeld_modform.congroup_gamma0`)::
+
+        sage: A.<T> = GF(5)[]
+        sage: G = Gamma0(T^4 + 2*T + 3)
+        sage: G
+        Congruence Subgroup Gamma0(T^4 + 2*T + 3)
     """
     from sage.modular.arithgroup.all import SL2Z
+    if isinstance(N, Polynomial):
+        from sage.modular.drinfeld_modform.congroup_gamma0 import Gamma0_drinfeld
+        return Gamma0_drinfeld(N)
     if N == 1:
         return SL2Z
     try:
@@ -89,7 +101,6 @@ class Gamma0_class(GammaH_class):
          Modular Symbols space of dimension 18 for Gamma_0(100)
           of weight 2 with sign 1 over Rational Field
     """
-
     def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_0(N)`.
