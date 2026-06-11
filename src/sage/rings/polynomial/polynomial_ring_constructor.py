@@ -909,6 +909,15 @@ def _multi_variate(base_ring, names, sparse=None, order='degrevlex', implementat
         else:
             implementation_names.update([None, "singular"])
 
+    if R is None and implementation == "flint":
+        from sage.rings.integer_ring import ZZ
+        if base_ring is not ZZ:
+            raise ValueError("FLINT multivariate polynomial implementation only supports ZZ as base ring")
+        from sage.rings.polynomial.multi_polynomial_integer_flint import (
+            MPolynomialRing_integer_flint,
+        )
+        R = MPolynomialRing_integer_flint(base_ring, n, names, order)
+
     if R is None and implementation is None:
         # Interpret implementation=None as implementation="generic"
         implementation = "generic"

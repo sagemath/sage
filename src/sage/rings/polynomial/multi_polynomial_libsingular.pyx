@@ -219,6 +219,7 @@ from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_mo
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict, MPolynomialRing_polydict_domain
 from sage.rings.polynomial.multi_polynomial_ring_base import BooleanPolynomialRing_base
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
@@ -914,6 +915,11 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                         sBucketDeleteAndDestroy(&bucket)
                         raise
                     return new_MP(self, _p)
+
+        elif isinstance(element, MPolynomial):
+            variable_names_t = self.variable_names()
+            if base_ring.has_coerce_map_from(element.parent()._mpoly_base_ring(variable_names_t)):
+                return self(element._mpoly_dict_recursive(variable_names_t, base_ring))
 
         elif isinstance(element, polynomial_element.Polynomial):
             if base_ring.has_coerce_map_from(element.parent()._mpoly_base_ring(self.variable_names())):
