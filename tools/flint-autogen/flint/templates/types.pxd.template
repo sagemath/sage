@@ -922,7 +922,7 @@ cdef extern from "flint_wrap.h":
     ctypedef fmpz_mpoly_ctx_struct fmpz_mpoly_ctx_t[1]
 
     ctypedef struct fmpq_mpoly_ctx_struct:
-        pass
+        fmpz_mpoly_ctx_t zctx
 
     ctypedef fmpq_mpoly_ctx_struct fmpq_mpoly_ctx_t[1]
 
