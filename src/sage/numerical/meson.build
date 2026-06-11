@@ -36,7 +36,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/numerical',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cypari2, gmp, mpfr, mpc, numpy],
+    dependencies: [py_dep, cypari2, gmp, mpfr, mpc],
   )
 endforeach
 
