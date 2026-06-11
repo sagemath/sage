@@ -6,7 +6,7 @@ treat the matrix representations of the elements of the cubic Hecke algebra
 (:class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`)
 together with its parent class :class:`CubicHeckeMatrixSpace`. Furthermore,
 it contains enums for their types (:class:`RepresentationType`) and names
-(:class:`AbsIrreducibeRep`).
+(:class:`AbsIrreducibleRep`).
 
 
 AUTHORS:
@@ -143,7 +143,7 @@ class RepresentationType(Enum):
 # ---------------------------------------------
 # Enum for absolute irreducible representations
 # ---------------------------------------------
-class AbsIrreducibeRep(Enum):
+class AbsIrreducibleRep(Enum):
     r"""
     Enum class to select an absolutely irreducible representation for the cubic
     Hecke algebra (``CHAn``) on `n`-strands.
@@ -158,17 +158,21 @@ class AbsIrreducibeRep(Enum):
 
         ``Wn_ijk``
 
-    The only ambiguity among the available irreducible representations occurs for the two nine-dimensional modules, which
+    The only ambiguity among the available irreducible representations occurs
+    for the two nine-dimensional modules, which
     are conjugated to each other and distinguished by these names:
 
         ``W4_333`` and ``W4_333bar``
 
     Examples of names:
 
-    - ``W2_100`` -- one dimensional representation of the cubic Hecke algebra on 2 strands corresponding to the first root
+    - ``W2_100`` -- one dimensional representation
+      of the cubic Hecke algebra on 2 strands corresponding to the first root
       of the cubic equation
-    - ``W3_111`` -- three dimensional irreducible representation of the cubic Hecke algebra on 3 strands
-    - ``W4_242`` -- eight dimensional irreducible representation of the cubic Hecke algebra on 4 strands having the second
+    - ``W3_111`` -- three dimensional irreducible representation
+      of the cubic Hecke algebra on 3 strands
+    - ``W4_242`` -- eight dimensional irreducible representation
+      of the cubic Hecke algebra on 4 strands having the second
       root of the cubic equation as weight of dimension 4
 
     Alternative names are taken from [MW2012]_ and can be shown by
@@ -177,7 +181,7 @@ class AbsIrreducibeRep(Enum):
     EXAMPLES::
 
         sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
-        sage: [irr.name for irr in chmr.AbsIrreducibeRep]
+        sage: [irr.name for irr in chmr.AbsIrreducibleRep]
         ['W2_100', 'W2_001', 'W2_010', 'W3_100', 'W3_001', 'W3_010', 'W3_011', 'W3_110',
          'W3_101', 'W3_111', 'W4_100', 'W4_001', 'W4_010', 'W4_011', 'W4_110', 'W4_101',
          'W4_111', 'W4_120', 'W4_201', 'W4_012', 'W4_102', 'W4_210', 'W4_021', 'W4_213',
@@ -199,7 +203,7 @@ class AbsIrreducibeRep(Enum):
         EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
-            sage: chmr.AbsIrreducibeRep.W3_011.alternative_name()
+            sage: chmr.AbsIrreducibleRep.W3_011.alternative_name()
             'Tbc'
         """
         return self.value['alt_name']
@@ -211,7 +215,7 @@ class AbsIrreducibeRep(Enum):
         EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
-            sage: chmr.AbsIrreducibeRep.W3_111.dimension()
+            sage: chmr.AbsIrreducibleRep.W3_111.dimension()
             3
         """
         return self.value['dim']
@@ -223,9 +227,9 @@ class AbsIrreducibeRep(Enum):
         EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
-            sage: chmr.AbsIrreducibeRep.W3_001.number_gens()
+            sage: chmr.AbsIrreducibleRep.W3_001.number_gens()
             2
-            sage: chmr.AbsIrreducibeRep.W4_001.number_gens()
+            sage: chmr.AbsIrreducibleRep.W4_001.number_gens()
             3
         """
         return self.value['ngens']
@@ -238,9 +242,9 @@ class AbsIrreducibeRep(Enum):
         EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
-            sage: chmr.AbsIrreducibeRep.W3_001.length_orbit()
+            sage: chmr.AbsIrreducibleRep.W3_001.length_orbit()
             3
-            sage: chmr.AbsIrreducibeRep.W3_111.length_orbit()
+            sage: chmr.AbsIrreducibleRep.W3_111.length_orbit()
             1
         """
         return self.value['len_orbit']
@@ -253,7 +257,7 @@ class AbsIrreducibeRep(Enum):
         EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
-            sage: chmr.AbsIrreducibeRep.W3_111.gap_index()
+            sage: chmr.AbsIrreducibleRep.W3_111.gap_index()
             6
         """
         return self.value['gap_ind']
@@ -265,7 +269,7 @@ class AbsIrreducibeRep(Enum):
         EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
-            sage: chmr.AbsIrreducibeRep.W3_111.internal_index()
+            sage: chmr.AbsIrreducibleRep.W3_111.internal_index()
             6
         """
         return self.value['intern_ind']
@@ -365,9 +369,9 @@ class AbsIrreducibeRep(Enum):
     W5_393 = {'alt_name': None, 'dim': 15, 'ngens': 4, 'len_orbit': 3, 'gap_ind': 29, 'intern_ind': 29}
 
 
-# ------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Definition of CubicHeckeMatrixRep
-# --------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 class CubicHeckeMatrixRep(Matrix_generic_dense):
     r"""
     Class to supervise the diagonal block matrix structure arising from
@@ -435,8 +439,9 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         if not representation_type.is_split():
             return matrix(self)
         n = self.parent()._cubic_hecke_algebra.ngens()
-        s = sum(irr_rep.dimension() for irr_rep in AbsIrreducibeRep if irr_rep.number_gens() == n and irr_rep.internal_index() < ind)
-        for irr_rep in AbsIrreducibeRep:
+        s = sum(irr_rep.dimension() for irr_rep in AbsIrreducibleRep
+                if irr_rep.number_gens() == n and irr_rep.internal_index() < ind)
+        for irr_rep in AbsIrreducibleRep:
             if irr_rep.number_gens() == n and irr_rep.internal_index() == ind:
                 d = irr_rep.dimension()
                 return matrix(self.submatrix(s, s, d, d))
@@ -450,7 +455,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
 
         INPUT:
 
-        - ``irr`` -- an instance of :class:`AbsIrreducibeRep` specifying an
+        - ``irr`` -- an instance of :class:`AbsIrreducibleRep` specifying an
           absolute irreducible representation of the cubic Hecke algebra
 
         EXAMPLES::
@@ -487,7 +492,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
 
         INPUT:
 
-        - ``item`` -- an :class:`AbsIrreducibeRep` specifying an
+        - ``item`` -- an :class:`AbsIrreducibleRep` specifying an
           absolute irreducible representation of the cubic Hecke algebra;
           alternatively, it can be specified by list index
           (see :meth:`internal_index` respectively :meth:`gap_index`)
@@ -506,7 +511,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
             sage: m1[CHA2.irred_repr.W2_001]  # indirect doctest
             [b]
         """
-        if isinstance(item, AbsIrreducibeRep):
+        if isinstance(item, AbsIrreducibleRep):
             return self._get_block(self._irr_to_ind(item))
         if isinstance(item, (Integer, int)):
             return self._get_block(item)
@@ -543,7 +548,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
 
         INPUT:
 
-        - ``irr`` -- an :class:`AbsIrreducibeRep` specifying an
+        - ``irr`` -- an :class:`AbsIrreducibleRep` specifying an
           absolute irreducible representation of the cubic Hecke algebra;
           alternatively, it can be specified by list index (see
           :meth:`internal_index` respectively :meth:`gap_index`)
@@ -566,7 +571,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
             [0 b 0]
             [0 0 0]
         """
-        if isinstance(irr, AbsIrreducibeRep):
+        if isinstance(irr, AbsIrreducibleRep):
             ind = self._irr_to_ind(irr)
         else:
             ind = Integer(irr)

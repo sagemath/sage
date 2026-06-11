@@ -86,6 +86,7 @@ py.install_sources(
   'matrix_symbolic_dense.pyx',
   'matrix_symbolic_sparse.pxd',
   'matrix_symbolic_sparse.pyx',
+  'matrix_utils.pxd',
   'matrix_window.pxd',
   'matrix_window.pyx',
   'misc.pyx',

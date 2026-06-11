@@ -137,3 +137,7 @@ if not all_deps_found
     copy: true,
   )
 endif
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('RANKWIDTH_ENABLED', rw.found())
+conf_data.set10('TDLIB_ENABLED', tdlib.found())

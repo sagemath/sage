@@ -44,3 +44,7 @@ foreach name, pyx : extension_data_cpp
     )
   endif
 endforeach
+
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('COXETER3_ENABLED', coxeter3.found())

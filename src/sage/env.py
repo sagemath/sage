@@ -440,8 +440,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
     def uname_specific(name, value, alternative):
         if name in UNAME[0]:
             return value
-        else:
-            return alternative
+        return alternative
 
     aliases["LINUX_NOEXECSTACK"] = uname_specific("Linux", ["-Wl,-z,noexecstack"],
                                                   [])

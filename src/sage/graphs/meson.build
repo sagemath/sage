@@ -256,6 +256,11 @@ if not all_deps_found
   )
 endif
 
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('BLISS_ENABLED', bliss.found())
+conf_data.set10('MCQD_ENABLED', mcqd.found())
+
 subdir('base')
 subdir('generators')
 subdir('graph_decompositions')
