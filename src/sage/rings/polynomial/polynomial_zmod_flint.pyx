@@ -1049,3 +1049,406 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
     # polynomial_gf2x has modular_composition as the method name so here we
     # allow both
     modular_composition = compose_mod
+
+    @coerce_binop
+    def divides(self, Polynomial_zmod_flint other):
+        r"""
+        Return ``True`` if this polynomial divides ``other``.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: f = x - 1
+            sage: g = x^3 - 1
+            sage: f.divides(g)
+            True
+            sage: f.divides(x + 1)
+            False
+            sage: R(0).divides(x)
+            False
+            sage: R(0).divides(R(0))
+            True
+            sage: f.divides(R(0))
+            True
+
+        Also works over `\ZZ/n\ZZ` for composite ``n``::
+
+            sage: R.<x> = Zmod(15)[]
+            sage: (x - 1).divides(x^2 - 1)
+            True
+            sage: (x - 1).divides(x + 1)
+            False
+        """
+        cdef Polynomial_zmod_flint q
+        cdef int result
+        if self.is_zero():
+            return other.is_zero()
+        q = self._new()
+        sig_on()
+        result = nmod_poly_divides(&q.x, &other.x, &self.x)
+        sig_off()
+        return bool(result)
+
+    def is_squarefree(self):
+        r"""
+        Return ``True`` if this polynomial is squarefree.
+
+        A nonzero polynomial is squarefree if and only if it is coprime to its
+        derivative. By convention, the zero polynomial is considered
+        squarefree.
+
+        This method requires the base ring to be a field (i.e., the modulus
+        to be prime).
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: (x^2 - 1).is_squarefree()
+            True
+            sage: ((x - 1)^2).is_squarefree()
+            False
+            sage: R(0).is_squarefree()
+            True
+            sage: R(1).is_squarefree()
+            True
+
+        TESTS::
+
+            sage: R.<x> = Zmod(6)[]
+            sage: (x^2 - 1).is_squarefree()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: squarefree test of polynomials over rings with composite characteristic is not implemented
+        """
+        if not self.base_ring().is_field():
+            raise NotImplementedError(
+                "squarefree test of polynomials over rings with composite characteristic is not implemented")
+        if self.is_zero():
+            return True
+        return self.gcd(self._derivative()).is_one() or self.gcd(self._derivative()).is_unit()
+
+    def _derivative(self, var=None):
+        r"""
+        Return the formal derivative of this polynomial.
+
+        INPUT:
+
+        - ``var`` -- (optional) must be either ``None`` or the unique
+          generator of the parent ring
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(5)[]
+            sage: f = 3*x^3 + 4*x^2 + 2*x + 1
+            sage: f._derivative()
+            4*x^2 + 3*x + 2
+            sage: f._derivative(x)
+            4*x^2 + 3*x + 2
+            sage: f._derivative(x) == f.derivative()
+            True
+        """
+        if var is not None and var is not self._parent.gen():
+            raise ValueError("cannot differentiate with respect to {}".format(var))
+        cdef Polynomial_zmod_flint res = self._new()
+        sig_on()
+        nmod_poly_derivative(&res.x, &self.x)
+        sig_off()
+        return res
+
+    def integral(self):
+        r"""
+        Return the formal integral of this polynomial with constant term zero.
+
+        The coefficient of degree `k+1` in the result is the coefficient of
+        degree `k` in ``self`` divided by `k+1`. This requires `k+1` to be
+        invertible modulo the modulus for every nonzero coefficient.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(5)[]
+            sage: (x^2 + 3*x + 1).integral()
+            2*x^3 + 4*x^2 + x
+
+        TESTS::
+
+            sage: R.<x> = GF(5)[]
+            sage: (x^4).integral()
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: integration not possible: leading exponent is not invertible
+        """
+        cdef unsigned long n = nmod_poly_modulus(&self.x)
+        cdef long deg = nmod_poly_degree(&self.x)
+        cdef long k
+        # ensure all required divisors are invertible
+        for k in range(1, deg + 2):
+            if nmod_poly_get_coeff_ui(&self.x, k - 1) != 0:
+                from sage.arith.misc import GCD
+                if GCD(k, n) != 1:
+                    raise ArithmeticError(
+                        "integration not possible: leading exponent is not invertible")
+        cdef Polynomial_zmod_flint res = self._new()
+        sig_on()
+        nmod_poly_integral(&res.x, &self.x)
+        sig_off()
+        return res
+
+    def discriminant(self):
+        r"""
+        Return the discriminant of this polynomial.
+
+        This method requires the base ring to be a field (i.e., the modulus
+        to be prime).
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: (x^2 + x + 1).discriminant()
+            4
+            sage: (x^3 - x).discriminant()
+            4
+            sage: R(5).discriminant()
+            0
+
+        TESTS::
+
+            sage: R.<x> = Zmod(6)[]
+            sage: (x^2 + 1).discriminant()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: discriminant of polynomials over rings with composite characteristic is not implemented
+        """
+        if not self.base_ring().is_field():
+            raise NotImplementedError(
+                "discriminant of polynomials over rings with composite characteristic is not implemented")
+        sig_on()
+        cdef unsigned long d = nmod_poly_discriminant(&self.x)
+        sig_off()
+        return self.base_ring()(d)
+
+    def taylor_shift(self, c):
+        r"""
+        Return ``self(x + c)``, the Taylor shift of this polynomial by ``c``.
+
+        INPUT:
+
+        - ``c`` -- an element of the base ring (or coercible to it)
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: f = x^3 + 2*x - 1
+            sage: f.taylor_shift(1)
+            x^3 + 3*x^2 + 5*x + 2
+            sage: f.taylor_shift(1) == f(x + 1)
+            True
+            sage: f.taylor_shift(3)
+            x^3 + 2*x^2 + x + 4
+
+        Also works over `\ZZ/n\ZZ` for composite ``n``::
+
+            sage: R.<x> = Zmod(10)[]
+            sage: (x^2 + x).taylor_shift(2)
+            x^2 + 5*x + 6
+        """
+        cdef unsigned long cc = <unsigned long>(int(self.base_ring()(c)))
+        cdef Polynomial_zmod_flint res = self._new()
+        sig_on()
+        nmod_poly_taylor_shift(&res.x, &self.x, cc)
+        sig_off()
+        return res
+
+    @coerce_binop
+    def compose_series(self, Polynomial_zmod_flint other, n):
+        r"""
+        Return the composition of this polynomial with ``other`` modulo `x^n`.
+
+        The polynomial ``other`` must have zero constant term so that the
+        composition is well-defined as a power series.
+
+        INPUT:
+
+        - ``other`` -- a polynomial with zero constant coefficient
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: f = 1 + x + x^2
+            sage: g = x + x^3
+            sage: f.compose_series(g, 6)
+            2*x^4 + x^3 + x^2 + x + 1
+            sage: (1 + x).compose_series(x, 4)
+            x + 1
+
+        TESTS::
+
+            sage: f.compose_series(1 + x, 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: other must have zero constant term
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        if not other.is_zero() and nmod_poly_get_coeff_ui(&other.x, 0) != 0:
+            raise ValueError("other must have zero constant term")
+        cdef Polynomial_zmod_flint res = self._new()
+        sig_on()
+        nmod_poly_compose_series(&res.x, &self.x, &other.x, <long>n)
+        sig_off()
+        return res
+
+    def power_sums(self, n):
+        r"""
+        Return the polynomial whose coefficients are the Newton power sums
+        of the roots of this polynomial, up to (but not including) order
+        ``n``.
+
+        If `r_1, \dots, r_d` are the roots of this polynomial (counted with
+        multiplicity), then the returned polynomial is
+        `\sum_{k=0}^{n-1} p_k x^k` where `p_k = \sum_i r_i^k`.
+
+        This method requires the base ring to be a field.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(11)[]
+            sage: f = (x - 1) * (x - 2) * (x + 3)
+            sage: f.power_sums(5)
+            10*x^4 + 4*x^3 + 3*x^2 + 3
+            sage: f.power_sums(0)
+            0
+        """
+        if n < 0:
+            raise ValueError("n must be a nonnegative integer")
+        if self.is_zero():
+            raise ValueError("power_sums is not defined for the zero polynomial")
+        if not self.base_ring().is_field():
+            raise NotImplementedError(
+                "power_sums of polynomials over rings with composite characteristic is not implemented")
+        cdef Polynomial_zmod_flint res = self._new()
+        sig_on()
+        nmod_poly_power_sums(&res.x, &self.x, <long>n)
+        sig_off()
+        return res
+
+    def sqrt(self, extend=True):
+        r"""
+        Return the polynomial square root of this polynomial if it is a
+        perfect square in the polynomial ring; otherwise, raise a
+        :class:`ValueError`.
+
+        This method requires the base ring to be a field. The argument
+        ``extend`` is accepted for compatibility but the result, if it
+        exists, is always in the same polynomial ring.
+
+        INPUT:
+
+        - ``extend`` -- ignored (only kept for compatibility)
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: f = (x^2 + 3*x + 1)^2
+            sage: f.sqrt()
+            x^2 + 3*x + 1
+            sage: R(4).sqrt()
+            2
+            sage: x.sqrt()
+            Traceback (most recent call last):
+            ...
+            ValueError: x is not a perfect square
+        """
+        if not self.base_ring().is_field():
+            raise NotImplementedError(
+                "sqrt of polynomials over rings with composite characteristic is not implemented")
+        cdef Polynomial_zmod_flint res = self._new()
+        cdef int ok
+        sig_on()
+        ok = nmod_poly_sqrt(&res.x, &self.x)
+        sig_off()
+        if not ok:
+            raise ValueError("{} is not a perfect square".format(self))
+        return res
+
+    @coerce_binop
+    def invmod(self, Polynomial_zmod_flint modulus):
+        r"""
+        Return the inverse of this polynomial modulo ``modulus``.
+
+        Raises a :class:`ValueError` if the inverse does not exist (i.e., if
+        this polynomial is not coprime to ``modulus``).
+
+        This method requires the base ring to be a field.
+
+        INPUT:
+
+        - ``modulus`` -- a polynomial in the same ring
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: f = x + 1
+            sage: m = x^3 + x + 1
+            sage: g = f.invmod(m)
+            sage: (f * g) % m
+            1
+            sage: x.invmod(x^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: x is not invertible modulo x^2
+        """
+        if not self.base_ring().is_field():
+            raise NotImplementedError(
+                "invmod of polynomials over rings with composite characteristic is not implemented")
+        cdef Polynomial_zmod_flint res = self._new()
+        cdef int ok
+        sig_on()
+        ok = nmod_poly_invmod(&res.x, &self.x, &modulus.x)
+        sig_off()
+        if not ok:
+            raise ValueError("{} is not invertible modulo {}".format(self, modulus))
+        return res
+
+    @coerce_binop
+    def remove(self, Polynomial_zmod_flint other):
+        r"""
+        Remove all occurrences of the factor ``other`` from this polynomial.
+
+        Returns a pair ``(k, q)`` where ``k`` is the largest nonnegative
+        integer such that ``other^k`` divides ``self``, and
+        ``q = self / other^k``.
+
+        This method requires the base ring to be a field and ``other`` to
+        have positive degree.
+
+        INPUT:
+
+        - ``other`` -- a polynomial in the same ring with positive degree
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(7)[]
+            sage: f = (x - 2)^3 * (x + 1)
+            sage: f.remove(x - 2)
+            (3, x + 1)
+            sage: f.remove(x + 1)
+            (1, x^3 + x^2 + 5*x + 6)
+            sage: f.remove(x)
+            (0, x^4 + 2*x^3 + 6*x^2 + 4*x + 6)
+        """
+        if not self.base_ring().is_field():
+            raise NotImplementedError(
+                "remove of polynomials over rings with composite characteristic is not implemented")
+        if other.degree() <= 0:
+            raise ValueError("other must have positive degree")
+        cdef Polynomial_zmod_flint res = self._new()
+        sig_on()
+        nmod_poly_set(&res.x, &self.x)
+        cdef unsigned long k = nmod_poly_remove(&res.x, &other.x)
+        sig_off()
+        return Integer(k), res
