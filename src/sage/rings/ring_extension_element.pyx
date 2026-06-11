@@ -902,7 +902,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         names = parent._basis_names
         b = parent._base
         while b is not base:
-            new_names = [ ]
+            new_names = []
             for y in names:
                 for x in (<RingExtensionWithBasis>b)._basis_names:
                     if x == "":
@@ -1146,7 +1146,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ValueError: not (explicitly) defined over Finite Field in z3 of size 5^3
         """
         base = self._parent._check_base(base)
-        degrees = [ ]
+        degrees = []
         b = self._parent
         degree = 1
         while b is not base:
@@ -1157,12 +1157,12 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             degrees.append(reldeg)
             b = b.base_ring()
         degrees.reverse()
-        coeffs = { }
+        coeffs = {}
         v = self._vector(base)
         S = PolynomialRing(base, len(degrees), names=var)
         for i in range(degree):
             ii = ZZ(i)
-            exponents = [ ]
+            exponents = []
             for d in degrees:
                 ii, exponent = ii.quo_rem(d)
                 exponents.append(exponent)

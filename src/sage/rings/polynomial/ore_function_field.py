@@ -337,7 +337,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
             s += ";" + twist
         return s + "\\right)"
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         r"""
         Return the Ore function field in variable ``var`` with the same base
         ring, twisting morphism and twisting derivation as ``self``.
@@ -354,12 +354,14 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: K = R.fraction_field()
             sage: K
             Ore Function Field in x over Finite Field in t of size 5^3 twisted by t |--> t^5
-            sage: Ky = K.change_var('y'); Ky
+            sage: Ky = K.change_variable_name('y'); Ky
             Ore Function Field in y over Finite Field in t of size 5^3 twisted by t |--> t^5
-            sage: Ky is K.change_var('y')
+            sage: Ky is K.change_variable_name('y')
             True
         """
-        return OreFunctionField(self._ring.change_var(var))
+        return OreFunctionField(self._ring.change_variable_name(var))
+
+    change_var = change_variable_name
 
     def characteristic(self):
         r"""
