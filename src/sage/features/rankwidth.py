@@ -12,11 +12,12 @@ Feature for the rank-width graph decomposition
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.config import rankwidth_enabled
 from sage.features import PythonModule
-from sage.features.join_feature import JoinFeature
+from sage.features.build_feature import BuildFeature
 
 
-class RankWidth(JoinFeature):
+class RankWidth(BuildFeature):
     r"""
     A :class:`~sage.features.Feature` indicating whether or not the
     rank-width graph decomposition is available.
@@ -32,9 +33,11 @@ class RankWidth(JoinFeature):
         sage: RankWidth().is_present()  # needs rankwidth
         FeatureTestResult('rankwidth', True)
         sage: RankWidth().is_present()  # needs !rankwidth
-        FeatureTestResult('sage.graphs.graph_decompositions.rankwidth', False)
+        FeatureTestResult('rankwidth', False)
 
     """
+    _enabled_in_build = rankwidth_enabled
+
     def __init__(self):
         r"""
         EXAMPLES::
@@ -44,9 +47,26 @@ class RankWidth(JoinFeature):
             Feature('rankwidth')
 
         """
-        f = PythonModule("sage.graphs.graph_decompositions.rankwidth")
-        JoinFeature.__init__(self, "rankwidth", [f], spkg="rw", type="standard")
+        super().__init__("rankwidth", spkg="rw", type="standard")
 
+    def is_present_at_runtime(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features import FeatureTestResult
+            sage: from sage.features.rankwidth import RankWidth
+            sage: rw = RankWidth()
+            sage: result = rw.is_present_at_runtime()
+            sage: isinstance(result, FeatureTestResult)
+            True
+            sage: result  # needs rankwidth
+            FeatureTestResult('rankwidth', True)
+
+        """
+        cython_modname = "sage.graphs.graph_decompositions.rankwidth"
+        result = PythonModule(cython_modname)._is_present()
+        result.feature = self
+        return result
 
 def all_features():
     return [RankWidth()]

@@ -125,6 +125,7 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 import sage.matrix.matrix_space as matrix_space
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 from sage.cpython.string cimport char_to_str
@@ -1183,8 +1184,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             verbose('mod-p multiply of %s x %s matrix by %s x %s matrix modulo %s' % (
                     self._nrows, self._ncols, right._nrows, right._ncols, self.p))
 
-        if self._ncols != right._nrows:
-            raise ArithmeticError("right's number of rows must match self's number of columns")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef int e
         cdef Matrix_modn_dense_template ans, B

@@ -16,9 +16,9 @@ EXAMPLES::
     sage: sigma = 3.0; n = 1000
     sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)()
     ....:      for _ in range(n)]
-    sage: l = [vector(f).norm().n() for f in l]                                         # needs sage.symbolic
+    sage: l = [vector(f).norm().n() for f in l]
     sage: from numpy import mean                                                        # needs numpy
-    sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # needs numpy sage.symbolic
+    sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # needs numpy
     (24.0, 24.0)
 """
 # ******************************************************************************

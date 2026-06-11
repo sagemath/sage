@@ -50,7 +50,7 @@ from sage.rings.polynomial.polynomial_quotient_ring_element import (
 )
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.quotient_ring import QuotientRing_generic
-from sage.rings.ring import CommutativeRing, Field
+from sage.rings.ring import Ring, Field
 from sage.structure.category_object import normalize_names
 from sage.structure.coerce_maps import DefaultConvertMap_unique
 from sage.structure.factory import UniqueFactory
@@ -580,7 +580,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     #
 
     retract = _coerce_impl
-    ambient = CommutativeRing.base
+    ambient = Ring.base
 
     def lift(self, x):
         """
@@ -693,7 +693,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         Rpoly = S(self.polynomial_ring())
         Rpoly.set_ring()
         modulus = S(self.modulus()) # should live in Rpoly
-        Rtmp = S(self.polynomial_ring().change_var(self.variable_name()))
+        Rtmp = S(self.polynomial_ring().change_variable_name(self.variable_name()))
         Rtmp.set_ring()
         self.__singular = S("ideal(fetch(%s,%s))" % (Rpoly.name(),modulus.name()),"qring")
         return self.__singular
@@ -2202,7 +2202,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
         return richcmp(self.parent(), other.parent(), op)
 
 
-class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeRing):
+class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, Ring):
     """
     EXAMPLES::
 

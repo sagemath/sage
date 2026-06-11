@@ -1,5 +1,9 @@
 /* WARNING: src/sage/libs/flint/flint_wrap.h is generated from
+<<<<<<<< HEAD:tools/autogen/flint/templates/flint_wrap.h.template
  * tools/autogen/flint/templates/flint_wrap.h.template
+========
+ * tools/flint-autogen/flint/templates/flint_wrap.h.template
+>>>>>>>> upstream/develop:tools/flint-autogen/flint/templates/flint_wrap.h.template
  * please make sure that you are modifying the correct file! */
 
 #ifndef SAGE_FLINT_WRAP_H
@@ -98,6 +102,7 @@
 #include <flint/fmpz_mod_mat.h>
 #include <flint/fmpz_mod_mpoly.h>
 #include <flint/fmpz_mod_mpoly_factor.h>
+#include <flint/fmpz_mod_mpoly_q.h>
 #include <flint/fmpz_mod_poly.h>
 #include <flint/fmpz_mod_poly_factor.h>
 #include <flint/fmpz_mod_vec.h>
@@ -139,19 +144,19 @@
 #include <flint/gr_mat.h>
 #include <flint/gr_mpoly.h>
 #include <flint/gr_poly.h>
+#include <flint/gr_series.h>
 #include <flint/gr_special.h>
 #include <flint/gr_vec.h>
 #include <flint/hypgeom.h>
 #include <flint/long_extras.h>
+#include <flint/longlong.h>
 #include <flint/mag.h>
-#if __FLINT_RELEASE < __FLINT_RELEASE_NUM(3,4,0)
-#include <flint/mpfr_mat.h>
-#include <flint/mpfr_vec.h>
-#endif
 #include <flint/mpn_extras.h>
+#include <flint/mpn_mod.h>
 #include <flint/mpoly.h>
 #include <flint/nf.h>
 #include <flint/nf_elem.h>
+#include <flint/nfloat.h>
 #include <flint/nmod.h>
 #include <flint/nmod_mat.h>
 #include <flint/nmod_mpoly.h>
