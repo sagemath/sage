@@ -216,8 +216,7 @@ class Superincreasing(SageObject):
         """
         if self._seq is None:
             return "An empty sequence."
-        else:
-            return "Super-increasing sequence of length %s" % len(self._seq)
+        return "Super-increasing sequence of length %s" % len(self._seq)
 
     def largest_less_than(self, N):
         r"""
@@ -299,8 +298,7 @@ class Superincreasing(SageObject):
                 low = mid + 1
         if N >= self._seq[high]:
             return self._seq[high]
-        else:
-            return None
+        return None
 
     def _latex_(self):
         r"""
@@ -325,8 +323,7 @@ class Superincreasing(SageObject):
         """
         if self._seq is None:
             return latex([])
-        else:
-            return latex(self._seq)
+        return latex(self._seq)
 
     def is_superincreasing(self, seq=None):
         r"""
@@ -436,25 +433,24 @@ class Superincreasing(SageObject):
                 cumSum += e
             return True
         # now we know that seq is not None, so test seq for super-increasing
-        else:
-            # seq must be a non-empty sequence
-            if len(seq) == 0:
+        # seq must be a non-empty sequence
+        if len(seq) == 0:
+            return False
+        # so now seq is known to represent a non-empty sequence
+        if (not isinstance(seq[0], Integer)) and (not isinstance(seq[0], int)):
+            raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % seq[0])
+        if seq[0] < 0:
+            raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % seq[0])
+        cumSum = seq[0]  # the cumulative sum of the sequence seq
+        for e in seq[1:]:
+            if (not isinstance(e, Integer)) and (not isinstance(e, int)):
+                raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % e)
+            if e < 0:
+                raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % e)
+            if e <= cumSum:
                 return False
-            # so now seq is known to represent a non-empty sequence
-            if (not isinstance(seq[0], Integer)) and (not isinstance(seq[0], int)):
-                raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % seq[0])
-            if seq[0] < 0:
-                raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % seq[0])
-            cumSum = seq[0]  # the cumulative sum of the sequence seq
-            for e in seq[1:]:
-                if (not isinstance(e, Integer)) and (not isinstance(e, int)):
-                    raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % e)
-                if e < 0:
-                    raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % e)
-                if e <= cumSum:
-                    return False
-                cumSum += e
-            return True
+            cumSum += e
+        return True
 
     def subset_sum(self, N):
         r"""
@@ -543,8 +539,7 @@ class Superincreasing(SageObject):
             return []
         if sum(candidates) == N:
             return candidates
-        else:
-            return []
+        return []
 
 
 def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
@@ -650,15 +645,14 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
     if value_only:
         return p.solve(objective_only=True, log=verbose)
 
+    objective = p.solve(log=verbose)
+    present = p.get_values(present, convert=ZZ, tolerance=integrality_tolerance)
+
+    val = []
+
+    if reals:
+        [val.extend([seq[i][0]] * present[i]) for i in range(len(seq))]
     else:
-        objective = p.solve(log=verbose)
-        present = p.get_values(present, convert=ZZ, tolerance=integrality_tolerance)
+        [val.extend([seq[i]] * present[i]) for i in range(len(seq))]
 
-        val = []
-
-        if reals:
-            [val.extend([seq[i][0]] * present[i]) for i in range(len(seq))]
-        else:
-            [val.extend([seq[i]] * present[i]) for i in range(len(seq))]
-
-        return [objective,val]
+    return [objective,val]

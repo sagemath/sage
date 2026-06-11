@@ -435,22 +435,17 @@ def affine_factorizations(w, l, weight=None):
         if l == 0:
             if w.is_one():
                 return [[]]
-            else:
-                return []
-        else:
-            return [[u] + p for u, v in w.left_pieri_factorizations()
-                    for p in affine_factorizations(v, l - 1)]
-    else:
-        if l != len(weight):
             return []
-        if l == 0:
-            if w.is_one():
-                return [[]]
-            else:
-                return []
-        else:
-            return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
-                    for p in affine_factorizations(v, l - 1, weight[1:])]
+        return [[u] + p for u, v in w.left_pieri_factorizations()
+                for p in affine_factorizations(v, l - 1)]
+    if l != len(weight):
+        return []
+    if l == 0:
+        if w.is_one():
+            return [[]]
+        return []
+    return [[u] + p for u, v in w.left_pieri_factorizations(max_length=weight[0]) if u.length() == weight[0]
+            for p in affine_factorizations(v, l - 1, weight[1:])]
 
 #####################################################################
 #  Crystal isomorphisms
@@ -482,7 +477,7 @@ class FactorizationToTableaux(CrystalMorphism):
             p += [i + 1] * len(word)
             # We sort for those pesky commutative elements
             # The word is most likely in reverse order to begin with
-            q += sorted(reversed(word))
+            q += sorted(word)
         C = self.codomain()
         return C(RSK(p, q, insertion=RSK.rules.EG)[1])
 

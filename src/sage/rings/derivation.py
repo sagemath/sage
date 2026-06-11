@@ -321,15 +321,15 @@ class RingDerivationModule(Module, UniqueRepresentation):
         if twist is not None:
             self.Element = RingDerivationWithTwist_generic
             if domain.is_field():
-                self._gens = [ 1 ]
-                self._basis = [ 1 ]
+                self._gens = [1]
+                self._basis = [1]
         elif (domain is ZZ or domain in NumberFields() or domain in FiniteFields()
               or isinstance(domain, IntegerModRing_generic)
               or (isinstance(domain, pAdicGeneric) and (domain.is_field() or domain.absolute_e() == 1))):
             self.Element = RingDerivationWithoutTwist_zero
-            self._gens = [ ]
-            self._basis = [ ]
-            self._dual_basis = [ ]
+            self._gens = []
+            self._basis = []
+            self._dual_basis = []
             self._constants = (domain, True)
         elif (isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base, PowerSeriesRing_generic, LaurentSeriesRing))
               or (isinstance(domain, FractionField_generic)
@@ -908,12 +908,11 @@ class RingDerivationWithoutTwist(RingDerivation):
                 s += " + (%s)*%s" % (sc, ddx)
         if s[:3] == " + ":
             return s[3:]
-        elif s[:3] == " - ":
+        if s[:3] == " - ":
             return "-" + s[3:]
-        elif s == "":
+        if s == "":
             return "0"
-        else:
-            return s
+        return s
 
     def _latex_(self):
         r"""
@@ -961,12 +960,11 @@ class RingDerivationWithoutTwist(RingDerivation):
                 s += " + \\left(%s\\right) %s" % (sc, ddx)
         if s[:3] == " + ":
             return s[3:]
-        elif s[:3] == " - ":
+        if s[:3] == " - ":
             return "-" + s[3:]
-        elif s == "":
+        if s == "":
             return "0"
-        else:
-            return s
+        return s
 
     def list(self):
         """
@@ -1059,13 +1057,11 @@ class RingDerivationWithoutTwist(RingDerivation):
         if op == op_EQ:
             if isinstance(other, RingDerivationWithoutTwist):
                 return self.list() == other.list()
-            else:
-                return False
+            return False
         if op == op_NE:
             if isinstance(other, RingDerivationWithoutTwist):
                 return self.list() != other.list()
-            else:
-                return True
+            return True
         return NotImplemented
 
     def _bracket_(self, other):
@@ -1121,7 +1117,6 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(5)[]
             sage: Dx = R.derivation(x)
             sage: Dx.pth_power()
@@ -1155,7 +1150,6 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(3)[]
             sage: D = R.derivation_module().random_element()
             sage: Dp = D.pth_power()
@@ -1172,7 +1166,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         p = parent.domain().characteristic()
         if not p.is_prime():
             raise TypeError("the domain of the derivation must have positive and prime characteristic")
-        arg = [ ]
+        arg = []
         for x in parent.dual_basis():
             res = x
             for _ in range(p):
@@ -1534,7 +1528,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         TESTS::
 
-            sage: # needs sage.libs.singular
             sage: from sage.rings.derivation import RingDerivationWithoutTwist_wrapper
             sage: R.<x,y> = GF(5)[]
             sage: S = R.quo([x^5, y^5])
@@ -1571,7 +1564,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1587,7 +1579,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1603,7 +1594,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1618,7 +1608,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1635,7 +1624,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1653,7 +1641,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: M = S.derivation_module()
@@ -1815,7 +1802,9 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
         domain = parent.domain()
         codomain = parent.codomain()
         defining_morphism = parent.defining_morphism()
-        if isinstance(domain, FractionField_generic):
+        if self._base_derivation == 0:
+            res = codomain.zero()
+        elif isinstance(domain, FractionField_generic):
             num = x.numerator()
             den = x.denominator()
             u = defining_morphism(num)
@@ -1936,7 +1925,6 @@ class RingDerivationWithoutTwist_quotient(RingDerivationWithoutTwist_wrapper):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: f = x^3*S.derivation(); f
@@ -2018,7 +2006,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
             stwi = "twisting_morphism"
         if sc == "1":
             return "%s - %s" % (stwi, sdef)
-        elif sc == "-1":
+        if sc == "-1":
             s = "-"
         elif scalar._is_atomic():
             s = "%s*" % sc
@@ -2034,7 +2022,6 @@ class RingDerivationWithTwist_generic(RingDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a + 1, twist=Frob)
@@ -2060,7 +2047,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
             stwi = "\\text{twisting morphism}"
         if sc == "1":
             return "%s - %s" % (stwi, sdef)
-        elif sc == "-1":
+        if sc == "-1":
             s = "-"
         elif scalar._is_atomic():
             s = "%s " % sc
@@ -2289,13 +2276,11 @@ class RingDerivationWithTwist_generic(RingDerivation):
         if op == op_EQ:
             if isinstance(other, RingDerivationWithTwist_generic):
                 return self._scalar == other._scalar
-            else:
-                return False
+            return False
         if op == op_NE:
             if isinstance(other, RingDerivationWithTwist_generic):
                 return self._scalar != other._scalar
-            else:
-                return True
+            return True
         return NotImplemented
 
     def extend_to_fraction_field(self):

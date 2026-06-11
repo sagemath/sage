@@ -93,8 +93,7 @@ class ObjectReprABC:
         if ok:
             p.flush()
             return stream.getvalue()
-        else:
-            return '--- object not handled by representer ---'
+        return '--- object not handled by representer ---'
 
 
 class SomeIPythonRepr(ObjectReprABC):

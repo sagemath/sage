@@ -38,24 +38,18 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
-      - name: make dist (--disable-download-from-upstream-url)
-        id: make_dist
+      - name: Configure with --enable-download-from-upstream-url
         run: |
-          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
-        env:
-          MAKE: make -j8
-      - name: make download (--disable-download-from-upstream-url)
-        id: make_download
-        run: |
-          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
-        env:
-          MAKE: make -j8
-      - name: Reconfigure with --enable-download-from-upstream-url
-        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
-        run: |
+          # Run "bootstrap -s" so that the configure tarball
+          # (configure-$(git rev-parse HEAD).tar.gz) is generated and saved
+          # locally to upstream/. Otherwise "make dist" below tries to
+          # download it from the Sage mirrors / GitHub release assets, which
+          # fails for unreleased commits (e.g. on workflow_dispatch / PR runs).
+          ./bootstrap -s
           ./configure
       - name: make dist (--enable-download-from-upstream-url)
-        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        id: make_dist
+        if: success() || failure()
         run: |
           make dist
         env:
@@ -152,8 +146,9 @@ jobs:
           echo "$release_notes" > release_notes
 
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
+          preserve_order: true
           files: |
             dist/*
             upstream/*

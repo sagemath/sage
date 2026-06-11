@@ -639,7 +639,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -725,7 +724,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -850,7 +848,6 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._meet_of_coatoms(1,2)
@@ -960,7 +957,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -976,7 +972,6 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._join_of_atoms(1,2)

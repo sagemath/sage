@@ -171,7 +171,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         """
         if method is None:
             return self._element_repr_method
-        elif method in ["default", "basic", "block", "conj"]:
+        if method in ["default", "basic", "block", "conj"]:
             self._element_repr_method = method
         else:
             raise ValueError(f"the specified method {method} is not supported")
@@ -245,8 +245,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         """
         if self._n in [3, infinity]:
             return QQ
-        else:
-            return self._base_ring.number_field()
+        return self._base_ring.number_field()
 
     def n(self):
         r"""
@@ -313,10 +312,9 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         # Also we could use NumberFields...
         if self._n == infinity:
             return AA.one()
-        else:
-            rho = AlgebraicField()(E(2 * self._n))
-            rho.simplify()
-            return rho
+        rho = AlgebraicField()(E(2 * self._n))
+        rho.simplify()
+        return rho
 
     def alpha(self):
         r"""
@@ -721,19 +719,18 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if D.is_square():
             return K
-        else:
-            # unfortunately we can't set embeddings for relative extensions :-(
-            # return K.extension(x**2 - D, 'e', embedding=AA(D).sqrt())
+        # unfortunately we can't set embeddings for relative extensions :-(
+        # return K.extension(x**2 - D, 'e', embedding=AA(D).sqrt())
 
-            L = K.extension(x**2 - D, 'e')
+        L = K.extension(x**2 - D, 'e')
 
-            # e = AA(D).sqrt()
-            # emb = L.hom([e])
-            # L._unset_embedding()
-            # L.register_embedding(emb)
+        # e = AA(D).sqrt()
+        # emb = L.hom([e])
+        # L._unset_embedding()
+        # L.register_embedding(emb)
 
-            # return NumberField(L.absolute_polynomial(), 'e', structure=AbsoluteFromRelative(L), embedding=(???))
-            return L
+        # return NumberField(L.absolute_polynomial(), 'e', structure=AbsoluteFromRelative(L), embedding=(???))
+        return L
 
     # We cache this method for performance reasons (it is repeatedly reused)
     @cached_method

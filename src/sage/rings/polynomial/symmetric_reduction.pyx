@@ -442,7 +442,6 @@ cdef class SymmetricReductionStrategy:
         polynomial. This can be avoided by specifying the optional
         parameter 'good_input'::
 
-            sage: # needs sage.combinat
             sage: S.add_generator(y[2] + y[1]*x[2])
             sage: S
             Symmetric Reduction Strategy in

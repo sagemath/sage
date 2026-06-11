@@ -459,7 +459,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: (a**2 - a + 1)._gap_init_()
@@ -514,7 +513,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: F = CyclotomicField(8)
             sage: F.gen()._libgap_()
             E(8)
@@ -554,7 +552,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K.zero()._pari_polynomial('x')
@@ -586,7 +583,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 + 2)
             sage: K(1).__pari__()
@@ -2888,7 +2884,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<a> = QuadraticField(2)
             sage: SR(a)         # indirect doctest
             sqrt(2)
@@ -4022,10 +4017,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: L.<b, c> = NumberFieldTower([x^2 - 5, x^3 + x + 3])
             sage: [(b + c).local_height_arch(i) for i in range(4)]
-            [1.238223390757884911842206617439,
-            0.02240347229957875780769746914391,
-            0.780028961749618,
-            1.16048938497298]
+            [1.238223390757884911842206617260,
+             0.02240347229957875780769746914391,
+             0.780028961749618,
+             1.16048938497298]
         """
         K = self.number_field()
         emb = K.places(prec=prec)[i]

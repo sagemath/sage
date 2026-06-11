@@ -448,7 +448,6 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     by the cyclic shifts of `(0, \pm 1, \pm (1+\sqrt(5))/2)`, cf.
     :wikipedia:`Regular_icosahedron`. It needs a number field::
 
-        sage: # needs sage.rings.number_field
         sage: R0.<r0> = QQ[]
         sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))
         sage: gold = (1+r1)/2
@@ -463,7 +462,6 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     When the input contains elements of a Number Field, they require an
     embedding::
 
-        sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
         sage: K = NumberField(x^2 - 2,'s')
         sage: s = K.0
@@ -506,7 +504,6 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: Polyhedron(p)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
 
-        sage: # needs sage.combinat
         sage: H.<x,y> = HyperplaneArrangements(QQ)
         sage: h = x + y - 1; h
         Hyperplane x + y - 1

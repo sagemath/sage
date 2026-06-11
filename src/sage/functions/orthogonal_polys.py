@@ -524,9 +524,9 @@ class OrthogonalFunction(BuiltinFunction):
         algorithm = kwds.get('algorithm', None)
         if algorithm == 'pari':
             return self.eval_pari(*args, **kwds)
-        elif algorithm == 'recursive':
+        if algorithm == 'recursive':
             return self.eval_recursive(*args, **kwds)
-        elif algorithm == 'maxima':
+        if algorithm == 'maxima':
             kwds['hold'] = True
             return _maxima(self._eval_(*args, **kwds))._sage_()
 
@@ -838,7 +838,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         """
         if n < 0:
             return self.eval_formula(-n, x)
-        elif n == 0:
+        if n == 0:
             return parent(x).one()
 
         res = parent(x).zero()
@@ -913,8 +913,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         a, b = self._eval_recursive_((n+1)//2, x, both or n % 2)
         if n % 2 == 0:
             return 2*a*a - 1, both and 2*a*b - x
-        else:
-            return 2*a*b - x, both and 2*b*b - 1
+        return 2*a*b - x, both and 2*b*b - 1
 
     def _eval_numpy_(self, n, x):
         """
@@ -1139,8 +1138,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         a, b = self._eval_recursive_((n-1)//2, x, True)
         if n % 2 == 0:
             return (b+a)*(b-a), both and 2*b*(x*b-a)
-        else:
-            return 2*a*(b-x*a), both and (b+a)*(b-a)
+        return 2*a*(b-x*a), both and (b+a)*(b-a)
 
     def _evalf_(self, n, x, **kwds):
         """
@@ -1479,7 +1477,7 @@ class Func_legendre_Q(BuiltinFunction):
         from sage.functions.log import ln
         if n == 0:
             return (ln(1+arg)-ln(1-arg))/2
-        elif n == 1:
+        if n == 1:
             return arg/2*(ln(1+arg)-ln(1-arg))-1
 
         x, l = PolynomialRing(QQ, 'x,l').gens()
@@ -1523,7 +1521,7 @@ class Func_legendre_Q(BuiltinFunction):
         from sage.functions.log import ln
         if n == 0:
             return (ln(1+arg)-ln(1-arg))/2
-        elif n == 1:
+        if n == 1:
             return arg/2*(ln(1+arg)-ln(1-arg))-1
 
         arg = SR(arg)
@@ -1961,7 +1959,7 @@ class Func_assoc_legendre_Q(BuiltinFunction):
             from .trig import sin
             if m in QQ and n in QQ:
                 return -(sqrt(SR.pi()))*sin(SR.pi()/2*(m+n))*gamma(QQ(m+n+1)/2)/gamma(QQ(n-m)/2 + 1)*2**(m-1)
-            elif isinstance(n, Expression) or isinstance(m, Expression):
+            if isinstance(n, Expression) or isinstance(m, Expression):
                 return -(sqrt(SR.pi()))*sin(SR.pi()/2*(m+n))*gamma((m+n+1)/2)/gamma((n-m)/2 + 1)*2**(m-1)
 
     def _evalf_(self, n, m, x, parent=None, **kwds):
@@ -2007,10 +2005,8 @@ class Func_assoc_legendre_Q(BuiltinFunction):
                 denom = sqrt(1 - x**2)*(1 - x**2)**((m-1)/2)
             if m == n + 1:
                 return (-1)**m*(m-1).factorial()*2**n/denom
-            else:
-                return (-1)**m*(m-1).factorial()*((x+1)**m - (x-1)**m)/(2*denom)
-        else:
-            return ((n-m+1)*x*gen_legendre_Q(n, m-1, x)-(n+m-1)*gen_legendre_Q(n-1, m-1, x))/sqrt(1-x**2)
+            return (-1)**m*(m-1).factorial()*((x+1)**m - (x-1)**m)/(2*denom)
+        return ((n-m+1)*x*gen_legendre_Q(n, m-1, x)-(n+m-1)*gen_legendre_Q(n-1, m-1, x))/sqrt(1-x**2)
 
     def _derivative_(self, n, m, x, *args, **kwds):
         """
@@ -2451,7 +2447,7 @@ class Func_laguerre(OrthogonalFunction):
         if isinstance(n, (Integer, int)):
             if n >= 0 and not hasattr(x, 'prec'):
                 return self._pol_laguerre(n, x)
-            elif n < 0:
+            if n < 0:
                 return exp(x)*laguerre(-n-1, -x)
 
     def _eval_special_values_(self, n, x):
@@ -2514,8 +2510,7 @@ class Func_laguerre(OrthogonalFunction):
             # work around mpmath issue 307
             from sage.functions.log import exp
             return exp(x) * _mpmath_utils_call(_mpmath_laguerre, -n-1, 0, -x, parent=the_parent)
-        else:
-            return _mpmath_utils_call(_mpmath_laguerre, n, 0, x, parent=the_parent)
+        return _mpmath_utils_call(_mpmath_laguerre, n, 0, x, parent=the_parent)
 
     def _derivative_(self, n, x, *args, **kwds):
         """
@@ -2827,7 +2822,7 @@ class Func_krawtchouk(OrthogonalFunction):
         """
         if j == 0:
             return parent(x).one()
-        elif j == 1:
+        if j == 1:
             return x - n * p
         q = 1 - p
         tm2 = p * q * (n - (j-1) + 1) * krawtchouk.eval_recursive(j-2, x, n, p)
@@ -2954,7 +2949,7 @@ class Func_meixner(OrthogonalFunction):
         """
         if n == 0:
             return parent(x).one()
-        elif n == 1:
+        if n == 1:
             return (1 - 1/c) * x + b
         tm2 = (b+n-1) * (b+n-2) * (n - 1) * meixner.eval_recursive(n-2, x, b, c)
         tm1 = (b+n-1) * ((c-1) * x + n-1 + (n-1+b) * c) * meixner.eval_recursive(n-1, x, b, c)
@@ -3091,7 +3086,7 @@ class Func_hahn(OrthogonalFunction):
         """
         if k == 0:
             return parent(x).one()
-        elif k == 1:
+        if k == 1:
             return -(a+b+2) / ((a+1)*n) * x + 1
         A = (k+a+b) * (k+a) * (n-k+1) / ((2*k+a+b-1) * (2*k+a+b))
         C = (k-1) * (k+b-1) * (k+a+b+n) / ((2*k+a+b-2) * (2*k+a+b-1))

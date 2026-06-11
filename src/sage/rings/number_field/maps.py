@@ -43,7 +43,7 @@ from sage.categories.map import Map
 from sage.categories.homset import Hom
 from sage.categories.morphism import IdentityMorphism
 
-import sage.rings.rational_field as rational_field
+from sage.rings import rational_field
 
 QQ = rational_field.RationalField()
 

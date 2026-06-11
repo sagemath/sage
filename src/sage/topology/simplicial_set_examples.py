@@ -193,7 +193,7 @@ class Nerve(SimplicialSet_arbitrary):
         start, skel = self._n_skeleton
         if start == n:
             return skel
-        elif start > n:
+        if start > n:
             return skel.n_skeleton(n)
 
         # There is a single vertex. Name it after the identity

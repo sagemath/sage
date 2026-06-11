@@ -392,17 +392,16 @@ class tr_data_rel:
                 for i in range(m):
                     f_out[i] = self.a[i]
                 return
-            else:
-                if verbose:
-                    print("  finished")
+            if verbose:
+                print("  finished")
 
-                # Already reached maximum, so "carry the 1" to find the next value of k.
+            # Already reached maximum, so "carry the 1" to find the next value of k.
+            k += 1
+            while k < m and len(self.amaxvals[k]) == 0:
                 k += 1
-                while k < m and len(self.amaxvals[k]) == 0:
-                    k += 1
-                if k < m:
-                    self.a[k] = self.amaxvals[k].pop()
-                    k -= 1
+            if k < m:
+                self.a[k] = self.amaxvals[k].pop()
+                k -= 1
 
         # If we are working through an initialization routine, treat that.
         elif haltk and k == haltk-1:
@@ -618,13 +617,12 @@ class tr_data_rel:
                 for i in range(m):
                     f_out[i] = self.a[i]
                 return
-            else:
+            k += 1
+            while k < m and len(self.amaxvals[k]) == 0:
                 k += 1
-                while k < m and len(self.amaxvals[k]) == 0:
-                    k += 1
-                if k < m:
-                    self.a[k] = self.amaxvals[k].pop()
-                    k -= 1
+            if k < m:
+                self.a[k] = self.amaxvals[k].pop()
+                k -= 1
 
         # k == n-1, so iteration is complete; return the zero polynomial (of degree n+1).
         self.k = k
@@ -744,11 +742,10 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
         g = pari(F.defining_polynomial()).polrecip().Vec()
         if return_seqs:
             return [[0,0,0,0], [1, [-1, 1], g]]
-        elif return_pari_objects:
+        if return_pari_objects:
             return [[1, g, pari('xF-1')]]
-        else:
-            Px = PolynomialRing(QQ, 'xF')
-            return [[ZZ(1), [QQ(_) for _ in g], Px.gen()-1]]
+        Px = PolynomialRing(QQ, 'xF')
+        return [[ZZ(1), [QQ(_) for _ in g], Px.gen()-1]]
 
     if verbose:
         saveout = sys.stdout
@@ -890,11 +887,10 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
                 [[s[0], [QQ(x) for x in s[1].polrecip().Vec()],
                   s[2].coefficients(sparse=False)]
                  for s in S]]
-    elif return_pari_objects:
+    if return_pari_objects:
         return S
-    else:
-        Px = PolynomialRing(QQ, 'x')
-        return [[s[0], Px([QQ(_) for _ in s[1].list()]), s[2]] for s in S]
+    Px = PolynomialRing(QQ, 'x')
+    return [[s[0], Px([QQ(_) for _ in s[1].list()]), s[2]] for s in S]
 
 
 def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
@@ -1006,9 +1002,8 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
     if return_seqs:
         return [[ZZ(_) for _ in counts],
                 [[ZZ(s[0]), [QQ(_) for _ in s[1].polrecip().Vec()]] for s in S]]
-    elif return_pari_objects:
+    if return_pari_objects:
         return S
-    else:
-        Px = PolynomialRing(QQ, 'x')
-        return [[ZZ(s[0]), Px([QQ(_) for _ in s[1].list()])]
-                for s in S]
+    Px = PolynomialRing(QQ, 'x')
+    return [[ZZ(s[0]), Px([QQ(_) for _ in s[1].list()])]
+            for s in S]

@@ -618,7 +618,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: k.<a> = GF(2^20, implementation='pari_ffelt')
             sage: e = k.random_element()
             sage: f = loads(dumps(e))
@@ -880,7 +879,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: F.<a> = GF(13^64, implementation='pari_ffelt'); F
             Finite Field in a of size 13^64
             sage: x = F.random_element()
@@ -893,7 +891,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: x.pth_power(-1)**13 == x
             True
 
-            sage: # needs sage.modules
             sage: F.<a> = GF(127^16, implementation='pari_ffelt'); F
             Finite Field in a of size 127^16
             sage: x = F.random_element()
@@ -1386,7 +1383,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: F = FiniteField(2^3, 'aa', implementation='pari_ffelt')
             sage: aa = F.multiplicative_generator()
             sage: gap(aa)  # indirect doctest
@@ -1404,7 +1400,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         You can specify the instance of the Gap interpreter that is used::
 
-            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(200)^2, 'a', implementation='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_(gap)
@@ -1414,7 +1409,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
         Gap only supports relatively small finite fields::
 
-            sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(1000)^2, 'a', implementation='pari_ffelt')
             sage: a = F.multiplicative_generator()
             sage: a._gap_init_()
@@ -1442,7 +1436,6 @@ def unpickle_FiniteFieldElement_pari_ffelt(parent, elem):
     """
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: k.<a> = GF(2^20, implementation='pari_ffelt')
         sage: e = k.random_element()
         sage: f = loads(dumps(e)) # indirect doctest

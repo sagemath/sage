@@ -615,9 +615,8 @@ class PathAlgebra(CombinatorialFreeModule):
         if factor_on_left:
             return self.sum(coeff * element
                             for element, coeff in iter_of_elements_coeff)
-        else:
-            return self.sum(element * coeff
-                            for element, coeff in iter_of_elements_coeff)
+        return self.sum(element * coeff
+                        for element, coeff in iter_of_elements_coeff)
 
     def homogeneous_component(self, n):
         """

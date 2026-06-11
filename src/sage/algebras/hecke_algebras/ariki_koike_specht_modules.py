@@ -378,7 +378,7 @@ class SpechtModule(CombinatorialFreeModule):
             if scalar.parent() is P._AK.LT():
                 return P.linear_combination((self.L(sum(([i]*val for i, val in enumerate(m[0], start=1)), [])).T(m[1].reduced_word()), c)
                                             for m, c in scalar)
-            elif scalar.parent() is P._AK.T():
+            if scalar.parent() is P._AK.T():
                 AKT = P._AK.T()
                 return P.linear_combination((self.T(AKT._basis_to_word(m)), c)
                                             for m, c in scalar)
