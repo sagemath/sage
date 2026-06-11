@@ -1259,7 +1259,7 @@ cdef class RiemannTheta:
         mpc_init2(self.c1, self.prec)
         mpc_init2(self.c2, self.prec)
 
-    def _dealloc__(self):
+    def __dealloc__(self):
         r"""
         Deallocate object.
 
