@@ -2746,14 +2746,14 @@ class Stream_sub(Stream_binary):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_add
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_sub
             sage: f = Stream_exact([0,3])
             sage: g = Stream_function(lambda n: -3*n, True, 1)
-            sage: h = Stream_add(f, g, True)
+            sage: h = Stream_sub(f, g, True)
             sage: h._approximate_order
             1
             sage: [h[i] for i in range(5)]
-            [0, 0, -6, -9, -12]
+            [0, 6, 6, 9, 12]
         """
         # this is not the true order, because we may have cancellation
         return min(self._left._approximate_order, self._right._approximate_order)
@@ -2778,6 +2778,66 @@ class Stream_sub(Stream_binary):
             [0, 0, -2, -6, -12, -20, -30, -42, -56, -72]
         """
         return self._left[n] - self._right[n]
+
+
+class Stream_hadamard_mul(Stream_binary):
+    """
+    Operator for Hadamard product of two coefficient streams.
+
+    INPUT:
+
+    - ``left`` -- :class:`Stream` of coefficients on the left side of the operator
+    - ``right`` -- :class:`Stream` of coefficients on the right side of the operator
+    - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import (Stream_hadamard_mul, Stream_function)
+        sage: f = Stream_function(lambda n: n, True, 0)
+        sage: g = Stream_function(lambda n: n+1, True, 0)
+        sage: h = Stream_hadamard_mul(f, g, True)
+        sage: [h[i] for i in range(10)]
+        [0, 2, 6, 12, 20, 30, 42, 56, 72, 90]
+    """
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_hadamard_mul
+            sage: f = Stream_exact([0,3])
+            sage: g = Stream_function(lambda n: -3*n, True, 1)
+            sage: h = Stream_hadamard_mul(f, g, True)
+            sage: h._approximate_order
+            1
+            sage: [h[i] for i in range(5)]
+            [0, -9, 0, 0, 0]
+        """
+        # this is not the true order, unless we have an integral domain
+        return max(self._left._approximate_order, self._right._approximate_order)
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_function, Stream_hadamard_mul)
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: g = Stream_function(lambda n: n^2, True, 0)
+            sage: h = Stream_hadamard_mul(f, g, True)
+            sage: h.get_coefficient(5)
+            125
+            sage: [h.get_coefficient(i) for i in range(10)]
+            [0, 1, 8, 27, 64, 125, 216, 343, 512, 729]
+        """
+        return self._left[n] * self._right[n]
 
 
 class Stream_cauchy_mul(Stream_binary):
@@ -5376,15 +5436,14 @@ class Stream_infinite_operator(Stream):
             if other._is_sparse:
                 return any(self[i] != other[i] for i in other._cache
                            if self._approximate_order <= i < self._cur_order)
-            else:
-                deg = other._approximate_order + len(other._cache)
+            deg = other._approximate_order + len(other._cache)
         elif isinstance(other, Stream_infinite_operator):
             deg = other._cur_order
         else:
             return False
         ao = min(self._approximate_order, other._approximate_order)
         cur_order = min(self._cur_order, deg)
-        if cur_order == -infinity: # no coefficients computed for one of the series
+        if cur_order == -infinity:  # no coefficients computed for one of the series
             return False
         return any(self[i] != other[i] for i in range(ao, cur_order))
 

@@ -359,8 +359,7 @@ cdef class OrePolynomial(AlgebraElement):
         """
         if self:
             return self[0]
-        else:
-            return self.base_ring().zero()
+        return self.base_ring().zero()
 
     def leading_coefficient(self):
         r"""
@@ -411,13 +410,10 @@ cdef class OrePolynomial(AlgebraElement):
         #       automorphisms. Once that is available, general case can
         #       be implemented. Reference: http://bit.ly/29Vidu7
         if self._parent.base_ring().is_integral_domain():
-            if self.degree() == 0 and self[0].is_unit():
-                return True
-            else:
-                return False
-        else:
-            raise NotImplementedError("is_unit is not implemented for Ore polynomial rings "
-                                      "over base rings which are not integral domains")
+            return self.degree() == 0 and self[0].is_unit()
+
+        raise NotImplementedError("is_unit is not implemented for Ore polynomial rings "
+                                  "over base rings which are not integral domains")
 
     def is_nilpotent(self):
         r"""
@@ -618,8 +614,7 @@ cdef class OrePolynomial(AlgebraElement):
             ...
             NotImplementedError: the leading coefficient of the divisor is not invertible
         """
-        q, _ = self.right_quo_rem(right)
-        return q
+        return self.right_quo_rem(right)[0]
 
     cpdef _div_(self, right):
         r"""
@@ -1197,7 +1192,7 @@ cdef class OrePolynomial(AlgebraElement):
         while not B.is_zero():
             A, B = B, A % B
         if monic:
-            A = A.right_monic()
+            return A.right_monic()
         return A
 
     @coerce_binop
@@ -1280,7 +1275,7 @@ cdef class OrePolynomial(AlgebraElement):
             A = B
             _, B = A_._left_quo_rem(B)
         if monic:
-            A = A.left_monic()
+            return A.left_monic()
         return A
 
     cdef OrePolynomial _left_lcm_cofactor(self, OrePolynomial other):
@@ -1507,7 +1502,7 @@ cdef class OrePolynomial(AlgebraElement):
             raise ZeroDivisionError("division by zero is not valid")
         L = self._left_lcm_cofactor(other) * self
         if monic:
-            L = L.right_monic()
+            return L.right_monic()
         return L
 
     @coerce_binop
@@ -1591,7 +1586,7 @@ cdef class OrePolynomial(AlgebraElement):
             raise ZeroDivisionError("division by zero is not valid")
         L = self * self._right_lcm_cofactor(other)
         if monic:
-            L = L.left_monic()
+            return L.left_monic()
         return L
 
     def _repr_(self, name=None):
@@ -1780,11 +1775,9 @@ cdef class OrePolynomial(AlgebraElement):
             return self
         if n > 0:
             return self._parent(n * [self.base_ring().zero()] + self.list(), check=False)
-        if n < 0:
-            if n > self.degree():
-                return self._parent([])
-            else:
-                return self._parent(self.list()[-n:], check=False)
+        if n > self.degree():
+            return self._parent([])
+        return self._parent(self.list()[-n:], check=False)
 
     def __lshift__(self, k):
         r"""
@@ -1845,7 +1838,7 @@ cdef class OrePolynomial(AlgebraElement):
             Ore Polynomial Ring in y over Univariate Polynomial Ring in t over Integer Ring
              twisted by t |--> t + 1
         """
-        R = self._parent.change_var(var)
+        R = self._parent.change_variable_name(var)
         return R(self.list())
 
     def is_term(self):
@@ -2046,8 +2039,7 @@ cdef class OrePolynomial(AlgebraElement):
             sage: a.left_mod(b)
             2*t^2 + 4*t
         """
-        _, r = self.left_quo_rem(other)
-        return r
+        return self.left_quo_rem(other)[1]
 
     def is_constant(self):
         r"""
