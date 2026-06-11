@@ -624,8 +624,7 @@ right. This requires storing the previously read digit in a state.
     sage: def shift_right_transition(state, digit):
     ....:     if state == 'I':
     ....:         return (digit, None)
-    ....:     else:
-    ....:         return (digit, state)
+    ....:     return (digit, state)
     sage: shift_right_transducer = Transducer(
     ....:     shift_right_transition,
     ....:     initial_states=['I'],
@@ -665,8 +664,7 @@ with our intention to forget the first letter.
     sage: def xor_transition(state, digits):
     ....:    if digits[0] is None or digits[1] is None:
     ....:        return (0, None)
-    ....:    else:
-    ....:        return (0, digits[0].__xor__(digits[1]))
+    ....:    return (0, digits[0].__xor__(digits[1]))
     sage: from itertools import product
     sage: xor_transducer = Transducer(
     ....:    xor_transition,
@@ -6591,8 +6589,7 @@ class FiniteStateMachine(SageObject):
             sage: def f(state1, state2):
             ....:     if state1 != state2:
             ....:          return [(0, 1), (1, 0)]
-            ....:     else:
-            ....:          return None
+            ....:     return None
             sage: F.add_transitions_from_function(f)
             sage: F.transitions()
             [Transition from 0 to 1: 0|1,
@@ -9055,8 +9052,7 @@ class FiniteStateMachine(SageObject):
                     ....:     value = carry + input
                     ....:     if value.mod(2) == 0:
                     ....:         return (value/2, 0)
-                    ....:     else:
-                    ....:         return ((value-1)/2, 1)
+                    ....:     return ((value-1)/2, 1)
 
                 Now, we only have to start with a carry of `1` to
                 get the required transducer::
@@ -10454,8 +10450,7 @@ class FiniteStateMachine(SageObject):
 
         if expectation_only:
             return expectation
-        return {'expectation': expectation,
-                'variance': variance}
+        return {'expectation': expectation, 'variance': variance}
 
     def is_monochromatic(self):
         """

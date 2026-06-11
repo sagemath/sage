@@ -7272,10 +7272,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         check for reliable interrupting, see :issue:`18919`::
 
             sage: from cysignals import AlarmInterrupt
+            sage: from warnings import filterwarnings
+            sage: filterwarnings("ignore", r"cypari2 leaked \d+ bytes on the PARI stack")
             sage: for i in [1..10]:             # long time (5s)                        # needs sage.libs.pari
             ....:     with ensure_interruptible_after(i/11):
             ....:         (2^100).binomial(2^22, algorithm='pari')
-            doctest:...: RuntimeWarning: cypari2 leaked ... bytes on the PARI stack...
         """
         cdef Integer x
         cdef Integer mm

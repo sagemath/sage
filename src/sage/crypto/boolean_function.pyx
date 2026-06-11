@@ -506,8 +506,8 @@ cdef class BooleanFunction(SageObject):
         bitset_init(anf, <mp_bitcnt_t> (1<<self._nvariables))
         bitset_copy(anf, self._truth_table)
         reed_muller(anf.bits, ZZ(anf.limbs).exact_log(2))
-        from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
-        R = BooleanPolynomialRing(self._nvariables, "x")
+        from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor
+        R = BooleanPolynomialRing_constructor(self._nvariables, 'x')
         G = R.gens()
         P = R(0)
 
@@ -851,12 +851,22 @@ cdef class BooleanFunction(SageObject):
             sage: B = BooleanFunction("7969817CC5893BA6AC326E47619F5AD0")
             sage: B.correlation_immunity()
             2
+
+        TESTS:
+
+        Check if :issue:`28001` is fixed::
+
+            sage: from sage.crypto.boolean_function import BooleanFunction
+            sage: f = [False, False, True, False, False, True, False, False]
+            sage: f = BooleanFunction(f)
+            sage: f.correlation_immunity()
+            1
         """
         cdef long c, i
         if self._correlation_immunity is None:
             c = self._nvariables
             W = self.walsh_hadamard_transform()
-            for i in range(len(W)):
+            for i in range(1, len(W)):
                 sig_check()
                 if W[i]:
                     c = min(c, hamming_weight(i))

@@ -433,9 +433,8 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         """
         if precision < 2:
             raise ValueError("precision must be at least 2")
-        Field.__init__(self,
-                base_ring=self,
-                category=sage.categories.fields.Fields().Infinite())
+        Field.__init__(self, self,
+                       category=sage.categories.fields.Fields().Infinite())
         self._prec = precision
         from sage.rings.real_lazy import RLF
         self._populate_coercion_lists_(coerce_list=[ZZ, QQ], convert_method_name='_arb_')
