@@ -429,11 +429,11 @@ cdef class Vector_mpc:
 
         EXAMPLES::
 
-            sage: from sage.numerical.riemann_theta import Vector_mpfr
-            sage: RR = RealField(40)
-            sage: V = Vector_mpfr(RR,3)
+            sage: from sage.numerical.riemann_theta import Vector_mpc
+            sage: CC = ComplexField(40)
+            sage: V = Vector_mpc(CC,3)
             sage: V
-            <Vector_mpfr [NaN, NaN, NaN]>
+            <Vector_mpc [NaN + NaN*I, NaN + NaN*I, NaN + NaN*I]>
         """
         cdef long i
         self.n = n
@@ -1319,7 +1319,7 @@ cdef class RiemannTheta:
             Theta function (see [DHBvHS2004]_). Furthermore, floating point rounding in iterated
             summations may perturb the lower bits.
 
-        OUTPUT: A complex number of a tuple of them; the value(s) of the indicated Riemann
+        OUTPUT: A complex number or a tuple of them; the value(s) of the indicated Riemann
         Theta function(s).
 
         EXAMPLES::
