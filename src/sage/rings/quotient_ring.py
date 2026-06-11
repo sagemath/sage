@@ -375,7 +375,7 @@ class QuotientRing_nc(Parent):
         sage: j^3
         -j*k*i - j*k*j - j*k*k
 
-    For rings that *do* inherit from :class:`~sage.rings.ring.CommutativeRing`,
+    For rings that *do* inherit from :class:`~sage.rings.ring.Ring`,
     we provide a subclass :class:`QuotientRing_generic`, for backwards
     compatibility.
 
@@ -1331,7 +1331,7 @@ class QuotientRing_nc(Parent):
         return self.retract(self.cover_ring().random_element())
 
 
-class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
+class QuotientRing_generic(QuotientRing_nc, ring.Ring):
     r"""
     Create a quotient ring of a *commutative* ring `R` by the ideal `I`.
 
@@ -1350,7 +1350,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
 
         INPUT:
 
-        - ``R`` -- a ring that is a :class:`~sage.rings.ring.CommutativeRing`
+        - ``R`` -- a ring that is a :class:`~sage.rings.ring.Ring`
 
         - ``I`` -- an ideal of `R`
 

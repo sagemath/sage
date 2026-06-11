@@ -514,13 +514,13 @@ def check_relation_maxima(relation):
 
     if relation.operator() == operator.eq:  # operator is equality
         try:
-            s = test_max_equal(relation.lhs(),relation.rhs())
+            s = test_max_equal(relation.lhs(), relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     elif relation.operator() == operator.ne:  # operator is not equal
         try:
-            s = test_max_notequal(relation.lhs(),relation.rhs())
+            s = test_max_notequal(relation.lhs(), relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
@@ -1581,7 +1581,8 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                 m = eq._maxima_()
                 s = m.to_poly_solve(x, options='algexact:true')
                 T = string_to_list_of_solutions(repr(s))
-                X.extend(u for t in T if (u :=_to_poly_solve_unwrap_solution(t)) is not None)
+                X.extend(u for t in T
+                         if (u := _to_poly_solve_unwrap_solution(t)) is not None)
             except TypeError as mess:
                 if ignore_exceptions:
                     continue
