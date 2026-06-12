@@ -1,4 +1,6 @@
 
+from typing import TYPE_CHECKING, Any
+
 from sage.arith.misc import is_prime
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -6,10 +8,12 @@ from sage.rings.integer import Integer
 
 from .digital_signature_base import DigitalSignatureBase
 
+if TYPE_CHECKING:
+    from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 
 class DigitalSignatureAlgorithm(DigitalSignatureBase):
 
-    def __init__(self, p, q, generator):
+    def __init__(self, p: Integer | int, q: Integer | int, generator: Integer | int | IntegerMod_abstract) -> None:
         r"""
         Create an instance of the Digital Signature Algorithm using
         primes ``p`` and ``q`` and generator ``g``
@@ -19,7 +23,6 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         - ``q`` -- prime integer
 
         - ``p`` -- prime integer for which (p-1) is a multiple of ``q``
-
 
         - ``generator`` -- base non-one element of the digital signature `\frac{\mathbb{Z}}{q\mathbb{Z}}`.
 
@@ -48,7 +51,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         self.generator = self.pZmod(generator)
 
 
-    def generate_keys(self):
+    def generate_keys(self) -> tuple[IntegerMod_abstract, IntegerMod_abstract]:
         """
         Generates a keypair to be used for signatures
 
@@ -60,7 +63,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         public_key = self.pZmod(self.generator)**secret_key
         return (public_key, secret_key)
 
-    def sign(self, message, secret_key):
+    def sign(self, message, secret_key: IntegerMod_abstract) -> tuple[tuple[IntegerMod_abstract, IntegerMod_abstract], Any]:
         """
         Signs a message from the secret_key
 
@@ -78,7 +81,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         s = self.qZmod(k)**(-1) * (self.qZmod(message) + self.qZmod(secret_key) * r)
         return ((r, s), message)
 
-    def verify(self, public_key, signature, message):
+    def verify(self, public_key: IntegerMod_abstract, signature: tuple[IntegerMod_abstract, IntegerMod_abstract], message) -> bool:
         """
         Verifies that the signature is valid
 
@@ -103,7 +106,7 @@ class DigitalSignatureAlgorithm(DigitalSignatureBase):
         )
         return v == r
 
-    def parameters(self):
+    def parameters(self) -> tuple[Any, Any, IntegerMod_abstract]:
         """
         Returns the public parameter set, which is of the form ``(p, q, generator)``
 
