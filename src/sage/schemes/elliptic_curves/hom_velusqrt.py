@@ -1150,7 +1150,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 = x^3 + (8*z2+70)*x + (3*z2+49) over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
             sage: E.isogeny(E.lift_x(0), algorithm='velusqrt').dual()
-            Composite morphism of degree 213 = 71*3:
+            Composite morphism of degree 213 = 71*3*1:
               From: Elliptic Curve defined by y^2 = x^3 + (50*z2+61)*x + (22*z2+25) over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
         """

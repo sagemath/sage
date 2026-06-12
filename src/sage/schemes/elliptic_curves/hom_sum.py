@@ -224,7 +224,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: endo.degree()
             420
             sage: endo.to_isogeny_chain()
-            Composite morphism of degree 420 = 4*1*3*5*7:
+            Composite morphism of degree 420 = 4*1*3*5*7*1:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
 
@@ -245,7 +245,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: m2 = E.scalar_multiplication(2)
             sage: m3 = E.scalar_multiplication(3)
             sage: (m2 - m3).to_isogeny_chain()
-            Composite morphism of degree 1 = 1^2:
+            Composite morphism of degree 1:
               From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
             sage: (m2 - m3).rational_maps()

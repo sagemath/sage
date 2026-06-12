@@ -132,9 +132,7 @@ class EllipticCurveHom(Morphism):
             ret = other._composition_impl(self, other)
 
         if ret is NotImplemented:
-            from sage.schemes.elliptic_curves.hom_composite import (
-                EllipticCurveHom_composite,
-            )
+            from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             ret = EllipticCurveHom_composite.from_factors([other, self])
 
         return ret

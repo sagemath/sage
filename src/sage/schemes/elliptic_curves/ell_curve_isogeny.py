@@ -3213,7 +3213,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: z2 = GF(71^2).gen()
             sage: E = EllipticCurve(j=57*z2+51)
             sage: E.isogeny(3*E.lift_x(0)).dual()
-            Composite morphism of degree 71 = 71*1^2:
+            Composite morphism of degree 71 = 71*1:
               From: Elliptic Curve defined by y^2 = x^3 + (32*z2+67)*x + (24*z2+37)
                     over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42)
@@ -3234,7 +3234,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: post = WeierstrassIsomorphism(phi.codomain(), (5,6,7,8))
             sage: phi = post * phi * pre
             sage: phi.dual()
-            Composite morphism of degree 213 = 71*3:
+            Composite morphism of degree 213 = 71*3*1:
               From: Elliptic Curve defined
                     by y^2 + 17*x*y + 45*y = x^3 + 30*x^2 + (6*z2+64)*x + (48*z2+65)
                     over Finite Field in z2 of size 71^2
