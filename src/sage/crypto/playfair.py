@@ -1,5 +1,3 @@
-
-
 r"""
 This file contains a classical implementation of the Playfair cipher
 
@@ -69,15 +67,15 @@ class PlayfairCryptosystem():
     corresponding ciphertext digraph `(c_1,c_2)` is obtained according to the
     following rules:
 
-        - If `r_1 = r_2`, that is, the two symbols lie in the same row, each
+    - If `r_1 = r_2`, that is, the two symbols lie in the same row, each
         symbol is replaced by the symbol immediately to its right, wrapping
         around to the beginning of the row when necessary.
 
-        - If `c_1 = c_2`, that is, the two symbols lie in the same column,
+    - If `c_1 = c_2`, that is, the two symbols lie in the same column,
         each symbol is replaced by the symbol immediately below it,
         wrapping around to the top of the column when necessary.
 
-        - Otherwise, the two symbols form the corners of a rectangle in the
+    - Otherwise, the two symbols form the corners of a rectangle in the
         key square. Each symbol is replaced by the symbol in the same row
         but in the column occupied by the other symbol. Thus, if
         `(r_1,c_1)` and `(r_2,c_2)` are the coordinates of the plaintext
@@ -128,7 +126,6 @@ class PlayfairCryptosystem():
         - non-alphabetic characters removed
 
         EXAMPLES::
-
         Capitalize all letters::
 
             sage: PF = PlayfairCryptosystem()
@@ -194,7 +191,6 @@ class PlayfairCryptosystem():
         A 5x5 list-of-lists representing the Playfair key matrix.
 
         EXAMPLES::
-
         If there is no keyword passed in, or the processed string is empty
         then the matrix is just filled in alphabetical order (skipping 'J')::
 
