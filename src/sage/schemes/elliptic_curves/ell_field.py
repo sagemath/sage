@@ -27,7 +27,7 @@ from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
 from .constructor import EllipticCurve
-from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from .ell_curve_isogeny import EllipticCurveIsogeny, _construct_isogeny, isogeny_codomain_from_kernel
 from . import ell_generic
 
 
@@ -1904,7 +1904,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
         if algorithm == "traditional":
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
+            return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
         if kernel is not None:
             # Check for multiple points or point of known order
@@ -1932,21 +1932,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 elif known_order:
                     from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
                     return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
-        try:
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
-        except NotImplementedError as err:
-            if kernel is None:
-                raise err
-            try:
-                from .ell_curve_isogeny import _factored_isogeny_from_kernel_polynomial
-                return _factored_isogeny_from_kernel_polynomial(self, kernel,
-                                                               codomain=codomain,
-                                                               model=model,
-                                                               check=check)
-            except NotImplementedError:
-                raise err
-        except AttributeError as e:
-            raise RuntimeError("Unable to construct isogeny: %s" % e)
+
+        return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
     def isogeny_codomain(self, kernel):
         r"""

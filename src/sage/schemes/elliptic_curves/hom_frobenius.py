@@ -160,7 +160,7 @@ from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, find_post_isomorphism
-from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
+from sage.schemes.elliptic_curves.ell_curve_isogeny import _construct_isogeny
 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
 from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
 
@@ -493,7 +493,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
             Phis = []
             for _ in range(self._n):
                 Ep = EllipticCurve([a**self._p for a in E.a_invariants()])
-                Phis.append(EllipticCurveIsogeny(Ep, ker, codomain=E))
+                Phis.append(_construct_isogeny(Ep, ker, codomain=E))
                 E, ker = Ep, ker.map_coefficients(lambda c: c**self._p)
             Phi = EllipticCurveHom_composite.from_factors(Phis[::-1], self._codomain)
 

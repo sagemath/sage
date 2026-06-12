@@ -1163,8 +1163,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         F = self._raw_domain.base_ring()
         from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
         isom = ~WeierstrassIsomorphism(self._raw_domain, (~F(self._degree), 0, 0, 0))
-        from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
-        phi = EllipticCurveIsogeny(self._raw_codomain, None, isom.domain(), self._degree)
+        phi = self._raw_codomain.isogeny(kernel=None, codomain=isom.domain(), degree=self._degree)
         return ~self._pre_iso * isom * phi * ~self._post_iso
 
     @cached_method
