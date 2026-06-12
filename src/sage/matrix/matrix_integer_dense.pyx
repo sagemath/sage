@@ -305,6 +305,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: v.parent()
             Full MatrixSpace of 1 by 100000 dense matrices over Integer Ring
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``fmpz_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Integer z
         for t in ma.iter(coerce, True):

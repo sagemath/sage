@@ -882,6 +882,54 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = B.row_module(D.base_ring())
         return self.domain().submodule(V, check=False)
 
+    def kernel_basis(self):
+        r"""
+        Return a basis of the kernel of this morphism, in echelon form.
+
+        The basis is taken from :meth:`kernel`, so it spans the kernel and
+        respects the matrix convention determined by :meth:`side`: every
+        returned vector is mapped to zero by this morphism.
+
+        EXAMPLES:
+
+        For a ``side='left'`` morphism (the default), ``f(x) = x*M``, so the
+        relevant kernel is the *left* kernel of the matrix::
+
+            sage: A = linear_transformation(matrix([[0, -1], [0, 0]]))
+            sage: A.kernel_basis()
+            ((0, 1),)
+            sage: all(A(v).is_zero() for v in A.kernel_basis())
+            True
+
+        The convention is respected for both sides, so the result is
+        consistent with :meth:`kernel`::
+
+            sage: B = linear_transformation(matrix([[0, -1], [0, 0]]), side='right')
+            sage: B.kernel_basis()
+            ((1, 0),)
+            sage: all(B(v).is_zero() for v in B.kernel_basis())
+            True
+
+        This also works for free module morphisms that are not vector
+        space morphisms::
+
+            sage: V = ZZ^2
+            sage: phi = V.hom(matrix([[0, -1], [0, 0]]))
+            sage: phi.kernel_basis()
+            ((0, 1),)
+            sage: all(phi(v).is_zero() for v in phi.kernel_basis())
+            True
+
+        TESTS:
+
+        Check that :issue:`40933` is fixed::
+
+            sage: A = linear_transformation(matrix([[0, -1], [0, 0]]))
+            sage: A.kernel_basis()[0] in A.kernel()
+            True
+        """
+        return tuple(self.kernel().basis())
+
     def image(self):
         """
         Compute the image of this morphism.

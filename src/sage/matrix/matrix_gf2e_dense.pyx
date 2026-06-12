@@ -238,6 +238,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 a 0]
             [0 0 a]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``mzed_init``). Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch significantly faster
+            # (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t

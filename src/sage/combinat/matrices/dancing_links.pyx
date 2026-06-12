@@ -904,11 +904,11 @@ cdef class dancing_linksWrapper:
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: x = dlx_solver(rows)
-            sage: s = x.to_sat_solver()                                                 # needs sage.sat
+            sage: s = x.to_sat_solver()
 
         Using some optional SAT solvers::
 
-            sage: x.to_sat_solver('cryptominisat')      # optional - pycryptosat        # needs sage.sat
+            sage: x.to_sat_solver('cryptominisat')      # optional - pycryptosat
             CryptoMiniSat solver: 4 variables, 7 clauses.
         """
         from sage.sat.solvers.satsolver import SAT
@@ -960,20 +960,20 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_sat_solver() in solutions                        # needs sage.sat
+            sage: d.one_solution_using_sat_solver() in solutions
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_sat_solver('glucose')                # optional - glucose, needs sage.sat
-            sage: s in solutions                                                # optional - glucose, needs sage.sat
+            sage: s = d.one_solution_using_sat_solver('glucose')                # optional - glucose
+            sage: s in solutions                                                # optional - glucose
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_sat_solver() is None                             # needs sage.sat
+            sage: d.one_solution_using_sat_solver() is None
             True
         """
         sat_solver = self.to_sat_solver(solver)
