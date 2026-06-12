@@ -132,6 +132,21 @@ class DigitalSignatureBase(SageObject):
         result_of_verification = self.verify(public_key, signature, message)
         return public_key, secret_key, signature, message, result_of_verification
 
+    
+    @classmethod
+    def named_parameter_set(cls, name: str) -> Self:
+        r"""
+        Convenience method to easily construct particular instances of a key exchange scheme
+        for actual parameter sets that are used in practice and have names. Implementations
+        may also wish to implement a parameter set named 'toy' of a size that is just large
+        enough to be non-trivial but is nowhere near cryptographic size. Implementations may
+        also wish to set a custom name on the key exchange instance before returning it.
+
+        Sage library implementations of key exchange schemes should define a 'toy' implementation
+        and use it for most tests to reduce testing time.
+        """
+        raise ValueError(f'Unknown parameter set name "{name}" for {cls}')
+
     def _repr_(self) -> str:
         return f'{type(self).__name__} with parameter set: {self.parameters()}'
 
