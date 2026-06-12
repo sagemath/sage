@@ -37,11 +37,19 @@ experimental_warning(
 
 
 class DigitalSignatureBase(SageObject):
-    """
+    r"""
     A base class for Digial Signature Schemes
 
     Implementers of this class must implement all abstract methods
     defined in :meth:`DigitalSignatureBase`.
+
+    NOTE:
+
+    Typically Digital Signatures Sign arbitrary bytes as messages, however for teaching purposes
+    most schemes will use a cryptographic hash on the message to generate an integer.
+    Thus to make it easier for users we suggest that messages are represented as some 32-byte
+    integer. This can be changed by the implementor however if so then the implementing class
+    must override the ``_test_sign()`` method to be able to test with different messages.
     """
 
     @abstractmethod
