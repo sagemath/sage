@@ -1899,7 +1899,15 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
         if algorithm == "velusqrt":
             from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
-            return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
+            phi = EllipticCurveHom_velusqrt(self, kernel)
+            if model is not None:
+                if codomain is not None:
+                    raise ValueError("cannot specify a codomain curve and model name simultaneously")
+                from sage.schemes.elliptic_curves.ell_field import compute_model
+                codomain = compute_model(phi.codomain(), model)
+            if codomain is not None:
+                phi = phi.codomain().isomorphism_to(codomain) * phi
+            return phi
         if algorithm == "factored":
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)

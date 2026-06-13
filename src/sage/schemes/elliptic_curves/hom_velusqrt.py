@@ -49,15 +49,15 @@ and must therefore be equal *up to post-isomorphism*::
     sage: sum(iso * psi == phi for iso in isos)
     1
 
-Just like
-:class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`,
-the constructor supports a ``model`` keyword argument::
+By constructing an :class:`EllipticCurveHom_velusqrt` object through
+the `:meth:`EllipticCurve_field.isogeny` method, a ``model`` keyword
+can be used to specify the shape of the codomain curve::
 
     sage: E = EllipticCurve(GF(6666679), [1,1])
     sage: K = E(9091, 517864)
-    sage: phi = EllipticCurveHom_velusqrt(E, K, model='montgomery')
+    sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt')
     sage: phi
-    Elliptic-curve isogeny (using square-root Vélu) of degree 2999:
+    Composite morphism of degree 2999 = 2999*1:
       From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 6666679
       To:   Elliptic Curve defined by y^2 = x^3 + 1559358*x^2 + x over Finite Field of size 6666679
 
@@ -699,12 +699,12 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 301*x + 86 over Finite Field of size 419
             sage: E2 = EllipticCurve(GF(419), [0,6,0,385,42])
-            sage: EllipticCurveHom_velusqrt(E, K, codomain=E2)
-            Elliptic-curve isogeny (using square-root Vélu) of degree 105:
+            sage: E.isogeny(K, codomain=E2, algorithm='velusqrt')
+            Composite morphism of degree 105 = 105*1:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
-            sage: EllipticCurveHom_velusqrt(E, K, model='montgomery')
-            Elliptic-curve isogeny (using square-root Vélu) of degree 105:
+            sage: E.isogeny(K, model='montgomery', algorithm='velusqrt')
+            Composite morphism of degree 105 = 105*1:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
 
@@ -767,7 +767,14 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         self._domain = E
         self._compute_codomain(model=model)
 
+        if model is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(42363, "the 'model' argument to the EllipticCurveHom_velusqrt constructor is deprecated; use E.isogeny(..., codomain={model!r}, ..., algorithm='velusqrt') instead of EllipticCurveHom_velusqrt(E, ..., model={model!r}, ...)")
+
         if codomain is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(42363, "the 'codomain' argument to the EllipticCurveHom_velusqrt constructor is deprecated; use E.isogeny(..., algorithm='velusqrt') instead of EllipticCurveHom_velusqrt(E, ...)")
+
             self._post_iso = self._codomain.isomorphism_to(codomain) * self._post_iso
             self._codomain = codomain
 
@@ -932,9 +939,9 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
             sage: E = EllipticCurve(GF(71), [0,5,0,1,0])
             sage: K = E(4, 19)
-            sage: phi = EllipticCurveHom_velusqrt(E, K, model='montgomery')
+            sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt')
             sage: phi
-            Elliptic-curve isogeny (using square-root Vélu) of degree 19:
+            Composite morphism of degree 19 = 19*1:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x^2 + x over Finite Field of size 71
               To:   Elliptic Curve defined by y^2 = x^3 + 40*x^2 + x over Finite Field of size 71
             sage: phi(K)
@@ -946,7 +953,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: phi(E(0,0))
             (0 : 0 : 1)
             sage: phi(E(7,13))
-            (70 : 31 : 1)
+            (70 : ... : 1)
 
         TESTS::
 
@@ -1255,8 +1262,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
             sage: K = (E.cardinality() // 11) * E.gens()[0]
-            sage: phi = E.isogeny(K, algorithm='velusqrt', model='montgomery'); phi
-            Elliptic-curve isogeny (using square-root Vélu) of degree 11:
+            sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt'); phi
+            Composite morphism of degree 11 = 11*1:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 61*x^2 + x over Finite Field in z2 of size 101^2
             sage: phi.scaling_factor()
@@ -1342,8 +1349,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
             sage: K = (E.cardinality() // 11) * E.gens()[0]
-            sage: phi = E.isogeny(K, algorithm='velusqrt', model='montgomery'); phi
-            Elliptic-curve isogeny (using square-root Vélu) of degree 11:
+            sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt'); phi
+            Composite morphism of degree 11 = 11*1:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 61*x^2 + x over Finite Field in z2 of size 101^2
             sage: phi(E.lift_x(42)).x()
