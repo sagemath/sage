@@ -574,6 +574,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: Matrix(IntegerModRing(200), [[int(2**128+1), int(2**256+1), int(2**1024+1)]])        # needs sage.rings.finite_rings
             [ 57 137  17]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``check_calloc`` with ``zeroed_alloc``). Returning here avoids
+            # building a ``MatrixArgs`` object and iterating over an empty
+            # generator, which makes creating a zero matrix from scratch
+            # significantly faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef long i, j
         it = ma.iter(convert=False, sparse=True)

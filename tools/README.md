@@ -66,3 +66,36 @@ Example:
 cd flint-autogen
 FLINT_GIT_DIR=/path/to/flint.git python flint_autogen.py
 ```
+
+## Generate cython header files for flint
+
+The flint-autogen directory contains a script (`flint_autogen.py`)
+that will automatically generate the pxd files in
+`SAGE_ROOT/src/sage/libs/flint`. It requires gitpython to be
+installed, and for `FLINT_GIT_DIR` to be set to a clone of the flint
+git repository.
+
+Example:
+
+```bash
+# don't forget to install gitpython first
+cd flint-autogen
+FLINT_GIT_DIR=/path/to/flint.git python flint_autogen.py
+```
+
+## Update Type Stubs
+
+This command updates the type stubs (`.pyi` files) in the source folder based on the corresponding Cython files (`.pyx` files).
+
+It supports two modes of operation:
+- Check mode: Compares the existing type stubs with the generated ones and reports any differences without making changes. This is useful for verifying wether the type stubs are in sync with the Cython files.
+
+  ```bash
+  uv run tools/update_typestubs.py check <path to Cython file.pyx>
+  ```
+
+- Write mode: Generates new type stubs which is handy to initially create type stubs for Cython files that do not have them yet. The created type stubs are pretty basic, and do not include detailed type information (e.g., specific types for function parameters and return types). One can then manually edit the generated type stubs to add more specific type information, or use AI tools to assist in refining the type annotations.
+
+  ```bash
+  uv run tools/update_typestubs.py write <path to Cython file.pyx>
+  ```

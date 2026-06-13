@@ -218,7 +218,8 @@ cdef class Matrix:
 
         # Ugly code...
         if sparse:
-            Ts = MatrixSpace(ZZ, n, sparse=sparse).zero_matrix().__copy__()
+            MS = MatrixSpace(ZZ, n, sparse=sparse)
+            Ts = MS.element_class(MS, None, False, False)
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
                     Mij = Integer(self.M.sub(i+1,j+1))
@@ -226,7 +227,8 @@ cdef class Matrix:
                         Ts.set_unsafe(i, j, Mij)
             return Ts
         else:
-            Td = MatrixSpace(ZZ, n, sparse=sparse).zero_matrix().__copy__()
+            MS = MatrixSpace(ZZ, n, sparse=sparse)
+            Td = MS.element_class(MS, None, False, False)
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
                     Mij = Integer(self.M.sub(i+1,j+1))

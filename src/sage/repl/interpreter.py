@@ -723,7 +723,7 @@ def get_test_shell():
 
         sage: from sage.tests import check_executable
         sage: cmd = 'from sage.repl.interpreter import get_test_shell; shell = get_test_shell()'
-        sage: (out, err, ret) = check_executable(["sage", "-c", cmd])
+        sage: (out, err, ret) = check_executable(["python3", "-m", "sage.cli", "-c", cmd])
         sage: out + err
         ''
     """
