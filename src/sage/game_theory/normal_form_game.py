@@ -384,6 +384,19 @@ more than 2 players::
      (1, 1, 0): [8, 4, 6],
      (1, 1, 1): [2, 6, 4]}
 
+Just as a two player game can be created from two payoff matrices, an `N`
+player game can be created directly from a list of `N` payoff arrays. Since a
+Sage matrix is only two-dimensional, the payoffs of a game with more than two
+players are given as `N`-dimensional numpy arrays of the same shape (one per
+player)::
+
+    sage: import numpy as np
+    sage: A = np.array([[[3, 1], [2, 3]], [[9, 3], [8, 2]]])
+    sage: B = np.array([[[1, 5], [6, 5]], [[7, 2], [4, 6]]])
+    sage: C = np.array([[[4, 9], [5, 8]], [[9, 3], [6, 4]]])
+    sage: NormalFormGame([A, B, C]) == threegame
+    True
+
 The above requires a lot of input that could be simplified if there is
 another data structure with our utilities and/or a structure to the
 utilities.  The following example creates a game with a relatively strange
@@ -653,10 +666,13 @@ from sage.cpython.string import bytes_to_str
 
 try:
     import numpy as np
+except ImportError:
+    np = None
+
+try:
     from pygambit import Game
     from pygambit.nash import lp_solve, lcp_solve, gnm_solve
 except ImportError:
-    np = None
     Game = None
     lp_solve = None
     lcp_solve = None
@@ -670,8 +686,21 @@ class NormalFormGame(SageObject, MutableMapping):
 
     INPUT:
 
-    - ``generator`` -- can be a list of 2 matrices, a single matrix or left
-      blank
+    - ``generator`` -- can be any of the following:
+
+      * a list of `N` payoff arrays describing an `N` player game. For a 2
+        player game these are the two payoff matrices (Sage matrices); for a
+        game with more than 2 players each payoff array is an `N`-dimensional
+        numpy array (a Sage matrix being only 2-dimensional cannot describe
+        the payoffs of a game with more than 2 players). All arrays must have
+        the same shape and the number of arrays must equal their common number
+        of dimensions.
+
+      * a single matrix, in which case a 2 player zero-sum game is constructed.
+
+      * a gambit ``Game``.
+
+      * left blank, in which case the utilities are populated manually.
     """
 
     def __init__(self, generator=None):
@@ -713,6 +742,27 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: threegame.obtain_nash(algorithm='gnm')  # optional - gambit
             [[(0.0, 1.0), (1.0, 0.0), (1.0, 0.0)]]
 
+        Rather than populating the utilities by hand, the same game can be
+        built directly from a list of payoff arrays, one ``N``-dimensional
+        numpy array per player::
+
+            sage: import numpy as np
+            sage: A = np.array([[[3, 1], [2, 3]], [[9, 3], [8, 2]]])
+            sage: B = np.array([[[1, 5], [6, 5]], [[7, 2], [4, 6]]])
+            sage: C = np.array([[[4, 9], [5, 8]], [[9, 3], [6, 4]]])
+            sage: arraygame = NormalFormGame([A, B, C])
+            sage: arraygame == threegame
+            True
+            sage: arraygame
+            Normal Form Game with the following utilities: {(0, 0, 0): [3, 1, 4],
+             (0, 0, 1): [1, 5, 9],
+             (0, 1, 0): [2, 6, 5],
+             (0, 1, 1): [3, 5, 8],
+             (1, 0, 0): [9, 7, 9],
+             (1, 0, 1): [3, 2, 3],
+             (1, 1, 0): [8, 4, 6],
+             (1, 1, 1): [2, 6, 4]}
+
         Can initialise a game from a gambit game object::
 
             sage: # optional - gambit
@@ -736,6 +786,17 @@ class NormalFormGame(SageObject, MutableMapping):
             Traceback (most recent call last):
             ...
             ValueError: matrices must be the same size
+
+        Raise an error if the number of payoff arrays does not match the number
+        of players, i.e. the number of dimensions of each array (here three
+        2-dimensional matrices cannot describe a 3 player game)::
+
+            sage: p1 = matrix([[1, 2], [3, 4]])
+            sage: error = NormalFormGame([p1, p1, p1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of matrices must match the number of players,
+             i.e. the number of dimensions of each matrix
 
         Note that when initializing, a single argument must be passed::
 
@@ -761,7 +822,6 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         self.players = []
         self.utilities = {}
-        matrices = []
         if generator is not None:
             if type(generator) is not list and type(generator) is not Game:
                 raise TypeError("Generator function must be a list, gambit game or nothing")
@@ -769,10 +829,7 @@ class NormalFormGame(SageObject, MutableMapping):
         if type(generator) is list:
             if len(generator) == 1:
                 generator.append(-generator[-1])
-            matrices = generator
-            if matrices[0].dimensions() != matrices[1].dimensions():
-                raise ValueError("matrices must be the same size")
-            self._two_matrix_game(matrices)
+            self._n_matrix_game(generator)
         elif type(generator) is Game:
             game = generator
             self._gambit_game(game)
@@ -942,26 +999,75 @@ class NormalFormGame(SageObject, MutableMapping):
             return r"\left(%s, %s\right)" % (M1._latex_(), M2._latex_())
         return latex(str(self))
 
-    def _two_matrix_game(self, matrices):
+    def _n_matrix_game(self, matrices):
         r"""
-        Populate ``self.utilities`` with the values from 2 matrices.
+        Populate ``self.utilities`` from a list of payoff arrays, one per
+        player.
+
+        Each entry of ``matrices`` is the payoff array of a player: a Sage
+        matrix for a 2 player game, or an `N`-dimensional numpy array for an
+        `N` player game. All arrays must have the same shape, and the number
+        of arrays must equal their common number of dimensions (one strategy
+        axis per player).
 
         EXAMPLES:
 
-        A small example game::
+        A small two player game::
 
             sage: A = matrix([[1, 0], [-2, 3]])
             sage: B = matrix([[3, 2], [-1, 0]])
             sage: two_game = NormalFormGame()
-            sage: two_game._two_matrix_game([A, B])
+            sage: two_game._n_matrix_game([A, B])
+            sage: two_game
+            Normal Form Game with the following utilities: {(0, 0): [1, 3],
+             (0, 1): [0, 2], (1, 0): [-2, -1], (1, 1): [3, 0]}
+
+        A three player game built from three 3-dimensional numpy arrays::
+
+            sage: import numpy as np
+            sage: A = np.array([[[3, 1], [2, 3]], [[9, 3], [8, 2]]])
+            sage: B = np.array([[[1, 5], [6, 5]], [[7, 2], [4, 6]]])
+            sage: C = np.array([[[4, 9], [5, 8]], [[9, 3], [6, 4]]])
+            sage: three_game = NormalFormGame()
+            sage: three_game._n_matrix_game([A, B, C])
+            sage: three_game
+            Normal Form Game with the following utilities: {(0, 0, 0): [3, 1, 4],
+             (0, 0, 1): [1, 5, 9],
+             (0, 1, 0): [2, 6, 5],
+             (0, 1, 1): [3, 5, 8],
+             (1, 0, 0): [9, 7, 9],
+             (1, 0, 1): [3, 2, 3],
+             (1, 1, 0): [8, 4, 6],
+             (1, 1, 1): [2, 6, 4]}
         """
         self.players = []
         self.utilities = {}
-        self.add_player(matrices[0].dimensions()[0])
-        self.add_player(matrices[1].dimensions()[1])
+
+        def shape(m):
+            # Sage matrices expose .dimensions(); numpy arrays expose .shape
+            if hasattr(m, "dimensions"):
+                return tuple(m.dimensions())
+            return tuple(m.shape)
+
+        shapes = [shape(m) for m in matrices]
+        if any(s != shapes[0] for s in shapes):
+            raise ValueError("matrices must be the same size")
+        if len(matrices) != len(shapes[0]):
+            raise ValueError("the number of matrices must match the number of "
+                             "players, i.e. the number of dimensions of each "
+                             "matrix")
+
+        for num_strategies in shapes[0]:
+            self.add_player(num_strategies)
+
         for strategy_profile in self.utilities:
-            self.utilities[strategy_profile] = [matrices[0][strategy_profile],
-                                                matrices[1][strategy_profile]]
+            utility_vector = []
+            for m in matrices:
+                value = m[strategy_profile]
+                if np is not None and isinstance(value, np.generic):
+                    value = value.item()
+                utility_vector.append(value)
+            self.utilities[strategy_profile] = utility_vector
 
     def _gambit_game(self, game):
         r"""
