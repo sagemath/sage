@@ -8009,6 +8009,7 @@ class Graph(GenericGraph):
 
     @doc_index("Connectivity, orientations, trees")
     def gomory_hu_tree(self, algorithm=None, solver=None, verbose=0,
+                       immutable=None,
                        *, integrality_tolerance=1e-3):
         r"""
         Return a Gomory-Hu tree of ``self``.
@@ -8044,6 +8045,10 @@ class Graph(GenericGraph):
           verbosity. Set to 0 by default, which means quiet.
 
           Only useful when ``algorithm == "LP"``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and Gomory-Hu tree will behave the same way.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -8128,6 +8133,19 @@ class Graph(GenericGraph):
 
             sage: graphs.EmptyGraph().gomory_hu_tree()
             Graph on 0 vertices
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.HouseGraph()
+            sage: G.gomory_hu_tree().is_immutable()
+            False
+            sage: G.gomory_hu_tree(immutable=True).is_immutable()
+            True
+            sage: G = graphs.HouseGraph(immutable=True)
+            sage: G.gomory_hu_tree().is_immutable()
+            True
+            sage: G.gomory_hu_tree(immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple()
 
@@ -8214,7 +8232,9 @@ class Graph(GenericGraph):
                 stack.append((gX, vertices & frozenset(gX)))
 
         # Finally return the Gomory-Hu tree
-        return T
+        if immutable is None:
+            immutable = self.is_immutable()
+        return T.copy(immutable=True) if immutable else T
 
     @doc_index("Leftovers")
     def two_factor_petersen(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
