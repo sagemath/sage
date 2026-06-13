@@ -432,12 +432,16 @@ class Test:
 
             sage: from sage.modular.arithgroup.tests import Test
             sage: Test().test_ross_dim_formula(30, 8)
+            True
         """
         from sage.modular.dirichlet import DirichletGroup
+        failure = False
         for N in range(3,N_ub+1):
             Gamma1_N = Gamma1(N)
             for eps in DirichletGroup(N):
                 for k in range(2,k_ub+1):
                     Ross_dim = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="Ross")
                     CO_dim = Gamma1_N.dimension_new_cusp_forms(k,eps,algorithm="CohenOesterle")
-                    assert Ross_dim == CO_dim
+                    if Ross_dim != CO_dim:
+                        failure = True
+        return not failure

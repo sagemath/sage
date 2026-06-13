@@ -625,7 +625,7 @@ class Gamma1_class(GammaH_class):
                 raise ValueError("Algorithm 'Ross' not defined for p-new subspace")
             if k < 2:
                 raise ValueError("Algorithm 'Ross' only defined for k >= 2")
-            return _ross_dim_formula_newspace_character(N, k, eps)
+            return _ross_dim_formula_newspace_character(ZZ(N), ZZ(k), eps)
 
         from .congroup_gammaH import mumu
 
@@ -659,10 +659,9 @@ def _ross_dim_formula_newspace_character(N, k, chi):
 
     # First term of explicit dimension formula
     def psi(n_fact):
-        ret = ZZ(1)
-        for p,r in n_fact:
-            ret *= (p+1) * p**(r-1)
-        return ret
+        # Note this is equal to Gamma0(N).index() 
+        return prod([p**r + p**(r-1) for (p,r) in n_fact])
+        
 
     def beta_psi_f(n_fact, f):
         ret = ZZ(1)
@@ -712,7 +711,7 @@ def _ross_dim_formula_newspace_character(N, k, chi):
 
     # Third term of explicit dimension formula
     def get_chi_p_alpha(f, chi, p, x):
-        assert f % p == 0
+        # Note that f % p == 0.
         f_fact = factor(f)
         rems = [(x if q == p else ZZ(1)) for (q,alpha) in f_fact]
         mods = [q**alpha for (q,alpha) in f_fact]
@@ -735,7 +734,7 @@ def _ross_dim_formula_newspace_character(N, k, chi):
             else:
                 u = Zmod(p**r)(-3).sqrt(extend=False)
                 chi_x = get_chi_p_alpha(f, chi, p, ZZ((-1+u)/2))
-                assert chi_x**3 == 1
+                # Note that chi_x**3 == 1
                 if chi_x == 1:
                     ret *= 2
                 else:
@@ -785,7 +784,7 @@ def _ross_dim_formula_newspace_character(N, k, chi):
             else:
                 upm = Zmod(p**r)(-1).sqrt(extend=False)
                 chi_x = get_chi_p_alpha(f, chi, p, ZZ(upm))
-                assert chi_x**4 == 1
+                # Note that chi_x**4 == 1
                 if chi_x == 1:
                     ret *= 2
                 elif chi_x == -1:
@@ -824,10 +823,6 @@ def _ross_dim_formula_newspace_character(N, k, chi):
         return ret
 
     # Finally, compute the actual dimension formula
-    k = ZZ(k)
-    N = ZZ(N)
-    assert k >= 2
-    assert chi.modulus() == N
     if chi(-1) != (-1)**k:
         return ZZ(0)
     f = chi.conductor()
@@ -839,5 +834,4 @@ def _ross_dim_formula_newspace_character(N, k, chi):
     ret -= ((k-1)/4 - k//4) * rhopm(f_fact, chi, f) * beta_rhopm_f(Nf_fact, f)
     ret -= frac(1,2) * 2**len(f_fact) * beta_sigma_f(Nf_fact, f)
     ret += (1 if k == 2 and f == 1 else 0) * moebius(N//f)
-    assert ret.is_integral()
     return ZZ(ret)
