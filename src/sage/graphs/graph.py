@@ -5766,7 +5766,8 @@ class Graph(GenericGraph):
         f.close()
 
     @doc_index("Algorithmically hard stuff")
-    def topological_minor(self, H, vertices=False, paths=False, solver=None, verbose=0,
+    def topological_minor(self, H, vertices=False, paths=False, solver=None,
+                          verbose=0, immutable=None,
                           *, integrality_tolerance=1e-3):
         r"""
         Return a topological `H`-minor from ``self`` if one exists.
@@ -5792,6 +5793,10 @@ class Graph(GenericGraph):
 
         - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its topological minor will behave the same way.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -5845,6 +5850,23 @@ class Graph(GenericGraph):
             sage: g = graphs.RandomGNP(15,.3)
             sage: g = g.subgraph(edges=g.min_spanning_tree())
             sage: g.topological_minor(graphs.CycleGraph(3))                             # needs sage.numerical.mip
+            False
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs sage.numerical.mip
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: g = graphs.PetersenGraph()
+            sage: g.topological_minor(K4).is_immutable()
+            False
+            sage: g.topological_minor(K4,immutable=True).is_immutable()
+            True
+            sage: g = graphs.PetersenGraph(immutable=True)
+            sage: g.topological_minor(K4).is_immutable()
+            True
+            sage: g.topological_minor(K4, immutable=False).is_immutable()
             False
         """
         self._scream_if_not_simple()
@@ -5989,7 +6011,9 @@ class Graph(GenericGraph):
                         minor.set_vertex(g, h)
                         break
 
-        return minor
+        if immutable is None:
+            immutable = self.is_immutable()
+        return minor.copy(immutable=True) if immutable else minor
 
     # Cliques
 
