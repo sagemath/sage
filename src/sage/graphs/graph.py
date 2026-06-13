@@ -5595,7 +5595,7 @@ class Graph(GenericGraph):
         return C
 
     @doc_index("Leftovers")
-    def seidel_switching(self, s, inplace=True):
+    def seidel_switching(self, s, inplace=True, immutable=None):
         r"""
         Return the Seidel switching of ``self`` w.r.t. subset of vertices ``s``.
 
@@ -5613,6 +5613,11 @@ class Graph(GenericGraph):
           modification inplace, or to return a copy of the graph after
           switching
 
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its Seidel switching will behave the same way.
+          This parameter is ignored when ``inplace`` is ``True``.
+
         EXAMPLES::
 
             sage: G = graphs.CycleGraph(5)
@@ -5629,13 +5634,41 @@ class Graph(GenericGraph):
             sage: G.seidel_switching([1,4,5])
             sage: G == H
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.CycleGraph(5)
+            sage: G = G.disjoint_union(graphs.CompleteGraph(1))
+            sage: s = [(0, 1), (1, 0), (0, 0)]
+            sage: H = G.copy(immutable=False)
+            sage: H.seidel_switching(s, inplace=True)
+            sage: H.is_immutable()
+            False
+            sage: H.seidel_switching(s, inplace=True, immutable=True)
+            sage: H.is_immutable()
+            False
+            sage: H = G.copy(immutable=True)
+            sage: H.seidel_switching(s, inplace=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: this graph is immutable and so cannot be changed
+            sage: X = H.seidel_switching(s, inplace=False)
+            sage: X.is_immutable()
+            True
+            sage: X = H.seidel_switching(s, inplace=False, immutable=False)
+            sage: X.is_immutable()
+            False
         """
-        G = self if inplace else copy(self)
+        if inplace:
+            self._scream_if_immutable()
+        elif immutable is None:
+            immutable = self.is_immutable()
+        G = self if inplace else self.copy(immutable=False)
         boundary = self.edge_boundary(s)
         G.add_edges(itertools.product(s, set(self).difference(s)))
         G.delete_edges(boundary)
         if not inplace:
-            return G
+            return G.copy(immutable=True) if immutable else G
 
     @doc_index("Leftovers")
     def twograph(self):

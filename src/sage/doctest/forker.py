@@ -1873,13 +1873,14 @@ class DocTestDispatcher(SageObject):
         opt = self.controller.options
 
         job_client = None
-        try:
-            from gnumake_tokenpool import JobClient, NoJobServer
-        except ImportError:
-            pass
-        else:
+        # Using gnumake_tokenpool leads to doctest failures when
+        # testing in parallel. See #38116 and #42293.
+        if sys.platform != "darwin":
             try:
+                from gnumake_tokenpool import JobClient, NoJobServer
                 job_client = JobClient(use_cysignals=True)
+            except ImportError:
+                pass
             except NoJobServer:
                 pass
 
