@@ -58,11 +58,12 @@ AUTHORS:
 
 from sage.rings.integer_ring import ZZ
 from sage.categories.morphism import Morphism
+from sage.structure.unique_representation import CachedRepresentation
 from sage.schemes.generic.homset import SchemeHomset_generic
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 
 
-class EllipticCurveHomset(SchemeHomset_generic):
+class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
     r"""
     This class represents the set of all homomorphisms between two fixed
     elliptic curves.

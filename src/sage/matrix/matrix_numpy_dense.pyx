@@ -138,6 +138,14 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             [        0.0 1.0 + 1.0*I]
             [2.0 + 2.0*I 3.0 + 3.0*I]
         """
+        if entries is None:
+            # ``__create_matrix__`` (called from ``__cinit__``) allocated an
+            # uninitialized NumPy array. Zeroing it with a single fast NumPy
+            # call is much faster than iterating over all entries, which
+            # makes creating a zero matrix from scratch significantly faster
+            # (see :issue:`36146`).
+            self._matrix_numpy.fill(0)
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef long i, j
         it = ma.iter(coerce)

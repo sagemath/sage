@@ -305,20 +305,6 @@ def has_imagemagick() -> bool:
     return ImageMagick().is_present()
 
 
-def has_dvipng() -> bool:
-    """
-    Test if dvipng is available.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.external import has_dvipng
-        sage: has_dvipng() # optional -- dvipng
-        FeatureTestResult('dvipng', True)
-    """
-    from sage.features.dvipng import dvipng
-    return dvipng().is_present()
-
-
 def has_rubiks() -> bool:
     """
     Test if the rubiks package (``cu2``, ``cubex``, ``dikcube``,
