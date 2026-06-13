@@ -412,13 +412,14 @@ cdef class SemidefiniteProgram(SageObject):
 
         return ("Semidefinite Program " +
 
-                ( "\"" +self._backend.problem_name()+ "\""
-                  if (str(self._backend.problem_name()) != "") else "")+
+                ("\"" + self._backend.problem_name() + "\""
+                 if (str(self._backend.problem_name()) != "") else "") +
 
-                " ( " + ("maximization" if b.is_maximization() else "minimization" ) +
+                " ( " + ("maximization" if b.is_maximization()
+                         else "minimization") +
 
-                ", " + str(b.ncols()) + " variables, " +
-                str(b.nrows()) + " constraints )")
+                f", {b.ncols()} variables, " +
+                f"{b.nrows()} constraints )")
 
     def __getitem__(self, v):
         r"""
@@ -516,8 +517,7 @@ cdef class SemidefiniteProgram(SageObject):
         if not name and self._first_variable_names:
             name = self._first_variable_names.pop(0)
 
-        return sdp_variable_parent(self,
-                      name=name)
+        return sdp_variable_parent(self, name=name)
 
     def _first_ngens(self, n):
         """
@@ -630,15 +630,15 @@ cdef class SemidefiniteProgram(SageObject):
 
         # varid_name associates variables id to names
         varid_name = {}
-        for 0<= i < b.ncols():
+        for 0 <= i < b.ncols():
             s = b.col_name(i)
             varid_name[i] = s if s else 'x_'+str(i)
 
-        ##### Sense and objective function
+        # ### Sense and objective function
         print("Maximization:" if b.is_maximization() else "Minimization:")
         print(" ", end=" ")
         first = True
-        for 0<= i< b.ncols():
+        for 0 <= i< b.ncols():
             c = b.objective_coefficient(i)
             if c == 0:
                 continue
@@ -652,36 +652,37 @@ cdef class SemidefiniteProgram(SageObject):
             print("- {}".format(-b.obj_constant_term))
         print("\n")
 
-        ##### Constraints
+        # ### Constraints
         print("Constraints:")
         for i in range(b.nrows()):
             indices, values = b.row(i)
             print(" ", end=" ")
             # Constraint's name
             if b.row_name(i):
-                print(b.row_name(i)+":", end=" ")
+                print(b.row_name(i) + ":", end=" ")
             first = True
-            l = sorted(zip(indices,values))
+            l = sorted(zip(indices, values))
             l.reverse()
             if l[-1][0] == -1:
                 _, last_value = l.pop()
             else:
-                last_value = matrix.zero( l[0][1].dimensions()[0],l[0][1].dimensions()[1]  )
+                last_value = matrix.zero(l[0][1].dimensions()[0],
+                                         l[0][1].dimensions()[1])
             l.reverse()
             for j, c in l:
                 if c == 0:
                     continue
-                print((("+ " if (not first) else "") +
-                        ( str(repr(c).replace('\n',"")  )  )+varid_name[j]),
+                print((("+ " if not first else "") +
+                       str(repr(c).replace('\n', "")) + varid_name[j]),
                       end=" ")
                 first = False
-            print(("<= "), end=" ")
-            print(repr(-last_value).replace('\n',""))
+            print("<= ", end=" ")
+            print(repr(-last_value).replace('\n', ""))
 
-        ##### Variables
+        # ### Variables
         print("Variables:")
         print("  ", end=" ")
-        for 0<= i < b.ncols()-1:
+        for 0 <= i < b.ncols()-1:
             print(str(varid_name[i]) + ", ", end=" ")
         print(str(varid_name[b.ncols()-1]))
 
@@ -733,10 +734,10 @@ cdef class SemidefiniteProgram(SageObject):
         val = []
         for l in lists:
             if isinstance(l, SDPVariable):
-                    c = {}
-                    for k, v in l.items():
-                        c[k] = self._backend.get_variable_value(self._variables[v])
-                    val.append(c)
+                c = {}
+                for k, v in l.items():
+                    c[k] = self._backend.get_variable_value(self._variables[v])
+                val.append(c)
             elif isinstance(l, list):
                 if len(l) == 1:
                     val.append([self.get_values(l[0])])
@@ -745,7 +746,7 @@ cdef class SemidefiniteProgram(SageObject):
                     [c.append(self.get_values(ll)) for ll in l]
                     val.append(c)
             elif l in self._variables:
-                #val.append(self._values[l])
+                # val.append(self._values[l])
                 val.append(self._backend.get_variable_value(self._variables[l]))
 
         if len(lists) == 1:
@@ -805,7 +806,7 @@ cdef class SemidefiniteProgram(SageObject):
         d = f.pop(-1, self._backend.zero())
 
         for i in range(self._backend.ncols()):
-            values.append(f.get(i,self._backend.zero()))
+            values.append(f.get(i, self._backend.zero()))
         self._backend.set_objective(values, d)
 
     def add_constraint(self, linear_function, name=None):
@@ -1254,7 +1255,7 @@ cdef class SDPVariable(Element):
             return self._dict[i]
         zero = self._p._backend.zero()
         name = self._name + "[" + str(i) + "]" if self._name else None
-        j = self._p._backend.add_variable( obj=zero, name=name)
+        j = self._p._backend.add_variable(obj=zero, name=name)
         v = self._p.linear_function({j: 1})
         self._p._variables[v] = j
         self._dict[i] = v

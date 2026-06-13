@@ -101,6 +101,12 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         - ``coerce`` -- if ``False``, assume without checking that the
           entries are of type :class:`Integer`
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to the (empty)
+            # zero matrix. Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Integer z
         for t in ma.iter(coerce, True):

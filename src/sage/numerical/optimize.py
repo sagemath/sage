@@ -102,7 +102,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         RuntimeError: f appears to have no zero on the interval
     """
     try:
-        return f.find_root(a=a,b=b,xtol=xtol,rtol=rtol,maxiter=maxiter,full_output=full_output)
+        return f.find_root(a=a, b=b, xtol=xtol, rtol=rtol,
+                           maxiter=maxiter, full_output=full_output)
     except AttributeError:
         pass
     a = float(a)
@@ -157,7 +158,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
 
     g = lambda x: float(f(x))
     brentqRes = scipy.optimize.brentq(g, a, b,
-                                 full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
+                                      full_output=full_output, xtol=xtol,
+                                      rtol=rtol, maxiter=maxiter)
     # A check following :issue:`4942`, to ensure we actually found a root
     # Maybe should use a different tolerance here?
     # The idea is to take roughly the derivative and multiply by estimated
@@ -410,7 +412,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         fast_gradient_functions = [fast_callable(gradient_list[i],
                                                  vars=var_names, domain=float)
                                    for i in range(len(gradient_list))]
-        gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
+        gradient = lambda p: numpy.array([a(*p)
+                                          for a in fast_gradient_functions])
     else:
         f = func
 
@@ -418,7 +421,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         if gradient is None:
             min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
         else:
-            min = optimize.fmin_bfgs(f, [float(_) for _ in x0],fprime=gradient, disp=verbose, **args)
+            min = optimize.fmin_bfgs(f, [float(_) for _ in x0], fprime=gradient, disp=verbose, **args)
     else:
         if algorithm == "simplex":
             min = optimize.fmin(f, [float(_) for _ in x0], disp=verbose, **args)
@@ -431,12 +434,15 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         elif algorithm == "ncg":
             if isinstance(func, Expression):
                 hess = func.hessian()
-                hess_fast = [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
+                hess_fast = [[fast_callable(a, vars=var_names, domain=float)
+                              for a in row] for row in hess]
                 hessian = lambda p: [[a(*p) for a in row] for row in hess_fast]
                 from numpy import dot
-                hessian_p = lambda p,v: dot(numpy.array(hessian(p)),v)
-                min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient,
-                      fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
+                hessian_p = lambda p, v: dot(numpy.array(hessian(p)), v)
+                min = optimize.fmin_ncg(f, [float(_) for _ in x0],
+                                        fprime=gradient,
+                                        fhess=hessian, fhess_p=hessian_p,
+                                        disp=verbose, **args)
     return vector(RDF, min)
 
 
@@ -539,24 +545,25 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
     if int(numpy.version.short_version[0]) > 1:
         numpy.set_printoptions(legacy="1.25")
     from scipy import optimize
-    function_type = type(lambda x,y: x+y)
+    function_type = type(lambda x, y: x+y)
 
     if isinstance(func, Expression):
         var_list = func.arguments()
         fast_f = fast_callable(func, vars=var_list, domain=float)
         f = lambda p: fast_f(*p)
         gradient_list = func.gradient()
-        fast_gradient_functions = [ fast_callable(gi,
-                                                  vars=var_list,
-                                                  domain=float)
-                                    for gi in gradient_list ]
-        gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
+        fast_gradient_functions = [fast_callable(gi,
+                                                 vars=var_list,
+                                                 domain=float)
+                                   for gi in gradient_list]
+        gradient = lambda p: numpy.array([a(*p)
+                                          for a in fast_gradient_functions])
         if isinstance(cons, Expression):
             fast_cons = fast_callable(cons, vars=var_list, domain=float)
             cons = lambda p: numpy.array([fast_cons(*p)])
         elif isinstance(cons, list) and isinstance(cons[0], Expression):
-            fast_cons = [ fast_callable(ci, vars=var_list, domain=float)
-                          for ci in cons ]
+            fast_cons = [fast_callable(ci, vars=var_list, domain=float)
+                         for ci in cons]
             cons = lambda p: numpy.array([a(*p) for a in fast_cons])
     else:
         f = func
@@ -875,7 +882,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
                 return binpacking(items, k=k, maximum=maximum, solver=solver, verbose=verbose,
                                   integrality_tolerance=integrality_tolerance)
             except MIPSolverException:
-                k = k + 1
+                k += 1
 
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
     p = MixedIntegerLinearProgram(solver=solver)
@@ -885,11 +892,11 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
 
     # Capacity constraint of each bin
     for b in range(k):
-        p.add_constraint(p.sum(weight[i]*box[i,b] for i in weight) <= maximum)
+        p.add_constraint(p.sum(weight[i]*box[i, b] for i in weight) <= maximum)
 
     # Each item is assigned exactly one bin
     for i in weight:
-        p.add_constraint(p.sum(box[i,b] for b in range(k)) == 1)
+        p.add_constraint(p.sum(box[i, b] for b in range(k)) == 1)
 
     try:
         p.solve(log=verbose)
@@ -901,7 +908,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
     boxes = [[] for i in range(k)]
 
     for i,b in box:
-        if box[i,b]:
+        if box[i, b]:
             boxes[b].append(weight[i] if isinstance(items, list) else i)
 
     return boxes

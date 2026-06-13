@@ -556,30 +556,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         except (TypeError, ValueError):
             return False
 
-    def _coerce_impl(self, x):
-        """
-        Return the coercion of x into this polynomial quotient ring.
-
-        The rings that coerce into the quotient ring canonically are:
-
-        - this ring
-
-        - any canonically isomorphic ring
-
-        - anything that coerces into the ring of which this is the
-          quotient
-        """
-        if isinstance(x, PolynomialQuotientRingElement):
-            if x.parent() == self:
-                return self.element_class(self, self.__ring(x.lift()), check=False)
-        # any ring that coerces to the base ring of this polynomial ring.
-        return self(self.polynomial_ring().coerce(x))
-
     ############################################
-    # Methods to make the category framework happy...
+    # Method to make the category framework happy...
     #
-
-    retract = _coerce_impl
     ambient = Ring.base
 
     def lift(self, x):
