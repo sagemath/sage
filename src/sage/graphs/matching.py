@@ -1194,6 +1194,18 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: sorted(m)                                                             # needs sage.networkx
         [(0, 3, 3), (1, 2, 6)]
 
+    Self-loops are filtered out before the matching is computed, so they do
+    not affect the result.  This holds for vertices with any integer label,
+    including labels above 256, which CPython does not cache as identical
+    objects (so the loop filter must compare endpoints by value, not by
+    identity)::
+
+        sage: G = Graph([(300, 300), (300, 301), (302, 303)], loops=True)
+        sage: G.matching(value_only=True, algorithm='Edmonds')                      # needs networkx
+        2
+        sage: G.matching(value_only=True, algorithm='LP')                           # needs sage.numerical.mip
+        2
+
     TESTS:
 
     If ``algorithm`` is set to anything different from ``'Edmonds'`` or
@@ -1215,7 +1227,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
     W = {}
     L = {}
     for u, v, l in G.edge_iterator():
-        if u is v:
+        if u == v:
             continue
         fuv = frozenset((u, v))
         if fuv not in L or (use_edge_labels and W[fuv] < weight(l)):

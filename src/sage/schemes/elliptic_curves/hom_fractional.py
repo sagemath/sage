@@ -230,6 +230,22 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             sage: phi._eval(Q)
             (z3^2 + 9*z3 : 10*z3^2 + 6*z3 + 10 : 1)
 
+        The complexity is generally determined by the size of the
+        prime *powers* in the denominator. For example, the following
+        works rather quickly::
+
+            sage: p = 419
+            sage: E = EllipticCurve(GF(p^2), [1,0])
+            sage: pi = E.frobenius_endomorphism()
+            sage: factor(p + 1)
+            2^2 * 3 * 5 * 7
+            sage: phi = (pi - 1) / (p + 1)
+            sage: Q = E(91, 129)
+            sage: phi(Q)
+            (91 : 290 : 1)
+
+        ALGORITHM: See [EPSV2023]_, p. 8, "Evaluating fractional isogenies".
+
         TESTS:
 
         Check for :issue:`41902`::
@@ -258,8 +274,27 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         if not P:
             return self._codomain.base_extend(F).zero()
 
-        P = P.divide(self._d, extend=True)
-        Q = self._phi._eval(P).change_ring(F)
+        n = P.order()
+        t = self._d
+        u = t.prime_to_m_part(n)
+        if u == t:
+            Q = t.inverse_mod(n) * self._phi._eval(P)
+        else:
+            ls = t.prime_divisors()
+            qs = [l**t.valuation(l) for l in ls]
+            ms = [l**n.valuation(l) for l in ls]
+            ms[0] *= n.prime_to_m_part(t)
+            Ts = [P]
+            from sage.rings.generic import ProductTree
+            for bas in ProductTree(ms).CRT_bases()[::-1]:
+                Ts = [k * T for (vec, T) in zip(bas, Ts) for k in vec]
+            # now sum(Ts) == P and each T has the corresponding order m
+
+            Q = self._codomain.base_extend(F).zero()
+            for q, m, T in zip(qs, ms, Ts):
+                T = T.divide(q, extend=True)
+                k = (t // q).inverse_mod(m)
+                Q += k * self._phi._eval(T).change_ring(F)
 
         return self._codomain.base_extend(F)(*Q)
 

@@ -1558,6 +1558,27 @@ def isogenies_13_1728(E, minimal_models=True):
           363594277511/574456513088876544*a^11 + 7213386922793/2991961005671232*a^9
             + 2810970361185589/1329760446964992*a^7 - 281503836888046601/8975883017013696*a^5
             + 1287313166530075/848061509544*a^3 - 9768837984886039/6925835661276*a)]
+
+    TESTS:
+
+    Check that :issue:`42262` is fixed::
+
+        sage: F = GF((2**31-1, 2))
+        sage: E = EllipticCurve(F, [1,0])
+        sage: E.isogenies_prime_degree(13)
+        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2147483647^2 to ...]
     """
     if E.j_invariant() != 1728:
         raise ValueError("j-invariant must be 1728")
