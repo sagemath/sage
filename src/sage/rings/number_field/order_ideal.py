@@ -277,16 +277,84 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
         return self._K
 
     def factor(self):
+        r"""
+        Return a (non-unique) prime factorization of this ideal.
+
+        EXAMPLES:
+
+        A basic factorization in a non-maximal order of a quadratic field.
+        The ideal `3*O` factors into two distinct prime ideals since 3 splits
+        in `K` and is coprime to the conductor::
+
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^3 + 5)
+            sage: O = K.order([2*a])   # conductor 2
+            sage: I = O.ideal(3)
+            sage: # since 3 is coprime to the conductor, the factorization is correct and unique
+            sage: F = I.factor()
+            sage: F.prod() == I
+            True
+
+        For non-invertible ideals, the factorization is informational: the
+        product of the factors with their exponents need not equal the original
+        ideal, unlike the invertible case::
+
+            sage: I = O.ideal(2)
+            sage: # the product of the factors with their exponents need not equal the original
+            sage: I.factor().prod() == I
+            False
+
+        Two distinct ``O``-ideals can have identical factorizations when they
+        lift to the same ``O_K``-ideal. Here ``O.ideal(2)`` and
+        ``O.ideal(2, 2*a)`` are different (they have different norms) but both
+        lift to ``2*O_K``::
+
+            sage: I1 = O.ideal(2)
+            sage: I2 = O.ideal([2, 2*a])
+            sage: I1 == I2
+            False
+            sage: I1.norm() == I2.norm()
+            False
+            sage: [(P, e) for P, e in I1.factor()] == [(P, e) for P, e in I2.factor()]
+            True
+
+        TESTS:
+
+        The factors are ideals of the non-maximal order `O`, not of `O_K`::
+
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^2 + 5)
+            sage: O = K.order([2*a])
+            sage: I = O.ideal(3)
+            sage: F = I.factor()
+            sage: type(F)
+            <class 'sage.structure.factorization.Factorization'>
+            sage: all(P.ring() is O for (P, _) in F)
+            True
+
+        Number fields defined by non-monic and non-integral
+        polynomials are supported::
+
+            sage: K.<a> = NumberField(2*x^2 + 1)
+            sage: O = K.order([2*a])
+            sage: F = O.ideal(3).factor()
+            sage: prod(P.norm()^e for (P, e) in F) == O.ideal(3).norm()
+            True
+        """
+        # this is almost the same code as the one from the maximal order case
         try:
             return self.__factorization
         except AttributeError:
             O = self.ring()
             K = self.number_field()
+            # we lift the O-ideal to the maximal order O_K
             lift = K.ideal(self.gens())
+            # compute the factorization in O_K
             F = K.pari_nf().idealfactor(lift.pari_hnf())
             A = []
             for j in range(len(F[0])):
                 I = self.number_field().ideal(F[j,0])
+                # and intersect each of the ideals with O
                 projection = O.intersection(I)
                 A.append((projection,ZZ(F[j,1])))
             self.__factorization = Factorization(A)
