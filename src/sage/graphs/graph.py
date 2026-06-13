@@ -3204,6 +3204,7 @@ class Graph(GenericGraph):
 
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0,
+                                    immutable=None,
                                     *, integrality_tolerance=1e-3):
         r"""
         Return a degree-constrained subgraph.
@@ -3236,6 +3237,10 @@ class Graph(GenericGraph):
         - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
 
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its degree constrained subgraph will behave the same way.
+
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
@@ -3263,6 +3268,23 @@ class Graph(GenericGraph):
             sage: m = g.degree_constrained_subgraph(bounds=bounds)                      # needs sage.numerical.mip
             sage: m.size()                                                              # needs sage.numerical.mip
             3
+
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs sage.numerical.mip
+            sage: bounds = lambda x: [1,1]
+            sage: g = graphs.CycleGraph(4)
+            sage: g.degree_constrained_subgraph(bounds=bounds).is_immutable()
+            False
+            sage: g.degree_constrained_subgraph(bounds=bounds, immutable=True).is_immutable()
+            True
+            sage: g = graphs.CycleGraph(4, immutable=True)
+            sage: g.degree_constrained_subgraph(bounds=bounds).is_immutable()
+            True
+            sage: g.degree_constrained_subgraph(bounds=bounds, immutable=False).is_immutable()
+            False
         """
         self._scream_if_not_simple()
         from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
@@ -3299,10 +3321,12 @@ class Graph(GenericGraph):
         except MIPSolverException:
             return False
 
-        g = copy(self)
+        g = self.copy(immutable=False)
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         g.delete_edges(e for e in g.edge_iterator(labels=False) if not b[frozenset(e)])
-        return g
+        if immutable is None:
+            immutable = self.is_immutable()
+        return g.copy(immutable=True) if immutable else g
 
     # Coloring
 
