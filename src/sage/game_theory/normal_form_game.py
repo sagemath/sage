@@ -1819,6 +1819,69 @@ class NormalFormGame(SageObject, MutableMapping):
     def _extract_gambit_equilibria(self, equilibria):
         r"""
         Convert a pygambit equilibria collection to a list of strategy profiles.
+
+        The Gambit solvers (:meth:`_solve_gnm`, :meth:`_solve_LCP` and
+        :meth:`_solve_lp`) return their results as pygambit objects.  Each
+        equilibrium ``eq`` is a mixed strategy profile that behaves like a
+        mapping from a player's strategies to the probability with which that
+        strategy is played.  This helper flattens that representation into the
+        format used throughout the rest of :class:`NormalFormGame`: a list of
+        equilibria, where each equilibrium is a list with one entry per player
+        and each entry is a tuple giving the probability assigned to each of
+        that player's pure strategies.
+
+        Concretely, the returned object has the shape::
+
+            [
+              [ (p_0^0, p_0^1, ...),   # mixed strategy of player 0
+                (p_1^0, p_1^1, ...),   # mixed strategy of player 1
+                ... ],                 # one tuple per player
+              ...                      # one such list per equilibrium
+            ]
+
+        where ``p_i^j`` is the probability that player ``i`` plays their pure
+        strategy ``j``.  All probabilities are converted to Python ``float``\s.
+
+        INPUT:
+
+        - ``equilibria`` -- an iterable of pygambit mixed strategy profiles,
+          such as the ``equilibria`` attribute of the result returned by a
+          Gambit solver
+
+        OUTPUT: a list of equilibria, each represented as a list of tuples of
+        floats (one tuple per player)
+
+        EXAMPLES:
+
+        Solving a two player game with Gambit's GNM solver and then extracting
+        the equilibria into Sage's native format::
+
+            sage: from pygambit.nash import gnm_solve            # optional - gambit
+            sage: A = matrix([[1, 2], [3, 4]])
+            sage: B = matrix([[3, 3], [1, 4]])
+            sage: C = NormalFormGame([A, B])
+            sage: g = C._gambit_()                               # optional - gambit
+            sage: result = gnm_solve(g)                          # optional - gambit
+            sage: C._extract_gambit_equilibria(result.equilibria)  # optional - gambit
+            [[(0.0, 1.0), (0.0, 1.0)]]
+
+        The method works for any number of players; here each of the three
+        players is given a single tuple in every equilibrium::
+
+            sage: threegame = NormalFormGame()
+            sage: threegame.add_player(2)
+            sage: threegame.add_player(2)
+            sage: threegame.add_player(2)
+            sage: for i in range(2):
+            ....:     for j in range(2):
+            ....:         for k in range(2):
+            ....:             threegame[i, j, k][0] = i + 1
+            ....:             threegame[i, j, k][1] = j + 1
+            ....:             threegame[i, j, k][2] = k + 1
+            sage: g = threegame._gambit_()                       # optional - gambit
+            sage: eqs = threegame._extract_gambit_equilibria(gnm_solve(g).equilibria)  # optional - gambit
+            sage: all(len(eq) == 3 for eq in eqs)                # optional - gambit
+            True
         """
         return [[tuple(float(eq[s]) for s in player.strategies)
                  for player in eq.game.players]
