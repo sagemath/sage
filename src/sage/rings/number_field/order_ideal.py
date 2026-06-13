@@ -67,7 +67,6 @@ from sage.rings.polynomial.polynomial_ring import polygens
 from sage.rings.ideal import Ideal_generic
 from sage.structure.factorization import Factorization
 
-import sage.rings.number_field.order
 
 # TODO I*u works when u lies in I.ring().number_field(), but u*I doesn't
 
@@ -130,6 +129,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
             sage: I.norm()
             13
         """
+        import sage.rings.number_field.order
         if not isinstance(O, sage.rings.number_field.order.Order):
             raise TypeError('not a number-field order')
 

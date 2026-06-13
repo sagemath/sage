@@ -103,7 +103,7 @@ with ideals in non-maximal orders.
     sage: R.ideal(5).is_prime()
     Traceback (most recent call last):
     ...
-    AttributeError: 'NumberFieldOrderIdeal_generic' object has no attribute 'is_prime'
+    NotImplementedError
 
 
 Relative Extensions
