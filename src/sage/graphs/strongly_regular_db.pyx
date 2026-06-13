@@ -491,14 +491,14 @@ def is_goethals_seidel(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_goethals_seidel
         sage: t = is_goethals_seidel(28, 15, 6, 10); t                                  # needs sage.combinat sage.modules
-        [<function GoethalsSeidelGraph at ...>, 3, 3]
+        (<function GoethalsSeidelGraph at ...>, 3, 3)
         sage: g = t[0](*t[1:]); g                                                       # needs sage.combinat sage.modules
         Graph on 28 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.combinat sage.modules
         (28, 15, 6, 10)
 
         sage: t = is_goethals_seidel(256, 135, 70, 72); t                               # needs sage.combinat sage.modules
-        [<function GoethalsSeidelGraph at ...>, 2, 15]
+        (<function GoethalsSeidelGraph at ...>, 2, 15)
         sage: g = t[0](*t[1:]); g                                                       # needs sage.combinat sage.modules
         Graph on 256 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.combinat sage.modules
@@ -514,19 +514,19 @@ def is_goethals_seidel(int v, int k, int l, int mu):
         ....:           (496, 255, 126, 136), (540, 275, 130, 150), (576, 299, 154, 156),
         ....:           (780, 399, 198, 210), (784, 405, 208, 210), (976, 495, 238, 264)]:
         ....:     print(is_goethals_seidel(*p))
-        [<function GoethalsSeidelGraph at ...>, 2, 3]
-        [<function GoethalsSeidelGraph at ...>, 3, 3]
-        [<function GoethalsSeidelGraph at ...>, 2, 7]
-        [<function GoethalsSeidelGraph at ...>, 3, 7]
-        [<function GoethalsSeidelGraph at ...>, 2, 11]
-        [<function GoethalsSeidelGraph at ...>, 2, 15]
-        [<function GoethalsSeidelGraph at ...>, 2, 19]
-        [<function GoethalsSeidelGraph at ...>, 3, 15]
-        [<function GoethalsSeidelGraph at ...>, 5, 11]
-        [<function GoethalsSeidelGraph at ...>, 2, 23]
-        [<function GoethalsSeidelGraph at ...>, 3, 19]
-        [<function GoethalsSeidelGraph at ...>, 2, 27]
-        [<function GoethalsSeidelGraph at ...>, 5, 15]
+        (<function GoethalsSeidelGraph at ...>, 2, 3)
+        (<function GoethalsSeidelGraph at ...>, 3, 3)
+        (<function GoethalsSeidelGraph at ...>, 2, 7)
+        (<function GoethalsSeidelGraph at ...>, 3, 7)
+        (<function GoethalsSeidelGraph at ...>, 2, 11)
+        (<function GoethalsSeidelGraph at ...>, 2, 15)
+        (<function GoethalsSeidelGraph at ...>, 2, 19)
+        (<function GoethalsSeidelGraph at ...>, 3, 15)
+        (<function GoethalsSeidelGraph at ...>, 5, 11)
+        (<function GoethalsSeidelGraph at ...>, 2, 23)
+        (<function GoethalsSeidelGraph at ...>, 3, 19)
+        (<function GoethalsSeidelGraph at ...>, 2, 27)
+        (<function GoethalsSeidelGraph at ...>, 5, 15)
     """
     from sage.combinat.designs.bibd import balanced_incomplete_block_design
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
@@ -1168,7 +1168,7 @@ def is_RSHCD(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_RSHCD
         sage: t = is_RSHCD(64,27,10,12); t                                              # needs sage.combinat sage.modules
-        [<cyfunction SRG_from_RSHCD at ...>, 64, 27, 10, 12]
+        (<cyfunction SRG_from_RSHCD at ...>, 64, 27, 10, 12)
         sage: g = t[0](*t[1:]); g                                                       # needs sage.combinat sage.modules
         Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.combinat sage.modules
