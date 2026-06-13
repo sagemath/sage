@@ -53,6 +53,7 @@ https://www.singular.uni-kl.de/Manual/latest/sing_418.htm
 '''
 singular_max_char = 2**29 - 1
 
+
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""
     Implementation of :meth:`PolynomialRing_singular_repr._singular_init_`.

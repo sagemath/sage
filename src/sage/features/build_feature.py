@@ -14,6 +14,7 @@ This is an implementation of Option 3 in `Github discussion 41067
 
 from sage.features import Feature, FeatureTestResult
 
+
 class BuildFeature(Feature):
     r"""
     A class for features that can be enabled or disabled at
@@ -124,7 +125,6 @@ class BuildFeature(Feature):
             sage: bf.is_present_at_runtime = const_True.__get__(bf)
             sage: (not defer_feature_checks) or bf.is_present().is_present
             True
-
         """
         if self.is_runtime_detectable():
             return self.is_present_at_runtime()

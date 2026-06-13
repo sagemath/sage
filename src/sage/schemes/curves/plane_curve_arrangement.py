@@ -67,6 +67,7 @@ from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class PlaneCurveArrangementElement(Element):
     """
     An ordered plane curve arrangement.

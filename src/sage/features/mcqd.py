@@ -15,6 +15,7 @@ from sage.config import mcqd_enabled
 from sage.features import PythonModule
 from sage.features.build_feature import BuildFeature
 
+
 class Mcqd(BuildFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
@@ -57,6 +58,7 @@ class Mcqd(BuildFeature):
         result = PythonModule("sage.graphs.mcqd")._is_present()
         result.feature = self
         return result
+
 
 def all_features():
     return [Mcqd()]

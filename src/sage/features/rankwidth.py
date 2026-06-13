@@ -68,5 +68,6 @@ class RankWidth(BuildFeature):
         result.feature = self
         return result
 
+
 def all_features():
     return [RankWidth()]

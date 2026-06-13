@@ -16,6 +16,7 @@ from sage.config import meataxe_enabled
 from sage.features import PythonModule
 from sage.features.build_feature import BuildFeature
 
+
 class Meataxe(BuildFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
@@ -59,6 +60,7 @@ class Meataxe(BuildFeature):
         result = PythonModule(modname)._is_present()
         result.feature = self
         return result
+
 
 def all_features():
     return [Meataxe()]

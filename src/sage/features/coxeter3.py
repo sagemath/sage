@@ -17,6 +17,7 @@ from sage.config import coxeter3_enabled
 from sage.features import PythonModule
 from sage.features.build_feature import BuildFeature
 
+
 class Coxeter3(BuildFeature):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
@@ -63,6 +64,7 @@ class Coxeter3(BuildFeature):
         result = PythonModule(cython_modname)._is_present()
         result.feature = self
         return result
+
 
 def all_features():
     return [Coxeter3()]

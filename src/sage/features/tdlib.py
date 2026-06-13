@@ -16,6 +16,7 @@ from sage.config import tdlib_enabled
 from sage.features import PythonModule
 from sage.features.build_feature import BuildFeature
 
+
 class Tdlib(BuildFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
@@ -51,6 +52,7 @@ class Tdlib(BuildFeature):
         result = PythonModule(modname)._is_present()
         result.feature = self
         return result
+
 
 def all_features():
     return [Tdlib()]

@@ -254,12 +254,12 @@ class HypergeometricAlgebraic(Element):
                 _ = parameters.degree()
             except ValueError:
                 raise ValueError("the parameters %s and %s do not define a hypergeometric function"
-                              % (parameters.top, parameters.bottom[:-1]))
+                                 % (parameters.top, parameters.bottom[:-1]))
             if char > 0:
                 val, _, _ = parameters.valuation_position(char)
                 if val < 0:
                     raise ValueError("the parameters %s and %s do not define a hypergeometric function in characteristic %s"
-                                  % (parameters.top, parameters.bottom[:-1], char))
+                                     % (parameters.top, parameters.bottom[:-1], char))
         self._scalar = scalar
         self._parameters = parameters
         self._coeffs = [scalar]
@@ -796,7 +796,7 @@ class HypergeometricAlgebraic(Element):
             sage: g[9]
             0
         """
-        self._compute_coeffs(n+1)
+        self._compute_coeffs(n + 1)
         S = self.base_ring()
         return S(self._coeffs[n])
 
@@ -2497,7 +2497,7 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
             True
         """
         if (isinstance(other, HypergeometricFunctions)
-        and self.base_ring().has_coerce_map_from(other.base_ring())):
+                and self.base_ring().has_coerce_map_from(other.base_ring())):
             if self._symbolic_equality:
                 return True
             else:
@@ -2679,6 +2679,7 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
             return LazyPowerSeriesRing(self.base_ring(), self._name)
         else:
             return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
+
 
 # Helper functions
 ##################

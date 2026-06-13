@@ -488,6 +488,7 @@ class AvailableSoftware:
         # the list. Note that when defer_feature_checks is not set,
         # *no* BuildFeatures are runtime-detectable.
         from sage.features.build_feature import BuildFeature
+
         def build_time_only(f):
             return ( isinstance(f, BuildFeature)
                      and
@@ -513,6 +514,7 @@ class AvailableSoftware:
         # the list. Note that when defer_feature_checks is not set,
         # *no* BuildFeatures are runtime-detectable.
         from sage.features.build_feature import BuildFeature
+
         def build_time_only(f):
             return ( isinstance(f, BuildFeature)
                      and

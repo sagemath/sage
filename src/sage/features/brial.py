@@ -37,7 +37,6 @@ class Brial(BuildFeature):
         """
         super().__init__("brial", spkg="brial", type="standard")
 
-
     def is_present_at_runtime(self):
         r"""
         TESTS::
@@ -60,6 +59,7 @@ class Brial(BuildFeature):
         result = PythonModule(cython_modname)._is_present()
         result.feature = self
         return result
+
 
 def all_features():
     return [Brial()]

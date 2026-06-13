@@ -17,6 +17,7 @@ from sage.config import sirocco_enabled
 from sage.features import PythonModule
 from sage.features.build_feature import BuildFeature
 
+
 class Sirocco(BuildFeature):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
@@ -58,6 +59,7 @@ class Sirocco(BuildFeature):
         result = PythonModule("sage.libs.sirocco")._is_present()
         result.feature = self
         return result
+
 
 def all_features():
     return [Sirocco()]
