@@ -449,11 +449,11 @@ cdef class LinearFunctionOrConstraint(ModuleElement):
         return hash_by_id(<void*>self)
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Parent of linear functions
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearFunctionsParent_class(Parent):
     r"""
@@ -667,14 +667,14 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: p.an_element()   # indirect doctest
             5*x_2 + 7*x_5
         """
-        return self._element_constructor_({2:5, 5:7})
+        return self._element_constructor_({2: 5, 5: 7})
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Elements of linear functions
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearFunction(LinearFunctionOrConstraint):
     r"""
@@ -852,7 +852,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         """
         e = dict(self._f)
         for id, coeff in b.dict().items():
-            e[id] = self._f.get(id,0) + coeff
+            e[id] = self._f.get(id, 0) + coeff
         P = self.parent()
         return P(e)
 
@@ -1098,11 +1098,11 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         return (left-right).is_zero()
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Parent of linear constraints
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearConstraintsParent_class(Parent):
     """
@@ -1241,13 +1241,13 @@ cdef class LinearConstraintsParent_class(Parent):
             False
         """
         if right is None and isinstance(left, LinearConstraint):
-            if (left.parent() is self) and (left.is_equation() == equality):
+            if left.parent() is self and left.is_equation() == equality:
                 return left
             else:
                 return LinearConstraint(self, (<LinearConstraint>left).constraints,
                                         equality=equality)
         if right is None:
-            if isinstance(left, (list,tuple)):
+            if isinstance(left, (list, tuple)):
                 return LinearConstraint(self, left, equality=equality)
             else:
                 return LinearConstraint(self, [left], equality=equality)
@@ -1285,11 +1285,11 @@ cdef class LinearConstraintsParent_class(Parent):
         return self(0) <= LF.an_element()
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Elements of linear constraints
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearConstraint(LinearFunctionOrConstraint):
     """
@@ -1352,7 +1352,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         super().__init__(parent)
         self.equality = equality
         LF = parent.linear_functions_parent()
-        self.constraints = [ LF(term) for term in terms ]
+        self.constraints = [LF(term) for term in terms]
 
     cpdef equals(LinearConstraint left, LinearConstraint right):
         """

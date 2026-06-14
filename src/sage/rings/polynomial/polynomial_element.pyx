@@ -4359,13 +4359,25 @@ cdef class Polynomial(CommutativePolynomial):
 
         This shows that the issue at :issue:`7711` is resolved::
 
-            sage: P.<x,z> = PolynomialRing(GF(2147483647))
+            sage: P.<x,z> = PolynomialRing(GF(2^29 - 3))
             sage: Q.<y> = PolynomialRing(P)
             sage: p = x + y + z
             sage: p.integral()
-            -1073741823*y^2 + (x + z)*y
+            -268435454*y^2 + (x + z)*y
 
-            sage: P.<x,z> = PolynomialRing(GF(next_prime(2147483647)))
+            sage: P.<x,z> = PolynomialRing(GF(2^29 + 11))
+            sage: Q.<y> = PolynomialRing(P)
+            sage: p = x + y + z
+            sage: p.integral()
+            268435462*y^2 + (x + z)*y
+
+            sage: P.<x,z> = PolynomialRing(GF(2^31 - 1))
+            sage: Q.<y> = PolynomialRing(P)
+            sage: p = x + y + z
+            sage: p.integral()
+            1073741824*y^2 + (x + z)*y
+
+            sage: P.<x,z> = PolynomialRing(GF(2^31 + 11))
             sage: Q.<y> = PolynomialRing(P)
             sage: p = x + y + z
             sage: p.integral()
