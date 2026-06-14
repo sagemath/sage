@@ -656,7 +656,7 @@ class FileFeature(Feature):
 
 class Executable(FileFeature):
     r"""
-    A feature describing an executable in the ``PATH``.
+    A feature describing an executable.
 
     The executable is searched first in ``SAGE_LOCAL/bin``, then in ``PATH``.
 
@@ -677,7 +677,9 @@ class Executable(FileFeature):
         sage: Executable(name='does-not-exist', executable='does-not-exist-xxxxyxyyxyy').is_present()
         FeatureTestResult('does-not-exist', False)
     """
-    def __init__(self, name, executable, **kwds):
+    executable: Path
+
+    def __init__(self, name: str, executable: Path | str, **kwds) -> None:
         r"""
         TESTS::
 
@@ -686,9 +688,9 @@ class Executable(FileFeature):
             True
         """
         Feature.__init__(self, name, **kwds)
-        self.executable = executable
+        self.executable = Path(executable)
 
-    def _is_present(self):
+    def _is_present(self) -> FeatureTestResult:
         r"""
         Test whether the executable is on the current PATH and functional.
 
@@ -705,7 +707,7 @@ class Executable(FileFeature):
             return result
         return self.is_functional()
 
-    def is_functional(self):
+    def is_functional(self) -> FeatureTestResult:
         r"""
         Return whether an executable in the path is functional.
 
@@ -741,8 +743,11 @@ class Executable(FileFeature):
             sage.features.FeatureNotPresentError: does-not-exist is not available.
             Executable 'does-not-exist-xxxxyxyyxyy' not found on PATH.
         """
+        if self.executable.is_absolute() and self.executable.exists():
+            return str(self.executable.resolve())
+
         if SAGE_LOCAL and Path(SAGE_LOCAL).resolve():
-            search_path = os.path.join(SAGE_LOCAL, 'bin')
+            search_path = os.path.join(SAGE_LOCAL, "bin")
             path = shutil.which(self.executable, path=search_path)
             if path is not None:
                 return path
@@ -750,9 +755,11 @@ class Executable(FileFeature):
         path = shutil.which(self.executable)
         if path is not None:
             return path
-        raise FeatureNotPresentError(self,
-                                     reason="Executable {executable!r} not found on PATH.".format(executable=self.executable),
-                                     resolution=self.resolution())
+        raise FeatureNotPresentError(
+            self,
+            reason=f"Executable '{str(self.executable)}' not found on PATH.",
+            resolution=self.resolution(),
+        )
 
 
 class StaticFile(FileFeature):

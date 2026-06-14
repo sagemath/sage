@@ -11,6 +11,8 @@ Features for testing the presence of nauty executables
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from pathlib import Path
+
 from sage.env import SAGE_NAUTY_BINS_PREFIX
 
 from . import Executable
@@ -36,10 +38,16 @@ class NautyExecutable(Executable):
             sage: isinstance(NautyExecutable('geng'), NautyExecutable)
             True
         """
+        if SAGE_NAUTY_BINS_PREFIX is None:
+            raise ValueError("SAGE_NAUTY_BINS_PREFIX is not set.")
+        if SAGE_NAUTY_BINS_PREFIX.endswith("-"):
+            executable = f"{SAGE_NAUTY_BINS_PREFIX}{name}"
+        else:
+            executable = Path(SAGE_NAUTY_BINS_PREFIX) / name
         Executable.__init__(
             self,
             name=f"nauty_{name}",
-            executable=f"{SAGE_NAUTY_BINS_PREFIX}{name}",
+            executable=executable,
             spkg="nauty",
             type="standard",
         )

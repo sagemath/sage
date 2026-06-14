@@ -51,14 +51,14 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from libc.math cimport sqrt, sin, cos, acos, M_PI
+from libc.math cimport sqrt, sin, cos, acos
 from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.misc.decorators import rename_keyword
 from sage.plot.plot3d.base import Graphics3dGroup
 from sage.plot.plot3d.index_face_set cimport IndexFaceSet, PrimitiveObject
 from sage.plot.plot3d.transform cimport point_c
-
+from sage.arith.constants cimport M_PI
 
 # Helper function to check that Box input is right
 def validate_frame_size(size):
