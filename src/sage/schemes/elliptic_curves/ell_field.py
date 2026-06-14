@@ -1910,7 +1910,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             return phi
         if algorithm == "factored":
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            if len(phi.factors()) == 1:
+                phi = phi.factors()[0]
+            return phi
         if algorithm == "traditional":
             return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
@@ -1919,7 +1922,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             kernel_is_list = isinstance(kernel, (list, tuple))
             if kernel_is_list and kernel[0] in self and len(kernel) > 1:
                 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                if len(phi.factors()) == 1:
+                    phi = phi.factors()[0]
+                return phi
 
             if not kernel_is_list or (len(kernel) == 1 and kernel[0] in self):
                 # Single point on the curve; unpack the list for compatibility with velusqrt
@@ -1939,7 +1945,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # Otherwise fall back to the standard case
                 elif known_order:
                     from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                    return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                    phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                    if len(phi.factors()) == 1:
+                        phi = phi.factors()[0]
+                    return phi
 
         return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 

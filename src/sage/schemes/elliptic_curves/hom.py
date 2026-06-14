@@ -56,10 +56,10 @@ class EllipticCurveHom(Morphism):
             sage: P = E.lift_x(1)
             sage: E.isogeny(P)                        # indirect doctest
             Isogeny of degree 127 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2 to Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
-            sage: E.isogeny(P, algorithm='factored')  # indirect doctest
-            Composite morphism of degree 127:
+            sage: E.isogeny(P, codomain=EllipticCurve(GF(257^2), [3,-30]), algorithm='factored')  # indirect doctest
+            Composite morphism of degree 127 = 127*1:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
-              To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 3*x + 227 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
             Elliptic-curve isogeny (using square-root Vélu) of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
