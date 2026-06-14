@@ -1787,6 +1787,12 @@ class MicaliVaziraniMatching:
 
     Edge = tuple[int, int, Any]
 
+    #: Sentinel stored in ``mate[v]`` when vertex ``v`` is *exposed*
+    #: (unmatched). A real mate is a vertex index in ``{0, ..., N - 1}``, so any
+    #: negative value is unambiguous; ``-1`` is the conventional choice for the
+    #: ``mate`` array used throughout the matching literature.
+    EXPOSED = -1
+
     @dataclass
     class Petal:
         r"""
@@ -1829,7 +1835,7 @@ class MicaliVaziraniMatching:
             sage: MV = MicaliVaziraniMatching(graphs.PetersenGraph())
             sage: MV.N
             10
-            sage: MV.M.size()
+            sage: MV.matching_size
             0
 
         TESTS::
@@ -1901,11 +1907,48 @@ class MicaliVaziraniMatching:
                 for (u, v) in self.G.edge_iterator(labels=False)}
         self.prop_edges: Set[int] = set()
 
-        self.M = Graph()
-        self.M.add_vertices(self.G)
+        # The matching itself: ``mate[v]`` is the vertex matched to ``v``, or
+        # ``EXPOSED`` if ``v`` is currently unmatched. ``matching_size`` tracks
+        # the number of matched edges so it need not be recomputed.
+        self.mate: List[int] = [self.EXPOSED] * self.N
+        self.matching_size = 0
         self.phase_index = 0
         self.num_augmentations = 0
         self.INFINITY = float('inf')
+
+    def is_exposed(self, v: int) -> bool:
+        r"""
+        Return whether vertex ``v`` is *exposed* (not covered by the matching).
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(2))
+            sage: MV.is_exposed(0)
+            True
+            sage: _ = MV.get_matching()
+            sage: MV.is_exposed(0)
+            False
+        """
+        return self.mate[v] == self.EXPOSED
+
+    def is_saturated(self, v: int) -> bool:
+        r"""
+        Return whether vertex ``v`` is *saturated* (covered by the matching).
+
+        This is the negation of :meth:`is_exposed`.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(2))
+            sage: MV.is_saturated(0)
+            False
+            sage: _ = MV.get_matching()
+            sage: MV.is_saturated(0)
+            True
+        """
+        return self.mate[v] != self.EXPOSED
 
     # indexing the edges
     def edge_to_index(self, i: int, j: int) -> int:
@@ -1942,7 +1985,7 @@ class MicaliVaziraniMatching:
     # *************************************
     def compute_initial_maximal_matching(self) -> None:
         r"""
-        Seed ``self.M`` with a greedy maximal matching.
+        Seed ``self.mate`` with a greedy maximal matching.
 
         The matching is built by repeatedly selecting a vertex of minimum
         (positive) degree, matching it with one of its neighbors of minimum
@@ -1959,20 +2002,20 @@ class MicaliVaziraniMatching:
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.CompleteGraph(4))
             sage: MV.compute_initial_maximal_matching()
-            sage: MV.M.size()
+            sage: MV.matching_size
             2
 
         TESTS:
 
-        The seed is a valid matching (every vertex is covered at most once)
-        and is maximal (no edge has both endpoints free)::
+        The seed is a valid matching (mates are mutual) and is maximal (no edge
+        has both endpoints free)::
 
             sage: def seed_is_maximal(G):
             ....:     MV = MicaliVaziraniMatching(G)
             ....:     MV.compute_initial_maximal_matching()
-            ....:     if max(MV.M.degree(), default=0) > 1:
+            ....:     matched = {v for v in range(MV.N) if MV.is_saturated(v)}
+            ....:     if any(MV.mate[MV.mate[v]] != v for v in matched):
             ....:         return False
-            ....:     matched = {v for v in MV.M if MV.M.degree(v)}
             ....:     return not any(u not in matched and v not in matched
             ....:                    for u, v in MV.G.edge_iterator(labels=False))
             sage: all(seed_is_maximal(G) for G in [graphs.PetersenGraph(),
@@ -2037,8 +2080,10 @@ class MicaliVaziraniMatching:
             neighbors = J.neighbors(u)
             v = min(neighbors, key=lambda x: degree[x])
 
-            # Add the edge (u, v) to the matching M with its label
-            self.M.add_edge(u, v, J.edge_label(u, v))
+            # Match u with v.
+            self.mate[u] = v
+            self.mate[v] = u
+            self.matching_size += 1
 
             # Update the degree of neighbors and relocate them to new buckets
             # the degrees will decrease by at most 2 after deletion
@@ -2098,10 +2143,7 @@ class MicaliVaziraniMatching:
         self.search_level_vertices = []
 
         for u in self.G:
-            # A vertex is considered matched if it is incident to an edge in
-            # the current matching M. Checking `u in M` only tests whether u
-            # is a vertex of M, so use degree instead.
-            if self.M.degree(u):
+            if self.is_saturated(u):
                 # Matched vertices start with infinite levels
                 self.min_level[u] = self.INFINITY
                 self.max_level[u] = self.INFINITY
@@ -2181,10 +2223,12 @@ class MicaliVaziraniMatching:
 
             for v in self.G.neighbor_iterator(u):
                 edge_index = self.edge_to_index(u, v)
-                l = self.G.edge_label(u, v)
 
+                # Even levels (parity 0) scan unmatched edges, odd levels
+                # (parity 1) scan matched edges; ``mate[u] == v`` is exactly the
+                # "is (u, v) a matched edge?" test.
                 if self.edge_scanned[edge_index] != self.phase_index and \
-                   self.M.has_edge(u, v, l) == parity and \
+                   (self.mate[u] == v) == parity and \
                    self.deletion_phase[v] != self.phase_index:
                     self.edge_scanned[edge_index] = self.phase_index
 
@@ -2250,7 +2294,7 @@ class MicaliVaziraniMatching:
             False
             sage: MV.MAX(0)
             True
-            sage: MV.M.size()
+            sage: MV.matching_size
             2
         """
         is_augmented = False
@@ -2272,7 +2316,7 @@ class MicaliVaziraniMatching:
                         left_support, right_support, (u, v, l))
                     if augmentation_success:
                         is_augmented = True
-                        if self.M.size() == self.G.order() // 2:
+                        if self.matching_size == self.N // 2:
                             return is_augmented
 
             elif not encountered_deleted_vertex:
@@ -2843,9 +2887,7 @@ class MicaliVaziraniMatching:
                     return []
 
                 else:
-                    if not self.M.has_edge(
-                            current_vertex, new_petal,
-                            self.G.edge_label(current_vertex, new_petal)):
+                    if self.mate[current_vertex] != new_petal:
                         path_addition = self.unfold_petal(
                             new_petal, self.vertex_petal_map[new_petal].base)
                         if not path_addition:
@@ -2927,14 +2969,16 @@ class MicaliVaziraniMatching:
         left_path.reverse()
         path = left_path + right_path
 
-        # Toggle edges along the path: matched edges become unmatched and vice versa
-        for index in range(len(path) - 1):
-            u, v = path[index], path[index+1]
-            label = self.G.edge_label(u, v)
-            if self.M.has_edge(u, v, label):
-                self.M.delete_edge(u, v, label)
-            else:
-                self.M.add_edge(u, v, label)
+        # ``path`` is an augmenting path: a free-to-free alternating path with
+        # an odd number of edges, so its even-indexed edges (path[0]--path[1],
+        # path[2]--path[3], ...) are exactly the edges that become matched.
+        # Reassigning the mates along these edges overwrites the old matched
+        # edges of the path and raises the matching size by exactly one.
+        for index in range(0, len(path) - 1, 2):
+            u, v = path[index], path[index + 1]
+            self.mate[u] = v
+            self.mate[v] = u
+        self.matching_size += 1
 
         # Erase vertex based on search level
         erase_vertex_list = []
@@ -3088,23 +3132,33 @@ class MicaliVaziraniMatching:
             sage: MicaliVaziraniMatching(Graph()).get_matching()
             []
         """
-        if not self.G.size():
-            return EdgesView(self.M)
+        from sage.graphs.graph import Graph
 
-        there_exists_a_phase = True
-        self.compute_initial_maximal_matching()
+        if self.G.size():
+            self.compute_initial_maximal_matching()
 
-        self.start_new_phase()
-        while there_exists_a_phase:
-            self.num_augmentations = 0
-            there_exists_a_phase = self.search()
-            self.phase_index += 1
+            there_exists_a_phase = True
             self.start_new_phase()
+            while there_exists_a_phase:
+                self.num_augmentations = 0
+                there_exists_a_phase = self.search()
+                self.phase_index += 1
+                self.start_new_phase()
 
-            # Stop early if perfect matching found
-            if self.M.size() == self.N // 2:
-                break
+                # Stop early if perfect matching found
+                if self.matching_size == self.N // 2:
+                    break
 
-        # map the numeric vertex labels back to the original labels
-        self.M.relabel(perm=self.index_to_vertex, inplace=True)
-        return EdgesView(self.M)
+        # Rebuild the matching as a graph on the *original* vertex labels.
+        # ``self.G`` still carries the internal 0, ..., N - 1 labels, so edge
+        # labels are looked up with the internal endpoints and the vertices are
+        # mapped back through ``index_to_vertex``. The ``v < u`` guard reports
+        # each matched edge exactly once.
+        M = Graph()
+        M.add_vertices(self.index_to_vertex)
+        for v in range(self.N):
+            u = self.mate[v]
+            if u != self.EXPOSED and v < u:
+                M.add_edge(self.index_to_vertex[v], self.index_to_vertex[u],
+                           self.G.edge_label(v, u))
+        return EdgesView(M)
