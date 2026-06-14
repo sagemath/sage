@@ -389,9 +389,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         Internal method to compute and cache the degree of this sum morphism
         (and its dual).
 
-        ALGORITHM: Evaluate the composition with the dual on points of small
-        order and solve logarithms to eventually recover the degree using CRT.
-        (This is essentially Schoof's algorithm, applied to a scalar.)
+        ALGORITHM: Recursive application of the formula
+        `\deg(\varphi+\psi) = \deg(\varphi) + \deg(\psi) + \mathrm{tr}(\varphi\circ\widehat\psi)`.
 
         EXAMPLES::
 
@@ -427,25 +426,13 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         else:
             #TODO In some cases it would probably be faster to simply
             # compute the kernel polynomial using the addition formulas?
-            from sage.rings.finite_rings.integer_mod import Mod
-
-            lo, hi = self._degree_bounds()
-            M = hi - lo + 1
-            rem = Mod(0,1)
-            for l in Primes():
-                if rem.modulus() >= M:
-                    break
-                try:
-                    P = point_of_order(self._domain, l)
-                except ValueError:
-                    continue   # supersingular and l == p
-
-                Q = self.dual()._eval(self._eval(P))
-                d = discrete_log(Q, P, ord=l, operation='+')
-                rem = rem.crt(Mod(d-lo, l))
-
-            self._degree = lo + rem.lift()
-            self.dual()._degree = self._degree
+            mid = (len(self._phis) + 1) // 2
+            left = EllipticCurveHom_sum(self._phis[:mid])
+            right = EllipticCurveHom_sum(self._phis[mid:])
+            pair = left * right.dual() if right.degree() < left.degree() else left.dual() * right
+            self._degree = left.degree() + right.degree() + pair.trace()
+            if self.dual.is_in_cache():
+                self.dual()._degree = self._degree
 
     @staticmethod
     def _comparison_impl(left, right, op):
@@ -688,3 +675,47 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
         Q = self._eval(P)
         return order_from_multiple(Q, p**m)
+
+    def xEVAL(self, xP):
+        r"""
+        For other :class:`EllipticCurveHom` implementations, the method of this name
+        returns the `x`-coordinate of `\varphi(P)` given the `x`-coordinate of `P`.
+
+        In the case of :class:`EllipticCurveHom_sum` objects, this method fails with
+        a :class:`NotImplementedError`: This is because implementing it would require
+        taking a square root anyway, which defeats the purpose of `x`-only arithmetic.
+        Users who need this are likely better off using "full" points `(x,y)` on the
+        curve for their computations.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES:
+
+        The following example shows that square roots are inherently required for
+        implementing this method::
+
+            sage: E = EllipticCurve(GF((2^31-1, 2)), [1, 0])
+            sage: iota = E.automorphisms()[-1]
+            sage: pi = E.frobenius_isogeny()
+            sage: phi = iota + pi
+            sage: phi(E.lift_x(42)).x()
+            692203532*z2 + 445237135
+            sage: phi.xEVAL(42)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)
+            sage: phi.xEVAL((42, 1))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)
+        """
+        raise NotImplementedError('x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)')

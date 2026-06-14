@@ -99,10 +99,9 @@ class BuildFeature(Feature):
         from sage.config import defer_feature_checks
         if not defer_feature_checks:
             return False
-        elif hasattr(self, "is_present_at_runtime"):
+        if hasattr(self, "is_present_at_runtime"):
             return True
-        else:
-            return False
+        return False
 
     def _is_present(self):
         r"""
@@ -129,10 +128,9 @@ class BuildFeature(Feature):
         """
         if self.is_runtime_detectable():
             return self.is_present_at_runtime()
-        else:
-            import sage.config
-            # Wrap with bool() so that we can be lazy and use meson's
-            # set10() rather than painstakingly writing "True" and
-            # "False" to the config file.
-            result =  bool(self._enabled_in_build)
-            return FeatureTestResult(self, result)
+        import sage.config
+        # Wrap with bool() so that we can be lazy and use meson's
+        # set10() rather than painstakingly writing "True" and
+        # "False" to the config file.
+        result = bool(self._enabled_in_build)
+        return FeatureTestResult(self, result)

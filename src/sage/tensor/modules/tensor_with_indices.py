@@ -538,9 +538,7 @@ class TensorWithIndices(SageObject):
             sage: a_ind.update()
             15
         """
-        if self._changed:
-            return self._tensor
-        return self
+        return self if not self._changed else self._tensor
 
     def __eq__(self, other):
         r"""

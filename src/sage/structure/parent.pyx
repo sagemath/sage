@@ -88,6 +88,40 @@ This came up in some subtle bug once::
 
     sage: gp(2) + gap(3)                                                                # needs sage.libs.gap sage.libs.pari
     5
+
+Old tests::
+
+    sage: V = VectorSpace(GF(2,'a'), 2)
+    sage: V.list()
+    [(0, 0), (1, 0), (0, 1), (1, 1)]
+    sage: MatrixSpace(GF(3), 1, 1).list()
+    [[0], [1], [2]]
+    sage: DirichletGroup(3).list()
+    [Dirichlet character modulo 3 of conductor 1 mapping 2 |--> 1,
+     Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1]
+
+    sage: K = GF(7^6,'a')
+    sage: K.list()[:10]
+    [0, 1, 2, 3, 4, 5, 6, a, a + 1, a + 2]
+    sage: K.<a> = GF(4)
+    sage: K.list()
+    [0, a, a + 1, 1]
+
+    sage: QQ['q,t'].coerce_map_from(int)
+    Composite map:
+      From: Set of Python objects of class 'int'
+      To:   Multivariate Polynomial Ring in q, t over Rational Field
+      Defn:   Native morphism:
+              From: Set of Python objects of class 'int'
+              To:   Rational Field
+            then
+              Polynomial base injection morphism:
+              From: Rational Field
+              To:   Multivariate Polynomial Ring in q, t over Rational Field
+
+   sage: R.<x,y> = QQ[]
+   sage: R._generic_convert_map(QQ).category_for()
+   Category of sets with partial maps
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Robert Bradshaw <robertwb@math.washington.edu>
@@ -298,7 +332,18 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         if names is not None:
             self._assign_names(names, normalize)
-        self._set_element_constructor()
+        # caching the element constructor
+        try:
+            _element_constructor_ = self._element_constructor_
+        except (AttributeError, TypeError):
+            # Remark: A TypeError can actually occur;
+            # it is a possible reason for "hasattr" to return False
+            pass
+        else:
+            assert callable(_element_constructor_)
+            self._element_constructor = _element_constructor_
+            self._element_init_pass_parent = guess_pass_parent(self, self._element_constructor)
+
         self.init_coerce(False)
 
         for cls in self.__class__.mro():
@@ -578,31 +623,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             if module is not None:
                 cls.__module__ = module
         return cls
-
-    def _set_element_constructor(self):
-        """
-        This function is used in translating from the old to the new coercion model.
-
-        It is called from sage.structure.parent_old.Parent.__init__
-        when an old style parent provides a _element_constructor_ method.
-
-        It just asserts that this _element_constructor_ is callable and
-        also sets self._element_init_pass_parent
-
-        EXAMPLES::
-
-            sage: k = GF(5)
-            sage: k._set_element_constructor()
-        """
-        try:
-            _element_constructor_ = self._element_constructor_
-        except (AttributeError, TypeError):
-            # Remark: A TypeError can actually occur;
-            # it is a possible reason for "hasattr" to return False
-            return
-        assert callable(_element_constructor_)
-        self._element_constructor = _element_constructor_
-        self._element_init_pass_parent = guess_pass_parent(self, self._element_constructor)
 
     def category(self):
         """

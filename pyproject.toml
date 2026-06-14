@@ -76,6 +76,7 @@ dependencies = [
 description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dynamic = ["version"]
 license = "GPL-2.0-or-later"
+license-files = ["COPYING.txt"]
 name = "sagemath"
 requires-python = ">=3.12, <3.15"
 urls = { Homepage = "https://www.sagemath.org" }
@@ -94,6 +95,7 @@ extra = [
 ]
 regina = ['regina']
 snappy = ['snappy']
+test = ["pytest-xdist"]
 #giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
 
 [project.readme]
@@ -109,13 +111,17 @@ platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 [tool.pytest.ini_options]
 # sage.libs.giac is a stub to keep the old imports working; all
 # it does is try to import sagemath_giac.
-norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage/libs/giac tools subprojects"
+norecursedirs = "local prefix venv build builddir pkgs .git .github src/doc src/bin src/sage/libs/giac tools subprojects"
 python_files = "*_test.py"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
-addopts = "--import-mode importlib -p no:warnings"
+addopts = "--import-mode importlib -p no:warnings --strict-markers"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
 # https://docs.pytest.org/en/stable/reference/reference.html#confval-consider_namespace_packages
 consider_namespace_packages = true
+markers = [
+  "long: long-running tests",
+  "longlong: extremely long-running tests",
+]
 
 # External dependencies in the format proposed by https://peps.python.org/pep-0725
 [external]
@@ -247,7 +253,82 @@ docs = [
   "sphinx-inline-tabs",
 ]
 lint = ["flake8-rst-docstrings", "pycodestyle", "relint", "ruff"]
-test = ["coverage", "pytest", "pytest-xdist"]
+test = ["coverage", "pytest"]
+
+[tool.ty]
+[tool.ty.rules]
+# Existing failures
+# TODO: Fix those, and then remove the "ignore" rules below.
+# Obtained via ty check --output-format=concise 2>&1 | tee /tmp/ty-check.log; awk 'match($0,/(error)\[([^]]+)\]/,m){c[m[2]]++} END{for (k in c) printf "%7d %s\n", c[k], k}' /tmp/ty-check.log | sort -nr
+
+# 5187 unresolved-import
+# 3821 unresolved-attribute
+# 2394 unresolved-reference
+# 2312 call-non-callable
+# 2296 missing-argument
+# 699 invalid-method-override
+# 454 invalid-argument-type
+# 450 invalid-assignment
+# 397 not-subscriptable
+# 376 unsupported-operator
+# 254 no-matching-overload
+# 239 unknown-argument
+# 182 not-iterable
+# 100 possibly-missing-submodule
+# 155 too-many-positional-arguments
+# 84 invalid-return-type
+# 65 unused-type-ignore-comment
+# 43 parameter-already-assigned
+# 32 inconsistent-mro
+# 21 possibly-missing-submodule
+# 12 invalid-type-form
+# 7 index-out-of-bounds
+# 7 empty-body
+# 5 invalid-attribute-access
+# 4 invalid-type-arguments
+# 4 deprecated
+# 4 mismatched-type-name
+# 2 invalid-super-argument
+# 2 call-top-callable
+# 1 invalid-total-ordering
+# 1 invalid-raise
+# 1 invalid-parameter-default
+# 1 invalid-overload
+# 1 conflicting-declarations
+"call-non-callable" = "ignore"
+"call-top-callable" = "ignore"
+"conflicting-declarations" = "ignore"
+"deprecated" = "ignore"
+"empty-body" = "ignore"
+"inconsistent-mro" = "ignore"
+"index-out-of-bounds" = "ignore"
+"invalid-argument-type" = "ignore"
+"invalid-assignment" = "ignore"
+"invalid-attribute-access" = "ignore"
+"invalid-method-override" = "ignore"
+"invalid-overload" = "ignore"
+"invalid-parameter-default" = "ignore"
+"invalid-raise" = "ignore"
+"invalid-return-type" = "ignore"
+"invalid-super-argument" = "ignore"
+"invalid-total-ordering" = "ignore"
+"invalid-type-arguments" = "ignore"
+"invalid-type-form" = "ignore"
+"mismatched-type-name" = "ignore"
+"missing-argument" = "ignore"
+"no-matching-overload" = "ignore"
+"not-iterable" = "ignore"
+"not-subscriptable" = "ignore"
+"parameter-already-assigned" = "ignore"
+"possibly-missing-submodule" = "ignore"
+"too-many-positional-arguments" = "ignore"
+"unknown-argument" = "ignore"
+"unresolved-attribute" = "ignore"
+"unresolved-global" = "ignore"
+"unresolved-import" = "ignore"
+"unresolved-reference" = "ignore"
+"unsupported-operator" = "ignore"
+"unused-type-ignore-comment" = "ignore"
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
@@ -437,6 +518,9 @@ select = [
   "PLW2101",
   "PLW2901",
   "PLW3301",
+
+  # flake8-return - https://docs.astral.sh/ruff/rules/#flake8-return-ret
+  "RET505",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -450,3 +534,5 @@ select = [
 [tool.uv]
 # Don't use build isolation for sage (it's incompatible with meson-python's editable install)
 no-build-isolation-package = ["sagemath"]
+# Build these packages from source instead of installing pre-built wheels.
+no-binary-package = ["cypari2", "pplpy", "primecountpy"]

@@ -84,6 +84,7 @@ from sage.structure.proof.proof import get_flag as get_proof_flag
 from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 #########################################################
 # PARI C library
@@ -304,6 +305,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: v.parent()
             Full MatrixSpace of 1 by 100000 dense matrices over Integer Ring
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``fmpz_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Integer z
         for t in ma.iter(coerce, True):
@@ -823,8 +831,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ....:         raise RuntimeError("ERROR\nm1=\n{}\nm2=\n{}\nans_flint=\n{}\nans_linbox=\n{}".format(
             ....:                 m1.str(), m2.str(), ans_flint.str(), ans_linbox.str()))
         """
-        if self._ncols != right._nrows:
-            raise IndexError("Number of columns of self must equal number of rows of right.")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Py_ssize_t i, j, k, nr, nc, snc
         cdef object parent
@@ -863,8 +870,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
     cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
         cdef Matrix_integer_dense M
 
-        if self._ncols != right._nrows:
-            raise IndexError("Number of columns of self must equal number of rows of right.")
+        check_matrix_multiplication_sizes(self, right)
 
         M = self._new(self._nrows, right._ncols)
 

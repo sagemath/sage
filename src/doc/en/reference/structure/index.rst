@@ -24,17 +24,6 @@ Parents
    sage/structure/nonexact
    sage/structure/global_options
 
-Old-Style Parents (Deprecated)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/structure/parent_old
-   sage/structure/parent_base
-   sage/structure/parent_gens
-   sage/structure/gens_py
-
 Elements
 --------
 
