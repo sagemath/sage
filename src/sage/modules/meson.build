@@ -85,13 +85,14 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/modules',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
+    dependencies: deps,
   )
 endforeach
 
@@ -101,6 +102,7 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gd, gmp, m4ri, png]
   if is_windows
     # sage_modules_vector_mod2_dense.pyx.cpp.obj : error LNK2019: unresolved external symbol "struct mzd_t * __cdecl mzd_init(int,int)"
     continue
@@ -112,9 +114,33 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/modules',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_numpy,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'modules',
+      install: true,
+      copy: true,
+  )
+  endif
 endforeach
 
 install_subdir('fg_pid', install_dir: sage_install_dir / 'modules')

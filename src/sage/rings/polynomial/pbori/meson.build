@@ -38,6 +38,7 @@ py.install_sources(
 extension_data_cpp = {'pbori': files('pbori.pyx')}
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, brial, brial_groebner, cysignals, gmp, m4ri, png]
   override_options = ['cython_language=cpp']
   if not boost_cpp17_compatible
     override_options += ['cpp_std=c++11']
@@ -49,17 +50,26 @@ foreach name, pyx : extension_data_cpp
     install: true,
     override_options: override_options,
     include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
-    dependencies: [
-      py_dep,
-      boost,
-      brial,
-      brial_groebner,
-      cysignals,
-      gmp,
-      m4ri,
-      png,
-    ],
+    dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'rings/polynomial/pbori',
+      install: true,
+      copy: true,
+    )
+  endif
 endforeach
 
 # Record in the config file whether or not optional packages were

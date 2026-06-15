@@ -30,9 +30,13 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.real_mpfr import RealField
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
+from sage.features import FeatureNotPresentError
 
 # Other global variables
-ZZx = PolynomialRing(ZZ, 'x')
+try:
+    ZZx = PolynomialRing(ZZ, 'x')
+except FeatureNotPresentError:
+    ZZx = None
 
 from libc.math cimport lrint, floor, ceil, fabs, round
 

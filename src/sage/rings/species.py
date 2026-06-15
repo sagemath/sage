@@ -30,8 +30,8 @@ AUTHORS:
 - Mainak Roy and Martin Rubey (2024-11): Initial version
 """
 
-from itertools import accumulate, chain, product
 from collections import defaultdict
+from itertools import accumulate, chain, product
 
 from sage.arith.misc import divisors
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
@@ -47,35 +47,42 @@ from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.set_partition_ordered import OrderedSetPartitions
 from sage.combinat.sf.sf import SymmetricFunctions
+from sage.features import FeatureNotPresentError
 from sage.functions.other import factorial
 from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
-from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
-from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
-                                              IndexedFreeAbelianMonoidElement)
-from sage.rings.rational_field import QQ
+from sage.monoids.indexed_free_monoid import (
+    IndexedFreeAbelianMonoid,
+    IndexedFreeAbelianMonoidElement,
+)
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.factorization import Factorization
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
-from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE
-from sage.structure.unique_representation import (UniqueRepresentation,
-                                                  WithPicklingByInitArgs)
+from sage.structure.richcmp import op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE
+from sage.structure.unique_representation import (
+    UniqueRepresentation,
+    WithPicklingByInitArgs,
+)
 
-GAP_FAIL = libgap.eval('fail')
-# for each key (currently size and orbit-sizes) a list of canonical
+try:
+    GAP_FAIL = libgap.eval('fail')
+except FeatureNotPresentError:
+    GAP_FAIL = None# for each key (currently size and orbit-sizes) a list of canonical
 # representatives of directly indecomposable groups
 # TODO: most likely, it would be better to store the groups as GAP groups
 _dis_cache = dict()
@@ -806,10 +813,11 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             Eo_4(Y)
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
-        from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
-                                                          CyclicPermutationGroup,
-                                                          DihedralGroup,
-                                                          SymmetricGroup)
+        from sage.groups.perm_gps.permgroup_named import (
+            AlternatingGroup,
+            CyclicPermutationGroup,
+            DihedralGroup,
+        )
 
         for s in range(self._arity):
             pi = {s: range(1, n+1)}
@@ -1724,7 +1732,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             G, dompart = self.permutation_group()
             pi = {}
             for i, s in enumerate(dompart):
-                pi.update({e: i for e in s})
+                pi.update(dict.fromkeys(s, i))
 
             def cycle_type(g):
                 tuples = g.cycle_tuples(singletons=True)

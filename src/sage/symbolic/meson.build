@@ -120,6 +120,7 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp, gsl, flint, singular_factory]
   py.extension_module(
     name,
     sources: pyx,
@@ -136,8 +137,26 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       include_directories('../libs/gmp'),
     ],
-    dependencies: [py_dep, cysignals, flint, gmp, gsl, singular_factory],
+    dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'symbolic',
+      install: true,
+      copy: true,
+    )
+  endif
 endforeach
 
 install_subdir('integration', install_dir: sage_install_dir / 'symbolic')

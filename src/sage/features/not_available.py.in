@@ -1,0 +1,14 @@
+# This file will be installed whenever the corresponding Cython extension module
+# cannot be built due to missing dependencies. It provides a mock object that allows to import
+# arbitrary attributes without raising an ImportError. However, when actually invoking
+# any function on the mock a FeatureNotPresentError is raised.
+
+from sage.features.mock import mock
+
+def __getattr__(key: str):
+    if key == '__path__':
+        # This is a special attribute that Python looks for when importing a package.
+        # We raise AttributeError to prevent Python from querying every attribute twice.
+        # https://stackoverflow.com/questions/56786604/import-modules-that-dont-exist-yet
+        raise AttributeError
+    return mock(__name__, key)

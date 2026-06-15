@@ -14,6 +14,7 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, blas, flint, fplll, givaro, gmp, gmpxx, linbox]
   py.extension_module(
     name,
     sources: pyx,
@@ -25,7 +26,25 @@ foreach name, pyx : extension_data_cpp
       'cpp_std=c++11',
     ],
     include_directories: [inc_flint],
-    dependencies: [py_dep, blas, flint, givaro, gmp, gmpxx, linbox],
+    dependencies: deps,
   )
+
+  all_deps_found = true
+  foreach dep : deps
+    if not dep.found()
+      all_deps_found = false
+      break
+    endif
+  endforeach
+  if not all_deps_found
+    configure_file(
+      input: not_available,
+      output: name + '.py',
+      install_tag: 'python-runtime',
+      install_dir: sage_install_dir / 'libs/linbox',
+      install: true,
+      copy: true,
+    )
+  endif
 endforeach
 
