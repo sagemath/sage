@@ -205,8 +205,11 @@ class MatchingCoveredGraph(Graph):
         sage: G = MatchingCoveredGraph(graphs.PetersenGraph())
         sage: G
         Matching covered petersen graph: graph on 10 vertices
-        sage: sorted(G.get_matching())
-        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+        sage: M = G.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == G.order()  # Each vertex is matched precisely once
+        True
+        sage: all(G.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in G
+        True
 
         sage: G = graphs.StaircaseGraph(4)
         sage: H = MatchingCoveredGraph(G)
@@ -214,8 +217,11 @@ class MatchingCoveredGraph(Graph):
         Matching covered staircase graph: graph on 8 vertices
         sage: H == G
         True
-        sage: sorted(H.get_matching())
-        [(0, 1, None), (2, 7, None), (3, 6, None), (4, 5, None)]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
         sage: G = Graph({0: [1, 2, 3, 4], 1: [2, 5],
         ....:            2: [5], 3: [4, 5], 4: [5]})
@@ -224,8 +230,11 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 6 vertices
         sage: H == G
         True
-        sage: sorted(H.get_matching())
-        [(0, 4, None), (1, 2, None), (3, 5, None)]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
         sage: # needs networkx
         sage: import networkx
@@ -235,10 +244,11 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 24 vertices
         sage: H == G
         True
-        sage: sorted(H.get_matching())
-        [(0, 15, None), (1, 14, None), (2, 13, None), (3, 12, None),
-         (4, 23, None), (5, 22, None), (6, 21, None), (7, 20, None),
-         (8, 19, None), (9, 18, None), (10, 17, None), (11, 16, None)]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
         sage: G = Graph('E|fG', sparse=True)
         sage: H = MatchingCoveredGraph(G)
@@ -246,8 +256,11 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 6 vertices
         sage: H == G
         True
-        sage: sorted(H.get_matching())
-        [(0, 5, None), (1, 2, None), (3, 4, None)]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
         sage: M = Matrix([(0,1,0,0,1,1,0,0,0,0),
         ....:             (1,0,1,0,0,0,1,0,0,0),
@@ -274,8 +287,11 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: sorted(H.get_matching())
-        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
         sage: M = Matrix([(-1, 0, 0, 0, 1, 0, 0, 0, 0, 0,-1, 0, 0, 0, 0),
         ....:             ( 1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1, 0, 0, 0),
@@ -302,16 +318,22 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: sorted(H.get_matching())
-        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
         sage: G = Graph([(0, 1), (0, 3), (0, 4), (1, 2), (1, 5), (2, 3),
         ....:            (2, 6), (3, 7), (4, 5), (4, 7), (5, 6), (6, 7)])
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: sorted(H.get_matching())
-        [(0, 4, None), (1, 5, None), (2, 6, None), (3, 7, None)]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
         sage: # optional - python_igraph
         sage: import igraph
@@ -319,38 +341,50 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H
         Matching covered graph on 4 vertices
-        sage: sorted(H.get_matching())
-        [(0, 3, {}), (1, 2, {})]
+        sage: M = H.get_matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in H
+        True
 
     One may specify a perfect matching::
 
         sage: P = graphs.PetersenGraph()
-        sage: M = P.matching()
-        sage: sorted(M)
-        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+        sage: M = P.matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == P.order()  # Each vertex is matched precisely once
+        True
+        sage: all(P.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in P
+        True
         sage: G = MatchingCoveredGraph(P, matching=M)
         sage: G
         Matching covered petersen graph: graph on 10 vertices
         sage: P == G
         True
-        sage: sorted(G.get_matching())
-        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
-        sage: sorted(G.get_matching()) == sorted(M)
+        sage: N = G.get_matching(); V = [v for e in N for v in e[:2]]
+        sage: len(set(V)) == len(V) == G.order()  # Each vertex is matched precisely once
+        True
+        sage: all(G.has_edge(u, v) for u, v, _ in N)  # Every matched edge is in G
+        True
+        sage: sorted(N) == sorted(M)
         True
 
         sage: G = graphs.TruncatedBiwheelGraph(14)
-        sage: M = G.matching()
-        sage: sorted(M)
-        [(0, 27, None), (1, 26, None), (2, 3, None), (4, 5, None),
-         (6, 7, None), (8, 9, None), (10, 11, None), (12, 13, None),
-         (14, 15, None), (16, 17, None), (18, 19, None), (20, 21, None),
-         (22, 23, None), (24, 25, None)]
+        sage: M = G.matching(); V = [v for e in M for v in e[:2]]
+        sage: len(set(V)) == len(V) == G.order()  # Each vertex is matched precisely once
+        True
+        sage: all(G.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in G
+        True
         sage: H = MatchingCoveredGraph(G, M)
         sage: H
         Matching covered truncated biwheel graph: graph on 28 vertices
         sage: H == G
         True
-        sage: sorted(H.get_matching()) == sorted(M)
+        sage: N = H.get_matching(); V = [v for e in N for v in e[:2]]
+        sage: len(set(V)) == len(V) == H.order()  # Each vertex is matched precisely once
+        True
+        sage: all(H.has_edge(u, v) for u, v, _ in N)  # Every matched edge is in H
+        True
+        sage: sorted(N) == sorted(M)
         True
 
     One may specify some keyword arguments::
@@ -2009,8 +2043,6 @@ class MatchingCoveredGraph(Graph):
             sage: P = graphs.PetersenGraph()
             sage: M = P.matching()
             sage: G = MatchingCoveredGraph(P)
-            sage: sorted(G.get_matching())
-            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
             sage: sorted(M) == sorted(G.get_matching())
             True
         """
@@ -3611,10 +3643,10 @@ class MatchingCoveredGraph(Graph):
             ([(0, 10, None), (1, 13, None), (10, 11, None), (11, 12, None),
              (12, 13, None)], [(0, 1, None)])
             sage: if (0, 1, None) in M:
-            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:     assert (sorted(N - M), sorted(M - N)) == \
             ....:         ([(0, 10, None), (1, 13, None), (11, 12, None)], [(0, 1, None)])
             ....: else:
-            ....:     assert sorted(N - M), sorted(M - N) == \
+            ....:     assert (sorted(N - M), sorted(M - N)) == \
             ....:         ([(10, 11, None), (12, 13, None)], [])
 
         Subdividing a multiple edge/ some multiple edges::
@@ -3868,7 +3900,7 @@ class MatchingCoveredGraph(Graph):
             sage: G.add_edges([(0, 1)] * 3)
             sage: from collections import Counter
             sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
-            sage: M = list(G.get_matching())
+            sage: M = set(G.get_matching())
             sage: G.subdivide_edges([(0, 1), (0, 1, None)], 2)
             sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: N = set(G.get_matching())
@@ -3879,10 +3911,11 @@ class MatchingCoveredGraph(Graph):
             ([(0, 4, None), (0, 6, None), (1, 5, None), (1, 7, None),
               (4, 5, None), (6, 7, None)], [(0, 1, None), (0, 1, None)])
             sage: if (0, 1, None) in M:
-            ....:     assert sorted(N - M), sorted(M - N) == \
-            ....:         ([(0, 4, None), (1, 5, None)], [(0, 1, None)])
-            ....:     assert sorted(N - M), sorted(M - N) == \
-            ....:         ([(4, 5, None)], [])
+            ....:     assert (sorted(N - M), sorted(M - N)) == \
+            ....:         ([(0, 4, None), (1, 5, None), (6, 7, None)], [(0, 1, None)])
+            ....: else:
+            ....:     assert (sorted(N - M), sorted(M - N)) == \
+            ....:         ([(4, 5, None), (6, 7, None)], [])
 
         Subdividing edges with at least one of which is a multiple edge::
 
@@ -4067,11 +4100,11 @@ class MatchingCoveredGraph(Graph):
             sage: P = graphs.PetersenGraph()
             sage: G = MatchingCoveredGraph(P)
             sage: sorted(G.get_matching())
-            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
-            sage: M = [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
+            [(0, 1, None), (2, 3, None), (4, 9, None), (5, 7, None), (6, 8, None)]
+            sage: M = [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]
             sage: G.update_matching(M)
             sage: sorted(G.get_matching())
-            [(0, 1, None), (2, 3, None), (4, 9, None), (5, 7, None), (6, 8, None)]
+            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
 
         TESTS:
 
@@ -4079,8 +4112,11 @@ class MatchingCoveredGraph(Graph):
 
             sage: P = graphs.PetersenGraph()
             sage: G = MatchingCoveredGraph(P)
-            sage: sorted(G.get_matching())
-            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+            sage: M = G.get_matching(); V = [v for e in M for v in e[:2]]
+            sage: len(set(V)) == len(V) == G.order()  # Each vertex is matched precisely once
+            True
+            sage: all(G.has_edge(u, v) for u, v, _ in M)  # Every matched edge is in G
+            True
             sage: S = str('0')
             sage: G.update_matching(S)
             Traceback (most recent call last):

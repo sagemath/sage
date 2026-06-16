@@ -60,14 +60,16 @@ if TYPE_CHECKING:
     from sage.graphs.graph import Graph
 
 
-def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
+def has_perfect_matching(G, algorithm=None, solver=None, verbose=0,
                          *, integrality_tolerance=1e-3):
     r"""
     Return whether the graph has a perfect matching.
 
     INPUT:
 
-    - ``algorithm`` -- string (default: ``'Edmonds'``)
+    - ``algorithm`` -- string (default: ``None``); if ``None``, the graph's own
+      :meth:`matching` default is used (Micali-Vazirani for a general graph,
+      Hopcroft-Karp for a bipartite graph). Otherwise one of
 
       - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
         find a matching of maximal cardinality, then check whether this
@@ -104,11 +106,11 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
 
     EXAMPLES::
 
-        sage: graphs.PetersenGraph().has_perfect_matching()                         # needs networkx
+        sage: graphs.PetersenGraph().has_perfect_matching()
         True
-        sage: graphs.WheelGraph(6).has_perfect_matching()                           # needs networkx
+        sage: graphs.WheelGraph(6).has_perfect_matching()
         True
-        sage: graphs.WheelGraph(5).has_perfect_matching()                           # needs networkx
+        sage: graphs.WheelGraph(5).has_perfect_matching()
         False
         sage: graphs.PetersenGraph().has_perfect_matching(algorithm='LP_matching')  # needs sage.numerical.mip
         True
@@ -143,11 +145,24 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip
         ....:     for algo in ['Edmonds', 'LP_matching', 'LP', 'Micali-Vazirani'])
         False
+
+    The default delegates the algorithm choice to the graph's own
+    :meth:`matching`, so subclasses with a different algorithm set (for example
+    :class:`~sage.graphs.bipartite_graph.BipartiteGraph`, which uses
+    Hopcroft-Karp) are handled without error::
+
+        sage: B = BipartiteGraph(graphs.CompleteBipartiteGraph(3, 3))
+        sage: B.has_perfect_matching()
+        True
     """
     if G.order() % 2:
         return False
 
-    if algorithm in ["Edmonds", "Micali-Vazirani"]:
+    if algorithm is None or algorithm in ["Edmonds", "Micali-Vazirani"]:
+        # ``algorithm=None`` delegates to the graph's own ``matching`` default,
+        # so a subclass with a different algorithm set (e.g. ``BipartiteGraph``,
+        # which uses Hopcroft-Karp) resolves to its own default rather than
+        # being forced to understand ``'Micali-Vazirani'``.
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
                                       algorithm=algorithm)
@@ -176,7 +191,7 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
                      'or "Micali-Vazirani"')
 
 
-def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
+def is_bicritical(G, matching=None, algorithm=None, coNP_certificate=False,
                   solver=None, verbose=0, *, integrality_tolerance=0.001):
     r"""
     Check if the graph is bicritical.
@@ -208,8 +223,9 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
       If set to ``None``, a matching is computed using the other parameters.
 
-    - ``algorithm`` -- string (default: ``'Edmonds'``); the algorithm to be
-      used to compute a maximum matching of the graph among
+    - ``algorithm`` -- string (default: ``None``); the algorithm used to compute a
+      maximum matching of the graph. If ``None``, the graph's own :meth:`matching`
+      default is used; otherwise one of
 
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
 
@@ -504,7 +520,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     return (True, None) if coNP_certificate else True
 
 
-def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbose=0,
+def is_factor_critical(G, matching=None, algorithm=None, solver=None, verbose=0,
                        *, integrality_tolerance=0.001):
     r"""
     Check whether the graph is factor-critical.
@@ -529,8 +545,9 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
       If set to ``None``, a matching is computed using the other parameters.
 
-    - ``algorithm`` -- string (default: ``'Edmonds'``); the algorithm to use
-      to compute a maximum matching of the graph among
+    - ``algorithm`` -- string (default: ``None``); the algorithm used to compute a
+      maximum matching of the graph. If ``None``, the graph's own :meth:`matching`
+      default is used; otherwise one of
 
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX
 
@@ -559,9 +576,9 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
     Odd length cycles and odd cliques of order at least 3 are
     factor-critical graphs::
 
-        sage: [graphs.CycleGraph(2*i + 1).is_factor_critical() for i in range(5)]   # needs networkx
+        sage: [graphs.CycleGraph(2*i + 1).is_factor_critical() for i in range(5)]
         [True, True, True, True, True]
-        sage: [graphs.CompleteGraph(2*i + 1).is_factor_critical() for i in range(5)]            # needs networkx
+        sage: [graphs.CompleteGraph(2*i + 1).is_factor_critical() for i in range(5)]
         [True, True, True, True, True]
 
     More generally, every Hamiltonian graph with an odd number of vertices
@@ -572,12 +589,12 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
         sage: G.add_edge(14, 0)
         sage: G.is_hamiltonian()
         True
-        sage: G.is_factor_critical()                                                # needs networkx
+        sage: G.is_factor_critical()
         True
 
     Friendship graphs are non-Hamiltonian factor-critical graphs::
 
-        sage: all(graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5))             # needs networkx
+        sage: all(graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5))
         True
 
     Bipartite graphs are not factor-critical::
@@ -595,10 +612,10 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
     One can specify a matching::
 
         sage: F = graphs.FriendshipGraph(4)
-        sage: M = F.matching()                                                      # needs networkx
-        sage: F.is_factor_critical(matching=M)                                      # needs networkx
+        sage: M = F.matching()
+        sage: F.is_factor_critical(matching=M)
         True
-        sage: F.is_factor_critical(matching=Graph(M))                               # needs networkx
+        sage: F.is_factor_critical(matching=Graph(M))
         True
 
     TESTS:
@@ -608,8 +625,8 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
         sage: G = graphs.RandomGNP(15, .3)
         sage: while not G.is_biconnected():
         ....:     G = graphs.RandomGNP(15, .3)
-        sage: M = G.matching()                                                      # needs networkx
-        sage: G.is_factor_critical(matching=M[:-1])                                 # needs networkx
+        sage: M = G.matching()
+        sage: G.is_factor_critical(matching=M[:-1])
         Traceback (most recent call last):
         ...
         ValueError: the input is not a near perfect matching of the graph
@@ -711,7 +728,7 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
     return len(even) == G.order()
 
 
-def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
+def is_matching_covered(G, matching=None, algorithm=None, coNP_certificate=False,
                         solver=None, verbose=0, *, integrality_tolerance=0.001):
     r"""
     Check if the graph is matching covered.
@@ -754,8 +771,9 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
 
       If set to ``None``, a matching is computed using the other parameters.
 
-    - ``algorithm`` -- string (default: ``'Edmonds'``); the algorithm to be
-      used to compute a maximum matching of the graph among
+    - ``algorithm`` -- string (default: ``None``); the algorithm used to compute a
+      maximum matching of the graph. If ``None``, the graph's own :meth:`matching`
+      default is used; otherwise one of
 
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
 
@@ -966,6 +984,14 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
         Perhaps this method can be updated to handle them, but in the meantime
         if you want to use it please disallow loops using allow_loops().
 
+    On a :class:`~sage.graphs.bipartite_graph.BipartiteGraph` the maximum
+    matching is delegated to the graph's own :meth:`matching` (Hopcroft-Karp),
+    so the default ``algorithm=None`` is handled without error::
+
+        sage: B = BipartiteGraph(graphs.CompleteBipartiteGraph(3, 3))
+        sage: B.is_matching_covered()
+        True
+
     REFERENCES:
 
     - [LM2024]_
@@ -1097,7 +1123,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     return (True, None) if coNP_certificate else True
 
 
-def matching(G, value_only=False, algorithm='Edmonds',
+def matching(G, value_only=False, algorithm=None,
              use_edge_labels=False, solver=None, verbose=0,
              *, integrality_tolerance=1e-3):
     r"""
@@ -1124,13 +1150,17 @@ def matching(G, value_only=False, algorithm='Edmonds',
     - ``value_only`` -- boolean (default: ``False``); when set to ``True``,
       only the cardinal (or the weight) of the matching is returned
 
-    - ``algorithm`` -- string (default: ``'Edmonds'``)
+    - ``algorithm`` -- string (default: ``None``); the algorithm to use. If
+      ``None``, the Micali-Vazirani algorithm is used for an unweighted
+      matching and Edmonds' algorithm for a weighted matching (that is, when
+      ``use_edge_labels=True``).
 
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem
 
-      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm; it computes a
+        maximum cardinality matching and does not support edge labels or weights
 
     - ``use_edge_labels`` -- boolean (default: ``False``)
 
@@ -1167,17 +1197,32 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
     ALGORITHM:
 
-    The problem is solved using Edmond's algorithm implemented in NetworkX,
-    or using Linear Programming or using the Micali-Vazirani algorithm
-    depending on the value of ``algorithm``.
+    By default the problem is solved with the Micali-Vazirani algorithm for an
+    unweighted matching and with Edmonds' algorithm (as implemented in NetworkX)
+    for a weighted matching. Edmonds' algorithm, a Linear Programming
+    formulation and the Micali-Vazirani algorithm can also be selected
+    explicitly through ``algorithm``.
 
     EXAMPLES:
 
     Maximum matching in a Pappus Graph::
 
         sage: g = graphs.PappusGraph()
-        sage: g.matching(value_only=True)                                            # needs sage.networkx
+        sage: g.matching(value_only=True)
         9
+
+    Without ``value_only`` the default returns a maximum matching as an
+    :class:`~sage.graphs.views.EdgesView` (unweighted, via the Micali-Vazirani
+    algorithm); it is a valid matching of `G`::
+
+        sage: g = graphs.PappusGraph()
+        sage: M = g.matching()
+        sage: len(M)
+        9
+        sage: all(g.has_edge(u, v) for u, v, _ in M)
+        True
+        sage: len(set(w for u, v, _ in M for w in (u, v))) == 2 * len(M)
+        True
 
     Same test with the Linear Program formulation::
 
@@ -1192,11 +1237,11 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
     TESTS:
 
-    When ``use_edge_labels`` is set to ``False``, with Edmonds' algorithm
-    and LP formulation::
+    When ``use_edge_labels`` is set to ``False``, with the default
+    (Micali-Vazirani) algorithm and the LP formulation::
 
         sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-        sage: sorted(g.matching())                                                  # needs sage.networkx
+        sage: sorted(g.matching())
         [(0, 1, 0), (2, 3, -5)]
         sage: sorted(g.matching(algorithm='LP'))                                    # needs sage.numerical.mip
         [(0, 1, 0), (2, 3, -5)]
@@ -1260,6 +1305,18 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: G.matching(value_only=True, algorithm='Micali-Vazirani')
         2
 
+    Without an explicit ``algorithm``, an unweighted matching is computed with
+    the Micali-Vazirani algorithm (which needs no optional package), while a
+    weighted matching falls back to Edmonds' algorithm. On this weighted path
+    the unweighted default takes the two light edges (cardinality 2) while the
+    weighted default takes the single heavy one (weight 5)::
+
+        sage: g = Graph([(0, 1, 1), (1, 2, 5), (2, 3, 1)])
+        sage: g.matching(value_only=True)
+        2
+        sage: g.matching(value_only=True, use_edge_labels=True)                      # needs networkx
+        5
+
     TESTS:
 
     If ``algorithm`` is set to anything different from ``'Edmonds'``, ``'LP'``,
@@ -1280,7 +1337,31 @@ def matching(G, value_only=False, algorithm='Edmonds',
         Traceback (most recent call last):
         ...
         ValueError: Micali-Vazirani algorithm does not support edge labels or weights
+
+    With ``value_only=True`` the Micali-Vazirani algorithm returns a Sage
+    :class:`~sage.rings.integer.Integer`, consistent with the other
+    algorithms::
+
+        sage: m = graphs.PetersenGraph().matching(algorithm='Micali-Vazirani',
+        ....:                                      value_only=True)
+        sage: type(m)
+        <class 'sage.rings.integer.Integer'>
+
+    The default algorithm handles edgeless graphs and still returns an
+    :class:`~sage.rings.integer.Integer`::
+
+        sage: Graph().matching(value_only=True)
+        0
+        sage: type(Graph(3).matching(value_only=True))
+        <class 'sage.rings.integer.Integer'>
     """
+    if algorithm is None:
+        # The Micali-Vazirani algorithm is the default for an unweighted
+        # matching: it runs in O(sqrt(|V|) |E|) and, unlike Edmonds' algorithm,
+        # needs no optional NetworkX dependency. It cannot handle edge weights,
+        # so a weighted matching still defaults to Edmonds' algorithm.
+        algorithm = 'Edmonds' if use_edge_labels else 'Micali-Vazirani'
+
     from sage.rings.real_mpfr import RR
 
     def weight(x):
@@ -1355,7 +1436,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         micali_vazirani_matching = MicaliVaziraniMatching(G)
         M = micali_vazirani_matching.get_matching()
 
-        return len(M) if value_only else M
+        return Integer(len(M)) if value_only else M
 
     raise ValueError('algorithm must be set to one of the following: '
                  '\'Edmonds,\' \'LP,\' or \'Micali-Vazirani\'')
@@ -1500,15 +1581,16 @@ def M_alternating_even_mark(G, vertex, matching):
 
         sage: G = graphs.CycleGraph(3)
         sage: M = G.matching()
-        sage: M
-        [(0, 2, None)]
+        sage: len(M)
+        1
+        sage: M[-1] in [(0, 1, None), (0, 2, None), (1, 2, None)]
+        True
         sage: from sage.graphs.matching import M_alternating_even_mark
-        sage: S0 = M_alternating_even_mark(G, 0, M)
-        sage: S0
-        {0}
-        sage: S1 = M_alternating_even_mark(G, 1, M)
-        sage: S1
-        {0, 1, 2}
+        sage: all(M_alternating_even_mark(G, u, M) == {u} for u in M[0][:2])
+        True
+        sage: v = next(v for v in G.vertices(sort=True) if v not in M[0][:2])
+        sage: M_alternating_even_mark(G, v, M) == {0, 1, 2}
+        True
 
     The result is equivalent for the underlying simple graph of the provided
     graph, if the other parameters provided are the same::
@@ -1853,6 +1935,16 @@ class MicaliVaziraniMatching:
             sage: M = MicaliVaziraniMatching(G).get_matching()
             sage: len(M) == len(G.to_simple().matching(algorithm='Edmonds'))
             True
+
+        Subclasses of :class:`~sage.graphs.graph.Graph` that override graph
+        mutators with invariant guards (for example
+        :class:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph`) are
+        handled by operating on a plain base :class:`~sage.graphs.graph.Graph`::
+
+            sage: from sage.graphs.matching_covered_graph import MatchingCoveredGraph
+            sage: G = MatchingCoveredGraph(graphs.PetersenGraph())
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            5
         """
         from sage.graphs.graph import Graph
 
@@ -1862,16 +1954,21 @@ class MicaliVaziraniMatching:
         # ******************************
         # Set up global state containers
         # ******************************
-        # Loops and multiple edges are removed: a maximum matching of the
-        # underlying simple graph is a maximum matching of ``G`` (a loop can
-        # never be matched, and parallel edges are redundant for the unweighted
-        # matching computed here). ``to_simple`` also clears the loops/multiedge
-        # flags, so the downstream code may safely mutate ``self.G``; copy
-        # explicitly only when ``G`` is already simple.
+        # Work on a fresh, plain ``Graph``. Loops and multiple edges are removed
+        # (a maximum matching of the underlying simple graph is a maximum
+        # matching of ``G``: a loop can never be matched, and parallel edges are
+        # redundant for the unweighted matching computed here). Crucially, we
+        # rebuild via the base ``Graph`` constructor rather than ``copy()`` /
+        # ``to_simple()``, because those preserve the *dynamic* class: on a
+        # ``Graph`` subclass that overrides mutators with invariant guards (e.g.
+        # ``MatchingCoveredGraph.delete_vertices``) the free vertex deletions and
+        # relabelling done below would dispatch to the guarded overrides and
+        # raise. ``Graph(...)`` strips the subclass (and any vertex-association
+        # baggage), so the algorithm owns a graph it may freely mutate.
         if G.allows_loops() or G.allows_multiple_edges():
-            self.G = G.to_simple(immutable=False)
+            self.G = Graph(G.to_simple(immutable=False))
         else:
-            self.G = G.copy(immutable=False)
+            self.G = Graph(G)
 
         # Isolated vertices cannot be matched, so drop them.
         self.G.delete_vertices(v for v, d in self.G.degree_iterator(labels=True)
