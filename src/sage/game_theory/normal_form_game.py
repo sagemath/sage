@@ -660,7 +660,7 @@ from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector
-from sage.misc.temporary_file import tmp_filename
+from sage.misc.temporary_file import tmp_filename, atomic_write
 from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.cpython.string import bytes_to_str
 
@@ -670,10 +670,11 @@ except ImportError:
     np = None
 
 try:
-    from pygambit import Game
+    from pygambit import Game, read_nfg
     import pygambit.nash as gambit_nash
 except ImportError:
     Game = None
+    read_nfg = None
     gambit_nash = None
 
 
@@ -1195,6 +1196,74 @@ class NormalFormGame(SageObject, MutableMapping):
                 arrays[i][sp] = sgn * (int(val) if as_integer else float(val))
 
         return Game.from_arrays(*arrays)
+
+    def save_game(self, path):
+        r"""
+        Save the game to ``path`` in Gambit's strategic-form ``.nfg`` format.
+
+        The game is converted to a Gambit game (see :meth:`_gambit_`),
+        serialised with Gambit's writer and written atomically with
+        :func:`~sage.misc.temporary_file.atomic_write` so that a partially
+        written file is never left behind.
+
+        The game is always written in the ``.nfg`` (strategic form) format.
+        A :class:`NormalFormGame` is always a strategic-form game, and Gambit's
+        extensive-form (``.efg``) writer is undefined for such games, so that
+        format is not available.
+
+        INPUT:
+
+        - ``path`` -- string; the file path to write the game to
+
+        EXAMPLES::
+
+            sage: A = matrix([[2, 1], [1, 2.5]])
+            sage: g = NormalFormGame([A])
+            sage: path = tmp_filename(ext='.nfg')
+            sage: g.save_game(path)                          # optional - gambit
+            sage: with open(path) as f:                      # optional - gambit
+            ....:     print(f.read()[:5])
+            NFG 1
+        """
+        if Game is None:
+            raise NotImplementedError("gambit is not installed")
+        g = self._gambit_()
+        with atomic_write(path) as f:   # text mode by default (binary=False)
+            f.write(g.to_nfg())
+
+    def load_game(self, path):
+        r"""
+        Populate this game from a Gambit strategic-form ``.nfg`` file.
+
+        The file at ``path`` is read with Gambit's ``read_nfg`` reader and the
+        resulting Gambit game is converted into this :class:`NormalFormGame`
+        in place (see :meth:`_gambit_game`), replacing any existing players and
+        utilities.  This is the inverse of :meth:`save_game`.
+
+        INPUT:
+
+        - ``path`` -- string; the path of a ``.nfg`` file to read
+
+        EXAMPLES:
+
+        A game can be saved and then read back in::
+
+            sage: A = matrix([[2, 1], [1, 2.5]])
+            sage: B = matrix([[4, 3], [2, 1]])
+            sage: g = NormalFormGame([A, B])
+            sage: path = tmp_filename(ext='.nfg')
+            sage: g.save_game(path)                          # optional - gambit
+            sage: h = NormalFormGame()                       # optional - gambit
+            sage: h.load_game(path); h                       # optional - gambit
+            Normal Form Game with the following utilities: {(0, 0): [2.0, 4.0],
+            (0, 1): [1.0, 3.0],
+            (1, 0): [1.0, 2.0],
+            (1, 1): [2.5, 1.0]}
+        """
+        if Game is None:
+            raise NotImplementedError("gambit is not installed")
+        game = read_nfg(path)
+        self._gambit_game(game)
 
     def is_constant_sum(self):
         r"""
