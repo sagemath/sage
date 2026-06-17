@@ -259,7 +259,7 @@ Below we show how the these algorithms are called::
 
     sage: matching_pennies.obtain_nash(algorithm='lrs')  # optional - lrslib
     [[(1/2, 1/2), (1/2, 1/2)]]
-    sage: matching_pennies.obtain_nash(algorithm='LCP')  # optional - gambit
+    sage: matching_pennies.obtain_nash(algorithm='LCP')  # abs tol 1e-9 # optional - gambit
     [[(0.5, 0.5), (0.5, 0.5)]]
     sage: matching_pennies.obtain_nash(algorithm='lp', solver='PPL')
     [[(1/2, 1/2), (1/2, 1/2)]]
@@ -587,7 +587,7 @@ is evidenced by the various algorithms returning different solutions::
     sage: degenerate_game = NormalFormGame([A,B])
     sage: degenerate_game.obtain_nash(algorithm='lrs')  # random, optional - lrslib
     [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (1/2, 3)], [(1, 0, 0), (1, 3)]]
-    sage: degenerate_game.obtain_nash(algorithm='LCP')  # optional - gambit
+    sage: degenerate_game.obtain_nash(algorithm='LCP')  # abs tol 1e-9 # optional - gambit
     [[(0.0, 0.3333333333, 0.6666666667), (0.3333333333, 0.6666666667)],
      [(1.0, -0.0, 0.0), (0.6666666667, 0.3333333333)],
      [(1.0, 0.0, 0.0), (1.0, 0.0)]]
@@ -671,12 +671,10 @@ except ImportError:
 
 try:
     from pygambit import Game
-    from pygambit.nash import lp_solve, lcp_solve, gnm_solve
+    import pygambit.nash as gambit_nash
 except ImportError:
     Game = None
-    lp_solve = None
-    lcp_solve = None
-    gnm_solve = None
+    gambit_nash = None
 
 
 class NormalFormGame(SageObject, MutableMapping):
@@ -1111,20 +1109,24 @@ class NormalFormGame(SageObject, MutableMapping):
 
         TESTS::
 
+        Gambit games are indexed by strategy labels (and players by their
+        labels) rather than by integers; the default labels are the strings
+        ``'1'``, ``'2'``, ... ::
+
             sage: # optional - gambit
             sage: A = matrix([[2, 1], [1, 2.5]])
             sage: g = NormalFormGame([A])
             sage: gg = g._gambit_()
-            sage: float(gg[0, 0][gg.players[0]])
+            sage: float(gg['1', '1'][gg.players['1']])
             2.0
-            sage: float(gg[1, 1][gg.players[0]])
+            sage: float(gg['2', '2'][gg.players['1']])
             2.5
-            sage: float(gg[0, 0][gg.players[1]])
+            sage: float(gg['1', '1'][gg.players['2']])
             -2.0
             sage: gg_int = g._gambit_(as_integer=True)
-            sage: int(gg_int[0, 0][gg_int.players[0]])
+            sage: int(gg_int['1', '1'][gg_int.players['1']])
             2
-            sage: int(gg_int[1, 1][gg_int.players[0]])
+            sage: int(gg_int['2', '2'][gg_int.players['1']])
             2
 
         ::
@@ -1134,12 +1136,12 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = matrix([[3, 2], [5.5, 4]])
             sage: g = NormalFormGame([A, B])
             sage: gg = g._gambit_()
-            sage: float(gg[0, 0][gg.players[0]])
+            sage: float(gg['1', '1'][gg.players['1']])
             2.0
-            sage: float(gg[0, 1][gg.players[1]])
+            sage: float(gg['2', '1'][gg.players['2']])
             5.5
             sage: gg_int = g._gambit_(as_integer=True)
-            sage: int(gg_int[0, 1][gg_int.players[1]])
+            sage: int(gg_int['2', '1'][gg_int.players['2']])
             5
 
         ::
@@ -1174,11 +1176,11 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: threegame[1, 1, 1][1] = 6
             sage: threegame[1, 1, 1][2] = 4
             sage: gg = threegame._gambit_(as_integer=True)
-            sage: int(gg[0, 0, 0][gg.players[0]])
+            sage: int(gg['1', '1', '1'][gg.players['1']])
             3
-            sage: int(gg[1, 0, 0][gg.players[1]])
+            sage: int(gg['2', '1', '1'][gg.players['2']])
             7
-            sage: int(gg[0, 0, 1][gg.players[2]])
+            sage: int(gg['1', '1', '2'][gg.players['3']])
             9
         """
         sgn = 1 if maximization else -1
@@ -1440,12 +1442,19 @@ class NormalFormGame(SageObject, MutableMapping):
           * ``'LCP'`` -- this algorithm is only suited for 2 player games.
             See the gambit web site (http://gambit.sourceforge.net/).
 
-          * ``'gnm'`` -- this algorithm is suited for games with an arbitrary
-            number of players (in particular for games with more than 2
-            players) and uses the global Newton method implemented in gambit.
-            It is a numerical algorithm and so returns floating point
-            approximations of a sample of the equilibria. See the gambit web
-            site (http://gambit.sourceforge.net/).
+          * ``'gnm'``, ``'enumpure'``, ``'enumpoly'``, ``'liap'``,
+            ``'simpdiv'``, ``'ipa'``, ``'logit'`` -- these algorithms are
+            suited for games with an arbitrary number of players (in
+            particular for games with more than 2 players) and use the
+            corresponding solver implemented in gambit (the global Newton
+            method, enumeration of pure equilibria, enumeration of equilibria
+            via polynomial systems, Lyapunov function minimisation,
+            simplicial subdivision, iterated polymatrix approximation and
+            logit quantal response tracing respectively). They are numerical
+            algorithms and so in general return floating point approximations
+            of a sample of the equilibria. See the gambit web site
+            (http://gambit.sourceforge.net/). When no ``algorithm`` is given
+            for a game with more than 2 players, ``'enumpure'`` is used.
 
           * ``'lp'`` -- this algorithm is only suited for 2 player
             constant sum games. Uses MILP solver determined by the
@@ -1555,7 +1564,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 0, 3/4, 1/4), (1/28, 27/28, 0)]]
             sage: g.obtain_nash(algorithm='lrs')  # optional - lrslib
             [[(0, 0, 3/4, 1/4), (1/28, 27/28, 0)]]
-            sage: g.obtain_nash(algorithm='LCP')  # optional - gambit
+            sage: g.obtain_nash(algorithm='LCP')  # abs tol 1e-9 # optional - gambit
             [[(0.0, 0.0, 0.75, 0.25), (0.0357142857, 0.9642857143, 0.0)]]
 
         2 random matrices::
@@ -1705,7 +1714,9 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g.obtain_nash(algorithm='invalid')
             Traceback (most recent call last):
             ...
-            ValueError: 'algorithm' should be set to 'enumeration', 'LCP', 'lp', 'lrs' for 2 player games or 'gnm' for more players
+            ValueError: 'algorithm' should be set to 'enumeration', 'LCP',
+            'lp', 'lrs' for 2 player games or one of 'gnm', 'enumpure',
+            'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit' for any number of players
             sage: g.obtain_nash(algorithm='lp', solver='invalid')
             Traceback (most recent call last):
             ...
@@ -1718,9 +1729,9 @@ class NormalFormGame(SageObject, MutableMapping):
         from sage.features.lrs import LrsNash
         if not algorithm:
             if len(self.players) > 2:
-                # Only the gambit GNM solver handles games with more than
-                # two players.
-                algorithm = "gnm"
+                # Only the gambit solvers handle games with more than two
+                # players; enumpure enumerates the pure strategy equilibria.
+                algorithm = "enumpure"
             elif self.is_constant_sum():
                 algorithm = "lp"
             elif LrsNash().is_present():
@@ -1736,7 +1747,7 @@ class NormalFormGame(SageObject, MutableMapping):
             if algorithm == "LCP":
                 if Game is None:
                     raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
-                return self._solve_LCP(maximization)
+                return self._use_gambit_solver('lcp', maximization)
 
             if algorithm.startswith('lp'):
                 return self._solve_LP(solver=solver, maximization=maximization)
@@ -1744,12 +1755,17 @@ class NormalFormGame(SageObject, MutableMapping):
             if algorithm == "enumeration":
                 return self._solve_enumeration(maximization)
 
-        if algorithm == "gnm":
+        # The remaining gambit solvers all handle an arbitrary number of
+        # players, so they are routed here (outside the two player branch
+        # above) and are available for two player games as well.
+        gambit_algorithms = {"gnm", "enumpure", "enumpoly", "liap",
+                             "simpdiv", "ipa", "logit"}
+        if algorithm in gambit_algorithms:
             if Game is None:
                 raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
-            return self._solve_gnm(maximization)
+            return self._use_gambit_solver(algorithm, maximization)
 
-        raise ValueError("'algorithm' should be set to 'enumeration', 'LCP', 'lp', 'lrs' for 2 player games or 'gnm' for more players")
+        raise ValueError("'algorithm' should be set to 'enumeration', 'LCP', 'lp', 'lrs' for 2 player games or one of 'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit' for any number of players")
 
     def _solve_lrs(self, maximization=True):
         r"""
@@ -1820,8 +1836,8 @@ class NormalFormGame(SageObject, MutableMapping):
         r"""
         Convert a pygambit equilibria collection to a list of strategy profiles.
 
-        The Gambit solvers (:meth:`_solve_gnm`, :meth:`_solve_LCP` and
-        :meth:`_solve_lp`) return their results as pygambit objects.  Each
+        The Gambit solvers (see :meth:`_use_gambit_solver`) return their
+        results as pygambit objects.  Each
         equilibrium ``eq`` is a mixed strategy profile that behaves like a
         mapping from a player's strategies to the probability with which that
         strategy is played.  This helper flattens that representation into the
@@ -1887,32 +1903,70 @@ class NormalFormGame(SageObject, MutableMapping):
                  for player in eq.game.players]
                 for eq in equilibria]
 
-    def _solve_gnm(self, maximization=True):
+    def _use_gambit_solver(self, algorithm, maximization=True):
         r"""
-        Solve a :class:`NormalFormGame` using Gambit's GNM algorithm.
+        Solve a :class:`NormalFormGame` using one of Gambit's solvers.
 
-        This uses the global Newton method implemented in
-        `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_ to compute
-        a sample Nash equilibrium of the game.  Unlike the ``'lrs'``,
-        ``'LCP'``, ``'lp'`` and ``'enumeration'`` solvers, GNM is **not**
-        restricted to two player games: it can compute a Nash equilibrium
-        for a game with an arbitrary number of players.  Note however that
-        GNM is a numerical algorithm and so, in general, returns
-        floating point approximations of (and not necessarily all of) the
-        equilibria.
+        This is a single entry point for the Gambit ([Gambit]_) Nash
+        solvers.  The desired solver is selected through the ``algorithm``
+        argument so that the conversion to a Gambit game, the call to the
+        solver and the extraction of the equilibria need only be written
+        once.
+
+        The ``'lcp'`` and ``'lp'`` solvers are restricted to two player
+        games; all of the other solvers can compute a Nash equilibrium for a
+        game with an arbitrary number of players.  These are numerical
+        algorithms and so, in general, return floating point approximations
+        of (and not necessarily all of) the equilibria.
+
+        INPUT:
+
+        - ``algorithm`` -- string; the Gambit solver to use (matched
+          case-insensitively), one of
+
+          * ``'lcp'`` -- the Linear Complementarity solver (two player games)
+          * ``'lp'`` -- the Linear Programming solver (two player constant
+            sum games)
+          * ``'gnm'`` -- the global Newton method (any number of players)
+          * ``'enumpure'`` -- enumeration of the pure strategy equilibria
+            (any number of players)
+          * ``'enumpoly'`` -- enumeration of equilibria by solving systems of
+            polynomial equations (any number of players)
+          * ``'liap'`` -- minimisation of the Lyapunov function starting from
+            the centroid (any number of players)
+          * ``'simpdiv'`` -- simplicial subdivision starting from the centroid
+            (any number of players)
+          * ``'ipa'`` -- iterated polymatrix approximation (any number of
+            players)
+          * ``'logit'`` -- tracing of the logit quantal response equilibrium
+            correspondence (any number of players)
+
+        - ``maximization`` -- boolean (default: ``True``); whether the
+          players maximize (``True``) or minimize (``False``) their utility
+
+        OUTPUT: a sorted list of Nash equilibria, each a list with one tuple
+        of floats per player (see :meth:`_extract_gambit_equilibria`)
 
         EXAMPLES:
 
-        A two player game::
+        The LCP solver on a two player game::
+
+            sage: a = matrix([[1, 0], [1, 4]])
+            sage: b = matrix([[2, 3], [2, 4]])
+            sage: c = NormalFormGame([a, b])
+            sage: c._use_gambit_solver('lcp')  # optional - gambit
+            [[(0.0, 1.0), (0.0, 1.0)]]
+
+        The GNM solver on a two player game::
 
             sage: A = matrix([[1, 2], [3, 4]])
             sage: B = matrix([[3, 3], [1, 4]])
             sage: C = NormalFormGame([A, B])
-            sage: C._solve_gnm()  # optional - gambit
+            sage: C._use_gambit_solver('gnm')  # optional - gambit
             [[(0.0, 1.0), (0.0, 1.0)]]
 
-        GNM can also solve games with more than two players, which none of
-        the other solvers are able to do.  Here is a three player game::
+        GNM (like every solver other than ``'lcp'`` and ``'lp'``) can also
+        solve games with more than two players.  Here is a three player game::
 
             sage: threegame = NormalFormGame()
             sage: threegame.add_player(2)  # Adding first player with 2 strategies
@@ -1942,8 +1996,15 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: threegame[1, 1, 1][0] = 2
             sage: threegame[1, 1, 1][1] = 6
             sage: threegame[1, 1, 1][2] = 4
-            sage: threegame._solve_gnm()  # optional - gambit
+            sage: threegame._use_gambit_solver('gnm')  # optional - gambit
             [[(0.0, 1.0), (1.0, 0.0), (1.0, 0.0)]]
+
+        The LP solver on a constant sum game::
+
+            sage: A = matrix([[2, 1], [1, 2.5]])
+            sage: g = NormalFormGame([A])
+            sage: g._use_gambit_solver('lp')  # optional - gambit
+            [[(0.6, 0.4), (0.6, 0.4)]]
 
         Players can also be set to minimize their utility, here using the
         Prisoner's Dilemma where players minimize time spent in prison::
@@ -1951,56 +2012,65 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: A = matrix([[2, 5], [0, 4]])
             sage: B = matrix([[2, 0], [5, 4]])
             sage: prisoners_dilemma = NormalFormGame([A, B])
-            sage: prisoners_dilemma._solve_gnm(maximization=False)  # optional - gambit
+            sage: prisoners_dilemma._use_gambit_solver('gnm', maximization=False)  # optional - gambit
             [[(0.0, 1.0), (0.0, 1.0)]]
-        """
-        g = self._gambit_(maximization=maximization)
-        result = gnm_solve(g)
-        nasheq = self._extract_gambit_equilibria(result.equilibria)
-        return sorted(nasheq)
 
-    def _solve_LCP(self, maximization):
-        r"""
-        Solve a :class:`NormalFormGame` using Gambit's LCP algorithm.
+        The remaining solvers are used in the same way.  The ``'enumpure'``,
+        ``'enumpoly'`` and ``'simpdiv'`` solvers return exact values here::
 
-        EXAMPLES::
-
-            sage: a = matrix([[1, 0], [1, 4]])
-            sage: b = matrix([[2, 3], [2, 4]])
-            sage: c = NormalFormGame([a, b])
-            sage: c._solve_LCP(maximization=True)  # optional - gambit
+            sage: c._use_gambit_solver('enumpure')  # optional - gambit
             [[(0.0, 1.0), (0.0, 1.0)]]
-        """
-        g = self._gambit_(maximization=maximization)
-        result = lcp_solve(g, rational=False)
-        nasheq = self._extract_gambit_equilibria(result.equilibria)
-        return sorted(nasheq)
+            sage: c._use_gambit_solver('enumpoly')  # optional - gambit
+            [[(0.0, 1.0), (0.0, 1.0)]]
+            sage: c._use_gambit_solver('simpdiv')  # optional - gambit
+            [[(0.0, 1.0), (0.0, 1.0)]]
 
-    def _solve_gambit_LP(self, maximization=True):
-        r"""
-        Solve a constant sum :class:`NormalFormGame` using Gambit's
-        LP implementation.
+        The ``'ipa'``, ``'liap'`` and ``'logit'`` solvers are iterative and
+        return floating point approximations, so we round their output::
 
-        EXAMPLES::
+            sage: eq = c._use_gambit_solver('ipa')  # optional - gambit
+            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]  # optional - gambit
+            [[[0.0, 1.0], [0.0, 1.0]]]
+            sage: eq = c._use_gambit_solver('liap')  # optional - gambit
+            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]  # optional - gambit
+            [[[0.0, 1.0], [0.0, 1.0]]]
+            sage: eq = c._use_gambit_solver('logit')  # optional - gambit
+            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]  # optional - gambit
+            [[[0.0, 1.0], [0.0, 1.0]]]
 
-            sage: A = matrix([[2, 1], [1, 2.5]])
-            sage: g = NormalFormGame([A])
-            sage: g._solve_gambit_LP()  # optional - gambit
-            [[(0.6, 0.4), (0.6, 0.4)]]
-            sage: A = matrix.identity(2)
-            sage: g = NormalFormGame([A])
-            sage: g._solve_gambit_LP()  # optional - gambit
-            [[(0.5, 0.5), (0.5, 0.5)]]
-            sage: g = NormalFormGame([A,A])
-            sage: g._solve_gambit_LP()  # optional - gambit
+        An unknown algorithm raises an error::
+
+            sage: c._use_gambit_solver('invalid')
             Traceback (most recent call last):
             ...
-            RuntimeError: Method only valid for constant-sum games.
+            ValueError: 'algorithm' should be one of 'lcp', 'lp', 'gnm',
+            'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'
         """
         if Game is None:
             raise NotImplementedError("gambit is not installed")
+
         g = self._gambit_(maximization=maximization)
-        result = lp_solve(g, rational=False)
+        # Each solver has its own calling convention: ``lcp``/``lp`` take a
+        # ``rational`` flag while ``liap``/``simpdiv`` need a starting mixed
+        # strategy profile rather than the game itself.
+        solvers = {
+            'lcp': lambda: gambit_nash.lcp_solve(g, rational=False),
+            'lp': lambda: gambit_nash.lp_solve(g, rational=False),
+            'gnm': lambda: gambit_nash.gnm_solve(g),
+            'enumpure': lambda: gambit_nash.enumpure_solve(g),
+            'enumpoly': lambda: gambit_nash.enumpoly_solve(g),
+            'ipa': lambda: gambit_nash.ipa_solve(g),
+            'logit': lambda: gambit_nash.logit_solve(g),
+            'liap': lambda: gambit_nash.liap_solve(g.mixed_strategy_profile(rational=False)),
+            'simpdiv': lambda: gambit_nash.simpdiv_solve(g.mixed_strategy_profile(rational=True)),
+        }
+
+        algorithm = algorithm.lower()
+        if algorithm not in solvers:
+            raise ValueError("'algorithm' should be one of 'lcp', 'lp', 'gnm', "
+                             "'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'")
+
+        result = solvers[algorithm]()
         nasheq = self._extract_gambit_equilibria(result.equilibria)
         return sorted(nasheq)
 
@@ -2057,7 +2127,7 @@ class NormalFormGame(SageObject, MutableMapping):
         if not self.is_constant_sum():
             raise ValueError("Input game needs to be a two player constant sum game")
         if solver == 'gambit':
-            return self._solve_gambit_LP(maximization)
+            return self._use_gambit_solver('lp', maximization)
 
         sgn = 1
         if not maximization:
@@ -2569,7 +2639,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 0, 1, 0), (0, 1, 0, 0)],
              [(17/29, 0, 0, 12/29), (0, 0, 42/73, 31/73)],
              [(122/145, 0, 23/145, 0), (0, 1, 0, 0)]]
-            sage: d_game.obtain_nash(algorithm='LCP')  # optional - gambit
+            sage: d_game.obtain_nash(algorithm='LCP')  # abs tol 1e-9 # optional - gambit
             [[(0.5862068966, 0.0, 0.0, 0.4137931034),
               (0.0, 0.0, 0.5753424658, 0.4246575342)]]
             sage: d_game.obtain_nash(algorithm='enumeration')
