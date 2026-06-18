@@ -7156,6 +7156,9 @@ REFERENCES:
              matching algorithm*. Combinatorica **14** (1994), no. 1, 71-109.
              :doi:`10.1007/BF01305952`.
 
+.. [Vaz2020] \V. V. Vazirani. *A Proof of the MV Matching Algorithm*.
+             Preprint, 2020. :arxiv:`2012.03582`.
+
 .. [Vazirani2002] Monica Vazirani. *Parameterizing Hecek algebra modules:
                   Bernstein-Zelevinsky multisegments, Kleshchev
                   multipartitions, and crystal graphs*. Transform. Groups
