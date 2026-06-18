@@ -659,9 +659,8 @@ def _ross_dim_formula_newspace_character(N, k, chi):
 
     # First term of explicit dimension formula
     def psi(n_fact):
-        # Note this is equal to Gamma0(N).index() 
+        # Note this is equal to Gamma0(N).index()
         return prod([p**r + p**(r-1) for (p,r) in n_fact])
-        
 
     def beta_psi_f(n_fact, f):
         ret = ZZ(1)
