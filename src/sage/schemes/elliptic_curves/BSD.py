@@ -271,9 +271,10 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
       proof.elliptic_curve or sage.structure.proof). If ``False``, this
       function just immediately returns the empty list.
 
-    - ``secs_hi`` -- maximum number of seconds to try to compute the
-      Heegner index before switching over to trying to compute the
-      Heegner index bound. (Rank 0 only!)
+    - ``secs_hi`` -- this argument currently has no effect; it is retained for
+      backward compatibility. It was formerly intended as a time budget (in
+      seconds) for computing the Heegner index before falling back to the
+      Heegner index bound.
 
     - ``return_BSD`` -- boolean (default: ``False``); whether to return an object
       which contains information to reconstruct a proof
@@ -286,74 +287,82 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     REFERENCES:
 
     - [Cha2005]_
+    - [CrM2012]_
     - [Jet2008]_
     - [Kat2004]_
     - [Kol1991]_
     - [LW2015]_
     - [LS]_
     - [Maz1978]_
+    - [Mil2011]_
+    - [MS2013]_
     - [Rub1991]_
     - [SW2013]_
+    - [Ski2016]_
+    - [SU2014]_
     - [GJPST2009]_
 
-    EXAMPLES::
+    EXAMPLES:
 
-        sage: EllipticCurve('11a').prove_BSD(verbosity=2)
+    The full Birch and Swinnerton-Dyer conjecture is known for every elliptic
+    curve over `\QQ` of conductor less than `5000` and analytic rank at most
+    `1`, by the verified computations of [Mil2011]_, [GJPST2009]_, [CrM2012]_
+    and [MS2013]_ (summarised at the end of [LW2015]_, Section 5). In that
+    range ``prove_BSD`` certifies this immediately::
+
+        sage: EllipticCurve('11a').prove_BSD(verbosity=1)
         p = 2: True by 2-descent
-        True for p not in {2, 5} by Kolyvagin.
-        Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
-        True for p = 5 by Kolyvagin bound
+        True for all p: BSD is known for curves of conductor < 5000 and analytic rank <= 1, by Miller et al.
         []
 
-        sage: EllipticCurve('14a').prove_BSD(verbosity=2)
+    This even handles curves for which the prime-by-prime machinery would
+    otherwise leave a prime undetermined, such as ``681b``, where `3` divides
+    the order of the Tate-Shafarevich group::
+
+        sage: EllipticCurve('681b').prove_BSD()
+        []
+
+    For conductor at least `5000` the full prime-by-prime machinery runs.
+    Skinner's cyclotomic main conjecture for `GL_2` [Ski2016]_ (building on
+    [SU2014]_) closes many primes that the older results leave undetermined.
+    For example ``5389a1`` has analytic rank `0` with the predicted order of
+    Sha divisible by `9`; the prime `3`, for which the other methods give only
+    an upper bound, is proven by Skinner::
+
+        sage: EllipticCurve('5389a1').prove_BSD()
+        []
+        sage: EllipticCurve('5389a1').prove_BSD(verbosity=1)
         p = 2: True by 2-descent
         True for p not in {2, 3} by Kolyvagin.
-        Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
+        Analytic 3-rank is 2, actual 3-rank is at most 2.
+            by Stein-Wuthrich.
+        <BLANKLINE>
+        True for p=3 by Skinner
+        []
+
+    The other theorems remain in force for the primes Skinner does not
+    cover::
+
+        sage: EllipticCurve('5004e1').prove_BSD(verbosity=1)
+        p = 2: True by 2-descent
+        True for p not in {2, 3} by Kolyvagin.
+        Jetchev's results apply (at p = 3) with m_max = 1
         True for p = 3 by Kolyvagin bound
         []
 
-        sage: E = EllipticCurve("20a1")
-        sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 3} by Kolyvagin.
-        Kato further implies that #Sha[3] is trivial.
-        []
-
-        sage: E = EllipticCurve("50b1")
-        sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 3, 5} by Kolyvagin.
-        Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
-        Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
-        True for p = 3 by Kolyvagin bound
-        True for p = 5 by Kolyvagin bound
-        []
-        sage: E.prove_BSD(two_desc='pari')
-        []
-
-    A rank two curve::
+    Nothing is known in rank `\geq 2`::
 
         sage: E = EllipticCurve('389a')
-
-    We know nothing with proof=True::
-
         sage: E.prove_BSD()
         Set of all prime numbers: 2, 3, 5, 7, ...
 
-    We (think we) know everything with proof=False::
+    With ``proof=False`` the function immediately returns the empty list::
 
         sage: E.prove_BSD(proof=False)
         []
 
-    A curve of rank 0 and prime conductor::
-
-        sage: E = EllipticCurve('19a')
-        sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 3} by Kolyvagin.
-        Kolyvagin's bound for p = 3 applies by Lawson-Wuthrich
-        True for p = 3 by Kolyvagin bound
-        []
+    The rank conjecture is double-checked, and an inconsistent analytic rank
+    is caught::
 
         sage: E = EllipticCurve('37a')
         sage: E.rank()
@@ -382,36 +391,6 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         ...
         RuntimeError: Apparent contradiction: 0 <= rank(sha[2]) <= 0, but ord_2(sha_an) = 2
 
-    An example with a Tamagawa number at 5::
-
-        sage: E = EllipticCurve('123a1')
-        sage: E.prove_BSD(verbosity=2)
-        p = 2: True by 2-descent
-        True for p not in {2, 5} by Kolyvagin.
-        Kolyvagin's bound for p = 5 applies by Lawson-Wuthrich
-        True for p = 5 by Kolyvagin bound
-        []
-
-    A curve for which 3 divides the order of the Tate-Shafarevich group::
-
-        sage: E = EllipticCurve('681b')
-        sage: E.prove_BSD(verbosity=2)               # long time
-        p = 2: True by 2-descent...
-        True for p not in {2, 3} by Kolyvagin....
-        Remaining primes:
-        p = 3: irreducible, surjective, non-split multiplicative
-            (0 <= ord_p <= 2)
-            ord_p(#Sha_an) = 2
-        [3]
-
-    A curve for which we need to use ``heegner_index_bound``::
-
-        sage: E = EllipticCurve('198b')
-        sage: E.prove_BSD(verbosity=1, secs_hi=1)
-        p = 2: True by 2-descent
-        True for p not in {2, 3} by Kolyvagin.
-        [3]
-
     The ``return_BSD`` option gives an object with detailed information
     about the proof::
 
@@ -426,31 +405,26 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         sage: B.primes
         []
         sage: B.heegner_indexes
-        {-23: 2}
+        {}
 
     TESTS:
 
-    This was fixed by :issue:`8184` and :issue:`7575`::
+    Skinner's criterion is correctly *not* applied when its hypotheses fail:
+    for ``5040i1`` (conductor `5040 = 2^4 \cdot 3^2 \cdot 5 \cdot 7`) the prime
+    `3` has additive reduction, so it is left undetermined rather than wrongly
+    certified::
 
-        sage: EllipticCurve('438e1').prove_BSD(verbosity=1)
-        p = 2: True by 2-descent...
-        True for p not in {2} by Kolyvagin.
+        sage: EllipticCurve('5040i1').prove_BSD()                          # long time
+        [3]
+
+    Curves that were the subject of earlier fixes (:issue:`8184`,
+    :issue:`7575`) are certified by the conductor bound::
+
+        sage: EllipticCurve('438e1').prove_BSD()
         []
-
-    ::
-
-        sage: E = EllipticCurve('960d1')
-        sage: E.prove_BSD(verbosity=1)  # long time (4s on sage.math, 2011)
-        p = 2: True by 2-descent
-        True for p not in {2} by Kolyvagin.
+        sage: EllipticCurve('960d1').prove_BSD()
         []
-
-    ::
-
-        sage: E = EllipticCurve('66b3')
-        sage: E.prove_BSD(two_desc="pari",verbosity=1)
-        p = 2: True by 2-descent
-        True for p not in {2} by Kolyvagin.
+        sage: EllipticCurve('66b3').prove_BSD(two_desc="pari")
         []
     """
     if proof is None:
@@ -533,6 +507,25 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     if BSD.rank != BSD.curve.analytic_rank():
         raise RuntimeError("It seems that the rank conjecture does not hold for this curve (%s)! This may be a counterexample to BSD, but is more likely a bug." % BSD.curve)
+
+    # Full BSD is known for every elliptic curve over QQ of conductor < 5000
+    # and analytic rank <= 1, by the verified computations of [Mil2011],
+    # [GJPST2009], [CrM2012] and [MS2013] (see the end of [LW2015],
+    # Section 5).
+    # Curves of rank > 1 have already returned above, so the analytic rank is
+    # <= 1 here and the short-circuit applies (including for curves with CM).
+    if BSD.N < 5000:
+        if verbosity > 0:
+            print('True for all p: BSD is known for curves of conductor < 5000 '
+                  'and analytic rank <= 1, by Miller et al.')
+        BSD.primes = []
+        BSD.bounds = {}
+        BSD.proof['finite'] = []
+        BSD.proof['reason_finite'] = 'conductor < 5000'
+        # reduce memory footprint (cf. the end of this function)
+        BSD.curve = BSD.curve.label()
+        BSD.Sha = None
+        return BSD if return_BSD else BSD.primes
 
     # reduce set of remaining primes to a finite set
     kolyvagin_primes = []
@@ -660,8 +653,9 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                         BSD.bounds[p][1] = min(BSD.bounds[p][1], p_bound)
                     else:
                         BSD.bounds[p] = (0, p_bound)
-                    print('Analytic %d-rank is ' % p + str(BSD.sha_an.ord(p)) + ', actual %d-rank is at most %d.' % (p, p_bound))
-                    print('    by Stein-Wuthrich.\n')
+                    if verbosity > 0:
+                        print('Analytic %d-rank is ' % p + str(BSD.sha_an.ord(p)) + ', actual %d-rank is at most %d.' % (p, p_bound))
+                        print('    by Stein-Wuthrich.\n')
         for p in primes_to_remove:
             BSD.primes.remove(p)
         kolyvagin_primes = []
@@ -825,6 +819,40 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             else:
                 BSD.proof[p] = ['Mazur']
 
+    # Skinner: for analytic rank 0, BSD(E, p) holds by the cyclotomic main
+    # conjecture for GL_2 [Ski2016] (building on [SU2014]) whenever E[p] is
+    # irreducible, p is a prime of good ordinary or multiplicative reduction,
+    # and the mod-p representation is ramified at some prime of multiplicative
+    # reduction -- i.e. some prime q != p of multiplicative reduction with
+    # p not dividing ord_q(Delta_min). This is an unconditional proof of
+    # BSD(E, p) (as for Mazur above), so no sha_an cross-check is applied.
+    # (When E is semistable and p is good ordinary, irreducibility already
+    # forces such a q to exist, by Ribet's level lowering.)
+    if BSD.rank == 0:
+        min_disc = BSD.curve.minimal_model().discriminant()
+        mult_primes = [q for q in BSD.N.prime_divisors()
+                       if BSD.curve.has_multiplicative_reduction(q)]
+        primes_to_remove = []
+        for p in BSD.primes:
+            if p == 2:
+                continue
+            if not galrep.is_irreducible(p):
+                continue
+            good_ordinary = BSD.curve.is_good(p) and BSD.curve.is_ordinary(p)
+            if not (good_ordinary or BSD.curve.has_multiplicative_reduction(p)):
+                continue
+            if any(q != p and min_disc.valuation(q) % p != 0 for q in mult_primes):
+                if verbosity > 0:
+                    print('True for p=%d by Skinner' % p)
+                primes_to_remove.append(p)
+        for p in primes_to_remove:
+            BSD.primes.remove(p)
+            BSD.bounds.pop(p, None)
+            if p in BSD.proof:
+                BSD.proof[p].append('Skinner')
+            else:
+                BSD.proof[p] = ['Skinner']
+
     BSD.primes.sort()
 
     # Try harder to compute the Heegner index, where it matters
@@ -842,7 +870,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                     if verbosity > 2:
                         print('    trying max_height =', max_height)
                     old_bound = M
-                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height, secs_dc=secs_hi)
+                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height)
                     if M == -1:
                         max_height += 1
                         continue
@@ -896,7 +924,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                     old_bound = M
                     if p**(BSD.sha_an.ord(p) / 2 + 1) > M or max_height >= 22:
                         break
-                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height, secs_dc=secs_hi)
+                    M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height)
                     if M == -1:
                         max_height += 1
                         continue

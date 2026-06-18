@@ -1961,6 +1961,10 @@ REFERENCES:
             "Orange"
             https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/orange-spec.pdf
 
+.. [CrM2012] \B. Creutz and R. L. Miller, *Second isogeny descents and the
+             Birch and Swinnerton-Dyer conjectural formula*. J. Algebra 372
+             (2012), 673-701.
+
 .. [CrNa2020] \J.E. Cremona and F. Najman,  `\QQ`-curves over odd degree number fields, :arxiv:`2004.10054`.
 
 .. [CreSuth2023] \J.E. Cremona and A.V. Sutherland.
@@ -5310,6 +5314,10 @@ REFERENCES:
 .. [Mil2006] \J. W. Milnor, *On Lattes maps*,
              Dynamics on the Riemann sphere, Eur. Math. Soc., 9-43
 
+.. [Mil2011] \R. L. Miller, *Proving the Birch and Swinnerton-Dyer conjecture
+             for specific elliptic curves of analytic rank zero and one*.
+             LMS J. Comput. Math. 14 (2011), 327-350.
+
 .. [Mil1978] \S. Milne, *A q-analog of restricted growth functions,
              Dobinsky’s equality and Charlier
              polynomials*. Trans. Amer. Math. Soc., 245 (1978),
@@ -5439,6 +5447,9 @@ REFERENCES:
              *Generating random derangements*
              :doi:`10.1137/1.9781611972986.7`
              https://web.archive.org/web/20080517081306/http://www.siam.org/proceedings/analco/2008/anl08_022martinezc.pdf
+
+.. [MS2013] \R. Miller and M. Stoll, *Explicit isogeny descent on elliptic
+            curves*. Math. Comp. 82 (2013), no. 281, 513-529.
 
 .. [MPPS2020] Jennifer Morse, Jianping Pan, Wencin Poh, Anne Schilling.
              *A Crystal on Decreasing Factorizations in the 0-Hecke Monoid*
@@ -6496,6 +6507,9 @@ REFERENCES:
 .. [Sil2009] Joseph H. Silverman, The Arithmetic of Elliptic
              Curves. Second edition. Graduate Texts in Mathematics, 106.
              Springer, 2009.
+
+.. [Ski2016] \C. Skinner, *Multiplicative reduction and the cyclotomic main
+             conjecture for GL_2*. Pacific J. Math. 283 (2016), no. 1, 171-200.
 
 .. [Sim2004] Aron Simis, *Cremona transformations and some related algebras*.
              Journal of Algebra 280.1 (2004), 162-179.
