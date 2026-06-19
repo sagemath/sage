@@ -1876,7 +1876,7 @@ class MicaliVaziraniMatching:
     - [HS2017]_
     """
     from dataclasses import dataclass
-    from typing import Any, Optional
+    from typing import Any
 
     Edge = tuple[int, int, Any]
 
@@ -1908,7 +1908,7 @@ class MicaliVaziraniMatching:
             (0, (1, 2))
         """
         base: int
-        peaks: Tuple[int, int]
+        peaks: tuple[int, int]
 
     def __init__(self, G) -> None:
         r"""
@@ -1993,11 +1993,11 @@ class MicaliVaziraniMatching:
         self.vertex_to_index = {u: i for i, u in enumerate(self.index_to_vertex)}
         self.G.relabel(perm=self.vertex_to_index, inplace=True)
 
-        self.tenacity_bridges_map: List[List[int]] = [[] for _ in range(2 * self.N + 2)]
-        self.deletion_phase: List[int] = [-1] * self.N
-        self.visit_mark: List[Any] = [None] * self.N
-        self.vertex_petal_map: List[Any] = [None] * self.N
-        self.vertex_bud_map: List[int] = list(range(self.N))
+        self.tenacity_bridges_map: list[list[int]] = [[] for _ in range(2 * self.N + 2)]
+        self.deletion_phase: list[int] = [-1] * self.N
+        self.visit_mark: list[Any] = [None] * self.N
+        self.vertex_petal_map: list[Any] = [None] * self.N
+        self.vertex_bud_map: list[int] = list(range(self.N))
 
         # Integer "infinity" sentinel for levels and tenacities, so the level
         # arrays stay homogeneously ``int``. Its value is the length of
@@ -2009,27 +2009,27 @@ class MicaliVaziraniMatching:
         # exceeds every finite level (each is
         # ``2 * search_level + 1 - minlevel <= 2 * N + 1``).
         self.INFINITY = 2 * self.N + 2
-        self.level: List[List[int]] = [[0, self.INFINITY] for _ in range(self.N)]
-        self.min_level: List[int] = [0] * self.N
-        self.max_level: List[int] = [self.INFINITY] * self.N
-        self.predecessor: List[List[int]] = [[] for _ in range(self.N)]
-        self.successor: List[List[int]] = [[] for _ in range(self.N)]
-        self.color: List[int] = [None] * self.N
-        self.search_level_vertices: List[int] = list(range(self.N))
+        self.level: list[list[int]] = [[0, self.INFINITY] for _ in range(self.N)]
+        self.min_level: list[int] = [0] * self.N
+        self.max_level: list[int] = [self.INFINITY] * self.N
+        self.predecessor: list[list[int]] = [[] for _ in range(self.N)]
+        self.successor: list[list[int]] = [[] for _ in range(self.N)]
+        self.color: list[int | None] = [None] * self.N
+        self.search_level_vertices: list[int] = list(range(self.N))
 
         # Edge indexing must be set up before ``edge_scanned``, which is keyed
         # by ``edge_to_index`` (and therefore needs ``_edge_to_index``).
         self.index_to_edge = list(self.G.edges(labels=False, sort_vertices=True))
         self._edge_to_index = {e: i for i, e in enumerate(self.index_to_edge)}
 
-        self.edge_scanned: Dict[int, int] = {self.edge_to_index(u, v): -1
+        self.edge_scanned: dict[int, int] = {self.edge_to_index(u, v): -1
                 for (u, v) in self.G.edge_iterator(labels=False)}
-        self.prop_edges: Set[int] = set()
+        self.prop_edges: set[int] = set()
 
         # The matching itself: ``mate[v]`` is the vertex matched to ``v``, or
         # ``EXPOSED`` if ``v`` is currently unmatched. ``matching_size`` tracks
         # the number of matched edges so it need not be recomputed.
-        self.mate: List[int] = [self.EXPOSED] * self.N
+        self.mate: list[int] = [self.EXPOSED] * self.N
         self.matching_size = 0
         self.phase_index = 0
         self.num_augmentations = 0
@@ -2166,12 +2166,12 @@ class MicaliVaziraniMatching:
         J: Graph = self.G.copy(immutable=False)
 
         # Create the degree list
-        degree: List[int] = [J.degree(v) for v in range(self.N)]
+        degree: list[int] = [J.degree(v) for v in range(self.N)]
         minimum_degree, maximum_degree = min(degree), max(degree)
 
         # Create a list of buckets, where bucket[i] holds the set of
         # vertices of degree i
-        buckets: List[set] = [set() for _ in range(maximum_degree + 1)]
+        buckets: list[set] = [set() for _ in range(maximum_degree + 1)]
         for v, d in enumerate(degree):
             buckets[d].add(v)
 
@@ -2327,7 +2327,7 @@ class MicaliVaziraniMatching:
         if not self.search_level_vertices or search_level > self.G.order():
             return True
 
-        next_search_level_vertices = []
+        next_search_level_vertices: list[int] = []
         parity = search_level % 2
 
         for u in self.search_level_vertices:
@@ -2474,7 +2474,7 @@ class MicaliVaziraniMatching:
             sage: len(M) == len(G.matching(algorithm='Edmonds'))
             True
         """
-        next_search_level_vertices: List[int] = []
+        next_search_level_vertices: list[int] = []
         for vertex in support:
             self.max_level[vertex] = 2 * search_level + 1 - self.min_level[vertex]
             level_parity = self.max_level[vertex] % 2
@@ -2504,7 +2504,7 @@ class MicaliVaziraniMatching:
         self,
         source_red_vertex: int,
         source_green_vertex: int,
-    ) -> tuple[list[int], list[int], Optional[int], bool]:
+    ) -> tuple[list[int], list[int], int | None, bool]:
         r"""
         Run the double depth-first search from the two ends of a bridge.
 
@@ -3093,7 +3093,7 @@ class MicaliVaziraniMatching:
         self.matching_size += 1
 
         # Erase vertex based on search level
-        erase_vertex_list = []
+        erase_vertex_list: list[int] = []
         for vertex in path:
             self.deletion_phase[vertex] = self.phase_index
             erase_vertex_list.append(vertex)
@@ -3140,7 +3140,7 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             3
         """
-        path = []
+        path: list[int] = []
         current_vertex = peak
         predecessor_list = self.predecessor[current_vertex][:]
 
