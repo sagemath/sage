@@ -1998,9 +1998,20 @@ class MicaliVaziraniMatching:
         self.visit_mark: List[Any] = [None] * self.N
         self.vertex_petal_map: List[Any] = [None] * self.N
         self.vertex_bud_map: List[int] = list(range(self.N))
-        self.level: List[List[Any]] = [[0, float('inf')] for _ in range(self.N)]
+
+        # Integer "infinity" sentinel for levels and tenacities, so the level
+        # arrays stay homogeneously ``int``. Its value is the length of
+        # ``tenacity_bridges_map`` (``2 * N + 2``), i.e. one past the largest
+        # valid bucket index ``2 * N + 1``. The guard ``tenacity < self.INFINITY``
+        # is then exactly "this tenacity indexes a real bucket", so a bridge is
+        # filed only when it fits and an out-of-range tenacity is skipped rather
+        # than raising. ``INFINITY`` is thus never used as an index, and it
+        # exceeds every finite level (each is
+        # ``2 * search_level + 1 - minlevel <= 2 * N + 1``).
+        self.INFINITY = 2 * self.N + 2
+        self.level: List[List[int]] = [[0, self.INFINITY] for _ in range(self.N)]
         self.min_level: List[int] = [0] * self.N
-        self.max_level: List[Any] = [float('inf')] * self.N
+        self.max_level: List[int] = [self.INFINITY] * self.N
         self.predecessor: List[List[int]] = [[] for _ in range(self.N)]
         self.successor: List[List[int]] = [[] for _ in range(self.N)]
         self.color: List[int] = [None] * self.N
@@ -2022,7 +2033,6 @@ class MicaliVaziraniMatching:
         self.matching_size = 0
         self.phase_index = 0
         self.num_augmentations = 0
-        self.INFINITY = float('inf')
 
     def is_exposed(self, v: int) -> bool:
         r"""
@@ -2354,9 +2364,6 @@ class MicaliVaziraniMatching:
                         # In the case where tenacity is defined and,
                         # thus we know which level the bridge will be processed
                         if tenacity < self.INFINITY:
-                            if tenacity >= len(self.tenacity_bridges_map):
-                                self.tenacity_bridges_map.extend([]
-                                    for _ in range(tenacity - len(self.tenacity_bridges_map) + 1))
                             self.tenacity_bridges_map[tenacity].append(edge_index)
 
                         # The case where tenacity is not yet known
@@ -2486,9 +2493,6 @@ class MicaliVaziraniMatching:
                     if edge_index not in self.prop_edges:
                         tenacity = self.max_level[vertex] + self.level[neighbor][0] + 1
                         if tenacity < self.INFINITY:
-                            if tenacity >= len(self.tenacity_bridges_map):
-                                self.tenacity_bridges_map.extend([]
-                                    for _ in range(tenacity - len(self.tenacity_bridges_map) + 1))
                             self.tenacity_bridges_map[tenacity].append(edge_index)
 
         self.search_level_vertices += next_search_level_vertices
