@@ -1324,6 +1324,10 @@ class Order(Parent, sage.rings.abc.Order):
         r"""
         Return the conductor of `self` in its integral closure as an ideal of the maximal order.
 
+        INPUT:
+
+        - ``as_self_ideal`` -- boolean (default: ``False``); specifies whether to check for primality
+
         ALGORITHM:
 
         We follow the algorithm of Secion 6 of [KP2005]_.
