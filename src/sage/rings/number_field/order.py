@@ -1321,7 +1321,7 @@ class Order(Parent, sage.rings.abc.Order):
         """
         return hash((self._K, self._module_rep))
 
-    def conductor(self):
+    def conductor(self, as_self_ideal=False):
         r"""
         Return the conductor of self in its integral closure as an ideal of self.
 
@@ -1365,9 +1365,8 @@ class Order(Parent, sage.rings.abc.Order):
             <class 'sage.rings.number_field.order_ideal.NumberFieldOrderIdeal_generic'>
         """
 
+        # for quadratic fields we used to return an integer
         if self._K.absolute_degree() == 2:
-            from sage.misc.superseded import deprecation
-            deprecation(42314, "For orders in quadratic fields, the conductor method used to return an integer. This will be deprecated in favor of returning an ideal instead.")
             D = self.discriminant()
             D0 = self._K.discriminant()
             return (D // D0).sqrt()
@@ -1390,7 +1389,10 @@ class Order(Parent, sage.rings.abc.Order):
         H = dM.hermite_form(include_zero_rows=False)
         Hinv = H.inverse()
         generators = vector(O.basis()) * d * Hinv
-        return self.ideal([*generators])
+        if as_self_ideal is True:
+            return self.ideal([*generators])
+
+        return self._K.ideal(*generators)
 
     def random_element(self, *args, **kwds):
         r"""
