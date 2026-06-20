@@ -1326,7 +1326,8 @@ class Order(Parent, sage.rings.abc.Order):
 
         INPUT:
 
-        - ``as_self_ideal`` -- boolean (default: ``False``); specifies whether to check for primality
+        - ``as_self_ideal`` -- boolean (default: ``False``); if set to ``True``, return the conductor as an ideal of
+        self, otherwise return it as an ideal of the maximal order.
 
         ALGORITHM:
 
