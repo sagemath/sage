@@ -1871,12 +1871,23 @@ class MicaliVaziraniMatching:
 
     Each phase runs in `O(|E|)` time apart from the maintenance of blossom
     bases, which is done with a union-find structure (see :meth:`get_bud` and
-    :meth:`form_petal`); with `O(\sqrt{|V|})` phases the overall running time is
-    `O(\sqrt{|V|}\,|E|\,\alpha(|E|, |V|))`, where `\alpha(\cdot, \cdot)` is the
-    :wikipedia:`inverse Ackermann function <Ackermann_function#Inverse>`. The
-    optimal `O(\sqrt{|V|}\,|E|)` bound of [MV1980]_,
-    which replaces the union-find with Gabow's incremental-tree set-merging, is
-    not implemented here.
+    :meth:`form_petal`). Because the base of a blossom must stay the
+    representative of its set, the union step links by base rather than by
+    rank, so the structure relies on path compression alone: `O(\log |V|)`
+    amortized per operation. With `O(\sqrt{|V|})` phases the overall running
+    time is therefore `O(\sqrt{|V|}\,|E|\,\log |V|)`. The sharper
+    `O(\sqrt{|V|}\,|E|\,\alpha(|E|, |V|))` bound, with `\alpha(\cdot, \cdot)` the
+    :wikipedia:`inverse Ackermann function <Ackermann_function#Inverse>`, would
+    require pairing path compression with union-by-rank -- here that means
+    decoupling the rank-balanced forest from the bud labels (a separate
+    root-to-bud map) -- and is not implemented. The optimal
+    `O(\sqrt{|V|}\,|E|)` bound of [MV1980]_, which replaces the union-find with
+    Gabow's incremental-tree set-merging, is not implemented here.
+
+    The space complexity is `O(|V| + |E|)`: a constant number of per-vertex
+    arrays (levels, predecessors/successors, mates, the union-find map) whose
+    adjacency-style lists total `O(|E|)`, together with the per-edge index maps
+    and the tenacity bridge buckets.
 
     INPUT:
 
@@ -2888,9 +2899,13 @@ class MicaliVaziraniMatching:
         Each vertex contracted into a blossom points, through
         ``vertex_bud_map``, towards the *bud* (base) of that blossom. This is a
         union-find structure: the method follows the chain to the
-        representative bud and compresses the path on the way back, like the
-        *find* operation of union-find. A vertex that lies in no blossom is its
-        own bud.
+        representative bud, then compresses the path so that every vertex along
+        it points straight at the bud, like the *find* operation of union-find.
+        A vertex that lies in no blossom is its own bud.
+
+        The traversal is iterative -- one pass to locate the bud and a second
+        to compress the path -- so a deeply nested chain of blossoms cannot
+        overflow the call stack.
 
         INPUT:
 
@@ -2902,10 +2917,27 @@ class MicaliVaziraniMatching:
             sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
             sage: MV.get_bud(2)
             2
+
+        TESTS:
+
+        A long bud chain is resolved without recursion, and every vertex on it
+        is compressed to point straight at the bud (the recursive version would
+        exceed the interpreter's recursion limit here)::
+
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(2))
+            sage: MV.vertex_bud_map = list(range(1, 10001)) + [10000]
+            sage: MV.get_bud(0)
+            10000
+            sage: MV.vertex_bud_map[0]
+            10000
         """
-        if vertex != self.vertex_bud_map[vertex]:
-            self.vertex_bud_map[vertex] = self.get_bud(self.vertex_bud_map[vertex])
-        return self.vertex_bud_map[vertex]
+        bud = vertex
+        while self.vertex_bud_map[bud] != bud:
+            bud = self.vertex_bud_map[bud]
+
+        while vertex != bud:
+            self.vertex_bud_map[vertex], vertex = bud, self.vertex_bud_map[vertex]
+        return bud
 
     # ******************************
     # Unfold a blossom (petal)
