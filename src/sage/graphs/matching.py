@@ -1224,6 +1224,43 @@ def matching(G, value_only=False, algorithm=None,
         sage: len(set(w for u, v, _ in M for w in (u, v))) == 2 * len(M)
         True
 
+    Vertex labels may be any hashable object. The matching round-trips through
+    a variety of vertex-label kinds -- strings, tuples, Sage integers and
+    rationals -- and carries arbitrary edge labels through unchanged::
+
+        sage: def round_trips(vs):
+        ....:     P = Graph([(vs[0], vs[1], 'e0'), (vs[1], vs[2], 'e1'),
+        ....:                (vs[2], vs[3], 'e2')])
+        ....:     M = P.matching()
+        ....:     return (len(M) == 2
+        ....:             and all(P.has_edge(u, v) and P.edge_label(u, v) == l
+        ....:                     for u, v, l in M)
+        ....:             and set(w for u, v, _ in M for w in (u, v)) <= set(P))
+        sage: all(round_trips(vs) for vs in [('a', 'b', 'c', 'd'),
+        ....:                                ((0, 0), (0, 1), (1, 1), (1, 0)),
+        ....:                                (10, 20, 30, 40),
+        ....:                                (1/2, 1/3, 1/4, 1/5)])
+        True
+
+    Isolated vertices are dropped -- they never appear in the result::
+
+        sage: H = graphs.CycleGraph(5); H.add_vertices([100, 101, 102])
+        sage: M = H.matching()
+        sage: len(M) == 2 and set(w for u, v, _ in M for w in (u, v)) <= set(range(5))
+        True
+
+    A non-bipartite graph of odd order -- a triangle with a pendant path --
+    is matched correctly, leaving exactly one vertex exposed::
+
+        sage: G = Graph([('s', 'a', 1), ('a', 'b', 2), ('b', 'c', 3),
+        ....:            ('c', 'd', 4), ('d', 'b', 5)])
+        sage: M = G.matching()
+        sage: len(M) == 2 and all(G.has_edge(u, v) and G.edge_label(u, v) == l
+        ....:                     for u, v, l in M)
+        True
+        sage: len(set(x for u, v, l in M for x in (u, v))) == 4  # one vertex exposed
+        True
+
     Same test with the Linear Program formulation::
 
         sage: g = graphs.PappusGraph()
@@ -2141,24 +2178,30 @@ class MicaliVaziraniMatching:
             ....:                                   graphs.CompleteBipartiteGraph(7, 9)])
             True
 
-        Seeding only reduces the number of phases; it never changes the size of
-        the final maximum matching, which agrees with Edmonds' blossom
-        algorithm::
+        Seeding only reduces the number of phases; it never changes the
+        outcome. The final matching is always **valid** (every edge exists and
+        no vertex is covered twice) and of **maximum** cardinality, agreeing in
+        size with Edmonds' blossom algorithm::
 
-            sage: graph_list = [graphs.PetersenGraph(), graphs.CompleteGraph(9),
-            ....:               graphs.CompleteGraph(11),
-            ....:               graphs.CompleteBipartiteGraph(7, 9)]
-            sage: all(len(MicaliVaziraniMatching(G).get_matching())
-            ....:     == len(G.matching(algorithm='Edmonds')) for G in graph_list)
+            sage: def valid_max_matching(G):
+            ....:     M = MicaliVaziraniMatching(G).get_matching()
+            ....:     covered = [w for u, v, _ in M for w in (u, v)]
+            ....:     valid = (all(G.has_edge(u, v) for u, v, _ in M)
+            ....:              and len(set(covered)) == 2 * len(M))
+            ....:     edmonds = len(G.matching(algorithm='Edmonds'))
+            ....:     return valid and len(M) == edmonds
+            sage: all(valid_max_matching(G) for G in [graphs.PetersenGraph(),
+            ....:                                      graphs.CompleteGraph(9),
+            ....:                                      graphs.CompleteGraph(11),
+            ....:                                      graphs.CompleteBipartiteGraph(7, 9)])
             True
 
         The same holds over many random graphs::
 
             sage: set_random_seed(0)
-            sage: all(len(MicaliVaziraniMatching(G).get_matching())             # long time
-            ....:     == len(G.matching(algorithm='Edmonds'))
-            ....:     for G in (graphs.RandomGNP(randint(2, 40), random())
-            ....:               for _ in range(100)))
+            sage: random_graphs = (graphs.RandomGNP(randint(2, 40), random())
+            ....:                  for _ in range(100))
+            sage: all(valid_max_matching(G) for G in random_graphs)  # long time
             True
         """
 
