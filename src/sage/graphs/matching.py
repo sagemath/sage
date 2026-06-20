@@ -3112,6 +3112,65 @@ class MicaliVaziraniMatching:
 
         return path
 
+    def _is_valid_augmenting_path(self, path: list[int]) -> bool:
+        r"""
+        Return whether ``path`` is a valid augmenting path of the current
+        matching.
+
+        A valid augmenting path is a sequence of distinct vertices of even
+        length (an odd number of edges) that starts and ends at *exposed*
+        (unmatched) vertices, uses only edges of the graph, and strictly
+        alternates unmatched and matched edges: the even-indexed edges
+        ``path[0]--path[1]``, ``path[2]--path[3]``, ... are currently unmatched
+        (and become matched), while the odd-indexed edges are currently
+        matched. This guards :meth:`augment` against toggling a malformed
+        reconstruction.
+
+        INPUT:
+
+        - ``path`` -- list of integers; the candidate alternating path
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
+            sage: MV._is_valid_augmenting_path([0, 1])
+            True
+
+        With the edge ``1--2`` matched, the length-4 path is augmenting::
+
+            sage: MV.mate[1], MV.mate[2] = 2, 1
+            sage: MV._is_valid_augmenting_path([0, 1, 2, 3])
+            True
+
+        Malformed paths are rejected -- an odd number of vertices, a
+        non-existent edge, an already-matched endpoint, or a sequence that does
+        not strictly alternate::
+
+            sage: MV._is_valid_augmenting_path([0, 1, 2])
+            False
+            sage: MV._is_valid_augmenting_path([0, 3])
+            False
+            sage: MV._is_valid_augmenting_path([1, 2])
+            False
+            sage: MV3 = MicaliVaziraniMatching(graphs.PathGraph(4))
+            sage: MV3._is_valid_augmenting_path([0, 1, 2, 3])
+            False
+        """
+        if len(path) < 2 or len(path) % 2 or len(set(path)) != len(path):
+            return False
+        if self.mate[path[0]] != self.EXPOSED or \
+           self.mate[path[-1]] != self.EXPOSED:
+            return False
+        for i in range(len(path) - 1):
+            u, v = path[i], path[i + 1]
+            if not self.G.has_edge(u, v):
+                return False
+            # Even-indexed edges must be unmatched, odd-indexed ones matched.
+            if (self.mate[u] == v) != bool(i % 2):
+                return False
+        return True
+
     # ******************************
     # Augment along a found path
     # ******************************
@@ -3126,9 +3185,11 @@ class MicaliVaziraniMatching:
 
         The two halves of the augmenting path meet at ``bridge``. Each half is
         reconstructed from its support with :meth:`get_path`, the left half is
-        reversed, and the two are spliced into a single free-to-free path. Every
-        edge along that path is toggled (matched edges become unmatched and vice
-        versa), increasing the matching size by one. Finally the path vertices,
+        reversed, and the two are spliced into a single free-to-free path. The
+        spliced path is validated with :meth:`_is_valid_augmenting_path` and,
+        only if it is well formed, every edge along it is toggled (matched edges
+        become unmatched and vice versa), increasing the matching size by one.
+        Finally the path vertices,
         together with any predecessors that become unreachable, are erased from
         the current phase's search structures so that further augmenting paths
         found in the same phase remain vertex-disjoint.
@@ -3163,6 +3224,11 @@ class MicaliVaziraniMatching:
         # bridge vertex
         left_path.reverse()
         path = left_path + right_path
+
+        if not self._is_valid_augmenting_path(path):
+            # Reject a malformed reconstruction rather than corrupt the matching
+            # by toggling a path of wrong length or broken alternation.
+            return False
 
         # ``path`` is an augmenting path: a free-to-free alternating path with
         # an odd number of edges, so its even-indexed edges (path[0]--path[1],
