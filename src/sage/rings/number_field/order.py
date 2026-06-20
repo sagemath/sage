@@ -2196,6 +2196,9 @@ class Order_absolute(Order):
                     s = "Gaussian Integers"
         else:
             s = "Order"
+            if self.number_field().absolute_degree() == 2:
+                f = self.conductor()
+                s += f' of conductor {f}'
         try:
             gens = self.ring_generators()
         except TypeError:
