@@ -1326,8 +1326,7 @@ class Order(Parent, sage.rings.abc.Order):
 
         INPUT:
 
-        - ``as_self_ideal`` -- boolean (default: ``False``); if set to ``True``, return the conductor as an ideal of
-        self, otherwise return it as an ideal of the maximal order.
+        - ``as_self_ideal`` -- boolean (default: ``False``); if set to ``True``, return the conductor as an ideal of self, otherwise return it as an ideal of the maximal order.
 
         ALGORITHM:
 
@@ -1368,9 +1367,12 @@ class Order(Parent, sage.rings.abc.Order):
             (3, 3*a^2 + 3*a, a^2 - 2*a - 2)
 
         TESTS::
-            sage: K.<a> = NumberField(x^3 + 2)
+            sage: K.<a> = NumberField(x^3 - 2)
+            sage: O = K.order(10*a)     # this is example 9.1 from [KP2005]_
             sage: type(O.conductor())
             <class 'sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal'>
+            sage: O.conductor()
+            Fractional ideal (100)
             sage: K.<a> = QuadraticField(-101)
             sage: O = K.order(2*a)
             sage: type(O.conductor())
