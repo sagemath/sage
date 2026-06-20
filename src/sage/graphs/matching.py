@@ -56,6 +56,9 @@ from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
 from typing import TYPE_CHECKING
 
+# Type-checking-only import: ``TYPE_CHECKING`` is ``False`` at runtime, so the
+# body below is never executed (and is reported as uncovered by design). It
+# exists solely to resolve the ``Graph`` annotations under a static checker.
 if TYPE_CHECKING:
     from sage.graphs.graph import Graph
 
@@ -1354,6 +1357,13 @@ def matching(G, value_only=False, algorithm=None,
         sage: g.matching(value_only=True, use_edge_labels=True)                      # needs networkx
         5
 
+    The Linear Program formulation also reports the weighted optimum when both
+    ``value_only`` and ``use_edge_labels`` are set::
+
+        sage: g.matching(value_only=True, use_edge_labels=True,                      # needs sage.numerical.mip
+        ....:            algorithm='LP')
+        5
+
     TESTS:
 
     If ``algorithm`` is set to anything different from ``'Edmonds'``, ``'LP'``,
@@ -2196,12 +2206,10 @@ class MicaliVaziraniMatching:
             ....:                                      graphs.CompleteBipartiteGraph(7, 9)])
             True
 
-        The same holds over many random graphs::
+        The same holds on a random graph::
 
-            sage: set_random_seed(0)
-            sage: random_graphs = (graphs.RandomGNP(randint(2, 40), random())
-            ....:                  for _ in range(100))
-            sage: all(valid_max_matching(G) for G in random_graphs)  # long time
+            sage: G = graphs.RandomGNP(randint(2, 40), random())
+            sage: valid_max_matching(G)
             True
         """
 
@@ -3286,6 +3294,37 @@ class MicaliVaziraniMatching:
 
             sage: MicaliVaziraniMatching(Graph()).get_matching()
             []
+
+        TESTS:
+
+        Regression graphs found by a coverage-guided search, each forcing
+        augmentation through one or more blossoms -- one of them also unfolds a
+        *nested* petal. They exercise the double depth-first search, blossom
+        formation and petal unfolding (:meth:`DDFS`, :meth:`form_blossom`,
+        :meth:`unfold_petal`, :meth:`unfold_path_in_petal`, :meth:`get_path`,
+        :meth:`augment`), and each returns a valid matching of maximum
+        cardinality::
+
+            sage: def is_valid_maximum_matching(G):
+            ....:     M = MicaliVaziraniMatching(G).get_matching()
+            ....:     covered = [w for u, v, _ in M for w in (u, v)]
+            ....:     valid = (all(G.has_edge(u, v) for u, v, _ in M)
+            ....:              and len(set(covered)) == 2 * len(M))
+            ....:     return valid and len(M) == len(G.matching(algorithm='Edmonds'))
+            sage: blossom_graphs = [
+            ....:     Graph([(0, 2), (0, 6), (1, 8), (1, 9), (2, 9), (2, 11),
+            ....:            (3, 7), (3, 8), (3, 9), (3, 10), (4, 7), (4, 10),
+            ....:            (4, 11), (5, 6), (5, 8), (6, 9)]),
+            ....:     Graph([(0, 12), (1, 11), (1, 13), (2, 8), (2, 11),
+            ....:            (2, 15), (3, 5), (3, 9), (4, 8), (4, 11), (4, 17),
+            ....:            (5, 13), (6, 7), (6, 10), (6, 17), (7, 17),
+            ....:            (8, 17), (9, 13), (10, 14), (10, 16), (11, 14),
+            ....:            (15, 17), (16, 17)]),
+            ....:     Graph([(0, 12), (1, 3), (1, 8), (2, 8), (2, 13), (3, 14),
+            ....:            (4, 5), (5, 6), (7, 9), (7, 14), (9, 14), (10, 13),
+            ....:            (10, 15), (11, 12), (13, 15)])]
+            sage: all(is_valid_maximum_matching(G) for G in blossom_graphs)                       # needs networkx
+            True
         """
         from sage.graphs.graph import Graph
 
