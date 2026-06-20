@@ -1371,13 +1371,13 @@ class Order(Parent, sage.rings.abc.Order):
             sage: K.<a> = NumberField(x^3 + 2)
             sage: type(O.conductor())
             <class 'sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal'>
-            sage: K.<a> = NumberField(x^2 + 2)
+            sage: K.<a> = QuadraticField(-101)
             sage: O = K.order(2*a)
             sage: type(O.conductor())
             <class 'sage.rings.integer.Integer'>
             sage: K.discriminant().factor()
             -1 * 2^2 * 101
-            sage: K.order(5*t).discriminant().factor()
+            sage: K.order(5*a).discriminant().factor()
             -1 * 2^2 * 5^2 * 101
         """
 
