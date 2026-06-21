@@ -3584,6 +3584,23 @@ class MicaliVaziraniMatching:
             ....:     for k in (4, 7, 10)
             ....:     for H in (random_relabel(triangle_chain(k)) for _ in range(5)))
             True
+
+        Sparse Erdos--Renyi graphs near the giant-component threshold are where
+        the matching structure is richest -- the giant component is just
+        emerging, there are many odd components, and reaching the maximum takes
+        several augmentation phases. Holding the *expected degree* `c` constant
+        (so the edge probability is `p = c / |V|`) and sweeping `c` across `1`
+        keeps the search in this regime as `|V|` grows, unlike a fixed `p` which
+        makes large graphs nearly complete. The Micali--Vazirani matching is
+        maximum and valid throughout::
+
+            sage: set_random_seed(0)
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for n in (10, 20, 40, 80)
+            ....:     for c in (0.5, 1.0, 1.5, 2.5, 4.0)
+            ....:     for G in [graphs.RandomGNP(n, c / n)])
+            True
         """
         from sage.graphs.graph import Graph
 
