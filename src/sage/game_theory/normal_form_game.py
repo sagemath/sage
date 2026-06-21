@@ -1197,7 +1197,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         return Game.from_arrays(*arrays)
 
-    def save_game(self, path):
+    def save_nfg(self, path):
         r"""
         Save the game to ``path`` in Gambit's strategic-form ``.nfg`` format.
 
@@ -1220,7 +1220,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: A = matrix([[2, 1], [1, 2.5]])
             sage: g = NormalFormGame([A])
             sage: path = tmp_filename(ext='.nfg')
-            sage: g.save_game(path)                          # optional - gambit
+            sage: g.save_nfg(path)                           # optional - gambit
             sage: with open(path) as f:                      # optional - gambit
             ....:     print(f.read()[:5])
             NFG 1
@@ -1231,14 +1231,14 @@ class NormalFormGame(SageObject, MutableMapping):
         with atomic_write(path) as f:   # text mode by default (binary=False)
             f.write(g.to_nfg())
 
-    def load_game(self, path):
+    def load_nfg(self, path):
         r"""
         Populate this game from a Gambit strategic-form ``.nfg`` file.
 
         The file at ``path`` is read with Gambit's ``read_nfg`` reader and the
         resulting Gambit game is converted into this :class:`NormalFormGame`
         in place (see :meth:`_gambit_game`), replacing any existing players and
-        utilities.  This is the inverse of :meth:`save_game`.
+        utilities.  This is the inverse of :meth:`save_nfg`.
 
         INPUT:
 
@@ -1252,9 +1252,9 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = matrix([[4, 3], [2, 1]])
             sage: g = NormalFormGame([A, B])
             sage: path = tmp_filename(ext='.nfg')
-            sage: g.save_game(path)                          # optional - gambit
+            sage: g.save_nfg(path)                           # optional - gambit
             sage: h = NormalFormGame()                       # optional - gambit
-            sage: h.load_game(path); h                       # optional - gambit
+            sage: h.load_nfg(path); h                        # optional - gambit
             Normal Form Game with the following utilities: {(0, 0): [2.0, 4.0],
             (0, 1): [1.0, 3.0],
             (1, 0): [1.0, 2.0],
