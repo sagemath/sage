@@ -2968,25 +2968,69 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             2
         """
+        return self._run_trampoline(self._unfold_petal_generator(vertex, target))
+
+    def _run_trampoline(self, root_call):
+        r"""
+        Drive a generator-based recursion with an explicit stack.
+
+        ``root_call``, and every value it yields, is a generator that performs
+        part of the computation: it ``yield``\ s a sub-generator wherever the
+        recursive version would recurse, and ``return``\ s its result. The
+        result of each finished generator is sent back into its parent. This
+        replaces Python call recursion -- and its stack-depth limit -- by a
+        heap-allocated stack, so :meth:`unfold_petal` and
+        :meth:`unfold_path_in_petal` cannot overflow the interpreter stack on
+        deeply nested blossoms.
+        """
+        call_stack = [root_call]
+        result = None
+        while call_stack:
+            try:
+                # Resume the top call, handing back the result of the sub-call
+                # it last requested (``None`` on its first activation).
+                requested_call = call_stack[-1].send(result)
+            except StopIteration as returned:
+                # The call finished: pop it and hand its result to its caller.
+                result = returned.value
+                call_stack.pop()
+            else:
+                # The call requested a sub-call: run that generator next.
+                call_stack.append(requested_call)
+                result = None
+        return result
+
+    def _unfold_petal_generator(self, vertex, target):
+        r"""
+        Generator form of :meth:`unfold_petal`, driven by
+        :meth:`_run_trampoline`.
+
+        The logic is identical to the recursive version; each recursive call is
+        a ``yield`` of the corresponding sub-generator.
+        """
         path = list()
         petal = self.vertex_petal_map[vertex]
         bud = petal.base
         if self.max_level[vertex] % 2:
-            path = self.unfold_path_in_petal(vertex, bud, petal)
+            path = yield self._unfold_path_in_petal_generator(vertex, bud, petal)
         else:
             red_vertex = petal.peaks[0]
             green_vertex = petal.peaks[1]
             if not self.color[vertex]:
-                left_path = self.unfold_path_in_petal(red_vertex, vertex, petal)
-                right_path = self.unfold_path_in_petal(green_vertex, bud, petal)
+                left_path = yield self._unfold_path_in_petal_generator(
+                    red_vertex, vertex, petal)
+                right_path = yield self._unfold_path_in_petal_generator(
+                    green_vertex, bud, petal)
                 if left_path and right_path:
                     left_path.reverse()
                     path = left_path + right_path
                 else:
                     return []
             elif self.color[vertex]:
-                left_path = self.unfold_path_in_petal(red_vertex, bud, petal)
-                right_path = self.unfold_path_in_petal(green_vertex, vertex, petal)
+                left_path = yield self._unfold_path_in_petal_generator(
+                    red_vertex, bud, petal)
+                right_path = yield self._unfold_path_in_petal_generator(
+                    green_vertex, vertex, petal)
                 if left_path and right_path:
                     right_path.reverse()
                     path = right_path + left_path
@@ -2995,7 +3039,7 @@ class MicaliVaziraniMatching:
         if bud == target:
             return path
         path.pop()
-        petal_path = self.unfold_petal(bud, target)
+        petal_path = yield self._unfold_petal_generator(bud, target)
         return path + petal_path
 
     def unfold_path_in_petal(
@@ -3029,11 +3073,22 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             3
         """
+        return self._run_trampoline(
+            self._unfold_path_in_petal_generator(start_vertex, end_vertex, petal))
+
+    def _unfold_path_in_petal_generator(self, start_vertex, end_vertex, petal):
+        r"""
+        Generator form of :meth:`unfold_path_in_petal`, driven by
+        :meth:`_run_trampoline`.
+
+        The logic is identical to the recursive version; each recursive call is
+        a ``yield`` of the corresponding sub-generator.
+        """
         if start_vertex == end_vertex:
             return [start_vertex]
         if self.vertex_petal_map[start_vertex] != petal:
             new_target = self.vertex_petal_map[start_vertex].base
-            path = self.unfold_petal(start_vertex, new_target)
+            path = yield self._unfold_petal_generator(start_vertex, new_target)
             current_vertex = new_target
         else:
             path = [start_vertex]
@@ -3072,7 +3127,7 @@ class MicaliVaziraniMatching:
                     current_vertex = vertex
                     if self.vertex_petal_map[vertex] != petal and \
                        self.vertex_petal_map[vertex] is not None:
-                        petal_path = self.unfold_petal(
+                        petal_path = yield self._unfold_petal_generator(
                             current_vertex, self.vertex_petal_map[vertex].base)
                         path += petal_path
                         current_vertex = path[-1]
@@ -3083,7 +3138,7 @@ class MicaliVaziraniMatching:
 
                 else:
                     if self.mate[current_vertex] != new_petal:
-                        path_addition = self.unfold_petal(
+                        path_addition = yield self._unfold_petal_generator(
                             new_petal, self.vertex_petal_map[new_petal].base)
                         if not path_addition:
                             return []
@@ -3095,19 +3150,21 @@ class MicaliVaziraniMatching:
                             # digging deeper into the petal
                             path.pop()
                             if self.vertex_petal_map[current_vertex]:
-                                path += self.unfold_petal(
+                                addition = yield self._unfold_petal_generator(
                                     current_vertex,
                                     self.vertex_petal_map[current_vertex].base)
+                                path += addition
                                 current_vertex = \
                                     self.vertex_petal_map[current_vertex].base
                             else:
                                 # bud failure
                                 return []
                     else:
-                        path += self.unfold_path_in_petal(
+                        addition = yield self._unfold_path_in_petal_generator(
                             new_petal,
                             self.vertex_petal_map[new_petal].base,
                             self.vertex_petal_map[new_petal])
+                        path += addition
                         current_vertex = self.vertex_petal_map[new_petal].base
 
         return path
@@ -3184,7 +3241,7 @@ class MicaliVaziraniMatching:
         Augment the current matching along a discovered augmenting path.
 
         The two halves of the augmenting path meet at ``bridge``. Each half is
-        reconstructed from its support with :meth:`get_path`, the left half is
+        reconstructed from its support with :meth:`find_path`, the left half is
         reversed, and the two are spliced into a single free-to-free path. The
         spliced path is validated with :meth:`_is_valid_augmenting_path` and,
         only if it is well formed, every edge along it is toggled (matched edges
@@ -3214,8 +3271,8 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             2
         """
-        left_path = self.get_path(left_support, bridge[0])
-        right_path = self.get_path(right_support, bridge[1])
+        left_path = self.find_path(left_support, bridge[0])
+        right_path = self.find_path(right_support, bridge[1])
         if not left_path or not right_path:
             # Could not construct a valid augmenting path
             return False
@@ -3260,7 +3317,7 @@ class MicaliVaziraniMatching:
         return True
 
     # Procedure to find path after discovering an augmenting path via DDFS
-    def get_path(self, support: list[int], peak: int) -> list[int]:
+    def find_path(self, support: list[int], peak: int) -> list[int]:
         r"""
         Reconstruct one half of an augmenting path from a peak to a free vertex.
 
@@ -3399,7 +3456,7 @@ class MicaliVaziraniMatching:
         augmentation through one or more blossoms -- one of them also unfolds a
         *nested* petal. They exercise the double depth-first search, blossom
         formation and petal unfolding (:meth:`DDFS`, :meth:`form_blossom`,
-        :meth:`unfold_petal`, :meth:`unfold_path_in_petal`, :meth:`get_path`,
+        :meth:`unfold_petal`, :meth:`unfold_path_in_petal`, :meth:`find_path`,
         :meth:`augment`), and each returns a valid matching of maximum
         cardinality::
 
