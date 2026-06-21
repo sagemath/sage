@@ -1857,9 +1857,9 @@ class MicaliVaziraniMatching:
 
     The computation proceeds in *phases* (see :meth:`search`). Each phase runs
     a breadth-first search from the currently unmatched vertices that assigns
-    to every vertex a *min_level* and a *max_level* -- the lengths of a shortest
+    to every vertex a ``min_level`` and a ``max_level`` -- the lengths of a shortest
     even- and odd-length alternating path from a free vertex -- and classifies
-    every edge as either a *prop* (an edge of a min_level path) or a *bridge*.
+    every edge as either a *prop* (an edge of a ``min_level`` path) or a *bridge*.
     Bridges are bucketed by their *tenacity* and processed by a double
     depth-first search (:meth:`DDFS`), which either reports a *bottleneck*
     around which an odd structure is contracted into a blossom (stored as a
@@ -2305,7 +2305,7 @@ class MicaliVaziraniMatching:
         Reset the per-phase search state before a new phase.
 
         Every matched vertex is given infinite levels; every unmatched (free)
-        vertex is put at min_level `0` and becomes a root of the next
+        vertex is put at ``min_level`` `0` and becomes a root of the next
         breadth-first search. Predecessor/successor lists, petal and bud maps,
         colours, scanned-edge marks and the tenacity buckets are all cleared.
 
@@ -2353,7 +2353,7 @@ class MicaliVaziraniMatching:
 
     def min_level(self, vertex: int) -> int:
         r"""
-        Return the min_level of ``vertex``: ``min(even_level, odd_level)``.
+        Return the ``min_level`` of ``vertex``: ``min(even_level, odd_level)``.
 
         EXAMPLES::
 
@@ -2367,7 +2367,7 @@ class MicaliVaziraniMatching:
 
     def max_level(self, vertex: int) -> int:
         r"""
-        Return the max_level of ``vertex``: ``max(even_level, odd_level)``.
+        Return the ``max_level`` of ``vertex``: ``max(even_level, odd_level)``.
 
         EXAMPLES::
 
@@ -2384,12 +2384,12 @@ class MicaliVaziraniMatching:
     # ******************************
     def MIN(self, search_level: int) -> bool:
         r"""
-        Run one breadth-first step of the min_level search.
+        Run one breadth-first step of the ``min_level`` search.
 
         From the vertices currently at ``search_level``, scan the
         appropriate-parity edges (unmatched edges from even levels, matched
         edges from odd levels). A neighbor reached for the first time is
-        assigned min_level ``search_level + 1``, the scanned edge becomes a
+        assigned ``min_level`` ``search_level + 1``, the scanned edge becomes a
         *prop* and the current vertex is recorded as its predecessor; an edge
         to an already-levelled vertex is a *bridge* and is filed under its
         tenacity for :meth:`MAX` to process.
@@ -2404,7 +2404,7 @@ class MicaliVaziraniMatching:
         EXAMPLES:
 
         With an empty matching every vertex is free at level `0`, so the first
-        min_level step finds no new levels to assign::
+        ``min_level`` step finds no new levels to assign::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
@@ -2477,7 +2477,7 @@ class MicaliVaziraniMatching:
         bridge yields a shortest augmenting path, which is augmented
         (:meth:`augment`); otherwise they collapse to a *bottleneck* and the
         enclosed odd structure is contracted into a blossom
-        (:meth:`form_blossom`) whose vertices are given their max_levels
+        (:meth:`form_blossom`) whose vertices are given their ``max_levels``
         (:meth:`label_max`).
 
         INPUT:
@@ -2540,11 +2540,11 @@ class MicaliVaziraniMatching:
     # ******************************
     def label_max(self, support: list[int], search_level: int) -> None:
         r"""
-        Assign max_levels to the vertices of a freshly formed blossom.
+        Assign ``max_levels`` to the vertices of a freshly formed blossom.
 
-        For every vertex of ``support`` the max_level is set to
+        For every vertex of ``support`` the ``max_level`` is set to
         ``2 * search_level + 1 - min_level``; vertices that thereby acquire an
-        even max_level can open further bridges, which are filed under their
+        even ``max_level`` can open further bridges, which are filed under their
         tenacity (once finite) for later levels.
 
         INPUT:
