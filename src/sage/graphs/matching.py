@@ -3557,6 +3557,33 @@ class MicaliVaziraniMatching:
             sage: is_valid_maximum_matching(                                          # long time, needs networkx
             ....:     G, get_matching_from_empty(G))
             True
+
+        Relabelling the vertices must not change the outcome. The internal
+        indices `0, 1, \ldots, n - 1` are assigned in vertex-iteration order,
+        so the bridge bucketing and the double depth-first search can be
+        sensitive to the labelling. Applying several random label permutations
+        to the regression blossom graphs (and to the triangle chains, run
+        without the greedy seed so augmentation is forced through the
+        blossoms) and checking that each still yields a valid maximum matching
+        guards against an order-dependence bug that a single fixed labelling
+        would hide::
+
+            sage: def random_relabel(G):
+            ....:     verts = list(G)
+            ....:     targets = list(verts)
+            ....:     shuffle(targets)
+            ....:     return G.relabel(perm=dict(zip(verts, targets)), inplace=False)
+            sage: set_random_seed(0)
+            sage: all(is_valid_maximum_matching(H,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(H).get_matching())
+            ....:     for G in blossom_graphs
+            ....:     for H in (random_relabel(G) for _ in range(5)))
+            True
+            sage: all(is_valid_maximum_matching(H,                                     # needs networkx
+            ....:         get_matching_from_empty(H))
+            ....:     for k in (4, 7, 10)
+            ....:     for H in (random_relabel(triangle_chain(k)) for _ in range(5)))
+            True
         """
         from sage.graphs.graph import Graph
 
