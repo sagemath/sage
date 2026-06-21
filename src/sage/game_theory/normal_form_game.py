@@ -324,11 +324,11 @@ matrices(without specifying the utilities), an error is returned::
     sage: f.obtain_nash()
     Traceback (most recent call last):
     ...
-    ValueError: utilities have not been populated
+    ValueError: utilities have not been populated; ...
     sage: f.payoff_matrices()
     Traceback (most recent call last):
     ...
-    ValueError: utilities have not been populated
+    ValueError: utilities have not been populated; ...
 
 Here we populate the missing utilities::
 
@@ -1226,7 +1226,10 @@ class NormalFormGame(SageObject, MutableMapping):
             NFG 1
         """
         if Game is None:
-            raise NotImplementedError("gambit is not installed")
+            raise NotImplementedError(
+                "save_nfg() requires the optional gambit package; "
+                "install it with: pip install pygambit"
+            )
         g = self._gambit_()
         with atomic_write(path) as f:   # text mode by default (binary=False)
             f.write(g.to_nfg())
@@ -1261,7 +1264,10 @@ class NormalFormGame(SageObject, MutableMapping):
             (1, 1): [2.5, 1.0]}
         """
         if Game is None:
-            raise NotImplementedError("gambit is not installed")
+            raise NotImplementedError(
+                "load_nfg() requires the optional gambit package; "
+                "install it with: pip install pygambit"
+            )
         game = read_nfg(path)
         self._gambit_game(game)
 
@@ -1343,7 +1349,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g.payoff_matrices()
             Traceback (most recent call last):
             ...
-            ValueError: utilities have not been populated
+            ValueError: utilities have not been populated; ...
 
         The above creates a 2 player game where each player has
         a single strategy. Here we populate the strategies and
@@ -1357,7 +1363,12 @@ class NormalFormGame(SageObject, MutableMapping):
             raise ValueError("Only available for 2 player games")
 
         if not self._is_complete():
-            raise ValueError("utilities have not been populated")
+            raise ValueError(
+                "utilities have not been populated; set a payoff value for "
+                "every strategy profile, e.g. game[0, 1][0] = 3, or "
+                "construct the game from payoff matrices via "
+                "NormalFormGame([A, B])"
+            )
 
         m1 = matrix(QQ, self.players[0].num_strategies, self.players[1].num_strategies)
         m2 = matrix(QQ, self.players[0].num_strategies, self.players[1].num_strategies)
@@ -1710,7 +1721,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: cg.obtain_nash(algorithm='lp', solver='glpk')
             Traceback (most recent call last):
             ...
-            ValueError: Input game needs to be a two player constant sum game
+            ValueError: the 'lp' algorithm only works for two-player constant-sum games, ...
 
         Here is an example of a 3 by 2 game with 3 Nash equilibrium::
 
@@ -1783,9 +1794,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g.obtain_nash(algorithm='invalid')
             Traceback (most recent call last):
             ...
-            ValueError: 'algorithm' should be set to 'enumeration', 'LCP',
-            'lp', 'lrs' for 2 player games or one of 'gnm', 'enumpure',
-            'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit' for any number of players
+            ValueError: unknown algorithm 'invalid' for a 2-player game; ...
             sage: g.obtain_nash(algorithm='lp', solver='invalid')
             Traceback (most recent call last):
             ...
@@ -1793,7 +1802,12 @@ class NormalFormGame(SageObject, MutableMapping):
              (in which case the default one is used), or a callable.
         """
         if not self._is_complete():
-            raise ValueError("utilities have not been populated")
+            raise ValueError(
+                "utilities have not been populated; set a payoff value for "
+                "every strategy profile, e.g. game[0, 1][0] = 3, or "
+                "construct the game from payoff matrices via "
+                "NormalFormGame([A, B])"
+            )
 
         from sage.features.lrs import LrsNash
         if not algorithm:
@@ -1815,7 +1829,10 @@ class NormalFormGame(SageObject, MutableMapping):
 
             if algorithm == "LCP":
                 if Game is None:
-                    raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
+                    raise RuntimeError(
+                        "the 'LCP' algorithm requires the optional gambit "
+                        "package; install it with: pip install pygambit"
+                    )  # should later become a FeatureNotFoundError
                 return self._use_gambit_solver('lcp', maximization)
 
             if algorithm.startswith('lp'):
@@ -1831,10 +1848,19 @@ class NormalFormGame(SageObject, MutableMapping):
                              "simpdiv", "ipa", "logit"}
         if algorithm in gambit_algorithms:
             if Game is None:
-                raise RuntimeError("gambit not found")  # should later become a FeatureNotFoundError
+                raise RuntimeError(
+                    f"the '{algorithm}' algorithm requires the optional gambit "
+                    "package; install it with: pip install pygambit"
+                )  # should later become a FeatureNotFoundError
             return self._use_gambit_solver(algorithm, maximization)
 
-        raise ValueError("'algorithm' should be set to 'enumeration', 'LCP', 'lp', 'lrs' for 2 player games or one of 'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit' for any number of players")
+        n = len(self.players)
+        raise ValueError(
+            f"unknown algorithm {algorithm!r} for a {n}-player game; "
+            "for 2-player games use 'enumeration', 'lrs', 'LCP', or 'lp', "
+            "and for any number of players use one of the gambit solvers: "
+            "'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'"
+        )
 
     def _solve_lrs(self, maximization=True):
         r"""
@@ -2112,11 +2138,13 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: c._use_gambit_solver('invalid')
             Traceback (most recent call last):
             ...
-            ValueError: 'algorithm' should be one of 'lcp', 'lp', 'gnm',
-            'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'
+            ValueError: unknown gambit algorithm 'invalid'; ...
         """
         if Game is None:
-            raise NotImplementedError("gambit is not installed")
+            raise NotImplementedError(
+                f"the '{algorithm}' algorithm requires the optional gambit "
+                "package; install it with: pip install pygambit"
+            )
 
         g = self._gambit_(maximization=maximization)
         # Each solver has its own calling convention: ``lcp``/``lp`` take a
@@ -2136,8 +2164,12 @@ class NormalFormGame(SageObject, MutableMapping):
 
         algorithm = algorithm.lower()
         if algorithm not in solvers:
-            raise ValueError("'algorithm' should be one of 'lcp', 'lp', 'gnm', "
-                             "'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'")
+            raise ValueError(
+                f"unknown gambit algorithm {algorithm!r}; "
+                "supported values are 'lcp' and 'lp' (2-player games only) "
+                "and 'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', "
+                "'ipa', 'logit' (any number of players)"
+            )
 
         result = solvers[algorithm]()
         nasheq = self._extract_gambit_equilibria(result.equilibria)
@@ -2191,10 +2223,14 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: g._solve_LP()
             Traceback (most recent call last):
             ...
-            ValueError: Input game needs to be a two player constant sum game
+            ValueError: the 'lp' algorithm only works for two-player constant-sum games, ...
         """
         if not self.is_constant_sum():
-            raise ValueError("Input game needs to be a two player constant sum game")
+            raise ValueError(
+                "the 'lp' algorithm only works for two-player constant-sum "
+                "games, but this game is not constant-sum; use "
+                "algorithm='enumeration', 'lrs', or 'LCP' instead"
+            )
         if solver == 'gambit':
             return self._use_gambit_solver('lp', maximization)
 
