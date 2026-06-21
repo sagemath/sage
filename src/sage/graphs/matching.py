@@ -3486,18 +3486,21 @@ class MicaliVaziraniMatching:
 
         Regression graphs found by a coverage-guided search, each forcing
         augmentation through one or more blossoms -- one of them also unfolds a
-        *nested* petal. They exercise the double depth-first search, blossom
-        formation and petal unfolding (:meth:`DDFS`, :meth:`form_blossom`,
-        :meth:`unfold_petal`, :meth:`unfold_path_in_petal`, :meth:`find_path`,
-        :meth:`augment`), and each returns a valid matching of maximum
-        cardinality::
+        *nested* petal. For these graphs the greedy seed (see
+        :meth:`compute_initial_maximal_matching`) is non-empty but one short of
+        a maximum matching, so an augmentation -- and hence a petal unfolding --
+        happens even with the seed in place (unlike the triangle chains below,
+        which the greedy seed already solves). They exercise the double
+        depth-first search, blossom formation and petal unfolding
+        (:meth:`DDFS`, :meth:`form_blossom`, :meth:`unfold_petal`,
+        :meth:`unfold_path_in_petal`, :meth:`find_path`, :meth:`augment`), and
+        each returns a valid matching of maximum cardinality::
 
-            sage: def is_valid_maximum_matching(G):
-            ....:     M = MicaliVaziraniMatching(G).get_matching()
+            sage: def is_valid_maximum_matching(G, M):
             ....:     covered = [w for u, v, _ in M for w in (u, v)]
-            ....:     valid = (all(G.has_edge(u, v) for u, v, _ in M)
-            ....:              and len(set(covered)) == 2 * len(M))
-            ....:     return valid and len(M) == len(G.matching(algorithm='Edmonds'))
+            ....:     return (all(G.has_edge(u, v) for u, v, _ in M)
+            ....:             and len(set(covered)) == 2 * len(M)
+            ....:             and len(M) == len(G.matching(algorithm='Edmonds')))
             sage: blossom_graphs = [
             ....:     Graph([(0, 2), (0, 6), (1, 8), (1, 9), (2, 9), (2, 11),
             ....:            (3, 7), (3, 8), (3, 9), (3, 10), (4, 7), (4, 10),
@@ -3510,7 +3513,49 @@ class MicaliVaziraniMatching:
             ....:     Graph([(0, 12), (1, 3), (1, 8), (2, 8), (2, 13), (3, 14),
             ....:            (4, 5), (5, 6), (7, 9), (7, 14), (9, 14), (10, 13),
             ....:            (10, 15), (11, 12), (13, 15)])]
-            sage: all(is_valid_maximum_matching(G) for G in blossom_graphs)                       # needs networkx
+            sage: all(is_valid_maximum_matching(G,                                    # needs networkx
+            ....:     MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in blossom_graphs)
+            True
+
+        Skipping the greedy seed (an optional optimization that only reduces the
+        number of phases) forces the algorithm to build the matching from empty
+        by augmentation alone; on a chain of triangles this routes augmenting
+        paths through the blossoms, exercising the petal-unfolding trampoline
+        (:meth:`unfold_petal` / :meth:`unfold_path_in_petal`). The result is
+        still a valid matching of maximum cardinality::
+
+            sage: def triangle_chain(num_triangles):
+            ....:     edges = []
+            ....:     for i in range(num_triangles):
+            ....:         edges += [(3*i, 3*i+1), (3*i+1, 3*i+2), (3*i+2, 3*i)]
+            ....:     for i in range(num_triangles - 1):
+            ....:         edges.append((3*i+2, 3*i+3))
+            ....:     return Graph(edges)
+            sage: def get_matching_from_empty(G):
+            ....:     mv = MicaliVaziraniMatching(G)
+            ....:     mv.compute_initial_maximal_matching = lambda: None
+            ....:     return mv.get_matching()
+            sage: seeded = MicaliVaziraniMatching(triangle_chain(3))
+            sage: seeded.compute_initial_maximal_matching()       # the real greedy seed
+            sage: seeded.matching_size > 0                        # matches several edges
+            True
+            sage: unseeded = MicaliVaziraniMatching(triangle_chain(3))
+            sage: unseeded.compute_initial_maximal_matching = lambda: None
+            sage: unseeded.compute_initial_maximal_matching()     # neutralised
+            sage: unseeded.matching_size                          # genuinely empty
+            0
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:    get_matching_from_empty(G))
+            ....:     for G in (triangle_chain(k) for k in range(1, 21)))
+            True
+
+        The same holds on a deep chain; the petal unfolding is iterative, so it
+        does not overflow the recursion limit::
+
+            sage: G = triangle_chain(60)
+            sage: is_valid_maximum_matching(                                          # long time, needs networkx
+            ....:     G, get_matching_from_empty(G))
             True
         """
         from sage.graphs.graph import Graph
