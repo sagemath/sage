@@ -3300,27 +3300,38 @@ class QuaternionOrder(Parent):
         # Otherwise, there might be other unknown alpha's giving isomorphism. If so we can't find them.
         raise NotImplementedError("isomorphism_to was not able to recognize the given orders as isomorphic")
 
-    def represent_integer(self, n):
+    def represent_integer(self, n, smooth_bound=None, *, full=True):
         r"""
-        Given a positive integer `n`, attempt to compute a quaternion in this order
-        whose (reduced) norm equals `n`.
+        Given a positive integer `n`, compute a quaternion in this order whose
+        (reduced) norm equals `n`. If no such element exists, ``None`` is returned.
+
+        INPUT:
+
+        - ``n`` -- positive integer
+
+        - ``smooth_bound`` -- positive integer or (default) ``None``;
+          specifies an upper bound on the prime factors this method attempts
+          to extract prior to representing integers by binary quadratic forms
+
+        - ``full`` -- boolean (default: ``True``); specifies whether to search
+          for solutions in the entire order or merely in a convenient suborder.
 
         .. WARNING::
 
-            This method does not guarantee success: If it does not *find* a solution,
-            that does **not** imply that there does not *exist* a solution.
+            If ``full`` is set to ``False`` or ``smooth_bound`` is given, this
+            method may fail to find a solution even if one exists.
 
         .. NOTE::
 
-            This method currently only works for orders containing `1,i,j,k`
-            in definite quaternion algebras.
+            This method heuristically runs in polynomial time (in the bit length
+            of the input) if all of the following constraints hold:
 
-        .. NOTE::
+            - The shortest trace-zero element of this quaternion order has small norm;
+            - ``smooth_bound`` is small;
+            - ``full`` is ``False`` or there exists a basis of the order that is close to orthogonal
 
-            This method requires `q = -i^2` to be "small" in order to have
-            any chance at succeeding before the heat death of the universe.
-            (The complexity scales approximately linearly with the class
-            number of `\ZZ[\sqrt{-q}]`.)
+            (Here, "small" means polynomial in the bit length of the discriminant
+            of this order.)
 
         EXAMPLES::
 
@@ -3328,46 +3339,126 @@ class QuaternionOrder(Parent):
             sage: O = B.maximal_order(); O
             Order of Quaternion Algebra (-1, -419) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
             sage: O.represent_integer(5)
-            2 + i
+            2 - i
             sage: O.represent_integer(1019)
+            -8 - 7/2*i - 3/2*k
+            sage: O.represent_integer(1019, full=False)  # random
             10 + 9*i + j + k
 
-        ALGORITHM: [KLPT2014]_, §3.2
+        ::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-3, -419)
+            sage: O = B.quaternion_order([1,
+            ....:                         1/2 - 11911/23944*i - 33/11972*j + 45/23944*k,
+            ....:                         15503/23944*i + 3487/11972*j + 13203/23944*k,
+            ....:                         -12989/23944*i + 11639/11972*j + 3175/23944*k])
+            sage: O.represent_integer(7)
+            5/2 + 11911/23944*i + 33/11972*j - 45/23944*k
+
+        ::
+
+            sage: p = 2^127 - 1
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -p)
+            sage: O = B.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+            sage: print(O.represent_integer(2^127 + 100))
+            10 + i + k
+            sage: print(O.represent_integer(2^127 + 101))
+            9247344907038065505 + 9199336695150709798*i
+            sage: print(O.represent_integer(2^127 + 102))
+            None
+            sage: print(O.represent_integer(2^127 + 103))
+            18007179761979493019/2 - 6822115276825140697*i + 1/2*k
+            sage: print(O.represent_integer(2^127 + 103, full=False))
+            -10 - 2*i + k
+            sage: print(O.represent_integer(2^127 + 103, smooth_bound=1))
+            None
+            sage: print(O.represent_integer(2^127 + 103, smooth_bound=100))
+            -10 - 2*i + k
+            sage: print(O.represent_integer(2^127 + 303))
+            17652745271232707461/2 + 7049896005799996563*i + 1/2*k
+            sage: print(O.represent_integer(2^127 + 303, full=False))
+            None
+
+        ALGORITHM: Generalized variant of [KLPT2014]_, §3.2, with ideas taken
+        from the ``FullRepresentInteger`` algorithm of [DFLLW2023]_.
         """
         n = ZZ(n)
+        if n < 0:
+            raise ValueError('target norm must be non-negative')
+        if not n:
+            return self.zero()
+        if n.is_one():
+            return self.one()
 
-        B = self.quaternion_algebra()
-        ii, jj, kk = B.gens()
-        if ii not in self or jj not in self:
-            raise NotImplementedError('only implemented for orders containing 1,i,j,k')
+        basis = self.unit_ideal().reduced_basis()
+        _, ii, jj, __ = basis
+        assert _ in (self.one(), -self.one())
+
+        # find orthogonal elements ii, jj with norm(ii) minimal
+        # these do not necessarily generate the full order!
+        ee = self.one()
+        ii -= ii.reduced_trace() / 2
+        ii *= self.basis_matrix().solve_left(vector(ii)).denominator()
+        jj -= jj.reduced_trace() / 2
+        jj -= jj.pair(ii) / 2 * ii
+        jj *= self.basis_matrix().solve_left(vector(jj)).denominator()
+        kk = ii * jj
+        assert ii in self and jj in self and kk in self
 
         from sage.quadratic_forms.binary_qf import BinaryQF
-        if not all(v in ZZ for v in B.invariants()):
-            raise NotImplementedError('only implemented for integral algebra invariants')
-        q, p = (-ZZ(v) for v in B.invariants())
-        if q <= 0 or p <= 0:
-            raise NotImplementedError('only implemented for definite quaternion algebras')
+        q, p = (-ZZ(g**2) for g in (ii, jj))
+        assert q >= 1 and p >= 1
         nf = BinaryQF(1, 0, q)
 
+        nn = n
+        if full:
+            O = self.quaternion_algebra().fractional_ideal([1, ii, jj, ii*jj])
+            f = O.basis_matrix().solve_left(self.basis_matrix()).denominator()
+            nn *= f**2
+
         from sage.misc.functional import isqrt
-        cbnd = isqrt(n / 2 / p)
-        dbnd = isqrt(n / 2 / p / q)
 
-        from sage.misc.mrange import cantor_product
+        def _abcd():
+            cbnd = isqrt(nn / p)
+            for c in range(cbnd + 1):
+                n0 = nn - p * nf(c,0)
+                assert n0 >= 0
 
-        for c,d in cantor_product(range(cbnd + 1), range(dbnd + 1)):
-            n1 = n - p * nf(c,d)
-            if not n1.is_pseudoprime():  # or otherwise "Cornacchia-friendly"
-                continue
+                dbnd = isqrt(n0 / p / q)
+                for d in range(dbnd + 1):
+                    n1 = nn - p * nf(c,d)
+                    assert n1 >= 0
 
-            sol = nf.solve_integer(n1, algorithm='cornacchia')
-            if sol is not None:
-                a, b = sol
-                break
+                    if n1 <= 1:
+                        yield n1, 0, c, d
+                        continue
+
+                    if smooth_bound == 1:
+                        fac = (n1, 1),
+                    else:
+                        fac = n1.factor(limit=smooth_bound)
+
+                    if not fac[-1][0].is_pseudoprime():
+                        continue
+
+                    algo = 'cornacchia' if len(fac) == 1 and fac[0][1] == 1 else 'general'
+                    sol = nf.solve_integer(n1, algorithm=algo)
+                    if sol is None:
+                        continue
+                    a, b = sol
+
+                    yield a, b, c, d
+
+        for a, b, c, d in _abcd():
+            elt = a * self.one() + b * ii + c * jj + d * kk
+            if full:
+                elt /= f
+                if elt not in self:
+                    continue
+            break
         else:
             return
 
-        elt = B([a, b, c, d])
         assert elt in self
         assert elt.reduced_norm() == n
         return elt
