@@ -3784,6 +3784,32 @@ class MicaliVaziraniMatching:
             6
             sage: is_valid_maximum_matching(G, M)                                      # needs networkx
             True
+
+        The algorithm is a pure function: two independent runs on the same
+        graph return the same set of matched edges, a guard against any
+        dependence on the iteration order of the internal sets::
+
+            sage: def canonical(M):
+            ....:     return sorted((min(u, v), max(u, v)) for u, v, _ in M)
+            sage: all(canonical(MicaliVaziraniMatching(G).get_matching())
+            ....:         == canonical(MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in (graphs.PetersenGraph(), three_triangle_chain(6),
+            ....:               graphs.ToroidalGrid2dGraph(3, 5)))
+            True
+
+        The returned object honours the documented contract: it is an
+        :class:`~sage.graphs.views.EdgesView` whose edges are genuine edges of
+        `G`, carried on the original vertex labels::
+
+            sage: from sage.graphs.views import EdgesView
+            sage: G = graphs.PetersenGraph()
+            sage: M = MicaliVaziraniMatching(G).get_matching()
+            sage: isinstance(M, EdgesView)
+            True
+            sage: all(G.has_edge(u, v) for u, v, _ in M)
+            True
+            sage: set(w for u, v, _ in M for w in (u, v)) <= set(G)
+            True
         """
         from sage.graphs.graph import Graph
 
