@@ -3601,6 +3601,89 @@ class MicaliVaziraniMatching:
             ....:     for c in (0.5, 1.0, 1.5, 2.5, 4.0)
             ....:     for G in [graphs.RandomGNP(n, c / n)])
             True
+
+        Joining consecutive triangles by *three* edges (one per vertex) nests
+        the blossoms inside one another, so augmenting through the chain
+        exercises the petal unfolding at depth. The greedy seed already solves
+        such a chain, so we check both the seeded result and -- to actually
+        drive the nested unfolding -- the unseeded one (built entirely by
+        augmentation); each is a valid maximum matching::
+
+            sage: def three_triangle_chain(num_triangles):
+            ....:     edges = []
+            ....:     for i in range(num_triangles):
+            ....:         edges += [(3*i, 3*i+1), (3*i+1, 3*i+2), (3*i+2, 3*i)]
+            ....:     for i in range(num_triangles - 1):
+            ....:         edges += [(3*i, 3*i+3), (3*i+1, 3*i+4), (3*i+2, 3*i+5)]
+            ....:     return Graph(edges)
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in (three_triangle_chain(k) for k in range(1, 13)))
+            True
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         get_matching_from_empty(G))
+            ....:     for G in (three_triangle_chain(k) for k in range(1, 13)))
+            True
+
+        The deep nested chain must not overflow the recursion limit, since the
+        petal unfolding is iterative::
+
+            sage: G = three_triangle_chain(60)
+            sage: is_valid_maximum_matching(                                           # long time, needs networkx
+            ....:     G, get_matching_from_empty(G))
+            True
+
+        Across a range of sizes, paths, cycles (odd cycles exercise blossoms),
+        complete, wheel and star graphs (a star's maximum matching is a single
+        edge), together with the complete bipartite graphs, all agree with
+        Edmonds' algorithm::
+
+            sage: structured = [gen(n) for n in range(2, 12)
+            ....:                for gen in (graphs.PathGraph, graphs.CycleGraph,
+            ....:                            graphs.CompleteGraph,
+            ....:                            graphs.WheelGraph, graphs.StarGraph)]
+            sage: structured += [graphs.CompleteBipartiteGraph(a, b)
+            ....:                 for a in range(1, 6) for b in range(1, 6)]
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in structured)
+            True
+
+        Two-dimensional grids (whose vertices are coordinate tuples) are matched
+        correctly::
+
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in (graphs.Grid2dGraph(r, c)
+            ....:               for r, c in [(2, 2), (2, 3), (3, 3),
+            ....:                            (3, 4), (4, 4), (3, 5)]))
+            True
+
+        A broad sweep of Erdos--Renyi graphs over sizes and densities, plus an
+        assorted batch at random densities, all match Edmonds (seeded for
+        reproducibility)::
+
+            sage: from sage.misc.prandom import randint, random
+            sage: dense = [graphs.RandomGNP(n, p) for n in range(2, 30)            # long time
+            ....:          for p in (0.1, 0.25, 0.5, 0.75, 0.9)]
+            sage: assorted = [graphs.RandomGNP(randint(10, 40), random())          # long time
+            ....:             for _ in range(40)]
+            sage: all(is_valid_maximum_matching(G,                                     # long time, needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in dense + assorted)
+            True
+
+        Graphs whose greedy maximal seed is far from maximum -- a long even
+        path and a comb (a spine with a pendant at every vertex) -- force many
+        augmentation phases on top of the seed, and still reach the maximum::
+
+            sage: long_path = Graph([(i, i + 1) for i in range(40)])
+            sage: comb = Graph([(i, i + 1) for i in range(20)]
+            ....:              + [(i, 100 + i) for i in range(21)])
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in (long_path, comb))
+            True
         """
         from sage.graphs.graph import Graph
 
