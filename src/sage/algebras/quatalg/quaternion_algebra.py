@@ -3396,7 +3396,6 @@ class QuaternionOrder(Parent):
 
         # find orthogonal elements ii, jj with norm(ii) minimal
         # these do not necessarily generate the full order!
-        ee = self.one()
         ii -= ii.reduced_trace() / 2
         ii *= self.basis_matrix().solve_left(vector(ii)).denominator()
         jj -= jj.reduced_trace() / 2
