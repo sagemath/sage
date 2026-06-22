@@ -3682,6 +3682,47 @@ class MicaliVaziraniMatching:
             ....:         MicaliVaziraniMatching(G).get_matching())
             ....:     for G in (long_path, comb))
             True
+
+        Highly symmetric graphs are a stress test for the bridge handling: a
+        vertex-transitive graph presents many bridges of the same tenacity at
+        once, so a single search level fires the double depth-first search
+        repeatedly. The classical cubic semi-symmetric / arc-transitive graphs
+        and the larger five-regular Sylvester graph are all matched to maximum
+        cardinality::
+
+            sage: symmetric = [graphs.HeawoodGraph(), graphs.MoebiusKantorGraph(),
+            ....:               graphs.PappusGraph(), graphs.DesarguesGraph(),
+            ....:               graphs.SylvesterGraph(),
+            ....:               graphs.CubeGraph(2), graphs.CubeGraph(3),
+            ....:               graphs.CubeGraph(4)]
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in symmetric)
+            True
+
+        The balanced bipartite members (the cubic incidence graphs and the
+        hypercubes) have perfect matchings, which the algorithm recovers
+        without needing any optional package::
+
+            sage: bipartite_regular = [graphs.HeawoodGraph(),
+            ....:                       graphs.MoebiusKantorGraph(),
+            ....:                       graphs.PappusGraph(),
+            ....:                       graphs.DesarguesGraph(),
+            ....:                       graphs.CubeGraph(2), graphs.CubeGraph(3),
+            ....:                       graphs.CubeGraph(4)]
+            sage: all(2 * len(MicaliVaziraniMatching(G).get_matching()) == G.order()
+            ....:     for G in bipartite_regular)
+            True
+
+        The bipartite members above form no blossoms (no odd cycles), so the
+        greedy seed only changes the number of phases there. The Sylvester
+        graph is *not* bipartite, so neutralising the seed and building its
+        matching purely by augmentation guarantees that blossoms are formed and
+        unfolded from scratch; the result is still a valid maximum matching::
+
+            sage: G = graphs.SylvesterGraph()
+            sage: is_valid_maximum_matching(G, get_matching_from_empty(G))             # needs networkx
+            True
         """
         from sage.graphs.graph import Graph
 
