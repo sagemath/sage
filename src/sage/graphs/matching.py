@@ -3573,7 +3573,6 @@ class MicaliVaziraniMatching:
             ....:     targets = list(verts)
             ....:     shuffle(targets)
             ....:     return G.relabel(perm=dict(zip(verts, targets)), inplace=False)
-            sage: set_random_seed(0)
             sage: all(is_valid_maximum_matching(H,                                     # needs networkx
             ....:         MicaliVaziraniMatching(H).get_matching())
             ....:     for G in blossom_graphs
@@ -3594,7 +3593,6 @@ class MicaliVaziraniMatching:
         makes large graphs nearly complete. The Micali--Vazirani matching is
         maximum and valid throughout::
 
-            sage: set_random_seed(0)
             sage: all(is_valid_maximum_matching(G,                                     # needs networkx
             ....:         MicaliVaziraniMatching(G).get_matching())
             ....:     for n in (10, 20, 40, 80)
