@@ -3723,6 +3723,67 @@ class MicaliVaziraniMatching:
             sage: G = graphs.SylvesterGraph()
             sage: is_valid_maximum_matching(G, get_matching_from_empty(G))             # needs networkx
             True
+
+        Toroidal grids wrap around, so the graph is four-regular and
+        vertex-transitive; when a side is odd the torus is not bipartite and
+        augmentation must contract odd cycles into blossoms. Across several
+        shapes the matching is maximum and valid::
+
+            sage: tori = [graphs.ToroidalGrid2dGraph(p, q)
+            ....:         for p, q in [(3, 3), (3, 4), (4, 4),
+            ....:                      (3, 5), (4, 5), (4, 6)]]
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in tori)
+            True
+
+        On an odd-by-odd torus (non-bipartite, odd order so exactly one vertex
+        stays exposed) building the matching from scratch guarantees blossom
+        formation, and the near-perfect matching is still found::
+
+            sage: G = graphs.ToroidalGrid2dGraph(3, 5)
+            sage: M = get_matching_from_empty(G)
+            sage: 2 * len(M) == G.order() - 1
+            True
+            sage: is_valid_maximum_matching(G, M)                                      # needs networkx
+            True
+
+        Factor-critical graphs have a near-perfect matching -- deleting any one
+        vertex leaves a perfectly matchable graph, so a maximum matching of the
+        whole graph covers all but one vertex. The friendship graph (``k``
+        triangles sharing a common vertex) is factor-critical, and the
+        algorithm leaves exactly one vertex exposed (no optional package
+        needed)::
+
+            sage: friendship = [graphs.FriendshipGraph(k) for k in range(1, 6)]
+            sage: all(2 * len(MicaliVaziraniMatching(G).get_matching())
+            ....:         == G.order() - 1 for G in friendship)
+            True
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in friendship)
+            True
+
+        Built from scratch its triangles are contracted as blossoms, and the
+        near-perfect matching is still recovered::
+
+            sage: G = graphs.FriendshipGraph(5)
+            sage: 2 * len(get_matching_from_empty(G)) == G.order() - 1
+            True
+
+        Berge--Tutte: a graph with several odd components has a deficiency equal
+        to their number, so the maximum matching leaves one vertex exposed per
+        odd component. Three odd cliques/cycles (orders 3, 5 and 7) give a
+        matching of size `1 + 2 + 3 = 6`, three vertices exposed::
+
+            sage: G = graphs.CompleteGraph(3).disjoint_union(graphs.CompleteGraph(5))
+            sage: G = G.disjoint_union(graphs.CycleGraph(7))
+            sage: G.relabel()
+            sage: M = MicaliVaziraniMatching(G).get_matching()
+            sage: len(M)
+            6
+            sage: is_valid_maximum_matching(G, M)                                      # needs networkx
+            True
         """
         from sage.graphs.graph import Graph
 
