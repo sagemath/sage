@@ -3212,7 +3212,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ....: ])
             sage: w = [1, 10, 1]
             sage: R_weights = B.LLL(weights=w)
-            sage: R_manual = (B * diagonal_matrix(w)).LLL() * diagonal_matrix([1/x for x in w])
+            sage: R_manual = ((B * diagonal_matrix(w)).LLL() * diagonal_matrix([1/x for x in w])).change_ring(ZZ)
             sage: R_weights == R_manual
             True
 
@@ -3277,9 +3277,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             if transformation:
                 B_reduced, U = res
-                return B_reduced * Winv, U
+                return (B_reduced * Winv).change_ring(ZZ), U
             else:
-                return res * Winv
+                return (res * Winv).change_ring(ZZ)
 
         if self.ncols() == 0 or self.nrows() == 0:
             verbose("Trivial matrix, nothing to do")
