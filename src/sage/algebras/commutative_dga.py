@@ -900,7 +900,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
     The arguments ``R`` and ``I`` are primarily for use by the
     :meth:`quotient` method.
 
-    These algebras should be graded over the integers; multi-graded
+    These algebras should be graded over the (non-negative) integers; multi-graded
     algebras should be constructed using
     :class:`GCAlgebra_multigraded` instead.
 
@@ -961,6 +961,30 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             sage: A5.<z> = GradedCommutativeAlgebra(GF(2))
             sage: z**2 == 0
             False
+
+        Multidegrees must all have the same length, and must consist of
+        nonnegative integers::
+
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=((1, 0), (0,)))
+            Traceback (most recent call last):
+            ...
+            ValueError: multidegrees must all have the same length
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=((1, 0), (0, -1)))
+            Traceback (most recent call last):
+            ...
+            ValueError: degrees must be nonnegative
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=((1, 0), 2))
+            Traceback (most recent call last):
+            ...
+            TypeError: degrees must be a list of integers or a list of tuples/lists of integers
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=((1, 0), (0, 1/2)))
+            Traceback (most recent call last):
+            ...
+            TypeError: degrees must be a list of integers or a list of tuples/lists of integers
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=(2, (1, 0)))
+            Traceback (most recent call last):
+            ...
+            TypeError: degrees must be a list of integers or a list of tuples/lists of integers
         """
         if names is None:
             if degrees is None:
@@ -980,14 +1004,36 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             # Deal with multigrading: convert lists and tuples to elements
             # of an additive abelian group.
             if degrees:
+                bad_type = TypeError("degrees must be a list of integers or a"
+                                     " list of tuples/lists of integers")
                 try:
                     rank = len(list(degrees[0]))
+                except TypeError:
+                    # The first entry is not an iterable, so the degrees
+                    # are a (singly-graded) list of nonnegative integers.
+                    for d in degrees:
+                        if d not in ZZ:
+                            raise bad_type
+                        if d < 0:
+                            raise ValueError("degrees must be nonnegative")
+                else:
+                    # Multigrading: every degree must be an iterable (list or
+                    # tuple) of nonnegative integers, all of the same length.
+                    for d in degrees:
+                        try:
+                            entries = list(d)
+                        except TypeError:
+                            raise bad_type
+                        if len(entries) != rank:
+                            raise ValueError("multidegrees must all have the"
+                                             " same length")
+                        for e in entries:
+                            if e not in ZZ:
+                                raise bad_type
+                            if e < 0:
+                                raise ValueError("degrees must be nonnegative")
                     G = AdditiveAbelianGroup([0] * rank)
                     degrees = [G(vector(d)) for d in degrees]
-                except TypeError:
-                    # The entries of degrees are not iterables, so
-                    # treat as singly-graded.
-                    pass
 
             degrees = tuple(degrees)
         if not R or not I:
