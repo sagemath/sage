@@ -310,15 +310,14 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
     if resolvable:
         if existence:
             return orthogonal_array(k,n,resolvable=True,existence=True)
-        else:
-            OA = orthogonal_array(k,n,resolvable=True,check=False)
-            # the call to TransversalDesign will sort the block so we can not
-            # rely on the order *after* the call
-            blocks = [[i*n+c for i,c in enumerate(B)] for B in OA]
-            classes = [blocks[i:i+n] for i in range(0,n*n,n)]
-            TD = TransversalDesign(blocks,k,n,check=check,copy=False)
-            TD._classes = classes
-            return TD
+        OA = orthogonal_array(k,n,resolvable=True,check=False)
+        # the call to TransversalDesign will sort the block so we can not
+        # rely on the order *after* the call
+        blocks = [[i*n+c for i,c in enumerate(B)] for B in OA]
+        classes = [blocks[i:i+n] for i in range(0,n*n,n)]
+        TD = TransversalDesign(blocks,k,n,check=check,copy=False)
+        TD._classes = classes
+        return TD
 
     # Is k is None we find the largest available
     if k is None:
@@ -589,15 +588,14 @@ def wilson_construction(OA, k, r, m, u, check=True, explain_construction=False):
     if explain_construction:
         if not u:
             return ("Product of orthogonal arrays n={}.{}").format(r,m)
-        elif all(len(uu) == 1 and uu[0][0] == 1 for uu in u):
+        if all(len(uu) == 1 and uu[0][0] == 1 for uu in u):
             return ("Wilson's construction n={}.{}+{} with master design OA({}+{},{})"
                     .format(r, m, "+".join(str(x) for ((_,x),) in u), k, n_trunc, r))
-        else:
-            return ("Brouwer-van Rees construction n={}.{}+{} with master design OA({}+{},{})"
-                    .format(r, m,
-                            "+".join("(" + "+".join(str(x)+"."+str(mul) for mul,x in uu) + ")"
-                                     for uu in u),
-                            k, n_trunc, r))
+        return ("Brouwer-van Rees construction n={}.{}+{} with master design OA({}+{},{})"
+                .format(r, m,
+                        "+".join("(" + "+".join(str(x)+"."+str(mul) for mul,x in uu) + ")"
+                                 for uu in u),
+                        k, n_trunc, r))
 
     if OA is None:
         master_design = orthogonal_array(k+n_trunc,r,check=False)
@@ -845,7 +843,7 @@ def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, e
     if k is None:
         if existence:
             return largest_available_k(n,t)
-        elif n == 0 or n == 1:
+        if n == 0 or n == 1:
             raise ValueError("there is no upper bound on k when 0<=n<=1")
         else:
             k = largest_available_k(n,t)
@@ -944,14 +942,13 @@ def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, e
 
         if existence:
             return True
-        elif explain_construction:
+        if explain_construction:
             return "the database contains {} MOLS of order {}".format(MOLS_constructions[n][0],n)
-        else:
-            construction = MOLS_constructions[n][1]
-            mols = construction()
-            OA = [[i,j]+[m[i,j] for m in mols]
-                  for i in range(n) for j in range(n)]
-            OA = OA_from_wider_OA(OA,k)
+        construction = MOLS_constructions[n][1]
+        mols = construction()
+        OA = [[i,j]+[m[i,j] for m in mols]
+              for i in range(n) for j in range(n)]
+        OA = OA_from_wider_OA(OA,k)
 
     # Constructions from the database III (Quasi-difference matrices)
     elif (may_be_available and
@@ -965,7 +962,7 @@ def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, e
                 (orthogonal_array(k,u,existence=True) is True)):
                 if existence:
                     return True
-                elif explain_construction:
+                if explain_construction:
                     return "the database contains a ({},{};{},{};{})-quasi difference matrix".format(nn,k,lmbda,mu,u)
                 G,M = f()
                 M = [R[:k] for R in M]
@@ -995,7 +992,7 @@ def orthogonal_array(k, n, t=2, resolvable=False, check=True, existence=False, e
         _OA_cache_set(k,n,Unknown)
         if existence:
             return Unknown
-        elif explain_construction:
+        if explain_construction:
             return "No idea"
         raise NotImplementedError("I don't know how to build an OA({},{})!".format(k,n))
 
@@ -1040,13 +1037,12 @@ def largest_available_k(n, t=2):
     if n == 0 or n == 1:
         from sage.rings.infinity import Infinity
         return Infinity
-    elif t == 2:
+    if t == 2:
         if projective_plane(n,existence=True) is True:
             return n+1
-        else:
-            k = 1
-            while _OA_cache_construction_available(k+1,n) is True:
-                k = k+1
+        k = 1
+        while _OA_cache_construction_available(k+1,n) is True:
+            k = k+1
     else:
         k = t-1
 
@@ -1263,7 +1259,7 @@ def incomplete_orthogonal_array(k, n, holes, resolvable=False, existence=False):
         return OA[:-n]
 
     # Easy case
-    elif max_hole == 1 and number_of_holes <= 1:
+    if max_hole == 1 and number_of_holes <= 1:
         if existence:
             return orthogonal_array(k,n,existence=True)
         OA = orthogonal_array(k,n)

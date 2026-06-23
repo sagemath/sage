@@ -605,8 +605,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             diff = ph - ep
             if diff >= 0:
                 return self.f(i, power=diff)
-            else:
-                return self.e(i, power=-diff)
+            return self.e(i, power=-diff)
 
         def weight(self):
             """
@@ -1177,8 +1176,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                     #if a.is_short_root():
                     #    if cartan_dual.type() == 'G':
                     #        return 3*a
-                    #    else:
-                    #        return 2*a
+                    #    return 2*a
                     #return a
 
             paths = [G.shortest_path(L[i+1],L[i]) for i in range(len(L)-1)]
@@ -1189,15 +1187,12 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                         for i, label in enumerate(paths_labels))
                 if ct.type() == 'BC':
                     return 2 * s
-                else:
-                    return s
-            else:
-                s = sum((1 - scalars[i]) * c_weight.scalar(dualize(Qd.sum(stretch_short_root(root) for root in label)))
-                        for i, label in enumerate(paths_labels))
-                if ct.dual().type() == 'BC':
-                    return s / 2
-                else:
-                    return s
+                return s
+            s = sum((1 - scalars[i]) * c_weight.scalar(dualize(Qd.sum(stretch_short_root(root) for root in label)))
+                    for i, label in enumerate(paths_labels))
+            if ct.dual().type() == 'BC':
+                return s / 2
+            return s
 
 
 #####################################################################

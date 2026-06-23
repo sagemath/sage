@@ -367,7 +367,6 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         def neg_xlog2x(p):
             if p == 0:
                 return 0
-            else:
-                return -p*log(p,2)
+            return -p*log(p,2)
         p = self.function()
         return sum([neg_xlog2x(p[x]) for x in p])

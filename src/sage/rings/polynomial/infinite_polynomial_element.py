@@ -219,38 +219,37 @@ class InfinitePolynomial(CommutativePolynomial,
                 )
                 p = sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict()))
                 return InfinitePolynomial_dense(A, p)
-            else:
-                # Now there remains to fight the oddities and bugs of libsingular.
-                PP = p.parent()
-                if A._P.has_coerce_map_from(PP):
-                    if A._P.ngens() == PP.ngens():  # coercion is sometimes by position!
-                        f = PP.hom(PP.variable_names(), A._P)
-                        try:
-                            return InfinitePolynomial_dense(A, f(p))
-                        except (ValueError, TypeError):
-                            # last desperate attempt: String conversion
-                            from sage.misc.sage_eval import sage_eval
-                            from sage.rings.polynomial.infinite_polynomial_ring import (
-                                GenDictWithBasering,
-                            )
-                            # the base ring may be a function field, therefore
-                            # we need GenDictWithBasering
-                            return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
-                    return InfinitePolynomial_dense(A, A._P(p))
-                # there is no coercion, so, we set up a name-preserving map.
-                SV = set(repr(x) for x in p.variables())
-                f = PP.hom([x if x in SV else 0 for x in PP.variable_names()], A._P)
-                try:
-                    return InfinitePolynomial_dense(A, f(p))
-                except (ValueError, TypeError):
-                    # last desperate attempt: String conversion
-                    from sage.misc.sage_eval import sage_eval
-                    from sage.rings.polynomial.infinite_polynomial_ring import (
-                        GenDictWithBasering,
-                    )
-                    # the base ring may be a function field, therefore
-                    # we need GenDictWithBasering
-                    return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
+            # Now there remains to fight the oddities and bugs of libsingular.
+            PP = p.parent()
+            if A._P.has_coerce_map_from(PP):
+                if A._P.ngens() == PP.ngens():  # coercion is sometimes by position!
+                    f = PP.hom(PP.variable_names(), A._P)
+                    try:
+                        return InfinitePolynomial_dense(A, f(p))
+                    except (ValueError, TypeError):
+                        # last desperate attempt: String conversion
+                        from sage.misc.sage_eval import sage_eval
+                        from sage.rings.polynomial.infinite_polynomial_ring import (
+                            GenDictWithBasering,
+                        )
+                        # the base ring may be a function field, therefore
+                        # we need GenDictWithBasering
+                        return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
+                return InfinitePolynomial_dense(A, A._P(p))
+            # there is no coercion, so, we set up a name-preserving map.
+            SV = set(repr(x) for x in p.variables())
+            f = PP.hom([x if x in SV else 0 for x in PP.variable_names()], A._P)
+            try:
+                return InfinitePolynomial_dense(A, f(p))
+            except (ValueError, TypeError):
+                # last desperate attempt: String conversion
+                from sage.misc.sage_eval import sage_eval
+                from sage.rings.polynomial.infinite_polynomial_ring import (
+                    GenDictWithBasering,
+                )
+                # the base ring may be a function field, therefore
+                # we need GenDictWithBasering
+                return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
         return InfinitePolynomial_sparse(A, p)
 
     # Construction and other basic methods
@@ -331,6 +330,38 @@ class InfinitePolynomial(CommutativePolynomial,
             \alpha_{3} \alpha_{2}^{2}
         """
         return self._p._latex_()
+
+    def _symbolic_(self, R):
+        """
+        Convert ``self`` to a symbolic expression.
+
+        EXAMPLES::
+
+            sage: # needs sage.symbolic
+            sage: S.<a> = InfinitePolynomialRing(QQ)
+            sage: v = SR(a[0])
+            sage: v
+            a_0
+            sage: v.variables()
+            (a_0,)
+
+        Case 1 from :issue:`41656` -- coercing into a polynomial ring over SR::
+
+            sage: # needs sage.symbolic
+            sage: S.<a> = InfinitePolynomialRing(QQ)
+            sage: v = SR(a[0])
+            sage: v.parent()['x'](v)
+            a_0
+
+        Case 2 from :issue:`41656` -- ``bool()`` of a symbolic relation::
+
+            sage: # needs sage.symbolic
+            sage: S.<a> = InfinitePolynomialRing(QQ)
+            sage: v = SR(a[0])
+            sage: bool(v == v)
+            True
+        """
+        return self._p._symbolic_(R)
 
     def subs(self, fixed=None, **kwargs):
         """
@@ -915,11 +946,10 @@ class InfinitePolynomial(CommutativePolynomial,
             divisor = self.base_ring().one() / p  # use induction
             OUTP = self.parent().tensor_with_ring(divisor.base_ring())
             return OUTP(self) * OUTP(divisor)
-        else:
-            from sage.rings.fraction_field_element import FractionFieldElement
-            field = self.parent().fraction_field()
-            # there remains a problem in reduction
-            return FractionFieldElement(field, self, x, reduce=False)
+        from sage.rings.fraction_field_element import FractionFieldElement
+        field = self.parent().fraction_field()
+        # there remains a problem in reduction
+        return FractionFieldElement(field, self, x, reduce=False)
 
     def factor(self, proof=None):
         """
@@ -1415,35 +1445,89 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: a(x_1=M)                                                              # needs sage.modules
             [x_0 + 1       1]
             [      2     x_0]
+
+        TESTS:
+
+        Check that :issue:`40504` is fixed: the common ring must include all
+        variable names of every involved backend ring, not only those that
+        physically appear in the polynomials::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ, implementation='sparse')
+            sage: p = x[1] + x[3]
+            sage: p(x_3=x[7])
+            x_7 + x_1
+            sage: p(x_3=x[7] + 1)
+            x_7 + x_1 + 1
+
+        Positional substitution still counts only the variables that actually
+        occur in ``self``::
+
+            sage: x[3](2)
+            2
+            sage: p(2, 3)
+            5
+            sage: p([2, 3])
+            5
+
+        A constant polynomial is unaffected by any call::
+
+            sage: c = X(5)
+            sage: c()
+            5
+            sage: c(2, 3)
+            5
+            sage: c(x_3=2)
+            5
+            sage: c(x_3=x[5])
+            5
         """
-        # Replace any InfinitePolynomials by their underlying polynomials
-        if hasattr(self._p, 'variables'):
-            V = [str(x) for x in self._p.variables()]
-        else:
-            V = []
+        # A constant is unaffected by any substitution.
+        if hasattr(self._p, 'variables') and not self._p.variables():
+            return self
+
+        P = self.parent()
+
+        # Translate positional args into keyword args.  Positional
+        # substitution acts on the variables that actually occur in
+        # ``self``, taken in the parent ring's gens() order (i.e.
+        # descending ``varname_key``).  Both ``p(2, 3)`` and
+        # ``p([2, 3])`` are accepted.
+        if args:
+            if len(args) == 1 and isinstance(args[0], (list, tuple)):
+                values = list(args[0])
+            else:
+                values = list(args)
+            appearing = sorted((str(v) for v in self._p.variables()),
+                               key=P.varname_key, reverse=True)
+            if len(values) != len(appearing):
+                raise TypeError(
+                    "number of arguments does not match number of variables in parent")
+            for name, value in zip(appearing, values):
+                if name in kwargs:
+                    raise TypeError(f"got multiple values for variable {name!r}")
+                kwargs[name] = value
+
+        # Build a temporary ring whose generators contain every variable
+        # name the substitution might touch: those of ``self._p``'s parent,
+        # every keyword used, and the parent generators of each substituted
+        # ``InfinitePolynomial``.  Using ``variable_names()`` instead of
+        # ``variables()`` is essential -- omitting a variable that is
+        # present in some backend parent can silently trigger an illegal
+        # positional coercion between polynomial rings (see :issue:`40504`).
+        var_names = set(self._p.parent().variable_names())
         for kw, value in kwargs.items():
+            var_names.add(kw)
             if isinstance(value, InfinitePolynomial):
                 kwargs[kw] = value._p
-                V.append(kw)
-                if hasattr(value._p, 'variables'):
-                    V.extend([str(x) for x in value._p.variables()])
-        args = list(args)
-        for i, arg in enumerate(args):
-            if isinstance(arg, InfinitePolynomial):
-                args[i] = arg._p
-                if hasattr(arg._p, 'variables'):
-                    V.extend([str(x) for x in arg._p.variables()])
-        V = list(set(V))
-        V.sort(key=self.parent().varname_key, reverse=True)
-        if V:
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            R = PolynomialRing(self._p.base_ring(), V, order=self.parent()._order)
-        else:
-            return self
-        res = R(self._p)(*args, **kwargs)
+                var_names.update(value._p.parent().variable_names())
+        var_names = sorted(var_names, key=P.varname_key, reverse=True)
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(self._p.base_ring(), var_names, order=P._order)
+        res = R(self._p).subs(**kwargs)
         try:
             from sage.misc.sage_eval import sage_eval
-            return sage_eval(repr(res), self.parent().gens_dict())
+            return sage_eval(repr(res), P.gens_dict())
         except Exception:
             return res
 
@@ -1917,19 +2001,72 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
             sage: a(x_1=x[100])
             x_100 + x_0
+
+        TESTS:
+
+        Positional substitution acts on the variables that actually
+        occur in ``self``::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: x[3](2)
+            2
+            sage: p = x[1] + x[3]
+            sage: p(2, 3)
+            5
+            sage: p([2, 3])
+            5
+
+        A constant polynomial is unaffected by any call::
+
+            sage: c = X(5)
+            sage: c()
+            5
+            sage: c(2, 3)
+            5
+            sage: c(x_3=2)
+            5
+            sage: c(x_3=x[5])
+            5
         """
-        # Replace any InfinitePolynomials by their underlying polynomials
+        # A constant is unaffected by any substitution.
+        if hasattr(self._p, 'variables') and not self._p.variables():
+            return self
+
+        P = self.parent()
+
+        # Translate positional args into keyword args.  Positional
+        # substitution acts on the variables that actually occur in
+        # ``self``, taken in the parent ring's gens() order (i.e.
+        # descending ``varname_key``).  Both ``p(2, 3)`` and
+        # ``p([2, 3])`` are accepted.
+        if args:
+            if len(args) == 1 and isinstance(args[0], (list, tuple)):
+                values = list(args[0])
+            else:
+                values = list(args)
+            appearing = sorted((str(v) for v in self._p.variables()),
+                               key=P.varname_key, reverse=True)
+            if len(values) != len(appearing):
+                raise TypeError(
+                    "number of arguments does not match number of variables in parent")
+            for name, value in zip(appearing, values):
+                if name in kwargs:
+                    raise TypeError(f"got multiple values for variable {name!r}")
+                kwargs[name] = value
+
+        # Replace any InfinitePolynomials by their underlying polynomials.
+        # Accessing each ``InfinitePolynomial`` may grow ``P._P``, the
+        # canonical backend ring shared by all dense elements.
         for kw, value in kwargs.items():
             if isinstance(value, InfinitePolynomial):
                 kwargs[kw] = value._p
-        args = list(args)
-        for i, arg in enumerate(args):
-            if isinstance(arg, InfinitePolynomial):
-                args[i] = arg._p
-        self._p = self.parent().polynomial_ring()(self._p)
-        res = self._p(*args, **kwargs)
+
+        # Pull ``self._p`` into the (possibly grown) canonical ring and
+        # substitute there.
+        self._p = P.polynomial_ring()(self._p)
+        res = self._p.subs(**kwargs)
         try:
-            return self.parent()(res)
+            return P(res)
         except ValueError:
             return res
 

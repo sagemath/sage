@@ -660,7 +660,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<x,y,z> = BooleanPolynomialRing(3)
             sage: P.<x,y,z> = QQ[]
             sage: P(B.gen(0))
@@ -2054,6 +2054,76 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: S.<y> = PolynomialRing(k, 1)
             sage: f(y).parent()
             Multivariate Polynomial Ring in y over Finite Field in a of size 2^4
+
+        Check that substitution and evaluation do not leak (:issue:`27261`)::
+
+            sage: import gc
+            sage: import resource
+            sage: R = PolynomialRing(ZZ, 'x', 50)
+            sage: d = {str(g): g for g in R.gens()}
+            sage: p = sum(d.values())
+            sage: S.<x, y> = ZZ[]
+            sage: q = (x + y)**100
+            sage: def leak_27261():
+            ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     gc.collect()
+            ....:     for _ in range(50):
+            ....:         _ = p.subs(**d)
+            ....:     for _ in range(20):
+            ....:         _ = q(x + y, y)
+            ....:         _ = q(1, 2)
+            ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+            sage: zeros = 0
+            sage: for i in range(30):  # long time
+            ....:     n = leak_27261()
+            ....:     print("Leaked {} bytes".format(n))
+            ....:     if n == 0:
+            ....:         zeros += 1
+            ....:         if zeros >= 6:
+            ....:             break
+            ....:     else:
+            ....:         zeros = 0
+            Leaked...
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+
+        Check that evaluating and adding polynomials over number fields does
+        not leak (:issue:`32604`)::
+
+            sage: import gc
+            sage: import resource
+            sage: K.<a> = QuadraticField(-1)
+            sage: R.<x> = PolynomialRing(K, 1)
+            sage: def leak(N):
+            ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     gc.collect()
+            ....:     for _ in range(N):
+            ....:         _ = x(1)
+            ....:         _ = x + 1
+            ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+            sage: zeros = 0
+            sage: for i in range(30):  # long time
+            ....:     n = leak(10000)
+            ....:     print("Leaked {} bytes".format(n))
+            ....:     if n == 0:
+            ....:         zeros += 1
+            ....:         if zeros >= 6:
+            ....:             break
+            ....:     else:
+            ....:         zeros = 0
+            Leaked...
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
         """
         cdef Element sage_res
 
@@ -2308,12 +2378,12 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: x/P(3)
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
             sage: x/3
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
         TESTS::
 
@@ -3735,7 +3805,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             res_id = fast_map_common_subexp(from_id, _ring, to_id, _ring)
             _p = res_id.m[0]
 
-            from_id.m[0] = NULL
+            p_Delete(&from_id.m[0], _ring)
             res_id.m[0] = NULL
 
             id_Delete(&from_id, _ring)
@@ -5071,7 +5141,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: GCD of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+            NotImplementedError: GCD over rings not implemented.
             sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
@@ -5185,7 +5255,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: LCM of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+            TypeError: LCM over non-integral domains not available.
             sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):

@@ -1247,8 +1247,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
         """
         if self.t:
             return self._s(self._self_to_m(x))
-        else:
-            return sum(cmu*self._s(self._Qp(mu.conjugate())) for mu,cmu in x).omega()
+        return sum(cmu*self._s(self._Qp(mu.conjugate())) for mu,cmu in x).omega()
 
     def _s_to_self(self, x):
         r"""
@@ -1288,8 +1287,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
         """
         if self.t:
             return self._m_to_self(self._m(x))
-        else:
-            return self._from_dict({mu.conjugate() : cmu for mu,cmu in self._Qp(x.omega())})
+        return self._from_dict({mu.conjugate() : cmu for mu,cmu in self._Qp(x.omega())})
 
     def _self_to_m(self, x):
         r"""
@@ -1330,8 +1328,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
                                 * self._Lmunu(part2, mu).subs(q=self.q, t=tinv)
                                 for mu,c in part_coeff(x, d)) )
                 for d in range(x.degree()+1) for part2 in Partitions_n(d) })
-        else:
-            return self._m(self._self_to_s(x))
+        return self._m(self._self_to_s(x))
 
     def _m_to_self( self, f ):
         r"""
@@ -1507,8 +1504,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
         if not mu:
             if not nu:
                 return QQqt.one()
-            else:
-                return QQqt.zero()
+            return QQqt.zero()
         if (mu,nu) in self._self_to_m_cache:
             return self._self_to_m_cache[(mu,nu)]
         if len(nu) == 1:

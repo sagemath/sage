@@ -16,15 +16,15 @@ on:
         description: 'Stringified JSON object listing tox system factors'
         type: string
         # 'tox -e update_docker_platforms' updates below
+        # Only distros with Python 3.12+ are supported (Sage now requires system Python 3.12+)
         default: >-
           [
-           "ubuntu-jammy",
            "ubuntu-noble",
-           "debian-bullseye",
-           "debian-bookworm",
-           "fedora-40",
-           "fedora-41",
-           "centos-stream-9",
+           "ubuntu-resolute",
+           "debian-trixie",
+           "fedora-42",
+           "fedora-43",
+           "centos-stream-10",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
@@ -280,4 +280,4 @@ jobs:
           else
              echo "No Docker images created."
           fi
-        if: always() && ${{ inputs.docker_push_repository }}
+        if: ${{ always() && inputs.docker_push_repository }}

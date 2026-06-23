@@ -1,13 +1,13 @@
 from typing import Any, Optional, Union
 
-from sage.rings.ring import CommutativeRing
+from sage.rings.ring import Ring
 from sage.rings.integer import Integer
 from sage.libs.gmp.types import mpz_t
 
 def is_IntegerRing(x: Any) -> bool:
     ...
 
-class IntegerRing_class(CommutativeRing):
+class IntegerRing_class(Ring):
     def __init__(self) -> None:
         ...
 
@@ -17,7 +17,7 @@ class IntegerRing_class(CommutativeRing):
     def __hash__(self) -> int:
         ...
 
-    def __richcmp__(self, right: Any, op: int) -> bool:
+    def __richcmp__(self, other: Any, op: int) -> bool:
         ...
 
     def _repr_(self) -> str:

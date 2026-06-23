@@ -104,8 +104,16 @@ def classical_modular_polynomial(l, j=None):
         sage: l = random_prime(50)
         sage: classical_modular_polynomial(l, j) == classical_modular_polynomial(l)(j, Y)
         True
+
+    ::
+
+        sage: classical_modular_polynomial(1)
+        X - Y
     """
     l = ZZ(l)
+
+    if l.is_one() and l not in _cache:
+        _cache[l] = ZZ['X,Y']({(1, 0): 1, (0, 1): -1})
 
     if j is None:
         # We are supposed to return the generic modular polynomial. First

@@ -206,7 +206,7 @@ import pexpect
 
 import sage.interfaces.abc
 from sage.cpython.string import bytes_to_str
-from sage.env import GAP_ROOT_PATHS, SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
+from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
 from sage.interfaces.expect import (
     Expect,
     ExpectElement,
@@ -228,27 +228,20 @@ if SAGE_GAP_COMMAND is None:
     # Passing -A allows us to use a minimal GAP installation without
     # producing errors at start-up. The files sage.g and sage.gaprc are
     # used to load any additional packages that may be available.
-    gap_cmd = f'gap -A -l "{GAP_ROOT_PATHS}"'
+    gap_cmd = "gap -A"
     if SAGE_GAP_MEMORY is not None:
         gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 else:
     gap_cmd = SAGE_GAP_COMMAND
 
 
-if platform.processor() == 'ia64' and os.path.exists('/usr/bin/prctl'):
-    # suppress unaligned access to 0x..., ip=0x... warnings
-    gap_cmd = 'prctl --unaligned=silent ' + gap_cmd
-
-
 def gap_command(use_workspace_cache=True, local=True):
     if use_workspace_cache:
         if local:
             return "%s -L %s" % (gap_cmd, WORKSPACE), False
-        else:
-            # TO DO: Use remote workspace
-            return gap_cmd, False
-    else:
-        return gap_cmd, True
+        # TO DO: Use remote workspace
+        return gap_cmd, False
+    return gap_cmd, True
 
 
 # ########### Classes with methods for both the GAP3 and GAP4 interface
@@ -743,10 +736,8 @@ class Gap_generic(ExtraTabCompletion, Expect):
                 self._start()
                 if line != '':
                     return self._eval_line(line, allow_use_file=allow_use_file)
-                else:
-                    return ''
-            else:
-                raise exc
+                return ''
+            raise exc
 
         except KeyboardInterrupt:
             self._keyboard_interrupt()
@@ -902,7 +893,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             res = self.eval(cmd)
         if self.eval(self._identical_function + '(last,__SAGE_LAST__)') != 'true':
             return self.new('last2;')
-        elif res.strip():
+        if res.strip():
             from sage.interfaces.interface import AsciiArtString
             return AsciiArtString(res)
 
@@ -1002,10 +993,9 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
         P = self.parent()
         if P.eval('%s = true' % self.name()) == 'true':
             return 1
-        elif P.eval('%s = false' % self.name()) == 'true':
+        if P.eval('%s = false' % self.name()) == 'true':
             return 0
-        else:
-            return int(self.Length())
+        return int(self.Length())
 
     def is_string(self):
         """
@@ -1085,7 +1075,7 @@ class Gap(Gap_generic):
             True
         """
         self.__use_workspace_cache = use_workspace_cache
-        cmd, self.__make_workspace = gap_command(use_workspace_cache, server is None)
+        cmd, _ = gap_command(use_workspace_cache, server is None)
         # -b: suppress banner
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
@@ -1210,12 +1200,9 @@ class Gap(Gap_generic):
                 gap_reset_workspace(verbose=False)
                 Expect._start(self, "Failed to start GAP.")
                 self._session_number = n
-                self.__make_workspace = False
             else:
                 raise
 
-        if self.__use_workspace_cache and self.__make_workspace:
-            self.save_workspace()
         # Now, as self._expect exists, we can compile some useful pattern:
         self._compiled_full_pattern = self._expect.compile_pattern_list([
             r'@p\d+\.', '@@', '@[A-Z]', r'@[123456!"#$%&][^+]*\+',
@@ -1385,8 +1372,7 @@ class Gap(Gap_generic):
             r = r.strip().replace("\\\n", "")
             os.unlink(tmp)
             return r
-        else:
-            return self.eval('Print(%s);' % var, newlines=False)
+        return self.eval('Print(%s);' % var, newlines=False)
 
     def _pre_interact(self):
         """
@@ -1564,8 +1550,7 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
         if use_file:
             P = self._check_valid()
             return P.get(self.name(), use_file=True)
-        else:
-            return repr(self)
+        return repr(self)
 
     def _latex_(self):
         r"""

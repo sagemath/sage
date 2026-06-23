@@ -42,9 +42,9 @@ import operator
 import sage.structure.coerce_actions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-import sage.rings.integer as integer
+from sage.rings import integer
 from sage.rings.finite_rings.finite_field_base import FiniteField
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.modules.free_module
 
 from sage.misc.lazy_attribute import lazy_attribute
@@ -927,8 +927,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         if not self.__nrows or not self.__ncols:
             from sage.rings.integer_ring import ZZ
             return ZZ.one()
-        else:
-            return self.base_ring().cardinality() ** (self.__nrows * self.__ncols)
+        return self.base_ring().cardinality() ** (self.__nrows * self.__ncols)
 
     def characteristic(self):
         r"""
@@ -994,47 +993,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return MatrixSpace(self._base, self.__ncols, self.__nrows,
                 self.__is_sparse, self.Element)
-
-    @lazy_attribute
-    def _copy_zero(self):
-        """
-        Is it faster to copy a zero matrix or is it faster to create a
-        new matrix from scratch?
-
-        EXAMPLES::
-
-            sage: MS = MatrixSpace(GF(2), 20, 20)
-            sage: MS._copy_zero
-            False
-
-            sage: MS = MatrixSpace(GF(3), 20, 20)
-            sage: MS._copy_zero
-            True
-            sage: MS = MatrixSpace(GF(3), 200, 200)
-            sage: MS._copy_zero
-            False
-
-            sage: MS = MatrixSpace(ZZ,200,200)
-            sage: MS._copy_zero
-            False
-            sage: MS = MatrixSpace(ZZ,30,30)
-            sage: MS._copy_zero
-            True
-
-            sage: MS = MatrixSpace(QQ,200,200)
-            sage: MS._copy_zero
-            False
-            sage: MS = MatrixSpace(QQ,20,20)
-            sage: MS._copy_zero
-            False
-        """
-        if self.__is_sparse:
-            return False
-        elif self.Element is sage.matrix.matrix_mod2_dense.Matrix_mod2_dense:
-            return False
-        elif self.Element is sage.matrix.matrix_rational_dense.Matrix_rational_dense:
-            return False
-        return self.__nrows <= 40 or self.__ncols <= 40
 
     def _element_constructor_(self, entries, **kwds):
         """
@@ -1272,26 +1230,23 @@ class MatrixSpace(UniqueRepresentation, Parent):
                     if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
-                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
+                    if isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.MatrixVectorAction(self, S)
-                    elif isinstance(S, SchemeHomset_points):
+                    if isinstance(S, SchemeHomset_points):
                         return matrix_action.MatrixSchemePointAction(self, S)
-                    elif isinstance(S, SchemeHomset_generic):
+                    if isinstance(S, SchemeHomset_generic):
                         return matrix_action.MatrixPolymapAction(self, S)
-                    else:
-                        # action of base ring
-                        return sage.structure.coerce_actions.RightModuleAction(S, self)
-                else:
-                    if isinstance(S, MatrixSpace):
-                        # matrix multiplications
-                        return matrix_action.MatrixMatrixAction(S, self)
-                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
-                        return matrix_action.VectorMatrixAction(self, S)
-                    elif isinstance(S, SchemeHomset_generic):
-                        return matrix_action.PolymapMatrixAction(self, S)
-                    else:
-                        # action of base ring
-                        return sage.structure.coerce_actions.LeftModuleAction(S, self)
+                    # action of base ring
+                    return sage.structure.coerce_actions.RightModuleAction(S, self)
+                if isinstance(S, MatrixSpace):
+                    # matrix multiplications
+                    return matrix_action.MatrixMatrixAction(S, self)
+                if isinstance(S, sage.modules.free_module.FreeModule_generic):
+                    return matrix_action.VectorMatrixAction(self, S)
+                if isinstance(S, SchemeHomset_generic):
+                    return matrix_action.PolymapMatrixAction(self, S)
+                # action of base ring
+                return sage.structure.coerce_actions.LeftModuleAction(S, self)
         except TypeError:
             return None
 
@@ -1835,7 +1790,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [0 0], [0 0], [1 0], [0 1]
             ]
         """
-        v = {(r, c): self.zero_matrix().__copy__()
+        v = {(r, c): self.element_class(self, None, False, False)
              for r in range(self.__nrows)
              for c in range(self.__ncols)}
         one = self.base_ring().one()
@@ -2010,7 +1965,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         if self.__nrows != self.__ncols:
             raise TypeError("identity matrix must be square")
-        A = self.zero_matrix().__copy__()
+        A = self.element_class(self, None, False, False)
         one = self.base_ring().one()
         for i in range(self.__nrows):
             A[i, i] = one
@@ -2070,7 +2025,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             raise TypeError("diagonal matrix must be square")
         if self.__nrows < len(entries):
             raise ValueError('number of diagonal matrix entries (%s) exceeds the matrix size (%s)' % (len(entries), self.__nrows))
-        A = self.zero_matrix().__copy__()
+        A = self.element_class(self, None, False, False)
         for i in range(len(entries)):
             A[i, i] = entries[i]
         return A
@@ -2136,7 +2091,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             return self.__basis[n]
         r = n // self.__ncols
         c = n - (r * self.__ncols)
-        z = self.zero_matrix().__copy__()
+        z = self.element_class(self, None, False, False)
         z[r, c] = 1
         return z
 
@@ -2179,6 +2134,36 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [0 0 0]
             [0 0 0]
             [0 0 0]
+
+        Creating a zero matrix from scratch (``entries=None``) gives a correct
+        mutable zero matrix without disturbing the cached immutable one, for
+        the dense and sparse types optimized in :issue:`36146`::
+
+            sage: rings = [ZZ, QQ, GF(2), GF(3), GF(101),
+            ....:          GF(2^8, 'a'), Integers(2^16), Integers(10)]
+            sage: for R in rings:
+            ....:     for sparse in [False, True]:
+            ....:         for shape in [(3, 3), (2, 4), (0, 0), (0, 3), (3, 0)]:
+            ....:             MS = MatrixSpace(R, *shape, sparse=sparse)
+            ....:             m = MS.element_class(MS, None, False, False)
+            ....:             assert m.is_zero() and m.is_mutable()
+            ....:             assert m.list() == MS.zero_matrix().list()
+            ....:             if shape[0] and shape[1]:
+            ....:                 m[0, 0] = R(1)
+            ....:                 assert MS.zero_matrix().is_zero()
+
+        The same holds for the complex ball and NumPy-backed (``RDF``, ``CDF``)
+        dense matrix types::
+
+            sage: for R in [CBF, RDF, CDF]:
+            ....:     for shape in [(3, 3), (2, 4), (0, 0), (0, 3), (3, 0)]:
+            ....:         MS = MatrixSpace(R, *shape)
+            ....:         m = MS.element_class(MS, None, False, False)
+            ....:         assert m.is_zero() and m.is_mutable()
+            ....:         assert m.list() == MS.zero_matrix().list()
+            ....:         if shape[0] and shape[1]:
+            ....:             m[0, 0] = R(1)
+            ....:             assert MS.zero_matrix().is_zero()
         """
         res = self.element_class(self, None, False, False)
         res.set_immutable()
@@ -2448,7 +2433,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: M = Mat(GF(9,'a'), 3, sparse=True).random_element()                   # needs sage.rings.finite_rings
             sage: TestSuite(M).run()                                                    # needs sage.rings.finite_rings
         """
-        Z = self.zero_matrix().__copy__()
+        Z = self.element_class(self, None, False, False)
         if density is None:
             Z.randomize(density=float(1), nonzero=kwds.pop('nonzero', False),
                 *args, **kwds)
@@ -2640,10 +2625,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
         if order is None:
             if self.is_dense():
                 return self.element_class(self, vector, coerce=coerce)
-            else:
-                nc = self.ncols()
-                d = {(k // nc, k % nc): c for k, c in vector.dict().items()}
-                return self.element_class(self, d, coerce=coerce)
+            nc = self.ncols()
+            d = {(k // nc, k % nc): c for k, c in vector.dict().items()}
+            return self.element_class(self, d, coerce=coerce)
         return super().from_vector(vector, order=order, coerce=coerce)
 
     def _from_dict(self, d, coerce=True, remove_zeros=True):

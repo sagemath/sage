@@ -1329,25 +1329,23 @@ def convert(expr, target):
         if is_unit(x):
             if unit_to_type[str(x)] == 'temperature':
                 return convert_temperature(expr, target)
-            else:
-                z[x] = base_units(x)
+            z[x] = base_units(x)
 
     expr = expr.subs(z)
 
     if target is None:
         return expr
-    else:
-        for y in base_target.variables():
-            if is_unit(y):
-                tz[y] = base_units(y)
-        base_target = base_target.subs(tz)
-        coeff = (expr / base_target).expand()
+    for y in base_target.variables():
+        if is_unit(y):
+            tz[y] = base_units(y)
+    base_target = base_target.subs(tz)
+    coeff = (expr / base_target).expand()
 
-        for variable in coeff.variables():
-            if is_unit(str(variable)):
-                raise ValueError("Incompatible units")
+    for variable in coeff.variables():
+        if is_unit(str(variable)):
+            raise ValueError("Incompatible units")
 
-        return coeff.mul(target, hold=True)
+    return coeff.mul(target, hold=True)
 
 
 def base_units(unit):
@@ -1396,10 +1394,9 @@ def base_units(unit):
             base = base.subs({i: SR.var(value_to_unit[str(i)][1])})
         number = unitdict[str(v)][str(unit)]
         return base * (sage_eval(number) if isinstance(number, str) else number)
-    else:
-        base = SR.var(value_to_unit[str(v)][1])
-        number = unitdict[str(v)][str(unit)]
-        return base * (sage_eval(number) if isinstance(number, str) else number)
+    base = SR.var(value_to_unit[str(v)][1])
+    number = unitdict[str(v)][str(unit)]
+    return base * (sage_eval(number) if isinstance(number, str) else number)
 
 
 def convert_temperature(expr, target):
@@ -1457,11 +1454,11 @@ def convert_temperature(expr, target):
                       locals={'x': coeff})
         if target is None or target_temp == units.temperature.kelvin:
             return a[0] * units.temperature.kelvin
-        elif target_temp == units.temperature.celsius or target_temp == units.temperature.centigrade:
+        if target_temp == units.temperature.celsius or target_temp == units.temperature.centigrade:
             return a[1] * target_temp
-        elif target_temp == units.temperature.fahrenheit:
+        if target_temp == units.temperature.fahrenheit:
             return a[2] * units.temperature.fahrenheit
-        elif target_temp == units.temperature.rankine:
+        if target_temp == units.temperature.rankine:
             return a[3] * target_temp
     else:
         raise ValueError("cannot convert")

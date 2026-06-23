@@ -71,7 +71,7 @@ cdef class CircuitsMatroid(Matroid):
             self._C = set(M.circuits())
         else:
             self._groundset = frozenset(groundset)
-            self._C = set([frozenset(C) for C in circuits])
+            self._C = {frozenset(C) for C in circuits}
         # k-circuits
         self._k_C = {}
         for C in self._C:
@@ -835,8 +835,7 @@ cdef class CircuitsMatroid(Matroid):
             raise ValueError("broken circuit complex of matroid with loops is not defined")
         return SimplicialComplex(
             self.no_broken_circuits_facets(ordering, reduced),
-            maximality_check=False,
-            is_immutable=True,
+            maximality_check=False, immutable=True
         )
 
     # properties

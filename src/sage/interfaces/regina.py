@@ -297,10 +297,8 @@ optional Sage package Regina installed.
                 nam = self._namespace.__name__
                 if callable(val):
                     return eval('%s.%s' % (nam, code), globs)
-                else:
-                    return val
-            else:
-                return eval(code, globs)
+                return val
+            return eval(code, globs)
         return exec(code, globs)
 
     def eval(self, code, *args, **kwds):
@@ -428,13 +426,12 @@ optional Sage package Regina installed.
         def convert_arg(arg):
             if isinstance(arg, InterfaceElement) and arg.parent() is self:
                 return arg._inst
-            elif isinstance(arg, (list, tuple)):
+            if isinstance(arg, (list, tuple)):
                 return type(arg)([convert_arg(i) for i in arg])
-            elif hasattr(arg, '_regina_'):
+            if hasattr(arg, '_regina_'):
                 reg = arg._regina_(self)
                 return convert_arg(reg)
-            else:
-                return arg
+            return arg
 
         if args:
             args = list(args)
@@ -451,8 +448,8 @@ optional Sage package Regina installed.
 
         EXAMPLES::
 
-            sage: regina._function_call(regina.Polynomial, (-3, 5/3))
-            <regina.Polynomial: 5/3 x - 3>
+            sage: regina._function_call(regina.PolynomialRational, (-3, 5/3))
+            <regina.PolynomialRational: 5/3 x - 3>
         """
         args, kwds = self._convert_args_kwds(*args, **kwds)
         if len(args) == 0:
@@ -483,8 +480,7 @@ optional Sage package Regina installed.
             if self._regina_object(res):
                 new = res.__class__(res)  # this is the way to get a copy of a Regina object
                 return self(new)
-            else:
-                return res
+            return res
 
     def _equality_symbol(self):
         r"""
@@ -666,13 +662,13 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             sage: type(regina.AbelianGroup().detail)
             <class 'sage.interfaces.regina.ReginaFunctionElement'>
             sage: regina.AbelianGroup().detail._name
-            <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_0.detail of <regina.AbelianGroup: 0>>
+            <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.detail of <regina.AbelianGroup: 0>>
         """
         P = self._check_valid()
         if attrname == '_inst':
             self._inst = P.get(self.name())
             return self._inst
-        elif attrname[:1] == "_":
+        if attrname[:1] == "_":
             raise AttributeError
         else:
             inst = self._inst
@@ -773,14 +769,14 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
         from sage.structure.richcmp import rich_to_bool, op_EQ, op_NE
         if self._inst == other._inst:
             return rich_to_bool(op, 0)
-        elif op == op_EQ:
+        if op == op_EQ:
             return False
-        elif op == op_NE:
+        if op == op_NE:
             return True
         try:
             if self._inst < other._inst:
                 return rich_to_bool(op, -1)
-            elif self._inst > other._inst:
+            if self._inst > other._inst:
                 return rich_to_bool(op, 1)
         except TypeError:
             pass
@@ -833,9 +829,8 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             if is_native(sinst) and is_native(oinst):
                 if operation == '*':
                     return P(sinst * oinst)
-                else:
-                    return P(sinst + oinst)
-            if type(sinst) == type(oinst):
+                return P(sinst + oinst)
+            if type(sinst) is type(oinst):
                 if hasattr(self, 'addTermsLast'):
                     new = self.__deepcopy__()
                     new.addTermsLast(other)
@@ -851,9 +846,9 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
 
             if exp == 1:
                 return self
-            elif exp == 2:
+            if exp == 2:
                 return self * self
-            elif exp > 0:
+            if exp > 0:
                 for i in range(exp):
                     return self**(exp - 1) * self
             else:
@@ -901,7 +896,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             sage: R.<u> = PolynomialRing(ZZ)
             sage: p = u**3 -2*u + 9
             sage: rp = regina(p); rp
-            <regina.Polynomial: x^3 - 2 x + 9>
+            <regina.PolynomialRational: x^3 - 2 x + 9>
             sage: rp.sage() == p
             True
             sage: F3 = FreeGroup(3)
@@ -935,7 +930,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
         nspc = P._namespace
         if hasattr(inst, 'sage'):
             return inst.sage()
-        elif isinstance(inst, (nspc.Polynomial, nspc.Laurent, nspc.Laurent2)):
+        if isinstance(inst, (nspc.Polynomial, nspc.Laurent, nspc.Laurent2)):
             if self._sage_parent:
                 R = self._sage_parent
                 old_var_names = ['x', 'y']
@@ -955,7 +950,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
                     R = LaurentPolynomialRing(ZZ, 'x, y')
                 lc = R.gens_dict()
             return from_detail_str(lc)
-        elif isinstance(inst, nspc.GroupExpression):
+        if isinstance(inst, nspc.GroupExpression):
             num_gens = max(t.generator for t in inst.terms()) + 1
             if self._sage_parent:
                 F = self._sage_parent
@@ -965,12 +960,12 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             gens = F.gens()
             lc = {'g%s' % i: gens[i] for i in range(num_gens)}
             return from_detail_str(lc)
-        elif isinstance(inst, nspc.Link):
+        if isinstance(inst, nspc.Link):
             from sage.knots.link import Link
             return Link(inst.pdData())
-        elif hasattr(self, 'detail'):
+        if hasattr(self, 'detail'):
             return from_detail_str(locals)
-        elif locals:
+        if locals:
             # if locals are given we use `_sage_repr`
             # surely this only covers simple cases
             from sage.misc.sage_eval import sage_eval
@@ -987,7 +982,7 @@ class ReginaFunctionElement(InterfaceFunctionElement):
 
         sage: A = regina.AbelianGroup()
         sage: A.addRank
-        <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_0.addRank of <regina.AbelianGroup: 0>>
+        <bound method pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1.addRank of <regina.AbelianGroup: 0>>
         sage: type(A.addRank)
         <class 'sage.interfaces.regina.ReginaFunctionElement'>
     """

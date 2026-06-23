@@ -417,7 +417,7 @@ from copy import copy
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-import sage.graphs.generic_graph_pyx as generic_graph_pyx
+from sage.graphs import generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
@@ -1006,6 +1006,16 @@ class Graph(GenericGraph):
             sage: Graph(g, immutable=True)
             Petersen graph: Graph on 10 vertices
 
+        When the input provides an explicit vertex list, creating an immutable
+        graph preserves this order::
+
+            sage: G = Graph([['b', 'a'], []])
+            sage: list(G)
+            ['b', 'a']
+            sage: Gim = Graph([['b', 'a'], []], immutable=True)
+            sage: list(Gim)
+            ['b', 'a']
+
         Check error messages for graphs built from incidence matrices (see
         :issue:`18440`)::
 
@@ -1051,9 +1061,9 @@ class Graph(GenericGraph):
         if immutable:
             data_structure = 'static_sparse'
 
-        # If the data structure is static_sparse, we first build a graph
-        # using the sparse data structure, then re-encode the resulting graph
-        # as a static sparse graph.
+        # For ``static_sparse``, construction still defaults to a mutable sparse
+        # backend followed by conversion, though selected simple formats are
+        # handled directly below.
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
         if data_structure in ["sparse", "static_sparse"]:
@@ -1150,6 +1160,13 @@ class Graph(GenericGraph):
                 multiedges = False
             format = 'adjacency_matrix'
 
+        direct_static_sparse = False
+        if data_structure == "static_sparse":
+            from sage.graphs.base.static_sparse_backend import (
+                StaticSparseBackend,
+                _direct_static_sparse_backend_from_edges,
+            )
+
         # At this point, 'format' has been set. We build the graph
 
         if format == 'graph6':
@@ -1225,18 +1242,48 @@ class Graph(GenericGraph):
                 loops = any(f(v, v) for v in verts)
             if weighted is None:
                 weighted = False
-            self.allow_loops(loops, check=False)
-            self.allow_multiple_edges(bool(multiedges), check=False)
-            self.add_vertices(verts)
-            self.add_edges(e for e in itertools.combinations(verts, 2) if f(*e))
-            if loops:
-                self.add_edges((v, v) for v in verts if f(v, v))
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse":
+                edge_data = (e for e in itertools.combinations(verts, 2) if f(*e))
+                if loops:
+                    edge_data = itertools.chain(edge_data,
+                                                ((v, v) for v in verts if f(v, v)))
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    verts,
+                    edge_data,
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_loops(loops, check=False)
+                self.allow_multiple_edges(bool(multiedges), check=False)
+                self.add_vertices(verts)
+                self.add_edges(e for e in itertools.combinations(verts, 2) if f(*e))
+                if loops:
+                    self.add_edges((v, v) for v in verts if f(v, v))
 
         elif format == "vertices_and_edges":
-            self.allow_multiple_edges(bool(multiedges), check=False)
-            self.allow_loops(bool(loops), check=False)
-            self.add_vertices(data[0])
-            self.add_edges(data[1])
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse" and not multiedges_allowed:
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    data[0],
+                    data[1],
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=False,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_multiple_edges(bool(multiedges), check=False)
+                self.allow_loops(bool(loops), check=False)
+                self.add_vertices(data[0])
+                self.add_edges(data[1])
 
         elif format == 'dict_of_dicts':
             from .graph_input import from_dict_of_dicts
@@ -1249,18 +1296,44 @@ class Graph(GenericGraph):
             from_dict_of_lists(self, data, loops=loops, multiedges=multiedges, weighted=weighted)
 
         elif format == 'int':
-            self.allow_loops(loops if loops else False, check=False)
-            self.allow_multiple_edges(multiedges if multiedges else False, check=False)
             if data < 0:
                 raise ValueError("The number of vertices cannot be strictly negative!")
-            if data:
-                self.add_vertices(range(data))
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse":
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    range(data),
+                    [],
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_loops(loops if loops else False, check=False)
+                self.allow_multiple_edges(multiedges if multiedges else False, check=False)
+                if data:
+                    self.add_vertices(range(data))
 
         elif format == 'list_of_edges':
-            self.allow_multiple_edges(bool(multiedges),
-                                      check=False)
-            self.allow_loops(bool(loops), check=False)
-            self.add_edges(data)
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse" and not multiedges_allowed:
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    [],
+                    data,
+                    directed=False,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_multiple_edges(bool(multiedges),
+                                          check=False)
+                self.allow_loops(bool(loops), check=False)
+                self.add_edges(data)
         else:
             raise ValueError("Unknown input format '{}'".format(format))
 
@@ -1278,11 +1351,12 @@ class Graph(GenericGraph):
             self.name(name)
 
         if data_structure == "static_sparse":
-            from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            ib = StaticSparseBackend(self,
-                                     loops=self.allows_loops(),
-                                     multiedges=self.allows_multiple_edges())
-            self._backend = ib
+            if not direct_static_sparse:
+                ib = StaticSparseBackend(self,
+                                         loops=self.allows_loops(),
+                                         multiedges=self.allows_multiple_edges(),
+                                         sort=(format != "vertices_and_edges"))
+                self._backend = ib
             self._immutable = True
 
     # Formats
@@ -1587,7 +1661,7 @@ class Graph(GenericGraph):
                 for u2, v2, w2 in multiple_edges[1:]:
                     if u1 == u2 and v1 == v2:
                         return (False, [(u1, v1, w1), (v2, u2, w2)])
-                    elif u1 == v2 and v1 == u2:
+                    if u1 == v2 and v1 == u2:
                         return (False, [(u1, v1, w1), (u2, v2, w2)])
 
             if output == 'edge':
@@ -2475,7 +2549,7 @@ class Graph(GenericGraph):
                     return False
             return (True, []) if certificate else True
 
-        elif algorithm == 'matrix':
+        if algorithm == 'matrix':
             if self.order() < 3:
                 return True
             return (self.adjacency_matrix()**3).trace() == 0
@@ -3488,17 +3562,17 @@ class Graph(GenericGraph):
         if algorithm == "DLX":
             from sage.graphs.graph_coloring import chromatic_number
             return chromatic_number(self)
-        elif algorithm == "MILP":
+        if algorithm == "MILP":
             from sage.graphs.graph_coloring import vertex_coloring
             return vertex_coloring(self, value_only=True, solver=solver, verbose=verbose,
                                    integrality_tolerance=integrality_tolerance)
-        elif algorithm == "CP":
+        if algorithm == "CP":
             f = self.chromatic_polynomial()
             i = 0
             while not f(i):
                 i += 1
             return i
-        elif algorithm == "parallel":
+        if algorithm == "parallel":
             def use_all(algorithms):
                 @parallel(len(algorithms), verbose=False)
                 def func(alg):
@@ -3590,7 +3664,7 @@ class Graph(GenericGraph):
             from sage.graphs.graph_coloring import vertex_coloring
             return vertex_coloring(self, hex_colors=hex_colors, solver=solver, verbose=verbose,
                                    integrality_tolerance=integrality_tolerance)
-        elif algorithm == "DLX":
+        if algorithm == "DLX":
             from sage.graphs.graph_coloring import first_coloring
             return first_coloring(self, hex_colors=hex_colors)
 
@@ -4059,7 +4133,7 @@ class Graph(GenericGraph):
         g = self
         if not g:
             return ZZ.zero() if value_only else g.parent()()
-        elif not g.size():
+        if not g.size():
             return ZZ.zero() if value_only else g.parent()([[next(g.vertex_iterator())], []])
         from sage.numerical.mip import MixedIntegerLinearProgram
 
@@ -5521,7 +5595,7 @@ class Graph(GenericGraph):
         return C
 
     @doc_index("Leftovers")
-    def seidel_switching(self, s, inplace=True):
+    def seidel_switching(self, s, inplace=True, immutable=None):
         r"""
         Return the Seidel switching of ``self`` w.r.t. subset of vertices ``s``.
 
@@ -5539,6 +5613,11 @@ class Graph(GenericGraph):
           modification inplace, or to return a copy of the graph after
           switching
 
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its Seidel switching will behave the same way.
+          This parameter is ignored when ``inplace`` is ``True``.
+
         EXAMPLES::
 
             sage: G = graphs.CycleGraph(5)
@@ -5555,13 +5634,41 @@ class Graph(GenericGraph):
             sage: G.seidel_switching([1,4,5])
             sage: G == H
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.CycleGraph(5)
+            sage: G = G.disjoint_union(graphs.CompleteGraph(1))
+            sage: s = [(0, 1), (1, 0), (0, 0)]
+            sage: H = G.copy(immutable=False)
+            sage: H.seidel_switching(s, inplace=True)
+            sage: H.is_immutable()
+            False
+            sage: H.seidel_switching(s, inplace=True, immutable=True)
+            sage: H.is_immutable()
+            False
+            sage: H = G.copy(immutable=True)
+            sage: H.seidel_switching(s, inplace=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: this graph is immutable and so cannot be changed
+            sage: X = H.seidel_switching(s, inplace=False)
+            sage: X.is_immutable()
+            True
+            sage: X = H.seidel_switching(s, inplace=False, immutable=False)
+            sage: X.is_immutable()
+            False
         """
-        G = self if inplace else copy(self)
+        if inplace:
+            self._scream_if_immutable()
+        elif immutable is None:
+            immutable = self.is_immutable()
+        G = self if inplace else self.copy(immutable=False)
         boundary = self.edge_boundary(s)
         G.add_edges(itertools.product(s, set(self).difference(s)))
         G.delete_edges(boundary)
         if not inplace:
-            return G
+            return G.copy(immutable=True) if immutable else G
 
     @doc_index("Leftovers")
     def twograph(self):
@@ -5945,7 +6052,7 @@ class Graph(GenericGraph):
         if algorithm == "native":
             from sage.graphs.independent_sets import IndependentSets
             return list(IndependentSets(self, maximal=True, complement=True))
-        elif algorithm == "NetworkX":
+        if algorithm == "NetworkX":
             import networkx
             return list(networkx.find_cliques(self.networkx_graph()))
         raise ValueError("Algorithm must be equal to 'native' or to 'NetworkX'.")
@@ -6028,10 +6135,10 @@ class Graph(GenericGraph):
         if algorithm == "Cliquer":
             from sage.graphs.cliquer import max_clique
             return max_clique(self)
-        elif algorithm == "MILP":
+        if algorithm == "MILP":
             return self.complement().independent_set(algorithm=algorithm, solver=solver, verbose=verbose,
                                                      integrality_tolerance=integrality_tolerance)
-        elif algorithm == "mcqd":
+        if algorithm == "mcqd":
             return mcqd(self)
         raise NotImplementedError("Only 'MILP', 'Cliquer' and 'mcqd' are supported.")
 
@@ -6130,13 +6237,13 @@ class Graph(GenericGraph):
         if algorithm == "Cliquer":
             from sage.graphs.cliquer import clique_number
             return clique_number(self)
-        elif algorithm == "networkx":
+        if algorithm == "networkx":
             import networkx
             return networkx.graph_clique_number(self.networkx_graph(), cliques)
-        elif algorithm == "MILP":
+        if algorithm == "MILP":
             return len(self.complement().independent_set(algorithm=algorithm, solver=solver, verbose=verbose,
                                                          integrality_tolerance=integrality_tolerance))
-        elif algorithm == "mcqd":
+        if algorithm == "mcqd":
             return len(mcqd(self))
         raise NotImplementedError("Only 'networkx' 'MILP' 'Cliquer' and 'mcqd' are supported.")
 
@@ -6903,7 +7010,7 @@ class Graph(GenericGraph):
                 value[v] = 1 + clique_number(self.subgraph(self.neighbors(v)))
                 self.subgraph(self.neighbors(v)).plot()
             return value
-        elif algorithm == "networkx":
+        if algorithm == "networkx":
             import networkx
             return dict(networkx.node_clique_number(self.networkx_graph(), vertices, cliques))
         raise NotImplementedError("Only 'networkx' and 'cliquer' are supported.")
@@ -7132,10 +7239,11 @@ class Graph(GenericGraph):
             sage: b = Graph(20)
             sage: b.add_edges(a.nonzero_positions(), loops=False)
             sage: cores = b.cores(with_labels=True); cores
-            {0: 3, 1: 3, 2: 3, 3: 3, 4: 2, 5: 2, 6: 3, 7: 1, 8: 3, 9: 3, 10: 3,
-             11: 3, 12: 3, 13: 3, 14: 2, 15: 3, 16: 3, 17: 3, 18: 3, 19: 3}
+            {0: 2, 1: 2, 2: 3, 3: 3, 4: 2, 5: 3, 6: 3, 7: 2, 8: 2,
+             9: 2, 10: 3, 11: 1, 12: 3, 13: 3, 14: 3, 15: 3, 16: 3,
+             17: 3, 18: 2, 19: 3}
             sage: [v for v,c in cores.items() if c >= 2]  # the vertices in the 2-core
-            [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19]
 
         Checking the 2-core of a random lobster is indeed the empty set::
 
@@ -7580,7 +7688,7 @@ class Graph(GenericGraph):
 
             return relabel(D)
 
-        elif style == 'tree':
+        if style == 'tree':
             from sage.combinat.rooted_tree import LabelledRootedTree
             if D.is_empty():
                 return LabelledRootedTree([])
@@ -9119,7 +9227,7 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Leftovers")
-    def folded_graph(self, check=False):
+    def folded_graph(self, check=False, immutable=None):
         r"""
         Return the antipodal fold of this graph.
 
@@ -9137,6 +9245,10 @@ class Graph(GenericGraph):
         - ``check`` -- boolean (default: ``False``); whether to check if the
           graph is antipodal. If ``check`` is ``True`` and the graph is not
           antipodal, then return ``False``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its folded graph will behave the same way.
 
         OUTPUT: this function returns a new graph and ``self`` is not touched
 
@@ -9187,6 +9299,19 @@ class Graph(GenericGraph):
             sage: G = Graph(1)
             sage: G.folded_graph()
             Folded Graph: Graph on 1 vertex
+
+        Check the bahavior of parameter ``immutable``::
+
+            sage: G = Graph(5)
+            sage: G.folded_graph().is_immutable()
+            False
+            sage: G.folded_graph(immutable=True).is_immutable()
+            True
+            sage: G = Graph(5, immutable=True)
+            sage: G.folded_graph().is_immutable()
+            True
+            sage: G.folded_graph(immutable=False).is_immutable()
+            False
         """
         G = self.antipodal_graph()
 
@@ -9212,10 +9337,11 @@ class Graph(GenericGraph):
                    itertools.product(newVertices[i], newVertices[j])):
                 edges.append((i, j))
 
-        H = Graph([range(numCliques), edges], format='vertices_and_edges')
+        if immutable is None:
+            immutable = self.is_immutable()
         name = self.name() if self.name() != "" else "Graph"
-        H.name(f"Folded {name}")
-        return H
+        return Graph([range(numCliques), edges], format='vertices_and_edges',
+                     name=f"Folded {name}", immutable=immutable)
 
     @doc_index("Leftovers")
     def antipodal_graph(self):
@@ -9401,9 +9527,11 @@ class Graph(GenericGraph):
         dictionary from :meth:`~Graph.minor`::
 
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
-            sage: K44.is_projective_planar(return_map=True)
-            (False,
-             {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]})
+            sage: is_planar, minor_map = K44.is_projective_planar(return_map=True)
+            sage: is_planar
+            False
+            sage: sorted(tuple(v) for v in minor_map.values())
+            [(0,), (1,), (2,), (3,), (4,), (5,), (6,), (7,)]
 
         .. SEEALSO::
 
@@ -9443,7 +9571,8 @@ class Graph(GenericGraph):
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
     chromatic_polynomial = LazyImport('sage.graphs.chrompoly', 'chromatic_polynomial', at_startup=True)
-    rank_decomposition = LazyImport('sage.graphs.graph_decompositions.rankwidth', 'rank_decomposition', at_startup=True)
+    from sage.features.rankwidth import RankWidth
+    rank_decomposition = LazyImport('sage.graphs.graph_decompositions.rankwidth', 'rank_decomposition', at_startup=True, feature=RankWidth())
     from sage.graphs.graph_decompositions.tree_decomposition import treewidth
     from sage.graphs.graph_decompositions.vertex_separation import pathwidth
     from sage.graphs.graph_decompositions.tree_decomposition import treelength
@@ -9452,8 +9581,8 @@ class Graph(GenericGraph):
     from sage.graphs.graph_decompositions.cutwidth import cutwidth
     from sage.graphs.graph_decompositions.slice_decomposition import slice_decomposition
     matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
-    from sage.graphs.cliquer import all_max_clique as cliques_maximum
-    from sage.graphs.cliquer import all_cliques
+    cliques_maximum = LazyImport('sage.graphs.cliquer', 'all_max_clique', at_startup=True)
+    all_cliques = LazyImport('sage.graphs.cliquer', 'all_cliques', at_startup=True)
     from sage.graphs.spanning_tree import random_spanning_tree
     from sage.graphs.spanning_tree import spanning_trees
     from sage.graphs.graph_decompositions.graph_products import is_cartesian_product

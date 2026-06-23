@@ -212,8 +212,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         if self._lower is minus_infinity:
             return minus_infinity
-        else:
-            return self._lower._value
+        return self._lower._value
 
     def upper(self):
         """
@@ -231,8 +230,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         if self._upper is infinity:
             return infinity
-        else:
-            return self._upper._value
+        return self._upper._value
 
     def lower_closed(self):
         """
@@ -787,7 +785,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
             return NotImplemented
         if scalar == RLF(0):
             return InternalRealInterval(RLF(0), True, RLF(0), True)
-        elif scalar < RLF(0):
+        if scalar < RLF(0):
             lower, lower_closed, upper, upper_closed = upper, upper_closed, lower, lower_closed
         if lower == -infinity:
             lower = -infinity
@@ -848,8 +846,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         if self._lower_closed:
             return (self._lower, 0), -1
-        else:
-            return (self._lower, 1), -1
+        return (self._lower, 1), -1
 
     def _scan_upper(self):
         r"""
@@ -884,8 +881,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         if self._upper_closed:
             return (self._upper, 1), +1
-        else:
-            return (self._upper, 0), +1
+        return (self._upper, 0), +1
 
 
 @richcmp_method
@@ -1557,8 +1553,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         if self.n_components() == 0:
             return '{}'
-        else:
-            return ' ∪ '.join(map(repr, self._intervals))
+        return ' ∪ '.join(map(repr, self._intervals))
 
     def _latex_(self):
         r"""
@@ -1574,8 +1569,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         from sage.misc.latex import latex
         if self.n_components() == 0:
             return r'\emptyset'
-        else:
-            return r' \cup '.join(latex(i) for i in self._intervals)
+        return r' \cup '.join(latex(i) for i in self._intervals)
 
     def _sympy_condition_(self, variable):
         r"""
@@ -1608,11 +1602,10 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         false = (x == 0)._sympy_() & False  # trick to get sympy's False
         if self.n_components() == 0:
             return false
-        else:
-            cond = false
-            for it in self._intervals:
-                cond = cond | it._sympy_condition_(x)
-            return cond
+        cond = false
+        for it in self._intervals:
+            cond = cond | it._sympy_condition_(x)
+        return cond
 
     def _giac_condition_(self, variable):
         r"""
@@ -1678,12 +1671,11 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             upper = RLF(upper)
         if upper is infinity or lower is minus_infinity:
             return lower, upper
-        elif lower is infinity or upper is minus_infinity:
+        if lower is infinity or upper is minus_infinity:
             return upper, lower
-        elif upper < lower:
+        if upper < lower:
             return upper, lower
-        else:
-            return lower, upper
+        return lower, upper
 
     @staticmethod
     def interval(lower, upper, *, lower_closed=None, upper_closed=None, **kwds):
@@ -2385,8 +2377,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         if isinstance(i.lower(), AnInfinity):
             if isinstance(i.upper(), AnInfinity):
                 return ZZ.zero()
-            else:
-                return i.upper() - 1
+            return i.upper() - 1
         if isinstance(i.upper(), AnInfinity):
             return i.lower() + 1
         if i.lower_closed():
@@ -2538,8 +2529,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             lower, lower_closed = lower_scan[0][0], lower_scan[0][1] == 0
             upper, upper_closed = upper_scan[0][0], upper_scan[0][1] > 0
             return RealSet(InternalRealInterval(lower, lower_closed, upper, upper_closed))
-        else:
-            return RealSet()
+        return RealSet()
 
     def is_connected(self):
         """
@@ -2743,24 +2733,22 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             lower, upper = i.lower(), i.upper()
             if i.is_point():
                 return sib.name('RealSet.point')(lower)
-            elif lower == minus_infinity and upper == infinity:
+            if lower == minus_infinity and upper == infinity:
                 return sib.name('RealSet')(sib(minus_infinity), sib(infinity))
-            else:
-                if i.lower_closed():
-                    if i.upper_closed():
-                        t = 'RealSet.closed'
-                    else:
-                        t = 'RealSet.closed_open'
-                elif i.upper_closed():
-                    t = 'RealSet.open_closed'
+            if i.lower_closed():
+                if i.upper_closed():
+                    t = 'RealSet.closed'
                 else:
-                    t = 'RealSet.open'
-                return sib.name(t)(sib(lower), sib(upper))
+                    t = 'RealSet.closed_open'
+            elif i.upper_closed():
+                t = 'RealSet.open_closed'
+            else:
+                t = 'RealSet.open'
+            return sib.name(t)(sib(lower), sib(upper))
 
         if self.is_empty():
             return sib.name('RealSet')()
-        else:
-            return sib.sum(interval_input(i) for i in self)
+        return sib.sum(interval_input(i) for i in self)
 
     def __mul__(self, right):
         r"""
@@ -2781,10 +2769,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         if not isinstance(right, RealSet):
             return RealSet(*[e * right for e in self])
-        elif not isinstance(self, RealSet):
+        if not isinstance(self, RealSet):
             return RealSet(*[self * e for e in right])
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __rmul__(self, other):
         r"""
@@ -2829,6 +2816,5 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         sympy_init()
         if self.is_universe():
             return Reals
-        else:
-            return Union(*[interval._sympy_()
-                           for interval in self._intervals])
+        return Union(*[interval._sympy_()
+                       for interval in self._intervals])

@@ -211,8 +211,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         """
         if n in self._self_to_base_cache:
             return
-        else:
-            self._self_to_base_cache[n] = {}
+        self._self_to_base_cache[n] = {}
 
         self._gram_schmidt(n, self._sf_base, self._scalar,
                            self._self_to_base_cache,

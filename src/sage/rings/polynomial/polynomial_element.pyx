@@ -112,7 +112,7 @@ from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.structure.category_object cimport normalize_names
 
 from sage.misc.derivative import multi_derivative
-
+from sage.misc.lazy_import import LazyImport
 from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
 from sage.arith.functions import lcm
 
@@ -128,13 +128,14 @@ from sage.misc.cachefunc import cached_function
 from sage.categories.map cimport Map
 from sage.categories.morphism cimport Morphism
 
-from sage.misc.superseded import deprecation_cython as deprecation
 from sage.misc.cachefunc import cached_method
 
 
 from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
 from sage.rings.polynomial.polydict cimport ETuple
+
+SymbolicRing = LazyImport('sage.symbolic.ring', 'SymbolicRing')
 
 
 cdef class Polynomial(CommutativePolynomial):
@@ -2468,11 +2469,6 @@ cdef class Polynomial(CommutativePolynomial):
           are assumed to have degree ``degree``. Note that ``degree``
           must be set.
 
-        .. WARNING::
-
-            Negative degree input will be deprecated. Instead use
-            ``assume_equal_deg``.
-
         .. NOTE::
 
             For finite fields, ``any_root()`` is non-deterministic when
@@ -2645,14 +2641,9 @@ cdef class Polynomial(CommutativePolynomial):
             #       this will be the most performant
             return f.roots(ring, multiplicities=False)[0]
 
-        # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
-        # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
-        # ensure that the degree is positive.
         degree = ZZ(degree)
         if degree < 0:
-            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_equal_deg`.")
-            degree = -degree
-            assume_equal_deg = True
+            raise ValueError('degree must be positive')
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
         # use this to compute a field extension and return the generator as root of this polynomial
@@ -4368,13 +4359,25 @@ cdef class Polynomial(CommutativePolynomial):
 
         This shows that the issue at :issue:`7711` is resolved::
 
-            sage: P.<x,z> = PolynomialRing(GF(2147483647))
+            sage: P.<x,z> = PolynomialRing(GF(2^29 - 3))
             sage: Q.<y> = PolynomialRing(P)
             sage: p = x + y + z
             sage: p.integral()
-            -1073741823*y^2 + (x + z)*y
+            -268435454*y^2 + (x + z)*y
 
-            sage: P.<x,z> = PolynomialRing(GF(next_prime(2147483647)))
+            sage: P.<x,z> = PolynomialRing(GF(2^29 + 11))
+            sage: Q.<y> = PolynomialRing(P)
+            sage: p = x + y + z
+            sage: p.integral()
+            268435462*y^2 + (x + z)*y
+
+            sage: P.<x,z> = PolynomialRing(GF(2^31 - 1))
+            sage: Q.<y> = PolynomialRing(P)
+            sage: p = x + y + z
+            sage: p.integral()
+            1073741824*y^2 + (x + z)*y
+
+            sage: P.<x,z> = PolynomialRing(GF(2^31 + 11))
             sage: Q.<y> = PolynomialRing(P)
             sage: p = x + y + z
             sage: p.integral()
@@ -7106,13 +7109,61 @@ cdef class Polynomial(CommutativePolynomial):
         v = ','.join(a._magma_init_(magma) for a in self.list())
         return '%s![%s]' % (R.name(), v)
 
+    def _fricas_init_(self):
+        """
+        Return this polynomial in FriCAS.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: R.<y> = ZZ[]
+            sage: f = y^3 - 17*y + 5
+            sage: g = fricas(f); g   # indirect doctest
+             3
+            y  - 17 y + 5
+            sage: f._fricas_init_()
+            '[[[0,5],[1,-17],[3,1]]$...]$UnivariatePolynomial(y,Integer)'
+
+        Coefficients in a finite field::
+
+            sage: # optional - fricas
+            sage: R.<y> = GF(7)[]
+            sage: f = y^3 - 17*y + 5
+            sage: g = fricas(f); g
+             3
+            y  + 4 y + 5
+            sage: f._fricas_init_()
+            '[[[0,5::PrimeField(7)],[1,4::PrimeField(7)],[3,1::PrimeField(7)]]$...]$UnivariatePolynomial(y,PrimeField(7))'
+
+        TESTS::
+
+            sage: # optional - fricas
+            sage: R.<y> = GF(7)[]
+            sage: fricas(17*y)
+            3 y
+            sage: (17*y)._fricas_init_()
+            'monomial(3::PrimeField(7),1)$UnivariatePolynomial(y,PrimeField(7))'
+        """
+        R = self.parent()._fricas_init_()
+        B = self.base_ring()._fricas_init_()
+        v = self.variable_name()
+
+        d = list(self.dict().items())
+        if len(d) == 1:
+            k, e = list(d)[0]
+            return f"monomial({e._fricas_init_()},{k})${R}"
+
+        c = ",".join(f"[{k},{e._fricas_init_()}]"
+                     for k, e in self.dict().items())
+        return f"[[{c}]$List(Record(k:NonNegativeInteger,c:{B}))]${R}"
+
     def _gap_(self, gap):
         """
         Return this polynomial in GAP.
 
         INPUT:
 
-        - ``gap`` -- a GAP or libgap instance
+        - ``gap`` -- a GAP instance
 
         EXAMPLES::
 
@@ -7129,8 +7180,6 @@ cdef class Polynomial(CommutativePolynomial):
             y^3-17*y+5
             sage: gap(z^2 + z)
             z^2+z
-            sage: libgap(z^2 + z)
-            z^2+z
 
         Coefficients in a finite field::
 
@@ -7138,14 +7187,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = y^3 - 17*y + 5
             sage: g = gap(f); g
             y^3+Z(7)^4*y+Z(7)^5
-            sage: h = libgap(f); h
-            y^3+Z(7)^4*y+Z(7)^5
             sage: g.Factors()
             [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: h.Factors()
-            [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
-            sage: f.factor()
-            (y + 5) * (y + 1)^2
         """
         R = gap(self._parent)
         var = list(R.IndeterminatesOfPolynomialRing())[0]
@@ -7153,18 +7196,31 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _libgap_(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
-            sage: R.<x> = ZZ[]
-            sage: libgap(-x^3 + 3*x)   # indirect doctest                               # needs sage.libs.gap
-            -x^3+3*x
-            sage: libgap(R.zero())     # indirect doctest                               # needs sage.libs.gap
+            sage: R.<z> = ZZ[]
+            sage: libgap(z^2 + z)
+            z^2+z
+            sage: libgap(R.zero())     # indirect doctest
             0
+
+        Coefficients in a finite field::
+
+            sage: R.<y> = GF(7)[]
+            sage: f = y^3 - 17*y + 5
+            sage: h = libgap(f); h
+            y^3+Z(7)^4*y+Z(7)^5
+            sage: h.Factors()
+            [ y+Z(7)^0, y+Z(7)^0, y+Z(7)^5 ]
+            sage: f.factor()
+            (y + 5) * (y + 1)^2
         """
         from sage.libs.gap.libgap import libgap
-        return self._gap_(libgap)
+        R = libgap(self._parent)
+        var = list(R.IndeterminatesOfPolynomialRing())[0]
+        return self(var)
 
-    def _giac_init_(self):
+    def _giac_init_(self) -> str:
         r"""
         Return a Giac string representation of this polynomial.
 
@@ -7194,9 +7250,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: R.<v> = QQ[]
             sage: p = v^3 + 3*v + 1/5
             sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
-            (<regina.Polynomial: x^3 + 3 x + 1/5>,
+            (<regina.PolynomialRational: x^3 + 3 x + 1/5>,
             <class 'sage.interfaces.regina.ReginaElement'>,
-            <class 'regina.engine.Polynomial'>)
+            <class 'regina.engine.PolynomialRational'>)
             sage: regina(p.change_ring(CC))                      # optional regina
             Traceback (most recent call last):
             ...
@@ -8405,9 +8461,9 @@ cdef class Polynomial(CommutativePolynomial):
         complex ball fields::
 
             sage: Pol.<x> = CBF[]
-            sage: set((x^2 + 2).roots(multiplicities=False))
-            {[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
-             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I}
+            sage: sorted((x^2 + 2).roots(multiplicities=False), key=imag)
+            [[+/- ...e-19] + [-1.414213562373095 +/- ...e-17]*I,
+             [+/- ...e-19] + [1.414213562373095 +/- ...e-17]*I]
             sage: (x^3 - 1/2).roots(RBF, multiplicities=False)
             [[0.7937005259840997 +/- ...e-17]]
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False)
@@ -8871,7 +8927,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 return [rt for (rt, mult) in rts_mult]
 
-        if isinstance(L, sage.rings.abc.SymbolicRing):
+        if isinstance(L, SymbolicRing):
             if self.degree() == 2:
                 from sage.misc.functional import sqrt
                 from sage.symbolic.constants import I

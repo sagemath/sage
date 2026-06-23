@@ -1279,8 +1279,7 @@ class GraphLatex(SageObject):
         else:
             if option_name in self._options:
                 return self._options[option_name]
-            else:
-                return GraphLatex.__graphlatex_options[option_name]
+            return GraphLatex.__graphlatex_options[option_name]
 
     def latex(self):
         r"""
@@ -1338,17 +1337,17 @@ class GraphLatex(SageObject):
             %%
             \begin{scope}
               \pgfsetstrokecolor{black}
-              \definecolor{strokecol}{rgb}{...};
+              \definecolor{strokecol}{rgb}{...}
               \pgfsetstrokecolor{strokecol}
-              \definecolor{fillcol}{rgb}{...};
+              \definecolor{fillcol}{rgb}{...}
               \pgfsetfillcolor{fillcol}
               \filldraw ... cycle;
             \end{scope}
             \begin{scope}
               \pgfsetstrokecolor{black}
-              \definecolor{strokecol}{rgb}{...};
+              \definecolor{strokecol}{rgb}{...}
               \pgfsetstrokecolor{strokecol}
-              \definecolor{fillcol}{rgb}{...};
+              \definecolor{fillcol}{rgb}{...}
               \pgfsetfillcolor{fillcol}
               \filldraw ... cycle;
             \end{scope}
@@ -1358,7 +1357,7 @@ class GraphLatex(SageObject):
         format = self.get_option('format')
         if format == "tkz_graph":
             return self.tkz_picture()
-        elif format == "dot2tex":
+        if format == "dot2tex":
             return self.dot2tex_picture()
 
     def dot2tex_picture(self):
@@ -1396,7 +1395,7 @@ class GraphLatex(SageObject):
             \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
               \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
               \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
-              \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
+              \definecolor{strokecol}{rgb}{0.0,0.0,0.0}
               \pgfsetstrokecolor{strokecol}
               \draw (...bp,...bp) node {$\text{\texttt{my{\char`\_}label}}$};
             %

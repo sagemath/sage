@@ -305,34 +305,6 @@ def has_imagemagick() -> bool:
     return ImageMagick().is_present()
 
 
-def has_dvipng() -> bool:
-    """
-    Test if dvipng is available.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.external import has_dvipng
-        sage: has_dvipng() # optional -- dvipng
-        FeatureTestResult('dvipng', True)
-    """
-    from sage.features.dvipng import dvipng
-    return dvipng().is_present()
-
-
-def has_pdf2svg() -> bool:
-    """
-    Test if pdf2svg is available.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.external import has_pdf2svg
-        sage: has_pdf2svg() # optional -- pdf2svg
-        FeatureTestResult('pdf2svg', True)
-    """
-    from sage.features.pdf2svg import pdf2svg
-    return pdf2svg().is_present()
-
-
 def has_rubiks() -> bool:
     """
     Test if the rubiks package (``cu2``, ``cubex``, ``dikcube``,
@@ -494,8 +466,7 @@ class AvailableSoftware:
             if not self._seen[idx]:
                 self._seen[idx] = 1
             return True
-        else:
-            return False
+        return False
 
     def issuperset(self, other):
         """
@@ -513,9 +484,20 @@ class AvailableSoftware:
         """
         Return the list of names of those features for which testing their presence is allowed.
         """
+        # Exclude build features that aren't runtime detectable from
+        # the list. Note that when defer_feature_checks is not set,
+        # *no* BuildFeatures are runtime-detectable.
+        from sage.features.build_feature import BuildFeature
+        def build_time_only(f):
+            return ( isinstance(f, BuildFeature)
+                     and
+                     not f.is_runtime_detectable() )
+
         return [feature.name
                 for feature, seen in zip(self._features, self._seen)
-                if seen >= 0 and (self._allow_external or feature not in self._external_features)]
+                if seen >= 0
+                and (self._allow_external or feature not in self._external_features)
+                and not build_time_only(feature)]
 
     def seen(self):
         """
@@ -527,9 +509,18 @@ class AvailableSoftware:
             sage: available_software.seen() # random
             ['internet', 'latex', 'magma']
         """
+        # Exclude build features that aren't runtime detectable from
+        # the list. Note that when defer_feature_checks is not set,
+        # *no* BuildFeatures are runtime-detectable.
+        from sage.features.build_feature import BuildFeature
+        def build_time_only(f):
+            return ( isinstance(f, BuildFeature)
+                     and
+                     not f.is_runtime_detectable() )
         return [feature.name
                 for feature, seen in zip(self._features, self._seen)
-                if seen > 0]
+                if seen > 0
+                and not build_time_only(feature)]
 
     def hidden(self):
         """

@@ -451,6 +451,36 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         # TODO: inseparable case should be consistent with Frobenius' .kernel_polynomial()
         return self._domain.division_polynomial(self._m.abs()).monic().radical()
 
+    def kernel_subgroup(self, *, extend=False, algorithm=None):
+        r"""
+        Return the kernel subgroup of this scalar-multiplication
+        endomorphism :class:`AdditiveAbelianGroupWrapper`.
+
+        Since this morphism is a scalar multiplication `[m]`,
+        the kernel is simply the `m`-torsion subgroup.
+
+        ALGORITHM:
+
+        This method defers to ``self.domain().torsion_subgroup()``.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: phi = E.scalar_multiplication(7)
+            sage: phi.kernel_subgroup()
+            Traceback (most recent call last):
+            ...
+            ValueError: kernel subgroup has no generating points over the base field
+            sage: phi.kernel_subgroup(extend=True)
+            Additive abelian group isomorphic to Z/7 + Z/7
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 5*x + 5
+                over Finite Field in t of size 101^6
+        """
+        ker = self.domain().torsion_subgroup(self._m, extend=extend, algorithm=algorithm)
+        if ker.order() != self.separable_degree():
+            raise ValueError('kernel subgroup has no generating points over the base field')
+        return ker
+
     def dual(self):
         """
         Return the dual isogeny of this scalar-multiplication map.
@@ -528,3 +558,43 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             w = negation_morphism(self._domain).rational_maps()
             result._rational_maps = tuple(f(*w) if f is not None else None for f in self._rational_maps)
         return result
+
+    def xEVAL(self, xP):
+        r"""
+        Return the `x`-coordinate of `[m]P` given the `x`-coordinate of `P`,
+        where this morphism equals `[m]`.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(2^127-1), [1, 0])
+            sage: phi = E.scalar_multiplication(31337)
+            sage: phi(E.lift_x(42)).x()
+            57585471024709306431549264638431243650
+            sage: phi.xEVAL(42)
+            57585471024709306431549264638431243650
+            sage: E.scalar_multiplication(2^127).xEVAL(42)
+            +Infinity
+            sage: phi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: phi.xEVAL((210, 5))
+            (112721781618011304620679249440085222783, 63670757948168934832761807482864762548)
+            sage: E.scalar_multiplication(2^127).xEVAL((210, 5))
+            (88560166162945505017519763556469875524, 0)
+            sage: phi.xEVAL((1, 0))
+            (1, 0)
+        """
+        return self._domain.xMUL(self._m, xP)

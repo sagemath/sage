@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 include 'misc.pxi'
 include 'decl.pxi'
@@ -183,7 +183,7 @@ cdef class ntl_ZZ_pContext_factory():
 ZZ_pContext_factory = ntl_ZZ_pContext_factory()
 
 
-def ntl_ZZ_pContext( v ):
+def ntl_ZZ_pContext(v):
     """
     Create a new ZZ_pContext.
 
@@ -195,6 +195,6 @@ def ntl_ZZ_pContext( v ):
         34
     """
     v = ntl_ZZ(v)
-    if (v < ntl_ZZ(2)):
+    if v < ntl_ZZ(2):
         raise ValueError("%s is not a valid modulus." % v)
     return (<ntl_ZZ_pContext_factory>ZZ_pContext_factory).make_c(v)

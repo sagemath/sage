@@ -139,8 +139,7 @@ class pRational:
         """
         if self.exponent == 0:
             return repr(self.x)
-        else:
-            return "%s^%s * %s" % (self.p, self.exponent, self.x)
+        return "%s^%s * %s" % (self.p, self.exponent, self.x)
 
     def reduce(self, prec):
         r"""
@@ -326,8 +325,7 @@ class pRational:
             val = None
         if sexp < oexp:
             return self.__class__(p, self.x + other.x * p**(oexp-sexp), sexp, valuation=val)
-        else:
-            return self.__class__(p, self.x * p**(sexp-oexp) + other.x, oexp, valuation=val)
+        return self.__class__(p, self.x * p**(sexp-oexp) + other.x, oexp, valuation=val)
 
     def __sub__(self, other):
         r"""
@@ -432,14 +430,13 @@ class pRational:
         if sx == 0:
             return (self.__class__(self.p, 0, 0, valuation=Infinity),
                     self.__class__(self.p, 0, 0, valuation=Infinity))
-        elif sval >= oval:
+        if sval >= oval:
             return (self.__class__(self.p, sx / ox, diff, valuation=diff),
                     self.__class__(self.p, 0, 0, valuation=Infinity))
-        else:
-            pd = self.p**(-diff)
-            sred = sx % pd
-            return (self.__class__(self.p, (sx - sred)/(pd*ox), 0),
-                    self.__class__(self.p, sred, sval, valuation=sval))
+        pd = self.p**(-diff)
+        sred = sx % pd
+        return (self.__class__(self.p, (sx - sred)/(pd*ox), 0),
+                self.__class__(self.p, sred, sval, valuation=sval))
 
     def __lshift__(self, n):
         r"""
@@ -1102,9 +1099,9 @@ class DifferentialPrecisionGeneric(SageObject):
              WeakProxy#...,
              WeakProxy#...]
         """
-        ret = [ ref for ref in self._elements if dead or ref() is not None]
+        ret = [ref for ref in self._elements if dead or ref() is not None]
         if values:
-            ret = [ ref() for ref in ret ]
+            return [ref() for ref in ret]
         return ret
 
     # History
@@ -1136,8 +1133,9 @@ class DifferentialPrecisionGeneric(SageObject):
             :meth:`history`, :meth:`history_disable`, :meth:`history_clear`
         """
         if self._history is None:
-            self._history_init = ( len(self._elements), list(self._marked_for_deletion) )
-            self._history = [ ]
+            self._history_init = (len(self._elements),
+                                  list(self._marked_for_deletion))
+            self._history = []
 
     def history_disable(self):
         r"""
@@ -1212,8 +1210,9 @@ class DifferentialPrecisionGeneric(SageObject):
         """
         if self._history is None:
             raise ValueError("History is not tracked")
-        self._history_init = ( len(self._elements), list(self._marked_for_deletion) )
-        self._history = [ ]
+        self._history_init = (len(self._elements),
+                              list(self._marked_for_deletion))
+        self._history = []
 
     def _format_history(self, time, status, timings):
         r"""
@@ -1248,8 +1247,7 @@ class DifferentialPrecisionGeneric(SageObject):
             else:
                 s = "%.6fs" % time
             return s + "  " + status
-        else:
-            return status
+        return status
 
     def history(self, compact=True, separate_reduce=False, timings=True, output_type='asciiart'):
         r"""
@@ -1295,7 +1293,7 @@ class DifferentialPrecisionGeneric(SageObject):
 
         Now we start creating and deleting elements::
 
-            sage: L = [ R.random_element() for _ in range(20) ]
+            sage: L = [R.random_element() for _ in range(20)]
             sage: for p in range(20):
             ....:    if is_prime(p): L[p] = None
             sage: prec.del_elements()
@@ -1438,7 +1436,7 @@ class DifferentialPrecisionGeneric(SageObject):
             status = n*['o']
             for index in mark:
                 status[index] = '~'
-            hist = [ self._format_history(-1, status, timings) ]
+            hist = [self._format_history(-1, status, timings)]
             oldevent = ''
             total_time = 0
             for (event, index, tme) in self._history:
@@ -1475,8 +1473,7 @@ class DifferentialPrecisionGeneric(SageObject):
             if status or oldevent == '':
                 hist.append(self._format_history(total_time, status, timings))
             return '\n'.join(hist)
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def timings(self, action=None):
         r"""
@@ -1522,15 +1519,15 @@ class DifferentialPrecisionGeneric(SageObject):
         """
         if self._history is None:
             raise ValueError("History is not tracked")
-        tme_by_event = { 'add': 0, 'del': 0, 'mark': 0, 'partial reduce': 0, 'full reduce': 0 }
+        tme_by_event = {'add': 0, 'del': 0, 'mark': 0,
+                        'partial reduce': 0, 'full reduce': 0}
         for (event, _, tme) in self._history:
             tme_by_event[event] += tme
         if action is None:
             return tme_by_event
         if action in tme_by_event:
             return tme_by_event[action]
-        else:
-            raise ValueError("invalid event")
+        raise ValueError("invalid event")
 
 
 class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
@@ -1570,7 +1567,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
         """
         DifferentialPrecisionGeneric.__init__(self, p, label)
         self._repr_type = "Precision lattice"
-        self._capped = { }
+        self._capped = {}
 
     # We need to copy this method.
     # Indeed otherwise it is inherited from UniqueRepresentation
@@ -2123,7 +2120,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
         val = 0
         for ref in elements:
             col = self._matrix[ref]
-            row = [ x.value() for x in col ]
+            row = [x.value() for x in col]
             valcol = min([ x.valuation() for x in col ])
             val = min(valcol, val)
             row += (n-len(row)) * [ZZ(0)]
@@ -2211,7 +2208,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             sage: prec.internal_prec()
             25
 
-            sage: L = [ R.random_element() for _ in range(50) ]
+            sage: L = [R.random_element() for _ in range(50)]
             sage: prec.internal_prec()
             28
         """
@@ -2658,8 +2655,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         col = self._matrix[ref]
         if len(col) == 0:
             return Infinity
-        else:
-            return min( [ c.valuation() for c in col ] )
+        return min( [ c.valuation() for c in col ] )
 
     def precision_lattice(self, elements=None):
         r"""
@@ -2713,12 +2709,12 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         else:
             elements = list_of_padics(elements)
         n = len(self._elements)
-        rows = [ ]
+        rows = []
         val = 0
         for ref in elements:
             col = self._matrix[ref]
-            row = [ x.value() for x in col ]
-            valcol = min([ x.valuation() for x in col ])
+            row = [x.value() for x in col]
+            valcol = min([x.valuation() for x in col])
             val = min(valcol, val)
             row += (n-len(row)) * [ZZ(0)]
             rows.append(row)
@@ -2873,7 +2869,7 @@ def list_of_padics(elements):
     """
     from sage.rings.padics.padic_lattice_element import pAdicLatticeElement
     if isinstance(elements, pAdicLatticeElement):
-        return [ pAdicLatticeElementWeakProxy(elements) ]
+        return [pAdicLatticeElementWeakProxy(elements)]
     try:
         if elements.parent().is_sparse():
             elements = elements.coefficients()
@@ -2881,7 +2877,7 @@ def list_of_padics(elements):
         pass
     if not isinstance(elements, list):
         elements = list(elements)
-    ans = [ ]
+    ans = []
     for x in elements:
         ans += list_of_padics(x)
     return ans

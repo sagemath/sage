@@ -1369,9 +1369,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         if not self.is_finite():
             if order is None:
                 return infinity
-            else:
-                # Finite order subgroups are all contained in the torsion subgroup
-                return self.torsion_subgroup().number_of_subgroups(order=order)
+            # Finite order subgroups are all contained in the torsion subgroup
+            return self.torsion_subgroup().number_of_subgroups(order=order)
 
         from itertools import chain
         from collections import defaultdict
@@ -1879,7 +1878,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         """
         return self._gens
 
-    def gen(self, n):
+    def gen(self, n=0):
         """
         Return the `n`-th generator of this subgroup.
 

@@ -10,11 +10,6 @@ VERSION = "@PACKAGE_VERSION@"
 # to it.
 SAGE_LOCAL = "@prefix@"
 
-# The semicolon-separated list of GAP root paths. This is the list of
-# locations that are searched for GAP packages. This is passed directly
-# to GAP via the -l flag.
-GAP_ROOT_PATHS = "@GAP_ROOT_PATHS@".replace("${prefix}", SAGE_LOCAL)
-
 # The path to the standalone maxima executable.
 MAXIMA = "@SAGE_MAXIMA@".replace("${prefix}", SAGE_LOCAL)
 
@@ -60,6 +55,18 @@ THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
 
+# build-time feature flags
+defer_feature_checks = @DEFER_FEATURE_CHECKS@
+bliss_enabled = @BLISS_ENABLED@
+brial_enabled = @BRIAL_ENABLED@
+coxeter3_enabled = @COXETER3_ENABLED@
+eclib_enabled = @ECLIB_ENABLED@
+libhomfly_enabled = @LIBHOMFLY_ENABLED@
+mcqd_enabled = @MCQD_ENABLED@
+meataxe_enabled = @MEATAXE_ENABLED@
+rankwidth_enabled = @RANKWIDTH_ENABLED@
+sirocco_enabled = @SIROCCO_ENABLED@
+tdlib_enabled = @TDLIB_ENABLED@
 
 def is_editable_install() -> bool:
     """

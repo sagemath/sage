@@ -81,9 +81,10 @@ Test that :issue:`15971` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.misc.latex as latex
-from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
+from sage.categories.quotient_fields import QuotientFields
+from sage.categories.rings import Rings
+from sage.misc import latex
 from sage.misc.cachefunc import cached_method
 from sage.rings import fraction_field_element, ring
 from sage.rings.integer_ring import ZZ
@@ -142,29 +143,6 @@ def FractionField(R, names=None):
     return R.fraction_field()
 
 
-def is_FractionField(x) -> bool:
-    """
-    Test whether or not ``x`` inherits from :class:`FractionField_generic`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.fraction_field import is_FractionField
-        sage: is_FractionField(Frac(ZZ['x']))
-        doctest:warning...
-        DeprecationWarning: The function is_FractionField is deprecated;
-        use 'isinstance(..., FractionField_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_FractionField(QQ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38128,
-                "The function is_FractionField is deprecated; "
-                "use 'isinstance(..., FractionField_generic)' instead.")
-    return isinstance(x, FractionField_generic)
-
-
 class FractionField_generic(ring.Field):
     """
     The fraction field of an integral domain.
@@ -201,7 +179,7 @@ class FractionField_generic(ring.Field):
             cat = cat.Infinite()
         elif R in Rings().Finite():
             cat = cat.Finite()
-        Parent.__init__(self, base=R, names=R._names, category=cat)
+        Parent.__init__(self, base=R, names=R._names, normalize=False, category=cat)
 
     def __reduce__(self):
         """
@@ -524,6 +502,17 @@ class FractionField_generic(ring.Field):
         s = 'FieldOfFractions(%s)' % self.ring()._magma_init_(magma)
         return magma._with_names(s, self.variable_names())
 
+    def _fricas_init_(self) -> str:
+        r"""
+        Return the FriCAS representation of `\QQ`.
+
+        EXAMPLES::
+
+           sage: fricas(FractionField(GF(3)['t']))   #optional - fricas # indirect doctest
+           Fraction(UnivariatePolynomial(t,PrimeField(3)))
+        """
+        return f'Fraction {self._R._fricas_init_()}'
+
     def ring(self):
         """
         Return the ring that this is the fraction field of.
@@ -750,8 +739,8 @@ class FractionField_generic(ring.Field):
                 return x
             from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             if isinstance(self.ring(), PolynomialRing_generic):
-                from sage.rings.power_series_ring_element import PowerSeries
                 from sage.rings.laurent_series_ring_element import LaurentSeries
+                from sage.rings.power_series_ring_element import PowerSeries
                 if isinstance(x, PowerSeries):
                     from sage.misc.superseded import deprecation
                     deprecation(
@@ -1071,8 +1060,7 @@ class FractionField_generic(ring.Field):
         if g.is_zero():
             if f.is_zero():
                 return f
-            else:
-                return f.monic()
+            return f.monic()
         Pol = f.parent()
         Num = Pol.change_ring(self.base())
         f1 = Num(f.numerator())

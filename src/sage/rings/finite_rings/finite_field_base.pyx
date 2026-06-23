@@ -73,7 +73,7 @@ cdef class FiniteField(Field):
         """
         if category is None:
             category = FiniteFields()
-        Field.__init__(self, base, names, normalize, category)
+        Field.__init__(self, base, names, normalize, category=category)
 
     # The methods __hash__ and __richcmp__ below were copied from
     # sage.misc.fast_methods.WithEqualityById; we cannot inherit from
@@ -268,6 +268,23 @@ cdef class FiniteField(Field):
             return "ZZ/%s" % self.order()
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
+
+    def _fricas_init_(self):
+        """
+        Return a string representation of this finite field that FriCAS
+        can understand.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: fricas(GF(5))
+            PrimeField(5)
+            sage: fricas(GF(5,3))
+            FiniteField(5,3)
+        """
+        if self.degree() == 1:
+            return f'PrimeField({self.characteristic()})'
+        return f'FiniteField({self.characteristic()},{self.degree()})'
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -1384,15 +1401,15 @@ cdef class FiniteField(Field):
         - ``name`` or ``names`` -- string; the name of the generator
           in the new extension
 
-        - ``latex_name`` or ``latex_names`` -- string; latex name of
-          the generator in the new extension
-
         - ``map`` -- boolean (default: ``False``); if ``False``,
           return just the extension `E`. If ``True``, return a pair
           `(E, f)`, where `f` is an embedding of ``self`` into `E`.
 
         - ``embedding`` -- currently not used; for compatibility with
           other ``AlgebraicExtensionFunctor`` calls
+
+        - ``latex_name`` or ``latex_names`` -- string; latex name of
+          the generator in the new extension
 
         - ``**kwds`` -- further keywords, passed to the finite field
           constructor.
@@ -1478,10 +1495,12 @@ cdef class FiniteField(Field):
         from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
+
         if name is None and names is not None:
             name = names
         if latex_name is None and latex_names is not None:
             latex_name = latex_names
+
         if self.degree() == 1:
             if isinstance(modulus, (int, Integer)):
                 E = GF((self.characteristic(), modulus), name=name, **kwds)
@@ -1491,7 +1510,11 @@ cdef class FiniteField(Field):
                 if modulus.change_ring(self).is_irreducible():
                     E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
                 else:
-                    E = Field.extension(self, modulus, name=name, embedding=embedding, **kwds)
+                    E = super().extension(modulus, name=name,
+                                          embedding=embedding, **kwds)
+            else:
+                raise TypeError("invalid input for modulus")
+
         elif isinstance(modulus, (int, Integer)):
             E = GF((self.characteristic(), self.degree() * modulus), name=name, **kwds)
             if E is self:
@@ -1508,11 +1531,11 @@ cdef class FiniteField(Field):
                 except AssertionError: # coercion already exists
                     pass
         else:
-            E = Field.extension(self, modulus, name=name, embedding=embedding, latex_name=latex_name, **kwds)
+            E = super().extension(modulus, name=name, embedding=embedding,
+                                  latex_name=latex_name, **kwds)
         if map:
             return (E, E.coerce_map_from(self))
-        else:
-            return E
+        return E
 
     @cached_method
     def _compatible_family(self):

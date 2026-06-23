@@ -150,14 +150,13 @@ def library_interact(
 
     if decorator_target is None:
         return decorator
-    else:
-        from sage.misc.superseded import deprecation
+    from sage.misc.superseded import deprecation
 
-        deprecation(
-            33382,
-            "Use decorator factory @library_interact(widgets) instead of @library_interact without any arguments.",
-        )
-        return decorator(decorator_target)
+    deprecation(
+        33382,
+        "Use decorator factory @library_interact(widgets) instead of @library_interact without any arguments.",
+    )
+    return decorator(decorator_target)
 
 
 def html(obj):

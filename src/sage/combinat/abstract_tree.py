@@ -1468,8 +1468,7 @@ class AbstractTree:
         def node_to_str(t):
             if hasattr(t, "label"):
                 return str(t.label())
-            else:
-                return "o"
+            return "o"
         # other possible choices for nodes would be u"█ ▓ ░ ╋ ╬"
 
         if self.is_empty():
@@ -1630,19 +1629,18 @@ class AbstractTree:
         TESTS::
 
             sage: latex(BinaryTree([[[],[]],[[],None]]))
-            { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
-            ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$$}
-            ;}\newcommand{\nodec}{\node[draw,circle] (c) {$$}
-            ;}\newcommand{\noded}{\node[draw,circle] (d) {$$}
-            ;}\newcommand{\nodee}{\node[draw,circle] (e) {$$}
-            ;}\newcommand{\nodef}{\node[draw,circle] (f) {$$}
+            { \newcommand{\nodea}{\node[draw,circle] (a) {}
+            ;}\newcommand{\nodeb}{\node[draw,circle] (b) {}
+            ;}\newcommand{\nodec}{\node[draw,circle] (c) {}
+            ;}\newcommand{\noded}{\node[draw,circle] (d) {}
+            ;}\newcommand{\nodee}{\node[draw,circle] (e) {}
+            ;}\newcommand{\nodef}{\node[draw,circle] (f) {}
             ;}\begin{tikzpicture}[auto]
             \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
                      \&         \&         \& \nodea  \&         \&         \&         \\
                      \& \nodeb  \&         \&         \&         \& \nodee  \&         \\
              \nodec  \&         \& \noded  \&         \& \nodef  \&         \&         \\
             };
-            <BLANKLINE>
             \path[ultra thick, red] (b) edge (c) edge (d)
                 (e) edge (f)
                 (a) edge (b) edge (e);
@@ -1666,8 +1664,8 @@ class AbstractTree:
         cmd = "\\node"
         new_cmd1 = "\\newcommand{" + cmd
         new_cmd2 = "}{\\node[draw,circle] ("
-        new_cmd3 = ") {$"
-        new_cmd4 = "$}\n;}"
+        new_cmd3 = ") {"
+        new_cmd4 = "}\n;}"
         # some variables to simplify code
         sep = "\\&"
         space = " " * 9
@@ -1689,7 +1687,7 @@ class AbstractTree:
                 create a name (infixe reading)
                  -> ex: b
                 create a new command:
-                 -> ex: \newcommand{\nodeb}{\node[draw,circle] (b) {$$};
+                 -> ex: \newcommand{\nodeb}{\node[draw,circle] (b) {};
                 return the name and the command to build:
                   . the matrix
                   . and the edges
@@ -1721,14 +1719,14 @@ class AbstractTree:
                 TESTS::
 
                     sage: t = BinaryTree([]); print(latex(t))
-                    { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {}
                     ;}\begin{tikzpicture}[auto]
                     \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
                      \nodea  \\
                     };
                     \end{tikzpicture}}
                     sage: t = OrderedTree([]); print(latex(t))
-                    { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {}
                     ;}\begin{tikzpicture}[auto]
                     \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
                      \nodea  \\
@@ -1805,24 +1803,23 @@ class AbstractTree:
                              \& \nodeb  \&         \&         \&         \& \nodee  \&         \\
                      \nodec  \&         \& \noded  \&         \& \nodef  \&         \& \nodeg  \\
                     };
-                    <BLANKLINE>
                     \path[ultra thick, red] (b) edge (c) edge (d)
                         (e) edge (f) edge (g)
                         (a) edge (b) edge (e);
                     \end{tikzpicture}}
+
                     sage: t = BinaryTree([[],[[],[]]]); print(latex(t))
-                    { \newcommand{\nodea}{\node[draw,circle] (a) {$$}
-                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {$$}
-                    ;}\newcommand{\nodec}{\node[draw,circle] (c) {$$}
-                    ;}\newcommand{\noded}{\node[draw,circle] (d) {$$}
-                    ;}\newcommand{\nodee}{\node[draw,circle] (e) {$$}
+                    { \newcommand{\nodea}{\node[draw,circle] (a) {}
+                    ;}\newcommand{\nodeb}{\node[draw,circle] (b) {}
+                    ;}\newcommand{\nodec}{\node[draw,circle] (c) {}
+                    ;}\newcommand{\noded}{\node[draw,circle] (d) {}
+                    ;}\newcommand{\nodee}{\node[draw,circle] (e) {}
                     ;}\begin{tikzpicture}[auto]
                     \matrix[column sep=.3cm, row sep=.3cm,ampersand replacement=\&]{
                              \& \nodea  \&         \&         \&         \\
                      \nodeb  \&         \&         \& \nodec  \&         \\
                              \&         \& \noded  \&         \& \nodee  \\
                     };
-                    <BLANKLINE>
                     \path[ultra thick, red] (c) edge (d) edge (e)
                         (a) edge (b) edge (c);
                     \end{tikzpicture}}
@@ -1863,7 +1860,6 @@ class AbstractTree:
                      \nodea  \\
                      \nodeb  \\
                     };
-                    <BLANKLINE>
                     \path[ultra thick, red] (a) edge (b);
                     \end{tikzpicture}}
                     sage: t = OrderedTree([[[],[]]]).canonical_labelling(); print(latex(t))
@@ -1877,7 +1873,6 @@ class AbstractTree:
                              \& \nodeb  \&         \\
                      \nodec  \&         \& \noded  \\
                     };
-                    <BLANKLINE>
                     \path[ultra thick, red] (b) edge (c) edge (d)
                         (a) edge (b);
                     \end{tikzpicture}}
@@ -1893,7 +1888,6 @@ class AbstractTree:
                              \& \nodeb  \&         \\
                      \nodec  \& \noded  \& \nodee  \\
                     };
-                    <BLANKLINE>
                     \path[ultra thick, red] (b) edge (c) edge (d) edge (e)
                         (a) edge (b);
                     \end{tikzpicture}}
@@ -1911,7 +1905,6 @@ class AbstractTree:
                              \& \nodeb  \&         \& \nodef  \& \nodeg  \\
                      \nodec  \& \noded  \& \nodee  \&         \&         \\
                     };
-                    <BLANKLINE>
                     \path[ultra thick, red] (b) edge (c) edge (d) edge (e)
                         (a) edge (b) edge (f) edge (g);
                     \end{tikzpicture}}
@@ -1960,9 +1953,11 @@ class AbstractTree:
         def make_cmd(nodes):
             cmds = []
             for name, label in nodes:
+                if label:
+                    label = "$" + label + "$"
                 cmds.append(new_cmd1 + name + new_cmd2 +
-                    name + new_cmd3 +
-                    label + new_cmd4)
+                            name + new_cmd3 +
+                            label + new_cmd4)
             return cmds
 
         def make_edges(edges):
@@ -1979,8 +1974,7 @@ class AbstractTree:
                 (matrix_begin +
                     "\\\\ \n".join(matrix) +
                 matrix_end +
-                ("\n" +
-                path_begin +
+                (path_begin +
                     "\n\t".join(make_edges(edges)) +
                 path_end if edges else "")
                 if matrix else "") +
@@ -2370,11 +2364,10 @@ class AbstractLabelledTree(AbstractTree):
         """
         if path is None:
             return self._label
-        else:
-            tr = self
-            for i in path:
-                tr = tr[i]
-            return tr._label
+        tr = self
+        for i in path:
+            tr = tr[i]
+        return tr._label
 
     def labels(self):
         """
@@ -2505,10 +2498,9 @@ class AbstractLabelledTree(AbstractTree):
         TR = self.parent().unlabelled_trees()
         if not self:
             return TR.leaf()
-        else:
-            return TR._element_constructor_([i.shape() for i in self])
+        return TR._element_constructor_([i.shape() for i in self])
 
-    def as_digraph(self):
+    def as_digraph(self, immutable=False):
         """
         Return a directed graph version of ``self``.
 
@@ -2517,6 +2509,11 @@ class AbstractLabelledTree(AbstractTree):
             At this time, the output makes sense only if ``self`` is a
             labelled binary tree with no repeated labels and no ``None``
             labels.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or a mutable graph
 
         EXAMPLES::
 
@@ -2527,17 +2524,29 @@ class AbstractLabelledTree(AbstractTree):
 
            sage: t = BinaryTree([[None, None],[[],None]])
            sage: lt = t.canonical_labelling()
-           sage: lt.as_digraph()
+           sage: d1 = lt.as_digraph(); d1
            Digraph on 4 vertices
+           sage: d2 = lt.as_digraph(immutable=True); d2
+           Digraph on 4 vertices
+           sage: d1.is_isomorphic(d2)
+           True
         """
         from sage.graphs.digraph import DiGraph
-        resu = {self.label():
-                [t.label() for t in self if not t.is_empty()]}
-        resu = DiGraph(resu, format='dict_of_lists')
-        for t in self:
-            if not t.is_empty():
-                resu = resu.union(t.as_digraph())
-        return resu
+        vertices = [self.label()]
+        edges = []
+        stack = [self]
+        while stack:
+            lt = stack.pop()
+            u = lt.label()
+            for t in lt:
+                if not t.is_empty():
+                    v = t.label()
+                    vertices.append(v)
+                    edges.append((u, v))
+                    stack.append(t)
+
+        return DiGraph([vertices, edges], format="vertices_and_edges",
+                       immutable=immutable)
 
 
 class AbstractLabelledClonableTree(AbstractLabelledTree,

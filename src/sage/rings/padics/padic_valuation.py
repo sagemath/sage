@@ -137,12 +137,11 @@ class PadicValuationFactory(UniqueFactory):
 
         if R is ZZ or R is QQ:
             return self.create_key_for_integers(R, prime), {}
-        elif isinstance(R, pAdicGeneric):
+        if isinstance(R, pAdicGeneric):
             return self.create_key_for_local_ring(R, prime), {}
-        elif isinstance(R.fraction_field(), NumberField) or isinstance(R, PolynomialQuotientRing_generic):
+        if isinstance(R.fraction_field(), NumberField) or isinstance(R, PolynomialQuotientRing_generic):
             return self.create_key_and_extra_args_for_number_field(R, prime, approximants=approximants)
-        else:
-            raise NotImplementedError("p-adic valuations not implemented for %r" % (R,))
+        raise NotImplementedError("p-adic valuations not implemented for %r" % (R,))
 
     def create_key_for_integers(self, R, prime):
         r"""
@@ -201,12 +200,11 @@ class PadicValuationFactory(UniqueFactory):
         from sage.rings.valuation.valuation import DiscretePseudoValuation
         if isinstance(prime, DiscretePseudoValuation):
             return self.create_key_and_extra_args_for_number_field_from_valuation(R, prime, prime, approximants=approximants)
-        elif prime in K:
+        if prime in K:
             return self.create_key_and_extra_args_for_number_field_from_valuation(R, K.valuation(prime), prime, approximants=approximants)
-        elif prime in L or isinstance(prime, NumberFieldFractionalIdeal):
+        if prime in L or isinstance(prime, NumberFieldFractionalIdeal):
             return self.create_key_and_extra_args_for_number_field_from_ideal(R, L.fractional_ideal(prime), prime)
-        else:
-            raise ValueError("prime must be a discrete pseudo-valuation, a prime in the base ring, or a fractional ideal")
+        raise ValueError("prime must be a discrete pseudo-valuation, a prime in the base ring, or a fractional ideal")
 
     def create_key_and_extra_args_for_number_field_from_valuation(self, R, v, prime, approximants):
         r"""
@@ -398,22 +396,21 @@ class PadicValuationFactory(UniqueFactory):
         if isinstance(R, pAdicGeneric):
             assert (len(key) == 1)
             return parent.__make_element_class__(pAdicValuation_padic)(parent)
-        elif R is ZZ or R is QQ:
+        if R is ZZ or R is QQ:
             prime = key[1]
             assert (len(key) == 2)
             return parent.__make_element_class__(pAdicValuation_int)(parent, prime)
+        v = key[1]
+        approximants = extra_args['approximants']
+        parent = DiscretePseudoValuationSpace(R)
+        K = R.fraction_field()
+        if isinstance(K, NumberField):
+            G = K.relative_polynomial()
+        elif isinstance(R, PolynomialQuotientRing_generic):
+            G = R.modulus()
         else:
-            v = key[1]
-            approximants = extra_args['approximants']
-            parent = DiscretePseudoValuationSpace(R)
-            K = R.fraction_field()
-            if isinstance(K, NumberField):
-                G = K.relative_polynomial()
-            elif isinstance(R, PolynomialQuotientRing_generic):
-                G = R.modulus()
-            else:
-                raise NotImplementedError
-            return parent.__make_element_class__(pAdicFromLimitValuation)(parent, v, G.change_ring(R.base_ring()), approximants)
+            raise NotImplementedError
+        return parent.__make_element_class__(pAdicFromLimitValuation)(parent, v, G.change_ring(R.base_ring()), approximants)
 
 
 pAdicValuation = PadicValuationFactory("sage.rings.padics.padic_valuation.pAdicValuation")
@@ -567,7 +564,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
 
-        steps = [ GaussValuation(R, self) ]
+        steps = [GaussValuation(R, self)]
         while True:
             v = steps[-1]
             if v.E() > 1:
@@ -590,8 +587,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         if include_steps:
             return ret, steps
-        else:
-            return ret
+        return ret
 
     def is_totally_ramified(self, G, include_steps=False, assume_squarefree=False):
         r"""
@@ -663,7 +659,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
 
-        steps = [ GaussValuation(R, self) ]
+        steps = [GaussValuation(R, self)]
         while True:
             v = steps[-1]
             if v.F() > 1:
@@ -686,8 +682,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         if include_steps:
             return ret, steps
-        else:
-            return ret
+        return ret
 
     def change_domain(self, ring):
         r"""
@@ -833,8 +828,7 @@ class pAdicValuation_base(DiscreteValuation):
         v = self(self.uniformizer())
         if self.domain() in Fields():
             return DiscreteValueSemigroup([-v,v])
-        else:
-            return DiscreteValueSemigroup([v])
+        return DiscreteValueSemigroup([v])
 
 
 class pAdicValuation_padic(pAdicValuation_base):
@@ -1393,26 +1387,17 @@ def _fraction_field(ring):
     r"""
     Return a fraction field of ``ring``.
 
-    EXAMPLES:
+    This workaround is no longer needed.
 
-    This works around some annoyances with ``ring.fraction_field()``::
+    EXAMPLES::
 
         sage: R.<x> = ZZ[]
         sage: S = R.quo(x^2 + 1)
         sage: S.fraction_field()
-        Fraction Field of Univariate Quotient Polynomial Ring in xbar over Integer Ring with modulus x^2 + 1
+        Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 + 1
 
         sage: from sage.rings.padics.padic_valuation import _fraction_field
         sage: _fraction_field(S)
         Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 + 1
     """
-    from sage.categories.fields import Fields
-    if ring in Fields():
-        return ring
-
-    from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
-    if isinstance(ring, PolynomialQuotientRing_generic):
-        from sage.categories.integral_domains import IntegralDomains
-        if ring in IntegralDomains():
-            return ring.base().change_ring(ring.base_ring().fraction_field()).quo(ring.modulus())
     return ring.fraction_field()

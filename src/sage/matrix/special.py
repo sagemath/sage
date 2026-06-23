@@ -120,8 +120,7 @@ def matrix_method(func=None, name=None):
         func.__doc__ = "%s\n\n%s" % (prefix, func.__doc__)
         setattr(matrix, name, func)
         return func
-    else:
-        return lambda func: matrix_method(func, name=name)
+    return lambda func: matrix_method(func, name=name)
 
 
 @matrix_method
@@ -658,22 +657,21 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         else:
             A.randomize(density=density, nonzero=True, *args, **kwds)
         return A
-    elif algorithm == 'echelon_form':
+    if algorithm == 'echelon_form':
         return random_rref_matrix(parent, *args, **kwds)
-    elif algorithm == 'echelonizable':
+    if algorithm == 'echelonizable':
         return random_echelonizable_matrix(parent, *args, **kwds)
-    elif algorithm == 'diagonalizable':
+    if algorithm == 'diagonalizable':
         return random_diagonalizable_matrix(parent, *args, **kwds)
-    elif algorithm == 'subspaces':
+    if algorithm == 'subspaces':
         return random_subspaces_matrix(parent, *args, **kwds)
-    elif algorithm == 'unimodular':
+    if algorithm == 'unimodular':
         return random_unimodular_matrix(parent, *args, **kwds)
-    elif algorithm == 'unitary':
+    if algorithm == 'unitary':
         return random_unitary_matrix(parent, *args, **kwds)
-    elif algorithm == 'bistochastic':
+    if algorithm == 'bistochastic':
         return random_bistochastic_matrix(parent, *args, **kwds)
-    else:
-        raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
+    raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
 
 
 @matrix_method
@@ -904,8 +902,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # Ship ring, matrix size, dictionary to matrix constructor
     if ring is None:
         return matrix(nrows, nrows, w, sparse=sparse)
-    else:
-        return matrix(ring, nrows, nrows, w, sparse=sparse)
+    return matrix(ring, nrows, nrows, w, sparse=sparse)
 
 
 @matrix_method
@@ -1518,8 +1515,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         elem[row1, row1] = scale
     if rowop:
         return elem
-    else:
-        return elem.transpose()
+    return elem.transpose()
 
 
 @matrix_method
@@ -2032,8 +2028,7 @@ def block_matrix(*args, **kwds):
     if not args:
         if sparse is not None:
             return matrix_space.MatrixSpace(ZZ, 0, 0, sparse=sparse)([])
-        else:
-            return matrix_space.MatrixSpace(ZZ, 0, 0)([])
+        return matrix_space.MatrixSpace(ZZ, 0, 0)([])
 
     if len(args) >= 1 and args[0] in Rings():
         # A ring is specified
@@ -2810,7 +2805,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
     rows = parent.nrows()
     if rank < 0:
         raise ValueError("matrices must have rank zero or greater.")
-    if rank > min(rows,parent.ncols()):
+    if rank > min(rows, parent.ncols()):
         raise ValueError("matrices cannot have rank greater than min(ncols,nrows).")
     matrix = random_rref_matrix(parent, rank)
 
@@ -2831,7 +2826,8 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
                                                    randint(-5, 5))
                         row_index += 1
             if rows > 1:
-                matrix.add_multiple_of_row(0, randint(1,rows-1), randint(-3,3))
+                matrix.add_multiple_of_row(0, randint(1, rows-1),
+                                           randint(-3, 3))
         else:
             if rank == 1:  # would be better just to have a special generator...
                 tries = 0
@@ -2853,7 +2849,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
                     if pivots != row_index:
                         # To ensure a leading one is not removed by the addition of the pivot row by its
                         # additive inverse.
-                        matrix_copy = matrix.with_added_multiple_of_row(row_index,matrix.pivot_rows()[pivots],randint(-5,5))
+                        matrix_copy = matrix.with_added_multiple_of_row(row_index, matrix.pivot_rows()[pivots], randint(-5, 5))
                         tries += 1
                         # Range for scalar multiples determined experimentally.
                     if max(map(abs, matrix_copy.list())) < upper_bound:
@@ -2868,23 +2864,23 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
             row1 = 0
             if rows > 1:
                 while row1 < 1:
-                    matrix_copy = matrix.with_added_multiple_of_row(0,randint(1,rows-1),randint(-3,3))
-                    if max(map(abs,matrix_copy.list())) < upper_bound:
+                    matrix_copy = matrix.with_added_multiple_of_row(0, randint(1, rows-1), randint(-3, 3))
+                    if max(map(abs, matrix_copy.list())) < upper_bound:
                         matrix = matrix_copy
                         row1 += 1
     # If the matrix generated over a different ring, random elements from the designated ring are used as and
     # the routine is run similarly to the size unchecked version for rationals and integers.
     else:
-        for pivots in range(rank-1,-1,-1):
+        for pivots in range(rank-1, -1, -1):
             row_index = 0
             while row_index < rows:
                 if pivots == row_index:
                     row_index += 1
                 if pivots != row_index and row_index != rows:
-                    matrix.add_multiple_of_row(row_index,matrix.pivot_rows()[pivots],ring.random_element())
+                    matrix.add_multiple_of_row(row_index, matrix.pivot_rows()[pivots], ring.random_element())
                     row_index += 1
         if rows > 1:
-            matrix.add_multiple_of_row(0,randint(1,rows-1),ring.random_element())
+            matrix.add_multiple_of_row(0, randint(1, rows-1), ring.random_element())
     return matrix
 
 
@@ -3017,15 +3013,15 @@ def random_subspaces_matrix(parent, rank=None):
         raise ValueError("rank cannot exceed the number of rows or columns.")
     nullity = rows - rank
     B = random_matrix(ring, rows, columns, algorithm='echelon_form',
-            num_pivots=rank)
+                      num_pivots=rank)
 
     # Create a nonsingular matrix whose columns will be used to stack a matrix
     # over the L matrix, forming a nonsingular matrix.
     K_nonzero_columns = random_matrix(ring, rank, rank,
-            algorithm='echelonizable', rank=rank)
+                                      algorithm='echelonizable', rank=rank)
     K = matrix(QQ, rank, rows)
     L = random_matrix(ring, nullity, rows, algorithm='echelon_form',
-            num_pivots=nullity)
+                      num_pivots=nullity)
     for column in range(len(L.nonpivots())):
         for entry in range(rank):
             K[entry, L.nonpivots()[column]] = K_nonzero_columns[entry, column]
@@ -3138,8 +3134,9 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
     if upper_bound is None:
         # random_echelonizable_matrix() always returns a determinant one matrix if given full rank.
         return random_matrix(ring, size, algorithm='echelonizable', rank=size)
-    elif upper_bound is not None and (ring == ZZ or ring == QQ):
-        return random_matrix(ring, size,algorithm='echelonizable',rank=size, upper_bound=upper_bound, max_tries=max_tries)
+    if upper_bound is not None and (ring == ZZ or ring == QQ):
+        return random_matrix(ring, size, algorithm='echelonizable',
+                             rank=size, upper_bound=upper_bound, max_tries=max_tries)
 
 
 @matrix_method
@@ -3291,8 +3288,8 @@ def random_unitary_matrix(parent):
         raise ValueError("base ring of parent must be a subfield "
                          "of the complex numbers")
 
-    I = identity_matrix(F,n)
-    A = random_matrix(F,n)
+    I = identity_matrix(F, n)
+    A = random_matrix(F, n)
     S = A - A.conjugate_transpose()
     U = (S-I).inverse()*(S+I)
 
@@ -3305,6 +3302,7 @@ def random_unitary_matrix(parent):
             U.set_row_to_multiple_of_row(i, i, -1)
 
     return U
+
 
 @matrix_method
 def random_bistochastic_matrix(parent):
@@ -3408,6 +3406,7 @@ def random_bistochastic_matrix(parent):
     B = random_unitary_matrix(parent)
     # Squaring every entry.
     return B.elementwise_product(B)
+
 
 @matrix_method
 def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
@@ -3606,7 +3605,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     low_bound = 0
     for row_index in range(len(dimensions)):
         up_bound = up_bound + dimensions[row_index]
-        for entry in range(low_bound,up_bound):
+        for entry in range(low_bound, up_bound):
             diagonal_matrix[entry, entry] = eigenvalues[row_index]
         low_bound = low_bound+dimensions[row_index]
     # Create a matrix to hold each of the eigenvectors as its columns, begin with an identity matrix so that after row and column
@@ -3619,8 +3618,8 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         upper_limit = upper_limit+dimensions[dimension_index]
         lowest_index_row_with_one = size-dimensions[dimension_index]
         # assign a one to the row that is the eigenvalue dimension rows up from the bottom row then assign ones diagonally down to the right.
-        for eigen_ones in range(lower_limit,upper_limit):
-            eigenvector_matrix[lowest_index_row_with_one,eigen_ones] = 1
+        for eigen_ones in range(lower_limit, upper_limit):
+            eigenvector_matrix[lowest_index_row_with_one, eigen_ones] = 1
             lowest_index_row_with_one += 1
         lower_limit = lower_limit+dimensions[dimension_index]
     # Create a list to give the eigenvalue dimension corresponding to each column.
@@ -3629,22 +3628,22 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         for k in range(dimensions[i]):
             dimension_check.append(dimensions[i])
     # run routine over the rows that are in the range of the protected ones.  Use addition of column multiples to fill entries.
-    for dimension_multiplicity in range(max(dimensions),min(dimensions),-1):
+    for dimension_multiplicity in range(max(dimensions), min(dimensions), -1):
         highest_one_row = size-dimension_multiplicity
         highest_one_column = 0
         # find the column with the protected one in the lowest indexed row.
-        while eigenvector_matrix[highest_one_row,highest_one_column] == 0:
+        while eigenvector_matrix[highest_one_row, highest_one_column] == 0:
             highest_one_column += 1
         # dimension_check determines if column has a low enough eigenvalue dimension to take a column multiple.
         for bottom_entry_filler in range(len(dimension_check)):
-            if dimension_check[bottom_entry_filler] < dimension_multiplicity and eigenvector_matrix[highest_one_row,bottom_entry_filler] == 0:
+            if dimension_check[bottom_entry_filler] < dimension_multiplicity and eigenvector_matrix[highest_one_row, bottom_entry_filler] == 0:
                 # randint range determined experimentally to keep entries manageable.
-                eigenvector_matrix.add_multiple_of_column(bottom_entry_filler,highest_one_column,randint(-4,4))
+                eigenvector_matrix.add_multiple_of_column(bottom_entry_filler, highest_one_column, randint(-4, 4))
     # Fill remaining rows using scalar row addition.
-    for row in range(size-max(dimensions),size):
+    for row in range(size-max(dimensions), size):
         for upper_row in range(size-max(dimensions)):
             # range of multiplier determined experimentally so that entries stay manageable for small matrices
-            eigenvector_matrix.add_multiple_of_row(upper_row,row,randint(-4,4))
+            eigenvector_matrix.add_multiple_of_row(upper_row, row, randint(-4, 4))
     return eigenvector_matrix*diagonal_matrix*(eigenvector_matrix.inverse())
 
 

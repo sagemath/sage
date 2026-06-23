@@ -8,7 +8,7 @@ specific base classes.
 .. WARNING::
 
     Those classes, except maybe for the lowest ones like
-    :class:`CommutativeRing` and :class:`Field`,
+    :class:`Field`,
     are being progressively deprecated in favor of the corresponding
     categories. which are more flexible, in particular with respect to multiple
     inheritance.
@@ -18,7 +18,7 @@ The class inheritance hierarchy is:
 - :class:`Ring` (to be deprecated)
 
   - :class:`Algebra` (deprecated and essentially removed)
-  - :class:`CommutativeRing`
+  - :class:`CommutativeRing` (deprecated and essentially removed)
 
     - :class:`NoetherianRing` (deprecated and essentially removed)
     - :class:`CommutativeAlgebra` (deprecated and essentially removed)
@@ -27,7 +27,7 @@ The class inheritance hierarchy is:
       - :class:`DedekindDomain` (deprecated and essentially removed)
       - :class:`PrincipalIdealDomain` (deprecated and essentially removed)
 
-Subclasses of :class:`CommutativeRing` are
+Other subclaasses of :class:`Ring` are
 
 - :class:`Field`
 
@@ -96,6 +96,15 @@ This is to test a deprecation::
     sage: F.category()
     Category of algebras over Rational Field
 
+    sage: from sage.rings.ring import CommutativeRing
+    sage: class Niets(CommutativeRing):
+    ....:     pass
+    sage: F = Niets(ZZ)
+    ...:
+    DeprecationWarning: use the category CommutativeRings
+    See https://github.com/sagemath/sage/issues/42153 for details.
+    sage: F.category()
+    Category of commutative rings
 """
 
 # ****************************************************************************
@@ -123,7 +132,7 @@ from sage.categories.noetherian_rings import NoetherianRings
 _Rings = Rings()
 _CommutativeRings = CommutativeRings()
 
-cdef class Ring(ParentWithGens):
+cdef class Ring(Parent):
     """
     Generic ring class.
 
@@ -244,17 +253,36 @@ cdef class Ring(ParentWithGens):
             sage: R
             Multivariate Polynomial Ring in x, y over Rational Field
         """
-        # Unfortunately, ParentWithGens inherits from sage.structure.parent_old.Parent.
-        # Its __init__ method does *not* call Parent.__init__, since this would somehow
-        # yield an infinite recursion. But when we call it from here, it works.
-        # This is done in order to ensure that __init_extra__ is called.
-        #
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
+        if base is None:
+            raise TypeError('a ring must have a base ring')
         if category is None:
             category = check_default_category(_Rings, category)
         Parent.__init__(self, base=base, names=names, normalize=normalize,
                         category=category)
+
+    def gens(self):
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+
+        EXAMPLES::
+
+           sage: ZZ.gens()
+           (1,)
+
+           sage: ZZ["y"].gens()
+           (y,)
+
+           sage: InfinitePolynomialRing(QQ, "a").gens()
+           (a_*,)
+        """
+        cdef int i
+        if self._gens is not None:
+            return self._gens
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
 
     def __iter__(self):
         r"""
@@ -482,144 +510,41 @@ cdef class Ring(ParentWithGens):
 
 
 cdef class CommutativeRing(Ring):
-    """
-    Generic commutative ring.
-    """
-    _default_category = _CommutativeRings
-
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: Integers(389)['x,y']
-            Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-        """
-        if base_ring is not self and base_ring not in _CommutativeRings:
-            raise TypeError("base ring %s is no commutative ring" % base_ring)
-
-        # This is a low-level class. For performance, we trust that
-        # the category is fine, if it is provided. If it isn't, we use
-        # the category of commutative rings.
-        category = check_default_category(self._default_category, category)
-        Ring.__init__(self, base_ring, names=names, normalize=normalize,
-                      category=category)
-
-    def fraction_field(self):
-        """
-        Return the fraction field of ``self``.
-
-        EXAMPLES::
-
-            sage: R = Integers(389)['x,y']
-            sage: Frac(R)
-            Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-            sage: R.fraction_field()
-            Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-        """
-        try:
-            if self.is_field():
-                return self
-        except NotImplementedError:
-            pass
-
-        if not self.is_integral_domain():
-            raise TypeError("self must be an integral domain.")
-
-        if self.__fraction_field is not None:
-            return self.__fraction_field
-        else:
-            import sage.rings.fraction_field
-            K = sage.rings.fraction_field.FractionField_generic(self)
-            self.__fraction_field = K
-        return self.__fraction_field
-
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Algebraically extend ``self`` by taking the quotient
-        ``self[x] / (f(x))``.
-
-        INPUT:
-
-        - ``poly`` -- a polynomial whose coefficients are coercible into
-          ``self``
-
-        - ``name`` -- (optional) name for the root of `f`
-
-        .. NOTE::
-
-            Using this method on an algebraically complete field does *not*
-            return this field; the construction ``self[x] / (f(x))`` is done
-            anyway.
-
-        EXAMPLES::
-
-            sage: R = QQ['x']
-            sage: y = polygen(R)
-            sage: R.extension(y^2 - 5, 'a')                                             # needs sage.libs.pari
-            Univariate Quotient Polynomial Ring in a over
-             Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
-
-        ::
-
-            sage: P.<x> = PolynomialRing(GF(5))
-            sage: F.<a> = GF(5).extension(x^2 - 2)
-            sage: P.<t> = F[]
-            sage: R.<b> = F.extension(t^2 - a); R
-            Univariate Quotient Polynomial Ring in b over
-             Finite Field in a of size 5^2 with modulus b^2 + 4*a
-        """
-        from sage.rings.polynomial.polynomial_element import Polynomial
-        if not isinstance(poly, Polynomial):
-            try:
-                poly = poly.polynomial(self)
-            except (AttributeError, TypeError):
-                raise TypeError("polynomial (=%s) must be a polynomial." % repr(poly))
-        if names is not None:
-            name = names
-        if isinstance(name, tuple):
-            name = name[0]
-        if name is None:
-            name = str(poly.parent().gen(0))
-        for key, val in kwds.items():
-            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_name', 'latex_names']:
-                raise TypeError("extension() got an unexpected keyword argument '%s'" % key)
-            if not (val is None or isinstance(val, list) and all(c is None for c in val)):
-                raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
-        R = self[name]
-        I = R.ideal(R(poly.list()))
-        return R.quotient(I, name)
-
-
-cdef class IntegralDomain(CommutativeRing):
-    _default_category = IntegralDomains()
-
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = _CommutativeRings
+        deprecation(42153, "use the category CommutativeRings")
+        super().__init__(*args, **kwds)
+
+
+cdef class IntegralDomain(Ring):
+    def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = IntegralDomains()
         deprecation(39227, "use the category IntegralDomains")
         super().__init__(*args, **kwds)
 
 
-cdef class NoetherianRing(CommutativeRing):
-    _default_category = NoetherianRings()
-
+cdef class NoetherianRing(Ring):
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = NoetherianRings()
         deprecation(37234, "use the category NoetherianRings")
         super().__init__(*args, **kwds)
 
 
-cdef class DedekindDomain(CommutativeRing):
-    _default_category = DedekindDomains()
-
+cdef class DedekindDomain(Ring):
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = DedekindDomains()
         deprecation(37234, "use the category DedekindDomains")
         super().__init__(*args, **kwds)
 
 
-cdef class PrincipalIdealDomain(CommutativeRing):
-    _default_category = PrincipalIdealDomains()
-
+cdef class PrincipalIdealDomain(Ring):
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = PrincipalIdealDomains()
         deprecation(37719, "use the category PrincipalIdealDomains")
         super().__init__(*args, **kwds)
 
@@ -660,7 +585,8 @@ from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-cdef class Field(CommutativeRing):
+
+cdef class Field(Ring):
     """
     Generic field
 
@@ -669,7 +595,10 @@ cdef class Field(CommutativeRing):
         sage: QQ.is_noetherian()
         True
     """
-    _default_category = _Fields
+    def __init__(self, *args, **kwds):
+        if 'category' not in kwds:
+            kwds['category'] = _Fields
+        super().__init__(*args, **kwds)
 
 
 cdef class Algebra(Ring):
@@ -680,31 +609,9 @@ cdef class Algebra(Ring):
         super().__init__(base_ring, *args, **kwds)
 
 
-cdef class CommutativeAlgebra(CommutativeRing):
+cdef class CommutativeAlgebra(Ring):
     def __init__(self, base_ring, *args, **kwds):
-        self._default_category = CommutativeAlgebras(base_ring)
+        if "category" not in kwds:
+            kwds["category"] = CommutativeAlgebras(base_ring)
         deprecation(37999, "use the category CommutativeAlgebras")
         super().__init__(base_ring, *args, **kwds)
-
-
-def is_Ring(x):
-    """
-    Return ``True`` if ``x`` is a ring.
-
-    EXAMPLES::
-
-        sage: from sage.rings.ring import is_Ring
-        sage: is_Ring(ZZ)
-        doctest:warning...
-        DeprecationWarning: The function is_Ring is deprecated; use '... in Rings()' instead
-        See https://github.com/sagemath/sage/issues/38288 for details.
-        True
-        sage: MS = MatrixSpace(QQ, 2)                                                   # needs sage.modules
-        sage: is_Ring(MS)                                                               # needs sage.modules
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38288,
-                       "The function is_Ring is deprecated; "
-                       "use '... in Rings()' instead")
-    return x in _Rings

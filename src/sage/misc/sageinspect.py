@@ -434,7 +434,7 @@ def _extract_source(lines, lineno):
 
     if isinstance(lines, str):
         lines = lines.splitlines(True)  # true keeps the '\n'
-    if len(lines):
+    if lines:
         # Fixes an issue with getblock
         lines[-1] += '\n'
 
@@ -963,7 +963,7 @@ def _split_syntactical_unit(s):
         s = s.strip()
         if tmp_group == stop:
             return ''.join(out), s
-        elif s.startswith(stop):
+        if s.startswith(stop):
             out.append(stop)
             return ''.join(out), s[1:].strip()
     raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start), repr(stop)))
@@ -1288,7 +1288,7 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
-    elif hasattr(obj, '__init__'):
+    if hasattr(obj, '__init__'):
         pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
         if pos is not None:
             (_, filename, _) = pos
@@ -1422,8 +1422,8 @@ def sage_getargspec(obj):
         sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
         FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
-        sage: sage_getargspec(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs brial
+        sage: sage_getargspec(BooleanMonomialMonoid.gen)                                # needs brial
         FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: I = P*[x,y]
@@ -1526,8 +1526,8 @@ def sage_getargspec(obj):
     Test that :issue:`17009` is fixed::
 
         sage: sage_getargspec(gap)                                                      # needs sage.libs.gap
-        FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None,
-                    defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw='kwds',
+                    defaults=(0,), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     By :issue:`17814`, the following gives the correct answer (previously, the
     defaults would have been found ``None``)::
@@ -1608,24 +1608,22 @@ def sage_getargspec(obj):
             base_spec = sage_getargspec(obj.func)
             return base_spec
         return sage_getargspec(obj.__class__.__call__)
-    elif (hasattr(obj, '__objclass__') and hasattr(obj, '__name__') and
+    if (hasattr(obj, '__objclass__') and hasattr(obj, '__name__') and
           obj.__name__ == 'next'):
         # Handle sage.rings.ring.FiniteFieldIterator.next and similar
         # slot wrappers.  This is mainly to suppress Sphinx warnings.
         return ['self'], None, None, None
-    else:
-        # We try to get the argspec by reading the source, which may be
-        # expensive, but should only be needed for functions defined outside
-        # of the Sage library (since otherwise the signature should be
-        # embedded in the docstring)
-        try:
-            source = sage_getsource(obj)
-        except TypeError:  # happens for Python builtins
-            source = ''
-        if source:
-            return inspect.FullArgSpec(*_sage_getargspec_cython(source))
-        else:
-            func_obj = obj
+    # We try to get the argspec by reading the source, which may be
+    # expensive, but should only be needed for functions defined outside
+    # of the Sage library (since otherwise the signature should be
+    # embedded in the docstring)
+    try:
+        source = sage_getsource(obj)
+    except TypeError:  # happens for Python builtins
+        source = ''
+    if source:
+        return inspect.FullArgSpec(*_sage_getargspec_cython(source))
+    func_obj = obj
 
     # Otherwise we're (hopefully!) plain Python, so use inspect
     try:
@@ -1777,8 +1775,8 @@ def sage_signature(obj):
         sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
         sage: sage_signature(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
         <Signature (self)>
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
-        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs brial
+        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs brial
         <Signature (self, i=0)>
         sage: I = P*[x,y]
         sage: sage_signature(I.groebner_basis)                                         # needs sage.libs.singular
@@ -2005,9 +2003,8 @@ def _sage_getdoc_unformatted(obj):
     # not a 'getset_descriptor' or similar.
     if isinstance(r, str):
         return r
-    else:
-        # Not a string of any kind
-        return ''
+    # Not a string of any kind
+    return ''
 
 
 def sage_getdoc_original(obj):
@@ -2316,8 +2313,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             # less whitespace first
             candidates.sort()
             return inspect.getblock(lines[candidates[0][1]:]), candidates[0][1]+base_lineno
-        else:
-            raise OSError('could not find class definition')
+        raise OSError('could not find class definition')
 
     if inspect.ismethod(obj):
         obj = obj.__func__
@@ -2484,8 +2480,7 @@ def sage_getsourcelines(obj):
     if isclassinstance(obj):
         if isinstance(obj, functools.partial):
             return sage_getsourcelines(obj.func)
-        else:
-            return sage_getsourcelines(obj.__class__)
+        return sage_getsourcelines(obj.__class__)
 
     # First, we deal with nested classes. Their name contains a dot, and we
     # have a special function for that purpose.
@@ -2512,7 +2507,7 @@ def sage_getsourcelines(obj):
                             B = None
                         if B is not None and B is not obj:
                             return sage_getsourcelines(B)
-                    if obj.__class__ != type:
+                    if obj.__class__ is not type:
                         return sage_getsourcelines(obj.__class__)
                     raise err
 
@@ -2599,15 +2594,11 @@ def sage_getvariablename(self, omit_underscore_names=True):
     # This is a modified version of code taken from
     # https://web.archive.org/web/20100416095847/http://pythonic.pocoo.org/2009/5/30/finding-objects-names
     # written by Georg Brandl.
-    result = []
-    for frame in inspect.stack():
-        for name, obj in frame[0].f_globals.items():
-            if obj is self:
-                result.append(name)
+    result = [name for frame in inspect.stack()
+              for name, obj in frame[0].f_globals.items() if obj is self]
     if len(result) == 1:
         return result[0]
-    else:
-        return sorted(result)
+    return sorted(result)
 
 
 __internal_teststring = '''

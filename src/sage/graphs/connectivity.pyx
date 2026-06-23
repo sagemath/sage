@@ -279,6 +279,7 @@ def number_of_connected_components(G, forbidden_vertices=None):
     return len(connected_components(G, sort=False,
                                     forbidden_vertices=forbidden_vertices))
 
+
 connected_components_number = number_of_connected_components
 
 
@@ -1256,7 +1257,7 @@ def is_edge_cut(G, edges):
                     queue.append(w)
 
         # We now check if some vertices of comp have not been reached
-        if len(set(DS.find(v) for v in comp)) > 1:
+        if len({DS.find(v) for v in comp}) > 1:
             return True
 
     return False
@@ -1684,7 +1685,7 @@ def minimal_separators(G, forbidden_vertices=None):
         A, cliques = g.atoms_and_clique_separators()
         if cliques:
             # A clique separator may be repeated in cliques
-            cliques = set(frozenset(clique) for clique in cliques)
+            cliques = {frozenset(clique) for clique in cliques}
             yield from (set(clique) for clique in cliques)
             atoms.extend(g.subgraph(atom) for atom in A)
         else:
@@ -2326,11 +2327,16 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         except MIPSolverException:
             return True
 
+    # The objective function is a sum of booleans, but they get summed
+    # before conversion. This can lead to an objective value that is
+    # very close to, but not actually, an integer. So instead of
+    # querying the objective value directly, we (re)compute it from
+    # the optimal booleans, post-conversion, taking the integrality
+    # tolerance into consideration.
     p.set_objective(p.sum(in_set[1, v] for v in g))
-
-    val = p.solve(log=verbose)
-
+    p.solve(log=verbose)
     in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+    val = sum(in_set[1, v] for v in g)
 
     if value_only:
         return sum(1 for v in g if in_set[1, v])
@@ -2489,7 +2495,7 @@ def strongly_connected_components_digraph(G, keep_labels=False):
 
     if keep_labels:
         g = DiGraph(len(scc), multiedges=True, loops=True)
-        g.add_edges(set((d[u], d[v], label) for u, v, label in G.edge_iterator()))
+        g.add_edges({(d[u], d[v], label) for u, v, label in G.edge_iterator()})
 
     else:
         g = DiGraph(len(scc), multiedges=False, loops=False)
@@ -3196,16 +3202,16 @@ def spqr_tree(G, algorithm='Hopcroft_Tarjan', solver=None, verbose=0,
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 15), ('R', 1), ('S', 15)]
         sage: T = G.spqr_tree(algorithm='cleave')                                       # needs sage.numerical.mip
-        sage: sorted(Counter(u[0] for u in T).items())                                  # needs sage.numerical.mip
-        [('P', 15), ('R', 1), ('S', 15)]
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))                                    # needs sage.numerical.mip
+        True
         sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm='Hopcroft_Tarjan')
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 60), ('R', 1), ('S', 75)]
         sage: T = G.spqr_tree(algorithm='cleave')       # long time                     # needs sage.numerical.mip
-        sage: sorted(Counter(u[0] for u in T).items())  # long time                     # needs sage.numerical.mip
-        [('P', 60), ('R', 1), ('S', 75)]
+        sage: G.is_isomorphic(spqr_tree_to_graph(T))    # long time                     # needs sage.numerical.mip
+        True
 
     TESTS::
 

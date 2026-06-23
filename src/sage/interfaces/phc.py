@@ -722,8 +722,7 @@ class PHC:
                     sol_pts.append(point([a_sol[0][var_name].real(), a_sol[0][var_name].imag()]))
                     sol_pts.append(point([a_sol[-1][var_name].real(), a_sol[-1][var_name].imag()]))
             return sum(sol_pts) + sum(path_lines)
-        else:
-            return sum(path_lines)
+        return sum(path_lines)
 
     def mixed_volume(self, polys, verbose=False):
         """
@@ -917,10 +916,9 @@ class PHC:
 
         # Was there an error?
         if e:
-            from shutil import which
-            if not which('phc'):
-                print(str(os.system('which phc')) + '  PHC needs to be installed and in your path')
-                raise RuntimeError
+            from sage.features import Executable
+            phc_executable = Executable(name='phc', executable='phc')
+            phc_executable.require()
             # todo -- why? etc.
             with open(log_filename) as f:
                 msg = f.read()

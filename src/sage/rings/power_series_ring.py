@@ -133,8 +133,8 @@ TESTS::
     sage: TestSuite(M).run()
 """
 
-import sage.categories.commutative_rings as commutative_rings
-import sage.misc.latex as latex
+from sage.categories import commutative_rings
+from sage.misc import latex
 from sage.interfaces.abc import MagmaElement
 from sage.misc.lazy_import import lazy_import
 from sage.rings import (
@@ -155,10 +155,10 @@ from sage.structure.nonexact import Nonexact
 from sage.structure.unique_representation import UniqueRepresentation
 
 _CommutativeRings = commutative_rings.CommutativeRings()
-import sage.categories.integral_domains as integral_domains
+from sage.categories import integral_domains
 
 _IntegralDomains = integral_domains.IntegralDomains()
-import sage.categories.fields as fields
+from sage.categories import fields
 
 _Fields = fields.Fields()
 
@@ -455,38 +455,6 @@ def _multi_variate(base_ring, num_gens=None, names=None,
 
 def _single_variate():
     pass
-
-
-def is_PowerSeriesRing(R):
-    """
-    Return ``True`` if this is a *univariate* power series ring.  This is in
-    keeping with the behavior of ``is_PolynomialRing``
-    versus ``is_MPolynomialRing``.
-
-    EXAMPLES::
-
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
-        sage: is_PowerSeriesRing(10)
-        doctest:warning...
-        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
-        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
-        See https://github.com/sagemath/sage/issues/38290 for details.
-        False
-        sage: is_PowerSeriesRing(QQ[['x']])
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x'))
-        True
-        sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38290,
-                "The function is_PowerSeriesRing is deprecated; "
-                "use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.")
-    if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
-        return R.ngens() == 1
-    else:
-        return False
 
 
 class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
@@ -845,76 +813,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             1 - x^3 + x^6 - x^9 + x^12 - x^15 + x^18 + O(x^20)
             sage: R(2 - x^2 + x^6)
             2 - x^2 + x^6
-        """
-        if prec is not infinity:
-            prec = integer.Integer(prec)
-            if prec < 0:
-                raise ValueError("prec (= %s) must be nonnegative" % prec)
-        if isinstance(f, power_series_ring_element.PowerSeries) and f.parent() is self:
-            if prec >= f.prec():
-                return f
-            f = f.truncate(prec)
-        elif isinstance(f, LaurentSeries) and f.parent().power_series_ring() is self:
-            return self(f.power_series(), prec, check=check)
-        elif isinstance(f, MagmaElement) and str(f.Type()) == 'RngSerPowElt':
-            v = sage_eval(f.Eltseq())  # could use .sage() ?
-            return self(v) * (self.gen(0)**f.Valuation())
-        elif isinstance(f, FractionFieldElement):
-            if self.base_ring().has_coerce_map_from(f.parent()):
-                return self.element_class(self, [f], prec, check=check)
-            else:
-                num = self.element_class(self, f.numerator(), prec, check=check)
-                den = self.element_class(self, f.denominator(), prec, check=check)
-                return self.coerce(num/den)
-        elif isinstance(f, Expression):
-            from sage.symbolic.expression import SymbolicSeries
-            if isinstance(f, SymbolicSeries):
-                if str(f.default_variable()) == self.variable_name():
-                    return self.element_class(self, f.list(),
-                                              f.degree(f.default_variable()),
-                                              check=check)
-                else:
-                    raise TypeError("Can only convert series into ring with same variable name.")
-        else:
-            from sage.rings.lazy_series import LazyPowerSeries
-            if isinstance(f, LazyPowerSeries):
-                if prec is infinity:
-                    try:
-                        f = f.polynomial()
-                    except ValueError:
-                        f = f.add_bigoh(self.default_prec())
-                else:
-                    f = f.add_bigoh(prec)
-        return self.element_class(self, f, prec, check=check)
-
-    def construction(self):
-        """
-        Return the functorial construction of ``self``, namely, completion of
-        the univariate polynomial ring with respect to the indeterminate
-        (to a given precision).
-
-        EXAMPLES::
-
-            sage: R = PowerSeriesRing(ZZ, 'x')
-            sage: c, S = R.construction(); S
-            Univariate Polynomial Ring in x over Integer Ring
-            sage: R == c(S)
-            True
-            sage: R = PowerSeriesRing(ZZ, 'x', sparse=True)
-            sage: c, S = R.construction()
-            sage: R == c(S)
-            True
-        """
-        from sage.categories.pushout import CompletionFunctor
-        if self.is_sparse():
-            extras = {'sparse': True}
-        else:
-            extras = None
-        return CompletionFunctor(self._names[0], self.default_prec(), extras), self._poly_ring()
-
-    def _coerce_impl(self, x):
-        """
-        Return canonical coercion of x into ``self``.
 
         Rings that canonically coerce to this power series ring `R`:
 
@@ -972,18 +870,69 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
              from Power Series Ring in t over Univariate Polynomial Ring in w over Finite Field of size 7
              to Power Series Ring in t over Integer Ring
         """
-        try:
-            P = x.parent()
-            if isinstance(P, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
-                if P.variable_name() == self.variable_name():
-                    if self.has_coerce_map_from(P.base_ring()):
-                        return self(x)
-                    else:
-                        raise TypeError("no natural map between bases of power series rings")
-        except AttributeError:
-            pass
+        if prec is not infinity:
+            prec = integer.Integer(prec)
+            if prec < 0:
+                raise ValueError("prec (= %s) must be nonnegative" % prec)
+        if isinstance(f, power_series_ring_element.PowerSeries) and f.parent() is self:
+            if prec >= f.prec():
+                return f
+            f = f.truncate(prec)
+        elif isinstance(f, LaurentSeries) and f.parent().power_series_ring() is self:
+            return self(f.power_series(), prec, check=check)
+        elif isinstance(f, MagmaElement) and str(f.Type()) == 'RngSerPowElt':
+            v = sage_eval(f.Eltseq())  # could use .sage() ?
+            return self(v) * (self.gen(0)**f.Valuation())
+        elif isinstance(f, FractionFieldElement):
+            if self.base_ring().has_coerce_map_from(f.parent()):
+                return self.element_class(self, [f], prec, check=check)
+            num = self.element_class(self, f.numerator(), prec, check=check)
+            den = self.element_class(self, f.denominator(), prec, check=check)
+            return self.coerce(num/den)
+        elif isinstance(f, Expression):
+            from sage.symbolic.expression import SymbolicSeries
+            if isinstance(f, SymbolicSeries):
+                if str(f.default_variable()) == self.variable_name():
+                    return self.element_class(self, f.list(),
+                                              f.degree(f.default_variable()),
+                                              check=check)
+                raise TypeError("Can only convert series into ring with same variable name.")
+        else:
+            from sage.rings.lazy_series import LazyPowerSeries
+            if isinstance(f, LazyPowerSeries):
+                if prec is infinity:
+                    try:
+                        f = f.polynomial()
+                    except ValueError:
+                        f = f.add_bigoh(self.default_prec())
+                else:
+                    f = f.add_bigoh(prec)
+        return self.element_class(self, f, prec, check=check)
 
-        return self._coerce_map_via([self.base_ring(), self.__poly_ring], P)(x)
+    def construction(self):
+        """
+        Return the functorial construction of ``self``, namely, completion of
+        the univariate polynomial ring with respect to the indeterminate
+        (to a given precision).
+
+        EXAMPLES::
+
+            sage: R = PowerSeriesRing(ZZ, 'x')
+            sage: c, S = R.construction(); S
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: R == c(S)
+            True
+            sage: R = PowerSeriesRing(ZZ, 'x', sparse=True)
+            sage: c, S = R.construction()
+            sage: R == c(S)
+            True
+        """
+        from sage.categories.pushout import CompletionFunctor
+        if self.is_sparse():
+            extras = {'sparse': True}
+        else:
+            extras = None
+        return CompletionFunctor(self._names[0], self.default_prec(), extras), self._poly_ring()
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
@@ -1056,8 +1005,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         if R.has_coerce_map_from(self.base_ring()):
             return self.change_ring(R)
-        else:
-            raise TypeError("no base extension defined")
+        raise TypeError("no base extension defined")
 
     def change_ring(self, R):
         """
@@ -1079,7 +1027,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return PowerSeriesRing(R, name=self.variable_name(), default_prec=self.default_prec())
 
-    def change_var(self, var):
+    def change_variable_name(self, var):
         """
         Return the power series ring in variable ``var`` over the same base ring.
 
@@ -1087,10 +1035,12 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
             sage: R.<T> = QQ[[]]; R
             Power Series Ring in T over Rational Field
-            sage: R.change_var('D')
+            sage: R.change_variable_name('D')
             Power Series Ring in D over Rational Field
         """
         return PowerSeriesRing(self.base_ring(), names=var, sparse=self.is_sparse())
+
+    change_var = change_variable_name
 
     def is_exact(self):
         """
@@ -1155,8 +1105,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         if self.base_ring().is_field():
             return self.gen()
-        else:
-            raise TypeError("The base ring is not a field")
+        raise TypeError("The base ring is not a field")
 
     def ngens(self):
         """
@@ -1318,8 +1267,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         if self.base_ring().is_field():
             return self.base_ring()
-        else:
-            return self.base_ring().residue_field()
+        return self.base_ring().residue_field()
 
     def laurent_series_ring(self):
         """

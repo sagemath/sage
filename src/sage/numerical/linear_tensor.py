@@ -312,12 +312,11 @@ class LinearTensorParent_class(Parent):
                 m_matrix[i, i] = m
             m_matrix.set_immutable()
             return m_matrix
-        elif self.is_vector_space():
+        if self.is_vector_space():
             # Turn constants into vectors with all entries equal
             m_vector = M([m] * M.degree())
             return m_vector
-        else:
-            return M(m)
+        return M(m)
 
     def _element_constructor_(self, x):
         """

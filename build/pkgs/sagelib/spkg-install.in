@@ -55,7 +55,8 @@ if [ "$SAGE_EDITABLE" = yes ]; then
         --config-settings=build-dir="build/sage-distro" \
         --config-settings=setup-args="--native-file=$SAGE_PKGS/../platform/meson/sage-configure-native-file.ini" \
         --config-settings=setup-args="-DSAGE_LOCAL=$SAGE_LOCAL" \
-        --config-settings=setup-args="-Dbuild-docs=$SAGE_BUILD_DOCS"
+        --config-settings=setup-args="-Dbuild-docs=$SAGE_BUILD_DOCS" \
+        --config-settings=setup-args="-Ddefer_feature_checks=true"
 
     if [ "$SAGE_WHEELS" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
@@ -73,7 +74,8 @@ else
     # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
     sdh_pip_install --no-build-isolation . --config-setting=build-dir="build/sage-distro" \
         --config-setting=setup-args="-DSAGE_LOCAL=$SAGE_LOCAL" \
-        --config-setting=setup-args="-Dbuild-docs=$SAGE_BUILD_DOCS"
+        --config-setting=setup-args="-Dbuild-docs=$SAGE_BUILD_DOCS" \
+        --config-setting=setup-args="-Ddefer_feature_checks=true"
 fi
 
 # Remove (potentially invalid) star import caches.

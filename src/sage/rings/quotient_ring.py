@@ -109,7 +109,7 @@ easily::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.interfaces.abc
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.structure.parent_gens
 
 from sage.structure.parent import Parent
@@ -313,7 +313,7 @@ def QuotientRing(R, I, names=None, **kwds):
         return R
     try:
         if I.is_principal():
-            return R.quotient_by_principal_ideal(I.gen(), names)
+            return R.quotient_by_principal_ideal(I.gen(), names, **kwds)
     except (AttributeError, NotImplementedError):
         pass
     if not is_commutative:
@@ -334,42 +334,6 @@ def QuotientRing(R, I, names=None, **kwds):
     if R in _CommRings:
         return QuotientRing_generic(R, I, names, **kwds)
     return QuotientRing_nc(R, I, names, **kwds)
-
-
-def is_QuotientRing(x):
-    """
-    Test whether or not ``x`` inherits from :class:`QuotientRing_nc`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.quotient_ring import is_QuotientRing
-        sage: R.<x> = PolynomialRing(ZZ,'x')
-        sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
-        sage: S = R.quotient_ring(I)
-        sage: is_QuotientRing(S)
-        doctest:warning...
-        DeprecationWarning: The function is_QuotientRing is deprecated;
-        use 'isinstance(..., QuotientRing_nc)' instead.
-        See https://github.com/sagemath/sage/issues/38266 for details.
-        True
-        sage: is_QuotientRing(R)
-        False
-
-    ::
-
-        sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-        sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-        sage: Q = F.quo(I)
-        sage: is_QuotientRing(Q)
-        True
-        sage: is_QuotientRing(F)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38266,
-                "The function is_QuotientRing is deprecated; "
-                "use 'isinstance(..., QuotientRing_nc)' instead.")
-    return isinstance(x, QuotientRing_nc)
 
 
 _RingsQuotients = _Rings.Quotients()
@@ -411,7 +375,7 @@ class QuotientRing_nc(Parent):
         sage: j^3
         -j*k*i - j*k*j - j*k*k
 
-    For rings that *do* inherit from :class:`~sage.rings.ring.CommutativeRing`,
+    For rings that *do* inherit from :class:`~sage.rings.ring.Ring`,
     we provide a subclass :class:`QuotientRing_generic`, for backwards
     compatibility.
 
@@ -547,9 +511,8 @@ class QuotientRing_nc(Parent):
             return QuotientFunctor(self.__I, names=names, domain=_CommRings,
                                    codomain=_CommRings,
                                    as_field=isinstance(self, Field)), self.__R
-        else:
-            return QuotientFunctor(self.__I, names=names,
-                                   as_field=isinstance(self, Field)), self.__R
+        return QuotientFunctor(self.__I, names=names,
+                               as_field=isinstance(self, Field)), self.__R
 
     def _repr_(self):
         """
@@ -1368,7 +1331,7 @@ class QuotientRing_nc(Parent):
         return self.retract(self.cover_ring().random_element())
 
 
-class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
+class QuotientRing_generic(QuotientRing_nc, ring.Ring):
     r"""
     Create a quotient ring of a *commutative* ring `R` by the ideal `I`.
 
@@ -1387,7 +1350,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
 
         INPUT:
 
-        - ``R`` -- a ring that is a :class:`~sage.rings.ring.CommutativeRing`
+        - ``R`` -- a ring that is a :class:`~sage.rings.ring.Ring`
 
         - ``I`` -- an ideal of `R`
 

@@ -351,7 +351,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None,
         set_random_seed(seed)
 
     complement = False
-    if d1 > n2/2 or d2 > n1/2:
+    if 2 * d1 > n2 or 2 * d2 > n1:
         # We build the complement graph instead
         complement = True
         d1 = n2 - d1
@@ -1296,7 +1296,7 @@ def pruned_tree(T, f, s):
     if not ke:
         # No removed edge. Only one possible subtree
         return [tuple(T)] * n
-    elif ke == n - 1:
+    if ke == n - 1:
         # All edges are removed. Only n possible subtrees
         return [(u,) for u in T]
 
@@ -1720,7 +1720,6 @@ def RandomPartialKTree(n, k, x, seed=None, immutable=False):
                  name=f"Random partial {k}-tree", immutable=True)
 
 
-
 def RandomRegular(d, n, seed=None, immutable=False):
     r"""
     Return a random `d`-regular graph on `n` vertices, or ``False`` on failure.
@@ -1920,8 +1919,8 @@ def _auxiliary_random_forest_word(n, k):
         sage: with(seed(94364165)):
         ....:     _auxiliary_random_forest_word(4, 3)
         ....:     _auxiliary_random_forest_word(3, 5)
-        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]
-        [1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 
     TESTS::
 

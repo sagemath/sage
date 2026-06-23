@@ -54,7 +54,8 @@ import sage.rings.infinity
 import sage.rings.rational
 import sage.rings.rational_field
 import sage.rings.ideal
-from sage.categories.basic import EuclideanDomains, DedekindDomains
+from sage.categories.dedekind_domains import DedekindDomains
+from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.noetherian_rings import NoetherianRings
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
@@ -86,34 +87,7 @@ cdef int number_of_integer_rings = 0
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
 
-def is_IntegerRing(x):
-    r"""
-    Internal function: return ``True`` iff ``x`` is the ring `\ZZ` of integers.
-
-    TESTS::
-
-        sage: from sage.rings.integer_ring import is_IntegerRing
-        sage: is_IntegerRing(ZZ)
-        doctest:warning...
-        DeprecationWarning: The function is_IntegerRing is deprecated;
-        use 'isinstance(..., IntegerRing_class)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_IntegerRing(QQ)
-        False
-        sage: is_IntegerRing(parent(3))
-        True
-        sage: is_IntegerRing(parent(1/3))
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_IntegerRing is deprecated; "
-                       "use 'isinstance(..., IntegerRing_class)' instead.")
-    return isinstance(x, IntegerRing_class)
-
-
-cdef class IntegerRing_class(CommutativeRing):
+cdef class IntegerRing_class(Ring):
     r"""
     The ring of integers.
 
@@ -431,7 +405,7 @@ cdef class IntegerRing_class(CommutativeRing):
             K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
-        return CommutativeRing.__getitem__(self, x)
+        return Ring.__getitem__(self, x)
 
     def range(self, start, end=None, step=None):
         """

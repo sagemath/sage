@@ -205,30 +205,6 @@ def IntegerMod(parent, value):
     return t(parent, value)
 
 
-def is_IntegerMod(x):
-    """
-    Return ``True`` if and only if x is an integer modulo
-    `n`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.integer_mod import is_IntegerMod
-        sage: is_IntegerMod(5)
-        doctest:warning...
-        DeprecationWarning: The function is_IntegerMod is deprecated;
-        use 'isinstance(..., IntegerMod_abstract)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        False
-        sage: is_IntegerMod(Mod(5,10))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_IntegerMod is deprecated; "
-                       "use 'isinstance(..., IntegerMod_abstract)' instead.")
-    return isinstance(x, IntegerMod_abstract)
-
-
 cdef inline inverse_or_None(x):
     try:
         return ~x
@@ -585,30 +561,34 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         """
         return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
-    def _axiom_init_(self) -> str:
+    def _fricas_init_(self) -> str:
         """
-        Return a string representation of the corresponding to
-        (Pan)Axiom object.
+        Return a string representation of the corresponding
+        FriCAS object.
 
         EXAMPLES::
 
             sage: a = Integers(15)(4)
-            sage: a._axiom_init_()
-            '4 :: IntegerMod(15)'
-
-            sage: aa = axiom(a); aa             # optional - axiom
-            4
-            sage: aa.type()                     # optional - axiom
-            IntegerMod 15
+            sage: a._fricas_init_()
+            '4::IntegerMod(15)'
 
             sage: aa = fricas(a); aa            # optional - fricas
             4
             sage: aa.typeOf()                   # optional - fricas
             IntegerMod(15)
-        """
-        return '%s :: %s' % (self, self.parent()._axiom_init_())
 
-    _fricas_init_ = _axiom_init_
+            sage: a = GF(7)(4)
+            sage: a._fricas_init_()
+            '4::PrimeField(7)'
+
+            sage: aa = fricas(a); aa            # optional - fricas
+            4
+            sage: aa.typeOf()                   # optional - fricas
+            PrimeField(7)
+        """
+        return '%s::%s' % (self, self.parent()._fricas_init_())
+
+    _axiom_init_ = _fricas_init_
 
     def _sage_input_(self, sib, coerced):
         r"""

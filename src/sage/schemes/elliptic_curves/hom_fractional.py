@@ -127,6 +127,21 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
               Numerator:   Scalar-multiplication endomorphism [-3]
                              of Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 11
               Denominator: 3
+
+        TESTS:
+
+        This example used to take a very long time prior to :issue:`42085`::
+
+            sage: F.<t> = GF((179, 2))
+            sage: q = 31
+            sage: E, iota = special_supersingular_curve(F, q, endomorphism=True)
+            sage: pi = E.frobenius_isogeny()
+            sage: iota * (21 + pi) / 31
+            Fractional elliptic-curve morphism of degree 20:
+              Numerator:   Composite morphism of degree 19220 = 620*31:
+              From: Elliptic Curve defined by y^2 = x^3 + x + 178 over Finite Field in t of size 179^2
+              To:   Elliptic Curve defined by y^2 = x^3 + x + 178 over Finite Field in t of size 179^2
+              Denominator: 31
         """
         if not isinstance(phi, EllipticCurveHom):
             raise TypeError('not an elliptic-curve morphism')
@@ -144,16 +159,13 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
 
             E = phi.domain()
             for l, e in d.factor():
-                F = E.division_field(l**e)
-                EE = E.change_ring(F)
+                pts = E.torsion_gens(l**e, extend=True)
 
-                psi = E.division_polynomial(l**e).radical()
-                psi //= psi.gcd(E.division_polynomial(l**(e-1)))
-                if psi.degree() < l**2//2:
-                    assert l == E.base_field().characteristic()
-                    if psi.is_one():
-                        # supersingular, hence [p] is the only p^2-isogeny up to isomorphism
-                        continue
+                assert len(pts) == 2 or l == E.base_field().characteristic()
+                if not pts:
+                    # supersingular, hence [p] is the only p^2-isogeny up to isomorphism
+                    continue
+                if len(pts) == 1:
                     # ordinary, hence [p] is Frobenius times its dual
                     insep = phi.inseparable_degree().valuation(l)
                     sep = phi.degree().valuation(l) - insep
@@ -161,9 +173,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
                         raise ValueError(f'{phi} is not divisible by {l**e}')
                     continue
 
-                P, Q = _torsion_gens(E, EE, l, e, psi=psi)
-
-                if phi._eval(P) or phi._eval(Q):
+                if any(phi._eval(pt) for pt in pts):
                     raise ValueError(f'{phi} is not divisible by {l**e}')
 
         self._phi = phi
@@ -219,34 +229,74 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             (9*z3^2 + 6*z3 + 6 : 4*z3^2 + 9*z3 + 3 : 1)
             sage: phi._eval(Q)
             (z3^2 + 9*z3 : 10*z3^2 + 6*z3 + 10 : 1)
+
+        The complexity is generally determined by the size of the
+        prime *powers* in the denominator. For example, the following
+        works rather quickly::
+
+            sage: p = 419
+            sage: E = EllipticCurve(GF(p^2), [1,0])
+            sage: pi = E.frobenius_endomorphism()
+            sage: factor(p + 1)
+            2^2 * 3 * 5 * 7
+            sage: phi = (pi - 1) / (p + 1)
+            sage: Q = E(91, 129)
+            sage: phi(Q)
+            (91 : 290 : 1)
+
+        ALGORITHM: See [EPSV2023]_, p. 8, "Evaluating fractional isogenies".
+
+        TESTS:
+
+        Check for :issue:`41902`::
+
+            sage: F.<t> = GF((1019, 2))
+            sage: E = EllipticCurve(F, [1, 0])
+            sage: P = E.lift_x(675*t + 800)
+            sage: i = E.automorphisms()[-1]
+            sage: j = E.frobenius_isogeny()
+            sage: f = End(E)(6) / 6
+            sage: P
+            (675*t + 800 : 518*t + 493 : 1)
+            sage: f(P)
+            (675*t + 800 : 518*t + 493 : 1)
+
+        Check for :issue:`41969`::
+
+            sage: E, endo = special_supersingular_curve(GF(1021^2), endomorphism=True)
+            sage: ((1 + endo + E.frobenius_isogeny()) / 2)((148, 0))
+            (148 : 0 : 1)
         """
         if self._domain.defining_polynomial()(*P):
             raise ValueError(f'{P} not on {self._domain}')
-        k = Sequence(P).universe()
+        F = Sequence(P).universe()
 
         if not P:
-            return self._codomain.base_extend(k).zero()
+            return self._codomain.base_extend(F).zero()
 
-        # TODO this should really be a "divide point by possibly
-        # extending the base field" method
-        F = k
         n = P.order()
-        m = self._d.prime_to_m_part(n)
-        P *= m.inverse_mod(n)
-        for q, e in (self._d//m).factor():
-            for _ in range(e):
-                f = P.division_points(q, poly_only=True)
-                try:
-                    f.any_root(assume_squarefree=True)
-                except ValueError:
-                    g = f.factor()[0][0]
-                    F = F.extension(g.degree())
-                    g.any_root(ring=F)
-                P = P.change_ring(F).division_points(q)[0]
+        t = self._d
+        u = t.prime_to_m_part(n)
+        if u == t:
+            Q = t.inverse_mod(n) * self._phi._eval(P)
+        else:
+            ls = t.prime_divisors()
+            qs = [l**t.valuation(l) for l in ls]
+            ms = [l**n.valuation(l) for l in ls]
+            ms[0] *= n.prime_to_m_part(t)
+            Ts = [P]
+            from sage.rings.generic import ProductTree
+            for bas in ProductTree(ms).CRT_bases()[::-1]:
+                Ts = [k * T for (vec, T) in zip(bas, Ts) for k in vec]
+            # now sum(Ts) == P and each T has the corresponding order m
 
-        Q = self._phi._eval(P).change_ring(k)
+            Q = self._codomain.base_extend(F).zero()
+            for q, m, T in zip(qs, ms, Ts):
+                T = T.divide(q, extend=True)
+                k = (t // q).inverse_mod(m)
+                Q += k * self._phi._eval(T).change_ring(F)
 
-        return self._codomain.base_extend(k)(*Q)
+        return self._codomain.base_extend(F)(*Q)
 
     def _repr_(self) -> str:
         r"""
@@ -300,27 +350,24 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         ker = []
         insep = 0
         for l, e in self._phi.degree().factor():
-            F = E.division_field(l**e)
-            EE = E.change_ring(F)
+            pts = E.torsion_gens(l**e, extend=True)
 
-            psi = E.division_polynomial(l**e).radical()
-            psi //= psi.gcd(E.division_polynomial(l**(e-1)))
-            if psi.degree() < l**2//2:
-                assert l == E.base_field().characteristic()
-                if psi.is_one():
-                    # supersingular, hence [p] is the only p^2-isogeny up to isomorphism
-                    insep += 2*self._d.valuation(l)
-                else:
-                    # ordinary, hence [p] is Frobenius times its dual
-                    insep += self._d.valuation(l)
-                    ker.append(self._d.p_primary_part(l) * EE.lift_x(psi.any_root(ring=F)))
+            assert len(pts) == 2 or l == E.base_field().characteristic()
+            if not pts:
+                # supersingular, hence [p] is the only p^2-isogeny up to isomorphism
+                insep += 2*self._d.valuation(l)
+                continue
+            if len(pts) == 1:
+                # ordinary, hence [p] is Frobenius times its dual
+                insep += self._d.valuation(l)
+                ker.append(self._d.p_primary_part(l) * pts[0])
                 continue
 
-            P, Q = _torsion_gens(E, EE, l, e, psi=psi)
+            P, Q = pts
             if self.is_endomorphism():
                 RS = None
             else:
-                RS = _torsion_gens(self._codomain, self._codomain.change_ring(F), l, e)
+                RS = self._codomain.change_ring(P.curve().base_field()).torsion_basis(l**e, extend=False)
 
             mat = self._phi.matrix_on_subgroup((P, Q), RS)
             for row in filter(bool, self._d.p_primary_part(l) * mat.left_kernel_matrix()):
@@ -525,19 +572,3 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             419
         """
         return self._phi.inseparable_degree() / self._domain.scalar_multiplication(self._d).inseparable_degree()
-
-
-def _torsion_gens(E, EE, l, e, psi=None):
-    if psi is None:
-        psi = E.division_polynomial(l**e).radical()
-        psi //= psi.gcd(E.division_polynomial(l**(e-1)))
-
-    xs = iter(psi.roots(ring=EE.base_field(), multiplicities=False))
-    P = EE.lift_x(next(xs))
-    while True:
-        Q = EE.lift_x(next(xs))
-        if not (P.weil_pairing(Q, l**e)**(l**(e-1))).is_one():
-            break
-    else:
-        assert False, f'bug in finding {l**e}-torsion basis'
-    return P, Q

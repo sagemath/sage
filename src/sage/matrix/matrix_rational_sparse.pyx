@@ -89,6 +89,12 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - ``coerce`` -- if ``False``, assume without checking that the
           entries are of type :class:`Rational`
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to the (empty)
+            # zero matrix. Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
         for t in ma.iter(coerce, True):
@@ -319,7 +325,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _unpickle(self, data, int version):   # use version >= 0
     # cpdef _add_(self, right):
     # cdef _mul_(self, Matrix right):
-    # cpdef _richcmp_(self, Matrix right, int op):
+    # cpdef _richcmp_(self, Matrix other, int op):
     # def __neg__(self):
     # def __invert__(self):
     # def __copy__(self):
@@ -496,7 +502,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         self.mpz_denom(D.value)
 
         MZ = sage.matrix.matrix_space.MatrixSpace(ZZ, self._nrows, self._ncols, sparse=True)
-        A = MZ.zero_matrix().__copy__()
+        A = MZ.element_class(MZ, None, False, False)
 
         mpz_init(t)
         sig_on()
@@ -668,7 +674,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef Matrix_rational_dense B
         cdef mpq_vector* v
 
-        B = self.matrix_space(sparse=False).zero_matrix().__copy__()
+        MS = self.matrix_space(sparse=False)
+        B = MS.element_class(MS, None, False, False)
         for i from 0 <= i < self._nrows:
             v = &(self._matrix[i])
             for j from 0 <= j < v.num_nonzero:
@@ -860,7 +867,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef linbox.SparseMatrix_rational * M = new_linbox_matrix_rational_sparse(givQQ, self)
 
         MQ = sage.matrix.matrix_space.MatrixSpace(QQ, self._ncols, self._ncols, sparse=True)
-        A = MQ.zero_matrix().__copy__()
+        A = MQ.element_class(MQ, None, False, False)
 
         cdef linbox.SparseMatrix_rational * N = new_linbox_matrix_rational_sparse(givQQ, A)
 

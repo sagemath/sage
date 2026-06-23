@@ -326,12 +326,52 @@ Then SageMath will be built either using the compilers provided by the
 operating system, or its own compilers.
 
 
-Tcl/Tk (and system's Python)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Using an external Python installed by uv
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, and you
-are going to use your OS's Python3 as Sage's Python, you merely need to install
-its **Tkinter** module.  On Linux systems, it is usually provided by the
+If you want Sage's classical ``./configure && make`` build to use an
+external Python that is not provided by your system package manager, you can
+install one with `uv <https://docs.astral.sh/uv/>`_.
+
+Sage no longer builds its own Python interpreter, so you need to provide one
+either from your system package manager or from a tool such as ``uv``.
+
+Sage's ``./configure`` currently accepts Python versions in the range
+``>= 3.12`` and ``< 3.15``. It also checks that the interpreter provides the
+modules ``sqlite3``, ``ctypes``, ``math``, ``hashlib``, ``socket``, ``ssl``,
+``ensurepip``, and ``zlib``.
+
+On Python 3.12 and newer, Sage additionally checks for ``setuptools`` because
+``distutils`` was removed from the Python standard library. The configure test
+creates a fresh virtual environment from the selected interpreter and then
+imports ``setuptools`` there before compiling small C and C++ extension
+modules. Therefore it is not enough to install ``setuptools`` into an
+unrelated project environment; it needs to be available from the Python
+interpreter that you pass to ``./configure``.
+
+For a ``uv``-managed Python, ``uv`` marks the interpreter as externally
+managed, so installing ``setuptools`` into it requires
+``--break-system-packages``. Also, ``--with-python`` should point to the
+actual Python executable path. One way to prepare such a Python is::
+
+    $ uv python install 3.13
+    $ PYTHON3="$(uv python find --managed-python --resolve-links 3.13)"
+    $ uv pip install --python "$PYTHON3" --break-system-packages setuptools
+    $ ./configure --with-python="$PYTHON3"
+
+You can replace ``3.13`` by another supported minor version such as ``3.12``
+or ``3.14``. After ``./configure`` succeeds, continue with the usual build
+step::
+
+    $ make
+
+
+Tcl/Tk
+^^^^^^
+
+If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage, make sure
+that the Python installation used by Sage provides the **Tkinter** module. On
+Linux systems, it is usually provided by the
 **python3-tk** or a similarly named (e.g. **python3-tkinter**) package,
 which can be installed using::
 
@@ -339,39 +379,13 @@ which can be installed using::
 
 or similar commands.
 
-Tcl/Tk (and Sage's own Python)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If you are using an external Python, check that exact interpreter before
+running ``./configure``::
 
-If you want to use `Tcl/Tk <https://www.tcl.tk/>`_ libraries in Sage,
-and you are going to build Sage's Python from source, you need to install
-these, and the corresponding headers.
-On Linux systems, these are usually provided by the **tk** and **tk-dev**
-(or **tk-devel**) packages which can be installed using::
+    $ "$PYTHON3" -c "import tkinter"
 
-    $ sudo apt-get install tk tk-dev
-
-or similar commands.
-
-
-Sage's Python will then automatically recognize your system's install of Tcl/Tk.
-If you installed Sage first, all is not lost. You just need to rebuild
-Sage's Python and any part of Sage relying on it::
-
-    $ sage -f python3  # rebuild Python3
-    $ make             # rebuild components of Sage depending on Python
-
-after installing the Tcl/Tk development libraries as above.
-
-If
-
-.. skip
-
-.. code-block:: ipycon
-
-   sage: import _tkinter
-   sage: import Tkinter
-
-does not raise an :class:`ImportError`, then it worked.
+If this command raises an :class:`ImportError`, then the selected Python does
+not provide Tcl/Tk support yet.
 
 
 .. _build-from-source-step-by-step:

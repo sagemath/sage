@@ -282,8 +282,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
                                                  for l,c in rec)
         if scalar is None:
             return result
-        else:
-            return scalar * result
+        return scalar * result
 
     def straighten_word(self, word):
         r"""

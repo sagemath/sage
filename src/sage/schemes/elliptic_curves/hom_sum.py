@@ -18,8 +18,8 @@ EXAMPLES::
     sage: phi + phi
     Sum morphism:
       From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
-      To:   Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
-      Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101)
+      To:   Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101
+      Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101)
     sage: phi + phi == phi * E.scalar_multiplication(2)
     True
     sage: phi + phi + phi == phi * E.scalar_multiplication(3)
@@ -76,8 +76,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: EllipticCurveHom_sum([phi, phi])
             Sum morphism:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
-              To:   Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
-              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101)
+              To:   Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101
+              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101)
 
         The zero morphism can be constructed even between non-isogenous curves::
 
@@ -130,7 +130,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: P = E.lift_x(0)
             sage: (phi + phi)(P)
-            (72 : 56 : 1)
+            (2 : 97 : 1)
             sage: (phi - phi)(P)
             (0 : 1 : 0)
         """
@@ -153,7 +153,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: P = E.change_ring(GF(101^2)).lift_x(1)
             sage: (phi + phi)._eval(P)
-            (11 : 15*z2 + 71 : 1)
+            (48 : 35*z2 + 31 : 1)
             sage: (phi - phi)._eval(P)
             (0 : 1 : 0)
         """
@@ -173,8 +173,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: phi + phi  # indirect doctest
             Sum morphism:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
-              To:   Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
-              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101)
+              To:   Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101
+              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101)
         """
         return f'Sum morphism:' \
                 f'\n  From: {self._domain}' \
@@ -212,7 +212,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: (phi + phi).to_isogeny_chain()
             Composite morphism of degree 28 = 4*1*7:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
-              To:   Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
+              To:   Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101
 
         ::
 
@@ -389,9 +389,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         Internal method to compute and cache the degree of this sum morphism
         (and its dual).
 
-        ALGORITHM: Evaluate the composition with the dual on points of small
-        order and solve logarithms to eventually recover the degree using CRT.
-        (This is essentially Schoof's algorithm, applied to a scalar.)
+        ALGORITHM: Recursive application of the formula
+        `\deg(\varphi+\psi) = \deg(\varphi) + \deg(\psi) + \mathrm{tr}(\varphi\circ\widehat\psi)`.
 
         EXAMPLES::
 
@@ -427,25 +426,13 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         else:
             #TODO In some cases it would probably be faster to simply
             # compute the kernel polynomial using the addition formulas?
-            from sage.rings.finite_rings.integer_mod import Mod
-
-            lo, hi = self._degree_bounds()
-            M = hi - lo + 1
-            rem = Mod(0,1)
-            for l in Primes():
-                if rem.modulus() >= M:
-                    break
-                try:
-                    P = point_of_order(self._domain, l)
-                except ValueError:
-                    continue   # supersingular and l == p
-
-                Q = self.dual()._eval(self._eval(P))
-                d = discrete_log(Q, P, ord=l, operation='+')
-                rem = rem.crt(Mod(d-lo, l))
-
-            self._degree = lo + rem.lift()
-            self.dual()._degree = self._degree
+            mid = (len(self._phis) + 1) // 2
+            left = EllipticCurveHom_sum(self._phis[:mid])
+            right = EllipticCurveHom_sum(self._phis[mid:])
+            pair = left * right.dual() if right.degree() < left.degree() else left.dual() * right
+            self._degree = left.degree() + right.degree() + pair.trace()
+            if self.dual.is_in_cache():
+                self.dual()._degree = self._degree
 
     @staticmethod
     def _comparison_impl(left, right, op):
@@ -512,8 +499,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101), [5,5])
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: (phi + phi).rational_maps()
-            ((5*x^28 + 43*x^27 + 26*x^26 - ... + 7*x^2 - 23*x + 38)/(23*x^27 + 16*x^26 + 9*x^25 + ... - 43*x^2 - 22*x + 37),
-             (42*x^42*y - 44*x^41*y - 22*x^40*y + ... - 26*x^2*y - 50*x*y - 18*y)/(-24*x^42 - 47*x^41 - 12*x^40 + ... + 18*x^2 - 48*x + 18))
+            ((31*x^28 + 4*x^27 + 40*x^26 + ... + 3*x^2 + 19*x - 27)/(23*x^27 + 16*x^26 + 9*x^25 + ... - 43*x^2 - 22*x + 37),
+             (-3*x^42*y + 32*x^41*y + 16*x^40*y + ... - 27*x^2*y + 18*x*y - 42*y)/(-24*x^42 - 47*x^41 - 12*x^40 + ... + 18*x^2 - 48*x + 18))
 
         ALGORITHM: :meth:`to_isogeny_chain`.
         """
@@ -530,7 +517,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101), [5,5])
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: (phi + phi).x_rational_map()
-            (9*x^28 + 37*x^27 + 67*x^26 + ... + 53*x^2 + 100*x + 28)/(x^27 + 49*x^26 + 97*x^25 + ... + 64*x^2 + 21*x + 6)
+            (76*x^28 + 88*x^27 + 72*x^26 + ... + 66*x^2 + 14*x + 12)/(x^27 + 49*x^26 + 97*x^25 + ... + 64*x^2 + 21*x + 6)
+
 
         ALGORITHM: :meth:`to_isogeny_chain`.
         """
@@ -579,9 +567,9 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101), [5,5])
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: phi.scaling_factor()
-            84
+            1
             sage: (phi + phi).scaling_factor()
-            67
+            2
 
         ALGORITHM: The scaling factor is additive under addition
         of elliptic-curve morphisms, so we simply add together the
@@ -600,9 +588,9 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: (phi + phi).dual()
             Sum morphism:
-              From: Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
+              From: Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101
               To:   Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
-              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101)
+              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 29*x + 51 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101)
             sage: (phi + phi).dual() == phi.dual() + phi.dual()
             True
 
@@ -687,3 +675,47 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
         Q = self._eval(P)
         return order_from_multiple(Q, p**m)
+
+    def xEVAL(self, xP):
+        r"""
+        For other :class:`EllipticCurveHom` implementations, the method of this name
+        returns the `x`-coordinate of `\varphi(P)` given the `x`-coordinate of `P`.
+
+        In the case of :class:`EllipticCurveHom_sum` objects, this method fails with
+        a :class:`NotImplementedError`: This is because implementing it would require
+        taking a square root anyway, which defeats the purpose of `x`-only arithmetic.
+        Users who need this are likely better off using "full" points `(x,y)` on the
+        curve for their computations.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES:
+
+        The following example shows that square roots are inherently required for
+        implementing this method::
+
+            sage: E = EllipticCurve(GF((2^31-1, 2)), [1, 0])
+            sage: iota = E.automorphisms()[-1]
+            sage: pi = E.frobenius_isogeny()
+            sage: phi = iota + pi
+            sage: phi(E.lift_x(42)).x()
+            692203532*z2 + 445237135
+            sage: phi.xEVAL(42)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)
+            sage: phi.xEVAL((42, 1))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)
+        """
+        raise NotImplementedError('x-only evaluation not implemented for sums of isogenies (it would require taking a square root anyway)')
