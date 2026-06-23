@@ -985,6 +985,14 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             Traceback (most recent call last):
             ...
             TypeError: degrees must be a list of integers or a list of tuples/lists of integers
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=(2, 1, 0))
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of generators must be the same as the number of degrees
+            sage: GradedCommutativeAlgebra(QQ, names='a,b,c', degrees=(2, 1))
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of generators must be the same as the number of degrees
         """
         if names is None:
             if degrees is None:
@@ -1036,6 +1044,10 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                     degrees = [G(vector(d)) for d in degrees]
 
             degrees = tuple(degrees)
+
+        if len(names) != len(degrees):
+            raise ValueError("the number of generators must be the same as "
+                             "the number of degrees")
         if not R or not I:
             if n > 1:
                 F = FreeAlgebra(base, n, names)
