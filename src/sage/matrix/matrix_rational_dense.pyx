@@ -1290,9 +1290,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
     def height(self):
         """
-        Return the height of this matrix, which is the maximum of the
-        absolute values of all numerators and denominators of entries in
-        this matrix.
+        Return the height of this matrix, which is the least common
+        multiple of the absolute values of all numerators and
+        denominators of entries in this matrix.
 
         OUTPUT: integer
 
@@ -1318,15 +1318,15 @@ cdef class Matrix_rational_dense(Matrix_dense):
         cdef Py_ssize_t i, j
         sig_on()
         fmpz_init(x)
-        fmpz_zero(h)
+        fmpz_one(h)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 fmpz_abs(x, fmpq_mat_entry_num(self._matrix, i, j))
-                if fmpz_cmp(h, x) < 0:
-                    fmpz_set(h, x)
+                if not fmpz_is_zero(x) and fmpz_cmp(h, x) != 0:
+                    fmpz_lcm(h, h, x)
                 fmpz_abs(x, fmpq_mat_entry_den(self._matrix, i, j))
-                if fmpz_cmp(h, x) < 0:
-                    fmpz_set(h, x)
+                if not fmpz_is_zero(x) and fmpz_cmp(h, x) != 0:
+                    fmpz_lcm(h, h, x)
         fmpz_clear(x)
         sig_off()
         return 0

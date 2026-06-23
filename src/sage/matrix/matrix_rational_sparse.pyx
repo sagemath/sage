@@ -426,19 +426,19 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     cdef int mpz_height(self, mpz_t height) except -1:
         cdef mpz_t x, h
         mpz_init(x)
-        mpz_init_set_si(h, 0)
+        mpz_init_set_si(h, 1)
         cdef Py_ssize_t i, j
         sig_on()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
                 mpq_get_num(x, self._matrix[i].entries[j])
                 mpz_abs(x, x)
-                if mpz_cmp(h,x) < 0:
-                    mpz_set(h,x)
+                if mpz_cmp(h,x) != 0:
+                    mpz_lcm(h,h,x)
                 mpq_get_den(x, self._matrix[i].entries[j])
                 mpz_abs(x, x)
-                if mpz_cmp(h,x) < 0:
-                    mpz_set(h,x)
+                if mpz_cmp(h,x) != 0:
+                    mpz_lcm(h,h,x)
         sig_off()
         mpz_set(height, h)
         mpz_clear(h)
