@@ -121,6 +121,7 @@ additional functionality (e.g. linear extensions).
     - :meth:`is_binary() <sage.matroids.matroid.Matroid.is_binary>`
     - :meth:`ternary_matroid() <sage.matroids.matroid.Matroid.ternary_matroid>`
     - :meth:`is_ternary() <sage.matroids.matroid.Matroid.is_ternary>`
+    - :meth:`is_quaternary() <sage.matroids.matroid.Matroid.is_quaternary>`
     - :meth:`relabel() <sage.matroids.matroid.Matroid.relabel>`
 
 - Optimization
@@ -6602,6 +6603,36 @@ cdef class Matroid(SageObject):
         """
         return self.ternary_matroid(randomized_tests=randomized_tests, verify=True) is not None
 
+    cpdef bint is_quaternary(self) noexcept:
+        r"""
+        Return if ``self`` is quaternary.
+
+        A matroid is quaternary if and only if it has no minor isomorphic to
+        any of the matroids `U_{2, 6}`, `U_{4, 6}`, `P_6`, `F_7^-`,
+        `(F_7^-)^*`, `P_8`, and `P_8^=`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Fano()
+            sage: M.is_quaternary()
+            True
+            sage: M = matroids.catalog.NonFano()
+            sage: M.is_quaternary()
+            False
+
+        REFERENCES:
+
+        [GGK2000]_
+        """
+        from sage.matroids.database_matroids import (
+            Uniform, P6, NonFano, NonFanoDual, P8, P8pp
+        )
+        for M in (Uniform(2, 6), Uniform(4, 6), P6(),
+                  NonFano(), NonFanoDual(), P8(), P8pp()):
+            if self.has_minor(M):
+                return False
+        return True
+
     cpdef bint is_graphic(self) noexcept:
         r"""
         Return if ``self`` is graphic.
@@ -6623,18 +6654,10 @@ cdef class Matroid(SageObject):
 
         [Oxl2011]_, p. 385.
         """
-        from sage.matroids.database_matroids import (
-            U24,
-            Fano,
-            FanoDual,
-            K5dual,
-            K33dual
-        )
-        excluded_minors = [U24(), Fano(), FanoDual(), K5dual(), K33dual()]
-        for M in excluded_minors:
-            if self.has_minor(M):
-                return False
-        return True
+        if not self.is_regular():  # U24, Fano, or FanoDual minor
+            return False
+        from sage.matroids.database_matroids import K5dual, K33dual
+        return not (self.has_minor(K5dual()) or self.has_minor(K33dual()))
 
     cpdef bint is_regular(self) noexcept:
         r"""
@@ -6663,9 +6686,7 @@ cdef class Matroid(SageObject):
         if not self.is_binary():  # equivalent to checking for a U24 minor
             return False
         from sage.matroids.database_matroids import Fano, FanoDual
-        if self.has_minor(Fano()) or self.has_minor(FanoDual()):
-            return False
-        return True
+        return not (self.has_minor(Fano()) or self.has_minor(FanoDual()))
 
     # matroid k-closed
 

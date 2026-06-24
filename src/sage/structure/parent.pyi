@@ -15,7 +15,6 @@ def is_Parent(x: Any) -> bool: ...
 
 class Parent[ElementT](CategoryObject):
     _element_constructor: Callable[..., Any] | None
-    _element_init_pass_parent: bool
     _convert_method_name: str | None
     _initial_coerce_list: list[Any]
     _initial_action_list: list[Any]
