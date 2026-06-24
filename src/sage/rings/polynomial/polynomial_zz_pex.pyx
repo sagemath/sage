@@ -17,11 +17,12 @@ AUTHOR:
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
-from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
-from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
+from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX, ZZ_pX_to_ZZ_pE
+from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff, ZZ_pX_SetCoeff_long
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
 from sage.libs.ntl.convert cimport ZZ_to_mpz, mpz_to_ZZ
 
+from sage.rings.finite_rings.element_givaro cimport Cache_givaro, FiniteField_givaroElement
 from sage.structure.element import have_same_parent, canonical_coercion
 
 # We need to define this stuff before including the templating stuff
@@ -45,6 +46,69 @@ include "sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi"
 include "polynomial_template.pxi"
 
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
+
+
+# Cache at most one converted NTL coefficient per small Givaro field element.
+cdef int _GIVARO_NTL_CACHE_MAX_SIZE = 4096
+
+
+cdef inline ntl_ZZ_pE ZZ_pE_from_givaro_int(ntl_ZZ_pEContext_class modulus,
+                                            int n, int characteristic,
+                                            int degree):
+    cdef ntl_ZZ_pE d = ntl_ZZ_pE.__new__(ntl_ZZ_pE)
+    cdef ZZ_pX_c c_pX
+    cdef int i
+    cdef int coeff
+
+    d.c = modulus
+    modulus.restore_c()
+    # Givaro stores these field elements and field parameters as C ints.
+    for i in range(degree):
+        coeff = n % characteristic
+        if coeff:
+            ZZ_pX_SetCoeff_long(c_pX, i, coeff)
+        n = n // characteristic
+        if not n:
+            break
+    d.x = ZZ_pX_to_ZZ_pE(c_pX)
+    return d
+
+
+cdef inline ntl_ZZ_pE ZZ_pE_from_givaro(parent, FiniteField_givaroElement e):
+    cdef Cache_givaro cache = e._cache
+    cdef ntl_ZZ_pEContext_class modulus = parent._modulus
+    cdef int n = cache.log_to_int(e.element)
+    cdef ntl_ZZ_pE d
+    cdef dict converted
+
+    if cache.order_c() <= _GIVARO_NTL_CACHE_MAX_SIZE:
+        # The converted values are tied to this polynomial ring's NTL context.
+        try:
+            converted = parent._ntl_ZZ_pE_cache
+        except AttributeError:
+            converted = {}
+            parent._ntl_ZZ_pE_cache = converted
+        try:
+            d = <ntl_ZZ_pE>converted[n]
+            modulus.restore_c()
+            return d
+        except KeyError:
+            d = ZZ_pE_from_givaro_int(modulus, n,
+                                      cache.characteristic(),
+                                      cache.exponent())
+            converted[n] = d
+            return d
+
+    return ZZ_pE_from_givaro_int(modulus, n,
+                                 cache.characteristic(),
+                                 cache.exponent())
+
+
+cdef inline ntl_ZZ_pE ZZ_pE_from_base_element(parent, x):
+    if isinstance(x, FiniteField_givaroElement) and x.parent() is parent.base_ring():
+        return ZZ_pE_from_givaro(parent, <FiniteField_givaroElement>x)
+    return parent._modulus.ZZ_pE(list(x.polynomial()))
+
 
 cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
     cdef list L = []
@@ -122,18 +186,33 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             Traceback (most recent call last):
             ...
             TypeError: unable to coerce from a finite field other than the prime subfield
+
+        Repeated construction over small Givaro finite fields reuses the
+        converted NTL coefficients (:issue:`40667`)::
+
+            sage: K.<a> = GF(9)
+            sage: R.<x> = K[]
+            sage: coeffs = list(K)
+            sage: f = R(coeffs)
+            sage: f == R(coeffs)
+            True
+            sage: sorted(R._ntl_ZZ_pE_cache) == sorted(c._integer_representation() for c in coeffs)
+            True
         """
         cdef ntl_ZZ_pE d
         try:
-            if (x.parent() is parent.base_ring()) or (x.parent() == parent.base_ring()):
+            x_parent = x.parent()
+        except AttributeError:
+            pass
+        else:
+            K = parent.base_ring()
+            if x_parent is K or x_parent == K:
                 Polynomial.__init__(self, parent, is_gen=is_gen)
                 (<Polynomial_template>self)._cparent = get_cparent(parent)
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
-                d = parent._modulus.ZZ_pE(list(x.polynomial()))
+                d = ZZ_pE_from_base_element(parent, x)
                 ZZ_pEX_SetCoeff(self.x, 0, d.x)
                 return
-        except AttributeError:
-            pass
 
         if isinstance(x, Polynomial):
             x = x.list()
@@ -148,7 +227,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
                 # not necessarily a coercion. So, we must
                 # not do K.coerce(e) but K(e).
                 e = K(e)
-                d = parent._modulus.ZZ_pE(list(e.polynomial()))
+                d = ZZ_pE_from_base_element(parent, e)
                 ZZ_pEX_SetCoeff(self.x, i, d.x)
             return
 

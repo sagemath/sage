@@ -166,7 +166,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     all_requirements = {
         # Following can be removed once https://github.com/regro/cf-scripts/pull/2176 is used in grayskull
         req.replace("lrcalc", "python-lrcalc")
-        .replace("symengine", "python-symengine")
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
         .replace("pkg:generic/latexmk", "latexmk")
