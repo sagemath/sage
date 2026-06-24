@@ -836,13 +836,13 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         a = self**(n // 2)
         return a == 1 or a == 0
 
-    def square_root(self, extend=False, all=False):
+    def square_root(self, extend=False, all=False, algorithm=None):
         """
         The square root function.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
           square root in an extension ring, if necessary. Otherwise, raise a
           :exc:`ValueError` if the root is not in the base ring.
 
@@ -852,6 +852,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return all
           square roots of ``self``, instead of just one
+
+        - ``algorithm`` -- ignored; accepted for compatibility with finite
+          ring and finite field square-root interfaces
 
         .. WARNING::
 
@@ -868,6 +871,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             3
             sage: F(4).square_root()
             2
+            sage: F(4).square_root(algorithm='tonelli')^2 == F(4)
+            True
             sage: K = FiniteField(7^3, 'alpha', implementation='pari_ffelt')
             sage: K(3).square_root()
             Traceback (most recent call last):
@@ -879,7 +884,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         except ValueError:
             raise ValueError("must be a perfect square.")
 
-    def sqrt(self, extend=False, all=False):
+    def sqrt(self, extend=False, all=False, algorithm=None):
         """
         See :meth:`square_root`.
 
@@ -889,7 +894,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: (a^3 - a - 1).sqrt()
             a^16 + 2*a^15 + a^13 + 2*a^12 + a^10 + 2*a^9 + 2*a^8 + a^7 + a^6 + 2*a^5 + a^4 + 2*a^2 + 2*a + 2
         """
-        return self.square_root(extend=extend, all=all)
+        return self.square_root(extend=extend, all=all, algorithm=algorithm)
 
     def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""

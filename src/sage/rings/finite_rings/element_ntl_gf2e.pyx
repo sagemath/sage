@@ -640,9 +640,20 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         return True
 
-    def sqrt(FiniteField_ntl_gf2eElement self, all=False, extend=False):
+    def sqrt(FiniteField_ntl_gf2eElement self, all=False, extend=False, algorithm=None):
         """
         Return a square root of this finite field element in its parent.
+
+        INPUT:
+
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all
+          square roots of ``self``, instead of just one
+
+        - ``extend`` -- ignored; accepted for compatibility with other finite
+          field implementations
+
+        - ``algorithm`` -- ignored; accepted for compatibility with finite
+          ring and finite field square-root interfaces
 
         EXAMPLES::
 
@@ -652,6 +663,8 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: a.sqrt()
             a^19 + a^15 + a^14 + a^12 + a^9 + a^7 + a^4 + a^3 + a + 1
             sage: a.sqrt()^2 == a
+            True
+            sage: a.sqrt(algorithm='tonelli')^2 == a
             True
 
         This failed before :issue:`4899`::
