@@ -962,14 +962,30 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             sage: z**2 == 0
             False
 
-        Multidegrees must all have the same length, and must consist of
-        nonnegative integers::
+        Degrees must be positive, and the number of generators must
+        agree with the length of the list of degrees::
+
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=(2, 0))
+            Traceback (most recent call last):
+            ...
+            ValueError: degrees must be positive
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=(2, 1, 2))
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of generators must be the same as the number of degrees
+            sage: GradedCommutativeAlgebra(QQ, names='a,b,c', degrees=(2, 1))
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of generators must be the same as the number of degrees
+
+        Multidegrees must all have the same length, must consist of
+        nonnegative integers, and must have positive total degree::
 
             sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=((1, 0), (0,)))
             Traceback (most recent call last):
             ...
             ValueError: multidegrees must all have the same length
-            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=((1, 0), (0, -1)))
+            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=((1, 0), (2, -1)))
             Traceback (most recent call last):
             ...
             ValueError: degrees must be nonnegative
@@ -985,14 +1001,10 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             Traceback (most recent call last):
             ...
             TypeError: degrees must be a list of integers or a list of tuples/lists of integers
-            sage: GradedCommutativeAlgebra(QQ, names='a,b', degrees=(2, 1, 0))
+            sage: GradedCommutativeAlgebra(QQ, names='a,b,c', degrees=((1,0), (0, 0)))
             Traceback (most recent call last):
             ...
-            ValueError: the number of generators must be the same as the number of degrees
-            sage: GradedCommutativeAlgebra(QQ, names='a,b,c', degrees=(2, 1))
-            Traceback (most recent call last):
-            ...
-            ValueError: the number of generators must be the same as the number of degrees
+            ValueError: total degrees must be positive
         """
         if names is None:
             if degrees is None:
@@ -1022,8 +1034,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                     for d in degrees:
                         if d not in ZZ:
                             raise bad_type
-                        if d < 0:
-                            raise ValueError("degrees must be nonnegative")
+                        if d <= 0:
+                            raise ValueError("degrees must be positive")
                 else:
                     # Multigrading: every degree must be an iterable (list or
                     # tuple) of nonnegative integers, all of the same length.
@@ -1035,6 +1047,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                         if len(entries) != rank:
                             raise ValueError("multidegrees must all have the"
                                              " same length")
+                        if sum(entries) <= 0:
+                            raise ValueError("total degrees must be positive")
                         for e in entries:
                             if e not in ZZ:
                                 raise bad_type
