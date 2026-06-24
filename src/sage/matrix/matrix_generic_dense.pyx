@@ -339,6 +339,27 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
+
+        TESTS::
+
+            sage: Ext=ExteriorAlgebra(QQ,['p'])
+            sage: Ext.inject_variables(verbose=False)
+            sage: Mp = matrix(1,1,[[p]])
+            sage: Mp[0,0]*Mp[0,0]
+            0
+            sage: Mp*Mp
+            [0]
+
+            sage: # needs sage.modules
+            sage: MS = MatrixSpace(MatrixSpace(ZZ, 2, 2), 2, 2)
+            sage: A = MS([matrix(ZZ, 2, [n, 0, 0, n]) for n in range(1, 5)])
+            sage: B = A * A
+            sage: B[0, 0]
+            [7 0]
+            [0 7]
+            sage: B[1, 1]
+            [22  0]
+            [ 0 22]
         """
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
@@ -354,11 +375,11 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         zero = R.zero()
         p = 0
         for i in range(nr):
+            m = i*snc
             for j in range(nc):
                 z = zero
-                m = i*snc
                 for k in range(snc):
-                    z += self._entries[m+k]._mul_(right._entries[k*nc+j])
+                    z += self._entries[m+k] * (right._entries[k*nc+j])
                 v[p] = z
                 p += 1
 

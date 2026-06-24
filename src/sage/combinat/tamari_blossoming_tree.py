@@ -29,20 +29,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from collections.abc import Iterator
+from math import acos, cos, pi, sin
 from typing import Self
-from math import acos, cos, sin, pi
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.binary_tree import from_tamari_sorting_tuple, BinaryTree
+from sage.combinat.binary_tree import BinaryTree, from_tamari_sorting_tuple
 from sage.combinat.dyck_word import DyckWords
 from sage.combinat.integer_lists.invlex import IntegerListsLex
-from sage.combinat.interval_posets import (TamariIntervalPoset,
-                                           TamariIntervalPosets)
-from sage.combinat.ordered_tree import OrderedTree, LabelledOrderedTree
+from sage.combinat.interval_posets import TamariIntervalPoset, TamariIntervalPosets
+from sage.combinat.ordered_tree import LabelledOrderedTree, OrderedTree
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.prandom import uniform, randrange
+from sage.misc.prandom import randrange, uniform
 from sage.plot.arc import arc
 from sage.plot.arrow import arrow2d
 from sage.plot.bezier_path import bezier_path
@@ -1473,10 +1472,9 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
                 # at the root: one bud at the beginning or the end
                 if len(idx) != 1 or (idx[0] != 0 and idx[0] != len(tree) - 1):
                     return False
-            else:
-                # otherwise: two buds consecutive
-                if len(idx) != 2 or idx[1] - idx[0] != 1:
-                    return False
+            # otherwise: two buds consecutive
+            elif len(idx) != 2 or idx[1] - idx[0] != 1:
+                return False
             for st in tree:
                 if st and not aux(st):  # an internal node failing the test
                     return False
@@ -1577,7 +1575,7 @@ class _RandomPath:
         return s
 
     @staticmethod
-    def cutting(cardlist: list[float], size: int) -> list[(float, int)]:
+    def cutting(cardlist: list[float], size: int) -> list[tuple[float, int]]:
         """
         Utility function to generate the cutting ratio list according to a
         list of (relative) count of objects of sizes from ``0`` to ``size``.
@@ -1621,7 +1619,7 @@ class _RandomPath:
         # check list size
         if len(cardlist) != size + 1:
             raise ValueError("invalid parameter: l does not have correct size.")
-        cutting: list[(float, int)] = []
+        cutting: list[tuple[float, int]] = []
         for i in range(size + 1):
             cutting.append((cardlist[i] * cardlist[size - i], i))
         # sort with decreasing probability for efficient random generation
@@ -2004,13 +2002,12 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
         for step in path:
             if step == 3:  # new node
                 stack.append([0, []])
-            else:  # depending on type
-                if stack[-1][0] < 2:  # add bud
-                    stack[-1][0] += 1
-                    stack[-1][1].append([])
-                else:  # subtree completed
-                    subtree = stack.pop()[1]
-                    stack[-1][1].append(subtree)
+            elif stack[-1][0] < 2:  # add bud
+                stack[-1][0] += 1
+                stack[-1][1].append([])
+            else:  # subtree completed
+                subtree = stack.pop()[1]
+                stack[-1][1].append(subtree)
         # Get the tree (list of subtrees for the moment)
         stack = stack[-1][1][0]
         # pop the last bud, which is always the last child
@@ -2311,14 +2308,13 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
         for step in path:
             if step == 2:  # new nodes
                 stack.append([0, []])
-            else:  # depending on type
-                if stack[-1][0] == 0:  # add two buds
-                    stack[-1][0] = 1
-                    stack[-1][1].append([])
-                    stack[-1][1].append([])
-                else:  # subtree completed
-                    subtree = stack.pop()[1]
-                    stack[-1][1].append(subtree)
+            elif stack[-1][0] == 0:  # add two buds
+                stack[-1][0] = 1
+                stack[-1][1].append([])
+                stack[-1][1].append([])
+            else:  # subtree completed
+                subtree = stack.pop()[1]
+                stack[-1][1].append(subtree)
         tree = stack[-1][1]
         tree.append([])  # add the extra bud besides the root
         return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,

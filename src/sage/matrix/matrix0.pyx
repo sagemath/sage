@@ -5518,7 +5518,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t r,c
         x = self._base_ring(left)
         cdef Matrix ans
-        ans = self._parent.zero_matrix().__copy__()
+        ans = self._parent.element_class(self._parent, None, False, False)
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
                 ans.set_unsafe(r, c, x * self.get_unsafe(r, c))
@@ -5560,7 +5560,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t r,c
         x = self._base_ring(right)
         cdef Matrix ans
-        ans = self._parent.zero_matrix().__copy__()
+        ans = self._parent.element_class(self._parent, None, False, False)
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
                 ans.set_unsafe(r, c, self.get_unsafe(r, c) * x)
