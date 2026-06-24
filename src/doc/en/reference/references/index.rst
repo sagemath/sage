@@ -1455,7 +1455,7 @@ REFERENCES:
             http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf.
 
 .. [BS2007] \R. Bröker and P. Stevenhagen. *Constructing elliptic curves of
-            prime order*. [math.NT] (2007), :arXiv:`0712.2022`.
+            prime order*. [math.NT] (2007), :arxiv:`0712.2022`.
 
 .. [BS2010] \P. Baseilhac and K. Shigechi. *A new current algebra and the
             reflection equation*. Lett. Math. Phys. **92** (2010),
@@ -1552,8 +1552,8 @@ REFERENCES:
           and totally positive varieties*
           Invent. Math. **143** No. 1. (2002), 77-128.
 
-.. [BZ2003] Vladimir Batagelj and Matjaz Zaversnik. *An `O(m)`
-            Algorithm for Cores Decomposition of
+.. [BZ2003] Vladimir Batagelj and Matjaz Zaversnik. *An* `O(m)`
+            *Algorithm for Cores Decomposition of
             Networks*. 2003. :arxiv:`cs/0310049v1`.
 
 .. _ref-C:
@@ -1621,7 +1621,7 @@ REFERENCES:
             :arxiv:`1308.0936v2`.
 
 .. [CC2023] \C. Ceballos and C. Chenevière.
-                *On linear intervals in the alt `\nu`-Tamari lattices* :arxiv:`2305.02250`
+                *On linear intervals in the alt* `\nu`\ *-Tamari lattices* :arxiv:`2305.02250`
 
 .. [CCL2015] \N. Cohen, D. Coudert, and A. Lancin. *On computing the Gromov
              hyperbolicity*. ACM Journal of Experimental Algorithmics,
@@ -2177,7 +2177,7 @@ REFERENCES:
              Algebras*. CUP 2010.
 
 .. [CT2013] \J. E. Cremona and T. Thongjunthug, *The Complex AGM, periods of
-            elliptic curves over `\CC` and complex elliptic logarithms*.
+            elliptic curves over* `\mathbb{C}` *and complex elliptic logarithms*.
             Journal of Number Theory Volume 133, Issue 8, August 2013, pages
             2813-2841.
 
@@ -3085,6 +3085,10 @@ REFERENCES:
              Riemann surfaces and Dessins d'enfant*, (2011)
              London Mathematical Society, Student Text 79.
 
+.. [GGK2000] Geelen, James F., Albertus MH Gerards, and Ajai Kapoor,
+             *The excluded minors for GF(4)-representable matroids.*,
+             Journal of Combinatorial Theory, Series B 79.2 (2000): 247-299.
+
 .. [GGMM2020] \A. Garver, S. Grosser, J. Matherne, and A. Morales.
               *Counting linear extensions of posets with determinants of hook
               lengths*. Preprint, :arxiv:`2001.08822` (2020).
@@ -3484,7 +3488,7 @@ REFERENCES:
 
 .. [HJ2020]  U. Hartl and A.-K. Juschka, 
              *Pink’s theory of Hodge structures and the Hodge conjecture over function fields*,
-             in *`t`-motives: Hodge structures, transcendence and other motivic aspects*
+             in `t`\ *-motives: Hodge structures, transcendence and other motivic aspects*
              EMS Ser. Congr. Rep. (2020), 31-182
 
 .. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
@@ -3765,8 +3769,8 @@ REFERENCES:
              Adv. Math. **227**, no. 2, (2011) 847--894.
              doi:`10.1016/j.aim.2011.02.012`, :arxiv:`0708.2632`.
 
-.. [HR2016]  Clemens Heuberger and Roswitha Rissner, *Computing
-             `J`-Ideals of a Matrix Over a Principal Ideal Domain*,
+.. [HR2016]  Clemens Heuberger and Roswitha Rissner, *Computing*
+             `J`\ *-Ideals of a Matrix Over a Principal Ideal Domain*,
              :arxiv:`1611.10308`, 2016.
 
 .. [HR2017] Patricia Hersh and Victor Reiner, *Representation Stability
@@ -3948,8 +3952,8 @@ REFERENCES:
               CANS, (2009), pp. 334-348.
 
 .. [Ive2012] \S. Iveson,
-             *Tableaux on `k + 1`-cores, reduced words for affine
-             permutations, and `k`-Schur expansions*,
+             *Tableaux on* `k + 1`\ *-cores, reduced words for affine
+             permutations, and* `k`\ *-Schur expansions*,
              Operators on `k`-tableaux and the `k`-Littlewood-Richardson
              rule for a special case,
              UC Berkeley: Mathematics,  Ph.D. Thesis,
@@ -4794,7 +4798,7 @@ REFERENCES:
 
 .. [LLMS2013] Thomas Lam, Luc Lapointe, Jennifer Morse, and Mark Shimozono (2013).
               *The poset of k-shapes and branching rules for k-Schur functions*
-              <https://www.ams.org/books/memo/1050/memo1050.pdf>`_. Memoirs of the American Mathematical Society, 223(1050), 1-113. DOI: 10.1090/S0065-9266-2012-00655-1
+              `<https://www.ams.org/books/memo/1050/memo1050.pdf>`_. Memoirs of the American Mathematical Society, 223(1050), 1-113. DOI: 10.1090/S0065-9266-2012-00655-1
 
 .. [LLMSSZ2013] Thomas Lam, Luc Lapointe, Jennifer Morse, Anne
                 Schilling, Mark Shimozono and Mike Zabrocki.
@@ -5235,7 +5239,7 @@ REFERENCES:
              Decoding." IEEE Trans. on Information Theory, vol. 15(1),
              pp. 122-127, Jan 1969.
 
-.. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order `pq^2 + 1`*,
+.. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order* `pq^2 + 1`,
              Canad. J. Math. 30 (1978) 321-331, :doi:`10.4153/CJM-1978-029-1`.
 
 .. [Mat2012] Yoshitake Matsumoto, *Database of Matroids*, 2012,
@@ -5845,7 +5849,7 @@ REFERENCES:
 
 .. [Pas1992] \D. V. Pasechnik,
              *Skew-symmetric association schemes with two classes and strongly
-             regular graphs of type `L_{2n-1}(4n- 1)`*,
+             regular graphs of type* `L_{2n-1}(4n- 1)`,
              Acta Applicandaie Math. 29(1992), 129-138.
              :doi:`10.1007/BF00053382`.
 
@@ -6642,7 +6646,7 @@ REFERENCES:
 
 .. [ST1993] \P. D. Seymour and Robin Thomas,
             *Graph searching and a min-max theorem for tree-width*,
-            `J. Comb. Theory Ser. B 58, 1 (May 1993), 22-33.
+            \J. Comb. Theory Ser. B 58, 1 (May 1993), 22-33.
             :doi:`10.1006/jctb.1993.1027`.
 
 .. [ST1994] Simon, K. and Trunz, P., *A cleanup on transitive orientation*,
@@ -7018,7 +7022,7 @@ REFERENCES:
                      SIGMA **7** (2011), 069, 24 pages. :arxiv:`1104.2813`.
 
 .. [Ter2021] Paul Terwilliger. *The alternating central extension of the*
-             `q`*-Onsager algebra*. Preprint, :arxiv:`2103.03028` (2021).
+             `q`\ *-Onsager algebra*. Preprint, :arxiv:`2103.03028` (2021).
 
 .. [Ter2021b] Paul Terwilliger. *The alternating central extension of the
               Onsager Lie algebra*. Preprint, :arxiv:`2104.08106` (2021).
