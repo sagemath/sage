@@ -168,7 +168,7 @@ from sage.rings.polynomial.ore_function_element import (
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
-from sage.structure.richcmp import op_EQ
+from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.unique_representation import UniqueRepresentation
 
 WORKING_CENTER_MAX_TRIES = 1000
@@ -727,9 +727,9 @@ class SectionOreFunctionCenterInjection(Section):
         except ValueError:
             raise ValueError("%s is not in the center" % x)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
-        Compare this morphism with ``right``.
+        Compare this morphism with ``other``.
 
         TESTS::
 
@@ -746,7 +746,7 @@ class SectionOreFunctionCenterInjection(Section):
             False
         """
         if op == op_EQ:
-            return (self.domain() is right.domain()) and (self.codomain() is right.codomain())
+            return (self.domain() is other.domain()) and (self.codomain() is other.codomain())
         return NotImplemented
 
 
@@ -809,9 +809,9 @@ class OreFunctionCenterInjection(RingHomomorphism):
         denominator = self._ringembed(x.denominator())
         return self._codomain(numerator, denominator, simplify=False)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
-        Compare this morphism with ``right``.
+        Compare this morphism with ``other``.
 
         TESTS::
 
@@ -827,7 +827,9 @@ class OreFunctionCenterInjection(RingHomomorphism):
             False
         """
         if op == op_EQ:
-            return (self.domain() is right.domain()) and (self.codomain() is right.codomain())
+            return (self.domain() is other.domain()) and (self.codomain() is other.codomain())
+        if op == op_NE:
+            return (self.domain() is not other.domain()) or (self.codomain() is not other.codomain())
         return NotImplemented
 
     def section(self):

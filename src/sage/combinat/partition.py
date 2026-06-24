@@ -6372,6 +6372,31 @@ class Partitions(UniqueRepresentation, Parent):
         else:
             Parent.__init__(self, category=FiniteEnumeratedSets())
 
+    def __bool__(self):
+        """
+        Return whether ``self`` should be treated as nonempty.
+
+        EXAMPLES::
+
+            sage: bool(Partitions(20, parts_in=[100]))
+            False
+            sage: bool(Partitions(20, parts_in=[1, 2]))
+            True
+            sage: bool(Partitions(-1))
+            False
+            sage: bool(Partitions(0, length=1))
+            False
+            sage: bool(Partitions(0, length=0))
+            True
+
+        Finite families are checked for emptiness; infinite families keep the
+        default truth value without trying to iterate through their elements::
+
+            sage: bool(Partitions())
+            True
+        """
+        return not self.is_finite() or not self.is_empty()
+
     Element = Partition
 
     # add options to class
@@ -8413,6 +8438,19 @@ class Partitions_with_constraints(IntegerListsLex):
 
     Element = Partition
     options = Partitions.options
+
+    def __bool__(self):
+        """
+        Return whether ``self`` contains at least one partition.
+
+        EXAMPLES::
+
+            sage: bool(Partitions(5, inner=[6]))
+            False
+            sage: bool(Partitions(5, inner=[2]))
+            True
+        """
+        return not self.is_empty()
 
     def __contains__(self, x):
         """
