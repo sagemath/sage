@@ -10,6 +10,7 @@ on:
       - 'uv.lock'
       - 'subprojects/**'
       - '.github/workflows/ci.yml'
+      - 'build/pkgs/*/distros/*.txt'
   workflow_dispatch:
     # Allow to run manually
 

@@ -559,14 +559,6 @@ class Sequence_generic(SageObject, list):
 
         return list.__getitem__(self, n)
 
-    # We have to define the *slice functions as long as Sage uses Python 2.*
-    # otherwise the inherited *slice functions from list are called
-    def __getslice__(self, i, j):
-        return self.__getitem__(slice(i, j))
-
-    def __setslice__(self, i, j, value):
-        return self.__setitem__(slice(i, j), value)
-
     def append(self, x):
         """
         EXAMPLES::

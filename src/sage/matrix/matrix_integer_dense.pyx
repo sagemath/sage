@@ -305,6 +305,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: v.parent()
             Full MatrixSpace of 1 by 100000 dense matrices over Integer Ring
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``fmpz_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Integer z
         for t in ma.iter(coerce, True):
@@ -1057,9 +1064,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
-        Compare ``self`` with ``right``, examining entries in
+        Compare ``self`` with ``other``, examining entries in
         lexicographic (row major) ordering.
 
         EXAMPLES::
@@ -1079,14 +1086,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
         sig_on()
         for i in range(self._nrows):
             for j in range(self._ncols):
-                k = fmpz_cmp(fmpz_mat_entry(self._matrix,i,j),
-                             fmpz_mat_entry((<Matrix_integer_dense>right)._matrix,i,j))
+                k = fmpz_cmp(fmpz_mat_entry(self._matrix, i, j),
+                             fmpz_mat_entry((<Matrix_integer_dense>other)._matrix, i, j))
                 if k:
                     sig_off()
-                    if k < 0:
-                        return rich_to_bool(op, -1)
-                    else:
-                        return rich_to_bool(op, 1)
+                    return rich_to_bool(op, -1 if k < 0 else 1)
         sig_off()
         return rich_to_bool(op, 0)
 

@@ -2445,16 +2445,16 @@ class BipartiteGraph(Graph):
                                       verbose=verbose,
                                       integrality_tolerance=integrality_tolerance)
 
+        if value_only:
+            return len(self.matching())
         if not self.is_connected():
             VC = []
             for b in self.connected_components_subgraphs():
                 if b.size():
                     VC.extend(b.vertex_cover(algorithm='Konig'))
-            if value_only:
-                return len(VC)
             return VC
 
-        M = Graph(self.matching())
+        M = Graph(self.matching(), format='list_of_edges')
         left = set(self.left)
         right = set(self.right)
 
@@ -2483,11 +2483,7 @@ class BipartiteGraph(Graph):
             Z.update(X)
 
         # The solution is (left \ Z) + (right \cap Z)
-        VC = list((left.difference(Z)).union(right.intersection(Z)))
-
-        if value_only:
-            return len(VC)
-        return VC
+        return list((left.difference(Z)).union(right.intersection(Z)))
 
     def _subgraph_by_adding(self, vertices=None, edges=None, edge_property=None, immutable=None):
         r"""

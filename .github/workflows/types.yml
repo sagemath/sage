@@ -16,7 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  pyright:
+  types:
+    name: Type check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,6 +48,10 @@ jobs:
           environment-file: environment-3.12-linux.yml
 
         # No need to build sagelib; pyright only needs the libraries from which sagelib imports
+
+      - name: Static code check with ty
+        shell: bash -l {0}
+        run: ty check --output-format=github
 
       - name: Static code check with pyright
         uses: jakebailey/pyright-action@v2.3.3

@@ -146,7 +146,7 @@ class DiscretePseudoValuation(Morphism):
         """
         return id(self)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare this element to ``other``.
 
@@ -186,7 +186,7 @@ class DiscretePseudoValuation(Morphism):
             return self._ge_(other)
         raise NotImplementedError("Operator not implemented for this valuation")
 
-    def _eq_(self, other):
+    def _eq_(self, other) -> bool:
         r"""
         Return whether this valuation and ``other`` are indistinguishable.
 
@@ -209,7 +209,7 @@ class DiscretePseudoValuation(Morphism):
         """
         return self is other
 
-    def _le_(self, other):
+    def _le_(self, other) -> bool:
         r"""
         Return whether this valuation is less than or equal to ``other``
         pointwise.
@@ -226,7 +226,7 @@ class DiscretePseudoValuation(Morphism):
         """
         return other >= self
 
-    def _ge_(self, other):
+    def _ge_(self, other) -> bool:
         r"""
         Return whether this valuation is greater than or equal to ``other``
         pointwise.
@@ -715,31 +715,34 @@ class DiscreteValuation(DiscretePseudoValuation):
             new_leafs = []
             if node.forced_leaf:
                 return new_leafs
-            augmentations = node.valuation.mac_lane_step(G,
-                             report_degree_bounds_and_caches=True,
-                             coefficients=node.coefficients,
-                             valuations=node.valuations,
-                             check=False,
-                             # We do not want to see augmentations that are
-                             # already part of other branches of the tree of
-                             # valuations for obvious performance reasons and
-                             # also because the principal_part_bound would be
-                             # incorrect for these.
-                             allow_equivalent_key=node.valuation.is_gauss_valuation(),
-                             # The length of an edge in the Newton polygon in
-                             # one MacLane step bounds the length of the
-                             # principal part (i.e., the part with negative
-                             # slopes) of the Newton polygons in the next
-                             # MacLane step. Therefore, mac_lane_step does not
-                             # need to compute valuations for coefficients
-                             # beyond that bound as they do not contribute any
-                             # augmentations.
-                             principal_part_bound=node.principal_part_bound)
+            augmentations = node.valuation.mac_lane_step(
+                G,
+                report_degree_bounds_and_caches=True,
+                coefficients=node.coefficients,
+                valuations=node.valuations,
+                check=False,
+                # We do not want to see augmentations that are
+                # already part of other branches of the tree of
+                # valuations for obvious performance reasons and
+                # also because the principal_part_bound would be
+                # incorrect for these.
+                allow_equivalent_key=node.valuation.is_gauss_valuation(),
+                # The length of an edge in the Newton polygon in
+                # one MacLane step bounds the length of the
+                # principal part (i.e., the part with negative
+                # slopes) of the Newton polygons in the next
+                # MacLane step. Therefore, mac_lane_step does not
+                # need to compute valuations for coefficients
+                # beyond that bound as they do not contribute any
+                # augmentations.
+                principal_part_bound=node.principal_part_bound
+            )
             for w, bound, principal_part_bound, coefficients, valuations in augmentations:
                 ef = bound == w.E()*w.F()
                 new_leafs.append(MacLaneApproximantNode(w, node, ef, principal_part_bound, coefficients, valuations))
             for leaf in new_leafs:
-                if is_sufficient(leaf, [l for l in new_leafs if l is not leaf]):
+                if is_sufficient(leaf, [lf for lf in new_leafs
+                                        if lf is not leaf]):
                     leaf.forced_leaf = True
             return new_leafs
 
