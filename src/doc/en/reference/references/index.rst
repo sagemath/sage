@@ -3502,11 +3502,6 @@ REFERENCES:
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              https://web.archive.org/web/20040401033532/http://www-math.mit.edu/~hajiagha/pp11.ps
 
-.. [HJ2020]  U. Hartl and A.-K. Juschka, 
-             *Pink’s theory of Hodge structures and the Hodge conjecture over function fields*,
-             in `t`\ *-motives: Hodge structures, transcendence and other motivic aspects*
-             EMS Ser. Congr. Rep. (2020), 31-182
-
 .. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
              *Totally-balanced and greedy matrices*.
              SIAM Journal on Algebraic Discrete Methods 6.4 (1985): 721-730.
@@ -3627,7 +3622,7 @@ REFERENCES:
 
 .. [HJ2020]  U. Hartl and A.-K. Juschka, 
              *Pink’s theory of Hodge structures and the Hodge conjecture over function fields*,
-             in *`t`-motives: Hodge structures, transcendence and other motivic aspects*
+             in `t`\ *-motives: Hodge structures, transcendence and other motivic aspects*
              EMS Ser. Congr. Rep. (2020), 31-182
 
 .. [HK2002] *Introduction to Quantum Groups and Crystal Bases.*
@@ -5226,7 +5221,7 @@ REFERENCES:
              in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
              405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
 
-.. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order `pq^2 + 1`*,
+.. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order* `pq^2 + 1`,
              Canad. J. Math. 30 (1978) 321-331, :doi:`10.4153/CJM-1978-029-1`.
 
 .. [Mat1992] \O. Mathieu. *Classification of Harish-Chandra
@@ -5261,70 +5256,6 @@ REFERENCES:
 .. [Mathas2004] Andrew Mathas.
                 *Matrix units and generic degrees for the Ariki-Koike algebras*.
                 J. Algebra. **281** (2004) pp. 695-730.
-
-.. [Mat2002] Jiří Matousek, *Lectures on Discrete Geometry*, Springer,
-             2002
-
-.. [Mas1995] Mason, Geoffrey. *The quantum double of a finite group and its role
-             in conformal field theory*. Groups '93 Galway/St. Andrews, Vol. 2,
-             405-417, London Math. Soc. Lecture Note Ser., 212, Cambridge, 1995.
-
-.. [Ma2009] Sarah Mason, *An Explicit Construction of Type A Demazure
-            Atoms*, Journal of Algebraic Combinatorics, Vol. 29,
-            (2009), No. 3, p.295-313. :arxiv:`0707.4267`
-
-.. [Mac1936I] Saunders MacLane, *A construction for prime ideals as absolute
-             values of an algebraic field*. Duke Mathematical Journal, 2(3)
-             (1936), 492-510.
-
-.. [Mac1936II] Saunders MacLane, *A construction for absolute values in
-              polynomial rings*. Transactions of the American Mathematical
-              Society, 40(3)(1936), 363-395.
-
-.. [Mac1915] Percy A. MacMahon, *Combinatory Analysis*,
-             Cambridge University Press (1915--1916).
-             (Reprinted: Chelsea, New York, 1960).
-
-.. [Man2019] V. Manero and M. Marco, *Effective computation of
-             degree bounded minimal models of GCDA's*, :arxiv:`1909.07761`
-
-.. [MAR2009] \H. Molina-Abril and P. Réal, *Homology computation using
-             spanning trees* in Progress in Pattern Recognition, Image
-             Analysis, Computer Vision, and Applications, Lecture
-             Notes in Computer Science, volume 5856, pp 272-278,
-             Springer, Berlin (2009).
-
-.. [Mar1997] \C.-M. Marle, *The Schouten-Nijenhuis bracket and interior
-             products*, Journal of Geometry and Physics **23**, 350
-             (1997); :doi:`10.1016/S0393-0440(97)80009-5`
-
-.. [Mark1992] George Markowsky, *Primes, irreducibles and
-              extremal lattices*, Order 9 (1992), no. **3**, 265-290.
-              :doi:`10.1007%2FBF00383950`
-
-.. [Mar1994] George Markowsky.
-             *Permutation lattices revisited*.
-             Mathematical Social Sciences, 27 (1994), 59--72.
-
-.. [Mar2009a] Matilde Marcolli, Feynman Motives, Chapter 3,
-              Feynman integrals and algebraic varieties,
-              http://www.its.caltech.edu/~matilde/LectureN3.pdf
-
-.. [Mas1969] James L. Massey, "Shift-Register Synthesis and BCH
-             Decoding." IEEE Trans. on Information Theory, vol. 15(1),
-             pp. 122-127, Jan 1969.
-
-.. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order* `pq^2 + 1`,
-             Canad. J. Math. 30 (1978) 321-331, :doi:`10.4153/CJM-1978-029-1`.
-
-.. [Mat2012] Yoshitake Matsumoto, *Database of Matroids*, 2012,
-             https://www-imai.is.s.u-tokyo.ac.jp/~ymatsu/matroid/index.html
-
-.. [Mat2015]  \A. Mathas. *Cyclotomic quiver Hecke algebras of type A*,
-              in *Modular representation theory of finite and p-adic groups*,
-              165-266, Lect. Notes Ser. Inst. Math. Sci. Natl. Univ. Singap.,
-              **30**, World Sci. Publ., Hackensack, NJ, 2015.
-              :mathscinet:`MR3495747`
 
 .. [May1964] \J. P. May, "The cohomology of restricted Lie algebras
              and of Hopf algebras; application to the Steenrod
