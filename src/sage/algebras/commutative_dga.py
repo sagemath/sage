@@ -629,8 +629,6 @@ class Differential(UniqueRepresentation, Morphism,
         # ``n - deg``; uniform in deg, with an empty source degree giving 0
         return self.differential_matrix(n - deg).row_space()
 
-
-
     def cocycles(self, n):
         r"""
         The ``n``-th cocycle group of the algebra.
