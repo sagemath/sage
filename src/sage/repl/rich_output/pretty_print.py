@@ -11,7 +11,7 @@ EXAMPLES::
     sage: pretty_print(1, 2, 3)
     1 2 3
 
-    sage: pretty_print(x^2 / (x + 1))                                                   # needs sage.symbolic
+    sage: pretty_print(x^2 / (x + 1))
     x^2/(x + 1)
 
 TESTS::
@@ -22,7 +22,7 @@ TESTS::
 EXAMPLES::
 
     sage: %display ascii_art  # not tested
-    sage: pretty_print(x^2 / (x + 1))                                                   # needs sage.symbolic
+    sage: pretty_print(x^2 / (x + 1))
        2
       x
     -----
@@ -40,9 +40,9 @@ Printing a graphics object just prints a string, whereas
 :func:`pretty_print` does not print anything and just shows the
 graphics instead::
 
-    sage: print(plot(sin))                                                              # needs sage.plot sage.symbolic
+    sage: print(plot(sin))
     Graphics object consisting of 1 graphics primitive
-    sage: pretty_print(plot(sin))                                                       # needs sage.plot sage.symbolic
+    sage: pretty_print(plot(sin))
 """
 
 # ****************************************************************************
@@ -114,10 +114,10 @@ class SequencePrettyPrinter(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
-            sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()   # needs sage.graphs sage.plot
-            sage: type(plt)                                                             # needs sage.graphs sage.plot
+            sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()
+            sage: type(plt)
             <class 'sage.plot.multigraphics.GraphicsArray'>
-            sage: plt                                                                   # needs sage.graphs sage.plot
+            sage: plt
             Graphics Array of size 1 x 4
         """
         import sage.graphs.graph_list as graphs_list
@@ -132,10 +132,10 @@ class SequencePrettyPrinter(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
-            sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()   # needs sage.plot
-            sage: type(ga)                                                              # needs sage.plot
+            sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()
+            sage: type(ga)
             <class 'sage.plot.multigraphics.GraphicsArray'>
-            sage: ga.nrows(), ga.ncols()                                                # needs sage.plot
+            sage: ga.nrows(), ga.ncols()
             (2, 4)
         """
         from sage.plot.plot import graphics_array
@@ -154,9 +154,9 @@ class SequencePrettyPrinter(SageObject):
         The keyword arguments are only used the first time graphics
         output is generated::
 
-            sage: seq = SequencePrettyPrinter(Graph(), Graph(), edge_labels=True)       # needs sage.graphs sage.plot
-            sage: seq.pretty_print()   # does not pass edge_labels to graphics object   # needs sage.graphs sage.plot
-            sage: seq._concatenate_graphs().show(edge_labels=True)                      # needs sage.graphs sage.plot
+            sage: seq = SequencePrettyPrinter(Graph(), Graph(), edge_labels=True)
+            sage: seq.pretty_print()   # does not pass edge_labels to graphics object
+            sage: seq._concatenate_graphs().show(edge_labels=True)
             Traceback (most recent call last):
             ...
             TypeError: ...matplotlib() got an unexpected keyword argument 'edge_labels'...
@@ -238,13 +238,13 @@ def pretty_print(*args, **kwds):
     For text-based backends, the default text display preference is to output
     plain text which is usually the same as using ``print()``::
 
-        sage: pretty_print(x^2 / (x + 1))                                               # needs sage.symbolic
+        sage: pretty_print(x^2 / (x + 1))
         x^2/(x + 1)
 
-        sage: t = BinaryTrees(3).first()                                                # needs sage.graphs
-        sage: pretty_print(t)                                                           # needs sage.graphs
+        sage: t = BinaryTrees(3).first()
+        sage: pretty_print(t)
         [., [., [., .]]]
-        sage: print(t)                                                                  # needs sage.graphs
+        sage: print(t)
         [., [., [., .]]]
 
     TESTS::
@@ -258,7 +258,7 @@ def pretty_print(*args, **kwds):
     The following illustrates a possible use-case::
 
         sage: %display ascii_art  # not tested
-        sage: for t in BinaryTrees(3)[:3]:                                              # needs sage.graphs
+        sage: for t in BinaryTrees(3)[:3]:
         ....:     pretty_print(t)
         o
          \
@@ -274,7 +274,7 @@ def pretty_print(*args, **kwds):
          / \
         o   o
 
-        sage: pretty_print(x^2 / (x + 1))                                               # needs sage.symbolic
+        sage: pretty_print(x^2 / (x + 1))
            2
           x
         -----
@@ -288,7 +288,6 @@ def pretty_print(*args, **kwds):
 
     ::
 
-        sage: # needs sage.plot sage.symbolic
         sage: plt = plot(sin)
         sage: pretty_print(plt)             # graphics output
         sage: pretty_print(plt, plt)        # graphics output

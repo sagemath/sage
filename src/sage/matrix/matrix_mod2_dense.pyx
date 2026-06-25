@@ -1570,17 +1570,17 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             A.subdivide(col_divs, row_divs)
         return A
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
-        Compare ``self`` with ``right``.
+        Compare ``self`` with ``other``.
 
         While equality and
         inequality are clearly defined, ``<`` and ``>`` are not.  For
-        those first the matrix dimensions of ``self`` and ``right``
+        those first the matrix dimensions of ``self`` and ``other``
         are compared. If these match then ``<`` means that there is a
         position smallest (i,j) in ``self`` where ``self[i,j]`` is
-        zero but ``right[i,j]`` is one. This (i,j) is smaller than the
-        (i,j) if ``self`` and ``right`` are exchanged for the
+        zero but ``other[i,j]`` is one. This (i,j) is smaller than the
+        (i,j) if ``self`` and ``other`` are exchanged for the
         comparison.
 
         EXAMPLES::
@@ -1601,7 +1601,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if self._nrows == 0 or self._ncols == 0:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, mzd_cmp(self._entries,
-                                        (<Matrix_mod2_dense>right)._entries))
+                                        (<Matrix_mod2_dense>other)._entries))
 
     def augment(self, right, subdivide=False):
         r"""

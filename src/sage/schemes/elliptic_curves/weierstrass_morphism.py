@@ -23,14 +23,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import get_coercion_model
-
-from .constructor import EllipticCurve
-from sage.schemes.elliptic_curves.hom import EllipticCurveHom
-from sage.structure.richcmp import (richcmp, richcmp_not_equal, op_EQ, op_NE)
-from sage.structure.sequence import Sequence
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.schemes.elliptic_curves.hom import EllipticCurveHom
+from sage.structure.element import get_coercion_model
+from sage.structure.richcmp import op_EQ, op_NE, richcmp, richcmp_not_equal
+from sage.structure.sequence import Sequence
+
+from .constructor import EllipticCurve
 
 
 class baseWI:
@@ -897,6 +897,8 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
             True
         """
         return ~self
+
+    inverse = dual
 
     def __neg__(self):
         """

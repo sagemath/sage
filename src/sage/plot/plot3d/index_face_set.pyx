@@ -95,8 +95,7 @@ cdef inline format_json_vertex(point_c P):
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 cdef inline format_json_face(face_c face):
-    s = "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
-    return s
+    return "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
 
 cdef inline format_obj_vertex(point_c P):
     cdef char ss[100]
@@ -875,20 +874,18 @@ cdef class IndexFaceSet(PrimitiveObject):
         if not self.global_texture:
             color_idx = ",".join('%r %r %r' % (fs[i].color.r, fs[i].color.g, fs[i].color.b)
                                  for i in range(self.fcount))
-            # Note: Don't use f-strings, since Sage on Python 2 still expects
-            # this to return a plain str instead of a unicode
-            return dedent("""
+            return dedent(f"""
                 <IndexedFaceSet solid='False' colorPerVertex='False' coordIndex='{coord_idx},-1'>
                   <Coordinate point='{points}'/>
                   <Color color='{color_idx}' />
                 </IndexedFaceSet>
-            """.format(coord_idx=coord_idx, points=points, color_idx=color_idx))
+            """)
 
-        return dedent("""
+        return dedent(f"""
             <IndexedFaceSet coordIndex='{coord_idx},-1'>
               <Coordinate point='{points}'/>
             </IndexedFaceSet>
-        """.format(coord_idx=coord_idx, points=points))
+        """)
 
     def bounding_box(self):
         r"""
@@ -1310,7 +1307,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         opacity = float(self._extra_kwds.get('opacity', 1))
 
         if self.global_texture:
-            color_str = '"#{}"'.format(self.texture.hex_rgb())
+            color_str = f'"#{self.texture.hex_rgb()}"'
             json = ['{{"vertices":{}, "faces":{}, "color":{}, "opacity":{}}}'.format(
                     vertices_str, faces_str, color_str, opacity)]
         else:

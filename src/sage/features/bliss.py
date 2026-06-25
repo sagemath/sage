@@ -14,48 +14,8 @@ Features for testing the presence of ``bliss``
 # *****************************************************************************
 
 from sage.config import bliss_enabled
-from sage.features import CythonFeature, PythonModule
+from sage.features import PythonModule
 from sage.features.build_feature import BuildFeature
-
-TEST_CODE = """
-# distutils: language=c++
-# distutils: libraries=bliss
-
-cdef extern from "bliss/graph.hh" namespace "bliss":
-    cdef cppclass Graph:
-        Graph(const unsigned int)
-
-from cysignals.signals cimport sig_on, sig_off
-
-sig_on()
-Graph(1)
-sig_off()
-"""
-
-
-class BlissLibrary(CythonFeature):
-    r"""
-    A :class:`~sage.features.Feature` which describes whether the :ref:`Bliss library <spkg_bliss>` is
-    present and functional.
-
-    EXAMPLES::
-
-        sage: from sage.features.bliss import BlissLibrary
-        sage: BlissLibrary().require()  # optional - libbliss
-    """
-
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.bliss import BlissLibrary
-            sage: BlissLibrary()
-            Feature('libbliss')
-        """
-        CythonFeature.__init__(self, "libbliss", test_code=TEST_CODE,
-                               spkg='bliss',
-                               url='http://www.tcs.hut.fi/Software/bliss/')
-
 
 class Bliss(BuildFeature):
     r"""

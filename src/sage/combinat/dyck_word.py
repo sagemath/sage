@@ -3382,10 +3382,25 @@ class DyckWords(UniqueRepresentation, Parent):
             [1, 1, 0, 1, 0, 0]
             sage: elt.parent() is D
             True
+            sage: D([x])
+            Traceback (most recent call last):
+            ...
+            ValueError: [x] is not an element of Complete Dyck words
+            sage: D([1, 1, 0])
+            Traceback (most recent call last):
+            ...
+            ValueError: [1, 1, 0] is not an element of Complete Dyck words
+            sage: DyckWords(2)([1, 0])
+            Traceback (most recent call last):
+            ...
+            ValueError: [1, 0] is not an element of Dyck words with 2 opening parentheses and 2 closing parentheses
         """
         if isinstance(word, DyckWord) and word.parent() is self:
             return word
-        return self.element_class(self, list(word))
+        word = list(word)
+        if word not in self:
+            raise ValueError("%s is not an element of %s" % (word, self))
+        return self.element_class(self, word)
 
     def __contains__(self, x) -> bool:
         r"""

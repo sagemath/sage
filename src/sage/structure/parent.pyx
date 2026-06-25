@@ -196,16 +196,6 @@ def is_Parent(x):
     deprecation_cython(37922, "the function is_Parent is deprecated; use 'isinstance(..., Parent)' instead")
     return isinstance(x, Parent)
 
-
-cdef bint guess_pass_parent(parent, element_constructor) noexcept:
-    # Returning True here is deprecated, see #26879
-    if isinstance(element_constructor, MethodType):
-        return False
-    elif isinstance(element_constructor, BuiltinMethodType):
-        return element_constructor.__self__ is not parent
-    else:
-        return True
-
 from sage.categories.category import Category
 from sage.structure.dynamic_class import dynamic_class
 Sets_parent_class = Sets().parent_class
@@ -280,13 +270,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         accordingly for use by
         :meth:`Sets.Facade.ParentMethods.facade_for`.
 
-        Internal invariants:
-
-        - ``self._element_init_pass_parent == guess_pass_parent(self,
-          self._element_constructor)`` Ensures that :meth:`__call__`
-          passes down the parent properly to
-          :meth:`_element_constructor`.  See :issue:`5979`.
-
         .. TODO::
 
             Eventually, category should be
@@ -342,7 +325,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         else:
             assert callable(_element_constructor_)
             self._element_constructor = _element_constructor_
-            self._element_init_pass_parent = guess_pass_parent(self, self._element_constructor)
 
         self.init_coerce(False)
 
@@ -757,7 +739,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
              ('_coerce_from_list', []),
              ('_convert_from_hash', <sage.structure.coerce_dict.MonoDict object at ...>),
              ('_convert_from_list', [...]),
-             ('_element_init_pass_parent', False),
+             ('_element_init_pass_parent', None),
              ('_embedding', None),
              ('_initial_action_list', []),
              ('_initial_coerce_list', []),
@@ -773,7 +755,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             '_initial_coerce_list': self._initial_coerce_list,
             '_initial_action_list': self._initial_action_list,
             '_initial_convert_list': self._initial_convert_list,
-            '_element_init_pass_parent': self._element_init_pass_parent,
+            '_element_init_pass_parent': None,
         }
 
     def __getstate__(self):
@@ -789,7 +771,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         d['_embedding'] = self._embedding
         d['_element_constructor'] = self._element_constructor
         d['_convert_method_name'] = self._convert_method_name
-        d['_element_init_pass_parent'] = self._element_init_pass_parent
         d['_initial_coerce_list'] = self._initial_coerce_list
         d['_initial_action_list'] = self._initial_action_list
         d['_initial_convert_list'] = self._initial_convert_list
@@ -817,7 +798,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                                            embedding=d['_embedding'],
                                            convert_method_name=d['_convert_method_name'],
                                            element_constructor=d['_element_constructor'],
-                                           init_no_parent=not d['_element_init_pass_parent'],
                                            unpickling=True)
 
     def _repr_option(self, key):
@@ -1488,10 +1468,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         - ``convert_method_name`` -- a name to look for that other elements
           can implement to create elements of ``self`` (e.g. ``_integer_``)
 
-        - ``init_no_parent`` -- if ``True`` omit passing ``self`` in as the
-          first argument of element_constructor for conversion. This
-          is useful if parents are unique, or element_constructor is a
-          bound method (this latter case can be detected automatically).
+        - ``init_no_parent`` -- ignored
         """
         self.init_coerce(False)
 
@@ -1503,7 +1480,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             except AttributeError:
                 raise RuntimeError("an _element_constructor_ method must be defined")
         self._element_constructor = element_constructor
-        self._element_init_pass_parent = guess_pass_parent(self, element_constructor)
 
         if not isinstance(coerce_list, list):
             raise ValueError(_LazyString("%s_populate_coercion_lists_: coerce_list is type %s, must be list", (type(coerce_list), type(self)), {}))
@@ -1517,8 +1493,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         self._initial_convert_list = copy(convert_list)
 
         self._convert_method_name = convert_method_name
-        if init_no_parent is not None:
-            self._element_init_pass_parent = not init_no_parent
 
         for mor in coerce_list:
             self.register_coercion(mor)

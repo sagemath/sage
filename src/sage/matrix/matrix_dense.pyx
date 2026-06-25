@@ -54,7 +54,7 @@ cdef class Matrix_dense(matrix.Matrix):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -82,13 +82,13 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: M.transpose() == M
             False
         """
-        other = <Matrix_dense>right
+        m_other = <Matrix_dense>other
         cdef Py_ssize_t i, j
         # Parents are equal, so dimensions of self and other are equal
         for i in range(self._nrows):
             for j in range(self._ncols):
                 lij = self.get_unsafe(i, j)
-                rij = other.get_unsafe(i, j)
+                rij = m_other.get_unsafe(i, j)
                 r = richcmp_item(lij, rij, op)
                 if r is not NotImplemented:
                     return bool(r)
