@@ -284,10 +284,10 @@ class Differential(UniqueRepresentation, Morphism,
             if not res.is_zero():
                 raise ValueError("the differential does not preserve the ideal")
 
-        # Infer the degree of the differential from the homogeneous images of the generators. 
-        # The ``degree_of_differential`` argument is only a fallback used when there is 
-        # nothing to infer (e.g. the zero differential); 
-        # the actual degree always comes from the dictionary. 
+        # Infer the degree of the differential from the homogeneous images
+        # of the generators. The ``degree_of_differential`` argument is only
+        # used as a fallback when there is nothing to infer (the trivial
+        # differential); otherwise the degree comes from the dictionary.
         inferred = None
         for gen, x in im_gens.items():
             if not x.is_zero():
