@@ -229,7 +229,7 @@ class Differential(UniqueRepresentation, Morphism,
         # Infer the degree of the differential from the homogeneous images of the generators.
         # The ``degree_of_differential`` argument is only a fallback used when there is 
         # nothing to infer (e.g. the zero differential);
-        # the actual degree always comes from the dictionary. 
+        # the actual degree always comes from the dictionary.
         seen = set()
         for gen, x in im_gens.items():
             if not x.is_zero():
