@@ -5239,7 +5239,7 @@ class RuleCylindricRS(Rule):
 
         OUTPUT:
 
-        A pair ``(t, 0)``, where `t` is the shape of the fourth shape.
+        A pair ``(t, 0)``, where `t` is the fourth shape.
 
         EXAMPLES::
 
