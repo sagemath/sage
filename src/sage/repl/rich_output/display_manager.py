@@ -680,7 +680,6 @@ class DisplayManager(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot sage.symbolic
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: plt = plot(sin)
@@ -730,9 +729,9 @@ class DisplayManager(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
-            sage: get_display_manager().threejs_scripts(online=True)                    # needs sage.plot
+            sage: get_display_manager().threejs_scripts(online=True)
             '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
-            sage: get_display_manager().threejs_scripts(online=False)                   # needs sage.plot
+            sage: get_display_manager().threejs_scripts(online=False)
             Traceback (most recent call last):
             ...
             ValueError: current backend does not support

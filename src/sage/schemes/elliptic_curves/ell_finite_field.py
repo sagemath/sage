@@ -1192,9 +1192,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
                 over Finite Field in t of size 2147483647^3
             sage: E.torsion_subgroup(42, extend=True, algorithm='divpoly')
-            Additive abelian group isomorphic to Z/42 + Z/14
+            Additive abelian group isomorphic to Z/42 + Z/42
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
-                over Finite Field of size 2147483647
+                  over Finite Field in t of size 2147483647^3
             sage: E.torsion_subgroup(42, extend=True, algorithm='structure')
             Additive abelian group isomorphic to Z/42 + Z/42
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
@@ -1267,6 +1267,16 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             sage: A1 = E.torsion_subgroup(n, algorithm='random')
             sage: A2 = E.torsion_subgroup(n, algorithm='structure')
             sage: A3 = E.torsion_subgroup(n, algorithm='divpoly')
+            sage: assert A1 == A2 == A3
+
+        ::
+
+            sage: p = 2^31 - 1
+            sage: n = 42
+            sage: E = EllipticCurve(GF(p), [1767054656, 143637714])
+            sage: A1 = E.torsion_subgroup(n, extend=true, algorithm='random')
+            sage: A2 = E.torsion_subgroup(n, extend=true, algorithm='structure')
+            sage: A3 = E.torsion_subgroup(n, extend=true, algorithm='divpoly')
             sage: assert A1 == A2 == A3
 
         .. SEEALSO::
@@ -1380,7 +1390,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
         if algorithm == 'divpoly':
             # NB: we already handled extend= above
-            return super().torsion_subgroup(n, extend=False, algorithm='divpoly')
+            return EllipticCurve_field.torsion_subgroup(E, n, extend=False, algorithm='divpoly')
 
         if algorithm == 'structure':
             return E.abelian_group().torsion_subgroup(n)
@@ -2258,6 +2268,17 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             ....:         pass
             sage: all(any(E2.is_isomorphic(E1) for E1 in twists1) for E2 in twists2)
             True
+
+        ::
+
+            sage: E = EllipticCurve(GF(101), [0, 2])
+            sage: E in E.twists()
+            True
+            sage: E == E.twists()[0]
+            True
+            sage: E.is_isomorphic(E.twists()[0])
+            True
+
         """
         K = self.base_field()
         j = self.j_invariant()
@@ -2273,7 +2294,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                 if self.is_isomorphic(t):
                     twists[i] = twists[0]
                     twists[0] = self
-                break
+                    break
             return twists
 
         # Now j is not 0 or 1728, and we only have a quadratic twist

@@ -497,6 +497,7 @@ class MarkovTraceModuleBasis(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.databases.cubic_hecke_db import MarkovTraceModuleBasis
             sage: MarkovTraceModuleBasis.U1.regular_homfly_polynomial()
             1

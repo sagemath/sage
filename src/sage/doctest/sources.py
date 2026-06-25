@@ -718,10 +718,11 @@ class FileDocTestSource(DocTestSource):
 
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
-            sage: filename = sage.repl.user_globals.__file__
+            sage: import sage.tests.numpy
+            sage: filename = sage.tests.numpy.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: FDS.file_optional_tags
-            {'sage.modules': None}
+            {'numpy': None}
         """
         from .parsing import parse_file_optional_tags
         return parse_file_optional_tags(self)

@@ -74,7 +74,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         sage: type(F.gen(2))
         <class 'sage.rings.algebraic_closure_finite_field.AlgebraicClosureFiniteField_pseudo_conway_with_category.element_class'>
     """
-    def __init__(self, parent, value):
+    def __init__(self, parent, value) -> None:
         """
         TESTS::
 
@@ -87,7 +87,8 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             there is no coercion map between the parents of ``x``
             and ``loads(dumps(x))``.
         """
-        if isinstance(value, Element) and isinstance(value.parent(), FiniteField):
+        if isinstance(value, Element) and isinstance(value.parent(),
+                                                     FiniteField):
             n = value.parent().degree()
         else:
             from sage.rings.integer import Integer
@@ -96,7 +97,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         self._level = n
         FieldElement.__init__(self, parent)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -149,7 +150,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             return hash(x)
         return hash((x, F.degree()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -161,9 +162,9 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         """
         return self._value._repr_()
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         """
-        Compare ``self`` with ``right``.
+        Compare ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -171,7 +172,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F.gen(2) == F.gen(3)
             False
         """
-        x, y = self.parent()._to_common_subfield(self, right)
+        x, y = self.parent()._to_common_subfield(self, other)
         return richcmp(x, y, op)
 
     def __pow__(self, exp):
