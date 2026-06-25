@@ -88,6 +88,40 @@ This came up in some subtle bug once::
 
     sage: gp(2) + gap(3)                                                                # needs sage.libs.gap sage.libs.pari
     5
+
+Old tests::
+
+    sage: V = VectorSpace(GF(2,'a'), 2)
+    sage: V.list()
+    [(0, 0), (1, 0), (0, 1), (1, 1)]
+    sage: MatrixSpace(GF(3), 1, 1).list()
+    [[0], [1], [2]]
+    sage: DirichletGroup(3).list()
+    [Dirichlet character modulo 3 of conductor 1 mapping 2 |--> 1,
+     Dirichlet character modulo 3 of conductor 3 mapping 2 |--> -1]
+
+    sage: K = GF(7^6,'a')
+    sage: K.list()[:10]
+    [0, 1, 2, 3, 4, 5, 6, a, a + 1, a + 2]
+    sage: K.<a> = GF(4)
+    sage: K.list()
+    [0, a, a + 1, 1]
+
+    sage: QQ['q,t'].coerce_map_from(int)
+    Composite map:
+      From: Set of Python objects of class 'int'
+      To:   Multivariate Polynomial Ring in q, t over Rational Field
+      Defn:   Native morphism:
+              From: Set of Python objects of class 'int'
+              To:   Rational Field
+            then
+              Polynomial base injection morphism:
+              From: Rational Field
+              To:   Multivariate Polynomial Ring in q, t over Rational Field
+
+   sage: R.<x,y> = QQ[]
+   sage: R._generic_convert_map(QQ).category_for()
+   Category of sets with partial maps
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Robert Bradshaw <robertwb@math.washington.edu>
@@ -161,16 +195,6 @@ def is_Parent(x):
     from sage.misc.superseded import deprecation_cython
     deprecation_cython(37922, "the function is_Parent is deprecated; use 'isinstance(..., Parent)' instead")
     return isinstance(x, Parent)
-
-
-cdef bint guess_pass_parent(parent, element_constructor) noexcept:
-    # Returning True here is deprecated, see #26879
-    if isinstance(element_constructor, MethodType):
-        return False
-    elif isinstance(element_constructor, BuiltinMethodType):
-        return element_constructor.__self__ is not parent
-    else:
-        return True
 
 from sage.categories.category import Category
 from sage.structure.dynamic_class import dynamic_class
@@ -246,13 +270,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         accordingly for use by
         :meth:`Sets.Facade.ParentMethods.facade_for`.
 
-        Internal invariants:
-
-        - ``self._element_init_pass_parent == guess_pass_parent(self,
-          self._element_constructor)`` Ensures that :meth:`__call__`
-          passes down the parent properly to
-          :meth:`_element_constructor`.  See :issue:`5979`.
-
         .. TODO::
 
             Eventually, category should be
@@ -298,7 +315,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         if names is not None:
             self._assign_names(names, normalize)
-        self._set_element_constructor()
+        # caching the element constructor
+        try:
+            _element_constructor_ = self._element_constructor_
+        except (AttributeError, TypeError):
+            # Remark: A TypeError can actually occur;
+            # it is a possible reason for "hasattr" to return False
+            pass
+        else:
+            assert callable(_element_constructor_)
+            self._element_constructor = _element_constructor_
+
         self.init_coerce(False)
 
         for cls in self.__class__.mro():
@@ -579,31 +606,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 cls.__module__ = module
         return cls
 
-    def _set_element_constructor(self):
-        """
-        This function is used in translating from the old to the new coercion model.
-
-        It is called from sage.structure.parent_old.Parent.__init__
-        when an old style parent provides a _element_constructor_ method.
-
-        It just asserts that this _element_constructor_ is callable and
-        also sets self._element_init_pass_parent
-
-        EXAMPLES::
-
-            sage: k = GF(5)
-            sage: k._set_element_constructor()
-        """
-        try:
-            _element_constructor_ = self._element_constructor_
-        except (AttributeError, TypeError):
-            # Remark: A TypeError can actually occur;
-            # it is a possible reason for "hasattr" to return False
-            return
-        assert callable(_element_constructor_)
-        self._element_constructor = _element_constructor_
-        self._element_init_pass_parent = guess_pass_parent(self, self._element_constructor)
-
     def category(self):
         """
         EXAMPLES::
@@ -737,7 +739,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
              ('_coerce_from_list', []),
              ('_convert_from_hash', <sage.structure.coerce_dict.MonoDict object at ...>),
              ('_convert_from_list', [...]),
-             ('_element_init_pass_parent', False),
+             ('_element_init_pass_parent', None),
              ('_embedding', None),
              ('_initial_action_list', []),
              ('_initial_coerce_list', []),
@@ -753,7 +755,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             '_initial_coerce_list': self._initial_coerce_list,
             '_initial_action_list': self._initial_action_list,
             '_initial_convert_list': self._initial_convert_list,
-            '_element_init_pass_parent': self._element_init_pass_parent,
+            '_element_init_pass_parent': None,
         }
 
     def __getstate__(self):
@@ -769,7 +771,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         d['_embedding'] = self._embedding
         d['_element_constructor'] = self._element_constructor
         d['_convert_method_name'] = self._convert_method_name
-        d['_element_init_pass_parent'] = self._element_init_pass_parent
         d['_initial_coerce_list'] = self._initial_coerce_list
         d['_initial_action_list'] = self._initial_action_list
         d['_initial_convert_list'] = self._initial_convert_list
@@ -797,7 +798,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                                            embedding=d['_embedding'],
                                            convert_method_name=d['_convert_method_name'],
                                            element_constructor=d['_element_constructor'],
-                                           init_no_parent=not d['_element_init_pass_parent'],
                                            unpickling=True)
 
     def _repr_option(self, key):
@@ -1468,10 +1468,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         - ``convert_method_name`` -- a name to look for that other elements
           can implement to create elements of ``self`` (e.g. ``_integer_``)
 
-        - ``init_no_parent`` -- if ``True`` omit passing ``self`` in as the
-          first argument of element_constructor for conversion. This
-          is useful if parents are unique, or element_constructor is a
-          bound method (this latter case can be detected automatically).
+        - ``init_no_parent`` -- ignored
         """
         self.init_coerce(False)
 
@@ -1483,7 +1480,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             except AttributeError:
                 raise RuntimeError("an _element_constructor_ method must be defined")
         self._element_constructor = element_constructor
-        self._element_init_pass_parent = guess_pass_parent(self, element_constructor)
 
         if not isinstance(coerce_list, list):
             raise ValueError(_LazyString("%s_populate_coercion_lists_: coerce_list is type %s, must be list", (type(coerce_list), type(self)), {}))
@@ -1497,8 +1493,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         self._initial_convert_list = copy(convert_list)
 
         self._convert_method_name = convert_method_name
-        if init_no_parent is not None:
-            self._element_init_pass_parent = not init_no_parent
 
         for mor in coerce_list:
             self.register_coercion(mor)

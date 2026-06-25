@@ -1358,7 +1358,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             True
         """
         "multiply two meataxe matrices by the school book algorithm"
-        if self.Data == NULL or right.Data == NULL
+        if self.Data == NULL or right.Data == NULL:
             raise ValueError("The matrices must not be empty")
         check_matrix_multiplication_sizes(self, right)
         sig_on()
