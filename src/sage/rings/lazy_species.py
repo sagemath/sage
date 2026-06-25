@@ -1752,6 +1752,37 @@ class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
         self._left = F
         self._other = G
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: Ep = E.restrict(1)
+            sage: Ep.arithmetic_product(Ep).generating_series()
+            X + X^2 + 1/3*X^3 + 1/3*X^4 + 1/60*X^5 + 61/360*X^6 + O(X^7)
+
+        We check Example 2.2 from [MM2008]_::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: C = L.Cycles()
+            sage: Lp = X/(1 - X)
+            sage: C.arithmetic_product(Lp).generating_series()
+            X + 3/2*X^2 + 4/3*X^3 + 7/4*X^4 + 6/5*X^5 + 2*X^6 + O(X^7)
+        """
+        f = self._left.generating_series()
+        g = self._other.generating_series()
+        zero = f.parent().base_ring().zero()
+
+        def coefficient(n):
+            if not n:
+                return zero
+            return sum((f[d] * g[n // d] for d in divisors(n)), zero)
+
+        return f.parent()(coefficient)
+
 
 class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, other):
@@ -1779,6 +1810,29 @@ class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
         super().__init__(P, coeff_stream)
         self._left = left
         self._other = other
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: E.hadamard_product(E).generating_series()
+            1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
+
+            sage: C = L.Cycles()
+            sage: C.hadamard_product(C).generating_series()
+            X + 1/2*X^2 + 2/3*X^3 + 3/2*X^4 + 24/5*X^5 + 20*X^6 + O(X^7)
+        """
+        f = self._left.generating_series()
+        g = self._other.generating_series()
+
+        def coefficient(n):
+            return factorial(n) * f[n] * g[n]
+
+        return f.parent()(coefficient)
 
 
 class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):

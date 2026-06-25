@@ -126,7 +126,7 @@ cdef class String:
             sage: s = String('Hi')
             sage: TestSuite(s).run()
         """
-        return (String, (repr(self),) )
+        return (String, (repr(self),))
 
 
 cdef class Type:
@@ -277,7 +277,7 @@ cdef class CoxGroup(SageObject):
         cdef Type t = Type(type)
         cdef c_CoxGroup* c_W = coxeterGroup(t.x, rank)
         self.x = c_W
-        self.out_ordering = {i+1: o for i,o in enumerate(ordering)}
+        self.out_ordering = {i + 1: o for i, o in enumerate(ordering)}
         self.in_ordering = {self.out_ordering[a]: a for a in self.out_ordering}
 
         # If the Cartan type supplied is relabeled, compose these orderings
@@ -625,10 +625,10 @@ cdef class CoxGroup(SageObject):
         rank = self.rank()
         m = matrix(ZZ, rank, rank)
         for i, ii in enumerate(self.cartan_type.index_set()):
-            ii = self.in_ordering[ii]-1
+            ii = self.in_ordering[ii] - 1
             for j, jj in enumerate(self.cartan_type.index_set()):
-                jj = self.in_ordering[jj]-1
-                m[i,j] = self.x.M(ii, jj)
+                jj = self.in_ordering[jj] - 1
+                m[i, j] = self.x.M(ii, jj)
         return m
 
     def coxeter_graph(self):
@@ -657,11 +657,11 @@ cdef class CoxGroup(SageObject):
         m = self.coxeter_matrix()
         rank = self.rank()
         for i, row in enumerate(m.rows()):
-            for j in range(i+1,rank):
+            for j in range(i + 1, rank):
                 if row[j] == 3:
-                    g.add_edge(i+1, j+1)
+                    g.add_edge(i + 1, j + 1)
                 elif row[j] > 4:
-                    g.add_edge(i+1, j+1, row[j])
+                    g.add_edge(i + 1, j + 1, row[j])
         return g
 
 
@@ -774,7 +774,7 @@ cdef class CoxGroupElement:
             IndexError: The index (4) is out of range.
         """
         if isinstance(i, slice):
-            #Get the start, stop, and step from the slice
+            # Get the start, stop, and step from the slice
             return [self[ii] for ii in range(*i.indices(len(self)))]
         if i < 0:
             i += len(self)
@@ -949,6 +949,7 @@ cdef class CoxGroupElement:
             True
         """
         cdef Generator ss = self._parent_group.in_ordering[s]
+        # dubious line above or below
         return self.group.isDescent(self.word, s)
 
     cdef CoxGroupElement _new(self) noexcept:
@@ -1118,7 +1119,7 @@ cdef class CoxGroupElement:
         cdef CoxGroupElement vv = CoxGroupElement(self._parent_group, v)
         cdef CoxNbr x = self.group.extendContext(self.word)
         cdef CoxNbr y = self.group.extendContext(vv.word)
-        return ZZ(self.group.mu(x,y))
+        return ZZ(self.group.mu(x, y))
 
 
 cdef LFlags_to_list(CoxGroup parent, LFlags f) noexcept:

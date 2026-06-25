@@ -277,7 +277,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             ok
             sage: gap._expect.sendline()  # now we are out of sync
             1
-            sage: gap._synchronize()
+            sage: gap._synchronize(timeout=2)  # allow the CI more time
             sage: gap(123)
             123
         """
@@ -335,7 +335,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         # handler and input, if we don't wait a bit the result is
         # unpredictable.
         E.sendline(chr(3))
-        time.sleep(0.1)
+        time.sleep(0.2)
         E.sendline()
         try:
             # send a dummy command
@@ -352,11 +352,11 @@ class Gap_generic(ExtraTabCompletion, Expect):
             # either complete successfully (output "@n+<number>") or
             # return a "Syntax error: od expected@J@f +<number>"
             E.sendline()
-            time.sleep(0.1)
+            time.sleep(0.2)
             E.sendline('224433437;')
             E.expect(r'@[nf][@J\s>]*224433437', timeout=timeout)
             E.sendline()
-            time.sleep(0.1)
+            time.sleep(0.2)
             E.sendline('224433479;')
             E.expect(r'@[nf][@J\s>]*224433479', timeout=timeout)
             E.send(' ')
