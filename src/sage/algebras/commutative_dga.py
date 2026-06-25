@@ -192,7 +192,65 @@ class Differential(UniqueRepresentation, Morphism,
             Traceback (most recent call last):
             ...
             ValueError: the differential does not preserve the ideal
+
+        If a degree is given explicitly, it must agree with the degree
+        inferred from a non-empty, well-defined differential::
+
+            sage: from sage.algebras.commutative_dga import Differential
+            sage: A.<x,y> = GradedCommutativeAlgebra(QQ, degrees=(1, 2))
+            sage: Differential(A, {x: y}, degree_of_differential=1)
+            Differential of Graded Commutative Algebra with generators ('x', 'y')
+             in degrees (1, 2) over Rational Field
+              Defn: x --> y
+                    y --> 0
+            sage: Differential(A, {x: y}, degree_of_differential=-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the given degree of the differential does not agree with the degree inferred from the dictionary
+
+        The same holds for a homological (degree `-1`) differential::
+
+            sage: B.<u,v> = GradedCommutativeAlgebra(QQ, degrees=(2, 1))
+            sage: Differential(B, {u: v}, degree_of_differential=-1)
+            Differential of Graded Commutative Algebra with generators ('u', 'v')
+             in degrees (2, 1) over Rational Field
+              Defn: u --> v
+                    v --> 0
+            sage: Differential(B, {u: v}, degree_of_differential=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the given degree of the differential does not agree with the degree inferred from the dictionary
+
+        An explicitly given degree must be ``1`` or ``-1``::
+
+            sage: Differential(A, {x: y}, degree_of_differential=2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the total degree of the differential must be 1 or -1
+
+        The differential must have a well-defined degree: the generator
+        images must be homogeneous and all shift the degree by the same
+        amount::
+
+            sage: P.<a,b,c,e> = GradedCommutativeAlgebra(QQ, degrees=(2, 2, 4, 6))
+            sage: P.differential({a: c, b: e})
+            Traceback (most recent call last):
+            ...
+            ValueError: the differential does not have a well-defined degree
+            sage: P.differential({a: c + e})
+            Traceback (most recent call last):
+            ...
+            ValueError: the differential does not have a well-defined degree
+
+        and the inferred degree must itself be ``1`` or ``-1``::
+
+            sage: P.differential({a: c})
+            Traceback (most recent call last):
+            ...
+            ValueError: the inferred total degree of the differential is not 1 or -1
         """
+        if degree_of_differential not in (0, 1, -1):
+            raise ValueError("the total degree of the differential must be 1 or -1")
         if isinstance(im_gens, (list, tuple)):
             im_gens = {A.gen(i): A(x) for i, x in enumerate(im_gens)}
         else:
@@ -226,22 +284,30 @@ class Differential(UniqueRepresentation, Morphism,
             if not res.is_zero():
                 raise ValueError("the differential does not preserve the ideal")
 
-        # Infer the degree of the differential from the homogeneous images of the generators.
-        # The ``degree_of_differential`` argument is only a fallback used when there is
-        # nothing to infer (e.g. the zero differential);
-        # the actual degree always comes from the dictionary.
-        seen = set()
+        # Infer the degree of the differential from the homogeneous images of the generators. 
+        # The ``degree_of_differential`` argument is only a fallback used when there is 
+        # nothing to infer (e.g. the zero differential); 
+        # the actual degree always comes from the dictionary. 
+        inferred = None
         for gen, x in im_gens.items():
             if not x.is_zero():
                 if not x.is_homogeneous():
                     raise ValueError("the differential does not have a well-defined degree")
-                seen.add(total_degree(x.degree()) - total_degree(gen.degree()))
-        if len(seen) > 1:
-            raise ValueError("the differential does not have a well-defined degree")
-        if seen:
-            degree_of_differential = seen.pop()
-            if degree_of_differential not in (1, -1):
-                raise ValueError("the total degree of the differential must be 1 or -1")
+                deg = total_degree(x.degree()) - total_degree(gen.degree())
+                if inferred is None:
+                    inferred = deg
+                elif inferred != deg:
+                    raise ValueError("the differential does not have a well-defined degree")
+        if inferred is not None:
+            if inferred not in (1, -1):
+                raise ValueError("the inferred total degree of the differential "
+                                 "is not 1 or -1")
+            # If a nonzero degree was given explicitly, it must agree with
+            # the degree inferred from the (non-empty, homogeneous) dictionary.
+            if degree_of_differential not in (0, inferred):
+                raise ValueError("the given degree of the differential does not "
+                                 "agree with the degree inferred from the dictionary")
+            degree_of_differential = inferred
 
         im_gens = tuple(im_gens.get(x, A.zero()) for x in A.gens())
         return super().__classcall__(cls, A, im_gens, degree_of_differential)
@@ -336,7 +402,7 @@ class Differential(UniqueRepresentation, Morphism,
             0
         """
         deg = self._degree_of_differential
-        if total and deg is not None:
+        if total:
             return total_degree(deg)
         return deg
 
@@ -657,6 +723,13 @@ class Differential(UniqueRepresentation, Morphism,
         Each class of ``H`` is lifted to a cocycle, expressed in terms of
         ``basis``, and wrapped in a :class:`CohomologyClass`. Shared by
         the singly-graded and multigraded :meth:`cohomology`.
+
+        TESTS::
+
+            sage: A.<a,b,c,d,e> = GradedCommutativeAlgebra(QQ, degrees=(1,1,1,1,1))
+            sage: D = A.differential({d: a*b, e: b*c})
+            sage: D._cohomology_module(D.cohomology_raw(2), A.basis(2))
+            Free module generated by {[a*c], [a*d], [b*d], [c*d - a*e], [b*e], [c*e]} over Rational Field
         """
         A = self.domain()
         classes = [CohomologyClass(sum(c * b for c, b in zip(H.lift(v), basis)), A)
@@ -811,12 +884,17 @@ class Differential_multigraded(Differential):
         """
         Differential.__init__(self, A, im_gens, degree_of_differential)
 
-        diff_deg = {y.degree() - x.degree()
-                    for x in A.gens() if not (y := self(x)).is_zero()}
-        if len(diff_deg) > 1:
-            raise ValueError("the differential does not have a well-defined degree")
+        diff_deg = None
+        for x in A.gens():
+            y = self(x)
+            if not y.is_zero():
+                deg = y.degree() - x.degree()
+                if diff_deg is None:
+                    diff_deg = deg
+                elif diff_deg != deg:
+                    raise ValueError("the differential does not have a well-defined degree")
         G = AdditiveAbelianGroup([0] * A._grading_rank)
-        self._degree_of_differential = diff_deg.pop() if diff_deg else G.zero()
+        self._degree_of_differential = diff_deg if diff_deg is not None else G.zero()
 
     @cached_method
     def differential_matrix_multigraded(self, n, total=False):
@@ -2399,7 +2477,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: A.cdg_algebra({a: a*b*c})
             Traceback (most recent call last):
             ...
-            ValueError: the total degree of the differential must be 1 or -1
+            ValueError: the inferred total degree of the differential is not 1 or -1
 
         The differential composed with itself must be zero::
 
