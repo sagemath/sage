@@ -3308,28 +3308,25 @@ class DifferentialGCAlgebra(GCAlgebra):
                x1 --> 0
                x2 --> 0
 
-        This cohomological construction is not implemented for a
-        differential of degree `-1`::
+        This also works for differentials of degree `-1`::
 
-            sage: H.<u,v> = GradedCommutativeAlgebra(QQ, degrees=(2, 1))
-            sage: H.cdg_algebra({u: v}).cohomology_algebra()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: cohomology_algebra is not implemented for differentials of degree -1
+            sage: H.<u,v,w> = GradedCommutativeAlgebra(GF(2), degrees=(1, 1, 3))
+            sage: H.cdg_algebra({w: u*v}).cohomology_algebra(8)
+            Commutative Differential Graded Algebra with generators ('x0', 'x1', 'x2') in degrees (1, 1, 6) with relations [x0*x1] over Finite Field of size 2 with differential:
+               x0 --> 0
+               x1 --> 0
+               x2 --> 0
 
         Check that this works in the multigraded setting::
 
             sage: C.<h0,h1,v1> = GradedCommutativeAlgebra(GF(2), degrees=((1,0),(1,0),(0,1)))
             sage: D = C.cdg_algebra({v1: h0*h1})
             sage: D.cohomology_algebra(4)
-            Commutative Differential Graded Algebra with generators ('x0', 'x1', 'x2') in degrees ((1,0), (1,0), (0,2)) with relations [x0*x1] over Finite Field of size 2 with differential:
+            Commutative Differential Graded Algebra with generators ('x0', 'x1', 'x2') in degrees ((1, 0), (1, 0), (0, 2)) with relations [x0*x1] over Finite Field of size 2 with differential:
                x0 --> 0
                x1 --> 0
                x2 --> 0
         """
-        if self.differential().degree_of_differential(total=True) == -1:
-            raise NotImplementedError("cohomology_algebra is not implemented "
-                                      "for differentials of degree -1")
         cohomgens = self.cohomology_generators(max_degree)
         if not cohomgens:
             raise ValueError("cohomology ring has no generators")
