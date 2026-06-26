@@ -17,7 +17,6 @@ AUTHORS:
 - James Bui (2026-06-12): helped in discussing code design
 - Alasdair McAndrew (2010-03-19): we looked at McAndrew's code as published
                                   here https://github.com/sagemath/sage/issues/8559
-- OpenAI. (2026-06-10) ChatGPT: used to assist in generation and formatting function comments
 """
 
 #*****************************************************************************
