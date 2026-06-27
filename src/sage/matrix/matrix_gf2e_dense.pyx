@@ -94,6 +94,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free
 from sage.libs.m4rie cimport *
@@ -237,6 +238,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 a 0]
             [0 0 a]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``mzed_init``). Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch significantly faster
+            # (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
@@ -425,8 +433,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
             This function is very slow. Use ``*`` operator instead.
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -468,13 +475,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A*B == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
         ans = self.new_matrix(nrows = self.nrows(), ncols = right.ncols())
         if self._nrows == 0 or self._ncols == 0 or right._ncols == 0:
+            # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
             return ans
         sig_on()
         ans._entries = mzed_mul(ans._entries, self._entries, (<Matrix_gf2e_dense>right)._entries)
@@ -529,8 +536,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_newton_john(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -577,8 +583,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_karatsuba(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -628,8 +633,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_strassen(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -700,7 +704,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -717,7 +721,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if self._nrows == 0 or self._ncols == 0:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, mzed_cmp(self._entries,
-                                         (<Matrix_gf2e_dense>right)._entries))
+                                         (<Matrix_gf2e_dense>other)._entries))
 
     def __copy__(self):
         """

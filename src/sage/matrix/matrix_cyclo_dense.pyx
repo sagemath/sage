@@ -770,14 +770,14 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         return hash(self._matrix)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         Implement comparison of two cyclotomic matrices with
         identical parents.
 
         INPUT:
 
-        - ``self``, ``right`` -- matrices with same parent
+        - ``self``, ``other`` -- matrices with same parent
 
         OUTPUT: boolean
 
@@ -805,7 +805,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: A >= 2*A
             False
         """
-        return self._matrix._richcmp_((<Matrix_cyclo_dense>right)._matrix, op)
+        return self._matrix._richcmp_((<Matrix_cyclo_dense>other)._matrix, op)
 
     def __copy__(self):
         """

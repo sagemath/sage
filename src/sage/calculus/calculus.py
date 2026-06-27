@@ -1928,13 +1928,12 @@ def laplace(ex, t, s, algorithm='maxima'):
                 return result._sage_(), a, cond
             except AttributeError:
                 raise AttributeError("Unable to convert SymPy result (={}) into"
-                        " Sage".format(result))
-        elif 'LaplaceTransform' in format(result):
+                                     " Sage".format(result))
+        if 'LaplaceTransform' in format(result):
             return dummy_laplace(ex, t, s)
-        else:
-            return result
+        return result
 
-    elif algorithm == 'giac':
+    if algorithm == 'giac':
         from sage.interfaces.giac import giac
         try:
             result = giac.laplace(ex, t, s)
@@ -1944,8 +1943,7 @@ def laplace(ex, t, s, algorithm='maxima'):
             return dummy_laplace(ex, t, s)
         return result.sage()
 
-    else:
-        raise ValueError("Unknown algorithm: %s" % algorithm)
+    raise ValueError("Unknown algorithm: %s" % algorithm)
 
 
 def inverse_laplace(ex, s, t, algorithm='maxima'):

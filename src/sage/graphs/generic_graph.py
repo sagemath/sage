@@ -7504,7 +7504,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph().edge_disjoint_spanning_trees(0, algorithm='foo')
             Traceback (most recent call last):
             ...
-            ValueError: algorithm must be None, "Rosking-Tarjan" or "MILP" for undirected graphs
+            ValueError: algorithm must be None, "Roskind-Tarjan" or "MILP" for undirected graphs
             sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm=None)
             []
             sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm='MILP')
@@ -7513,6 +7513,14 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be None or "MILP" for directed graphs
+
+        Check that the issue raised in :issue:`42257` on the MILP formulation on
+        complete directed graphs of order 3 is fixed::
+
+            sage: clique = digraphs.Complete
+            sage: [len(clique(k).edge_disjoint_spanning_trees(k - 1, algorithm='MILP'))
+            ....:  for k in range(1, 8)]
+            [0, 1, 2, 3, 4, 5, 6]
         """
         self._scream_if_not_simple()
         from sage.categories.sets_cat import EmptySetError
@@ -7527,7 +7535,7 @@ class GenericGraph(GenericGraph_pyx):
             from sage.graphs.spanning_tree import edge_disjoint_spanning_trees
             return edge_disjoint_spanning_trees(self, k)
         elif algorithm != "MILP":
-            raise ValueError('algorithm must be None, "Rosking-Tarjan" or "MILP" '
+            raise ValueError('algorithm must be None, "Roskind-Tarjan" or "MILP" '
                              'for undirected graphs')
 
         G = self
@@ -7587,8 +7595,9 @@ class GenericGraph(GenericGraph_pyx):
 
             # We use the Miller-Tucker-Zemlin subtour elimination constraints
             # combined with the Desrosiers-Langevin strengthening constraints
+            # (only when n is large enough to avoid corner cases).
             for u, v in D.edge_iterator(labels=False):
-                if D.has_edge(v, u):
+                if n > 3 and D.has_edge(v, u):
                     # DL
                     p.add_constraint(pos[u, c] + (n - 1)*edge[(u, v), c] + (n - 3)*edge[(v, u), c]
                                      <= pos[v, c] + n - 2)
@@ -23501,7 +23510,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: print(G.latex_options().dot2tex_picture())    # optional - dot2tex graphviz, needs sage.plot
             \begin{tikzpicture}[>=latex,line join=bevel,]
             ...
-              \definecolor{strokecolor}{rgb}{0.25,0.5,1.0};
+              \definecolor{strokecolor}{rgb}{0.25,0.5,1.0}
               \draw [strokecolor,] (node_0) ... (node_1);
             ...
             \end{tikzpicture}

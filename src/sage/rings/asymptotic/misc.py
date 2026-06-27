@@ -38,7 +38,7 @@ lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
-def repr_short_to_parent(s):
+def repr_short_to_parent(s: str):
     r"""
     Helper method for the growth group factory, which converts a short
     representation string to a parent.
@@ -106,7 +106,7 @@ def repr_short_to_parent(s):
     return P
 
 
-def parent_to_repr_short(P):
+def parent_to_repr_short(P) -> str:
     r"""
     Helper method which generates a short(er) representation string
     out of a parent.
@@ -153,23 +153,26 @@ def parent_to_repr_short(P):
     from sage.rings.real_mpfr import RR
     from sage.symbolic.ring import SR
 
+    abbreviations = {ZZ: 'ZZ', QQ: 'QQ', SR: 'SR',
+                     RR: 'RR', CC: 'CC',
+                     RIF: 'RIF', CIF: 'CIF',
+                     RBF: 'RBF', CBF: 'CBF'}
+
     def abbreviate(P):
         try:
             return P._repr_short_()
         except AttributeError:
             pass
-        abbreviations = {ZZ: 'ZZ', QQ: 'QQ', SR: 'SR',
-                         RR: 'RR', CC: 'CC',
-                         RIF: 'RIF', CIF: 'CIF',
-                         RBF: 'RBF', CBF: 'CBF'}
         try:
             return abbreviations[P]
         except KeyError:
             pass
         raise ValueError('Cannot abbreviate %s.' % (P,))
 
-    poly = isinstance(P, (PolynomialRing_generic, MPolynomialRing_base))
-    power = isinstance(P, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing))
+    poly = isinstance(P, (PolynomialRing_generic,
+                          MPolynomialRing_base))
+    power = isinstance(P, (PowerSeriesRing_generic,
+                           MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
     if poly or power:
         if poly:
@@ -189,7 +192,7 @@ def parent_to_repr_short(P):
     return s
 
 
-def split_str_by_op(string, op, strip_parentheses=True):
+def split_str_by_op(string: str, op: str, strip_parentheses=True) -> tuple:
     r"""
     Split the given string into a tuple of substrings arising by
     splitting by ``op`` and taking care of parentheses.
@@ -253,16 +256,16 @@ def split_str_by_op(string, op, strip_parentheses=True):
         sage: split_str_by_op('(e^(n*log(n)))^SR.subring(no_variables=True)', '*')
         ('(e^(n*log(n)))^SR.subring(no_variables=True)',)
     """
-    def is_balanced(s):
+    def is_balanced(s: str) -> bool:
         open = 0
-        for l in s:
-            if l == '(':
+        for let in s:
+            if let == '(':
                 open += 1
-            elif l == ')':
+            elif let == ')':
                 open -= 1
             if open < 0:
                 return False
-        return bool(open == 0)
+        return not open
 
     factors = []
     balanced = True
@@ -298,7 +301,7 @@ def split_str_by_op(string, op, strip_parentheses=True):
     return tuple(strip(f) for f in factors)
 
 
-def repr_op(left, op, right=None, latex=False):
+def repr_op(left, op: str, right=None, latex=False) -> str:
     r"""
     Create a string ``left op right`` with
     taking care of parentheses in its operands.
@@ -349,8 +352,8 @@ def repr_op(left, op, right=None, latex=False):
             return s
         if any(sig in s for sig in signals) or latex and s.startswith(r'\frac'):
             if latex:
-                return r'\left({}\right)'.format(s)
-            return '({})'.format(s)
+                return fr'\left({s}\right)'
+            return f'({s})'
         return s
 
     return add_parentheses(left, op) + op + add_parentheses(right, op)
@@ -697,7 +700,7 @@ def bidirectional_merge_sorted(A, B, key=None):
     return (resultA, resultB)
 
 
-def log_string(element, base=None):
+def log_string(element, base=None) -> str:
     r"""
     Return a representation of the log of the given element to the
     given base.
@@ -729,6 +732,8 @@ def strip_symbolic(expression):
 
     If ``expression`` is not symbolic, then ``expression`` is returned.
 
+    This also transforms integers in QQ to integers in ZZ.
+
     INPUT:
 
     - ``expression`` -- an object
@@ -750,9 +755,14 @@ def strip_symbolic(expression):
         sage: strip_symbolic(pi); _.parent()
         pi
         Symbolic Ring
+        sage: strip_symbolic(QQ(2)); _.parent()
+        2
+        Integer Ring
     """
     from sage.structure.element import parent, Element
     from sage.symbolic.ring import SymbolicRing
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.rational_field import QQ
 
     P = parent(expression)
     if isinstance(P, SymbolicRing):
@@ -762,6 +772,10 @@ def strip_symbolic(expression):
                 return stripped
         except TypeError:
             pass
+
+    # convert integers in QQ to integers in ZZ
+    if P is QQ and expression in ZZ:
+        return ZZ(expression)
     return expression
 
 

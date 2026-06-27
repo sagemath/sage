@@ -44,6 +44,10 @@ from sage.structure.sage_object import SageObject
 from sage.misc.decorators import suboptions
 from .colors import rgbcolor
 
+# Suppress matplotlib warnings
+import logging
+logging.getLogger('matplotlib.font_manager').setLevel(logging.ERROR)
+
 ALLOWED_EXTENSIONS = ['.eps', '.pdf', '.pgf', '.png', '.ps', '.sobj', '.svg']
 DEFAULT_DPI = 100
 

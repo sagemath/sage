@@ -50,7 +50,7 @@ from sage.rings.polynomial.polynomial_quotient_ring_element import (
 )
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.quotient_ring import QuotientRing_generic
-from sage.rings.ring import CommutativeRing, Field
+from sage.rings.ring import Ring, Field
 from sage.structure.category_object import normalize_names
 from sage.structure.coerce_maps import DefaultConvertMap_unique
 from sage.structure.factory import UniqueFactory
@@ -556,31 +556,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         except (TypeError, ValueError):
             return False
 
-    def _coerce_impl(self, x):
-        """
-        Return the coercion of x into this polynomial quotient ring.
-
-        The rings that coerce into the quotient ring canonically are:
-
-        - this ring
-
-        - any canonically isomorphic ring
-
-        - anything that coerces into the ring of which this is the
-          quotient
-        """
-        if isinstance(x, PolynomialQuotientRingElement):
-            if x.parent() == self:
-                return self.element_class(self, self.__ring(x.lift()), check=False)
-        # any ring that coerces to the base ring of this polynomial ring.
-        return self(self.polynomial_ring().coerce(x))
-
     ############################################
-    # Methods to make the category framework happy...
+    # Method to make the category framework happy...
     #
-
-    retract = _coerce_impl
-    ambient = CommutativeRing.base
+    ambient = Ring.base
 
     def lift(self, x):
         """
@@ -693,7 +672,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         Rpoly = S(self.polynomial_ring())
         Rpoly.set_ring()
         modulus = S(self.modulus()) # should live in Rpoly
-        Rtmp = S(self.polynomial_ring().change_var(self.variable_name()))
+        Rtmp = S(self.polynomial_ring().change_variable_name(self.variable_name()))
         Rtmp.set_ring()
         self.__singular = S("ideal(fetch(%s,%s))" % (Rpoly.name(),modulus.name()),"qring")
         return self.__singular
@@ -2202,7 +2181,7 @@ class PolynomialQuotientRing_coercion(DefaultConvertMap_unique):
         return richcmp(self.parent(), other.parent(), op)
 
 
-class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeRing):
+class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, Ring):
     """
     EXAMPLES::
 

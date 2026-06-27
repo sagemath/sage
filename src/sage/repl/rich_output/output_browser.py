@@ -82,9 +82,9 @@ class OutputHtml(OutputBase):
             sage: rich_output.print_to_stdout()
             <div>Hello World!</div>
         """
-        print(self.html.get_unicode())
+        print(self.html.get_str())
 
-    def with_html_tag(self):
+    def with_html_tag(self) -> str:
         r"""
         Return the HTML code surrounded by ``<html>`` tag.
 
@@ -99,4 +99,4 @@ class OutputHtml(OutputBase):
             sage: rich_output.with_html_tag()
             '<html><div>Hello World!</div></html>'
         """
-        return '<html>{0}</html>'.format(self.html.get_unicode())
+        return '<html>{0}</html>'.format(self.html.get_str())

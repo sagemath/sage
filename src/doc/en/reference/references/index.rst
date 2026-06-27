@@ -188,7 +188,7 @@ REFERENCES:
 .. [AHM2018] Edward Allen, Joshua Hallam, Sarah Mason, *Dual Immaculate
              Quasisymmetric Functions Expand Positively into Young Quasisymmetric
              Schur Functions*. :arxiv:`1606.03519`
-             
+
 .. [AHMP2008] \J.-P. Aumasson, L. Henzen, W. Meier, and R. C-W Phan,
               *Sha-3 proposal blake*; in Submission to NIST, (2008).
 
@@ -1042,7 +1042,7 @@ REFERENCES:
 .. [BKSTY06] \A. Buch, A. Kresch, M. Shimozono, H. Tamvakis, and A. Yong.
              *Stable Grothendieck polynomials and* `K`-*theoretic factor sequences*.
              Math. Ann. **340** Issue 2, (2008), pp. 359--382.
-             :arxiv:`math/0601514v1`.        
+             :arxiv:`math/0601514v1`.
 
 .. [BK2009] \J. Brundan and A. Kleshchev.
             *Graded decomposition numbers for cyclotomic Hecke algebras*.
@@ -1455,7 +1455,7 @@ REFERENCES:
             http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf.
 
 .. [BS2007] \R. Bröker and P. Stevenhagen. *Constructing elliptic curves of
-            prime order*. [math.NT] (2007), :arXiv:`0712.2022`.
+            prime order*. [math.NT] (2007), :arxiv:`0712.2022`.
 
 .. [BS2010] \P. Baseilhac and K. Shigechi. *A new current algebra and the
             reflection equation*. Lett. Math. Phys. **92** (2010),
@@ -1500,7 +1500,7 @@ REFERENCES:
               Volume 20, Springer (2007)
 
 .. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
-             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
+             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010).
 
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
@@ -1552,8 +1552,8 @@ REFERENCES:
           and totally positive varieties*
           Invent. Math. **143** No. 1. (2002), 77-128.
 
-.. [BZ2003] Vladimir Batagelj and Matjaz Zaversnik. *An `O(m)`
-            Algorithm for Cores Decomposition of
+.. [BZ2003] Vladimir Batagelj and Matjaz Zaversnik. *An* `O(m)`
+            *Algorithm for Cores Decomposition of
             Networks*. 2003. :arxiv:`cs/0310049v1`.
 
 .. _ref-C:
@@ -1621,7 +1621,7 @@ REFERENCES:
             :arxiv:`1308.0936v2`.
 
 .. [CC2023] \C. Ceballos and C. Chenevière.
-                *On linear intervals in the alt `\nu`-Tamari lattices* :arxiv:`2305.02250`
+                *On linear intervals in the alt* `\nu`\ *-Tamari lattices* :arxiv:`2305.02250`
 
 .. [CCL2015] \N. Cohen, D. Coudert, and A. Lancin. *On computing the Gromov
              hyperbolicity*. ACM Journal of Experimental Algorithmics,
@@ -1692,6 +1692,11 @@ REFERENCES:
             *Gröbner and diagonal bases in Orlik-Solomon type algebras*
             Cubo **7** (2), (2005). pp. 1-20.
 
+.. [CF2026]  Xavier Caruso, Florian Fürnsinn,
+             *Algorithms for Algebraic and Arithmetic Attributes
+             of Hypergeometric Functions*,
+             https://arxiv.org/abs/2601.16105
+
 .. [CFHM2013] Wei Chen, Wenjie Fang, Guangda Hu, Michael W. Mahoney,
               *On the Hyperbolicity of Small-World and Treelike Random Graphs*,
               Internet Mathematics 9:4 (2013), 434-491.
@@ -1719,6 +1724,10 @@ REFERENCES:
 .. [CFL1958] \K.-T. Chen, R.H. Fox, R.C. Lyndon, Free differential calculus,
              IV. The quotient groups of the lower central series, Ann. of Math.
              68 (1958) 81--95.
+
+.. [CFV2025] Xavier Caruso, Florian Fürnsinn, Daniel Vargas-Montoya,
+           *Galois groups of reductions modulo p of D-finite series*,
+           :arxiv:`2504.09429`, 2025.
 
 .. [CFZ2000] \J. Cassaigne, S. Ferenczi, L.Q. Zamboni, *Imbalances in
              Arnoux-Rauzy sequences*, Ann. Inst. Fourier (Grenoble)
@@ -1797,6 +1806,9 @@ REFERENCES:
 
 .. [ChenDB] Eric Chen, Online database of two-weight codes,
             http://moodle.tec.hkr.se/~chen/research/2-weight-codes/search.php
+
+.. [Chr1986] Gilles Christol, *Fonctions hypergéométriques bornées*.
+             Groupe de travail d’analyse ultramétrique 14 (1986-87), exp. no 8, p. 1-16
 
 .. [CHK2001] Keith D. Cooper, Timothy J. Harvey and Ken Kennedy. *A
              Simple, Fast Dominance Algorithm*, Software practice and
@@ -1907,7 +1919,7 @@ REFERENCES:
 
 .. [CM] Benoit Collins, Sho Matsumoto, *On some properties of
         orthogonal Weingarten functions*, :arxiv:`0903.5143`.
-        
+
 .. [CM2000] Paula A.A.B. Carvalho and Ian M. Musson. *Down-up algebras and
             their representation theory*. J. Algebra. **228** no. 1, (2000),
             pp. 286-310. :doi:`10.1006/jabr.1999.8263`
@@ -2165,7 +2177,7 @@ REFERENCES:
              Algebras*. CUP 2010.
 
 .. [CT2013] \J. E. Cremona and T. Thongjunthug, *The Complex AGM, periods of
-            elliptic curves over `\CC` and complex elliptic logarithms*.
+            elliptic curves over* `\mathbb{C}` *and complex elliptic logarithms*.
             Journal of Number Theory Volume 133, Issue 8, August 2013, pages
             2813-2841.
 
@@ -2654,7 +2666,7 @@ REFERENCES:
 .. [EG1987] Paul Edelman, Curtis Greene.
             *Balanced Tableaux*.
             Advances in Mathematics 63 (1987), pp. 42-99.
-            :doi:`10.1016/0001-8708(87)90063-6`             
+            :doi:`10.1016/0001-8708(87)90063-6`
 
 .. [EGNO2015] Pavel Etingof, Shlomo Gelaki, Dmitri Nikshych and Victor Ostrik,
                *Tensor Categories*, AMS Mathematical Surveys and Monographs 205 (2015).
@@ -2805,7 +2817,7 @@ REFERENCES:
              und Geometrie*, Dissertation, University of
              Bayreuth, 2013.
 
-.. [FFN2025] Wenjie Fang, Éric Fusy, Philippe Nadeau, 
+.. [FFN2025] Wenjie Fang, Éric Fusy, Philippe Nadeau,
              *Tamari intervals and blossoming trees*.
              Combinatorial Theory, Volume 5, Issue 1.
              :doi:`10.5070/C65165015`.
@@ -2975,6 +2987,11 @@ REFERENCES:
             toric varieties defined by atomic lattices*. Inventiones
             Mathematicae. **155** (2004), no. 3, pp. 515-536.
 
+.. [FY2024] Florian Fürnsinn, Sergey Yurkevich.
+            *Algebraicity of hypergeometric functions with arbitrary parameters*,
+            Bulletin of the London Mathematical Society. **56** (2024),
+            pp. 2824-2846. :doi:`10.1112/blms.13103`, :arxiv:`2308.12855` (2023).
+
 .. [FZ2001] \S. Fomin and A. Zelevinsky. *Cluster algebras I. Foundations*,
             \J. Amer. Math. Soc. **15** (2002), no. 2, pp. 497-529.
             :arxiv:`math/0104151` (2001).
@@ -3043,6 +3060,10 @@ REFERENCES:
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187-203, 1991.
 
+
+.. [Gek2001] \E.-U. Gekeler. Invariants of some algebraic curves related to
+              Drinfeld modular curves. Journal of Number Theory 90, No. 1, 166-183, 2001.
+
 .. [Gek2008] \E.-U. Gekeler. Frobenius Distributions of Drinfeld Modules over
              Finite Fields. Transactions of the American Mathematical Society,
              Volume 360 (2008), no. 4.
@@ -3050,6 +3071,10 @@ REFERENCES:
 .. [Gek2017] \E.-U. Gekeler. On Drinfeld modular forms of higher rank.
              Journal de théorie des nombres de Bordeaux,
              Volume 29 (2017) no. 3, pp. 875-902. :doi:`10.5802/jtnb.1005`
+
+.. [Ges2016] \I. M. Gessel. Lagrange inversion.
+             Journal of Combinatorial Theory, Series A,
+             Volume 144 (2016), pp. 212–249. :doi:`10.1016/j.jcta.2016.06.018`
 
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
@@ -3059,6 +3084,10 @@ REFERENCES:
 .. [GGD2011] \E. Girondo, \G. Gonzalez-Diez, *Introduction to Compact
              Riemann surfaces and Dessins d'enfant*, (2011)
              London Mathematical Society, Student Text 79.
+
+.. [GGK2000] Geelen, James F., Albertus MH Gerards, and Ajai Kapoor,
+             *The excluded minors for GF(4)-representable matroids.*,
+             Journal of Combinatorial Theory, Series B 79.2 (2000): 247-299.
 
 .. [GGMM2020] \A. Garver, S. Grosser, J. Matherne, and A. Morales.
               *Counting linear extensions of posets with determinants of hook
@@ -3085,7 +3114,7 @@ REFERENCES:
 .. [GHJV1994] \E. Gamma, R. Helm, R. Johnson, J. Vlissides, *Design
               Patterns: Elements of Reusable Object-Oriented
               Software*. Addison-Wesley (1994). ISBN 0-201-63361-2.
-              
+
 .. [GHM2008] \S. Galbraith, M. Harrison, D. Mireles Morales,
              *Efficient hyperelliptic arithmetic using balanced representation for divisors*,
              Algorithmic Number Theory: 8th International Symposium, ANTS-VIII Banff, Canada, May 17-22, 2008 Proceedings 8.
@@ -3314,7 +3343,7 @@ REFERENCES:
 .. [GR2018v5sol] Darij Grinberg, Victor Reiner.
                  *Hopf Algebras In Combinatorics*,
                  :arxiv:`1409.8356v5`, available with solutions at
-                 https://arxiv.org/src/1409.8356v5/anc/HopfComb-v73-with-solutions.pdf            
+                 https://arxiv.org/src/1409.8356v5/anc/HopfComb-v73-with-solutions.pdf
 
 .. [Gri2005] \G. Grigorov, Kato's Euler System and the Main Conjecture,
              Harvard Ph.D. Thesis (2005).
@@ -3456,6 +3485,11 @@ REFERENCES:
 
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              https://web.archive.org/web/20040401033532/http://www-math.mit.edu/~hajiagha/pp11.ps
+
+.. [HJ2020]  U. Hartl and A.-K. Juschka, 
+             *Pink’s theory of Hodge structures and the Hodge conjecture over function fields*,
+             in `t`\ *-motives: Hodge structures, transcendence and other motivic aspects*
+             EMS Ser. Congr. Rep. (2020), 31-182
 
 .. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
              *Totally-balanced and greedy matrices*.
@@ -3605,6 +3639,11 @@ REFERENCES:
              matroid representations*, Discrete Applied Mathematics
              154 (2006), pp. 1210-1222.
 
+.. [HLMvW2011] James Haglund, Kurt Luoto, Sarah Mason, and Stephanie
+               van Willigenburg. *Quasisymmetric Schur functions.*
+               Journal of Combinatorial Theory, Series A 118, no. 2
+               (2011): 463-490. :arxiv:`0810.2489`
+
 .. [HLNT09] \F. Hivert, J.-G. Luque, J.-C. Novelli, J.-Y. Thibon,
             *The (1-E)-transform in combinatorial Hopf algebras*.
             :arxiv:`math/0912.0184v2`
@@ -3730,8 +3769,8 @@ REFERENCES:
              Adv. Math. **227**, no. 2, (2011) 847--894.
              doi:`10.1016/j.aim.2011.02.012`, :arxiv:`0708.2632`.
 
-.. [HR2016]  Clemens Heuberger and Roswitha Rissner, *Computing
-             `J`-Ideals of a Matrix Over a Principal Ideal Domain*,
+.. [HR2016]  Clemens Heuberger and Roswitha Rissner, *Computing*
+             `J`\ *-Ideals of a Matrix Over a Principal Ideal Domain*,
              :arxiv:`1611.10308`, 2016.
 
 .. [HR2017] Patricia Hersh and Victor Reiner, *Representation Stability
@@ -3913,8 +3952,8 @@ REFERENCES:
               CANS, (2009), pp. 334-348.
 
 .. [Ive2012] \S. Iveson,
-             *Tableaux on `k + 1`-cores, reduced words for affine
-             permutations, and `k`-Schur expansions*,
+             *Tableaux on* `k + 1`\ *-cores, reduced words for affine
+             permutations, and* `k`\ *-Schur expansions*,
              Operators on `k`-tableaux and the `k`-Littlewood-Richardson
              rule for a special case,
              UC Berkeley: Mathematics,  Ph.D. Thesis,
@@ -4024,6 +4063,10 @@ REFERENCES:
              and link polynomials.  Ann. of Math. (2) 126 (1987),
              no. 2, 335--388. :doi:`10.2307/1971403`
              :mathscinet:`MR0908150`
+
+.. [Joh2013] \F. Johansson. A fast algorithm for reversion of power series.
+             arXiv:1108.4772 [cs.SC] (2013).
+             https://arxiv.org/abs/1108.4772
 
 .. [Jon2005] \V. Jones, The Jones Polynomial, 2005.
              https://math.berkeley.edu/~vfr/jones.pdf
@@ -4755,7 +4798,7 @@ REFERENCES:
 
 .. [LLMS2013] Thomas Lam, Luc Lapointe, Jennifer Morse, and Mark Shimozono (2013).
               *The poset of k-shapes and branching rules for k-Schur functions*
-              <https://www.ams.org/books/memo/1050/memo1050.pdf>`_. Memoirs of the American Mathematical Society, 223(1050), 1-113. DOI: 10.1090/S0065-9266-2012-00655-1
+              `<https://www.ams.org/books/memo/1050/memo1050.pdf>`_. Memoirs of the American Mathematical Society, 223(1050), 1-113. DOI: 10.1090/S0065-9266-2012-00655-1
 
 .. [LLMSSZ2013] Thomas Lam, Luc Lapointe, Jennifer Morse, Anne
                 Schilling, Mark Shimozono and Mike Zabrocki.
@@ -5032,6 +5075,12 @@ REFERENCES:
 .. [LW2015] \T. Lawson and C. Wuthrich, Vanishing of some Galois
             cohomology groups for elliptic curves, :arxiv:`1505.02940`
 
+.. [LW2026] Felix Lazebnik and Ye Wang, *Some Families of Graphs,
+            Hypergraphs and Digraphs Defined by Triangular Systems
+            of Polynomial Equations*, The Electronic Journal of
+            Combinatorics, Dynamic Surveys, #DS28 (2026).
+            :doi:`10.37236/14054`
+
 .. [LY2001] \K. Lauter and T. Yang, *Computing genus 2 curves from
             invariants on the Hilbert moduli space*,
             Journal of Number Theory 131
@@ -5190,7 +5239,7 @@ REFERENCES:
              Decoding." IEEE Trans. on Information Theory, vol. 15(1),
              pp. 122-127, Jan 1969.
 
-.. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order `pq^2 + 1`*,
+.. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order* `pq^2 + 1`,
              Canad. J. Math. 30 (1978) 321-331, :doi:`10.4153/CJM-1978-029-1`.
 
 .. [Mat2012] Yoshitake Matsumoto, *Database of Matroids*, 2012,
@@ -5800,7 +5849,7 @@ REFERENCES:
 
 .. [Pas1992] \D. V. Pasechnik,
              *Skew-symmetric association schemes with two classes and strongly
-             regular graphs of type `L_{2n-1}(4n- 1)`*,
+             regular graphs of type* `L_{2n-1}(4n- 1)`,
              Acta Applicandaie Math. 29(1992), 129-138.
              :doi:`10.1007/BF00053382`.
 
@@ -6045,7 +6094,7 @@ REFERENCES:
 .. [Read2011] \N. Reading, *Noncrossing partitions and the shard intersection
                order*, J. Algebraic Combin., 33 (2011), 483-530.
                :doi:`10.1007/s10801-010-0255-3`
-               
+
 .. [ReSt2020] Nathan Reading and Salvatore Stella, *An affine almost positive
               roots model*, J. Comb. Algebra Volume 4, Issue 1, 2020, pp. 1--59
 
@@ -6597,7 +6646,7 @@ REFERENCES:
 
 .. [ST1993] \P. D. Seymour and Robin Thomas,
             *Graph searching and a min-max theorem for tree-width*,
-            `J. Comb. Theory Ser. B 58, 1 (May 1993), 22-33.
+            \J. Comb. Theory Ser. B 58, 1 (May 1993), 22-33.
             :doi:`10.1006/jctb.1993.1027`.
 
 .. [ST1994] Simon, K. and Trunz, P., *A cleanup on transitive orientation*,
@@ -6973,7 +7022,7 @@ REFERENCES:
                      SIGMA **7** (2011), 069, 24 pages. :arxiv:`1104.2813`.
 
 .. [Ter2021] Paul Terwilliger. *The alternating central extension of the*
-             `q`*-Onsager algebra*. Preprint, :arxiv:`2103.03028` (2021).
+             `q`\ *-Onsager algebra*. Preprint, :arxiv:`2103.03028` (2021).
 
 .. [Ter2021b] Paul Terwilliger. *The alternating central extension of the
               Onsager Lie algebra*. Preprint, :arxiv:`2104.08106` (2021).
@@ -7038,6 +7087,11 @@ REFERENCES:
 
 .. [TW1980] \A.D. Thomas and G.V. Wood, Group Tables (Exeter: Shiva
             Publishing, 1980)
+
+.. [TvW2018] Vasu Tewari and Stephanie van
+             Willigenburg. *Quasisymmetric and noncommutative skew
+             Pieri rules*.  Advances in Applied Mathematics 100
+             (2018): pp. 101-121. :arxiv:`1512.04614`
 
 .. [TY1984] Robert Endre Tarjan, Mihalis Yannakakis. *Simple linear-time
             algorithms to test chordality of graphs, test acyclicity of
@@ -7151,6 +7205,11 @@ REFERENCES:
        ribbon tableaux, and an action of affine permutations*.
        Europe J. Combinatorics. **20** (1999).
        http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
+
+.. [vW2020] Stephanie van Willigenburg, *Dual graphs from
+            noncommutative and quasisymmetric Schur functions.*
+            Proceedings of the American Mathematical Society 148.3
+            (2020): 1063-1078. :arxiv:`1907.13094`
 
 .. _ref-W:
 

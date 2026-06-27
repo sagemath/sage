@@ -910,8 +910,7 @@ class ReferenceSubBuilder(DocBuilder):
         i = doc.find('\n')
         if i != -1:
             return doc[i + 1:].lstrip().splitlines()[0]
-        else:
-            return doc
+        return doc
 
     def auto_rest_filename(self, module_name: str) -> Path:
         """
@@ -1151,23 +1150,22 @@ def get_builder(name: str, options: BuildOptions) -> DocBuilder | ReferenceBuild
     """
     if name == 'reference_top':
         return ReferenceTopBuilder('reference', options)
-    elif name.endswith('reference'):
+    if name.endswith('reference'):
         return ReferenceBuilder(name, options)
-    elif 'reference' in name and (options.source_dir / 'en' / name).exists():
+    if 'reference' in name and (options.source_dir / 'en' / name).exists():
         return ReferenceSubBuilder(name, options)
-    elif name.endswith('website'):
+    if name.endswith('website'):
         return WebsiteBuilder(name, options)
-    elif name.startswith('file='):
+    if name.startswith('file='):
         path = name[5:]
         if path.endswith('.sage') or path.endswith('.pyx'):
             raise NotImplementedError('Building documentation for a single file only works for Python files.')
         return SingleFileBuilder(path)
-    elif Path(name) in get_all_documents(options.source_dir):
+    if Path(name) in get_all_documents(options.source_dir):
         return DocBuilder(name, options)
-    else:
-        print("'%s' is not a recognized document. Type 'sage --docbuild -D' for a list" % name)
-        print("of documents, or 'sage --docbuild --help' for more help.")
-        sys.exit(1)
+    print("'%s' is not a recognized document. Type 'sage --docbuild -D' for a list" % name)
+    print("of documents, or 'sage --docbuild --help' for more help.")
+    sys.exit(1)
 
 
 def get_all_documents(source: Path) -> list[Path]:

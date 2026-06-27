@@ -87,7 +87,7 @@ cdef int number_of_integer_rings = 0
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
 
-cdef class IntegerRing_class(CommutativeRing):
+cdef class IntegerRing_class(Ring):
     r"""
     The ring of integers.
 
@@ -293,10 +293,13 @@ cdef class IntegerRing_class(CommutativeRing):
 
             sage: A in InfiniteEnumeratedSets()
             True
+
+            sage: ZZ.variable_names()
+            ()
         """
         cat = (EuclideanDomains(), DedekindDomains(),
                InfiniteEnumeratedSets().Metric(), NoetherianRings())
-        Parent.__init__(self, base=self, names=('x',), normalize=False,
+        Parent.__init__(self, base=self, names=(), normalize=False,
                         category=cat)
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')
@@ -405,7 +408,7 @@ cdef class IntegerRing_class(CommutativeRing):
             K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
-        return CommutativeRing.__getitem__(self, x)
+        return Ring.__getitem__(self, x)
 
     def range(self, start, end=None, step=None):
         """

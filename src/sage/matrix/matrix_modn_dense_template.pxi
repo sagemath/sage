@@ -125,6 +125,7 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.randstate cimport randstate, current_randstate
 import sage.matrix.matrix_space as matrix_space
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 from sage.cpython.string cimport char_to_str
@@ -573,6 +574,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: Matrix(IntegerModRing(200), [[int(2**128+1), int(2**256+1), int(2**1024+1)]])        # needs sage.rings.finite_rings
             [ 57 137  17]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``check_calloc`` with ``zeroed_alloc``). Returning here avoids
+            # building a ``MatrixArgs`` object and iterating over an empty
+            # generator, which makes creating a zero matrix from scratch
+            # significantly faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef long i, j
         it = ma.iter(convert=False, sparse=True)
@@ -989,7 +997,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare two dense matrices over `\Z/n\Z`.
 
@@ -1029,7 +1037,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             False
         """
         cdef Py_ssize_t i
-        cdef celement* other_ent = (<Matrix_modn_dense_template>right)._entries
+        cdef celement* other_ent = (<Matrix_modn_dense_template>other)._entries
         sig_on()
         for i in range(self._nrows * self._ncols):
             if self._entries[i] < other_ent[i]:
@@ -1183,8 +1191,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             verbose('mod-p multiply of %s x %s matrix by %s x %s matrix modulo %s' % (
                     self._nrows, self._ncols, right._nrows, right._ncols, self.p))
 
-        if self._ncols != right._nrows:
-            raise ArithmeticError("right's number of rows must match self's number of columns")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef int e
         cdef Matrix_modn_dense_template ans, B
