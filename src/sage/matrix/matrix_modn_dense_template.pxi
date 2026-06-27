@@ -997,7 +997,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_off()
         return M
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare two dense matrices over `\Z/n\Z`.
 
@@ -1037,7 +1037,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             False
         """
         cdef Py_ssize_t i
-        cdef celement* other_ent = (<Matrix_modn_dense_template>right)._entries
+        cdef celement* other_ent = (<Matrix_modn_dense_template>other)._entries
         sig_on()
         for i in range(self._nrows * self._ncols):
             if self._entries[i] < other_ent[i]:

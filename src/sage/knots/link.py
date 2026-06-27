@@ -3349,6 +3349,12 @@ class Link(SageObject):
                 s += ' {} {}'.format(abs(cr) - 1, sign(cr))
         for i, cr in enumerate(ogc[1]):
             s += ' {} {}'.format(i, cr)
+
+        # Raise a more informative error if libhomfly is not available
+        # or was disabled.
+        from sage.features.libhomfly import Libhomfly
+        Libhomfly().require()
+
         from sage.libs.homfly import homfly_polynomial_dict
         dic = homfly_polynomial_dict(s)
         if normalization == 'lm':
