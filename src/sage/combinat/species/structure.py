@@ -41,13 +41,13 @@ compositions are [3], [2, 1], [1, 2], and [1, 1, 1].
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.categories.enumerated_sets import EnumeratedSets
-from sage.combinat.combinat import CombinatorialObject
 from sage.rings.integer import Integer
 from sage.structure.parent import Parent
+from sage.structure.sage_object import SageObject
 from copy import copy
 
 
-class GenericSpeciesStructure(CombinatorialObject):
+class GenericSpeciesStructure(SageObject):
     def __init__(self, parent, labels, list):
         """
         This is a base class from which the classes for the structures inherit.
@@ -65,7 +65,7 @@ class GenericSpeciesStructure(CombinatorialObject):
         """
         self._parent = parent
         self._labels = labels
-        CombinatorialObject.__init__(self, list)
+        self._list = [x for x in list]
 
     def parent(self):
         """
@@ -127,6 +127,121 @@ class GenericSpeciesStructure(CombinatorialObject):
             True
         """
         return not (self == other)
+
+    def __lt__(self, other):
+        """
+        Check whether ``self`` is less than ``other``.
+
+        The comparison is done on the underlying lists; the labels are
+        ignored.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import GenericSpeciesStructure
+            sage: a = GenericSpeciesStructure(None, [2,3,4], [1,2,3])
+            sage: b = GenericSpeciesStructure(None, [2,3,4], [1,3,2])
+            sage: a < b
+            True
+            sage: b < a
+            False
+        """
+        if isinstance(other, GenericSpeciesStructure):
+            return self._list < other._list
+        return self._list < other
+
+    def __le__(self, other):
+        """
+        Check whether ``self`` is less than or equal to ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import GenericSpeciesStructure
+            sage: a = GenericSpeciesStructure(None, [2,3,4], [1,2,3])
+            sage: b = GenericSpeciesStructure(None, [2,3,4], [1,3,2])
+            sage: a <= b
+            True
+            sage: a <= a
+            True
+        """
+        if isinstance(other, GenericSpeciesStructure):
+            return self._list <= other._list
+        return self._list <= other
+
+    def __gt__(self, other):
+        """
+        Check whether ``self`` is greater than ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import GenericSpeciesStructure
+            sage: a = GenericSpeciesStructure(None, [2,3,4], [1,2,3])
+            sage: b = GenericSpeciesStructure(None, [2,3,4], [1,3,2])
+            sage: b > a
+            True
+            sage: a > b
+            False
+        """
+        if isinstance(other, GenericSpeciesStructure):
+            return self._list > other._list
+        return self._list > other
+
+    def __ge__(self, other):
+        """
+        Check whether ``self`` is greater than or equal to ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import GenericSpeciesStructure
+            sage: a = GenericSpeciesStructure(None, [2,3,4], [1,2,3])
+            sage: b = GenericSpeciesStructure(None, [2,3,4], [1,3,2])
+            sage: b >= a
+            True
+            sage: a >= a
+            True
+        """
+        if isinstance(other, GenericSpeciesStructure):
+            return self._list >= other._list
+        return self._list >= other
+
+    def __getitem__(self, i):
+        """
+        Return the ``i``-th entry of the underlying list of ``self``.
+
+        EXAMPLES::
+
+            sage: T = species.BinaryTreeSpecies()
+            sage: t = T.structures([1,2,3])[0]; t
+            1*(2*3)
+            sage: t[0], t[1][0]
+            (1, 2)
+        """
+        return self._list[i]
+
+    def __len__(self) -> int:
+        """
+        Return the length of the underlying list of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import GenericSpeciesStructure
+            sage: a = GenericSpeciesStructure(None, [2,3,4], [1,2,3])
+            sage: len(a)
+            3
+        """
+        return len(self._list)
+
+    def __iter__(self):
+        """
+        Iterate over the underlying list of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import GenericSpeciesStructure
+            sage: a = GenericSpeciesStructure(None, [2,3,4], [1,2,3])
+            sage: list(iter(a))
+            [1, 2, 3]
+        """
+        return iter(self._list)
 
     def labels(self):
         """
