@@ -354,7 +354,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: from sage.repl.rich_output.output_graphics3d import OutputSceneJmol
-            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')   # needs sage.plot
+            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')
             'Launched jmol viewer for Graphics3d object'
         """
         from sage.doctest import DOCTEST_MODE
@@ -577,7 +577,7 @@ class BackendIPythonNotebook(BackendIPython):
 
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
-            sage: backend.threejs_offline_scripts()                                     # needs sage.plot
+            sage: backend.threejs_offline_scripts()
             '...<script src="/nbextensions/threejs-sage/r.../three.min.js...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager

@@ -91,8 +91,8 @@ cdef class Matrix:
         cdef long i, j
         if self.M:
             i, j = ij
-            if 0<i and i<=self.M[0].nrows() and 0<j and j<=self.M[0].ncols():
-                return self.M.sub(i,j)
+            if 0 < i <= self.M[0].nrows() and 0 < j <= self.M[0].ncols():
+                return self.M.sub(i, j)
             raise IndexError("matrix indices out of range")
         raise IndexError("cannot index into an undefined matrix")
 

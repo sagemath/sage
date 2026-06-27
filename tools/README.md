@@ -67,6 +67,12 @@ cd flint-autogen
 FLINT_GIT_DIR=/path/to/flint.git python flint_autogen.py
 ```
 
+## Check status of ruff config
+
+The `tools/check_ruff.py` script lists any ruff linter prefixes or rules that already pass on the entire codebase.
+This script can be run from the root directory of the Sage repo as `tools/check_ruff.py prefix` to check rule prefixes, or `tools/check_ruff.py rule` to check individual rules.
+Such rules are usually safe to add to the ruff config in `pyproject.toml`, but manual checking what the rule does and considering its relevance to Sage should still be done (for example, do not enable linter rules that are specific to a library that Sage does not use).
+
 ## Generate cython header files for flint
 
 The flint-autogen directory contains a script (`flint_autogen.py`)

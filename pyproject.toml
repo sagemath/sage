@@ -90,7 +90,6 @@ extra = [
   'pycosat >=0.6.3',
   'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
   'sage_numerical_backends_coin',
-  'symengine >= 0.6.1', # Only used in tests
 ]
 test = ["pytest-xdist"]
 #giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
@@ -368,21 +367,172 @@ ignore = [
   # Module level import not at top of file.
   # ruff is not aware of our lazy_imports, we may be able to remove this ignore after adopting PEP 810
   "E402",
+
+  "T20", # Rules to prohibit print statements - there are valid uses of print statements in Sage
 ]
 
 select = [
   "C4", # flake8-comprehensions - https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
   "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
+  "FA", # flake8-future-annotations - https://docs.astral.sh/ruff/rules/#flake8-future-annotations-fa
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
   "TC", # flake8-type-checking - https://docs.astral.sh/ruff/rules/#flake8-type-checking-tc
   "W", # pycodestyle warnings - https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+  "YTT", # flake8-2020 - https://docs.astral.sh/ruff/rules/#flake8-2020-ytt
 
   # flake8-pie - https://docs.astral.sh/ruff/rules/#flake8-pie-pie
+  "PIE796",
+  "PIE800",
+  "PIE804",
+  "PIE807",
   "PIE808",
 
+  # flake8-pyi - https://docs.astral.sh/ruff/rules/#flake8-pyi-pyi
+  "PYI002",
+  "PYI003",
+  "PYI004",
+  "PYI005",
+  "PYI006",
+  "PYI007",
+  "PYI008",
+  "PYI010",
+  "PYI011",
+  "PYI012",
+  "PYI013",
+  "PYI014",
+  "PYI016",
+  "PYI017",
+  "PYI018",
+  "PYI021",
+  "PYI030",
+  "PYI032",
+  "PYI033",
+  "PYI035",
+  "PYI041",
+  "PYI042",
+  "PYI043",
+  "PYI046",
+  "PYI047",
+  "PYI049",
+  "PYI050",
+  "PYI051",
+  "PYI052",
+  "PYI055",
+  "PYI056",
+  "PYI057",
+  "PYI058",
+  "PYI059",
+  "PYI061",
+  "PYI062",
+  "PYI063",
+  "PYI064",
+
+  # flake8-pytest-style - https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
+  "PT002",
+  "PT003",
+  "PT007",
+  "PT008",
+  "PT010",
+  "PT011",
+  "PT012",
+  "PT013",
+  "PT014",
+  "PT016",
+  "PT019",
+  "PT020",
+  "PT021",
+  "PT022",
+  "PT023",
+  "PT024",
+  "PT025",
+  "PT026",
+  "PT030",
+  "PT031",
+
+  # flake8-bugbear - https://docs.astral.sh/ruff/rules/#flake8-bugbear-b
+  "B002",
+  "B003",
+  "B004",
+  "B005",
+  "B012",
+  "B013",
+  "B014",
+  "B016",
+  "B017",
+  "B019",
+  "B021",
+  "B022",
+  "B024",
+  "B025",
+  "B027",
+  "B029",
+  "B030",
+  "B031",
+  "B032",
+  "B033",
+  "B034",
+  "B035",
+  "B911",
+  "B911",
+  "B912",
+
+  # flake8-logging - https://docs.astral.sh/ruff/rules/#flake8-logging-log
+  "LOG001",
+  "LOG002",
+  "LOG007",
+  "LOG014",
+
+  # flake8-logging-format - https://docs.astral.sh/ruff/rules/#flake8-logging-format-g
+  "G003",
+  "G010",
+  "G101",
+  "G201",
+  "G202",
+
+  # flake8-simplify - https://docs.astral.sh/ruff/rules/#flake8-simplify-sim
+  "SIM107",
+  "SIM112",
+  "SIM116",
+  "SIM210",
+  "SIM220",
+  "SIM221",
+  "SIM223",
+  "SIM401",
+  "SIM905",
+  "SIM911",
+
   # ruff-specific rules - https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+  "RUF008",
+  "RUF009",
   "RUF013",
+  "RUF016",
+  "RUF018",
+  "RUF020",
+  "RUF022",
+  "RUF024",
+  "RUF026",
+  "RUF028",
+  "RUF030",
+  "RUF032",
+  "RUF033",
   "RUF036",
+  "RUF037",
+  "RUF040",
+  "RUF041",
+  "RUF043",
+  "RUF048",
+  "RUF049",
+  "RUF053",
+  "RUF057",
+  "RUF058",
+  "RUF060",
+  "RUF061",
+  "RUF064",
+  "RUF101",
+  "RUF102",
+  "RUF103",
+  "RUF104",
+  "RUF200",
 
   # perflint - https://docs.astral.sh/ruff/rules/#perflint-perf
   "PERF101",
@@ -390,16 +540,50 @@ select = [
   "PERF403",
 
   # pyupgrade - https://docs.astral.sh/ruff/rules/#pyupgrade-up
+  "UP001",
+  "UP003",
   "UP004",
+  "UP005",
   "UP006",
   "UP008",
   "UP010",
+  "UP011",
+  "UP012",
+  "UP013",
+  "UP014",
   "UP015",
+  "UP018",
+  "UP019",
+  "UP020",
+  "UP021",
   "UP022",
+  "UP023",
+  "UP024",
+  "UP025",
+  "UP026",
+  "UP029",
+  "UP033",
   "UP034",
   "UP035",
+  "UP036",
+  "UP041",
+  "UP042",
+  "UP043",
+  "UP044",
+  "UP047",
+  "UP049",
+  "UP050",
 
   # refurb - https://docs.astral.sh/ruff/rules/#refurb-furb
+  "FURB105",
+  "FURB157",
+  "FURB161",
+  "FURB162",
+  "FURB166",
+  "FURB168",
+  "FURB169",
+  "FURB177",
+  "FURB181",
   "FURB188",
 
   # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
@@ -422,7 +606,12 @@ select = [
   "E902",
 
   # pydocstyle - https://docs.astral.sh/ruff/rules/#pydocstyle-d
+  "D201",
+  "D206",
   "D211",
+  "D215",
+  "D408",
+  "D418",
 
   # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
   # Like with the E rules, this isn't stable enough yet to enable all of PL
@@ -433,6 +622,7 @@ select = [
   "PLC0132",
   "PLC0205",
   "PLC0206",
+  "PLC0207",
   "PLC0208",
   "PLC0414",
   "PLC1802",
@@ -527,6 +717,9 @@ select = [
 "src/sage/algebras/lie_conformal_algebras/examples.py" = [
   "F401", # Unused import - reexports for convenience.
 ]
+
+[tool.cython-lint]
+ignore = ["E501", "E741"]
 
 [tool.uv]
 # Don't use build isolation for sage (it's incompatible with meson-python's editable install)

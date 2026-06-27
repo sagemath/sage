@@ -510,7 +510,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         sig_off()
         return ans
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         TESTS::
 
@@ -543,12 +543,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         for i in range(self._nrows):
             for j in range(self._ncols):
                 k = fmpq_cmp(fmpq_mat_entry(self._matrix, i, j),
-                             fmpq_mat_entry((<Matrix_rational_dense> right)._matrix, i, j))
+                             fmpq_mat_entry((<Matrix_rational_dense> other)._matrix, i, j))
                 if k:
-                    if k > 0:
-                        return rich_to_bool(op, 1)
-                    else:
-                        return rich_to_bool(op, -1)
+                    return rich_to_bool(op, 1 if k > 0 else -1)
         return rich_to_bool(op, 0)
 
     cdef _vector_times_matrix_(self, Vector v):

@@ -13036,144 +13036,6 @@ cdef class Matrix(Matrix1):
         import sage.matrix.symplectic_basis
         return sage.matrix.symplectic_basis.symplectic_basis_over_field(self)
 
-    def _cyclic_subspace(self, v):
-        r"""
-        Helper function for computing with cyclic (Krylov) subspaces.
-
-        For a square matrix `A` and a vector `v`, the cyclic subspace
-        is spanned by the vectors
-
-        .. MATH::
-
-            \{v, Av, A^2v, A^3v, \dots \}
-
-        INPUT:
-
-        - ``self`` -- a square matrix over a field
-
-        - ``v`` -- a vector with a degree equal to the size of the matrix
-
-        There is no explicit error-checking, it is the responsibility of
-        the calling routine to provide accurate input.
-
-        OUTPUT:
-
-        Four related items are output.  Principally this routine
-        determines the dimension of a cyclic subspace, but also
-        creates two bases for the subspace.  Let `k` be the smallest
-        integer such that `A^kv` is a linear combination of the
-        products with smaller powers of `A`, i.e. the dimension
-        of the cyclic subspace.
-
-        - A list of the vectors `v, Av, A^2v,\dots, A^{k-1}v`
-          (the "iterates").  These vectors give one basis of
-          the subspace.
-
-        - A list of scalars giving a linear combination of
-          `v, Av, A^2v,\dots, A^kv` that equals the zero vector.
-          This is the unique such set of such scalars where the
-          last one in the list is 1.  These can be used to form
-          a monic polynomial in `A` that has `v` in its right kernel.
-          the length of this list is `k+1`.
-
-        - Form a matrix whose rows are the linearly independent iterates.
-          Augment with a `k\times k` identity matrix.  Apply row operations,
-          scaling and adding multiples of rows, but never swap rows.  Do
-          this to create `k` pivot columns.  The third output is this
-          augmented, nearly row-reduced, matrix.  The rows of the left
-          portion will form a basis for the subspace, while the right
-          portion will record linear combinations of the iterates that
-          equal these basis vectors.
-
-        - A list of length `k` with the location of the pivots
-          in the augmented matrix.  Specifically, entry  ``i``  of this
-          list is the column index of the pivot column containing its
-          lone 1 in row ``i``.
-
-        .. SEEALSO::
-
-            :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
-            Krylov iterates and Krylov bases for several vectors at a time.
-
-        ALGORITHM:
-
-        This could be called an "online echelon form" routine.  As each
-        new power of the matrix is built, the iterate is added to the bottom
-        of the augmented matrix and row operations are used to update
-        the pivot columns.  Rows are never swapped, so this is not
-        strictly reduced row-echelon form, but the running time will
-        be similar.  The main difference is that it "discovers" the
-        dimension of the subspace as quickly as possible.
-
-        EXAMPLES::
-
-            sage: A = matrix(QQ, [[5,4,2,1],[0,1,-1,-1],[-1,-1,3,0],[1,1,-1,2]])
-            sage: v = vector(QQ, [0,1,0,0])
-            sage: (QQ^4).span([v, A*v, A^2*v, A^3*v]).dimension()
-            3
-
-            sage: iterates, poly, augmented, pivots = A._cyclic_subspace(v)
-
-            sage: iterates
-            [(0, 1, 0, 0), (4, 1, -1, 1), (23, 1, -8, 8)]
-            sage: poly
-            [-16, 24, -9, 1]
-            sage: lindep = iterates + [A^3*v]
-            sage: sum(poly[i]*lindep[i] for i in range(4))
-            (0, 0, 0, 0)
-            sage: B = sum(poly[i]*A^i for i in range(4))
-            sage: v in B.right_kernel()
-            True
-
-            sage: augmented
-            [    0     1     0     0     1     0     0]
-            [    1     0     0     0  -7/9   8/9  -1/9]
-            [    0     0     1    -1 -19/9  23/9  -4/9]
-            sage: pivots
-            [1, 0, 2]
-            sage: transform = augmented[:, 4:7]
-            sage: transform*matrix(iterates) == augmented[:, 0:4]
-            True
-            sage: (QQ^4).span(iterates) == (QQ^4).span(augmented[:, 0:4].rows())
-            True
-        """
-        cdef Py_ssize_t n, i, j, k, pivcol
-        cdef Matrix aug
-        n = self.ncols()
-        aug = self.new_matrix(nrows=n+1, ncols=n+(n+1))
-        iterate = v.__copy__()
-        iterates = []
-        pivots = []
-        for k in range(n+1):
-            for j in range(n):
-                aug[k, j] = iterate[j]
-            # record keeping in augmented identity matrix
-            aug[k, n+k] = 1
-            # clear out pivot cols of row k, using pivots of previous rows
-            for i in range(k):
-                aug.add_multiple_of_row(k, i, -aug[k, pivots[i]])
-            # identify new pivot
-            # no new pivot is all zeros, ie linear dependence
-            pivcol = -1
-            for j in range(n):
-                if aug[k, j] != 0:
-                    pivcol = j
-                    pivots.append(pivcol)
-                    break
-            # scale pivot, and clear its column
-            if pivcol != -1:
-                aug.rescale_row(k, 1/aug[k, pivcol])
-                for i in range(k):
-                    aug.add_multiple_of_row(i, k, -aug[i, pivcol])
-                iterates.append(iterate)
-                iterate = self*iterate
-            else:
-                break
-        poly = []
-        for j in range(n, n+k+1):
-            poly.append(aug[k, j])
-        return iterates, poly, aug.submatrix(0, 0, k, n+k), pivots
-
     def cyclic_subspace(self, v, var=None, basis='echelon'):
         r"""
         Create a cyclic subspace for a vector, and optionally,
@@ -13221,13 +13083,12 @@ cdef class Matrix(Matrix1):
         is the unique monic polynomial whose coefficients provide
         a relation of linear dependence on the first `k` powers.
 
-        For less convenient, but more flexible output, see the
-        helper method "_cyclic_subspace" in this module.
-
         .. SEEALSO::
 
             :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
             Krylov iterates and Krylov bases for several vectors at a time.
+            This method is implemented on top of :meth:`krylov_basis` applied
+            to the single vector ``v``.
 
         EXAMPLES::
 
@@ -13251,6 +13112,26 @@ cdef class Matrix(Matrix1):
             T^3 - 9*T^2 + 24*T - 16
             sage: p.degree() == E.dimension()
             True
+
+        When ``v`` is a cyclic vector the subspace is the whole space and the
+        polynomial has degree ``n`` (here ``A`` is the companion matrix of
+        `x^4 - 2`)::
+
+            sage: x = polygen(QQ, 'x')
+            sage: A = matrix.companion(x^4 - 2, 'right'); A
+            [0 0 0 2]
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            sage: v = vector(QQ, 4, [0, 1, 2, 3])
+            sage: A.cyclic_subspace(v, var='x', basis='iterates')
+            (x^4 - 2,
+             Vector space of degree 4 and dimension 4 over Rational Field
+             User basis matrix:
+             [0 1 2 3]
+             [6 0 1 2]
+             [4 6 0 1]
+             [2 4 6 0])
 
         The polynomial has coefficients that yield a non-trivial
         relation of linear dependence on the iterates.  Or,
@@ -13287,7 +13168,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        A small case.  ::
+        A small case::
 
             sage: A = matrix(QQ, 5, range(25))
             sage: u = zero_vector(QQ, 5)
@@ -13296,10 +13177,21 @@ cdef class Matrix(Matrix1):
             Basis matrix:
             []
 
-        Various problem inputs.  Notice the vector must have entries
+        Over a finite prime field, the zero vector correctly yields
+        the trivial subspace and the constant polynomial (:issue:`40735`)::
+
+            sage: A = matrix(GF(97), 3, range(9))
+            sage: A.cyclic_subspace(zero_vector(GF(97), 3))
+            Vector space of degree 3 and dimension 0 over Finite Field of size 97
+            Basis matrix:
+            []
+            sage: A.cyclic_subspace(zero_vector(GF(97), 3), var='t')[0]
+            1
+
+        Various problem inputs. Notice the vector must have entries
         that coerce into the base ring of the matrix, and a polynomial
         ring generator must have a base ring that agrees with the
-        base ring of the matrix.  ::
+        base ring of the matrix::
 
             sage: A = matrix(QQ, 4, range(16))
             sage: v = vector(QQ, 4, range(4))
@@ -13391,27 +13283,61 @@ cdef class Matrix(Matrix1):
         except TypeError:
             raise TypeError('unable to make vector entries compatible with matrix entries')
 
-        iterates, poly, augmented, pivots = self._cyclic_subspace(v)
-        k = len(pivots)
-        polynomial = (var is not None)
-        if polynomial:
-            x = sage.rings.polynomial.polynomial_ring.polygen(R, var)
-            poly = sum([poly[i] * x**i for i in range(len(poly))])
         ambient = R**n
+        polynomial = (var is not None)
+
+        if v.is_zero():
+            if basis == 'echelon':
+                subspace = ambient.subspace([], check=False,
+                                            already_echelonized=True)
+            else:  # basis == 'iterates'
+                subspace = ambient.subspace_with_basis([], check=False)
+            if not polynomial:
+                return subspace
+
+            x = sage.rings.polynomial.polynomial_ring.polygen(R, var)
+            return x.parent().one(), subspace
+
+        # The cyclic subspace of ``v`` under ``self`` is the Krylov subspace of
+        # the single row vector ``v`` with multiplication matrix
+        # ``self.transpose()``.  Routing through :meth:`krylov_basis` reuses its
+        # fast block-matrix algorithms (see :issue:`40735`).  The rows of ``B``
+        # are the iterates ``v, self*v, ..., self^(k-1)*v``.
+        Mt = self.transpose()
+        E = self.new_matrix(nrows=1, ncols=n, entries=list(v))
+        # ``krylov_basis`` defaults to ``degrees=n`` for the single row, which is
+        # exactly the Cayley-Hamilton bound: the `n`-th iterate is dependent on
+        # the previous ones, so rows up to degree ``n - 1`` suffice.
+        B = E.krylov_basis(Mt, output_rows=False)
+        k = B.nrows()
+
         if basis == 'echelon':
-            echelon = []
-            pivot_col_row = [(v, i) for i, v in enumerate(pivots)]
-            pivot_col_row.sort()
-            aug = augmented.submatrix(0, 0, k, n)
-            for _, pivrow in pivot_col_row:
-                echelon.append(aug.row(pivrow))
-            subspace = ambient.subspace(echelon, check=False, already_echelonized=True)
-        elif basis == 'iterates':
-            subspace = ambient.subspace_with_basis(iterates, check=False)
-        if polynomial:
-            return poly, subspace
-        else:
+            if k == 0:
+                subspace = ambient.subspace([], check=False,
+                                            already_echelonized=True)
+            else:
+                echelon = B.echelon_form()
+                subspace = ambient.subspace(echelon.rows(), check=False,
+                                            already_echelonized=True)
+        else:  # basis == 'iterates'
+            subspace = ambient.subspace_with_basis(B.rows(), check=False)
+
+        if not polynomial:
             return subspace
+
+        # The accompanying polynomial is the minimal polynomial of ``v`` under
+        # ``self``: the unique monic relation of linear dependence on the
+        # iterates ``v, self*v, ..., self^k*v``.  With ``c`` the coordinates of
+        # ``self^k*v`` in the basis of iterates, this polynomial is
+        # ``x^k - sum(c[i] x^i)``.
+        PolR = sage.rings.polynomial.polynomial_ring.polygen(R, var).parent()
+        if k == 0:
+            poly = PolR.one()
+        else:
+            w = B[k - 1] * Mt                 # equals self^k * v, as a row
+            c = B.solve_left(w)
+            poly = PolR([-c[i] for i in range(k)] + [R.one()])
+        return poly, subspace
 
     def _cholesky_extended_ff(self):
         r"""
@@ -15045,7 +14971,7 @@ cdef class Matrix(Matrix1):
             return result
 
         cdef Py_ssize_t i, j, k  # loop indices
-        cdef Py_ssize_t r        # another row/column index
+        cdef Py_ssize_t r = 0    # another row/column index (set before use)
 
         # We need to construct 1x1 and 2x2 matrices to stick in d.
         from sage.matrix.constructor import matrix
