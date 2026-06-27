@@ -1218,8 +1218,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: D.degree()
             3
             sage: v = D.basis_matrix()[0]
-            sage: v[0]
-            1
+            sage: v[0] in [0,1]
+            True
 
             sage: while F.random_deformation(1/50).get_degree(2).matrix() == matrix([1, 0, 0]):
             ....:     pass

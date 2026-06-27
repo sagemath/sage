@@ -2860,13 +2860,12 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         tester = options['tester']
         max_samples = tester._max_samples
-        try:
+        from sage.features.libhomfly import Libhomfly
+        if Libhomfly().is_present():
             if max_samples:
                 tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
             else:
                 tester.assertTrue(self.is_recoverable(unique=False))
-        except ImportError:
-            pass
 
     def inject(self, verbose=True):
         r"""
