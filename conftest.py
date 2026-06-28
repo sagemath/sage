@@ -247,16 +247,6 @@ def pytest_collect_file(
                 # Fails with many errors due to different testing framework
                 return IgnoreCollector.from_parent(parent)
 
-            if (
-                file_path.name == "finitely_presented.py"
-                and file_path.parent.name == "groups"
-            ):
-                # Passes under `sage -t` but not here: pytest extracts doctests
-                # from __doc__ (where Python collapses backslash-continuations
-                # and processes escapes in non-raw docstrings) while sage -t
-                # reads the raw source, plus some order-dependent GAP state.
-                return IgnoreCollector.from_parent(parent)
-
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
