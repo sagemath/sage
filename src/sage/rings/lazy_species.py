@@ -64,6 +64,7 @@ bi-point-determining graphs we use Corollary (4.6) in
 from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
 from sage.libs.gap.libgap import libgap
+from sage.misc.cachefunc import cached_function
 from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
@@ -2900,6 +2901,30 @@ def weighted_partitions_by_capacity(weights, capacities):
         next_bin = chosen_bin + 1
 
 
+@cached_function
+def _factor_coset_action(k, A):
+    r"""
+    Return the action of the symmetric group on `k` letters on the
+    cosets of the subgroup ``A``.
+
+    This is cached, because :func:`fixed_points` is called many times
+    with the same ``(k, A)`` but varying ``B`` (the indecomposable
+    factors of the molecules of the left species recur), and
+    constructing the coset action dominates that branch.
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import _factor_coset_action
+        sage: A = PermutationGroup([(1,2)])
+        sage: act = _factor_coset_action(3, A)
+        sage: act.Image().NrMovedPoints().sage()    # S_3 on the 3 cosets of A
+        3
+        sage: _factor_coset_action(3, A) is act      # the result is cached
+        True
+    """
+    return libgap.FactorCosetAction(libgap.SymmetricGroup(k), A)
+
+
 def fixed_points(k, A, B):
     r"""
     Compute the number of fixed points of the action of `B` on
@@ -2927,11 +2952,11 @@ def fixed_points(k, A, B):
     if index == 1:
         return ZZ.one()
 
-    S = libgap.SymmetricGroup(k)
     if index < 1000:
-        act = libgap.FactorCosetAction(S, A)
+        act = _factor_coset_action(k, A)
         return index - libgap.Length(libgap.MovedPoints(libgap.Image(act, B))).sage()
 
+    S = libgap.SymmetricGroup(k)
     N_B = None
     count = ZZ.zero()
     for hom in libgap.IsomorphicSubgroups(A, B):
