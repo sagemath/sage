@@ -64,6 +64,7 @@ bi-point-determining graphs we use Corollary (4.6) in
 from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
 from sage.libs.gap.libgap import libgap
+from sage.libs.gap.util import GAPError
 from sage.misc.cachefunc import cached_function
 from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
@@ -2789,8 +2790,9 @@ def _table_of_marks_symmetric_group(n):
     the symmetric groups in a range of small degrees.  Looking up the
     precomputed table is dramatically faster than computing it from the
     group, and it is feasible for degrees where computing from the
-    group is not.  When the table is not in the library, we fall back
-    to computing it from the group.
+    group is not.  When the table is not in the library -- either
+    because the degree is out of range or because ``tomlib`` is not
+    installed -- we fall back to computing it from the group.
 
     EXAMPLES::
 
@@ -2806,7 +2808,11 @@ def _table_of_marks_symmetric_group(n):
         sage: _table_of_marks_symmetric_group(3) == libgap.TableOfMarks(_SymmetricGroup(3))
         True
     """
-    tom = libgap.TableOfMarks("S%s" % n)
+    try:
+        tom = libgap.TableOfMarks("S%s" % n)
+    except GAPError:
+        # ``tomlib`` is not installed at all
+        tom = libgap.fail
     if tom != libgap.fail:
         return tom
     return libgap.TableOfMarks(_SymmetricGroup(n))
