@@ -147,6 +147,12 @@ class TestSuite:
           ``Semigroups()``).
     """
 
+    # Tell pytest not to collect this as a test class despite its ``Test``
+    # prefix; it has an ``__init__`` and is not a pytest test case. Without
+    # this, importing ``TestSuite`` at module level in a ``*_test.py`` file
+    # triggers a ``PytestCollectionWarning``.
+    __test__ = False
+
     def __init__(self, instance):
         """
         TESTS::

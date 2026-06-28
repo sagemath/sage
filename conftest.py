@@ -550,3 +550,31 @@ def assert_close():
             )
 
     return _assert_close
+
+
+@pytest.fixture
+def run_test_suite():
+    r"""
+    Run Sage's :class:`~sage.misc.sage_unittest.TestSuite` on an object.
+
+    This wraps the ubiquitous ``TestSuite(obj).run(...)`` idiom used by unit
+    tests. Crucially it defaults ``raise_on_failure=True`` so that a failing
+    test suite actually fails the pytest test: with the bare ``TestSuite.run``
+    default (``raise_on_failure=False``) failures are only printed, not raised.
+
+    Any keyword arguments are forwarded to
+    :meth:`~sage.misc.sage_unittest.TestSuite.run` (e.g. ``skip``,
+    ``max_runs``, ``verbose``).
+
+    EXAMPLES (used as a pytest fixture)::
+
+        def test_my_parent(run_test_suite):
+            from sage.all import ZZ
+            run_test_suite(ZZ)
+    """
+    from sage.misc.sage_unittest import TestSuite
+
+    def _run(obj, *, raise_on_failure=True, **kwargs):
+        TestSuite(obj).run(raise_on_failure=raise_on_failure, **kwargs)
+
+    return _run

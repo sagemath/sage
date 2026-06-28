@@ -1,10 +1,6 @@
 import pytest
 from sage.rings.padics.factory import ZpLC, ZpLF, QpLC, QpLF
 
-# ZpLC, ZpLF, QpLC, and QpLF all raise FutureWarnings
-from warnings import filterwarnings
-filterwarnings("ignore", category=FutureWarning)
-
 
 @pytest.fixture
 def R1():
@@ -36,20 +32,18 @@ def R4():
 elements = ("R1", "R2", "R3", "R4")
 
 
+# ZpLC, ZpLF, QpLC, and QpLF all raise FutureWarnings; ignore them just for
+# these tests (rather than mutating the warning filters process-wide).
+@pytest.mark.filterwarnings("ignore::FutureWarning")
 @pytest.mark.long
 @pytest.mark.parametrize("e", elements)
-def test_padic_lattice_element(e, request):
+def test_padic_lattice_element(e, request, run_test_suite):
     r"""
     Run the ``TestSuite()`` for some examples that previously
     lived in the TESTS:: block of the padic_lattice_element module.
     """
-    from sage.misc.sage_unittest import TestSuite
-
     # Convert the string to a real fixture
     e = request.getfixturevalue(e)
 
     # Only do a few runs, _test_matrix_smith() in particular is slow.
-    TestSuite(e).run(verbose=True,
-                     raise_on_failure=True,
-                     skip="_test_teichmuller",
-                     max_runs=8)
+    run_test_suite(e, verbose=True, skip="_test_teichmuller", max_runs=8)

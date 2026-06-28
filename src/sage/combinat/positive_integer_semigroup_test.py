@@ -1,16 +1,10 @@
-import pytest
-
-
-def test_positive_integer_semigroup():
+def test_positive_integer_semigroup(run_test_suite):
     r"""
     Run the ``TestSuite()`` for ``PositiveIntegerSemigroup``
     (this can take quite a long time).
     """
-    from sage.misc.sage_unittest import TestSuite
     from sage.combinat.backtrack import PositiveIntegerSemigroup
     PP = PositiveIntegerSemigroup()
 
     # fewer max_runs since these are kind of slow
-    TestSuite(PP).run(verbose=True,
-                      raise_on_failure=True,
-                      max_runs=256)
+    run_test_suite(PP, verbose=True, max_runs=256)
