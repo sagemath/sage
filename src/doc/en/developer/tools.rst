@@ -476,8 +476,8 @@ be reproduced. Pass ``--random-seed=<seed>`` (or set the
 ``SAGE_PYTEST_RANDOM_SEED`` environment variable) to replay a particular run;
 otherwise a fresh random seed is used each time.
 
-*Fixtures:* In addition to the standard pytest fixtures, ``conftest.py``
-provides:
+*Fixtures:* In addition to the standard pytest fixtures, Sage's pytest plugin
+(:sage_root:`src/sage/_pytest_plugin.py`) provides:
 
 - ``tmpfile`` -- a temporary file that can be reopened and is cleaned up
   afterwards.
@@ -493,7 +493,10 @@ provides:
 
 - VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `official VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
-*Configuration:* :sage_root:`conftest.py`
+*Configuration:* :sage_root:`src/sage/_pytest_plugin.py` (loaded via
+``addopts = "... -p sage._pytest_plugin"`` in :sage_root:`pyproject.toml`, so
+its options are available regardless of the working directory) and the
+``[tool.pytest.ini_options]`` section of :sage_root:`pyproject.toml`.
 
 *Documentation:* https://docs.pytest.org/en/stable/index.html
 

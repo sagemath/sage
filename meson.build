@@ -218,8 +218,3 @@ root = meson.current_source_dir()
 root_build = meson.current_build_dir()
 
 subdir('src')
-
-py.install_sources(
-  'conftest.py',
-  subdir: 'sage',
-)

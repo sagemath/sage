@@ -1,8 +1,13 @@
 # pyright: strict
-"""Configuration and fixtures for pytest.
+"""Sage's pytest plugin: configuration, collection hooks, and fixtures.
 
-This file configures pytest and provides some global fixtures.
-See https://docs.pytest.org/en/latest/index.html for more details.
+This module is loaded as a pytest plugin via ``addopts = "... -p
+sage._pytest_plugin"`` in ``pyproject.toml`` rather than as a ``conftest.py``.
+Loading it as a plugin (read from the rootdir config regardless of the working
+directory) means its command-line options -- ``--doctest``, ``--long``,
+``--longlong``, ``--random-seed`` -- are registered even though there is no
+``conftest.py`` at the repository root. See
+https://docs.pytest.org/en/latest/index.html for more details.
 """
 
 from __future__ import annotations
@@ -132,7 +137,7 @@ class SageDoctestModule(DoctestModule):
                     obj = inspect.unwrap(obj)
 
                 # Type ignored because this is a private function.
-                return super()._find_lineno(  # type:ignore[misc]
+                return super()._find_lineno(  # type: ignore[misc]
                     obj,
                     source_lines,
                 )
@@ -149,7 +154,7 @@ class SageDoctestModule(DoctestModule):
                 _resolve_lazy_members(obj)
                 with _patch_unwrap_mock_aware():
                     # Type ignored because this is a private function.
-                    super()._find(  # type:ignore[misc]
+                    super()._find(  # type: ignore[misc]
                         tests, obj, name, module, source_lines, globs, seen
                     )
 
@@ -253,9 +258,7 @@ def pytest_collect_file(
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
-def pytest_ignore_collect(
-    collection_path: Path, config: pytest.Config
-) -> bool | None:
+def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
     """
     This hook is called when collecting test files, and can be used to
     prevent considering this path for collection by returning ``True``.
@@ -504,6 +507,7 @@ def tmpfile():
     """
     from os import unlink
     from tempfile import NamedTemporaryFile
+
     t = NamedTemporaryFile(delete=False)
     yield t
     unlink(t.name)

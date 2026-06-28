@@ -94,6 +94,7 @@ endforeach
 
 py.install_sources(
   '__init__.py',
+  '_pytest_plugin.py',
   'all.py',
   'all_cmdline.py',
   'all_test.py',
