@@ -113,7 +113,7 @@ class SemistandardSuperTableau(Tableau):
         SST = SemistandardSuperTableaux_all()
         return SST.element_class(SST, t)
 
-    def __init__(self, parent, t, check=True, preprocessed=False):
+    def __init__(self, parent, t, preprocessed=False):
         r"""
         Initialize a semistandard super tableau for given tableau ``t``.
 
@@ -133,7 +133,7 @@ class SemistandardSuperTableau(Tableau):
         """
         if not preprocessed:
             t = self._preprocess(t)
-        super().__init__(parent, t, check=check)
+        super().__init__(parent, t)
 
     @staticmethod
     def _preprocess(t):

@@ -153,8 +153,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         sage: Tableau([]) # The empty tableau
         []
 
-    When using code that will generate a lot of tableaux, it is slightly more
-    efficient to construct a Tableau from the appropriate Parent object::
+    A Tableau can also be constructed from the appropriate Parent object::
 
         sage: T = Tableaux()
         sage: T([[1, 2, 3], [4, 5]])
@@ -177,7 +176,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         sage: Tableau([1,2,3])
         Traceback (most recent call last):
         ...
-        ValueError: a tableau must be a list of iterables
+        TypeError: 'sage.rings.integer.Integer' object is not iterable
     """
     @staticmethod
     def __classcall_private__(cls, t):
@@ -200,16 +199,9 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if isinstance(t, cls):
             return t
 
-        # We must verify ``t`` is a list of iterables, and also
-        # normalize it to be a list of tuples.
-        try:
-            t = [tuple(_) for _ in t]
-        except TypeError:
-            raise ValueError("a tableau must be a list of iterables")
-
         return Tableaux_all().element_class(Tableaux_all(), t)
 
-    def __init__(self, parent, t, check=True):
+    def __init__(self, parent, t):
         r"""
         Initialize a tableau.
 
@@ -251,7 +243,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         # Normalize t to be a list of tuples.
         t = [tuple(_) for _ in t]
 
-        ClonableList.__init__(self, parent, t, check=check)
+        ClonableList.__init__(self, parent, t, check=True)
         # This dispatches the input verification to the :meth:`check`
         # method.
 
@@ -4420,9 +4412,7 @@ class SemistandardTableau(Tableau):
         sage: SemistandardTableau([]) # The empty tableau
         []
 
-    When using code that will generate a lot of tableaux, it is slightly more
-    efficient to construct a SemistandardTableau from the appropriate
-    :class:`Parent` object::
+    A SemistandardTableau can also be constructed from the appropriate :class:`Parent` object::
 
         sage: SST = SemistandardTableaux()
         sage: SST([[1, 2, 3], [4, 5]])
@@ -4474,41 +4464,7 @@ class SemistandardTableau(Tableau):
         """
         if isinstance(t, SemistandardTableau):
             return t
-        if t in SemistandardTableaux():
-            return SemistandardTableaux_all().element_class(SemistandardTableaux_all(), t)
-
-        # t is not a semistandard tableau so we give an appropriate error message
-        if t not in Tableaux():
-            raise ValueError('%s is not a tableau' % t)
-
-        for (rix, row) in enumerate(t):
-            for (cix, v) in enumerate(row):
-                if not isinstance(v, (int, Integer)):
-                    raise ValueError("expected entry to be an integer at (row=%s, col=%s)" % (rix, cix))
-                if v <= 0:
-                    raise ValueError("expected entry to be a positive integer at (row=%s, col=%s). Found (%s)" % (rix, cix, v))
-
-        for (rix, row) in enumerate(t):
-            for cix in range(len(row)-1):
-                if row[cix] > row[cix+1]:
-                    raise ValueError("row (%s) is not weakly increasing between columns (%s, %s)" % (rix, cix, cix+1))
-
-        # If we're still here ``t`` cannot be column strict
-        for rix in range(len(t)-1):
-            rcur = t[rix]
-            rnext = t[rix+1]
-
-            # check that SST is strictly increasing in columns
-            # we know that len(rnext) <= len(rcur) as the SST cannot have
-            # more columns in the next row than the current row.
-            assert len(rnext) <= len(rcur)
-
-            for cix in range(len(rnext)):
-                if rnext[cix] <= rcur[cix]:
-                    raise ValueError("column (%s) is not strictly increasing between rows (%s, %s)" % (cix, rix, rix+1))
-
-        # we should have found an error by now.
-        raise ValueError('we should have found an error by now in tableau %s' % t)
+        return SemistandardTableaux_all().element_class(SemistandardTableaux_all(), t)
 
     def check(self):
         """
@@ -4519,17 +4475,17 @@ class SemistandardTableau(Tableau):
             sage: SemistandardTableau([[1,2,3],[1]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: column (0) is not strictly increasing between rows (0, 1)
+            ValueError: the entries of each column of a semistandard tableau must be strictly increasing
 
             sage: SemistandardTableau([[1,2,1]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: row (0) is not weakly increasing between columns (1, 2)
+            ValueError: the entries in each row of a semistandard tableau must be weakly increasing
 
             sage: SemistandardTableau([[0,1]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: expected entry to be a positive integer at (row=0, col=0). Found (0)
+            ValueError: the entries of a semistandard tableau must be nonnegative integers
         """
         super().check()
 
@@ -4581,9 +4537,7 @@ class RowStandardTableau(Tableau):
         sage: RowStandardTableau([[1,2,5],[3,4]]) in StandardTableaux()
         True
 
-    When using code that will generate a lot of tableaux, it is more
-    efficient to construct a :class:`RowStandardTableau` from the
-    appropriate :class:`Parent` object::
+    A :class:`RowStandardTableau` can also be constructed from the appropriate :class:`Parent` object::
 
         sage: ST = RowStandardTableaux()
         sage: ST([[3, 4, 5], [1, 2]])
@@ -5519,7 +5473,7 @@ class Tableaux(UniqueRepresentation, Parent):
         False
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **kwargs):
+    def __classcall_private__(cls, n=None, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
         arguments.  See the documentation for :class:`Tableaux` for more
@@ -5534,13 +5488,6 @@ class Tableaux(UniqueRepresentation, Parent):
             sage: Tableaux(n=3)
             Tableaux of size 3
         """
-        if args:
-            n = args[0]
-        elif 'n' in kwargs:
-            n = kwargs['n']
-        else:
-            n = None
-
         if n is None:
             return Tableaux_all()
         if not isinstance(n, (int, Integer)) or n < 0:
