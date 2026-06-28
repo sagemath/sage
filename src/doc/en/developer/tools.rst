@@ -417,6 +417,15 @@ only pattern pytest collects as unit tests; note that the older
 doctests, run by ``./sage -t``. Unit tests cannot be defined in Cython
 (``.pyx``) files; place them in a sibling ``_test.py`` file instead.
 
+*Excluding a module:* To stop pytest from collecting a module (its unit tests
+*and* its doctests), set ``__test__ = False`` at module level. This is the
+standard pytest opt-out; it is the right tool when a module's name or contents
+would otherwise be mis-collected (a ``Test``-prefixed class, a ``test_``
+helper) or when its doctests cannot run under pytest (for example, code that
+manipulates ``sys.stdout``'s file descriptor, which conflicts with pytest's
+capture). ``./sage -t`` reads the raw source and ignores ``__test__``, so its
+doctests still run there.
+
 *Installation:*
 
 - ``./sage -i pytest pytest_xdist``.
