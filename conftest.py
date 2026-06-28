@@ -173,6 +173,15 @@ class SageDoctestModule(DoctestModule):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
                     raise
+
+        # Honour the standard pytest opt-out: a module with ``__test__ = False``
+        # is not collected. We check it here (before the finder runs) because
+        # the stdlib doctest finder otherwise treats ``__test__`` as a dict of
+        # extra doctests and crashes on the bool. ``sage -t`` reads the raw
+        # source and ignores ``__test__``, so doctests still run there.
+        if getattr(module, "__test__", True) is False:
+            return
+
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
@@ -239,12 +248,6 @@ def pytest_collect_file(
                 and file_path.parent.name == "nbconvert"
             ):
                 # This is an executable file.
-                return IgnoreCollector.from_parent(parent)
-
-            if (
-                file_path.name in ("forker.py", "reporting.py")
-            ) and file_path.parent.name == "doctest":
-                # Fails with many errors due to different testing framework
                 return IgnoreCollector.from_parent(parent)
 
             return SageDoctestModule.from_parent(parent, path=file_path)

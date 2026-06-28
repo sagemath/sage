@@ -51,6 +51,12 @@ from sage.doctest.sources import DictAsObject
 from sage.doctest.util import count_noun
 from sage.structure.sage_object import SageObject
 
+# Tell pytest not to collect the doctests in this module: they exercise the
+# doctesting framework itself (running nested doctests and inspecting their
+# reported results), which conflicts with pytest. They run fine under
+# ``sage -t``, which ignores this flag and reads the raw source.
+__test__ = False
+
 if sys.platform != "win32":
     from signal import SIGALRM, SIGBUS, SIGHUP, SIGKILL, SIGPIPE, SIGQUIT
 
