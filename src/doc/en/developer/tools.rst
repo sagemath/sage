@@ -389,9 +389,33 @@ Pytest
 `Pytest <https://docs.pytest.org/en/stable/>`_ is a testing framework.
 It is included in the Sage distribution as an optional package.
 
-Currently, Sage only makes very limited use of pytest, for testing the
-package :mod:`sage.numerical.backends` and some modules in
-:mod:`sage.manifolds`.
+Most of Sage's automated tests are :ref:`doctests <chapter-doctesting>`,
+which double as documentation. Pytest complements them by hosting *unit
+tests* -- tests that are not meant to appear in the reference manual.
+Reach for a pytest unit test (rather than a doctest) when the test:
+
+- exercises many cases via parametrization
+  (``@pytest.mark.parametrize``), randomized, or property-based inputs;
+
+- is a regression test for a fixed bug, with no pedagogical value to a
+  reader of the documentation;
+
+- checks an error path and reads more naturally with
+  ``pytest.raises(...)`` than with a doctest traceback; or
+
+- needs fixtures, temporary files, mocking, or shared expensive setup.
+
+Keep using doctests for everything that illustrates how an object or
+function is used, and keep using :class:`~sage.misc.sage_unittest.TestSuite`
+for category/axiom conformance.
+
+*Naming convention:* Unit tests live in files named ``<something>_test.py``
+next to the module they test (for example,
+:sage_root:`src/sage/numerical/backends/glpk_backend_test.py`). This is the
+only pattern pytest collects as unit tests; note that the older
+``test_<something>.py`` files are ordinary modules that merely *contain*
+doctests, run by ``./sage -t``. Unit tests cannot be defined in Cython
+(``.pyx``) files; place them in a sibling ``_test.py`` file instead.
 
 *Installation:*
 
@@ -407,6 +431,45 @@ package :mod:`sage.numerical.backends` and some modules in
   For example, ``./sage -pytest -n 4`` will run 4 tests in parallel, while
   ``./sage -pytest -n auto`` will spawn a number of workers processes equal
   to the number of available CPUs.
+
+*Markers:* As with the doctester, long-running tests and tests that depend
+on optional features are skipped by default:
+
+- ``@pytest.mark.long`` / ``@pytest.mark.longlong`` mark long-running tests.
+  They are skipped unless ``./sage -pytest`` is passed ``--long`` (runs
+  ``long`` tests) or ``--longlong`` (runs both ``long`` and ``longlong``
+  tests), mirroring ``./sage -t --long``.
+
+- ``@pytest.mark.optional("feature", ...)`` skips the test unless every
+  named feature is present. Feature names are the same ones used by the
+  doctest ``# optional - ...`` and ``# needs ...`` tags, for example::
+
+      import pytest
+
+      @pytest.mark.optional("sage.plot", "latex")
+      def test_plot_to_pdf():
+          ...
+
+*Randomness:* Sage's random number generator is seeded before every test, as
+in ``sage -t``. The seed is reported in the test header so a failing run can
+be reproduced. Pass ``--random-seed=<seed>`` (or set the
+``SAGE_PYTEST_RANDOM_SEED`` environment variable) to replay a particular run;
+otherwise a fresh random seed is used each time.
+
+*Fixtures:* In addition to the standard pytest fixtures, ``conftest.py``
+provides:
+
+- ``tmpfile`` -- a temporary file that can be reopened and is cleaned up
+  afterwards.
+
+- ``assert_close`` -- assert that two numbers are numerically close, the
+  Sage-aware counterpart of :func:`pytest.approx` for symbolic and exact
+  values (both arguments are evaluated numerically before comparison)::
+
+      def test_sqrt(assert_close):
+          from sage.all import sqrt
+          assert_close(sqrt(2), 1.4142135623730951)
+          assert_close(sqrt(2), 1.41421, rel_tol=1e-5)
 
 - VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `official VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 

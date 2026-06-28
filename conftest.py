@@ -36,6 +36,11 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
+# Stash key holding the per-session Sage random seed (resolved in
+# ``pytest_configure`` and applied by the ``set_random_seed`` fixture).
+_random_seed_key = pytest.StashKey[int]()
+
+
 def is_subpath(path: Path, parent: Path) -> bool:
     # Check if the path is in a subdirectory, or a subsubdirectory, ... of the parent
     path = path.resolve()
@@ -280,6 +285,118 @@ def pytest_addoption(parser):
         help="Run doctests in all .py modules",
         dest="doctest",
     )
+    # Mirror `sage -t`: long-running tests are skipped unless explicitly
+    # requested. Tests are tagged with the ``long`` / ``longlong`` markers
+    # (declared in ``pyproject.toml``).
+    group.addoption(
+        "--long",
+        action="store_true",
+        default=False,
+        help="Also run tests marked as long (skipped by default)",
+        dest="run_long",
+    )
+    group.addoption(
+        "--longlong",
+        action="store_true",
+        default=False,
+        help="Also run tests marked as long or longlong (skipped by default)",
+        dest="run_longlong",
+    )
+    group.addoption(
+        "--random-seed",
+        type=int,
+        default=None,
+        metavar="SEED",
+        help=(
+            "Seed for Sage's random number generator, set before each test "
+            "(default: a fresh random seed, reported in the test header). "
+            "Can also be set via the SAGE_PYTEST_RANDOM_SEED environment variable."
+        ),
+        dest="random_seed",
+    )
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """
+    Resolve the Sage random seed once per session.
+
+    The seed is taken from ``--random-seed``, falling back to the
+    ``SAGE_PYTEST_RANDOM_SEED`` environment variable, and finally to a fresh
+    random seed. It is stashed on the config and applied before each test by
+    the :func:`set_random_seed` fixture, mirroring ``sage -t``.
+    """
+    import os
+
+    from sage.misc import randstate
+
+    seed = config.getoption("random_seed")
+    if seed is None:
+        env_seed = os.environ.get("SAGE_PYTEST_RANDOM_SEED")
+        seed = int(env_seed) if env_seed else None
+    if seed is None:
+        # Let Sage pick a fresh seed and record it so the run is reproducible.
+        randstate.set_random_seed()
+        seed = randstate.initial_seed()
+    config.stash[_random_seed_key] = seed
+
+
+def pytest_report_header(config: pytest.Config) -> str:
+    """Report the random seed so a failing run can be reproduced."""
+    seed = config.stash[_random_seed_key]
+    return f"Sage random seed: {seed} (re-run with --random-seed={seed})"
+
+
+def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]):
+    """
+    Skip tests marked ``long`` / ``longlong`` unless the corresponding
+    command-line option is given.
+
+    This mirrors the behaviour of ``sage -t``, where long-running tests are
+    only executed when ``--long`` is passed. ``--longlong`` implies ``--long``.
+
+    See `pytest documentation <https://docs.pytest.org/en/stable/reference/reference.html#std-hook-pytest_collection_modifyitems>`_.
+    """
+    run_longlong = config.getoption("run_longlong")
+    run_long = config.getoption("run_long") or run_longlong
+
+    skip_long = pytest.mark.skip(reason="need --long option to run")
+    skip_longlong = pytest.mark.skip(reason="need --longlong option to run")
+
+    for item in items:
+        if not run_longlong and "longlong" in item.keywords:
+            item.add_marker(skip_longlong)
+        elif not run_long and "long" in item.keywords:
+            item.add_marker(skip_long)
+
+        _skip_if_features_missing(item)
+
+
+def _skip_if_features_missing(item: pytest.Item) -> None:
+    """
+    Honour the ``optional`` marker: skip ``item`` unless every named Sage
+    feature is available, using the same detection as the doctest framework.
+
+    Feature names are those accepted by the doctest ``# optional - ...`` and
+    ``# needs ...`` tags, e.g. ``sage.symbolic``, ``sage.plot``, ``latex``,
+    ``pynormaliz``. Usage::
+
+        @pytest.mark.optional("sage.plot", "latex")
+        def test_something():
+            ...
+    """
+    features = [
+        name for marker in item.iter_markers(name="optional") for name in marker.args
+    ]
+    if not features:
+        return
+
+    from sage.doctest.external import available_software
+
+    missing = [name for name in features if name not in available_software]
+    if missing:
+        item.add_marker(
+            pytest.mark.skip(reason="missing Sage feature(s): " + ", ".join(missing))
+        )
 
 
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
@@ -336,6 +453,21 @@ def doctest_run(
 doctest.DocTestRunner.run = doctest_run
 
 
+@pytest.fixture(autouse=True)
+def set_random_seed(request: pytest.FixtureRequest):
+    """
+    Seed Sage's random number generator before each test.
+
+    This mirrors ``sage -t``: the same seed (resolved once per session in
+    :func:`pytest_configure`) is applied before every test, so a run is
+    reproducible with ``--random-seed=<seed>`` (the seed is printed in the
+    test header).
+    """
+    from sage.misc.randstate import set_random_seed as sage_set_random_seed
+
+    sage_set_random_seed(request.config.stash[_random_seed_key])
+
+
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """
@@ -374,3 +506,39 @@ def tmpfile():
     t = NamedTemporaryFile(delete=False)
     yield t
     unlink(t.name)
+
+
+@pytest.fixture
+def assert_close():
+    r"""
+    Assert that two (possibly symbolic or exact) numbers are numerically close.
+
+    This is the Sage-aware counterpart of :func:`pytest.approx` for the cases
+    it does not handle directly, in particular symbolic and exact values:
+    both arguments are evaluated numerically (via :func:`complex`) before
+    being compared. Real, complex, rational, and symbolic inputs are all
+    accepted.
+
+    The tolerance follows :func:`math.isclose`: the values are close when
+    ``abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)``. This mirrors
+    the ``# rel tol`` / ``# abs tol`` doctest flags.
+
+    EXAMPLES (used as a pytest fixture)::
+
+        def test_sqrt(assert_close):
+            from sage.all import sqrt
+            assert_close(sqrt(2), 1.4142135623730951)
+            assert_close(sqrt(2), 1.41421, rel_tol=1e-5)
+    """
+    import cmath
+
+    def _assert_close(actual, expected, *, rel_tol=1e-9, abs_tol=0.0):
+        a = complex(actual)
+        e = complex(expected)
+        if not cmath.isclose(a, e, rel_tol=rel_tol, abs_tol=abs_tol):
+            raise AssertionError(
+                f"{actual!r} is not close to {expected!r} "
+                f"(|diff| = {abs(a - e):.3e}, rel_tol={rel_tol}, abs_tol={abs_tol})"
+            )
+
+    return _assert_close
