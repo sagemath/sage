@@ -2912,11 +2912,16 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return Integer(result)
         return Integer(singular_polynomial_deg(p, NULL, r))
 
-    def degrees(self):
+    def degrees(self, as_ETuples=False):
         """
         Return a tuple with the maximal degree of each variable in
         this polynomial.  The list of degrees is ordered by the order
         of the generators.
+
+        INPUT:
+
+        - ``as_ETuples`` -- boolean (default: ``False``); if ``True``
+          return the result as an ``ETuple``, otherwise return a tuple
 
         EXAMPLES::
 
@@ -2927,6 +2932,18 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             (1, 2, 1)
             sage: (q + y0^5).degrees()
             (5, 2, 1)
+            sage: q.degrees(as_ETuples=False)
+            (1, 2, 1)
+            sage: type(q.degrees(as_ETuples=False))
+            <class 'tuple'>
+            sage: type(q.degrees())
+            <class 'tuple'>
+            sage: q.degrees(as_ETuples=True)
+            (1, 2, 1)
+            sage: type(q.degrees(as_ETuples=True))
+            <class 'sage.rings.polynomial.polydict.ETuple'>
+            sage: R(0).degrees(as_ETuples=True)
+            (0, 0, 0)
 
         TESTS:
 
@@ -2947,7 +2964,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             for i from 0 <= i < r.N:
                 d[i] = max(d[i],p_GetExp(p, i+1, r))
             p = pNext(p)
-        return tuple(map(Integer, d))
+        d = list(map(Integer, d))
+        if as_ETuples:
+            return ETuple(d)
+        return tuple(d)
 
     def coefficient(self, degrees):
         """

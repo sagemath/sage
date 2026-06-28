@@ -535,11 +535,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         macaulay2.use(m2_parent)
         return macaulay2('substitute(%s,%s)' % (repr(self), m2_parent._name))
 
-    def degrees(self):
+    def degrees(self, as_ETuples=True):
         r"""
         Return a tuple (precisely - an ``ETuple``) with the
         degree of each variable in this polynomial. The list of degrees is,
         of course, ordered by the order of the generators.
+
+        INPUT:
+
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True``
+          return the result as an ``ETuple``, otherwise return a tuple
 
         EXAMPLES::
 
@@ -556,12 +561,24 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = (1-x) * (1+y+z+x^3)^5
             sage: f.degrees()
             (16, 5, 5, 0)
+            sage: f.degrees(as_ETuples=False)
+            (16, 5, 5, 0)
+            sage: type(f.degrees())
+            <class 'sage.rings.polynomial.polydict.ETuple'>
+            sage: type(f.degrees(as_ETuples=False))
+            <... 'tuple'>
             sage: R(0).degrees()
             (0, 0, 0, 0)
+            sage: type(R(0).degrees(as_ETuples=False))
+            <... 'tuple'>
         """
         if not self:
-            return polydict.ETuple({}, self.parent().ngens())
-        return self._MPolynomial_element__element.max_exp()
+            degrees = polydict.ETuple({}, self.parent().ngens())
+        else:
+            degrees = self._MPolynomial_element__element.max_exp()
+        if as_ETuples:
+            return degrees
+        return tuple(degrees)
 
     def degree(self, x=None, std_grading=False):
         """
