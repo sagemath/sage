@@ -452,13 +452,15 @@ doctests still run there.
   ``./sage -pytest -n auto`` will spawn a number of workers processes equal
   to the number of available CPUs.
 
-*Markers:* As with the doctester, long-running tests and tests that depend
-on optional features are skipped by default:
+*Markers:*
 
 - ``@pytest.mark.long`` / ``@pytest.mark.longlong`` mark long-running tests.
-  They are skipped unless ``./sage -pytest`` is passed ``--long`` (runs
-  ``long`` tests) or ``--longlong`` (runs both ``long`` and ``longlong``
-  tests), mirroring ``./sage -t --long``.
+  Unlike the doctester, a plain ``pytest`` run executes them by default (this
+  is how they get continuous-integration coverage); restrict a run with the
+  standard pytest marker expression, e.g. ``-m 'not longlong'`` or
+  ``-m 'not long and not longlong'``. ``./sage -t`` applies such an expression
+  to its internal pytest run, so it skips both unless ``--long`` is given (and
+  never runs ``longlong``), matching its historic behaviour.
 
 - ``@pytest.mark.optional("feature", ...)`` skips the test unless every
   named feature is present. Feature names are the same ones used by the

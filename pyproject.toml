@@ -115,15 +115,15 @@ python_files = "*_test.py"
 # spurious "Fatal Python error" crashes during doctest collection/execution.
 # "-p sage._pytest_plugin" loads Sage's pytest plugin at startup. This is read
 # from this rootdir config regardless of the working directory, so the plugin's
-# options (--doctest, --long, --random-seed, ...) are registered even when there
-# is no conftest.py at the repo root. See sage/_pytest_plugin.py.
+# options (--doctest, --random-seed) are registered even when there is no
+# conftest.py at the repo root. See sage/_pytest_plugin.py.
 addopts = "--import-mode importlib -p no:warnings -p no:faulthandler -p sage._pytest_plugin --strict-markers"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
 # https://docs.pytest.org/en/stable/reference/reference.html#confval-consider_namespace_packages
 consider_namespace_packages = true
 markers = [
-  "long: long-running tests (run with --long)",
-  "longlong: extremely long-running tests (run with --longlong)",
+  "long: long-running tests (run by default; exclude with -m 'not long')",
+  "longlong: extremely long-running tests (run by default; exclude with -m 'not longlong')",
   "optional(*features): skip the test unless all named Sage features are present (mirrors the doctest '# optional'/'# needs' tags)",
 ]
 

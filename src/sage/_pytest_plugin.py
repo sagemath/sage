@@ -4,9 +4,9 @@
 This module is loaded as a pytest plugin via ``addopts = "... -p
 sage._pytest_plugin"`` in ``pyproject.toml`` rather than as a ``conftest.py``.
 Loading it as a plugin (read from the rootdir config regardless of the working
-directory) means its command-line options -- ``--doctest``, ``--long``,
-``--longlong``, ``--random-seed`` -- are registered even though there is no
-``conftest.py`` at the repository root. See
+directory) means its command-line options -- ``--doctest`` and
+``--random-seed`` -- are registered even though there is no ``conftest.py`` at
+the repository root. See
 https://docs.pytest.org/en/latest/index.html for more details.
 """
 
@@ -289,23 +289,9 @@ def pytest_addoption(parser):
         help="Run doctests in all .py modules",
         dest="doctest",
     )
-    # Mirror `sage -t`: long-running tests are skipped unless explicitly
-    # requested. Tests are tagged with the ``long`` / ``longlong`` markers
-    # (declared in ``pyproject.toml``).
-    group.addoption(
-        "--long",
-        action="store_true",
-        default=False,
-        help="Also run tests marked as long (skipped by default)",
-        dest="run_long",
-    )
-    group.addoption(
-        "--longlong",
-        action="store_true",
-        default=False,
-        help="Also run tests marked as long or longlong (skipped by default)",
-        dest="run_longlong",
-    )
+    # Note: the ``long``/``longlong`` markers (declared in ``pyproject.toml``)
+    # run by default; select with the standard pytest marker expression, e.g.
+    # ``-m 'not longlong'``. We deliberately do not add ``--long``-style flags.
     group.addoption(
         "--random-seed",
         type=int,
@@ -352,26 +338,16 @@ def pytest_report_header(config: pytest.Config) -> str:
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]):
     """
-    Skip tests marked ``long`` / ``longlong`` unless the corresponding
-    command-line option is given.
+    Skip collected tests whose required Sage features are missing.
 
-    This mirrors the behaviour of ``sage -t``, where long-running tests are
-    only executed when ``--long`` is passed. ``--longlong`` implies ``--long``.
+    Note that the ``long`` / ``longlong`` markers are intentionally *not*
+    skipped here: they run by default and are selected with the standard pytest
+    marker expression (e.g. ``-m 'not longlong'``); ``sage -t`` passes such an
+    expression for its internal pytest run.
 
     See `pytest documentation <https://docs.pytest.org/en/stable/reference/reference.html#std-hook-pytest_collection_modifyitems>`_.
     """
-    run_longlong = config.getoption("run_longlong")
-    run_long = config.getoption("run_long") or run_longlong
-
-    skip_long = pytest.mark.skip(reason="need --long option to run")
-    skip_longlong = pytest.mark.skip(reason="need --longlong option to run")
-
     for item in items:
-        if not run_longlong and "longlong" in item.keywords:
-            item.add_marker(skip_longlong)
-        elif not run_long and "long" in item.keywords:
-            item.add_marker(skip_long)
-
         _skip_if_features_missing(item)
 
 
