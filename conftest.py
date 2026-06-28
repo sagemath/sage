@@ -254,36 +254,13 @@ def pytest_collect_file(
                 return IgnoreCollector.from_parent(parent)
 
             if (
-                (
-                    file_path.name == "arithgroup_generic.py"
-                    and file_path.parent.name == "arithgroup"
-                )
-                or (
-                    file_path.name == "pari.py"
-                    and file_path.parent.name == "lfunctions"
-                )
-                or (
-                    file_path.name == "permgroup_named.py"
-                    and file_path.parent.name == "perm_gps"
-                )
-                or (
-                    file_path.name == "finitely_generated.py"
-                    and file_path.parent.name == "matrix_gps"
-                )
-                or (
-                    file_path.name == "libgap_mixin.py"
-                    and file_path.parent.name == "groups"
-                )
-                or (
-                    file_path.name == "finitely_presented.py"
-                    and file_path.parent.name == "groups"
-                )
-                or (
-                    file_path.name == "classical_geometries.py"
-                    and file_path.parent.name == "generators"
-                )
+                file_path.name == "finitely_presented.py"
+                and file_path.parent.name == "groups"
             ):
-                # Fails with "Fatal Python error"
+                # Passes under `sage -t` but not here: pytest extracts doctests
+                # from __doc__ (where Python collapses backslash-continuations
+                # and processes escapes in non-raw docstrings) while sage -t
+                # reads the raw source, plus some order-dependent GAP state.
                 return IgnoreCollector.from_parent(parent)
 
             return SageDoctestModule.from_parent(parent, path=file_path)
