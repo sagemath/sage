@@ -423,7 +423,18 @@ doctests, run by ``./sage -t``. Unit tests cannot be defined in Cython
 
 *Usage:*
 
-- Tox, Sage doctester: At the end of ``./sage -t`` (or ``./sage --tox -e doctest``), Pytest is automatically invoked.
+- Sage doctester (recommended): ``./sage -t`` runs the unit tests for the
+  given files or directories right after their doctests, so a single command
+  covers both. The relevant options are forwarded to pytest, so the whole run
+  is configured and seeded consistently:
+
+  - ``./sage -t --long`` also runs ``long`` unit tests (``longlong`` tests are
+    never run this way);
+  - ``-p N`` distributes both doctests and unit tests across ``N`` threads;
+  - the random seed reported by ``./sage -t`` is reused for the unit tests, so
+    a failing run can be reproduced with ``./sage -t --random-seed=<seed>``.
+
+  ``./sage --tox -e doctest`` invokes the doctester in the same way.
 
 - Manual: Run ``./sage -pytest path/to/the/test_file.py`` or ``./sage -pytest``
   to run all tests. The additional argument ``-n`` can be used to

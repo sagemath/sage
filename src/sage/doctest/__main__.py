@@ -209,18 +209,20 @@ def main():
 
     exit_code_pytest = 0
 
-    # Never run "long long" tests via sage -t (or python -m
-    # sage.doctest) to avoid catching users by surprise with
-    # tests that run for several minutes.
-    pytest_markers = "not longlong"
-    if not args.long:
-        # Multiple "-m" flags cannot be combined,
-        #
-        #   https://github.com/pytest-dev/pytest/issues/7229
-        #
-        # so we construct one big compound statement instead.
-        pytest_markers += " and not long"
-    pytest_options = ["-m", pytest_markers]
+    pytest_options = []
+
+    # Long-running tests are gated by conftest.py via the --long/--longlong
+    # options (see pytest_collection_modifyitems). "longlong" tests are never
+    # run via sage -t (or python -m sage.doctest) to avoid catching users by
+    # surprise with tests that run for several minutes; "long" tests are run
+    # only with --long, mirroring the doctester.
+    if args.long:
+        pytest_options.append("--long")
+
+    # Seed pytest with the same random seed as the doctest run, so the whole
+    # sage -t invocation is reproducible from the single seed it reports.
+    if DC.options.random_seed is not None:
+        pytest_options += ["--random-seed", str(DC.options.random_seed)]
 
     if pytest_nprocs != 1 and not find_spec("xdist"):
         # The default is "1", so anything else is an explicit request
