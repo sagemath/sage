@@ -41,6 +41,30 @@ if TYPE_CHECKING:
 _random_seed_key = pytest.StashKey[int]()
 
 
+def _resolve_lazy_imports(module: object) -> None:
+    """
+    Eagerly resolve the :class:`~sage.misc.lazy_import.LazyImport` objects in
+    ``module``'s namespace.
+
+    The stdlib doctest finder iterates over ``module.__dict__``; touching a
+    lazy import there triggers its resolution, which mutates the namespace and
+    raises ``RuntimeError: dictionary changed size during iteration``. Forcing
+    resolution up front (over a snapshot of the values) avoids that. This does
+    no extra work overall: the finder would resolve the same lazy imports while
+    walking the module.
+    """
+    from sage.misc.lazy_import import LazyImport
+
+    for value in list(vars(module).values()):
+        if isinstance(value, LazyImport):
+            try:
+                value._get_object()
+            except Exception:
+                # Leave unresolvable lazy imports in place; the finder's usual
+                # missing-feature/module handling applies when they are reached.
+                pass
+
+
 def is_subpath(path: Path, parent: Path) -> bool:
     # Check if the path is in a subdirectory, or a subsubdirectory, ... of the parent
     path = path.resolve()
@@ -122,6 +146,10 @@ class SageDoctestModule(DoctestModule):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
                     raise
+        # Resolve lazy imports before the finder walks the module namespace,
+        # to avoid "dictionary changed size during iteration".
+        _resolve_lazy_imports(module)
+
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
@@ -197,17 +225,13 @@ def pytest_collect_file(
                 return IgnoreCollector.from_parent(parent)
 
             if (
-                (
-                    file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
-                    and file_path.parent.name == "categories"
-                )
-                or (
-                    file_path.name == "__init__.py"
-                    and file_path.parent.name == "crypto"
-                )
-                or (file_path.name == "__init__.py" and file_path.parent.name == "mq")
+                file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
+                and file_path.parent.name == "categories"
             ):
-                # TODO: Fix these (import fails with "RuntimeError: dictionary changed size during iteration")
+                # TODO: Fix this. Unlike the cases handled by
+                # _resolve_lazy_imports, the "dictionary changed size during
+                # iteration" here originates deeper than the module namespace
+                # (nested class/category dicts resolved during the finder walk).
                 return IgnoreCollector.from_parent(parent)
 
             if (
