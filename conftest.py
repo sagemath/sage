@@ -41,28 +41,50 @@ if TYPE_CHECKING:
 _random_seed_key = pytest.StashKey[int]()
 
 
-def _resolve_lazy_imports(module: object) -> None:
+def _resolve_lazy_members(obj: object) -> None:
     """
-    Eagerly resolve the :class:`~sage.misc.lazy_import.LazyImport` objects in
-    ``module``'s namespace.
+    Eagerly resolve lazy members that cache themselves into ``obj``'s namespace.
 
-    The stdlib doctest finder iterates over ``module.__dict__``; touching a
-    lazy import there triggers its resolution, which mutates the namespace and
-    raises ``RuntimeError: dictionary changed size during iteration``. Forcing
-    resolution up front (over a snapshot of the values) avoids that. This does
-    no extra work overall: the finder would resolve the same lazy imports while
-    walking the module.
+    The stdlib doctest finder iterates over ``obj.__dict__`` for both modules
+    and classes. Touching a lazy member during that walk resolves it and writes
+    the result back into the namespace, raising ``RuntimeError: dictionary
+    changed size during iteration``. Resolving them up front avoids that, and
+    does no extra work overall: the finder would resolve the same members while
+    walking ``obj``, and the resolved values are cached globally.
+
+    Two kinds of lazy member cause this:
+
+    - :class:`~sage.misc.lazy_import.LazyImport` objects stored directly in a
+      module (or class) namespace; and
+
+    - :class:`~sage.misc.lazy_attribute.lazy_class_attribute` descriptors, which
+      are looked up along the MRO but cache their value into the *subclass* that
+      they are accessed on (e.g. ``_axiom`` on a category with axiom).
     """
+    from sage.misc.lazy_attribute import lazy_class_attribute
     from sage.misc.lazy_import import LazyImport
 
-    for value in list(vars(module).values()):
-        if isinstance(value, LazyImport):
+    if isinstance(obj, type):
+        names = {
+            name
+            for klass in obj.__mro__
+            for name, value in list(vars(klass).items())
+            if isinstance(value, (LazyImport, lazy_class_attribute))
+        }
+        for name in names:
             try:
-                value._get_object()
+                getattr(obj, name)
             except Exception:
-                # Leave unresolvable lazy imports in place; the finder's usual
+                # Leave unresolvable members in place; the finder's usual
                 # missing-feature/module handling applies when they are reached.
                 pass
+    elif inspect.ismodule(obj):
+        for value in list(vars(obj).values()):
+            if isinstance(value, LazyImport):
+                try:
+                    value._get_object()
+                except Exception:
+                    pass
 
 
 def is_subpath(path: Path, parent: Path) -> bool:
@@ -120,6 +142,11 @@ class SageDoctestModule(DoctestModule):
             ) -> None:
                 if _is_mocked(obj):
                     return
+                # Resolve lazy members of obj before super()._find iterates
+                # obj.__dict__, to avoid "dictionary changed size during
+                # iteration" when the walk triggers a lazy import or
+                # lazy_class_attribute.
+                _resolve_lazy_members(obj)
                 with _patch_unwrap_mock_aware():
                     # Type ignored because this is a private function.
                     super()._find(  # type:ignore[misc]
@@ -146,10 +173,6 @@ class SageDoctestModule(DoctestModule):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
                     raise
-        # Resolve lazy imports before the finder walks the module namespace,
-        # to avoid "dictionary changed size during iteration".
-        _resolve_lazy_imports(module)
-
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
@@ -222,16 +245,6 @@ def pytest_collect_file(
                 and file_path.parent.name == "nbconvert"
             ):
                 # This is an executable file.
-                return IgnoreCollector.from_parent(parent)
-
-            if (
-                file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
-                and file_path.parent.name == "categories"
-            ):
-                # TODO: Fix this. Unlike the cases handled by
-                # _resolve_lazy_imports, the "dictionary changed size during
-                # iteration" here originates deeper than the module namespace
-                # (nested class/category dicts resolved during the finder walk).
                 return IgnoreCollector.from_parent(parent)
 
             if (
