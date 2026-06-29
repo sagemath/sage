@@ -12,6 +12,9 @@ if not cliquer.found()
   cliquer = cc.find_library('cliquer', required: false, disabler: true)
 endif
 
+# The planarity public header is found in different locations depending on the
+# version and packaging; planarity.pyx includes it through planarity-compat.h,
+# which selects the available layout with __has_include.
 planarity = dependency('libplanarity', required: false, disabler: true)
 if not planarity.found()
   # fallback for older versions without pkg-config
