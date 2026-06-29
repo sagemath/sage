@@ -1,4 +1,3 @@
-# pyright: strict
 """Sage's pytest plugin: configuration, collection hooks, and fixtures.
 
 This module is loaded as a pytest plugin via ``addopts = "... -p
