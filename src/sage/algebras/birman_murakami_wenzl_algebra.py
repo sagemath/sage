@@ -121,9 +121,9 @@ REFERENCES:
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 from sage.misc.verbose import verbose
-from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from sage.monoids.tangles import KauffmanTangle, KauffmanTangles
+from sage.rings.integer_ring import ZZ
 
 
 class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
@@ -334,8 +334,8 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
             True
         """
         from sage.algebras.iwahori_hecke_algebra import IwahoriHeckeAlgebra
-        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
         from sage.functions.generalized import sgn
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
         bmw_algebra = self.parent()
         basis = bmw_algebra.basis().keys()
         skn1, skn2, skn3 = bmw_algebra._skein_normalization
@@ -607,7 +607,9 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         # ----------------------------------------------------------------------
         # defining the algebra itself
         # ----------------------------------------------------------------------
-        from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+        from sage.categories.finite_dimensional_algebras_with_basis import (
+            FiniteDimensionalAlgebrasWithBasis,
+        )
         category = FiniteDimensionalAlgebrasWithBasis(R)
 
         CombinatorialFreeModule.__init__(self, R, basis, prefix='', bracket=False, category=category)
@@ -857,7 +859,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
             g1, = gs
             e1, = es
             return g1**2
-        elif n == 3:
+        if n == 3:
             g1, g2 = gs
             e1, e2 = es
             return g2*~g1*g2

@@ -26,12 +26,12 @@ REFERENCES:
 #############################################################################
 
 from collections.abc import Callable
+
+from sage.combinat.diagram_algebras import BrauerDiagram
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.monoids.automatic_semigroup import AutomaticSemigroup
 from sage.plot.graphics import Graphics
-from sage.combinat.diagram_algebras import BrauerDiagram
-
 
 ##############################################################################
 # Tangle element class
@@ -160,8 +160,8 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         PA = P.BA.ambient()
         con = P.BA.one_basis()
         num_removed_loop = 0
-        for i in self.defining_word():
-            i = abs(i)
+        for ii in self.defining_word():
+            i = abs(ii)
             if i < n:
                 bd, = PA.s(i).support()
             else:
@@ -291,12 +291,11 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             if g >= n:
                 # no crossings in ``self``
                 return {}
-            else:
-                # one crossing in ``self``
-                i = abs(g)
-                st1 = los[i - 1]
-                st2 = los[i]
-                return {st1: [(st2, 0)], st2: [(st1, 0)]}
+            # one crossing in ``self``
+            i = abs(g)
+            st1 = los[i - 1]
+            st2 = los[i]
+            return {st1: [(st2, 0)], st2: [(st1, 0)]}
 
         left_tangle = P(word[:-1])
         gen = P(word[-1:])
@@ -478,16 +477,13 @@ class KauffmanTangle(AutomaticSemigroup.Element):
                         # st1 has reverse orientation in its closure
                         if st1.cross_over(pos, gen):
                             return pos
-                    else:
-                        if not st1.cross_over(pos, gen):
-                            return pos
-                else:
-                    if st1 << st2:
-                        if st2.cross_over(pos, gen):
-                            return pos
-                    else:
-                        if st1.cross_over(pos, gen):
-                            return pos
+                    elif not st1.cross_over(pos, gen):
+                        return pos
+                elif st1 << st2:
+                    if st2.cross_over(pos, gen):
+                        return pos
+                elif st1.cross_over(pos, gen):
+                    return pos
         return None
 
     @cached_method
@@ -704,6 +700,7 @@ class KauffmanTangles(AutomaticSemigroup):
         n = len(FG.gens()) // 2
         gens = FG.semigroup_generators()[:-n]
         import operator
+
         from sage.categories.monoids import Monoids
         from sage.sets.family import Family
         category = Monoids().FinitelyGenerated().Infinite()
@@ -736,8 +733,8 @@ class KauffmanTangles(AutomaticSemigroup):
             Brauer Algebra of rank 3 with parameter x over Univariate Polynomial Ring in x over Integer Ring
         """
         from sage.combinat.diagram_algebras import BrauerAlgebra
-        from sage.rings.polynomial.polynomial_ring import polygen
         from sage.rings.integer_ring import ZZ
+        from sage.rings.polynomial.polynomial_ring import polygen
         return BrauerAlgebra(self._nstrands, polygen(ZZ))
 
     def list(self):
@@ -820,7 +817,7 @@ class KauffmanTangles(AutomaticSemigroup):
             elif any(i > 2 * n for i in x):
                 raise ValueError('generators are only for indices <= %s defined' % (2 * n))
             return self(A(x))
-        elif isinstance(x, BrauerDiagram):
+        if isinstance(x, BrauerDiagram):
             return self.morton_wasserman_tangle(x)
         from sage.groups.braid import Braid
         if isinstance(x, Braid):
@@ -1072,9 +1069,9 @@ class Strand:
         """
         if self.propagating():
             return 'Propagating strand from position %s on top to position %s on bottom' % (self.start, self.end)
-        elif self.inline_top():
+        if self.inline_top():
             return 'Inline strand on top line from position %s to position %s' % (self.start, self.end)
-        elif self.inline_bottom():
+        if self.inline_bottom():
             return 'Inline strand on bottom line from position %s to position %s' % (self.start, self.end)
         return 'The %s-th closed loop on the way from top to bottom' % self.start
 
@@ -1324,7 +1321,7 @@ class Strand:
             for st_l in strands_l:
                 if st_l.end == -pos:
                     return st_l.start
-                elif st_l.start == -pos:
+                if st_l.start == -pos:
                     return st_l.end
 
         def free_pos(match):
@@ -1493,21 +1490,18 @@ class Strand:
         if not lstrands:
             assert self.inline_bottom()
             return [(-self.start, lw), (-self.end, lw)]
-        elif len(lstrands) > 1:
+        if len(lstrands) > 1:
             assert e_gen
             lst1 = lstrands[0]
             lst2 = lstrands[1]
             if lst1.start > 0:
                 return join_positions(lst1, lst2)
-            else:
-                if lst2.start > 0:
-                    return join_positions(lst2, lst1)
-                else:
-                    # both are bottom-inline
-                    if lst1.start > lst2.start:
-                        return join_positions(lst1, lst2)
-                    else:
-                        return join_positions(lst2, lst1)
+            if lst2.start > 0:
+                return join_positions(lst2, lst1)
+            # both are bottom-inline
+            if lst1.start > lst2.start:
+                return join_positions(lst1, lst2)
+            return join_positions(lst2, lst1)
         lst1 = lstrands[0]
         positions = lst1.position_sequence()
         xs, ys = positions[0]
@@ -1565,11 +1559,10 @@ class Strand:
         if fx < tx and fy < ty:
             # from top left to bottom right
             return gen > 0
-        elif fx > tx and fy > ty:
+        if fx > tx and fy > ty:
             # from bottom right to top left
             return gen > 0
-        else:
-            return gen < 0
+        return gen < 0
 
     @cached_method
     def crossing_sign(self, pos: int, gen: int) -> int:
@@ -1620,34 +1613,28 @@ class Strand:
                 if oy < uy:
                     # over from above -> over goes into a right curve
                     return 1
-                else:
-                    # over from below -> over goes into a left curve
-                    return -1
-            else:
-                # both come from the right
-                if oy < uy:
-                    # over from above -> over goes into a left curve
-                    return -1
-                else:
-                    # over from below -> over goes into a right curve
-                    return 1
+                # over from below -> over goes into a left curve
+                return -1
+            # both come from the right
+            if oy < uy:
+                # over from above -> over goes into a left curve
+                return -1
+            # over from below -> over goes into a right curve
+            return 1
         if oy == uy:
             if oy == pos:
                 # both come from above
                 if ox < ux:
                     # over from the left -> over goes into a left curve
                     return -1
-                else:
-                    # over from the right -> over goes into a right curve
-                    return 1
-            else:
-                # both come from the below
-                if ox < ux:
-                    # over from the left -> over goes into a right curve
-                    return 1
-                else:
-                    # over from the right -> over goes into a left curve
-                    return -1
+                # over from the right -> over goes into a right curve
+                return 1
+            # both come from the below
+            if ox < ux:
+                # over from the left -> over goes into a right curve
+                return 1
+            # over from the right -> over goes into a left curve
+            return -1
 
     @cached_method
     def neighbor(self, successor: bool = True):
@@ -1723,9 +1710,8 @@ class Strand:
             if reverse:
                 if prec.start == -suc.start:
                     reverse = False
-            else:
-                if prec.end == -suc.end:
-                    reverse = True
+            elif prec.end == -suc.end:
+                reverse = True
             res[suc] = reverse
             prec = suc
             suc = prec.neighbor(successor=not reverse)

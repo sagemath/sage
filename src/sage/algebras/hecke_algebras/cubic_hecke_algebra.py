@@ -125,16 +125,22 @@ AUTHORS:
 # ###########################################################################
 from warnings import warn
 
+from sage.algebras.hecke_algebras.cubic_hecke_base_ring import (
+    CubicHeckeRingOfDefinition,
+)
+from sage.algebras.hecke_algebras.cubic_hecke_matrix_rep import (
+    AbsIrreducibleRep,
+    CubicHeckeMatrixSpace,
+    RepresentationType,
+)
+from sage.algebras.splitting_algebra import solve_with_extension
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.groups.cubic_braid import CubicBraidGroup
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.verbose import verbose
-from sage.groups.cubic_braid import CubicBraidGroup
-from sage.rings.integer_ring import ZZ
-from sage.algebras.splitting_algebra import solve_with_extension
 from sage.modules.free_module_element import vector
-from sage.matrix.matrix_space import MatrixSpace
-from sage.algebras.hecke_algebras.cubic_hecke_base_ring import CubicHeckeRingOfDefinition
-from sage.algebras.hecke_algebras.cubic_hecke_matrix_rep import CubicHeckeMatrixSpace, AbsIrreducibleRep, RepresentationType
+from sage.rings.integer_ring import ZZ
 
 
 ##############################################################################
@@ -858,7 +864,10 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         # ----------------------------------------------------------------------
         # preparing use of data base anf file cache
         # ----------------------------------------------------------------------
-        from sage.databases.cubic_hecke_db import CubicHeckeDataBase, CubicHeckeFileCache
+        from sage.databases.cubic_hecke_db import (
+            CubicHeckeDataBase,
+            CubicHeckeFileCache,
+        )
         self._database = CubicHeckeDataBase()
         self._filecache = CubicHeckeFileCache(self._nstrands)
 
@@ -1096,7 +1105,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         # defining the algebra itself
         # ----------------------------------------------------------------------
         if self._cubic_braid_group.is_finite():
-            from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+            from sage.categories.finite_dimensional_algebras_with_basis import (
+                FiniteDimensionalAlgebrasWithBasis,
+            )
             category = FiniteDimensionalAlgebrasWithBasis(base_ring)
         else:
             from sage.categories.algebras_with_basis import AlgebrasWithBasis
@@ -2681,8 +2692,8 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
               over Multivariate Polynomial Ring in u, v, w, s
               over Integer Ring localized at (s, w, v, u)
         """
-        from sage.modules.free_module import FreeModule
         from sage.databases.cubic_hecke_db import MarkovTraceModuleBasis
+        from sage.modules.free_module import FreeModule
         basis = [b for b in MarkovTraceModuleBasis if b.strands() <= self._nstrands]
         BRM = self.base_ring(generic=True).markov_trace_version()
         return FreeModule(BRM, basis)
@@ -2738,9 +2749,8 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             BG = self.extension_ring(generic=True)
             if generic or B == BG:
                 B = BME
-            else:
-                if B == BG.as_splitting_algebra():
-                    B = BME.as_splitting_algebra()
+            elif B == BG.as_splitting_algebra():
+                B = BME.as_splitting_algebra()
         else:
             B = self.base_ring()
             BG = self.base_ring(generic=True)
