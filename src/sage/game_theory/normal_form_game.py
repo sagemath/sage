@@ -272,7 +272,7 @@ Note that if no algorithm argument is passed then the default will be
 selected according to the following order (if the corresponding package is
 installed):
 
-1. ``'gnm'`` (if the game has more than 2 players; requires 'gambit')
+1. ``'enumpoly'`` (if the game has more than 2 players; requires 'gambit')
 2. ``'lp'`` (if the game is constant-sum; uses the solver chosen by Sage)
 3. ``'lrs'`` (requires 'lrslib')
 4. ``'enumeration'``
@@ -423,11 +423,18 @@ utility function::
 
 Games with more than 2 players can be solved using the ``'gnm'``
 algorithm, which interfaces with gambit's implementation of the global
-Newton method (this is also the algorithm selected by default for such
-games)::
+Newton method::
 
     sage: threegame.obtain_nash(algorithm='gnm')  # optional - gambit
     [[(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)]]
+
+When no algorithm is given for a game with more than 2 players, the
+``'enumpoly'`` algorithm is selected by default; it interfaces with
+gambit's enumeration of equilibria via systems of polynomial equations
+and, unlike ``'gnm'``, returns all of the equilibria it finds::
+
+    sage: threegame.obtain_nash()  # optional - gambit
+    [[(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)], [(1.0, 0.0), (0.0, 1.0), (0.0, 1.0)]]
 
 Note that ``'gnm'`` is a numerical algorithm and so returns floating
 point approximations of a sample of the equilibria. Further compatibility
@@ -1504,7 +1511,8 @@ class NormalFormGame(SageObject, MutableMapping):
                    for profile in self.utilities.values())
         return all(results)
 
-    def obtain_nash(self, algorithm=False, maximization=True, solver=None):
+    def obtain_nash(self, algorithm=False, maximization=True, solver=None,
+                    phc_path=None):
         r"""
         A function to return the Nash equilibrium for the game.
         Optional arguments can be used to specify the algorithm used.
@@ -1534,7 +1542,7 @@ class NormalFormGame(SageObject, MutableMapping):
             algorithms and so in general return floating point approximations
             of a sample of the equilibria. See the gambit web site
             (http://gambit.sourceforge.net/). When no ``algorithm`` is given
-            for a game with more than 2 players, ``'enumpure'`` is used.
+            for a game with more than 2 players, ``'enumpoly'`` is used.
 
           * ``'lp'`` -- this algorithm is only suited for 2 player
             constant sum games. Uses MILP solver determined by the
@@ -1593,6 +1601,15 @@ class NormalFormGame(SageObject, MutableMapping):
           be ``'gambit'`` to use the MILP solver included with the gambit
           library. Note that ``None`` means to use the default Sage LP solver,
           normally GLPK.
+
+        - ``phc_path`` -- (optional) a path (a string or
+          :class:`~pathlib.Path`) to the PHCpack ``phc`` executable. When
+          given, the ``'enumpoly'`` algorithm solves the underlying systems of
+          polynomial equations with PHCpack instead of gambit's built-in
+          solver. This is only supported by the ``'enumpoly'`` algorithm (the
+          default for games with more than 2 players); passing it for any other
+          algorithm raises a :class:`ValueError`. PHCpack is available from
+          http://homepages.math.uic.edu/~jan/download.html.
 
         EXAMPLES:
 
@@ -1800,6 +1817,14 @@ class NormalFormGame(SageObject, MutableMapping):
             ...
             ValueError: 'solver' should be set to 'GLPK', ..., None
              (in which case the default one is used), or a callable.
+
+        Passing ``phc_path`` with an algorithm other than ``'enumpoly'``
+        raises an error::
+
+            sage: g.obtain_nash(algorithm='lrs', phc_path='/usr/bin/phc')
+            Traceback (most recent call last):
+            ...
+            ValueError: 'phc_path' is only supported by the 'enumpoly' algorithm; got algorithm 'lrs'
         """
         if not self._is_complete():
             raise ValueError(
@@ -1813,15 +1838,22 @@ class NormalFormGame(SageObject, MutableMapping):
         if not algorithm:
             if len(self.players) > 2:
                 # Only the gambit solvers handle games with more than two
-                # players; enumpure enumerates the pure strategy equilibria.
-                algorithm = "enumpure"
+                # players; enumpoly enumerates the equilibria by solving the
+                # corresponding systems of polynomial equations.
+                algorithm = "enumpoly"
             elif self.is_constant_sum():
                 algorithm = "lp"
             elif LrsNash().is_present():
                 algorithm = "lrs"
             else:
                 algorithm = "enumeration"
-        
+
+        if phc_path is not None and algorithm != "enumpoly":
+            raise ValueError(
+                "'phc_path' is only supported by the 'enumpoly' algorithm; "
+                f"got algorithm {algorithm!r}"
+            )
+
         if len(self.players) < 3:
             if algorithm == "lrs":
                 LrsNash().require()
@@ -1852,7 +1884,8 @@ class NormalFormGame(SageObject, MutableMapping):
                     f"the '{algorithm}' algorithm requires the optional gambit "
                     "package; install it with: pip install pygambit"
                 )  # should later become a FeatureNotFoundError
-            return self._use_gambit_solver(algorithm, maximization)
+            return self._use_gambit_solver(algorithm, maximization,
+                                           phc_path=phc_path)
 
         n = len(self.players)
         raise ValueError(
@@ -1998,7 +2031,7 @@ class NormalFormGame(SageObject, MutableMapping):
                  for player in eq.game.players]
                 for eq in equilibria]
 
-    def _use_gambit_solver(self, algorithm, maximization=True):
+    def _use_gambit_solver(self, algorithm, maximization=True, phc_path=None):
         r"""
         Solve a :class:`NormalFormGame` using one of Gambit's solvers.
 
@@ -2038,6 +2071,13 @@ class NormalFormGame(SageObject, MutableMapping):
 
         - ``maximization`` -- boolean (default: ``True``); whether the
           players maximize (``True``) or minimize (``False``) their utility
+
+        - ``phc_path`` -- (optional) a path (a string or
+          :class:`~pathlib.Path`) to the PHCpack ``phc`` executable. Only
+          supported by the ``'enumpoly'`` algorithm, for which it makes the
+          underlying systems of polynomial equations be solved with PHCpack
+          (using enumeration on the strategic game). Passing it for any other
+          algorithm raises a :class:`ValueError`.
 
         OUTPUT: a sorted list of Nash equilibria, each a list with one tuple
         of floats per player (see :meth:`_extract_gambit_equilibria`)
@@ -2120,6 +2160,17 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: c._use_gambit_solver('simpdiv')  # optional - gambit
             [[(0.0, 1.0), (0.0, 1.0)]]
 
+        When the PHCpack ``phc`` executable is available, ``'enumpoly'`` can
+        solve the underlying systems of polynomial equations with PHCpack
+        instead of gambit's built-in solver by passing ``phc_path``.  PHCpack
+        is a numerical homotopy continuation solver, so we round its output;
+        it finds the same equilibria as the built-in solver::
+
+            sage: from shutil import which                          # optional - phc gambit
+            sage: phc_eq = c._use_gambit_solver('enumpoly', phc_path=which('phc'))  # optional - phc gambit
+            sage: [[[round(p, 6) for p in s] for s in e] for e in phc_eq]  # optional - phc gambit
+            [[[0.0, 1.0], [0.0, 1.0]]]
+
         The ``'ipa'``, ``'liap'`` and ``'logit'`` solvers are iterative and
         return floating point approximations, so we round their output::
 
@@ -2133,13 +2184,102 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: [[[round(p, 6) for p in s] for s in e] for e in eq]  # optional - gambit
             [[[0.0, 1.0], [0.0, 1.0]]]
 
+        The following examples cross-check the solvers against the equilibria
+        recorded in Gambit's own test suite (``gambit/tests/test_nash.py``).
+        The :math:`2\times 2` zero-sum game whose payoff matrices are
+        :math:`I` and :math:`-I` is matching-pennies-like: it has the single
+        equilibrium in which both players mix uniformly.  The ``'lcp'``,
+        ``'enumpoly'`` and ``'simpdiv'`` solvers all recover it::
+
+            sage: A = matrix.identity(2)
+            sage: zero_sum = NormalFormGame([A, -A])
+            sage: zero_sum._use_gambit_solver('lcp')  # abs tol 1e-9 # optional - gambit
+            [[(0.5, 0.5), (0.5, 0.5)]]
+            sage: zero_sum._use_gambit_solver('enumpoly')  # optional - gambit
+            [[(0.5, 0.5), (0.5, 0.5)]]
+
+        The game is constant sum, so the ``'lp'`` solver applies to its
+        single-matrix form and finds the same equilibrium, while
+        ``'enumpure'`` correctly reports that there is no equilibrium in pure
+        strategies::
+
+            sage: NormalFormGame([A])._use_gambit_solver('lp')  # optional - gambit
+            [[(0.5, 0.5), (0.5, 0.5)]]
+            sage: zero_sum._use_gambit_solver('enumpure')  # optional - gambit
+            []
+
+        The :math:`3\times 3` coordination game (both payoff matrices the
+        identity) has :math:`2^3 - 1 = 7` equilibria, one uniform mix over
+        each nonempty set of matching strategies.  ``'enumpoly'`` finds all
+        seven, ``'enumpure'`` finds the three pure ones and ``'simpdiv'``
+        returns the fully mixed one::
+
+            sage: I3 = matrix.identity(3)
+            sage: coordination = NormalFormGame([I3, I3])
+            sage: coordination._use_gambit_solver('enumpure')  # optional - gambit
+            [[(0.0, 0.0, 1.0), (0.0, 0.0, 1.0)],
+             [(0.0, 1.0, 0.0), (0.0, 1.0, 0.0)],
+             [(1.0, 0.0, 0.0), (1.0, 0.0, 0.0)]]
+            sage: coordination._use_gambit_solver('enumpoly')  # abs tol 1e-6 # optional - gambit
+            [[(0.0, 0.0, 1.0), (0.0, 0.0, 1.0)],
+             [(0.0, 0.5, 0.5), (0.0, 0.5, 0.5)],
+             [(0.0, 1.0, 0.0), (0.0, 1.0, 0.0)],
+             [(0.333333, 0.333333, 0.333333), (0.333333, 0.333333, 0.333333)],
+             [(0.5, 0.0, 0.5), (0.5, 0.0, 0.5)],
+             [(0.5, 0.5, 0.0), (0.5, 0.5, 0.0)],
+             [(1.0, 0.0, 0.0), (1.0, 0.0, 0.0)]]
+            sage: coordination._use_gambit_solver('simpdiv')  # abs tol 1e-9 # optional - gambit
+            [[(0.3333333333333333, 0.3333333333333333, 0.3333333333333333),
+              (0.3333333333333333, 0.3333333333333333, 0.3333333333333333)]]
+
+        Finally, a :math:`6\times 6` game with long Lemke-Howson paths and a
+        unique equilibrium; the ``'gnm'``, ``'ipa'`` and ``'lcp'`` solvers all
+        recover it::
+
+            sage: A = matrix([[-180, 72, -333, 297, -153, 270],
+            ....:             [-30, 17, -33, 42, -3, 20],
+            ....:             [-81, 36, -126, 126, -36, 90],
+            ....:             [90, -36, 126, -126, 36, -81],
+            ....:             [20, -3, 42, -33, 17, -30],
+            ....:             [270, -153, 297, -333, 72, -180]])
+            sage: B = matrix([[72, 36, 17, -3, -36, -153],
+            ....:             [-180, -81, -30, 20, 90, 270],
+            ....:             [297, 126, 42, -33, -126, -333],
+            ....:             [-333, -126, -33, 42, 126, 297],
+            ....:             [270, 90, 20, -30, -81, -180],
+            ....:             [-153, -36, -3, 17, 36, 72]])
+            sage: long_lh = NormalFormGame([A, B])
+            sage: long_lh._use_gambit_solver('gnm')  # abs tol 1e-6 # optional - gambit
+            [[(0.033333, 0.166667, 0.3, 0.3, 0.166667, 0.033333),
+              (0.166667, 0.033333, 0.3, 0.3, 0.033333, 0.166667)]]
+            sage: long_lh._use_gambit_solver('ipa')  # abs tol 1e-6 # optional - gambit
+            [[(0.033333, 0.166667, 0.3, 0.3, 0.166667, 0.033333),
+              (0.166667, 0.033333, 0.3, 0.3, 0.033333, 0.166667)]]
+            sage: long_lh._use_gambit_solver('lcp')  # abs tol 1e-6 # optional - gambit
+            [[(0.033333, 0.166667, 0.3, 0.3, 0.166667, 0.033333),
+              (0.166667, 0.033333, 0.3, 0.3, 0.033333, 0.166667)]]
+
         An unknown algorithm raises an error::
 
             sage: c._use_gambit_solver('invalid')
             Traceback (most recent call last):
             ...
             ValueError: unknown gambit algorithm 'invalid'; ...
+
+        ``phc_path`` may only be given for the ``'enumpoly'`` algorithm::
+
+            sage: c._use_gambit_solver('gnm', phc_path='/usr/bin/phc')
+            Traceback (most recent call last):
+            ...
+            ValueError: 'phc_path' is only supported by the 'enumpoly' algorithm; got algorithm 'gnm'
         """
+        algorithm = algorithm.lower()
+        if phc_path is not None and algorithm != "enumpoly":
+            raise ValueError(
+                "'phc_path' is only supported by the 'enumpoly' algorithm; "
+                f"got algorithm {algorithm!r}"
+            )
+
         if Game is None:
             raise NotImplementedError(
                 f"the '{algorithm}' algorithm requires the optional gambit "
@@ -2149,20 +2289,23 @@ class NormalFormGame(SageObject, MutableMapping):
         g = self._gambit_(maximization=maximization)
         # Each solver has its own calling convention: ``lcp``/``lp`` take a
         # ``rational`` flag while ``liap``/``simpdiv`` need a starting mixed
-        # strategy profile rather than the game itself.
+        # strategy profile rather than the game itself.  When ``phc_path`` is
+        # given, ``enumpoly`` solves the polynomial systems with PHCpack, which
+        # only supports enumeration on the strategic game.
         solvers = {
             'lcp': lambda: gambit_nash.lcp_solve(g, rational=False),
             'lp': lambda: gambit_nash.lp_solve(g, rational=False),
             'gnm': lambda: gambit_nash.gnm_solve(g),
             'enumpure': lambda: gambit_nash.enumpure_solve(g),
-            'enumpoly': lambda: gambit_nash.enumpoly_solve(g),
+            'enumpoly': lambda: gambit_nash.enumpoly_solve(g) if phc_path is None
+                else gambit_nash.enumpoly_solve(
+                    g, use_strategic=True, phcpack_path=phc_path),
             'ipa': lambda: gambit_nash.ipa_solve(g),
             'logit': lambda: gambit_nash.logit_solve(g),
             'liap': lambda: gambit_nash.liap_solve(g.mixed_strategy_profile(rational=False)),
             'simpdiv': lambda: gambit_nash.simpdiv_solve(g.mixed_strategy_profile(rational=True)),
         }
 
-        algorithm = algorithm.lower()
         if algorithm not in solvers:
             raise ValueError(
                 f"unknown gambit algorithm {algorithm!r}; "
