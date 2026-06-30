@@ -2545,6 +2545,8 @@ class MicaliVaziraniMatching:
                         left_support, right_support, (u, v, l))
                     if augmentation_success:
                         is_augmented = True
+                        # maximum matching reached (>= N - 1 vertices matched);
+                        # no augmenting path can remain, so stop the phase early
                         if self.matching_size == self.N // 2:
                             return is_augmented
 
@@ -3906,7 +3908,9 @@ class MicaliVaziraniMatching:
                 self.phase_index += 1
                 self.start_new_phase()
 
-                # Stop early if perfect matching found
+                # Stop once the matching is maximum: matching_size == N // 2
+                # means at most one vertex is left exposed, so no augmenting
+                # path can remain.
                 if self.matching_size == self.N // 2:
                     break
 
