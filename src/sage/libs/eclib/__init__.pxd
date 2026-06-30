@@ -48,8 +48,8 @@ cdef extern from "eclib/svector.h":
     cdef cppclass svec:
         vec as_vec()
         scalar elem(int) const
-        map[int,scalar].iterator begin()
-        map[int,scalar].iterator end()
+        map[int, scalar].iterator begin()
+        map[int, scalar].iterator end()
 
 cdef extern from "eclib/matrix.h":
     cdef cppclass mat:
@@ -100,7 +100,7 @@ cdef extern from "eclib/curve.h":
         Curvedata()
         Curvedata(Curve C, int m)
         Curvedata(bigint a1, bigint a2, bigint a3, bigint a4, bigint a6,
-                int min_on_init)
+                  int min_on_init)
         void getai(bigint a1, bigint a2, bigint a3, bigint a4, bigint a6)
 
     cdef cppclass CurveRed:
@@ -122,7 +122,7 @@ cdef extern from "eclib/descent.h":
 cdef extern from "eclib/homspace.h":
     cdef cppclass homspace:
         long modulus
-        int plusflag # sign
+        int plusflag  # sign
         int cuspidal
 
         homspace(long n, int hp, int hcusp, int verbose)
@@ -151,7 +151,7 @@ cdef extern from "eclib/newforms.h":
         # which for us will always be 0:
         rational plus_modular_symbol(rational r, int i, int base_at_infinity)
         rational minus_modular_symbol(rational r, int i, int base_at_infinity)
-        pair[rational,rational] full_modular_symbol(rational r, int i, int base_at_infinity)
+        pair[rational, rational] full_modular_symbol(rational r, int i, int base_at_infinity)
 
     cdef cppclass newform:
         newforms* nf
