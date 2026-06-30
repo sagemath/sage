@@ -3914,16 +3914,17 @@ class MicaliVaziraniMatching:
                 if self.matching_size == self.N // 2:
                     break
 
-        # Rebuild the matching as a graph on the *original* vertex labels.
-        # ``self.G`` still carries the internal 0, ..., N - 1 labels, so edge
-        # labels are looked up with the internal endpoints and the vertices are
-        # mapped back through ``index_to_vertex``. The ``v < u`` guard reports
-        # each matched edge exactly once.
-        M = Graph()
-        M.add_vertices(self.index_to_vertex)
-        for v in range(self.N):
-            u = self.mate[v]
-            if u != self.EXPOSED and v < u:
-                M.add_edge(self.index_to_vertex[v], self.index_to_vertex[u],
-                           self.G.edge_label(v, u))
-        return EdgesView(M)
+        # Rebuild the matching on the *original* vertex labels. ``self.G`` still
+        # carries the internal 0, ..., N - 1 labels, so edge labels are looked
+        # up with the internal endpoints and the vertices are mapped back
+        # through ``index_to_vertex``. The ``vi < ui`` guard yields each matched
+        # edge exactly once.
+        def matched_edges():
+            for vi, v in enumerate(self.index_to_vertex):
+                ui = self.mate[vi]
+                if ui != self.EXPOSED and vi < ui:
+                    yield (v, self.index_to_vertex[ui],
+                           self.G.edge_label(vi, ui))
+
+        return Graph([self.index_to_vertex, matched_edges()],
+                     format='vertices_and_edges').edges()
