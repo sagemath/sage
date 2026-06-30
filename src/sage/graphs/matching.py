@@ -2053,7 +2053,6 @@ class MicaliVaziraniMatching:
 
         self.tenacity_bridges_map: list[list[int]] = [[] for _ in range(2 * self.N + 2)]
         self.deletion_phase: list[int] = [-1] * self.N
-        self.visit_mark: list[Any] = [None] * self.N
         self.vertex_petal_map: list[Any] = [None] * self.N
         self.vertex_bud_map: list[int] = list(range(self.N))
 
@@ -2341,7 +2340,6 @@ class MicaliVaziraniMatching:
             self.vertex_petal_map[u] = None
             self.vertex_bud_map[u] = u
             self.color[u] = None
-            self.visit_mark[u] = None
 
         for u, v in self.G.edge_iterator(labels=False):
             edge_index = self.edge_to_index(u, v)
@@ -2627,225 +2625,147 @@ class MicaliVaziraniMatching:
             2
         """
         encountered_deleted_vertex = False
+        RED, GREEN = 0, 1
+        other_colour = (GREEN, RED)
 
-        # Stack saves previously traversed vertices
-        red_stack, green_stack = [], []
-        # Set the starting point for each of red and green DFS's
-        red_vertex, green_vertex = \
-            self.get_bud(source_red_vertex), self.get_bud(source_green_vertex)
+        def buds(vertex):
+            return [self.get_bud(p) for p in self.predecessor[vertex]]
 
-        # Copy predecessor list over for the current vertex
-        red_predecessors, green_predecessors = \
-            self.predecessor[red_vertex][:], self.predecessor[green_vertex][:]
-        # the lists holding the support of the current bridge
-        red_support, green_support = [red_vertex], [green_vertex]
+        red_root, green_root = (self.get_bud(source_red_vertex),
+                                self.get_bud(source_green_vertex))
 
-        # Following is used to save the data for DFS's for when they backtrack
-        # in the case a bottleneck is reached
-        previous_red_support, previous_green_support = [red_vertex], [green_vertex]
+        # A bridge whose two ends already share a bud encloses no new structure.
+        if red_root == green_root:
+            return [], [], red_root, encountered_deleted_vertex
 
-        # Boolean variables are initiated
-        no_augmentation_found = bool(self.min_level(red_vertex)
-                                     or self.min_level(green_vertex))
-        collision = red_vertex == green_vertex
+        phase = self.phase_index
 
-        # Returns nothing if there is no support for the petal
-        if collision and not no_augmentation_found:
-            return [], [], red_vertex, encountered_deleted_vertex
+        # ``owner[v]`` is the colour of the search that has claimed ``v``. A
+        # vertex stays claimed when its search backtracks over it, so at the end
+        # the claimed vertices are exactly the support of the bridge (the whole
+        # set ``V_b - {b}`` of [Vaz2020]_, both branches, not just one path).
+        # ``stack[c]`` is the current root-to-centre path of search ``c`` (its
+        # centre is ``stack[c][-1]``) and ``rem[v]`` holds the predecessor buds
+        # of ``v`` not yet tried as a next descent step.
+        owner = {red_root: RED, green_root: GREEN}
+        stack = ([red_root], [green_root])
+        rem = {red_root: buds(red_root), green_root: buds(green_root)}
+        if self.deletion_phase[red_root] == phase or \
+           self.deletion_phase[green_root] == phase:
+            encountered_deleted_vertex = True
 
-        # Label is used to track if vertices have been visit_mark in the current DDFS
-        label = (source_red_vertex, source_green_vertex)
-        self.visit_mark[red_vertex], self.visit_mark[green_vertex] = label, label
-
-        # DDFS continues to run while an augmenting path still isn't found
-        while no_augmentation_found:
-            red_min_level = self.min_level(red_vertex)
-            green_min_level = self.min_level(green_vertex)
-            # Checks for when the two DFS's land on the same vertex
-            if collision:
-                # The the levels of the vertices are the same, we reverse the green DFS
-                if red_min_level == green_min_level:
-                    previous_green_support = green_support[:]
-                    green_vertex, green_predecessors, reverse_check = self.reverse_DFS(
-                        green_vertex, green_predecessors, green_stack, green_support)
-
-                    if reverse_check:
-                        previous_red_support, red_bottleneck = red_support[:], red_vertex
-                        red_vertex, red_predecessors, reverse_check = self.reverse_DFS(
-                            red_vertex, red_predecessors, red_stack, red_support)
-
-                elif red_min_level > green_min_level:
-                    red_vertex, red_predecessors, collision = self.reverse_DFS(
-                        red_vertex, red_predecessors, red_stack, red_support)
-
-                elif red_min_level < green_min_level:
-                    green_vertex, green_predecessors, collision = self.reverse_DFS(
-                        green_vertex, green_predecessors, green_stack, green_support)
-
-                if red_vertex == green_vertex:
-                    previous_red_support.pop()
-                    green_support.pop()
-                    return (previous_red_support, green_support,
-                            red_vertex, encountered_deleted_vertex)
-
-                collision = False
-
-            # Case where red DFS advances in search
-            elif red_min_level >= green_min_level:
-
-                # Advance the red DFS, will reverse if no vertices to travel to
-                red_vertex, red_predecessors, collision = self.advance_DFS(
-                    red_vertex, red_predecessors, red_stack, red_support, label)
-
-                # If stack is cleared and no vertices left to explore, bottleneck is found
-                if not red_stack and not red_predecessors:
-                    previous_red_support.pop()
-                    green_support.pop()
-                    return (previous_red_support, green_support,
-                            green_vertex, encountered_deleted_vertex)
-
-            # Case where green DFS advances in search
-            else:
-                # Advance the green DFS, will reverse if no vertices to travel to
-                green_vertex, green_predecessors, collision = self.advance_DFS(
-                    green_vertex, green_predecessors, green_stack, green_support, label)
-
-                # If stack is clearned and no vertices left to explore, reverse red DFS
-                if not green_stack and not green_predecessors:
-                    green_support = previous_green_support
-                    previous_green_support, green_vertex, green_predecessors = \
-                        [green_vertex], red_vertex, red_predecessors[:]
-                    previous_red_support, red_bottleneck = red_support[:], red_vertex
-                    red_vertex, red_predecessors, reverse_check = self.reverse_DFS(
-                        red_vertex, red_predecessors, red_stack, red_support)
-
-                    if reverse_check:
-                        previous_red_support.pop()
-                        green_support.pop()
-                        return (previous_red_support, green_support,
-                                red_bottleneck, encountered_deleted_vertex)
-
-            # Checks if vertex was removed in previous augmentation during
-            # current search_level
-            if self.deletion_phase[red_vertex] == self.phase_index or \
-               self.deletion_phase[green_vertex] == self.phase_index:
+        def claim(colour, vertex):
+            nonlocal encountered_deleted_vertex
+            owner[vertex] = colour
+            rem[vertex] = buds(vertex)
+            stack[colour].append(vertex)
+            if self.deletion_phase[vertex] == phase:
                 encountered_deleted_vertex = True
 
-            # Checks if augmenting path has been found
-            if not self.min_level(red_vertex) and \
-               not self.min_level(green_vertex) and \
-               red_vertex != green_vertex:
-                no_augmentation_found = False
+        def descend_below(colour, barrier):
+            # ``colour`` yields ``barrier`` to the other search: it backtracks
+            # *off* ``barrier`` and looks, among its already-open branches, for
+            # another route down to a vertex ``w != barrier`` with
+            # ``min_level(w) <= min_level(barrier)``.  It never re-enters
+            # ``barrier`` (that vertex is the other search's now) nor the other
+            # search's territory.  Returns whether it succeeds.
+            barrier_level = self.min_level(barrier)
+            if stack[colour][-1] == barrier:
+                stack[colour].pop()
+            while stack[colour]:
+                centre = stack[colour][-1]
+                if centre != barrier and self.min_level(centre) <= barrier_level:
+                    return True
+                moved = False
+                while rem[centre]:
+                    candidate = rem[centre].pop()
+                    if candidate == barrier or candidate in owner:
+                        continue
+                    claim(colour, candidate)
+                    moved = True
+                    break
+                if moved:
+                    continue
+                stack[colour].pop()
+            return False
 
-        return red_support, green_support, None, encountered_deleted_vertex
+        def support_minus(bottleneck):
+            red_support = [v for v in owner
+                           if owner[v] == RED and v != bottleneck]
+            green_support = [v for v in owner
+                             if owner[v] == GREEN and v != bottleneck]
+            return red_support, green_support
 
-    # ******************************
-    # Auxiliary Subroutine: advance DFS along predecessors
-    # ******************************
-    def advance_DFS(
-        self,
-        vertex: int,
-        predecessor_list: list[int],
-        stack: list[tuple[int, list[int]]],
-        support: list[int],
-        label: tuple[int, int],
-    ) -> tuple[int, list[int], bool]:
-        r"""
-        Take one forward step of a depth-first search in :meth:`DDFS`.
+        # The two searches descend the predecessor structure in lockstep: at
+        # each step the higher centre (larger ``min_level``; ties go to red)
+        # moves one step, so they stay level-synchronised and can only meet at
+        # their centres. They either reach two distinct free vertices along
+        # vertex-disjoint paths -- an augmenting path -- or collapse onto a
+        # single highest bottleneck, the base of a new blossom.
+        while True:
+            red_centre, green_centre = stack[RED][-1], stack[GREEN][-1]
+            red_level, green_level = (self.min_level(red_centre),
+                                      self.min_level(green_centre))
 
-        Move to the bud of the next predecessor of ``vertex``, pushing the
-        current position onto ``stack`` and appending the new vertex to
-        ``support``. If ``vertex`` has no predecessors left, backtrack via
-        :meth:`reverse_DFS`.
+            if red_level == 0 and green_level == 0 and red_centre != green_centre:
+                # Two disjoint paths to two distinct free vertices.
+                return (stack[RED][:], stack[GREEN][:], None,
+                        encountered_deleted_vertex)
 
-        INPUT:
+            colour = RED if red_level >= green_level else GREEN
+            centre = stack[colour][-1]
+            opponent_centre = stack[other_colour[colour]][-1]
 
-        - ``vertex`` -- integer; the current vertex of this search
-        - ``predecessor_list`` -- list of integers; the unexplored
-          predecessors of ``vertex``
-        - ``stack`` -- list; the backtracking stack of this search
-        - ``support`` -- list of integers; the vertices visited by this search
-        - ``label`` -- a pair identifying the current ``DDFS`` (for marking
-          visited vertices)
+            met = False
+            claimed = False
+            while rem[centre]:
+                candidate = rem[centre].pop()
+                if candidate == opponent_centre:
+                    met = True
+                    break
+                if candidate in owner:
+                    continue
+                claim(colour, candidate)
+                claimed = True
+                break
 
-        OUTPUT: a tuple ``(next_vertex, predecessor_list, collided)`` where
-        ``collided`` is ``True`` if the step reached a vertex already visited
-        by this ``DDFS``.
+            if claimed:
+                continue
 
-        EXAMPLES:
+            if not met:
+                # ``centre`` is a dead end: backtrack, or -- if back at the root
+                # with nowhere to go -- the opponent's centre dominates every
+                # remaining path and is the bottleneck.
+                if len(stack[colour]) > 1:
+                    stack[colour].pop()
+                    continue
+                red_support, green_support = support_minus(opponent_centre)
+                return (red_support, green_support, opponent_centre,
+                        encountered_deleted_vertex)
 
-        Exercised through :meth:`DDFS` during a run that forms a blossom::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
-            2
-        """
-        reverse_check = False
-        if predecessor_list:
-            next_vertex = self.get_bud(predecessor_list.pop())
-
-            # Save the previous vertex with it's predecessor list to the stack
-            stack.append((vertex, predecessor_list))
-
-            # Add next vertex to support
-            support.append(next_vertex)
-            predecessor_list = self.predecessor[next_vertex][:]
-
-            if self.visit_mark[next_vertex] == label:
-                return next_vertex, predecessor_list, True
-            self.visit_mark[next_vertex] = label
-
-        # If next vertex not found reverse path
-        else:
-            next_vertex, predecessor_list, reverse_check = self.reverse_DFS(
-                vertex, predecessor_list, stack, support)
-        return next_vertex, predecessor_list, reverse_check
-
-    # ******************************
-    # Auxiliary Subroutine: backtrack in DFS stack
-    # ******************************
-    def reverse_DFS(
-        self,
-        vertex: int,
-        predecessor_list: list[int],
-        stack: list[tuple[int, list[int]]],
-        support: list[int],
-    ) -> tuple[int, list[int], bool]:
-        r"""
-        Backtrack one step of a depth-first search in :meth:`DDFS`.
-
-        Pop the most recently visited position off ``stack``, restoring the
-        previous vertex and its predecessor list and removing the dead-end
-        vertex from ``support``.
-
-        INPUT:
-
-        - ``vertex`` -- integer; the current (dead-end) vertex
-        - ``predecessor_list`` -- list of integers; predecessors of ``vertex``
-        - ``stack`` -- list; the backtracking stack of this search
-        - ``support`` -- list of integers; the vertices visited by this search
-
-        OUTPUT: a tuple ``(vertex, predecessor_list, failure)`` where
-        ``failure`` is ``True`` if the stack was empty (nothing to backtrack
-        to).
-
-        EXAMPLES:
-
-        Exercised through :meth:`DDFS` during a run that forms a blossom::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
-            2
-        """
-        failure = False
-        if stack:
-            previous_vertex = stack.pop()
-            vertex = previous_vertex[0]
-            predecessor_list = previous_vertex[1]
-            support.pop()
-        else:
-            failure = True
-        return vertex, predecessor_list, failure
+            # The advancing search reached the opponent's centre ``m``: is ``m``
+            # the highest bottleneck? Following [Vaz2020]_, green tries to step
+            # below ``m`` first, then red; whoever cannot must yield ``m`` to the
+            # other, and if neither can, ``m`` is the bottleneck.
+            m = opponent_centre
+            stack[colour].append(m)
+            saved_green = stack[GREEN][:]
+            if descend_below(GREEN, m):
+                owner[m] = RED
+                if stack[RED][-1] != m:
+                    stack[RED].append(m)
+                rem[m] = buds(m)
+            else:
+                stack[GREEN][:] = saved_green
+                if descend_below(RED, m):
+                    owner[m] = GREEN
+                    if stack[GREEN][-1] != m:
+                        stack[GREEN].append(m)
+                    rem[m] = buds(m)
+                else:
+                    red_support, green_support = support_minus(m)
+                    return (red_support, green_support, m,
+                            encountered_deleted_vertex)
 
     # Each vertex can only belong to one petal
     # The bud cannot be part of the petal
@@ -2974,7 +2894,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Unfold a blossom (petal)
     # ******************************
-    def unfold_petal(self, vertex: int, target: int) -> list[int]:
+    def unfold_petal(self, vertex: int, target: int, visited=None) -> list[int]:
         r"""
         Reconstruct the alternating path through a blossom.
 
@@ -2987,6 +2907,9 @@ class MicaliVaziraniMatching:
 
         - ``vertex`` -- integer; a vertex lying in a petal
         - ``target`` -- integer; the endpoint up to which the path is unfolded
+        - ``visited`` -- set of integers or ``None``; vertices already used by
+          the surrounding path, excluded so that the expansion stays
+          vertex-disjoint from it (the reconstructed path must be simple)
 
         OUTPUT: the list of vertices of the path inside the blossom (empty if
         it cannot be reconstructed)
@@ -3000,7 +2923,8 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             2
         """
-        return self._run_trampoline(self._unfold_petal_generator(vertex, target))
+        return self._run_trampoline(
+            self._unfold_petal_generator(vertex, target, visited))
 
     def _run_trampoline(self, root_call):
         r"""
@@ -3032,46 +2956,63 @@ class MicaliVaziraniMatching:
                 result = None
         return result
 
-    def _unfold_petal_generator(self, vertex, target):
+    def _unfold_petal_generator(self, vertex, target, visited=None):
         r"""
         Generator form of :meth:`unfold_petal`, driven by
         :meth:`_run_trampoline`.
 
-        The logic is identical to the recursive version; each recursive call is
-        a ``yield`` of the corresponding sub-generator.
+        The logic mirrors the recursive version; each recursive call is a
+        ``yield`` of the corresponding sub-generator. ``visited`` carries the
+        vertices already used by the path being assembled so that the two arcs
+        of the blossom -- and any further nested blossom -- stay vertex-disjoint,
+        keeping the reconstructed path simple. It is an internal recursion
+        argument; external callers pass ``None``.
         """
+        if visited is None:
+            visited = set()
         path = list()
         petal = self.vertex_petal_map[vertex]
         bud = petal.base
         if self.max_level(vertex) % 2:
-            path = yield self._unfold_path_in_petal_generator(vertex, bud, petal)
+            path = yield self._unfold_path_in_petal_generator(
+                vertex, bud, petal, visited)
         else:
-            red_vertex = petal.peaks[0]
-            green_vertex = petal.peaks[1]
+            # An even-level ``vertex`` is reached by going up one arc of the
+            # blossom to a peak, across the bridge ``peaks[0]``--``peaks[1]``,
+            # and down the other arc to ``bud``. The colour of ``vertex`` fixes
+            # which peak its arc starts from. The two arcs must be
+            # vertex-disjoint, so they are searched *jointly*: the arc to
+            # ``vertex`` enumerates candidates and, for each, the arc to ``bud``
+            # is searched avoiding it (the ``continuation``). The vertex-arc
+            # backtracks whenever the bud-arc cannot avoid it, so a simple path
+            # is found whenever one exists.
             if not self.color[vertex]:
-                left_path = yield self._unfold_path_in_petal_generator(
-                    red_vertex, vertex, petal)
-                right_path = yield self._unfold_path_in_petal_generator(
-                    green_vertex, bud, petal)
-                if left_path and right_path:
-                    left_path.reverse()
-                    path = left_path + right_path
-                else:
-                    return []
-            elif self.color[vertex]:
-                left_path = yield self._unfold_path_in_petal_generator(
-                    red_vertex, bud, petal)
-                right_path = yield self._unfold_path_in_petal_generator(
-                    green_vertex, vertex, petal)
-                if left_path and right_path:
-                    right_path.reverse()
-                    path = right_path + left_path
-                else:
-                    return []
+                vertex_peak, bud_peak = petal.peaks[0], petal.peaks[1]
+            else:
+                vertex_peak, bud_peak = petal.peaks[1], petal.peaks[0]
+
+            bud_arc = [None]
+
+            def find_bud_arc(avoid):
+                return self._unfold_path_in_petal_generator(
+                    bud_peak, bud, petal, avoid)
+
+            vertex_arc = yield self._unfold_path_in_petal_generator(
+                vertex_peak, vertex, petal, visited, find_bud_arc, bud_arc)
+            if not vertex_arc or bud_arc[0] is None:
+                return []
+            # ``vertex_arc`` runs peak->vertex; reverse it so the path leaves
+            # ``vertex``, crosses the bridge to ``bud_peak`` and descends to
+            # ``bud``.
+            vertex_arc.reverse()
+            path = vertex_arc + bud_arc[0]
         if bud == target:
             return path
         path.pop()
-        petal_path = yield self._unfold_petal_generator(bud, target)
+        petal_path = yield self._unfold_petal_generator(
+            bud, target, visited | set(path))
+        if not petal_path:
+            return []
         return path + petal_path
 
     def unfold_path_in_petal(
@@ -3108,98 +3049,169 @@ class MicaliVaziraniMatching:
         return self._run_trampoline(
             self._unfold_path_in_petal_generator(start_vertex, end_vertex, petal))
 
-    def _unfold_path_in_petal_generator(self, start_vertex, end_vertex, petal):
+    def _unfold_path_in_petal_generator(self, start_vertex, end_vertex, petal,
+                                        visited=None, continuation=None,
+                                        result_holder=None):
         r"""
         Generator form of :meth:`unfold_path_in_petal`, driven by
         :meth:`_run_trampoline`.
 
-        The logic is identical to the recursive version; each recursive call is
-        a ``yield`` of the corresponding sub-generator.
+        Reconstruct a *simple* alternating segment from ``start_vertex`` to
+        ``end_vertex`` inside ``petal`` by a depth-first search over predecessor
+        links, descending into any nested petal by expanding it (via
+        :meth:`_unfold_petal_generator`) and resuming at its base. The search
+        backtracks: a petal's support may branch (a peak with several descending
+        paths), so several predecessors of a vertex may eventually reach
+        ``end_vertex`` while only some extend the current segment to a *simple*
+        path. ``visited`` carries the vertices already on the segment, so a
+        branch that would revisit one -- and thus build a non-simple, invalid
+        path -- is rejected and the next branch is tried.
+
+        When ``continuation`` is given (used to join the two arcs of a blossom),
+        the search is *joint*: every time it completes a segment reaching
+        ``end_vertex`` it runs ``continuation`` on the segment's vertex set to
+        reconstruct the remaining arc; the segment is accepted only if that
+        succeeds, otherwise the search backtracks to another segment. The
+        continuation's result is stored in ``result_holder`` for the caller, so
+        the two arcs end up vertex-disjoint.
+
+        The found segment is returned, or ``[]`` if no branch reaches
+        ``end_vertex`` (and, when given, satisfies ``continuation``) without
+        repeating a vertex.
+
+        INPUT:
+
+        - ``start_vertex`` -- integer; where the segment starts
+        - ``end_vertex`` -- integer; where the segment ends
+        - ``petal`` -- the :class:`Petal` whose interior is being traced
+        - ``visited`` -- set of integers or ``None``; vertices already on the
+          enclosing segment, excluded to keep the reconstruction simple
+        - ``continuation`` -- callable or ``None``; given the completed
+          segment's vertex set, returns a generator reconstructing the remaining
+          arc (``[]`` on failure). Drives joint backtracking across the bridge
+        - ``result_holder`` -- one-element list or ``None``; receives the
+          continuation's result on success
+
+        ``visited``, ``continuation`` and ``result_holder`` are internal
+        recursion arguments; external callers pass ``None``.
+
+        EXAMPLES:
+
+        Exercised through :meth:`unfold_petal` whenever an augmenting path runs
+        through a branching or nested blossom::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 1)])
+            sage: len(MicaliVaziraniMatching(G).get_matching())
+            3
         """
+        if visited is None:
+            visited = set()
         if start_vertex == end_vertex:
-            return [start_vertex]
-        if self.vertex_petal_map[start_vertex] != petal:
-            new_target = self.vertex_petal_map[start_vertex].base
-            path = yield self._unfold_petal_generator(start_vertex, new_target)
-            current_vertex = new_target
-        else:
-            path = [start_vertex]
-            current_vertex = start_vertex
-        while current_vertex != end_vertex:
-            previous_vertex = current_vertex
-            predecessor_list = self.predecessor[current_vertex][:]
-            new_petal = None
-            next_petal_vertex = None
-            wrong_petal_vertex = None
-            for vertex in predecessor_list:
-                if self.vertex_petal_map[vertex] is not None:
-                    if vertex == end_vertex:
-                        current_vertex = vertex
-                        path.append(end_vertex)
-                        break
-                    if self.vertex_petal_map[vertex] == petal and \
-                       self.color[current_vertex] == self.color[vertex]:
-                        next_petal_vertex = vertex
-                    elif self.vertex_petal_map[vertex] == petal and \
-                         self.color[current_vertex] != self.color[vertex]:
-                        wrong_petal_vertex = vertex
-                    else:
-                        new_petal = vertex
-                elif vertex == petal.base:
-                    current_vertex = vertex
-                    path.append(end_vertex)
-                    break
-
-            if previous_vertex == current_vertex:
-                if next_petal_vertex is not None:
-                    current_vertex = next_petal_vertex
-                    path.append(current_vertex)
-
-                elif wrong_petal_vertex is not None:
-                    current_vertex = vertex
-                    if self.vertex_petal_map[vertex] != petal and \
-                       self.vertex_petal_map[vertex] is not None:
-                        petal_path = yield self._unfold_petal_generator(
-                            current_vertex, self.vertex_petal_map[vertex].base)
-                        path += petal_path
-                        current_vertex = path[-1]
-                    else:
-                        path.append(current_vertex)
-                elif new_petal is None:
+            if continuation is not None:
+                remaining = yield continuation(visited | {start_vertex})
+                if not remaining:
                     return []
+                result_holder[0] = remaining
+            return [start_vertex]
 
-                else:
-                    if self.mate[current_vertex] != new_petal:
-                        path_addition = yield self._unfold_petal_generator(
-                            new_petal, self.vertex_petal_map[new_petal].base)
-                        if not path_addition:
-                            return []
+        # If the segment starts inside a nested petal, expand that petal up to
+        # its base and continue the search from the base.
+        start_petal = self.vertex_petal_map[start_vertex]
+        if start_petal is not None and start_petal != petal:
+            base = start_petal.base
+            head = yield self._unfold_petal_generator(
+                start_vertex, base, visited)
+            if not head:
+                return []
+            if base == end_vertex:
+                if continuation is not None:
+                    remaining = yield continuation(visited | set(head))
+                    if not remaining:
+                        return []
+                    result_holder[0] = remaining
+                return head
+            tail = yield self._unfold_path_in_petal_generator(
+                base, end_vertex, petal, visited | set(head),
+                continuation, result_holder)
+            if not tail:
+                return []
+            # ``head`` ends at ``base`` and ``tail`` starts at ``base``.
+            return head[:-1] + tail
 
-                        path += path_addition
-                        current_vertex = self.vertex_petal_map[new_petal].base
-                        while self.vertex_petal_map[current_vertex] != petal and \
-                              current_vertex != end_vertex:
-                            # digging deeper into the petal
-                            path.pop()
-                            if self.vertex_petal_map[current_vertex]:
-                                addition = yield self._unfold_petal_generator(
-                                    current_vertex,
-                                    self.vertex_petal_map[current_vertex].base)
-                                path += addition
-                                current_vertex = \
-                                    self.vertex_petal_map[current_vertex].base
-                            else:
-                                # bud failure
-                                return []
-                    else:
-                        addition = yield self._unfold_path_in_petal_generator(
-                            new_petal,
-                            self.vertex_petal_map[new_petal].base,
-                            self.vertex_petal_map[new_petal])
-                        path += addition
-                        current_vertex = self.vertex_petal_map[new_petal].base
+        visited = visited | {start_vertex}
 
-        return path
+        # Classify the predecessors of ``start_vertex`` into candidate next
+        # steps, preserving predecessor order: a predecessor equal to
+        # ``end_vertex`` finishes the segment; one lying in this petal is a
+        # direct (single-edge) step; one lying in a *different* petal is a
+        # nested blossom to descend into.
+        direct_steps = []
+        nested_steps = []
+        reaches_end = False
+        for predecessor in self.predecessor[start_vertex]:
+            if predecessor == end_vertex:
+                reaches_end = True
+            else:
+                predecessor_petal = self.vertex_petal_map[predecessor]
+                if predecessor_petal == petal:
+                    direct_steps.append(predecessor)
+                elif predecessor_petal is not None:
+                    nested_steps.append(predecessor)
+
+        # Completing on the single edge to ``end_vertex`` is the shortest
+        # option; with a continuation it is accepted only if the remaining arc
+        # can avoid this segment, otherwise the search falls through to longer
+        # routes.
+        if reaches_end:
+            if continuation is None:
+                return [start_vertex, end_vertex]
+            remaining = yield continuation(visited | {end_vertex})
+            if remaining:
+                result_holder[0] = remaining
+                return [start_vertex, end_vertex]
+
+        # Try direct steps first (a single edge), then nested descents,
+        # backtracking whenever a branch fails to reach ``end_vertex`` as a
+        # simple path satisfying the continuation.
+        for predecessor in direct_steps:
+            if predecessor in visited:
+                continue
+            tail = yield self._unfold_path_in_petal_generator(
+                predecessor, end_vertex, petal, visited, continuation,
+                result_holder)
+            if tail:
+                return [start_vertex] + tail
+
+        for predecessor in nested_steps:
+            nested_petal = self.vertex_petal_map[predecessor]
+            base = nested_petal.base
+            # An unmatched edge into the nested petal expands the whole petal; a
+            # matched edge resumes the path inside it. This mirrors the two ways
+            # an alternating path can enter a contracted blossom.
+            if self.mate[start_vertex] != predecessor:
+                addition = yield self._unfold_petal_generator(
+                    predecessor, base, visited)
+            else:
+                addition = yield self._unfold_path_in_petal_generator(
+                    predecessor, base, nested_petal, visited)
+            if not addition or any(v in visited for v in addition):
+                continue
+            if base == end_vertex:
+                if continuation is not None:
+                    remaining = yield continuation(visited | set(addition))
+                    if not remaining:
+                        continue
+                    result_holder[0] = remaining
+                return [start_vertex] + addition
+            tail = yield self._unfold_path_in_petal_generator(
+                base, end_vertex, petal, visited | set(addition),
+                continuation, result_holder)
+            if tail:
+                # ``addition`` ends at ``base`` and ``tail`` starts at ``base``.
+                return [start_vertex] + addition + tail[1:]
+
+        return []
 
     def _is_valid_augmenting_path(self, path: list[int]) -> bool:
         r"""
@@ -3398,7 +3410,7 @@ class MicaliVaziraniMatching:
                 path.append(current_vertex)
             else:
                 petal_path = self.unfold_petal(
-                    current_vertex, self.get_bud(current_vertex))
+                    current_vertex, self.get_bud(current_vertex), set(path))
                 if not petal_path:
                     return []
                 path += petal_path
@@ -3809,6 +3821,43 @@ class MicaliVaziraniMatching:
             sage: all(G.has_edge(u, v) for u, v, _ in M)
             True
             sage: set(w for u, v, _ in M for w in (u, v)) <= set(G)
+            True
+
+        :meth:`compute_initial_maximal_matching` is an optional performance
+        optimization: it greedily matches high-degree vertices before the phase
+        search begins, which typically reduces the number of phases ([HS2017]_)
+        but is not required for correctness. Whether or not the seed is applied,
+        :meth:`get_matching` must return a matching of maximum cardinality.
+
+        The ``graph6`` strings below come from coverage- and differential-guided
+        searches. They stress :meth:`DDFS`, nested blossoms as in [Vaz2020]_,
+        Figure 8, branched petal unfolding, and bridge processing under vertex
+        labellings where the internal vertex order is sensitive. Each graph is
+        checked against Edmonds' algorithm with the default run (seed enabled)
+        and with the seed suppressed via ``get_matching_from_empty``::
+
+            sage: stress_graphs = [
+            ....:     'GwS_Gg', 'GSHCj?', 'IS@@W_@QO', 'K_?W@?iOCCAH', 'KH_OCK??i?BC',
+            ....:     'OOO?g_O@@?@??H_PGA?P?', 'OOP?g_O@P?@?OHcPHAGPA',
+            ....:     'OOP?g_?@p?@?OHcPHAGPA',
+            ....:     'O?@??OIoABDCGgc?IOw?_',
+            ....:     'OOP?_oQ@P?@?O@_PHAGPA', 'Mx[HDJt_HjXOahG??',
+            ....:     'O?H??OJsABDCGgcGIOO?_', 'Q?@??OIoABDCGgc?IOw?_?GOY?G',
+            ....:     'HksJdGd',
+            ....:     # Unfolding a path through a blossom must reconstruct two
+            ....:     # vertex-disjoint arcs; greedily reconstructing them
+            ....:     # independently can build a non-simple path or strand the
+            ....:     # second arc, so the two arcs are searched jointly with
+            ....:     # backtracking across the bridge. These exercise that.
+            ....:     'YhCKH?@?G?_@?@?O_?G????C??G??GC?C??`??C????_??@???@???C_',
+            ....:     'QhCK[???G?_HOI????W?A??C??W']
+            sage: stress = list(map(Graph, stress_graphs))
+            sage: all(is_valid_maximum_matching(G,                                     # needs networkx
+            ....:         MicaliVaziraniMatching(G).get_matching())
+            ....:     for G in stress)
+            True
+            sage: all(is_valid_maximum_matching(G, get_matching_from_empty(G))         # needs networkx
+            ....:     for G in stress)
             True
         """
         from sage.graphs.graph import Graph
