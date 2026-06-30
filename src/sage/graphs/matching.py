@@ -1862,12 +1862,37 @@ class MicaliVaziraniMatching:
     every edge as either a *prop* (an edge of a ``min_level`` path) or a *bridge*.
     Bridges are bucketed by their *tenacity* and processed by a double
     depth-first search (:meth:`DDFS`), which either reports a *bottleneck*
-    around which an odd structure is contracted into a blossom (stored as a
+    around which an odd structure is contracted into a *petal* (a
     :class:`Petal`), or returns two vertex-disjoint paths forming a shortest
     augmenting path. A phase augments along a maximal set of vertex-disjoint
     shortest augmenting paths before the next phase begins; `O(\sqrt{|V|})`
     phases suffice. Seeding the search with a greedy maximal matching (see
     :meth:`compute_initial_maximal_matching`) reduces the number of phases.
+
+    Terminology follows [Vaz2020]_, distinguishing the *algorithmic* structures
+    a search builds from the *graph-theoretic* ones they approximate:
+
+    - a *petal* is the odd structure a single :meth:`DDFS` contracts; a
+      *blossom* is a union of petals. The petal is the algorithmic object (it
+      depends on how the search resolves choices) and is the one realised in
+      code as :class:`Petal`; the blossom is its graph-theoretic counterpart;
+    - a *bud* is the bottleneck vertex of a petal, where the two searches
+      collide (algorithmic); a *base* is `\mathrm{bud}^*(v)`, the base of the
+      blossom containing `v` (graph-theoretic). The two coincide once all petals
+      at a base have merged. The implementation does not store them separately:
+      a single union-find (``vertex_bud_map`` / :meth:`get_bud`, with the value
+      also kept in ``Petal.bud``) holds the current representative, which is a
+      petal's bud at formation and the blossom's base after merging;
+    - the two endpoints of a *bridge* are its *peaks* (``petal.peaks``), and
+      the two odd-alternating predecessor paths from a peak down to the bud are
+      the petal's two *arcs*. Here ``peak`` and ``arc`` are descriptive
+      implementation names rather than terms from [Vaz2020]_.
+
+    Accordingly this documentation says *petal*/*bud* for the algorithmic
+    objects the code manipulates and *blossom*/*base* for the graph-theoretic
+    notions; the two pairs are not interchangeable. *Unfolding* a petal
+    (:meth:`unfold_petal`; the *open* operation of the papers) expands it back
+    into a genuine alternating path of the input graph.
 
     Each phase runs in `O(|E|)` time apart from the maintenance of blossom
     bases, which is done with a union-find structure (see :meth:`get_bud` and
@@ -1947,25 +1972,26 @@ class MicaliVaziraniMatching:
     @dataclass
     class Petal:
         r"""
-        A contracted blossom found during a phase.
+        A petal: the odd structure a single :meth:`DDFS` contracts in a phase.
 
-        A petal records an odd structure that the double depth-first search
-        collapses around a single vertex. Following [Vaz1994]_ and the
-        implementation of Huang and Stein [HS2017]_, it stores:
+        Following [Vaz1994]_ and the implementation of Huang and Stein
+        [HS2017]_, a petal stores:
 
-        - ``base`` -- the *bud*: the highest bottleneck vertex at which the two
-          (red and green) depth-first searches of :meth:`DDFS` collide;
+        - ``bud`` -- the petal's *bud*: the highest bottleneck vertex at which
+          the two (red and green) depth-first searches of :meth:`DDFS` collide.
+          A union of petals sharing this vertex forms a *blossom* whose
+          graph-theoretic *base* it is (see the class docstring);
         - ``peaks`` -- the pair of endpoints (the red and green roots) of the
           *bridge* whose double depth-first search created the petal.
 
         EXAMPLES::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: p = MicaliVaziraniMatching.Petal(base=0, peaks=(1, 2))
-            sage: p.base, p.peaks
+            sage: p = MicaliVaziraniMatching.Petal(bud=0, peaks=(1, 2))
+            sage: p.bud, p.peaks
             (0, (1, 2))
         """
-        base: int
+        bud: int
         peaks: tuple[int, int]
 
     def __init__(self, G) -> None:
@@ -2456,7 +2482,7 @@ class MicaliVaziraniMatching:
 
                         # The case where tenacity is not yet known
                         # (possibly due to the even/ odd level of
-                        # the blossom not yet labeled)
+                        # the petal not yet labeled)
                         else:
                             self.prop_edges.discard(edge_index)
 
@@ -2474,8 +2500,8 @@ class MicaliVaziraniMatching:
         (:meth:`DDFS`). If the two searches reach distinct free vertices the
         bridge yields a shortest augmenting path, which is augmented
         (:meth:`augment`); otherwise they collapse to a *bottleneck* and the
-        enclosed odd structure is contracted into a blossom
-        (:meth:`form_blossom`) whose vertices are given their ``max_levels``
+        enclosed odd structure is contracted into a *petal*
+        (:meth:`form_petal`) whose vertices are given their ``max_levels``
         (:meth:`label_max`).
 
         INPUT:
@@ -2523,7 +2549,7 @@ class MicaliVaziraniMatching:
                             return is_augmented
 
             elif not encountered_deleted_vertex:
-                self.form_blossom(left_support, right_support, bottleneck, (u, v, l))
+                self.form_petal(left_support, right_support, bottleneck, (u, v, l))
                 self.label_max(left_support, search_level)
                 self.label_max(right_support, search_level)
 
@@ -2534,11 +2560,11 @@ class MicaliVaziraniMatching:
     # After identifying support, we assign the vertex its max level label.
     # Note: This step is skipped during augmentation, as max levels are reset regardless.
     # ******************************
-    # Label vertices after forming a blossom
+    # Label vertices after forming a petal
     # ******************************
     def label_max(self, support: list[int], search_level: int) -> None:
         r"""
-        Assign ``max_levels`` to the vertices of a freshly formed blossom.
+        Assign ``max_levels`` to the vertices of a freshly formed petal.
 
         For every vertex of ``support`` the ``max_level`` is set to
         ``2 * search_level + 1 - min_level``; vertices that thereby acquire an
@@ -2547,13 +2573,13 @@ class MicaliVaziraniMatching:
 
         INPUT:
 
-        - ``support`` -- list of integers; the vertices of the blossom found
+        - ``support`` -- list of integers; the vertices of the petal found
           by :meth:`DDFS`
         - ``search_level`` -- integer; the current search level
 
         EXAMPLES:
 
-        This is exercised whenever a blossom forms during a full run; the
+        This is exercised whenever a petal forms during a full run; the
         result agrees in size with Edmonds' algorithm::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
@@ -2602,7 +2628,7 @@ class MicaliVaziraniMatching:
         predecessors while staying as deep as possible. They either reach two
         distinct free vertices along vertex-disjoint paths -- certifying a
         shortest augmenting path -- or collapse onto a single *bottleneck*
-        vertex, the base of a new blossom.
+        vertex, the bud of a new petal.
 
         INPUT:
 
@@ -2701,7 +2727,7 @@ class MicaliVaziraniMatching:
         # moves one step, so they stay level-synchronised and can only meet at
         # their centres. They either reach two distinct free vertices along
         # vertex-disjoint paths -- an augmenting path -- or collapse onto a
-        # single highest bottleneck, the base of a new blossom.
+        # single highest bottleneck, the bud of a new petal.
         while True:
             red_centre, green_centre = stack[RED][-1], stack[GREEN][-1]
             red_level, green_level = (self.min_level(red_centre),
@@ -2772,9 +2798,9 @@ class MicaliVaziraniMatching:
     # Each vertex in the petal points to the bud
 
     # ******************************
-    # Contract a blossom (petal)
+    # Contract a petal
     # ******************************
-    def form_blossom(
+    def form_petal(
         self,
         left_support: list[int],
         right_support: list[int],
@@ -2782,32 +2808,32 @@ class MicaliVaziraniMatching:
         bridge: Edge,
     ) -> None:
         r"""
-        Contract a new blossom rooted at ``bud``.
+        Contract a new petal with the given ``bud``.
 
-        A :class:`Petal` with base ``bud`` and peaks the two endpoints of
+        A :class:`Petal` with that ``bud`` and peaks the two endpoints of
         ``bridge`` is created, and the two supports returned by :meth:`DDFS`
-        are attached to it (one per side) via :meth:`form_petal`.
+        are attached to it (one per side) via :meth:`_attach_petal_side`.
 
         INPUT:
 
-        - ``left_support`` -- list of integers; the red side of the blossom
-        - ``right_support`` -- list of integers; the green side of the blossom
-        - ``bud`` -- integer; the base (bottleneck) of the blossom
+        - ``left_support`` -- list of integers; the red side of the petal
+        - ``right_support`` -- list of integers; the green side of the petal
+        - ``bud`` -- integer; the bud (bottleneck) of the petal
         - ``bridge`` -- the bridge edge ``(u, v, label)`` that formed it
 
         EXAMPLES:
 
-        Triggered whenever a blossom forms, e.g. on an odd cycle::
+        Triggered whenever a petal forms, e.g. on an odd cycle::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
             2
         """
-        petal = self.Petal(base=bud, peaks=(bridge[0], bridge[1]))
-        self.form_petal(left_support, bud, petal, 0)
-        self.form_petal(right_support, bud, petal, 1)
+        petal = self.Petal(bud=bud, peaks=(bridge[0], bridge[1]))
+        self._attach_petal_side(left_support, bud, petal, 0)
+        self._attach_petal_side(right_support, bud, petal, 1)
 
-    def form_petal(
+    def _attach_petal_side(
         self,
         support: list[int],
         bud: int,
@@ -2815,22 +2841,22 @@ class MicaliVaziraniMatching:
         direction: int,
     ) -> None:
         r"""
-        Attach one side of a blossom to its petal.
+        Attach one side of a petal to it.
 
-        Every vertex of ``support`` is pointed at the blossom's bud, assigned
-        the given ``petal`` and coloured by ``direction`` (`0` for the red
-        side, `1` for the green side).
+        Every vertex of ``support`` is pointed at the petal's bud, assigned the
+        given ``petal`` and coloured by ``direction`` (`0` for the red side,
+        `1` for the green side).
 
         INPUT:
 
         - ``support`` -- list of integers; the vertices on this side
-        - ``bud`` -- integer; the base of the blossom
+        - ``bud`` -- integer; the bud of the petal
         - ``petal`` -- the :class:`Petal` being built
         - ``direction`` -- `0` (red) or `1` (green)
 
         EXAMPLES:
 
-        Triggered through :meth:`form_blossom` when a blossom forms::
+        Triggered through :meth:`form_petal` when a petal forms::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
@@ -2848,15 +2874,16 @@ class MicaliVaziraniMatching:
         r"""
         Return the bud of ``vertex`` (with path compression).
 
-        Each vertex contracted into a blossom points, through
-        ``vertex_bud_map``, towards the *bud* (base) of that blossom. This is a
-        union-find structure: the method follows the chain to the
-        representative bud, then compresses the path so that every vertex along
-        it points straight at the bud, like the *find* operation of union-find.
-        A vertex that lies in no blossom is its own bud.
+        Each vertex contracted into a petal points, through ``vertex_bud_map``,
+        towards that petal's *bud*; as petals sharing a vertex merge, the
+        representative becomes `\mathrm{bud}^*(v)`, the *base* of the resulting
+        blossom. This is a union-find structure: the method follows the chain to
+        the representative, then compresses the path so that every vertex along
+        it points straight at it, like the *find* operation of union-find. A
+        vertex that lies in no petal is its own bud.
 
         The traversal is iterative -- one pass to locate the bud and a second
-        to compress the path -- so a deeply nested chain of blossoms cannot
+        to compress the path -- so a deeply nested chain of petals cannot
         overflow the call stack.
 
         INPUT:
@@ -2892,16 +2919,22 @@ class MicaliVaziraniMatching:
         return bud
 
     # ******************************
-    # Unfold a blossom (petal)
+    # Unfold a petal
     # ******************************
     def unfold_petal(self, vertex: int, target: int, visited=None) -> list[int]:
         r"""
-        Reconstruct the alternating path through a blossom.
+        Reconstruct the alternating path through a petal.
 
-        When an augmenting path enters a contracted blossom, the actual path
+        When an augmenting path enters a contracted petal, the actual path
         inside it is recovered by expanding the petal: the segment from
         ``vertex`` up to ``target`` (the bud, possibly recursing through nested
         petals) is rebuilt using the petal's peaks and the predecessor links.
+
+        See the class docstring for the *petal*/*blossom*, *bud*/*base*, *peak*
+        and *arc* terminology. In brief, an *arc* is one of the two
+        odd-alternating predecessor paths from a peak down to the bud: an
+        even-level ``vertex`` is recovered by going up its arc to a peak, across
+        the bridge to the other peak, and down the other arc to the bud.
 
         INPUT:
 
@@ -2911,7 +2944,7 @@ class MicaliVaziraniMatching:
           the surrounding path, excluded so that the expansion stays
           vertex-disjoint from it (the reconstructed path must be simple)
 
-        OUTPUT: the list of vertices of the path inside the blossom (empty if
+        OUTPUT: the list of vertices of the path inside the petal (empty if
         it cannot be reconstructed)
 
         EXAMPLES:
@@ -2937,7 +2970,7 @@ class MicaliVaziraniMatching:
         replaces Python call recursion -- and its stack-depth limit -- by a
         heap-allocated stack, so :meth:`unfold_petal` and
         :meth:`unfold_path_in_petal` cannot overflow the interpreter stack on
-        deeply nested blossoms.
+        deeply nested petals.
         """
         call_stack = [root_call]
         result = None
@@ -2964,7 +2997,7 @@ class MicaliVaziraniMatching:
         The logic mirrors the recursive version; each recursive call is a
         ``yield`` of the corresponding sub-generator. ``visited`` carries the
         vertices already used by the path being assembled so that the two arcs
-        of the blossom -- and any further nested blossom -- stay vertex-disjoint,
+        of the petal -- and any further nested petal -- stay vertex-disjoint,
         keeping the reconstructed path simple. It is an internal recursion
         argument; external callers pass ``None``.
         """
@@ -2972,13 +3005,13 @@ class MicaliVaziraniMatching:
             visited = set()
         path = list()
         petal = self.vertex_petal_map[vertex]
-        bud = petal.base
+        bud = petal.bud
         if self.max_level(vertex) % 2:
             path = yield self._unfold_path_in_petal_generator(
                 vertex, bud, petal, visited)
         else:
             # An even-level ``vertex`` is reached by going up one arc of the
-            # blossom to a peak, across the bridge ``peaks[0]``--``peaks[1]``,
+            # petal to a peak, across the bridge ``peaks[0]``--``peaks[1]``,
             # and down the other arc to ``bud``. The colour of ``vertex`` fixes
             # which peak its arc starts from. The two arcs must be
             # vertex-disjoint, so they are searched *jointly*: the arc to
@@ -3067,7 +3100,7 @@ class MicaliVaziraniMatching:
         branch that would revisit one -- and thus build a non-simple, invalid
         path -- is rejected and the next branch is tried.
 
-        When ``continuation`` is given (used to join the two arcs of a blossom),
+        When ``continuation`` is given (used to join the two arcs of a petal),
         the search is *joint*: every time it completes a segment reaching
         ``end_vertex`` it runs ``continuation`` on the segment's vertex set to
         reconstruct the remaining arc; the segment is accepted only if that
@@ -3098,7 +3131,7 @@ class MicaliVaziraniMatching:
         EXAMPLES:
 
         Exercised through :meth:`unfold_petal` whenever an augmenting path runs
-        through a branching or nested blossom::
+        through a branching or nested petal::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 1)])
@@ -3116,15 +3149,15 @@ class MicaliVaziraniMatching:
             return [start_vertex]
 
         # If the segment starts inside a nested petal, expand that petal up to
-        # its base and continue the search from the base.
+        # its bud and continue the search from the bud.
         start_petal = self.vertex_petal_map[start_vertex]
         if start_petal is not None and start_petal != petal:
-            base = start_petal.base
+            bud = start_petal.bud
             head = yield self._unfold_petal_generator(
-                start_vertex, base, visited)
+                start_vertex, bud, visited)
             if not head:
                 return []
-            if base == end_vertex:
+            if bud == end_vertex:
                 if continuation is not None:
                     remaining = yield continuation(visited | set(head))
                     if not remaining:
@@ -3132,11 +3165,11 @@ class MicaliVaziraniMatching:
                     result_holder[0] = remaining
                 return head
             tail = yield self._unfold_path_in_petal_generator(
-                base, end_vertex, petal, visited | set(head),
+                bud, end_vertex, petal, visited | set(head),
                 continuation, result_holder)
             if not tail:
                 return []
-            # ``head`` ends at ``base`` and ``tail`` starts at ``base``.
+            # ``head`` ends at ``bud`` and ``tail`` starts at ``bud``.
             return head[:-1] + tail
 
         visited = visited | {start_vertex}
@@ -3145,7 +3178,7 @@ class MicaliVaziraniMatching:
         # steps, preserving predecessor order: a predecessor equal to
         # ``end_vertex`` finishes the segment; one lying in this petal is a
         # direct (single-edge) step; one lying in a *different* petal is a
-        # nested blossom to descend into.
+        # nested petal to descend into.
         direct_steps = []
         nested_steps = []
         reaches_end = False
@@ -3185,19 +3218,19 @@ class MicaliVaziraniMatching:
 
         for predecessor in nested_steps:
             nested_petal = self.vertex_petal_map[predecessor]
-            base = nested_petal.base
+            bud = nested_petal.bud
             # An unmatched edge into the nested petal expands the whole petal; a
             # matched edge resumes the path inside it. This mirrors the two ways
-            # an alternating path can enter a contracted blossom.
+            # an alternating path can enter a contracted petal.
             if self.mate[start_vertex] != predecessor:
                 addition = yield self._unfold_petal_generator(
-                    predecessor, base, visited)
+                    predecessor, bud, visited)
             else:
                 addition = yield self._unfold_path_in_petal_generator(
-                    predecessor, base, nested_petal, visited)
+                    predecessor, bud, nested_petal, visited)
             if not addition or any(v in visited for v in addition):
                 continue
-            if base == end_vertex:
+            if bud == end_vertex:
                 if continuation is not None:
                     remaining = yield continuation(visited | set(addition))
                     if not remaining:
@@ -3205,10 +3238,10 @@ class MicaliVaziraniMatching:
                     result_holder[0] = remaining
                 return [start_vertex] + addition
             tail = yield self._unfold_path_in_petal_generator(
-                base, end_vertex, petal, visited | set(addition),
+                bud, end_vertex, petal, visited | set(addition),
                 continuation, result_holder)
             if tail:
-                # ``addition`` ends at ``base`` and ``tail`` starts at ``base``.
+                # ``addition`` ends at ``bud`` and ``tail`` starts at ``bud``.
                 return [start_vertex] + addition + tail[1:]
 
         return []
@@ -3368,7 +3401,7 @@ class MicaliVaziraniMatching:
         Starting at ``peak``, the predecessor links are followed downwards using
         ``support`` -- the sequence of buds produced by the double DFS -- as a
         guide: for each bud the predecessors are popped until the matching bud
-        is reached. Whenever a vertex lies inside a contracted blossom, the
+        is reached. Whenever a vertex lies inside a contracted petal, the
         corresponding segment is expanded with :meth:`unfold_petal` so that the
         returned sequence is a genuine alternating path in the original graph.
 
@@ -3503,8 +3536,8 @@ class MicaliVaziraniMatching:
         a maximum matching, so an augmentation -- and hence a petal unfolding --
         happens even with the seed in place (unlike the triangle chains below,
         which the greedy seed already solves). They exercise the double
-        depth-first search, blossom formation and petal unfolding
-        (:meth:`DDFS`, :meth:`form_blossom`, :meth:`unfold_petal`,
+        depth-first search, petal formation and petal unfolding
+        (:meth:`DDFS`, :meth:`form_petal`, :meth:`unfold_petal`,
         :meth:`unfold_path_in_petal`, :meth:`find_path`, :meth:`augment`), and
         each returns a valid matching of maximum cardinality::
 
