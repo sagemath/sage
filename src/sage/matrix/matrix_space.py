@@ -102,14 +102,16 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         sage: get_matrix_class(ZZ, 3, 3, False, 'generic')
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
-        sage: get_matrix_class(GF(2^15), 3, 3, False, None)                             # needs sage.rings.finite_rings
+        sage: get_matrix_class(GF(2^15), 3, 3, False, None)  # needs m4rie
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: get_matrix_class(GF(2^17), 3, 3, False, None)                             # needs sage.rings.finite_rings
+        sage: get_matrix_class(GF(2^15), 3, 3, False, None)  # needs !m4rie
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        sage: get_matrix_class(GF(2^17), 3, 3, False, None)
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
         sage: get_matrix_class(GF(2), 2, 2, False, 'm4ri')                              # needs sage.libs.m4ri
         <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
-        sage: get_matrix_class(GF(4), 2, 2, False, 'm4ri')                              # needs sage.libs.m4ri sage.rings.finite_rings
+        sage: get_matrix_class(GF(4), 2, 2, False, 'm4ri')                              # needs m4rie
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: get_matrix_class(GF(7), 2, 2, False, 'linbox-float')                      # needs sage.libs.linbox
         <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
@@ -155,7 +157,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
         sage: type(matrix(GF(2), 2, range(4)))                                          # needs sage.libs.m4ri
         <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
-        sage: type(matrix(GF(64, 'z'), 2, range(4)))                                    # needs sage.libs.m4ri sage.rings.finite_rings
+        sage: type(matrix(GF(64, 'z'), 2, range(4)))                                    # needs m4rie
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(matrix(GF(125, 'z'), 2, range(4)))                       # optional - meataxe, needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
@@ -206,6 +208,8 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         return implementation
 
     if not sparse:
+        from sage.features.m4rie import M4rie
+
         if implementation is None:
             # Choose default implementation:
             if R is sage.rings.integer_ring.ZZ:
@@ -251,11 +255,8 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                         return matrix_mod2_dense.Matrix_mod2_dense
 
                 if R.characteristic() == 2 and R.order() <= 65536:  # 65536 == 2^16
-                    try:
+                    if M4rie().is_present():
                         from . import matrix_gf2e_dense
-                    except ImportError:
-                        pass
-                    else:
                         return matrix_gf2e_dense.Matrix_gf2e_dense
 
                 if (not R.is_prime_field()) and R.order() < 256:
@@ -390,6 +391,8 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                 if R.order() == 2:
                     from . import matrix_mod2_dense
                     return matrix_mod2_dense.Matrix_mod2_dense
+
+                M4rie().require()
                 from . import matrix_gf2e_dense
                 return matrix_gf2e_dense.Matrix_gf2e_dense
             raise ValueError("'m4ri' matrices are only available for fields of characteristic 2 and order <= 65536")
@@ -2876,6 +2879,14 @@ register_unpickle_override('sage.matrix.matrix_integer_2x2',
     'MatrixSpace_ZZ_2x2_class', MatrixSpace)
 register_unpickle_override('sage.matrix.matrix_integer_2x2',
     'MatrixSpace_ZZ_2x2', _MatrixSpace_ZZ_2x2)
-lazy_import('sage.matrix.matrix_gf2e_dense', 'unpickle_matrix_gf2e_dense_v0')
-register_unpickle_override('sage.matrix.matrix_mod2e_dense',
-    'unpickle_matrix_mod2e_dense_v0', unpickle_matrix_gf2e_dense_v0)
+
+def _unpickle_gf2e(a, base_ring, nrows, ncols):
+    from sage.features.m4rie import M4rie
+    M4rie().require()
+    from sage.matrix.matrix_gf2e_dense import unpickle_matrix_gf2e_dense_v0
+    return unpickle_matrix_gf2e_dense_v0(a, base_ring, nrows, ncols)
+
+register_unpickle_override(
+    'sage.matrix.matrix_mod2e_dense',
+    'unpickle_matrix_mod2e_dense_v0',
+    _unpickle_gf2e)
