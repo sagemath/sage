@@ -18,7 +18,7 @@ if not fs.exists(datadir / 'cremona')
   )
 endif
 # Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
-conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
+conf_data.set('SAGE_KENZO_FAS', '${kenzo_prefix}/lib/ecl/kenzo.fas')
 # It can be found, so we don't have to set anything here:
 conf_data.set('NTL_INCDIR', '')
 conf_data.set('NTL_LIBDIR', '')
