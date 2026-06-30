@@ -73,6 +73,13 @@ option(
 )
 
 option(
+  'm4rie',
+  type: 'feature',
+  value: 'auto',
+  description: 'm4rie interface for matrices over GF(2^e)'
+)
+
+option(
   'mcqd',
   type: 'feature',
   value: 'auto',
