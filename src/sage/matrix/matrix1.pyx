@@ -2140,7 +2140,7 @@ cdef class Matrix(Matrix0):
             [ 3  4  5]
             [ 9 10 11]
 
-        The default is to check whether the any index in ``drows`` is out of range. ::
+        The default is to check whether any index in ``drows`` is out of range. ::
 
             sage: A.delete_rows([-1,2,4])
             Traceback (most recent call last):

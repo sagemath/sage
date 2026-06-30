@@ -5141,7 +5141,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: GCD of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+            NotImplementedError: GCD over rings not implemented.
             sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
@@ -5255,7 +5255,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: LCM of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+            TypeError: LCM over non-integral domains not available.
             sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):

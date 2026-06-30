@@ -2279,10 +2279,9 @@ def compute_trace_generic(phi):
     for l in Primes():
         if tr.modulus() >= M:
             break
-        try:
-            P = point_of_order(E, l)
-        except ValueError:
-            continue   # supersingular and l == p
+        if l == p:
+            continue
+        P = point_of_order(E, l)
 
         Q = phi._eval(P)
         if not Q:  # we learn nothing when P lies in the kernel

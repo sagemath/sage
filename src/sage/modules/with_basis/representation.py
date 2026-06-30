@@ -910,7 +910,7 @@ class Representation_abstract:
             sage: v = CF[1].an_element(); v
             2*B[0] + 2*B[1]
             sage: x * v
-            B[1] + B[2]
+            B[0] + B[3]
 
         We reproduce the decomposition matrix for `S_5` over `\GF{2}`::
 

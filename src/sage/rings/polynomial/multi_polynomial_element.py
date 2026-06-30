@@ -186,9 +186,9 @@ class MPolynomial_element(MPolynomial):
             y += c * prod((v ** e for v, e in zip(x, m) if e), one)
         return y
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         """
-        Compare ``self`` to ``right`` with respect to the term order of
+        Compare ``self`` to ``other`` with respect to the term order of
         self.parent().
 
         EXAMPLES::
@@ -215,7 +215,7 @@ class MPolynomial_element(MPolynomial):
             sage: x^4*y^7*z^1 < x^4*y^2*z^3                                             # needs sage.rings.number_field
             False
         """
-        return self.__element.rich_compare(right.__element, op,
+        return self.__element.rich_compare(other.__element, op,
                                            self.parent().term_order().sortkey)
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
@@ -237,16 +237,14 @@ class MPolynomial_element(MPolynomial):
             sage: phi(w/x)
             1/y*z
         """
-        n = self.parent().ngens()
-        if n == 0:
+        if not self.parent().ngens():
             return codomain.coerce(self)
-        y = codomain(0)
         if base_map is None:
             # Just use conversion
             base_map = codomain
-        for (m,c) in self.element().dict().items():
-            y += base_map(c)*prod([ im_gens[i]**m[i] for i in range(n) if m[i] ])
-        return y
+        # self.element() is a PolyDict, its dict() maps ETuple's to coefficents
+        return sum((base_map(c) * prod(g**e for g, e in zip(im_gens, m) if e)
+                    for m, c in self.element().dict().items()), codomain(0))
 
     def number_of_terms(self):
         """
@@ -451,7 +449,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: x._new_constant_poly(R.base_ring()(2),R)
             2
         """
-        return MPolynomial_polydict(P, {P._zero_tuple:x})
+        return MPolynomial_polydict(P, {P._zero_tuple: x})
 
     def _repr_(self):
         """
@@ -1501,10 +1499,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.constant_coefficient()
             0
         """
-        #v = (0,)*int(self.parent().ngens())
+        # v = (0,)*int(self.parent().ngens())
         d = self.element().dict()
         try:
-            return d[polydict.ETuple({},self.parent().ngens())]
+            return d[polydict.ETuple({}, self.parent().ngens())]
         except KeyError:
             return self.parent().base_ring().zero()
 
@@ -1582,7 +1580,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if not self.is_univariate():
             raise TypeError("polynomial must involve at most one variable")
 
-        #construct ring if None
+        # construct ring if None
         if R is None:
             # constant, we just pick first variable from parent
             if self.is_constant():
@@ -1593,24 +1591,24 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         monomial_coefficients = self._MPolynomial_element__element.dict()
 
         if not self.is_constant():
-            var_idx = self.degrees().nonzero_positions()[0] #variable
+            var_idx = self.degrees().nonzero_positions()[0]  # variable
         else:
-            var_idx = 0 #constant
+            var_idx = 0  # constant
             if len(monomial_coefficients) == 0:
                 return R(0)
 
-        #construct list
+        # construct list
         lookup = [0,] * len(next(iter(monomial_coefficients)))
         coefficients = []
         for degree in range(max(m[var_idx]
                                 for m in monomial_coefficients.keys()) + 1):
             lookup[var_idx] = int(degree)
             try:
-                coefficients.append( monomial_coefficients[ polydict.ETuple(lookup) ] ) #if we find something, add the coefficient
+                coefficients.append(monomial_coefficients[polydict.ETuple(lookup)])  # if we find something, add the coefficient
             except KeyError:
-                coefficients.append( 0 ) #else add zero
+                coefficients.append(0)  # else add zero
 
-        #construct polynomial
+        # construct polynomial
         return R(coefficients)
 
     def variables(self):
@@ -1731,7 +1729,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             R = self.parent()
             f = self._MPolynomial_element__element.lcmt(R.term_order().greater_tuple)
             one = R.base_ring().one()
-            self.__lm = MPolynomial_polydict(R,polydict.PolyDict({f: one}, check=False))
+            self.__lm = MPolynomial_polydict(R, polydict.PolyDict({f: one}, check=False))
             return self.__lm
 
     def lc(self):
@@ -1753,7 +1751,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 return self.base_ring()._zero_element
             R = self.parent()
             f = self._MPolynomial_element__element.dict()
-            self.__lc = f[self._MPolynomial_element__element.lcmt( R.term_order().greater_tuple )]
+            self.__lc = f[self._MPolynomial_element__element.lcmt(
+                R.term_order().greater_tuple)]
             return self.__lc
 
     def lt(self):
@@ -2127,9 +2126,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if R.ngens() == 0:
             base_ring = self.base_ring()
             if base_ring.is_field():
-                return Factorization([],unit=self.base_ring()(self))
+                return Factorization([], unit=self.base_ring()(self))
             F = base_ring(self).factor()
-            return Factorization([(R(f),m) for f,m in F], unit=F.unit())
+            return Factorization([(R(f), m) for f, m in F], unit=F.unit())
 
         base_ring = self.base_ring()
         if hasattr(base_ring, '_factor_multivariate_polynomial'):
@@ -2249,12 +2248,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             f = self.parent().flattening_morphism()
             if f.domain() != f.codomain():
                 g = f.section()
-                q,r = f(self).quo_rem(f(right))
+                q, r = f(self).quo_rem(f(right))
                 return g(q), g(r)
             raise
         else:
             X = self._singular_().division(right._singular_())
-            return R(X[1][1,1]), R(X[2][1])
+            return R(X[1][1, 1]), R(X[2][1])
 
     @handle_AA_and_QQbar
     def resultant(self, other, variable=None):
