@@ -3630,6 +3630,8 @@ def rational_kernel_polynomial(E, l, *, all=False):
     r"""
     Computes one or all kernel polynomials of `E` for an `\ell`-isogeny.
 
+    The `j`-invariant of `E` must not equal `0` or `1728`.
+
     INPUT:
 
     - ``E`` -- elliptic curve
@@ -3667,6 +3669,9 @@ def rational_kernel_polynomial(E, l, *, all=False):
     https://github.com/travismo/beyond-the-SEA/blob/edd845a/isogenies.sage
     of [MPSW25]_.
     """
+    if E.j_invariant() in (0, 1728):
+        raise NotImplementedError('the case j(E) ∈ {0, 1728} is currently not supported')
+
     if any(E.a_invariants()[:-2]):
         Ew = E.short_weierstrass_model()
         iso = E.isomorphism_to(Ew)
