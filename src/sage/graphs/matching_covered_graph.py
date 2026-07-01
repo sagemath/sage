@@ -165,8 +165,11 @@ class MatchingCoveredGraph(Graph):
 
       If set to ``None``, a matching is computed using the other parameters.
 
-    - ``algorithm`` -- string (default: ``'Edmonds'``); the algorithm to be
-      used to compute a maximum matching of the graph among
+    - ``algorithm`` -- string (default: ``None``); the algorithm used to
+      compute a maximum matching of the graph, one of
+
+      - ``None`` -- the graph's own default is used (the Micali--Vazirani
+        algorithm for a general graph, Hopcroft--Karp for a bipartite graph),
 
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
 
@@ -624,7 +627,7 @@ class MatchingCoveredGraph(Graph):
         TypeError: input data is of unknown type
     """
 
-    def __init__(self, data=None, matching=None, algorithm='Edmonds',
+    def __init__(self, data=None, matching=None, algorithm=None,
                  solver=None, verbose=0, integrality_tolerance=0.001,
                  *args, **kwds):
         r"""
@@ -900,7 +903,7 @@ class MatchingCoveredGraph(Graph):
         except Exception as exception:
             raise exception
 
-    def _upgrade_from_graph(self, data=None, matching=None, algorithm='Edmonds',
+    def _upgrade_from_graph(self, data=None, matching=None, algorithm=None,
                             solver=None, verbose=0, integrality_tolerance=0.001,
                             *args, **kwds):
         r"""
@@ -2307,7 +2310,7 @@ class MatchingCoveredGraph(Graph):
         return False
 
     @doc_index('Overwritten methods')
-    def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
+    def has_perfect_matching(G, algorithm=None, solver=None, verbose=0,
                              *, integrality_tolerance=1e-3):
         r"""
         Check whether the graph has a perfect matching.
@@ -2321,10 +2324,18 @@ class MatchingCoveredGraph(Graph):
 
         INPUT:
 
-        - ``algorithm`` -- string (default: ``'Edmonds'``)
+        - ``algorithm`` -- string (default: ``None``)
+
+          - ``None`` -- the graph's own default is used (the Micali--Vazirani
+            algorithm for a general graph, Hopcroft--Karp for a bipartite
+            graph).
 
           - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
             find a matching of maximal cardinality, then check whether this
+            cardinality is half the number of vertices of the graph.
+
+          - ``'Micali-Vazirani'`` uses the Micali--Vazirani algorithm to find a
+            matching of maximal cardinality, then check whether this
             cardinality is half the number of vertices of the graph.
 
           - ``'LP_matching'`` uses a Linear Program to find a matching of
@@ -2375,7 +2386,7 @@ class MatchingCoveredGraph(Graph):
             True
 
         Providing with an algorithm, that is not one of ``'Edmonds'``,
-        ``'LP_matching'`` or ``'LP'``::
+        ``'Micali-Vazirani'``, ``'LP_matching'`` or ``'LP'``::
 
             sage: S = graphs.StaircaseGraph(4)
             sage: J = MatchingCoveredGraph(S)
@@ -2383,13 +2394,14 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be set to 'Edmonds',
-            'LP_matching' or 'LP'
+            'Micali-Vazirani', 'LP_matching' or 'LP'
         """
-        if algorithm in ['Edmonds', 'LP_matching', 'LP']:
+        if algorithm in [None, 'Edmonds', 'Micali-Vazirani',
+                         'LP_matching', 'LP']:
             return True
 
         raise ValueError('algorithm must be set to \'Edmonds\', '
-                         '\'LP_matching\' or \'LP\'')
+                         '\'Micali-Vazirani\', \'LP_matching\' or \'LP\'')
 
     @doc_index('Overwritten methods')
     def is_biconnected(self):
