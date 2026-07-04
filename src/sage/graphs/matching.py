@@ -2008,6 +2008,44 @@ class MicaliVaziraniMatching:
         bud: int
         peaks: tuple[int, int]
 
+    @dataclass
+    class DDFSRun:
+        r"""
+        The result of one :meth:`DDFS` run on a bridge.
+
+        The double DFS either finds two vertex-disjoint paths to distinct free
+        vertices -- an augmenting path, with ``bottleneck`` ``None`` -- or
+        collapses onto a single highest ``bottleneck`` vertex, the bud of a new
+        petal. ``red_support`` and ``green_support`` are the vertices visited by
+        the red and green searches; ``encountered_deleted_vertex`` is ``True``
+        if either search touched a vertex erased earlier in the same phase.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MicaliVaziraniMatching.DDFSRun([], [], None, False).is_augmenting
+            True
+            sage: MicaliVaziraniMatching.DDFSRun([], [], 3, False).is_augmenting
+            False
+        """
+        red_support: list[int]
+        green_support: list[int]
+        bottleneck: int | None
+        encountered_deleted_vertex: bool
+
+        @property
+        def is_augmenting(self) -> bool:
+            r"""
+            Return whether an augmenting path was found (no ``bottleneck``).
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MicaliVaziraniMatching.DDFSRun([], [], None, False).is_augmenting
+                True
+            """
+            return self.bottleneck is None
+
     def __init__(self, G) -> None:
         r"""
         Set up the per-instance state for the Micali--Vazirani algorithm.
@@ -2601,14 +2639,13 @@ class MicaliVaziraniMatching:
                self.deletion_phase[v] == self.phase_index:
                 continue
 
-            (red_support, green_support, bottleneck,
-             encountered_deleted_vertex) = self.DDFS(u, v)
+            result = self.DDFS(u, v)
 
-            # if the bridge has been augmented
-            if bottleneck is None:
-                if not encountered_deleted_vertex:
+            # if the bridge yields an augmenting path
+            if result.is_augmenting:
+                if not result.encountered_deleted_vertex:
                     augmentation_success = self.augment(
-                        red_support, green_support, (u, v, l))
+                        result.red_support, result.green_support, (u, v, l))
                     if augmentation_success:
                         is_augmented = True
                         # maximum matching reached (>= N - 1 vertices matched);
@@ -2616,10 +2653,11 @@ class MicaliVaziraniMatching:
                         if self.matching_size == self.N // 2:
                             return is_augmented
 
-            elif not encountered_deleted_vertex:
-                self.form_petal(red_support, green_support, bottleneck, (u, v, l))
-                self.assign_max_levels(red_support, search_level)
-                self.assign_max_levels(green_support, search_level)
+            elif not result.encountered_deleted_vertex:
+                self.form_petal(result.red_support, result.green_support,
+                                result.bottleneck, (u, v, l))
+                self.assign_max_levels(result.red_support, search_level)
+                self.assign_max_levels(result.green_support, search_level)
 
         if is_augmented:
             self.num_augmentations += 1
@@ -2687,7 +2725,7 @@ class MicaliVaziraniMatching:
         self,
         source_red_vertex: int,
         source_green_vertex: int,
-    ) -> tuple[list[int], list[int], int | None, bool]:
+    ) -> DDFSRun:
         r"""
         Run the double depth-first search from the two ends of a bridge.
 
@@ -2703,10 +2741,10 @@ class MicaliVaziraniMatching:
         - ``source_red_vertex`` -- integer; one endpoint of the bridge
         - ``source_green_vertex`` -- integer; the other endpoint
 
-        OUTPUT: a tuple ``(red_support, green_support, bottleneck,
-        encountered_deleted_vertex)``. ``bottleneck`` is ``None`` when an
-        augmenting path is found, otherwise the bottleneck vertex; the two
-        supports are the vertices visited by each search.
+        OUTPUT: a :class:`DDFSRun`. Its ``bottleneck`` is ``None`` when an
+        augmenting path is found (``is_augmenting`` is then ``True``), otherwise
+        the bottleneck vertex; ``red_support`` and ``green_support`` are the
+        vertices visited by each search.
 
         EXAMPLES:
 
@@ -2730,7 +2768,7 @@ class MicaliVaziraniMatching:
 
         # A bridge whose two ends already share a bud encloses no new structure.
         if red_root == green_root:
-            return [], [], red_root, encountered_deleted_vertex
+            return self.DDFSRun([], [], red_root, encountered_deleted_vertex)
 
         phase = self.phase_index
 
@@ -2803,8 +2841,8 @@ class MicaliVaziraniMatching:
 
             if red_level == 0 and green_level == 0 and red_center != green_center:
                 # Two disjoint paths to two distinct free vertices.
-                return (stack[RED][:], stack[GREEN][:], None,
-                        encountered_deleted_vertex)
+                return self.DDFSRun(stack[RED][:], stack[GREEN][:], None,
+                                       encountered_deleted_vertex)
 
             color = RED if red_level >= green_level else GREEN
             center = stack[color][-1]
@@ -2834,8 +2872,9 @@ class MicaliVaziraniMatching:
                     stack[color].pop()
                     continue
                 red_support, green_support = support_minus(opponent_center)
-                return (red_support, green_support, opponent_center,
-                        encountered_deleted_vertex)
+                return self.DDFSRun(red_support, green_support,
+                                       opponent_center,
+                                       encountered_deleted_vertex)
 
             # The advancing search reached the opponent's center ``m``: is ``m``
             # the highest bottleneck? Following [Vaz2020]_, green tries to step
@@ -2858,8 +2897,8 @@ class MicaliVaziraniMatching:
                     rem[m] = buds(m)
                 else:
                     red_support, green_support = support_minus(m)
-                    return (red_support, green_support, m,
-                            encountered_deleted_vertex)
+                    return self.DDFSRun(red_support, green_support, m,
+                                           encountered_deleted_vertex)
 
     # Each vertex can only belong to one petal
     # The bud cannot be part of the petal
