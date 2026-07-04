@@ -2046,7 +2046,7 @@ class MicaliVaziraniMatching:
             """
             return self.bottleneck is None
 
-    def __init__(self, G) -> None:
+    def __init__(self, G, extended_phases: bool = True) -> None:
         r"""
         Set up the per-instance state for the Micali--Vazirani algorithm.
 
@@ -2058,6 +2058,14 @@ class MicaliVaziraniMatching:
           vertices are dropped, and the remaining vertices are relabelled to
           `0, 1, \ldots, n - 1`. Edge labels are ignored.
 
+        - ``extended_phases`` -- boolean (default: ``True``); the phase-
+          termination policy. If ``True``, use the *extended search phases* of
+          Huang and Stein [HS2017]_, in which one phase keeps growing its search
+          structure and augmenting at successive tenacity levels. If ``False``,
+          use the classic Micali--Vazirani phase, which ends as soon as a level
+          augments. Both compute a maximum-cardinality matching; the extended
+          variant rebuilds the search structure less often. See :meth:`search`.
+
         EXAMPLES::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
@@ -2066,6 +2074,13 @@ class MicaliVaziraniMatching:
             10
             sage: MV.matching_size
             0
+
+        The classic (non-extended) phase policy computes the same maximum::
+
+            sage: MV = MicaliVaziraniMatching(graphs.PetersenGraph(),
+            ....:                             extended_phases=False)
+            sage: len(MV.get_matching())
+            5
 
         TESTS::
 
@@ -2170,6 +2185,11 @@ class MicaliVaziraniMatching:
         self.matching_size = 0
         self.phase_index = 0
         self.num_augmentations = 0
+
+        # Phase-termination policy (see :meth:`search`): ``True`` selects the
+        # Huang--Stein extended search phases, ``False`` the classic
+        # Micali--Vazirani phase that stops at the first augmenting level.
+        self.extended_phases = extended_phases
 
     def is_exposed(self, v: int) -> bool:
         r"""
@@ -3572,10 +3592,12 @@ class MicaliVaziraniMatching:
         extends the breadth-first structure by one tenacity step and
         :meth:`MAX` processes the bridges discovered so far, running the double
         DFS and augmenting along every minimum-length augmenting path it finds.
-        The phase stops as soon as augmentations occur at some level, or when
-        :meth:`MIN` reports that the search structure is exhausted. This is the
-        *extended search phases* variant of Huang and Stein [HS2017]_ (see the
-        class docstring).
+        With ``extended_phases`` (the default), the phase keeps growing and
+        augmenting at successive levels until :meth:`MIN` reports the search
+        structure exhausted -- the *extended search phases* of Huang and Stein
+        [HS2017]_. With ``extended_phases`` set to ``False``, the phase ends at
+        the first level that augments -- the classic Micali--Vazirani phase.
+        Either way the maximum is reached once no augmenting path remains.
 
         INPUT: none
 
@@ -3601,6 +3623,11 @@ class MicaliVaziraniMatching:
             augmentation_found = self.MAX(search_level)
             if search_complete and not self.num_augmentations:
                 return False
+
+            # Classic Micali--Vazirani ends a phase at its first augmenting
+            # level; the extended variant keeps growing until MIN is exhausted.
+            if not self.extended_phases and self.num_augmentations:
+                return True
 
             search_level += 1
         return True
