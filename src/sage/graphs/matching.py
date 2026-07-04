@@ -1969,6 +1969,15 @@ class MicaliVaziraniMatching:
     #: ``mate`` array used throughout the matching literature.
     EXPOSED = -1
 
+    #: Colors of the two searches run by the double DFS (:meth:`DDFS`): a *red*
+    #: search and a *green* search. ``color[v]`` records which side of a petal
+    #: vertex ``v`` was attached to.
+    RED, GREEN = 0, 1
+
+    #: Sentinel stored in ``color[v]`` before ``v`` is attached to a petal side.
+    #: Keeps ``color`` homogeneously ``int`` (cf. :attr:`EXPOSED`).
+    NO_COLOR = -1
+
     @dataclass
     class Petal:
         r"""
@@ -2099,7 +2108,7 @@ class MicaliVaziraniMatching:
         self.odd_level: list[int] = [self.INFINITY] * self.N
         self.predecessor: list[list[int]] = [[] for _ in range(self.N)]
         self.successor: list[list[int]] = [[] for _ in range(self.N)]
-        self.color: list[int | None] = [None] * self.N
+        self.color: list[int] = [self.NO_COLOR] * self.N
         self.search_level_vertices: list[int] = list(range(self.N))
 
         # Edge indexing must be set up before ``edge_scanned``, which is keyed
@@ -2365,7 +2374,7 @@ class MicaliVaziraniMatching:
             self.successor[u] = []
             self.vertex_petal_map[u] = None
             self.vertex_bud_map[u] = u
-            self.color[u] = None
+            self.color[u] = self.NO_COLOR
 
         for u, v in self.G.edge_iterator(labels=False):
             edge_index = self.edge_to_index(u, v)
@@ -2535,14 +2544,14 @@ class MicaliVaziraniMatching:
                self.deletion_phase[v] == self.phase_index:
                 continue
 
-            (left_support, right_support, bottleneck,
+            (red_support, green_support, bottleneck,
              encountered_deleted_vertex) = self.DDFS(u, v)
 
             # if the bridge has been augmented
             if bottleneck is None:
                 if not encountered_deleted_vertex:
                     augmentation_success = self.augment(
-                        left_support, right_support, (u, v, l))
+                        red_support, green_support, (u, v, l))
                     if augmentation_success:
                         is_augmented = True
                         # maximum matching reached (>= N - 1 vertices matched);
@@ -2551,9 +2560,9 @@ class MicaliVaziraniMatching:
                             return is_augmented
 
             elif not encountered_deleted_vertex:
-                self.form_petal(left_support, right_support, bottleneck, (u, v, l))
-                self.label_max(left_support, search_level)
-                self.label_max(right_support, search_level)
+                self.form_petal(red_support, green_support, bottleneck, (u, v, l))
+                self.label_max(red_support, search_level)
+                self.label_max(green_support, search_level)
 
         if is_augmented:
             self.num_augmentations += 1
@@ -2653,7 +2662,7 @@ class MicaliVaziraniMatching:
             2
         """
         encountered_deleted_vertex = False
-        RED, GREEN = 0, 1
+        RED, GREEN = self.RED, self.GREEN
         other_color = (GREEN, RED)
 
         def buds(vertex):
@@ -2804,8 +2813,8 @@ class MicaliVaziraniMatching:
     # ******************************
     def form_petal(
         self,
-        left_support: list[int],
-        right_support: list[int],
+        red_support: list[int],
+        green_support: list[int],
         bud: int,
         bridge: Edge,
     ) -> None:
@@ -2818,8 +2827,8 @@ class MicaliVaziraniMatching:
 
         INPUT:
 
-        - ``left_support`` -- list of integers; the red side of the petal
-        - ``right_support`` -- list of integers; the green side of the petal
+        - ``red_support`` -- list of integers; the red side of the petal
+        - ``green_support`` -- list of integers; the green side of the petal
         - ``bud`` -- integer; the bud (bottleneck) of the petal
         - ``bridge`` -- the bridge edge ``(u, v, label)`` that formed it
 
@@ -2832,8 +2841,8 @@ class MicaliVaziraniMatching:
             2
         """
         petal = self.Petal(bud=bud, peaks=(bridge[0], bridge[1]))
-        self._attach_petal_side(left_support, bud, petal, 0)
-        self._attach_petal_side(right_support, bud, petal, 1)
+        self._attach_petal_side(red_support, bud, petal, self.RED)
+        self._attach_petal_side(green_support, bud, petal, self.GREEN)
 
     def _attach_petal_side(
         self,
@@ -3021,7 +3030,7 @@ class MicaliVaziraniMatching:
             # is searched avoiding it (the ``continuation``). The vertex-arc
             # backtracks whenever the bud-arc cannot avoid it, so a simple path
             # is found whenever one exists.
-            if not self.color[vertex]:
+            if self.color[vertex] == self.RED:
                 vertex_peak, bud_peak = petal.peaks[0], petal.peaks[1]
             else:
                 vertex_peak, bud_peak = petal.peaks[1], petal.peaks[0]
@@ -3312,15 +3321,15 @@ class MicaliVaziraniMatching:
     # ******************************
     def augment(
         self,
-        left_support: list[int],
-        right_support: list[int],
+        red_support: list[int],
+        green_support: list[int],
         bridge: Edge,
     ) -> bool:
         r"""
         Augment the current matching along a discovered augmenting path.
 
         The two halves of the augmenting path meet at ``bridge``. Each half is
-        reconstructed from its support with :meth:`find_path`, the left half is
+        reconstructed from its support with :meth:`find_path`, the red half is
         reversed, and the two are spliced into a single free-to-free path. The
         spliced path is validated with :meth:`_is_valid_augmenting_path` and,
         only if it is well formed, every edge along it is toggled (matched edges
@@ -3332,9 +3341,9 @@ class MicaliVaziraniMatching:
 
         INPUT:
 
-        - ``left_support`` -- list of integers; the buds tracing the left half
+        - ``red_support`` -- list of integers; the buds tracing the red half
           of the path down to a free vertex
-        - ``right_support`` -- list of integers; the buds tracing the right half
+        - ``green_support`` -- list of integers; the buds tracing the green half
         - ``bridge`` -- the :class:`Edge` whose endpoints are the two peaks
           where the halves meet
 
@@ -3350,16 +3359,16 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             2
         """
-        left_path = self.find_path(left_support, bridge[0])
-        right_path = self.find_path(right_support, bridge[1])
-        if not left_path or not right_path:
+        red_path = self.find_path(red_support, bridge[0])
+        green_path = self.find_path(green_support, bridge[1])
+        if not red_path or not green_path:
             # Could not construct a valid augmenting path
             return False
 
-        # The left path needs to be reversed to go from the free vertex to the
+        # The red path needs to be reversed to go from the free vertex to the
         # bridge vertex
-        left_path.reverse()
-        path = left_path + right_path
+        red_path.reverse()
+        path = red_path + green_path
 
         if not self._is_valid_augmenting_path(path):
             # Reject a malformed reconstruction rather than corrupt the matching
