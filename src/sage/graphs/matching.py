@@ -1373,8 +1373,8 @@ def matching(G, value_only=False, algorithm=None,
         sage: g.matching(algorithm='somethingdifferent')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be set to one of the following: 'Edmonds,'
-        'LP,' or 'Micali-Vazirani'
+        ValueError: algorithm must be set to one of the following: 'Edmonds',
+        'LP', or 'Micali-Vazirani'
 
     Micali-Vazirani algorithm computes a maximum cardinality matching; the
     parameter ``use_edge_labels`` must be set to ``False``::
@@ -1485,8 +1485,8 @@ def matching(G, value_only=False, algorithm=None,
 
         return Integer(len(M)) if value_only else M
 
-    raise ValueError('algorithm must be set to one of the following: '
-                 '\'Edmonds,\' \'LP,\' or \'Micali-Vazirani\'')
+    raise ValueError("algorithm must be set to one of the following: "
+                     "'Edmonds', 'LP', or 'Micali-Vazirani'")
 
 
 def perfect_matchings(G, labels=False):
@@ -3468,7 +3468,9 @@ class MicaliVaziraniMatching:
         :meth:`MAX` processes the bridges discovered so far, running the double
         DFS and augmenting along every minimum-length augmenting path it finds.
         The phase stops as soon as augmentations occur at some level, or when
-        :meth:`MIN` reports that the search structure is exhausted.
+        :meth:`MIN` reports that the search structure is exhausted. This is the
+        *extended search phases* variant of Huang and Stein [HS2017]_ (see the
+        class docstring).
 
         INPUT: none
 
