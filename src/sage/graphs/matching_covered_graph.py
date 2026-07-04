@@ -671,7 +671,9 @@ class MatchingCoveredGraph(Graph):
                 self._matching = matching
 
             else:
-                self._matching = Graph(self).matching()
+                self._matching = Graph(self).matching(
+                    algorithm=algorithm, solver=solver, verbose=verbose,
+                    integrality_tolerance=integrality_tolerance)
 
         else:
             raise TypeError('input data is of unknown type')
