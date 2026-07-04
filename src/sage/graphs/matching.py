@@ -2417,6 +2417,58 @@ class MicaliVaziraniMatching:
         """
         return max(self.even_level[vertex], self.odd_level[vertex])
 
+    def is_outer(self, vertex: int) -> bool:
+        r"""
+        Return whether ``vertex`` is *outer* (its ``min_level`` is even).
+
+        A vertex is outer when the shortest alternating path reaching it from a
+        free vertex has even length, that is ``even_level < odd_level``.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+            sage: MV.start_new_phase()
+            sage: MV.is_outer(0)
+            True
+        """
+        return self.even_level[vertex] < self.odd_level[vertex]
+
+    def is_prop(self, edge_index: int) -> bool:
+        r"""
+        Return whether the edge indexed ``edge_index`` is a *prop*.
+
+        A prop is an edge on a ``min_level`` alternating path (a tree edge of
+        the phase's breadth-first search); every other scanned edge is a
+        *bridge* (see :meth:`is_bridge`).
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+            sage: MV.start_new_phase()
+            sage: MV.is_prop(0)
+            False
+        """
+        return edge_index in self.prop_edges
+
+    def is_bridge(self, edge_index: int) -> bool:
+        r"""
+        Return whether the edge indexed ``edge_index`` is a *bridge*.
+
+        A bridge is a scanned edge that is not a prop (see :meth:`is_prop`);
+        bridges are bucketed by their tenacity and processed by :meth:`DDFS`.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+            sage: MV.start_new_phase()
+            sage: MV.is_bridge(0)
+            True
+        """
+        return not self.is_prop(edge_index)
+
     # ******************************
     # Primary Subroutine: Find min_level of vertices
     # ******************************
@@ -2621,7 +2673,7 @@ class MicaliVaziraniMatching:
                     # File the bridge under its tenacity, but only once that
                     # tenacity is determined (a neighbor whose even level is
                     # still infinite leaves it unknown for now).
-                    if edge_index not in self.prop_edges:
+                    if self.is_bridge(edge_index):
                         tenacity = max_level + self.even_level[neighbor] + 1
                         if tenacity < self.INFINITY:
                             self.bridges_by_tenacity[tenacity].append(edge_index)
@@ -3022,7 +3074,7 @@ class MicaliVaziraniMatching:
         path = list()
         petal = self.vertex_petal_map[vertex]
         bud = petal.bud
-        if self.max_level(vertex) % 2:
+        if self.is_outer(vertex):
             path = yield self._unfold_path_in_petal_generator(
                 vertex, bud, petal, visited)
         else:
