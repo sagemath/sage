@@ -1894,6 +1894,11 @@ class MicaliVaziraniMatching:
     (:meth:`unfold_petal`; the *open* operation of the papers) expands it back
     into a genuine alternating path of the input graph.
 
+    The core procedures :meth:`MIN`, :meth:`MAX` and :meth:`DDFS` are spelled in
+    upper case to match the procedure names of [MV1980]_ and [Vaz2020]_. This is
+    a deliberate departure from the usual lower-case method naming, kept so the
+    code maps one-to-one onto the papers; it should not be "corrected".
+
     Each phase runs in `O(|E|)` time apart from the maintenance of blossom
     bases, which is done with a union-find structure (see :meth:`get_bud` and
     :meth:`form_petal`). Because the base of a blossom must stay the
@@ -2086,14 +2091,14 @@ class MicaliVaziraniMatching:
         self.vertex_to_index = {u: i for i, u in enumerate(self.index_to_vertex)}
         self.G.relabel(perm=self.vertex_to_index, inplace=True)
 
-        self.tenacity_bridges_map: list[list[int]] = [[] for _ in range(2 * self.N + 2)]
+        self.bridges_by_tenacity: list[list[int]] = [[] for _ in range(2 * self.N + 2)]
         self.deletion_phase: list[int] = [-1] * self.N
         self.vertex_petal_map: list[Any] = [None] * self.N
         self.vertex_bud_map: list[int] = list(range(self.N))
 
         # Integer "infinity" sentinel for levels and tenacities, so the level
         # arrays stay homogeneously ``int``. Its value is the length of
-        # ``tenacity_bridges_map`` (``2 * N + 2``), i.e. one past the largest
+        # ``bridges_by_tenacity`` (``2 * N + 2``), i.e. one past the largest
         # valid bucket index ``2 * N + 1``. The guard ``tenacity < self.INFINITY``
         # is then exactly "this tenacity indexes a real bucket", so a bridge is
         # filed only when it fits and an out-of-range tenacity is skipped rather
@@ -2382,7 +2387,7 @@ class MicaliVaziraniMatching:
             self.edge_scanned[edge_index] = -1
 
         for index in range(1, int(2*self.G.order()+2)):
-            self.tenacity_bridges_map[index] = []
+            self.bridges_by_tenacity[index] = []
 
     def min_level(self, vertex: int) -> int:
         r"""
@@ -2487,7 +2492,7 @@ class MicaliVaziraniMatching:
                         # In the case where tenacity is defined and,
                         # thus we know which level the bridge will be processed
                         if tenacity < self.INFINITY:
-                            self.tenacity_bridges_map[tenacity].append(edge_index)
+                            self.bridges_by_tenacity[tenacity].append(edge_index)
 
                         # The case where tenacity is not yet known
                         # (possibly due to the even/ odd level of
@@ -2511,7 +2516,7 @@ class MicaliVaziraniMatching:
         (:meth:`augment`); otherwise they collapse to a *bottleneck* and the
         enclosed odd structure is contracted into a *petal*
         (:meth:`form_petal`) whose vertices are given their ``max_levels``
-        (:meth:`label_max`).
+        (:meth:`assign_max_levels`).
 
         INPUT:
 
@@ -2537,7 +2542,7 @@ class MicaliVaziraniMatching:
         """
         is_augmented = False
 
-        for edge_index in self.tenacity_bridges_map[2 * search_level + 1]:
+        for edge_index in self.bridges_by_tenacity[2 * search_level + 1]:
             u, v = self.index_to_edge[edge_index]
             l = self.G.edge_label(u, v)
             if self.deletion_phase[u] == self.phase_index or \
@@ -2561,8 +2566,8 @@ class MicaliVaziraniMatching:
 
             elif not encountered_deleted_vertex:
                 self.form_petal(red_support, green_support, bottleneck, (u, v, l))
-                self.label_max(red_support, search_level)
-                self.label_max(green_support, search_level)
+                self.assign_max_levels(red_support, search_level)
+                self.assign_max_levels(green_support, search_level)
 
         if is_augmented:
             self.num_augmentations += 1
@@ -2573,7 +2578,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Label vertices after forming a petal
     # ******************************
-    def label_max(self, support: list[int], search_level: int) -> None:
+    def assign_max_levels(self, support: list[int], search_level: int) -> None:
         r"""
         Assign ``max_levels`` to the vertices of a freshly formed petal.
 
@@ -2619,7 +2624,7 @@ class MicaliVaziraniMatching:
                     if edge_index not in self.prop_edges:
                         tenacity = max_level + self.even_level[neighbor] + 1
                         if tenacity < self.INFINITY:
-                            self.tenacity_bridges_map[tenacity].append(edge_index)
+                            self.bridges_by_tenacity[tenacity].append(edge_index)
 
         self.search_level_vertices += next_search_level_vertices
 
