@@ -2332,7 +2332,7 @@ class MicaliVaziraniMatching:
         Every matched vertex is given infinite levels; every unmatched (free)
         vertex is put at ``min_level`` `0` and becomes a root of the next
         breadth-first search. Predecessor/successor lists, petal and bud maps,
-        colours, scanned-edge marks and the tenacity buckets are all cleared.
+        colors, scanned-edge marks and the tenacity buckets are all cleared.
 
         EXAMPLES:
 
@@ -2654,7 +2654,7 @@ class MicaliVaziraniMatching:
         """
         encountered_deleted_vertex = False
         RED, GREEN = 0, 1
-        other_colour = (GREEN, RED)
+        other_color = (GREEN, RED)
 
         def buds(vertex):
             return [self.get_bud(p) for p in self.predecessor[vertex]]
@@ -2668,12 +2668,12 @@ class MicaliVaziraniMatching:
 
         phase = self.phase_index
 
-        # ``owner[v]`` is the colour of the search that has claimed ``v``. A
+        # ``owner[v]`` is the color of the search that has claimed ``v``. A
         # vertex stays claimed when its search backtracks over it, so at the end
         # the claimed vertices are exactly the support of the bridge (the whole
         # set ``V_b - {b}`` of [Vaz2020]_, both branches, not just one path).
-        # ``stack[c]`` is the current root-to-centre path of search ``c`` (its
-        # centre is ``stack[c][-1]``) and ``rem[v]`` holds the predecessor buds
+        # ``stack[c]`` is the current root-to-center path of search ``c`` (its
+        # center is ``stack[c][-1]``) and ``rem[v]`` holds the predecessor buds
         # of ``v`` not yet tried as a next descent step.
         owner = {red_root: RED, green_root: GREEN}
         stack = ([red_root], [green_root])
@@ -2682,39 +2682,39 @@ class MicaliVaziraniMatching:
            self.deletion_phase[green_root] == phase:
             encountered_deleted_vertex = True
 
-        def claim(colour, vertex):
+        def claim(color, vertex):
             nonlocal encountered_deleted_vertex
-            owner[vertex] = colour
+            owner[vertex] = color
             rem[vertex] = buds(vertex)
-            stack[colour].append(vertex)
+            stack[color].append(vertex)
             if self.deletion_phase[vertex] == phase:
                 encountered_deleted_vertex = True
 
-        def descend_below(colour, barrier):
-            # ``colour`` yields ``barrier`` to the other search: it backtracks
+        def descend_below(color, barrier):
+            # ``color`` yields ``barrier`` to the other search: it backtracks
             # *off* ``barrier`` and looks, among its already-open branches, for
             # another route down to a vertex ``w != barrier`` with
             # ``min_level(w) <= min_level(barrier)``.  It never re-enters
             # ``barrier`` (that vertex is the other search's now) nor the other
             # search's territory.  Returns whether it succeeds.
             barrier_level = self.min_level(barrier)
-            if stack[colour][-1] == barrier:
-                stack[colour].pop()
-            while stack[colour]:
-                centre = stack[colour][-1]
-                if centre != barrier and self.min_level(centre) <= barrier_level:
+            if stack[color][-1] == barrier:
+                stack[color].pop()
+            while stack[color]:
+                center = stack[color][-1]
+                if center != barrier and self.min_level(center) <= barrier_level:
                     return True
                 moved = False
-                while rem[centre]:
-                    candidate = rem[centre].pop()
+                while rem[center]:
+                    candidate = rem[center].pop()
                     if candidate == barrier or candidate in owner:
                         continue
-                    claim(colour, candidate)
+                    claim(color, candidate)
                     moved = True
                     break
                 if moved:
                     continue
-                stack[colour].pop()
+                stack[color].pop()
             return False
 
         def support_minus(bottleneck):
@@ -2725,35 +2725,35 @@ class MicaliVaziraniMatching:
             return red_support, green_support
 
         # The two searches descend the predecessor structure in lockstep: at
-        # each step the higher centre (larger ``min_level``; ties go to red)
+        # each step the higher center (larger ``min_level``; ties go to red)
         # moves one step, so they stay level-synchronised and can only meet at
-        # their centres. They either reach two distinct free vertices along
+        # their centers. They either reach two distinct free vertices along
         # vertex-disjoint paths -- an augmenting path -- or collapse onto a
         # single highest bottleneck, the bud of a new petal.
         while True:
-            red_centre, green_centre = stack[RED][-1], stack[GREEN][-1]
-            red_level, green_level = (self.min_level(red_centre),
-                                      self.min_level(green_centre))
+            red_center, green_center = stack[RED][-1], stack[GREEN][-1]
+            red_level, green_level = (self.min_level(red_center),
+                                      self.min_level(green_center))
 
-            if red_level == 0 and green_level == 0 and red_centre != green_centre:
+            if red_level == 0 and green_level == 0 and red_center != green_center:
                 # Two disjoint paths to two distinct free vertices.
                 return (stack[RED][:], stack[GREEN][:], None,
                         encountered_deleted_vertex)
 
-            colour = RED if red_level >= green_level else GREEN
-            centre = stack[colour][-1]
-            opponent_centre = stack[other_colour[colour]][-1]
+            color = RED if red_level >= green_level else GREEN
+            center = stack[color][-1]
+            opponent_center = stack[other_color[color]][-1]
 
             met = False
             claimed = False
-            while rem[centre]:
-                candidate = rem[centre].pop()
-                if candidate == opponent_centre:
+            while rem[center]:
+                candidate = rem[center].pop()
+                if candidate == opponent_center:
                     met = True
                     break
                 if candidate in owner:
                     continue
-                claim(colour, candidate)
+                claim(color, candidate)
                 claimed = True
                 break
 
@@ -2761,22 +2761,22 @@ class MicaliVaziraniMatching:
                 continue
 
             if not met:
-                # ``centre`` is a dead end: backtrack, or -- if back at the root
-                # with nowhere to go -- the opponent's centre dominates every
+                # ``center`` is a dead end: backtrack, or -- if back at the root
+                # with nowhere to go -- the opponent's center dominates every
                 # remaining path and is the bottleneck.
-                if len(stack[colour]) > 1:
-                    stack[colour].pop()
+                if len(stack[color]) > 1:
+                    stack[color].pop()
                     continue
-                red_support, green_support = support_minus(opponent_centre)
-                return (red_support, green_support, opponent_centre,
+                red_support, green_support = support_minus(opponent_center)
+                return (red_support, green_support, opponent_center,
                         encountered_deleted_vertex)
 
-            # The advancing search reached the opponent's centre ``m``: is ``m``
+            # The advancing search reached the opponent's center ``m``: is ``m``
             # the highest bottleneck? Following [Vaz2020]_, green tries to step
             # below ``m`` first, then red; whoever cannot must yield ``m`` to the
             # other, and if neither can, ``m`` is the bottleneck.
-            m = opponent_centre
-            stack[colour].append(m)
+            m = opponent_center
+            stack[color].append(m)
             saved_green = stack[GREEN][:]
             if descend_below(GREEN, m):
                 owner[m] = RED
@@ -2846,7 +2846,7 @@ class MicaliVaziraniMatching:
         Attach one side of a petal to it.
 
         Every vertex of ``support`` is pointed at the petal's bud, assigned the
-        given ``petal`` and coloured by ``direction`` (`0` for the red side,
+        given ``petal`` and colored by ``direction`` (`0` for the red side,
         `1` for the green side).
 
         INPUT:
@@ -3014,7 +3014,7 @@ class MicaliVaziraniMatching:
         else:
             # An even-level ``vertex`` is reached by going up one arc of the
             # petal to a peak, across the bridge ``peaks[0]``--``peaks[1]``,
-            # and down the other arc to ``bud``. The colour of ``vertex`` fixes
+            # and down the other arc to ``bud``. The color of ``vertex`` fixes
             # which peak its arc starts from. The two arcs must be
             # vertex-disjoint, so they are searched *jointly*: the arc to
             # ``vertex`` enumerates candidates and, for each, the arc to ``bud``
