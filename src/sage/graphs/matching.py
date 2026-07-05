@@ -2064,7 +2064,7 @@ class MicaliVaziraniMatching:
             sage: instance.edge_to_index(2, 1)
             1
         """
-        def __init__(self, G):
+        def __init__(self, G: Graph):
             from sage.graphs.graph import Graph
 
             if not isinstance(G, Graph):
@@ -2121,6 +2121,166 @@ class MicaliVaziraniMatching:
             if i > j:
                 i, j = j, i
             return self._edge_to_index[i, j]
+
+    class Petals:
+        r"""
+        Petals of the current phase: a bud union-find plus the petal store.
+
+        Records each vertex's :class:`Petal` and its *bud*, and merges buds as
+        petals combine, so :meth:`get_bud` returns `\mathrm{bud}^*(v)` -- the
+        *base* of the resulting blossom. Reset once per phase via :meth:`reset`.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: petals = MicaliVaziraniMatching(graphs.PathGraph(4)).petals
+            sage: petals.get_bud(2)
+            2
+        """
+        def __init__(self, N: int, petal_class: type,
+                     red: int, green: int, no_color: int):
+            self._N = N
+            self._Petal = petal_class
+            self._RED, self._GREEN, self._NO_COLOR = red, green, no_color
+            self.vertex_bud_map = list(range(N))
+            self.vertex_petal_map = [None] * N
+            self.color = [no_color] * N
+
+        def reset(self) -> None:
+            r"""
+            Reset the petal state at the start of a phase.
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+                sage: MV.petals.vertex_bud_map[0] = 1
+                sage: MV.petals.reset()
+                sage: MV.petals.vertex_bud_map
+                [0, 1, 2]
+            """
+            for u in range(self._N):
+                self.vertex_bud_map[u] = u
+                self.vertex_petal_map[u] = None
+                self.color[u] = self._NO_COLOR
+
+        # ******************************
+        # Path compression: find the bud of a vertex
+        # ******************************
+        def get_bud(self, vertex: int) -> int:
+            r"""
+            Return the bud of ``vertex`` (with path compression).
+
+            Each vertex contracted into a petal points, through
+            ``vertex_bud_map``, towards that petal's *bud*; as petals sharing a
+            vertex merge, the representative becomes `\mathrm{bud}^*(v)`, the
+            *base* of the resulting blossom. This is a union-find structure: the
+            method follows the chain to the representative, then compresses the
+            path so that every vertex along it points straight at it, like the
+            *find* operation of union-find. A vertex in no petal is its own bud.
+
+            The traversal is iterative -- one pass to locate the bud and a second
+            to compress the path -- so a deeply nested chain of petals cannot
+            overflow the call stack.
+
+            INPUT:
+
+            - ``vertex`` -- integer; an internal vertex label
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
+                sage: MV.petals.get_bud(2)
+                2
+
+            TESTS:
+
+            A long bud chain is resolved without recursion, and every vertex on
+            it is compressed to point straight at the bud (the recursive version
+            would exceed the interpreter's recursion limit here)::
+
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(2))
+                sage: MV.petals.vertex_bud_map = list(range(1, 10001)) + [10000]
+                sage: MV.petals.get_bud(0)
+                10000
+                sage: MV.petals.vertex_bud_map[0]
+                10000
+            """
+            bud = vertex
+            while self.vertex_bud_map[bud] != bud:
+                bud = self.vertex_bud_map[bud]
+
+            while vertex != bud:
+                self.vertex_bud_map[vertex], vertex = bud, self.vertex_bud_map[vertex]
+            return bud
+
+        # Each vertex can only belong to one petal
+        # The bud cannot be part of the petal
+        # Each vertex in the petal points to the bud
+
+        # ******************************
+        # Contract a petal
+        # ******************************
+        def form_petal(
+            self,
+            red_support: list[int],
+            green_support: list[int],
+            bud: int,
+            bridge: MicaliVaziraniMatching.Edge,
+        ) -> None:
+            r"""
+            Contract a new petal with the given ``bud``.
+
+            A :class:`Petal` with that ``bud`` and peaks the two endpoints of
+            ``bridge`` is created, and the red and green supports found by the
+            double DFS are attached to it, one per side.
+
+            INPUT:
+
+            - ``red_support`` -- list of integers; the red side of the petal
+            - ``green_support`` -- list of integers; the green side of the petal
+            - ``bud`` -- integer; the bud (bottleneck) of the petal
+            - ``bridge`` -- the bridge edge ``(u, v, label)`` that formed it
+
+            EXAMPLES:
+
+            Triggered whenever a petal forms, e.g. on an odd cycle::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
+                2
+            """
+            petal = self._Petal(bud=bud, peaks=(bridge[0], bridge[1]))
+            self._attach_petal_side(red_support, bud, petal, self._RED)
+            self._attach_petal_side(green_support, bud, petal, self._GREEN)
+
+        def _attach_petal_side(
+            self,
+            support: list[int],
+            bud: int,
+            petal: MicaliVaziraniMatching.Petal,
+            direction: int,
+        ) -> None:
+            r"""
+            Attach one side of a petal to it.
+
+            Every vertex of ``support`` is pointed at the petal's bud, assigned
+            the given ``petal`` and colored by ``direction`` (`0` for the red
+            side, `1` for the green side).
+
+            EXAMPLES:
+
+            Triggered through :meth:`form_petal` when a petal forms::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
+                2
+            """
+            for vertex in support:
+                self.vertex_bud_map[vertex] = self.get_bud(bud)
+                self.vertex_petal_map[vertex] = petal
+                self.color[vertex] = direction
 
     def __init__(self, G, extended_phases: bool = True,
                  check_invariants: bool = False) -> None:
@@ -2205,8 +2365,13 @@ class MicaliVaziraniMatching:
 
         self.bridges_by_tenacity: list[list[int]] = [[] for _ in range(2 * self.N + 2)]
         self.deletion_phase: list[int] = [-1] * self.N
-        self.vertex_petal_map: list[Any] = [None] * self.N
-        self.vertex_bud_map: list[int] = list(range(self.N))
+
+        # Petals of the current phase (bud union-find + petal store). The driver
+        # keeps references to the arrays still read outside it (the petal map
+        # and colours) until those readers move too.
+        self.petals = self.Petals(self.N, self.Petal,
+                                  self.RED, self.GREEN, self.NO_COLOR)
+        self.vertex_petal_map = self.petals.vertex_petal_map
 
         # Integer "infinity" sentinel for levels and tenacities, so the level
         # arrays stay homogeneously ``int``. Its value is the length of
@@ -2225,7 +2390,7 @@ class MicaliVaziraniMatching:
         self.odd_level: list[int] = [self.INFINITY] * self.N
         self.predecessor: list[list[int]] = [[] for _ in range(self.N)]
         self.successor: list[list[int]] = [[] for _ in range(self.N)]
-        self.color: list[int] = [self.NO_COLOR] * self.N
+        self.color = self.petals.color
         self.search_level_vertices: list[int] = list(range(self.N))
 
         # ``edge_scanned`` is keyed by ``edge_to_index`` (see :class:`_Instance`).
@@ -2492,9 +2657,8 @@ class MicaliVaziraniMatching:
 
             self.predecessor[u] = []
             self.successor[u] = []
-            self.vertex_petal_map[u] = None
-            self.vertex_bud_map[u] = u
-            self.color[u] = self.NO_COLOR
+
+        self.petals.reset()
 
         for u, v in self.G.edge_iterator(labels=False):
             edge_index = self.edge_to_index(u, v)
@@ -2749,7 +2913,7 @@ class MicaliVaziraniMatching:
                             return is_augmented
 
             elif not result.encountered_deleted_vertex:
-                self.form_petal(result.red_support, result.green_support,
+                self.petals.form_petal(result.red_support, result.green_support,
                                 result.bottleneck, (u, v, l))
                 self.assign_max_levels(result.red_support, search_level)
                 self.assign_max_levels(result.green_support, search_level)
@@ -2859,10 +3023,10 @@ class MicaliVaziraniMatching:
         other_color = (GREEN, RED)
 
         def buds(vertex):
-            return [self.get_bud(p) for p in self.predecessor[vertex]]
+            return [self.petals.get_bud(p) for p in self.predecessor[vertex]]
 
-        red_root, green_root = (self.get_bud(source_red_vertex),
-                                self.get_bud(source_green_vertex))
+        red_root, green_root = (self.petals.get_bud(source_red_vertex),
+                                self.petals.get_bud(source_green_vertex))
 
         # A bridge whose two ends already share a bud encloses no new structure.
         if red_root == green_root:
@@ -2997,131 +3161,6 @@ class MicaliVaziraniMatching:
                     red_support, green_support = support_minus(m)
                     return self.DDFSRun(red_support, green_support, m,
                                            encountered_deleted_vertex)
-
-    # Each vertex can only belong to one petal
-    # The bud cannot be part of the petal
-    # Each vertex in the petal points to the bud
-
-    # ******************************
-    # Contract a petal
-    # ******************************
-    def form_petal(
-        self,
-        red_support: list[int],
-        green_support: list[int],
-        bud: int,
-        bridge: Edge,
-    ) -> None:
-        r"""
-        Contract a new petal with the given ``bud``.
-
-        A :class:`Petal` with that ``bud`` and peaks the two endpoints of
-        ``bridge`` is created, and the two supports returned by :meth:`DDFS`
-        are attached to it (one per side) via :meth:`_attach_petal_side`.
-
-        INPUT:
-
-        - ``red_support`` -- list of integers; the red side of the petal
-        - ``green_support`` -- list of integers; the green side of the petal
-        - ``bud`` -- integer; the bud (bottleneck) of the petal
-        - ``bridge`` -- the bridge edge ``(u, v, label)`` that formed it
-
-        EXAMPLES:
-
-        Triggered whenever a petal forms, e.g. on an odd cycle::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
-            2
-        """
-        petal = self.Petal(bud=bud, peaks=(bridge[0], bridge[1]))
-        self._attach_petal_side(red_support, bud, petal, self.RED)
-        self._attach_petal_side(green_support, bud, petal, self.GREEN)
-
-    def _attach_petal_side(
-        self,
-        support: list[int],
-        bud: int,
-        petal: Petal,
-        direction: int,
-    ) -> None:
-        r"""
-        Attach one side of a petal to it.
-
-        Every vertex of ``support`` is pointed at the petal's bud, assigned the
-        given ``petal`` and colored by ``direction`` (`0` for the red side,
-        `1` for the green side).
-
-        INPUT:
-
-        - ``support`` -- list of integers; the vertices on this side
-        - ``bud`` -- integer; the bud of the petal
-        - ``petal`` -- the :class:`Petal` being built
-        - ``direction`` -- `0` (red) or `1` (green)
-
-        EXAMPLES:
-
-        Triggered through :meth:`form_petal` when a petal forms::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: len(MicaliVaziraniMatching(graphs.CycleGraph(5)).get_matching())
-            2
-        """
-        for vertex in support:
-            self.vertex_bud_map[vertex] = self.get_bud(bud)
-            self.vertex_petal_map[vertex] = petal
-            self.color[vertex] = direction
-
-    # ******************************
-    # Path compression: find the bud of a vertex
-    # ******************************
-    def get_bud(self, vertex: int) -> int:
-        r"""
-        Return the bud of ``vertex`` (with path compression).
-
-        Each vertex contracted into a petal points, through ``vertex_bud_map``,
-        towards that petal's *bud*; as petals sharing a vertex merge, the
-        representative becomes `\mathrm{bud}^*(v)`, the *base* of the resulting
-        blossom. This is a union-find structure: the method follows the chain to
-        the representative, then compresses the path so that every vertex along
-        it points straight at it, like the *find* operation of union-find. A
-        vertex that lies in no petal is its own bud.
-
-        The traversal is iterative -- one pass to locate the bud and a second
-        to compress the path -- so a deeply nested chain of petals cannot
-        overflow the call stack.
-
-        INPUT:
-
-        - ``vertex`` -- integer; an internal vertex label
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
-            sage: MV.get_bud(2)
-            2
-
-        TESTS:
-
-        A long bud chain is resolved without recursion, and every vertex on it
-        is compressed to point straight at the bud (the recursive version would
-        exceed the interpreter's recursion limit here)::
-
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(2))
-            sage: MV.vertex_bud_map = list(range(1, 10001)) + [10000]
-            sage: MV.get_bud(0)
-            10000
-            sage: MV.vertex_bud_map[0]
-            10000
-        """
-        bud = vertex
-        while self.vertex_bud_map[bud] != bud:
-            bud = self.vertex_bud_map[bud]
-
-        while vertex != bud:
-            self.vertex_bud_map[vertex], vertex = bud, self.vertex_bud_map[vertex]
-        return bud
 
     # ******************************
     # Unfold a petal
@@ -3636,7 +3675,7 @@ class MicaliVaziraniMatching:
         for vertex in support:
 
             # Do a search following the trail given by the support
-            while self.get_bud(current_vertex) != vertex:
+            while self.petals.get_bud(current_vertex) != vertex:
                 # If it is not the correct vertex pop the next vertex
                 # in the predecessor list
                 current_vertex = predecessor_list.pop()
@@ -3648,11 +3687,11 @@ class MicaliVaziraniMatching:
                 path.append(current_vertex)
             else:
                 petal_path = self.unfold_petal(
-                    current_vertex, self.get_bud(current_vertex), set(path))
+                    current_vertex, self.petals.get_bud(current_vertex), set(path))
                 if not petal_path:
                     return []
                 path += petal_path
-                current_vertex = self.get_bud(current_vertex)
+                current_vertex = self.petals.get_bud(current_vertex)
                 predecessor_list = self.predecessor[current_vertex][:]
         return path
 
