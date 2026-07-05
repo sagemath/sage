@@ -2046,7 +2046,8 @@ class MicaliVaziraniMatching:
             """
             return self.bottleneck is None
 
-    def __init__(self, G, extended_phases: bool = True) -> None:
+    def __init__(self, G, extended_phases: bool = True,
+                 check_invariants: bool = False) -> None:
         r"""
         Set up the per-instance state for the Micali--Vazirani algorithm.
 
@@ -2065,6 +2066,12 @@ class MicaliVaziraniMatching:
           use the classic Micali--Vazirani phase, which ends as soon as a level
           augments. Both compute a maximum-cardinality matching; the extended
           variant rebuilds the search structure less often. See :meth:`search`.
+
+        - ``check_invariants`` -- boolean (default: ``False``); a debugging aid.
+          If ``True``, :meth:`search` runs :meth:`_check_invariants` after every
+          level, asserting internal invariants. Off by default (the checks cost
+          `O(|V|)` per level) and never changes the result; the assertions are
+          ``assert`` statements, so ``python -O`` removes them regardless.
 
         EXAMPLES::
 
@@ -2190,6 +2197,10 @@ class MicaliVaziraniMatching:
         # Huang--Stein extended search phases, ``False`` the classic
         # Micali--Vazirani phase that stops at the first augmenting level.
         self.extended_phases = extended_phases
+
+        # Debugging aid (see the constructor argument): when ``True``,
+        # :meth:`search` runs :meth:`_check_invariants` after each level.
+        self.check_invariants = check_invariants
 
     def is_exposed(self, v: int) -> bool:
         r"""
@@ -2475,6 +2486,24 @@ class MicaliVaziraniMatching:
         """
         return max(self.even_level[vertex], self.odd_level[vertex])
 
+    def tenacity(self, vertex: int) -> int:
+        r"""
+        Return the *tenacity* of ``vertex``: ``even_level + odd_level``.
+
+        Tenacity is the central quantity of [Vaz2020]_ -- bridges are processed
+        in order of increasing tenacity. For a vertex it equals
+        ``min_level(v) + max_level(v)``.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+            sage: MV.start_new_phase()
+            sage: MV.tenacity(0) == MV.INFINITY
+            True
+        """
+        return self.even_level[vertex] + self.odd_level[vertex]
+
     def is_outer(self, vertex: int) -> bool:
         r"""
         Return whether ``vertex`` is *outer* (its ``min_level`` is even).
@@ -2722,6 +2751,9 @@ class MicaliVaziraniMatching:
 
             # Record the actual max level on the corresponding parity slot
             levels[level_parity][vertex] = max_level
+            if self.check_invariants:
+                # a vertex's max level is discovered exactly at its tenacity
+                assert self.tenacity(vertex) == 2 * search_level + 1
             next_search_level_vertices.append(vertex)
 
             if not level_parity:
@@ -3584,6 +3616,39 @@ class MicaliVaziraniMatching:
     # minimum length disjoin augmenting paths) and erase those vertices
     # judiciously.
     # ******************************
+    def _check_invariants(self) -> None:
+        r"""
+        Assert internal search-state invariants; a debugging aid.
+
+        When :attr:`check_invariants` is set, :meth:`search` calls this after
+        every level. It checks that ``even_level`` is even and ``odd_level`` odd
+        wherever finite, and that no vertex is the bud of a petal it belongs to
+        (a bud lies outside its petal). Raises ``AssertionError`` on a
+        violation; it never runs -- and so never affects the result -- unless
+        :attr:`check_invariants` is ``True``.
+
+        (Augmenting-path validity is not checked here: it is already enforced in
+        production by :meth:`_is_valid_augmenting_path` inside :meth:`augment`.)
+
+        EXAMPLES:
+
+        A full run with the checks enabled still computes the maximum::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: MV = MicaliVaziraniMatching(graphs.PetersenGraph(),
+            ....:                             check_invariants=True)
+            sage: len(MV.get_matching())
+            5
+        """
+        for v in range(self.N):
+            assert self.even_level[v] == self.INFINITY or not self.even_level[v] % 2, \
+                f'even_level[{v}] = {self.even_level[v]} is not even'
+            assert self.odd_level[v] == self.INFINITY or self.odd_level[v] % 2, \
+                f'odd_level[{v}] = {self.odd_level[v]} is not odd'
+            petal = self.vertex_petal_map[v]
+            assert petal is None or petal.bud != v, \
+                f'vertex {v} is the bud of its own petal'
+
     def search(self) -> bool:
         r"""
         Run one phase, augmenting along shortest vertex-disjoint paths.
@@ -3621,6 +3686,8 @@ class MicaliVaziraniMatching:
         while not augmentation_found and not search_complete:
             search_complete = self.MIN(search_level)
             augmentation_found = self.MAX(search_level)
+            if self.check_invariants:
+                self._check_invariants()
             if search_complete and not self.num_augmentations:
                 return False
 
