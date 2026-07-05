@@ -557,7 +557,12 @@ class GenDictWithBasering:
         self._D = [start]
         while hasattr(P, 'base_ring') and (P.base_ring() is not P):
             P = P.base_ring()
-            D = P.gens_dict()
+            try:
+                D = P.gens_dict()
+            except AttributeError:
+                # Some base rings have no named generators to add to
+                # the evaluation namespace.
+                continue
             if isinstance(D, GenDictWithBasering):
                 self._D.extend(D._D)
                 break
@@ -615,6 +620,70 @@ class GenDictWithBasering:
             except KeyError:
                 pass
         raise KeyError("{} is not a variable name of {} or its iterated base rings".format(k, self._P))
+
+    def __iter__(self):
+        """
+        Iterate over the variable names that can be enumerated.
+
+        Since this dictionary is used as the namespace for evaluating
+        string representations of polynomials, Python may iterate over
+        it when introspecting that namespace, for instance when
+        suggesting a similar name for a :class:`NameError`. The keys
+        of an :class:`InfiniteGenDict` (such as ``'a_15'``) cannot be
+        enumerated and are therefore skipped.
+
+        TESTS::
+
+            sage: R.<a,b> = InfinitePolynomialRing(ZZ['t'])
+            sage: D = R.gens_dict()
+            sage: sorted(D)
+            ['1', 't']
+        """
+        seen = set()
+        for D in self._D:
+            if isinstance(D, dict):
+                for k in D:
+                    if k not in seen:
+                        seen.add(k)
+                        yield k
+
+    def __contains__(self, k):
+        """
+        Membership agrees with item access, in contrast to iteration,
+        which can only cover the enumerable variable names.
+
+        TESTS::
+
+            sage: R.<a,b> = InfinitePolynomialRing(ZZ['t'])
+            sage: D = R.gens_dict()
+            sage: 'a_15' in D
+            True
+            sage: 't' in D
+            True
+            sage: 'x' in D
+            False
+        """
+        try:
+            self[k]
+        except KeyError:
+            return False
+        return True
+
+    def keys(self):
+        """
+        Return the variable names that can be enumerated.
+
+        The keys of an :class:`InfiniteGenDict` (such as ``'a_15'``)
+        cannot be enumerated and are not listed, although they are
+        accessible by item access and contained in the dictionary.
+
+        TESTS::
+
+            sage: R.<a,b> = InfinitePolynomialRing(ZZ['t'])
+            sage: sorted(R.gens_dict().keys())
+            ['1', 't']
+        """
+        return list(self)
 
 
 ##############################################################
@@ -928,39 +997,149 @@ class InfinitePolynomialRing_sparse(Ring):
             ...
             ValueError: cannot convert 1/3 into an element of Infinite polynomial ring in x over Integer Ring
 
-        .. WARNING::
+        Converting an infinite polynomial into a ring with a larger
+        base ring does not match the variables by position
+        (:issue:`37756`)::
 
-            The :issue:`37756` is not yet fixed::
+            sage: L.<x, y> = QQ[]
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: M = InfinitePolynomialRing(L, names=["a"])
+            sage: c = a[0]
+            sage: M(c)
+            a_0
 
-                sage: L.<x, y> = QQ[]
-                sage: R.<a> = InfinitePolynomialRing(QQ)
-                sage: M = InfinitePolynomialRing(L, names=["a"])
-                sage: c = a[0]
-                sage: M(c)  # known bug
-                a_0
+        Check :issue:`40540`::
 
-            Check :issue:`40540`::
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: P.<x,y> = QQ[]
+            sage: a[0] * P.one()
+            a_0
+            sage: (a[0] * P.one()).parent()
+            Infinite polynomial ring in a over Multivariate Polynomial Ring in x, y over Rational Field
 
-                sage: R.<a> = InfinitePolynomialRing(QQ)
-                sage: P.<x,y> = QQ[]
-                sage: a[0] * P.one()    # known bug
-                a_0
+        The same positional renaming is avoided for other named base
+        rings::
+
+            sage: LS.<x, y> = LazyPowerSeriesRing(QQ)
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: o = LS(0); r = a[0]
+            sage: o + r
+            a_0
+            sage: (o + r).parent()
+            Infinite polynomial ring in a over Multivariate Lazy Taylor Series Ring in x, y over Rational Field
+
+            sage: PS.<x, y> = QQ[[]]
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: o = PS(0); r = a[0]
+            sage: o + r
+            a_0
+
+            sage: LP.<x, y> = LaurentPolynomialRing(QQ)
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: o = LP(0); r = a[0]
+            sage: o + r
+            a_0
+
+            sage: UCF = UniversalCyclotomicField()
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: o = UCF(0); r = a[0]
+            sage: o + r
+            a_0
+
+        If the base ring is itself an infinite polynomial ring, finite
+        polynomials in variables of the base are still interpreted in
+        the base ring, and the result is an element of ``self``::
+
+            sage: A = InfinitePolynomialRing(ZZ, names=['a', 'b'])
+            sage: a, b = A.gens()
+            sage: Y = InfinitePolynomialRing(A, names=['z'], order='degrevlex')
+            sage: q = Y(a[2].polynomial()); q
+            a_2
+            sage: q.parent() is Y
+            True
+
+        Conversion also works if the base ring does not use
+        libsingular; the variables are then matched by name::
+
+            sage: Lg = PolynomialRing(QQ, ['x', 'y'], implementation='generic')
+            sage: Sg = InfinitePolynomialRing(Lg, names=['a'])
+            sage: p = Sg(sum(Lg.gens())); p
+            x + y
+            sage: p.parent() is Sg
+            True
+
+        Polynomials whose variable names are known neither to ``self``
+        nor to its base ring are rejected instead of being silently
+        renamed (:issue:`40540`)::
+
+            sage: S = InfinitePolynomialRing(L, names=["a"])
+            sage: R2.<u, v> = QQ[]
+            sage: S(u)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot convert u into an element of Infinite polynomial ring in a over Multivariate Polynomial Ring in x, y over Rational Field - no conversion into underlying polynomial ring
+
+        A variable name of the parent of ``x`` that the base ring does
+        not know prevents direct interpretation in the base ring, even
+        if the variable does not occur in ``x``; the variables are
+        nevertheless matched by name (:issue:`40540`)::
+
+            sage: B = PolynomialRing(QQ, ['b', 'c'])
+            sage: W.<w, b> = QQ[]
+            sage: S2 = InfinitePolynomialRing(B, names=['a'])
+            sage: S2(b)
+            b
+            sage: S2(b).parent() is S2
+            True
+
+        The same holds for base rings that do not use libsingular,
+        whose conversion would match same-size variable sets by
+        position even if the names agree up to a permutation::
+
+            sage: Np = PolynomialRing(QQ, ['y', 'x'], implementation='generic')
+            sage: Sg(Np.gen(0))
+            y
+
+        Base rings that are not polynomial rings use their own
+        conversion semantics, for instance evaluation at the generator
+        of a number field or quotient ring::
+
+            sage: t = polygen(QQ)
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: NK = InfinitePolynomialRing(K, ['a'])
+            sage: NK(t^2 + 1)
+            0
+            sage: NK(t + 1)
+            (i + 1)
+
+        ::
+
+            sage: T = InfinitePolynomialRing(SR, ['a'])
+            sage: T(polygen(QQ, 't'))
+            t
         """
         from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
         # In many cases, the easiest solution is to "simply" evaluate
         # the string representation.
         from sage.misc.sage_eval import sage_eval
+
+        def interpret_string(s):
+            # String evaluation resolves the variables of ``self`` and
+            # of its iterated base rings by name. The result may live
+            # in the base ring, so wrap it into an element of ``self``.
+            res = sage_eval(s, self.gens_dict())
+            P = parent(res)
+            if P is self:
+                return res
+            if self._base.has_coerce_map_from(P):
+                return InfinitePolynomial(self, self._base(res))
+            raise ValueError(f"cannot convert {s} into an element of {self}")
+
         if isinstance(x, str):
             try:
-                x = sage_eval(x, self.gens_dict())
-            except (TypeError, ValueError, SyntaxError):
+                return interpret_string(x)
+            except (TypeError, ValueError, SyntaxError, NameError):
                 raise ValueError(f"cannot convert {x} into an element of {self}")
-            P = parent(x)
-            if P is self:
-                return x
-            if self._base.has_coerce_map_from(P):
-                return InfinitePolynomial(self, self._base(x))
-            raise ValueError(f"cannot convert {x} into an element of {self}")
 
         if isinstance(parent(x), InfinitePolynomialRing_sparse):
             # the easy case - parent == self - is already past
@@ -972,18 +1151,53 @@ class InfinitePolynomialRing_sparse(Ring):
             xmaxind = -1
 
         # Now, we focus on the underlying classical polynomial ring.
-        # First, try interpretation in the base ring.
-        try:
+        # First, try interpretation in the base ring. This is unsafe
+        # if the parent of x is a polynomial ring and the base is a
+        # polynomial, Laurent, or series ring that does not know all
+        # variable names of the parent of x: such bases match the
+        # variables by position rather than by name, silently renaming
+        # them (:issue:`40540`). Other bases, such as number fields,
+        # interpret x by evaluation at their generators, so we let them.
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if isinstance(x, (Polynomial, MPolynomial)) and not x.is_constant():
+            from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
             from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
+            from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            from sage.rings.power_series_ring import PowerSeriesRing_generic
             if isinstance(self._base, MPolynomialRing_polydict):
-                x = sage_eval(repr(), next(self.gens_dict()))
+                # MPolynomialRing_polydict maps the variables by
+                # position whenever the numbers of variables coincide,
+                # even if the variable names agree up to a permutation.
+                # We fall through to name-based string evaluation.
+                base_interpretable = False
+            elif isinstance(self._base, (PolynomialRing_generic,
+                                         MPolynomialRing_base,
+                                         LaurentPolynomialRing_generic,
+                                         PowerSeriesRing_generic,
+                                         LazyPowerSeriesRing)):
+                try:
+                    base_names = self._base.variable_names_recursive()
+                except AttributeError:
+                    base_names = self._base.variable_names()
+                base_interpretable = all(name in base_names
+                                         for name in x.parent().variable_names())
             else:
+                base_interpretable = True
+        else:
+            base_interpretable = True
+        if base_interpretable:
+            try:
                 x = self._base(x)
-            # remark: Conversion to self._P (if applicable)
-            # is done in InfinitePolynomial()
-            return InfinitePolynomial(self, x)
-        except (TypeError, ValueError):
-            pass
+                # remark: Conversion to self._P (if applicable)
+                # is done in InfinitePolynomial()
+                return InfinitePolynomial(self, x)
+            except (TypeError, ValueError, KeyError):
+                # MPolynomialRing_polydict raises KeyError when
+                # converting a PARI element with an unknown variable
+                pass
 
         # By now, we can assume that x has a parent, because
         # types like int have already been done in the previous step;
@@ -992,7 +1206,7 @@ class InfinitePolynomialRing_sparse(Ring):
         # the variables attribute), we fall back to using strings
         if not hasattr(x, 'variables'):
             try:
-                return sage_eval(repr(x), self.gens_dict())
+                return interpret_string(repr(x))
             except (TypeError, ValueError, SyntaxError, NameError):
                 raise ValueError(f"cannot convert {x} into an element of {self}")
 
@@ -1041,7 +1255,7 @@ class InfinitePolynomialRing_sparse(Ring):
             # By now, x or self._P are not libsingular. Since MPolynomialRing_polydict
             # is too buggy, we use string evaluation
             try:
-                return sage_eval(repr(x), self.gens_dict())
+                return interpret_string(repr(x))
             except (ValueError, TypeError, NameError):
                 raise ValueError("cannot convert {} into an element of {} - no conversion into underlying polynomial ring".format(x, self))
 
@@ -1090,11 +1304,11 @@ class InfinitePolynomialRing_sparse(Ring):
                 except (TypeError, ValueError):
                     # OK, last resort, to be on the safe side
                     try:
-                        return sage_eval(repr(x), self.gens_dict())
+                        return interpret_string(repr(x))
                     except (ValueError, TypeError, NameError):
                         raise ValueError("cannot convert {} into an element of {}; conversion of the underlying polynomial failed".format(x, self))
         try:
-            return sage_eval(repr(x), self.gens_dict())
+            return interpret_string(repr(x))
         except (ValueError, TypeError, NameError):
             raise ValueError(f"cannot convert {x} into an element of {self}")
 

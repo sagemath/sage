@@ -839,12 +839,14 @@ cdef class MixedIntegerLinearProgram(SageObject):
         if not name and self._first_variable_names:
             name = self._first_variable_names.pop(0)
 
-        return MIPVariable(self,
-                      vtype,
-                      name=name,
-                      lower_bound=0 if (nonnegative or binary) else None,
-                      upper_bound=1 if binary else None,
-                           indices=indices)
+        return MIPVariable(
+            self,
+            vtype,
+            name=name,
+            lower_bound=0 if (nonnegative or binary) else None,
+            upper_bound=1 if binary else None,
+            indices=indices
+        )
 
     def default_variable(self):
         """
@@ -1149,21 +1151,21 @@ cdef class MixedIntegerLinearProgram(SageObject):
             # Equalities
             if (lb is not None) and lb == ub:
                 linear_function = []
-                linear_function = [coeffs.get(i,0) for i in range(nvar)]
-                linear_function.insert(0,-lb)
+                linear_function = [coeffs.get(i, 0) for i in range(nvar)]
+                linear_function.insert(0, -lb)
                 equalities.append(linear_function)
                 continue
             # Lower Bound
             if lb is not None:
                 linear_function = []
-                linear_function = [coeffs.get(i,0) for i in range(nvar)]
-                linear_function.insert(0,-lb)
+                linear_function = [coeffs.get(i, 0) for i in range(nvar)]
+                linear_function.insert(0, -lb)
                 inequalities.append(linear_function)
             # Upper Bound
             if ub is not None:
                 linear_function = []
-                linear_function = [-coeffs.get(i,0) for i in range(nvar)]
-                linear_function.insert(0,ub)
+                linear_function = [-coeffs.get(i, 0) for i in range(nvar)]
+                linear_function.insert(0, ub)
                 inequalities.append(linear_function)
 
         # Variable bounds
@@ -1174,20 +1176,20 @@ cdef class MixedIntegerLinearProgram(SageObject):
             if (lb is not None) and lb == ub:
                 linear_function = copy(zero)
                 linear_function[i] = 1
-                linear_function.insert(0,-lb)
+                linear_function.insert(0, -lb)
                 equalities.append(linear_function)
                 continue
             # Lower bound
             if lb is not None:
                 linear_function = copy(zero)
                 linear_function[i] = 1
-                linear_function.insert(0,-lb)
+                linear_function.insert(0, -lb)
                 inequalities.append(linear_function)
             # Upper bound
             if ub is not None:
                 linear_function = copy(zero)
                 linear_function[i] = -1
-                linear_function.insert(0,ub)
+                linear_function.insert(0, ub)
                 inequalities.append(linear_function)
         return Polyhedron(ieqs=inequalities, eqns=equalities, **kwds)
 
@@ -1270,7 +1272,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             else:
                 varid_explainer[i] = varid_name[i] = default_name
 
-        ##### Sense and objective function
+        # #### Sense and objective function
         formula_parts = []
         first = True
         for 0<= i< b.ncols():
@@ -1290,7 +1292,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             print("Maximization:" if b.is_maximization() else "Minimization:")
             print("  " + " ".join(formula_parts))
 
-        ##### Constraints
+        # #### Constraints
         print("Constraints:")
         for 0<= i < b.nrows():
             indices, values = b.row(i)
@@ -1313,7 +1315,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             # Upper bound
             print("<= "+str(ub) if ub is not None else "")
 
-        ##### Variables
+        # #### Variables
         print("Variables:")
         for 0<= i < b.ncols():
             if b.is_variable_integer(i):
@@ -1781,7 +1783,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                 if self != l.mip():
                     raise ValueError("Variable {!r} is a variable from a different problem".format(l))
                 c = {}
-                for (k,v) in l.items():
+                for k, v in l.items():
                     c[k] = get_backend_variable_value(v, tolerance)
                 val.append(c)
             elif isinstance(l, list):
@@ -1864,10 +1866,10 @@ cdef class MixedIntegerLinearProgram(SageObject):
             except TypeError:
                 # Should be a linear function
                 f = obj.dict()
-        d = f.pop(-1,self._backend.zero())
+        d = f.pop(-1, self._backend.zero())
 
         for i in range(self._backend.ncols()):
-            values.append(f.get(i,self._backend.zero()))
+            values.append(f.get(i, self._backend.zero()))
         self._backend.set_objective(values, d)
 
     def add_constraint(self, linear_function, max=None, min=None, name=None,
@@ -2403,9 +2405,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
         if isinstance(e, MIPVariable):
             e._vtype = self.__BINARY
             for v in e.values():
-                self._backend.set_variable_type(self._variables[v],self.__BINARY)
+                self._backend.set_variable_type(self._variables[v],
+                                                self.__BINARY)
         elif e in self._variables:
-            self._backend.set_variable_type(self._variables[e],self.__BINARY)
+            self._backend.set_variable_type(self._variables[e],
+                                            self.__BINARY)
         else:
             raise ValueError("e must be an instance of MIPVariable or one of its elements.")
 
@@ -2465,9 +2469,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
         if isinstance(e, MIPVariable):
             e._vtype = self.__INTEGER
             for v in e.values():
-                self._backend.set_variable_type(self._variables[v],self.__INTEGER)
+                self._backend.set_variable_type(self._variables[v],
+                                                self.__INTEGER)
         elif e in self._variables:
-            self._backend.set_variable_type(self._variables[e],self.__INTEGER)
+            self._backend.set_variable_type(self._variables[e],
+                                            self.__INTEGER)
         else:
             raise ValueError("e must be an instance of MIPVariable or one of its elements.")
 
@@ -2527,10 +2533,10 @@ cdef class MixedIntegerLinearProgram(SageObject):
         if isinstance(e, MIPVariable):
             e._vtype = self.__REAL
             for v in e.values():
-                self._backend.set_variable_type(self._variables[v],self.__REAL)
+                self._backend.set_variable_type(self._variables[v], self.__REAL)
                 self._backend.variable_lower_bound(self._variables[v], 0)
         elif e in self._variables:
-            self._backend.set_variable_type(self._variables[e],self.__REAL)
+            self._backend.set_variable_type(self._variables[e], self.__REAL)
             self._backend.variable_lower_bound(self._variables[e], 0)
         else:
             raise ValueError("e must be an instance of MIPVariable or one of its elements.")
@@ -3114,7 +3120,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         coef_matrix = []
         for constraint in self.constraints():
             coef_row = [0] * self.number_of_variables()
-            for index, value in zip(constraint[1][0],constraint[1][1]):
+            for index, value in zip(constraint[1][0], constraint[1][1]):
                 coef_row[index] = value
             coef_matrix.append(coef_row)
 
@@ -3133,7 +3139,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         def format(name, prefix, index):
             if name:
-                return name.replace('[','_').strip(']')
+                return name.replace('[', '_').strip(']')
             else:
                 return prefix + '_' + str(index)
 
@@ -3479,7 +3485,7 @@ cdef class MIPVariable(FiniteFamily):
         """
         self._lower_bound = min
         for v in self._dictionary.values():
-            self._p.set_min(v,min)
+            self._p.set_min(v, min)
 
     def set_max(self, max):
         r"""
@@ -3515,7 +3521,7 @@ cdef class MIPVariable(FiniteFamily):
         """
         self._upper_bound = max
         for v in self._dictionary.values():
-            self._p.set_max(v,max)
+            self._p.set_max(v, max)
 
     def _repr_(self):
         r"""
@@ -3548,11 +3554,11 @@ cdef class MIPVariable(FiniteFamily):
         s = 'MIPVariable{0} with {1} {2} component{3}'.format(
             " " + self._name if self._name else "",
             len(self._dictionary),
-            {0:"binary", -1:"real", 1:"integer"}[self._vtype],
+            {0: "binary", -1: "real", 1: "integer"}[self._vtype],
             "s" if len(self._dictionary) != 1 else "")
-        if (self._vtype != 0) and (self._lower_bound is not None):
+        if self._vtype != 0 and self._lower_bound is not None:
             s += ', >= {0}'.format(self._lower_bound)
-        if (self._vtype != 0) and (self._upper_bound is not None):
+        if self._vtype != 0 and self._upper_bound is not None:
             s += ', <= {0}'.format(self._upper_bound)
         return s
 

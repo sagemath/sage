@@ -33,7 +33,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
@@ -75,10 +75,13 @@ jobs:
   sdists:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v3
@@ -105,8 +108,6 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
           skip-existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true'
@@ -176,7 +177,6 @@ jobs:
             arch: arm64
             build: macosx
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
@@ -193,7 +193,7 @@ jobs:
       # Use 'build', not 'pip wheel'
       CIBW_BUILD_FRONTEND: build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up QEMU
         if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
@@ -251,8 +251,11 @@ jobs:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
     needs: build_wheels
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
 
       - uses: actions/download-artifact@v6
@@ -263,8 +266,6 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
           packages-dir: wheelhouse/
           skip-existing: true
           verbose: true

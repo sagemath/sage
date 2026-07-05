@@ -448,7 +448,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Matrices are always mutable by default, i.e., you can change their
         entries using ``A[i,j] = x``. However, mutable matrices
-        aren't hashable, so can't be used as keys in dictionaries, etc.
+        aren't hashable, so cannot be used as keys in dictionaries, etc.
         Also, often when implementing a class, you might compute a matrix
         associated to it, e.g., the matrix of a Hecke operator. If you
         return this matrix to the user you're really returning a reference
@@ -465,7 +465,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [10   1]
             [ 2   3]
 
-        Mutable matrices are not hashable, so can't be used as keys for
+        Mutable matrices are not hashable, so cannot be used as keys for
         dictionaries::
 
             sage: hash(A)
@@ -1726,6 +1726,26 @@ cdef class Matrix(sage.structure.element.Matrix):
         tester = self._tester(**options)
         # Test to make sure the returned matrix is a copy
         tester.assertIsNot(self.change_ring(self.base_ring()), self)
+
+    def _change_implementation(self, implementation):
+        r"""
+        For rings with multiple implementations, such as `\ZZ/N\ZZ`, allows for switching between implementations.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Zmod(5), 2, implementation="flint")
+            sage: a = M(range(4))
+            sage: b = a._change_implementation("linbox-double"); b
+            [0 1]
+            [2 3]
+            sage: type(b)
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+        """
+        M = sage.matrix.matrix_space.MatrixSpace(self.base_ring(), self._nrows, self._ncols, sparse=self.is_sparse(), implementation=implementation)
+        mat = M(self.list(), coerce=True, copy=False)
+        if self._subdivisions is not None:
+            mat.subdivide(self.subdivisions())
+        return mat
 
     def _matrix_(self, R=None):
         """
@@ -4849,13 +4869,17 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: m.rank()
             2
 
-        Rank is not implemented over the integers modulo a composite yet.::
+        Rank is defined for integers modulo a composite number in terms of the Howell form::
 
             sage: m = matrix(Integers(4), 2, [2,2,2,2])
             sage: m.rank()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Echelon form not implemented over 'Ring of integers modulo 4'.
+            0
+
+        There are no pivots that are 1::
+
+            sage: m.howell_form()
+            [2 2]
+            [0 0]
 
         TESTS:
 
@@ -5518,7 +5542,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t r,c
         x = self._base_ring(left)
         cdef Matrix ans
-        ans = self._parent.zero_matrix().__copy__()
+        ans = self._parent.element_class(self._parent, None, False, False)
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
                 ans.set_unsafe(r, c, x * self.get_unsafe(r, c))
@@ -5560,7 +5584,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t r,c
         x = self._base_ring(right)
         cdef Matrix ans
-        ans = self._parent.zero_matrix().__copy__()
+        ans = self._parent.element_class(self._parent, None, False, False)
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
                 ans.set_unsafe(r, c, self.get_unsafe(r, c) * x)
@@ -5843,7 +5867,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: m = matrix(Zmod(49), 2, [2,1,3,3])
             sage: type(m)
-            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
             sage: ~m
             [ 1 16]
             [48 17]

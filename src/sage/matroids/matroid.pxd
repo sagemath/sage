@@ -194,6 +194,7 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
+    cpdef bint is_quaternary(self) noexcept
     cpdef bint is_regular(self) noexcept
     cpdef bint is_graphic(self) noexcept
 
