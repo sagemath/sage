@@ -2282,6 +2282,144 @@ class MicaliVaziraniMatching:
                 self.vertex_petal_map[vertex] = petal
                 self.color[vertex] = direction
 
+    class _SearchState:
+        r"""
+        Per-phase mutable search state for :class:`MicaliVaziraniMatching`.
+
+        Holds the per-vertex level arrays ``even_level``/``odd_level``, the
+        ``predecessor``/``successor`` links, the tenacity-bucketed
+        ``bridges_by_tenacity``, the ``prop_edges`` set, the erase/scan stamps
+        (``deletion_phase``/``edge_scanned``) and the ``search_level_vertices``
+        frontier, together with the derived level accessors :meth:`min_level`,
+        :meth:`max_level`, :meth:`tenacity`, :meth:`is_outer`, :meth:`is_prop`
+        and :meth:`is_bridge`.
+
+        ``INFINITY`` (`2N + 2`) is the integer sentinel for unset levels and
+        out-of-range tenacities, keeping the level arrays homogeneously ``int``.
+        It equals the length of ``bridges_by_tenacity`` -- one past the largest
+        valid bucket index `2N + 1` -- so ``tenacity < INFINITY`` means exactly
+        "this tenacity indexes a real bucket"; ``INFINITY`` is never used as an
+        index and exceeds every finite level (each is
+        ``2 * search_level + 1 - min_level <= 2N + 1``).
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: state = MicaliVaziraniMatching(graphs.PathGraph(3)).state
+            sage: state.INFINITY
+            8
+        """
+        def __init__(self, N: int, num_edges: int):
+            self.INFINITY = 2 * N + 2
+            self.even_level: list[int] = [0] * N
+            self.odd_level: list[int] = [self.INFINITY] * N
+            self.predecessor: list[list[int]] = [[] for _ in range(N)]
+            self.successor: list[list[int]] = [[] for _ in range(N)]
+            self.bridges_by_tenacity: list[list[int]] = [[] for _ in range(2 * N + 2)]
+            self.deletion_phase: list[int] = [-1] * N
+            self.search_level_vertices: list[int] = list(range(N))
+            self.prop_edges: set[int] = set()
+            self.edge_scanned: dict[int, int] = {i: -1 for i in range(num_edges)}
+
+        def min_level(self, vertex: int) -> int:
+            r"""
+            Return the ``min_level`` of ``vertex``: ``min(even_level, odd_level)``.
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+                sage: MV.start_new_phase()
+                sage: MV.state.min_level(0)
+                0
+            """
+            return min(self.even_level[vertex], self.odd_level[vertex])
+
+        def max_level(self, vertex: int) -> int:
+            r"""
+            Return the ``max_level`` of ``vertex``: ``max(even_level, odd_level)``.
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+                sage: MV.start_new_phase()
+                sage: MV.state.max_level(0) == MV.state.INFINITY
+                True
+            """
+            return max(self.even_level[vertex], self.odd_level[vertex])
+
+        def tenacity(self, vertex: int) -> int:
+            r"""
+            Return the *tenacity* of ``vertex``: ``even_level + odd_level``.
+
+            Tenacity is the central quantity of [Vaz2020]_ -- bridges are
+            processed in order of increasing tenacity. For a vertex it equals
+            ``min_level(v) + max_level(v)``.
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+                sage: MV.start_new_phase()
+                sage: MV.state.tenacity(0) == MV.state.INFINITY
+                True
+            """
+            return self.even_level[vertex] + self.odd_level[vertex]
+
+        def is_outer(self, vertex: int) -> bool:
+            r"""
+            Return whether ``vertex`` is *outer* (its ``min_level`` is even).
+
+            A vertex is outer when the shortest alternating path reaching it from
+            a free vertex has even length, that is ``even_level < odd_level``.
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+                sage: MV.start_new_phase()
+                sage: MV.state.is_outer(0)
+                True
+            """
+            return self.even_level[vertex] < self.odd_level[vertex]
+
+        def is_prop(self, edge_index: int) -> bool:
+            r"""
+            Return whether the edge indexed ``edge_index`` is a *prop*.
+
+            A prop is an edge on a ``min_level`` alternating path (a tree edge of
+            the phase's breadth-first search); every other scanned edge is a
+            *bridge* (see :meth:`is_bridge`).
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+                sage: MV.start_new_phase()
+                sage: MV.state.is_prop(0)
+                False
+            """
+            return edge_index in self.prop_edges
+
+        def is_bridge(self, edge_index: int) -> bool:
+            r"""
+            Return whether the edge indexed ``edge_index`` is a *bridge*.
+
+            A bridge is a scanned edge that is not a prop (see :meth:`is_prop`);
+            bridges are bucketed by their tenacity and processed by the double
+            depth-first search.
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
+                sage: MV.start_new_phase()
+                sage: MV.state.is_bridge(0)
+                True
+            """
+            return not self.is_prop(edge_index)
+
     def __init__(self, G, extended_phases: bool = True,
                  check_invariants: bool = False) -> None:
         r"""
@@ -2363,40 +2501,18 @@ class MicaliVaziraniMatching:
         self.index_to_vertex = self.instance.index_to_vertex
         self.index_to_edge = self.instance.index_to_edge
 
-        self.bridges_by_tenacity: list[list[int]] = [[] for _ in range(2 * self.N + 2)]
-        self.deletion_phase: list[int] = [-1] * self.N
+        # Per-phase search state: level arrays, predecessor/successor links,
+        # tenacity-bucketed bridges, prop edges, and the erase/scan stamps, plus
+        # the derived level accessors (see :class:`_SearchState`).
+        self.state = self._SearchState(self.N, len(self.index_to_edge))
 
         # Petals of the current phase (bud union-find + petal store). The driver
-        # keeps references to the arrays still read outside it (the petal map
-        # and colours) until those readers move too.
+        # keeps references to the Petals arrays still read outside it (the petal
+        # map and colours) until those readers move too.
         self.petals = self.Petals(self.N, self.Petal,
                                   self.RED, self.GREEN, self.NO_COLOR)
         self.vertex_petal_map = self.petals.vertex_petal_map
-
-        # Integer "infinity" sentinel for levels and tenacities, so the level
-        # arrays stay homogeneously ``int``. Its value is the length of
-        # ``bridges_by_tenacity`` (``2 * N + 2``), i.e. one past the largest
-        # valid bucket index ``2 * N + 1``. The guard ``tenacity < self.INFINITY``
-        # is then exactly "this tenacity indexes a real bucket", so a bridge is
-        # filed only when it fits and an out-of-range tenacity is skipped rather
-        # than raising. ``INFINITY`` is thus never used as an index, and it
-        # exceeds every finite level (each is
-        # ``2 * search_level + 1 - min_level <= 2 * N + 1``).
-        self.INFINITY = 2 * self.N + 2
-        # Per-vertex levels indexed by parity (the papers' even_level and
-        # odd_level). The min_level/ max_level are derived via :meth:`min_level`
-        # and :meth:`max_level`.
-        self.even_level: list[int] = [0] * self.N
-        self.odd_level: list[int] = [self.INFINITY] * self.N
-        self.predecessor: list[list[int]] = [[] for _ in range(self.N)]
-        self.successor: list[list[int]] = [[] for _ in range(self.N)]
         self.color = self.petals.color
-        self.search_level_vertices: list[int] = list(range(self.N))
-
-        # ``edge_scanned`` is keyed by ``edge_to_index`` (see :class:`_Instance`).
-        self.edge_scanned: dict[int, int] = {self.edge_to_index(u, v): -1
-                for (u, v) in self.G.edge_iterator(labels=False)}
-        self.prop_edges: set[int] = set()
 
         # The matching itself: ``mate[v]`` is the vertex matched to ``v``, or
         # ``EXPOSED`` if ``v`` is currently unmatched. ``matching_size`` tracks
@@ -2636,135 +2752,37 @@ class MicaliVaziraniMatching:
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
             sage: MV.start_new_phase()
-            sage: MV.even_level
+            sage: MV.state.even_level
             [0, 0, 0, 0]
-            sage: sorted(MV.search_level_vertices)
+            sage: sorted(MV.state.search_level_vertices)
             [0, 1, 2, 3]
         """
-        self.search_level_vertices = []
+        self.state.search_level_vertices = []
 
         for u in self.G:
             if self.is_saturated(u):
                 # Matched vertices start with infinite levels
-                self.even_level[u] = self.INFINITY
-                self.odd_level[u] = self.INFINITY
+                self.state.even_level[u] = self.state.INFINITY
+                self.state.odd_level[u] = self.state.INFINITY
 
             else:
                 # Unmatched vertices start at level 0 and are candidates for search
-                self.search_level_vertices.append(u)
-                self.even_level[u] = 0
-                self.odd_level[u] = self.INFINITY
+                self.state.search_level_vertices.append(u)
+                self.state.even_level[u] = 0
+                self.state.odd_level[u] = self.state.INFINITY
 
-            self.predecessor[u] = []
-            self.successor[u] = []
+            self.state.predecessor[u] = []
+            self.state.successor[u] = []
 
         self.petals.reset()
 
         for u, v in self.G.edge_iterator(labels=False):
             edge_index = self.edge_to_index(u, v)
-            self.prop_edges.discard(edge_index)
-            self.edge_scanned[edge_index] = -1
+            self.state.prop_edges.discard(edge_index)
+            self.state.edge_scanned[edge_index] = -1
 
         for index in range(1, int(2*self.G.order()+2)):
-            self.bridges_by_tenacity[index] = []
-
-    def min_level(self, vertex: int) -> int:
-        r"""
-        Return the ``min_level`` of ``vertex``: ``min(even_level, odd_level)``.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.start_new_phase()
-            sage: MV.min_level(0)
-            0
-        """
-        return min(self.even_level[vertex], self.odd_level[vertex])
-
-    def max_level(self, vertex: int) -> int:
-        r"""
-        Return the ``max_level`` of ``vertex``: ``max(even_level, odd_level)``.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.start_new_phase()
-            sage: MV.max_level(0) == MV.INFINITY
-            True
-        """
-        return max(self.even_level[vertex], self.odd_level[vertex])
-
-    def tenacity(self, vertex: int) -> int:
-        r"""
-        Return the *tenacity* of ``vertex``: ``even_level + odd_level``.
-
-        Tenacity is the central quantity of [Vaz2020]_ -- bridges are processed
-        in order of increasing tenacity. For a vertex it equals
-        ``min_level(v) + max_level(v)``.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.start_new_phase()
-            sage: MV.tenacity(0) == MV.INFINITY
-            True
-        """
-        return self.even_level[vertex] + self.odd_level[vertex]
-
-    def is_outer(self, vertex: int) -> bool:
-        r"""
-        Return whether ``vertex`` is *outer* (its ``min_level`` is even).
-
-        A vertex is outer when the shortest alternating path reaching it from a
-        free vertex has even length, that is ``even_level < odd_level``.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.start_new_phase()
-            sage: MV.is_outer(0)
-            True
-        """
-        return self.even_level[vertex] < self.odd_level[vertex]
-
-    def is_prop(self, edge_index: int) -> bool:
-        r"""
-        Return whether the edge indexed ``edge_index`` is a *prop*.
-
-        A prop is an edge on a ``min_level`` alternating path (a tree edge of
-        the phase's breadth-first search); every other scanned edge is a
-        *bridge* (see :meth:`is_bridge`).
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.start_new_phase()
-            sage: MV.is_prop(0)
-            False
-        """
-        return edge_index in self.prop_edges
-
-    def is_bridge(self, edge_index: int) -> bool:
-        r"""
-        Return whether the edge indexed ``edge_index`` is a *bridge*.
-
-        A bridge is a scanned edge that is not a prop (see :meth:`is_prop`);
-        bridges are bucketed by their tenacity and processed by :meth:`DDFS`.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.start_new_phase()
-            sage: MV.is_bridge(0)
-            True
-        """
-        return not self.is_prop(edge_index)
+            self.state.bridges_by_tenacity[index] = []
 
     # ******************************
     # Primary Subroutine: Find min_level of vertices
@@ -2798,23 +2816,23 @@ class MicaliVaziraniMatching:
             sage: MV.start_new_phase()
             sage: MV.MIN(0)
             False
-            sage: MV.even_level
+            sage: MV.state.even_level
             [0, 0, 0]
         """
-        if not self.search_level_vertices or search_level > self.G.order():
+        if not self.state.search_level_vertices or search_level > self.G.order():
             return True
 
         next_search_level_vertices: list[int] = []
         parity = search_level % 2
-        levels = (self.even_level, self.odd_level)
+        levels = (self.state.even_level, self.state.odd_level)
 
-        for u in self.search_level_vertices:
+        for u in self.state.search_level_vertices:
             if levels[parity][u] != search_level and \
-               levels[parity][u] < self.INFINITY:
+               levels[parity][u] < self.state.INFINITY:
                 next_search_level_vertices.append(u)
                 continue
 
-            if self.deletion_phase[u] == self.phase_index:
+            if self.state.deletion_phase[u] == self.phase_index:
                 continue
 
             for v in self.G.neighbor_iterator(u):
@@ -2823,33 +2841,33 @@ class MicaliVaziraniMatching:
                 # Even levels (parity 0) scan unmatched edges, odd levels
                 # (parity 1) scan matched edges; ``mate[u] == v`` is exactly the
                 # "is (u, v) a matched edge?" test.
-                if self.edge_scanned[edge_index] != self.phase_index and \
+                if self.state.edge_scanned[edge_index] != self.phase_index and \
                    (self.mate[u] == v) == parity and \
-                   self.deletion_phase[v] != self.phase_index:
-                    self.edge_scanned[edge_index] = self.phase_index
+                   self.state.deletion_phase[v] != self.phase_index:
+                    self.state.edge_scanned[edge_index] = self.phase_index
 
-                    if self.min_level(v) > search_level:
+                    if self.state.min_level(v) > search_level:
                         levels[1 - parity][v] = search_level + 1
                         next_search_level_vertices.append(v)
-                        self.predecessor[v].append(u)
-                        self.successor[u].append(v)
-                        self.prop_edges.add(edge_index)
+                        self.state.predecessor[v].append(u)
+                        self.state.successor[u].append(v)
+                        self.state.prop_edges.add(edge_index)
 
                     else:
                         tenacity = levels[parity][u] + levels[parity][v] + 1
 
                         # In the case where tenacity is defined and,
                         # thus we know which level the bridge will be processed
-                        if tenacity < self.INFINITY:
-                            self.bridges_by_tenacity[tenacity].append(edge_index)
+                        if tenacity < self.state.INFINITY:
+                            self.state.bridges_by_tenacity[tenacity].append(edge_index)
 
                         # The case where tenacity is not yet known
                         # (possibly due to the even/ odd level of
                         # the petal not yet labeled)
                         else:
-                            self.prop_edges.discard(edge_index)
+                            self.state.prop_edges.discard(edge_index)
 
-        self.search_level_vertices = next_search_level_vertices
+        self.state.search_level_vertices = next_search_level_vertices
         return False
 
     # ******************************
@@ -2891,11 +2909,11 @@ class MicaliVaziraniMatching:
         """
         is_augmented = False
 
-        for edge_index in self.bridges_by_tenacity[2 * search_level + 1]:
+        for edge_index in self.state.bridges_by_tenacity[2 * search_level + 1]:
             u, v = self.index_to_edge[edge_index]
             l = self.G.edge_label(u, v)
-            if self.deletion_phase[u] == self.phase_index or \
-               self.deletion_phase[v] == self.phase_index:
+            if self.state.deletion_phase[u] == self.phase_index or \
+               self.state.deletion_phase[v] == self.phase_index:
                 continue
 
             result = self.DDFS(u, v)
@@ -2954,16 +2972,16 @@ class MicaliVaziraniMatching:
             True
         """
         next_search_level_vertices: list[int] = []
-        levels = (self.even_level, self.odd_level)
+        levels = (self.state.even_level, self.state.odd_level)
         for vertex in support:
-            max_level = 2 * search_level + 1 - self.min_level(vertex)
+            max_level = 2 * search_level + 1 - self.state.min_level(vertex)
             level_parity = max_level % 2
 
             # Record the actual max level on the corresponding parity slot
             levels[level_parity][vertex] = max_level
             if self.check_invariants:
                 # a vertex's max level is discovered exactly at its tenacity
-                assert self.tenacity(vertex) == 2 * search_level + 1
+                assert self.state.tenacity(vertex) == 2 * search_level + 1
             next_search_level_vertices.append(vertex)
 
             if not level_parity:
@@ -2973,12 +2991,12 @@ class MicaliVaziraniMatching:
                     # File the bridge under its tenacity, but only once that
                     # tenacity is determined (a neighbor whose even level is
                     # still infinite leaves it unknown for now).
-                    if self.is_bridge(edge_index):
-                        tenacity = max_level + self.even_level[neighbor] + 1
-                        if tenacity < self.INFINITY:
-                            self.bridges_by_tenacity[tenacity].append(edge_index)
+                    if self.state.is_bridge(edge_index):
+                        tenacity = max_level + self.state.even_level[neighbor] + 1
+                        if tenacity < self.state.INFINITY:
+                            self.state.bridges_by_tenacity[tenacity].append(edge_index)
 
-        self.search_level_vertices += next_search_level_vertices
+        self.state.search_level_vertices += next_search_level_vertices
 
     # ******************************
     # Double DFS to locate augmenting paths
@@ -3023,7 +3041,7 @@ class MicaliVaziraniMatching:
         other_color = (GREEN, RED)
 
         def buds(vertex):
-            return [self.petals.get_bud(p) for p in self.predecessor[vertex]]
+            return [self.petals.get_bud(p) for p in self.state.predecessor[vertex]]
 
         red_root, green_root = (self.petals.get_bud(source_red_vertex),
                                 self.petals.get_bud(source_green_vertex))
@@ -3044,8 +3062,8 @@ class MicaliVaziraniMatching:
         owner = {red_root: RED, green_root: GREEN}
         stack = ([red_root], [green_root])
         rem = {red_root: buds(red_root), green_root: buds(green_root)}
-        if self.deletion_phase[red_root] == phase or \
-           self.deletion_phase[green_root] == phase:
+        if self.state.deletion_phase[red_root] == phase or \
+           self.state.deletion_phase[green_root] == phase:
             encountered_deleted_vertex = True
 
         def claim(color, vertex):
@@ -3053,7 +3071,7 @@ class MicaliVaziraniMatching:
             owner[vertex] = color
             rem[vertex] = buds(vertex)
             stack[color].append(vertex)
-            if self.deletion_phase[vertex] == phase:
+            if self.state.deletion_phase[vertex] == phase:
                 encountered_deleted_vertex = True
 
         def descend_below(color, barrier):
@@ -3063,12 +3081,12 @@ class MicaliVaziraniMatching:
             # ``min_level(w) <= min_level(barrier)``.  It never re-enters
             # ``barrier`` (that vertex is the other search's now) nor the other
             # search's territory.  Returns whether it succeeds.
-            barrier_level = self.min_level(barrier)
+            barrier_level = self.state.min_level(barrier)
             if stack[color][-1] == barrier:
                 stack[color].pop()
             while stack[color]:
                 center = stack[color][-1]
-                if center != barrier and self.min_level(center) <= barrier_level:
+                if center != barrier and self.state.min_level(center) <= barrier_level:
                     return True
                 moved = False
                 while rem[center]:
@@ -3098,8 +3116,8 @@ class MicaliVaziraniMatching:
         # single highest bottleneck, the bud of a new petal.
         while True:
             red_center, green_center = stack[RED][-1], stack[GREEN][-1]
-            red_level, green_level = (self.min_level(red_center),
-                                      self.min_level(green_center))
+            red_level, green_level = (self.state.min_level(red_center),
+                                      self.state.min_level(green_center))
 
             if red_level == 0 and green_level == 0 and red_center != green_center:
                 # Two disjoint paths to two distinct free vertices.
@@ -3250,7 +3268,7 @@ class MicaliVaziraniMatching:
         path = list()
         petal = self.vertex_petal_map[vertex]
         bud = petal.bud
-        if self.is_outer(vertex):
+        if self.state.is_outer(vertex):
             path = yield self._unfold_path_in_petal_generator(
                 vertex, bud, petal, visited)
         else:
@@ -3426,7 +3444,7 @@ class MicaliVaziraniMatching:
         direct_steps = []
         nested_steps = []
         reaches_end = False
-        for predecessor in self.predecessor[start_vertex]:
+        for predecessor in self.state.predecessor[start_vertex]:
             if predecessor == end_vertex:
                 reaches_end = True
             else:
@@ -3622,19 +3640,19 @@ class MicaliVaziraniMatching:
         # Erase vertex based on search level
         erase_vertex_list: list[int] = []
         for vertex in path:
-            self.deletion_phase[vertex] = self.phase_index
+            self.state.deletion_phase[vertex] = self.phase_index
             erase_vertex_list.append(vertex)
 
         while erase_vertex_list:
             current_vertex = erase_vertex_list.pop()
-            successors = self.successor[current_vertex][:]
+            successors = self.state.successor[current_vertex][:]
             for vertex in successors:
-                if self.deletion_phase[vertex] != self.phase_index:
-                    self.predecessor[vertex].remove(current_vertex)
-                    self.successor[current_vertex].remove(vertex)
-                    if not self.predecessor[vertex]:
+                if self.state.deletion_phase[vertex] != self.phase_index:
+                    self.state.predecessor[vertex].remove(current_vertex)
+                    self.state.successor[current_vertex].remove(vertex)
+                    if not self.state.predecessor[vertex]:
                         erase_vertex_list.append(vertex)
-                        self.deletion_phase[vertex] = self.phase_index
+                        self.state.deletion_phase[vertex] = self.phase_index
         return True
 
     # Procedure to find path after discovering an augmenting path via DDFS
@@ -3669,7 +3687,7 @@ class MicaliVaziraniMatching:
         """
         path: list[int] = []
         current_vertex = peak
-        predecessor_list = self.predecessor[current_vertex][:]
+        predecessor_list = self.state.predecessor[current_vertex][:]
 
         # Follow the support given to get the path
         for vertex in support:
@@ -3680,7 +3698,7 @@ class MicaliVaziraniMatching:
                 # in the predecessor list
                 current_vertex = predecessor_list.pop()
 
-            predecessor_list = self.predecessor[current_vertex][:]
+            predecessor_list = self.state.predecessor[current_vertex][:]
             # If the vertex is not part of a petal, add it to the path
             # Otherwise unfold the petal
             if self.vertex_petal_map[current_vertex] is None:
@@ -3692,7 +3710,7 @@ class MicaliVaziraniMatching:
                     return []
                 path += petal_path
                 current_vertex = self.petals.get_bud(current_vertex)
-                predecessor_list = self.predecessor[current_vertex][:]
+                predecessor_list = self.state.predecessor[current_vertex][:]
         return path
 
     # ******************************
@@ -3726,10 +3744,10 @@ class MicaliVaziraniMatching:
             5
         """
         for v in range(self.N):
-            assert self.even_level[v] == self.INFINITY or not self.even_level[v] % 2, \
-                f'even_level[{v}] = {self.even_level[v]} is not even'
-            assert self.odd_level[v] == self.INFINITY or self.odd_level[v] % 2, \
-                f'odd_level[{v}] = {self.odd_level[v]} is not odd'
+            assert self.state.even_level[v] == self.state.INFINITY or not self.state.even_level[v] % 2, \
+                f'even_level[{v}] = {self.state.even_level[v]} is not even'
+            assert self.state.odd_level[v] == self.state.INFINITY or self.state.odd_level[v] % 2, \
+                f'odd_level[{v}] = {self.state.odd_level[v]} is not odd'
             petal = self.vertex_petal_map[v]
             assert petal is None or petal.bud != v, \
                 f'vertex {v} is the bud of its own petal'
