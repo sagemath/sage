@@ -65,6 +65,7 @@ def conjugatingbraid(braid1, braid2):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import conjugatingbraid
         sage: B = BraidGroup(3)
         sage: b = B([1, 2, 1, -2])
@@ -97,6 +98,7 @@ def leftnormalform(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import leftnormalform
         sage: B = BraidGroup(3)
         sage: b = B([1, 2, 1, -2])
@@ -127,6 +129,7 @@ def rightnormalform(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import rightnormalform
         sage: B = BraidGroup(3)
         sage: b = B([1, 2, 1, -2])
@@ -154,6 +157,7 @@ def greatestcommondivisor(braid1, braid2):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import greatestcommondivisor
         sage: B = BraidGroup(3)
         sage: b1 = B([1, 2, -1])
@@ -183,6 +187,7 @@ def leastcommonmultiple(braid1, braid2):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import leastcommonmultiple
         sage: B = BraidGroup(3)
         sage: b1 = B([1, 2, -1])
@@ -214,6 +219,7 @@ def centralizer(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import centralizer
         sage: B = BraidGroup(3)
         sage: b = B([1, 2, -1])
@@ -248,6 +254,7 @@ def supersummitset(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import supersummitset
         sage: B = BraidGroup(3)
         sage: b = B([1, 2, -1])
@@ -277,6 +284,7 @@ def ultrasummitset(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import ultrasummitset
         sage: B = BraidGroup(3)
         sage: b = B([1, 2, -1])
@@ -305,6 +313,7 @@ def thurston_type(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import thurston_type
         sage: B = BraidGroup(3)
         sage: b = B([1, 2, -1])
@@ -342,6 +351,7 @@ def rigidity(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import rigidity
         sage: B = BraidGroup(3)
         sage: c = B([1, 1, 1, 2, 2])
@@ -371,6 +381,7 @@ def sliding_circuits(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import sliding_circuits
         sage: B = BraidGroup(3)
         sage: c = B([1, 1, 1, 2, 2])
@@ -405,6 +416,7 @@ def send_to_sss(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import send_to_sss
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2,- 3])
@@ -435,6 +447,7 @@ def send_to_uss(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import send_to_uss
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2,- 1])
@@ -465,6 +478,7 @@ def send_to_sc(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import send_to_sc
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
@@ -495,6 +509,7 @@ def trajectory(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import trajectory
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
@@ -528,6 +543,7 @@ def cyclic_slidings(braid):
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.libs.braiding import cyclic_slidings
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
