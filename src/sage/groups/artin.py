@@ -400,8 +400,13 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 3, -1, 2, -3])
-            sage: b.left_normal_form()
-            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
+            sage: actual = b.left_normal_form()
+            sage: s0, s1, s2 = B.gens()
+            sage: expected = (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1,
+            ....:             s0*s1*s2*s1*s0,
+            ....:             s0*s2*s1)
+            sage: actual == expected
+            True
             sage: c = B([1])
             sage: c.left_normal_form()
             (1, s0)

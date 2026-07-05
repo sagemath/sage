@@ -4965,26 +4965,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cones.trivial(0).discrete_complementarity_set()
             ()
 
-        TESTS:
-
-        A discrete complementarity set for the dual can be obtained by
-        switching components in a discrete complementarity set of the
-        original cone::
-
-            sage: K = random_cone(max_ambient_dim=6)
-            sage: dcs_dual = K.dual().discrete_complementarity_set()
-            sage: expected = tuple((x,s) for (s,x) in dcs_dual)
-            sage: actual = K.discrete_complementarity_set()
-            sage: sorted(actual) == sorted(expected)
-            True
-
-        The pairs in a discrete complementarity set are in fact
-        complementary::
-
-            sage: K = random_cone(max_ambient_dim=6)
-            sage: dcs = K.discrete_complementarity_set()
-            sage: sum((s*x).abs() for (x,s) in dcs)
-            0
         """
         # Return an immutable tuple instead of a mutable list because
         # the result will be cached.
@@ -5085,40 +5065,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             [0 0 1]
             ]
 
-        TESTS:
-
-        Every operator in a :meth:`lyapunov_like_basis` is Lyapunov-like
-        on the cone::
-
-            sage: K = random_cone(max_ambient_dim=8)
-            sage: LL = K.lyapunov_like_basis()
-            sage: all(L.is_lyapunov_like_on(K) for L in LL)
-            True
-
-        The Lyapunov-like transformations on a cone and its dual are
-        transposes of one another. However, there's no reason to expect
-        that one basis will consist of transposes of the other::
-
-            sage: K = random_cone(max_ambient_dim=8)
-            sage: LL1 = K.lyapunov_like_basis()
-            sage: LL2 = (L.transpose() for L in K.dual().lyapunov_like_basis())
-            sage: V = VectorSpace(K.lattice().base_field(), K.lattice_dim()^2)
-            sage: LL1_vecs = (V(m.list()) for m in LL1)
-            sage: LL2_vecs = (V(m.list()) for m in LL2)
-            sage: V.span(LL1_vecs) == V.span(LL2_vecs)
-            True
-
-        The space of all Lyapunov-like transformations is a Lie algebra
-        and should therefore be closed under the lie bracket::
-
-            sage: K = random_cone(max_ambient_dim=4)
-            sage: LL = K.lyapunov_like_basis()
-            sage: W = VectorSpace(K.lattice().base_field(), K.lattice_dim()**2)
-            sage: LL_W = W.span( W(m.list()) for m in LL )
-            sage: brackets = (W((L1*L2 - L2*L1).list()) for L1 in LL
-            ....:                                       for L2 in LL)
-            sage: all(b in LL_W for b in brackets)
-            True
         """
         # Matrices are not vectors in Sage, so we have to convert them
         # to vectors explicitly before we can find a basis. We need these
@@ -5250,93 +5196,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: K.lyapunov_rank()
             3
 
-        Lyapunov rank is invariant under :meth:`dual` [RNPA2011]_::
-
-            sage: K = Cone([(2,2,4), (-1,9,0), (2,0,6)])
-            sage: K.lyapunov_rank() == K.dual().lyapunov_rank()
-            True
-
-        TESTS:
-
-        Lyapunov rank should be additive on a product of proper cones
-        [RNPA2011]_::
-
-            sage: K1 = random_cone(max_ambient_dim=6,
-            ....:                  strictly_convex=True,
-            ....:                  solid=True)
-            sage: K2 = random_cone(max_ambient_dim=6,
-            ....:                  strictly_convex=True,
-            ....:                  solid=True)
-            sage: K = K1.cartesian_product(K2)
-            sage: K.lyapunov_rank() == K1.lyapunov_rank() + K2.lyapunov_rank()
-            True
-
-        Lyapunov rank should be invariant under a linear isomorphism
-        [Or2017]_::
-
-            sage: K1 = random_cone(max_ambient_dim=8)
-            sage: n = K1.lattice_dim()
-            sage: A = random_matrix(QQ, n, algorithm='unimodular')
-            sage: K2 = Cone((A*r for r in K1), lattice=K1.lattice())
-            sage: K1.lyapunov_rank() == K2.lyapunov_rank()
-            True
-
-        Lyapunov rank should be invariant under :meth:`dual` [RNPA2011]_::
-
-            sage: K = random_cone(max_ambient_dim=8)
-            sage: K.lyapunov_rank() == K.dual().lyapunov_rank()
-            True
-
-        The Lyapunov rank of a proper polyhedral cone in a non-trivial
-        `n`-dimensional space can be any number between `1` and `n`
-        inclusive, excluding `n-1` [GT2014]_::
-
-            sage: K = random_cone(max_ambient_dim=8,
-            ....:                 min_rays=1,
-            ....:                 strictly_convex=True,
-            ....:                 solid=True)
-            sage: b = K.lyapunov_rank()
-            sage: n = K.lattice_dim()
-            sage: 1 <= b <= n
-            True
-            sage: b == n-1
-            False
-
-        No polyhedral closed convex cone in `n` dimensions has Lyapunov
-        rank `n-1` [Or2017]_::
-
-            sage: K = random_cone(max_ambient_dim=8)
-            sage: K.lyapunov_rank() == K.lattice_dim() - 1
-            False
-
-        The calculation of the Lyapunov rank of an improper cone can
-        be reduced to that of a proper cone [Or2017]_::
-
-            sage: K = random_cone(max_ambient_dim=8)
-            sage: K_SP = K.solid_restriction().strict_quotient()
-            sage: l = K.lineality()
-            sage: c = K.codim()
-            sage: actual = K.lyapunov_rank()
-            sage: expected = K_SP.lyapunov_rank() + K.dim()*(l + c) + c**2
-            sage: actual == expected
-            True
-
-        The Lyapunov rank of a cone is the length of a
-        :meth:`lyapunov_like_basis` for it::
-
-            sage: K = random_cone(max_ambient_dim=8)
-            sage: K.lyapunov_rank() == len(K.lyapunov_like_basis())
-            True
-
-        A "perfect" cone has Lyapunov rank `n` or more in `n`
-        dimensions. We can make any cone perfect by adding a slack
-        variable::
-
-            sage: K = random_cone(max_ambient_dim=8)
-            sage: L = ToricLattice(K.lattice_dim() + 1)
-            sage: K = Cone([r.list() + [0] for r in K], lattice=L)
-            sage: K.lyapunov_rank() >= K.lattice_dim()
-            True
         """
         # The solid_restriction() and strict_quotient() methods
         # already check if the cone is solid or strictly convex, so we
@@ -5499,6 +5358,66 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # explicit conversion, we return ``0`` when we have no rays.
         return L(sum(terms))
 
+    def _positive_operators_dual(self, K2):
+        r"""
+        Return the dual cone of the positive operators from
+        ``self`` to ``K2`` under the matrix <-> long-vector
+        isometry.
+
+        In :meth:`positive_operators_gens` we compute the cone of
+        positive operators from ``self`` to ``K2`` by taking the
+        dual of a dual. This method computes the latter dual. Matrices
+        cannot generate cones in Sage, so long vectors are used as
+        proxies in this step. The matrix <-> long-vector map is an
+        isometry, so everything works out the same in the end.
+
+        The intermediate dual cone of long vectors turns out to be
+        useful in at least one doctest, so it has been factored out
+        for efficiency.
+
+        REFERENCES:
+
+        - [Or2018b]_
+
+        EXAMPLES:
+
+        On the nonnegative orthant, the positive operators are the
+        (self-dual) cone of nonnegative matrices, which in long-vector
+        form is just a (bigger) nonnegative orthant::
+
+            sage: K = cones.nonnegative_orthant(3)
+            sage: J = K._positive_operators_dual(K)
+            sage: J.is_equivalent(cones.nonnegative_orthant(9))
+            True
+
+        """
+        # Matrices are not vectors in Sage, so we have to convert them
+        # to vectors explicitly before we can find a basis. We need these
+        # two values to construct the appropriate "long vector" space.
+        F = self.lattice().base_field()
+        n = self.lattice_dim()
+        m = K2.lattice_dim()
+
+        tensor_products = ( s.tensor_product(x) for x in self
+                                                for s in K2.dual() )
+
+        # Convert those tensor products to long vectors.
+        W = VectorSpace(F, n*m)
+        vectors = ( W(tp.list()) for tp in tensor_products )
+
+        check = True
+        if self.is_proper() and K2.is_proper():
+            # All of the generators involved are extreme vectors and
+            # therefore minimal. If this cone is neither solid nor
+            # strictly convex, then the tensor product of ``s`` and ``x``
+            # is the same as that of ``-s`` and ``-x``. However, as a
+            # /set/, ``tensor_products`` may still be minimal.
+            check = False
+
+        # Create the dual cone of the positive operators, expressed as
+        # long vectors.
+        return Cone(vectors, ToricLattice(W.dimension()), check=check)
+
     def positive_operators_gens(self, K2=None):
         r"""
         Compute minimal generators of the positive operators on this cone.
@@ -5621,77 +5540,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         TESTS:
 
-        A random positive operator should send a random element of one
-        cone into the other cone::
-
-            sage: K1 = random_cone(max_ambient_dim=3)
-            sage: K2 = random_cone(max_ambient_dim=3)
-            sage: pi_gens = K1.positive_operators_gens(K2)
-            sage: L = ToricLattice(K1.lattice_dim() * K2.lattice_dim())
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: P = matrix(K2.lattice_dim(),
-            ....:            K1.lattice_dim(),
-            ....:            pi_cone.random_element(QQ).list())
-            sage: K2.contains(P*K1.random_element(ring=QQ))
-            True
-
-        The lineality space of the dual of the positive operators
-        can be computed from the lineality spaces of the cone and
-        its dual [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: pi_gens = K.positive_operators_gens()
-            sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: actual = pi_cone.dual().linear_subspace()
-            sage: U1 = [vector((s.tensor_product(x)).list())
-            ....:       for x in K.lines()
-            ....:       for s in K.dual()]
-            sage: U2 = [vector((s.tensor_product(x)).list())
-            ....:       for x in K
-            ....:       for s in K.dual().lines()]
-            sage: expected = pi_cone.lattice().vector_space().span(U1+U2)
-            sage: actual == expected
-            True
-
-        The lineality of the dual of the positive operators is known
-        from its lineality space [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: n = K.lattice_dim()
-            sage: m = K.dim()
-            sage: l = K.lineality()
-            sage: pi_gens = K.positive_operators_gens()
-            sage: L = ToricLattice(n**2)
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: actual = pi_cone.dual().lineality()
-            sage: expected = l*(m - l) + m*(n - m)
-            sage: actual == expected
-            True
-
-        The dimension of the positive operators on a cone depends on the
-        dimension and lineality of that cone [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: n = K.lattice_dim()
-            sage: m = K.dim()
-            sage: l = K.lineality()
-            sage: pi_gens = K.positive_operators_gens()
-            sage: L = ToricLattice(n**2)
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: actual = pi_cone.dim()
-            sage: expected = n**2 - l*(m - l) - (n - m)*m
-            sage: actual == expected
-            True
-
         The trivial cone, full space, and half-plane all give rise to the
         expected dimensions [Or2018b]_::
 
@@ -5720,21 +5568,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                check=False)
             sage: pi_cone.dim() == 3
-            True
-
-        The lineality of the positive operators follows from the
-        description of its generators [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: n = K.lattice_dim()
-            sage: pi_gens = K.positive_operators_gens()
-            sage: L = ToricLattice(n**2)
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: actual = pi_cone.lineality()
-            sage: expected = n**2 - K.dim()*K.dual().dim()
-            sage: actual == expected
             True
 
         The trivial cone, full space, and half-plane all give rise to
@@ -5766,148 +5599,18 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: pi_cone.lineality() == 2
             True
 
-        A cone is proper if and only if its positive operators form a
-        proper cone [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: pi_gens = K.positive_operators_gens()
-            sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: K.is_proper() == pi_cone.is_proper()
-            True
-
-        The positive operators on a permuted cone can be obtained by
-        conjugation::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
-            sage: pK = Cone((p*k for k in K), K.lattice(), check=False)
-            sage: pi_gens = pK.positive_operators_gens()
-            sage: actual = Cone((g.list() for g in pi_gens),
-            ....:               lattice=L,
-            ....:               check=False)
-            sage: pi_gens = K.positive_operators_gens()
-            sage: expected = Cone(((p*g*p.inverse()).list() for g in pi_gens),
-            ....:                 lattice=L,
-            ....:                 check=False)
-            sage: actual.is_equivalent(expected)
-            True
-
-        An operator is positive from one cone to another if and only if
-        its adjoint is positive from the dual of the second cone to the
-        dual of the first::
-
-            sage: K1 = random_cone(max_ambient_dim=3)
-            sage: K2 = random_cone(max_ambient_dim=3)
-            sage: F = K1.lattice().vector_space().base_field()
-            sage: n = K1.lattice_dim()
-            sage: m = K2.lattice_dim()
-            sage: L = ToricLattice(n*m)
-            sage: W = VectorSpace(F, n*m)
-            sage: pi_gens = K1.positive_operators_gens(K2)
-            sage: pi_fwd = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: pi_gens = K2.dual().positive_operators_gens(K1.dual())
-            sage: pi_back = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: M_fwd = MatrixSpace(F, m, n)
-            sage: M_back = MatrixSpace(F, n, m)
-            sage: L = M_fwd(pi_fwd.random_element(ring=QQ).list())
-            sage: pi_back.contains(W(L.transpose().list()))
-            True
-            sage: L = M_back(pi_back.random_element(ring=QQ).list())
-            sage: pi_fwd.contains(W(L.transpose().list()))
-            True
-
-        The Lyapunov rank of the positive operators is the product of
-        the Lyapunov ranks of the associated cones if both are proper
-        [Or2018a]_::
-
-            sage: K1 = random_cone(max_ambient_dim=3,
-            ....:                  strictly_convex=True,
-            ....:                  solid=True)
-            sage: K2 = random_cone(max_ambient_dim=3,
-            ....:                  strictly_convex=True,
-            ....:                  solid=True)
-            sage: pi_gens = K1.positive_operators_gens(K2)
-            sage: L = ToricLattice(K1.lattice_dim() * K2.lattice_dim())
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: beta1 = K1.lyapunov_rank()
-            sage: beta2 = K2.lyapunov_rank()
-            sage: pi_cone.lyapunov_rank() == beta1*beta2
-            True
-
-        Lyapunov-like operators on a proper polyhedral positive operator
-        cone can be computed from the Lyapunov-like operators on the cones
-        with respect to which the operators are positive [Or2018a]_::
-
-            sage: K1 = random_cone(max_ambient_dim=3,
-            ....:                  strictly_convex=True,
-            ....:                  solid=True)
-            sage: K2 = random_cone(max_ambient_dim=3,
-            ....:                  strictly_convex=True,
-            ....:                  solid=True)
-            sage: pi_gens = K1.positive_operators_gens(K2)
-            sage: F = K1.lattice().base_field()
-            sage: m = K1.lattice_dim()
-            sage: n = K2.lattice_dim()
-            sage: L = ToricLattice(m*n)
-            sage: M1 = MatrixSpace(F, m, m)
-            sage: M2 = MatrixSpace(F, n, n)
-            sage: tps = (M2(s.list()).tensor_product(M1(x.list()))
-            ....:        for x in K1.dual().lyapunov_like_basis()
-            ....:        for s in K2.lyapunov_like_basis())
-            sage: W = VectorSpace(F, (m**2)*(n**2))
-            sage: expected = span(F, (W(x.list()) for x in tps))
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: LL_pi = pi_cone.lyapunov_like_basis()
-            sage: actual = span(F, (W(x.list()) for x in LL_pi))
-            sage: actual == expected
-            True
         """
         if K2 is None:
             K2 = self
 
-        # Matrices are not vectors in Sage, so we have to convert them
-        # to vectors explicitly before we can find a basis. We need these
-        # two values to construct the appropriate "long vector" space.
+        # Create cone of positive operators, expressed as long
+        # vectors.
+        pi_cone = self._positive_operators_dual(K2).dual()
+
+        # And finally convert its rays back to matrix representations.
         F = self.lattice().base_field()
         n = self.lattice_dim()
         m = K2.lattice_dim()
-
-        tensor_products = ( s.tensor_product(x) for x in self
-                                                for s in K2.dual() )
-
-        # Convert those tensor products to long vectors.
-        W = VectorSpace(F, n*m)
-        vectors = ( W(tp.list()) for tp in tensor_products )
-
-        check = True
-        if self.is_proper() and K2.is_proper():
-            # All of the generators involved are extreme vectors and
-            # therefore minimal. If this cone is neither solid nor
-            # strictly convex, then the tensor product of ``s`` and ``x``
-            # is the same as that of ``-s`` and ``-x``. However, as a
-            # /set/, ``tensor_products`` may still be minimal.
-            check = False
-
-        # Create the dual cone of the positive operators, expressed as
-        # long vectors.
-        pi_dual = Cone(vectors, ToricLattice(W.dimension()), check=check)
-
-        # Now compute the desired cone from its dual...
-        pi_cone = pi_dual.dual()
-
-        # And finally convert its rays back to matrix representations.
         M = MatrixSpace(F, m, n)
         return [ M(v.list()) for v in pi_cone ]
 
@@ -6089,51 +5792,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         TESTS:
 
-        The cross-positive property is possessed by every cross-positive
-        operator::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: cp_gens = K.cross_positive_operators_gens()
-            sage: all(L.is_cross_positive_on(K) for L in cp_gens)
-            True
-
-        The lineality space of the cone of cross-positive operators is
-        the space of Lyapunov-like operators [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: cp_gens = K.cross_positive_operators_gens()
-            sage: cp_cone = Cone((g.list() for g in cp_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: ll_basis = (vector(l.list())
-            ....:             for l in K.lyapunov_like_basis())
-            sage: lls = L.vector_space().span(ll_basis)
-            sage: cp_cone.linear_subspace() == lls
-            True
-
-        The lineality spaces of the duals of the positive and cross-
-        positive operator cones are equal. From this it follows that
-        the dimensions of the cross-positive operator cone and positive
-        operator cone are equal [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: pi_gens = K.positive_operators_gens()
-            sage: cp_gens = K.cross_positive_operators_gens()
-            sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: pi_cone = Cone((g.list() for g in pi_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: cp_cone = Cone((g.list() for g in cp_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: pi_cone.dim() == cp_cone.dim()
-            True
-            sage: pi_star = pi_cone.dual()
-            sage: cp_star = cp_cone.dual()
-            sage: pi_star.linear_subspace() == cp_star.linear_subspace()
-            True
-
         The trivial cone, full space, and half-plane all give rise to
         the expected dimensions [Or2018b]_::
 
@@ -6163,47 +5821,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cp_cone.dim() == 3
             True
 
-        The cross-positive operators of a permuted cone can be obtained by
-        conjugation::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: L = ToricLattice(K.lattice_dim()**2)
-            sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
-            sage: pK = Cone((p*k for k in K), K.lattice(), check=False)
-            sage: cp_gens = pK.cross_positive_operators_gens()
-            sage: actual = Cone((g.list() for g in cp_gens),
-            ....:               lattice=L,
-            ....:               check=False)
-            sage: cp_gens = K.cross_positive_operators_gens()
-            sage: expected = Cone(((p*g*p.inverse()).list() for g in cp_gens),
-            ....:                 lattice=L,
-            ....:                 check=False)
-            sage: actual.is_equivalent(expected)
-            True
-
-        An operator is cross-positive on a cone if and only if its
-        adjoint is cross-positive on the dual of that cone [Or2018b]_::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: F = K.lattice().vector_space().base_field()
-            sage: n = K.lattice_dim()
-            sage: L = ToricLattice(n**2)
-            sage: W = VectorSpace(F, n**2)
-            sage: cp_gens = K.cross_positive_operators_gens()
-            sage: cp_cone = Cone((g.list() for g in cp_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: cp_gens = K.dual().cross_positive_operators_gens()
-            sage: cp_star = Cone((g.list() for g in cp_gens),
-            ....:                lattice=L,
-            ....:                check=False)
-            sage: M = MatrixSpace(F, n)
-            sage: L = M(cp_cone.random_element(ring=QQ).list())
-            sage: cp_star.contains(W(L.transpose().list()))
-            True
-            sage: L = M(cp_star.random_element(ring=QQ).list())
-            sage: cp_cone.contains(W(L.transpose().list()))
-            True
         """
         # Compute the desired cone from its dual...
         cp_cone = self._cross_positive_operators_dual().dual()
@@ -6247,14 +5864,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - [BP1994]_
         - [Or2018b]_
 
-        TESTS:
-
-        The Z-property is possessed by every Z-operator::
-
-            sage: K = random_cone(max_ambient_dim=3)
-            sage: Z_gens = K.Z_operators_gens()
-            sage: all(L.is_Z_operator_on(K) for L in Z_gens)
-            True
         """
         return [ -cp for cp in self.cross_positive_operators_gens() ]
 

@@ -1409,10 +1409,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS::
 
-            sage: M = random_matrix(GF(9,'x'), 64,51)
-            sage: M == M*int(4) == int(4)*M
+            sage: M = random_matrix(GF(9,'x'), 64,51) # optional: meataxe
+            sage: M == M*int(4) == int(4)*M           # optional: meataxe
             True
-            sage: M*int(-1)+M == 0
+            sage: M*int(-1)+M == 0                    # optional: meataxe
             True
         """
         if self.Data == NULL:
@@ -1473,20 +1473,20 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS::
 
-            sage: MS = MatrixSpace(GF(9,'x'),500)
-            sage: while 1:
+            sage: MS = MatrixSpace(GF(9,'x'),500) # optional: meataxe
+            sage: while 1:                        # optional: meataxe
             ....:     M = MS.random_element()
             ....:     if M.rank() == 500:
             ....:         break
-            sage: Minv = ~M    # indirect doctest
-            sage: Minv*M == M*Minv == 1
+            sage: Minv = ~M                       # optional: meataxe
+            sage: Minv*M == M*Minv == 1           # optional: meataxe
             True
 
         We use the occasion to demonstrate that errors in MeatAxe are
         correctly handled in Sage::
 
-            sage: MS = MatrixSpace(GF(25,'x'),5)
-            sage: while 1:
+            sage: MS = MatrixSpace(GF(25,'x'),5) # optional: meataxe
+            sage: while 1:                       # optional: meataxe
             ....:     M = MS.random_element(density=0.4)
             ....:     if M.rank() < 5:
             ....:         break
