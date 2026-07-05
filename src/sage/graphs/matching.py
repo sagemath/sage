@@ -1974,9 +1974,9 @@ class MicaliVaziraniMatching:
     #: ``mate`` array used throughout the matching literature.
     EXPOSED = -1
 
-    #: Colors of the two searches run by the double DFS (:meth:`DDFS`): a *red*
-    #: search and a *green* search. ``color[v]`` records which side of a petal
-    #: vertex ``v`` was attached to.
+    #: Colors of the two searches run by the double depth-first search
+    #: (:meth:`DDFS`): a *red* search and a *green* search. ``color[v]`` records
+    #: which side of a petal vertex ``v`` was attached to.
     RED, GREEN = 0, 1
 
     #: Sentinel stored in ``color[v]`` before ``v`` is attached to a petal side.
@@ -2196,7 +2196,7 @@ class MicaliVaziraniMatching:
 
             A :class:`Petal` with that ``bud`` and peaks the two endpoints of
             ``bridge`` is created, and the red and green supports found by the
-            double DFS are attached to it, one per side.
+            double depth-first search are attached to it, one per side.
 
             INPUT:
 
@@ -2962,7 +2962,7 @@ class MicaliVaziraniMatching:
         self.state.search_level_vertices += next_search_level_vertices
 
     # ******************************
-    # Double DFS to locate augmenting paths
+    # Double depth-first search to locate augmenting paths
     # ******************************
     def DDFS(
         self,
@@ -3120,28 +3120,29 @@ class MicaliVaziraniMatching:
                 return (red_support, green_support, opponent_center,
                         encountered_deleted_vertex)
 
-            # The advancing search reached the opponent's center ``m``: is ``m``
-            # the highest bottleneck? Following [Vaz2020]_, green tries to step
-            # below ``m`` first, then red; whoever cannot must yield ``m`` to the
-            # other, and if neither can, ``m`` is the bottleneck.
-            m = opponent_center
-            stack[color].append(m)
+            # The advancing search reached the opponent's center, the
+            # ``meeting_point``: is it the highest bottleneck? Following
+            # [Vaz2020]_, green tries to step below ``meeting_point`` first, then
+            # red; whoever cannot must yield it to the other, and if neither can,
+            # ``meeting_point`` is the bottleneck.
+            meeting_point = opponent_center
+            stack[color].append(meeting_point)
             saved_green = stack[GREEN][:]
-            if descend_below(GREEN, m):
-                owner[m] = RED
-                if stack[RED][-1] != m:
-                    stack[RED].append(m)
-                rem[m] = buds(m)
+            if descend_below(GREEN, meeting_point):
+                owner[meeting_point] = RED
+                if stack[RED][-1] != meeting_point:
+                    stack[RED].append(meeting_point)
+                rem[meeting_point] = buds(meeting_point)
             else:
                 stack[GREEN][:] = saved_green
-                if descend_below(RED, m):
-                    owner[m] = GREEN
-                    if stack[GREEN][-1] != m:
-                        stack[GREEN].append(m)
-                    rem[m] = buds(m)
+                if descend_below(RED, meeting_point):
+                    owner[meeting_point] = GREEN
+                    if stack[GREEN][-1] != meeting_point:
+                        stack[GREEN].append(meeting_point)
+                    rem[meeting_point] = buds(meeting_point)
                 else:
-                    red_support, green_support = support_minus(m)
-                    return (red_support, green_support, m,
+                    red_support, green_support = support_minus(meeting_point)
+                    return (red_support, green_support, meeting_point,
                             encountered_deleted_vertex)
 
     # ******************************
@@ -3625,16 +3626,17 @@ class MicaliVaziraniMatching:
         Reconstruct one half of an augmenting path from a peak to a free vertex.
 
         Starting at ``peak``, the predecessor links are followed downwards using
-        ``support`` -- the sequence of buds produced by the double DFS -- as a
-        guide: for each bud the predecessors are popped until the matching bud
-        is reached. Whenever a vertex lies inside a contracted petal, the
-        corresponding segment is expanded with :meth:`unfold_petal` so that the
-        returned sequence is a genuine alternating path in the original graph.
+        ``support`` -- the sequence of buds produced by the double depth-first
+        search -- as a guide: for each bud the predecessors are popped until the
+        matching bud is reached. Whenever a vertex lies inside a contracted
+        petal, the corresponding segment is expanded with :meth:`unfold_petal`
+        so that the returned sequence is a genuine alternating path in the
+        original graph.
 
         INPUT:
 
         - ``support`` -- list of integers; the buds tracing the path, as
-          recorded during the double DFS
+          recorded during the double depth-first search
         - ``peak`` -- integer; the bridge endpoint from which to start tracing
 
         OUTPUT: the list of vertices from ``peak`` down to the free vertex
