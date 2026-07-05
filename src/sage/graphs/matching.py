@@ -2046,6 +2046,82 @@ class MicaliVaziraniMatching:
             """
             return self.bottleneck is None
 
+    class _Instance:
+        r"""
+        Immutable graph representation underlying :class:`MicaliVaziraniMatching`.
+
+        Built once from the input graph: it simplifies and relabels the graph to
+        `0, 1, \ldots, N - 1`, keeps the original labels for the round-trip in
+        :meth:`~MicaliVaziraniMatching.get_matching`, and numbers the edges so
+        edge-indexed arrays can be used. The algorithm treats it as read-only.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: instance = MicaliVaziraniMatching(graphs.PathGraph(3)).instance
+            sage: instance.N
+            3
+            sage: instance.edge_to_index(2, 1)
+            1
+        """
+        def __init__(self, G):
+            from sage.graphs.graph import Graph
+
+            if not isinstance(G, Graph):
+                raise ValueError("The input must be a graph")
+
+            # Work on a fresh, plain ``Graph``. Loops and multiple edges are
+            # removed (a maximum matching of the underlying simple graph is a
+            # maximum matching of ``G``: a loop can never be matched, and
+            # parallel edges are redundant for the unweighted matching computed
+            # here). Crucially, we rebuild via the base ``Graph`` constructor
+            # rather than ``copy()`` / ``to_simple()``, because those preserve
+            # the *dynamic* class: on a ``Graph`` subclass that overrides
+            # mutators with invariant guards (e.g.
+            # ``MatchingCoveredGraph.delete_vertices``) the free vertex deletions
+            # and relabelling done below would dispatch to the guarded overrides
+            # and raise. ``Graph(...)`` strips the subclass (and any
+            # vertex-association baggage), so the algorithm owns a graph it may
+            # freely mutate.
+            if G.allows_loops() or G.allows_multiple_edges():
+                self.graph = Graph(G.to_simple(immutable=False))
+            else:
+                self.graph = Graph(G)
+
+            # Isolated vertices cannot be matched, so drop them.
+            self.graph.delete_vertices(
+                v for v, d in self.graph.degree_iterator(labels=True) if not d)
+            self.N = self.graph.order()
+
+            # Relabel the remaining vertices to 0, 1, ..., N - 1, keeping the
+            # original labels in ``index_to_vertex`` so that the final matching
+            # can be mapped back to them (see
+            # :meth:`~MicaliVaziraniMatching.get_matching`).
+            self.index_to_vertex = list(self.graph)
+            self.vertex_to_index = {u: i
+                                    for i, u in enumerate(self.index_to_vertex)}
+            self.graph.relabel(perm=self.vertex_to_index, inplace=True)
+
+            self.index_to_edge = list(self.graph.edges(labels=False,
+                                                       sort_vertices=True))
+            self._edge_to_index = {e: i
+                                   for i, e in enumerate(self.index_to_edge)}
+
+        def edge_to_index(self, i: int, j: int) -> int:
+            r"""
+            Return the index assigned to the edge `\{i, j\}` (order-independent).
+
+            EXAMPLES::
+
+                sage: from sage.graphs.matching import MicaliVaziraniMatching
+                sage: instance = MicaliVaziraniMatching(graphs.PathGraph(3)).instance
+                sage: instance.edge_to_index(1, 2) == instance.edge_to_index(2, 1)
+                True
+            """
+            if i > j:
+                i, j = j, i
+            return self._edge_to_index[i, j]
+
     def __init__(self, G, extended_phases: bool = True,
                  check_invariants: bool = False) -> None:
         r"""
@@ -2115,41 +2191,17 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             5
         """
-        from sage.graphs.graph import Graph
-
-        if not isinstance(G, Graph):
-            raise ValueError("The input must be a graph")
-
         # ******************************
         # Set up global state containers
         # ******************************
-        # Work on a fresh, plain ``Graph``. Loops and multiple edges are removed
-        # (a maximum matching of the underlying simple graph is a maximum
-        # matching of ``G``: a loop can never be matched, and parallel edges are
-        # redundant for the unweighted matching computed here). Crucially, we
-        # rebuild via the base ``Graph`` constructor rather than ``copy()`` /
-        # ``to_simple()``, because those preserve the *dynamic* class: on a
-        # ``Graph`` subclass that overrides mutators with invariant guards (e.g.
-        # ``MatchingCoveredGraph.delete_vertices``) the free vertex deletions and
-        # relabelling done below would dispatch to the guarded overrides and
-        # raise. ``Graph(...)`` strips the subclass (and any vertex-association
-        # baggage), so the algorithm owns a graph it may freely mutate.
-        if G.allows_loops() or G.allows_multiple_edges():
-            self.G = Graph(G.to_simple(immutable=False))
-        else:
-            self.G = Graph(G)
-
-        # Isolated vertices cannot be matched, so drop them.
-        self.G.delete_vertices(v for v, d in self.G.degree_iterator(labels=True)
-                               if not d)
-        self.N = self.G.order()
-
-        # Relabel the remaining vertices to 0, 1, ..., N - 1, keeping the
-        # original labels in ``index_to_vertex`` so that the final matching
-        # can be mapped back to them (see :meth:`get_matching`).
-        self.index_to_vertex = list(self.G)
-        self.vertex_to_index = {u: i for i, u in enumerate(self.index_to_vertex)}
-        self.G.relabel(perm=self.vertex_to_index, inplace=True)
+        # The immutable graph representation -- simplification, isolated-vertex
+        # drop, relabelling to 0..N-1 and edge indexing -- lives in _Instance;
+        # the algorithm treats it as read-only.
+        self.instance = self._Instance(G)
+        self.G = self.instance.graph
+        self.N = self.instance.N
+        self.index_to_vertex = self.instance.index_to_vertex
+        self.index_to_edge = self.instance.index_to_edge
 
         self.bridges_by_tenacity: list[list[int]] = [[] for _ in range(2 * self.N + 2)]
         self.deletion_phase: list[int] = [-1] * self.N
@@ -2176,11 +2228,7 @@ class MicaliVaziraniMatching:
         self.color: list[int] = [self.NO_COLOR] * self.N
         self.search_level_vertices: list[int] = list(range(self.N))
 
-        # Edge indexing must be set up before ``edge_scanned``, which is keyed
-        # by ``edge_to_index`` (and therefore needs ``_edge_to_index``).
-        self.index_to_edge = list(self.G.edges(labels=False, sort_vertices=True))
-        self._edge_to_index = {e: i for i, e in enumerate(self.index_to_edge)}
-
+        # ``edge_scanned`` is keyed by ``edge_to_index`` (see :class:`_Instance`).
         self.edge_scanned: dict[int, int] = {self.edge_to_index(u, v): -1
                 for (u, v) in self.G.edge_iterator(labels=False)}
         self.prop_edges: set[int] = set()
@@ -2262,9 +2310,7 @@ class MicaliVaziraniMatching:
             sage: MV.edge_to_index(1, 2) == MV.edge_to_index(2, 1)
             True
         """
-        if i > j:
-            i, j = j, i
-        return self._edge_to_index[i, j]
+        return self.instance.edge_to_index(i, j)
 
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
