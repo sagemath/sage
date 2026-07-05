@@ -2174,14 +2174,15 @@ class NormalFormGame(SageObject, MutableMapping):
         The ``'ipa'``, ``'liap'`` and ``'logit'`` solvers are iterative and
         return floating point approximations, so we round their output::
 
-            sage: eq = c._use_gambit_solver('ipa')  # optional - gambit
-            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]  # optional - gambit
+            sage: # optional - gambit
+            sage: eq = c._use_gambit_solver('ipa')
+            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]
             [[[0.0, 1.0], [0.0, 1.0]]]
-            sage: eq = c._use_gambit_solver('liap')  # optional - gambit
-            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]  # optional - gambit
+            sage: eq = c._use_gambit_solver('liap')
+            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]
             [[[0.0, 1.0], [0.0, 1.0]]]
-            sage: eq = c._use_gambit_solver('logit')  # optional - gambit
-            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]  # optional - gambit
+            sage: eq = c._use_gambit_solver('logit')
+            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]
             [[[0.0, 1.0], [0.0, 1.0]]]
 
         The following examples cross-check the solvers against the equilibria
@@ -2231,6 +2232,21 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: coordination._use_gambit_solver('simpdiv')  # abs tol 1e-9 # optional - gambit
             [[(0.3333333333333333, 0.3333333333333333, 0.3333333333333333),
               (0.3333333333333333, 0.3333333333333333, 0.3333333333333333)]]
+
+        A 3 player game, coming from a local max cut instance, with two pure equilibria where
+        either player is on one side of the cut and one mixed equilibrium where all players mix uniformly::
+
+            sage: import numpy as np
+            sage: A = np.array([[[0, -1], [2, 1]], [[1, 2],[-1, 0]]])
+            sage: B = np.array([[[0, 2], [4, 2]], [[2, 4], [2, 0]]])
+            sage: C = np.array([[[0, 1], [2, -1]], [[-1, 2], [1, 0]]])
+            sage: max_cut_game = NormalFormGame([A, B, C])
+            sage: max_cut_game._use_gambit_solver('enumpoly')  # abs tol 1e-6 # optional - gambit
+            [[(0.0, 1.0), (1.0, 0.0), (0.0, 1.0)],
+             [(0.5, 0.5), (0.5, 0.5), (0.5, 0.5)],
+             [(1.0, 0.0), (0.0, 1.0), (1.0, 0.0)]]
+            sage: max_cut_game._use_gambit_solver('enumpure')  # abs tol 1e-6 # optional - gambit
+            [[(0.0, 1.0), (1.0, 0.0), (0.0, 1.0)], [(1.0, 0.0), (0.0, 1.0), (1.0, 0.0)]]
 
         Finally, a :math:`6\times 6` game with long Lemke-Howson paths and a
         unique equilibrium; the ``'gnm'``, ``'ipa'`` and ``'lcp'`` solvers all
