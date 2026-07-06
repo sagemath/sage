@@ -3282,8 +3282,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             )
 
             if transformation:
-                B_reduced, U = res
-                return (B_reduced * Winv).change_ring(ZZ), U
+                B_reduced, U_weighted = res
+                return (B_reduced * Winv).change_ring(ZZ), U_weighted
             else:
                 return (res * Winv).change_ring(ZZ)
 
