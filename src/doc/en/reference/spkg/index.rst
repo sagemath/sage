@@ -51,6 +51,7 @@ Features
    sage/features/kenzo
    sage/features/latex
    sage/features/latte
+   sage/features/libbraiding
    sage/features/libhomfly
    sage/features/lrs
    sage/features/mcqd
