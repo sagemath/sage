@@ -47,8 +47,18 @@ from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
 from libc.stdint cimport uintptr_t
+from cpython.slice cimport PySlice_GetIndicesEx
 
-from sage.libs.m4ri cimport mzd_add, mzd_copy, mzd_cmp, mzd_free, mzd_init, mzd_set_ui, mzd_read_bit, mzd_row, mzd_write_bit, m4ri_word
+from sage.libs.m4ri cimport mzd_add, mzd_copy, mzd_cmp, mzd_free, mzd_init, mzd_set_ui, mzd_read_bit, mzd_row, mzd_submatrix, mzd_write_bit, m4ri_word
+
+from weakref import WeakValueDictionary
+
+# Cache of the ambient free modules that slicing returns as parents,
+# keyed by ``(base_ring, rank)``.  The values are held weakly, so this
+# never keeps a module alive longer than the canonical free-module
+# factory would, while still skipping the relatively expensive
+# ``FreeModule`` argument handling on the hot path (see :issue:`40482`).
+_slice_parents = WeakValueDictionary()
 
 cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
@@ -325,6 +335,109 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             IndexError: vector index out of range
         """
         mzd_write_bit(self._entries, 0, i, value)
+
+    def __getitem__(self, i):
+        r"""
+        Return the `i`-th entry or a slice of ``self``.
+
+        Slicing is implemented directly at the bit level (using m4ri),
+        bypassing the construction of intermediate
+        :class:`~sage.rings.finite_rings.integer_mod.IntegerMod` objects
+        that the generic implementation would create for every entry.
+
+        EXAMPLES::
+
+            sage: v = vector(GF(2), [1,0,1,1,0,1,1,1])
+            sage: v[2]
+            1
+            sage: v[-1]
+            1
+            sage: v[0:4]
+            (1, 0, 1, 1)
+            sage: v[0:4].parent()
+            Vector space of dimension 4 over Finite Field of size 2
+            sage: v[1::2]
+            (0, 1, 1, 1)
+            sage: v[::-1]
+            (1, 1, 1, 0, 1, 1, 0, 1)
+            sage: v[5:1:-1]
+            (1, 0, 1, 1)
+            sage: v[100:]
+            ()
+            sage: v[8]
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
+            sage: v[-9]
+            Traceback (most recent call last):
+            ...
+            IndexError: vector index out of range
+
+        A slice returns a fresh vector that does not share storage with
+        the original::
+
+            sage: v = vector(GF(2), [1,0,1,1])
+            sage: w = v[:]
+            sage: w[0] = 0
+            sage: v
+            (1, 0, 1, 1)
+
+        TESTS:
+
+        The optimized slicing agrees with the generic implementation for
+        every combination of start, stop and step::
+
+            sage: v = vector(GF(2), [randint(0, 1) for _ in range(40)])
+            sage: l = list(v)
+            sage: bounds = list(range(-45, 46)) + [None]
+            sage: steps = [s for s in range(-3, 4) if s != 0] + [None]
+            sage: all(list(v[a:b:c]) == [GF(2)(x) for x in l[a:b:c]]
+            ....:     for a in bounds for b in bounds for c in steps)
+            True
+
+        Slicing an empty vector works::
+
+            sage: vector(GF(2), [])[:]
+            ()
+
+        ``Vector_mod2_dense`` is also used for ``Integers(2)``, which is a
+        different ring from ``GF(2)``; the cached slice parent must be over
+        the right ring::
+
+            sage: vector(GF(2), [1,0,1,1])[0:2].parent()
+            Vector space of dimension 2 over Finite Field of size 2
+            sage: vector(Integers(2), [1,0,1,1])[0:2].parent()
+            Vector space of dimension 2 over Ring of integers modulo 2
+        """
+        cdef Py_ssize_t d = self._degree
+        cdef Py_ssize_t start, stop, step, slicelength
+        cdef Py_ssize_t n
+        cdef Vector_mod2_dense z
+        if isinstance(i, slice):
+            PySlice_GetIndicesEx(i, d, &start, &stop, &step, &slicelength)
+            key = (self._base_ring, slicelength)
+            M = _slice_parents.get(key)
+            if M is None:
+                from sage.modules.free_module import FreeModule
+                M = FreeModule(self._base_ring, slicelength, sparse=False)
+                _slice_parents[key] = M
+            z = Vector_mod2_dense.__new__(Vector_mod2_dense)
+            z._init(slicelength, M)
+            if slicelength:
+                if step == 1:
+                    mzd_submatrix(z._entries, self._entries,
+                                  0, start, 1, start + slicelength)
+                else:
+                    for n in range(slicelength):
+                        mzd_write_bit(z._entries, 0, n,
+                                      mzd_read_bit(self._entries, 0, start + n * step))
+            return z
+        n = i
+        if n < 0:
+            n += d
+        if n < 0 or n >= d:
+            raise IndexError("vector index out of range")
+        return self.get_unsafe(n)
 
     def __reduce__(self):
         """

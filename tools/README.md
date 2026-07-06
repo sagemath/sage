@@ -28,6 +28,8 @@ Within an active virtual environment where Meson is installed, run the following
 tools/update-meson.py
 ```
 
+Note that this script does not handling adding dependencies, those still must be done manually.
+
 ## Find Outdated Deprecations
 
 Code that is deprecated can be safely removed one year after the first stable release containing the deprecation. This command searches for deprecated code in the source folder and prints all old deprecations.

@@ -39,11 +39,6 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.richcmp cimport rich_to_bool
 from sage.structure.sage_object cimport SageObject
 
-try:
-    from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
-except ImportError:
-    BooleanPolynomial = ()
-
 # for details about the implementation of hamming_weight (in .pxd),
 # walsh_hadamard transform, reed_muller transform, and a lot
 # more, see 'Matters computational' available on www.jjj.de.
@@ -283,6 +278,12 @@ cdef class BooleanFunction(SageObject):
             ...
             ValueError: the length of the truth table must be a power of 2
         """
+        from sage.features.brial import Brial
+        if Brial().is_present():
+            from sage.rings.polynomial.pbori.pbori import BooleanPolynomial
+        else:
+            BooleanPolynomial = ()
+
         cdef mp_bitcnt_t i
         if isinstance(x, str):
             L = ZZ(len(x))

@@ -14,10 +14,9 @@ Features for testing the presence of ``coxeter3``
 # *****************************************************************************
 
 from sage.config import coxeter3_enabled
-from sage.features import PythonModule
-from sage.features.build_feature import BuildFeature
+from sage.features.build_feature import BuildModule
 
-class Coxeter3(BuildFeature):
+class Coxeter3(BuildModule):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
     :mod:`sage.libs.coxeter3` module is available in this installation
@@ -26,43 +25,35 @@ class Coxeter3(BuildFeature):
     EXAMPLES::
 
         sage: from sage.features.coxeter3 import Coxeter3
-        sage: Coxeter3().require()  # needs coxeter3
+        sage: Coxeter3().is_present()  # needs coxeter3
+        FeatureTestResult('coxeter3', True)
+        sage: Coxeter3().is_present()  # needs !coxeter3
+        FeatureTestResult('coxeter3', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !coxeter3`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.coxeter3 import Coxeter3
+        sage: Coxeter3().is_present_at_runtime()  # needs coxeter3
+        FeatureTestResult('coxeter3', True)
 
     """
     _enabled_in_build = coxeter3_enabled
 
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.coxeter3 import Coxeter3
             sage: Coxeter3()
             Feature('coxeter3')
 
         """
-        super().__init__("coxeter3", spkg="coxeter3")
+        module_name = "sage.libs.coxeter3.coxeter"
+        super().__init__("coxeter3", module_name)
 
-    def is_present_at_runtime(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features import FeatureTestResult
-            sage: from sage.features.coxeter3 import Coxeter3
-            sage: result = Coxeter3().is_present_at_runtime()
-            sage: isinstance(result, FeatureTestResult)
-            True
-            sage: result  # needs coxeter3
-            FeatureTestResult('coxeter3', True)
-
-        """
-        # The build system installs the sage/libs/coxeter3 source code
-        # even when coxeter3 support is disabled, so a naive import of
-        # that module will actually succeed. We check for a
-        # conditionally-compiled cython module instead.
-        cython_modname = "sage.libs.coxeter3.coxeter"
-        result = PythonModule(cython_modname)._is_present()
-        result.feature = self
-        return result
 
 def all_features():
     return [Coxeter3()]

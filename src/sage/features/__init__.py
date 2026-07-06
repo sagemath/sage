@@ -872,7 +872,12 @@ class PythonModule(Feature):
         """
         import importlib
         try:
-            importlib.import_module(self.name)
+            import warnings
+            with warnings.catch_warnings():
+                # user warnings don't make sense for testing the presence
+                # for example in snappy -> plink
+                warnings.filterwarnings('ignore', category=UserWarning)
+                importlib.import_module(self.name)
         except ImportError as exception:
             return FeatureTestResult(self, False, reason=f"Failed to import `{self.name}`: {exception}")
         return FeatureTestResult(self, True, reason=f"Successfully imported `{self.name}`.")

@@ -26,7 +26,7 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 
 
 def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
-                quotient=None, dual=False, ntl=False, lattice=False):
+                quotient=None, dual=False, ntl=False, lattice=False, mat_impl=None):
     r"""
     This function generates different types of integral lattice bases
     of row vectors relevant in cryptography.
@@ -70,6 +70,9 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     - ``lattice`` -- set this flag if you want a
       :class:`FreeModule_submodule_with_basis_integer` object instead
       of an integer matrix representing the basis
+
+    - ``mat_impl`` -- an implementation type for matrices mod `q`; main options
+      are ``"linbox"`` and ``"flint"``.
 
     OUTPUT: ``B`` a unique size-reduced triangular (primal: lower_left,
     dual: lower_right) basis of row vectors for the lattice in question
@@ -240,7 +243,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     A = identity_matrix(ZZ_q, n)
 
     if type == 'random' or type == 'modular':
-        R = MatrixSpace(ZZ_q, m-n, n)
+        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS
+        if mat_impl is None and q < MAX_MODULUS:
+            mat_impl = 'linbox'
+        R = MatrixSpace(ZZ_q, m-n, n, implementation=mat_impl)
         A = A.stack(R.random_element())
 
     elif type == 'ideal':
