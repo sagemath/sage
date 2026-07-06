@@ -106,7 +106,7 @@ jobs:
 
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install test prerequisites
         # From docker.yml
@@ -225,7 +225,7 @@ jobs:
           swap-storage: true
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install test prerequisites
         # From docker.yml
@@ -309,6 +309,6 @@ jobs:
 
       - name: Upload coverage to codecov
         if: (success() || failure()) && steps.container.outcome == 'success'
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           directory: .coverage/coverage-report
