@@ -45,7 +45,7 @@ from sage.misc.abstract_method import abstract_method
 
 class EquivalenceDecompositionTooSmall(Exception):
     r"""
-    Raised by :meth:`InductiveValuation.mac_lane_step` when the
+    Raised by ``InductiveValuation.mac_lane_step`` when the
     equivalence-decomposition of ``G`` is empty because the requested
     ``principal_part_bound`` is too small to see a non-trivial decomposition.
 
