@@ -428,13 +428,13 @@ class Rule(UniqueRepresentation):
             try:
                 P = StandardTableau(p)
             except ValueError:
-                P = SemistandardTableau(p)
+                P = SemistandardTableau(p, check=False)
             try:
                 Q = StandardTableau(q)
             except ValueError:
-                Q = SemistandardTableau(q)
+                Q = SemistandardTableau(q, check=False)
             return [P, Q]
-        return [SemistandardTableau(p), SemistandardTableau(q)]
+        return [SemistandardTableau(p, check=False), SemistandardTableau(q, check=False)]
 
     def _backward_format_output(self, lower_row, upper_row, output,
                                 p_is_standard, q_is_standard):
@@ -918,7 +918,7 @@ class RuleHecke(Rule):
                 # so we need to add a new row to p and q.
                 p.append([j])
                 q.append([(i,)])
-        return [SemistandardTableau(p), Tableau(q)]
+        return [SemistandardTableau(p, check=False), Tableau(q, check=False)]
 
     def backward_rule(self, p, q, output):
         r"""
@@ -1488,20 +1488,21 @@ class RuleDualRSK(Rule):
         """
         from sage.combinat.tableau import Tableau, StandardTableau, SemistandardTableau
 
-        if len(p) == 0:
-            return [StandardTableau([]), StandardTableau([])]
+        if not p:
+            T = StandardTableau([], check=False)
+            return [T, T]
 
         if check_standard:
             try:
                 P = StandardTableau(p)
             except ValueError:
-                P = Tableau(p)
+                P = Tableau(p, check=False)
             try:
                 Q = StandardTableau(q)
             except ValueError:
-                Q = SemistandardTableau(q)
+                Q = SemistandardTableau(q, check=False)
             return [P, Q]
-        return [Tableau(p), SemistandardTableau(q)]
+        return [Tableau(p, check=False), SemistandardTableau(q, check=False)]
 
 
 class RuleCoRSK(RuleRSK):
@@ -1778,13 +1779,13 @@ class RuleCoRSK(RuleRSK):
             try:
                 P = StandardTableau(p)
             except ValueError:
-                P = SemistandardTableau(p)
+                P = SemistandardTableau(p, check=False)
             try:
                 Q = StandardTableau(q)
             except ValueError:
-                Q = Tableau(q)
+                Q = Tableau(q, check=False)
             return [P, Q]
-        return [SemistandardTableau(p), Tableau(q)]
+        return [SemistandardTableau(p, check=False), Tableau(q, check=False)]
 
     def backward_rule(self, p, q, output):
         r"""
@@ -2288,18 +2289,19 @@ class RuleSuperRSK(RuleRSK):
         from sage.combinat.super_tableau import SemistandardSuperTableau, StandardSuperTableau
 
         if not p:
-            return [StandardTableau([]), StandardTableau([])]
+            T = StandardTableau([], check=False)
+            return [T, T]
         if check_standard:
             try:
                 P = StandardSuperTableau(p)
             except ValueError:
-                P = SemistandardSuperTableau(p)
+                P = SemistandardSuperTableau(p, check=False)
             try:
                 Q = StandardSuperTableau(q)
             except ValueError:
-                Q = SemistandardSuperTableau(q)
+                Q = SemistandardSuperTableau(q, check=False)
             return [P, Q]
-        return [SemistandardSuperTableau(p), SemistandardSuperTableau(q)]
+        return [SemistandardSuperTableau(p, check=False), SemistandardSuperTableau(q, check=False)]
 
     def backward_rule(self, p, q, output='array'):
         r"""
@@ -2740,8 +2742,8 @@ class RuleStar(Rule):
                 p.append([j])
                 q.append([i])
         from sage.combinat.tableau import Tableau, SemistandardTableau
-        p = Tableau(p)
-        q = SemistandardTableau(q)
+        p = Tableau(p, check=False)
+        q = SemistandardTableau(q, check=False)
         return [p, q]
 
     def backward_rule(self, p, q, output='array'):

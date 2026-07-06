@@ -885,6 +885,18 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         GapPackage("polycyclic", spkg='gap_packages').require()
         return 'AbelianPcpGroup(%s)' % list(self.gens_orders())
 
+    def _snappy_(self, snappy):
+        r"""
+        Return ``self`` as in interface wrapper object for SnapPy.
+
+        EXAMPLES::
+
+           sage: A = AbelianGroup([5,15,0,0])
+           sage: snappy(A)                      # optional snappy
+           Z/5 + Z/15 + Z + Z
+        """
+        return snappy.AbelianGroup(elementary_divisors=list(self.gens_orders()))
+
     def gen(self, i=0):
         """
         The `i`-th generator of the abelian group.

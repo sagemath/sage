@@ -36,6 +36,12 @@ cdef class Matrix_dense(matrix.Matrix):
     cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         self.set_unsafe(i, j, value)
 
+    cdef void set_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j, unsigned long value):
+        self.set_unsafe(i, j, value)
+
+    cdef unsigned long get_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j):
+        return self.get_unsafe(i, j)
+
     def _pickle(self):
         version = -1
         data = self._list()  # linear list of all elements

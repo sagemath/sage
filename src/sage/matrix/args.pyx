@@ -508,7 +508,7 @@ cdef class MatrixArgs:
 
         - If ``sparse`` is True: yield instances of
           :class:`SparseEntry`. The indices ``(i, j)`` are guaranteed to
-          lie within the matrix. Zero entries in the input are *not*
+          lie within the matrix. Zero entries in the input are *not necessarily*
           skipped.
 
         .. WARNING::
@@ -1343,9 +1343,6 @@ cdef class MatrixArgs:
         self.set_nrows(inrows)
         self.set_ncols(incols)
         str_dtype = str(e.dtype)
-
-        if not (e.flags.c_contiguous is True or e.flags.f_contiguous is True):
-            raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
 
         from sage.matrix.constructor import matrix
         from sage.rings.real_double import RDF

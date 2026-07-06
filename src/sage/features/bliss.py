@@ -14,10 +14,9 @@ Features for testing the presence of ``bliss``
 # *****************************************************************************
 
 from sage.config import bliss_enabled
-from sage.features import PythonModule
-from sage.features.build_feature import BuildFeature
+from sage.features.build_feature import BuildModule
 
-class Bliss(BuildFeature):
+class Bliss(BuildModule):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
     :mod:`sage.graphs.bliss` module is available in this installation
@@ -26,38 +25,36 @@ class Bliss(BuildFeature):
     EXAMPLES::
 
         sage: from sage.features.bliss import Bliss
-        sage: Bliss().require()  # needs bliss
+        sage: Bliss().is_present()  # needs bliss
+        FeatureTestResult('bliss', True)
+        sage: Bliss().is_present()  # needs !bliss
+        FeatureTestResult('bliss', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !bliss`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.bliss import Bliss
+        sage: Bliss().is_present_at_runtime()  # needs bliss
+        FeatureTestResult('bliss', True)
+
     """
     _enabled_in_build = bliss_enabled
 
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.bliss import Bliss
             sage: Bliss()
             Feature('bliss')
 
         """
+        module_name = "sage.graphs.bliss"
         super().__init__("bliss",
+                         module_name,
                          url='http://www.tcs.hut.fi/Software/bliss/')
-
-    def is_present_at_runtime(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features import FeatureTestResult
-            sage: from sage.features.bliss import Bliss
-            sage: result = Bliss().is_present_at_runtime()
-            sage: isinstance(result, FeatureTestResult)
-            True
-            sage: result  # needs bliss
-            FeatureTestResult('bliss', True)
-
-        """
-        result = PythonModule("sage.graphs.bliss")._is_present()
-        result.feature = self
-        return result
 
 def all_features():
     return [Bliss()]

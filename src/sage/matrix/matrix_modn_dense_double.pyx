@@ -65,7 +65,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
         TESTS::
 
-            sage: A = random_matrix(IntegerModRing(2^16), 4, 4)
+            sage: A = random_matrix(IntegerModRing(2^16), 4, 4, implementation='linbox')
             sage: type(A[0,0])
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
         """
@@ -79,21 +79,17 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: A = random_matrix(GF(3016963), 4, 4)
-            sage: l = A.list()
-            sage: A[0,0] = 220082r
-            sage: A.list()[1:] == l[1:]
-            True
+            sage: A = random_matrix(GF(3016963), 4, 4, implementation='linbox')
+            sage: A[0,0] = 220082r; A
+            [ 220082 ...]
             sage: a = A[0,0]; a
             220082
             sage: ~a
             2859358
 
-            sage: A = random_matrix(Integers(5099106), 4, 4)
-            sage: l = A.list()
-            sage: A[0,0] = 220082r
-            sage: A.list()[1:] == l[1:]
-            True
+            sage: A = random_matrix(Integers(5099106), 4, 4, implementation='linbox')
+            sage: A[0,0] = 220082r; A
+            [ 220082 ...]
             sage: a = A[0,0]; a
             220082
             sage: a*a
@@ -101,7 +97,14 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         """
         self._matrix[i][j] = <double>value
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
+    cdef unsigned long get_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+        cdef double result = (<Matrix_modn_dense_template>self)._matrix[i][j]
+        return <int_fast64_t>result
+
+    cdef void set_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j, unsigned long value) noexcept:
+        self._matrix[i][j] = <double>value
+
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x):
         r"""
         Set the (i,j) entry with no bounds-checking, or any other checks.
 
@@ -109,9 +112,9 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: A = random_matrix(GF(3016963), 4, 4)
-            sage: K = A.base_ring()
+            sage: A = random_matrix(GF(3016963), 4, 4, implementation='linbox')
             sage: l = A.list()
+            sage: K = A.base_ring()
             sage: A[0,0] = K(220082)
             sage: A.list()[1:] == l[1:]
             True
@@ -120,7 +123,8 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
             sage: ~a
             2859358
 
-            sage: A = random_matrix(Integers(5099106), 4, 4)
+            sage: A = random_matrix(Integers(5099106), 4, 4, implementation='linbox')
+            sage: l = A.list()
             sage: K = A.base_ring()
             sage: l = A.list()
             sage: A[0,0] = K(220081)
@@ -149,25 +153,33 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: K = GF(3016963)
-            sage: l = [K.random_element() for _ in range(4*4)]
-            sage: A = matrix(K, 4, 4, l)
-            sage: a = A[0,0]
-            sage: a == l[0]
-            True
-            sage: a == 0 or ~a*a == 1
-            True
-            sage: a.parent() is K
-            True
+            sage: A = matrix(GF(3016963),
+            ....:           [[220081, 2824836,  765701, 2282256],
+            ....:           [1795330,  767112, 2967421, 1373921],
+            ....:           [2757699, 1142917, 2720973, 2877160],
+            ....:           [1674049, 1341486, 2641133, 2173280]],
+            ....:           implementation='linbox')
+            sage: a = A[0,0]; a
+            220081
+            sage: ~a
+            697224
+            sage: K = A.base_ring()
+            sage: ~K(220081)
+            697224
 
-            sage: K = Integers(5099106)
-            sage: l = [K.random_element() for _ in range(4*4)]
-            sage: A = matrix(Integers(5099106), 4, 4, l)
-            sage: a = A[0,1]
-            sage: a == l[1]
-            True
-            sage: a*a == K(Integer(l[1]))^2
-            True
+            sage: A = matrix(Integers(5099106),
+            ....:            [[2629491, 1237101, 2033003, 3788106],
+            ....:            [4649912, 1157595, 4928315, 4382585],
+            ....:            [4252686,  978867, 2601478, 1759921],
+            ....:            [1303120, 1860486, 3405811, 2203284]],
+            ....:            implementation='linbox')
+            sage: a = A[0,1]; a
+            1237101
+            sage: a*a
+            3803997
+            sage: K = A.base_ring()
+            sage: K(1237101)^2
+            3803997
         """
         cdef Matrix_modn_dense_double _self = <Matrix_modn_dense_double>self
         cdef double result = (<Matrix_modn_dense_template>self)._matrix[i][j]
@@ -193,7 +205,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
         TESTS::
 
-            sage: m = matrix(GF(257),3,4,range(12))
+            sage: m = matrix(GF(257), 3, 4, range(12))
             sage: m
             [ 0  1  2  3]
             [ 4  5  6  7]
