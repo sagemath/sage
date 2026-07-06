@@ -2253,8 +2253,8 @@ class MicaliVaziraniMatching:
         ``bridges_by_tenacity``, the ``prop_edges`` set, the erase/scan stamps
         (``deletion_phase``/``edge_scanned``) and the ``search_level_vertices``
         frontier, together with the derived level accessors :meth:`min_level`,
-        :meth:`max_level`, :meth:`tenacity`, :meth:`is_outer`, :meth:`is_prop`
-        and :meth:`is_bridge`.
+        :meth:`max_level`, :meth:`tenacity`, :meth:`is_outer` and
+        :meth:`is_prop`.
 
         ``INFINITY`` (`2N + 2`) is the integer sentinel for unset levels and
         out-of-range tenacities, keeping the level arrays homogeneously ``int``.
@@ -2355,9 +2355,11 @@ class MicaliVaziraniMatching:
             r"""
             Return whether the edge indexed ``edge_index`` is a *prop*.
 
-            A prop is an edge on a ``min_level`` alternating path (a tree edge of
-            the phase's breadth-first search); every other scanned edge is a
-            *bridge* (see :meth:`is_bridge`).
+            A *prop* is an edge on a ``min_level`` alternating path (a tree
+            edge of the phase's breadth-first search), tracked in
+            ``prop_edges``; every other scanned edge is a *bridge*. Bridges are
+            bucketed by their tenacity and processed by the double depth-first
+            search.
 
             EXAMPLES::
 
@@ -2368,24 +2370,6 @@ class MicaliVaziraniMatching:
                 False
             """
             return edge_index in self.prop_edges
-
-        def is_bridge(self, edge_index: int) -> bool:
-            r"""
-            Return whether the edge indexed ``edge_index`` is a *bridge*.
-
-            A bridge is a scanned edge that is not a prop (see :meth:`is_prop`);
-            bridges are bucketed by their tenacity and processed by the double
-            depth-first search.
-
-            EXAMPLES::
-
-                sage: from sage.graphs.matching import MicaliVaziraniMatching
-                sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-                sage: MV.start_new_phase()
-                sage: MV.state.is_bridge(0)
-                True
-            """
-            return not self.is_prop(edge_index)
 
     def __init__(self, G, extended_phases: bool = True,
                  check_invariants: bool = False) -> None:
@@ -2510,24 +2494,6 @@ class MicaliVaziraniMatching:
         """
         return self.mate[v] == self.EXPOSED
 
-    def is_saturated(self, v: int) -> bool:
-        r"""
-        Return whether vertex ``v`` is *saturated* (covered by the matching).
-
-        This is the negation of :meth:`is_exposed`.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(2))
-            sage: MV.is_saturated(0)
-            False
-            sage: _ = MV.get_matching()
-            sage: MV.is_saturated(0)
-            True
-        """
-        return self.mate[v] != self.EXPOSED
-
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
     # *************************************
@@ -2561,7 +2527,7 @@ class MicaliVaziraniMatching:
             sage: def seed_is_maximal(G):
             ....:     MV = MicaliVaziraniMatching(G)
             ....:     MV.compute_initial_maximal_matching()
-            ....:     matched = {v for v in range(MV.N) if MV.is_saturated(v)}
+            ....:     matched = {v for v in range(MV.N) if not MV.is_exposed(v)}
             ....:     if any(MV.mate[MV.mate[v]] != v for v in matched):
             ....:         return False
             ....:     return not any(u not in matched and v not in matched
@@ -2695,7 +2661,7 @@ class MicaliVaziraniMatching:
         self.state.search_level_vertices = []
 
         for u in self.G:
-            if self.is_saturated(u):
+            if not self.is_exposed(u):
                 # Matched vertices start with infinite levels
                 self.state.even_level[u] = self.state.INFINITY
                 self.state.odd_level[u] = self.state.INFINITY
@@ -2946,7 +2912,7 @@ class MicaliVaziraniMatching:
                     # File the bridge under its tenacity, but only once that
                     # tenacity is determined (a neighbor whose even level is
                     # still infinite leaves it unknown for now).
-                    if self.state.is_bridge(edge_index):
+                    if not self.state.is_prop(edge_index):
                         tenacity = max_level + self.state.even_level[neighbor] + 1
                         if tenacity < self.state.INFINITY:
                             self.state.bridges_by_tenacity[tenacity].append(edge_index)
