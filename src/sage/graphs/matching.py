@@ -2301,6 +2301,11 @@ class MicaliVaziraniMatching:
             r"""
             Return the ``max_level`` of ``vertex``: ``max(even_level, odd_level)``.
 
+            This is ``maxlevel`` in [Vaz2020]_ (Definition 3.3): the larger of
+            ``even_level`` and ``odd_level`` when at least one of them is
+            finite. It is checked in :meth:`assign_max_levels`, where the newly
+            assigned level must equal this larger value.
+
             EXAMPLES::
 
                 sage: from sage.graphs.matching import MicaliVaziraniMatching
@@ -2897,9 +2902,25 @@ class MicaliVaziraniMatching:
         result agrees in size with Edmonds' algorithm::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
+            sage: def is_valid_maximum_matching(G, M):
+            ....:     covered = [w for u, v, _ in M for w in (u, v)]
+            ....:     return (all(G.has_edge(u, v) for u, v, _ in M)
+            ....:             and len(set(covered)) == 2 * len(M)
+            ....:             and len(M) == len(G.matching(algorithm='Edmonds')))
             sage: G = graphs.CompleteGraph(9)
             sage: M = MicaliVaziraniMatching(G).get_matching()
-            sage: len(M) == len(G.matching(algorithm='Edmonds'))
+            sage: is_valid_maximum_matching(G, M)
+            True
+
+        With ``check_invariants=True`` every ``max_level`` assigned here is
+        verified against :meth:`_SearchState.max_level` (the larger of the two
+        levels); a petal forms on the complete graph of order `5`, so the
+        assertion is actually exercised, and the result is a valid maximum
+        matching::
+
+            sage: G = graphs.CompleteGraph(5)
+            sage: M = MicaliVaziraniMatching(G, check_invariants=True).get_matching()
+            sage: is_valid_maximum_matching(G, M)
             True
         """
         next_search_level_vertices: list[int] = []
@@ -2913,6 +2934,9 @@ class MicaliVaziraniMatching:
             if self.check_invariants:
                 # a vertex's max level is discovered exactly at its tenacity
                 assert self.state.tenacity(vertex) == 2 * search_level + 1
+                # the value just written is now the larger of the two levels,
+                # i.e. the vertex's max level
+                assert self.state.max_level(vertex) == max_level
             next_search_level_vertices.append(vertex)
 
             if not level_parity:
@@ -3164,8 +3188,8 @@ class MicaliVaziraniMatching:
         result of each finished generator is sent back into its parent. This
         replaces Python call recursion -- and its stack-depth limit -- by a
         heap-allocated stack, so :meth:`unfold_petal` and
-        :meth:`unfold_path_in_petal` cannot overflow the interpreter stack on
-        deeply nested petals.
+        :meth:`_unfold_path_in_petal_generator` cannot overflow the interpreter
+        stack on deeply nested petals.
         """
         call_stack = [root_call]
         result = None
@@ -3243,45 +3267,11 @@ class MicaliVaziraniMatching:
             return []
         return path + petal_path
 
-    def unfold_path_in_petal(
-        self,
-        start_vertex: int,
-        end_vertex: int,
-        petal: MicaliVaziraniMatching._Petal,
-    ) -> list[int]:
-        r"""
-        Trace one segment of the alternating path inside a petal.
-
-        Helper for :meth:`unfold_petal`: it walks from ``start_vertex`` to
-        ``end_vertex`` within ``petal`` along predecessor links, recursing into
-        any nested petals encountered on the way.
-
-        INPUT:
-
-        - ``start_vertex`` -- integer; where the segment starts
-        - ``end_vertex`` -- integer; where the segment ends
-        - ``petal`` -- the :class:`_Petal` whose interior is being traced
-
-        OUTPUT: the list of vertices from ``start_vertex`` to ``end_vertex``
-        (empty if it cannot be reconstructed)
-
-        EXAMPLES:
-
-        Triggered through :meth:`unfold_petal` on a blossom on a stem::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 1)])
-            sage: len(MicaliVaziraniMatching(G).get_matching())
-            3
-        """
-        return self._run_trampoline(
-            self._unfold_path_in_petal_generator(start_vertex, end_vertex, petal))
-
     def _unfold_path_in_petal_generator(self, start_vertex, end_vertex, petal,
                                         visited=None, continuation=None,
                                         result_holder=None):
         r"""
-        Generator form of :meth:`unfold_path_in_petal`, driven by
+        Trace one segment of the alternating path inside a petal, driven by
         :meth:`_run_trampoline`.
 
         Reconstruct a *simple* alternating segment from ``start_vertex`` to
@@ -3488,8 +3478,7 @@ class MicaliVaziraniMatching:
         """
         if len(path) < 2 or len(path) % 2 or len(set(path)) != len(path):
             return False
-        if self.mate[path[0]] != self.EXPOSED or \
-           self.mate[path[-1]] != self.EXPOSED:
+        if not self.is_exposed(path[0]) or not self.is_exposed(path[-1]):
             return False
         for i in range(len(path) - 1):
             u, v = path[i], path[i + 1]
@@ -3778,7 +3767,7 @@ class MicaliVaziraniMatching:
         which the greedy seed already solves). They exercise the double
         depth-first search, petal formation and petal unfolding
         (:meth:`DDFS`, :meth:`form_petal`, :meth:`unfold_petal`,
-        :meth:`unfold_path_in_petal`, :meth:`find_path`, :meth:`augment`), and
+        :meth:`find_path`, :meth:`augment`), and
         each returns a valid matching of maximum cardinality::
 
             sage: def is_valid_maximum_matching(G, M):
@@ -3807,7 +3796,7 @@ class MicaliVaziraniMatching:
         number of phases) forces the algorithm to build the matching from empty
         by augmentation alone; on a chain of triangles this routes augmenting
         paths through the blossoms, exercising the petal-unfolding trampoline
-        (:meth:`unfold_petal` / :meth:`unfold_path_in_petal`). The result is
+        (:meth:`unfold_petal`). The result is
         still a valid matching of maximum cardinality::
 
             sage: def triangle_chain(num_triangles):
