@@ -166,7 +166,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         r._parent = P
         r._cparent = get_cparent(P)
         nmod_poly_init(&r.x, nmod_poly_modulus(&self.x))
-        celement_set_si(&r.x, int(x), (<Polynomial_template>self)._cparent)
+        celement_set_ui(&r.x, int(x), (<Polynomial_template>self)._cparent)
         return r
 
     cdef int _set_list(self, x) except -1:

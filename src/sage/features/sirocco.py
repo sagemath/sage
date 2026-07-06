@@ -14,10 +14,9 @@ Features for testing the presence of ``sirocco``
 # *****************************************************************************
 
 from sage.config import sirocco_enabled
-from sage.features import PythonModule
-from sage.features.build_feature import BuildFeature
+from sage.features.build_feature import BuildModule
 
-class Sirocco(BuildFeature):
+class Sirocco(BuildModule):
     r"""
     A :class:`~sage.features.Feature` which describes whether the
     :mod:`sage.libs.sirocco` module is available in this installation
@@ -26,38 +25,35 @@ class Sirocco(BuildFeature):
     EXAMPLES::
 
         sage: from sage.features.sirocco import Sirocco
-        sage: Sirocco().require()  # needs sirocco
+        sage: Sirocco().is_present()  # needs sirocco
+        FeatureTestResult('sirocco', True)
+        sage: Sirocco().is_present()  # needs !sirocco
+        FeatureTestResult('sirocco', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !sirocco`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.sirocco import Sirocco
+        sage: Sirocco().is_present_at_runtime()  # needs sirocco
+        FeatureTestResult('sirocco', True)
 
     """
     _enabled_in_build = sirocco_enabled
 
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.sirocco import Sirocco
             sage: Sirocco()
             Feature('sirocco')
 
         """
-        super().__init__("sirocco", spkg="sirocco")
+        module_name = "sage.libs.sirocco"
+        super().__init__("sirocco", module_name, spkg="sirocco")
 
-    def is_present_at_runtime(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features import FeatureTestResult
-            sage: from sage.features.sirocco import Sirocco
-            sage: result = Sirocco().is_present_at_runtime()
-            sage: isinstance(result, FeatureTestResult)
-            True
-            sage: result  # needs sirocco
-            FeatureTestResult('sirocco', True)
-
-        """
-        result = PythonModule("sage.libs.sirocco")._is_present()
-        result.feature = self
-        return result
 
 def all_features():
     return [Sirocco()]
