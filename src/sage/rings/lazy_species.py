@@ -1783,6 +1783,75 @@ class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
 
         return f.parent()(coefficient)
 
+    def structures(self, labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        This uses the rectangle description of the arithmetic product [MM2008]_.
+
+        EXAMPLES:
+
+        A rectangle is a structure in the arithmetic product of
+        non-empty sets with itself.  Arranging the blocks of the
+        first set partition in rows, and the blocks of the second in
+        columns, two rectangles are equal if one can be obtained from
+        the other by permuting rows and columns.::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: R = E.arithmetic_product(E)
+            sage: list(R.structures([1, 2, 3, 4]))
+            [(((1, 2, 3, 4),), ((1,), (2,), (3,), (4,))),
+             (((1, 2), (3, 4)), ((1, 3), (2, 4))),
+             (((1, 2), (3, 4)), ((1, 4), (2, 3))),
+             (((1, 4), (2, 3)), ((1, 2), (4, 3))),
+             (((1, 4), (2, 3)), ((1, 3), (4, 2))),
+             (((1, 3), (2, 4)), ((1, 2), (3, 4))),
+             (((1, 3), (2, 4)), ((1, 4), (3, 2))),
+             (((1,), (2,), (3,), (4,)), ((1, 2, 3, 4),))]
+
+        The arithmetic product can be regarded as an assembly of
+        cloned structures.  The structures corresponding to the rows
+        are all isomorphic::
+
+            sage: E2 = E.restrict(2,2)
+            sage: list(E2.arithmetic_product(E2+X^2).structures([1, 2, 3, 4]))[:3]
+            [(((1, 2), (3, 4)), (((1, 3), (2, 4)), 'left')),
+             (((1, 2), (3, 4)), ((X^2, (((2, 4),), ((1, 3),))), 'right')),
+             (((1, 2), (3, 4)), ((X^2, (((1, 3),), ((2, 4),))), 'right'))]
+
+        When the number of labels is prime, the rectangle is either
+        a single row or a single column::
+
+            sage: C = L.Cycles()
+            sage: A = E.arithmetic_product(C)
+            sage: list(A.structures([1, 2, 3]))
+            [(((1, 2, 3),), ((1,), (2,), (3,))),
+             (((1, 2, 3),), ((1,), (3,), (2,))),
+             (((1,), (2,), (3,)), ((1, 2, 3),))]
+        """
+        labels = _label_sets(self.parent()._arity, [labels])[0]
+        n = len(labels)
+        if not n:
+            return
+        position = {u: i for i, u in enumerate(labels)}
+
+        def ordered_block(block):
+            return tuple(sorted(block, key=lambda u: position[u]))
+
+        def rectangles(k):
+            l = n // k
+            for row_partition in SetPartitions(labels, [l] * k):
+                rows = tuple(sorted((ordered_block(row) for row in row_partition), key=lambda row: position[row[0]]))
+                first_row = rows[0]
+                for permuted_rows in itertools.product(*(itertools.permutations(row) for row in rows[1:])):
+                    columns = tuple((u,) + tuple(row[j] for row in permuted_rows) for j, u in enumerate(first_row))
+                    yield rows, columns
+
+        for k in divisors(n):
+            for rows, columns in rectangles(k):
+                yield from itertools.product(self._left.structures(rows), self._other.structures(columns))
+
 
 class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, other):
@@ -1833,6 +1902,21 @@ class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
             return factorial(n) * f[n] * g[n]
 
         return f.parent()(coefficient)
+
+    def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: C = L.Cycles()
+            sage: sorted(E.hadamard_product(C).structures([1,2,3]))
+            [((1, 2, 3), (1, 2, 3)), ((1, 2, 3), (1, 3, 2))]
+        """
+        labels = _label_sets(self.parent()._arity, labels)
+        yield from itertools.product(self._left.structures(*labels), self._other.structures(*labels))
 
 
 class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):
