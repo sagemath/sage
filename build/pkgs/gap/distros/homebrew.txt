@@ -1,1 +1,2 @@
-gap-system/gap/gap
+# gap-system/gap/gap
+# commented out 2026-07-03, as it breaks doctesting without --debug, see #42471

@@ -377,3 +377,6 @@ src/sage/calculus/__init__.py
 /src/doc/en/installation/*.txt
 /src/doc/en/reference/spkg/*.rst
 !/src/doc/en/reference/spkg/index.rst
+
+# doctesting noise
+PrOgReSs.gFaN

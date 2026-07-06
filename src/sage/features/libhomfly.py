@@ -3,16 +3,15 @@ Feature for testing the presence of libhomfly
 """
 
 from sage.config import libhomfly_enabled
-from sage.features import PythonModule
-from sage.features.build_feature import BuildFeature
+from sage.features.build_feature import BuildModule
 
 
-class Libhomfly(BuildFeature):
+class Libhomfly(BuildModule):
     r"""
     A :class:`sage.features.Feature` describing the presence of
     :mod:`sage.libs.homfly`, the interface to libhomfly.
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.features.libhomfly import Libhomfly
         sage: Libhomfly().is_present()  # needs libhomfly
@@ -20,37 +19,31 @@ class Libhomfly(BuildFeature):
         sage: Libhomfly().is_present()  # needs !libhomfly
         FeatureTestResult('libhomfly', False)
 
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !libhomfly`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.libhomfly import Libhomfly
+        sage: Libhomfly().is_present_at_runtime()  # needs libhomfly
+        FeatureTestResult('libhomfly', True)
+
     """
     _enabled_in_build = libhomfly_enabled
 
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.libhomfly import Libhomfly
-            sage: isinstance(Libhomfly(), Libhomfly)
-            True
+            sage: Libhomfly()
+            Feature('libhomfly')
 
         """
-        super().__init__('libhomfly', spkg='libhomfly', type='standard')
-
-    def is_present_at_runtime(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features import FeatureTestResult
-            sage: from sage.features.libhomfly import Libhomfly
-            sage: lhf = Libhomfly()
-            sage: result = lhf.is_present_at_runtime()
-            sage: isinstance(result, FeatureTestResult)
-            True
-            sage: result  # needs libhomfly
-            FeatureTestResult('libhomfly', True)
-
-        """
-        result = PythonModule("sage.libs.homfly")._is_present()
-        result.feature = self
-        return result
+        module_name = "sage.libs.homfly"
+        super().__init__('libhomfly',
+                         module_name,
+                         type='standard')
 
 
 def all_features():
