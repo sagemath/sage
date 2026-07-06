@@ -11,8 +11,42 @@ Factory for symbolic functions
 ###############################################################################
 from __future__ import annotations
 
+import hashlib
+import re
+
 from sage.symbolic.function import (SymbolicFunction, sfunctions_funcs,
                                     unpickle_wrapper)
+
+_maxima_identifier = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
+
+
+class _MaximaInterfaceName:
+    def name(self):
+        """
+        Return the interface name used by conversion dictionaries.
+        """
+        return 'maxima'
+
+
+_maxima_interface_name = _MaximaInterfaceName()
+
+
+def _maxima_function_name(name):
+    """
+    Return a Maxima-safe name for the formal symbolic function ``name``.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.function_factory import _maxima_function_name
+        sage: _maxima_function_name('f')
+        'f'
+        sage: _maxima_function_name(chr(92) + 'phi').startswith('_SAGE_symbolic_function_')
+        True
+    """
+    if _maxima_identifier.match(name):
+        return name
+    digest = hashlib.sha1(name.encode('utf-8')).hexdigest()[:16]
+    return f'_SAGE_symbolic_function_{digest}'
 
 
 def function_factory(name, nargs=0, latex_name=None, conversions=None,
@@ -41,7 +75,18 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
         g(2)
         sage: g(2).n()
         1.00000000000000
+
+        sage: t = var('t')
+        sage: h = function_factory(chr(92) + 'phi', 1, chr(92) + 'xi')
+        sage: latex(h(t).simplify())
+        \xi\left(t\right)
     """
+    conversions = {} if conversions is None else dict(conversions)
+    if 'maxima' not in conversions:
+        maxima_name = _maxima_function_name(name)
+        if maxima_name != name:
+            conversions['maxima'] = maxima_name
+
     class NewSymbolicFunction(SymbolicFunction):
         def __init__(self):
             """
@@ -55,7 +100,7 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
             SymbolicFunction.__init__(self, name, nargs, latex_name,
                     conversions, evalf_params_first)
 
-        def _maxima_init_(self):
+        def _maxima_init_(self, I=None):
             """
             EXAMPLES::
 
@@ -63,8 +108,11 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
                 sage: f = function_factory('f', 2) # indirect doctest
                 sage: f._maxima_init_()
                 "'f"
+                sage: g = function_factory('g', 1, conversions={'maxima': 'gg'})
+                sage: g._maxima_init_()
+                "'gg"
             """
-            return "'%s" % self.name()
+            return "'%s" % self._interface_init_(I or _maxima_interface_name)
 
         def _fricas_init_(self):
             """
@@ -326,6 +374,14 @@ def function(s, **kwds) -> SymbolicFunction | list[SymbolicFunction]:
         2*x
 
     TESTS:
+
+    Formal functions whose Sage name is not a Maxima identifier keep their
+    custom LaTeX name through Maxima-backed simplification (:issue:`40052`)::
+
+        sage: t = var('t')
+        sage: phi = function(chr(92) + 'phi', nargs=1, latex_name=chr(92) + 'xi')
+        sage: latex(phi(t).simplify())
+        \xi\left(t\right)
 
     Make sure that :issue:`15860` is fixed and whitespaces are removed::
 
