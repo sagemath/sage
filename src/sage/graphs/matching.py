@@ -1863,7 +1863,7 @@ class MicaliVaziraniMatching:
     Bridges are bucketed by their *tenacity* and processed by a double
     depth-first search (:meth:`DDFS`), which either reports a *bottleneck*
     around which an odd structure is contracted into a *petal* (a
-    :class:`Petal`), or returns two vertex-disjoint paths forming a shortest
+    :class:`_Petal`), or returns two vertex-disjoint paths forming a shortest
     augmenting path. A phase augments along a maximal set of vertex-disjoint
     shortest augmenting paths before the next phase begins; `O(\sqrt{|V|})`
     phases suffice. Seeding the search with a greedy maximal matching (see
@@ -1875,13 +1875,13 @@ class MicaliVaziraniMatching:
     - a *petal* is the odd structure a single :meth:`DDFS` contracts; a
       *blossom* is a union of petals. The petal is the algorithmic object (it
       depends on how the search resolves choices) and is the one realised in
-      code as :class:`Petal`; the blossom is its graph-theoretic counterpart;
+      code as :class:`_Petal`; the blossom is its graph-theoretic counterpart;
     - a *bud* is the bottleneck vertex of a petal, where the two searches
       collide (algorithmic); a *base* is `\mathrm{bud}^*(v)`, the base of the
       blossom containing `v` (graph-theoretic). The two coincide once all petals
       at a base have merged. The implementation does not store them separately:
       a single union-find (``vertex_bud_map`` / :meth:`get_bud`, with the value
-      also kept in ``Petal.bud``) holds the current representative, which is a
+      also kept in ``_Petal.bud``) holds the current representative, which is a
       petal's bud at formation and the blossom's base after merging;
     - the two endpoints of a *bridge* are its *peaks* (``petal.peaks``), and
       the two odd-alternating predecessor paths from a peak down to the bud are
@@ -1984,7 +1984,7 @@ class MicaliVaziraniMatching:
     NO_COLOR = -1
 
     @dataclass
-    class Petal:
+    class _Petal:
         r"""
         A petal: the odd structure a single :meth:`DDFS` contracts in a phase.
 
@@ -2001,7 +2001,7 @@ class MicaliVaziraniMatching:
         EXAMPLES::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: p = MicaliVaziraniMatching.Petal(bud=0, peaks=(1, 2))
+            sage: p = MicaliVaziraniMatching._Petal(bud=0, peaks=(1, 2))
             sage: p.bud, p.peaks
             (0, (1, 2))
         """
@@ -2084,11 +2084,11 @@ class MicaliVaziraniMatching:
                 i, j = j, i
             return self._edge_to_index[i, j]
 
-    class Petals:
+    class _Petals:
         r"""
         Petals of the current phase: a bud union-find plus the petal store.
 
-        Records each vertex's :class:`Petal` and its *bud*, and merges buds as
+        Records each vertex's :class:`_Petal` and its *bud*, and merges buds as
         petals combine, so :meth:`get_bud` returns `\mathrm{bud}^*(v)` -- the
         *base* of the resulting blossom. Reset once per phase via :meth:`reset`.
 
@@ -2194,7 +2194,7 @@ class MicaliVaziraniMatching:
             r"""
             Contract a new petal with the given ``bud``.
 
-            A :class:`Petal` with that ``bud`` and peaks the two endpoints of
+            A :class:`_Petal` with that ``bud`` and peaks the two endpoints of
             ``bridge`` is created, and the red and green supports found by the
             double depth-first search are attached to it, one per side.
 
@@ -2221,7 +2221,7 @@ class MicaliVaziraniMatching:
             self,
             support: list[int],
             bud: int,
-            petal: MicaliVaziraniMatching.Petal,
+            petal: MicaliVaziraniMatching._Petal,
             direction: int,
         ) -> None:
             r"""
@@ -2468,13 +2468,9 @@ class MicaliVaziraniMatching:
         # the derived level accessors (see :class:`_SearchState`).
         self.state = self._SearchState(self.N, len(self.index_to_edge))
 
-        # Petals of the current phase (bud union-find + petal store). The driver
-        # keeps references to the Petals arrays still read outside it (the petal
-        # map and colours) until those readers move too.
-        self.petals = self.Petals(self.N, self.Petal,
+        # Petals of the current phase (bud union-find + petal store).
+        self.petals = self._Petals(self.N, self._Petal,
                                   self.RED, self.GREEN, self.NO_COLOR)
-        self.vertex_petal_map = self.petals.vertex_petal_map
-        self.color = self.petals.color
 
         # The matching itself: ``mate[v]`` is the vertex matched to ``v``, or
         # ``EXPOSED`` if ``v`` is currently unmatched. ``matching_size`` tracks
@@ -2526,34 +2522,6 @@ class MicaliVaziraniMatching:
             True
         """
         return self.mate[v] != self.EXPOSED
-
-    # indexing the edges
-    def edge_to_index(self, i: int, j: int) -> int:
-        r"""
-        Return the integer index assigned to the edge `\{i, j\}`.
-
-        Edges are numbered `0, 1, \ldots, |E| - 1` so that edge-indexed arrays
-        can be used. The lookup is symmetric: the endpoints may be given in
-        either order.
-
-        INPUT:
-
-        - ``i`` -- integer; one endpoint (an internal vertex label in
-          `\{0, \ldots, n - 1\}`)
-        - ``j`` -- integer; the other endpoint
-
-        EXAMPLES::
-
-            sage: from sage.graphs.matching import MicaliVaziraniMatching
-            sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.edge_to_index(0, 1)
-            0
-            sage: MV.edge_to_index(2, 1)
-            1
-            sage: MV.edge_to_index(1, 2) == MV.edge_to_index(2, 1)
-            True
-        """
-        return self.instance.edge_to_index(i, j)
 
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
@@ -2739,7 +2707,7 @@ class MicaliVaziraniMatching:
         self.petals.reset()
 
         for u, v in self.G.edge_iterator(labels=False):
-            edge_index = self.edge_to_index(u, v)
+            edge_index = self.instance.edge_to_index(u, v)
             self.state.prop_edges.discard(edge_index)
             self.state.edge_scanned[edge_index] = -1
 
@@ -2798,7 +2766,7 @@ class MicaliVaziraniMatching:
                 continue
 
             for v in self.G.neighbor_iterator(u):
-                edge_index = self.edge_to_index(u, v)
+                edge_index = self.instance.edge_to_index(u, v)
 
                 # Even levels (parity 0) scan unmatched edges, odd levels
                 # (parity 1) scan matched edges; ``mate[u] == v`` is exactly the
@@ -2949,7 +2917,7 @@ class MicaliVaziraniMatching:
 
             if not level_parity:
                 for neighbor in self.G.neighbor_iterator(vertex):
-                    edge_index = self.edge_to_index(vertex, neighbor)
+                    edge_index = self.instance.edge_to_index(vertex, neighbor)
 
                     # File the bridge under its tenacity, but only once that
                     # tenacity is determined (a neighbor whose even level is
@@ -3231,7 +3199,7 @@ class MicaliVaziraniMatching:
         if visited is None:
             visited = set()
         path = list()
-        petal = self.vertex_petal_map[vertex]
+        petal = self.petals.vertex_petal_map[vertex]
         bud = petal.bud
         if self.state.is_outer(vertex):
             path = yield self._unfold_path_in_petal_generator(
@@ -3246,7 +3214,7 @@ class MicaliVaziraniMatching:
             # is searched avoiding it (the ``continuation``). The vertex-arc
             # backtracks whenever the bud-arc cannot avoid it, so a simple path
             # is found whenever one exists.
-            if self.color[vertex] == self.RED:
+            if self.petals.color[vertex] == self.RED:
                 vertex_peak, bud_peak = petal.peaks[0], petal.peaks[1]
             else:
                 vertex_peak, bud_peak = petal.peaks[1], petal.peaks[0]
@@ -3279,7 +3247,7 @@ class MicaliVaziraniMatching:
         self,
         start_vertex: int,
         end_vertex: int,
-        petal: Petal,
+        petal: MicaliVaziraniMatching._Petal,
     ) -> list[int]:
         r"""
         Trace one segment of the alternating path inside a petal.
@@ -3292,7 +3260,7 @@ class MicaliVaziraniMatching:
 
         - ``start_vertex`` -- integer; where the segment starts
         - ``end_vertex`` -- integer; where the segment ends
-        - ``petal`` -- the :class:`Petal` whose interior is being traced
+        - ``petal`` -- the :class:`_Petal` whose interior is being traced
 
         OUTPUT: the list of vertices from ``start_vertex`` to ``end_vertex``
         (empty if it cannot be reconstructed)
@@ -3343,7 +3311,7 @@ class MicaliVaziraniMatching:
 
         - ``start_vertex`` -- integer; where the segment starts
         - ``end_vertex`` -- integer; where the segment ends
-        - ``petal`` -- the :class:`Petal` whose interior is being traced
+        - ``petal`` -- the :class:`_Petal` whose interior is being traced
         - ``visited`` -- set of integers or ``None``; vertices already on the
           enclosing segment, excluded to keep the reconstruction simple
         - ``continuation`` -- callable or ``None``; given the completed
@@ -3377,7 +3345,7 @@ class MicaliVaziraniMatching:
 
         # If the segment starts inside a nested petal, expand that petal up to
         # its bud and continue the search from the bud.
-        start_petal = self.vertex_petal_map[start_vertex]
+        start_petal = self.petals.vertex_petal_map[start_vertex]
         if start_petal is not None and start_petal != petal:
             bud = start_petal.bud
             head = yield self._unfold_petal_generator(
@@ -3413,7 +3381,7 @@ class MicaliVaziraniMatching:
             if predecessor == end_vertex:
                 reaches_end = True
             else:
-                predecessor_petal = self.vertex_petal_map[predecessor]
+                predecessor_petal = self.petals.vertex_petal_map[predecessor]
                 if predecessor_petal == petal:
                     direct_steps.append(predecessor)
                 elif predecessor_petal is not None:
@@ -3444,7 +3412,7 @@ class MicaliVaziraniMatching:
                 return [start_vertex] + tail
 
         for predecessor in nested_steps:
-            nested_petal = self.vertex_petal_map[predecessor]
+            nested_petal = self.petals.vertex_petal_map[predecessor]
             bud = nested_petal.bud
             # An unmatched edge into the nested petal expands the whole petal; a
             # matched edge resumes the path inside it. This mirrors the two ways
@@ -3667,7 +3635,7 @@ class MicaliVaziraniMatching:
             predecessor_list = self.state.predecessor[current_vertex][:]
             # If the vertex is not part of a petal, add it to the path
             # Otherwise unfold the petal
-            if self.vertex_petal_map[current_vertex] is None:
+            if self.petals.vertex_petal_map[current_vertex] is None:
                 path.append(current_vertex)
             else:
                 petal_path = self.unfold_petal(
@@ -3714,7 +3682,7 @@ class MicaliVaziraniMatching:
                 f'even_level[{v}] = {self.state.even_level[v]} is not even'
             assert self.state.odd_level[v] == self.state.INFINITY or self.state.odd_level[v] % 2, \
                 f'odd_level[{v}] = {self.state.odd_level[v]} is not odd'
-            petal = self.vertex_petal_map[v]
+            petal = self.petals.vertex_petal_map[v]
             assert petal is None or petal.bud != v, \
                 f'vertex {v} is the bud of its own petal'
 
