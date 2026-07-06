@@ -105,6 +105,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/sage0
    sage/interfaces/scilab
    sage/interfaces/singular
+   sage/interfaces/snappy
    sage/interfaces/sympy
    sage/interfaces/tachyon
    sage/interfaces/tides

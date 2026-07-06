@@ -12,10 +12,9 @@ Features for testing the presence of ``mcqd``
 # *****************************************************************************
 
 from sage.config import mcqd_enabled
-from sage.features import PythonModule
-from sage.features.build_feature import BuildFeature
+from sage.features.build_feature import BuildModule
 
-class Mcqd(BuildFeature):
+class Mcqd(BuildModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
     the :mod:`~sage.graphs.mcqd` module, which is the SageMath
@@ -26,37 +25,33 @@ class Mcqd(BuildFeature):
         sage: from sage.features.mcqd import Mcqd
         sage: Mcqd().is_present()  # needs mcqd
         FeatureTestResult('mcqd', True)
+        sage: Mcqd().is_present()  # needs !mcqd
+        FeatureTestResult('mcqd', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !mcqd`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.mcqd import Mcqd
+        sage: Mcqd().is_present_at_runtime()  # needs mcqd
+        FeatureTestResult('mcqd', True)
 
     """
     _enabled_in_build = mcqd_enabled
 
     def __init__(self):
         """
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.mcqd import Mcqd
-            sage: isinstance(Mcqd(), Mcqd)
-            True
+            sage: Mcqd()
+            Feature('mcqd')
 
         """
-        super().__init__("mcqd", spkg="mcqd")
+        module_name = "sage.graphs.mcqd"
+        super().__init__("mcqd", module_name)
 
-    def is_present_at_runtime(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features import FeatureTestResult
-            sage: from sage.features.mcqd import Mcqd
-            sage: result = Mcqd().is_present_at_runtime()
-            sage: isinstance(result, FeatureTestResult)
-            True
-            sage: result  # needs mcqd
-            FeatureTestResult('mcqd', True)
-
-        """
-        result = PythonModule("sage.graphs.mcqd")._is_present()
-        result.feature = self
-        return result
 
 def all_features():
     return [Mcqd()]
