@@ -651,12 +651,13 @@ class EllipticCurveHom(Morphism):
         except AttributeError:
             pass
 
-        if self.separable_degree().is_one():
+        n = self.separable_degree()
+
+        if n.is_one():
             # purely inseparable
             return AdditiveAbelianGroupWrapper(self.domain().point_homset(), [], [])
 
         if algorithm == 'structure':
-            n = self.separable_degree()
             T1 = self.domain().torsion_subgroup(n, extend=extend)
             F = T1.universe().codomain().base_field()
             T2 = self.codomain().change_ring(F).torsion_subgroup(n)
@@ -689,13 +690,12 @@ class EllipticCurveHom(Morphism):
                 if s.is_one():
                     continue
                 Q = sum(c * P for c,P in zip(row, Ps))
-                assert not self._eval(Q)
                 Q.set_order(s)
                 gens.append(Q)
 
             A = AdditiveAbelianGroupWrapper(T1.universe(), gens, [pt._order for pt in gens])
-            assert A.order().divides(self.separable_degree())
-            if A.order() != self.separable_degree():
+            assert A.order().divides(n)
+            if A.order() != n:
                 raise ValueError('kernel subgroup has no generating points over the base field')
             return A
 
@@ -715,7 +715,7 @@ class EllipticCurveHom(Morphism):
                     continue
                 A = AdditiveAbelianGroupWrapper.from_generators(pts)
                 pts = [g.element() for g in A.gens()]
-                if A.order() == self.separable_degree():
+                if A.order() == n:
                     return A
             raise ValueError('kernel subgroup has no generating points over the base field')
 
@@ -738,7 +738,7 @@ class EllipticCurveHom(Morphism):
 
             A = AdditiveAbelianGroupWrapper.from_generators(pts)
             pts = [g.element() for g in A.gens()]
-            if A.order() == self.separable_degree():
+            if A.order() == n:
                 break
 
         return A
