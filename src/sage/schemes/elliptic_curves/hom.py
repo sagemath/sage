@@ -583,6 +583,22 @@ class EllipticCurveHom(Morphism):
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 5*x + 5
                 over Finite Field in z7 of size 101^7
 
+        ::
+
+            sage: GF(101^2).inject_variables()
+            Defining z2
+            sage: E = EllipticCurve(GF(101^2), [0, 1])
+            sage: R.<x> = GF(101^2)[]
+            sage: phi = E.isogeny(x^3 + 95*z2 + 55)
+            sage: H1 = phi.kernel_subgroup(algorithm='structure', extend=True); H1
+            Additive abelian group isomorphic to Z/7
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1
+                over Finite Field in t of size 101^6
+            sage: H2 = phi.kernel_subgroup(algorithm='kerpoly', extend=True); H2
+            Additive abelian group isomorphic to Z/7
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1
+                over Finite Field in u of size 101^6
+
         We can check that the (now proven insecure) key exchange "SIDH" works::
 
             sage: a, b = 91, 57
@@ -686,15 +702,13 @@ class EllipticCurveHom(Morphism):
         if algorithm != 'kerpoly':
             raise ValueError(f"invalid algorithm {algorithm}")
 
+        E = self.domain()
         f = self.kernel_polynomial()
-
-        if part:
-            f = f.gcd(E.division_polynomial(part))
 
         pts = []
 
         if not extend:
-            for x in self.kernel_polynomial().roots(multiplicities=False):
+            for x in f.roots(multiplicities=False):
                 try:
                     pts.append(E.lift_x(x))
                 except ValueError:
@@ -704,9 +718,6 @@ class EllipticCurveHom(Morphism):
                 if A.order() == self.separable_degree():
                     return A
             raise ValueError('kernel subgroup has no generating points over the base field')
-
-        E = self.domain()
-        f = self.kernel_polynomial()
 
         from sage.rings.polynomial.polynomial_ring import polygen
 
