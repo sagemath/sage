@@ -85,13 +85,13 @@ def get_editable_root() -> tuple[Path, Path] | None:
     """
     if (
         not is_editable_install()
-        or r"@EDITABLE_SRC@" == ""
-        or r"@EDITABLE_BUILD@" == ""
+        or r"@MESON_SOURCE_ROOT@" == ""
+        or r"@MESON_BUILD_ROOT@" == ""
     ):
         return None
 
-    src = Path(r"@EDITABLE_SRC@").resolve()
-    build = Path(r"@EDITABLE_BUILD@").resolve()
+    src = Path(r"@MESON_SOURCE_ROOT@").resolve()
+    build = Path(r"@MESON_BUILD_ROOT@").resolve()
     if src.is_dir() and build.is_dir():
         return src, build
     return None
