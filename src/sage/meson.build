@@ -2,8 +2,8 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
-conf_data.set('EDITABLE_SRC', root)
-conf_data.set('EDITABLE_BUILD', root_build)
+conf_data.set('EDITABLE_SRC', meson.global_source_root())
+conf_data.set('EDITABLE_BUILD', meson.global_build_root())
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
