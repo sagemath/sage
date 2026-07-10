@@ -8,18 +8,20 @@ compute equilibria of these games:
  * ``'enumeration'`` - An implementation of the support enumeration
    algorithm built in Sage.
 
- * ``'LCP'`` - An interface with the 'gambit' solver's implementation
-   of the Lemke-Howson algorithm.
+ * An interface with 'gambit', which implements all of its available
+   solvers (``'LCP'``, ``'enummixed'``, ``'lp'``, ``'gnm'``,
+   ``'enumpure'``, ``'enumpoly'``, ``'liap'``, ``'simpdiv'``, ``'ipa'``
+   and ``'logit'``). The ``'LCP'``, ``'enummixed'`` and ``'lp'`` solvers
+   are restricted to 2 player games, while the others are able to solve
+   games with an arbitrary number of players. See the gambit
+   documentation
+   (https://gambitproject.readthedocs.io/en/stable/pygambit.api.html).
 
  * ``'lp'`` - A built-in Sage implementation (with a gambit alternative)
    of a zero-sum game solver using linear programming. See
    :class:`MixedIntegerLinearProgram` for more on MILP solvers in Sage.
 
  * ``'lrs'`` - A solver interfacing with the 'lrslib' library.
-
- * ``'gnm'`` - An interface with the 'gambit' solver's implementation
-   of the global Newton method. Unlike the other algorithms, this one
-   is able to solve games with more than 2 players.
 
 The architecture for the class is based on the gambit architecture to
 ensure an easy transition between gambit and Sage.  Most of the
@@ -201,7 +203,7 @@ which returns the payoff matrices for a 2 player game::
 
 One can also input a single matrix and then a zero sum game is constructed.
 Here is an instance of `Rock-Paper-Scissors-Lizard-Spock
-<http://www.samkass.com/theories/RPSSL.html>`_::
+<https://www.samkass.com/theories/RPSSL.html>`_::
 
     sage: A = matrix([[0, -1, 1, 1, -1],
     ....:             [1, 0, -1, -1, 1],
@@ -236,16 +238,13 @@ currently available:
   algorithm uses the optional 'lrslib' package. To install it, type
   ``sage -i lrslib`` in the shell. For more information, see [Av2000]_.
 
-* ``'LCP'``: Linear complementarity program algorithm for 2 player games.
-  This algorithm uses the open source game theory package:
-  `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_.
-
-* ``'gnm'``: Global Newton method for games with an arbitrary number of
-  players. This algorithm also uses the open source game theory package
-  `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_ and is, in
-  particular, able to solve games with more than 2 players. Being a
-  numerical method, it returns floating point approximations of a sample
-  of the equilibria.
+* Sage also interfaces with all of the Nash equilibrium solvers provided by
+  the open source game theory package
+  `Gambit <https://www.gambit-project.org/>`_ [Gambit]_, including for games
+  with more than 2 players. See :meth:`obtain_nash` for the algorithm names
+  accepted here, and the `Gambit API overview
+  <https://gambitproject.readthedocs.io/en/stable/pygambit.html>`_ for the
+  underlying solvers.
 
 * ``'enumeration'``: Support enumeration for 2 player games. This
   algorithm is hard coded in Sage and checks through all potential
@@ -437,9 +436,7 @@ and, unlike ``'gnm'``, returns all of the equilibria it finds::
     [[(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)], [(1.0, 0.0), (0.0, 1.0), (0.0, 1.0)]]
 
 Note that ``'gnm'`` is a numerical algorithm and so returns floating
-point approximations of a sample of the equilibria. Further compatibility
-between Sage and gambit is actively being developed:
-https://github.com/tturocy/gambit/tree/sage_integration.
+point approximations of a sample of the equilibria.
 
 It can be shown that linear scaling of the payoff matrices conserves the
 equilibrium values::
@@ -551,7 +548,7 @@ Here we do the same for player 2::
     [0, 1]
 
 We see that for the game `Rock-Paper-Scissors-Lizard-Spock
-<http://www.samkass.com/theories/RPSSL.html>`_ any pure strategy has two best
+<https://www.samkass.com/theories/RPSSL.html>`_ any pure strategy has two best
 responses::
 
     sage: g = game_theory.normal_form_games.RPSLS()
@@ -678,7 +675,7 @@ except ImportError:
 
 from sage.features.gambit import pygambit
 from sage.misc.lazy_import import lazy_import
-lazy_import('pygambit', ['Game', 'read_nfg'], feature=pygambit())
+lazy_import('pygambit', ['Game', 'read_nfg', 'catalog'], feature=pygambit())
 lazy_import('pygambit', 'nash', 'gambit_nash', feature=pygambit())
 
 
@@ -1267,6 +1264,57 @@ class NormalFormGame(SageObject, MutableMapping):
         game = read_nfg(path)
         self._gambit_game(game)
 
+    def load_from_gambit_catalog(self, game=None, info=True):
+        r"""
+        List games in the Gambit catalog and/or load one into this game.
+
+        The `Gambit catalog
+        <https://gambitproject.readthedocs.io/en/stable/catalog.html>`_ ships a
+        small collection of example games. Depending on the arguments this
+        method lists the available games, loads one of them into ``self`` (in
+        place, replacing any existing players and utilities), or both.
+
+        INPUT:
+
+        - ``game`` -- (default: ``None``) the slug of a catalog game to load,
+          e.g. ``'bagwell1995'``. When ``None`` no game is loaded. The catalog
+          game is converted to its (reduced) strategic form via
+          :meth:`_gambit_game`.
+
+        - ``info`` -- boolean (default: ``True``); when ``True`` return the
+          table of available games (a :class:`pandas.DataFrame` with ``Game``
+          slugs and ``Title`` columns).
+
+        OUTPUT: the catalog table when ``info`` is ``True``, otherwise ``None``.
+
+        EXAMPLES::
+
+            sage: # optional - gambit
+            sage: g = NormalFormGame()
+            sage: 'bagwell1995' in list(g.load_from_gambit_catalog()['Game'])
+            True
+            sage: g.load_from_gambit_catalog('bagwell1995', info=False)
+            sage: len(g.players)
+            2
+            sage: g.load_from_gambit_catalog('not_a_real_game', info=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: 'not_a_real_game' is not a game in the Gambit catalog; ...
+        """
+        pygambit().require()
+        if game is not None:
+            try:
+                loaded = catalog.load(game)
+            except FileNotFoundError:
+                raise ValueError(
+                    f"{game!r} is not a game in the Gambit catalog; call "
+                    "load_from_gambit_catalog() with no argument to see the "
+                    "available games"
+                )
+            self._gambit_game(loaded)
+        if info:
+            return catalog.games()
+
     def is_constant_sum(self):
         r"""
         Check if the game is constant sum.
@@ -1514,10 +1562,14 @@ class NormalFormGame(SageObject, MutableMapping):
           this function:
 
           * ``'lrs'`` -- this algorithm is only suited for 2 player games.
-            See the lrs web site (http://cgm.cs.mcgill.ca/~avis/C/lrs.html).
+            See the lrs web site (https://cgm.cs.mcgill.ca/~avis/C/lrs.html).
+
+          * ``'enummixed'`` -- this algorithm is only suited for 2 player games. It
+            computes all mixed strategy Nash equilibria based on the gambit implementation,
+            see the gambit web site (https://gambitproject.readthedocs.io/en/stable/api/pygambit.nash.enummixed_solve.html).
 
           * ``'LCP'`` -- this algorithm is only suited for 2 player games.
-            See the gambit web site (http://gambit.sourceforge.net/).
+            See the gambit web site (https://gambitproject.readthedocs.io/en/stable/api/pygambit.nash.lcp_solve.html).
 
           * ``'gnm'``, ``'enumpure'``, ``'enumpoly'``, ``'liap'``,
             ``'simpdiv'``, ``'ipa'``, ``'logit'`` -- these algorithms are
@@ -1530,11 +1582,11 @@ class NormalFormGame(SageObject, MutableMapping):
             logit quantal response tracing respectively). They are numerical
             algorithms and so in general return floating point approximations
             of a sample of the equilibria. See the gambit web site
-            (http://gambit.sourceforge.net/). When no ``algorithm`` is given
+            (https://gambitproject.readthedocs.io/en/stable/pygambit.api.html). When no ``algorithm`` is given
             for a game with more than 2 players, ``'enumpoly'`` is used.
 
           * ``'lp'`` -- this algorithm is only suited for 2 player
-            constant sum games. Uses MILP solver determined by the
+            constant sum games. Uses MILP solver or the gambit solver, determined by the
             ``solver`` argument.
 
           * ``'enumeration'`` -- this is a very inefficient
@@ -1598,7 +1650,7 @@ class NormalFormGame(SageObject, MutableMapping):
           solver. This is only supported by the ``'enumpoly'`` algorithm (the
           default for games with more than 2 players); passing it for any other
           algorithm raises a :class:`ValueError`. PHCpack is available from
-          http://homepages.math.uic.edu/~jan/download.html.
+          https://homepages.math.uic.edu/~jan/download.html.
 
         EXAMPLES:
 
@@ -1652,6 +1704,15 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 0, 3/4, 1/4), (1/28, 27/28, 0)]]
             sage: g.obtain_nash(algorithm='LCP')  # abs tol 1e-9 # optional - gambit
             [[(0.0, 0.0, 0.75, 0.25), (0.0357142857, 0.9642857143, 0.0)]]
+
+        The ``'enummixed'`` algorithm (2 player games only) enumerates all the
+        extreme mixed strategy Nash equilibria; for a coordination game it
+        returns the two pure equilibria together with the mixed one::
+
+            sage: A = matrix([[1, 0], [0, 1]])
+            sage: coordination = NormalFormGame([A, A])
+            sage: coordination.obtain_nash(algorithm='enummixed')  # abs tol 1e-9 # optional - gambit
+            [[(0.0, 1.0), (0.0, 1.0)], [(0.5, 0.5), (0.5, 0.5)], [(1.0, 0.0), (1.0, 0.0)]]
 
         2 random matrices::
 
@@ -1858,6 +1919,10 @@ class NormalFormGame(SageObject, MutableMapping):
             if algorithm == "enumeration":
                 return self._solve_enumeration(maximization)
 
+            if algorithm == "enummixed":
+                pygambit().require()
+                return self._use_gambit_solver('enummixed', maximization)
+
         # The remaining gambit solvers all handle an arbitrary number of
         # players, so they are routed here (outside the two player branch
         # above) and are available for two player games as well.
@@ -1871,9 +1936,9 @@ class NormalFormGame(SageObject, MutableMapping):
         n = len(self.players)
         raise ValueError(
             f"unknown algorithm {algorithm!r} for a {n}-player game; "
-            "for 2-player games use 'enumeration', 'lrs', 'LCP', or 'lp', "
-            "and for any number of players use one of the gambit solvers: "
-            "'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'"
+            "for 2-player games use 'enumeration', 'lrs', 'LCP', 'lp', or "
+            "'enummixed', and for any number of players use one of the gambit "
+            "solvers: 'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'"
         )
 
     def _solve_lrs(self, maximization=True):
@@ -2036,6 +2101,8 @@ class NormalFormGame(SageObject, MutableMapping):
           * ``'lcp'`` -- the Linear Complementarity solver (two player games)
           * ``'lp'`` -- the Linear Programming solver (two player constant
             sum games)
+          * ``'enummixed'`` -- enumeration of extreme points of convex sets of 
+            all Nash equilibria (two player games)
           * ``'gnm'`` -- the global Newton method (any number of players)
           * ``'enumpure'`` -- enumeration of the pure strategy equilibria
             (any number of players)
@@ -2081,7 +2148,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: C._use_gambit_solver('gnm')  # optional - gambit
             [[(0.0, 1.0), (0.0, 1.0)]]
 
-        GNM (like every solver other than ``'lcp'`` and ``'lp'``) can also
+        GNM (like every solver other than ``'lcp'``, ``'lp'``, and ``'enummixed'``) can also
         solve games with more than two players.  Here is a three player game::
 
             sage: threegame = NormalFormGame()
@@ -2290,6 +2357,7 @@ class NormalFormGame(SageObject, MutableMapping):
             'lp': lambda: gambit_nash.lp_solve(g, rational=False),
             'gnm': lambda: gambit_nash.gnm_solve(g),
             'enumpure': lambda: gambit_nash.enumpure_solve(g),
+            'enummixed': lambda: gambit_nash.enummixed_solve(g, rational=False),
             'enumpoly': lambda: gambit_nash.enumpoly_solve(g) if phc_path is None
                 else gambit_nash.enumpoly_solve(
                     g, use_strategic=True, phcpack_path=phc_path),
@@ -2302,7 +2370,7 @@ class NormalFormGame(SageObject, MutableMapping):
         if algorithm not in solvers:
             raise ValueError(
                 f"unknown gambit algorithm {algorithm!r}; "
-                "supported values are 'lcp' and 'lp' (2-player games only) "
+                "supported values are 'lcp', 'lp', and 'enummixed' (2-player games only) "
                 "and 'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', "
                 "'ipa', 'logit' (any number of players)"
             )
@@ -2795,7 +2863,7 @@ class NormalFormGame(SageObject, MutableMapping):
             False
 
         whereas `Rock-Paper-Scissors-Lizard-Spock
-        <http://www.samkass.com/theories/RPSSL.html>`_ is degenerate because
+        <https://www.samkass.com/theories/RPSSL.html>`_ is degenerate because
         for every pure strategy there are two best responses.::
 
             sage: g = game_theory.normal_form_games.RPSLS()
