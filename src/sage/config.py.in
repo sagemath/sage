@@ -52,3 +52,10 @@ meataxe_enabled = @MEATAXE_ENABLED@
 rankwidth_enabled = @RANKWIDTH_ENABLED@
 sirocco_enabled = @SIROCCO_ENABLED@
 tdlib_enabled = @TDLIB_ENABLED@
+
+
+def get_include_dirs():
+    from sage.misc.superseded import deprecation
+    deprecation(42525, "sage.config.get_include_dirs() has been moved to sage.misc.cython.get_include_dirs()")
+    from sage.misc.cython import get_include_dirs as _gid
+    return _gid()
