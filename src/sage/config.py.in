@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import sage
-
 # In an editable install, these replace what (in a non-editable
 # install) would have been the installation path. The cython()
 # function needs them so that it can locate headers and such.
@@ -57,31 +55,6 @@ rankwidth_enabled = @RANKWIDTH_ENABLED@
 sirocco_enabled = @SIROCCO_ENABLED@
 tdlib_enabled = @TDLIB_ENABLED@
 
-def get_editable_root() -> tuple[Path, Path] | None:
-    """
-    Return the path to the Sage directory when using an editable
-    install.
-    Both the actual source directory and the build directory are returned, and are
-    guaranteed to exist.
-    If not using an editable install, or if the source/build directories do not
-    exist, return None.
-
-    EXAMPLES::
-
-        sage: from sage.config import get_editable_root
-        sage: get_editable_root() # random
-        (WindowsPath('<path_to_sage>/sage'), WindowsPath('<path_to_sage>/sage/build/cp312'))
-    """
-    if not all((is_editable_install(), MESON_SOURCE_ROOT, MESON_BUILD_ROOT)):
-        return None
-
-    src = Path(MESON_SOURCE_ROOT).resolve()
-    build = Path(MESON_BUILD_ROOT).resolve()
-    if src.is_dir() and build.is_dir():
-        return src, build
-    return None
-
-
 def get_include_dirs() -> list[Path]:
     """
     Return a list of directories to be used as include directories
@@ -102,10 +75,16 @@ def get_include_dirs() -> list[Path]:
             WindowsPath('<python>/site-packages/numpy/core/include')
         ]
     """
-    dirs: list[Path] = [Path(dir).parent for dir in sage.__path__]
-    editable_root = get_editable_root()
-    if editable_root is not None:
-        # We return both the source and build directory,
-        # because some headers are generated in the build directory.
-        dirs.extend([root / "src" for root in editable_root])
-    return [dir for dir in dirs if dir.is_dir()]
+    dirs: list[Path] = [p
+                        for d in sage.__path__
+                        if (p := Path(d).parent)
+                        if p.is_dir()]
+
+    from sage.features.meson_editable import MesonEditable
+    if  MesonEditable().is_present():
+        dirs.extend([p
+                     for d in (MESON_BUILD_ROOT, MESON_SOURCE_ROOT)
+                     if d  # Path() turns "" into "."
+                     if (p := Path(d).resolve() / "src")
+                     if p.is_dir() ])
+    return dirs
