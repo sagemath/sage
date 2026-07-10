@@ -1,5 +1,3 @@
-from pathlib import Path
-
 # In an editable install, these replace what (in a non-editable
 # install) would have been the installation path. The cython()
 # function needs them so that it can locate headers and such.
@@ -54,37 +52,3 @@ meataxe_enabled = @MEATAXE_ENABLED@
 rankwidth_enabled = @RANKWIDTH_ENABLED@
 sirocco_enabled = @SIROCCO_ENABLED@
 tdlib_enabled = @TDLIB_ENABLED@
-
-def get_include_dirs() -> list[Path]:
-    """
-    Return a list of directories to be used as include directories
-    when compiling Cython extensions that depend on Sage.
-
-    Headers should be included with the prefix "sage/", e.g.,
-    ``#include <sage/cpython/cython_metaclass.h>``.
-
-    EXAMPLES::
-
-        sage: from sage.config import get_include_dirs
-        sage: dirs = get_include_dirs()
-        sage: dirs # random
-        [
-            WindowsPath('<python>/site-packages'),
-            WindowsPath('<path_to_sage>/src'),
-            WindowsPath('<path_to_sage>/build/cp312/src'),
-            WindowsPath('<python>/site-packages/numpy/core/include')
-        ]
-    """
-    dirs: list[Path] = [p
-                        for d in sage.__path__
-                        if (p := Path(d).parent)
-                        if p.is_dir()]
-
-    from sage.features.meson_editable import MesonEditable
-    if  MesonEditable().is_present():
-        dirs.extend([p
-                     for d in (MESON_BUILD_ROOT, MESON_SOURCE_ROOT)
-                     if d  # Path() turns "" into "."
-                     if (p := Path(d).resolve() / "src")
-                     if p.is_dir() ])
-    return dirs
