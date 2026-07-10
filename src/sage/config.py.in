@@ -2,6 +2,12 @@ from pathlib import Path
 
 import sage
 
+# In an editable install, these replace what (in a non-editable
+# install) would have been the installation path. The cython()
+# function needs them so that it can locate headers and such.
+MESON_SOURCE_ROOT = r"@MESON_SOURCE_ROOT@"
+MESON_BUILD_ROOT = r"@MESON_BUILD_ROOT@"
+
 VERSION = "@PACKAGE_VERSION@"
 
 # The path to the standalone maxima executable.
@@ -83,15 +89,11 @@ def get_editable_root() -> tuple[Path, Path] | None:
         sage: get_editable_root() # random
         (WindowsPath('<path_to_sage>/sage'), WindowsPath('<path_to_sage>/sage/build/cp312'))
     """
-    if (
-        not is_editable_install()
-        or r"@MESON_SOURCE_ROOT@" == ""
-        or r"@MESON_BUILD_ROOT@" == ""
-    ):
+    if not all((is_editable_install(), MESON_SOURCE_ROOT, MESON_BUILD_ROOT)):
         return None
 
-    src = Path(r"@MESON_SOURCE_ROOT@").resolve()
-    build = Path(r"@MESON_BUILD_ROOT@").resolve()
+    src = Path(MESON_SOURCE_ROOT).resolve()
+    build = Path(MESON_BUILD_ROOT).resolve()
     if src.is_dir() and build.is_dir():
         return src, build
     return None
