@@ -103,7 +103,6 @@ py.install_sources(
   'all.py',
   'all_cmdline.py',
   'all_test.py',
-  'config_test.py',
   'env.py',
   'version.py',
   subdir: 'sage',
