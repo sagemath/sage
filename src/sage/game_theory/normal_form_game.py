@@ -676,13 +676,10 @@ try:
 except ImportError:
     np = None
 
-try:
-    from pygambit import Game, read_nfg
-    import pygambit.nash as gambit_nash
-except ImportError:
-    Game = None
-    read_nfg = None
-    gambit_nash = None
+from sage.features.gambit import pygambit
+from sage.misc.lazy_import import lazy_import
+lazy_import('pygambit', ['Game', 'read_nfg'], feature=pygambit())
+lazy_import('pygambit', 'nash', 'gambit_nash', feature=pygambit())
 
 
 class NormalFormGame(SageObject, MutableMapping):
@@ -1232,11 +1229,7 @@ class NormalFormGame(SageObject, MutableMapping):
             ....:     print(f.read()[:5])
             NFG 1
         """
-        if Game is None:
-            raise NotImplementedError(
-                "save_nfg() requires the optional gambit package; "
-                "install it with: pip install pygambit"
-            )
+        pygambit().require()
         g = self._gambit_()
         with atomic_write(path) as f:   # text mode by default (binary=False)
             f.write(g.to_nfg())
@@ -1270,11 +1263,7 @@ class NormalFormGame(SageObject, MutableMapping):
             (1, 0): [1.0, 2.0],
             (1, 1): [2.5, 1.0]}
         """
-        if Game is None:
-            raise NotImplementedError(
-                "load_nfg() requires the optional gambit package; "
-                "install it with: pip install pygambit"
-            )
+        pygambit().require()
         game = read_nfg(path)
         self._gambit_game(game)
 
@@ -1860,11 +1849,7 @@ class NormalFormGame(SageObject, MutableMapping):
                 return self._solve_lrs(maximization)
 
             if algorithm == "LCP":
-                if Game is None:
-                    raise RuntimeError(
-                        "the 'LCP' algorithm requires the optional gambit "
-                        "package; install it with: pip install pygambit"
-                    )  # should later become a FeatureNotFoundError
+                pygambit().require()
                 return self._use_gambit_solver('lcp', maximization)
 
             if algorithm.startswith('lp'):
@@ -1879,11 +1864,7 @@ class NormalFormGame(SageObject, MutableMapping):
         gambit_algorithms = {"gnm", "enumpure", "enumpoly", "liap",
                              "simpdiv", "ipa", "logit"}
         if algorithm in gambit_algorithms:
-            if Game is None:
-                raise RuntimeError(
-                    f"the '{algorithm}' algorithm requires the optional gambit "
-                    "package; install it with: pip install pygambit"
-                )  # should later become a FeatureNotFoundError
+            pygambit().require()
             return self._use_gambit_solver(algorithm, maximization,
                                            phc_path=phc_path)
 
@@ -2296,11 +2277,7 @@ class NormalFormGame(SageObject, MutableMapping):
                 f"got algorithm {algorithm!r}"
             )
 
-        if Game is None:
-            raise NotImplementedError(
-                f"the '{algorithm}' algorithm requires the optional gambit "
-                "package; install it with: pip install pygambit"
-            )
+        pygambit().require()
 
         g = self._gambit_(maximization=maximization)
         # Each solver has its own calling convention: ``lcp``/``lp`` take a
