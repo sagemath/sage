@@ -57,23 +57,6 @@ rankwidth_enabled = @RANKWIDTH_ENABLED@
 sirocco_enabled = @SIROCCO_ENABLED@
 tdlib_enabled = @TDLIB_ENABLED@
 
-def is_editable_install() -> bool:
-    """
-    Check whether this is an editable install of Sage.
-
-    EXAMPLES::
-
-        sage: from sage.config import is_editable_install
-        sage: is_editable_install()
-        False
-    """
-    # This function relies on the fact that meson-python sets up a custom
-    # loader for editable installs
-    # Alternatively, one could use the distribution metadata as in:
-    #  https://github.com/scientific-python/spin/blob/89e581c7201d0f6597ffc92c3e84894f99fc133b/spin/cmds/meson.py#L39
-    return type(sage.__loader__).__module__ == "_sagemath_editable_loader"
-
-
 def get_editable_root() -> tuple[Path, Path] | None:
     """
     Return the path to the Sage directory when using an editable
