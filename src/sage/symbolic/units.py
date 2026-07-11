@@ -47,21 +47,13 @@ Giving improper units to convert to raises a :exc:`ValueError`::
     ...
     ValueError: Incompatible units
 
-Converting temperatures works as well::
+Converting to a unit with an offset (like Celsius) is not supported::
 
-    sage: s = 68*units.temperature.fahrenheit
-    sage: s.convert(units.temperature.celsius)
-    20*celsius
-    sage: s.convert()
-    293.150000000000*kelvin
-
-Trying to multiply temperatures by another unit then converting raises a :exc:`ValueError`::
-
-    sage: wrong = 50*units.temperature.celsius*units.length.foot
-    sage: wrong.convert()
+    sage: units.temperature.kelvin.convert(units.temperature.celsius)
     Traceback (most recent call last):
     ...
-    ValueError: cannot convert
+    NotImplementedError: Unit 'celsius' requires an offset and is not supported.
+    Supported units in the category 'temperature' are: kelvin, rankine.
 
 TESTS:
 
@@ -99,6 +91,10 @@ from sage.symbolic.ring import SR
 ###############################################################################
 one = QQ.one()
 
+
+unsupported_units = {
+    'temperature': {'celsius', 'fahrenheit', 'centigrade'},
+}
 
 unitdict = {
 'acceleration':
@@ -398,11 +394,8 @@ unitdict = {
         {'steradian': 1},
 
 'temperature':
-        {'celsius': '(x + 273.15), (x), (x*9/5 + 32), ((x+273.15)*9/5)',
-        'centigrade': '(x + 273.15), (x), (x*9/5 + 32), ((x+273.15)*9/5)',
-        'fahrenheit': '(5/9*(x + 459.67)), ((x - 32)*5/9), (x), (x+459.67)',
-        'kelvin': '(x), (x - 273.15), (x*9/5 - 459.67), (x*9/5)',
-        'rankine': '(5/9*x), ((x-491.67)*5/9), (x-459.67), (x)'},
+        {'kelvin' : 1,
+         'rankine' : QQ(5) / 9},
 
 'time':
         {'century': 3153600000,
@@ -802,10 +795,7 @@ unit_docs = {
         {'steradian': 'SI derived unit of solid angle.\nDefined to be the solid angle subtended at the center of a sphere of radius r by a portion of the surface of the sphere having an area of r^2.'},
 
 'temperature_docs':
-        {'celsius': 'Defined to be -273.15 at absolute zero and 0.01 at the triple point of Vienna Standard Mean Ocean Water.\nCelsius is related to kelvin by the equation K = 273.15 + degrees Celsius.\nA change of 1 degree Celsius is equivalent to a change of 1 degree kelvin.',
-        'centigrade': 'Equivalent to celsius.',
-        'fahrenheit': 'Defined to be 32 degrees at the freezing point of water and 212 degrees at the boiling point of water, both at standard pressure (1 atmosphere).\nFahrenheit is related to kelvin by the equation K = 5/9*(degrees Fahrenheit + 459.67).\nA change of 1 degree fahrenheit is equal to a change of 5/9 kelvin.',
-        'kelvin': 'SI base unit of temperature.\nDefined to be exactly 0 at absolute zero and 273.16 at the triple point of Vienna Standard Mean Ocean Water.',
+        {'kelvin': 'SI base unit of temperature.\nDefined to be exactly 0 at absolute zero and 273.16 at the triple point of Vienna Standard Mean Ocean Water.',
         'rankine': 'Defined to be 0 at absolute zero and to have the same degree increment as Fahrenheit.\nRankine is related to kelvin by the equation K = 5/9*R.'},
 
 'time_docs':
@@ -1165,6 +1155,13 @@ class Units(ExtraTabCompletion):
             sage: units.area.acre is units.area.acre
             True
         """
+        unsupported_for_collection = unsupported_units.get(self.__name, set())
+        if name in unsupported_for_collection:
+                raise NotImplementedError(
+                f"Unit '{name}' requires an offset and is not supported. "
+                f"\n Supported units in the category {self.__name} are: "
+                f"{', '.join(sorted(set(self.__data)))}."
+                )
         if name in self.__units:
             return self.__units[name]
         if len(unit_to_type) == 0:
@@ -1327,8 +1324,6 @@ def convert(expr, target):
 
     for x in expr.variables():
         if is_unit(x):
-            if unit_to_type[str(x)] == 'temperature':
-                return convert_temperature(expr, target)
             z[x] = base_units(x)
 
     expr = expr.subs(z)
@@ -1397,68 +1392,3 @@ def base_units(unit):
     base = SR.var(value_to_unit[str(v)][1])
     number = unitdict[str(v)][str(unit)]
     return base * (sage_eval(number) if isinstance(number, str) else number)
-
-
-def convert_temperature(expr, target):
-    """
-    Function for converting between temperatures.
-
-    INPUT:
-
-    - ``expr`` -- a unit of temperature
-    - ``target`` -- a units of temperature
-
-    OUTPUT: a symbolic expression
-
-    EXAMPLES::
-
-        sage: t = 32*units.temperature.fahrenheit
-        sage: t.convert(units.temperature.celsius)
-        0
-        sage: t.convert(units.temperature.kelvin)
-        273.150000000000*kelvin
-
-    If target is ``None`` then it defaults to kelvin::
-
-        sage: t.convert()
-        273.150000000000*kelvin
-
-    This raises :exc:`ValueError` when either input is not a unit of temperature::
-
-        sage: t.convert(units.length.foot)
-        Traceback (most recent call last):
-        ...
-        ValueError: cannot convert
-        sage: wrong = units.length.meter*units.temperature.fahrenheit
-        sage: wrong.convert()
-        Traceback (most recent call last):
-        ...
-        ValueError: cannot convert
-
-    We directly call the convert_temperature function::
-
-        sage: sage.symbolic.units.convert_temperature(37*units.temperature.celsius, units.temperature.fahrenheit)
-        493/5*fahrenheit
-        sage: 493/5.0
-        98.6000000000000
-    """
-    if len(expr.variables()) != 1:
-        raise ValueError("cannot convert")
-    elif target is None or unit_to_type[str(target)] == 'temperature':
-        from sage.misc.sage_eval import sage_eval
-        expr_temp = expr.variables()[0]
-        coeff = expr / expr_temp
-        if target is not None:
-            target_temp = target.variables()[0]
-        a = sage_eval(unitdict['temperature'][str(expr_temp)],
-                      locals={'x': coeff})
-        if target is None or target_temp == units.temperature.kelvin:
-            return a[0] * units.temperature.kelvin
-        if target_temp == units.temperature.celsius or target_temp == units.temperature.centigrade:
-            return a[1] * target_temp
-        if target_temp == units.temperature.fahrenheit:
-            return a[2] * units.temperature.fahrenheit
-        if target_temp == units.temperature.rankine:
-            return a[3] * target_temp
-    else:
-        raise ValueError("cannot convert")
