@@ -1313,7 +1313,7 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(50 * units.length.light_year / units.time.year, units.length.foot / units.time.second)
         6249954068750/127*(foot/second)
 
-    Quantities may contain variables (not for temperature conversion, though)::
+    Quantities may contain variables::
 
         sage: sage.symbolic.units.convert(50 * x * units.area.square_meter, units.area.acre)
         acre*(1953125/158080329*x)

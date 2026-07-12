@@ -12041,14 +12041,14 @@ cdef class Expression(Expression_abc):
             NotImplementedError: Unit 'celsius' requires an offset and is not supported.
             Supported units in the category 'temperature' are: kelvin, rankine.
 
-        Trying to multiply a temperature by another unit then converting
-        raises a :exc:`ValueError`::
+        Temperature units can be combined with other units to form compound
+        expressions::
 
-            sage: wrong = 5*units.temperature.kelvin*units.length.foot
-            sage: wrong.convert(units.temperature.kelvin)
-            Traceback (most recent call last):
-            ...
-            ValueError: Incompatible units
+            sage: compound = 5*units.temperature.kelvin*units.length.foot
+            sage: compound.convert()
+            381/250*kelvin*meter
+            sage: compound.convert(units.temperature.kelvin*units.length.meter)
+            381/250*(kelvin*meter)
         """
         from sage.symbolic import units
         return units.convert(self, target)
