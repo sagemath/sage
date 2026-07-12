@@ -180,7 +180,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         ValueError: a tableau must be a list of iterables
     """
     @staticmethod
-    def __classcall_private__(cls, t):
+    def __classcall_private__(cls, t, check=True):
         r"""
         This ensures that a tableau is only ever constructed as an
         ``element_class`` call of an appropriate parent.
@@ -207,7 +207,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         except TypeError:
             raise ValueError("a tableau must be a list of iterables")
 
-        return Tableaux_all().element_class(Tableaux_all(), t)
+        return Tableaux_all().element_class(Tableaux_all(), t, check=check)
 
     def __init__(self, parent, t, check=True):
         r"""
@@ -4455,7 +4455,7 @@ class SemistandardTableau(Tableau):
         Semistandard tableaux of size 3 and maximum entry 3
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a SemistandardTableau is only ever constructed as an
         element_class call of an appropriate parent.
@@ -4474,8 +4474,9 @@ class SemistandardTableau(Tableau):
         """
         if isinstance(t, SemistandardTableau):
             return t
-        if t in SemistandardTableaux():
-            return SemistandardTableaux_all().element_class(SemistandardTableaux_all(), t)
+        if not check or t in SemistandardTableaux():
+            SST = SemistandardTableaux_all()
+            return SST.element_class(SST, t, check=check)
 
         # t is not a semistandard tableau so we give an appropriate error message
         if t not in Tableaux():
@@ -4617,7 +4618,7 @@ class RowStandardTableau(Tableau):
         True
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a :class:`RowStandardTableau` is only
         constructed as an ``element_class`` call of an appropriate parent.
@@ -4636,7 +4637,7 @@ class RowStandardTableau(Tableau):
             return t
 
         RST = RowStandardTableaux_all()
-        return RST.element_class(RST, t)
+        return RST.element_class(RST, t, check=check)
 
     def check(self):
         r"""
@@ -4723,7 +4724,7 @@ class StandardTableau(SemistandardTableau):
         True
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         This ensures that a :class:`StandardTableau` is only ever constructed
         as an ``element_class`` call of an appropriate parent.
@@ -4741,7 +4742,8 @@ class StandardTableau(SemistandardTableau):
         if isinstance(t, StandardTableau):
             return t
 
-        return StandardTableaux_all().element_class(StandardTableaux_all(), t)
+        S = StandardTableaux_all()
+        return S.element_class(S, t, check=check)
 
     def check(self):
         """
@@ -5167,7 +5169,7 @@ class IncreasingTableau(Tableau):
         Increasing tableaux of size 3 and maximum entry 3
     """
     @staticmethod
-    def __classcall_private__(self, t):
+    def __classcall_private__(self, t, check=True):
         r"""
         Construct an :class:`IncreasingTableau` from the appropriate parent.
 
@@ -5186,7 +5188,7 @@ class IncreasingTableau(Tableau):
         if isinstance(t, IncreasingTableau):
             return t
         IT = IncreasingTableaux()
-        return IT.element_class(IT, t)  # The check() will raise the appropriate error
+        return IT.element_class(IT, t, check=check)
 
     def check(self):
         """
@@ -5519,7 +5521,7 @@ class Tableaux(UniqueRepresentation, Parent):
         False
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **kwargs):
+    def __classcall_private__(cls, n=None, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
         arguments.  See the documentation for :class:`Tableaux` for more
@@ -5534,13 +5536,6 @@ class Tableaux(UniqueRepresentation, Parent):
             sage: Tableaux(n=3)
             Tableaux of size 3
         """
-        if args:
-            n = args[0]
-        elif 'n' in kwargs:
-            n = kwargs['n']
-        else:
-            n = None
-
         if n is None:
             return Tableaux_all()
         if not isinstance(n, (int, Integer)) or n < 0:
@@ -7207,7 +7202,7 @@ class RowStandardTableaux(Tableaux):
         Standard tableaux with 3-residue sequence (2,0,0,1,2) and multicharge (0)
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **kwargs):
+    def __classcall_private__(cls, n=None, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
         arguments.  See the documentation for :class:`RowStandardTableaux` for
@@ -7235,13 +7230,6 @@ class RowStandardTableaux(Tableaux):
         """
         from sage.combinat.partition import _Partitions
         from sage.combinat.skew_partition import SkewPartitions
-
-        if args:
-            n = args[0]
-        elif 'n' in kwargs:
-            n = kwargs[n]
-        else:
-            n = None
 
         if n is None:
             return RowStandardTableaux_all()
@@ -7604,7 +7592,7 @@ class StandardTableaux(SemistandardTableaux):
         Standard tableaux with 3-residue sequence (0,1,2,2,0) and multicharge (0)
     """
     @staticmethod
-    def __classcall_private__(cls, *args, **kwargs):
+    def __classcall_private__(cls, n=None, *args, **kwargs):
         r"""
         This is a factory class which returns the appropriate parent based on
         arguments.  See the documentation for :class:`StandardTableaux` for
@@ -7634,13 +7622,6 @@ class StandardTableaux(SemistandardTableaux):
         """
         from sage.combinat.partition import _Partitions
         from sage.combinat.skew_partition import SkewPartitions
-
-        if args:
-            n = args[0]
-        elif 'n' in kwargs:
-            n = kwargs['n']
-        else:
-            n = None
 
         if n is None:
             return StandardTableaux_all()
