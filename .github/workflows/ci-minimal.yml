@@ -153,7 +153,9 @@ jobs:
           # Hides a spurious warning that breaks a doctest
           export PYDEVD_DISABLE_FILE_VALIDATION=1
 
-          python3 -m sage.doctest -p4 --format github src
+          # Increase per-file timeout to avoid spurious timeouts in slow
+          # modules on Python 3.14 in the minimal CI environment.
+          python3 -m sage.doctest -p4 --timeout=1200 --format github src
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
