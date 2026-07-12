@@ -12027,20 +12027,28 @@ cdef class Expression(Expression_abc):
 
         Converting temperatures works as well::
 
-            sage: s = 68*units.temperature.fahrenheit
-            sage: s.convert(units.temperature.celsius)
-            20*celsius
+            sage: s = 5*units.temperature.kelvin
+            sage: s.convert(units.temperature.rankine)
+            9*rankine
             sage: s.convert()
-            293.150000000000*kelvin
+            5*kelvin
 
-        Trying to multiply temperatures by another unit then converting
-        raises a ValueError::
+        Units requiring offsets (like Celsius and Fahrenheit) are not supported::
 
-            sage: wrong = 50*units.temperature.celsius*units.length.foot
-            sage: wrong.convert()
+            sage: units.temperature.celsius
             Traceback (most recent call last):
             ...
-            ValueError: cannot convert
+            NotImplementedError: Unit 'celsius' requires an offset and is not supported.
+            Supported units in the category 'temperature' are: kelvin, rankine.
+
+        Trying to multiply a temperature by another unit then converting
+        raises a :exc:`ValueError`::
+
+            sage: wrong = 5*units.temperature.kelvin*units.length.foot
+            sage: wrong.convert(units.temperature.kelvin)
+            Traceback (most recent call last):
+            ...
+            ValueError: Incompatible units
         """
         from sage.symbolic import units
         return units.convert(self, target)
