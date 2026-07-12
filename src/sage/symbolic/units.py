@@ -1157,11 +1157,11 @@ class Units(ExtraTabCompletion):
         """
         unsupported_for_collection = unsupported_units.get(self.__name, set())
         if name in unsupported_for_collection:
-                raise NotImplementedError(
-                f"Unit '{name}' requires an offset and is not supported. "
-                f"\n Supported units in the category {self.__name} are: "
+            raise NotImplementedError(
+                f"Unit '{name}' requires an offset and is not supported.\n"
+                f"Supported units in the category '{self.__name}' are: "
                 f"{', '.join(sorted(set(self.__data)))}."
-                )
+            )
         if name in self.__units:
             return self.__units[name]
         if len(unit_to_type) == 0:
@@ -1313,7 +1313,7 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(50 * units.length.light_year / units.time.year, units.length.foot / units.time.second)
         6249954068750/127*(foot/second)
 
-    Quantities may contain variables (not for temperature conversion, though)::
+    Quantities may contain variables::
 
         sage: sage.symbolic.units.convert(50 * x * units.area.square_meter, units.area.acre)
         acre*(1953125/158080329*x)
