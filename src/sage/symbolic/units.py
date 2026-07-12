@@ -1157,11 +1157,11 @@ class Units(ExtraTabCompletion):
         """
         unsupported_for_collection = unsupported_units.get(self.__name, set())
         if name in unsupported_for_collection:
-                raise NotImplementedError(
-                f"Unit '{name}' requires an offset and is not supported. "
-                f"\n Supported units in the category {self.__name} are: "
+            raise NotImplementedError(
+                f"Unit '{name}' requires an offset and is not supported.\n"
+                f"Supported units in the category '{self.__name}' are: "
                 f"{', '.join(sorted(set(self.__data)))}."
-                )
+            )
         if name in self.__units:
             return self.__units[name]
         if len(unit_to_type) == 0:
