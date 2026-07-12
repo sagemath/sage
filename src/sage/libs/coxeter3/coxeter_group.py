@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-coxeter3
 # sage.doctest: optional - coxeter3
 """
 Coxeter Groups implemented with Coxeter3
@@ -10,7 +9,12 @@ Coxeter Groups implemented with Coxeter3
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.libs.coxeter3.coxeter import get_CoxGroup, CoxGroupElement
+from sage.features.coxeter3 import Coxeter3
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.libs.coxeter3.coxeter",
+            ["get_CoxGroup", "CoxGroupElement"],
+            feature=Coxeter3())
+
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -181,7 +185,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
     def rank(self):
         """
-        Return the rank of this Coxeter group, that is, the number of generators.
+        Return the rank of this Coxeter group.
+
+        This is the number of generators.
 
         EXAMPLES::
 
@@ -206,6 +212,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
     def length(self, x):
         """
         Return the length of an element ``x`` in this Coxeter group.
+
         This is just the length of a reduced word for ``x``.
 
         EXAMPLES::

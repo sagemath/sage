@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Axioms
 
@@ -1679,6 +1678,7 @@ all_axioms += ("Flying", "Blue",
                "Differentiable", "Smooth", "Analytic", "AlmostComplex",
                "FinitelyGeneratedAsMagma",
                "WellGenerated",
+               "Bounded",
                "Facade", "Finite", "Infinite", "Enumerated",
                "Complete",
                "Nilpotent",
@@ -1691,7 +1691,7 @@ all_axioms += ("Flying", "Blue",
                "Inverse", "Unital", "Division", "NoZeroDivisors", "Cellular",
                "AdditiveCommutative", "AdditiveAssociative", "AdditiveInverse", "AdditiveUnital",
                "Extremal", "Trim", "Semidistributive", "CongruenceUniform",
-               "Distributive", "Stone",
+               "ChainGraded", "Distributive", "Stone",
                "Endset",
                "Pointed",
                "Stratified"
@@ -2007,15 +2007,14 @@ class CategoryWithAxiom(Category):
         (base_category_class, axiom) = cls._base_category_class_and_axiom
         if len(args) == 1 and not options and isinstance(args[0], base_category_class):
             return super().__classcall__(cls, args[0])
-        else:
-            # The "obvious" idiom
-            ##   return cls(base_category_class(*args, **options))
-            # fails with ModulesWithBasis(QQ) as follows: The
-            # base_category_class is Modules, but Modules(QQ) is an instance
-            # of VectorSpaces and not of Modules. Hence,
-            # ModulesWithBasis.__classcall__ will not accept this instance as
-            # the first argument. Instead, we apply the axiom to the instance:
-            return base_category_class(*args, **options)._with_axiom(axiom)
+        # The "obvious" idiom
+        ##   return cls(base_category_class(*args, **options))
+        # fails with ModulesWithBasis(QQ) as follows: The
+        # base_category_class is Modules, but Modules(QQ) is an instance
+        # of VectorSpaces and not of Modules. Hence,
+        # ModulesWithBasis.__classcall__ will not accept this instance as
+        # the first argument. Instead, we apply the axiom to the instance:
+        return base_category_class(*args, **options)._with_axiom(axiom)
 
     @staticmethod
     def __classget__(cls, base_category, base_category_class):

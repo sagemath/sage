@@ -343,11 +343,10 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             return (isinstance(x, tuple) and
                     x[0] in self._family.keys() and
                     x[1] in self._family[x[0]])
-        else:
-            from warnings import warn
-            if self._family.cardinality() == Infinity:
-                warn("%s is an infinite union\nThe default implementation of __contains__ can loop forever. Please overload it." % (self))
-            return any(x in a for a in self._family)
+        from warnings import warn
+        if self._family.cardinality() == Infinity:
+            warn("%s is an infinite union\nThe default implementation of __contains__ can loop forever. Please overload it." % (self))
+        return any(x in a for a in self._family)
 
     def __contains__(self, x):
         """
@@ -382,11 +381,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         if self._facade:
             return self._is_a(x)
-        else:
-            if isinstance(x, self.element_class):
-                return True
-            else:
-                return self._is_a(x)
+        if isinstance(x, self.element_class):
+            return True
+        return self._is_a(x)
 
     def __iter__(self):
         """
@@ -479,8 +476,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 el = (k, el)
             if self._facade:
                 return el
-            else:
-                return self.element_class(self, el)  # Bypass correctness tests
+            return self.element_class(self, el)  # Bypass correctness tests
 
         keys_iter = iter(self._family.keys())
         if self._keepkey:
@@ -601,8 +597,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         """
         if not self._facade:
             return self._element_constructor_default
-        else:
-            return self._element_constructor_facade
+        return self._element_constructor_facade
 
     def _element_constructor_default(self, el):
         r"""
@@ -642,8 +637,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             el = el.value
         if self._is_a(el):
             return self.element_class(self, el)
-        else:
-            raise ValueError("value %s does not belong to %s" % (el, self))
+        raise ValueError("value %s does not belong to %s" % (el, self))
 
     def _element_constructor_facade(self, el):
         """

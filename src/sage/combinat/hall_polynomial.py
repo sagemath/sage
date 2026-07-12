@@ -14,7 +14,7 @@ Hall polynomials
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.misc.misc_c import prod

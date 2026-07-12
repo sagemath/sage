@@ -687,7 +687,6 @@ import re
 
 from sage.cpython.string import bytes_to_str
 from sage.misc.pager import pager
-from sage.misc.superseded import deprecation
 from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
@@ -877,20 +876,6 @@ class TachyonRT(SageObject):
         # debian patches tachyon so it won't report the version
         # we hardcode '0.99' since that's indeed the version they ship
         return res[1] if res else '0.99'
-
-    def help(self, use_pager=True):
-        """
-        Deprecated: type 'sage.interfaces.tachyon?' for help.
-
-        TESTS::
-
-            sage: from sage.interfaces.tachyon import TachyonRT
-            sage: t = TachyonRT()
-            sage: t.help(use_pager=False)
-            doctest:...: DeprecationWarning: type 'sage.interfaces.tachyon?' for help
-            See https://github.com/sagemath/sage/issues/34066 for details.
-        """
-        deprecation(34066, "type 'sage.interfaces.tachyon?' for help")
 
 
 tachyon_rt = TachyonRT()

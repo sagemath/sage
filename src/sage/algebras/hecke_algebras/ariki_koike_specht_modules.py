@@ -147,7 +147,7 @@ class SpechtModule(CombinatorialFreeModule):
         cat = Modules(R).FiniteDimensional().WithBasis()
         CombinatorialFreeModule.__init__(self, R, indices, category=cat, prefix='S')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -161,7 +161,7 @@ class SpechtModule(CombinatorialFreeModule):
         """
         return "Specht module of shape {} for {}".format(self._shape, self._AK)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -378,7 +378,7 @@ class SpechtModule(CombinatorialFreeModule):
             if scalar.parent() is P._AK.LT():
                 return P.linear_combination((self.L(sum(([i]*val for i, val in enumerate(m[0], start=1)), [])).T(m[1].reduced_word()), c)
                                             for m, c in scalar)
-            elif scalar.parent() is P._AK.T():
+            if scalar.parent() is P._AK.T():
                 AKT = P._AK.T()
                 return P.linear_combination((self.T(AKT._basis_to_word(m)), c)
                                             for m, c in scalar)

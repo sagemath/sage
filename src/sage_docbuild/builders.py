@@ -2,6 +2,11 @@
 """
 Documentation builders
 
+.. NOTE::
+
+   If you are a developer and want to build the SageMath documentation from source,
+   refer to `developer's guide <../../../developer/sage_manuals.html>`_.
+
 This module is the starting point for building documentation, and is
 responsible to figure out what to build and with which options. The actual
 documentation build for each individual document is then done in a subprocess
@@ -21,7 +26,7 @@ doctree files in ``local/share/doctree`` and ``inventory.inv`` inventory files
 in ``local/share/inventory``.
 
 The reference manual is built in two passes, first by :class:`ReferenceBuilder`
-with ``inventory`` output type and secondly with``html`` output type. The
+with ``inventory`` output type and secondly with ``html`` output type. The
 :class:`ReferenceBuilder` itself uses :class:`ReferenceTopBuilder` and
 :class:`ReferenceSubBuilder` to build subcomponents of the reference manual.
 The :class:`ReferenceSubBuilder` examines the modules included in the
@@ -72,8 +77,9 @@ import subprocess
 import sys
 import time
 import warnings
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Literal
+from typing import Literal
 
 from . import build_options
 from .build_options import BuildOptions
@@ -291,9 +297,10 @@ class DocBuilder():
         # Move generated PDFs
         for pdf in tex_dir.glob("*.pdf"):
             try:
-                shutil.move(str(pdf), pdf_dir)
+                dst_pdf = os.path.join(pdf_dir, os.path.basename(pdf))
+                shutil.move(str(pdf), dst_pdf)
             except Exception as e:
-                logger.error(f"Failed moving {pdf} to {pdf_dir}: {e}")
+                logger.error(f"Failed moving {pdf} to {dst_pdf}: {e}")
                 raise
 
         logger.info(f"Build finished. The built documents can be found in {pdf_dir}.")
@@ -318,7 +325,7 @@ class DocBuilder():
 
 def build_many(target, args, processes=None):
     """
-    Thin wrapper around `sage_docbuild.utils.build_many` which uses the
+    Thin wrapper around :func:`sage_docbuild.utils.build_many` which uses the
     docbuild settings ``NUM_THREADS`` and ``ABORT_ON_ERROR``.
     """
     if processes is None:
@@ -660,13 +667,6 @@ class ReferenceSubBuilder(DocBuilder):
             logger.info(f"Copying over custom reST files from {_sage} ...")
             shutil.copytree(_sage, self.dir / 'sage')
 
-        # Copy over some generated reST file in the build directory
-        # (Background: Meson puts them in the build directory, but Sphinx can also read
-        # files from the source directory, see https://github.com/sphinx-doc/sphinx/issues/3132)
-        generated_dir = self._options.output_dir / self.name
-        for file in generated_dir.rglob('*'):
-            shutil.copy2(file, self.dir / file.relative_to(generated_dir))
-
         getattr(DocBuilder, build_type)(self, *args, **kwds)
 
     def cache_file(self) -> Path:
@@ -910,8 +910,7 @@ class ReferenceSubBuilder(DocBuilder):
         i = doc.find('\n')
         if i != -1:
             return doc[i + 1:].lstrip().splitlines()[0]
-        else:
-            return doc
+        return doc
 
     def auto_rest_filename(self, module_name: str) -> Path:
         """
@@ -1151,23 +1150,22 @@ def get_builder(name: str, options: BuildOptions) -> DocBuilder | ReferenceBuild
     """
     if name == 'reference_top':
         return ReferenceTopBuilder('reference', options)
-    elif name.endswith('reference'):
+    if name.endswith('reference'):
         return ReferenceBuilder(name, options)
-    elif 'reference' in name and (options.source_dir / 'en' / name).exists():
+    if 'reference' in name and (options.source_dir / 'en' / name).exists():
         return ReferenceSubBuilder(name, options)
-    elif name.endswith('website'):
+    if name.endswith('website'):
         return WebsiteBuilder(name, options)
-    elif name.startswith('file='):
+    if name.startswith('file='):
         path = name[5:]
         if path.endswith('.sage') or path.endswith('.pyx'):
             raise NotImplementedError('Building documentation for a single file only works for Python files.')
         return SingleFileBuilder(path)
-    elif Path(name) in get_all_documents(options.source_dir):
+    if Path(name) in get_all_documents(options.source_dir):
         return DocBuilder(name, options)
-    else:
-        print("'%s' is not a recognized document. Type 'sage --docbuild -D' for a list" % name)
-        print("of documents, or 'sage --docbuild --help' for more help.")
-        sys.exit(1)
+    print("'%s' is not a recognized document. Type 'sage --docbuild -D' for a list" % name)
+    print("of documents, or 'sage --docbuild --help' for more help.")
+    sys.exit(1)
 
 
 def get_all_documents(source: Path) -> list[Path]:
@@ -1181,7 +1179,8 @@ def get_all_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_documents
-        sage: documents = get_all_documents(Path('src/doc'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_documents(Path(SAGE_DOC_SRC))
         sage: Path('en/tutorial') in documents
         True
     """
@@ -1214,7 +1213,8 @@ def get_all_reference_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_reference_documents
-        sage: documents = get_all_reference_documents(Path('src/doc/en'))
+        sage: from sage.env import SAGE_DOC_SRC
+        sage: documents = get_all_reference_documents(Path(SAGE_DOC_SRC) / 'en')
         sage: Path('reference/algebras') in documents
         True
     """
@@ -1225,7 +1225,7 @@ def get_all_reference_documents(source: Path) -> list[Path]:
             n = len(list(directory.iterdir()))
             documents.append((-n, directory.relative_to(source)))
 
-    # Sort largest component (most subdirectory entries) first since 
+    # Sort largest component (most subdirectory entries) first since
     # they will take the longest to build
     docs = [doc[1] for doc in sorted(documents)]
     # Put the bibliography first, because it needs to be built first:

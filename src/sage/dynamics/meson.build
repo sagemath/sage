@@ -3,7 +3,6 @@ py.install_sources(
   'all.py',
   'finite_dynamical_system.py',
   'finite_dynamical_system_catalog.py',
-  'surface_dynamics_deprecation.py',
   subdir: 'sage/dynamics',
 )
 

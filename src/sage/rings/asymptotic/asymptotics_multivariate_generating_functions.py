@@ -3620,53 +3620,6 @@ def diff_prod(f_derivs, u, g, X, interval, end, uderivs, atc):
     return uderivs
 
 
-def permutation_sign(s, u):
-    r"""
-    This function returns the sign of the permutation on
-    ``1, ..., len(u)`` that is induced by the sublist ``s`` of ``u``.
-
-    .. NOTE::
-
-        This function was intended for internal use and is deprecated now
-        (:issue:`29465`).
-
-    INPUT:
-
-    - ``s`` -- a sublist of ``u``
-    - ``u`` -- list
-
-    OUTPUT:
-
-    The sign of the permutation obtained by taking indices
-    within ``u`` of the list ``s + sc``, where ``sc`` is ``u``
-    with the elements of ``s`` removed.
-
-    EXAMPLES::
-
-        sage: from sage.rings.asymptotic.asymptotics_multivariate_generating_functions import permutation_sign
-        sage: u = ['a', 'b', 'c', 'd', 'e']
-        sage: s = ['b', 'd']
-        sage: permutation_sign(s, u)
-        doctest:...: DeprecationWarning: the function permutation_sign is deprecated
-        See https://github.com/sagemath/sage/issues/29465 for details.
-        -1
-        sage: s = ['d', 'b']
-        sage: permutation_sign(s, u)
-        1
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(29465, 'the function permutation_sign is deprecated')
-    from sage.combinat.permutation import Permutation
-
-    # Convert lists to lists of numbers in {1,..., len(u)}
-    A = [i + 1 for i in range(len(u))]
-    B = [u.index(x) + 1 for x in s]
-
-    C = sorted(set(A).difference(set(B)))
-    P = Permutation(B + C)
-    return P.signature()
-
-
 def subs_all(f, sub, simplify=False):
     r"""
     Return the items of `f` substituted by the dictionaries

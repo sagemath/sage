@@ -301,7 +301,7 @@ class FMatrix(SageObject):
     #   Class utilities   #
     #######################
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -892,7 +892,7 @@ class FMatrix(SageObject):
              100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
         """
         nonz = {idx: 100 for idx in self._singles}
-        for idx, _ in self._ks.items():
+        for idx in self._ks:
             nonz[idx] = 100
         return ETuple(nonz, self._poly_ring.ngens())
 
@@ -1717,7 +1717,7 @@ class FMatrix(SageObject):
         for eq_tup in eqns:
             partition[tuple(graph.connected_component_containing_vertex(variables(eq_tup)[0], sort=True))].append(eq_tup)
         if verbose:
-            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.connected_components_number()))
+            print("Partitioned {} equations into {} components of size:".format(len(eqns), graph.number_of_connected_components()))
             print(graph.connected_components_sizes())
         return partition
 

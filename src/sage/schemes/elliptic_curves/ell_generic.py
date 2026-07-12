@@ -61,7 +61,7 @@ from sage.rings.polynomial.polynomial_element import polynomial_is_variable
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.groups.additive_abelian.additive_abelian_group as groups
-import sage.groups.generic as generic
+from sage.groups import generic
 
 from sage.arith.functions import lcm
 from sage.rings.integer import Integer
@@ -71,9 +71,10 @@ from sage.rings.rational_field import RationalField
 from sage.rings.real_mpfr import RealField
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
+from sage.structure.coerce import py_scalar_to_element
 
 # Schemes
-import sage.schemes.projective.projective_space as projective_space
+from sage.schemes.projective import projective_space
 from sage.schemes.projective.projective_homset import SchemeHomset_points_abelian_variety_field
 import sage.schemes.curves.projective_curve as plane_curve
 
@@ -85,27 +86,6 @@ from . import weierstrass_morphism as wm
 
 sqrt = math.sqrt
 exp = math.exp
-
-
-def is_EllipticCurve(x):
-    r"""
-    Utility function to test if ``x`` is an instance of an Elliptic Curve class.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        sage: E = EllipticCurve([1,2,3/4,7,19])
-        sage: is_EllipticCurve(E)
-        doctest:warning...
-        DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_EllipticCurve(0)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
-    return isinstance(x, EllipticCurve_generic)
 
 
 class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
@@ -123,7 +103,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs, category=None):
+    def __init__(self, K, ainvs, category=None) -> None:
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -464,7 +444,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         x, y = SR.var('x, y')
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
-    def __contains__(self, P):
+    def __contains__(self, P) -> bool:
         """
         Return ``True`` if and only if P is a point on the elliptic curve.
 
@@ -922,8 +902,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve(F, [1,1])
             sage: {E.lift_x(t+1) for _ in range(1000)}  # but .lift_x() uses a fixed one
             {(t + 1 : 39*t^2 + 14*t + 12 : 1)}
+
+        Check python types::
+
+            sage: E = EllipticCurve('37a').short_weierstrass_model().change_ring(GF(17))
+            sage: E.lift_x(int(7), all=True)
+            [(7 : 3 : 1), (7 : 14 : 1)]
         """
         K = self.base_ring()
+        x = py_scalar_to_element(x)
         L = x.parent()
         E = self
 
@@ -966,16 +953,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             one = L.one()
             if all:
                 return [E.point([x, y, one], check=False) for y in ys]
-            else:
-                return E.point([x, ys[0], one], check=False)
+            return E.point([x, ys[0], one], check=False)
 
         # otherwise if the additional extension was not requested return the empty list or raise an error:
 
         if not extend:
             if all:
                 return []
-            else:
-                raise ValueError("No point with x-coordinate {} on {}".format(x, self))
+            raise ValueError("No point with x-coordinate {} on {}".format(x, self))
 
         # Now make the extension needed to contain the y-coordinates:
 
@@ -995,8 +980,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         one = M.one()
         if all:
             return [EM.point([x, y, one], check=False) for y in ys]
-        else:
-            return EM.point([x, ys[0], one], check=False)
+        return EM.point([x, ys[0], one], check=False)
 
     def _point_homset(self, *args, **kwds):
         r"""
@@ -1041,7 +1025,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         raise NotImplementedError("not implemented.")
 
-    def __is_over_RationalField(self):
+    def __is_over_RationalField(self) -> bool:
         r"""
         Internal function. Return true iff the base ring of this elliptic
         curve is the field of rational numbers.
@@ -1057,7 +1041,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         return isinstance(self.base_ring(), RationalField)
 
-    def is_on_curve(self, x, y):
+    def is_on_curve(self, x, y) -> bool:
         r"""
         Return ``True`` if `(x,y)` is an affine point on this curve.
 
@@ -1897,8 +1881,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         if not isinstance(n, (list, tuple)):
             return poly(int(n))
-        else:
-            return [poly(int(k)) for k in n]
+        return [poly(int(k)) for k in n]
 
     def two_division_polynomial(self, x=None):
         r"""
@@ -2529,8 +2512,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if m == 1:
             if not x_only:
                 return (x, y)
-            else:
-                return x
+            return x
 
         # Grab curve invariants
         a1, _, a3, _, _ = self.a_invariants()
@@ -2538,8 +2520,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if m == -1:
             if not x_only:
                 return (x, -y-a1*x-a3)
-            else:
-                return x
+            return x
 
         # If we only require the x coordinate, it is faster to use the recursive formula
         # since substituting polynomials is quite slow.
@@ -2681,8 +2662,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def isomorphism_to(self, other):
         """
-        Given another weierstrass model ``other`` of ``self``, return an
+        Given another Weierstrass model ``other`` of ``self``, return an
         isomorphism from ``self`` to ``other``.
+
+        If possible, this method returns a normalized isomorphism.
 
         INPUT:
 
@@ -2690,7 +2673,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         OUTPUT:
 
-        (Weierstrassmorphism) An isomorphism from ``self`` to ``other``.
+        (:class:`~wm.WeierstrassIsomorphism`) An isomorphism from ``self`` to ``other``.
 
         .. NOTE::
 
@@ -3022,19 +3005,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if complete_cube:
             if a1 == 0 and a2 == 0 and a3 == 0:
                 return self
-            else:
-                b2, b4, b6, _ = self.b_invariants()
-                if b2 == 0:
-                    return constructor.EllipticCurve([0,0,0,8*b4,16*b6])
-                else:
-                    c4, c6 = self.c_invariants()
-                    return constructor.EllipticCurve([0,0,0,-27*c4, -54*c6])
-        else:
-            if a1 == 0 and a3 == 0:
-                return self
-            else:
-                b2, b4, b6, _ = self.b_invariants()
-                return constructor.EllipticCurve([0,b2,0,8*b4,16*b6])
+            b2, b4, b6, _ = self.b_invariants()
+            if b2 == 0:
+                return constructor.EllipticCurve([0,0,0,8*b4,16*b6])
+            c4, c6 = self.c_invariants()
+            return constructor.EllipticCurve([0,0,0,-27*c4, -54*c6])
+        if a1 == 0 and a3 == 0:
+            return self
+        b2, b4, b6, _ = self.b_invariants()
+        return constructor.EllipticCurve([0,b2,0,8*b4,16*b6])
 
     def montgomery_model(self, twisted=False, morphism=False):
         r"""
@@ -3143,7 +3122,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
               To:   Projective Plane Curve over Finite Field of size 257
                     defined by -x^3 + 8*x^2*z - 127*y^2*z - x*z^2
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (x + 116*z : -y : -85*z)
+                    (x + 116*z : y : -85*z)
             sage: g = f.inverse(); g
             Scheme morphism:
               From: Projective Plane Curve over Finite Field of size 257
@@ -3151,7 +3130,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
               To:   Elliptic Curve defined by y^2 = x^3 + 10*x + 10
                     over Finite Field of size 257
               Defn: Defined on coordinates by sending (x : y : z) to
-                    (-85*x - 116*z : 85*y : z)
+                    (-85*x - 116*z : -85*y : z)
             sage: P = C(70, 8)
             sage: Q = C(17, 17)
             sage: P + Q             # this doesn't work...
@@ -3207,16 +3186,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         R = self.base_ring()
         P = PolynomialRing(R, 'v')
 
-        sols = []
-        for r in P([b, a, 0, 1]).roots(multiplicities=False):
-            for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False):
-                sols.append((r,s))
+        sols = [(r, s)
+                for r in P([b, a, 0, 1]).roots(multiplicities=False)
+                for s in P([3 * r**2 + a, 0, -1]).roots(multiplicities=False)]
 
         if not sols:
             raise ValueError(f'{self} has no Montgomery model')
 
         # square s allows us to take B=1
-        r,s = max(sols, key=lambda t: t[1].is_square())
+        r, s = max(sols, key=lambda t: t[1].is_square())
 
         A = 3 * r / s
         B = R.one() if s.is_square() else ~s
@@ -3746,8 +3724,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         from sage.libs.pari import pari
         if self.base_ring() in NumberFields():
             return pari.ellinit(self.a_invariants(), self.base_ring())
-        else:
-            return pari.ellinit(self.a_invariants())
+        return pari.ellinit(self.a_invariants())
 
     # This method is defined so that pari(E) returns exactly the same
     # as E.pari_curve().  This works even for classes that inherit from

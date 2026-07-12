@@ -111,7 +111,7 @@ cdef gen(int t, int p, k, n):
             gen(t + 1, t, k, n)
 
 
-def is_debruijn_sequence(seq, k, n):
+def is_debruijn_sequence(seq, k, n) -> bool:
     r"""
     Given a sequence of integer elements in `0, \ldots, k-1`, tests whether it
     corresponds to a De Bruijn sequence of parameters `k` and `n`.
@@ -133,7 +133,6 @@ def is_debruijn_sequence(seq, k, n):
         sage: is_debruijn_sequence([1] + s[1:], 2, 3)
         False
     """
-
     if k == 1:
         return seq == [0]
 

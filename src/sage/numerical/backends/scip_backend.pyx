@@ -263,11 +263,11 @@ cdef class SCIPBackend(GenericBackend):
             self.model.freeTransform()
         if coeff is None:
             return self.variables[variable].getObj()
-        else:
-            objexpr = self.model.getObjective()
-            var = self.variables[variable]
-            linfun = sum([e * c for e, c in objexpr.terms.iteritems() if e != var]) + var * coeff
-            self.model.setObjective(linfun, sense=self.model.getObjectiveSense())
+
+        objexpr = self.model.getObjective()
+        var = self.variables[variable]
+        linfun = sum([e * c for e, c in objexpr.terms.items() if e != var]) + var * coeff
+        self.model.setObjective(linfun, sense=self.model.getObjectiveSense())
 
     cpdef problem_name(self, name=None):
         """
@@ -500,7 +500,7 @@ cdef class SCIPBackend(GenericBackend):
         valslinear = self.model.getValsLinear(self.get_constraints()[index])
         cdef list indices = []
         cdef list values = []
-        for var, coeff in valslinear.iteritems():
+        for var, coeff in valslinear.items():
             indices.append(namedvars.index(var))
             values.append(coeff)
         return (indices, values)

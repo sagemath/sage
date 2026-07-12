@@ -381,7 +381,7 @@ class _mixed_key():
             try:
                 from sage.rings.qqbar import QQbar
                 num = QQbar(det_ex)
-            except (TypeError, AttributeError,ValueError,NotImplementedError):
+            except (TypeError, AttributeError, ValueError, NotImplementedError):
                 try:
                     num = det_ex.expand().n(RIF.prec()+5)
                 except (TypeError, AttributeError):

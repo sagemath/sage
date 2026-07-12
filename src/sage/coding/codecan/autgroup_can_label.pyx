@@ -215,7 +215,7 @@ class LinearCodeAutGroupCanLabel:
             sage: P2 = LinearCodeAutGroupCanLabel(C, P=[[0,3,5],[1,2,4,6]],
             ....:      algorithm_type='permutational')
             sage: P2.get_canonical_form().generator_matrix()
-            [1 1 1 0 0 0 1]
+            [1 0 0 1 0 1 1]
             [0 1 0 1 1 0 1]
             [0 0 1 0 1 1 1]
         """

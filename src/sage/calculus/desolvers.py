@@ -71,18 +71,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ##########################################################################
 
-import shutil
 import os
+from pathlib import Path
+import shutil
 
-from sage.interfaces.maxima import Maxima
+
+from sage.calculus.functional import diff
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.interfaces.maxima_lib","maxima")
 from sage.misc.functional import N
 from sage.rings.real_mpfr import RealField
 from sage.structure.element import Expression
-
-from .functional import diff
-
-
-maxima = Maxima()
 
 
 def fricas_desolve(de, dvar, ics, ivar):
@@ -156,8 +155,8 @@ def fricas_desolve_system(des, dvars, ics, ivar):
         [x(t) == cos(t)^2 + sin(t)^2 + 2*sin(t), y(t) == -2*cos(t) + 1]
     """
     from sage.interfaces.fricas import fricas
-    from sage.symbolic.ring import SR
     from sage.symbolic.relation import solve
+    from sage.symbolic.ring import SR
     ops = [dvar.operator() for dvar in dvars]
     y = fricas(des).solve(ops, ivar).sage()
     basis = y["basis"]
@@ -565,7 +564,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 
     if algorithm == "fricas":
         return fricas_desolve(de, dvar, ics, ivar)
-    elif algorithm != "maxima":
+    if algorithm != "maxima":
         raise ValueError("unknown algorithm %s" % algorithm)
 
     de00 = de._maxima_()
@@ -926,7 +925,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
 
     if algorithm == "fricas":
         return fricas_desolve_system(des, vars, ics, ivar)
-    elif algorithm != "maxima":
+    if algorithm != "maxima":
         raise ValueError("unknown algorithm %s" % algorithm)
 
     dvars = [v._maxima_() for v in vars]
@@ -1221,8 +1220,7 @@ def desolve_rk4_determine_bounds(ics, end_points=None):
         end_points = [end_points]
     if len(end_points) == 1:
         return min(ics[0], end_points[0]), max(ics[0], end_points[0])
-    else:
-        return min(ics[0], end_points[0]), max(ics[0], end_points[1])
+    return min(ics[0], end_points[0]), max(ics[0], end_points[1])
 
 
 def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output='list', **kwds):
@@ -1364,9 +1362,9 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
             return plot_slope_field(de, (ivar, XMIN, XMAX), (dvar, YMIN, YMAX)) + R
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
-        from sage.symbolic.ring import SR
         from sage.calculus.functional import diff
         from sage.symbolic.relation import solve
+        from sage.symbolic.ring import SR
         if isinstance(de, Expression) and de.is_relational():
             de = de.lhs() - de.rhs()
         # consider to add warning if the solution is not unique
@@ -1614,8 +1612,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     """
 
     from scipy.integrate import odeint
-    from sage.ext.fast_eval import fast_float
+
     from sage.calculus.functions import jacobian
+    from sage.ext.fast_eval import fast_float
 
     def desolve_odeint_inner(ivar):
         # one-dimensional systems:
@@ -1623,7 +1622,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
             assert len(des) == 1
             dvar = dvars[0]
             de = des[0]
-            func = fast_float(de, dvar, ivar)
+            func = lambda y, t: fast_float(de, dvar, ivar)(y.item(), t)
             if not compute_jac:
                 Dfun = None
             else:
@@ -1672,7 +1671,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
         if len(ivars) == 1:
             return desolve_odeint_inner(next(iter(ivars)))
-        elif not ivars:
+        if not ivars:
             from sage.symbolic.ring import SR
             with SR.temp_var() as ivar:
                 return desolve_odeint_inner(ivar)
@@ -1746,20 +1745,20 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
         raise RuntimeError('Unable to run because gcc cannot be found')
     from sage.interfaces.tides import genfiles_mintides
     from sage.misc.temporary_file import tmp_dir
-    tempdir = tmp_dir()
-    intfile = os.path.join(tempdir, 'integrator.c')
-    drfile = os.path.join(tempdir, 'driver.c')
-    fileoutput = os.path.join(tempdir, 'output')
-    runmefile = os.path.join(tempdir, 'runme')
+    tempdir = Path(tmp_dir())
+    intfile = tempdir / 'integrator.c'
+    drfile = tempdir / 'driver.c'
+    fileoutput = tempdir / 'output'
+    runmefile = tempdir / 'runme'
     genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics],
                       N(initial), N(final), N(delta), N(tolrel),
-                      N(tolabs), fileoutput)
-    subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
+                      N(tolabs), str(fileoutput))
+    subprocess.check_call('gcc -o ' + str(runmefile) + ' ' + str(tempdir / '*.c ') +
                           os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
                           + os.path.join('-L$SAGE_LOCAL', 'lib ') + ' -lm  -O2 ' +
                           os.path.join('-I$SAGE_LOCAL', 'include '),
                           shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(tempdir / 'runme', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with open(fileoutput) as outfile:
         res = outfile.readlines()
     for i in range(len(res)):
@@ -1838,23 +1837,23 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
     import subprocess
     if subprocess.call('command -v gcc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
         raise RuntimeError('Unable to run because gcc cannot be found')
-    from sage.interfaces.tides import genfiles_mpfr
-    from sage.functions.other import ceil
     from sage.functions.log import log
+    from sage.functions.other import ceil
+    from sage.interfaces.tides import genfiles_mpfr
     from sage.misc.temporary_file import tmp_dir
-    tempdir = tmp_dir()
-    intfile = os.path.join(tempdir, 'integrator.c')
-    drfile = os.path.join(tempdir, 'driver.c')
-    fileoutput = os.path.join(tempdir, 'output')
-    runmefile = os.path.join(tempdir, 'runme')
+    tempdir = Path(tmp_dir())
+    intfile = tempdir / 'integrator.c'
+    drfile = tempdir / 'driver.c'
+    fileoutput = tempdir / 'output'
+    runmefile = tempdir / 'runme'
     genfiles_mpfr(intfile, drfile, f, ics, initial, final, delta, [], [],
-                  digits, tolrel, tolabs, fileoutput)
-    subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
+                  digits, tolrel, tolabs, str(fileoutput))
+    subprocess.check_call('gcc -o ' + str(runmefile) + ' ' + str(tempdir / '*.c ') +
                           os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
                           + os.path.join('-L$SAGE_LOCAL', 'lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
                           os.path.join('-I$SAGE_LOCAL', 'include '),
                           shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(tempdir / 'runme', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with open(fileoutput) as outfile:
         res = outfile.readlines()
     for i in range(len(res)):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``lrslib``
 """
@@ -61,7 +60,8 @@ class Lrs(Executable):
             tf.write("V-representation\nbegin\n 1 1 rational\n 1 \nend\nvolume")
         command = [self.absolute_filename(), tf_name]
         try:
-            result = subprocess.run(command, capture_output=True, text=True)
+            result = subprocess.run(command, capture_output=True, text=True,
+                                    check=False)
         except OSError as e:
             return FeatureTestResult(self, False, reason='Running command "{}" '
                         'raised an OSError "{}" '.format(' '.join(command), e))
@@ -122,7 +122,8 @@ class LrsNash(Executable):
             tf.write("1 1\n \n 0\n \n 0\n")
         command = [self.absolute_filename(), tf_name]
         try:
-            result = subprocess.run(command, capture_output=True, text=True)
+            result = subprocess.run(command, capture_output=True, text=True,
+                                    check=False)
         except OSError as e:
             return FeatureTestResult(self, False, reason='Running command "{}" '
                         'raised an OSError "{}" '.format(' '.join(command), e))

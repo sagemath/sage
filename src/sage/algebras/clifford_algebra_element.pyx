@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 """
 Clifford algebra elements
 
@@ -36,7 +35,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
         sage: elt = ((x^3-z)*x + y)^2
         sage: TestSuite(elt).run()
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -442,8 +441,17 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
             4*a*b*c*d + 4*a*b*c + 4*a*b*d + 4*a*c*d + 4*b*c*d
              + 2*a*b + 2*a*c + 2*a*d + 2*b*c + 2*b*d + 2*c*d
              + 2*a + 2*b + 2*c + 2*d + 1
+
+            sage: from sage.all import ExteriorAlgebra, SR, var
+            sage: L.<a, b> = ExteriorAlgebra(SR)
+            sage: x, y = var('x y')
+            sage: x * (y * b)
+            x*y*b
+            sage: (x * a) * (y * b)
+            x*y*a*b
         """
         cdef Parent P = self._parent
+        cdef R = P.base_ring()
         zero = P._base.zero()
         cdef dict d
         cdef ExteriorAlgebraElement rhs = <ExteriorAlgebraElement> other
@@ -514,7 +522,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
                     if tot_cross % 2:
                         cr = -cr
 
-                val = d.get(t, zero) + cl * cr
+                val = d.get(t, zero) + R(cl) * R(cr)
                 if not val:
                     del d[t]
                 else:
@@ -947,7 +955,6 @@ cdef class CohomologyRAAGElement(CliffordAlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.graphs sage.groups
             sage: C4 = graphs.CycleGraph(4)
             sage: A = groups.misc.RightAngledArtin(C4)
             sage: H = A.cohomology()

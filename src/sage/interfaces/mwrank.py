@@ -18,8 +18,10 @@ Interface to mwrank
 # ****************************************************************************
 
 import os
+import re
 import weakref
-from .expect import Expect
+
+from sage.interfaces.expect import Expect
 
 instances = {}
 
@@ -57,7 +59,6 @@ def Mwrank(options='', server=None, server_tmpdir=None):
         Generator 1 is [0:-1:1]; height 0.051...
         Regulator = 0.051...
     """
-    global instances
     try:
         X = instances[options]()
         if X:
@@ -69,7 +70,6 @@ def Mwrank(options='', server=None, server_tmpdir=None):
     return X
 
 
-import re
 # regex matching '[a1,a2,a3,a4,a6]', no spaces, each ai a possibly signed integer
 AINVS_LIST_RE = re.compile(r'\[[+-]?(\d+)(,[+-]?\d+){4}]')
 # regex matching ' a1 a2 a3 a4 a6 ', any whitespace, each ai a possibly signed integer

@@ -554,14 +554,13 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
             method = self._calc_method._current
         if method in self._express:
             return self._express[method]
-        else:
-            for vv in self._express.values():
-                try:
-                    self._express[method] = self._calc_method._tranf[method](vv)
-                    return self._express[method]
-                except (KeyError, ValueError):
-                    pass
-            raise ValueError("no expression found for converting to {}".format(method))
+        for vv in self._express.values():
+            try:
+                self._express[method] = self._calc_method._tranf[method](vv)
+                return self._express[method]
+            except (KeyError, ValueError):
+                pass
+        raise ValueError("no expression found for converting to {}".format(method))
 
     def set_expr(self, calc_method, expression):
         r"""
@@ -625,8 +624,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         curr = self._calc_method._current
         if curr == 'SR' and self._chart.manifold().options.textbook_output:
             return str(ExpressionNice(self.expr(curr)))
-        else:
-            return str(self.expr(curr))
+        return str(self.expr(curr))
 
     def _latex_(self):
         r"""
@@ -762,10 +760,8 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         if 'simplify' in options:
             if options['simplify']:
                 return calc.simplify(resu, method=curr)
-            else:
-                return resu
-        else:
-            return calc.simplify(resu, method=curr)
+            return resu
+        return calc.simplify(resu, method=curr)
 
     def __bool__(self):
         r"""
@@ -1063,8 +1059,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
             if coordsi < 0 or coordsi >= self._nc:
                 raise ValueError("coordinate index out of range")
             return self._der[coordsi]
-        else:
-            return self._der[self._chart[:].index(coord)]
+        return self._der[self._chart[:].index(coord)]
 
     diff = derivative
 
@@ -1114,19 +1109,17 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         if isinstance(other, ChartFunction):
             if other.parent() != self.parent():
                 return False
+            if self._calc_method._current in self._express:
+                method = self._calc_method._current
             else:
-                if self._calc_method._current in self._express:
-                    method = self._calc_method._current
-                else:
-                    method = list(self._express)[0]  # pick a random method
-                # other.expr(method)
-                if method == 'sympy':
-                    return bool(
-                        sympy.simplify(other.expr(method) - self.expr(method)) == 0
-                    )
-                return bool(other.expr(method) == self.expr(method))
-        else:
-            return bool(self.expr(self._calc_method._current) == other)
+                method = list(self._express)[0]  # pick a random method
+            # other.expr(method)
+            if method == 'sympy':
+                return bool(
+                    sympy.simplify(other.expr(method) - self.expr(method)) == 0
+                )
+            return bool(other.expr(method) == self.expr(method))
+        return bool(self.expr(self._calc_method._current) == other)
 
     def __ne__(self, other):
         r"""
@@ -1313,13 +1306,12 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
                 expansion_symbol=other._expansion_symbol,
                 order=other._order,
             )
-        else:
-            return type(self)(
-                self.parent(),
-                res,
-                expansion_symbol=self._expansion_symbol,
-                order=self._order,
-            )
+        return type(self)(
+            self.parent(),
+            res,
+            expansion_symbol=self._expansion_symbol,
+            order=self._order,
+        )
 
     def _sub_(self, other):
         r"""
@@ -1384,13 +1376,12 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
                 expansion_symbol=other._expansion_symbol,
                 order=other._order,
             )
-        else:
-            return type(self)(
-                self.parent(),
-                res,
-                expansion_symbol=self._expansion_symbol,
-                order=self._order,
-            )
+        return type(self)(
+            self.parent(),
+            res,
+            expansion_symbol=self._expansion_symbol,
+            order=self._order,
+        )
 
     def _mul_(self, other):
         r"""
@@ -1451,13 +1442,12 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
                 expansion_symbol=other._expansion_symbol,
                 order=other._order,
             )
-        else:
-            return type(self)(
-                self.parent(),
-                res,
-                expansion_symbol=self._expansion_symbol,
-                order=self._order,
-            )
+        return type(self)(
+            self.parent(),
+            res,
+            expansion_symbol=self._expansion_symbol,
+            order=self._order,
+        )
 
     def _rmul_(self, other):
         """

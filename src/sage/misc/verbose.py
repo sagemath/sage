@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Verbosity System and Logging in SageMath
 
@@ -249,5 +248,4 @@ def get_verbose():
         2
         sage: set_verbose(0)
     """
-    global LEVEL
     return LEVEL

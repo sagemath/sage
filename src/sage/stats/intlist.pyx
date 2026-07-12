@@ -79,8 +79,7 @@ cdef class IntList:
             sage: stats.IntList([1, 3, 2^32])
             Traceback (most recent call last):
             ...
-            OverflowError: ... too large to convert to C long  # 32-bit
-            OverflowError: ... too large to convert to int     # 64-bit
+            OverflowError: ... too large to convert to ...
 
         Printing omits entries::
 
@@ -517,9 +516,9 @@ cdef class IntList:
 
         EXAMPLES::
 
-            sage: stats.IntList([3,7,19,-2]).plot()                                     # needs sage.plot
+            sage: stats.IntList([3,7,19,-2]).plot()
             Graphics object consisting of 1 graphics primitive
-            sage: stats.IntList([3,7,19,-2]).plot(color='red',                          # needs sage.plot
+            sage: stats.IntList([3,7,19,-2]).plot(color='red',
             ....:                                 pointsize=50, points=True)
             Graphics object consisting of 1 graphics primitive
         """
@@ -535,7 +534,7 @@ cdef class IntList:
 
         EXAMPLES::
 
-            sage: stats.IntList([1..15]).plot_histogram()                               # needs sage.plot
+            sage: stats.IntList([1..15]).plot_histogram()
             Graphics object consisting of 50 graphics primitives
         """
         return self.time_series().plot_histogram(*args, **kwds)
@@ -560,7 +559,6 @@ cdef IntList new_int_list(Py_ssize_t length):
     return t
 
 
-@cython.binding(True)
 def unpickle_intlist_v1(bytes v, Py_ssize_t n):
     """
     Version 1 unpickle method.

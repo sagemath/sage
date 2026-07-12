@@ -11,7 +11,6 @@
 
 """Implements generic interpreter instructions and related utilities."""
 
-from __future__ import print_function, absolute_import
 
 import re
 
@@ -117,7 +116,7 @@ def params_gen(**chunks):
     return params
 
 
-class InstrSpec(object):
+class InstrSpec:
     r"""
     Each instruction in an interpreter is represented as an InstrSpec.
     This contains all the information that we need to generate code

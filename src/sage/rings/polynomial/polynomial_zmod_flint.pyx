@@ -166,7 +166,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         r._parent = P
         r._cparent = get_cparent(P)
         nmod_poly_init(&r.x, nmod_poly_modulus(&self.x))
-        celement_set_si(&r.x, int(x), (<Polynomial_template>self)._cparent)
+        celement_set_ui(&r.x, int(x), (<Polynomial_template>self)._cparent)
         return r
 
     cdef int _set_list(self, x) except -1:
@@ -666,12 +666,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         # make the denominator monic
         c = t0.leading_coefficient()
-        t0 = t0.monic()
-        t1 = t1/c
-
-        return t1, t0
-
-    rational_reconstruct = deprecated_function_alias(12696, rational_reconstruction)
+        return t1 / c, t0.monic()
 
     @cached_method
     def is_irreducible(self):

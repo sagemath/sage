@@ -395,7 +395,7 @@ sdh_actually_pip_install_wheel() {
     shift
     # Issue #32659: pip no longer reinstalls local wheels if the version is the same.
     # Because neither (1) applying patches nor (2) local changes (in the case
-    # of sage-conf, sage-setup, etc.) bump the version number, we need to
+    # of sage-setup, etc.) bump the version number, we need to
     # override this behavior.  The pip install option --force-reinstall does too
     # much -- it also reinstalls all dependencies, which we do not want.
     $sudo sage-pip-uninstall "$distname" 2>&1 | sed '/^WARNING: Skipping .* as it is not installed./d'

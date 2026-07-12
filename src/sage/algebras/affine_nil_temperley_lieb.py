@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Affine nilTemperley Lieb Algebra of type A
 """
@@ -113,7 +112,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         """
         return self.weyl_group().one()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -242,7 +241,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
                 return j not in wi.descents()
         return self.has_no_braid_relation(w * s[w.first_descent()], i)
 
-    def _repr_term(self, t, short_display=True):
+    def _repr_term(self, t, short_display=True) -> str:
         """
         EXAMPLES::
 
@@ -256,7 +255,6 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         redword = t.reduced_word()
         if len(redword) == 0:
             return "1"
-        elif short_display:
+        if short_display:
             return "*".join("%s%d" % (self._prefix, i) for i in redword)
-        else:
-            return "*".join("%s[%d]" % (self._prefix, i) for i in redword)
+        return "*".join("%s[%d]" % (self._prefix, i) for i in redword)

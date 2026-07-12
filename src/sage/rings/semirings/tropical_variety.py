@@ -788,7 +788,7 @@ class TropicalSurface(TropicalVariety):
 
         if not self._hypersurface:
             return [[-1, 1], [-1, 1], [-1, 1]]
-        elif len(self._hypersurface) == 1:
+        if len(self._hypersurface) == 1:
             bound = 1
             for eqn in self._hypersurface[0][0]:
                 for op in eqn.operands():
@@ -1354,7 +1354,7 @@ class TropicalCurve(TropicalVariety):
             result[vertex] = vectors
         return result
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return ``True`` if ``self`` is smooth and ``False`` otherwise.
 
@@ -1377,7 +1377,7 @@ class TropicalCurve(TropicalVariety):
         """
         return len(self.vertices()) == self._poly.degree() ** 2
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return ``True`` if ``self`` is simple and ``False`` otherwise.
 

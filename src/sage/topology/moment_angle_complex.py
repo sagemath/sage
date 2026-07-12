@@ -186,18 +186,18 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         if simplicial_complex:
             if isinstance(simplicial_complex, MomentAngleComplex):
                 # Allows for copy constructor
-                immutable_complex = SimplicialComplex(simplicial_complex._simplicial_complex, is_mutable=False)
+                immutable_complex = SimplicialComplex(simplicial_complex._simplicial_complex, immutable=True)
             elif not isinstance(simplicial_complex, SimplicialComplex):
                 # Try to create a SimplicialComplex out of simplicial_complex
                 # in case that simplicial_complex is a list of facets, or
                 # something that can generate a SimplicialComplex
-                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+                immutable_complex = SimplicialComplex(simplicial_complex, immutable=True)
             elif simplicial_complex.is_mutable():
-                immutable_complex = SimplicialComplex(simplicial_complex, is_mutable=False)
+                immutable_complex = SimplicialComplex(simplicial_complex, immutable=True)
             else:
                 immutable_complex = simplicial_complex
         else:
-            immutable_complex = SimplicialComplex(is_mutable=False)
+            immutable_complex = SimplicialComplex(immutable=True)
         return super().__classcall__(cls, immutable_complex)
 
     def __init__(self, simplicial_complex) -> None:

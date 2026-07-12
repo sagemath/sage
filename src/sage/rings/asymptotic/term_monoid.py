@@ -1664,7 +1664,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
                     self.coefficient_ring.has_coerce_map_from(S.coefficient_ring):
                 return True
 
-    def _element_constructor_(self, data, *args, **kwds):
+    def _element_constructor_(self, data, **kwds):
         r"""
         Convert the given object to this term monoid.
 
@@ -1672,9 +1672,6 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         - ``data`` -- a growth element or an object representing the
           element to be initialized
-
-        - ``coefficient`` -- (default: ``None``) an element of the coefficient
-          ring
 
         - ``**kwds`` -- keyword arguments passed on to the term
 
@@ -1774,41 +1771,12 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
             Traceback (most recent call last):
             ...
             ValueError: Argument 'growth=x' is ambiguous.
-
-        ::
-
-            sage: OT(G.gen(), 4)
-            doctest:warning
-            ...
-            DeprecationWarning: Passing 'coefficient' as a positional argument is deprecated;
-            specify it as keyword argument 'coefficient=...'.
-            See https://github.com/sagemath/sage/issues/32215 for details.
-            O(x)
-            sage: OT(G.gen(), 4, coefficient=5)
-            Traceback (most recent call last):
-            ...
-            ValueError: Argument 'coefficient=5' is ambiguous.
         """
-        if len(args) > 1:
-            raise TypeError(
-                f'GenericTermMonoid._element_constructor_ '
-                f'takes one positional argument, '
-                f'another positional argument is deprecated, '
-                f'but {len(args)+1} were given')
-        if len(args) == 1:
-            from sage.misc.superseded import deprecation
-            deprecation(32215,
-                "Passing 'coefficient' as a positional argument is deprecated; "
-                "specify it as keyword argument 'coefficient=...'.")
-            if 'coefficient' in kwds:
-                raise ValueError(f"Argument 'coefficient={kwds['coefficient']}' is ambiguous.")
-            kwds['coefficient'] = args[0]
-
         if isinstance(data, self.element_class) and data.parent() == self:
             return data
-        elif isinstance(data, GenericTerm):
+        if isinstance(data, GenericTerm):
             return self.from_construction(data.construction(), **kwds)
-        elif isinstance(data, int) and data == 0:
+        if isinstance(data, int) and data == 0:
             raise ValueError('No input specified. Cannot continue '
                              'creating an element of %s.' % (self,))
 
@@ -2081,7 +2049,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
             sage: T = TermMonoid('O', G, QQ)
             sage: T(G.gen())  # indirect doctest
             O(x)
-            sage: T(G.gen(), SR.var('y'))  # indirect doctest
+            sage: T(G.gen(), coefficient=SR.var('y'))  # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: Cannot create OTerm(x) since given coefficient y
@@ -2753,7 +2721,7 @@ class OTerm(GenericTerm):
             if isinstance(P, AsymptoticRing):
                 return g.O()
 
-            elif isinstance(P, SymbolicRing):
+            if isinstance(P, SymbolicRing):
                 return g.Order()
 
         try:
@@ -3033,7 +3001,7 @@ class TermWithCoefficient(GenericTerm):
 
         The coefficients have to be from the given coefficient ring::
 
-            sage: CT_ZZ(x, 1/2)
+            sage: CT_ZZ(x, coefficient=1/2)
             Traceback (most recent call last):
             ...
             ValueError: Cannot create TermWithCoefficient(x)
@@ -3045,7 +3013,7 @@ class TermWithCoefficient(GenericTerm):
 
         For technical reasons, the coefficient 0 is not allowed::
 
-            sage: CT_ZZ(x^42, 0)
+            sage: CT_ZZ(x^42, coefficient=0)
             Traceback (most recent call last):
             ...
             ZeroCoefficientError:  Zero coefficient 0 is not allowed in
@@ -3159,11 +3127,11 @@ class TermWithCoefficient(GenericTerm):
 
         if g == '1':
             return c
-        elif c == '1':
+        if c == '1':
             return '{g}'.format(g=g)
-        elif c == '-1':
+        if c == '-1':
             return '-{g}'.format(g=g)
-        elif self.coefficient._is_atomic() or (-self.coefficient)._is_atomic():
+        if self.coefficient._is_atomic() or (-self.coefficient)._is_atomic():
             # note that -pi/2 is not atomic, but -5 is. As subtractions are handled
             # in the asymptotic ring, we ignore such non-atomicity.
             s = '{c} {g}' if latex else '{c}*{g}'
@@ -3866,8 +3834,7 @@ class ExactTerm(TermWithCoefficient):
         coeff_new = self.coefficient + other.coefficient
         if coeff_new.is_zero():
             return None
-        else:
-            return self.parent()(self.growth, coefficient=coeff_new)
+        return self.parent()(self.growth, coefficient=coeff_new)
 
     def log_term(self, base=None, locals=None):
         r"""
@@ -4481,10 +4448,9 @@ class BTerm(TermWithCoefficient):
             valid_from_string = ', '.join(fr'{variable} \ge {value}'
                                           for variable, value in self.valid_from.items())
             return fr'B_{{{valid_from_string}}}\left({self._repr_product_(latex=True)}\right)'
-        else:
-            valid_from_string = ''.join(f', {variable} >= {value}'
-                                        for variable, value in self.valid_from.items())
-            return f'B({self._repr_product_()}{valid_from_string})'
+        valid_from_string = ''.join(f', {variable} >= {value}'
+                                    for variable, value in self.valid_from.items())
+        return f'B({self._repr_product_()}{valid_from_string})'
 
     def _latex_(self):
         r"""

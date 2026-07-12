@@ -19,11 +19,11 @@ objects have a more group theoretic flavor than the more combinatorial
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import permgroup_element
-from sage.misc.sage_eval import sage_eval
-from sage.misc.lazy_import import lazy_import
+from sage.groups.perm_gps import permgroup_element
 from sage.interfaces.gap import GapElement
 from sage.libs.gap.element import GapElement_Permutation
+from sage.misc.lazy_import import lazy_import
+from sage.misc.sage_eval import sage_eval
 
 lazy_import('sage.combinat.permutation', ['Permutation', 'from_cycles'])
 
@@ -241,7 +241,7 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
         if as_cycles:
             return g.cycle_tuples()
         return g._list
-    elif isinstance(g, permgroup_element.PermutationGroupElement):
+    if isinstance(g, permgroup_element.PermutationGroupElement):
         if not as_cycles:
             l = list(range(1, g.parent().degree() + 1))
             return g._act_on_list_on_position(l)

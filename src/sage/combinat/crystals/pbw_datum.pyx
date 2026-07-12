@@ -86,10 +86,11 @@ class PBWDatum():
                 self.long_word == other_PBWDatum.long_word and
                 self.lusztig_datum == other_PBWDatum.lusztig_datum)
 
-    def is_equivalent_to(self, other_pbw_datum):
+    def is_equivalent_to(self, other_pbw_datum) -> bool:
         r"""
         Return whether ``self`` is equivalent to ``other_pbw_datum``.
-        modulo the tropical Plücker relations.
+
+        Here equivalent means modulo the tropical Plücker relations.
 
         EXAMPLES::
 
@@ -183,7 +184,7 @@ class PBWDatum():
         return PBWDatum(self.parent, reversed_long_word, reversed_lusztig_datum)
 
 
-class PBWData(): # UniqueRepresentation?
+class PBWData():  # UniqueRepresentation?
     """
     Helper class for the set of PBW data.
     """
@@ -354,46 +355,48 @@ cpdef tuple tropical_plucker_relation(tuple a, lusztig_datum):
         sage: tropical_plucker_relation((-2,-1), (1,2,3,4))
         (6, 1, 2, 3)
     """
-    if a == (0, 0): # A1xA1
+    if a == (0, 0):  # A1xA1
         t1, t2 = lusztig_datum
         return (t2, t1)
-    elif a == (-1, -1): # A2
-        t1,t2,t3 = lusztig_datum
-        return (t2+t3-min(t1,t3),
-                min(t1,t3),
-                t1+t2-min(t1,t3))
-    elif a == (-1, -2): # B2
-        t1,t2,t3,t4 = lusztig_datum
-        pi1 = min(t1+t2,min(t1,t3)+t4)
-        pi2 = min(2*t1+t2,2*min(t1,t3)+t4)
+    elif a == (-1, -1):  # A2
+        t1, t2, t3 = lusztig_datum
+        return (t2+t3-min(t1, t3),
+                min(t1, t3),
+                t1+t2-min(t1, t3))
+    elif a == (-1, -2):  # B2
+        t1, t2, t3, t4 = lusztig_datum
+        pi1 = min(t1+t2, min(t1, t3)+t4)
+        pi2 = min(2*t1+t2, 2*min(t1, t3)+t4)
         return (t2+2*t3+t4-pi2,
                 pi2-pi1,
                 2*pi1-pi2,
                 t1+t2+t3-pi1)
-    elif a == (-1, -3): # G2
-        t1,t2,t3,t4,t5,t6 = lusztig_datum
+    elif a == (-1, -3):  # G2
+        t1, t2, t3, t4, t5, t6 = lusztig_datum
         pi1 = min(t1+t2+2*t3+t4,
-                  t1+t2+2*min(t3,t5)+t6,
-                  min(t1,t3)+t4+2*t5+t6)
+                  t1+t2+2*min(t3, t5)+t6,
+                  min(t1, t3)+t4+2*t5+t6)
         pi2 = min(2*t1+2*t2+3*t3+t4,
-                  2*t1+2*t2+3*min(t3,t5)+t6,
-                  2*min(t1,t3)+2*t4+3*t5+t6,
-                  t1+t2+t4+2*t5+t6+min(t1+t3,2*t3,t3+t5,t1+t5))
+                  2*t1+2*t2+3*min(t3, t5)+t6,
+                  2*min(t1, t3)+2*t4+3*t5+t6,
+                  t1+t2+t4+2*t5+t6+min(t1+t3, 2*t3, t3+t5, t1+t5))
         pi3 = min(3*t1+2*t2+3*t3+t4,
-                  3*t1+2*t2+3*min(t3,t5)+t6,
-                  3*min(t1,t3)+2*t4+3*t5+t6,
-                  2*t1+t2+t4+2*t5+t6+min(t1+t3,2*t3,t3+t5,t1+t5))
+                  3*t1+2*t2+3*min(t3, t5)+t6,
+                  3*min(t1, t3)+2*t4+3*t5+t6,
+                  2*t1+t2+t4+2*t5+t6+min(t1+t3, 2*t3, t3+t5, t1+t5))
         pi4 = min(2*t1+2*t2+3*t3+t4+min(t1+t2+3*t3+t4,
-                                        t1+t2+3*min(t3,t5)+t6,
-                                        min(t1+t3,2*t3,t3+t5,t1+t5)+t4+2*t5+t6),
-                  2*t6+3*min(t1+t2+2*min(t3,t5),min(t1,t3)+t4+2*t5))
+                                        t1+t2+3*min(t3, t5)+t6,
+                                        min(t1+t3,
+                                            2*t3, t3+t5,
+                                            t1+t5)+t4+2*t5+t6),
+                  2*t6+3*min(t1+t2+2*min(t3, t5), min(t1, t3)+t4+2*t5))
         return (t2+3*t3+2*t4+3*t5+t6-pi3,
                 pi3-pi2,
                 3*pi2-pi3-pi4,
                 pi4-pi1-pi2,
                 3*pi1-pi4,
                 t1+t2+2*t3+t4+t5-pi1)
-    else: # (-1,-2) and (-1,-3)
+    else:  # (-1,-2) and (-1,-3)
         reversed_lusztig_datum = tuple(reversed(lusztig_datum))
         return tuple(reversed(tropical_plucker_relation((a[1], a[0]),
                                                         reversed_lusztig_datum)))
@@ -455,7 +458,7 @@ cpdef list enhance_braid_move_chain(braid_move_chain, cartan_type):
     cdef int k, pos, first, last
     cdef tuple cartan_sub_matrix
     cdef list output_list = []
-    output_list.append( (None, None) )
+    output_list.append((None, None))
     cdef tuple previous_word = <tuple> (braid_move_chain[0])
     cdef tuple current_word
     cartan_matrix = cartan_type.cartan_matrix()

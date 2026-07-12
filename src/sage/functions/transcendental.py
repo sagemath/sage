@@ -255,10 +255,9 @@ class Function_HurwitzZeta(BuiltinFunction):
             return zeta(s)
         if s in ZZ and s > 1:
             return ((-1) ** s) * psi(s - 1, x) / factorial(s - 1)
-        elif s in ZZ and s <= 0:
+        if s in ZZ and s <= 0:
             return -bernoulli_polynomial(x, -s + 1) / (-s + 1)
-        else:
-            return
+        return
 
     def _evalf_(self, s, x, parent=None, algorithm=None):
         r"""
@@ -283,9 +282,8 @@ class Function_HurwitzZeta(BuiltinFunction):
         """
         if diff_param == 1:
             return -s * hurwitz_zeta(s + 1, x)
-        else:
-            raise NotImplementedError('derivative with respect to first '
-                                      'argument')
+        raise NotImplementedError('derivative with respect to first '
+                                  'argument')
 
 
 hurwitz_zeta_func = Function_HurwitzZeta()
@@ -547,9 +545,9 @@ class DickmanRho(BuiltinFunction):
                 return None
         if x < 0:
             return x.parent()(0)
-        elif x <= 1:
+        if x <= 1:
             return x.parent()(1)
-        elif x <= 2:
+        if x <= 2:
             return 1 - x.log()
         n = x.floor()
         if self._cur_prec < x.parent().prec() or n not in self._f:
@@ -620,7 +618,7 @@ class DickmanRho(BuiltinFunction):
                 return PolynomialRealDense(RealField(abs_prec)['x'])
             if n == 0:
                 return PolynomialRealDense(RealField(abs_prec)['x'], [1])
-            elif n == 1:
+            if n == 1:
                 nterms = (RDF(abs_prec) * RDF(2).log()/RDF(3).log()).ceil()
                 R = RealField(abs_prec)
                 neg_three = ZZ(-3)

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Set factories
 =============
@@ -678,9 +677,8 @@ class TopMostParentPolicy(SetFactoryPolicy):
         factory = self._factory
         if constraints == self._top_constraints:
             return self.self_element_constructor_attributes(self._Element)
-        else:
-            return self.facade_element_constructor_attributes(
-                factory(*self._top_constraints, policy=self))
+        return self.facade_element_constructor_attributes(
+            factory(*self._top_constraints, policy=self))
 
     def _repr_(self):
         r"""
@@ -1146,8 +1144,7 @@ class ParentWithSetFactory(Parent):
             if check:
                 self.check_element(args[0], check)
             return args[0]
-        else:
-            return Parent.__call__(self, *args, **keywords)
+        return Parent.__call__(self, *args, **keywords)
 
     # QUESTION: Should we call:
     #     self._parent_for._element_constructor_

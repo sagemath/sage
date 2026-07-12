@@ -200,13 +200,13 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         self._coords = tuple(v)
         self._normalized = False
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Test the projective equality of two points.
 
         INPUT:
 
-        - ``right`` -- a point on projective space
+        - ``other`` -- a point on projective space
 
         OUTPUT: boolean
 
@@ -359,20 +359,20 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P != Q
             True
         """
-        if not isinstance(right, SchemeMorphism_point):
+        if not isinstance(other, SchemeMorphism_point):
             try:
-                right = self.codomain()(right)
+                other = self.codomain()(other)
             except TypeError:
                 return NotImplemented
-        if self.codomain() != right.codomain():
+        if self.codomain() != other.codomain():
             return op == op_NE
 
         n = len(self._coords)
         if op in [op_EQ, op_NE]:
-            b = all(self[i] * right[j] == self[j] * right[i]
+            b = all(self[i] * other[j] == self[j] * other[i]
                     for i in range(n) for j in range(i + 1, n))
             return b == (op == op_EQ)
-        return richcmp(self._coords, right._coords, op)
+        return richcmp(self._coords, other._coords, op)
 
     def __hash__(self):
         """
@@ -676,14 +676,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
         """
-        if self[n].is_zero():
+        sn = self[n]
+        if sn.is_zero():
             raise ValueError("can't dehomogenize at 0 coordinate")
         PS = self.codomain()
         A = PS.affine_patch(n)
-        Q = []
-        for i in range(PS.ambient_space().dimension_relative() + 1):
-            if i != n:
-                Q.append(self[i] / self[n])
+        Q = [self[i] / sn
+             for i in range(PS.ambient_space().dimension_relative() + 1)
+             if i != n]
         return A.point(Q)
 
     def global_height(self, prec=None):
@@ -840,8 +840,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             raise TypeError("must be over a number field or a number field order")
         if K == QQ:
             return max(K(c).local_height_arch(prec=prec) for c in self)
-        else:
-            return max(K(c).local_height_arch(i, prec=prec) for c in self)
+        return max(K(c).local_height_arch(i, prec=prec) for c in self)
 
     def multiplier(self, f, n, check=True):
         r"""
@@ -1080,7 +1079,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         This function still normalizes points so that the rightmost nonzero coordinate is 1.
         This is to maintain functionality with current
-        implementations of curves in projectives space (plane, conic, elliptic, etc).
+        implementations of curves in projective spaces (plane, conic, elliptic, etc).
         The :class:`SchemeMorphism_point_projective_ring` is for general use.
 
         EXAMPLES::

@@ -111,7 +111,7 @@ from sage.data_structures.bitset_base cimport *
 
 from cpython.long cimport PyLong_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
-from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
+from sage.libs.flint.longlong cimport FLINT_BIT_COUNT as BIT_COUNT
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 cimport cython
@@ -1388,7 +1388,7 @@ def _biseq_stresstest():
             L[randint(0, 99)] = L[randint(0, 99)] + L[randint(0, 99)]
         elif branch == 1:
             x = randint(0, 99)
-            if len(L[x]):
+            if L[x]:
                 y = randint(0, len(L[x]) - 1)
                 z = randint(y, len(L[x]) - 1)
                 L[randint(0, 99)] = L[x][y:z]
@@ -1400,7 +1400,7 @@ def _biseq_stresstest():
             t = L[randint(0, 99)].list()
         elif branch == 3:
             x = randint(0, 99)
-            if len(L[x]):
+            if L[x]:
                 y = randint(0, len(L[x])-1)
                 t = L[x][y]
                 try:

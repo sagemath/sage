@@ -91,7 +91,7 @@ cpdef fibers(f, domain):
     for x in domain:
         y = f(x)
         result.setdefault(y, set()).add(x)
-    for x, v in result.iteritems():
+    for x, v in result.items():
         result[x] = Set_object_enumerated(v)
     return result
 

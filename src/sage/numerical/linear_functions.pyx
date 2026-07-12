@@ -107,74 +107,7 @@ from sage.misc.fast_methods cimport hash_by_id
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport ModuleElement, Element
 from sage.misc.cachefunc import cached_function
-
-#*****************************************************************************
-#
-# Utility functions to test that something is a linear function / constraint
-#
-#*****************************************************************************
-
-cpdef is_LinearFunction(x):
-    """
-    Test whether ``x`` is a linear function.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: p = MixedIntegerLinearProgram()
-        sage: x = p.new_variable()
-        sage: from sage.numerical.linear_functions import is_LinearFunction
-        sage: is_LinearFunction(x[0] - 2*x[2])
-        doctest:warning...
-        DeprecationWarning: The function is_LinearFunction is deprecated;
-        use 'isinstance(..., LinearFunction)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: is_LinearFunction('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38184,
-                       "The function is_LinearFunction is deprecated; "
-                       "use 'isinstance(..., LinearFunction)' instead.")
-    return isinstance(x, LinearFunction)
-
-
-def is_LinearConstraint(x):
-    """
-    Test whether ``x`` is a linear constraint.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: p = MixedIntegerLinearProgram()
-        sage: x = p.new_variable()
-        sage: ieq = (x[0] <= x[1])
-        sage: from sage.numerical.linear_functions import is_LinearConstraint
-        sage: is_LinearConstraint(ieq)
-        doctest:warning...
-        DeprecationWarning: The function is_LinearConstraint is deprecated;
-        use 'isinstance(..., LinearConstraint)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: is_LinearConstraint('a string')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38184,
-                       "The function is_LinearConstraint is deprecated; "
-                       "use 'isinstance(..., LinearConstraint)' instead.")
-    return isinstance(x, LinearConstraint)
+from sage.misc.superseded import deprecated_function_alias
 
 
 # ****************************************************************************
@@ -516,11 +449,11 @@ cdef class LinearFunctionOrConstraint(ModuleElement):
         return hash_by_id(<void*>self)
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Parent of linear functions
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearFunctionsParent_class(Parent):
     r"""
@@ -734,14 +667,14 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: p.an_element()   # indirect doctest
             5*x_2 + 7*x_5
         """
-        return self._element_constructor_({2:5, 5:7})
+        return self._element_constructor_({2: 5, 5: 7})
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Elements of linear functions
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearFunction(LinearFunctionOrConstraint):
     r"""
@@ -797,11 +730,11 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         ModuleElement.__init__(self, parent)
         R = self.base_ring()
         if isinstance(f, dict):
-            self._f = dict( (int(key), R(value)) for key, value in f.iteritems() )
+            self._f = {int(key): R(value) for key, value in f.items()}
         else:
             self._f = {-1: R(f)}
 
-    cpdef iteritems(self):
+    cpdef items(self):
         """
         Iterate over the index, coefficient pairs.
 
@@ -816,13 +749,15 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             sage: p = MixedIntegerLinearProgram(solver = 'ppl')
             sage: x = p.new_variable()
             sage: f = 0.5 + 3/2*x[1] + 0.6*x[3]
-            sage: for id, coeff in sorted(f.iteritems()):
-            ....:     print('id = {}   coeff = {}'.format(id, coeff))
+            sage: for id, coeff in sorted(f.items()):
+            ....:     print(f'id = {id}   coeff = {coeff}')
             id = -1   coeff = 1/2
             id = 0   coeff = 3/2
             id = 1   coeff = 3/5
         """
-        return self._f.iteritems()
+        return self._f.items()
+
+    iteritems = deprecated_function_alias(40996, items)
 
     def dict(self):
         r"""
@@ -916,8 +851,8 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             -16 + x_0 + 5*x_2 - 6*x_3
         """
         e = dict(self._f)
-        for (id,coeff) in b.dict().iteritems():
-            e[id] = self._f.get(id,0) + coeff
+        for id, coeff in b.dict().items():
+            e[id] = self._f.get(id, 0) + coeff
         P = self.parent()
         return P(e)
 
@@ -933,7 +868,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             -1*x_0 + 8*x_3
         """
         P = self.parent()
-        return P({id: -coeff for id, coeff in self._f.iteritems()})
+        return P({id: -coeff for id, coeff in self._f.items()})
 
     cpdef _sub_(self, b):
         r"""
@@ -949,7 +884,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             -16 + x_0 - 5*x_2 - 10*x_3
         """
         e = dict(self._f)
-        for id, coeff in b.dict().iteritems():
+        for id, coeff in b.dict().items():
             e[id] = self._f.get(id, 0) - coeff
         P = self.parent()
         return P(e)
@@ -968,7 +903,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             15*x_2 + 6*x_3
         """
         P = self.parent()
-        return P(dict([(id,b*coeff) for (id, coeff) in self._f.iteritems()]))
+        return P({id: b * coeff for id, coeff in self._f.items()})
 
     cpdef _acted_upon_(self, x, bint self_on_left):
         """
@@ -1163,11 +1098,11 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         return (left-right).is_zero()
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Parent of linear constraints
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearConstraintsParent_class(Parent):
     """
@@ -1306,13 +1241,13 @@ cdef class LinearConstraintsParent_class(Parent):
             False
         """
         if right is None and isinstance(left, LinearConstraint):
-            if (left.parent() is self) and (left.is_equation() == equality):
+            if left.parent() is self and left.is_equation() == equality:
                 return left
             else:
                 return LinearConstraint(self, (<LinearConstraint>left).constraints,
                                         equality=equality)
         if right is None:
-            if isinstance(left, (list,tuple)):
+            if isinstance(left, (list, tuple)):
                 return LinearConstraint(self, left, equality=equality)
             else:
                 return LinearConstraint(self, [left], equality=equality)
@@ -1350,11 +1285,11 @@ cdef class LinearConstraintsParent_class(Parent):
         return self(0) <= LF.an_element()
 
 
-#*****************************************************************************
+# ***************************************************************************
 #
 # Elements of linear constraints
 #
-#*****************************************************************************
+# ***************************************************************************
 
 cdef class LinearConstraint(LinearFunctionOrConstraint):
     """
@@ -1417,7 +1352,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         super().__init__(parent)
         self.equality = equality
         LF = parent.linear_functions_parent()
-        self.constraints = [ LF(term) for term in terms ]
+        self.constraints = [LF(term) for term in terms]
 
     cpdef equals(LinearConstraint left, LinearConstraint right):
         """

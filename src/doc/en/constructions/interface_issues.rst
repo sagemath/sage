@@ -13,7 +13,7 @@ Background jobs
 Yes, a Sage job can be run in the background on a
 UNIX system. The canonical thing to do is type
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ nohup sage < command_file  > output_file &
 
@@ -108,7 +108,7 @@ know where it occurs in Sage, just type
 ``sage -grep <string>`` to find all occurrences of ``<string>`` in the
 Sage source code. For example,
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ sage -grep berlekamp_massey
     matrix/all.py:from berlekamp_massey import berlekamp_massey

@@ -294,7 +294,7 @@ class ParentLibGAP(SageObject):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def ngens(self):
         """
@@ -388,7 +388,7 @@ class ParentLibGAP(SageObject):
 
     generators = gens
 
-    def gen(self, i):
+    def gen(self, i=0):
         """
         Return the `i`-th generator of ``self``.
 
@@ -407,10 +407,18 @@ class ParentLibGAP(SageObject):
         EXAMPLES::
 
             sage: G = FreeGroup('a, b')
-            sage: G.gen(0)
+            sage: G.gen()
             a
             sage: G.gen(1)
             b
+
+        TESTS::
+
+            sage: G = FreeGroup('a, b, c')
+            sage: G.gen(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: i must be in range(ngens)
         """
         if not (0 <= i < self.ngens()):
             raise ValueError('i must be in range(ngens)')
@@ -526,7 +534,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         """
         return self._libgap
 
-    _libgap_ = _gap_ = gap
+    _libgap_ = gap
 
     def _test_libgap_conversion(self, **options):
         r"""

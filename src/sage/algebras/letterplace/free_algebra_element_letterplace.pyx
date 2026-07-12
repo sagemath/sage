@@ -17,12 +17,8 @@ AUTHOR:
 # ****************************************************************************
 
 from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
-from sage.libs.singular.function import lib
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from cpython.object cimport PyObject_RichCompare
-
-# Define some singular functions
-lib("freegb.lib")
 
 #####################
 # Free algebra elements
@@ -141,7 +137,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         cdef dict d = self._poly.monomial_coefficients()
         yield from d.items()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -222,7 +218,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             return ' '.join(L)
         return '0'
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 

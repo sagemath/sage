@@ -38,28 +38,6 @@ from sage.misc.persist import register_unpickle_override
 _Fields = Fields()
 
 
-def is_AffineSpace(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is an affine space.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.affine.affine_space import is_AffineSpace
-        sage: is_AffineSpace(AffineSpace(5, names='x'))
-        doctest:warning...
-        DeprecationWarning: The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
-        True
-        sage: is_AffineSpace(Spec(ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.")
-    return isinstance(x, AffineSpace_generic)
-
-
 def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
                 default_embedding_index=None):
     r"""
@@ -138,9 +116,8 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         if isinstance(R, FiniteField):
             return AffineSpace_finite_field(n, R, names,
                                             ambient_projective_space, default_embedding_index)
-        else:
-            return AffineSpace_field(n, R, names,
-                                     ambient_projective_space, default_embedding_index)
+        return AffineSpace_field(n, R, names,
+                                 ambient_projective_space, default_embedding_index)
     return AffineSpace_generic(n, R, names, ambient_projective_space, default_embedding_index)
 
 
@@ -276,7 +253,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             if not isinstance(self.base_ring(), FiniteField):
                 raise TypeError("base ring (= %s) must be a finite field" % self.base_ring())
             return list(self)
-        elif not isinstance(F, FiniteField):
+        if not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return list(self.base_extend(F))
 
@@ -646,8 +623,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         if isinstance(R, Map):
             return AffineSpace(self.dimension_relative(), R.codomain(), self.variable_names())
-        else:
-            return AffineSpace(self.dimension_relative(), R, self.variable_names())
+        return AffineSpace(self.dimension_relative(), R, self.variable_names())
 
     def coordinate_ring(self):
         """
@@ -949,7 +925,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
                 f = f.dehomogenize(1)
                 return f
             return DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
-        elif kind == 'second':
+        if kind == 'second':
             if monic and self.base().characteristic() != 2:
                 f = DynamicalSystem_affine([chebyshev_T(n, self.gen(0))], domain=self)
                 f = f.homogenize(1)
@@ -957,8 +933,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
                 f = f.dehomogenize(1)
                 return f
             return DynamicalSystem_affine([chebyshev_U(n, self.gen(0))], domain=self)
-        else:
-            raise ValueError("keyword 'kind' must have a value of either 'first' or 'second'")
+        raise ValueError("keyword 'kind' must have a value of either 'first' or 'second'")
 
     def origin(self):
         """

@@ -46,8 +46,7 @@ we could do the following.
 
 ::
 
-    sage: B = numpy.array([1.0]*5)                                                      # needs cvxopt
-    sage: B.shape=(5,1)                                                                 # needs cvxopt
+    sage: B = numpy.array([1.0]*5).reshape((5,1))                                       # needs cvxopt
     sage: print(B)                                                                      # needs cvxopt
     [[1.]
      [1.]

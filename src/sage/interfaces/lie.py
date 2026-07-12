@@ -171,9 +171,10 @@ You can call LiE's built-in functions using ``lie.functionname``. ::
     E8
 
 
-You can define your own functions in LiE using lie.eval .  Once you've defined
-a function (say f), you can call it using lie.f ; however, user-defined functions
-do not show up when using tab-completion. ::
+You can define your own functions in ``LiE`` using ``lie.eval``.  Once
+you have defined a function (say ``f``), you can call it using
+``lie.f`` ; however, user-defined functions do not show up when using
+tab-completion. ::
 
     sage: # optional - lie
     sage: lie.eval('f(int x) = 2*x')
@@ -532,8 +533,7 @@ class LiE(ExtraTabCompletion, Expect):
             self._read_info_files()
         if type:
             return sorted(self._tab_completion_dict[type])
-        else:
-            return self._tab_completion_list
+        return self._tab_completion_list
 
     def _an_element_(self):
         """
@@ -666,8 +666,7 @@ class LiE(ExtraTabCompletion, Expect):
         # return s.strip()
         if len(s) > 0 and s.find("\n") != -1:
             return s
-        else:
-            return s.strip()
+        return s.strip()
 
     def set(self, var, value):
         """
@@ -793,8 +792,7 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
             if R is not None:
                 m = m.change_ring(R)
             return m
-        else:
-            raise ValueError("not a matrix")
+        raise ValueError("not a matrix")
 
     def _sage_(self):
         """
@@ -812,11 +810,11 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
         t = self.type()
         if t == 'grp':
             raise ValueError("cannot convert Lie groups to native Sage objects")
-        elif t == 'mat':
+        if t == 'mat':
             import sage.matrix.constructor
             data = sage_eval(str(self).replace('\n', '').strip())
             return sage.matrix.constructor.matrix(data)
-        elif t == 'pol':
+        if t == 'pol':
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             from sage.rings.rational_field import QQ
 
@@ -851,12 +849,11 @@ class LiEElement(ExtraTabCompletion, ExpectElement):
                 pol += coef * monomial
 
             return pol
-        elif t == 'tex':
+        if t == 'tex':
             return repr(self)
-        elif t == 'vid':
+        if t == 'vid':
             return None
-        else:
-            return ExpectElement._sage_(self)
+        return ExpectElement._sage_(self)
 
 
 @instancedoc
@@ -886,25 +883,6 @@ class LiEFunction(ExpectFunction):
         """
         M = self._parent
         return M.help(self._name)
-
-
-def is_LiEElement(x) -> bool:
-    """
-    EXAMPLES::
-
-        sage: from sage.interfaces.lie import is_LiEElement
-        sage: is_LiEElement(2)
-        doctest:...: DeprecationWarning: the function is_LiEElement is deprecated; use isinstance(x, sage.interfaces.abc.LiEElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: l = lie(2) # optional - lie
-        sage: is_LiEElement(l) # optional - lie
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_LiEElement is deprecated; use isinstance(x, sage.interfaces.abc.LiEElement) instead")
-
-    return isinstance(x, LiEElement)
 
 
 # An instance

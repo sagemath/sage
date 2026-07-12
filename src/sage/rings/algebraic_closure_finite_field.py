@@ -74,7 +74,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         sage: type(F.gen(2))
         <class 'sage.rings.algebraic_closure_finite_field.AlgebraicClosureFiniteField_pseudo_conway_with_category.element_class'>
     """
-    def __init__(self, parent, value):
+    def __init__(self, parent, value) -> None:
         """
         TESTS::
 
@@ -87,7 +87,8 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             there is no coercion map between the parents of ``x``
             and ``loads(dumps(x))``.
         """
-        if isinstance(value, Element) and isinstance(value.parent(), FiniteField):
+        if isinstance(value, Element) and isinstance(value.parent(),
+                                                     FiniteField):
             n = value.parent().degree()
         else:
             from sage.rings.integer import Integer
@@ -96,7 +97,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         self._level = n
         FieldElement.__init__(self, parent)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -147,10 +148,9 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         F, x, _ = self.as_finite_field_element(minimal=True)
         if F.degree() == 1:
             return hash(x)
-        else:
-            return hash((x, F.degree()))
+        return hash((x, F.degree()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -162,9 +162,9 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         """
         return self._value._repr_()
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op) -> bool:
         """
-        Compare ``self`` with ``right``.
+        Compare ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -172,7 +172,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F.gen(2) == F.gen(3)
             False
         """
-        x, y = self.parent()._to_common_subfield(self, right)
+        x, y = self.parent()._to_common_subfield(self, other)
         return richcmp(x, y, op)
 
     def __pow__(self, exp):
@@ -555,7 +555,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F
             Algebraic closure of Finite Field of size 5
         """
-        Field.__init__(self, base_ring=base_ring, names=name,
+        Field.__init__(self, base_ring, names=name,
                        normalize=False, category=category)
 
     def __eq__(self, other):
@@ -631,8 +631,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             if x.parent() is not self:
                 raise ValueError('no conversion defined between different algebraic closures')
             return x
-        else:
-            return self.element_class(self, x)
+        return self.element_class(self, x)
 
     def _coerce_map_from_(self, other):
         """
@@ -647,9 +646,9 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if other is self:
             return True
-        elif isinstance(other, FiniteField) and self._subfield(other.degree()) is other:
+        if isinstance(other, FiniteField) and self._subfield(other.degree()) is other:
             return True
-        elif self._subfield(1).has_coerce_map_from(other):
+        if self._subfield(1).has_coerce_map_from(other):
             return True
 
     def _repr_(self):
@@ -745,13 +744,12 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if n == 1:
             return self.base_ring()
-        else:
-            from sage.rings.finite_rings.finite_field_constructor import FiniteField
-            return FiniteField(self.base_ring().cardinality() ** n,
-                               name=self.variable_name() + str(n),
-                               prefix=self.variable_name(),
-                               modulus=self._get_polynomial(n),
-                               check_irreducible=False)
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField
+        return FiniteField(self.base_ring().cardinality() ** n,
+                           name=self.variable_name() + str(n),
+                           prefix=self.variable_name(),
+                           modulus=self._get_polynomial(n),
+                           check_irreducible=False)
 
     def subfield(self, n):
         """
@@ -801,8 +799,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             # infinite loop in checking the morphism involving
             # polynomial_compiled.pyx on the modulus().
             return self._subfield(m).hom( (self._get_im_gen(m, n),), check=False)
-        else:
-            raise ValueError("subfield of degree %s not contained in subfield of degree %s" % (m, n))
+        raise ValueError("subfield of degree %s not contained in subfield of degree %s" % (m, n))
 
     def ngens(self):
         """
@@ -1148,6 +1145,5 @@ def AlgebraicClosureFiniteField(base_ring, name, category=None, implementation=N
 
     if implementation == 'pseudo_conway':
         return AlgebraicClosureFiniteField_pseudo_conway(base_ring, name, category, **kwds)
-    else:
-        raise ValueError('unknown implementation for algebraic closure of finite field: %s'
-                         % implementation)
+    raise ValueError('unknown implementation for algebraic closure of finite field: %s'
+                     % implementation)

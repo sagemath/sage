@@ -134,31 +134,6 @@ _Rings = Rings()
 _CommRings = _Rings.Commutative()
 
 
-def is_ProjectiveSpace(x):
-    r"""
-    Return ``True`` if ``x`` is a projective space.
-
-    In other words, if ``x`` is an ambient space `\mathbb{P}^n_R`,
-    where `R` is a ring and `n\geq 0` is an integer.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
-        doctest:warning...
-        DeprecationWarning: The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
-        True
-        sage: is_ProjectiveSpace(Spec(ZZ))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.")
-    return isinstance(x, ProjectiveSpace_ring)
-
-
 def ProjectiveSpace(n, R=None, names=None):
     r"""
     Return projective space of dimension ``n`` over the ring ``R``.
@@ -271,9 +246,8 @@ def ProjectiveSpace(n, R=None, names=None):
             return ProjectiveSpace_finite_field(n, R, names)
         if isinstance(R, RationalField):
             return ProjectiveSpace_rational_field(n, R, names)
-        else:
-            return ProjectiveSpace_field(n, R, names)
-    elif R in _CommRings:
+        return ProjectiveSpace_field(n, R, names)
+    if R in _CommRings:
         return ProjectiveSpace_ring(n, R, names)
     raise TypeError("R (=%s) must be a commutative ring" % R)
 
@@ -568,11 +542,11 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         if isinstance(right, ProductProjectiveSpaces_ring):
             return ProductProjectiveSpaces([self] + right.components())
-        elif isinstance(right, ProjectiveSpace_ring):
+        if isinstance(right, ProjectiveSpace_ring):
             if self is right:
                 return self.__pow__(2)
             return ProductProjectiveSpaces([self, right])
-        elif isinstance(right, AlgebraicScheme_subscheme):
+        if isinstance(right, AlgebraicScheme_subscheme):
             AS = self * right.ambient_space()
             CR = AS.coordinate_ring()
             n = self.ambient_space().coordinate_ring().ngens()
@@ -580,8 +554,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             phi = self.ambient_space().coordinate_ring().hom(list(CR.gens()[:n]), CR)
             psi = right.ambient_space().coordinate_ring().hom(list(CR.gens()[n:]), CR)
             return AS.subscheme([phi(t) for t in self.defining_polynomials()] + [psi(t) for t in right.defining_polynomials()])
-        else:
-            raise TypeError('%s must be a projective space, product of projective spaces, or subscheme' % right)
+        raise TypeError('%s must be a projective space, product of projective spaces, or subscheme' % right)
 
     def _latex_(self):
         r"""
@@ -928,9 +901,8 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if isinstance(R, Map):
             return ProjectiveSpace(self.dimension_relative(), R.codomain(),
                                self.variable_names())
-        else:
-            return ProjectiveSpace(self.dimension_relative(), R,
-                               self.variable_names())
+        return ProjectiveSpace(self.dimension_relative(), R,
+                           self.variable_names())
 
     def is_projective(self):
         """
@@ -1215,8 +1187,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                 return IQ_points_of_bounded_height(self, R, dim, bound)
 
             return points_of_bounded_height(self, R, dim, bound, prec)
-        else:
-            return QQ_points_of_bounded_height(self, dim, bound)
+        return QQ_points_of_bounded_height(self, dim, bound)
 
     def affine_patch(self, i, AA=None):
         r"""
@@ -2034,10 +2005,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         all_subsets = Subsets(range(len(points)), n)
         linearly_independent = True
         for subset in all_subsets:
-            point_list = []
-            for index in subset:
-                point_list.append(list(points[index]))
-            M = matrix(point_list)
+            M = matrix([list(points[index]) for index in subset])
             if M.rank() != n:
                 linearly_independent = False
                 break
@@ -2165,18 +2133,13 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         if binomial(n + 1, n - dim) != R.ngens():
             raise ValueError("for given dimension, there should be %d variables in the Chow form" % binomial(n + 1, n - dim))
         # create the brackets associated to variables
-        L1 = []
-        for t in UnorderedTuples(list(range(n + 1)), dim + 1):
-            if all(t[i] < t[i + 1] for i in range(dim)):
-                L1.append(list(t))
+        L1 = [list(t) for t in UnorderedTuples(range(n + 1), dim + 1)
+              if all(t[i] < t[i + 1] for i in range(dim))]
         # create the dual brackets
         L2 = []
         signs = []
         for l in L1:
-            s = []
-            for v in range(n + 1):
-                if v not in l:
-                    s.append(v)
+            s = [v for v in range(n + 1) if v not in l]
             t1 = [b + 1 for b in l]
             t2 = [b + 1 for b in s]
             perm = Permutation(t1 + t2)
@@ -2190,17 +2153,15 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         else:
             T = PolynomialRing(R.base_ring(), n + 1, 'z')
             M = matrix(T, n - dim, n + 1, list(T.gens()))
-        coords = []
-        for i in range(len(L2)):
-            coords.append(signs[i] * M.matrix_from_columns(L2[i]).det())
+        coords = [si * M.matrix_from_columns(L2i).det()
+                  for si, L2i in zip(signs, L2)]
         # substitute in dual brackets to chow form
         phi = R.hom(coords, T)
         ch = phi(Ch)
         # coefficients are polys in zs which are the chow equations for the chow form
         if n - dim - 1 > 0:
             return self.subscheme(ch.coefficients())
-        else:
-            return self.subscheme(ch)
+        return self.subscheme(ch)
 
     def curve(self, F):
         r"""
@@ -2357,7 +2318,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
         """
         if F is None:
             return list(self)
-        elif not isinstance(F, FiniteField):
+        if not isinstance(F, FiniteField):
             raise TypeError("second argument (= %s) must be a finite field" % F)
         return list(self.base_extend(F))
 

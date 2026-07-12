@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # ***************************************************************************
 #  Copyright (C) 2009-2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
@@ -17,7 +16,7 @@ from sage.structure.element cimport Element
 cdef class ClonableElement(Element):
     cdef bint _is_immutable
     cdef bint _needs_check
-    cdef long int  _hash
+    cdef Py_hash_t _hash
 
     cpdef bint _require_mutable(self) except -2
     cpdef bint is_mutable(self) noexcept
@@ -39,7 +38,7 @@ cdef class ClonableArray(ClonableElement):
     cpdef _setitem(self, int key, value)
     cpdef int index(self, key, start=*, stop=*) except -1
     cpdef int count(self, key) except -1
-    cpdef long int _hash_(self) except? -1
+    cpdef Py_hash_t _hash_(self) except? -1
 
 cdef class ClonableList(ClonableArray):
     cpdef append(self, el)
@@ -61,5 +60,5 @@ cdef class ClonableIntArray(ClonableElement):
     cpdef object _getitem(self, int key)
     cpdef _setitem(self, int item, value)
     cpdef int index(self, int item) except -1
-    cpdef long int _hash_(self) except? -1
+    cpdef Py_hash_t _hash_(self) except? -1
     cpdef list list(self)

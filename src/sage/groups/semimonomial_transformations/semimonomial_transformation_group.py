@@ -53,13 +53,16 @@ TESTS::
     sage: TestSuite(S.an_element()).run()
 """
 from __future__ import annotations
-from sage.rings.integer import Integer
 
 from sage.groups.group import FiniteGroup
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.action import Action
 from sage.combinat.permutation import Permutation
 from sage.groups.semimonomial_transformations.semimonomial_transformation import SemimonomialTransformation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 
 class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
@@ -213,20 +216,19 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
                     raise TypeError('%s of type %s' % (autom, type(autom)) +
                                     ' is not coerceable to an automorphism')
             return self.Element(self, v, perm, autom)
-        else:
-            try:
-                if arg1.parent() is self:
-                    return arg1
-            except AttributeError:
-                pass
-            try:
-                from sage.rings.integer import Integer
-                if Integer(arg1) == 1:
-                    return self()
-            except TypeError:
-                pass
-            raise TypeError('the first argument must be an integer' +
-                            ' or an element of this group')
+        try:
+            if arg1.parent() is self:
+                return arg1
+        except AttributeError:
+            pass
+        try:
+            from sage.rings.integer import Integer
+            if Integer(arg1) == 1:
+                return self()
+        except TypeError:
+            pass
+        raise TypeError('the first argument must be an integer' +
+                        ' or an element of this group')
 
     def base_ring(self):
         r"""

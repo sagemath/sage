@@ -25,6 +25,23 @@ cdef extern from "gmp++/gmp++.h" namespace "Givaro":
         mpz_ptr get_mpz()
         mpz_srcptr get_mpz_const()
 
+cdef extern from "givaro/givrational.h" namespace "Givaro":
+    cdef cppclass Rational:
+        Rational()
+        Rational(int32_t)
+        Rational(int64_t)
+        Rational(uint32_t)
+        Rational(uint64_t)
+        Rational(Integer&)
+        Rational(int32_t, int32_t)
+        Rational(int64_t, int64_t)
+        Rational(uint32_t, uint32_t)
+        Rational(uint64_t, uint64_t)
+        Rational(Integer&, Integer&, int)
+
+        Integer nume()
+        Integer deno()
+
 cdef extern from "givaro/givcategory.h" namespace "Givaro":
     cdef cppclass Sporadic:
         pass
@@ -34,12 +51,20 @@ cdef extern from "givaro/givcategory.h" namespace "Givaro":
         pass
 
 cdef extern from "givaro/zring.h":
-    ## template<class _Element> class ZRing
+    # template<class _Element> class ZRing
     cdef cppclass ZRing "Givaro::ZRing<Givaro::Integer>":
         ctypedef Integer Element
         Element zero
         Element one
         Element mone
+
+cdef extern from "givaro/qfield.h":
+    # template<class RatElement> class QField
+    cdef cppclass QField "Givaro::QField<Givaro::Rational>":
+        ctypedef Rational Element
+        Element one
+        Element mOne
+        Element zero
 
 cdef extern from "givaro/modular-integral.h":
     cdef cppclass Modular_uint64 "Givaro::Modular<uint64_t>":
@@ -97,12 +122,12 @@ cdef extern from "givaro/modular-floating.h":
         ostream& write(ostream&)
 
 cdef extern from "givaro/givpoly1.h" namespace "Givaro":
-    ## template < typename T, typename A=std::allocator<T> >
-    ## class givvector : public __GIV_STANDARD_VECTOR<T,A>
-    cdef cppclass givvector [T,ALLOCATOR=*]:
+    # template < typename T, typename A=std::allocator<T> >
+    # class givvector : public __GIV_STANDARD_VECTOR<T,A>
+    cdef cppclass givvector [T, ALLOCATOR=*]:
         T& operator[](size_t i)
         size_t size()
 
-    ## template<class Domain, class StorageTag=Dense> class Poly1Dom
-    cdef cppclass Poly1Dom[Domain,StorageClass=*]:
+    # template<class Domain, class StorageTag=Dense> class Poly1Dom
+    cdef cppclass Poly1Dom[Domain, StorageClass=*]:
         Poly1Dom(Domain&)

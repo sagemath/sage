@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Enumerated sets
 """
@@ -234,13 +233,12 @@ class EnumeratedSets(CategoryWithAxiom):
                  self.next != self._next_from_iterator ):
                 return self._iterator_from_next()
             #Check to see if .unrank() is overridden in the subclass
-            elif self.unrank != self._unrank_from_iterator:
+            if self.unrank != self._unrank_from_iterator:
                 return self._iterator_from_unrank()
             #Finally, check to see if .list() is overridden in the subclass
-            elif self.list != self._list_default:
+            if self.list != self._list_default:
                 return self._iterator_from_list()
-            else:
-                raise NotImplementedError("iterator called but not implemented")
+            raise NotImplementedError("iterator called but not implemented")
 
         def is_empty(self):
             r"""
@@ -785,12 +783,11 @@ class EnumeratedSets(CategoryWithAxiom):
                 2
                 sage: C.rank(5) # indirect doctest
             """
-            counter = 0
-            for u in self:
+            for counter, u in enumerate(self):
                 if u == x:
                     return counter
-                counter += 1
             return None
+
         rank = _rank_from_iterator
 
         def _iterator_from_list(self):
@@ -929,12 +926,11 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: list(C.some_elements()) # indirect doctest
                 [1, 2, 3]
             """
-            nb = 0
-            for i in self:
+            for nb, i in enumerate(self):
                 yield i
-                nb += 1
-                if nb >= 100:
+                if nb >= 99:
                     break
+
         some_elements = _some_elements_from_iterator
 
         def random_element(self):
@@ -1035,8 +1031,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 ....:     def __contains__(self, obj):
                 ....:         if obj == 3:
                 ....:             return False
-                ....:         else:
-                ....:             return obj in C
+                ....:         return obj in C
                 sage: CC = CCls()
                 sage: CC._test_enumerated_set_contains()
                 Traceback (most recent call last):
@@ -1045,10 +1040,8 @@ class EnumeratedSets(CategoryWithAxiom):
                 of a finite enumerated set: {1,2,3}
             """
             tester = self._tester(**options)
-            i = 0
-            for w in self:
+            for i, w in enumerate(self, start=1):
                 tester.assertIn(w, self)
-                i += 1
                 if i > tester._max_runs:
                     return
 

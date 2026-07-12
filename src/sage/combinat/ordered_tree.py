@@ -411,7 +411,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             [[0, 0, 1], [1, 0, 0]]
         """
         from sage.combinat.parallelogram_polyomino import ParallelogramPolyomino
-        if self.node_number() == 1:
+        if self.number_of_nodes() == 1:
             return ParallelogramPolyomino([[1], [1]])
         upper_nodes = []
         lower_nodes = []
@@ -436,28 +436,26 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         def W(path):
             if path in w_coordinate:
                 return w_coordinate[path]
-            else:
-                return w_coordinate[path[:-1]]
+            return w_coordinate[path[:-1]]
 
         def H(path):
             if path in h_coordinate:
                 return h_coordinate[path]
-            else:
-                return h_coordinate[path[:-1]]
+            return h_coordinate[path[:-1]]
 
         lower_path = []
         for i in range(1, len(lower_nodes)):
             lower_path.append(0)
             lower_path += [1] * (W(lower_nodes[i]) - W(lower_nodes[i - 1]))
         lower_path.append(0)
-        lower_path += [1] * (self.node_number() - len(lower_path))
+        lower_path += [1] * (self.number_of_nodes() - len(lower_path))
 
         upper_path = []
         for i in range(1, len(upper_nodes)):
             upper_path.append(1)
             upper_path += [0] * (H(upper_nodes[i]) - H(upper_nodes[i - 1]))
         upper_path.append(1)
-        upper_path += [0] * (self.node_number() - len(upper_path))
+        upper_path += [0] * (self.number_of_nodes() - len(upper_path))
 
         return ParallelogramPolyomino([lower_path, upper_path])
 
@@ -824,11 +822,10 @@ class OrderedTree(AbstractClonableTree, ClonableList,
                     resl[i] = resl[i].normalize()
                 resl.sort(key=lambda t: t.sort_key())
             return res
-        else:
-            resl = self._get_list()
-            for i in range(len(resl)):
-                resl[i] = resl[i].normalize()
-            resl.sort(key=lambda t: t.sort_key())
+        resl = self._get_list()
+        for i in range(len(resl)):
+            resl[i] = resl[i].normalize()
+        resl.sort(key=lambda t: t.sort_key())
 
 
 # Abstract class to serve as a Factory no instance are created.
@@ -878,10 +875,9 @@ class OrderedTrees(UniqueRepresentation, Parent):
         """
         if n is None:
             return OrderedTrees_all()
-        else:
-            if not (isinstance(n, (Integer, int)) and n >= 0):
-                raise ValueError("n must be a nonnegative integer")
-            return OrderedTrees_size(Integer(n))
+        if not (isinstance(n, (Integer, int)) and n >= 0):
+            raise ValueError("n must be a nonnegative integer")
+        return OrderedTrees_size(Integer(n))
 
     @cached_method
     def leaf(self):
@@ -1047,7 +1043,7 @@ class OrderedTrees_size(OrderedTrees):
             sage: T([[],[]]) in T
             True
         """
-        return isinstance(x, self.element_class) and x.node_number() == self._size
+        return isinstance(x, self.element_class) and x.number_of_nodes() == self._size
 
     def _an_element_(self):
         """
@@ -1077,9 +1073,8 @@ class OrderedTrees_size(OrderedTrees):
         """
         if self._size == 0:
             return Integer(0)
-        else:
-            from .combinat import catalan_number
-            return catalan_number(self._size - 1)
+        from .combinat import catalan_number
+        return catalan_number(self._size - 1)
 
     def random_element(self):
         """
@@ -1177,7 +1172,7 @@ class OrderedTrees_size(OrderedTrees):
             []
         """
         res = self.element_class(self._parent_for, *args, **keywords)
-        if res.node_number() != self._size:
+        if res.number_of_nodes() != self._size:
             raise ValueError("wrong number of nodes")
         return res
 
