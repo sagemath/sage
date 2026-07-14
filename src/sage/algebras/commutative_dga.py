@@ -718,6 +718,14 @@ class Differential(UniqueRepresentation, Morphism,
         quotient ``H`` (see :meth:`cohomology_raw`) and the ``basis`` of
         the relevant homogeneous component.
 
+        INPUT:
+
+        - ``H`` -- vector space quotient, for example as produced by
+          :meth:`cohomology_raw`
+        - ``basis`` -- iterable with names of basis elements, for
+          example as produced by :meth:`basis` of the domain of this
+          differential in the appropriate degree
+
         Each class of ``H`` is lifted to a cocycle, expressed in terms of
         ``basis``, and wrapped in a :class:`CohomologyClass`. Shared by
         the singly-graded and multigraded :meth:`cohomology`.
@@ -879,6 +887,14 @@ class Differential_multigraded(Differential):
 
             sage: A.differential({}).degree_of_differential()
             (0, 0)
+
+        The total degree of the differential cannot be zero::
+
+            sage: C.<u,v,w> = GradedCommutativeAlgebra(QQ, degrees=((2,0), (1,0), (0,1)))
+            sage: C.differential({u: v*w})
+            Traceback (most recent call last):
+            ...
+            ValueError: the inferred total degree of the differential is not 1 or -1
         """
         Differential.__init__(self, A, im_gens, degree_of_differential)
 
