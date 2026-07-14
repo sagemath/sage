@@ -30,8 +30,11 @@ from sage.algebras.quantum_groups.all import *
 from sage.algebras.lie_conformal_algebras.all import *
 
 # Algebra base classes
+from sage.algebras.banff_cluster_algebra import *
+from sage.algebras.flir import *
 from sage.algebras.free_algebra import FreeAlgebra
 from sage.algebras.free_algebra_quotient import FreeAlgebraQuotient
+
 
 from sage.algebras.finite_dimensional_algebras.all import FiniteDimensionalAlgebra
 
@@ -67,3 +70,5 @@ lazy_import('sage.algebras.q_system', 'QSystem')
 lazy_import('sage.algebras.cluster_algebra', 'ClusterAlgebra')
 
 lazy_import('sage.algebras.yangian', 'Yangian')
+
+lazy_import('sage.algebras.flir', 'FLIR')
