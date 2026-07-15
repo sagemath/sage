@@ -416,7 +416,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
         return self._poly_ring(1)
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         """
         Compute the dual of this Frobenius isogeny.
 
