@@ -1,8 +1,12 @@
-# pyright: strict
-"""Configuration and fixtures for pytest.
+"""Sage's pytest plugin: configuration, collection hooks, and fixtures.
 
-This file configures pytest and provides some global fixtures.
-See https://docs.pytest.org/en/latest/index.html for more details.
+This module is loaded as a pytest plugin via ``addopts = "... -p
+sage._pytest_plugin"`` in ``pyproject.toml`` rather than as a ``conftest.py``.
+Loading it as a plugin (read from the rootdir config regardless of the working
+directory) means its command-line options -- ``--doctest`` and
+``--random-seed`` -- are registered even though there is no ``conftest.py`` at
+the repository root. See
+https://docs.pytest.org/en/latest/index.html for more details.
 """
 
 from __future__ import annotations
@@ -34,6 +38,57 @@ from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
+
+
+# Stash key holding the per-session Sage random seed (resolved in
+# ``pytest_configure`` and applied by the ``set_random_seed`` fixture).
+_random_seed_key = pytest.StashKey[int]()
+
+
+def _resolve_lazy_members(obj: object) -> None:
+    """
+    Eagerly resolve lazy members that cache themselves into ``obj``'s namespace.
+
+    The stdlib doctest finder iterates over ``obj.__dict__`` for both modules
+    and classes. Touching a lazy member during that walk resolves it and writes
+    the result back into the namespace, raising ``RuntimeError: dictionary
+    changed size during iteration``. Resolving them up front avoids that, and
+    does no extra work overall: the finder would resolve the same members while
+    walking ``obj``, and the resolved values are cached globally.
+
+    Two kinds of lazy member cause this:
+
+    - :class:`~sage.misc.lazy_import.LazyImport` objects stored directly in a
+      module (or class) namespace; and
+
+    - :class:`~sage.misc.lazy_attribute.lazy_class_attribute` descriptors, which
+      are looked up along the MRO but cache their value into the *subclass* that
+      they are accessed on (e.g. ``_axiom`` on a category with axiom).
+    """
+    from sage.misc.lazy_attribute import lazy_class_attribute
+    from sage.misc.lazy_import import LazyImport
+
+    if isinstance(obj, type):
+        names = {
+            name
+            for klass in obj.__mro__
+            for name, value in list(vars(klass).items())
+            if isinstance(value, (LazyImport, lazy_class_attribute))
+        }
+        for name in names:
+            try:
+                getattr(obj, name)
+            except Exception:
+                # Leave unresolvable members in place; the finder's usual
+                # missing-feature/module handling applies when they are reached.
+                pass
+    elif inspect.ismodule(obj):
+        for value in list(vars(obj).values()):
+            if isinstance(value, LazyImport):
+                try:
+                    value._get_object()
+                except Exception:
+                    pass
 
 
 def is_subpath(path: Path, parent: Path) -> bool:
@@ -81,7 +136,7 @@ class SageDoctestModule(DoctestModule):
                     obj = inspect.unwrap(obj)
 
                 # Type ignored because this is a private function.
-                return super()._find_lineno(  # type:ignore[misc]
+                return super()._find_lineno(  # type: ignore[misc]
                     obj,
                     source_lines,
                 )
@@ -91,9 +146,14 @@ class SageDoctestModule(DoctestModule):
             ) -> None:
                 if _is_mocked(obj):
                     return
+                # Resolve lazy members of obj before super()._find iterates
+                # obj.__dict__, to avoid "dictionary changed size during
+                # iteration" when the walk triggers a lazy import or
+                # lazy_class_attribute.
+                _resolve_lazy_members(obj)
                 with _patch_unwrap_mock_aware():
                     # Type ignored because this is a private function.
-                    super()._find(  # type:ignore[misc]
+                    super()._find(  # type: ignore[misc]
                         tests, obj, name, module, source_lines, globs, seen
                     )
 
@@ -117,6 +177,15 @@ class SageDoctestModule(DoctestModule):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
                     raise
+
+        # Honour the standard pytest opt-out: a module with ``__test__ = False``
+        # is not collected. We check it here (before the finder runs) because
+        # the stdlib doctest finder otherwise treats ``__test__`` as a dict of
+        # extra doctests and crashes on the bool. ``sage -t`` reads the raw
+        # source and ignores ``__test__``, so doctests still run there.
+        if getattr(module, "__test__", True) is False:
+            return
+
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
@@ -168,12 +237,6 @@ def pytest_collect_file(
 
     See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#std-hook-pytest_collect_file>`_.
     """
-    if (
-        file_path.parent.name == "combinat"
-        or file_path.parent.parent.name == "combinat"
-    ):
-        # Crashes CI for some reason
-        return IgnoreCollector.from_parent(parent)
     if file_path.suffix == ".pyx":
         # We don't allow pytests to be defined in Cython files.
         # Normally, Cython files are filtered out already by pytest and we only
@@ -191,65 +254,10 @@ def pytest_collect_file(
                 # This is an executable file.
                 return IgnoreCollector.from_parent(parent)
 
-            if (
-                (
-                    file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
-                    and file_path.parent.name == "categories"
-                )
-                or (
-                    file_path.name == "__init__.py"
-                    and file_path.parent.name == "crypto"
-                )
-                or (file_path.name == "__init__.py" and file_path.parent.name == "mq")
-            ):
-                # TODO: Fix these (import fails with "RuntimeError: dictionary changed size during iteration")
-                return IgnoreCollector.from_parent(parent)
-
-            if (
-                file_path.name in ("forker.py", "reporting.py")
-            ) and file_path.parent.name == "doctest":
-                # Fails with many errors due to different testing framework
-                return IgnoreCollector.from_parent(parent)
-
-            if (
-                (
-                    file_path.name == "arithgroup_generic.py"
-                    and file_path.parent.name == "arithgroup"
-                )
-                or (
-                    file_path.name == "pari.py"
-                    and file_path.parent.name == "lfunctions"
-                )
-                or (
-                    file_path.name == "permgroup_named.py"
-                    and file_path.parent.name == "perm_gps"
-                )
-                or (
-                    file_path.name == "finitely_generated.py"
-                    and file_path.parent.name == "matrix_gps"
-                )
-                or (
-                    file_path.name == "libgap_mixin.py"
-                    and file_path.parent.name == "groups"
-                )
-                or (
-                    file_path.name == "finitely_presented.py"
-                    and file_path.parent.name == "groups"
-                )
-                or (
-                    file_path.name == "classical_geometries.py"
-                    and file_path.parent.name == "generators"
-                )
-            ):
-                # Fails with "Fatal Python error"
-                return IgnoreCollector.from_parent(parent)
-
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
-def pytest_ignore_collect(
-    collection_path: Path, config: pytest.Config
-) -> bool | None:
+def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
     """
     This hook is called when collecting test files, and can be used to
     prevent considering this path for collection by returning ``True``.
@@ -280,6 +288,94 @@ def pytest_addoption(parser):
         help="Run doctests in all .py modules",
         dest="doctest",
     )
+    # Note: the ``long``/``longlong`` markers (declared in ``pyproject.toml``)
+    # run by default; select with the standard pytest marker expression, e.g.
+    # ``-m 'not longlong'``. We deliberately do not add ``--long``-style flags.
+    group.addoption(
+        "--random-seed",
+        type=int,
+        default=None,
+        metavar="SEED",
+        help=(
+            "Seed for Sage's random number generator, set before each test "
+            "(default: a fresh random seed, reported in the test header). "
+            "Can also be set via the SAGE_PYTEST_RANDOM_SEED environment variable."
+        ),
+        dest="random_seed",
+    )
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """
+    Resolve the Sage random seed once per session.
+
+    The seed is taken from ``--random-seed``, falling back to the
+    ``SAGE_PYTEST_RANDOM_SEED`` environment variable, and finally to a fresh
+    random seed. It is stashed on the config and applied before each test by
+    the :func:`set_random_seed` fixture, mirroring ``sage -t``.
+    """
+    import os
+
+    from sage.misc import randstate
+
+    seed = config.getoption("random_seed")
+    if seed is None:
+        env_seed = os.environ.get("SAGE_PYTEST_RANDOM_SEED")
+        seed = int(env_seed) if env_seed else None
+    if seed is None:
+        # Let Sage pick a fresh seed and record it so the run is reproducible.
+        randstate.set_random_seed()
+        seed = randstate.initial_seed()
+    config.stash[_random_seed_key] = seed
+
+
+def pytest_report_header(config: pytest.Config) -> str:
+    """Report the random seed so a failing run can be reproduced."""
+    seed = config.stash[_random_seed_key]
+    return f"Sage random seed: {seed} (re-run with --random-seed={seed})"
+
+
+def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]):
+    """
+    Skip collected tests whose required Sage features are missing.
+
+    Note that the ``long`` / ``longlong`` markers are intentionally *not*
+    skipped here: they run by default and are selected with the standard pytest
+    marker expression (e.g. ``-m 'not longlong'``); ``sage -t`` passes such an
+    expression for its internal pytest run.
+
+    See `pytest documentation <https://docs.pytest.org/en/stable/reference/reference.html#std-hook-pytest_collection_modifyitems>`_.
+    """
+    for item in items:
+        _skip_if_features_missing(item)
+
+
+def _skip_if_features_missing(item: pytest.Item) -> None:
+    """
+    Honour the ``optional`` marker: skip ``item`` unless every named Sage
+    feature is available, using the same detection as the doctest framework.
+
+    Feature names are those accepted by the doctest ``# optional - ...`` and
+    ``# needs ...`` tags, e.g. ``sage.symbolic``, ``sage.plot``, ``latex``,
+    ``pynormaliz``. Usage::
+
+        @pytest.mark.optional("sage.plot", "latex")
+        def test_something():
+            ...
+    """
+    features = [
+        name for marker in item.iter_markers(name="optional") for name in marker.args
+    ]
+    if not features:
+        return
+
+    from sage.doctest.external import available_software
+
+    missing = [name for name in features if name not in available_software]
+    if missing:
+        item.add_marker(
+            pytest.mark.skip(reason="missing Sage feature(s): " + ", ".join(missing))
+        )
 
 
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
@@ -336,6 +432,21 @@ def doctest_run(
 doctest.DocTestRunner.run = doctest_run
 
 
+@pytest.fixture(autouse=True)
+def set_random_seed(request: pytest.FixtureRequest):
+    """
+    Seed Sage's random number generator before each test.
+
+    This mirrors ``sage -t``: the same seed (resolved once per session in
+    :func:`pytest_configure`) is applied before every test, so a run is
+    reproducible with ``--random-seed=<seed>`` (the seed is printed in the
+    test header).
+    """
+    from sage.misc.randstate import set_random_seed as sage_set_random_seed
+
+    sage_set_random_seed(request.config.stash[_random_seed_key])
+
+
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """
@@ -371,6 +482,71 @@ def tmpfile():
     """
     from os import unlink
     from tempfile import NamedTemporaryFile
+
     t = NamedTemporaryFile(delete=False)
     yield t
     unlink(t.name)
+
+
+@pytest.fixture
+def assert_close():
+    r"""
+    Assert that two (possibly symbolic or exact) numbers are numerically close.
+
+    This is the Sage-aware counterpart of :func:`pytest.approx` for the cases
+    it does not handle directly, in particular symbolic and exact values:
+    both arguments are evaluated numerically (via :func:`complex`) before
+    being compared. Real, complex, rational, and symbolic inputs are all
+    accepted.
+
+    The tolerance follows :func:`math.isclose`: the values are close when
+    ``abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)``. This mirrors
+    the ``# rel tol`` / ``# abs tol`` doctest flags.
+
+    EXAMPLES (used as a pytest fixture)::
+
+        def test_sqrt(assert_close):
+            from sage.all import sqrt
+            assert_close(sqrt(2), 1.4142135623730951)
+            assert_close(sqrt(2), 1.41421, rel_tol=1e-5)
+    """
+    import cmath
+
+    def _assert_close(actual, expected, *, rel_tol=1e-9, abs_tol=0.0):
+        a = complex(actual)
+        e = complex(expected)
+        if not cmath.isclose(a, e, rel_tol=rel_tol, abs_tol=abs_tol):
+            raise AssertionError(
+                f"{actual!r} is not close to {expected!r} "
+                f"(|diff| = {abs(a - e):.3e}, rel_tol={rel_tol}, abs_tol={abs_tol})"
+            )
+
+    return _assert_close
+
+
+@pytest.fixture
+def run_test_suite():
+    r"""
+    Run Sage's :class:`~sage.misc.sage_unittest.TestSuite` on an object.
+
+    This wraps the ubiquitous ``TestSuite(obj).run(...)`` idiom used by unit
+    tests. Crucially it defaults ``raise_on_failure=True`` so that a failing
+    test suite actually fails the pytest test: with the bare ``TestSuite.run``
+    default (``raise_on_failure=False``) failures are only printed, not raised.
+
+    Any keyword arguments are forwarded to
+    :meth:`~sage.misc.sage_unittest.TestSuite.run` (e.g. ``skip``,
+    ``max_runs``, ``verbose``).
+
+    EXAMPLES (used as a pytest fixture)::
+
+        def test_my_parent(run_test_suite):
+            from sage.all import ZZ
+            run_test_suite(ZZ)
+    """
+    from sage.misc.sage_unittest import TestSuite
+
+    def _run(obj, *, raise_on_failure=True, **kwargs):
+        TestSuite(obj).run(raise_on_failure=raise_on_failure, **kwargs)
+
+    return _run

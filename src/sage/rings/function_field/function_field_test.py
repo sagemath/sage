@@ -84,7 +84,7 @@ pairs = [("J", None),
 
 @pytest.mark.long
 @pytest.mark.parametrize("ff,max_runs", pairs)
-def test_function_field_testsuite(ff, max_runs, request) -> None:
+def test_function_field_testsuite(ff, max_runs, request, run_test_suite) -> None:
     r"""
     Run the TestSuite() on some function fields that are
     constructed in the documentation. They are slow, random, and not
@@ -101,17 +101,13 @@ def test_function_field_testsuite(ff, max_runs, request) -> None:
     - ``request`` -- fixture; a pytest built-in
 
     """
-    # The sage.misc.sage_unittest.TestSuite import is local to avoid
-    # pytest warnings.
-    from sage.misc.sage_unittest import TestSuite
-
     # Convert the fixture name (string) to an actual object using the
     # built-in "request" fixture.
     ff = request.getfixturevalue(ff)
 
     # Pass max_runs only if it's not None; otherwise use the default
-    run_args = {"verbose": True, "raise_on_failure": True}
+    run_args = {"verbose": True}
     if max_runs:
         run_args["max_runs"] = max_runs
 
-    TestSuite(ff).run(**run_args)
+    run_test_suite(ff, **run_args)

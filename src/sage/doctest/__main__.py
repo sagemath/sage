@@ -211,7 +211,9 @@ def main():
 
     # Never run "long long" tests via sage -t (or python -m
     # sage.doctest) to avoid catching users by surprise with
-    # tests that run for several minutes.
+    # tests that run for several minutes. A plain ``pytest`` invocation runs
+    # them (and is how they get CI coverage); we restrict here with the
+    # standard pytest marker expression.
     pytest_markers = "not longlong"
     if not args.long:
         # Multiple "-m" flags cannot be combined,
@@ -221,6 +223,11 @@ def main():
         # so we construct one big compound statement instead.
         pytest_markers += " and not long"
     pytest_options = ["-m", pytest_markers]
+
+    # Seed pytest with the same random seed as the doctest run, so the whole
+    # sage -t invocation is reproducible from the single seed it reports.
+    if DC.options.random_seed is not None:
+        pytest_options += ["--random-seed", str(DC.options.random_seed)]
 
     if pytest_nprocs != 1 and not find_spec("xdist"):
         # The default is "1", so anything else is an explicit request

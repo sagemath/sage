@@ -87,6 +87,13 @@ from sage.structure.sage_object import SageObject
 if typing.TYPE_CHECKING:
     from sage.doctest.control import DocTestController
 
+# Tell pytest not to collect the doctests in this module: they exercise the
+# doctesting framework itself (spoofing stdin/stdout, nested doctest runners),
+# which conflicts with pytest's output capture (e.g. ``sys.stdout.fileno()``
+# raises under capture). They run fine under ``sage -t``, which ignores this
+# flag and reads the raw source.
+__test__ = False
+
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.

@@ -20,14 +20,10 @@ def w():
 
 @pytest.mark.long
 @pytest.mark.parametrize("idx", [0,1])
-def test_finite_extension_from_limit_valuation_w(w, idx):
+def test_finite_extension_from_limit_valuation_w(w, idx, run_test_suite):
     r"""
     Run the ``TestSuite()`` for two examples given in the
     ``FiniteExtensionFromLimitValuation`` documentation.
     """
-    from sage.misc.sage_unittest import TestSuite
-
     # fewer max_runs, these are kind of slow
-    TestSuite(w[idx]).run(verbose=True,
-                          raise_on_failure=True,
-                          max_runs=512)
+    run_test_suite(w[idx], verbose=True, max_runs=512)

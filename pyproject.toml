@@ -109,14 +109,22 @@ platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 # it does is try to import sagemath_giac.
 norecursedirs = "local prefix venv build builddir pkgs .git .github src/doc src/bin src/sage/libs/giac tools subprojects"
 python_files = "*_test.py"
-# The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
-addopts = "--import-mode importlib -p no:warnings --strict-markers"
+# The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest.
+# The "no:faulthandler" hands signal handling to cysignals: pytest's faulthandler installs its own SIGSEGV/SIGFPE
+# handlers (via sigaltstack) that conflict with cysignals, turning signals that Sage handles internally into
+# spurious "Fatal Python error" crashes during doctest collection/execution.
+# "-p sage._pytest_plugin" loads Sage's pytest plugin at startup. This is read
+# from this rootdir config regardless of the working directory, so the plugin's
+# options (--doctest, --random-seed) are registered even when there is no
+# conftest.py at the repo root. See sage/_pytest_plugin.py.
+addopts = "--import-mode importlib -p no:warnings -p no:faulthandler -p sage._pytest_plugin --strict-markers"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
 # https://docs.pytest.org/en/stable/reference/reference.html#confval-consider_namespace_packages
 consider_namespace_packages = true
 markers = [
-  "long: long-running tests",
-  "longlong: extremely long-running tests",
+  "long: long-running tests (run by default; exclude with -m 'not long')",
+  "longlong: extremely long-running tests (run by default; exclude with -m 'not longlong')",
+  "optional(*features): skip the test unless all named Sage features are present (mirrors the doctest '# optional'/'# needs' tags)",
 ]
 
 # External dependencies in the format proposed by https://peps.python.org/pep-0725

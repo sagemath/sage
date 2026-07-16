@@ -363,8 +363,8 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
             sage: type(G)
             <class 'sage.groups.matrix_gps.finitely_generated.FinitelyGeneratedMatrixGroup_generic_with_category'>
 
-            sage: from sage.groups.matrix_gps.finitely_generated import \
-            ....:     FinitelyGeneratedMatrixGroup_generic
+            sage: from sage.groups.matrix_gps.finitely_generated import (
+            ....:     FinitelyGeneratedMatrixGroup_generic)
             sage: G = FinitelyGeneratedMatrixGroup_generic(2, QQ, [matrix(QQ, [[1,2], [3,4]])])
             sage: G.gens()
             (
