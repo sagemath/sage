@@ -64,7 +64,7 @@ jobs:
         if: success() || failure()
         run: |
           rm -f upstream/*do-not-distribute*
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
           path: |
@@ -101,7 +101,7 @@ jobs:
           python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -242,7 +242,7 @@ jobs:
               (cd unpacked && tar xfz - ) < $sdist
           done
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl

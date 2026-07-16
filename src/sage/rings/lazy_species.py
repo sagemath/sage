@@ -1066,6 +1066,27 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         return HadamardProductSpeciesElement(self, other)
 
+    def derivative(self):
+        r"""
+        Return the derivative species of ``self``.
+
+        This is defined on objects as `F'[U] = F[U \sqcup \{*\}]` where `*`
+        is a distinguished label not in `U`. If `\sigma: U \to V` is
+        a bijection, then `F'[\sigma]` is obtained by applying `F` to the
+        unique bijection `U \sqcup \{*\} \to V \sqcup \{*\}` that agrees
+        with `\sigma` on `U` and fixes `*`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: (X^3).derivative()[2]
+            3*X^2
+            sage: Lin = 1 / (1 - X)
+            sage: Lin.derivative()[4] == (Lin^2)[4]
+            True
+        """
+        return DerivativeSpeciesElement(self)
+
 
 class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
     r"""
@@ -1917,6 +1938,63 @@ class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
         """
         labels = _label_sets(self.parent()._arity, labels)
         yield from itertools.product(self._left.structures(*labels), self._other.structures(*labels))
+
+
+class DerivativeSpeciesElement(LazyCombinatorialSpeciesElement):
+    def __init__(self, F):
+        r"""
+        Initialize the derivative of ``F``.
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E2 = L(SymmetricGroup(2))
+            sage: D = (X^2*E2).derivative()
+            sage: D[3] == (2*X*E2 + X^3)[3]
+            True
+            sage: TestSuite(D).run(skip=['_test_category', '_test_pickling'])
+        """
+        if F.parent()._arity != 1:
+            raise NotImplementedError("derivative is not yet implemented for multisort species")
+
+        self._F = F
+
+        coeff_stream = Stream_function(
+            lambda n: F[n + 1].derivative(),
+            F.parent()._sparse,
+            max(F._coeff_stream._approximate_order - 1, 0),
+        )
+        super().__init__(F.parent(), coeff_stream)
+
+    def generating_series(self):
+        r"""
+        Return the exponential generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: E.derivative().generating_series() - E.generating_series()
+            O(X^7)
+
+            sage: Lin = 1 / (1 - X)
+            sage: Lin.derivative().generating_series() - (Lin^2).generating_series()
+            O(X^7)
+        """
+        return self._F.generating_series().derivative()
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: E.derivative().cycle_index_series() - E.cycle_index_series()
+            O^6
+        """
+        return self._F.cycle_index_series().derivative_with_respect_to_p1()
 
 
 class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):

@@ -505,7 +505,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         return self.to_isogeny_chain().kernel_polynomial()
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the dual of this fractional isogeny.
 
@@ -516,7 +516,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             sage: ((phi + phi) / 2).dual() == phi.dual()
             True
         """
-        psi = EllipticCurveHom_fractional(self._phi.dual(), self._d)
+        psi = EllipticCurveHom_fractional(self._phi.dual(algorithm=algorithm), self._d)
         psi.dual.set_cache(self)
         return psi
 

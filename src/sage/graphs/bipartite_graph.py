@@ -829,12 +829,26 @@ class BipartiteGraph(Graph):
             RuntimeError: cannot add duplicate vertex to other partition
             sage: (bg.left, bg.right)
             ({0, 1, 2}, set())
+            sage: bg.add_vertices([0, 1, 2], left=[False])
+            Traceback (most recent call last):
+            ...
+            ValueError: zip() argument 2 is longer than argument 1
+
+
+        Check that :issue:`42512` is fixed::
+
+            sage: bg = BipartiteGraph()
+            sage: bg.add_vertices(iter(range(5)), left=True)
+            sage: list(bg)
+            [0, 1, 2, 3, 4]
         """
         # sanity check on partition specifiers
         if left and right:  # also triggered if both lists are specified
             raise RuntimeError("only one partition may be specified")
         if not (left or right):
             raise RuntimeError("partition must be specified (e.g. left=True)")
+
+        vertices = list(vertices)
 
         # handle partitions
         if left and (not isinstance(left, Iterable)):
@@ -849,7 +863,7 @@ class BipartiteGraph(Graph):
                 left = [not tf for tf in right]
             new_left = set()
             new_right = set()
-            for tf, vv in zip(left, vertices):
+            for tf, vv in zip(left, vertices, strict=True):
                 if tf:
                     new_left.add(vv)
                 else:
@@ -1316,6 +1330,218 @@ class BipartiteGraph(Graph):
         """
         if new is True:
             raise ValueError("loops are not allowed in bipartite graphs")
+
+    def relabel(self, perm=None, inplace=True, return_map=False, check_input=True, complete_partial_function=True, immutable=None):
+        r"""
+        Relabel the vertices of ``self``.
+
+        INPUT:
+
+        - ``perm`` -- a function, dictionary, iterable, permutation, or
+          ``None`` (default: ``None``)
+
+        - ``inplace`` -- boolean (default: ``True``)
+
+        - ``return_map`` -- boolean (default: ``False``)
+
+        - ``check_input`` -- boolean; whether to test input for
+          correctness. *This can potentially be very time-consuming !*
+
+        - ``complete_partial_function`` -- boolean; whether to automatically
+          complete the permutation if some elements of the graph are not
+          associated with any new name. In this case, those elements are not
+          relabeled *This can potentially be very time-consuming !*.
+
+        - ``immutable`` -- boolean; with ``inplace=False``, whether to create
+          a mutable/immutable relabelled copy. ``immutable=None`` (default)
+          means that the graph and its copy will behave the same way.
+
+        If ``perm`` is a function ``f``, then each vertex ``v`` is
+        relabeled to ``f(v)``.
+
+        If ``perm`` is a dictionary ``d``, then each vertex ``v`` (which should
+        be a key of ``d``) is relabeled to ``d[v]``.
+
+        If ``perm`` is a list (or more generally, any iterable) of
+        length ``n``, then the first vertex returned by
+        ``G.vertices(sort=True)``
+        is relabeled to ``l[0]``, the second to ``l[1]``, ...
+
+        If ``perm`` is a permutation, then each vertex ``v`` is
+        relabeled to ``perm(v)``.
+
+        If ``perm`` is ``None``, the graph is relabeled to be on the
+        vertices `\{0,1,...,n-1\}`. This is *not* any kind of canonical
+        labeling, but it is consistent (relabeling twice will give the
+        same result).
+
+        If ``inplace`` is ``True``, the graph is modified in place and
+        ``None`` is returned. Otherwise a relabeled copy of the graph
+        is returned.
+
+        If ``return_map`` is ``True`` a dictionary representing the
+        relabelling map is returned (incompatible with ``inplace==False``).
+
+        EXAMPLES::
+
+            sage: G = BipartiteGraph(graphs.PathGraph(3))
+            sage: G.am()                                                                # needs sage.modules
+            [0 1 0]
+            [1 0 1]
+            [0 1 0]
+
+        Relabeling using a dictionary. Note that the dictionary does not define
+        the new label of vertex `0`::
+
+            sage: G.relabel({1:2,2:1}, inplace=False).am()                              # needs sage.modules
+            [0 0 1]
+            [0 0 1]
+            [1 1 0]
+
+        This is because the method automatically "extends" the relabeling to the
+        missing vertices (whose label will not change). Checking that all
+        vertices have an image can require some time, and this feature can be
+        disabled (at your own risk)::
+
+            sage: G.relabel({1:2,2:1}, inplace=False,                                   # needs sage.modules
+            ....:           complete_partial_function=False).am()
+            Traceback (most recent call last):
+            ...
+            KeyError: 0
+
+        Relabeling using a list::
+
+            sage: G.relabel([0,2,1], inplace=False).am()                                # needs sage.modules
+            [0 0 1]
+            [0 0 1]
+            [1 1 0]
+
+        Relabeling using an iterable::
+
+            sage: G.relabel(iter((0,2,1)), inplace=False).am()                          # needs sage.modules
+            [0 0 1]
+            [0 0 1]
+            [1 1 0]
+
+        Relabeling using a Sage permutation::
+
+            sage: G = BipartiteGraph(graphs.PathGraph(3))
+            sage: from sage.groups.perm_gps.permgroup_named import SymmetricGroup       # needs sage.groups
+            sage: S = SymmetricGroup(3)                                                 # needs sage.groups
+            sage: gamma = S('(1,2)')                                                    # needs sage.groups
+            sage: G.relabel(gamma, inplace=False).am()                                  # needs sage.groups sage.modules
+            [0 0 1]
+            [0 0 1]
+            [1 1 0]
+
+            sage: C4 = BipartiteGraph(graphs.CycleGraph(4))
+            sage: C4.relabel({u: str(u) for u in C4}, inplace=True)
+            sage: ar = C4.automorphism_group().random_element()
+            sage: R = C4.relabel(ar, inplace=False)
+            sage: perm = C4.is_isomorphic(R, certificate=True)[1]
+            sage: perm == {u: ar(u) for u in C4}
+            True
+
+        Relabeling using an injective function::
+
+            sage: G.edges(sort=True)
+            [(0, 1, None), (1, 2, None)]
+            sage: H = G.relabel(lambda i: i+10, inplace=False)
+            sage: H.vertices(sort=True)
+            [10, 11, 12]
+            sage: H.edges(sort=True)
+            [(10, 11, None), (11, 12, None)]
+
+        Relabeling using a non injective function has no meaning::
+
+            sage: G.edges(sort=True)
+            [(0, 1, None), (1, 2, None)]
+            sage: G.relabel(lambda i: 0, inplace=False)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Non injective relabeling
+
+        But this test can be disabled, which can lead to ... problems::
+
+            sage: G.edges(sort=True)
+            [(0, 1, None), (1, 2, None)]
+            sage: G.relabel(lambda i: 0, check_input = False)
+            sage: G.edges(sort=True)
+            []
+
+        Recovering the relabeling with ``return_map``::
+
+            sage: G = BipartiteGraph(graphs.CubeGraph(3))
+            sage: G.relabel(range(8), return_map=True)
+            {'000': 0,
+             '001': 1,
+             '010': 2,
+             '011': 3,
+             '100': 4,
+             '101': 5,
+             '110': 6,
+             '111': 7}
+
+        When no permutation is given, the relabeling is done to integers
+        from 0 to N-1 but in an arbitrary order::
+
+            sage: G = BipartiteGraph(graphs.CubeGraph(3))
+            sage: G.vertices(sort=True)
+            ['000', '001', '010', '011', '100', '101', '110', '111']
+            sage: G.relabel()
+            sage: G.vertices(sort=True)
+            [0, 1, 2, 3, 4, 5, 6, 7]
+
+        In the above case, the mapping is arbitrary but consistent::
+
+            sage: map1 = G.relabel(inplace=False, return_map=True)
+            sage: map2 = G.relabel(inplace=False, return_map=True)
+            sage: map1 == map2
+            True
+
+        ::
+
+            sage: G = BipartiteGraph(graphs.PathGraph(3))
+            sage: G.relabel(lambda i: i+10, return_map=True)
+            {0: 10, 1: 11, 2: 12}
+
+        TESTS::
+
+            sage: G = BipartiteGraph({1: [2,3]}, partition=({1}, {2, 3}))
+            sage: H, perm = G.relabel({1: 'a'}, inplace=False, return_map=True)
+            sage: perm
+            {1: 'a', 2: 2, 3: 3}
+
+        Ensure that the underlying bipartition is updated (:issue:`42509`)::
+
+            sage: H.bipartition()
+            ({'a'}, {2, 3})
+            sage: G.relabel({3: 'z'})
+            sage: G.bipartition()
+            ({1}, {2, 'z'})
+
+        """
+        x = GenericGraph.relabel(
+            self,
+            perm=perm,
+            inplace=inplace,
+            return_map=True,
+            check_input=check_input,
+            complete_partial_function=complete_partial_function,
+            immutable=immutable,
+        )
+
+        G, perm = (self, x) if inplace else x
+        G.left = {perm[v] for v in G.left}
+        G.right = {perm[v] for v in G.right}
+
+        if inplace and return_map:
+            return perm
+        if inplace:
+            return
+        if return_map:
+            return G, perm
+        return G
 
     def is_bipartite(self, certificate=False):
         r"""
