@@ -1826,6 +1826,77 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                         atoms[B] += e * f
             return M(atoms, check=False)
 
+        def derivative(self):
+            r"""
+            Return the derivative of ``self``.
+
+            We use the molecular derivative formula from Proposition 10 of
+            Section 2.6 in [BLL1998]_.
+
+            Note that the result is a polynomial species rather than
+            a molecular species.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X")
+                sage: X = M(SymmetricGroup(1))
+                sage: E2 = M(SymmetricGroup(2))
+                sage: (X*E2).derivative()
+                E_2 + X^2
+                sage: (X*E2).derivative().parent()
+                Polynomial species in X over Integer Ring
+                sage: (X*E2).derivative().is_molecular()
+                False
+
+            TESTS::
+
+                sage: M = MolecularSpecies("X")
+                sage: [sum(1 for m in M.subset(n) if m.derivative().is_molecular()) for n in range(1, 7)]
+                [1, 1, 2, 5, 5, 16]
+                sage: oeis(_) # optional - internet
+                0: A002106: Number of transitive permutation groups of degree n.
+            """
+            def delete_point_from_permutation(g, r, m):
+                r"""
+                Delete the fixed point `r` from a permutation of `\{1,\dots, m\}`.
+
+                The permutation `g` is assumed to fix `r`. The remaining points are
+                relabelled increasingly in `{1,\dots, m - 1}`.
+                """
+                relabel = {i: i if i < r else i - 1 for i in range(1, m + 1) if i != r}
+                cycles = []
+                for cycle in g.cycle_tuples():
+                    if r in cycle:
+                        continue
+                    new_cycle = tuple(relabel[i] for i in cycle)
+                    if len(new_cycle) > 1:
+                        cycles.append(new_cycle)
+                return tuple(cycles)
+
+            M = self.parent()
+            if M._arity != 1:
+                raise NotImplementedError("derivative is not yet implemented for multisort species")
+            P = PolynomialSpecies(ZZ, M._indices._names)
+            m = sum(self.grade())
+            if m == 0:
+                return P.zero()
+            if m == 1:
+                return P.one()
+            H, _ = self.permutation_group()
+            ans = P.zero()
+            for orbit in H.orbits():
+                r = min(orbit)
+                H_r = libgap.Stabilizer(H.gap(), r)
+                gens = []
+                for g in H_r.GeneratorsOfGroup().sage():
+                    cycles = delete_point_from_permutation(g, r, m)
+                    if cycles:
+                        gens.append(cycles)
+                H_r_star = PermutationGroup(gens, domain=range(1, m))
+                ans += P(M(H_r_star))
+            return ans
+
         def structures(self, *labels):
             r"""
             Iterate over the structures on the given set of labels.
@@ -2026,6 +2097,29 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 result_m *= result_a ** e
             result += c * result_m
         return result
+
+    def derivative(self):
+        r"""
+        Return the derivative of ``self``.
+
+        TESTS::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, ["X"])
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: (X^3).derivative()
+            3*X^2
+            sage: (E2^2 + X).derivative()
+            1 + 2*X*E_2
+            sage: E2(E2).derivative()
+            X*E_2
+        """
+        P = self.parent()
+        if P._arity != 1:
+            raise NotImplementedError("derivative is not yet implemented for multisort species")
+        return sum((c * P(M.derivative()) for M, c in self.monomial_coefficients().items()),
+                    P.zero())
 
     def hadamard_product(self, other):
         r"""
