@@ -1,10 +1,10 @@
 # distutils: extra_compile_args = -D_XPG6
 # flags chosen from libs/flint/fmpz_poly.pyx
 r"""
-FLINT nmod_mat class wrapper
+Dense matrices over `\Zmod{n}` for `n < 2^{64}` using FLINT
 
-This file implements matrices over `\ZZ/N\ZZ` for `N < 2^{64}` (or `N < 2^{32}` on 32-bit systems).
-It also adds some capabilities for composite `N` that are not present in FLINT.
+This file implements matrices over `\Zmod{n}` for `n < 2^{64}` (or `n < 2^{32}` on 32-bit systems).
+It also adds some capabilities for composite `n` that are not present in FLINT.
 
 AUTHORS:
 
@@ -72,7 +72,7 @@ MAX_MODULUS = (sys.maxsize + 1) << 1
 
 cdef class Matrix_modn_dense_flint(Matrix_dense):
     r"""
-    Matrices modulo `N` for `N < 2^{63}`
+    Matrices modulo `n` for `n < 2^{64}` (or `n < 2^{32}` on 32-bit systems).
 
     EXAMPLES::
 

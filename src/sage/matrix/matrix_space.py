@@ -125,36 +125,6 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
         sage: get_matrix_class(IntegerModRing(3), 4, 4, False, 'meataxe')   # optional - meataxe
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
-        sage: get_matrix_class(IntegerModRing(4), 4, 4, False, 'meataxe')
-        Traceback (most recent call last):
-        ...
-        ValueError: 'meataxe' matrix can only deal with finite fields of order < 256
-        sage: get_matrix_class(GF(next_prime(255)), 4, 4, False, 'meataxe')             # needs sage.rings.finite_rings
-        Traceback (most recent call last):
-        ...
-        ValueError: 'meataxe' matrix can only deal with finite fields of order < 256
-
-        sage: get_matrix_class(ZZ, 3, 5, False, 'crazy_matrix')
-        Traceback (most recent call last):
-        ...
-        ValueError: unknown matrix implementation 'crazy_matrix' over Integer Ring
-        sage: get_matrix_class(GF(3), 2, 2, False, 'm4ri')
-        Traceback (most recent call last):
-        ...
-        ValueError: 'm4ri' matrices are only available for fields of characteristic 2
-        and order <= 65536
-        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-float')                # needs sage.libs.linbox
-        Traceback (most recent call last):
-        ...
-        ValueError: 'linbox-float' matrices can only deal with order < 256
-        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-double')               # needs sage.libs.linbox
-        Traceback (most recent call last):
-        ...
-        ValueError: 'linbox-double' matrices can only deal with order < 94906266
-
-        sage: get_matrix_class(Zmod(2**64 - 1), 10, 10, False, 'flint')
-        <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
-
         sage: type(matrix(SR, 2, 2, 0))
         <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
         sage: type(matrix(GF(7), 2, range(4)))
@@ -189,6 +159,48 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(matrix(GF(125, 'z'), 2, range(4)))                       # optional - meataxe, needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+
+    TESTS::
+
+        sage: get_matrix_class(IntegerModRing(4), 4, 4, False, 'meataxe')
+        Traceback (most recent call last):
+        ...
+        ValueError: 'meataxe' matrix can only deal with finite fields of order < 256
+        sage: get_matrix_class(GF(next_prime(255)), 4, 4, False, 'meataxe')             # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: 'meataxe' matrix can only deal with finite fields of order < 256
+
+        sage: get_matrix_class(ZZ, 3, 5, False, 'crazy_matrix')
+        Traceback (most recent call last):
+        ...
+        ValueError: unknown matrix implementation 'crazy_matrix' over Integer Ring
+        sage: get_matrix_class(GF(3), 2, 2, False, 'm4ri')
+        Traceback (most recent call last):
+        ...
+        ValueError: 'm4ri' matrices are only available for fields of characteristic 2
+        and order <= 65536
+
+        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-float')                # needs sage.libs.linbox
+        Traceback (most recent call last):
+        ...
+        ValueError: 'linbox-float' matrices are only available over Z/N with N < 256
+        sage: get_matrix_class(Zmod(2**30), 2, 2, False, 'linbox-double')               # needs sage.libs.linbox
+        Traceback (most recent call last):
+        ...
+        ValueError: 'linbox-double' matrices are only available over Z/N with N < 94906266
+
+        sage: get_matrix_class(GF(25, 'x'), 2, 2, False, 'linbox')                      # needs sage.libs.linbox
+        Traceback (most recent call last):
+        ...
+        ValueError: 'linbox-float' matrices are only available over Z/N with N < 256
+
+        sage: get_matrix_class(Zmod(2**64 - 1), 10, 10, False, 'flint')
+        <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+        sage: get_matrix_class(GF(25, 'x'), 2, 2, False, 'flint')                      # needs sage.rings.finite_rings
+        Traceback (most recent call last):
+        ...
+        ValueError: 'flint' matrices are only available over the integers, the rationals and Z/N with N < 2^64
     """
     if isinstance(implementation, type):
         return implementation
@@ -367,10 +379,10 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             if R is sage.rings.rational_field.QQ:
                 from . import matrix_rational_dense
                 return matrix_rational_dense.Matrix_rational_dense
-
-            from . import matrix_modn_dense_flint
-            if R.order() < matrix_modn_dense_flint.MAX_MODULUS:
-                return matrix_modn_dense_flint.Matrix_modn_dense_flint
+            if isinstance(R, sage.rings.abc.IntegerModRing):
+                from . import matrix_modn_dense_flint
+                if R.order() < matrix_modn_dense_flint.MAX_MODULUS:
+                    return matrix_modn_dense_flint.Matrix_modn_dense_flint
             raise ValueError("'flint' matrices are only available over the integers, the rationals and Z/N with N < 2^64")
 
         if implementation == 'm4ri':
@@ -404,19 +416,22 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                 from . import matrix_cyclo_dense
                 return matrix_cyclo_dense.Matrix_cyclo_dense
             raise ValueError("'rational' matrices are only available over a cyclotomic field")
-        from . import matrix_modn_dense_float
-        if implementation == 'linbox':
-            implementation = 'linbox-float' if R.order() < matrix_modn_dense_float.MAX_MODULUS else 'linbox-double'
-        if implementation == 'linbox-float':
-            if R.order() < matrix_modn_dense_float.MAX_MODULUS:
-                return matrix_modn_dense_float.Matrix_modn_dense_float
-            raise ValueError("'linbox-float' matrices can only deal with order < %s" % matrix_modn_dense_float.MAX_MODULUS)
 
-        if implementation == 'linbox-double':
-            from . import matrix_modn_dense_double
-            if R.order() < matrix_modn_dense_double.MAX_MODULUS:
-                return matrix_modn_dense_double.Matrix_modn_dense_double
-            raise ValueError("'linbox-double' matrices can only deal with order < %s" % matrix_modn_dense_double.MAX_MODULUS)
+        if implementation.startswith('linbox'):
+            from . import matrix_modn_dense_float
+            if implementation == 'linbox':
+                implementation = 'linbox-float' if R.order() < matrix_modn_dense_float.MAX_MODULUS else 'linbox-double'
+
+            if implementation == 'linbox-float':
+                if isinstance(R, sage.rings.abc.IntegerModRing) and R.order() < matrix_modn_dense_float.MAX_MODULUS:
+                    return matrix_modn_dense_float.Matrix_modn_dense_float
+                raise ValueError("'linbox-float' matrices are only available over Z/N with N < %s" % matrix_modn_dense_float.MAX_MODULUS)
+
+            if implementation == 'linbox-double':
+                from . import matrix_modn_dense_double
+                if isinstance(R, sage.rings.abc.IntegerModRing) and R.order() < matrix_modn_dense_double.MAX_MODULUS:
+                    return matrix_modn_dense_double.Matrix_modn_dense_double
+                raise ValueError("'linbox-double' matrices are only available over Z/N with N < %s" % matrix_modn_dense_double.MAX_MODULUS)
 
         if implementation == 'generic':
             from sage.matrix.matrix_generic_dense import Matrix_generic_dense
@@ -846,6 +861,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
            - ``'meataxe'`` -- finite fields, needs to install the optional package meataxe
 
            - ``m4ri`` -- for characteristic 2 using M4RI library
+
+           - ``linbox`` -- automatically determine which of ``linbox-float`` or ``linbox-double`` to use
 
            - ``linbox-float`` -- for integer mod rings up to `2^8 = 256`
 
