@@ -55,7 +55,7 @@ jobs:
 
       - name: Deploy to Netlify
         id: deploy-netlify
-        uses: netlify/actions/cli@master
+        uses: netlify/actions/cli@3185065f4ab2f6df6f2ef41ee013626e1c02a426 # master
         with:
           args: deploy --dir=doc/doc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
         env:
@@ -69,7 +69,7 @@ jobs:
       # the nwtgck/actions-netlify action for that, except for that it is not
       # (yet) working in workflow_run context: https://github.com/nwtgck/actions-netlify/issues/545
       - name: Add/Update deployment status PR comment
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           number: ${{ steps.source-run-info.outputs.pullRequestNumber }}
           header: preview-comment

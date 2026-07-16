@@ -17,6 +17,9 @@ permissions:
 
 env:
   PYTHON_VERSION: 3.12
+  SAGE_USE_CDNS: "yes"
+  SAGE_LIVE_DOC: "yes"
+  SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
 
 jobs:
   livedoc:
@@ -33,7 +36,7 @@ jobs:
           tool-cache: true
 
       - name: Cache conda packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/conda_pkgs_dir
           key:
@@ -57,6 +60,12 @@ jobs:
           activate-environment: sage-dev
           environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
 
+      - name: Patch jupyter-sphinx for live doc
+        shell: bash -l {0}
+        run: |
+          JUPYTER_SPHINX_DIR=$(python -c "import jupyter_sphinx; print(jupyter_sphinx.__path__[0])")
+          patch -p2 -d "$JUPYTER_SPHINX_DIR" < build/pkgs/jupyter_sphinx/patches/0001-Patch-for-sage-live-doc.patch
+
       - name: Build Sage
         shell: bash -l {0}
         run: |
@@ -65,21 +74,17 @@ jobs:
           export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
+      - name: Build live doc
+        shell: bash -l {0}
+        run: |
+          meson compile -C builddir doc-html -j2
+
       - name: Build pdf doc
         shell: bash -l {0}
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
           meson compile -C builddir doc-pdf
-
-      - name: Build live doc
-        shell: bash -l {0}
-        run: |
-          meson compile -C builddir doc-html -j1
-        env:
-          SAGE_USE_CDNS: yes
-          SAGE_LIVE_DOC: yes
-          SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
 
       - name: Copy doc
         id: copy
@@ -91,7 +96,7 @@ jobs:
           zip -r livedoc.zip doc
 
       - name: Upload livedoc
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: livedoc
           path: livedoc.zip
