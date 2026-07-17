@@ -38,7 +38,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Cache conda packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/conda_pkgs_dir
           key:
@@ -139,7 +139,7 @@ jobs:
         run: |
           meson compile -C builddir doc-html
         env:
-          SAGE_USE_CDNS: yes
+          SAGE_USE_CDNS: "yes"
           SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
       - name: Copy doc
@@ -189,7 +189,7 @@ jobs:
           zip -r doc.zip doc
 
       - name: Upload doc
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: doc
           path: doc.zip
@@ -201,7 +201,7 @@ jobs:
       - name: Upload doc-develop
         # artifact doc-develop is used for doc build on pull request event
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: doc-${{ github.ref_name }}
           path: doc.zip
