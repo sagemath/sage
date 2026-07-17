@@ -1959,6 +1959,14 @@ cdef class Matrix(Matrix0):
             sage: F.parent()
             Full MatrixSpace of 1 by 4 dense matrices over Univariate Polynomial Ring in y over Integer Ring
 
+        Vector entries are coerced through the common base ring before
+        matching matrix implementations::
+
+            sage: A = matrix(QQ, 2, 2, [1, 2, 3, 4])
+            sage: A.augment(vector(ZZ, [5, 6]))
+            [1 2 5]
+            [3 4 6]
+
         AUTHORS:
 
         - Naqi Jaffery (2006-01-24): examples
@@ -1968,7 +1976,7 @@ cdef class Matrix(Matrix0):
 
         if not isinstance(right, sage.matrix.matrix1.Matrix):
             if hasattr(right, '_vector_'):
-                right = right.column(implementation=self.parent().Element)
+                right = right.column()
             else:
                 raise TypeError("a matrix must be augmented with another matrix, "
                                 "or a vector")
