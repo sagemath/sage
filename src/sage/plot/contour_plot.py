@@ -1631,6 +1631,20 @@ def region_plot(f, xrange, yrange, **options):
         g = region_plot(x**2 + y**2 < 100, (x,1,10), (y,1,10), scale='loglog')
         sphinx_plot(g)
 
+    Combining an outer disk with an excluded inner disk produces the
+    region between two circles, that is, an annulus (or ring)::
+
+        sage: region_plot([x^2 + y^2 < 4, x^2 + y^2 > 1], (x,-3,3), (y,-3,3),
+        ....:             incol='yellow', bordercol='black')
+        Graphics object consisting of 2 graphics primitives
+
+    .. PLOT::
+
+        x, y = var("x y")
+        g = region_plot([x**2 + y**2 < 4, x**2 + y**2 > 1], (x,-3,3), (y,-3,3),
+                        incol='yellow', bordercol='black')
+        sphinx_plot(g)
+
     TESTS:
 
     To check that :issue:`16907` is fixed::
