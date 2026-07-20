@@ -1,2 +1,2 @@
-# gap-system/gap/gap
-# commented out 2026-07-03, as it breaks doctesting without --debug, see #42471
+dimpase/gap/gap
+# a fixed fork for the broken for our purposes gap-system's tap (should have no Browse GAP package)
