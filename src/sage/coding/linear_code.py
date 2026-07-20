@@ -1281,22 +1281,46 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C2 = codes.random_linear_code(GF(3), 10, 5)
             sage: C1.is_permutation_equivalent(C2)
             False
+            sage: C1 = LinearCode(matrix(GF(3), [[1, 0, 1], [0, 1, 2]]))
+            sage: C2 = LinearCode(matrix(GF(3), [[0, 1, 1], [1, 0, 2]]))
+            sage: C1.is_permutation_equivalent(C2)
+            True
+            sage: C1.is_permutation_equivalent(C2, algorithm='verbose')
+            (True, (1,2))
+
+        Column scalings do not define a permutation equivalence (see
+        :issue:`40503`)::
+
+            sage: C1 = LinearCode(matrix(GF(3), [1, 1]))
+            sage: C2 = LinearCode(matrix(GF(3), [1, 2]))
+            sage: C1.is_permutation_equivalent(C2)
+            False
+            sage: C1.is_permutation_equivalent(C2, algorithm='verbose')
+            False
         """
-        from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
         F = self.base_ring()
         F_o = other.base_ring()
         q = F.order()
-        G = self.generator_matrix()
         n = self.length()
         n_o = other.length()
         if F != F_o or n != n_o:
             return False
-        k = len(G.rows())
+        k = self.dimension()
+        if k != other.dimension():
+            return False
         MS = MatrixSpace(F, q**k, n)
         CW1 = MS(self.list())
         CW2 = MS(other.list())
-        B1 = NonlinearBinaryCodeStruct(CW1)
-        B2 = NonlinearBinaryCodeStruct(CW2)
+        if q == 2:
+            from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
+            CodeStruct = NonlinearBinaryCodeStruct
+        else:
+            # NonlinearBinaryCodeStruct stores only supports; over larger fields
+            # that would incorrectly ignore nonzero field entries.
+            from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
+            CodeStruct = MatrixStruct
+        B1 = CodeStruct(CW1)
+        B2 = CodeStruct(CW2)
         ans = B1.is_isomorphic(B2)
         if ans is not False:
             if algorithm == "verbose":

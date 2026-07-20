@@ -1165,8 +1165,7 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         val += self._scalar.valuation(p)
         if position:
             return val, pos
-        else:
-            return val
+        return val
 
     def has_good_reduction(self, p):
         r"""
@@ -1428,16 +1427,15 @@ class HypergeometricAlgebraic_QQ(HypergeometricAlgebraic):
         if x == 0:
             B = prod(X - z**(b*d) for b in params.bottom)
             return companion_matrix(B, format='right').inverse()
-        elif x == 1:
+        if x == 1:
             A = prod(X - z**(a*d) for a in params.top)
             B = prod(X - z**(b*d) for b in params.bottom)
             return companion_matrix(A, format='right').inverse() * companion_matrix(B, format='right')
-        elif x is infinity:
+        if x is infinity:
             A = prod(X - z**(a*d) for a in params.top)
             return companion_matrix(A, format='right')
-        else:
-            n = len(params.top)
-            return identity_matrix(QQ, n)
+        n = len(params.top)
+        return identity_matrix(QQ, n)
 
     def is_maximum_unipotent_monodromy(self):
         r"""
@@ -2497,11 +2495,10 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
             True
         """
         if (isinstance(other, HypergeometricFunctions)
-        and self.base_ring().has_coerce_map_from(other.base_ring())):
+                and self.base_ring().has_coerce_map_from(other.base_ring())):
             if self._symbolic_equality:
                 return True
-            else:
-                return other._symbolic_equality
+            return other._symbolic_equality
 
     def _pushout_(self, other):
         r"""
@@ -2677,8 +2674,7 @@ class HypergeometricFunctions(Parent, UniqueRepresentation):
         """
         if default_prec is infinity:
             return LazyPowerSeriesRing(self.base_ring(), self._name)
-        else:
-            return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
+        return PowerSeriesRing(self.base_ring(), self._name, default_prec=default_prec)
 
 # Helper functions
 ##################

@@ -1428,7 +1428,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             prec = digits_to_bits(digits)
         return vector([e.numerical_approx(prec, algorithm=algorithm) for e in self])
 
-    def row(self):
+    def row(self, **kwds):
         r"""
         Return a matrix with a single row and the same entries as the vector ``self``.
 
@@ -1470,6 +1470,22 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: all([d.is_dense(), dm.is_dense(), s.is_sparse(), sm.is_sparse()])     # needs sage.symbolic
             True
 
+        When different matrix implementations are available, we can specify which to use. ::
+
+            sage: v1 = vector(Zmod(17), [1, 2, 3]);
+            sage: type(v1.row())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.row(implementation='flint'))
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.row(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            sage: v2 = vector(Zmod(1000), [1, 2, 3]);
+            sage: type(v2.row())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v2.row(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+
+
         TESTS:
 
         The :meth:`~sage.matrix.matrix1.Matrix.row` method will return
@@ -1492,10 +1508,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, 1, self.degree(),
-                        list(self), sparse=self.is_sparse())
+                        list(self), sparse=self.is_sparse(), **kwds)
         return ma.matrix()
 
-    def column(self):
+    def column(self, **kwds):
         r"""
         Return a matrix with a single column and the same entries as the vector ``self``.
 
@@ -1542,6 +1558,21 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: all([d.is_dense(), dm.is_dense(), s.is_sparse(), sm.is_sparse()])     # needs sage.symbolic
             True
 
+        When different matrix implementations are available, we can specify which to use. ::
+
+            sage: v1 = vector(Zmod(17), [1, 2, 3]);
+            sage: type(v1.column())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.column(implementation='flint'))
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.column(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            sage: v2 = vector(Zmod(1000), [1, 2, 3]);
+            sage: type(v2.column())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v2.column(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+
         TESTS:
 
         The :meth:`~sage.matrix.matrix1.Matrix.column` method will return
@@ -1564,7 +1595,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, self.degree(), 1,
-                        [(x,) for x in self], sparse=self.is_sparse())
+                        [(x,) for x in self], sparse=self.is_sparse(), **kwds)
         return ma.matrix()
 
     def __copy__(self):

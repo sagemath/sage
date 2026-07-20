@@ -48,7 +48,7 @@ jobs:
             tests: 'all'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Merge CI fixes from sagemath/sage
         run: |
@@ -68,7 +68,7 @@ jobs:
           git status
 
       - name: Cache conda packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/conda_pkgs_dir
           key:
@@ -208,7 +208,7 @@ jobs:
           python tools/find_cyclic_imports.py --check --verbose
 
       - name: Upload log
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}${{ matrix.tests == 'new' && '-new' || '' }}-log

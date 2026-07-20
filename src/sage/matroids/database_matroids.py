@@ -1659,7 +1659,9 @@ def ExtendedTernaryGolayCode(groundset='abcdefghijkl'):
         Extended Ternary Golay Code: Ternary matroid of rank 6 on 12 elements,
         type 6+
         sage: C = LinearCode(M.representation())
-        sage: C.is_permutation_equivalent(codes.GolayCode(GF(3)))
+        sage: G = codes.GolayCode(GF(3))
+        sage: C.canonical_representative('semilinear')[0] == \
+        ....:  G.canonical_representative('semilinear')[0]
         True
         sage: M.is_valid()
         True
