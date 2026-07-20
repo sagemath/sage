@@ -8684,6 +8684,121 @@ class FinitePoset(UniqueRepresentation, Parent):
                 res += M[lin_weights.fatten(comp)]
         return res
 
+    def bounded_p_partition_generating_series(self, m, q=None):
+        r"""
+        Return the generating function of bounded `P`-partitions of ``self``.
+
+        The generating function `U_m(P, q)` of the `m`-bounded `P`-partitions
+        is defined by
+
+        .. MATH::
+
+            U_m(P, q) := \sum_{\sigma} q^{|\sigma|}
+
+        where the sum is over all order-reversing maps
+        `\sigma: P \rightarrow \{0, \dots, m\}` and
+        `|\sigma| := \sum_{x \in P} \sigma(x)` is the size of the `P`-partition.
+
+        See Definition 3.2 of [Sta1971]_.
+
+        `U_m(P, q)` is also the rank generating function of
+        `J(P \times \mathbf{m})` where `\mathbf{m}` is a chain of `m` elements.
+
+        INPUT:
+
+        - ``m`` -- integer; the maximum value allowed for the parts
+        - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
+          default variable in ``ZZ['q']``
+
+        EXAMPLES::
+
+            sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
+            sage: P.bounded_p_partition_generating_series(2)
+            q^8 + q^7 + 2*q^6 + 3*q^5 + 4*q^4 + 3*q^3 + 3*q^2 + 2*q + 1
+
+            sage: P = Posets.ChainPoset(5)
+            sage: P.bounded_p_partition_generating_series(1, ZZ['t'].gen())
+            t^5 + t^4 + t^3 + t^2 + t + 1
+
+        TESTS::
+
+            sage: P = Poset([[1,2,3,4],[[1,4],[2,4],[4,3]]])
+            sage: P.bounded_p_partition_generating_series(4)(1) == P.order_polynomial()(5)
+            True
+
+            sage: P = Posets.ChainPoset(5)
+            sage: P.bounded_p_partition_generating_series(8) == q_binomial(8+5, 8)
+            True
+
+            sage: P = Poset([[], []])
+            sage: P.bounded_p_partition_generating_series(3)
+            1
+
+        ALGORITHM:
+
+        The algorithm uses a recursive approach optimized with dynamic programming
+        (memoization).
+
+        NOTES:
+
+        `U_m(P, 1) = \Omega_P(m+1)` where `\Omega_P` is the order polynomial of `P`.
+
+        When `P` is a chain of `n` elements, `U_m(n, q) = \binom{m+n}{n}_q`.
+
+        REFERENCES:
+
+        .. [Sta1971] Richard P. Stanley. *Ordered Structures and Partitions*.
+           Revision of the author's Ph.D. thesis (Harvard University, 1971).
+        """
+
+        from functools import lru_cache
+        from sage.rings.integer_ring import ZZ
+        from sage.combinat.q_analogues import q_int
+
+        if q is None:
+            R = ZZ['q']
+            q = R.gen()
+        else:
+            R = q.parent()
+
+        vertices = self.linear_extension() # Topological sort of P
+        k = len(vertices)
+        if k == 0:
+            return R.one()
+
+        v_idx = {v: i for i, v in enumerate(vertices)}
+        upper_covers = {v: self.upper_covers(v) for v in vertices}
+
+        @lru_cache(maxsize=None)
+        def count_partitions(i, bounds):
+            # 'bounds' is a tuple containing maximal possible values
+            # for vertices[i] to vertices[k-1].
+            M = bounds[0]
+
+            if i == k - 1:
+                return q_int(M + 1, q)
+
+            Q = R.zero()
+            # Upper bounds for the remaining vertices [i+1 ... k-1]
+            base_next_bounds = list(bounds[1:])
+
+            for j in range(0, M + 1):
+                new_bounds = base_next_bounds.copy()
+
+                # 'j' becomes the new upper bound for all successors, if smaller
+                for u in upper_covers[vertices[i]]:
+                    rel_idx = v_idx[u] - (i + 1)
+                    if j < new_bounds[rel_idx]:
+                        new_bounds[rel_idx] = j
+
+                Q += (q**j) * count_partitions(i + 1, tuple(new_bounds))
+
+            return Q
+
+        # Initially, all vertices have 'm' as their maximum limit
+        initial_bounds = tuple([m] * k)
+        return count_partitions(0, initial_bounds)
+
     def cuts(self):
         r"""
         Return the list of cuts of the poset ``self``.
