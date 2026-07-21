@@ -89,7 +89,7 @@ dependencies:
   - execnet=2.1.2=pyhd8ed1ab_0
   - executing=2.2.1=pyhd8ed1ab_0
   - expat=2.8.1=hac47afa_1
-  - filelock=3.31.1=pyhd8ed1ab_0
+  - filelock=3.31.2=pyhd8ed1ab_0
   - flake8=7.3.0=pyhd8ed1ab_0
   - flake8-rst-docstrings=0.4.0=pyhd8ed1ab_0
   - flang=19.1.7=hbeecb71_0
@@ -130,7 +130,7 @@ dependencies:
   - httpcore=1.0.9=pyh29332c3_0
   - httpx=0.28.1=pyhd8ed1ab_0
   - hyperframe=6.1.0=pyhd8ed1ab_0
-  - icu=78.3=h637d24d_0
+  - icu=78.3=h637d24d_1
   - idna=3.18=pyhcf101f3_0
   - igraph=1.0.1=h9eeb67d_0
   - imagesize=2.0.0=pyhd8ed1ab_0
@@ -389,7 +389,7 @@ dependencies:
   - ucrt=10.0.26100.0=h57928b3_0
   - unearth=0.18.2=pyhd8ed1ab_0
   - urllib3=2.7.0=pyhd8ed1ab_0
-  - uv=0.11.29=h7ca4a90_0
+  - uv=0.11.30=h7ca4a90_0
   - vc=14.5=h1b7c187_39
   - vc14_runtime=14.51.36231=h1b9f54f_39
   - vcomp14=14.51.36231=h1b9f54f_39

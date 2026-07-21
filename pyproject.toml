@@ -144,6 +144,7 @@ host-requires = [
   "pkg:generic/highs",
   "pkg:generic/iml",
   "pkg:generic/lcalc",
+  "pkg:generic/libatomic_ops",
   "pkg:generic/libbraiding",
   "pkg:generic/libgd",
   "pkg:generic/libhomfly",
