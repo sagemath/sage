@@ -226,43 +226,7 @@ def _maxima_share_subdirs(sharedir=None):
     return sorted(subdirs)
 
 
-def _ensure_maxima_objdir_subdirectories(subdirs, objdir=None):
-    r"""
-    Create Maxima package subdirectories in the ECL object cache.
-
-    ECL writes compiler intermediates such as ``.c``, ``.eclh`` and
-    ``.data`` next to the target ``.fas`` while compiling Maxima share
-    packages. Maxima's ``mk:defsystem`` calls ECL's
-    ``ensure-directories-exist`` for those target directories, but that
-    call is the unreliable part of :issue:`26968`. Creating the expected
-    share package directories with Python before Maxima starts loading
-    packages prevents ECL from reaching that file-open failure path.
-
-    The ``.data`` file here is a compiler-generated input to the C
-    compiler, not a reliable long-lived sidecar for the final ``.fas``.
-    Some valid ECL ``.fas`` files mention the temporary ``.data`` pathname
-    even when the temporary file has already been deleted, so the
-    prevention must be directory creation rather than compiled-file
-    invalidation.
-
-    INPUT:
-
-    - ``subdirs`` -- iterable of strings; Maxima share package
-      subdirectories.
-
-    - ``objdir`` -- string or ``None`` (default: ``None``); Maxima object
-      directory to inspect. When ``None``, use ``*maxima-objdir*``.
-    """
-    objdir = maxima_objdir if objdir is None else objdir
-    sharedir = os.path.join(objdir, "share")
-    os.makedirs(sharedir, exist_ok=True)
-
-    for subdir in subdirs:
-        os.makedirs(os.path.join(sharedir, subdir), exist_ok=True)
-
-
 _maxima_share_packages = _maxima_share_subdirs()
-_ensure_maxima_objdir_subdirectories(_maxima_share_packages)
 
 ecl_eval("(initialize-runtime-globals)")
 ecl_eval("(setq $nolabels t))")
