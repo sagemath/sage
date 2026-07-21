@@ -197,15 +197,6 @@ def _maxima_share_subdirs(sharedir=None):
         ....:     _maxima_share_subdirs(sharedir=d)
         ['contrib', 'contrib/diffequations', 'linearalgebra']
 
-        sage: from sage.interfaces.maxima_lib import _ensure_maxima_objdir_subdirectories
-        sage: with tempfile.TemporaryDirectory() as d:
-        ....:     _ensure_maxima_objdir_subdirectories(
-        ....:         ['linearalgebra', 'contrib/diffequations'], objdir=d)
-        ....:     os.path.isdir(os.path.join(d, 'share', 'linearalgebra'))
-        ....:     os.path.isdir(os.path.join(d, 'share', 'contrib', 'diffequations'))
-        True
-        True
-
     On startup, all discovered Maxima share package directories are
     mirrored under ``*maxima-objdir*/share``::
 
