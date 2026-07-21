@@ -6677,6 +6677,9 @@ REFERENCES:
             Electronic Journal of Combinatorics. **19(2)**. 2012.
             :arxiv:`1104.2359`
 
+.. [Sta1971] Richard Stanley. *Ordered Structures and Partitions*.
+             Revision of the author's Ph.D. thesis (Harvard University, 1971).
+
 .. [Sta1979] Richard Stanley. *Invariants of Finite Groups and their,
             applications to combinatorics*.
             Bulletin (New Series) of the American Mathematical Society,

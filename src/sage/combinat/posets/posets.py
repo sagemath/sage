@@ -8699,7 +8699,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         `\sigma: P \rightarrow \{0, \dots, m\}` and
         `|\sigma| := \sum_{x \in P} \sigma(x)` is the size of the `P`-partition.
 
-        See Definition 3.2 of [Sta1971]_.
+        See Definition I.3.2 of [Sta1971]_.
 
         `U_m(P, q)` is also the rank generating function of
         `J(P \times \mathbf{m})` where `\mathbf{m}` is a chain of `m` elements.
@@ -8744,13 +8744,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         `U_m(P, 1) = \Omega_P(m+1)` where `\Omega_P` is the order polynomial of `P`.
 
         When `P` is a chain of `n` elements, `U_m(n, q) = \binom{m+n}{n}_q`.
-
-        REFERENCES:
-
-        .. [Sta1971] Richard P. Stanley. *Ordered Structures and Partitions*.
-           Revision of the author's Ph.D. thesis (Harvard University, 1971).
         """
-
         from functools import lru_cache
         from sage.rings.integer_ring import ZZ
         from sage.combinat.q_analogues import q_int
