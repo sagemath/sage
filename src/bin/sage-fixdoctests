@@ -36,6 +36,7 @@ import re
 import shlex
 import subprocess
 import sys
+import textwrap
 
 from argparse import ArgumentParser
 from collections import defaultdict
@@ -303,7 +304,7 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
         got = re.sub(r'(doctest:warning).*^( *DeprecationWarning:)',
                      r'\1...\n\2',
                      got, 1, re.DOTALL | re.MULTILINE)
-        got = got.splitlines()      # got can't be the empty string
+        got = textwrap.dedent(got).splitlines()      # got can't be the empty string
 
     if args.only_tags:
         if args.verbose:
@@ -329,7 +330,7 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
     if not expected:
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
         append_to_line(line_num - 1,
-                       '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got),
+                       '\n' + '\n'.join(' ' * indent + line for line in got),
                        message="Adding the new output")
         return
 
@@ -338,8 +339,7 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
     # has the smallest indentation after lstrip(). Note that the amount of indentation
     # required could be negative if the ``got`` block is indented. In this case
     # ``indent`` is set to zero.
-    indent = max(0, (len(src_in_lines[line_num]) - len(src_in_lines[line_num].lstrip())
-                     - min(len(got[j]) - len(got[j].lstrip()) for j in range(len(got)))))
+    indent = len(src_in_lines[line_num]) - len(src_in_lines[line_num].lstrip())
 
     # Double check that what was expected was indeed in the source file and if
     # it is not then then print a warning for the user which contains the
@@ -358,7 +358,7 @@ def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
         update_line(line_num, None,
                     message="Expected something, got nothing; deleting the old output")
     else:
-        update_line(line_num, '\n'.join((' ' * indent + got[i]) for i in range(len(got))),
+        update_line(line_num, '\n'.join(' ' * indent + line for line in got),
                     message="Replacing the old expected output with the new output")
 
     # Mark any remaining `expected` lines as ``None`` so as to preserve the line numbering
