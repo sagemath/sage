@@ -27,7 +27,10 @@ if [ x"$SAGE_SPKG_INSTALL_DOCS" != xyes ] ; then
 fi
 
 sdh_configure $SAGE_CONFIGURE_GMP \
-              --enable-unicode=yes --with-defsystem $ECL_CONFIGURE
+              --enable-unicode=yes \
+              --with-defsystem \
+              --with-extra-files="$PWD/src/util/side-modules.lsp" \
+              $ECL_CONFIGURE
 
 # Before running make we touch build/TAGS so its building process is never triggered
 touch build/TAGS
@@ -35,6 +38,12 @@ touch build/TAGS
 # Ensure that ECL will not ask interactive questions (for example, when
 # pressing CTRL-C during the build)
 exec </dev/null
+
+# Make third-party modules installed in ECL's versioned library directory
+# discoverable through (require :module).  Sage package patchlevels are not
+# part of ECL's upstream version or its library directory name.
+ECL_VERSION="${PKG_VER%%.p*}"
+export ECL_SIDE_MODULES_PATH="${SAGE_INST_LOCAL}/lib/ecl-${ECL_VERSION}"
 
 sdh_make
 sdh_make_install

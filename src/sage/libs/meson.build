@@ -41,10 +41,19 @@ if ecl_bin.found()
     conf_data.set('SAGE_MAXIMA_FAS', '')
   else
     # Try Sage's custom maxima location
+    ecl_version = run_command(
+      ecl_bin,
+      '--norc',
+      '--eval',
+      '(princ (lisp-implementation-version))',
+      '--eval',
+      '(quit)',
+      check: true,
+    ).stdout().strip()
     sage_maxima = join_paths(
       get_option('SAGE_LOCAL'),
       'lib',
-      'ecl',
+      'ecl-' + ecl_version,
       'maxima.fas',
     )
     maxima_check = run_command(

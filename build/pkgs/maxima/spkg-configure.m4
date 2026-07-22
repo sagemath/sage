@@ -45,7 +45,16 @@ SAGE_SPKG_CONFIGURE([maxima], [
     dnl the maxima library (within ECL) by name instead of by
     dnl absolute path.
     SAGE_MAXIMA='${prefix}'/bin/maxima
-    SAGE_MAXIMA_FAS='${prefix}'/lib/ecl/maxima.fas
+    AS_IF([test x$sage_spkg_install_ecl = xyes], [
+      dnl The ECL SPKG version may have a Sage-specific patchlevel, which is
+      dnl not part of ECL's versioned library directory name.
+      ecl_version=${version_with_patchlevel_ecl%%.p*}
+    ], [
+      ecl_version=`ecl --norc \
+        --eval '(princ (lisp-implementation-version))' \
+        --eval '(quit)'`
+    ])
+    SAGE_MAXIMA_FAS='${prefix}'"/lib/ecl-${ecl_version}/maxima.fas"
   ])
 
   AC_SUBST(SAGE_MAXIMA, "${SAGE_MAXIMA}")
