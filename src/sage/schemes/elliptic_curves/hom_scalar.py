@@ -481,7 +481,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             raise ValueError('kernel subgroup has no generating points over the base field')
         return ker
 
-    def dual(self):
+    def dual(self, algorithm=None):
         """
         Return the dual isogeny of this scalar-multiplication map.
 

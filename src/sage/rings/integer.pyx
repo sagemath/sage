@@ -5058,6 +5058,46 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return R.zero()
         return R(self).abs().log()
 
+    cpdef bint is_even(self) noexcept:
+        r"""
+        Return whether or not this Integer is even.
+
+        EXAMPLES::
+
+            sage: 0.is_even()
+            True
+            sage: (-2).is_even()
+            True
+            sage: 12.is_even()
+            True
+            sage: 1.is_even()
+            False
+
+        AUTHORS:
+
+        - Vincent Macri (2026-07-08)
+        """
+        return mpz_even_p(self.value)
+
+    cpdef bint is_odd(self) noexcept:
+        r"""
+        Return whether or not this Integer is odd.
+
+        EXAMPLES::
+
+            sage: 1.is_odd()
+            True
+            sage: (-9).is_odd()
+            True
+            sage: 0.is_odd()
+            False
+
+        AUTHORS:
+
+        - Vincent Macri (2026-07-08)
+        """
+        return mpz_odd_p(self.value)
+
     cdef bint _is_power_of(Integer self, Integer n) noexcept:
         r"""
         Return a nonzero int if there is an integer b with

@@ -35,7 +35,7 @@ jobs:
         python: ['3.14']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Merge CI fixes from sagemath/sage
         run: |
@@ -44,7 +44,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Cache conda packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/conda_pkgs_dir
           key:
@@ -93,7 +93,7 @@ jobs:
       # those to fail as well.
       - name: Remove optional packages from Conda environment
         shell: bash -l {0}
-        run: conda remove bliss libhomfly rw sirocco
+        run: conda remove bliss libbraiding libhomfly rw sirocco
 
       - name: Print Conda environment
         shell: bash -l {0}
@@ -108,7 +108,7 @@ jobs:
           export CC="ccache $CC"
           export CXX="ccache $CXX"
 
-          meson setup --python.install-env=prefix --prefix="${HOME}/.local" --wrap-mode=nodownload -Dbuild-docs=false -Dbliss=disabled -Dcoxeter3=disabled -Dlibhomfly=disabled -Dmcqd=disabled -Dmeataxe=disabled -Drankwidth=disabled -Dsirocco=disabled -Dtdlib=disabled builddir
+          meson setup --python.install-env=prefix --prefix="${HOME}/.local" --wrap-mode=nodownload -Dbuild-docs=false -Dbliss=disabled -Dcoxeter3=disabled -Dlibbraiding=disabled -Dlibhomfly=disabled -Dmcqd=disabled -Dmeataxe=disabled -Drankwidth=disabled -Dsirocco=disabled -Dtdlib=disabled builddir
           meson install -C builddir
 
       - name: Check that all modules can be imported
@@ -156,7 +156,7 @@ jobs:
           python3 -m sage.doctest -p4 --format github src
 
       - name: Upload log
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: ${{ runner.os }}-meson-${{ matrix.python }}-minimal-log

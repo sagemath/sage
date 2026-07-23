@@ -337,8 +337,7 @@ def set_intersphinx_mappings(app, config):
 
     refpath = os.path.join(SAGE_DOC, "html", "en", "reference")
     invpath = os.path.join(SAGE_DOC, "inventory", "en", "reference")
-    if app.config.multidoc_first_pass == 1 or \
-            not (os.path.exists(refpath) and os.path.exists(invpath)):
+    if app.config.multidoc_first_pass == 1 or not os.path.exists(invpath):
         return
 
     app.config.intersphinx_mapping = {key: _intersphinx_mapping(key)

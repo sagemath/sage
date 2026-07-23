@@ -411,8 +411,12 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
 
         EXAMPLES::
 
-            sage: set_random_seed(10)
-            sage: C = codes.random_linear_code(GF(7), 11, 5)
+            sage: G = matrix(GF(7), [[1, 0, 0, 0, 0, 0, 5, 2, 6, 0, 6],
+            ....:                    [0, 1, 0, 0, 0, 1, 5, 3, 5, 5, 4],
+            ....:                    [0, 0, 1, 0, 0, 4, 6, 6, 2, 2, 2],
+            ....:                    [0, 0, 0, 1, 0, 3, 0, 3, 2, 5, 2],
+            ....:                    [0, 0, 0, 0, 1, 6, 0, 5, 0, 6, 0]])
+            sage: C = codes.LinearCode(G)
             sage: Cp = codes.PuncturedCode(C, 3)
             sage: E = codes.encoders.PuncturedCodePuncturedMatrixEncoder(Cp)
             sage: E.generator_matrix()

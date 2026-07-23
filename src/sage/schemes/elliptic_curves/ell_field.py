@@ -1609,8 +1609,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           isogenies.  This algorithm is selected by giving as the
           ``kernel`` parameter a monic polynomial (or a coefficient list
           in little endian) which will define the kernel of the isogeny.
-          Kohel's algorithm is currently only implemented for cyclic
-          isogenies, with the exception of `[2]`.
+          The direct implementation handles odd-degree kernel polynomials
+          and kernel polynomials contained in the 2-torsion; kernel
+          polynomials with both a nontrivial 2-torsion part and a
+          nontrivial odd part are decomposed into a composite of an
+          even-degree and an odd-degree isogeny.
 
         - √élu Algorithm (see
           :mod:`~sage.schemes.elliptic_curves.hom_velusqrt`):
@@ -1789,6 +1792,21 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               From: Elliptic Curve defined by y^2 + x*y = x^3 + x + 2 over Finite Field of size 31
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + 2*x + 26 over Finite Field of size 31
 
+        Kernel polynomials with both a nontrivial 2-torsion part and a
+        nontrivial odd part are decomposed without constructing kernel
+        points (:issue:`42023`)::
+
+            sage: F = GF(419)
+            sage: E = EllipticCurve(F, [1, 0])
+            sage: R.<x> = F[]
+            sage: phi = E.isogeny(x^3 - 25*x^2 + x)
+            sage: [f.degree() for f in phi.factors()]
+            [2, 3]
+            sage: phi.codomain()
+            Elliptic Curve defined by y^2 = x^3 + 141*x + 269 over Finite Field of size 419
+            sage: phi.kernel_polynomial()
+            x^3 + 394*x^2 + x
+
         Multiple ways to set the ``velu_sqrt_bound``::
 
             sage: E = EllipticCurve_from_j(GF(97)(42))
@@ -1912,6 +1930,17 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
         try:
             return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
+        except NotImplementedError as err:
+            if kernel is None:
+                raise err
+            try:
+                from .ell_curve_isogeny import _factored_isogeny_from_kernel_polynomial
+                return _factored_isogeny_from_kernel_polynomial(self, kernel,
+                                                               codomain=codomain,
+                                                               model=model,
+                                                               check=check)
+            except NotImplementedError:
+                raise err
         except AttributeError as e:
             raise RuntimeError("Unable to construct isogeny: %s" % e)
 

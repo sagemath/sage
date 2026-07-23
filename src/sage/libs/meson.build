@@ -76,7 +76,7 @@ endif
 braiding = dependency(
   'libbraiding',
   version: '>=1.3.1',
-  required: false,
+  required: get_option('libbraiding'),
   disabler: true,
 )
 
@@ -209,6 +209,7 @@ endforeach
 
 # Record in the config file whether or not optional packages were
 # found, so that we don't have to look for them at runtime.
+conf_data.set10('LIBBRAIDING_ENABLED', braiding.found())
 conf_data.set10('LIBHOMFLY_ENABLED', homfly.found())
 conf_data.set10('MEATAXE_ENABLED', mtx.found())
 conf_data.set10('SIROCCO_ENABLED', sirocco.found())

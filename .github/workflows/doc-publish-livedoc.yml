@@ -32,7 +32,7 @@ jobs:
       CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
     steps:
       - name: Get information about workflow origin
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         id: source-run-info
         with:
           script: |
@@ -76,7 +76,7 @@ jobs:
 
       - name: Deploy to netlify with doc-TAG alias
         id: deploy-netlify
-        uses: netlify/actions/cli@master
+        uses: netlify/actions/cli@3185065f4ab2f6df6f2ef41ee013626e1c02a426 # master
         with:
           args: deploy --dir=livedoc/doc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
         env:
@@ -87,7 +87,7 @@ jobs:
         if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to netlify with doc-release alias
-        uses: netlify/actions/cli@master
+        uses: netlify/actions/cli@3185065f4ab2f6df6f2ef41ee013626e1c02a426 # master
         with:
           args: deploy --dir=livedoc/doc --message doc-release --alias doc-release
         env:
