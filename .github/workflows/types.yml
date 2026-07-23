@@ -30,7 +30,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Cache conda packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/conda_pkgs_dir
           key:
