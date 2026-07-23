@@ -656,6 +656,7 @@ AUTHORS:
 # ****************************************************************************
 
 from collections.abc import MutableMapping
+from decimal import Decimal
 from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
@@ -1075,17 +1076,29 @@ class NormalFormGame(SageObject, MutableMapping):
 
         TESTS::
 
-            sage: # optional - gambit
             sage: import numpy as np
             sage: from pygambit import Game
-            sage: testgame = Game.from_arrays(np.array([[8., 2.], [10., 5.]]),
-            ....:                             np.array([[8., 10.], [2., 5.]]))
+            sage: testgame = Game.from_arrays(np.array([[8.5, 2.5], [10.1, 5.1]]),
+            ....:                             np.array([[8.5, 10.1], [2.5, 5.1]]))
             sage: g = NormalFormGame()
-            sage: g._gambit_game(testgame); g
-            Normal Form Game with the following utilities: {(0, 0): [8.0, 8.0],
-            (0, 1): [2.0, 10.0],
-            (1, 0): [10.0, 2.0],
-            (1, 1): [5.0, 5.0]}
+            sage: g._gambit_game(testgame); g                                       # optional - gambit
+            Normal Form Game with the following utilities: {(0, 0): [8.5, 8.5],
+            (0, 1): [2.5, 10.1],
+            (1, 0): [10.1, 2.5],
+            (1, 1): [5.1, 5.1]}
+
+        ::
+
+            sage: import numpy as np
+            sage: from pygambit import Game
+            sage: testgame = Game.from_arrays(np.array([[3, 0], [5, 10]], dtype=int),
+            ....:                             np.array([[3, 5], [0, 10]], dtype=int))
+            sage: g = NormalFormGame()
+            sage: g._gambit_game(testgame); g                                       # optional - gambit
+            Normal Form Game with the following utilities: {(0, 0): [3, 3],
+            (0, 1): [0, 5],
+            (1, 0): [5, 0],
+            (1, 1): [10, 10]}
         """
         self.players = []
         self.utilities = {}
@@ -1093,8 +1106,10 @@ class NormalFormGame(SageObject, MutableMapping):
             num_strategies = len(player.strategies)
             self.add_player(num_strategies)
         for strategy_profile in self.utilities:
-            utility_vector = [float(game[strategy_profile][game.players[i]])
-                              for i in range(len(self.players))]
+            # gambit stores inexact payoffs as decimals and exact ones as rationals
+            utility_vector = [float(payoff) if isinstance(payoff, Decimal) else QQ(payoff)
+                              for payoff in (game[strategy_profile][game.players[i]]
+                                             for i in range(len(self.players)))]
             self.utilities[strategy_profile] = utility_vector
 
     def _gambit_(self, as_integer=False, maximization=True):
