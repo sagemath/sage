@@ -157,6 +157,9 @@ case $system:$command in
         [ "$IGNORE_MISSING" = yes ] && options="$options --skip-unavailable"
         [ -n "$system_packages" ] && print_shell_command ${SUDO}dnf install $options $system_packages
         ;;
+    gentoo*:update)
+        print_shell_command ${SUDO}emerge --sync
+        ;;
     gentoo*:install)
         [ -n "$system_packages" ] && print_shell_command ${SUDO}emerge $system_packages
         ;;

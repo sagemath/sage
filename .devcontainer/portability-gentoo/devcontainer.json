@@ -1,0 +1,22 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "Gentoo",
+    //"image": "gentoo/stage3:latest",
+    "dockerFile": "Dockerfile",
+    "onCreateCommand": ".devcontainer/onCreate-meson.sh || true",
+    "features": {
+        // Git and Python features are not compatible with Gentoo, so we install it manually in the Dockerfile 
+        //"ghcr.io/devcontainers/features/git": {},
+        //"ghcr.io/devcontainers/features/python:1": {},
+        "../uv": {
+			"version": "latest"
+		}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    }
+}
