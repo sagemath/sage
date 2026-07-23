@@ -1,3 +1,5 @@
+.. _modular-forms:
+
 Modular Forms
 =============
 

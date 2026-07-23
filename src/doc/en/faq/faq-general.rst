@@ -204,7 +204,7 @@ functionalities are made possible through FOSS projects such as
 * And many more too numerous to list here.
 
 An up-to-date list can be found in the section
-`External Packages <../reference/spkg/index.html>`_
+:ref:`External Packages <spkg>`
 in the Sage Reference Manual.
 
 The principal programming languages of Sage are
@@ -252,8 +252,8 @@ build from source, during the ``./configure`` phase.
 
 To ensure that SageMath builds and runs correctly on a wide variety of
 systems, we use automated testing.  See the chapter `Portability
-testing <../developer/portability_testing.html>`_ in the Developer's
-Guide for details.
+:ref:`testing <chapter-portability_testing>` in the Developer's
+Guide. for details.
 
 
 With so many bugs in Sage and hundreds of open issues, why don't you produce a stabilization release?

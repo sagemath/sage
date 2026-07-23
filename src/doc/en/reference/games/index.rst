@@ -3,7 +3,7 @@ Games
 
 Sage includes a sophisticated Sudoku solver.  It also has a
 Rubik's cube solver (see
-`Rubik's Cube Group <../groups/sage/groups/perm_gps/cubegroup.html>`_).
+:mod:`Rubik's Cube Group <sage.groups.perm_gps.cubegroup>`).
 
 .. toctree::
    :maxdepth: 1

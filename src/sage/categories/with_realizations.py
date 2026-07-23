@@ -45,8 +45,7 @@ def WithRealizations(self):
           - :class:`IwahoriHeckeAlgebra`
           - :class:`ExtendedAffineWeylGroup`
 
-        - The `Implementing Algebraic Structures
-          <../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_
+        - The :ref:`tutorial-implementing-algebraic-structures`
           thematic tutorial.
 
         - :mod:`sage.categories.realizations`

@@ -3,10 +3,10 @@ Big O for various types (power series, `p`-adics, etc.)
 
 .. SEEALSO::
 
-    - `asymptotic expansions <../../../asymptotic/index.html>`_
-    - `p-adic numbers <../../../padics/index.html>`_
-    - `power series <../../../power_series/index.html>`_
-    - `polynomials <../../../polynomial_rings/index.html>`_
+    - :ref:`asymptotic expansions <asymptotic-expansions>`
+    - :ref:`p-adic numbers <padic-numbers>`
+    - :ref:`power series <power-series>`
+    - :ref:`polynomials <polynomial-rings>`
 """
 
 from sage.misc.lazy_import import lazy_import

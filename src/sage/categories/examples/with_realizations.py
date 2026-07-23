@@ -54,9 +54,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
     .. SEEALSO::
 
        - :func:`Sets().WithRealizations <sage.categories.with_realizations.WithRealizations>`
-       - the `Implementing Algebraic Structures
-         <../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_
-         thematic tutorial.
+       - :ref:`tutorial-implementing-algebraic-structures`
 
     EXAMPLES::
 

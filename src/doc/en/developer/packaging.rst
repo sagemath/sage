@@ -291,9 +291,9 @@ something like the following to install it:
 
 At build time :envvar:`CFLAGS`, :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`,
 and :envvar:`F77FLAGS` are usually set to ``-g -O2 -march=native``
-(according to `debugging options <../installation/source.html#sage-debug>`_
+(according to :ref:`debugging options <sage-debug>`
 and whether building
-`fat binaries <../installation/source.html#sage-fat-binary>`_).
+:ref:`fat binaries <sage-fat-binary>`).
 
 Slightly modified versions are available:
 

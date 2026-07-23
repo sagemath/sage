@@ -1,3 +1,5 @@
+.. _sage_startup_scripts:
+
 Sage startup scripts
 ====================
 

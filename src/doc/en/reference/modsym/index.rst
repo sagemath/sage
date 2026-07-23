@@ -1,3 +1,5 @@
+.. _modular-symbols:
+
 Modular Symbols
 ===============
 

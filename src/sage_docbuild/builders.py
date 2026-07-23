@@ -5,7 +5,7 @@ Documentation builders
 .. NOTE::
 
    If you are a developer and want to build the SageMath documentation from source,
-   refer to `developer's guide <../../../developer/sage_manuals.html>`_.
+   refer to :ref:`developer's guide <chapter-sage_manuals>`.
 
 This module is the starting point for building documentation, and is
 responsible to figure out what to build and with which options. The actual

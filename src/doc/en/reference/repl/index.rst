@@ -8,7 +8,7 @@ document, you'll find how the IPython integration works. You should
 also be familiar with the documentation for IPython.
 
 For more details about using the Sage command line, see `the Sage
-tutorial <../../tutorial/index.html>`_.
+:ref:`tutorial <tutorial-guide>`.
 
 Running Sage
 ------------
