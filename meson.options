@@ -17,6 +17,13 @@ option(
   description: 'Build the HTML / PDF documentation'
 )
 
+option(
+  'legacy-docs',
+  type: 'boolean',
+  value: false,
+  description: 'Use the legacy doc build pipeline (build-docs.py)'
+)
+
 # Useful on binary distros, for example, to allow features to flip on as soon
 # as the package that provides it is installed. If this is disabled, a rebuild
 # of sagelib is required to toggle features on or off.

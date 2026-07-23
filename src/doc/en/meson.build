@@ -1,3 +1,9 @@
+doc_sources = ['conf.py', 'index.rst']
+
+foreach file : doc_sources
+  doc_src += fs.copyfile(file)
+endforeach
+
 subdir('reference')
 subdir('constructions')
 subdir('website')
