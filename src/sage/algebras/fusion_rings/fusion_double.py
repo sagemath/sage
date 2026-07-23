@@ -243,7 +243,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i``, ``j``, -- a pair of basis elements
+        - ``i``, ``j`` -- a pair of basis elements
         - ``unitary`` -- boolean (default: ``False``); set to ``True`` to
           obtain the unitary `S`-matrix
 

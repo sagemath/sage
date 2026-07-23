@@ -112,15 +112,14 @@ Classes and functions
 from copy import copy
 
 import sage.geometry.abc
-
-from sage.topology.cell_complex import GenericCellComplex
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.modules.free_module_element import vector
-from sage.rings.integer_ring import ZZ
-from sage.graphs.graph import Graph
 from sage.combinat.posets.posets import Poset
 from sage.combinat.subset import powerset
+from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.graphs.graph import Graph
 from sage.misc.decorators import rename_keyword
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.topology.cell_complex import GenericCellComplex
 
 
 class PolyhedralComplex(GenericCellComplex):
@@ -168,8 +167,9 @@ class PolyhedralComplex(GenericCellComplex):
       if ``True``, then the constructor checks whether the cells
       are face-to-face, and it raises a :exc:`ValueError` if they are not
 
-    - ``immutable`` -- boolean (default: ``False``); set ``immutable=True`` to
-      make this polyhedral complex immutable
+    - ``is_mutable``, ``is_immutable`` -- boolean (default: ``False`` and
+      ``False`` respectively); set ``is_mutable=False`` or ``is_immutable=True``
+      to make this polyhedral complex immutable
 
     - ``backend`` -- string (optional); the name of the backend used for
       computations on Sage polyhedra; if it is not given, then each cell has
@@ -1649,10 +1649,9 @@ class PolyhedralComplex(GenericCellComplex):
                 for r in rays:
                     if sign == 0:
                         sign = coeff * r
-                    else:
-                        if sign * (coeff * r) < 0:
-                            self._is_convex = False
-                            return False
+                    elif sign * (coeff * r) < 0:
+                        self._is_convex = False
+                        return False
                 # lines are in the affine space of each boundary cell already
         self._is_convex = True
         self._polyhedron = Polyhedron(vertices=vertices, rays=rays, lines=lines,
@@ -2556,11 +2555,12 @@ def exploded_plot(polyhedra, *,
         sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)          # needs sage.plot
         Graphics object consisting of 23 graphics primitives
     """
+    import itertools
+
     from sage.plot.colors import rainbow
     from sage.plot.graphics import Graphics
     from sage.plot.line import line
     from sage.plot.point import point as plot_point
-    import itertools
 
     polyhedra = list(polyhedra)
     g = Graphics()
@@ -2604,10 +2604,9 @@ def exploded_plot(polyhedra, *,
                 if sticky_center:
                     for vt in vertex_translations:
                         g += line((center, vt), **sticky_center)
-            else:
-                if sticky_vertices:
-                    for vt1, vt2 in itertools.combinations(vertex_translations, 2):
-                        g += line((vt1, vt2), **sticky_vertices)
+            elif sticky_vertices:
+                for vt1, vt2 in itertools.combinations(vertex_translations, 2):
+                    g += line((vt1, vt2), **sticky_vertices)
     if point is None:
         # default from sage.geometry.polyhedron.plot
         point = dict(size=10)

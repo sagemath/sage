@@ -316,7 +316,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         see :func:`sage.numerical.backends.generic_backend.get_solver` for
         examples.
 
-    - ``maximization``
+    - ``maximization`` -- whether to maximize or minimize the objective function.
 
       - When set to ``True`` (default), the ``MixedIntegerLinearProgram``
         is defined as a maximization.

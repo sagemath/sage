@@ -4584,7 +4584,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
         - ``check`` -- boolean (default: ``True``); whether or not to check
           that ``sub`` is a submodule
 
-        - further named arguments, that are passed to the constructor
+        - ``kwds`` -- further named arguments, that are passed to the constructor
           of the quotient space
 
         EXAMPLES::
@@ -5521,7 +5521,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         - ``check`` -- boolean (default: ``True``); whether or not to check
           that sub is a submodule
 
-        - further named arguments, that are currently ignored.
+        - ``kwds`` -- further named arguments, that are currently ignored.
 
         OUTPUT:
 

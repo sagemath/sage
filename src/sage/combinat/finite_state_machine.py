@@ -2506,10 +2506,10 @@ class FiniteStateMachine(SageObject):
 
       #. an other instance of a finite state machine.
 
-    - ``initial_states`` and ``final_states`` -- the initial and
+    - ``initial_states``, ``final_states`` -- the initial and
       final states of this machine
 
-    - ``input_alphabet`` and ``output_alphabet`` -- the input and
+    - ``input_alphabet``, ``output_alphabet`` -- the input and
       output alphabets of this machine
 
     - ``determine_alphabets`` -- if ``True``, then the function
@@ -5612,7 +5612,7 @@ class FiniteStateMachine(SageObject):
           list or tuple of tracks, each of which can be a list or an
           iterable with entries from the input alphabet.
 
-        - ``initial_state`` or ``initial_states`` -- the initial
+        - ``initial_state``, ``initial_states`` -- the initial
           state(s) in which the machine starts. Either specify a
           single one with ``initial_state`` or a list of them with
           ``initial_states``. If both are given, ``initial_state``
@@ -9319,9 +9319,10 @@ class FiniteStateMachine(SageObject):
         INPUT:
 
         - ``edge_label`` -- (default: ``'words_in_out'``) can be
-            - ``'words_in_out'`` (labels will be strings ``'i|o'``)
-            - a function with which takes as input a transition
-              and outputs (returns) the label
+
+          - ``'words_in_out'`` (labels will be strings ``'i|o'``)
+          - a function with which takes as input a transition
+            and outputs (returns) the label
 
         OUTPUT: a :class:`directed graph <DiGraph>`
 
@@ -11178,7 +11179,7 @@ class Automaton(FiniteStateMachine):
           list or tuple of tracks, each of which can be a list or an
           iterable with entries from the input alphabet.
 
-        - ``initial_state`` or ``initial_states`` -- the initial
+        - ``initial_state``, ``initial_states`` -- the initial
           state(s) in which the machine starts. Either specify a
           single one with ``initial_state`` or a list of them with
           ``initial_states``. If both are given, ``initial_state``
@@ -12232,7 +12233,7 @@ class Transducer(FiniteStateMachine):
           list or tuple of tracks, each of which can be a list or an
           iterable with entries from the input alphabet.
 
-        - ``initial_state`` or ``initial_states`` -- the initial
+        - ``initial_state``, ``initial_states`` -- the initial
           state(s) in which the machine starts. Either specify a
           single one with ``initial_state`` or a list of them with
           ``initial_states``. If both are given, ``initial_state``
@@ -13415,7 +13416,7 @@ class FSMProcessIterator(SageObject, Iterator):
       list or tuple of tracks, each of which can be a list or an
       iterable with entries from the input alphabet.
 
-    - ``initial_state`` or ``initial_states`` -- the initial
+    - ``initial_state``, ``initial_states`` -- the initial
       state(s) in which the machine starts. Either specify a
       single one with ``initial_state`` or a list of them with
       ``initial_states``. If both are given, ``initial_state``

@@ -1106,7 +1106,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - one or more pairs of `(\tilde A, \tilde Z)`, where `\tilde
+        - ``elements_distributions`` -- one or more pairs of `(\tilde A, \tilde Z)`, where `\tilde
           A\subseteq A` and `\tilde Z` is a list of values in `Z` of
           the same size as `\tilde A`
 

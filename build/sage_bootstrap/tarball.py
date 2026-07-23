@@ -51,7 +51,7 @@ class Tarball(object):
 
         INPUT:
 
-        - ``tarball_name`` - string. The full filename (``foo-1.3.tar.bz2``)
+        - ``tarball_name`` -- string. The full filename (``foo-1.3.tar.bz2``)
           of a tarball on the Sage mirror network.
         - ``package`` - Package object, or None to auto-detect
         - ``tarball_info`` - dict with tarball info (for multi-tarball packages)

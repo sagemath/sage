@@ -92,11 +92,13 @@ class Sudoku(SageObject):
     INPUT:
 
     - ``puzzle`` -- the first argument can take one of three forms
-        * list - a Python list with elements of the puzzle in row-major order,
-          where a blank entry is a zero
-        * matrix - a square Sage matrix over `\ZZ`
-        * string - a string where each character is an entry of
-          the puzzle. For two-digit entries, a = 10, b = 11, etc.
+
+      * list - a Python list with elements of the puzzle in row-major order,
+        where a blank entry is a zero
+      * matrix - a square Sage matrix over `\ZZ`
+      * string - a string where each character is an entry of
+        the puzzle. For two-digit entries, a = 10, b = 11, etc.
+
     - ``verify_input`` -- boolean (default: ``True``); use ``False`` if you know
       the input is valid
 
