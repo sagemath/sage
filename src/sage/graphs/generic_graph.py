@@ -3333,7 +3333,7 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: G = graphs.PetersenGraph()
-            sage: G.genus()
+            sage: G.genus(algorithm='simple')
             1
             sage: G.get_embedding()
             {0: [1, 4, 5], 1: [0, 2, 6], 2: [1, 3, 7], 3: [2, 4, 8],
@@ -6544,7 +6544,7 @@ class GenericGraph(GenericGraph_pyx):
                         return False
         return True
 
-    def genus(self, set_embedding=True, on_embedding=None, minimal=True, maximal=False, circular=None, ordered=True):
+    def genus(self, set_embedding=True, on_embedding=None, minimal=True, maximal=False, circular=None, ordered=True, algorithm=None):
         r"""
         Return the minimal genus of the graph.
 
@@ -6602,6 +6602,18 @@ class GenericGraph(GenericGraph_pyx):
           ``True``, then whether or not the boundary order may be permuted
           (default: ``True``, which means the boundary order is preserved)
 
+        - ``algorithm`` -- string or ``None`` (default: ``None``); the algorithm to
+          use when computing minimum genus.  It must be one of ``'page'``,
+          ``'multi_genus'``, or ``'simple'``.  If ``None``, Sage uses
+          ``'page'`` when the optional :ref:`graph_genus <spkg_graph_genus>`
+          package is installed and otherwise uses ``'simple'``.  The optional
+          ``'page'`` algorithm is usually fastest on sparse low-degree graphs
+          and graphs with high girth.  The optional ``'multi_genus'``
+          algorithm is often very fast on small dense graphs and uses fewer
+          CPU cores, but has fixed C integer-size limits.  The built-in
+          ``'simple'`` algorithm enumerates rotation systems and is useful
+          for computing maximum genus.
+
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
@@ -6620,6 +6632,12 @@ class GenericGraph(GenericGraph_pyx):
             0
             sage: K33 = graphs.CompleteBipartiteGraph(3,3)
             sage: K33.genus()
+            1
+            sage: K33.genus(algorithm='simple')
+            1
+            sage: K33.genus(algorithm='page')        # optional - graph_genus
+            1
+            sage: K33.genus(algorithm='multi_genus') # optional - graph_genus
             1
 
         Using the circular argument, we can compute the minimal genus preserving
@@ -6679,6 +6697,8 @@ class GenericGraph(GenericGraph_pyx):
 
         if maximal:
             minimal = False
+        if not minimal and algorithm is None:
+            algorithm = 'simple'
 
         if circular is not None:
             if not isinstance(circular, list):
@@ -6733,7 +6753,7 @@ class GenericGraph(GenericGraph_pyx):
                     g = 0
                     for block in B:
                         H = G.subgraph(block)
-                        g += genus.simple_connected_graph_genus(H, set_embedding=True, check=False, minimal=True)
+                        g += genus.simple_connected_graph_genus(H, set_embedding=True, check=False, minimal=True, algorithm=algorithm)
                         emb = H.get_embedding()
                         for v in emb:
                             if v in embedding:
@@ -6742,7 +6762,7 @@ class GenericGraph(GenericGraph_pyx):
                                 embedding[v] = emb[v]
                     self._embedding = embedding
                 else:
-                    g = genus.simple_connected_graph_genus(G, set_embedding=True, check=False, minimal=minimal)
+                    g = genus.simple_connected_graph_genus(G, set_embedding=True, check=False, minimal=minimal, algorithm=algorithm)
                     self._embedding = G._embedding
                 return g
             if maximal and (self.has_multiple_edges() or self.has_loops()):
@@ -6752,9 +6772,9 @@ class GenericGraph(GenericGraph_pyx):
                 g = 0
                 for block in B:
                     H = G.subgraph(block)
-                    g += genus.simple_connected_graph_genus(H, set_embedding=False, check=False, minimal=True)
+                    g += genus.simple_connected_graph_genus(H, set_embedding=False, check=False, minimal=True, algorithm=algorithm)
                 return g
-            return genus.simple_connected_graph_genus(G, set_embedding=False, check=False, minimal=minimal)
+            return genus.simple_connected_graph_genus(G, set_embedding=False, check=False, minimal=minimal, algorithm=algorithm)
 
     def crossing_number(self):
         r"""
@@ -7367,6 +7387,10 @@ class GenericGraph(GenericGraph_pyx):
           * ``'MILP'`` -- use a mixed integer linear programming
             formulation. This is the default method for directed graphs.
 
+          * ``'Gabow'`` -- use the combinatorial algorithm of Gabow
+            [Gabow1995]_ for packing edge-disjoint spanning arborescences.
+            Only available for directed simple graphs.
+
           * ``None`` -- use ``'Roskind-Tarjan'`` for undirected graphs and
             ``'MILP'`` for directed graphs.
 
@@ -7512,7 +7536,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm='foo')
             Traceback (most recent call last):
             ...
-            ValueError: algorithm must be None or "MILP" for directed graphs
+            ValueError: algorithm must be None, "MILP" or "Gabow" for directed graphs
+            sage: DiGraph().edge_disjoint_spanning_trees(0, algorithm='Gabow')
+            []
 
         Check that the issue raised in :issue:`42257` on the MILP formulation on
         complete directed graphs of order 3 is fixed::
@@ -7521,6 +7547,19 @@ class GenericGraph(GenericGraph_pyx):
             sage: [len(clique(k).edge_disjoint_spanning_trees(k - 1, algorithm='MILP'))
             ....:  for k in range(1, 8)]
             [0, 1, 2, 3, 4, 5, 6]
+
+        The ``'Gabow'`` algorithm packs edge-disjoint spanning arborescences
+        in directed graphs::
+
+            sage: D = digraphs.Complete(4)
+            sage: trees = D.edge_disjoint_spanning_trees(3, algorithm='Gabow')
+            sage: len(trees)
+            3
+            sage: all(t.num_edges() == 3 for t in trees)
+            True
+            sage: all_edges = sum((t.edges(labels=False, sort=False) for t in trees), [])
+            sage: len(all_edges) == len(set(all_edges))
+            True
         """
         self._scream_if_not_simple()
         from sage.categories.sets_cat import EmptySetError
@@ -7529,8 +7568,9 @@ class GenericGraph(GenericGraph_pyx):
         from sage.numerical.mip import MIPSolverException, MixedIntegerLinearProgram
 
         if self.is_directed():
-            if algorithm is not None and algorithm != "MILP":
-                raise ValueError('algorithm must be None or "MILP" for directed graphs')
+            if algorithm is not None and algorithm not in ("MILP", "Gabow"):
+                raise ValueError('algorithm must be None, "MILP" or "Gabow" '
+                                 'for directed graphs')
         elif algorithm is None or algorithm == "Roskind-Tarjan":
             from sage.graphs.spanning_tree import edge_disjoint_spanning_trees
             return edge_disjoint_spanning_trees(self, k)
@@ -7543,6 +7583,10 @@ class GenericGraph(GenericGraph_pyx):
 
         if not n or not k:
             return []
+
+        if self.is_directed() and algorithm == "Gabow":
+            from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+            return GabowEdgeConnectivity(self).edge_disjoint_spanning_trees(k, root=root)
 
         if root is None:
             root = next(G.vertex_iterator())
@@ -24296,7 +24340,7 @@ class GenericGraph(GenericGraph_pyx):
 
         if not inplace:
             G = copy(self)
-            perm2 = G.relabel(perm,
+            perm2 = GenericGraph.relabel(G, perm,
                               return_map=return_map,
                               check_input=check_input,
                               complete_partial_function=complete_partial_function)

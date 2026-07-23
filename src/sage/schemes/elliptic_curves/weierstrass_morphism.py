@@ -874,7 +874,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         """
         return self._poly_ring(1)
 
-    def dual(self):
+    def dual(self, algorithm=None):
         """
         Return the dual isogeny of this isomorphism.
 
