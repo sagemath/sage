@@ -4,8 +4,8 @@ General Hecke Algebras and Hecke Modules
 This chapter describes the basic functionality for modules over Hecke
 algebras, including decompositions, degeneracy maps and so on. For specific
 examples of Hecke algebras that use this functionality see `Modular
-Symbols <../modsym/index.html>`_ and `Modular Forms
-<../modfrm/index.html>`_.
+:ref:`Modular Symbols <modular-symbols>` and :ref:`Modular Forms
+<modular-forms>`.
 
 .. toctree::
    :maxdepth: 1

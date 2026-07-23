@@ -1,3 +1,5 @@
+.. _polynomial-rings:
+
 Polynomials
 ===========
 

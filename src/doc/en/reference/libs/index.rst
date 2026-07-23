@@ -1,3 +1,5 @@
+.. _c-c-library-interfaces:
+
 C/C++ Library Interfaces
 ========================
 

@@ -115,8 +115,8 @@ Building Sage
 
 Sage is a large project with many dependencies. To build it, we recommend using
 Conda. You can instead use the approach described in the section
-`Sage-the-distribution (classical build) <../installation/source-distro.html>`_
-of the Sage installation guide, or use ``uv``, see `System Package Manager <../installation/source.html#using-system-package-manager>`_.
+:ref:`Sage-the-distribution (classical build) <sec-installation-from-sources-classical>`
+of the Sage installation guide, or use ``uv``, see :ref:`System Package Manager <system_package_manager>`.
 
 Here we concentrate on using Conda.  If you don't have Conda installed, you can install it by following the `official
 instructions <https://github.com/conda-forge/miniforge?tab=readme-ov-file#install>`_
@@ -147,7 +147,7 @@ This will install Sage in the current Conda environment.
 You can then start Sage from the command line with ``sage``.
 
 For more information on building Sage we refer to the section `building
-from source <../installation/source.html>`_ in the Sage installation guide.
+:ref:`from source <section-build-source>` in the Sage installation guide.
 
 .. _section-walkthrough-branch:
 

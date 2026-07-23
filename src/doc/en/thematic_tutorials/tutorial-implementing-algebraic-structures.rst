@@ -75,7 +75,7 @@ case::
     sage: A.category()
     Category of finite dimensional vector spaces with basis over Rational Field
 
-We can look at the available `Categories <../reference/categories/sage/categories/category.html>`_ 
+We can look at the available :mod:`Categories <sage.categories.category>` 
 from the documentation in the reference manual or we can use introspection to
 look through the list of categories to pick one we want::
 
