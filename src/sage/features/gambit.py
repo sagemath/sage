@@ -35,7 +35,40 @@ class pygambit(PythonModule):
             True
         """
         PythonModule.__init__(self, 'pygambit', spkg='pygambit',
-                              url='https://gambitproject.readthedocs.io')
+                              url='https://gambitproject.readthedocs.io/en/latest/install.html#install')
+
+    def resolution(self):
+        r"""
+        Return a suggestion on how to make :meth:`is_present` pass if it did
+        not pass.
+
+        The message gives the command for a non-managed installation of Sage
+        (plain ``pip``), the command for a managed installation of Sage such as
+        one based on conda or on system packages (``sage --pip``), and a pointer
+        to the upstream gambit installation instructions.
+
+        OUTPUT: string
+
+        EXAMPLES::
+
+            sage: from sage.features.gambit import pygambit
+            sage: print(pygambit().resolution())
+            To install pygambit you can run one of the following:
+              * in a non-managed installation of Sage:  pip install pygambit
+              * in a managed installation of Sage...:  sage --pip install pygambit
+            Further installation instructions are available at
+            https://gambitproject.readthedocs.io/en/latest/install.html#install.
+        """
+        if self._hidden:
+            return super().resolution()
+        return (
+            "To install pygambit you can run one of the following:\n"
+            "  * in a non-managed installation of Sage:  pip install pygambit\n"
+            "  * in a managed installation of Sage (for example based on conda "
+            "or on system packages):  sage --pip install pygambit\n"
+            "Further installation instructions are available at\n"
+            "{url}.".format(url=self.url)
+        )
 
 
 def all_features():
