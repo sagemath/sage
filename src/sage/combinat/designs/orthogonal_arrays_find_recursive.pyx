@@ -33,15 +33,6 @@ obtain an `OA(k,n)`.
     :func:`find_three_factor_product` | Find `n_1n_2n_3=n` to obtain an `OA(k,n)` by the three-factor product from [DukesLing14]_
     :func:`find_brouwer_separable_design` | Find `t(q^2+q+1)+x=n` to obtain an `OA(k,n)` by Brouwer's separable design construction.
     :func:`find_brouwer_van_rees_with_one_truncated_column` | Find `rm+x_1+...+x_c=n` such that the Brouwer-van Rees constructions yields a `OA(k,n)`.
-
-REFERENCES:
-
-.. [AC07] Concerning eight mutually orthogonal latin squares
-  Julian R. Abel, Nicholas Cavenagh
-  Journal of Combinatorial Designs
-  Vol. 15, n.3, pp. 255-261
-  2007
-
 Functions
 ---------
 """

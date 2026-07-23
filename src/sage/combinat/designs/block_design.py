@@ -6,20 +6,12 @@ A *block design* is a set together with a family of subsets (repeated subsets
 are allowed) whose members are chosen to satisfy some set of properties that are
 deemed useful for a particular application. See :wikipedia:`Block_design`.
 
-REFERENCES:
-
 - Block design from wikipedia: :wikipedia:`Block_design`
 
 - What is a block design?,
   http://designtheory.org/library/extrep/extrep-1.1-html/node4.html (in 'The
   External Representation of Block Designs' by Peter J. Cameron, Peter
   Dobcsanyi, John P. Morgan, Leonard H. Soicher)
-
-.. [Hu57] Daniel R. Hughes, "A class of non-Desarguesian projective planes",
-   The Canadian Journal of Mathematics (1957), http://cms.math.ca/cjm/v9/p378
-
-.. [We07] Charles Weibel, "Survey of Non-Desarguesian planes" (2007), notices of
-   the AMS, vol. 54 num. 10, pages 1294--1303
 
 AUTHORS:
 
@@ -987,11 +979,6 @@ def HadamardDesign(n):
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
         [5 5 5 5 5 5 5 5 5 5 5]
-
-    REFERENCES:
-
-    - [CvL] P. Cameron, J. H. van Lint, Designs, graphs, codes and
-      their links, London Math. Soc., 1991.
     """
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
     from sage.matrix.constructor import matrix
@@ -1048,12 +1035,6 @@ def Hadamard3Design(n):
         [2 2 0 2 2 2 2 2 2 2 2 4 2 2]
         [2 0 2 2 2 2 2 2 2 2 2 2 4 2]
         [0 2 2 2 2 2 2 2 2 2 2 2 2 4]
-
-
-    REFERENCES:
-
-    .. [CvL] \P. Cameron, J. H. van Lint, Designs, graphs, codes and
-      their links, London Math. Soc., 1991.
     """
     if n == 1 or n == 4:
         raise ValueError("The Hadamard design with n = %s does not extend to a three design." % n)

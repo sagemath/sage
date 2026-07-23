@@ -87,6 +87,11 @@ REFERENCES:
             Some new MOLS of order 2np for p a prime power,
             The Australasian Journal of Combinatorics, vol 10 (1994)
 
+.. [AC07] \R. Julian R. Abel and Nicholas Cavenagh,
+          *Concerning eight mutually orthogonal latin squares*,
+          J. Combin. Des. 15 (2007), no. 3, 255-261,
+          :doi:`10.1002/jcd.20121`
+
 .. [ACFLSS04] \F. N. Abu-Khzam, R. L. Collins, M. R. Fellows, M. A.  Langston,
               \W. H. Suters, and C. T. Symons: Kernelization Algorithm for the
               Vertex Cover Problem: Theory and Experiments. *SIAM
@@ -287,6 +292,11 @@ REFERENCES:
 .. [AN2023] Alex Abreu and Antonio Nigro. *Splitting the cohomology of Hessenberg
             varieties and e-positivity of chromatic symmetric functions*.
             Preprint (2023). :arxiv:`2304.10644`.
+
+.. [AndHonk97] A short course in Combinatorial Designs,
+               Ian Anderson, Iiro Honkala,
+               Internet Editions, Spring 1997,
+               http://www.utu.fi/~honkala/designs.ps
 
 .. [Ang1997] \B. Anglès. 1997. *On some characteristic polynomials attached to
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
@@ -1016,6 +1026,11 @@ REFERENCES:
                    \T. Peyrin, Y. Sasaki, P. Sasdrich, and S. M. Sim,
                    *The SKINNY family of block ciphers and its low-latency
                    variant MANTIS*; in CRYPTO, (2016), pp. 123-153.
+
+.. [BJL99] \T. Beth, D. Jungnickel, H. Lenz,
+           Design Theory 2ed.
+           Cambridge University Press
+           1999
 
 .. [BK1973] Coen Bron and Joep Kerbosch. *Algorithm 457:
             Finding All Cliques of an Undirected Graph*. Commun. ACM. v
@@ -1892,6 +1907,10 @@ REFERENCES:
 .. [CL2023] Xavier Caruso and Antoine Leudière.
             *Algorithms for computing norms and characteristic polynomials on general Drinfeld modules*, (2023) :arxiv:`2307.02879`.
 
+.. [ClaytonSmith] On the existence of `(v,5,1)`-BIBD.
+                  http://www.argilo.net/files/bibd.pdf
+                  Clayton Smith
+
 .. [Cle1872] Alfred Clebsch, *Theorie der binären algebraischen Formen*,
              Teubner, 1872.
 
@@ -2027,6 +2046,12 @@ REFERENCES:
 .. [Col2013] Julia Collins. *An algorithm for computing the Seifert
              matrix of a link from a braid
              representation*. (2013). https://ensaios.sbm.org.br/wp-content/uploads/sites/8/sites/8/2021/11/EM_30_Collins-1.pdf
+
+.. [ColDin01] Charles Colbourn, Jeffrey Dinitz,
+              *Mutually orthogonal latin squares: a brief survey of constructions*,
+              Volume 95, Issues 1-2, Pages 9-48,
+              Journal of Statistical Planning and Inference,
+              Springer, 1 May 2001.
 
 .. [Com2019] Camille Combe, *Réalisation cubique du poset des
              intervalles de Tamari*, preprint :arxiv:`1904.00658`
@@ -2201,6 +2226,9 @@ REFERENCES:
              and Intersection Algorithms. SIAM Journal on Computing
              1986 15:4, 948-957.
 
+- [CvL] P. Cameron, J. H. van Lint, Designs, graphs, codes and
+        their links, London Math. Soc., 1991.
+
 .. [CVV2019] Xavier Caruso, Tristan Vaccon and Thibaut Verron,
              *Gröbner bases over Tate algebras*, :arxiv:`1901.09574` (2019)
 
@@ -2317,6 +2345,11 @@ REFERENCES:
 .. [Den2012] Tom Denton. Canonical Decompositions of Affine Permutations,
              Affine Codes, and Split `k`-Schur Functions.  Electronic Journal of
              Combinatorics, 2012.
+
+.. [Denniston69] \R. H. F. Denniston,
+                 Some maximal arcs in finite projective planes.
+                 Journal of Combinatorial Theory 6, no. 3 (1969): 317-319.
+                 :doi:`10.1016/S0021-9800(69)80095-5`
 
 .. [Deo1987a] \V. Deodhar, A splitting criterion for the Bruhat
               orderings on Coxeter groups. Comm. Algebra,
@@ -3872,6 +3905,9 @@ REFERENCES:
 .. [Humphreys08] James E. Humphreys. *Representations of Semisimple Lie
                  Algebras in the BGG Category* `\mathcal{O}`.
                  Graduate Studies in Mathematics. Amer. Math. Soc., 2008.
+
+.. [Hu57] Daniel R. Hughes, "A class of non-Desarguesian projective planes",
+          The Canadian Journal of Mathematics (1957), http://cms.math.ca/cjm/v9/p378
 
 .. [Hutz2007] \B. Hutz. Arithmetic *Dynamics on Varieties of dimension greater
               than one*. Ph.D. Thesis, Brown University 2007
@@ -6094,6 +6130,11 @@ REFERENCES:
               Congressus numerantium, 1994.
               Pages 97--110
 
+.. [RCW71] \D. K. Ray-Chaudhuri, R. M. Wilson,
+           Solution of Kirkman's schoolgirl problem,
+           Volume 19, Pages 187-203,
+           Proceedings of Symposia in Pure Mathematics
+
 .. [Rea1968] Ronald C. Read,
              An improved method for computing the chromatic polynomials of sparse graphs,
              Research Report CORR 87-20, C & O Dept. Univ. of Waterloo, 1987.
@@ -6774,6 +6815,16 @@ REFERENCES:
 .. [Sti2006] Douglas R. Stinson. *Cryptography: Theory and
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
 
+.. [Stinson91] \D.R. Stinson,
+               A survey of Kirkman triple systems and related designs,
+               Volume 92, Issues 1-3, 17 November 1991, Pages 371-393,
+               Discrete Mathematics,
+               :doi:`10.1016/0012-365X(91)90294-C`
+
+.. [Stinson2004] Douglas R. Stinson,
+                 *Combinatorial designs: construction and analysis*,
+                 Springer, 2004.
+
 .. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
                 J. Automat. Reason. **6** (1990) 233-250.
 
@@ -7288,6 +7339,9 @@ REFERENCES:
 .. [WC2007] \R.A. Walker II, and C.J. Colbourn, *Perfect Hash Families:
              Constructions and Existence*. J. Math. Crypt. 1 (2007),
              pp.125-150
+
+.. [We07] Charles Weibel, "Survey of Non-Desarguesian planes" (2007), notices of
+          the AMS, vol. 54 num. 10, pages 1294--1303
 
 .. [Web2007] James Webb. *Game theory: decisions, interaction and
              Evolution*. Springer Science & Business Media, 2007.
