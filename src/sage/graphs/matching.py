@@ -1383,7 +1383,7 @@ def matching(G, value_only=False, algorithm=None,
         sage: g.matching(algorithm='Micali-Vazirani', use_edge_labels=True)
         Traceback (most recent call last):
         ...
-        ValueError: Micali-Vazirani algorithm does not support edge labels or weights
+        ValueError: the Micali-Vazirani algorithm does not support edge labels or weights
 
     With ``value_only=True`` the Micali-Vazirani algorithm returns a Sage
     :class:`~sage.rings.integer.Integer`, consistent with the other
@@ -1477,7 +1477,7 @@ def matching(G, value_only=False, algorithm=None,
 
     if algorithm == "Micali-Vazirani":
         if use_edge_labels:
-            raise ValueError("Micali-Vazirani algorithm does not "
+            raise ValueError("the Micali-Vazirani algorithm does not "
                 "support edge labels or weights")
 
         micali_vazirani_matching = MicaliVaziraniMatching(G)
@@ -2030,7 +2030,7 @@ class MicaliVaziraniMatching:
             from sage.graphs.graph import Graph
 
             if not isinstance(G, Graph):
-                raise ValueError("The input must be a graph")
+                raise ValueError("the input must be a graph")
 
             # Work on a fresh, plain ``Graph``. Loops and multiple edges are
             # removed (a maximum matching of the underlying simple graph is a
@@ -2419,7 +2419,7 @@ class MicaliVaziraniMatching:
             sage: MicaliVaziraniMatching(graphs.PetersenGraph().to_directed())
             Traceback (most recent call last):
             ...
-            ValueError: The input must be a graph
+            ValueError: the input must be a graph
             sage: MicaliVaziraniMatching(Graph([(0, 0)], loops=True)).N
             0
             sage: MV = MicaliVaziraniMatching(Graph([(0, 1), (0, 1)], multiedges=True))
