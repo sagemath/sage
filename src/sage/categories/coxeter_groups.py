@@ -75,7 +75,8 @@ class CoxeterGroups(Category_singleton):
 
     .. SEEALSO::
 
-        - :mod:`sage.combinat.root_system`
+        - :mod:`sage.combinat.root_system.all`
+        - :class:`sage.combinat.root_system.coxeter_group.CoxeterGroup`
         - :class:`WeylGroups`
         - :class:`GeneralizedCoxeterGroups`
 
