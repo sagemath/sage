@@ -233,34 +233,43 @@ inclusion!)
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 from collections.abc import Callable, Container
 from copy import copy
+from typing import TYPE_CHECKING
 from warnings import warn
 
 import sage.geometry.abc
-
-from sage.structure.richcmp import richcmp_method, richcmp
 from sage.misc.lazy_import import lazy_import
+from sage.structure.richcmp import richcmp, richcmp_method
+
 lazy_import('sage.combinat.combination', 'Combinations')
 lazy_import('sage.combinat.posets.posets', 'FinitePoset')
-from sage.geometry.cone import (_ambient_space_point,
-                                Cone,
-                                ConvexRationalPolyhedralCone,
-                                IntegralRayCollection,
-                                normalize_rays)
+from sage.geometry.cone import (
+    Cone,
+    ConvexRationalPolyhedralCone,
+    IntegralRayCollection,
+    _ambient_space_point,
+    normalize_rays,
+)
+
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
+
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.timing import walltime
 from sage.misc.misc_c import prod
+from sage.misc.timing import walltime
 from sage.modules.free_module import span
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
@@ -1187,7 +1196,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         if virtual_rays is not None:
             self._virtual_rays = PointCollection(virtual_rays, self.lattice())
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 
@@ -2477,8 +2486,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         """
         if not self.is_complete():
             raise ValueError('to be polytopal, the fan should be complete')
-        from sage.geometry.triangulation.point_configuration import PointConfiguration
         from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.geometry.triangulation.point_configuration import PointConfiguration
         pc = PointConfiguration(self.rays())
         v_pc = [tuple(p) for p in pc]
         pc_to_indices = {tuple(p):i for i, p in enumerate(pc)}
@@ -2747,8 +2756,10 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: fan1.is_isomorphic(fan1)
             True
         """
-        from sage.geometry.fan_isomorphism import \
-            fan_isomorphic_necessary_conditions, fan_isomorphism_generator
+        from sage.geometry.fan_isomorphism import (
+            fan_isomorphic_necessary_conditions,
+            fan_isomorphism_generator,
+        )
         if not fan_isomorphic_necessary_conditions(self, other):
             return False
         if self.lattice_dim() == 2:

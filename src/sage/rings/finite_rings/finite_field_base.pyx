@@ -39,6 +39,7 @@ from sage.categories.finite_fields import FiniteFields
 from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 from sage.rings.integer cimport Integer
 import sage.rings.abc
 
@@ -286,7 +287,7 @@ cdef class FiniteField(Field):
             return f'PrimeField({self.characteristic()})'
         return f'FiniteField({self.characteristic()},{self.degree()})'
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

@@ -52,6 +52,9 @@ AUTHORS:
 
 - Anna Haensch (2018-03): Added function ``quadratic_defect()``
 """
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
@@ -62,6 +65,9 @@ from sage.misc.fast_methods import Singleton
 from sage.rings.number_field import number_field_base
 from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 class RationalField(Singleton, number_field_base.NumberField):
@@ -1575,7 +1581,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         sympy_init()
         return Rationals
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

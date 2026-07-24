@@ -129,6 +129,7 @@ from sage.rings.abc import RealDoubleField, ComplexDoubleField
 
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
 
 
 CallableSymbolicExpressionRing_class = LazyImport(
@@ -1243,7 +1244,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return self
         return self.change_ring(R)
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

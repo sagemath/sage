@@ -184,6 +184,8 @@ from sage.structure.richcmp cimport rich_to_bool_sgn
 
 from sage.rings import integer_ring
 
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
+
 cimport gmpy2
 gmpy2.import_gmpy2()
 
@@ -6479,7 +6481,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return 'StringToInteger("%s",16)' % self.str(16)
         return str(self)
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when
         evaluated.

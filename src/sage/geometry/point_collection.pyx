@@ -83,6 +83,8 @@ from sage.geometry.toric_lattice import ToricLattice
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 
+from sage.misc.sage_input import CoercionMode, SageInputBuilder, SageInputExpression
+
 
 _output_format = "default"
 
@@ -146,7 +148,7 @@ cdef class PointCollection(SageObject):
         self._points = tuple(points)
         self._module = self._points[0].parent() if module is None else module
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: CoercionMode) -> SageInputExpression:
         r"""
         Return Sage command to reconstruct ``self``.
 
