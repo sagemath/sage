@@ -1013,7 +1013,24 @@ cdef class GraphicMatroid(Matroid):
             sage: O = Matroid(range(6), graphs.CycleGraph(6))
             sage: M._is_isomorphic(O)
             False
+            
+        ::
+
+            sage: M2 = matroids.catalog.K4()
+            sage: G = Graph(multiedges=True)
+            sage: G.add_vertices(range(4))
+            sage: G.add_edges([(0,1),(0,1),(0,2),(0,3),(1,2),(1,3),(2,3)])
+            sage: M = Matroid(G)
+            sage: M.is_isomorphic(M2)
+            False
+            sage: M2.is_isomorphic(M)
+            False
         """
+        # Add size check at the very top of _is_isomorphic
+        if self.size() != other.size():
+            if certificate:
+                return False, None
+            return False
         # Check for 3-connectivity so we don't have to worry about Whitney twists
         if isinstance(other, GraphicMatroid) and other.is_3connected():
             G = self.graph()
