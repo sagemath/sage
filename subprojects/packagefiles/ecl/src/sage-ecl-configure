@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+
+srcdir=$(CDPATH= cd "$(dirname "$0")" && pwd)
+"$srcdir/configure" "$@"
+
+printf '\nECL_SIDE_MODULES_PATH := %s\nexport ECL_SIDE_MODULES_PATH\n' \
+    "$ECL_SIDE_MODULES_PATH" >> Makefile

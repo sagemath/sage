@@ -79,7 +79,8 @@ The output is parseable (i. e. :issue:`31796` is fixed)::
 
 TESTS:
 
-Check our workaround for a race in ecl works, see :issue:`26968`.
+Check that Maxima initialization is not affected by an ECL race, see
+:issue:`26968`.
 We use a temporary ``MAXIMA_USERDIR`` so it's empty; we place it
 in ``DOT_SAGE`` since we expect it to have more latency than ``/tmp``.
 
@@ -145,29 +146,7 @@ ecl_eval("(set-locale-subdir)")
 if MAXIMA_PREFIX:
     os.environ["MAXIMA_PREFIX"] = MAXIMA_PREFIX
 
-# This workaround has to happen before any call to (set-pathnames).
-# To be safe please do not call anything other than
-# (set-locale-subdir) before this block.
-try:
-    ecl_eval("(set-pathnames)")
-except RuntimeError:
-    # Recover from :issue:`26968` by creating `*maxima-objdir*` here.
-    # This cannot be done before calling `(set-pathnames)` since
-    # `*maxima-objdir*` is computed there.
-    # We use python `os.makedirs()` which is immune to the race.
-    # Using `(ensure-directories-exist ...)` in lisp would be
-    # subject to the same race condition and since `*maxima-objdir*`
-    # has multiple components this is quite plausible to happen.
-    maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
-    os.makedirs(maxima_objdir, exist_ok=True)
-    # Call `(set-pathnames)` again to complete its job.
-    ecl_eval("(set-pathnames)")
-
-# Always ensure *maxima-objdir* exists using Python's os.makedirs,
-# which is more robust than ECL's ensure-directories-exist on some
-# platforms (see :issue:`26968`).
-maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
-os.makedirs(maxima_objdir, exist_ok=True)
+ecl_eval("(set-pathnames)")
 
 
 def _maxima_share_subdirs(sharedir=None):
@@ -177,7 +156,7 @@ def _maxima_share_subdirs(sharedir=None):
     The directories are read from Maxima's own ``*maxima-sharedir*`` -- the
     canonical package tree that Maxima itself searches and compiles into --
     rather than from a hardcoded list, so they cannot drift out of sync with
-    the installed Maxima version (see :issue:`26968`).
+    the installed Maxima version.
 
     INPUT:
 
@@ -223,24 +202,6 @@ ecl_eval(r"(defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not *pcprntd*) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
-
-# Replace Maxima's `loadfile` with a version that does not swallow the
-# underlying CL error.  Stock `loadfile` wraps the load in `(errset ...)`,
-# discards whatever the load actually signalled, and reports the generic
-# "loadfile: failed to load X" -- making CI failures undiagnosable.
-# Letting the original condition propagate gives us the real cause.
-ecl_eval(r"""
-(defun loadfile (file findp printp)
-  (and findp (member $loadprint '(nil $loadfile) :test #'equal) (setq printp nil))
-  (if printp (format t (intl:gettext "loadfile: loading ~A.~%") file))
-  (let* ((path (pathname file))
-         (*package* (find-package :maxima))
-         ($load_pathname path)
-         (*read-base* 10.))
-    #-sbcl (load (pathname file))
-    #+sbcl (with-compilation-unit nil (load (pathname file)))
-    (namestring path)))
-""")
 
 # The following is an adaptation of the "retrieve" function in maxima
 # itself. This routine is normally responsible for displaying a

@@ -3,3 +3,6 @@ url = https://gitlab.com/embeddable-common-lisp/ecl.git
 revision = 26.5.5
 depth = 1
 patch_directory = ecl
+# Keep this copy byte-identical to
+# build/pkgs/ecl/patches/59de50b52380132d44bfa05f573544cba0a8c65f.patch.
+diff_files = ecl/59de50b52380132d44bfa05f573544cba0a8c65f.patch

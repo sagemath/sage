@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -eu
+
+srcdir=$(CDPATH= cd "$(dirname "$0")" && pwd)
+"${CONFIG_SHELL:-/bin/sh}" "$srcdir/configure" "$@"
+
+# Meson's external_project finishes "make" before it starts "make install",
+# so src/binary-ecl/maxima.fas already exists when this target runs.
+printf '\n.PHONY: sage-install-maxima-fas\ninstall: sage-install-maxima-fas\nsage-install-maxima-fas:\n\t$(MKDIR_P) "$(DESTDIR)%s"\n\t$(INSTALL_DATA) src/binary-ecl/maxima.fas "$(DESTDIR)%s/maxima.fas"\n' \
+    "$MAXIMA_FAS_DIR" "$MAXIMA_FAS_DIR" >> Makefile

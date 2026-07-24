@@ -3,6 +3,7 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
   'cypari2 >=2.2.1; sys_platform != "win32"',
+  'meson >=1.7',
   'meson-python',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
@@ -222,7 +223,7 @@ dev = [
   "cibuildwheel",
   "conda-lock",
   "grayskull",
-  "meson", # Duplicate build-system requirement to fix editable installs with uv
+  "meson >=1.7", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
   "ninja", # Duplicate build-system requirement to fix editable installs with uv
   "pygithub",

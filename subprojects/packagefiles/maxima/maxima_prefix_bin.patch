@@ -2,12 +2,6 @@ diff --git a/src/maxima.in b/src/maxima.in
 index 2cf379cd4..a7608b065 100755
 --- a/src/maxima.in
 +++ b/src/maxima.in
-@@ -28,7 +28,7 @@ setup_vars() {
-       MAXIMA_IMAGESDIR="$MAXIMA_DEFAULT_IMAGESDIR"
-   else
-       if [ "$layout_autotools" = "true" ]; then
+@@ -31 +31 @@ setup_vars() {
 -	  MAXIMA_IMAGESDIR=$(unixize "$MAXIMA_PREFIX")/lib/$PACKAGE/$MAXIMA_VERSION
-+	  MAXIMA_IMAGESDIR=$(unixize "$MAXIMA_PREFIX")/lib/x86_64-linux-gnu/$PACKAGE/$MAXIMA_VERSION
-       else
- 	  MAXIMA_IMAGESDIR=$(unixize "$MAXIMA_PREFIX")/src
-       fi  
++	  MAXIMA_IMAGESDIR=$(unixize "$MAXIMA_PREFIX")/${libdir#"$prefix"/}/$PACKAGE/$MAXIMA_VERSION
