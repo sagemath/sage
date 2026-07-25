@@ -30,14 +30,17 @@ from collections.abc import Callable
 from sage.combinat.diagram_algebras import BrauerDiagram
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.monoids.automatic_semigroup import AutomaticSemigroup
 from sage.plot.graphics import Graphics
+from sage.structure.element_wrapper import ElementWrapper
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 ##############################################################################
 # Tangle element class
 ##############################################################################
 
-class KauffmanTangle(AutomaticSemigroup.Element):
+
+class KauffmanTangle(ElementWrapper):
     r"""
     Element in the semigroup of Kauffman tangles.
 
@@ -303,9 +306,16 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         crossing_dict = {}
 
         def add_crossings_to_dict(st, crossings):
-            if st not in crossing_dict:
-                crossing_dict[st] = []
-            crossing_dict[st] = sorted(set(crossing_dict[st] + crossings))
+            r"""
+            Accumulate crossings per strand in a set and sort once at the end
+            """
+            crossing_dict.setdefault(st, set()).update(crossings)
+
+        def sorted_crossing_dict():
+            r"""
+            Return the sorted crossing_dict at the end
+            """
+            return {st: sorted(cr) for st, cr in crossing_dict.items()}
 
         # first add crossings from left_tangle
         for lst1 in lcrossing_dict:
@@ -326,7 +336,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
                 # self crossing
                 st1, = matches
                 add_crossings_to_dict(st1, [(st1, lw - 1)])
-                return crossing_dict
+                return sorted_crossing_dict()
 
             matches = [st for st in los if st.start in bot_transpos or st.end in bot_transpos]
             st1, st2 = matches
@@ -334,7 +344,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
             add_crossings_to_dict(st1, [(st2, lw - 1)])
             add_crossings_to_dict(st2, [(st1, lw - 1)])
 
-        return crossing_dict
+        return sorted_crossing_dict()
 
     @cached_method
     def _strands_at_position(self, pos):
@@ -656,7 +666,7 @@ class KauffmanTangle(AutomaticSemigroup.Element):
         return a
 
 
-class KauffmanTangles(AutomaticSemigroup):
+class KauffmanTangles(UniqueRepresentation, Parent):
     r"""
     The semigroup of Kauffman tangles, which naturally index
     a basis for the Birman-Murakami-Wenzl algebra.
@@ -695,16 +705,17 @@ class KauffmanTangles(AutomaticSemigroup):
             sage: KT = KauffmanTangles('g0, g1, e0, e1')
             sage: TestSuite(KT).run()
         """
+        from sage.categories.monoids import Monoids
         from sage.groups.free_group import FreeGroup
         FG = FreeGroup(names)
         n = len(FG.gens()) // 2
+        # ambient generators of the tangle monoid: the braid generators with
+        # their inverses and the cap-cup generators (which have no inverse)
         gens = FG.semigroup_generators()[:-n]
-        import operator
-
-        from sage.categories.monoids import Monoids
-        from sage.sets.family import Family
+        self._ambient = FG
+        self._semigroup_gens = tuple(gens)
         category = Monoids().FinitelyGenerated().Infinite()
-        super().__init__(Family(gens), FG, FG.one(), operator.mul, category)
+        Parent.__init__(self, category=category)
         self._nstrands = n + 1
         self._mwt_names = {}  # support for the names of the BMW-algebra basis
         self._shared_memory = {}  # shared cache for sign independent results of methods
@@ -737,33 +748,97 @@ class KauffmanTangles(AutomaticSemigroup):
         from sage.rings.polynomial.polynomial_ring import polygen
         return BrauerAlgebra(self._nstrands, polygen(ZZ))
 
-    def list(self):
+    def ambient(self):
         r"""
-        Overloading this method is needed to make the TestSuite pass
-        (since we have an infinite semigroup).
+        Return the ambient free group of ``self``.
+
+        The elements of ``self`` are retracts of elements of this free group.
 
         EXAMPLES::
 
             sage: from sage.monoids.tangles import KauffmanTangles
-            sage: KauffmanTangles('g0, g1, e0, e1').list()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Semigroup of tangles with 3 (non closed) strands with generators Family (1, g0, g1, e0, e1, g0^-1, g1^-1) is infinite
+            sage: KauffmanTangles('g0, g1, e0, e1').ambient()
+            Free Group on generators {g0, g1, e0, e1}
         """
-        raise NotImplementedError('%s is infinite' % self)
+        return self._ambient
 
-    def cardinality(self):
+    def _retract(self, ambient_element) -> KauffmanTangle:
         r"""
-        Return infinity.
+        Wrap an element of the ambient free group into ``self``.
 
         EXAMPLES::
 
             sage: from sage.monoids.tangles import KauffmanTangles
-            sage: KauffmanTangles('g0, g1, e0, e1').cardinality()
-            +Infinity
+            sage: KT = KauffmanTangles('g0, g1, e0, e1')
+            sage: FG = KT.ambient()
+            sage: KT._retract(FG.gen(0) * FG.gen(2))
+            g0*e0
         """
-        from sage.rings.infinity import infinity
-        return infinity
+        return self.element_class(self, ambient_element)
+
+    def product(self, x, y) -> KauffmanTangle:
+        r"""
+        Return the product of two tangles, computed in the ambient free group.
+
+        The result is cached (via :meth:`_cached_product`): the same tangle
+        products recur heavily -- in :meth:`KauffmanTangle.expand_in_product`
+        every strand of a factor multiplies by the same generator, and the
+        Birman-Murakami-Wenzl recursion reuses products -- so memoizing avoids
+        recomputing the ambient free group multiplication.  ``product`` itself
+        is kept as a plain method because the ``Magmas`` category introspects
+        ``self.product.__func__`` during initialization.
+
+        EXAMPLES::
+
+            sage: from sage.monoids.tangles import KauffmanTangles
+            sage: KT = KauffmanTangles('g0, g1, e0, e1')
+            sage: KT((1, 3)) * KT((3,))
+            g0*e0^2
+        """
+        return self._cached_product(x, y)
+
+    @cached_method
+    def _cached_product(self, x, y) -> KauffmanTangle:
+        r"""
+        Cached worker for :meth:`product`.
+
+        EXAMPLES::
+
+            sage: from sage.monoids.tangles import KauffmanTangles
+            sage: KT = KauffmanTangles('g0, g1, e0, e1')
+            sage: KT._cached_product(KT((1, 3)), KT((3,)))
+            g0*e0^2
+        """
+        return self._retract(x.value * y.value)
+
+    @cached_method
+    def gens(self):
+        r"""
+        Return the generators of ``self`` (including the identity).
+
+        EXAMPLES::
+
+            sage: from sage.monoids.tangles import KauffmanTangles
+            sage: KauffmanTangles('g0, g1, e0, e1').gens()
+            Family (1, g0, g1, e0, e1, g0^-1, g1^-1)
+        """
+        from sage.sets.family import Family
+        return Family([self._retract(g) for g in self._semigroup_gens])
+
+    monoid_generators = gens
+    semigroup_generators = gens
+
+    def an_element(self) -> KauffmanTangle:
+        r"""
+        Return an element of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.monoids.tangles import KauffmanTangles
+            sage: KauffmanTangles('g0, g1, e0, e1').an_element()
+            g0
+        """
+        return self._retract(self._semigroup_gens[1])
 
     @cached_method
     def one(self):
@@ -776,7 +851,7 @@ class KauffmanTangles(AutomaticSemigroup):
             sage: KauffmanTangles('g0, g1, e0, e1').one()
             1
         """
-        return self(self.ambient().one())
+        return self._retract(self._ambient.one())
 
     @cached_method
     def _element_constructor_(self, x):
@@ -811,19 +886,23 @@ class KauffmanTangles(AutomaticSemigroup):
         if isinstance(x, tuple):
             lx = len(x)
             if not lx:
-                return self(self.ambient().one())
+                return self._retract(self._ambient.one())
             if any(abs(i) > n for i in x if i < 0):
                 raise ValueError('inverse generators are only for indices <= %s defined' % n)
             elif any(i > 2 * n for i in x):
                 raise ValueError('generators are only for indices <= %s defined' % (2 * n))
-            return self(A(x))
+            return self._retract(A(x))
         if isinstance(x, BrauerDiagram):
             return self.morton_wasserman_tangle(x)
         from sage.groups.braid import Braid
         if isinstance(x, Braid):
             if x.strands() == self._nstrands:
                 return self(x.Tietze())
-        return super()._element_constructor_(x)
+        if isinstance(x, KauffmanTangle):
+            if x.parent() is self:
+                return x
+            x = x.value
+        return self._retract(self._ambient(x))
 
     @cached_method
     def morton_wasserman_tangle(self, bd: BrauerDiagram, top_bottom: bool = True) -> KauffmanTangle:
@@ -1213,7 +1292,6 @@ class Strand:
         ocll = list(ocl)
         return scll[0] < ocll[0]
 
-    @cached_method
     def overlap(self, other):
         r"""
         Return the number of top line positions of ``other``

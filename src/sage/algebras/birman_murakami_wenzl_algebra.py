@@ -120,7 +120,7 @@ REFERENCES:
 # ###########################################################################
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
-from sage.misc.verbose import verbose
+from sage.misc.verbose import get_verbose, verbose
 from sage.modules.free_module_element import vector
 from sage.monoids.tangles import KauffmanTangle, KauffmanTangles
 from sage.rings.integer_ring import ZZ
@@ -271,7 +271,7 @@ class BirmanMurakamiWenzlElement(CombinatorialFreeModule.Element):
             tangle = basis[bas_ele]
             w = tangle.writhe(closure=True)
             los = tangle.list_of_strands()
-            locs = set(tuple(st.closure()) for st in los)
+            locs = {tuple(st.closure()) for st in los}
             num_closures = len(locs)
             return l**(-skn3*w) * x**(num_closures-1)
 
@@ -619,6 +619,7 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         # init the attributes being set on demand
         # ----------------------------------------------------------------------
         self._birman_murakami_wenzl_subalgebra = None
+        self._from_kauffman_tangle_cache = {}
 
     def _repr_(self):
         r"""
@@ -867,7 +868,6 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         e1, e2, e3 = es
         return g1*~g2*g3
 
-    @cached_method
     def _from_kauffman_tangle(self, tangle: KauffmanTangle, rec_count: int = 0) -> BirmanMurakamiWenzlElement:
         r"""
         Return an element of ``self`` constructed from the given instance of
@@ -888,22 +888,48 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
              + (m^3-m)*g1*e0 + g1*g0 + (m^3-m)*g1 + (-m^4+m^2-l^-1*m^3-l^-2*m^2)*e0
              + (m^5-2*m^3)*g0 + (-m^4+m^2)*o1
         """
+        cache = self._from_kauffman_tangle_cache
+        if tangle in cache:
+            return cache[tangle]
+        res = self._compute_from_kauffman_tangle(tangle, rec_count)
+        cache[tangle] = res
+        return res
+
+    def _compute_from_kauffman_tangle(self, tangle: KauffmanTangle, rec_count: int) -> BirmanMurakamiWenzlElement:
+        r"""
+        Worker for :meth:`_from_kauffman_tangle`.
+
+        This does the actual (uncached) work; go through
+        :meth:`_from_kauffman_tangle` so that the result is memoized.
+
+        EXAMPLES::
+
+            sage: BMW3 = algebras.BirmanMurakamiWenzl(3)
+            sage: T = BMW3.tangle_semigroup()
+            sage: t = T(KnotInfo.K6_2.braid())
+            sage: BMW3._compute_from_kauffman_tangle(t, 0) == BMW3._from_kauffman_tangle(t)
+            True
+        """
         base_ring = self.base_ring()
         l, m = base_ring.gens()
         x = self._delta
         skn1, skn2, skn3 = self._skein_normalization
+        # only build the (expensive) verbose messages when they would be shown;
+        # otherwise the eager ``%``-formatting of tangles/elements dominates
+        dbg = get_verbose() >= 2
 
-        prefix = ' '*2*rec_count + repr(rec_count)
+        prefix = ' '*2*rec_count + repr(rec_count) if dbg else ''
         pos = tangle.find_unlayered_crossing()
         if pos is None:
             conn, loops = tangle.connector()
             # obtain the Morton Wasserman tangle (needed because of lazy basis family)
             mwt = self.basis().keys()[conn]
             writhe = tangle.writhe()
-            verbose('%s Tangle %s with %s loops and writhe %s is layered and isotopic to %s' % (prefix, tangle, loops, writhe, mwt), level=2)
+            if dbg:
+                verbose('%s Tangle %s with %s loops and writhe %s is layered and isotopic to %s' % (prefix, tangle, loops, writhe, mwt), level=2)
             return l**(-skn3*writhe)*x**loops*self(conn)
 
-        # if there are unlayered crossings we resolve them recursivlely
+        # if there are unlayered crossings we resolve them recursively
         w = tangle.defining_word()
         P = tangle.parent()
         tangl = P(w[:pos])
@@ -912,20 +938,21 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
         i = w[pos]
         g = P((-i,))
         e = P((abs(i) + self.strands() - 1,))
-        prompt = '%s Tangle %s is not layered at position %s' % (prefix, tangle, pos)
-        verbose('%s (left %s, right %s, g %s, e %s): starting recursion' % (prompt, tangl, tangr, g, e), level=2)
-
-        verbose('%s, elem_g start recursion' % prompt, level=2)
+        if dbg:
+            prompt = '%s Tangle %s is not layered at position %s' % (prefix, tangle, pos)
+            verbose('%s (left %s, right %s, g %s, e %s): starting recursion' % (prompt, tangl, tangr, g, e), level=2)
+            verbose('%s, elem_g start recursion' % prompt, level=2)
         elem_g = self._from_kauffman_tangle(tangl * g * tangr, rec_count + 1)
-        verbose('%s, elem_g: %s end recursion' % (prompt, elem_g), level=2)
-
-        verbose('%s, elem_e start recursion' % prompt, level=2)
+        if dbg:
+            verbose('%s, elem_g: %s end recursion' % (prompt, elem_g), level=2)
+            verbose('%s, elem_e start recursion' % prompt, level=2)
         elem_e = self._from_kauffman_tangle(tangl * e * tangr, rec_count + 1)
-        verbose('%s, elem_e: %s end recursion' % (prompt, elem_e), level=2)
-
-        verbose('%s, elem_0 start recursion' % prompt, level=2)
+        if dbg:
+            verbose('%s, elem_e: %s end recursion' % (prompt, elem_e), level=2)
+            verbose('%s, elem_0 start recursion' % prompt, level=2)
         elem_0 = self._from_kauffman_tangle(tangl * tangr, rec_count + 1)
-        verbose('%s, elem_0: %s end recursion' % (prompt, elem_0), level=2)
+        if dbg:
+            verbose('%s, elem_0: %s end recursion' % (prompt, elem_0), level=2)
 
         # since elem_g has less unlayered crossings and  since elem_e and
         # elem_0 have less crossings at all the recursion must terminate
@@ -934,7 +961,8 @@ class BirmanMurakamiWenzlAlgebra(CombinatorialFreeModule):
             res = -skn1*elem_g + m*(elem_0 + skn2*elem_e)
         else:
             res = -skn1*elem_g + skn1*m*(elem_0 + skn2*elem_e)
-        verbose('%s, result: %s' % (prompt, res), level=2)
+        if dbg:
+            verbose('%s, result: %s' % (prompt, res), level=2)
         return res
 
     @cached_method
