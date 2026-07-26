@@ -1026,11 +1026,21 @@ cdef class GraphicMatroid(Matroid):
             sage: M2.is_isomorphic(M)
             False
         """
-        # Add size check at the very top of _is_isomorphic
+        # 1. Ground set size check
         if self.size() != other.size():
             if certificate:
                 return False, None
             return False
+
+        # 2. Direct invariants check for small ground sets (|E| < 4)
+        if self.size() < 4:
+            if len(self.loops()) != len(other.loops()) or self.simplify().size() != other.simplify().size():
+                return (False, None) if certificate else False
+
+            if certificate:
+                cert = dict(zip(self.groundset(), other.groundset()))
+                return (True, cert)
+            return True
         # Check for 3-connectivity so we don't have to worry about Whitney twists
         if isinstance(other, GraphicMatroid) and other.is_3connected():
             G = self.graph()
