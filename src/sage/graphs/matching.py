@@ -52,9 +52,10 @@ Methods
 # ****************************************************************************
 from __future__ import annotations
 import itertools
+from dataclasses import dataclass
 from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 # Type-checking-only import: ``TYPE_CHECKING`` is ``False`` at runtime, so the
 # body below is never executed (and is reported as uncovered by design). It
@@ -1963,8 +1964,6 @@ class MicaliVaziraniMatching:
     - [Vaz2020]_
     - [HS2017]_
     """
-    from dataclasses import dataclass
-    from typing import Any
 
     Edge = tuple[int, int, Any]
 
