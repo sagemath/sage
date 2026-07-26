@@ -2401,7 +2401,7 @@ class MicaliVaziraniMatching:
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.PetersenGraph())
-            sage: MV.N
+            sage: MV._N
             10
             sage: MV._matching_size
             0
@@ -2419,10 +2419,10 @@ class MicaliVaziraniMatching:
             Traceback (most recent call last):
             ...
             ValueError: the input must be a graph
-            sage: MicaliVaziraniMatching(Graph([(0, 0)], loops=True)).N
+            sage: MicaliVaziraniMatching(Graph([(0, 0)], loops=True))._N
             0
             sage: MV = MicaliVaziraniMatching(Graph([(0, 1), (0, 1)], multiedges=True))
-            sage: MV.N, MV._G.size()
+            sage: MV._N, MV._G.size()
             (2, 1)
             sage: G = Graph([(0, 0), (0, 1), (0, 1), (1, 2)], loops=True, multiedges=True)
             sage: M = MicaliVaziraniMatching(G).get_matching()
@@ -2447,23 +2447,22 @@ class MicaliVaziraniMatching:
         # the algorithm treats it as read-only.
         self._instance = self._Instance(G)
         self._G = self._instance.graph
-        self.N = self._instance.N
-        self.index_to_vertex = self._instance.index_to_vertex
-        self.index_to_edge = self._instance.index_to_edge
+        self._N = self._instance.N
 
         # Per-phase search state: level arrays, predecessor/successor links,
         # tenacity-bucketed bridges, prop edges, and the erase/scan stamps, plus
         # the derived level accessors (see :class:`_SearchState`).
-        self._state = self._SearchState(self.N, len(self.index_to_edge))
+        self._state = self._SearchState(
+            self._N, len(self._instance.index_to_edge))
 
         # Petals of the current phase (bud union-find + petal store).
-        self._petals = self._Petals(self.N, self._Petal,
+        self._petals = self._Petals(self._N, self._Petal,
                                   self.RED, self.GREEN, self.NO_COLOR)
 
         # The matching itself: ``mate[v]`` is the vertex matched to ``v``, or
         # ``EXPOSED`` if ``v`` is currently unmatched. ``matching_size`` tracks
         # the number of matched edges so it need not be recomputed.
-        self._mate: list[int] = [self.EXPOSED] * self.N
+        self._mate: list[int] = [self.EXPOSED] * self._N
         self._matching_size = 0
         self._phase_index = 0
         self._num_augmentations = 0
@@ -2526,7 +2525,7 @@ class MicaliVaziraniMatching:
             sage: def seed_is_maximal(G):
             ....:     MV = MicaliVaziraniMatching(G)
             ....:     MV.compute_initial_maximal_matching()
-            ....:     matched = {v for v in range(MV.N) if not MV.is_exposed(v)}
+            ....:     matched = {v for v in range(MV._N) if not MV.is_exposed(v)}
             ....:     if any(MV._mate[MV._mate[v]] != v for v in matched):
             ....:         return False
             ....:     return not any(u not in matched and v not in matched
@@ -2565,7 +2564,7 @@ class MicaliVaziraniMatching:
         J: Graph = self._G.copy(immutable=False)
 
         # Create the degree list
-        degree: list[int] = [J.degree(v) for v in range(self.N)]
+        degree: list[int] = [J.degree(v) for v in range(self._N)]
         minimum_degree, maximum_degree = min(degree), max(degree)
 
         # Create a list of buckets, where bucket[i] holds the set of
@@ -2810,7 +2809,7 @@ class MicaliVaziraniMatching:
         is_augmented = False
 
         for edge_index in self._state.bridges_by_tenacity[2 * search_level + 1]:
-            u, v = self.index_to_edge[edge_index]
+            u, v = self._instance.index_to_edge[edge_index]
             l = self._G.edge_label(u, v)
             if self._state.deletion_phase[u] == self._phase_index or \
                self._state.deletion_phase[v] == self._phase_index:
@@ -2828,7 +2827,7 @@ class MicaliVaziraniMatching:
                         is_augmented = True
                         # maximum matching reached (>= N - 1 vertices matched);
                         # no augmenting path can remain, so stop the phase early
-                        if self._matching_size == self.N // 2:
+                        if self._matching_size == self._N // 2:
                             return is_augmented
 
             elif not encountered_deleted_vertex:
@@ -3631,7 +3630,7 @@ class MicaliVaziraniMatching:
             sage: len(MV.get_matching())
             5
         """
-        for v in range(self.N):
+        for v in range(self._N):
             assert self._state.even_level[v] == self._state.INFINITY or not self._state.even_level[v] % 2, \
                 f'even_level[{v}] = {self._state.even_level[v]} is not even'
             assert self._state.odd_level[v] == self._state.INFINITY or self._state.odd_level[v] % 2, \
@@ -4103,20 +4102,20 @@ class MicaliVaziraniMatching:
                 # Stop once the matching is maximum: matching_size == N // 2
                 # means at most one vertex is left exposed, so no augmenting
                 # path can remain.
-                if self._matching_size == self.N // 2:
+                if self._matching_size == self._N // 2:
                     break
 
         # Rebuild the matching on the *original* vertex labels. ``self._G`` still
         # carries the internal 0, ..., N - 1 labels, so edge labels are looked
         # up with the internal endpoints and the vertices are mapped back
-        # through ``index_to_vertex``. The ``vi < ui`` guard yields each matched
-        # edge exactly once.
+        # through ``_instance.index_to_vertex``. The ``vi < ui`` guard yields
+        # each matched edge exactly once.
         def matched_edges():
-            for vi, v in enumerate(self.index_to_vertex):
+            for vi, v in enumerate(self._instance.index_to_vertex):
                 ui = self._mate[vi]
                 if ui != self.EXPOSED and vi < ui:
-                    yield (v, self.index_to_vertex[ui],
+                    yield (v, self._instance.index_to_vertex[ui],
                            self._G.edge_label(vi, ui))
 
-        return Graph([self.index_to_vertex, matched_edges()],
+        return Graph([self._instance.index_to_vertex, matched_edges()],
                      format='vertices_and_edges').edges()
