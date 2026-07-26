@@ -50,7 +50,7 @@ jobs:
           key: ${{ runner.os }}-meson-${{ env.PYTHON_VERSION }}
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           # Disabled for now due to
@@ -87,7 +87,7 @@ jobs:
 
       - name: Download old doc
         if: github.event_name == 'pull_request'
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: doc-develop
           github-token: ${{ secrets.GITHUB_TOKEN }}

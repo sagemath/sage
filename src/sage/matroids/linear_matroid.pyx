@@ -1085,8 +1085,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         if self != other:
             return self._is_field_isomorphism(other, mf)
-        else:
-            return self._is_field_isomorphism(copy(other), mf)
+        return self._is_field_isomorphism(copy(other), mf)
 
     cpdef _fast_isom_test(self, other):
         """
@@ -1277,8 +1276,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             return NotImplemented
         if left.is_field_equivalent(right):
             return rich_to_bool(op, 0)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     def __hash__(self):
         r"""
@@ -2722,8 +2720,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         if not self.is_connected():
             if certificate:
                 return False, self.components()[0]
-            else:
-                return False
+            return False
         if self.rank() > self.size() - self.rank():
             return self.dual()._is_3connected_shifting(certificate)
 
@@ -3530,8 +3527,7 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         if (<BinaryMatrix>self._A).get(self._prow[x], y):   # Not a Sage matrix operation
             return self._one
-        else:
-            return self._zero
+        return self._zero
 
     def _repr_(self):
         """
@@ -3714,8 +3710,7 @@ cdef class BinaryMatroid(LinearMatroid):
             return self._is_isomorphic(other), self._isomorphism(other)
         if isinstance(other, BinaryMatroid):
             return self.is_field_isomorphic(other)
-        else:
-            return LinearMatroid._is_isomorphic(self, other)
+        return LinearMatroid._is_isomorphic(self, other)
 
     cpdef _is_isomorphism(self, other, morphism):
         r"""
@@ -3742,8 +3737,7 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         if isinstance(other, BinaryMatroid):
             return self.is_field_isomorphism(other, morphism)
-        else:
-            return LinearMatroid._is_isomorphism(self, other, morphism)
+        return LinearMatroid._is_isomorphism(self, other, morphism)
 
     # invariants
     cpdef _make_invariant(self):
@@ -4744,8 +4738,7 @@ cdef class TernaryMatroid(LinearMatroid):
             return self._is_isomorphic(other), self._isomorphism(other)
         if isinstance(other, TernaryMatroid):
             return self.is_field_isomorphic(other)
-        else:
-            return LinearMatroid._is_isomorphic(self, other)
+        return LinearMatroid._is_isomorphic(self, other)
 
     # invariants
 
@@ -6398,8 +6391,7 @@ cdef class RegularMatroid(LinearMatroid):
             return self._is_isomorphic(other), self._isomorphism(other)
         if isinstance(other, RegularMatroid):
             return self.is_field_isomorphic(other)
-        else:
-            return LinearMatroid._is_isomorphic(self, other)
+        return LinearMatroid._is_isomorphic(self, other)
 
     cpdef _fast_isom_test(self, other):
         r"""

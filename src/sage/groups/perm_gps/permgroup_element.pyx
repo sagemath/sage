@@ -1090,8 +1090,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             j = i
             if 1 <= j <= self.n:
                 return from_gap[self.perm[j-1]+1]
-            else:
-                return from_gap[i]
+            return from_gap[i]
 
     cpdef list _act_on_list_on_position(self, list x):
         r"""
@@ -2109,8 +2108,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         if as_list:
             return l5
-        else:
-            return l1, l2
+        return l1, l2
 
 
 cdef class SymmetricGroupElement(PermutationGroupElement):

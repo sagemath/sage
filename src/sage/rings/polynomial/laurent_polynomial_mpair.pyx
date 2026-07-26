@@ -984,8 +984,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise ZeroDivisionError
         if right._poly.is_term():
             return self * ~right
-        else:
-            return RingElement._div_(self, rhs)
+        return RingElement._div_(self, rhs)
 
     def is_monomial(self):
         """
@@ -1488,8 +1487,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             f = self.subs(**kwds)
             if x:  # More than 1 non-keyword argument
                 return f(*x)
-            else:
-                return f
+            return f
 
         cdef int l = len(x)
 
@@ -2014,8 +2012,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if not self:
             if new_ring is None:
                 return self._parent.zero()
-            else:
-                return new_ring.zero()
+            return new_ring.zero()
 
         if self._prod is None:
             self._compute_polydict()

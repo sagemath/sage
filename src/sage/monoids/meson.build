@@ -8,6 +8,7 @@ py.install_sources(
   'free_monoid.py',
   'free_monoid_element.py',
   'hecke_monoid.py',
+  'hypoplactic_monoid.py',
   'indexed_free_monoid.py',
   'monoid.py',
   'plactic_monoid.py',
