@@ -1846,79 +1846,89 @@ def M_alternating_even_mark(G, vertex, matching):
 
 class MicaliVaziraniMatching:
     r"""
-    Compute a maximum cardinality matching (in a simple undirected unweighted
-    graph) with the Micali--Vazirani algorithm.
+    Compute a maximum cardinality matching in a simple undirected unweighted
+    graph using the Micali--Vazirani algorithm.
 
-    Given a simple undirected (unweighted) graph `G = (V, E)`, this class
-    computes a matching of maximum cardinality using the algorithm of Micali
-    and Vazirani [MV1980]_, whose correctness rests on the theory of
-    alternating paths and blossoms developed in [Vaz1994]_, with a complete
-    correctness proof given later in [Vaz2020]_. The phase structure follows
+    Given a simple undirected unweighted graph `G = (V, E)`, this class computes
+    a matching of maximum cardinality by the algorithm of Micali and Vazirani
+    [MV1980]_. The correctness of that algorithm rests on the theory of
+    alternating paths and blossoms developed in [Vaz1994]_; a complete proof was
+    given later in [Vaz2020]_. The phase structure of the implementation follows
     the *extended search phases* of Huang and Stein [HS2017]_.
 
-    The computation proceeds in *phases* (see :meth:`_search`). Each phase runs
-    a breadth-first search from the currently unmatched vertices that assigns
-    to every vertex a ``min_level`` and a ``max_level`` -- the lengths of a shortest
-    even- and odd-length alternating path from a free vertex -- and classifies
-    every edge as either a *prop* (an edge of a ``min_level`` path) or a *bridge*.
-    Bridges are bucketed by their *tenacity* and processed by a double
-    depth-first search (:meth:`_DDFS`), which either reports a *bottleneck*
-    around which an odd structure is contracted into a *petal* (a
-    :class:`_Petal`), or returns two vertex-disjoint paths forming a shortest
-    augmenting path. A phase augments along a maximal set of vertex-disjoint
-    shortest augmenting paths before the next phase begins; `O(\sqrt{|V|})`
-    phases suffice. Seeding the search with a greedy maximal matching (see
-    :meth:`_compute_initial_maximal_matching`) reduces the number of phases.
+    The computation proceeds in *phases* (see :meth:`_search`). A phase begins
+    with a breadth-first search from the currently exposed (unmatched) vertices.
+    This search assigns to each vertex `v` two levels, its ``even_level`` and its
+    ``odd_level``: the lengths of a shortest even-length and a shortest
+    odd-length alternating path from an exposed vertex to `v`. The smaller of the
+    two is the ``min_level`` of `v` and the larger is its ``max_level``. Each
+    edge is then classified either as a *prop*, an edge lying on a ``min_level``
+    alternating path, or as a *bridge*. The bridges are grouped by their
+    *tenacity* and processed by a double depth-first search (:meth:`_DDFS`). For
+    each bridge this search either reports a *bottleneck*, around which an odd
+    structure is contracted into a *petal* (a :class:`_Petal`), or returns two
+    vertex-disjoint paths that together form a shortest augmenting path. Before
+    the next phase begins, the phase augments the matching along a maximal set of
+    vertex-disjoint shortest augmenting paths. In total, `O(\sqrt{|V|})` phases
+    suffice. Seeding the search with a greedy maximal matching (see
+    :meth:`_compute_initial_maximal_matching`) reduces the number of phases
+    required.
 
-    Terminology follows [Vaz2020]_, distinguishing the *algorithmic* structures
-    a search builds from the *graph-theoretic* ones they approximate:
+    The terminology follows [Vaz2020]_, which distinguishes the *algorithmic*
+    structures that a search builds from the *graph-theoretic* structures that
+    they approximate:
 
-    - a *petal* is the odd structure a single :meth:`_DDFS` contracts; a
-      *blossom* is a union of petals. The petal is the algorithmic object (it
-      depends on how the search resolves choices) and is the one realised in
-      code as :class:`_Petal`; the blossom is its graph-theoretic counterpart;
-    - a *bud* is the bottleneck vertex of a petal, where the two searches
-      collide (algorithmic); a *base* is `\mathrm{bud}^*(v)`, the base of the
-      blossom containing `v` (graph-theoretic). The two coincide once all petals
-      at a base have merged. The implementation does not store them separately:
-      a single union-find (``vertex_bud_map`` / :meth:`get_bud`, with the value
-      also kept in ``_Petal.bud``) holds the current representative, which is a
-      petal's bud at formation and the blossom's base after merging;
-    - the two endpoints of a *bridge* are its *peaks* (``petal.peaks``), and
-      the two odd-alternating predecessor paths from a peak down to the bud are
-      the petal's two *arcs*. Here ``peak`` and ``arc`` are descriptive
-      implementation names rather than terms from [Vaz2020]_.
+    - a *petal* is the odd structure that a single :meth:`_DDFS` contracts, and
+      a *blossom* is a union of petals. The petal is the algorithmic object,
+      since it depends on how the search resolves its choices; it is realised in
+      code as :class:`_Petal`. The blossom is its graph-theoretic counterpart.
+    - a *bud* is the bottleneck vertex of a petal, the vertex at which the two
+      searches collide; it is an algorithmic object. A *base* is
+      `\mathrm{bud}^*(v)`, the base of the blossom containing `v`; it is a
+      graph-theoretic object. The two coincide once all petals at a base have
+      merged. The implementation does not store them separately. A single
+      union-find structure (``vertex_bud_map`` and :meth:`get_bud`, with the
+      value also kept in ``_Petal.bud``) holds the current representative of each
+      set; this representative is a petal's bud at formation and the blossom's
+      base after merging.
+    - the two endpoints of a *bridge* are its *peaks* (``petal.peaks``), and the
+      two odd-length alternating predecessor paths from a peak down to the bud
+      are the petal's two *arcs*. The names ``peak`` and ``arc`` are descriptive
+      implementation names and are not terms from [Vaz2020]_.
 
-    Accordingly this documentation says *petal*/*bud* for the algorithmic
-    objects the code manipulates and *blossom*/*base* for the graph-theoretic
+    In this documentation, *petal* and *bud* denote the algorithmic objects that
+    the code manipulates, while *blossom* and *base* denote the graph-theoretic
     notions; the two pairs are not interchangeable. *Unfolding* a petal
-    (:meth:`_unfold_petal`; the *open* operation of the papers) expands it back
+    (:meth:`_unfold_petal`, the *open* operation of the papers) expands it back
     into a genuine alternating path of the input graph.
 
-    The core procedures :meth:`_MIN`, :meth:`_MAX` and :meth:`_DDFS` are spelled in
-    upper case to match the procedure names of [MV1980]_ and [Vaz2020]_. This is
-    a deliberate departure from the usual lower-case method naming, kept so the
-    code maps one-to-one onto the papers; it should not be "corrected".
+    The core procedures :meth:`_MIN`, :meth:`_MAX`, and :meth:`_DDFS` are named
+    in upper case to match the procedure names used in [MV1980]_ and [Vaz2020]_,
+    so that the implementation corresponds directly to those references. This
+    departure from the usual lower-case naming of methods is deliberate and
+    should be preserved.
 
-    Each phase runs in `O(|E|)` time apart from the maintenance of blossom
-    bases, which is done with a union-find structure (see :meth:`get_bud` and
-    :meth:`form_petal`). Because the base of a blossom must stay the
-    representative of its set, the union step links by base rather than by
-    rank, so the structure relies on path compression alone: `O(\log |V|)`
-    amortized per operation. With `O(\sqrt{|V|})` phases the overall running
-    time is therefore `O(\sqrt{|V|}\,|E|\,\log |V|)`. The sharper
-    `O(\sqrt{|V|}\,|E|\,\alpha(|E|, |V|))` bound, with `\alpha(\cdot, \cdot)` the
-    :wikipedia:`inverse Ackermann function <Ackermann_function#Inverse>`, would
-    require pairing path compression with union-by-rank -- here that means
-    decoupling the rank-balanced forest from the bud labels (a separate
-    root-to-bud map) -- and is not implemented. The optimal
-    `O(\sqrt{|V|}\,|E|)` bound of [MV1980]_, which replaces the union-find with
-    Gabow's incremental-tree set-merging, is not implemented here.
+    Apart from the maintenance of blossom bases, each phase runs in `O(|E|)`
+    time. The bases are maintained with a union-find structure (see
+    :meth:`get_bud` and :meth:`form_petal`). The base of a blossom must remain
+    the representative of its set, so the union step links by base rather than by
+    rank, and the structure therefore relies on path compression alone. This
+    gives `O(\log |V|)` amortized time per operation. With `O(\sqrt{|V|})`
+    phases, the overall running time is `O(\sqrt{|V|}\,|E|\,\log |V|)`.
 
-    The space complexity is `O(|V| + |E|)`: a constant number of per-vertex
-    arrays (levels, predecessors/successors, mates, the union-find map) whose
-    adjacency-style lists total `O(|E|)`, together with the per-edge index maps
-    and the tenacity bridge buckets.
+    The sharper bound `O(\sqrt{|V|}\,|E|\,\alpha(|E|, |V|))`, in which
+    `\alpha(\cdot, \cdot)` denotes the :wikipedia:`inverse Ackermann function
+    <Ackermann_function#Inverse>`, would require combining path compression with
+    union-by-rank. In this setting that would mean decoupling the rank-balanced
+    forest from the bud labels, through a separate root-to-bud map, and it is not
+    implemented. The optimal bound `O(\sqrt{|V|}\,|E|)` of [MV1980]_, which
+    replaces the union-find structure with Gabow's incremental-tree set-merging,
+    is likewise not implemented here.
+
+    The space complexity is `O(|V| + |E|)`. The structure stores a constant
+    number of per-vertex arrays -- levels, predecessors and successors, mates,
+    and the union-find map -- whose adjacency-style lists total `O(|E|)`,
+    together with the per-edge index maps and the tenacity bridge buckets.
 
     INPUT:
 
