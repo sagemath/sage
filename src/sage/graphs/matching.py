@@ -1856,24 +1856,24 @@ class MicaliVaziraniMatching:
     correctness proof given later in [Vaz2020]_. The phase structure follows
     the *extended search phases* of Huang and Stein [HS2017]_.
 
-    The computation proceeds in *phases* (see :meth:`search`). Each phase runs
+    The computation proceeds in *phases* (see :meth:`_search`). Each phase runs
     a breadth-first search from the currently unmatched vertices that assigns
     to every vertex a ``min_level`` and a ``max_level`` -- the lengths of a shortest
     even- and odd-length alternating path from a free vertex -- and classifies
     every edge as either a *prop* (an edge of a ``min_level`` path) or a *bridge*.
     Bridges are bucketed by their *tenacity* and processed by a double
-    depth-first search (:meth:`DDFS`), which either reports a *bottleneck*
+    depth-first search (:meth:`_DDFS`), which either reports a *bottleneck*
     around which an odd structure is contracted into a *petal* (a
     :class:`_Petal`), or returns two vertex-disjoint paths forming a shortest
     augmenting path. A phase augments along a maximal set of vertex-disjoint
     shortest augmenting paths before the next phase begins; `O(\sqrt{|V|})`
     phases suffice. Seeding the search with a greedy maximal matching (see
-    :meth:`compute_initial_maximal_matching`) reduces the number of phases.
+    :meth:`_compute_initial_maximal_matching`) reduces the number of phases.
 
     Terminology follows [Vaz2020]_, distinguishing the *algorithmic* structures
     a search builds from the *graph-theoretic* ones they approximate:
 
-    - a *petal* is the odd structure a single :meth:`DDFS` contracts; a
+    - a *petal* is the odd structure a single :meth:`_DDFS` contracts; a
       *blossom* is a union of petals. The petal is the algorithmic object (it
       depends on how the search resolves choices) and is the one realised in
       code as :class:`_Petal`; the blossom is its graph-theoretic counterpart;
@@ -1892,10 +1892,10 @@ class MicaliVaziraniMatching:
     Accordingly this documentation says *petal*/*bud* for the algorithmic
     objects the code manipulates and *blossom*/*base* for the graph-theoretic
     notions; the two pairs are not interchangeable. *Unfolding* a petal
-    (:meth:`unfold_petal`; the *open* operation of the papers) expands it back
+    (:meth:`_unfold_petal`; the *open* operation of the papers) expands it back
     into a genuine alternating path of the input graph.
 
-    The core procedures :meth:`MIN`, :meth:`MAX` and :meth:`DDFS` are spelled in
+    The core procedures :meth:`_MIN`, :meth:`_MAX` and :meth:`_DDFS` are spelled in
     upper case to match the procedure names of [MV1980]_ and [Vaz2020]_. This is
     a deliberate departure from the usual lower-case method naming, kept so the
     code maps one-to-one onto the papers; it should not be "corrected".
@@ -1974,7 +1974,7 @@ class MicaliVaziraniMatching:
     EXPOSED = -1
 
     #: Colors of the two searches run by the double depth-first search
-    #: (:meth:`DDFS`): a *red* search and a *green* search. ``color[v]`` records
+    #: (:meth:`_DDFS`): a *red* search and a *green* search. ``color[v]`` records
     #: which side of a petal vertex ``v`` was attached to.
     RED, GREEN = 0, 1
 
@@ -1985,13 +1985,13 @@ class MicaliVaziraniMatching:
     @dataclass
     class _Petal:
         r"""
-        A petal: the odd structure a single :meth:`DDFS` contracts in a phase.
+        A petal: the odd structure a single :meth:`_DDFS` contracts in a phase.
 
         Following [Vaz1994]_ and the implementation of Huang and Stein
         [HS2017]_, a petal stores:
 
         - ``bud`` -- the petal's *bud*: the highest bottleneck vertex at which
-          the two (red and green) depth-first searches of :meth:`DDFS` collide.
+          the two (red and green) depth-first searches of :meth:`_DDFS` collide.
           A union of petals sharing this vertex forms a *blossom* whose
           graph-theoretic *base* it is (see the class docstring);
         - ``peaks`` -- the pair of endpoints (the red and green roots) of the
@@ -2290,7 +2290,7 @@ class MicaliVaziraniMatching:
 
                 sage: from sage.graphs.matching import MicaliVaziraniMatching
                 sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-                sage: MV.start_new_phase()
+                sage: MV._start_new_phase()
                 sage: MV._state.min_level(0)
                 0
             """
@@ -2302,14 +2302,14 @@ class MicaliVaziraniMatching:
 
             This is ``maxlevel`` in [Vaz2020]_ (Definition 3.3): the larger of
             ``even_level`` and ``odd_level`` when at least one of them is
-            finite. It is checked in :meth:`assign_max_levels`, where the newly
+            finite. It is checked in :meth:`_assign_max_levels`, where the newly
             assigned level must equal this larger value.
 
             EXAMPLES::
 
                 sage: from sage.graphs.matching import MicaliVaziraniMatching
                 sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-                sage: MV.start_new_phase()
+                sage: MV._start_new_phase()
                 sage: MV._state.max_level(0) == MV._state.INFINITY
                 True
             """
@@ -2327,7 +2327,7 @@ class MicaliVaziraniMatching:
 
                 sage: from sage.graphs.matching import MicaliVaziraniMatching
                 sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-                sage: MV.start_new_phase()
+                sage: MV._start_new_phase()
                 sage: MV._state.tenacity(0) == MV._state.INFINITY
                 True
             """
@@ -2344,7 +2344,7 @@ class MicaliVaziraniMatching:
 
                 sage: from sage.graphs.matching import MicaliVaziraniMatching
                 sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-                sage: MV.start_new_phase()
+                sage: MV._start_new_phase()
                 sage: MV._state.is_outer(0)
                 True
             """
@@ -2364,7 +2364,7 @@ class MicaliVaziraniMatching:
 
                 sage: from sage.graphs.matching import MicaliVaziraniMatching
                 sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-                sage: MV.start_new_phase()
+                sage: MV._start_new_phase()
                 sage: MV._state.is_prop(0)
                 False
             """
@@ -2389,10 +2389,10 @@ class MicaliVaziraniMatching:
           structure and augmenting at successive tenacity levels. If ``False``,
           use the classic Micali--Vazirani phase, which ends as soon as a level
           augments. Both compute a maximum-cardinality matching; the extended
-          variant rebuilds the search structure less often. See :meth:`search`.
+          variant rebuilds the search structure less often. See :meth:`_search`.
 
         - ``check_invariants`` -- boolean (default: ``False``); a debugging aid.
-          If ``True``, :meth:`search` runs :meth:`_check_invariants` after every
+          If ``True``, :meth:`_search` runs :meth:`_check_invariants` after every
           level, asserting internal invariants. Off by default (the checks cost
           `O(|V|)` per level) and never changes the result; the assertions are
           ``assert`` statements, so ``python -O`` removes them regardless.
@@ -2467,16 +2467,16 @@ class MicaliVaziraniMatching:
         self._phase_index = 0
         self._num_augmentations = 0
 
-        # Phase-termination policy (see :meth:`search`): ``True`` selects the
+        # Phase-termination policy (see :meth:`_search`): ``True`` selects the
         # Huang--Stein extended search phases, ``False`` the classic
         # Micali--Vazirani phase that stops at the first augmenting level.
         self.extended_phases = extended_phases
 
         # Debugging aid (see the constructor argument): when ``True``,
-        # :meth:`search` runs :meth:`_check_invariants` after each level.
+        # :meth:`_search` runs :meth:`_check_invariants` after each level.
         self.check_invariants = check_invariants
 
-    def is_exposed(self, v: int) -> bool:
+    def _is_exposed(self, v: int) -> bool:
         r"""
         Return whether vertex ``v`` is *exposed* (not covered by the matching).
 
@@ -2484,10 +2484,10 @@ class MicaliVaziraniMatching:
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.PathGraph(2))
-            sage: MV.is_exposed(0)
+            sage: MV._is_exposed(0)
             True
             sage: _ = MV.get_matching()
-            sage: MV.is_exposed(0)
+            sage: MV._is_exposed(0)
             False
         """
         return self._mate[v] == self.EXPOSED
@@ -2495,7 +2495,7 @@ class MicaliVaziraniMatching:
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
     # *************************************
-    def compute_initial_maximal_matching(self) -> None:
+    def _compute_initial_maximal_matching(self) -> None:
         r"""
         Seed ``self._mate`` with a greedy maximal matching.
 
@@ -2513,7 +2513,7 @@ class MicaliVaziraniMatching:
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.CompleteGraph(4))
-            sage: MV.compute_initial_maximal_matching()
+            sage: MV._compute_initial_maximal_matching()
             sage: MV._matching_size
             2
 
@@ -2524,8 +2524,8 @@ class MicaliVaziraniMatching:
 
             sage: def seed_is_maximal(G):
             ....:     MV = MicaliVaziraniMatching(G)
-            ....:     MV.compute_initial_maximal_matching()
-            ....:     matched = {v for v in range(MV._N) if not MV.is_exposed(v)}
+            ....:     MV._compute_initial_maximal_matching()
+            ....:     matched = {v for v in range(MV._N) if not MV._is_exposed(v)}
             ....:     if any(MV._mate[MV._mate[v]] != v for v in matched):
             ....:         return False
             ....:     return not any(u not in matched and v not in matched
@@ -2634,7 +2634,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Start a new phase
     # ******************************
-    def start_new_phase(self) -> None:
+    def _start_new_phase(self) -> None:
         r"""
         Reset the per-phase search state before a new phase.
 
@@ -2650,7 +2650,7 @@ class MicaliVaziraniMatching:
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.PathGraph(4))
-            sage: MV.start_new_phase()
+            sage: MV._start_new_phase()
             sage: MV._state.even_level
             [0, 0, 0, 0]
             sage: sorted(MV._state.search_level_vertices)
@@ -2659,7 +2659,7 @@ class MicaliVaziraniMatching:
         self._state.search_level_vertices = []
 
         for u in self._G:
-            if not self.is_exposed(u):
+            if not self._is_exposed(u):
                 # Matched vertices start with infinite levels
                 self._state.even_level[u] = self._state.INFINITY
                 self._state.odd_level[u] = self._state.INFINITY
@@ -2686,7 +2686,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Primary Subroutine: Find min_level of vertices
     # ******************************
-    def MIN(self, search_level: int) -> bool:
+    def _MIN(self, search_level: int) -> bool:
         r"""
         Run one breadth-first step of the ``min_level`` search.
 
@@ -2696,7 +2696,7 @@ class MicaliVaziraniMatching:
         assigned ``min_level`` ``search_level + 1``, the scanned edge becomes a
         *prop* and the current vertex is recorded as its predecessor; an edge
         to an already-levelled vertex is a *bridge* and is filed under its
-        tenacity for :meth:`MAX` to process.
+        tenacity for :meth:`_MAX` to process.
 
         INPUT:
 
@@ -2712,8 +2712,8 @@ class MicaliVaziraniMatching:
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.PathGraph(3))
-            sage: MV.start_new_phase()
-            sage: MV.MIN(0)
+            sage: MV._start_new_phase()
+            sage: MV._MIN(0)
             False
             sage: MV._state.even_level
             [0, 0, 0]
@@ -2772,17 +2772,17 @@ class MicaliVaziraniMatching:
     # ******************************
     # Primary Subroutine: Find max_level of vertices
     # ******************************
-    def MAX(self, search_level: int) -> bool:
+    def _MAX(self, search_level: int) -> bool:
         r"""
         Process the bridges of tenacity ``2 * search_level + 1``.
 
         Each such bridge is explored by a double depth-first search
-        (:meth:`DDFS`). If the two searches reach distinct free vertices the
+        (:meth:`_DDFS`). If the two searches reach distinct free vertices the
         bridge yields a shortest augmenting path, which is augmented
-        (:meth:`augment`); otherwise they collapse to a *bottleneck* and the
+        (:meth:`_augment`); otherwise they collapse to a *bottleneck* and the
         enclosed odd structure is contracted into a *petal*
         (:meth:`form_petal`) whose vertices are given their ``max_levels``
-        (:meth:`assign_max_levels`).
+        (:meth:`_assign_max_levels`).
 
         INPUT:
 
@@ -2794,14 +2794,14 @@ class MicaliVaziraniMatching:
         EXAMPLES:
 
         With an empty matching on a 4-cycle, the level-0 bridges are all of
-        tenacity `1`, and :meth:`MAX` augments a maximum set of them::
+        tenacity `1`, and :meth:`_MAX` augments a maximum set of them::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
             sage: MV = MicaliVaziraniMatching(graphs.CycleGraph(4))
-            sage: MV.start_new_phase()
-            sage: MV.MIN(0)
+            sage: MV._start_new_phase()
+            sage: MV._MIN(0)
             False
-            sage: MV.MAX(0)
+            sage: MV._MAX(0)
             True
             sage: MV._matching_size
             2
@@ -2816,12 +2816,12 @@ class MicaliVaziraniMatching:
                 continue
 
             (red_support, green_support, bottleneck,
-             encountered_deleted_vertex) = self.DDFS(u, v)
+             encountered_deleted_vertex) = self._DDFS(u, v)
 
             # ``bottleneck is None`` means the bridge yielded an augmenting path
             if bottleneck is None:
                 if not encountered_deleted_vertex:
-                    augmentation_success = self.augment(
+                    augmentation_success = self._augment(
                         red_support, green_support, (u, v, l))
                     if augmentation_success:
                         is_augmented = True
@@ -2833,8 +2833,8 @@ class MicaliVaziraniMatching:
             elif not encountered_deleted_vertex:
                 self._petals.form_petal(
                     red_support, green_support, bottleneck, (u, v, l))
-                self.assign_max_levels(red_support, search_level)
-                self.assign_max_levels(green_support, search_level)
+                self._assign_max_levels(red_support, search_level)
+                self._assign_max_levels(green_support, search_level)
 
         if is_augmented:
             self._num_augmentations += 1
@@ -2845,7 +2845,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Label vertices after forming a petal
     # ******************************
-    def assign_max_levels(self, support: list[int], search_level: int) -> None:
+    def _assign_max_levels(self, support: list[int], search_level: int) -> None:
         r"""
         Assign ``max_levels`` to the vertices of a freshly formed petal.
 
@@ -2857,7 +2857,7 @@ class MicaliVaziraniMatching:
         INPUT:
 
         - ``support`` -- list of integers; the vertices of the petal found
-          by :meth:`DDFS`
+          by :meth:`_DDFS`
         - ``search_level`` -- integer; the current search level
 
         EXAMPLES:
@@ -2920,7 +2920,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Double depth-first search to locate augmenting paths
     # ******************************
-    def DDFS(
+    def _DDFS(
         self,
         source_red_vertex: int,
         source_green_vertex: int,
@@ -3104,7 +3104,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Unfold a petal
     # ******************************
-    def unfold_petal(self, vertex: int, target: int, visited=None) -> list[int]:
+    def _unfold_petal(self, vertex: int, target: int, visited=None) -> list[int]:
         r"""
         Reconstruct the alternating path through a petal.
 
@@ -3151,7 +3151,7 @@ class MicaliVaziraniMatching:
         recursive version would recurse, and ``return``\ s its result. The
         result of each finished generator is sent back into its parent. This
         replaces Python call recursion -- and its stack-depth limit -- by a
-        heap-allocated stack, so :meth:`unfold_petal` and
+        heap-allocated stack, so :meth:`_unfold_petal` and
         :meth:`_unfold_path_in_petal_generator` cannot overflow the interpreter
         stack on deeply nested petals.
         """
@@ -3174,7 +3174,7 @@ class MicaliVaziraniMatching:
 
     def _unfold_petal_generator(self, vertex, target, visited=None):
         r"""
-        Generator form of :meth:`unfold_petal`, driven by
+        Generator form of :meth:`_unfold_petal`, driven by
         :meth:`_run_trampoline`.
 
         The logic mirrors the recursive version; each recursive call is a
@@ -3279,7 +3279,7 @@ class MicaliVaziraniMatching:
 
         EXAMPLES:
 
-        Exercised through :meth:`unfold_petal` whenever an augmenting path runs
+        Exercised through :meth:`_unfold_petal` whenever an augmenting path runs
         through a branching or nested petal::
 
             sage: from sage.graphs.matching import MicaliVaziraniMatching
@@ -3406,7 +3406,7 @@ class MicaliVaziraniMatching:
         alternates unmatched and matched edges: the even-indexed edges
         ``path[0]--path[1]``, ``path[2]--path[3]``, ... are currently unmatched
         (and become matched), while the odd-indexed edges are currently
-        matched. This guards :meth:`augment` against toggling a malformed
+        matched. This guards :meth:`_augment` against toggling a malformed
         reconstruction.
 
         INPUT:
@@ -3442,7 +3442,7 @@ class MicaliVaziraniMatching:
         """
         if len(path) < 2 or len(path) % 2 or len(set(path)) != len(path):
             return False
-        if not self.is_exposed(path[0]) or not self.is_exposed(path[-1]):
+        if not self._is_exposed(path[0]) or not self._is_exposed(path[-1]):
             return False
         for i in range(len(path) - 1):
             u, v = path[i], path[i + 1]
@@ -3456,7 +3456,7 @@ class MicaliVaziraniMatching:
     # ******************************
     # Augment along a found path
     # ******************************
-    def augment(
+    def _augment(
         self,
         red_support: list[int],
         green_support: list[int],
@@ -3466,7 +3466,7 @@ class MicaliVaziraniMatching:
         Augment the current matching along a discovered augmenting path.
 
         The two halves of the augmenting path meet at ``bridge``. Each half is
-        reconstructed from its support with :meth:`find_path`, the red half is
+        reconstructed from its support with :meth:`_find_path`, the red half is
         reversed, and the two are spliced into a single free-to-free path. The
         spliced path is validated with :meth:`_is_valid_augmenting_path` and,
         only if it is well formed, every edge along it is toggled (matched edges
@@ -3496,8 +3496,8 @@ class MicaliVaziraniMatching:
             sage: len(MicaliVaziraniMatching(G).get_matching())
             2
         """
-        red_path = self.find_path(red_support, bridge[0])
-        green_path = self.find_path(green_support, bridge[1])
+        red_path = self._find_path(red_support, bridge[0])
+        green_path = self._find_path(green_support, bridge[1])
         if not red_path or not green_path:
             # Could not construct a valid augmenting path
             return False
@@ -3542,7 +3542,7 @@ class MicaliVaziraniMatching:
         return True
 
     # Procedure to find path after discovering an augmenting path via DDFS
-    def find_path(self, support: list[int], peak: int) -> list[int]:
+    def _find_path(self, support: list[int], peak: int) -> list[int]:
         r"""
         Reconstruct one half of an augmenting path from a peak to a free vertex.
 
@@ -3550,7 +3550,7 @@ class MicaliVaziraniMatching:
         ``support`` -- the sequence of buds produced by the double depth-first
         search -- as a guide: for each bud the predecessors are popped until the
         matching bud is reached. Whenever a vertex lies inside a contracted
-        petal, the corresponding segment is expanded with :meth:`unfold_petal`
+        petal, the corresponding segment is expanded with :meth:`_unfold_petal`
         so that the returned sequence is a genuine alternating path in the
         original graph.
 
@@ -3591,7 +3591,7 @@ class MicaliVaziraniMatching:
             if self._petals.vertex_petal_map[current_vertex] is None:
                 path.append(current_vertex)
             else:
-                petal_path = self.unfold_petal(
+                petal_path = self._unfold_petal(
                     current_vertex, self._petals.get_bud(current_vertex), set(path))
                 if not petal_path:
                     return []
@@ -3610,7 +3610,7 @@ class MicaliVaziraniMatching:
         r"""
         Assert internal search-state invariants; a debugging aid.
 
-        When :attr:`check_invariants` is set, :meth:`search` calls this after
+        When :attr:`check_invariants` is set, :meth:`_search` calls this after
         every level. It checks that ``even_level`` is even and ``odd_level`` odd
         wherever finite, and that no vertex is the bud of a petal it belongs to
         (a bud lies outside its petal). Raises ``AssertionError`` on a
@@ -3618,7 +3618,7 @@ class MicaliVaziraniMatching:
         :attr:`check_invariants` is ``True``.
 
         (Augmenting-path validity is not checked here: it is already enforced in
-        production by :meth:`_is_valid_augmenting_path` inside :meth:`augment`.)
+        production by :meth:`_is_valid_augmenting_path` inside :meth:`_augment`.)
 
         EXAMPLES:
 
@@ -3639,16 +3639,16 @@ class MicaliVaziraniMatching:
             assert petal is None or petal.bud != v, \
                 f'vertex {v} is the bud of its own petal'
 
-    def search(self) -> bool:
+    def _search(self) -> bool:
         r"""
         Run one phase, augmenting along shortest vertex-disjoint paths.
 
-        A phase grows the search level by level: at each level :meth:`MIN`
+        A phase grows the search level by level: at each level :meth:`_MIN`
         extends the breadth-first structure by one tenacity step and
-        :meth:`MAX` processes the bridges discovered so far, running the double
+        :meth:`_MAX` processes the bridges discovered so far, running the double
         DFS and augmenting along every minimum-length augmenting path it finds.
         With ``extended_phases`` (the default), the phase keeps growing and
-        augmenting at successive levels until :meth:`MIN` reports the search
+        augmenting at successive levels until :meth:`_MIN` reports the search
         structure exhausted -- the *extended search phases* of Huang and Stein
         [HS2017]_. With ``extended_phases`` set to ``False``, the phase ends at
         the first level that augments -- the classic Micali--Vazirani phase.
@@ -3674,8 +3674,8 @@ class MicaliVaziraniMatching:
         augmentation_found = False
         search_complete = False
         while not augmentation_found and not search_complete:
-            search_complete = self.MIN(search_level)
-            augmentation_found = self.MAX(search_level)
+            search_complete = self._MIN(search_level)
+            augmentation_found = self._MAX(search_level)
             if self.check_invariants:
                 self._check_invariants()
             if search_complete and not self._num_augmentations:
@@ -3697,7 +3697,7 @@ class MicaliVaziraniMatching:
         Return a maximum cardinality matching of `G`.
 
         This is the entry point of the algorithm. A greedy maximal matching is
-        computed first, then phases are run repeatedly with :meth:`search`: each
+        computed first, then phases are run repeatedly with :meth:`_search`: each
         phase augments along a maximal set of minimum-length vertex-disjoint
         augmenting paths. Phases continue until one finds no augmenting path or
         a perfect matching is reached, after which the internal `0, 1, \ldots,
@@ -3725,13 +3725,13 @@ class MicaliVaziraniMatching:
         Regression graphs found by a coverage-guided search, each forcing
         augmentation through one or more blossoms -- one of them also unfolds a
         *nested* petal. For these graphs the greedy seed (see
-        :meth:`compute_initial_maximal_matching`) is non-empty but one short of
+        :meth:`_compute_initial_maximal_matching`) is non-empty but one short of
         a maximum matching, so an augmentation -- and hence a petal unfolding --
         happens even with the seed in place (unlike the triangle chains below,
         which the greedy seed already solves). They exercise the double
         depth-first search, petal formation and petal unfolding
-        (:meth:`DDFS`, :meth:`form_petal`, :meth:`unfold_petal`,
-        :meth:`find_path`, :meth:`augment`), and
+        (:meth:`_DDFS`, :meth:`form_petal`, :meth:`_unfold_petal`,
+        :meth:`_find_path`, :meth:`_augment`), and
         each returns a valid matching of maximum cardinality::
 
             sage: def is_valid_maximum_matching(G, M):
@@ -3760,7 +3760,7 @@ class MicaliVaziraniMatching:
         number of phases) forces the algorithm to build the matching from empty
         by augmentation alone; on a chain of triangles this routes augmenting
         paths through the blossoms, exercising the petal-unfolding trampoline
-        (:meth:`unfold_petal`). The result is
+        (:meth:`_unfold_petal`). The result is
         still a valid matching of maximum cardinality::
 
             sage: def triangle_chain(num_triangles):
@@ -3772,15 +3772,15 @@ class MicaliVaziraniMatching:
             ....:     return Graph(edges)
             sage: def get_matching_from_empty(G):
             ....:     mv = MicaliVaziraniMatching(G)
-            ....:     mv.compute_initial_maximal_matching = lambda: None
+            ....:     mv._compute_initial_maximal_matching = lambda: None
             ....:     return mv.get_matching()
             sage: seeded = MicaliVaziraniMatching(triangle_chain(3))
-            sage: seeded.compute_initial_maximal_matching()       # the real greedy seed
+            sage: seeded._compute_initial_maximal_matching()       # the real greedy seed
             sage: seeded._matching_size > 0                        # matches several edges
             True
             sage: unseeded = MicaliVaziraniMatching(triangle_chain(3))
-            sage: unseeded.compute_initial_maximal_matching = lambda: None
-            sage: unseeded.compute_initial_maximal_matching()     # neutralised
+            sage: unseeded._compute_initial_maximal_matching = lambda: None
+            sage: unseeded._compute_initial_maximal_matching()     # neutralised
             sage: unseeded._matching_size                          # genuinely empty
             0
             sage: all(is_valid_maximum_matching(G,                                     # needs networkx
@@ -4049,14 +4049,14 @@ class MicaliVaziraniMatching:
             sage: set(w for u, v, _ in M for w in (u, v)) <= set(G)
             True
 
-        :meth:`compute_initial_maximal_matching` is an optional performance
+        :meth:`_compute_initial_maximal_matching` is an optional performance
         optimization: it greedily matches high-degree vertices before the phase
         search begins, which typically reduces the number of phases ([HS2017]_)
         but is not required for correctness. Whether or not the seed is applied,
         :meth:`get_matching` must return a matching of maximum cardinality.
 
         The ``graph6`` strings below come from coverage- and differential-guided
-        searches. They stress :meth:`DDFS`, nested blossoms as in [Vaz2020]_,
+        searches. They stress :meth:`_DDFS`, nested blossoms as in [Vaz2020]_,
         Figure 8, branched petal unfolding, and bridge processing under vertex
         labellings where the internal vertex order is sensitive. Each graph is
         checked against Edmonds' algorithm with the default run (seed enabled)
@@ -4089,15 +4089,15 @@ class MicaliVaziraniMatching:
         from sage.graphs.graph import Graph
 
         if self._G.size():
-            self.compute_initial_maximal_matching()
+            self._compute_initial_maximal_matching()
 
             there_exists_a_phase = True
-            self.start_new_phase()
+            self._start_new_phase()
             while there_exists_a_phase:
                 self._num_augmentations = 0
-                there_exists_a_phase = self.search()
+                there_exists_a_phase = self._search()
                 self._phase_index += 1
-                self.start_new_phase()
+                self._start_new_phase()
 
                 # Stop once the matching is maximum: matching_size == N // 2
                 # means at most one vertex is left exposed, so no augmenting
