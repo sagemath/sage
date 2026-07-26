@@ -2213,10 +2213,9 @@ cdef class Polynomial_rational_flint(Polynomial):
             H = PariGroup(G, self.degree())
             if pari_group:
                 return H
-            else:
-                return PermutationGroup(H)
+            return PermutationGroup(H)
 
-        elif algorithm == 'kash':
+        if algorithm == 'kash':
             try:
                 from sage.interfaces.kash import kash
                 kash.eval('X := PolynomialRing(RationalField()).1')
@@ -2233,7 +2232,7 @@ cdef class Polynomial_rational_flint(Polynomial):
                     "supports degrees up to 21, or use algorithm='magma' if " +
                     "you have magma.")
 
-        elif algorithm == 'gap':
+        if algorithm == 'gap':
             if self.degree() > 15:
                 raise NotImplementedError("Galois group computation is " +
                     "supported for degrees up to 15 using GAP. Try " +
@@ -2242,7 +2241,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             fgap = libgap(self)
             return TransitiveGroup(self.degree(), fgap.GaloisType())
 
-        elif algorithm == 'magma':
+        if algorithm == 'magma':
             from sage.interfaces.magma import magma
             X = magma(self).GaloisGroup()
             try:
@@ -2255,8 +2254,7 @@ cdef class Polynomial_rational_flint(Polynomial):
                     "group.\n%s" % X)
             return TransitiveGroup(d, n)
 
-        else:
-            raise ValueError("Algorithm %s not supported." % algorithm)
+        raise ValueError("Algorithm %s not supported." % algorithm)
 
     def factor_mod(self, p):
         """

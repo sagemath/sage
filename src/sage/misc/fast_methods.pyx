@@ -179,7 +179,7 @@ cdef class WithEqualityById:
 
         if op == Py_EQ:
             return self is other
-        elif op == Py_NE:
+        if op == Py_NE:
             return self is not other
         return NotImplemented
 

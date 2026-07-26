@@ -846,11 +846,11 @@ cdef class Crystal_of_letters_type_B_element(Letter):
         """
         if self.value == i:
             if i < self._parent._cartan_type.n:
-                return self._parent._element_constructor_(i+1)
+                return self._parent._element_constructor_(i + 1)
             return self._parent._element_constructor_(0)
         if self.value == 0 and i == self._parent._cartan_type.n:
             return self._parent._element_constructor_(-self._parent._cartan_type.n)
-        if self.value == -i-1:
+        if self.value == -i - 1:
             return self._parent._element_constructor_(-i)
         return None
 
@@ -871,7 +871,7 @@ cdef class Crystal_of_letters_type_B_element(Letter):
             return 0
         if i == n and self.value == -n:
             return 2
-        if self.value == i+1 or self.value == -i:
+        if self.value == i + 1 or self.value == -i:
             return 1
         return 0
 
@@ -892,7 +892,7 @@ cdef class Crystal_of_letters_type_B_element(Letter):
             return 0
         if i == n and self.value == n:
             return 2
-        if self.value == i or self.value == -i-1:
+        if self.value == i or self.value == -i - 1:
             return 1
         return 0
 
@@ -929,10 +929,9 @@ cdef class Crystal_of_letters_type_C_element(Letter):
         """
         if self.value > 0:
             return self._parent.weight_lattice_realization().monomial(self.value-1)
-        elif self.value < 0:
+        if self.value < 0:
             return -self._parent.weight_lattice_realization().monomial(-self.value-1)
-        else:
-            return self._parent.weight_lattice_realization()(0)
+        return self._parent.weight_lattice_realization()(0)
 
     cpdef Letter e(self, int i):
         r"""
@@ -952,10 +951,9 @@ cdef class Crystal_of_letters_type_C_element(Letter):
         """
         if self.value == -self._parent._cartan_type.n and self.value == -i:
             return self._parent._element_constructor_(-self.value)
-        elif self.value == i+1 or self.value == -i:
+        if self.value == i+1 or self.value == -i:
             return self._parent._element_constructor_(self.value-1)
-        else:
-            return None
+        return None
 
     cpdef Letter f(self, int i):
         r"""
@@ -970,10 +968,9 @@ cdef class Crystal_of_letters_type_C_element(Letter):
         """
         if self.value == self._parent._cartan_type.n and self.value == i:
             return self._parent._element_constructor_(-self.value)
-        elif self.value == i or self.value == -i-1:
+        if self.value == i or self.value == -i-1:
             return self._parent._element_constructor_(self.value+1)
-        else:
-            return None
+        return None
 
     cpdef int epsilon(self, int i) noexcept:
         r"""
@@ -1036,10 +1033,9 @@ cdef class Crystal_of_letters_type_D_element(Letter):
         """
         if self.value > 0:
             return self._parent.weight_lattice_realization().monomial(self.value-1)
-        elif self.value < 0:
+        if self.value < 0:
             return -self._parent.weight_lattice_realization().monomial(-self.value-1)
-        else:
-            return self._parent.weight_lattice_realization()(0)
+        return self._parent.weight_lattice_realization()(0)
 
     cpdef Letter e(self, int i):
         r"""
@@ -1063,16 +1059,14 @@ cdef class Crystal_of_letters_type_D_element(Letter):
         if i == self._parent._cartan_type.n:
             if self.value == -i:
                 return self._parent._element_constructor_(i-1)
-            elif self.value == -(i-1):
+            if self.value == -(i-1):
                 return self._parent._element_constructor_(i)
-            else:
-                return None
-        elif self.value == i+1:
-            return self._parent._element_constructor_(i)
-        elif self.value == -i:
-            return self._parent._element_constructor_(-(i+1))
-        else:
             return None
+        if self.value == i + 1:
+            return self._parent._element_constructor_(i)
+        if self.value == -i:
+            return self._parent._element_constructor_(-(i + 1))
+        return None
 
     cpdef Letter f(self, int i):
         r"""
@@ -1096,14 +1090,12 @@ cdef class Crystal_of_letters_type_D_element(Letter):
         if i == self.value:
             if i == self._parent._cartan_type.n:
                 return self._parent._element_constructor_(-(i-1))
-            else:
-                return self._parent._element_constructor_(i+1)
-        elif self.value == -(i+1):
+            return self._parent._element_constructor_(i+1)
+        if self.value == -(i+1):
             return self._parent._element_constructor_(-i)
-        elif self.value == self._parent._cartan_type.n-1 and i == self.value+1:
+        if self.value == self._parent._cartan_type.n-1 and i == self.value+1:
             return self._parent._element_constructor_(-i)
-        else:
-            return None
+        return None
 
     cpdef int epsilon(self, int i) noexcept:
         r"""
@@ -1198,21 +1190,19 @@ cdef class Crystal_of_letters_type_G_element(Letter):
         if i == 1:
             if self.value == 2:
                 return self._parent._element_constructor_(1)
-            elif self.value == 0:
+            if self.value == 0:
                 return self._parent._element_constructor_(3)
-            elif self.value == -3:
+            if self.value == -3:
                 return self._parent._element_constructor_(0)
-            elif self.value == -1:
+            if self.value == -1:
                 return self._parent._element_constructor_(-2)
-            else:
-                return None
+            return None
         else:
             if self.value == 3:
                 return self._parent._element_constructor_(2)
-            elif self.value == -2:
+            if self.value == -2:
                 return self._parent._element_constructor_(-3)
-            else:
-                return None
+            return None
 
     cpdef Letter f(self, int i):
         r"""
@@ -1232,21 +1222,19 @@ cdef class Crystal_of_letters_type_G_element(Letter):
         if i == 1:
             if self.value == 1:
                 return self._parent._element_constructor_(2)
-            elif self.value == 3:
+            if self.value == 3:
                 return self._parent._element_constructor_(0)
-            elif self.value == 0:
+            if self.value == 0:
                 return self._parent._element_constructor_(-3)
-            elif self.value == -2:
+            if self.value == -2:
                 return self._parent._element_constructor_(-1)
-            else:
-                return None
+            return None
         else:
             if self.value == 2:
                 return self._parent._element_constructor_(3)
-            elif self.value == -3:
+            if self.value == -3:
                 return self._parent._element_constructor_(-2)
-            else:
-                return None
+            return None
 
     cpdef int epsilon(self, int i) noexcept:
         r"""
@@ -1632,8 +1620,7 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
             return self._parent._element_constructor_((-4, 5))
         if self.value == (-6,) and i == 6:
             return self._parent._element_constructor_((-5, 6))
-        else:
-            return None
+        return None
 
     cpdef LetterTuple f(self, int i):
         r"""
@@ -1718,8 +1705,7 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
             return self._parent._element_constructor_((-5, 6))
         if self.value == (-5, 6) and i == 6:
             return self._parent._element_constructor_((-6,))
-        else:
-            return None
+        return None
 
 cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
     r"""
@@ -2421,7 +2407,7 @@ cdef class BKKLetter(Letter):
         elif 0 < i:
             if b == i + 1:
                 return self._parent._element_constructor_(b - 1)
-        elif i == 0 and b == 1:
+        if i == 0 and b == 1:
             return self._parent._element_constructor_(-1)
         return None
 
@@ -2461,7 +2447,7 @@ cdef class BKKLetter(Letter):
         elif i < 0:
             if b == i - 1:
                 return self._parent._element_constructor_(b + 1)
-        elif i == 0 and b == -1:
+        if i == 0 and b == -1:
             return self._parent._element_constructor_(1)
         return None
 

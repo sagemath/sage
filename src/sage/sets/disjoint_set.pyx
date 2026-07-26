@@ -160,7 +160,7 @@ cpdef DisjointSet(arg):
         if arg < 0:
             raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
-    elif isinstance(arg, SetPartition):
+    if isinstance(arg, SetPartition):
         d = DisjointSet_of_hashables(arg.base_set())
         for part in arg:
             it = iter(part)
@@ -171,8 +171,7 @@ cpdef DisjointSet(arg):
             for x in it:
                 d.union(first, x)
         return d
-    else:
-        return DisjointSet_of_hashables(arg)
+    return DisjointSet_of_hashables(arg)
 
 cdef class DisjointSet_class(SageObject):
     r"""

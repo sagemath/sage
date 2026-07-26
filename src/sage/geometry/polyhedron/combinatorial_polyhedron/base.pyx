@@ -736,8 +736,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         if self.Vrep() is not None:
             return self.Vrep()
-        else:
-            return tuple(smallInteger(i) for i in range(self.n_Vrepresentation()))
+        return tuple(smallInteger(i) for i in range(self.n_Vrepresentation()))
 
     def Hrepresentation(self):
         r"""
@@ -776,8 +775,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         if self.facet_names() is not None:
             return self.facet_names() + self.equations()
-        else:
-            return tuple(smallInteger(i) for i in range(self.n_Hrepresentation()))
+        return tuple(smallInteger(i) for i in range(self.n_Hrepresentation()))
 
     def dimension(self):
         r"""
@@ -920,8 +918,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # Handling the case of a trivial polyhedron of dimension `0`.
             if names and self.Vrep():
                 return (self.Vrep()[0],)
-            else:
-                return (smallInteger(0),)
+            return (smallInteger(0),)
         if not self.is_bounded():
             it = self.face_iter(0)
             try:
@@ -935,8 +932,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                 return ()
         if names and self.Vrep():
             return tuple(self.Vrep()[i] for i in range(self.n_Vrepresentation()) if i not in self.far_face_tuple())
-        else:
-            return tuple(smallInteger(i) for i in range(self.n_Vrepresentation()) if i not in self.far_face_tuple())
+        return tuple(smallInteger(i) for i in range(self.n_Vrepresentation()) if i not in self.far_face_tuple())
 
     def n_facets(self):
         r"""
@@ -2772,8 +2768,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             raise ValueError("cannot iterate over dual of unbounded polyhedron")
         if dimension == -2:
             return FaceIterator(self, dual)
-        else:
-            return FaceIterator(self, dual, output_dimension=dimension)
+        return FaceIterator(self, dual, output_dimension=dimension)
 
     def face_lattice(self):
         r"""

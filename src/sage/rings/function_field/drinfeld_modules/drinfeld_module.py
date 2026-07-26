@@ -14,6 +14,7 @@ AUTHORS:
 - Antoine Leudière (2022-04): initial version
 - Xavier Caruso (2022-06): initial version
 - David Ayotte (2023-03): added basic `j`-invariants
+- Arix Eggink (2026-06): added automorphism_group_order
 """
 
 # *****************************************************************************
@@ -30,6 +31,7 @@ from sage.arith.misc import gcd
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
 from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.misc.functional import log
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 from sage.misc.lazy_import import lazy_import
@@ -46,7 +48,6 @@ from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
-
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
@@ -904,6 +905,168 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         from sage.rings.function_field.drinfeld_modules.action import DrinfeldModuleAction
         return DrinfeldModuleAction(self)
+
+    def automorphism_group_order(self, level=False, absolute=False, extension=None):
+        r"""
+        Return the order of the automorphism group of the Drinfeld module.
+
+        The automorphism group of a Drinfeld module is of the form `(\GF{q^M})^\times`
+        for some integer `M`. Note that this always is a cyclic group.
+
+        - If ``level`` is set to ``True``, the method returns this `M`, otherwise it
+          returns the order `q^M-1`.
+
+        - If ``absolute`` is set to ``True``, the method returns the size or level
+          (depending on the input ``level``) of the absolute automorphism group.
+          Otherwise, the method returns the size or level (depending on the input
+          ``level``) of the automorphism group in the field ``extension`` or the
+          extension of degree ``extension`` of the base field.
+
+        This code is based on Lemma 3.8.2 of [Pap2023]_.
+
+        INPUT:
+
+        - ``level`` (default: ``False``) -- boolean
+
+        - ``absolute`` (default: ``False``) -- boolean
+
+        - ``extension`` (default: ``None``) -- an extension of the base field `K`;
+          when `K` is a finite field, an integer (interpreted as the degree
+          of the extension) is also allowed.
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z12> = Fq.extension(6)
+            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
+            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
+            sage: phi.automorphism_group_order()
+            24
+
+        ::
+
+            sage: Fq = GF(3^2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: t = DrinfeldModule(A, [z, 1]).ore_variable()
+            sage: phi = DrinfeldModule(A, z+t^12)
+            sage: phi.automorphism_group_order()
+            728
+            sage: phi.automorphism_group_order(absolute=True)
+            282429536480
+            sage: phi.automorphism_group_order(level=True)
+            3
+            sage: phi.automorphism_group_order(level=True, absolute=True)
+            12
+            sage: L = K.extension(2)
+            sage: phi.automorphism_group_order(level=True, extension=L)
+            6
+            sage: phi.automorphism_group_order(level=True, extension=2)
+            6
+
+        ::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: K.<S> = FractionField(A)
+            sage: phi = DrinfeldModule(A, [S, 1, 3, 0, S+1])
+            sage: phi.automorphism_group_order(level=True, absolute=True)
+            1
+            sage: phi.automorphism_group_order(absolute=True)
+            6
+
+        ::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: K.<S> = FractionField(A)
+            sage: phi = DrinfeldModule(A, [S, 1, 3, 0, S+1])
+            sage: phi.automorphism_group_order()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Drinfeld module must be over a finite field for non absolute automorphism group computations
+
+        TESTS::
+
+            sage: Fq = GF(3^2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: t = DrinfeldModule(A, [z, 1]).ore_variable()
+            sage: phi = DrinfeldModule(A, z+t^12)
+            sage: phi.automorphism_group_order(absolute=True, extension=2)
+            Traceback (most recent call last):
+            ...
+            ValueError: when absolute=True, the argument extension must not be set, since extensions do nothing on absolute automorphism groups
+            sage: L = K.extension(2)
+            sage: phi.automorphism_group_order(absolute=True, extension=L)
+            Traceback (most recent call last):
+            ...
+            ValueError: when absolute=True, the argument extension must not be set, since extensions do nothing on absolute automorphism groups
+            sage: L2 = Fq.extension(4)
+            sage: phi.automorphism_group_order(level=True, extension = L2)
+            Traceback (most recent call last):
+            ...
+            ValueError: extension must be a field extension of the base field
+
+        ::
+
+            sage: Fq = GF(2^7)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(1)
+            sage: phi = DrinfeldModule(A, [z, 1])
+            sage: phi.automorphism_group_order(absolute=True)
+            127
+            sage: phi.automorphism_group_order()
+            127
+            sage: phi.automorphism_group_order(extension=2)
+            127
+
+        ::
+
+            sage: Fq = GF(3)
+            sage: A.<T> = Fq[]
+            sage: K.<S> = FractionField(A)
+            sage: phi = DrinfeldModule(A,[S,1])
+            sage: phi.automorphism_group_order(absolute=True)
+            2
+
+        ::
+
+            sage: Fq = GF(2^2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(4)
+            sage: t = DrinfeldModule(A, [z, 1]).ore_variable()
+            sage: phi = DrinfeldModule(A, z+t^8)
+            sage: L = K.extension(2)
+            sage: phi.automorphism_group_order(extension=L)
+            65535
+
+        """
+        if not (absolute or self.is_finite()):
+            raise NotImplementedError('Drinfeld module must be over a finite field for non absolute automorphism group computations')
+        if absolute and extension is not None:
+            raise ValueError('when absolute=True, the argument extension must not be set, since extensions do nothing on absolute automorphism groups')
+        r = self.rank()
+        level_ = gcd([r] + [i for i in range(1, r) if self._gen[i] != 0])
+        q = self.function_ring().base_ring().order()
+        if not absolute:
+            K = self.base()
+            if isinstance(extension, (int, Integer)):
+                extension_degree = extension
+            elif extension is None:
+                extension_degree = 1
+            else:
+                size = extension.order()
+                if size.is_power_of(K.order()):
+                    extension_degree = log(size, K.order())
+                else:
+                    raise ValueError('extension must be a field extension of the base field')
+            n = log(K.order(), q)*extension_degree
+            level_ = gcd(level_, n)
+        if level:
+            return level_
+        return q**level_ - 1
 
     def basic_j_invariant_parameters(self, coeff_indices=None, nonzero=False):
         r"""

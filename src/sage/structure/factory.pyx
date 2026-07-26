@@ -568,8 +568,7 @@ cdef class UniqueFactory(SageObject):
         d = generic_factory_getstate(obj)
         if d:
             return generic_factory_unpickle, obj._factory_data, d
-        else:
-            return generic_factory_unpickle, obj._factory_data
+        return generic_factory_unpickle, obj._factory_data
 
 
 # This is used to handle old UniqueFactory pickles

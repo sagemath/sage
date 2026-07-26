@@ -535,13 +535,12 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         if self._is_exact_zero():
             return (self.parent(), 0)
-        elif self._is_inexact_zero():
+        if self._is_inexact_zero():
             return (self.parent(), 0, self.valuation())
-        else:
-            return (self.parent(),
-                    tuple(tuple(c) if isinstance(c, list) else c
-                          for c in self.unit_part().expansion()),
-                    self.valuation(), self.precision_relative())
+        return (self.parent(),
+                tuple(tuple(c) if isinstance(c, list) else c
+                      for c in self.unit_part().expansion()),
+                self.valuation(), self.precision_relative())
 
     cdef int _set_inexact_zero(self, long absprec) except -1:
         """
@@ -646,8 +645,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         if self.ordp == maxordp:
             return 1
-        else:
-            return 0
+        return 0
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
@@ -681,8 +679,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self._normalize()
         if self.relprec == 0:
             return not self._is_exact_zero()
-        else:
-            return False
+        return False
 
     cdef int _set(self, ZZ_pX_c* unit, long ordp, long relprec) except -1:
         """
@@ -2546,8 +2543,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         e = self.parent().e()
         if e == 1:
             return [R(c, prec-k) << k for c in L]
-        else:
-            return [R(c, (((prec - i - 1) // e) + 1) - k) << k for i, c in enumerate(L)]
+        return [R(c, (((prec - i - 1) // e) + 1) - k) << k for i, c in enumerate(L)]
 
     def polynomial(self, var='x'):
         """

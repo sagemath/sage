@@ -614,8 +614,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         v = sib.int(self.lift())
         if coerced:
             return v
-        else:
-            return sib(self.parent())(v)
+        return sib(self.parent())(v)
 
     def log(self, b=None, order=None, check=False):
         r"""
@@ -1000,8 +999,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         x = self.lift()
         if 2*x <= n:
             return x
-        else:
-            return x - n
+        return x - n
 
     cpdef bint is_one(self) noexcept:
         raise NotImplementedError
@@ -1228,8 +1226,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         if self.is_one():
             if all:
                 return list(self.parent().square_roots_of_one())
-            else:
-                return self
+            return self
 
         if not self.is_square_c():
             if extend:
@@ -1547,8 +1544,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if pval > 0:
                 if all:
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
-                else:
-                    return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
+                return K(p**(pval // n) * mod(upart, p**(k-pval)).nth_root(n, algorithm=algorithm).lift())
             from sage.rings.padics.factory import ZpFM
             R = ZpFM(p,k)
             if p == 2:
@@ -2484,10 +2480,9 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         if self.ivalue == (<IntegerMod_int>right).ivalue:
             return rich_to_bool(op, 0)
-        elif self.ivalue < (<IntegerMod_int>right).ivalue:
+        if self.ivalue < (<IntegerMod_int>right).ivalue:
             return rich_to_bool(op, -1)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     cpdef bint is_one(IntegerMod_int self) noexcept:
         """
@@ -2749,10 +2744,9 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         """
         if k == 0:
             return self
-        elif k > 0:
+        if k > 0:
             return self._new_c((self.ivalue << k) % self._modulus.int32)
-        else:
-            return self._new_c(self.ivalue >> (-k))
+        return self._new_c(self.ivalue >> (-k))
 
     def __pow__(IntegerMod_int self, exp, m): # NOTE: m ignored, always use modulus of parent ring
         """
@@ -2829,8 +2823,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         res = mod_pow_int(self.ivalue, long_exp, self._modulus.int32)
         if invert:
             return ~self._new_c(res)
-        else:
-            return self._new_c(res)
+        return self._new_c(res)
 
     def __invert__(IntegerMod_int self):
         """
@@ -3027,11 +3020,10 @@ cdef class IntegerMod_int(IntegerMod_abstract):
                     i = n - i
                 if all:
                     return [self._new_c(i), self._new_c(n-i)]
-                else:
-                    return self._new_c(i)
-            elif self.ivalue == 0:
+                return self._new_c(i)
+            if self.ivalue == 0:
                 return [self] if all else self
-            elif not extend:
+            if not extend:
                 if all:
                     return []
                 raise ValueError("self must be a square")
@@ -3041,14 +3033,13 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         elif n <= 100 or n / (1 << len(moduli)) < 5000:
             if all:
                 return [self._new_c(i) for i from 0 <= i < n if (i*i) % n == self.ivalue]
-            else:
-                for i from 0 <= i <= n/2:
-                    if (i*i) % n == self.ivalue:
-                        return self._new_c(i)
-                if not extend:
-                    if all:
-                        return []
-                    raise ValueError("self must be a square")
+            for i from 0 <= i <= n/2:
+                if (i*i) % n == self.ivalue:
+                    return self._new_c(i)
+            if not extend:
+                if all:
+                    return []
+                raise ValueError("self must be a square")
         # Either it failed but extend was True, or the generic algorithm is better
         return IntegerMod_abstract.sqrt(self, extend=extend, all=all)
 
@@ -3310,10 +3301,9 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         if self.ivalue == (<IntegerMod_int64>right).ivalue:
             return rich_to_bool(op, 0)
-        elif self.ivalue < (<IntegerMod_int64>right).ivalue:
+        if self.ivalue < (<IntegerMod_int64>right).ivalue:
             return rich_to_bool(op, -1)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     cpdef bint is_one(IntegerMod_int64 self) noexcept:
         """
@@ -3563,10 +3553,9 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         if k == 0:
             return self
-        elif k > 0:
+        if k > 0:
             return self._new_c((self.ivalue << k) % self._modulus.int64)
-        else:
-            return self._new_c(self.ivalue >> (-k))
+        return self._new_c(self.ivalue >> (-k))
 
     def __pow__(IntegerMod_int64 self, exp, m): # NOTE: m ignored, always use modulus of parent ring
         """
@@ -3654,8 +3643,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         res = mod_pow_int64(self.ivalue, long_exp, self._modulus.int64)
         if invert:
             return self._new_c(mod_inverse_int64(res, self._modulus.int64))
-        else:
-            return self._new_c(res)
+        return self._new_c(res)
 
     def __invert__(IntegerMod_int64 self):
         """
@@ -4155,8 +4143,7 @@ def lucas_q1(mm, IntegerMod_abstract P):
             d1 = d1*d1 - two
     if mpz_odd_p(m.value):
         return d1*d2 - P
-    else:
-        return d1*d1 - two
+    return d1*d1 - two
 
 
 def lucas(k, P, Q=1, n=None):

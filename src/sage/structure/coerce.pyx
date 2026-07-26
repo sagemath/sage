@@ -353,16 +353,14 @@ cpdef bint parent_is_integers(P) except -1:
     if isinstance(P, type):
         if issubclass(P, int):
             return True
-        elif is_numpy_type(P):
+        if is_numpy_type(P):
             from numpy import integer
             return issubclass(P, integer)
-        elif issubclass(P, gmpy2.mpz):
+        if issubclass(P, gmpy2.mpz):
             return True
-        else:
-            return False
-    else:
-        from sage.rings.integer_ring import ZZ
-        return P is ZZ
+        return False
+    from sage.rings.integer_ring import ZZ
+    return P is ZZ
 
 
 def parent_is_numerical(P):
@@ -1242,8 +1240,7 @@ cdef class CoercionModel:
         if action is not None:
             if (<Action>action)._is_left:
                 return (<Action>action)._act_(x, y)
-            else:
-                return (<Action>action)._act_(y, x)
+            return (<Action>action)._act_(y, x)
 
         # Now coerce to a common parent and do the operation there
         try:
@@ -1403,8 +1400,7 @@ cdef class CoercionModel:
                 sage_parent = py_scalar_parent(type(x))
                 if sage_parent is None or sage_parent.has_coerce_map_from(yp):
                     return x, x.__class__(y)
-                else:
-                    return self.canonical_coercion(sage_parent(x), y)
+                return self.canonical_coercion(sage_parent(x), y)
             except (TypeError, ValueError):
                 self._record_exception()
 
@@ -1413,8 +1409,7 @@ cdef class CoercionModel:
                 sage_parent = py_scalar_parent(type(y))
                 if sage_parent is None or sage_parent.has_coerce_map_from(xp):
                     return y.__class__(x), y
-                else:
-                    return self.canonical_coercion(x, sage_parent(y))
+                return self.canonical_coercion(x, sage_parent(y))
             except (TypeError, ValueError):
                 self._record_exception()
 

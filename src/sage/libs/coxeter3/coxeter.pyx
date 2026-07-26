@@ -325,8 +325,7 @@ cdef class CoxGroup(SageObject):
         elif t in ['E']:
             if is_affine:
                 return srange(1, r) + [ZZ.zero()]
-            else:
-                return srange(1, r+1)
+            return srange(1, r+1)
         else:
             raise NotImplementedError
 

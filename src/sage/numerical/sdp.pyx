@@ -751,8 +751,7 @@ cdef class SemidefiniteProgram(SageObject):
 
         if len(lists) == 1:
             return val[0]
-        else:
-            return val
+        return val
 
     def set_objective(self, obj):
         r"""
