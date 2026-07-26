@@ -1965,22 +1965,22 @@ class MicaliVaziraniMatching:
     - [HS2017]_
     """
 
-    Edge = tuple[int, int, Any]
+    _Edge = tuple[int, int, Any]
 
     #: Sentinel stored in ``mate[v]`` when vertex ``v`` is *exposed*
     #: (unmatched). A real mate is a vertex index in ``{0, ..., N - 1}``, so any
     #: negative value is unambiguous; ``-1`` is the conventional choice for the
     #: ``mate`` array used throughout the matching literature.
-    EXPOSED = -1
+    _EXPOSED = -1
 
     #: Colors of the two searches run by the double depth-first search
     #: (:meth:`_DDFS`): a *red* search and a *green* search. ``color[v]`` records
     #: which side of a petal vertex ``v`` was attached to.
-    RED, GREEN = 0, 1
+    _RED, _GREEN = 0, 1
 
     #: Sentinel stored in ``color[v]`` before ``v`` is attached to a petal side.
-    #: Keeps ``color`` homogeneously ``int`` (cf. :attr:`EXPOSED`).
-    NO_COLOR = -1
+    #: Keeps ``color`` homogeneously ``int`` (cf. :attr:`_EXPOSED`).
+    _NO_COLOR = -1
 
     @dataclass
     class _Petal:
@@ -2188,7 +2188,7 @@ class MicaliVaziraniMatching:
             red_support: list[int],
             green_support: list[int],
             bud: int,
-            bridge: MicaliVaziraniMatching.Edge,
+            bridge: MicaliVaziraniMatching._Edge,
         ) -> None:
             r"""
             Contract a new petal with the given ``bud``.
@@ -2457,12 +2457,12 @@ class MicaliVaziraniMatching:
 
         # Petals of the current phase (bud union-find + petal store).
         self._petals = self._Petals(self._N, self._Petal,
-                                  self.RED, self.GREEN, self.NO_COLOR)
+                                  self._RED, self._GREEN, self._NO_COLOR)
 
         # The matching itself: ``mate[v]`` is the vertex matched to ``v``, or
         # ``EXPOSED`` if ``v`` is currently unmatched. ``matching_size`` tracks
         # the number of matched edges so it need not be recomputed.
-        self._mate: list[int] = [self.EXPOSED] * self._N
+        self._mate: list[int] = [self._EXPOSED] * self._N
         self._matching_size = 0
         self._phase_index = 0
         self._num_augmentations = 0
@@ -2490,7 +2490,7 @@ class MicaliVaziraniMatching:
             sage: MV._is_exposed(0)
             False
         """
-        return self._mate[v] == self.EXPOSED
+        return self._mate[v] == self._EXPOSED
 
     # *************************************
     # Greedy initial maximal matching (so as to reduce the total number of phases)
@@ -2958,7 +2958,7 @@ class MicaliVaziraniMatching:
             2
         """
         encountered_deleted_vertex = False
-        RED, GREEN = self.RED, self.GREEN
+        RED, GREEN = self._RED, self._GREEN
         other_color = (GREEN, RED)
 
         def buds(vertex):
@@ -3202,7 +3202,7 @@ class MicaliVaziraniMatching:
             # is searched avoiding it (the ``continuation``). The vertex-arc
             # backtracks whenever the bud-arc cannot avoid it, so a simple path
             # is found whenever one exists.
-            if self._petals.color[vertex] == self.RED:
+            if self._petals.color[vertex] == self._RED:
                 vertex_peak, bud_peak = petal.peaks[0], petal.peaks[1]
             else:
                 vertex_peak, bud_peak = petal.peaks[1], petal.peaks[0]
@@ -3460,7 +3460,7 @@ class MicaliVaziraniMatching:
         self,
         red_support: list[int],
         green_support: list[int],
-        bridge: Edge,
+        bridge: _Edge,
     ) -> bool:
         r"""
         Augment the current matching along a discovered augmenting path.
@@ -3481,7 +3481,7 @@ class MicaliVaziraniMatching:
         - ``red_support`` -- list of integers; the buds tracing the red half
           of the path down to a free vertex
         - ``green_support`` -- list of integers; the buds tracing the green half
-        - ``bridge`` -- the :class:`Edge` whose endpoints are the two peaks
+        - ``bridge`` -- the :class:`_Edge` whose endpoints are the two peaks
           where the halves meet
 
         OUTPUT: boolean; ``True`` if the matching was augmented, ``False`` if a
@@ -4113,7 +4113,7 @@ class MicaliVaziraniMatching:
         def matched_edges():
             for vi, v in enumerate(self._instance.index_to_vertex):
                 ui = self._mate[vi]
-                if ui != self.EXPOSED and vi < ui:
+                if ui != self._EXPOSED and vi < ui:
                     yield (v, self._instance.index_to_vertex[ui],
                            self._G.edge_label(vi, ui))
 
