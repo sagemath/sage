@@ -459,8 +459,7 @@ cdef class CombinatorialFace(SageObject):
             if self.atoms is other.atoms:
                 if not self._dual:
                     return face_issubset(self.face, other.face)
-                else:
-                    return face_issubset(other.face, self.face)
+                return face_issubset(other.face, self.face)
             else:
                 raise NotImplementedError("is_subface only implemented for faces of the same polyhedron")
         else:
@@ -515,8 +514,7 @@ cdef class CombinatorialFace(SageObject):
         """
         if self._dual:
             return smallInteger(self._ambient_dimension - self._dimension - 1)
-        else:
-            return smallInteger(self._dimension)
+        return smallInteger(self._dimension)
 
     dim = dimension
 
@@ -675,8 +673,7 @@ cdef class CombinatorialFace(SageObject):
         """
         if self._dual:
             return smallInteger(self.set_coatom_rep())
-        else:
-            return smallInteger(self.n_atom_rep())
+        return smallInteger(self.n_atom_rep())
 
     def ambient_Hrepresentation(self):
         r"""
@@ -847,8 +844,7 @@ cdef class CombinatorialFace(SageObject):
         cdef size_t n_equations = self._n_equations if add_equations else 0
         if not self._dual:
             return smallInteger(self.set_coatom_rep() + n_equations)
-        else:
-            return smallInteger(self.n_atom_rep() + n_equations)
+        return smallInteger(self.n_atom_rep() + n_equations)
 
     def as_combinatorial_polyhedron(self, quotient=False):
         r"""

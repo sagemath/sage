@@ -140,10 +140,9 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             ratio = e // x.parent().absolute_e()
             if k >= maxordp // ratio:
                 return maxordp
-            elif k <= minusmaxordp // ratio:
+            if k <= minusmaxordp // ratio:
                 return minusmaxordp
-            else:
-                return (k*e) // x.parent().absolute_e()
+            return (k*e) // x.parent().absolute_e()
         return k
     elif isinstance(x, pari_gen):
         pari_tmp = (<pari_gen>x).g

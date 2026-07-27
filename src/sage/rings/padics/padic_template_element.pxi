@@ -574,10 +574,9 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         else:
             if n < val:
                 return _zero(mode, expansion.teich_ring)
-            elif self.prime_pow.in_field:
+            if self.prime_pow.in_field:
                 return expansion[n - val]
-            else:
-                return expansion[n]
+            return expansion[n]
 
     def teichmuller_expansion(self, n=None):
         r"""
@@ -639,8 +638,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         """
         if pos:
             return trim_zeros(list(self.unit_part().expansion(lift_mode='simple')))
-        else:
-            return trim_zeros(list(self.unit_part().expansion(lift_mode='smallest')))
+        return trim_zeros(list(self.unit_part().expansion(lift_mode='smallest')))
 
     cpdef pAdicTemplateElement unit_part(self):
         r"""
@@ -892,8 +890,7 @@ cdef _zero(expansion_mode mode, teich_ring):
     """
     if mode == teichmuller_mode:
         return teich_ring(0)
-    else:
-        return _expansion_zero
+    return _expansion_zero
 
 cdef class ExpansionIter():
     """
@@ -1021,8 +1018,7 @@ cdef class ExpansionIter():
                 csub(self.curvalue, self.curvalue, self.tmp, prec, pp)
                 cshift_notrunc(self.curvalue, self.curvalue, -1, prec-1, pp, True)
                 return self.teich_ring(self.elt._new_with_value(self.tmp, prec))
-        else:
-            return cexpansion_next(self.curvalue, self.mode, self.curpower, pp)
+        return cexpansion_next(self.curvalue, self.mode, self.curpower, pp)
 
 cdef class ExpansionIterable():
     r"""
@@ -1112,10 +1108,9 @@ cdef class ExpansionIterable():
         cdef ExpansionIter expansion = ExpansionIter(self.elt, self.prec, self.mode)
         if self.val_shift == 0:
             return expansion
-        elif self.val_shift < 0:
+        if self.val_shift < 0:
             return itertools.islice(expansion, -self.val_shift, None)
-        else:
-            return itertools.chain(itertools.repeat(_zero(self.mode, self.teich_ring), self.val_shift), expansion)
+        return itertools.chain(itertools.repeat(_zero(self.mode, self.teich_ring), self.val_shift), expansion)
 
     def __len__(self):
         """

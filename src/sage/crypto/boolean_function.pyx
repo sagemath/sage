@@ -1093,8 +1093,7 @@ cdef class BooleanFunction(SageObject):
                 if A is not None:
                     if annihilator:
                         return i, A
-                    else:
-                        return i
+                    return i
         assert False, "you just found a bug!"
 
     def algebraic_degree(self):

@@ -960,7 +960,6 @@ cdef int is_available(int k, int n) except -1:
         return orthogonal_array(k,n,existence=True) is True
     if k <= _OA_cache[n].max_true:
         return True
-    elif k >= _OA_cache[n].min_unknown:
+    if k >= _OA_cache[n].min_unknown:
         return False
-    else:
-        return orthogonal_array(k,n,existence=True) is True
+    return orthogonal_array(k,n,existence=True) is True

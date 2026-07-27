@@ -306,8 +306,7 @@ class NonAssociative:
         """
         if self.right is None:
             return str(self.left)
-        else:
-            return "(%s*%s)" % (self.left, self.right)
+        return "(%s*%s)" % (self.left, self.right)
 
     def __mul__(self, other):
         """

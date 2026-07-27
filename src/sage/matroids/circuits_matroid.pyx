@@ -303,8 +303,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         if self._nsc_defined:
             return f'{Matroid._repr_(self)} with {len(self.nonspanning_circuits())} nonspanning circuits'
-        else:
-            return f'{Matroid._repr_(self)} with {len(self._C)} circuits'
+        return f'{Matroid._repr_(self)} with {len(self._C)} circuits'
 
     # comparison
 
