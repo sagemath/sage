@@ -111,6 +111,18 @@ to the default FLINT implementation, but not vice versa::
     sage: (R.0 + S.0).parent() is S                                                     # needs sage.libs.flint sage.libs.ntl
     True
 
+We verify Alpoge's counterexample to the Jacobian conjecture::
+
+    sage: P.<x,y,z> = QQ[]
+    sage: l = [(1+x*y)^3*z + y^2*(1+x*y)*(4+3*x*y), y+3*x*(1+x*y)^2*z + 3*x*y^2*(4+3*x*y), 2*x-3*x^2*y-x^3*z]
+    sage: M = Matrix([[l[i].derivative(j) for j in [x,y,z]] for i in range(3)])
+    sage: M.det()
+    -2
+    sage: [f(0,0,-1/4) for f in l]
+    [-1/4, 0, 0]
+    sage: [f(1,-3/2,13/2) for f in l]
+    [-1/4, 0, 0]
+
 TESTS::
 
     sage: K.<x> = FractionField(QQ['x'])

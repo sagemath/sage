@@ -455,17 +455,16 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef long y_ordp = _right.valuation_c()
         if x_ordp < y_ordp:
             return rich_to_bool(op, -1)
-        elif x_ordp > y_ordp:
+        if x_ordp > y_ordp:
             return rich_to_bool(op, 1)
-        else:  # equal ordp
-            _left.prime_pow.restore_top_context()
-            if x_ordp == left.prime_pow.ram_prec_cap:
-                return rich_to_bool(op, 0)  # since both are zero
-            elif _left.value == _right.value:
-                return rich_to_bool(op, 0)
-            else:
-                # for now just return 1
-                return rich_to_bool(op, 1)
+        # equal ordp
+        _left.prime_pow.restore_top_context()
+        if x_ordp == left.prime_pow.ram_prec_cap:
+            return rich_to_bool(op, 0)  # since both are zero
+        if _left.value == _right.value:
+            return rich_to_bool(op, 0)
+        # for now just return 1
+        return rich_to_bool(op, 1)
 
     def __invert__(self):
         """
@@ -1466,8 +1465,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 self.prime_pow.eis_shift(&u.value, &u.value, 1, self.prime_pow.ram_prec_cap)
         if n is None:
             return L
-        else:
-            return self.parent()(0)
+        return self.parent()(0)
 
     def _teichmuller_set_unsafe(self):
         """
@@ -1654,8 +1652,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         else:
             if index + valuation * self.prime_pow.e >= self.prime_pow.ram_prec_cap:
                 return self.prime_pow.ram_prec_cap
-            else:
-                return index + valuation * self.prime_pow.e
+            return index + valuation * self.prime_pow.e
 
     cdef ext_p_list(self, bint pos):
         r"""

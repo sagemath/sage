@@ -236,8 +236,7 @@ cdef class PointCollection(SageObject):
         # Avoid creating a copy of self
         if len(args) == len(self) and args == tuple(range(len(self))):
             return self
-        else:
-            return PointCollection([self[i] for i in args], self._module)
+        return PointCollection([self[i] for i in args], self._module)
 
     def __richcmp__(self, other, op: int) -> bool:
         r"""
@@ -494,8 +493,7 @@ cdef class PointCollection(SageObject):
         """
         if ring is None:
             return self.matrix()
-        else:
-            return self.matrix().change_ring(ring)
+        return self.matrix().change_ring(ring)
 
     def _repr_(self):
         r"""

@@ -3265,8 +3265,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             verbose("Trivial matrix, nothing to do")
             if transformation:
                 return self, self.new_matrix(0,0)
-            else:
-                return self
+            return self
 
         r = None  # rank
         cdef Matrix_integer_dense R = None  # LLL-reduced matrix
@@ -3422,8 +3421,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             R.cache("rank", r)
         if transformation:
             return R, U
-        else:
-            return R
+        return R
 
     def is_LLL_reduced(self, delta=None, eta=None, algorithm='fpLLL'):
         r"""
@@ -4245,8 +4243,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ZeroDivisionError('matrix must be nonsingular')
         if den < 0:
             return -M, -den
-        else:
-            return M, den
+        return M, den
 
     def __invert__(self):
         r"""

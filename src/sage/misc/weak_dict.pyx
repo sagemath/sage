@@ -669,8 +669,7 @@ cdef class WeakValueDictionary(dict):
         out = PyWeakref_GetObject(wr)
         if out == Py_None:
             return d
-        else:
-            return <object>out
+        return <object>out
 
     def __getitem__(self, k):
         """

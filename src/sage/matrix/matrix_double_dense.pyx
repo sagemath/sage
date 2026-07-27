@@ -552,8 +552,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         c = numpy.linalg.cond(self._matrix_numpy, p=p)
         if c == numpy.inf:
             return sage.rings.infinity.Infinity
-        else:
-            return RDF(c.real if numpy.iscomplexobj(c) else c)
+        return RDF(c.real if numpy.iscomplexobj(c) else c)
 
     def norm(self, p=2):
         r"""

@@ -576,8 +576,7 @@ cdef class GraphicMatroid(Matroid):
             except ValueError:
                 if certificate:
                     return (False, None)
-                else:
-                    return False
+                return False
 
             if certificate:
                 # This is where it gets complicated.

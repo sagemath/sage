@@ -229,11 +229,10 @@ cdef class pAdicCappedRelativeElement(CRElement):
         """
         if exactzero(self.ordp):
             return pari.zero()
-        else:
-            return new_gen_from_padic(self.ordp, self.relprec,
-                                      self.prime_pow.prime.value,
-                                      self.prime_pow.pow_mpz_t_tmp(self.relprec),
-                                      self.unit)
+        return new_gen_from_padic(self.ordp, self.relprec,
+                                  self.prime_pow.prime.value,
+                                  self.prime_pow.pow_mpz_t_tmp(self.relprec),
+                                  self.unit)
 
     def _integer_(self, Z=None):
         r"""
