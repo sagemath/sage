@@ -849,8 +849,7 @@ cdef class CachedFunction():
         k = self._argument_fixer.fix_to_pos_args_kwds(args, kwds)
         if self.key is None:
             return k
-        else:
-            return self.key(*k[0], **dict(k[1]))
+        return self.key(*k[0], **dict(k[1]))
 
     def __reduce__(self):
         """
@@ -1889,8 +1888,7 @@ cdef class CachedMethodCaller(CachedFunction):
         k = self._argument_fixer.fix_to_pos_args_kwds(args, kwds)
         if self.key is None:
             return k
-        else:
-            return self.key(self._instance, *k[0], **dict(k[1]))
+        return self.key(self._instance, *k[0], **dict(k[1]))
 
     def __call__(self, *args, **kwds):
         """

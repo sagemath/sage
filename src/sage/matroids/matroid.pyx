@@ -3690,8 +3690,7 @@ cdef class Matroid(SageObject):
             return {e: e for e in self.groundset()}
         if self.full_rank() == other.full_rank():
             return SetSystem(self.groundset(), self.nonbases())._isomorphism(SetSystem(other.groundset(), other.nonbases()))
-        else:
-            return None
+        return None
 
     cpdef equals(self, other):
         """
@@ -5120,13 +5119,10 @@ cdef class Matroid(SageObject):
         if len(components) == 1:
             if certificate:
                 return True, None
-            else:
-                return True
-        else:
-            if certificate:
-                return False, components[0]
-            else:
-                return False
+            return True
+        if certificate:
+            return False, components[0]
+        return False
 
     cpdef connectivity(self, S, T=None):
         r"""
@@ -5524,8 +5520,7 @@ cdef class Matroid(SageObject):
         if algorithm is None:
             if certificate:
                 return self._is_3connected_CE(True)
-            else:
-                return self._is_3connected_BC()
+            return self._is_3connected_BC()
         if algorithm == "bridges":
             return self._is_3connected_BC(certificate)
         if algorithm == "intersection":
@@ -5670,8 +5665,7 @@ cdef class Matroid(SageObject):
                 if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                     if certificate:
                         return False, X
-                    else:
-                        return False
+                    return False
                 # if h' is not spanned by I+g, then I is a connector for {e,f}, {g,h'}
                 H.intersection_update(self._closure(I.union([g])))
         g = E.pop()
@@ -5686,8 +5680,7 @@ cdef class Matroid(SageObject):
             if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                 if certificate:
                     return False, X
-                else:
-                    return False
+                return False
             # if h' is not spanned by I + f, then I is a connector for {e, g}, {f, h'}
             H.intersection_update(self._closure(I.union([f])))
         # check all 2-separations with f,g on one side, e on the other
@@ -5701,14 +5694,12 @@ cdef class Matroid(SageObject):
             if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                 if certificate:
                     return False, X
-                else:
-                    return False
+                return False
             # if h' is not spanned by I + e, then I is a connector for {f, g}, {e, h'}
             H.intersection_update(self._closure(I.union([e])))
         if certificate:
             return True, None
-        else:
-            return True
+        return True
 
     cpdef _is_3connected_shifting(self, certificate=False):
         r"""
@@ -5753,8 +5744,7 @@ cdef class Matroid(SageObject):
         if not self.is_connected():
             if certificate:
                 return False, self.components()[0]
-            else:
-                return False
+            return False
         if self.rank()>self.size()-self.rank():
             return self.dual()._is_3connected_shifting(certificate)
         X = set(self.basis())
@@ -6384,8 +6374,7 @@ cdef class Matroid(SageObject):
                 M = N
         if self.is_isomorphism(M, m):
             return M
-        else:
-            return None
+        return None
 
     cpdef is_binary(self, randomized_tests=1):
         r"""
@@ -6565,8 +6554,7 @@ cdef class Matroid(SageObject):
                 M = N
         if self.is_isomorphism(M, m):
             return M
-        else:
-            return None
+        return None
 
     cpdef is_ternary(self, randomized_tests=1):
         r"""

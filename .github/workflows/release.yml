@@ -84,7 +84,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           python-version: 3.12
           miniforge-version: latest
@@ -119,11 +119,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: release_dist
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
@@ -156,6 +156,7 @@ jobs:
           token: ${{ secrets.RELEASE_CREATION_TOKEN }}
           body_path: release_notes
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          max_retries: 3
 
   build_wheels:
     # Temporarily disabled due to build errors
@@ -201,7 +202,7 @@ jobs:
         with:
           platforms: all
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
@@ -258,7 +259,7 @@ jobs:
       CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           pattern: "*-*-*-wheels"
           path: wheelhouse

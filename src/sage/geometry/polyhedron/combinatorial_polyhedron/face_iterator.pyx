@@ -678,8 +678,7 @@ cdef class FaceIterator_base(SageObject):
                    if not (self._n_facets <= i < self._n_facets + self._n_equations)]
         if self.dual:
             return self._join_of_atoms(*indices)
-        else:
-            return self._meet_of_coatoms(*indices)
+        return self._meet_of_coatoms(*indices)
 
     def join_of_Vrep(self, *indices):
         r"""
@@ -808,8 +807,7 @@ cdef class FaceIterator_base(SageObject):
         """
         if not self.dual:
             return self._join_of_atoms(*indices)
-        else:
-            return self._meet_of_coatoms(*indices)
+        return self._meet_of_coatoms(*indices)
 
     def _meet_of_coatoms(self, *indices):
         r"""

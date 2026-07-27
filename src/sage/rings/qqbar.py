@@ -2745,7 +2745,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
 
     Test ``embedded`` for quadratic and cyclotomic fields::
 
-        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=False, minimal=True); v
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], name='zeta6', embedded=False, minimal=True); v
         (Number Field in zeta6 with defining polynomial x^2 - x + 1,
          [zeta6 - 1],
          Ring morphism:
@@ -2765,7 +2765,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
           From: Cyclotomic Field of order 6 and degree 2
           To:   Complex Lazy Field
           Defn: zeta6 -> 0.500000000000000? + 0.866025403784439?*I
-        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=False, minimal=True); v
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], name='I', embedded=False, minimal=True); v
         (Number Field in I with defining polynomial x^2 + 1,
          [I],
          Ring morphism:
@@ -2785,7 +2785,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
           From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
           To:   Complex Lazy Field
           Defn: I -> 1*I
-        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=False, minimal=True); v
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], name='zeta10', embedded=False, minimal=True); v
         (Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1,
          [zeta10],
          Ring morphism:
@@ -2824,7 +2824,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
 
         sage: AA((-1)^(2/3))
         1
-        sage: number_field_elements_from_algebraics([(-1)^(2/3)])
+        sage: number_field_elements_from_algebraics([(-1)^(2/3)], name='zeta6')
         (Number Field in zeta6 with defining polynomial x^2 - x + 1,
          [zeta6 - 1],
          Ring morphism:
@@ -2890,7 +2890,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         # if the default embedding is different from what is expected then modify the field
         if embedded != (fld.coerce_embedding() is not None):
             # creates the modified field
-            modified_field = NumberField(fld.defining_polynomial(), fld.variable_name(),
+            modified_field = NumberField(fld.defining_polynomial(), name,
                                          embedding=exact_generator if embedded else None)
 
             # embeds the numbers

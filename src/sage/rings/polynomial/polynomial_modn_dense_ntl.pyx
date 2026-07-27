@@ -958,8 +958,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
 
         if recip:
             return ~r
-        else:
-            return r
+        return r
 
     @coerce_binop
     def quo_rem(self, right):
@@ -1527,8 +1526,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             if do_sig: sig_off()
         if recip:
             return ~r
-        else:
-            return r
+        return r
 
     @coerce_binop
     def quo_rem(self, right):
@@ -1944,13 +1942,11 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
                 modulus = m
             self = self % modulus
             return parent(pow(self.ntl_ZZ_pX(), n, modulus.ntl_ZZ_pX()), construct=True)
-        else:
-            if n < 0:
-                return ~(self**(-n))
-            elif self.degree() <= 0:
-                return parent(self[0]**n)
-            else:
-                return parent(self.ntl_ZZ_pX()**n, construct=True)
+        if n < 0:
+            return ~(self**(-n))
+        if self.degree() <= 0:
+            return parent(self[0]**n)
+        return parent(self.ntl_ZZ_pX()**n, construct=True)
 
     @coerce_binop
     def gcd(self, right):

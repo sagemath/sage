@@ -290,8 +290,7 @@ def init_ecl():
 cdef ecl_string_to_python(cl_object s):
     if bint_base_string_p(s):
         return char_to_str(ecl_base_string_pointer_safe(s))
-    else:
-        return ''.join(chr(ecl_char(s, i)) for i in range(ecl_length(s)))
+    return ''.join(chr(ecl_char(s, i)) for i in range(ecl_length(s)))
 
 cdef cl_object ecl_safe_eval(cl_object form) except NULL:
     """
@@ -431,18 +430,16 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
     if isinstance(pyobj, bool):
         if pyobj:
             return ECL_T
-        else:
-            return ECL_NIL
-    elif pyobj is None:
         return ECL_NIL
-    elif isinstance(pyobj, int):
+    if pyobj is None:
+        return ECL_NIL
+    if isinstance(pyobj, int):
         if MOST_NEGATIVE_FIXNUM <= pyobj <= MOST_POSITIVE_FIXNUM:
             return ecl_make_integer(pyobj)
-        else:
-            return python_to_ecl(Integer(pyobj), read_strings)
-    elif isinstance(pyobj, float):
+        return python_to_ecl(Integer(pyobj), read_strings)
+    if isinstance(pyobj, float):
         return ecl_make_doublefloat(pyobj)
-    elif isinstance(pyobj, unicode):
+    if isinstance(pyobj, unicode):
         try:
             s = str_to_bytes(pyobj, 'ascii')
         except UnicodeEncodeError:
@@ -454,40 +451,35 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
 
         if read_strings:
             return ecl_safe_funcall(read_from_string_clobj, o)
-        else:
-            return o
-    elif isinstance(pyobj, bytes):
+        return o
+    if isinstance(pyobj, bytes):
         s = <bytes>pyobj
         if read_strings:
             return ecl_safe_read_string(s)
-        else:
-            return ecl_cstring_to_base_string_or_nil(s)
-    elif isinstance(pyobj, Integer):
+        return ecl_cstring_to_base_string_or_nil(s)
+    if isinstance(pyobj, Integer):
         if pyobj >= MOST_NEGATIVE_FIXNUM and pyobj <= MOST_POSITIVE_FIXNUM:
             return ecl_make_integer(pyobj)
-        else:
-            return ecl_bignum_from_mpz((<Integer>pyobj).value)
-    elif isinstance(pyobj, Rational):
+        return ecl_bignum_from_mpz((<Integer>pyobj).value)
+    if isinstance(pyobj, Rational):
         return ecl_make_ratio(
             python_to_ecl((<Rational>pyobj).numerator(), read_strings),
             python_to_ecl((<Rational>pyobj).denominator(), read_strings))
-    elif isinstance(pyobj, EclObject):
+    if isinstance(pyobj, EclObject):
         return (<EclObject>pyobj).obj
-    elif isinstance(pyobj, list):
+    if isinstance(pyobj, list):
         L = ECL_NIL
         for i in range(len(pyobj) - 1, -1, -1):
             L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
         return L
-    elif isinstance(pyobj, tuple):
+    if isinstance(pyobj, tuple):
         if not pyobj:
             return ECL_NIL
-        else:
-            L = python_to_ecl(pyobj[-1], read_strings)
-            for i in range(len(pyobj) - 2, -1, -1):
-                L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
-            return L
-    else:
-        raise TypeError("Unimplemented type for python_to_ecl")
+        L = python_to_ecl(pyobj[-1], read_strings)
+        for i in range(len(pyobj) - 2, -1, -1):
+            L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
+        return L
+    raise TypeError("Unimplemented type for python_to_ecl")
 
 
 cdef ecl_to_python(cl_object o):
@@ -853,13 +845,11 @@ cdef class EclObject:
         if op == Py_EQ:
             if not(isinstance(left, EclObject) and isinstance(right, EclObject)):
                 return False
-            else:
-                return bint_equal((<EclObject>left).obj, (<EclObject>right).obj)
-        elif op == Py_NE:
+            return bint_equal((<EclObject>left).obj, (<EclObject>right).obj)
+        if op == Py_NE:
             if not(isinstance(left, EclObject) and isinstance(right, EclObject)):
                 return True
-            else:
-                return not(bint_equal((<EclObject>left).obj, (<EclObject>right).obj))
+            return not(bint_equal((<EclObject>left).obj, (<EclObject>right).obj))
 
         # Common lisp only seems to be able to compare numeric and string types
         # and does not have generic routines for doing that.

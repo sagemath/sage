@@ -588,8 +588,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         if self.is_zero(prec):
             return Integer(1)
-        else:
-            return infinity
+        return infinity
 
     def artin_hasse_exp(self, prec=None, algorithm=None):
         r"""
@@ -1478,8 +1477,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if self.is_zero() and other.is_zero():
             if self.valuation() < other.valuation():
                 return self
-            else:
-                return other
+            return other
 
         if self.parent().is_field():
             return self.parent().one()
@@ -2236,8 +2234,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             # Qp or Zp, so there is a unique map
             if base_map is None:
                 return codomain.coerce(self)
-            else:
-                return base_map(self)
+            return base_map(self)
         f = self.polynomial()
         if base_map is not None:
             f = f.change_ring(base_map)
@@ -3498,14 +3495,12 @@ cdef class pAdicGenericElement(LocalGenericElement):
                 i += 1
             if all:
                 return [ans, ans2]
-            else:
-                return ans
+            return ans
         if extend:
             raise NotImplementedError("extending using the sqrt function not yet implemented")
-        elif all:
+        if all:
             return []
-        else:
-            raise ValueError("element is not a square")
+        raise ValueError("element is not a square")
 
     def nth_root(self, n, all=False):
         """

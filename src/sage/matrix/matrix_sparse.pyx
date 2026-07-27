@@ -762,8 +762,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         if self._nrows==0 or self._ncols==0:
             if not sparse:
                 return self.dense_matrix()
-            else:
-                return self.__copy__()
+            return self.__copy__()
         self_dict = self._dict()
         if len(self_dict) < self._nrows * self._ncols:
             zero_res = phi(self.base_ring()(0))

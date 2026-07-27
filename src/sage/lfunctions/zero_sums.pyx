@@ -272,8 +272,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
         z = F(psi(F(s)))
         if include_constant_term:
             return z
-        else:
-            return z + self._euler_gamma
+        return z + self._euler_gamma
 
     def logarithmic_derivative(self, s, num_terms=10000, as_interval=False):
         r"""
