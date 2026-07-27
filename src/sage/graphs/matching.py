@@ -3679,6 +3679,18 @@ class MicaliVaziraniMatching:
             sage: G = Graph([(0, 1), (1, 2), (2, 3), (3, 4), (4, 2)])
             sage: len(MicaliVaziraniMatching(G).get_matching())
             2
+
+        With ``extended_phases=False`` a phase stops as soon as it augments.
+        The seed is neutralised so the first phase must augment; the star's
+        maximum matching is smaller than ``N // 2``, so the phase augments
+        without completing the matching and the classic-phase early exit is
+        taken::
+
+            sage: MV = MicaliVaziraniMatching(graphs.StarGraph(4),
+            ....:                              extended_phases=False)
+            sage: MV._compute_initial_maximal_matching = lambda: None
+            sage: len(MV.get_matching())
+            1
         """
         search_level = 0
         augmentation_found = False
