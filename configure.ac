@@ -342,11 +342,24 @@ m4_pushdef([SAGE_BOOTSTRAP_URL],[See https://doc.sagemath.org/html/en/reference/
    ])
 
 # choose BLAS/LAPACK on Darwin
+dnl Accelerate is always available on macOS, works well, and avoids picking up
+dnl a third-party OpenBLAS whose openblas.pc advertises compile flags that are
+dnl not ours to pass on; see https://github.com/sagemath/sage/issues/42096.
+dnl The framework does not exist on any other platform, so the option must
+dnl remain "no" there.
+AS_CASE([$host],
+        [*-*-darwin*], [sage_darwin_accelerate_default=yes],
+        [sage_darwin_accelerate_default=no])
 AC_ARG_WITH([darwin-accelerate],
-            [AS_HELP_STRING([--with-darwin-accelerate={no (default)},yes}],
-                            [use Darwin (macOS) Accelerate BLAS/LAPACK])],
+            [AS_HELP_STRING([--without-darwin-accelerate],
+                            [on macOS, use OpenBLAS rather than the Accelerate framework for BLAS/LAPACK (default: use Accelerate)])],
             [SAGE_DARWIN_ACCELERATE="$withval"],
-            [SAGE_DARWIN_ACCELERATE="no"])
+            [SAGE_DARWIN_ACCELERATE="$sage_darwin_accelerate_default"])
+AS_CASE([$host],
+        [*-*-darwin*], [],
+        [AS_IF([test x$SAGE_DARWIN_ACCELERATE = xyes],
+               [AC_MSG_WARN([--with-darwin-accelerate is only supported on macOS; ignoring it on $host])])
+         SAGE_DARWIN_ACCELERATE=no])
 AC_SUBST([SAGE_DARWIN_ACCELERATE])
 
 SAGE_DARWIN_PKG_CONFIG_PATH=
