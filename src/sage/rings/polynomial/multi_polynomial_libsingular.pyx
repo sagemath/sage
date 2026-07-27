@@ -952,8 +952,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if element.constant():
                 if element:
                     return self._one_element
-                else:
-                    return self._zero_element
+                return self._zero_element
 
             variable_names_s = set(element.parent().variable_names())
             variable_names_t = self.variable_names()
@@ -1667,8 +1666,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         if not p_DivisibleBy(_a, _b, _r):
             return False
-        else:
-            return True
+        return True
 
     def monomial_lcm(self, MPolynomial_libsingular f, MPolynomial_libsingular g):
         """
@@ -1823,16 +1821,15 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         if p == NULL:
             if q == NULL:
-                return False #GCD(0,0) = 0
-            else:
-                return True #GCD(x,0) = 1
-        elif q == NULL:
-            return True # GCD(0,x) = 1
-        elif p_IsConstant(p,r) or p_IsConstant(q,r): # assuming a base field
+                return False  # GCD(0,0) = 0
+            return True  # GCD(x,0) = 1
+        if q == NULL:
+            return True  # GCD(0,x) = 1
+        if p_IsConstant(p, r) or p_IsConstant(q, r):  # assuming a base field
             return False
 
         for i from 1 <= i <= r.N:
-            if p_GetExp(p,i,r) and p_GetExp(q,i,r):
+            if p_GetExp(p, i, r) and p_GetExp(q, i, r):
                 return False
         return True
 
@@ -2131,8 +2128,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             f = self.subs(**kwds)
             if len(x) > 0:
                 return f(*x)
-            else:
-                return f
+            return f
 
         cdef int l = len(x)
         cdef MPolynomialRing_libsingular parent = self._parent
@@ -3917,8 +3913,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         if p_LmIsConstant(p, r):
             return si2sa(p_GetCoeff(p, r), r, self._parent._base)
-        else:
-            return self._parent._base._zero_element
+        return self._parent._base._zero_element
 
     def univariate_polynomial(self, R=None):
         """
@@ -4044,8 +4039,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             p = pNext(p)
         if sort:
             return sorted(s)
-        else:
-            return list(s)
+        return list(s)
 
     def variables(self):
         """
@@ -4233,8 +4227,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         if self._poly is NULL:
             return True
-        else:
-            return False
+        return False
 
     def __bool__(self):
         """
@@ -4248,8 +4241,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         if self._poly:
             return True
-        else:
-            return False
+        return False
 
     cpdef _floordiv_(self, right):
         """

@@ -2115,8 +2115,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             f = self.subs(**kwds)
             if x:  # If there are non-keyword arguments
                 return f(*x)
-            else:
-                return f
+            return f
 
         if not x:
             return self

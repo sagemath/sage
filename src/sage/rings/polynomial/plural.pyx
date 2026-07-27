@@ -1142,8 +1142,7 @@ cdef class NCPolynomialRing_plural(Ring):
 
         if not p_DivisibleBy(_a, _b, _r):
             return False
-        else:
-            return True
+        return True
 
     def monomial_lcm(self, NCPolynomial_plural f, NCPolynomial_plural g):
         """
@@ -1334,13 +1333,12 @@ cdef class NCPolynomialRing_plural(Ring):
         if p == NULL:
             if q == NULL:
                 return False  # GCD(0,0) = 0
-            else:
-                return True  # GCD(x,0) = 1
+            return True  # GCD(x,0) = 1
 
-        elif q == NULL:
+        if q == NULL:
             return True  # GCD(0,x) = 1
 
-        elif p_IsConstant(p, r) or p_IsConstant(q, r):  # assuming a base field
+        if p_IsConstant(p, r) or p_IsConstant(q, r):  # assuming a base field
             return False
 
         for i from 1 <= i <= r.N:

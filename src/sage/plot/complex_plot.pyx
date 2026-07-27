@@ -97,8 +97,7 @@ cdef inline double mag_to_lightness(double r, double rate=0.5) noexcept:
     """
     if rate == 0.5:
         return atan(log(sqrt(r)+1)) * (4/PI) - 1
-    else:
-        return atan(log(pow(r, rate)+1)) * (4/PI) - 1
+    return atan(log(pow(r, rate)+1)) * (4/PI) - 1
 
 
 cdef inline double cyclic_logarithmic_mag_to_lightness(double r, double base=2) noexcept:

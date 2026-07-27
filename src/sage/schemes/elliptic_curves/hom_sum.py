@@ -429,8 +429,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             mid = (len(self._phis) + 1) // 2
             left = EllipticCurveHom_sum(self._phis[:mid])
             right = EllipticCurveHom_sum(self._phis[mid:])
-            pair = left * right.dual() if right.degree() < left.degree() else left.dual() * right
-            self._degree = left.degree() + right.degree() + pair.trace()
+            self._degree = left.degree() + right.degree() + left.trace_pairing(right)
             if self.dual.is_in_cache():
                 self.dual()._degree = self._degree
 

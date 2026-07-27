@@ -1015,8 +1015,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             return 1
         if entry:
             return 0
-        else:
-            return 1
+        return 1
 
     def function(self, *args):
         """

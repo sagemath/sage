@@ -661,8 +661,7 @@ cdef class dancing_linksWrapper:
             dlx = self.restrict([i])
             if dlx.search():
                 return dlx.get_solution()
-            else:
-                return None
+            return None
 
         indices = [i for (i, row) in enumerate(self._rows) if column in row]
         for (args_kwds, val) in first_solution(indices):

@@ -806,8 +806,7 @@ cdef class MPolynomial(CommutativePolynomial):
         for m in M:
             if m.degree() != d:
                 return False
-        else:
-            return True
+        return True
 
     def homogeneous_components(self):
         r"""
@@ -3035,8 +3034,7 @@ cdef remove_from_tuple(e, int ind):
     del w[ind]
     if len(w) == 1:
         return w[0]
-    else:
-        return tuple(w)
+    return tuple(w)
 
 
 cdef class MPolynomial_libsingular(MPolynomial):

@@ -253,8 +253,7 @@ cdef class CategoryObject(SageObject):
         cls = type(self)
         if isinstance(cls, DynamicMetaclass):
             return cls.__bases__[0]
-        else:
-            return cls
+        return cls
 
     ##############################################################################
     # Generators
@@ -290,8 +289,7 @@ cdef class CategoryObject(SageObject):
         """
         if copy:
             return dict(self.__gens_dict())
-        else:
-            return self.__gens_dict()
+        return self.__gens_dict()
 
     def gens_dict_recursive(self):
         r"""

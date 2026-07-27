@@ -681,7 +681,7 @@ class ManifoldPoint(Element):
                         pass
         if common_chart is None:
             return False
-            #!# Another option would be:
+            # Another option would be:
             # raise ValueError("no common chart has been found to compare " +
             #                  "{} and {}".format(self, other))
         periods = common_chart.periods()

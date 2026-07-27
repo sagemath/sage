@@ -103,8 +103,7 @@ class SageSpawn(spawn):
             cmd = " ".join(self.args)
             if not self.terminated:
                 return "%s with PID %s running %s" % (self.__name, self.pid, cmd)
-            else:
-                return "%s finished running %s" % (self.__name, cmd)
+            return "%s finished running %s" % (self.__name, cmd)
         except Exception:
             return object.__repr__(self)
 

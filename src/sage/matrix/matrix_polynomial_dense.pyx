@@ -4823,8 +4823,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # extract sought basis and return
         if row_wise:
             return kbas[:m,:m]
-        else:
-            return kbas[:n,:n]
+        return kbas[:n,:n]
 
     def _basis_completion_via_reversed_approx(self):
         r"""
@@ -5199,8 +5198,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             if rk == 0:
                 if row_wise:
                     return matrix.identity(ring, n)
-                else:
-                    return matrix.identity(ring, m)
+                return matrix.identity(ring, m)
 
             # now, matrix is nonzero (and nonempty)
             if row_wise:
