@@ -5547,6 +5547,9 @@ REFERENCES:
 .. [Mue2010] Jan Steffen Mueller, *Explicit Kummer surface formulas for arbitrary characteristic*.
              LMS Journal of Computation and Mathematics, Volume 13, 47--64, 2010.
 
+.. [Muh2021] Henri Mühle, *Noncrossing Arc Diagrams, Tamari Lattices, and Parabolic Quotients
+             of the Symmetric Group*. Annals of Combinatorics, Volume 25, pages 307–344 (2021).
+
 .. [Mul2004] Siguna Muller, *On the Computation of Square Roots in
              Finite Fields*, in Designs, Codes and Cryptography,
              Volume 31, Issue 3 (March 2004)
@@ -6238,6 +6241,10 @@ REFERENCES:
              cubic graphs*, Journal of Combinatorial Theory, Series B, vol. 138,
              (2019), pages: 219 -- 285, ISSN: 0095 -- 8956,
              :doi:`10.1016/j.jctb.2019.02.002`.
+        
+.. [RST2024] Nathan Reading, David E Speyer, and Hugh Thomas, *The fundamental theorem
+             of finite semidistributive lattices*.
+             :arxiv:`1907.08050v2`
 
 .. [RSW2004] Reiner, Stanton, White - *The cyclic sieving phenomenon*,
              Journal of Combinatorial Theory A 108 (2004).
@@ -7083,6 +7090,9 @@ REFERENCES:
 
 .. [TW1980] \A.D. Thomas and G.V. Wood, Group Tables (Exeter: Shiva
             Publishing, 1980)
+
+.. [TW2018] Hugh Thomas and Nathan Williams, *Rowmotion in slow motion*.
+            :arxiv:`1712.10123v2`
 
 .. [TvW2018] Vasu Tewari and Stephanie van
              Willigenburg. *Quasisymmetric and noncommutative skew
