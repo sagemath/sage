@@ -351,8 +351,8 @@ AS_CASE([$host],
         [*-*-darwin*], [sage_darwin_accelerate_default=yes],
         [sage_darwin_accelerate_default=no])
 AC_ARG_WITH([darwin-accelerate],
-            [AS_HELP_STRING([--without-darwin-accelerate],
-                            [on macOS, use OpenBLAS rather than the Accelerate framework for BLAS/LAPACK (default: use Accelerate)])],
+            [AS_HELP_STRING([--with-darwin-accelerate={no,yes}],
+                            [use Darwin (macOS) Accelerate BLAS/LAPACK (default: yes on macOS, no elsewhere)])],
             [SAGE_DARWIN_ACCELERATE="$withval"],
             [SAGE_DARWIN_ACCELERATE="$sage_darwin_accelerate_default"])
 AS_CASE([$host],
