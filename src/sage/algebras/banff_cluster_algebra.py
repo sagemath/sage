@@ -758,6 +758,7 @@ class BanffClusterElement(FLIRElement, ClusterAlgebraElement):
 
         self._f = f
         self._value = L(f)
+        self.value = self._value
         #FLIRElement.__init__(self, parent, L(f), check=check)
 
         #ClusterAlgebraElement.__init__(self, parent, L(f))
