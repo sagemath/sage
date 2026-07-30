@@ -864,7 +864,7 @@ class DifferentiableManifold(TopologicalManifold):
             Open subset U of the 2-dimensional differentiable manifold R^2
         """
         super()._init_open_subset(resu, coord_def=coord_def)
-        #!# update vector frames and change of frames
+        # update vector frames and change of frames
 
     def diff_map(self, codomain, coord_functions=None, chart1=None,
                        chart2=None, name=None, latex_name=None):

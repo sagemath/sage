@@ -124,20 +124,17 @@ cdef class FiniteField(Field):
             False
         """
         if self is other:
-            if m == 2: # ==
+            if m == 2:  # ==
                 return True
-            elif m == 3: # !=
+            if m == 3:  # !=
                 return False
-            else:
-                # <= or >= or NotImplemented
-                return m==1 or m==5 or NotImplemented
-        else:
-            if m == 2:
-                return False
-            elif m == 3:
-                return True
-            else:
-                return NotImplemented
+            # <= or >= or NotImplemented
+            return m == 1 or m == 5 or NotImplemented
+        if m == 2:
+            return False
+        if m == 3:
+            return True
+        return NotImplemented
 
     def __repr__(self) -> str:
         """
@@ -1709,8 +1706,7 @@ cdef class FiniteField(Field):
                     pass
         if map:
             return K, inc
-        else:
-            return K
+        return K
 
     def subfields(self, degree=0, name=None):
         """

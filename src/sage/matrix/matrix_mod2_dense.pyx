@@ -366,8 +366,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         if mzd_read_bit(self._entries, i, j):
             return self._one
-        else:
-            return self._zero
+        return self._zero
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
         r"""
@@ -2470,16 +2469,14 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                             # A[i_bottom][j_right] == 0
                             if certificate:
                                 return False, (i, j, i_bottom, j_right)
-                            else:
-                                return False
+                            return False
                     j = j_right
                 else:
                     j += 1
 
         if certificate:
             return True, None
-        else:
-            return True
+        return True
 
 # Used for hashing
 cdef int i, k

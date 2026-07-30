@@ -666,8 +666,7 @@ cdef class GapElement(RingElement):
             finally:
                 GAP_Leave()
             return make_any_gap_element(self.parent(), copy)
-        else:
-            return self
+        return self
 
     cpdef GapElement deepcopy(self, bint mut):
         r"""
@@ -704,8 +703,7 @@ cdef class GapElement(RingElement):
             finally:
                 GAP_Leave()
             return make_any_gap_element(self.parent(), copy)
-        else:
-            return self
+        return self
 
     def __deepcopy__(self, memo):
         r"""
@@ -2875,8 +2873,7 @@ cdef class GapElement_MethodProxy(GapElement_Function):
         """
         if len(args) > 0:
             return GapElement_Function.__call__(self, * ([self.first_argument] + list(args)))
-        else:
-            return GapElement_Function.__call__(self, self.first_argument)
+        return GapElement_Function.__call__(self, self.first_argument)
 
 
 ############################################################################
@@ -3304,8 +3301,7 @@ cdef class GapElement_Permutation(GapElement):
 
         if parent is None:
             return Permutation(lst.sage(), check=False)
-        else:
-            return parent.one()._generate_new_GAP(lst)
+        return parent.one()._generate_new_GAP(lst)
 
 ############################################################################
 ### GapElement_Record ######################################################

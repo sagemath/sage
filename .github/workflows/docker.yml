@@ -137,7 +137,7 @@ jobs:
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
       - name: Download upstream artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}

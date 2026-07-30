@@ -390,8 +390,7 @@ cdef inline int bitset_lex_cmp(fused_bitset_t a, fused_bitset_t b) noexcept:
         return 0
     if bitset_in(a, i):
         return 1
-    else:
-        return -1
+    return -1
 
 cdef inline bint bitset_issubset(fused_bitset_t a, fused_bitset_t b) noexcept nogil:
     """
@@ -402,8 +401,7 @@ cdef inline bint bitset_issubset(fused_bitset_t a, fused_bitset_t b) noexcept no
     """
     if fused_bitset_t is sparse_bitset_t and a.non_zero_chunks_are_initialized:
         return _sparse_bitset_cmp(a.bits, a.non_zero_chunks, a.n_non_zero_chunks, b.bits, SUBSET)
-    else:
-        return _bitset_cmp(a.bits, b.bits, a.limbs, SUBSET)
+    return _bitset_cmp(a.bits, b.bits, a.limbs, SUBSET)
 
 cdef inline bint bitset_issuperset(fused_bitset_t a, fused_bitset_t b) noexcept nogil:
     """
@@ -422,8 +420,7 @@ cdef inline bint bitset_are_disjoint(fused_bitset_t a, fused_bitset_t b) noexcep
     """
     if fused_bitset_t is sparse_bitset_t and a.non_zero_chunks_are_initialized:
         return _sparse_bitset_cmp(a.bits, a.non_zero_chunks, a.n_non_zero_chunks, b.bits, DISJOINT)
-    else:
-        return _bitset_cmp(a.bits, b.bits, a.limbs, DISJOINT)
+    return _bitset_cmp(a.bits, b.bits, a.limbs, DISJOINT)
 
 
 #############################################################################

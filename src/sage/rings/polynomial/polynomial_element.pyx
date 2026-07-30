@@ -1019,18 +1019,18 @@ cdef class Polynomial(CommutativePolynomial):
         cdef Py_ssize_t d2 = pol.degree()
 
         # Special case constant polynomials
-        if d1 == -1: # self is the 0 polynomial
+        if d1 == -1:  # self is the 0 polynomial
             if d2 == -1:
-                return rich_to_bool(op, 0) # both polynomials are 0
-            elif d2 == 0:
+                return rich_to_bool(op, 0)  # both polynomials are 0
+            if d2 == 0:
                 return richcmp(self._parent._base.zero(), pol.get_unsafe(0), op)
-            return rich_to_bool_sgn(op, -1) # we have d2 > 0
-        elif d1 == 0: # self is a nonzero constant
+            return rich_to_bool_sgn(op, -1)  # we have d2 > 0
+        if d1 == 0:  # self is a nonzero constant
             if d2 == -1:
                 return richcmp(self.get_unsafe(0), pol._parent._base.zero(), op)
-            elif d2 == 0:
+            if d2 == 0:
                 return richcmp(self.get_unsafe(0), pol.get_unsafe(0), op)
-            return rich_to_bool_sgn(op, -1) # we have d2 > d1 == 0
+            return rich_to_bool_sgn(op, -1)  # we have d2 > d1 == 0
 
         # For different degrees, compare the degree
         if d1 != d2:
@@ -3271,10 +3271,9 @@ cdef class Polynomial(CommutativePolynomial):
                 else:
                     terms.append(sib(coeffs[i], True))
             return sib.sum(terms, simplify=True)
-        elif coerced:
+        if coerced:
             return sib(self.constant_coefficient(), True)
-        else:
-            return sib(self._parent)(sib(self.constant_coefficient(), True))
+        return sib(self._parent)(sib(self.constant_coefficient(), True))
 
     def __setitem__(self, n, value):
         """
@@ -3833,8 +3832,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         if isinstance(R, Map):
             return self.map_coefficients(R)
-        else:
-            return self._parent.change_ring(R)(self.list(copy=False))
+        return self._parent.change_ring(R)(self.list(copy=False))
 
     cpdef dict _mpoly_dict_recursive(self, tuple variables=None, base_ring=None):
         """
@@ -6311,8 +6309,7 @@ cdef class Polynomial(CommutativePolynomial):
         zero = self._parent.base_ring().zero()
         if sparse:
             return [c for c in self.list() if c != zero]
-        else:
-            return self.list()
+        return self.list()
 
     def global_height(self, prec=None):
         """
@@ -6656,8 +6653,7 @@ cdef class Polynomial(CommutativePolynomial):
         coeffs = self.list()
         if 0 <= d < len(coeffs):
             return coeffs[d]
-        else:
-            return self._parent.base_ring().zero()
+        return self._parent.base_ring().zero()
 
     def monomials(self):
         """
@@ -7688,8 +7684,7 @@ cdef class Polynomial(CommutativePolynomial):
             q = q.shift(prec - q.degree() - 1)
             if monic:
                 return q
-            else:
-                return (p1.leading_coefficient()**p2.degree() *
+            return (p1.leading_coefficient()**p2.degree() *
                         p2.leading_coefficient()**p1.degree() * q).change_ring(S)
 
         else:
@@ -8924,8 +8919,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             if multiplicities:
                 return rts_mult
-            else:
-                return [rt for (rt, mult) in rts_mult]
+            return [rt for (rt, mult) in rts_mult]
 
         if isinstance(L, SymbolicRing):
             if self.degree() == 2:
@@ -8945,8 +8939,7 @@ cdef class Polynomial(CommutativePolynomial):
                 if l:
                     if multiplicities:
                         return l
-                    else:
-                        return [val for val,m in l]
+                    return [val for val,m in l]
             from sage.symbolic.ring import SR
             vname = 'do_not_use_this_name_in_a_polynomial_coefficient'
             var = SR(vname)
@@ -8956,8 +8949,7 @@ cdef class Polynomial(CommutativePolynomial):
                              multiplicities=multiplicities)
             if multiplicities:
                 return [(rt.rhs(), mult) for rt, mult in zip(*rts)]
-            else:
-                return [rt.rhs() for rt in rts]
+            return [rt.rhs() for rt in rts]
 
         if L != K or isinstance(L, sage.rings.abc.AlgebraicField_common):
             # So far, the only "special" implementations are for real
@@ -8989,8 +8981,7 @@ cdef class Polynomial(CommutativePolynomial):
 
                 if multiplicities:
                     return rts
-                else:
-                    return [rt for (rt, mult) in rts]
+                return [rt for (rt, mult) in rts]
 
             if (isinstance(K, IntegerRing_class) or isinstance(K, RationalField)
                 or isinstance(K, sage.rings.abc.AlgebraicField_common) or input_gaussian) and \
@@ -9007,8 +8998,7 @@ cdef class Polynomial(CommutativePolynomial):
 
                 if multiplicities:
                     return rts
-                else:
-                    return [rt for (rt, mult) in rts]
+                return [rt for (rt, mult) in rts]
 
             if output_fp and output_complex and not input_gaussian:
                 # If we want the complex roots, and the input is not
@@ -9138,8 +9128,7 @@ cdef class Polynomial(CommutativePolynomial):
             rts_L.append((xL, mult))
         if multiplicities:
             return rts_L
-        else:
-            return [rt for (rt, _) in rts_L]
+        return [rt for (rt, _) in rts_L]
 
     def real_roots(self):
         """
@@ -9564,8 +9553,7 @@ cdef class Polynomial(CommutativePolynomial):
             b = Q.all_roots_in_interval(-2*q.sqrt(), 2*q.sqrt())
         if return_q:
             return (b, self.base_ring()(q.sqrt())) if b else (b, 0)
-        else:
-            return b
+        return b
 
     def is_lorentzian(self, explain=False):
         r"""
@@ -9920,8 +9908,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         if self.is_constant():
             return ()
-        else:
-            return self._parent.gens()
+        return self._parent.gens()
 
     def args(self):
         """
@@ -10170,8 +10157,7 @@ cdef class Polynomial(CommutativePolynomial):
         if n < 0:
             if n > self.degree():
                 return self._new_generic([])
-            else:
-                return self._new_generic(self.coefficients(sparse=False)[-int(n):])
+            return self._new_generic(self.coefficients(sparse=False)[-int(n):])
 
     def __lshift__(self, k):
         """
@@ -12079,8 +12065,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         """
         if a:
             return self._new_c([a],P)
-        else:
-            return self._new_c([],P)
+        return self._new_c([],P)
 
     def __reduce__(self):
         """
@@ -12369,8 +12354,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         """
         if not self._coeffs:
             return self.base_ring().zero()
-        else:
-            return self._coeffs[0]
+        return self._coeffs[0]
 
     cpdef list list(self, bint copy=True):
         """
@@ -12386,8 +12370,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         """
         if copy:
             return list(self._coeffs)
-        else:
-            return self._coeffs
+        return self._coeffs
 
     def degree(self, gen=None):
         """
@@ -12448,8 +12431,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         if n < 0:
             if n > len(self._coeffs) - 1:
                 return self._parent([])
-            else:
-                return self._new_c(self._coeffs[-int(n):], self._parent)
+            return self._new_c(self._coeffs[-int(n):], self._parent)
 
     @coerce_binop
     def quo_rem(self, other):

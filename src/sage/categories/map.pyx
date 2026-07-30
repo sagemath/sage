@@ -527,8 +527,7 @@ cdef class Map(Element):
         """
         if self._repr_type_str is None:
             return "Generic"
-        else:
-            return self._repr_type_str
+        return self._repr_type_str
 
     def _repr_defn(self):
         """
@@ -1173,10 +1172,9 @@ cdef class Map(Element):
         cdef Map connecting = D._internal_coerce_map_from(new_domain)
         if connecting is None:
             raise TypeError("No coercion from %s to %s" % (new_domain, D))
-        elif connecting.codomain() is not D:
+        if connecting.codomain() is not D:
             raise RuntimeError("BUG: coerce_map_from should always return a map to self (%s)" % D)
-        else:
-            return self.pre_compose(connecting.__copy__())
+        return self.pre_compose(connecting.__copy__())
 
     def extend_codomain(self, new_codomain):
         r"""
@@ -1213,10 +1211,9 @@ cdef class Map(Element):
         cdef Map connecting = new_codomain._internal_coerce_map_from(self._codomain)
         if connecting is None:
             raise TypeError("No coercion from %s to %s" % (self._codomain, new_codomain))
-        elif connecting.domain() is not self._codomain:
+        if connecting.domain() is not self._codomain:
             raise RuntimeError("BUG: coerce_map_from should always return a map from its input (%s)" % new_codomain)
-        else:
-            return self.post_compose(connecting.__copy__())
+        return self.post_compose(connecting.__copy__())
 
     def is_surjective(self):
         """
