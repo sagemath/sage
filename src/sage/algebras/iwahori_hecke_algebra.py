@@ -485,7 +485,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         self._q_sum = q1 + q2
         self._q_prod = -q1 * q2
 
-        # If -q1*q2 is a square then it makes sense to talk of he Kazhdan-Lusztig
+        # If -q1*q2 is a square then it makes sense to talk of the Kazhdan-Lusztig
         # basis of the Iwhaori-Hecke algebra. In this case we set
         # self._root=\sqrt{q1*q2}. The Kazhdan-Lusztig bases will be computed in
         # the generic case behind the scenes and then specialized to this # algebra.
