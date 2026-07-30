@@ -27,13 +27,13 @@ from cypari2.paridecl cimport (
     inf_get_sign,
     is_rational_t,
     maxprime,
-    pari_PRIMES, 
-    pari_sp, 
+    pari_PRIMES,
+    pari_sp,
     t_FFELT,
     t_POLMOD,
     uisprime,
     uisprimepower,
-    ulong, 
+    ulong,
 )
 from cypari2.stack cimport new_gen
 from sage.libs.pari.convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
@@ -341,8 +341,7 @@ cpdef gen_to_sage(Gen z, locals=None):
     elif t == t_INFINITY:
         if inf_get_sign(g) >= 0:
             return Infinity
-        else:
-            return -Infinity
+        return -Infinity
 
     # Fallback (e.g. polynomials): use string representation
     from sage.misc.sage_eval import sage_eval
@@ -552,8 +551,7 @@ cpdef pari_is_prime_power(Integer q, bint get_data):
     n = uisprimepower(mpz_get_ui(q.value), <ulong*>(&p))
     if n:
         return (smallInteger(p), smallInteger(n)) if get_data else True
-    else:
-        return (q, smallInteger(0)) if get_data else False
+    return (q, smallInteger(0)) if get_data else False
 
 
 cpdef unsigned long pari_maxprime() noexcept:

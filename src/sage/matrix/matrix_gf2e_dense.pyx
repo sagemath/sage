@@ -238,6 +238,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 a 0]
             [0 0 a]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``mzed_init``). Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch significantly faster
+            # (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
@@ -697,7 +704,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -714,7 +721,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if self._nrows == 0 or self._ncols == 0:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, mzed_cmp(self._entries,
-                                         (<Matrix_gf2e_dense>right)._entries))
+                                         (<Matrix_gf2e_dense>other)._entries))
 
     def __copy__(self):
         """

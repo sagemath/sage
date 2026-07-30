@@ -1518,22 +1518,22 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         i = mpfr_cmp(&left.__re.left, &(<ComplexIntervalFieldElement>right).__re.left)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__re.right, &(<ComplexIntervalFieldElement>right).__re.right)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__im.left, &(<ComplexIntervalFieldElement>right).__im.left)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__im.right, &(<ComplexIntervalFieldElement>right).__im.right)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         return 0
 
@@ -1864,8 +1864,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             x = ComplexIntervalFieldElement(self._parent, rho*theta.cos(), rho*theta.sin())
         if all:
             return [x, -x]
-        else:
-            return x
+        return x
 
     def is_square(self):
         r"""

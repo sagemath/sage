@@ -670,7 +670,7 @@ class InteractiveLPProblem(SageObject):
             if len(x) != n:
                 raise ValueError("A and x have incompatible dimensions")
         R = PolynomialRing(base_ring, x, order='neglex')
-        x = vector(R, R.gens()) # All variables as a vector
+        x = vector(R, R.gens())  # All variables as a vector
         self._Abcx = A, b, c, x
         self._constant_term = objective_constant_term
 
@@ -969,13 +969,15 @@ class InteractiveLPProblem(SageObject):
             problem_type = "-" + self.problem_type()
         else:
             problem_type = self.problem_type()
-        return InteractiveLPProblem(A, b, c, x,
-                    constraint_type=self._constraint_types + (constraint_type,),
-                    variable_type=self.variable_types(),
-                    problem_type=problem_type,
-                    base_ring=self.base_ring(),
-                    is_primal=self._is_primal,
-                    objective_constant_term=self.objective_constant_term())
+        return InteractiveLPProblem(
+            A, b, c, x,
+            constraint_type=self._constraint_types + (constraint_type,),
+            variable_type=self.variable_types(),
+            problem_type=problem_type,
+            base_ring=self.base_ring(),
+            is_primal=self._is_primal,
+            objective_constant_term=self.objective_constant_term()
+        )
 
     def base_ring(self):
         r"""
@@ -1612,7 +1614,7 @@ class InteractiveLPProblem(SageObject):
                 ieqs = [[-bi] + list(Ai), [bi+pad*Ai.norm().n()] + list(-Ai)]
             else:
                 continue
-            ieqs = [ [QQ(_) for _ in ieq] for ieq in ieqs]
+            ieqs = [[QQ(cf) for cf in ieq] for ieq in ieqs]
             halfplane = box.intersection(Polyhedron(ieqs=ieqs))
             result += halfplane.render_solid(alpha=alpha, color=color)
         # Same for variables, but no legend
@@ -4489,8 +4491,10 @@ class LPRevisedDictionary(LPAbstractDictionary):
         if leaving is not None:
             l = x_B.list().index(leaving)
         lines = []
-        lines.append(r"\begin{array}{l|r|%s||r||r%s%s}" % ("r"*m,
-            "|r" if entering is not None else "", "|r" if show_ratios else ""))
+        lines.append(r"\begin{array}{l|r|%s||r||r%s%s}" % (
+            "r"*m,
+            "|r" if entering is not None else "", "|r" if show_ratios else "")
+                     )
         headers = ["x_B", "c_B"]
         if generate_real_LaTeX:
             headers.append(r"\multicolumn{%d}{c||}{B^{-1}}" % m)

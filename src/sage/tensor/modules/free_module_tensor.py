@@ -2126,7 +2126,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             sage: a._rmul_(-1) == -a
             True
         """
-        #!# The following test is probably not necessary:
+        # The following test is probably not necessary:
         if isinstance(other, FreeModuleTensor):
             raise NotImplementedError("left tensor product not implemented")
         # Left multiplication by a scalar:

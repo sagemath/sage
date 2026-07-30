@@ -755,7 +755,6 @@ class MPolynomialIdeal_singular_repr(
     # Seems useful for Tab-Completion
     primary_decomposition_complete = complete_primary_decomposition
 
-    @require_field
     def primary_decomposition(self, algorithm='sy'):
         r"""
         Return a list of primary ideals such that their intersection
@@ -805,12 +804,17 @@ class MPolynomialIdeal_singular_repr(
               of Multivariate Polynomial Ring in x, y, z over Rational Field,
              Ideal (z^6 + 4*z^3 + 4, y - z^2)
               of Multivariate Polynomial Ring in x, y, z over Rational Field]
-
-        ::
-
             sage: from functools import reduce
             sage: reduce(lambda Qi, Qj: Qi.intersection(Qj), pd) == I
             True
+
+        ::
+
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: sorted(I.primary_decomposition(), key=str)
+            [Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring,
+             Ideal (y, x^2) of Multivariate Polynomial Ring in x, y over Integer Ring]
 
         ALGORITHM:
 
@@ -822,9 +826,20 @@ class MPolynomialIdeal_singular_repr(
           Computational Approach To Commutative Algebra. Springer, New
           York 1993.
         """
-        return [I for I, _ in self.complete_primary_decomposition(algorithm)]
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        S = self.ring()
+        if self.base_ring() is ZZ:
+            primdecZ = ff.primdecint__lib.primdecZ
+            M = primdecZ(self)
+            return [S.ideal(J[0]) for J in M]
+        if self.base_ring().is_field():
+            return [P for P, _ in self.complete_primary_decomposition(algorithm)]
+        raise NotImplementedError(
+            "primary decomposition is not implemented "
+            "for base ring %s" % self.base_ring()
+        )
 
-    @require_field
     def associated_primes(self, algorithm='sy'):
         r"""
         Return a list of the associated primes of primary ideals of
@@ -873,6 +888,11 @@ class MPolynomialIdeal_singular_repr(
             sage: pd = I.associated_primes(); sorted(pd, key=str)
             [Ideal (z^2 + 1, y + 1) of Multivariate Polynomial Ring in x, y, z over Rational Field,
              Ideal (z^3 + 2, y - z^2) of Multivariate Polynomial Ring in x, y, z over Rational Field]
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: sorted(I.associated_primes(), key=str)
+            [Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring,
+             Ideal (y, x) of Multivariate Polynomial Ring in x, y over Integer Ring]
 
         ALGORITHM:
 
@@ -884,7 +904,19 @@ class MPolynomialIdeal_singular_repr(
           Computational Approach To Commutative Algebra. Springer, New
           York 1993.
         """
-        return [P for _,P in self.complete_primary_decomposition(algorithm)]
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        S = self.ring()
+        if self.base_ring() is ZZ:
+            primdecZ = ff.primdecint__lib.primdecZ
+            M = primdecZ(self)
+            return [S.ideal(J[1]) for J in M]
+        if self.base_ring().is_field():
+            return [P for _, P in self.complete_primary_decomposition(algorithm)]
+        raise NotImplementedError(
+            "associated primes is not implemented "
+            "for base ring %s" % self.base_ring()
+        )
 
     def is_prime(self, **kwds):
         r"""
@@ -1597,18 +1629,18 @@ class MPolynomialIdeal_singular_repr(
             Ideal (x*y) of Multivariate Polynomial Ring in x, y over Algebraic Field
         """
         R = self.ring()
-
         for other in others:
             if not isinstance(other, MPolynomialIdeal_singular_repr) or other.ring() != R:
                 raise TypeError("Intersection is only available for ideals of the same ring.")
-
+        from sage.rings.integer_ring import ZZ
         from sage.libs.singular.function_factory import ff
-        intersect = ff.intersect
-
+        if self.base_ring() is ZZ:
+            intersect = ff.primdecint__lib.intersectZ
+        else:
+            intersect = ff.intersect
         K = intersect(self, *others)
         return R.ideal(K)
 
-    @require_field
     @libsingular_gb_standard_options
     def minimal_associated_primes(self):
         """
@@ -1624,19 +1656,30 @@ class MPolynomialIdeal_singular_repr(
               of Multivariate Polynomial Ring in x, y, z over Rational Field,
              Ideal (z^3 + 2, -z^2 + y)
               of Multivariate Polynomial Ring in x, y, z over Rational Field]
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: I.minimal_associated_primes()
+            [Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring]
 
         ALGORITHM:
 
         Uses Singular.
         """
+        from sage.rings.integer_ring import ZZ
         from sage.libs.singular.function_factory import ff
-        minAssGTZ = ff.primdec__lib.minAssGTZ
-
-        M = minAssGTZ(self)
+        if self.base_ring() is ZZ:
+            minAss = ff.primdecint__lib.minAssZ
+        elif self.base_ring().is_field():
+            minAss = ff.primdec__lib.minAssGTZ
+        else:
+            raise NotImplementedError(
+                "minimal associated primes is not implemented "
+                "for base ring %s" % self.base_ring()
+            )
+        M = minAss(self)
         R = self.ring()
         return [R.ideal(J) for J in M]
 
-    @require_field
     @libsingular_gb_standard_options
     def radical(self):
         r"""
@@ -1664,6 +1707,13 @@ class MPolynomialIdeal_singular_repr(
             Ideal (z^2 - y, y^2*z + y*z + 2*y + 2)
              of Multivariate Polynomial Ring in x, y, z over Rational Field
 
+        An example over the integers::
+
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x^2, x*y)
+            sage: I.radical()
+            Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring
+
         .. NOTE::
 
             From the Singular manual: A combination of the algorithms
@@ -1678,18 +1728,89 @@ class MPolynomialIdeal_singular_repr(
             sage: I.radical()
             Ideal (z^2 - y, y^2*z + y*z + 2*y + 2)
              of Multivariate Polynomial Ring in x, y, z over Finite Field of size 37
+
+        ALGORITHM:
+
+        Uses Singular.
         """
+        from sage.rings.integer_ring import ZZ
         from sage.libs.singular.function_factory import ff
-        radical = ff.primdec__lib.radical
-        r = radical(self)
-
         S = self.ring()
-
-        #I = self._singular_()
-        #I.parent().lib('primdec.lib')
-        #r = I.radical()
-
+        if self.base_ring() is ZZ:
+            radical = ff.primdecint__lib.radicalZ
+        elif self.base_ring().is_field():
+            radical = ff.primdec__lib.radical
+        else:
+            raise NotImplementedError(
+                "radical is not implemented "
+                "for base ring %s" % self.base_ring()
+            )
+        r = radical(self)
         return S.ideal(r)
+
+    @libsingular_gb_standard_options
+    def height(self):
+        r"""
+        Return the height of this ideal.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ, 3)
+            sage: I = ideal(x^2 + y^2, x*y, z)
+            sage: I.height()
+            3
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: I.height()
+            Traceback (most recent call last):
+            ...
+            TypeError: height is only available for ideals over ZZ.
+        """
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        if self.base_ring() is ZZ:
+            heightZ = ff.primdecint__lib.heightZ
+            return Integer(heightZ(self))
+        raise TypeError("height is only available for ideals over ZZ.")
+
+    @libsingular_gb_standard_options
+    def equidim(self):
+        r"""
+        Return the equidimensional part of this ideal.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ, 3)
+            sage: I = ideal(x*y, x*z)
+            sage: I.equidim()
+            Ideal (x) of Multivariate Polynomial Ring in x, y, z over Integer Ring
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: I.equidim()
+            Ideal (x) of Multivariate Polynomial Ring in x, y over Rational Field
+            sage: R.<x,y,z> = PolynomialRing(GF(37), 3)
+            sage: I = ideal(x*y, x*z)
+            sage: I.equidim()
+            Ideal (x) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 37
+
+        ALGORITHM:
+
+        Uses Singular.
+        """
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        S = self.ring()
+        if self.base_ring() is ZZ:
+            equidim = ff.primdecint__lib.equidimZ
+        elif self.base_ring().is_field():
+            equidim = ff.primdec__lib.equidimMax
+        else:
+            raise NotImplementedError(
+                "equidimensional part is not implemented "
+                "for base ring %s" % self.base_ring()
+            )
+        K = equidim(self)
+        return S.ideal(K)
 
     @require_field
     @libsingular_gb_standard_options

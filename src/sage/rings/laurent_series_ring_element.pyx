@@ -459,8 +459,7 @@ cdef class LaurentSeries(AlgebraElement):
         if self.is_zero():
             if self.prec() is infinity:
                 return "0"
-            else:
-                return "0 + \\cdots"
+            return "0 + \\cdots"
         s = " "
         v = self.__u.list()
         valuation = self.__n
@@ -712,8 +711,7 @@ cdef class LaurentSeries(AlgebraElement):
         )
         if absprec is None:
             return exact
-        else:
-            return exact.add_bigoh(absprec)
+        return exact.add_bigoh(absprec)
 
     def __setitem__(self, n, value):
         """
@@ -1111,8 +1109,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         if n <= self.__n:
             return self._parent.zero()
-        else:
-            return type(self)(self._parent, self.__u.truncate(n - self.__n), self.__n)
+        return type(self)(self._parent, self.__u.truncate(n - self.__n), self.__n)
 
     def truncate_laurentseries(self, long n):
         r"""
@@ -1130,12 +1127,11 @@ cdef class LaurentSeries(AlgebraElement):
         """
         if n <= self.__n:
             return self._parent.zero()
-        else:
-            return type(self)(
-                self._parent,
-                self.__u.truncate_powerseries(n - self.__n),
-                self.__n
-            )
+        return type(self)(
+            self._parent,
+            self.__u.truncate_powerseries(n - self.__n),
+            self.__n
+        )
 
     def truncate_neg(self, long n):
         r"""
@@ -1495,8 +1491,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         if self.is_zero():
             return 0
-        else:
-            return self.prec() - self.valuation()
+        return self.prec() - self.valuation()
 
     def __copy__(self):
         """

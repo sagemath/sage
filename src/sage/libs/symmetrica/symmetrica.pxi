@@ -1111,8 +1111,7 @@ cdef object _py_matrix(OP a):
     #return res
     if res == [] or res is None:
         return res
-    else:
-        return matrix_constructor(res)
+    return matrix_constructor(res)
 
 
 cdef void* _op_matrix(object a, OP res) noexcept:
@@ -1162,8 +1161,7 @@ cdef object _py_tableau(OP t):
     #return res
     if is_skew:
         return SkewTableau(res)
-    else:
-        return Tableau(res)
+    return Tableau(res)
 
 
 def start():
