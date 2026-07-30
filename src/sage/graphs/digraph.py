@@ -4272,7 +4272,7 @@ class DiGraph(GenericGraph):
         ..[RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS:
+        TESTS::
 
             The right orthogonal of the empty set is always the entire graph::
 
@@ -4350,7 +4350,7 @@ class DiGraph(GenericGraph):
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS:
+        TESTS::
 
             The left orthogonal of the empty set is always the entire graph::
 
@@ -4413,29 +4413,29 @@ class DiGraph(GenericGraph):
           previous insight means we can merge all elements that give the same `R` to
           obtain the left orthogonal of the new pair.
 
-        EXAMPLES:
+        EXAMPLES::
 
-        sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0)])
-        sage: G.maximal_orthogonal_pairs_lattice()
-        Finite lattice containing 10 elements
-        sage: list(G.maximal_orthogonal_pairs_lattice())
-        [({}, {0, 1, 2, 3}),
-         ({0}, {2, 3}),
-         ({1}, {0, 3}),
-         ({2}, {0, 1}),
-         ({3}, {1, 2}),
-         ({0, 1}, {3}),
-         ({0, 3}, {2}),
-         ({1, 2}, {0}),
-         ({2, 3}, {1}),
-         ({0, 1, 2, 3}, {})]
+            sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0)])
+            sage: G.maximal_orthogonal_pairs_lattice()
+            Finite lattice containing 10 elements
+            sage: list(G.maximal_orthogonal_pairs_lattice())
+            [({}, {0, 1, 2, 3}),
+            ({0}, {2, 3}),
+            ({1}, {0, 3}),
+            ({2}, {0, 1}),
+            ({3}, {1, 2}),
+            ({0, 1}, {3}),
+            ({0, 3}, {2}),
+            ({1, 2}, {0}),
+            ({2, 3}, {1}),
+            ({0, 1, 2, 3}, {})]
 
-        sage: L = G.maximal_orthogonal_pairs_lattice(labels="left")
-        sage: R = G.maximal_orthogonal_pairs_lattice(labels="right")
-        sage: all([G.right_orthogonal(L[i]) == R[i] for i in (0..9)])
-        True
-        sage: all([G.left_orthogonal(R[i]) == L[i] for i in (0..9)])
-        True
+            sage: L = G.maximal_orthogonal_pairs_lattice(labels="left")
+            sage: R = G.maximal_orthogonal_pairs_lattice(labels="right")
+            sage: all([G.right_orthogonal(L[i]) == R[i] for i in (0..9)])
+            True
+            sage: all([G.left_orthogonal(R[i]) == L[i] for i in (0..9)])
+            True
 
         .. SEEALSO::
 
@@ -4449,13 +4449,13 @@ class DiGraph(GenericGraph):
 
         .. Also see Section 1.6 in [Muh2021]_, and Section 2.3 in [TW2018]_.
 
-        TESTS:
+        TESTS::
 
-        sage: G = DiGraph()
-        sage: G.maximal_orthogonal_pairs_lattice()
-        Finite lattice containing 1 elements
-        sage: list(G.maximal_orthogonal_pairs_lattice())
-        [({}, {})]
+            sage: G = DiGraph()
+            sage: G.maximal_orthogonal_pairs_lattice()
+            Finite lattice containing 1 elements
+            sage: list(G.maximal_orthogonal_pairs_lattice())
+            [({}, {})]
         """
         G = DiGraph()
         from sage.sets.set import Set
@@ -4509,16 +4509,16 @@ class DiGraph(GenericGraph):
 
         - ``loops`` -- boolean (default: ``False``); whether to count loops
 
-        EXAMPLES:
+        EXAMPLES::
 
-        sage: G = DiGraph([(0, 1), (0, 2), (1, 3), (2, 3)], loops=True)
-        sage: G.surjective_edges()
-        [(1, 3), (2, 3)]
-        sage: G.add_edges([(3, 1), (2, 1), (0, 0)])
-        sage: G.surjective_edges()
-        [(2, 1), (2, 3)]
-        sage: G.surjective_edges(loops=True)
-        [(0, 0), (2, 1), (2, 3)]
+            sage: G = DiGraph([(0, 1), (0, 2), (1, 3), (2, 3)], loops=True)
+            sage: G.surjective_edges()
+            [(1, 3), (2, 3)]
+            sage: G.add_edges([(3, 1), (2, 1), (0, 0)])
+            sage: G.surjective_edges()
+            [(2, 1), (2, 3)]
+            sage: G.surjective_edges(loops=True)
+            [(0, 0), (2, 1), (2, 3)]
 
         .. SEEALSO::
 
@@ -4530,13 +4530,13 @@ class DiGraph(GenericGraph):
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS:
+        TESTS::
 
-        sage: G = DiGraph()
-        sage: G.surjective_edges()
-        []
-        sage: G.surjective_edges(loops=True)
-        []
+            sage: G = DiGraph()
+            sage: G.surjective_edges()
+            []
+            sage: G.surjective_edges(loops=True)
+            []
         """
         E = []
         for x, y, _ in self.edge_iterator():
@@ -4566,16 +4566,16 @@ class DiGraph(GenericGraph):
 
         - ``loops`` -- boolean (default: ``False``); whether to count loops
 
-        EXAMPLES:
+        EXAMPLES::
 
-        sage: G = DiGraph([(0, 1), (0, 2), (1, 3), (2, 3)], loops=True)
-        sage: G.injective_edges()
-        [(0, 1), (0, 2)]
-        sage: G.add_edges([(2, 0), (2, 1), (3, 3)])
-        sage: G.injective_edges()
-        [(0, 1), (2, 1)]
-        sage: G.injective_edges(loops=True)
-        [(0, 1), (2, 1), (3, 3)]
+            sage: G = DiGraph([(0, 1), (0, 2), (1, 3), (2, 3)], loops=True)
+            sage: G.injective_edges()
+            [(0, 1), (0, 2)]
+            sage: G.add_edges([(2, 0), (2, 1), (3, 3)])
+            sage: G.injective_edges()
+            [(0, 1), (2, 1)]
+            sage: G.injective_edges(loops=True)
+            [(0, 1), (2, 1), (3, 3)]
 
         .. SEEALSO::
 
@@ -4587,13 +4587,13 @@ class DiGraph(GenericGraph):
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS:
+        TESTS::
 
-        sage: G = DiGraph()
-        sage: G.injective_edges()
-        []
-        sage: G.injective_edges(loops=True)
-        []
+            sage: G = DiGraph()
+            sage: G.injective_edges()
+            []
+            sage: G.injective_edges(loops=True)
+            []
         """
         E = []
         for y, z, _ in self.edge_iterator():
@@ -4671,38 +4671,38 @@ class DiGraph(GenericGraph):
 
         Examples of graphs failing one or more conditions::
 
-        sage: G = DiGraph([(0, 1), (1, 0), (0, 0), (1, 1)], loops=True)
-        sage: G.is_two_acyclic_factorization_system(certificate=True)            # (0, 1), (1, 0) are both surjective
-        (False, ((0, 1), 'surj_not_order'))
+            sage: G = DiGraph([(0, 1), (1, 0), (0, 0), (1, 1)], loops=True)
+            sage: G.is_two_acyclic_factorization_system(certificate=True)            # (0, 1), (1, 0) are both surjective
+            (False, ((0, 1), 'surj_not_order'))
 
-        sage: G.add_edge(0, 2)                                                   # make (1, 0) no longer surjective
-        sage: G.is_two_acyclic_factorization_system(certificate=True)            # (0, 1) surjective, (1, 0) injective
-        (False, ((0, 1), 'not_brick'))
+            sage: G.add_edge(0, 2)                                                   # make (1, 0) no longer surjective
+            sage: G.is_two_acyclic_factorization_system(certificate=True)            # (0, 1) surjective, (1, 0) injective
+            (False, ((0, 1), 'not_brick'))
 
-        sage: G.add_edge(1, 3)                                                   # make (0, 1) no longer surjective
-        sage: G.is_two_acyclic_factorization_system(certificate=True)            # (0, 1), (1, 0) are both injective
-        (False, ((0, 1), 'inj_not_order'))
+            sage: G.add_edge(1, 3)                                                   # make (0, 1) no longer surjective
+            sage: G.is_two_acyclic_factorization_system(certificate=True)            # (0, 1), (1, 0) are both injective
+            (False, ((0, 1), 'inj_not_order'))
 
-        sage: G.add_edge(4, 1)                                                   # make (1, 0) no longer injective
-        sage: G.is_two_acyclic_factorization_system(certificate=True)            # surjective edges are (0, 2), (1, 3)
-        ....:                                                                    # injective edges are (0, 1), (4, 1)
-        ....:                                                                    # so no factorization exists for (1, 0)
-        (False, ((1, 0), 'not_factorization_system'))
+            sage: G.add_edge(4, 1)                                                   # make (1, 0) no longer injective
+            sage: G.is_two_acyclic_factorization_system(certificate=True)            # surjective edges are (0, 2), (1, 3)
+            ....:                                                                    # injective edges are (0, 1), (4, 1)
+            ....:                                                                    # so no factorization exists for (1, 0)
+            (False, ((1, 0), 'not_factorization_system'))
 
         Example of a two-acyclic factorization system, from Figure 1. of [RST2024]_ ::
 
-        sage: G = DiGraph([('b', 'a'), ('c', 'b'), ('c', 'a'), ('d', 'c'), ('e', 'd'), ('e', 'c'),
-        ....:              ('e', 'b'), ('f', 'e'), ('f', 'c'), ('f', 'b'), ('f', 'a'), ('g', 'f'),
-        ....:              ('g', 'e'), ('g', 'b'), ('g', 'a')])
-        sage: G.is_two_acyclic_factorization_system()
-        True
+            sage: G = DiGraph([('b', 'a'), ('c', 'b'), ('c', 'a'), ('d', 'c'), ('e', 'd'), ('e', 'c'),
+            ....:              ('e', 'b'), ('f', 'e'), ('f', 'c'), ('f', 'b'), ('f', 'a'), ('g', 'f'),
+            ....:              ('g', 'e'), ('g', 'b'), ('g', 'a')])
+            sage: G.is_two_acyclic_factorization_system()
+            True
 
         Note that by the fundamental theorem of finite semidistributive lattices, its lattice of
         maximal orthogonal pairs must be semidistributive::
 
-        sage: L = G.maximal_orthogonal_pairs_lattice()
-        sage: L.is_semidistributive()
-        True
+            sage: L = G.maximal_orthogonal_pairs_lattice()
+            sage: L.is_semidistributive()
+            True
 
         ..SEEALSO::
 
@@ -4715,11 +4715,11 @@ class DiGraph(GenericGraph):
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS:
+        TESTS::
 
-        sage: G = DiGraph()
-        sage: G.is_two_acyclic_factorization_system()
-        True
+            sage: G = DiGraph()
+            sage: G.is_two_acyclic_factorization_system()
+            True
         """
         surjEdges = DiGraph(self.surjective_edges())
         injEdges = DiGraph(self.injective_edges())
