@@ -425,18 +425,16 @@ cpdef closest(target, values, margin=1):
     cdef int i
     if len(values) == 0:
         raise ValueError
-    elif len(values) == 1:
+    if len(values) == 1:
         return values[0]
-    else:
-        dists = [abs(target - r) for r in values]
-        sdists = sorted(dists)
-        min_dist = sdists[0]
-        if margin*min_dist < sdists[1]:
-            for i in range(len(values)):
-                if dists[i] is min_dist:
-                    return values[i]
-        else:
-            return None
+    dists = [abs(target - r) for r in values]
+    sdists = sorted(dists)
+    min_dist = sdists[0]
+    if margin*min_dist < sdists[1]:
+        for i in range(len(values)):
+            if dists[i] is min_dist:
+                return values[i]
+    return None
 
 
 def root_from_approx(f, a):

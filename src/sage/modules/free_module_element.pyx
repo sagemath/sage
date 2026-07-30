@@ -1428,7 +1428,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             prec = digits_to_bits(digits)
         return vector([e.numerical_approx(prec, algorithm=algorithm) for e in self])
 
-    def row(self):
+    def row(self, **kwds):
         r"""
         Return a matrix with a single row and the same entries as the vector ``self``.
 
@@ -1470,6 +1470,22 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: all([d.is_dense(), dm.is_dense(), s.is_sparse(), sm.is_sparse()])     # needs sage.symbolic
             True
 
+        When different matrix implementations are available, we can specify which to use. ::
+
+            sage: v1 = vector(Zmod(17), [1, 2, 3]);
+            sage: type(v1.row())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.row(implementation='flint'))
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.row(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            sage: v2 = vector(Zmod(1000), [1, 2, 3]);
+            sage: type(v2.row())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v2.row(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+
+
         TESTS:
 
         The :meth:`~sage.matrix.matrix1.Matrix.row` method will return
@@ -1492,10 +1508,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, 1, self.degree(),
-                        list(self), sparse=self.is_sparse())
+                        list(self), sparse=self.is_sparse(), **kwds)
         return ma.matrix()
 
-    def column(self):
+    def column(self, **kwds):
         r"""
         Return a matrix with a single column and the same entries as the vector ``self``.
 
@@ -1542,6 +1558,21 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: all([d.is_dense(), dm.is_dense(), s.is_sparse(), sm.is_sparse()])     # needs sage.symbolic
             True
 
+        When different matrix implementations are available, we can specify which to use. ::
+
+            sage: v1 = vector(Zmod(17), [1, 2, 3]);
+            sage: type(v1.column())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.column(implementation='flint'))
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v1.column(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            sage: v2 = vector(Zmod(1000), [1, 2, 3]);
+            sage: type(v2.column())
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+            sage: type(v2.column(implementation='linbox'))
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+
         TESTS:
 
         The :meth:`~sage.matrix.matrix1.Matrix.column` method will return
@@ -1564,7 +1595,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, self.degree(), 1,
-                        [(x,) for x in self], sparse=self.is_sparse())
+                        [(x,) for x in self], sparse=self.is_sparse(), **kwds)
         return ma.matrix()
 
     def __copy__(self):
@@ -1590,8 +1621,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_sparse():
             return self.parent()(self.dict())
-        else:
-            return self.parent()(self.list())
+        return self.parent()(self.list())
 
     def subs(self, in_dict=None, **kwds):
         """
@@ -2537,8 +2567,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         from sage.plot.all import line, points
         if connect:
             return line(v, **kwds)
-        else:
-            return points(v, **kwds)
+        return points(v, **kwds)
 
     cpdef _dot_product_coerce_(left, Vector right):
         """
@@ -3874,8 +3903,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_dense():
             return self
-        else:
-            return self.parent().ambient_module().dense_module()(self.list())
+        return self.parent().ambient_module().dense_module()(self.list())
 
     def sparse_vector(self):
         """
@@ -3893,8 +3921,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_sparse():
             return self
-        else:
-            return self.parent().ambient_module().sparse_module()(self.list())
+        return self.parent().ambient_module().sparse_module()(self.list())
 
     def apply_map(self, phi, R=None, sparse=None):
         """
@@ -4006,10 +4033,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if sparse == self.is_sparse():
                 from copy import copy
                 return copy(self)
-            elif sparse:
+            if sparse:
                 return self.sparse_vector()
-            else:
-                return self.dense_vector()
+            return self.dense_vector()
 
         v = None
 
@@ -4035,8 +4061,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         if R is None:
             return vector(v, sparse=sparse)
-        else:
-            return vector(R, v, sparse=sparse)
+        return vector(R, v, sparse=sparse)
 
     def _derivative(self, var=None):
         """
@@ -4733,8 +4758,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         if copy:
             return list(self._entries)
-        else:
-            return self._entries
+        return self._entries
 
     def __call__(self, *args, **kwargs):
         """
@@ -5402,8 +5426,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         if copy:
             return dict(self._entries)
-        else:
-            return self._entries
+        return self._entries
 
     def list(self, copy=True):
         """

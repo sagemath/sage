@@ -150,6 +150,14 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         [2*x 3*x]
         [4*x 5*x]
 
+    As part of :issue:`31548` it is now possible to multiply matrices with different implementations::
+
+        sage: M = MatrixSpace(Zmod(5), 2, implementation="flint")
+        sage: N = MatrixSpace(Zmod(5), 2, implementation="linbox-double")
+        sage: M() * N()
+        [0 0]
+        [0 0]
+
     .. NOTE::
 
         The :func:`MatrixSpace` function caches the object it creates.
@@ -164,12 +172,6 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             raise TypeError("Not a matrix space: %s" % S)
 
         MatrixMulAction.__init__(self, G, S, True)
-
-        # disallow multiplication on different backends (same size and rings)
-        if (G.base_ring() is S.base_ring() and
-           G.is_sparse() == S.is_sparse() and
-           G.Element is not S.Element):
-            raise TypeError("no matrix multiplication between different implementations")
 
         # disallow multiplication (sparse) x (dense) when the densification is not the default
         # implementation
@@ -211,9 +213,15 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         """
         if self.G.ncols() != self.underlying_set().nrows():
             raise TypeError("incompatible dimensions %s, %s" %
-                            (self.G.ncols(), self.underlying_set().nrows()))
+                    (self.G.ncols(),  self.underlying_set().nrows()))
+        if self.G.Element is self.underlying_set().Element:
+            impl = self.G.Element
+        else:
+            # If the inputs have different implementations, we just use the default for this size of matrix.
+            impl = None
         return MatrixSpace(base, self.G.nrows(), self.underlying_set().ncols(),
-                           sparse=self.G.is_sparse() and self.underlying_set().is_sparse())
+                           sparse=self.G.is_sparse() and self.underlying_set().is_sparse(),
+                           implementation=impl)
 
     cpdef _act_(self, g, s):
         """
@@ -279,6 +287,10 @@ cdef class MatrixMatrixAction(MatrixMulAction):
                 B = B.dense_matrix()
             else:
                 A = A.dense_matrix()
+        if A._parent.Element is not self._codomain.Element:
+            A = A._change_implementation(self._codomain.Element)
+        if B._parent.Element is not self._codomain.Element:
+            B = B._change_implementation(self._codomain.Element)
         prod = A._matrix_times_matrix_(B)
         if A._subdivisions is not None or B._subdivisions is not None:
             Asubs = A.subdivisions()

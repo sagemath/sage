@@ -1725,8 +1725,7 @@ class IntegerPowerFunction():
         """
         if self.exponent >= 0:
             return "(^%s)" % self.exponent
-        else:
-            return "(^(%s))" % self.exponent
+        return "(^(%s))" % self.exponent
 
     def __call__(self, x):
         r"""

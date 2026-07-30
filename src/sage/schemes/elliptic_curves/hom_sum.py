@@ -389,9 +389,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         Internal method to compute and cache the degree of this sum morphism
         (and its dual).
 
-        ALGORITHM: Evaluate the composition with the dual on points of small
-        order and solve logarithms to eventually recover the degree using CRT.
-        (This is essentially Schoof's algorithm, applied to a scalar.)
+        ALGORITHM: Recursive application of the formula
+        `\deg(\varphi+\psi) = \deg(\varphi) + \deg(\psi) + \mathrm{tr}(\varphi\circ\widehat\psi)`.
 
         EXAMPLES::
 
@@ -427,25 +426,12 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         else:
             #TODO In some cases it would probably be faster to simply
             # compute the kernel polynomial using the addition formulas?
-            from sage.rings.finite_rings.integer_mod import Mod
-
-            lo, hi = self._degree_bounds()
-            M = hi - lo + 1
-            rem = Mod(0,1)
-            for l in Primes():
-                if rem.modulus() >= M:
-                    break
-                try:
-                    P = point_of_order(self._domain, l)
-                except ValueError:
-                    continue   # supersingular and l == p
-
-                Q = self.dual()._eval(self._eval(P))
-                d = discrete_log(Q, P, ord=l, operation='+')
-                rem = rem.crt(Mod(d-lo, l))
-
-            self._degree = lo + rem.lift()
-            self.dual()._degree = self._degree
+            mid = (len(self._phis) + 1) // 2
+            left = EllipticCurveHom_sum(self._phis[:mid])
+            right = EllipticCurveHom_sum(self._phis[mid:])
+            self._degree = left.degree() + right.degree() + left.trace_pairing(right)
+            if self.dual.is_in_cache():
+                self.dual()._degree = self._degree
 
     @staticmethod
     def _comparison_impl(left, right, op):
@@ -591,7 +577,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         return sum(phi.scaling_factor() for phi in self._phis)
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the dual of this sum morphism.
 
@@ -624,7 +610,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
         ALGORITHM: Taking the dual distributes over addition.
         """
-        psi = EllipticCurveHom_sum((phi.dual() for phi in self._phis),
+        psi = EllipticCurveHom_sum((phi.dual(algorithm=algorithm) for phi in self._phis),
                                    domain=self._codomain, codomain=self._domain)
         psi._degree = self._degree
         if self.trace.is_in_cache():

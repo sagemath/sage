@@ -448,7 +448,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Matrices are always mutable by default, i.e., you can change their
         entries using ``A[i,j] = x``. However, mutable matrices
-        aren't hashable, so can't be used as keys in dictionaries, etc.
+        aren't hashable, so cannot be used as keys in dictionaries, etc.
         Also, often when implementing a class, you might compute a matrix
         associated to it, e.g., the matrix of a Hecke operator. If you
         return this matrix to the user you're really returning a reference
@@ -465,7 +465,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [10   1]
             [ 2   3]
 
-        Mutable matrices are not hashable, so can't be used as keys for
+        Mutable matrices are not hashable, so cannot be used as keys for
         dictionaries::
 
             sage: hash(A)
@@ -597,8 +597,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         if self.get_unsafe(i, j):
             return 0
-        else:
-            return 1
+        return 1
 
     def add_to_entry(self, Py_ssize_t i, Py_ssize_t j, elt):
         r"""
@@ -1726,6 +1725,26 @@ cdef class Matrix(sage.structure.element.Matrix):
         tester = self._tester(**options)
         # Test to make sure the returned matrix is a copy
         tester.assertIsNot(self.change_ring(self.base_ring()), self)
+
+    def _change_implementation(self, implementation):
+        r"""
+        For rings with multiple implementations, such as `\ZZ/N\ZZ`, allows for switching between implementations.
+
+        EXAMPLES::
+
+            sage: M = MatrixSpace(Zmod(5), 2, implementation="flint")
+            sage: a = M(range(4))
+            sage: b = a._change_implementation("linbox-double"); b
+            [0 1]
+            [2 3]
+            sage: type(b)
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+        """
+        M = sage.matrix.matrix_space.MatrixSpace(self.base_ring(), self._nrows, self._ncols, sparse=self.is_sparse(), implementation=implementation)
+        mat = M(self.list(), coerce=True, copy=False)
+        if self._subdivisions is not None:
+            mat.subdivide(self.subdivisions())
+        return mat
 
     def _matrix_(self, R=None):
         """
@@ -3963,8 +3982,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     L.extend( L_prime )
         if return_diag:
             return [d[i] for i in range(self._nrows)]
-        else:
-            return True
+        return True
 
     ###################################################
     # Matrix-vector multiply
@@ -4849,13 +4867,17 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: m.rank()
             2
 
-        Rank is not implemented over the integers modulo a composite yet.::
+        Rank is defined for integers modulo a composite number in terms of the Howell form::
 
             sage: m = matrix(Integers(4), 2, [2,2,2,2])
             sage: m.rank()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Echelon form not implemented over 'Ring of integers modulo 4'.
+            0
+
+        There are no pivots that are 1::
+
+            sage: m.howell_form()
+            [2 2]
+            [0 0]
 
         TESTS:
 
@@ -4947,8 +4969,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         if column_order:
             return self._nonzero_positions_by_column(copy)
-        else:
-            return self._nonzero_positions_by_row(copy)
+        return self._nonzero_positions_by_row(copy)
 
     def _nonzero_positions_by_row(self, copy=True):
         """
@@ -5142,10 +5163,9 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: def val(i, j):
             ....:     if i < j:
             ....:         return 0
-            ....:     elif i == j:
+            ....:     if i == j:
             ....:         return 1
-            ....:     else:
-            ....:         return ZZ.random_element(-100,100)
+            ....:     return ZZ.random_element(-100,100)
             sage: rnd = matrix(ZZ, 8, 8, val)
             sage: (rnd * m24 * rnd.inverse_of_unit()).multiplicative_order()            # needs sage.libs.pari
             24
@@ -5202,7 +5222,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             if ppart < a:
                 ppart *= p
             return res * ppart
-        elif K is ZZ:
+        if K is ZZ:
             from sage.rings.infinity import Infinity
 
             # two small odd prime numbers
@@ -5228,11 +5248,9 @@ cdef class Matrix(sage.structure.element.Matrix):
             x = P.parent().gen()
             if x**o1 % P == 1:  # or (x % P)**o1 == 1 ? maybe faster
                 return o1
-            else:
-                return Infinity
-        else:
-            raise NotImplementedError("multiplicative order is only implemented"
-                                      " for matrices over finite fields or ZZ")
+            return Infinity
+        raise NotImplementedError("multiplicative order is only implemented"
+                                  " for matrices over finite fields or ZZ")
 
     ###################################################
     # Arithmetic
@@ -5518,7 +5536,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t r,c
         x = self._base_ring(left)
         cdef Matrix ans
-        ans = self._parent.zero_matrix().__copy__()
+        ans = self._parent.element_class(self._parent, None, False, False)
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
                 ans.set_unsafe(r, c, x * self.get_unsafe(r, c))
@@ -5560,7 +5578,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef Py_ssize_t r,c
         x = self._base_ring(right)
         cdef Matrix ans
-        ans = self._parent.zero_matrix().__copy__()
+        ans = self._parent.element_class(self._parent, None, False, False)
         for r from 0 <= r < self._nrows:
             for c from 0 <= c < self._ncols:
                 ans.set_unsafe(r, c, self.get_unsafe(r, c) * x)
@@ -5737,8 +5755,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         # Both self and right are matrices with compatible dimensions and base ring.
         if self._will_use_strassen(right):
             return self._multiply_strassen(right)
-        else:
-            return self._multiply_classical(right)
+        return self._multiply_classical(right)
 
     cdef bint _will_use_strassen(self, Matrix right) except -2:
         """
@@ -5843,7 +5860,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: m = matrix(Zmod(49), 2, [2,1,3,3])
             sage: type(m)
-            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
             sage: ~m
             [ 1 16]
             [48 17]
@@ -5921,40 +5938,38 @@ cdef class Matrix(sage.structure.element.Matrix):
         if R not in _Fields:
             if R in _IntegralDomains:
                 return ~self.matrix_over_field()
-            else:
-                return self.inverse_of_unit()
-        else:
-            A = self.augment(self.parent().identity_matrix())
-            A.echelonize()
+            return self.inverse_of_unit()
 
-            # Now we want to make sure that B is of the form [I|X], in
-            # which case X is the inverse of self. We can simply look at
-            # the lower right entry of the left half of B, and make sure
-            # that it's 1.
-            #
-            # However, doing this naively causes trouble over inexact
-            # fields -- see Issue #2256. The *right* thing to do would
-            # probably be to make sure that self.det() is nonzero. That
-            # doesn't work here, because our det over an arbitrary field
-            # just does expansion by minors and is unusable for even 10x10
-            # matrices over CC. Instead, we choose a different band-aid:
-            # we check to make sure that the lower right entry isn't
-            # 0. Since we're over a field, we know that it *should* be
-            # either 1 or 0. This can still cause trouble, but it's
-            # significantly better than it was before.
-            #
-            # Over exact rings, of course, we still want the old
-            # behavior.
+        A = self.augment(self.parent().identity_matrix())
+        A.echelonize()
 
-            if R.is_exact():
-                if not A[self._nrows-1, self._ncols-1].is_one():
-                    raise ZeroDivisionError("input matrix must be nonsingular")
-                if self.is_sparse():
-                    return self.build_inverse_from_augmented_sparse(A)
-            else:
-                if not A[self._nrows-1, self._ncols-1]:
-                    raise ZeroDivisionError("input matrix must be nonsingular")
-            return A.matrix_from_columns(list(range(self._ncols, 2 * self._ncols)))
+        # Now we want to make sure that B is of the form [I|X], in
+        # which case X is the inverse of self. We can simply look at
+        # the lower right entry of the left half of B, and make sure
+        # that it's 1.
+        #
+        # However, doing this naively causes trouble over inexact
+        # fields -- see Issue #2256. The *right* thing to do would
+        # probably be to make sure that self.det() is nonzero. That
+        # doesn't work here, because our det over an arbitrary field
+        # just does expansion by minors and is unusable for even 10x10
+        # matrices over CC. Instead, we choose a different band-aid:
+        # we check to make sure that the lower right entry isn't
+        # 0. Since we're over a field, we know that it *should* be
+        # either 1 or 0. This can still cause trouble, but it's
+        # significantly better than it was before.
+        #
+        # Over exact rings, of course, we still want the old
+        # behavior.
+
+        if R.is_exact():
+            if not A[self._nrows-1, self._ncols-1].is_one():
+                raise ZeroDivisionError("input matrix must be nonsingular")
+            if self.is_sparse():
+                return self.build_inverse_from_augmented_sparse(A)
+        elif not A[self._nrows-1, self._ncols-1]:
+            raise ZeroDivisionError("input matrix must be nonsingular")
+        return A.matrix_from_columns(list(range(self._ncols, 2 * self._ncols)))
 
     cdef build_inverse_from_augmented_sparse(self, A):
         # We can directly use the dict entries of A

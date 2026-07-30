@@ -1932,7 +1932,7 @@ def edge_connectivity(G,
     if not g.n_edges() or not g.n_vertices():
         if value_only:
             return 0
-        elif vertices:
+        if vertices:
             return [0, [], [{}, {}]]
         return [0, []]
 
@@ -2265,7 +2265,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             return g.order() > k
         if value_only:
             return max(g.order() - 1, 0)
-        elif not sets:
+        if not sets:
             return max(g.order() - 1, 0), []
         return max(g.order() - 1, 0), [], [[], []]
 

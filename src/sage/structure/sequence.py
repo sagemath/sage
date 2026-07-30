@@ -295,12 +295,13 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
     from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
     from sage.rings.quotient_ring import QuotientRing_nc
-    try:
+    from sage.features.brial import Brial
+    if Brial().is_present():
         # pbori (brial) is optional, so to keep the isinstance() below
         # working as intended in its absence, we set it equal to the
         # other type that isinstance() is checking for.
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-    except ImportError:
+    else:
         BooleanMonomialMonoid = MPolynomialRing_base
 
     if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
@@ -558,14 +559,6 @@ class Sequence_generic(SageObject, list):
                             cr=self.__cr)
 
         return list.__getitem__(self, n)
-
-    # We have to define the *slice functions as long as Sage uses Python 2.*
-    # otherwise the inherited *slice functions from list are called
-    def __getslice__(self, i, j):
-        return self.__getitem__(slice(i, j))
-
-    def __setslice__(self, i, j, value):
-        return self.__setitem__(slice(i, j), value)
 
     def append(self, x):
         """

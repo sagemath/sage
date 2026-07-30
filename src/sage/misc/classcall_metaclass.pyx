@@ -394,8 +394,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         """
         if cls.classget:
             return cls.classget(cls, instance, owner)
-        else:
-            return cls
+        return cls
 
     def __contains__(cls, x):
         r"""
@@ -442,8 +441,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         """
         if cls.classcontains:
             return cls.classcontains(cls, x)
-        else:
-            return x in object
+        return x in object
 
 
 def typecall(pytype cls, *args, **kwds):
