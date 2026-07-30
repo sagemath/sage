@@ -284,9 +284,10 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         )
     """
     from sage.structure.element import Matrix
-    try:
+    from sage.features.brial import Brial
+    if Brial().is_present():
         from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-    except ImportError:
+    else:
         BooleanMonomialMonoid = ()
 
     def is_ring(r):
@@ -1658,6 +1659,9 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         if not isinstance(R, BooleanPolynomialRing_base):
             raise NotImplementedError("Only BooleanPolynomialRing's are supported.")
+
+        from sage.features.brial import Brial
+        Brial().require()
 
         from sage.rings.polynomial.pbori.ll import (eliminate, ll_encode,
                                                     ll_red_nf_redsb)

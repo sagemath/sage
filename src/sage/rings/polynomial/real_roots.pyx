@@ -2399,8 +2399,7 @@ def root_bounds(p):
     if ub == 0 and lb == 0:
         if zero_roots == 0:
             return None
-        else:
-            return (lb, ub)
+        return (lb, ub)
 
     if ub == 0 and zero_roots == 0:
         swap_neg_cl = copy(neg_cl)
@@ -3581,10 +3580,8 @@ cdef class island:
         if bp.bitsize < 130:
             if isinstance(bp, interval_bernstein_polynomial_float):
                 return (ancestors, bp)
-            else:
-                return (ancestors + [bp], bp.as_float())
-        else:
-            return (ancestors + [bp], bp.downscale(bp.bitsize // 2))
+            return (ancestors + [bp], bp.as_float())
+        return (ancestors + [bp], bp.downscale(bp.bitsize // 2))
 
     def more_bits(self, context ctx, ancestors, interval_bernstein_polynomial bp, rightmost):
         """
@@ -3626,8 +3623,7 @@ cdef class island:
                 if bp.region() == ancestor_val.region():
                     if bp.bitsize < 32:
                         return (ancestors + [ancestor_val], ancestor_val.as_float())
-                    else:
-                        return (ancestors, ancestor_val)
+                    return (ancestors, ancestor_val)
 
                 new_lsb = ancestor_val.scale_log2
                 if new_lsb < target_lsb_l:
@@ -3821,15 +3817,13 @@ class warp_map:
         (l, u) = region
         if self.neg:
             return (-u/(1-u), -l/(1-l))
-        else:
-            return (l/(1-l), u/(1-u))
+        return (l/(1-l), u/(1-u))
 
     def to_ocean(self, region):
         (l, u) = region
         if self.neg:
             return (-u/(1-u), -l/(1-l))
-        else:
-            return (l/(l+1), u/(u+1))
+        return (l/(l+1), u/(u+1))
 
 
 def real_roots(p, bounds=None, seed=None, skip_squarefree=False, do_logging=False, wordsize=32, retval='rational', strategy=None, max_diameter=None):

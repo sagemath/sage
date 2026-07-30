@@ -128,9 +128,83 @@ class BuildFeature(Feature):
         """
         if self.is_runtime_detectable():
             return self.is_present_at_runtime()
-        import sage.config
         # Wrap with bool() so that we can be lazy and use meson's
         # set10() rather than painstakingly writing "True" and
         # "False" to the config file.
         result = bool(self._enabled_in_build)
         return FeatureTestResult(self, result)
+
+
+class BuildModule(BuildFeature):
+    r"""
+    A :class:`~sage.features.Feature` indicating the presence of
+    a python (or cython) module, with explicit support from the build
+    system.
+
+    This subclass encapsulates the runtime import check that is
+    standard for most python and cython modules. Its constructor takes
+    a ``module_name`` parameter that (optionally) differs from the
+    name of the feature. It is this ``module_name`` that we actually
+    try to import when feature checks are deferred to runtime.
+    """
+    def __init__(self, name, module_name=None, **kwargs):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.features.build_feature import BuildModule
+            sage: f = BuildModule("libgap", "sage.libs.gap.libgap")
+            sage: f._enabled_in_build = True
+            sage: f.is_present()
+            FeatureTestResult('libgap', True)
+
+        """
+        if module_name is None:
+            self._module_name = name
+        else:
+            self._module_name = module_name
+
+        super().__init__(name, **kwargs)
+
+    def is_present_at_runtime(self):
+        r"""
+        Check for the module at runtime.
+
+        This uses :func:`importlib.util.find_spec` rather than (say)
+        :func:`importlib.import_module` because we are only checking
+        for the _presence_ of the feature; if there's an error, then
+        so be it, but that doesn't mean that the feature is
+        nonexistent! Perhaps more importantly, this allows us to check
+        for the presence of a feature cheaply, without triggering a
+        module import. If the feature check performed the import,
+        doing a lazy import inside of ``if foo.is_present(): ...``
+        would be pointless.
+
+        TESTS::
+
+            sage: from sage.features.build_feature import BuildModule
+            sage: f = BuildModule("libgap", "sage.libs.gap.libgap")
+            sage: f.is_present_at_runtime()
+            FeatureTestResult('libgap', True)
+
+        ::
+
+            sage: from sage.features.build_feature import BuildModule
+            sage: f = BuildModule("sage.libs.nonexistent")
+            sage: f.is_present_at_runtime()
+            FeatureTestResult('sage.libs.nonexistent', False)
+
+        """
+        from importlib import import_module
+        result = True
+        msg = f"Successfully imported module `{self._module_name}`"
+
+        try:
+            import_module(self._module_name)
+        except ModuleNotFoundError:
+            result = False
+            msg = f"Module `{self._module_name}` not found"
+        except ImportError:
+            result = False
+            msg = f"Unable to import module `{self._module_name}`"
+
+        return FeatureTestResult(self, result, reason=msg)

@@ -1818,8 +1818,7 @@ cdef class BasisExchangeMatroid(Matroid):
         NSC.resize()
         if k:
             return SetSystem(self.groundset(), [C for C in NSC if len(C) == k])
-        else:
-            return NSC
+        return NSC
 
     # isomorphism
 
@@ -1840,8 +1839,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         if 2 * self._matroid_rank > self._groundset_size:
             return self.nonspanning_circuits()
-        else:
-            return self.noncospanning_cocircuits()
+        return self.noncospanning_cocircuits()
 
     cpdef Py_hash_t _weak_invariant(self) noexcept:
         """
@@ -2129,8 +2127,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self.__is_isomorphism(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._strong_invariant() != other._strong_invariant():
             return False
@@ -2142,8 +2139,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self.__is_isomorphism(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._heuristic_invariant() == other._heuristic_invariant():
             PHS = self._heuristic_partition()

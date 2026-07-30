@@ -2191,8 +2191,8 @@ cdef class Expression(Expression_abc):
 
             if op == Py_EQ:
                 return e2
-            else:                       # op == Py_NE, checked earlier.
-                return not e2
+            # op == Py_NE, checked earlier.
+            return not e2
 
         elif is_a_relational(r._gobj):  # l isn't relational but r is.
             # things aren't <, >, <=, >=, or == to relations; they
@@ -3446,14 +3446,10 @@ cdef class Expression(Expression_abc):
             from sage.symbolic.relation import check_relation_maxima_neq_as_not_eq
             if self.variables():
                 return check_relation_maxima_neq_as_not_eq(self)
-            else:
-                return False
+            return False
 
         self_is_zero = self._gobj.is_zero()
-        if self_is_zero:
-            return False
-        else:
-            return not bool(self == self._parent.zero())
+        return not (self_is_zero or bool(self == self._parent.zero()))
 
     def test_relation(self, int ntests=20, domain=None, proof=True):
         """
@@ -3597,13 +3593,10 @@ cdef class Expression(Expression_abc):
             else:
                 if self.operator()(val, zero):
                     return True
-                elif falsify(val, zero):
+                if falsify(val, zero):
                     return False
                 if is_interval and not proof:
-                    if val.contains_zero():
-                        return equality_ok
-                    else:
-                        return not equality_ok
+                    return val.contains_zero() == equality_ok
         else:
             for k in range(ntests):
                 try:
@@ -3632,10 +3625,9 @@ cdef class Expression(Expression_abc):
         if not proof:
             if not equality_ok:
                 return eq_count == 0
-            elif op == equal and is_interval:
+            if op == equal and is_interval:
                 return eq_count == ntests
-            else:
-                return True
+            return True
         # Nothing failed, so it *may* be True, but this method doesn't wasn't
         # able to find anything.
         return NotImplemented
@@ -7657,8 +7649,7 @@ cdef class Expression(Expression_abc):
         if base_ring == SR:
             if isinstance(R, MPolynomialRing_base):
                 return R({tuple([0]*R.ngens()):self})
-            else:
-                return R([self])
+            return R([self])
         return self.polynomial(None, ring=R)
 
     def fraction(self, base_ring):
@@ -9574,11 +9565,10 @@ cdef class Expression(Expression_abc):
             +Infinity
         """
         res = new_Expression_from_GEx(self._parent,
-                g_hold_wrapper(g_log, self._gobj, hold))
+                                      g_hold_wrapper(g_log, self._gobj, hold))
         if b is None:
             return res
-        else:
-            return res/self.coerce_in(b).log(hold=hold)
+        return res / self.coerce_in(b).log(hold=hold)
 
     def zeta(self, bint hold=False):
         """
@@ -9872,8 +9862,7 @@ cdef class Expression(Expression_abc):
         v = self.variables()
         if len(v) == 0:
             return self.parent().var('x')
-        else:
-            return v[0]
+        return v[0]
 
     def combine(self, bint deep=False):
         r"""
@@ -10228,7 +10217,7 @@ cdef class Expression(Expression_abc):
                 sig_off()
             return (new_Expression_from_GEx(self._parent, ex.op(0)),
                     new_Expression_from_GEx(self._parent, ex.op(1)))
-        elif is_a_mul(self._gobj):
+        if is_a_mul(self._gobj):
             for i in range(self._gobj.nops()):
                 oper = self._gobj.op(i)
                 if is_a_power(oper):   # oper = ex^power
@@ -10236,7 +10225,7 @@ cdef class Expression(Expression_abc):
                     power = oper.op(1)
                     if not is_a_numeric(power):
                         raise TypeError("self is not a rational expression")
-                    elif is_a_numeric(power):
+                    if is_a_numeric(power):
                         power_num = ex_to_numeric(power)
                         if power_num.is_positive():
                             vecnumer.push_back(oper)
@@ -10248,16 +10237,15 @@ cdef class Expression(Expression_abc):
                                             g_mul_construct(vecnumer, False)),
                     new_Expression_from_GEx(self._parent,
                                             g_mul_construct(vecdenom, False)))
-        elif is_a_power(self._gobj):
+        if is_a_power(self._gobj):
             power = self._gobj.op(1)
             if is_a_numeric(power) and ex_to_numeric(power).is_positive():
                 return (self, self._parent.one())
-            else:
-                return (self._parent.one(),
-                        new_Expression_from_GEx(self._parent,
-                               g_pow(self._gobj.op(0), g_abs(power))))
-        else:
-            return (self, self._parent.one())
+            return (self._parent.one(),
+                    new_Expression_from_GEx(self._parent,
+                                            g_pow(self._gobj.op(0),
+                                                  g_abs(power))))
+        return (self, self._parent.one())
 
     def partial_fraction(self, var=None):
         r"""
@@ -10807,14 +10795,11 @@ cdef class Expression(Expression_abc):
             True
         """
         simplified_expr = self.rectform()
-
         if complexity_measure is None:
             return simplified_expr
-
         if complexity_measure(simplified_expr) < complexity_measure(self):
             return simplified_expr
-        else:
-            return self
+        return self
 
     def simplify_real(self):
         r"""
@@ -10971,8 +10956,7 @@ cdef class Expression(Expression_abc):
         # right otherwise!
         if expand:
             return self.parent()(self._maxima_().trigexpand().trigsimp())
-        else:
-            return self.parent()(self._maxima_().trigsimp())
+        return self.parent()(self._maxima_().trigsimp())
 
     trig_simplify = simplify_trig
 
@@ -11871,8 +11855,7 @@ cdef class Expression(Expression_abc):
             sig_off()
         if b:
             return new_Expression_from_GEx(self._parent, x)
-        else:
-            return self
+        return self
 
     def factor_list(self, dontfactor=None):
         """
@@ -11960,10 +11943,9 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.operators import mul_vararg
         if op is mul_vararg:
             return sum([f._factor_list() for f in self.operands()], [])
-        elif op is operator.pow:
+        if op is operator.pow:
             return [tuple(self.operands())]
-        else:
-            return [(self, 1)]
+        return [(self, 1)]
 
     ###################################################################
     # Units
@@ -12224,8 +12206,7 @@ cdef class Expression(Expression_abc):
             rt_muls = [(S[i].rhs(), mul[i]) for i in range(len(mul))]
         if multiplicities:
             return rt_muls
-        else:
-            return [rt for rt, mul in rt_muls]
+        return [rt for rt, mul in rt_muls]
 
     def solve(self, x, multiplicities=False, solution_dict=False, explicit_solutions=False, to_poly_solve=False, algorithm=None, domain=None):
         r"""

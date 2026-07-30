@@ -1109,12 +1109,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             ....:     if z.real().contains_zero():
             ....:         if analytic:
             ....:             return z.parent()(NaN)
-            ....:         else:
-            ....:             return z.union(-z)
-            ....:     elif z.real() > 0:
+            ....:         return z.union(-z)
+            ....:     if z.real() > 0:
             ....:         return z
-            ....:     else:
-            ....:         return -z
+            ....:     return -z
             sage: CBF.integral(real_abs, -1, 1)
             [1.00000000000...]
             sage: CBF.integral(lambda z, analytic: real_abs(z.sin(), analytic), 0, 2*CBF.pi())
@@ -1538,8 +1536,7 @@ cdef class ComplexBall(RingElement):
         """
         if self.is_real():
             return hash(self.real())
-        else:
-            return (hash(self.real()) // 3) ^ hash(self.imag())
+        return (hash(self.real()) // 3) ^ hash(self.imag())
 
     def _repr_(self):
         """

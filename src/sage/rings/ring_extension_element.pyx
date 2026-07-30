@@ -626,8 +626,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sq = self.sqrt(extend=False, all=False)
         if root:
             return is_sq, sq
-        else:
-            return is_sq
+        return is_sq
 
     def sqrt(self, extend=True, all=False, name=None):
         r"""
@@ -676,8 +675,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             parent = RingExtension(backend_parent, parent, (gen,), names, constructors=[constructor])
         if all:
             return [ parent(s) for s in sq ]
-        else:
-            return parent(sq)
+        return parent(sq)
 
 
 # Fraction fields
@@ -745,8 +743,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sd = "/(%s)" % denom
         if num._is_atomic():
             return "%s%s" % (num, sd)
-        else:
-            return "(%s)%s" % (num, sd)
+        return "(%s)%s" % (num, sd)
 
     def _latex_extension(self, **options):
         r"""
@@ -773,8 +770,7 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
             sdenom = latex(denom)
         if denom == 1:
             return snum
-        else:
-            return "\\frac{%s}{%s}" % (snum, sdenom)
+        return "\\frac{%s}{%s}" % (snum, sdenom)
 
     def numerator(self):
         r"""

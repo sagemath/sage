@@ -3446,7 +3446,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
 
     EXAMPLES:
 
-    A diagonalizable matrix, size 5. ::
+    A diagonalizable matrix, size 5::
 
         sage: from sage.matrix.constructor import random_diagonalizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
@@ -3460,21 +3460,37 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
 
     A diagonalizable matrix with eigenvalues and dimensions designated,
     with a check that if eigenvectors were calculated by hand
-    entries would all be integers. ::
+    entries would all be integers::
 
-        sage: eigenvalues = [ZZ.random_element() for _ in range(3)]
-        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable',
-        ....:                   eigenvalues=eigenvalues, dimensions=[2,3,1])
-        sage: all(x in ZZ for x in (B-(-12*identity_matrix(6))).rref().list())
-        True
-        sage: all(x in ZZ for x in (B-(4*identity_matrix(6))).rref().list())
-        True
-        sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
+        sage: N = randint(5, 15)
+        sage: dimensions = Compositions(N).random_element()
+        sage: eigenvalues = [ZZ.random_element() for _ in dimensions]
+        sage: B = random_matrix(QQ, N, algorithm='diagonalizable',
+        ....:                   eigenvalues=eigenvalues, dimensions=dimensions)
+        sage: all(x in ZZ for eigenvalue in eigenvalues
+        ....:                    for x in (B - eigenvalue).rref().list())
         True
 
         sage: S = B.right_eigenmatrix()[1]
         sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
         sage: all(e in eigenvalues for e in eigenvalues2)
+        True
+
+    Repeated eigenvalues describe a single eigenspace, so their dimensions
+    are added before constructing the matrix::
+
+        sage: s = randint(0, 2^32)
+        sage: set_random_seed(s)
+        sage: B = random_matrix(QQ, 4, algorithm='diagonalizable',
+        ....:                   eigenvalues=[0, 0, 1], dimensions=[1, 1, 2])
+        sage: set_random_seed(s)
+        sage: B_normalized = random_matrix(QQ, 4, algorithm='diagonalizable',
+        ....:                              eigenvalues=[0, 1], dimensions=[2, 2])
+        sage: B == B_normalized
+        True
+        sage: B.right_kernel().dimension()
+        2
+        sage: all(x in ZZ for x in B.rref().list())
         True
 
     Matrices over finite fields are also supported::
@@ -3490,64 +3506,101 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         [2 1 1]
         [1 0 0]
 
+    Eigenvalues are compared after coercion into the base ring::
+
+        sage: K(0) == K(3)
+        True
+        sage: s = randint(0, 2^32)
+        sage: set_random_seed(s)
+        sage: M = random_matrix(K, 4, algorithm='diagonalizable',
+        ....:                   eigenvalues=[0, 3, 1], dimensions=[1, 2, 1])
+        sage: set_random_seed(s)
+        sage: M_normalized = random_matrix(K, 4, algorithm='diagonalizable',
+        ....:                              eigenvalues=[0, 1], dimensions=[3, 1])
+        sage: M == M_normalized
+        True
+        sage: M.base_ring() == K
+        True
+        sage: M.right_kernel().dimension()
+        3
+
     TESTS:
 
-    Eigenvalues must all be elements of the ring. ::
+    Grouping equal eigenvalues requires the elements of the base ring to be
+    hashable.  Rings whose elements are unhashable, such as unramified
+    `p`-adic extensions, are therefore not supported::
+
+        sage: K = Qq(9, names='a')
+        sage: random_matrix(K, 4, algorithm='diagonalizable',
+        ....:               eigenvalues=[K(2), K(2), K(5)],
+        ....:               dimensions=[1, 2, 1])
+        Traceback (most recent call last):
+        ...
+        TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'...
+
+    This applies to randomly generated eigenvalues as well::
+
+        sage: random_matrix(K, 4, algorithm='diagonalizable')
+        Traceback (most recent call last):
+        ...
+        TypeError: ...unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'...
+
+    Eigenvalues must be coercible into the ring::
 
         sage: random_matrix(QQ, 3, algorithm='diagonalizable',                          # needs sage.symbolic
         ....:               eigenvalues=[2+I, 2-I, 2], dimensions=[1,1,1])
         Traceback (most recent call last):
         ...
-        TypeError: eigenvalues must be elements of the corresponding ring.
+        TypeError: Unable to coerce I + 2 to a rational
 
-    Diagonal matrices must be square. ::
+    Diagonal matrices must be square::
 
         sage: random_matrix(QQ, 5, 7, algorithm='diagonalizable', eigenvalues=[-5,2,-3], dimensions=[1,1,3])
         Traceback (most recent call last):
         ...
-        TypeError: a diagonalizable matrix must be square.
+        TypeError: a diagonalizable matrix must be square
 
-    A list of eigenvalues must be accompanied with a list of dimensions. ::
+    A list of eigenvalues must be accompanied with a list of dimensions::
 
         sage: random_matrix(QQ,10,algorithm='diagonalizable',eigenvalues=[4,8])
         Traceback (most recent call last):
         ...
-        ValueError: the list of eigenvalues must have a list of dimensions corresponding to each eigenvalue.
+        ValueError: the list of eigenvalues must have a list of dimensions corresponding to each eigenvalue
 
-    A list of dimensions must be accompanied with a list of eigenvalues. ::
+    A list of dimensions must be accompanied with a list of eigenvalues::
 
         sage: random_matrix(QQ, 10,algorithm='diagonalizable',dimensions=[2,2,4,2])
         Traceback (most recent call last):
         ...
-        ValueError: the list of dimensions must have a list of corresponding eigenvalues.
+        ValueError: the list of dimensions must have a list of corresponding eigenvalues
 
-    The sum of the eigenvalue dimensions must equal the size of the matrix. ::
+    The sum of the eigenvalue dimensions must equal the size of the matrix::
 
         sage: random_matrix(QQ,12,algorithm='diagonalizable',eigenvalues=[4,2,6,-1],dimensions=[2,3,5,1])
         Traceback (most recent call last):
         ...
-        ValueError: the size of the matrix must equal the sum of the dimensions.
+        ValueError: the size of the matrix must equal the sum of the dimensions
 
-    Each eigenspace dimension must be at least 1. ::
+    Each eigenspace dimension must be at least 1::
 
         sage: random_matrix(QQ,9,algorithm='diagonalizable',eigenvalues=[-15,22,8,-4,90,12],dimensions=[4,2,2,4,-3,0])
         Traceback (most recent call last):
         ...
-        ValueError: eigenspaces must have a dimension of at least 1.
+        ValueError: eigenspaces must have a dimension of at least 1
 
-    Each eigenvalue must have a corresponding eigenspace dimension. ::
+    Each eigenvalue must have a corresponding eigenspace dimension::
 
         sage: random_matrix(QQ,12,algorithm='diagonalizable',eigenvalues=[4,2,6,-1],dimensions=[4,3,5])
         Traceback (most recent call last):
         ...
-        ValueError: each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.
+        ValueError: each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue
 
-    Each dimension must have an eigenvalue paired to it. ::
+    Each dimension must have an eigenvalue paired to it::
 
         sage: random_matrix(QQ,12,algorithm='diagonalizable',eigenvalues=[4,2,6],dimensions=[2,3,5,2])
         Traceback (most recent call last):
         ...
-        ValueError: each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.
+        ValueError: each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue
 
     .. TODO::
 
@@ -3558,84 +3611,57 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     Billy Wonderly (2010-07)
     """
 
+    from collections import defaultdict
+
     from sage.misc.prandom import randint
 
     size = parent.nrows()
     ring = parent.base_ring()
     if parent.nrows() != parent.ncols():
-        raise TypeError("a diagonalizable matrix must be square.")
+        raise TypeError("a diagonalizable matrix must be square")
     if eigenvalues is not None and dimensions is None:
-        raise ValueError("the list of eigenvalues must have a list of dimensions corresponding to each eigenvalue.")
+        raise ValueError("the list of eigenvalues must have a list of dimensions corresponding to each eigenvalue")
     if eigenvalues is None and dimensions is not None:
-        raise ValueError("the list of dimensions must have a list of corresponding eigenvalues.")
+        raise ValueError("the list of dimensions must have a list of corresponding eigenvalues")
     if eigenvalues is None and dimensions is None:
-        values = []
-        # create a list with "size" number of entries
-        for eigen_index in range(size):
-            eigenvalue = ring(randint(-10, 10))
-            values.append(eigenvalue)
-        values.sort()
-        dimensions = []
-        eigenvalues = []
-        # create a list with no duplicate values to be the eigenvalues
-        for eigenvalue in range(size):
-            if values[eigenvalue] not in eigenvalues:
-                eigenvalues.append(values[eigenvalue])
-        for dimension in range(len(eigenvalues)):
-            # dimension is equal to how many times an eigenvalue was generated in the 'values' list
-            dimensions.append(values.count(eigenvalues[dimension]))
-    size_check = 0
-    for check in range(len(dimensions)):
-        size_check = size_check + dimensions[check]
-    if not all(x in ring for x in eigenvalues):
-        raise TypeError("eigenvalues must be elements of the corresponding ring.")
-    if size != size_check:
-        raise ValueError("the size of the matrix must equal the sum of the dimensions.")
+        eigenvalues = [ring(randint(-10, 10)) for _ in range(size)]
+        dimensions = [1] * size
+
+    if size != sum(dimensions):
+        raise ValueError("the size of the matrix must equal the sum of the dimensions")
     if min(dimensions) < 1:
-        raise ValueError("eigenspaces must have a dimension of at least 1.")
+        raise ValueError("eigenspaces must have a dimension of at least 1")
     if len(eigenvalues) != len(dimensions):
-        raise ValueError("each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.")
-    # sort the dimensions in order of increasing size, and sort the eigenvalues list in an identical fashion, to maintain corresponding values.
-    dimensions_sort = sorted(zip(dimensions, eigenvalues))
-    dimensions = [x[0] for x in dimensions_sort]
-    eigenvalues = [x[1] for x in dimensions_sort]
-    # Create the matrix of eigenvalues on the diagonal.  Use a lower limit and upper limit determined by the eigenvalue dimensions.
-    diagonal_matrix = matrix(ring, size)
-    up_bound = 0
-    low_bound = 0
-    for row_index in range(len(dimensions)):
-        up_bound = up_bound + dimensions[row_index]
-        for entry in range(low_bound, up_bound):
-            diagonal_matrix[entry, entry] = eigenvalues[row_index]
-        low_bound = low_bound+dimensions[row_index]
+        raise ValueError("each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue")
+    # Merge equal eigenvalues after coercion into the base ring.  The dict
+    # groups by equality (hash only selects the bucket), so this still relies
+    # on the ring having meaningful equality; rings that signal otherwise by
+    # making their elements unhashable (p-adic extensions, say) raise a
+    # TypeError here instead of being grouped unreliably.
+    grouped = defaultdict(int)
+    for eigenvalue, dimension in zip(eigenvalues, dimensions):
+        grouped[ring(eigenvalue)] += dimension
+    eigenvalue_dimensions = sorted(grouped.items(), key=lambda pair: pair[1])
+    dimensions = [dimension for _, dimension in eigenvalue_dimensions]
+    # Create the matrix of eigenvalues on the diagonal, each repeated according to its dimension.
+    diag_matrix = diagonal_matrix(ring, [e for e, d in eigenvalue_dimensions for _ in range(d)])
     # Create a matrix to hold each of the eigenvectors as its columns, begin with an identity matrix so that after row and column
     # operations the resulting matrix will be unimodular.
-    eigenvector_matrix = matrix.identity(ring, size)
-    upper_limit = 0
-    lower_limit = 0
-    # run the routine over the necessary number of columns corresponding eigenvalue dimension.
-    for dimension_index in range(len(dimensions)-1):
-        upper_limit = upper_limit+dimensions[dimension_index]
-        lowest_index_row_with_one = size-dimensions[dimension_index]
-        # assign a one to the row that is the eigenvalue dimension rows up from the bottom row then assign ones diagonally down to the right.
-        for eigen_ones in range(lower_limit, upper_limit):
-            eigenvector_matrix[lowest_index_row_with_one, eigen_ones] = 1
-            lowest_index_row_with_one += 1
-        lower_limit = lower_limit+dimensions[dimension_index]
+    eigenvector_matrix = identity_matrix(ring, size)
+    cur_sum = 0
+    for dim in dimensions[:-1]:
+        for idx in range(dim):
+            eigenvector_matrix[-dim + idx, cur_sum + idx] = 1
+        cur_sum += dim
     # Create a list to give the eigenvalue dimension corresponding to each column.
-    dimension_check = []
-    for i in range(len(dimensions)):
-        for k in range(dimensions[i]):
-            dimension_check.append(dimensions[i])
+    dimension_check = [dim for dim in dimensions for _ in range(dim)]
     # run routine over the rows that are in the range of the protected ones.  Use addition of column multiples to fill entries.
     for dimension_multiplicity in range(max(dimensions), min(dimensions), -1):
         highest_one_row = size-dimension_multiplicity
-        highest_one_column = 0
         # find the column with the protected one in the lowest indexed row.
-        while eigenvector_matrix[highest_one_row, highest_one_column] == 0:
-            highest_one_column += 1
+        highest_one_column = min(col for col in range(size) if eigenvector_matrix[highest_one_row, col] != 0)
         # dimension_check determines if column has a low enough eigenvalue dimension to take a column multiple.
-        for bottom_entry_filler in range(len(dimension_check)):
+        for bottom_entry_filler in range(size):
             if dimension_check[bottom_entry_filler] < dimension_multiplicity and eigenvector_matrix[highest_one_row, bottom_entry_filler] == 0:
                 # randint range determined experimentally to keep entries manageable.
                 eigenvector_matrix.add_multiple_of_column(bottom_entry_filler, highest_one_column, randint(-4, 4))
@@ -3644,7 +3670,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         for upper_row in range(size-max(dimensions)):
             # range of multiplier determined experimentally so that entries stay manageable for small matrices
             eigenvector_matrix.add_multiple_of_row(upper_row, row, randint(-4, 4))
-    return eigenvector_matrix*diagonal_matrix*(eigenvector_matrix.inverse())
+    return eigenvector_matrix*diag_matrix*eigenvector_matrix.inverse()
 
 
 @matrix_method

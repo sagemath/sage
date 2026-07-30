@@ -173,8 +173,7 @@ cdef class Morphism(Map):
         d = self._repr_defn()
         if d == "":
             return self._repr_()
-        else:
-            return ", ".join(d.split("\n"))
+        return ", ".join(d.split("\n"))
 
     def category(self):
         """
@@ -506,8 +505,7 @@ cdef class IdentityMorphism(Morphism):
                             f"right (={right}) codomain")
         if isinstance(left, IdentityMorphism):
             return right
-        else:
-            return left
+        return left
 
     cpdef _pow_int(self, n):
         return self

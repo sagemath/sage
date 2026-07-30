@@ -49,8 +49,9 @@ The most useful methods that apply to isogenies are:
 
 .. WARNING::
 
-    This class only implements separable isogenies. When using Kohel's
-    algorithm, only cyclic isogenies can be computed (except for `[2]`).
+    This class only implements separable isogenies. The direct Kohel
+    implementation handles odd-degree kernel polynomials and kernel
+    polynomials contained in the 2-torsion.
 
     Working with other kinds of isogenies may be possible using other
     child classes of :class:`EllipticCurveHom`.
@@ -72,6 +73,9 @@ AUTHORS:
 - Lorenz Panny (2022): inseparable duals
 
 - Rémy Oudompheng (2023): implementation of the BMSS algorithm
+
+- William E. Mahaney (2026): computing duals of prime degree separable isogenies via pushforward.
+
 """
 
 # ****************************************************************************
@@ -421,6 +425,16 @@ def compute_codomain_kohel(E, kernel):
         sage: compute_codomain_kohel(E, x^3 + 7*x^2 + 15*x + 12)
         Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 15
          over Finite Field of size 19
+        sage: F = GF(419)
+        sage: E = EllipticCurve(F, [1, 0])
+        sage: R.<x> = F[]
+        sage: compute_codomain_kohel(E, x^3 - 25*x^2 + x)
+        Elliptic Curve defined by y^2 = x^3 + 141*x + 269 over Finite Field of size 419
+
+        sage: F = GF(3); R.<x> = F[]
+        sage: E = EllipticCurve(F, [1, 2, 0, 1, 0])
+        sage: compute_codomain_kohel(E, x^2 + x)
+        Elliptic Curve defined by y^2 + x*y = x^3 + 2*x^2 + x + 1 over Finite Field of size 3
 
     ALGORITHM:
 
@@ -443,7 +457,9 @@ def compute_codomain_kohel(E, kernel):
         psi_quo = psi//psi_2tor
 
         if psi_quo.degree() != 0:
-            raise NotImplementedError("Kohel's algorithm currently only supports cyclic isogenies (except for [2])")
+            phi_even = EllipticCurveIsogeny(E, psi_2tor)
+            psi_odd = phi_even.push_subgroup(psi_quo)
+            return compute_codomain_kohel(phi_even.codomain(), psi_odd)
 
         n = psi_2tor.degree()
 
@@ -521,6 +537,81 @@ def two_torsion_part(E, psi):
     return psi.gcd(psi_2)
 
 
+def _factored_isogeny_from_kernel_polynomial(E, kernel_polynomial,
+                                             codomain=None, model=None,
+                                             check=True):
+    r"""
+    Construct an isogeny from a kernel polynomial with both a nontrivial
+    2-torsion part and another component, recursively extracting
+    2-torsion factors.
+
+    This handles the case where the direct Kohel implementation can compute
+    each 2-torsion factor and the final residual kernel, but not the full
+    kernel polynomial in a single step.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import _factored_isogeny_from_kernel_polynomial
+        sage: F = GF(419)
+        sage: E = EllipticCurve(F, [1, 0])
+        sage: R.<x> = F[]
+        sage: phi = _factored_isogeny_from_kernel_polynomial(E, x^3 - 25*x^2 + x)
+        sage: [f.degree() for f in phi.factors()]
+        [2, 3]
+        sage: phi.codomain()
+        Elliptic Curve defined by y^2 = x^3 + 141*x + 269 over Finite Field of size 419
+
+    The pushed-forward quotient can still have a nontrivial 2-torsion
+    part, in which case the construction recurses::
+
+        sage: h = (x^6 + 336*x^5 + 252*x^4 + 167*x^3
+        ....:      + 83*x^2 + 418*x)
+        sage: phi = E.isogeny(h)
+        sage: [f.degree() for f in phi.factors()]
+        [2, 2, 3]
+        sage: phi.kernel_polynomial() == h
+        True
+
+    TESTS:
+
+    Check that a polynomial which does not define a subgroup is rejected::
+
+        sage: E.isogeny((x^3 + x) * (x^2 - 25*x + 1))
+        Traceback (most recent call last):
+        ...
+        ValueError: the polynomial x^5 + 394*x^4 + 2*x^3 + 394*x^2 + x
+        does not define a finite subgroup of
+        Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+    """
+    polynomial_ring = PolynomialRing(E.base_ring(), 'x')
+    psi = polynomial_ring(kernel_polynomial)
+
+    if not psi.is_monic():
+        raise ValueError("given kernel polynomial is not monic")
+
+    psi_2tor = two_torsion_part(E, psi)
+    if psi_2tor.degree() == 0:
+        return EllipticCurveIsogeny(E, psi, codomain=codomain, model=model,
+                                    check=check)
+
+    psi_quotient = psi // psi_2tor
+    if psi_quotient.degree() == 0:
+        return EllipticCurveIsogeny(E, psi_2tor, codomain=codomain,
+                                    model=model, check=check)
+
+    phi_2tor = EllipticCurveIsogeny(E, psi_2tor, check=check)
+    psi_image = phi_2tor.push_subgroup(psi_quotient)
+    phi_quotient = _factored_isogeny_from_kernel_polynomial(
+        phi_2tor.codomain(), psi_image, codomain=codomain, model=model,
+        check=check)
+    factored_isogeny = phi_quotient * phi_2tor
+
+    if check and factored_isogeny.kernel_polynomial() != psi:
+        raise ValueError(f"the polynomial {psi} does not define a finite subgroup of {E}")
+
+    return factored_isogeny
+
+
 class EllipticCurveIsogeny(EllipticCurveHom):
     r"""
     This class implements separable isogenies of elliptic curves.
@@ -537,8 +628,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
       isogenies.  This algorithm is selected by giving as the
       ``kernel`` parameter a monic polynomial (or a coefficient list)
       which will define the kernel of the isogeny.
-      Kohel's algorithm is currently only implemented for cyclic
-      isogenies, with the exception of `[2]`.
+      The direct Kohel implementation handles odd-degree kernel
+      polynomials and kernel polynomials contained in the 2-torsion.
 
     INPUT:
 
@@ -1821,6 +1912,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         self.__kernel_mod_sign = {}
         self.__v = self.__w = 0
 
+        self._kernel_gens = tuple(kernel_gens)  # cache for .kernel_gens()
+
         # Fast path: The kernel is given by a single generating point.
         if len(kernel_gens) == 1 and kernel_gens[0]:
             self.__init_from_kernel_point(kernel_gens[0])
@@ -2212,7 +2305,10 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             psi_quo = psi//psi_G
 
             if psi_quo.degree() != 0:
-                raise NotImplementedError("Kohel's algorithm currently only supports cyclic isogenies (except for [2])")
+                raise NotImplementedError(
+                    "the direct Kohel implementation requires kernel "
+                    "polynomials that are coprime to the 2-division "
+                    "polynomial or divide it")
 
             phi, omega, v, w, _, d = self.__init_even_kernel_polynomial(E, psi_G)
 
@@ -2937,7 +3033,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         self.__set_post_isomorphism(codomain, isom)
 
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the isogeny dual to this isogeny.
 
@@ -3096,6 +3192,27 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             Isogeny of degree 2
              from Elliptic Curve defined by y^2 = x^3 + 8*x + 1 over Finite Field in a of size 23^2
              to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 23^2
+
+        Example for :issue:`42335`::
+
+            sage: p = 13
+            sage: k.<w> = GF(p^8); #need to take a large enough field extension so E1[5] has all its points
+            sage: l = 5
+            sage: E1 = EllipticCurve(k, [1,4])
+            sage: E2 = EllipticCurve(k, [12,7])
+            sage: R.<x> = k[]
+            sage: f1 = x^2 + (w^7 + 5*w^6 + 9*w^5 + 3*w^4 + 9*w^3 + 3*w^2 + 10*w + 2)*x + 5*w^7 + 12*w^6 + 6*w^5 + 2*w^4 + 6*w^3 + 2*w^2 + 11*w + 12
+            sage: f2 = x^2 + (12*w^7 + 8*w^6 + 4*w^5 + 10*w^4 + 4*w^3 + 10*w^2 + 3*w + 8)*x + 8*w^7 + w^6 + 7*w^5 + 11*w^4 + 7*w^3 + 11*w^2 + 2*w + 3
+            sage: phi1 = E1.isogeny(f1)
+            sage: phi2 = E1.isogeny(f2)
+            sage: phi1_hat = phi1.dual()
+            sage: phi2_hat = phi2.dual()
+            sage: assert phi1 != phi2
+            sage: assert phi1_hat != phi2_hat  # known bug -- see #42335
+            sage: #show the method fixes the issue
+            sage: phi1_dual = phi1.dual(algorithm='pushforward')
+            sage: phi2_dual = phi2.dual(algorithm='pushforward')
+            sage: assert phi1_dual != phi2_dual
         """
         if self.__base_field.characteristic() in (2, 3):
             raise NotImplementedError("computation of dual isogenies not yet implemented in characteristics 2 and 3")
@@ -3106,6 +3223,40 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         F = self.__base_field
         d = self._degree
 
+        if algorithm == 'pushforward':
+        #TODO:
+            #Extra Features:
+                #Implement inseparable case.
+                #Implement composite degree cyclic case.
+                #Implement non-cyclic case.
+            if F(d) == 0:
+                raise NotImplementedError("``pushforward`` method not implemented for inseparable isogenies")
+            if not d.is_prime():
+                raise NotImplementedError("``pushforward`` method not implemented for composite degree isogenies")
+            """
+            Construct the dual isogeny of a prime-degree separable isogeny phi: E -> E' by generating the kernel with a pushforward of a torsion point.
+            """
+            E = self.domain()
+            E_prime = self.codomain()
+
+            kernel_poly = self.kernel_polynomial()
+            division_poly = E.division_polynomial(d)
+            quotient_poly = division_poly // kernel_poly
+
+            roots = quotient_poly.roots(multiplicities=False)
+            if not roots:
+                raise ValueError("the dual isogeny is not defined over the current ground field")
+
+            x0 = roots[0]
+            Qx0 = EllipticCurveHom.xEVAL(self, x0)
+            R = kernel_poly.parent()
+            x = R.gens()[0]
+            from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
+            pushforward_kernel_poly = EllipticCurve_field.kernel_polynomial_from_divisor(E_prime, x-Qx0, d)
+
+            return E_prime.isogeny(pushforward_kernel_poly)
+
+        #General case:
         if F(d) == 0:   # inseparable dual!
             p = F.characteristic()
             k = d.valuation(p)

@@ -186,6 +186,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [1/2   0]
             [  0 1/2]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``fmpq_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
         for t in ma.iter(coerce, True):
@@ -503,7 +510,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         sig_off()
         return ans
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         TESTS::
 
@@ -536,12 +543,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         for i in range(self._nrows):
             for j in range(self._ncols):
                 k = fmpq_cmp(fmpq_mat_entry(self._matrix, i, j),
-                             fmpq_mat_entry((<Matrix_rational_dense> right)._matrix, i, j))
+                             fmpq_mat_entry((<Matrix_rational_dense> other)._matrix, i, j))
                 if k:
-                    if k > 0:
-                        return rich_to_bool(op, 1)
-                    else:
-                        return rich_to_bool(op, -1)
+                    return rich_to_bool(op, 1 if k > 0 else -1)
         return rich_to_bool(op, 0)
 
     cdef _vector_times_matrix_(self, Vector v):
@@ -2907,7 +2911,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
             # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
             # pari doesn't work in case of 0 rows or columns
             # This case is easy, since the answer must be the 0 matrix.
-            return self.matrix_space(self._nrows, right._ncols).zero_matrix().__copy__()
+            MS = self.matrix_space(self._nrows, right._ncols)
+            return MS.element_class(MS, None, False, False)
         sig_on()
         cdef GEN M = gmul(_new_GEN_from_fmpq_mat_t(self._matrix),
                           _new_GEN_from_fmpq_mat_t(right._matrix))

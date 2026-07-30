@@ -35,6 +35,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections.abc import Iterator
+
 import sage.rings.infinity
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -858,7 +860,25 @@ class Set_object_enumerated(Set_object):
             sage: print(latex(S))
             \left\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18\right\}
             sage: TestSuite(S).run()
+
+        TESTS::
+
+            sage: from sage.sets.set import Set_object_enumerated
+            sage: a = Set_object_enumerated(i for i in range(3))
+            sage: a
+            {0, 1, 2}
+            sage: a
+            {0, 1, 2}
+            sage: Set_object_enumerated([0, 1, 2])
+            {0, 1, 2}
+            sage: Set_object_enumerated({0, 1, 2})
+            {0, 1, 2}
+            sage: from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+            sage: Set_object_enumerated(FiniteEnumeratedSet([0, 1, 2]))
+            {0, 1, 2}
         """
+        if isinstance(X, Iterator):
+            X = tuple(X)
         Set_object.__init__(self, X, category=FiniteEnumeratedSets().or_subcategory(category))
 
     def random_element(self):

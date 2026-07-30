@@ -27,6 +27,7 @@ The infinite set of all posets can be used to find minimal examples::
     :widths: 30, 70
     :delim: |
 
+    :meth:`~Posets.AltNuTamariLattice` | Return the alt `\nu`-Tamari lattice.
     :meth:`~Posets.AntichainPoset` | Return an antichain on `n` elements.
     :meth:`~Posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
     :meth:`~Posets.BubblePoset` | Return the Bubble lattice for `(m,n)`.
@@ -42,6 +43,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions of the integer `n` ordered by dominance.
     :meth:`~Posets.MobilePoset` | Return the mobile poset formed by the `ribbon` with `hangers` below and an `anchor` above.
     :meth:`~Posets.NoncrossingPartitions` | Return the poset of noncrossing partitions of a finite Coxeter group ``W``.
+    :meth:`~Posets.NuTamariLattice` | Return the `\nu`-Tamari lattice.
     :meth:`~Posets.PentagonPoset` | Return the Pentagon poset.
     :meth:`~Posets.PermutationPattern` | Return the Permutation pattern poset.
     :meth:`~Posets.PermutationPatternInterval` | Return an interval in the Permutation pattern poset.
@@ -170,6 +172,10 @@ class Posets(metaclass=ClasscallMetaclass):
         Finite lattice containing 8 elements
         sage: posets.ChainPoset(3)
         Finite lattice containing 3 elements
+        sage: posets.NuTamariLattice([1, 0, 1, 0])
+        Finite lattice containing 2 elements
+        sage: posets.AltNuTamariLattice('01001', [0, 0])
+        Finite lattice containing 7 elements
         sage: posets.RandomPoset(17,.15)
         Finite poset containing 17 elements
 
@@ -1326,7 +1332,10 @@ class Posets(metaclass=ClasscallMetaclass):
     ShardPoset = staticmethod(sage.combinat.shard_order.shard_poset)
 
     # Tamari lattices
+    import sage.combinat.nu_tamari_lattice
     import sage.combinat.tamari_lattices
+    AltNuTamariLattice = staticmethod(sage.combinat.nu_tamari_lattice.AltNuTamariLattice)
+    NuTamariLattice = staticmethod(sage.combinat.nu_tamari_lattice.NuTamariLattice)
     TamariLattice = staticmethod(sage.combinat.tamari_lattices.TamariLattice)
     DexterSemilattice = staticmethod(sage.combinat.tamari_lattices.DexterSemilattice)
 
