@@ -45,6 +45,29 @@ class SageKernel(IPythonKernel):
 
     shell_class = Type(SageZMQInteractiveShell)
 
+    @property
+    def kernel_info(self):
+        r"""
+        Return information about the Sage kernel.
+
+        Sage does not advertise kernel subshell support.  A subshell runs
+        callbacks in a separate thread, but Sage libraries are not generally
+        safe to call from such a thread.
+
+        TESTS::
+
+            sage: from sage.repl.ipython_kernel.kernel import SageKernel
+            sage: kernel = SageKernel.__new__(SageKernel)
+            sage: kernel.shell_channel_thread = object()
+            sage: "kernel subshells" in kernel.kernel_info["supported_features"]
+            False
+        """
+        info = super().kernel_info
+        features = info.get("supported_features", [])
+        info["supported_features"] = [feature for feature in features
+                                      if feature != "kernel subshells"]
+        return info
+
     def __init__(self, **kwds):
         """
         The Sage Jupyter Kernel.
