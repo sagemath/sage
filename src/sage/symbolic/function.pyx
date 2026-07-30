@@ -295,10 +295,9 @@ cdef class Function(SageObject):
             ....:         res = self._evalf_try_(x, y)
             ....:         if res:
             ....:             return res
-            ....:         elif x == 2:
+            ....:         if x == 2:
             ....:             return 3
-            ....:         else:
-            ....:             return
+            ....:         return
             sage: test = Test()
             sage: test(1.3, 4)
             2.30000000000000
@@ -319,8 +318,7 @@ cdef class Function(SageObject):
             ....:         res = self._evalf_try_(x)
             ....:         if res:
             ....:             return res
-            ....:         else:
-            ....:             return 3
+            ....:         return 3
             sage: test2 = Test2()
             sage: test2(1.3)
             0.500000000000000
@@ -376,8 +374,7 @@ cdef class Function(SageObject):
         """
         if self._latex_name is not None:
             return self._latex_name
-        else:
-            return self._name
+        return self._name
 
     def __richcmp__(self, other, op):
         """
@@ -1087,12 +1084,11 @@ cdef class BuiltinFunction(Function):
         from sage.rings.real_double import RDF
         if ZZ.has_coerce_map_from(p):
             return int(res)
-        elif RDF.has_coerce_map_from(p):
+        if RDF.has_coerce_map_from(p):
             return float(res)
-        elif CDF.has_coerce_map_from(p):
+        if CDF.has_coerce_map_from(p):
             return complex(res)
-        else:
-            return res
+        return res
 
     cdef _is_registered(self):
         """
@@ -1142,10 +1138,7 @@ cdef class BuiltinFunction(Function):
         original version of :meth:`_eval_` saved in :meth:`__init__`.
         """
         res = self._evalf_try_(*args)
-        if res is None:
-            return self._eval0_(*args)
-        else:
-            return res
+        return res or self._eval0_(*args)
 
     def __reduce__(self):
         """

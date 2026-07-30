@@ -111,6 +111,18 @@ to the default FLINT implementation, but not vice versa::
     sage: (R.0 + S.0).parent() is S                                                     # needs sage.libs.flint sage.libs.ntl
     True
 
+We verify Alpoge's counterexample to the Jacobian conjecture::
+
+    sage: P.<x,y,z> = QQ[]
+    sage: l = [(1+x*y)^3*z + y^2*(1+x*y)*(4+3*x*y), y+3*x*(1+x*y)^2*z + 3*x*y^2*(4+3*x*y), 2*x-3*x^2*y-x^3*z]
+    sage: M = Matrix([[l[i].derivative(j) for j in [x,y,z]] for i in range(3)])
+    sage: M.det()
+    -2
+    sage: [f(0,0,-1/4) for f in l]
+    [-1/4, 0, 0]
+    sage: [f(1,-3/2,13/2) for f in l]
+    [-1/4, 0, 0]
+
 TESTS::
 
     sage: K.<x> = FractionField(QQ['x'])
@@ -3287,7 +3299,8 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
         if sparse:
             return NotImplemented
         modulus = base_ring.order()
-        if modulus <= sys.maxsize:
+
+        if modulus <= (sys.maxsize << 1) + 1:
             defaults = ["FLINT", None]
         elif implementation == "FLINT":
             raise ValueError("FLINT does not support modulus %s" % modulus)
@@ -3392,8 +3405,8 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: type(P.gen())
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
-            sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x'); P       # needs sage.libs.ntl sage.rings.finite_rings
-            Univariate Polynomial Ring in x over Finite Field of size 9223372036854775837 (using NTL)
+            sage: P = PolynomialRing_dense_mod_p(GF(18446744073709551629), 'x'); P       # needs sage.libs.ntl sage.rings.finite_rings
+            Univariate Polynomial Ring in x over Finite Field of size 18446744073709551629 (using NTL)
             sage: type(P.gen())                                                         # needs sage.libs.ntl sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
@@ -3478,7 +3491,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             defaults = ["GF2X", "NTL", None]
         elif implementation == "GF2X":
             raise ValueError("GF2X only supports modulus 2")
-        elif modulus <= sys.maxsize:
+        elif modulus <= (sys.maxsize << 1) + 1:
             defaults = ["FLINT", None]
         elif implementation == "FLINT":
             raise ValueError("FLINT does not support modulus %s" % modulus)

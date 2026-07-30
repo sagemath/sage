@@ -556,30 +556,9 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         except (TypeError, ValueError):
             return False
 
-    def _coerce_impl(self, x):
-        """
-        Return the coercion of x into this polynomial quotient ring.
-
-        The rings that coerce into the quotient ring canonically are:
-
-        - this ring
-
-        - any canonically isomorphic ring
-
-        - anything that coerces into the ring of which this is the
-          quotient
-        """
-        if isinstance(x, PolynomialQuotientRingElement):
-            if x.parent() == self:
-                return self.element_class(self, self.__ring(x.lift()), check=False)
-        # any ring that coerces to the base ring of this polynomial ring.
-        return self(self.polynomial_ring().coerce(x))
-
     ############################################
-    # Methods to make the category framework happy...
+    # Method to make the category framework happy...
     #
-
-    retract = _coerce_impl
     ambient = Ring.base
 
     def lift(self, x):
@@ -667,6 +646,35 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             True
         """
         return hash((self.polynomial_ring(), self.modulus()))
+
+    def _cache_key(self):
+        """
+        Return a key which identifies this ring for caching.
+
+        This is used as a fallback by cached functions and methods when
+        this ring is not hashable, which happens when the coefficients of
+        the modulus are inexact, e.g., `p`-adic numbers.
+
+        EXAMPLES::
+
+            sage: R.<x> = Zq(4, names='a')[]
+            sage: S = R.quotient(x)
+            sage: S._cache_key()
+            (<class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic'>,
+             Univariate Polynomial Ring in x over 2-adic Unramified Extension Ring in a defined by x^2 + x + 1,
+             (1 + O(2^20))*x)
+
+        TESTS:
+
+        Check that :issue:`42518` is fixed::
+
+            sage: R.<x> = Zq(7^2, names='T')[]
+            sage: S = R.quotient(x)
+            sage: 5 * S(123)
+            6 + 3*7 + 5*7^2 + 7^3 + O(7^20)
+        """
+        return (PolynomialQuotientRing_generic,
+                self.polynomial_ring(), self.modulus())
 
     def _singular_init_(self, S=None):
         """

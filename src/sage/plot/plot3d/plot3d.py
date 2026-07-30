@@ -302,10 +302,10 @@ class _Coordinates:
             sage: [h(u=1,v=2) for h in T.to_cartesian(operator.mul)]
             [3.0, -1.0, 2.0]
 
-        The output of the function ``func`` is coerced to a float when
-        it is evaluated if the function is something like a lambda or
-        python callable. This takes care of situations like f returning a
-        singleton numpy array, for example.
+        The output of a Python callable ``func`` is coerced to a float when
+        it is evaluated. Thus it must return a scalar or another object
+        accepted by ``float()``. For example, extract the scalar value
+        returned by a SciPy interpolant explicitly (:issue:`42539`)::
 
             sage: from numpy import array
             sage: v_phi=array([ 0.,  1.57079637,  3.14159274, 4.71238911,  6.28318548])
@@ -316,7 +316,8 @@ class _Coordinates:
             ....: [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
             ....: [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422]])
             sage: import scipy.interpolate
-            sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r).ev
+            sage: spline = scipy.interpolate.RectBivariateSpline(v_phi, v_theta, m_r)
+            sage: f = lambda x, y: spline.ev(x, y).item()
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
             Graphics3d Object
         """

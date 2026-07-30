@@ -311,50 +311,6 @@ class sage__groups(JoinFeature):
                              spkg='sagemath_groups', type='standard')
 
 
-class sage__libs__braiding(PythonModule):
-    r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.braiding`.
-
-    EXAMPLES::
-
-        sage: from sage.features.sagemath import sage__libs__braiding
-        sage: sage__libs__braiding().is_present()                                            # needs sage.libs.braiding
-        FeatureTestResult('sage.libs.braiding', True)
-    """
-
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__libs__braiding
-            sage: isinstance(sage__libs__braiding(), sage__libs__braiding)
-            True
-        """
-        PythonModule.__init__(self, 'sage.libs.braiding',
-                              spkg='sagemath_libbraiding', type='standard')
-
-
-class sage__libs__ecl(PythonModule):
-    r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.ecl`.
-
-    EXAMPLES::
-
-        sage: from sage.features.sagemath import sage__libs__ecl
-        sage: sage__libs__ecl().is_present()                        # optional - sage.libs.ecl
-        FeatureTestResult('sage.libs.ecl', True)
-    """
-
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__libs__ecl
-            sage: isinstance(sage__libs__ecl(), sage__libs__ecl)
-            True
-        """
-        PythonModule.__init__(self, 'sage.libs.ecl',
-                              spkg='sagemath_symbolics', type='standard')
 
 
 class sage__libs__flint(JoinFeature):
@@ -915,36 +871,6 @@ class sage__rings__padics(JoinFeature):
                              type='standard')
 
 
-class sage__rings__real_double(PythonModule):
-    r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_double`.
-
-    EXAMPLES:
-
-    The Real Double Field is basically always available, and no ``# optional/needs`` tag is needed::
-
-        sage: RDF.characteristic()
-        0
-
-    The feature exists for use in doctests of Python modules that are shipped by the
-    most fundamental distributions.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__rings__real_double
-        sage: sage__rings__real_double().is_present()                                   # needs sage.rings.real_double
-        FeatureTestResult('sage.rings.real_double', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__rings__real_double
-            sage: isinstance(sage__rings__real_double(), sage__rings__real_double)
-            True
-        """
-        PythonModule.__init__(self, 'sage.rings.real_double', type='standard')
-
 
 class sage__rings__real_mpfr(JoinFeature):
     r"""
@@ -970,28 +896,6 @@ class sage__rings__real_mpfr(JoinFeature):
                               ],
                              spkg='sagemath_modules', type='standard')
 
-
-class sage__sat(JoinFeature):
-    r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.sat`.
-
-    TESTS::
-
-        sage: from sage.features.sagemath import sage__sat
-        sage: sage__sat().is_present()                                                  # needs sage.sat
-        FeatureTestResult('sage.sat', True)
-    """
-    def __init__(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features.sagemath import sage__sat
-            sage: isinstance(sage__sat(), sage__sat)
-            True
-        """
-        JoinFeature.__init__(self, 'sage.sat',
-                             [PythonModule('sage.sat.expression')],
-                             spkg='sagemath_combinat', type='standard')
 
 
 class sage__schemes(JoinFeature):
@@ -1102,8 +1006,6 @@ def all_features():
         sage__geometry__polyhedron(),
         sage__graphs(),
         sage__groups(),
-        sage__libs__braiding(),
-        sage__libs__ecl(),
         sage__libs__flint(),
         sage__libs__gap(),
         sage__libs__giac(),
@@ -1121,9 +1023,7 @@ def all_features():
         sage__rings__function_field(),
         sage__rings__number_field(),
         sage__rings__padics(),
-        sage__rings__real_double(),
         sage__rings__real_mpfr(),
-        sage__sat(),
         sage__schemes(),
         sage__symbolic(),
     ]

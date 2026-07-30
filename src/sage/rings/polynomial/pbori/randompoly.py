@@ -19,6 +19,7 @@ def gen_random_poly(ring, l, deg, vars_set, seed=123):
 
     EXAMPLES::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Ring, Variable
         sage: from sage.rings.polynomial.pbori.randompoly import gen_random_poly
         sage: r = Ring(16)
@@ -61,6 +62,7 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
 
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import Ring, groebner_basis
         sage: r = Ring(10)
         sage: from sage.rings.polynomial.pbori.randompoly import sparse_random_system
@@ -96,6 +98,7 @@ def sparse_random_system_data_file_content(number_of_variables, **kwds):
     r"""
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori.randompoly import sparse_random_system_data_file_content
         sage: sparse_random_system_data_file_content(10, number_of_polynomials=5, variables_per_polynomial=3, degree=2, random_seed=int(123))
         "declare_ring(['x'+str(i) for in range(10)])\nideal=\\\n[...]\n\n"

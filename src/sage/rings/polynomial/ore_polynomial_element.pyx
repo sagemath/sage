@@ -2836,8 +2836,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         """
         if sparse:
             return [c for c in self._coeffs if not c.is_zero()]
-        else:
-            return self._coeffs
+        return self._coeffs
 
     def hilbert_shift(self, s, var=None):
         r"""

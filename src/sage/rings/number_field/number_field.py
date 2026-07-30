@@ -88,7 +88,7 @@ import sage.rings.real_double
 import sage.rings.real_lazy
 import sage.rings.real_mpfr
 import sage.structure.coerce_exceptions
-from sage.arith.misc import euler_phi, factor, gcd, next_prime
+from sage.arith.misc import euler_phi, factor, gcd, next_prime, previous_prime
 from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.categories.sets_cat import Sets
@@ -11804,6 +11804,122 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             p = next_prime(p)
             if p % n == 1:
                 return p
+
+    def previous_split_prime(self, p, exclude=None):
+        """
+        Return the previous prime integer `p` that splits completely in
+        this cyclotomic field (and does not ramify).
+
+        INPUT:
+
+        - ``p`` -- an integer
+
+        - ``exclude`` -- a list of integers; if specified, the returned prime will not divide any of them.
+
+        EXAMPLES::
+
+            sage: K.<z> = CyclotomicField(3)
+            sage: K.previous_split_prime(17)
+            13
+            sage: K.previous_split_prime(17, [26])
+            7
+
+        If there are no previous split primes, this function will raise a ValueError::
+
+            sage: K.previous_split_prime(7)
+            Traceback (most recent call last):
+            ...
+            ValueError: no previous prime
+
+        We can handle the edge case of ``CyclotomicField(1)``, where all primes split::
+
+            sage: CyclotomicField(1).previous_split_prime(3)
+            2
+        """
+        n = self._n()
+        if n == 1:
+            return previous_prime(p)
+        while True:
+            p = previous_prime(p)
+            if p % n == 1 and (exclude is None or all(d % p != 0 for d in exclude)):
+                return p
+
+    @cached_method
+    def _reduction_matrix(self, p):
+        """
+        This method is used in multimodular algorithms for linear algebra.
+
+        It is better to cache on the base ring since the reduction matrix
+        depends only on the field.
+
+        INPUT:
+
+        ``p`` -- a prime that splits completely
+
+        OUTPUT:
+
+        - a matrix over GF(p) whose action from the left
+          gives the map from O_K to GF(p) x ... x GF(p)
+          given by reducing modulo all the primes over p.
+
+        - the inverse of this matrix
+
+        EXAMPLES::
+
+            sage: K.<z> = CyclotomicField(3)
+            sage: A, B = K._reduction_matrix(7)
+            sage: A
+            [1 4]
+            [1 2]
+            sage: B
+            [6 2]
+            [4 3]
+
+        The reduction matrix is used to calculate the reductions mod primes
+        above p. ::
+
+            sage: K.<z> = CyclotomicField(5)
+            sage: A = matrix(K, 2, 2, [1, z, z^2+1, 5*z^3]); A
+            [      1       z]
+            [z^2 + 1   5*z^3]
+            sage: T, S = K._reduction_matrix(11)
+            sage: T * A._rational_matrix().change_ring(GF(11))
+            [ 1  9  5  4]
+            [ 1  5  4  9]
+            [ 1  4  6  1]
+            [ 1  3 10  3]
+
+        The rows of this product are the (flattened) matrices mod each prime above p::
+
+            sage: roots = [r for r, e in K.defining_polynomial().change_ring(GF(11)).roots()]; roots
+            [9, 5, 4, 3]
+            sage: [r^2+1 for r in roots]
+            [5, 4, 6, 10]
+            sage: [5*r^3 for r in roots]
+            [4, 9, 1, 3]
+
+        The reduction matrix is cached::
+
+            sage: K._reduction_matrix(31) is K._reduction_matrix(31)
+            True
+        """
+        phi = self.defining_polynomial()
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+        from sage.matrix.constructor import matrix
+        F = GF(p)
+        aa = [a for a, _ in phi.change_ring(F).roots()]
+        n = self.degree()
+        if len(aa) != n:
+            raise ValueError("the prime p (=%s) must split completely but doesn't" % p)
+        T = matrix(F, n)
+        for i in range(n):
+            a = aa[i]
+            b = 1
+            for j in range(n):
+                T[i,j] = b
+                b *= a
+        T.set_immutable()
+        return T, T**(-1)
 
     def _pari_integral_basis(self, v=None, important=True):
         """

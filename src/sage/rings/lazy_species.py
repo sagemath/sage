@@ -1066,6 +1066,27 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         return HadamardProductSpeciesElement(self, other)
 
+    def derivative(self):
+        r"""
+        Return the derivative species of ``self``.
+
+        This is defined on objects as `F'[U] = F[U \sqcup \{*\}]` where `*`
+        is a distinguished label not in `U`. If `\sigma: U \to V` is
+        a bijection, then `F'[\sigma]` is obtained by applying `F` to the
+        unique bijection `U \sqcup \{*\} \to V \sqcup \{*\}` that agrees
+        with `\sigma` on `U` and fixes `*`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: (X^3).derivative()[2]
+            3*X^2
+            sage: Lin = 1 / (1 - X)
+            sage: Lin.derivative()[4] == (Lin^2)[4]
+            True
+        """
+        return DerivativeSpeciesElement(self)
+
 
 class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
     r"""
@@ -1752,6 +1773,106 @@ class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
         self._left = F
         self._other = G
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: Ep = E.restrict(1)
+            sage: Ep.arithmetic_product(Ep).generating_series()
+            X + X^2 + 1/3*X^3 + 1/3*X^4 + 1/60*X^5 + 61/360*X^6 + O(X^7)
+
+        We check Example 2.2 from [MM2008]_::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: C = L.Cycles()
+            sage: Lp = X/(1 - X)
+            sage: C.arithmetic_product(Lp).generating_series()
+            X + 3/2*X^2 + 4/3*X^3 + 7/4*X^4 + 6/5*X^5 + 2*X^6 + O(X^7)
+        """
+        f = self._left.generating_series()
+        g = self._other.generating_series()
+        zero = f.parent().base_ring().zero()
+
+        def coefficient(n):
+            if not n:
+                return zero
+            return sum((f[d] * g[n // d] for d in divisors(n)), zero)
+
+        return f.parent()(coefficient)
+
+    def structures(self, labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        This uses the rectangle description of the arithmetic product [MM2008]_.
+
+        EXAMPLES:
+
+        A rectangle is a structure in the arithmetic product of
+        non-empty sets with itself.  Arranging the blocks of the
+        first set partition in rows, and the blocks of the second in
+        columns, two rectangles are equal if one can be obtained from
+        the other by permuting rows and columns.::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: R = E.arithmetic_product(E)
+            sage: list(R.structures([1, 2, 3, 4]))
+            [(((1, 2, 3, 4),), ((1,), (2,), (3,), (4,))),
+             (((1, 2), (3, 4)), ((1, 3), (2, 4))),
+             (((1, 2), (3, 4)), ((1, 4), (2, 3))),
+             (((1, 4), (2, 3)), ((1, 2), (4, 3))),
+             (((1, 4), (2, 3)), ((1, 3), (4, 2))),
+             (((1, 3), (2, 4)), ((1, 2), (3, 4))),
+             (((1, 3), (2, 4)), ((1, 4), (3, 2))),
+             (((1,), (2,), (3,), (4,)), ((1, 2, 3, 4),))]
+
+        The arithmetic product can be regarded as an assembly of
+        cloned structures.  The structures corresponding to the rows
+        are all isomorphic::
+
+            sage: E2 = E.restrict(2,2)
+            sage: list(E2.arithmetic_product(E2+X^2).structures([1, 2, 3, 4]))[:3]
+            [(((1, 2), (3, 4)), (((1, 3), (2, 4)), 'left')),
+             (((1, 2), (3, 4)), ((X^2, (((2, 4),), ((1, 3),))), 'right')),
+             (((1, 2), (3, 4)), ((X^2, (((1, 3),), ((2, 4),))), 'right'))]
+
+        When the number of labels is prime, the rectangle is either
+        a single row or a single column::
+
+            sage: C = L.Cycles()
+            sage: A = E.arithmetic_product(C)
+            sage: list(A.structures([1, 2, 3]))
+            [(((1, 2, 3),), ((1,), (2,), (3,))),
+             (((1, 2, 3),), ((1,), (3,), (2,))),
+             (((1,), (2,), (3,)), ((1, 2, 3),))]
+        """
+        labels = _label_sets(self.parent()._arity, [labels])[0]
+        n = len(labels)
+        if not n:
+            return
+        position = {u: i for i, u in enumerate(labels)}
+
+        def ordered_block(block):
+            return tuple(sorted(block, key=lambda u: position[u]))
+
+        def rectangles(k):
+            l = n // k
+            for row_partition in SetPartitions(labels, [l] * k):
+                rows = tuple(sorted((ordered_block(row) for row in row_partition), key=lambda row: position[row[0]]))
+                first_row = rows[0]
+                for permuted_rows in itertools.product(*(itertools.permutations(row) for row in rows[1:])):
+                    columns = tuple((u,) + tuple(row[j] for row in permuted_rows) for j, u in enumerate(first_row))
+                    yield rows, columns
+
+        for k in divisors(n):
+            for rows, columns in rectangles(k):
+                yield from itertools.product(self._left.structures(rows), self._other.structures(columns))
+
 
 class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, other):
@@ -1779,6 +1900,101 @@ class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
         super().__init__(P, coeff_stream)
         self._left = left
         self._other = other
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: E.hadamard_product(E).generating_series()
+            1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
+
+            sage: C = L.Cycles()
+            sage: C.hadamard_product(C).generating_series()
+            X + 1/2*X^2 + 2/3*X^3 + 3/2*X^4 + 24/5*X^5 + 20*X^6 + O(X^7)
+        """
+        f = self._left.generating_series()
+        g = self._other.generating_series()
+
+        def coefficient(n):
+            return factorial(n) * f[n] * g[n]
+
+        return f.parent()(coefficient)
+
+    def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: C = L.Cycles()
+            sage: sorted(E.hadamard_product(C).structures([1,2,3]))
+            [((1, 2, 3), (1, 2, 3)), ((1, 2, 3), (1, 3, 2))]
+        """
+        labels = _label_sets(self.parent()._arity, labels)
+        yield from itertools.product(self._left.structures(*labels), self._other.structures(*labels))
+
+
+class DerivativeSpeciesElement(LazyCombinatorialSpeciesElement):
+    def __init__(self, F):
+        r"""
+        Initialize the derivative of ``F``.
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E2 = L(SymmetricGroup(2))
+            sage: D = (X^2*E2).derivative()
+            sage: D[3] == (2*X*E2 + X^3)[3]
+            True
+            sage: TestSuite(D).run(skip=['_test_category', '_test_pickling'])
+        """
+        if F.parent()._arity != 1:
+            raise NotImplementedError("derivative is not yet implemented for multisort species")
+
+        self._F = F
+
+        coeff_stream = Stream_function(
+            lambda n: F[n + 1].derivative(),
+            F.parent()._sparse,
+            max(F._coeff_stream._approximate_order - 1, 0),
+        )
+        super().__init__(F.parent(), coeff_stream)
+
+    def generating_series(self):
+        r"""
+        Return the exponential generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: E.derivative().generating_series() - E.generating_series()
+            O(X^7)
+
+            sage: Lin = 1 / (1 - X)
+            sage: Lin.derivative().generating_series() - (Lin^2).generating_series()
+            O(X^7)
+        """
+        return self._F.generating_series().derivative()
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: E.derivative().cycle_index_series() - E.cycle_index_series()
+            O^6
+        """
+        return self._F.cycle_index_series().derivative_with_respect_to_p1()
 
 
 class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):

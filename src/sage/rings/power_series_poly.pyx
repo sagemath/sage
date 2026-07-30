@@ -596,8 +596,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         if n:
             return PowerSeries_poly(self._parent, self.__f << n, self._prec + n)
-        else:
-            return self
+        return self
 
     def __rshift__(PowerSeries_poly self, n):
         """
@@ -617,8 +616,7 @@ cdef class PowerSeries_poly(PowerSeries):
             return PowerSeries_poly(self._parent,
                                     self.__f >> n,
                                     max(0, self._prec - n))
-        else:
-            return self
+        return self
 
     def __invert__(self):
         """
@@ -754,8 +752,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         if prec is infinity:
             return self.__f
-        else:
-            return self.__f.truncate(prec)
+        return self.__f.truncate(prec)
 
     cdef _inplace_truncate(self, long prec):
         """
