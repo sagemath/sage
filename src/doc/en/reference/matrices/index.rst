@@ -77,6 +77,7 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/matrix_gf2e_dense
    sage/matrix/matrix_modn_dense_double
    sage/matrix/matrix_modn_dense_float
+   sage/matrix/matrix_modn_dense_flint
    sage/matrix/matrix_modn_sparse
    sage/matrix/matrix_symbolic_dense
    sage/matrix/matrix_symbolic_sparse

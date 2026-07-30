@@ -9,14 +9,18 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
-from .base import StackInterpreter
-from ..instructions import (params_gen, instr_infix, instr_funcall_2args,
-                            instr_unary, InstrSpec)
+from ..instructions import (
+    InstrSpec,
+    instr_funcall_2args,
+    instr_infix,
+    instr_unary,
+    params_gen,
+)
 from ..memory import MemoryChunkConstants
 from ..storage import ty_double_complex, ty_python
 from ..utils import reindent_lines as ri
+from .base import StackInterpreter
 
 
 class CDFInterpreter(StackInterpreter):
@@ -71,7 +75,7 @@ class CDFInterpreter(StackInterpreter):
             13.0 + 26.0*I
         """
 
-        super(CDFInterpreter, self).__init__(ty_double_complex)
+        super().__init__(ty_double_complex)
         self.mc_py_constants = MemoryChunkConstants('py_constants', ty_python)
         # See comment for RDFInterpreter
         self.err_return = '-1094648119105371'

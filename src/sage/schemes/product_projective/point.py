@@ -143,7 +143,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         return '(%s)' % (" , ".join((" : ".join(repr(f) for f in Q))
                                     for Q in self._points))
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
         Compare two points in products of projective spaces.
 
@@ -194,10 +194,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             True
         """
         #needed for Digraph
-        if not isinstance(right, (ProductProjectiveSpaces_point_ring)):
+        if not isinstance(other, (ProductProjectiveSpaces_point_ring)):
             return NotImplemented
-        else:
-            return richcmp(self._points, right._points, op)
+        return richcmp(self._points, other._points, op)
 
     def __copy__(self):
         r"""
@@ -215,7 +214,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: P == Q
             True
         """
-        P = [copy(self[i]) for i in range(self.codomain().ambient_space().num_components())]
+        P = [copy(self[i]) for i in range(self.codomain().ambient_space().n_components())]
         return (self.codomain().point(P, False))
 
     def __iter__(self):
@@ -250,7 +249,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             4
         """
         image = self.codomain().ambient_space()
-        return image.dimension() + image.num_components()
+        return image.dimension() + image.n_components()
 
     def __hash__(self):
         """
@@ -308,7 +307,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: P
             (1 : 2 : 3 , 2 : 1 : 3)
         """
-        for i in range(self.codomain().ambient_space().num_components()):
+        for i in range(self.codomain().ambient_space().n_components()):
             self[i].normalize_coordinates()
 
     def dehomogenize(self, L):
@@ -352,7 +351,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         PP = self.codomain()
         A = PP.affine_patch(L)
         pt = []
-        for i in range(PP.ambient_space().num_components()):
+        for i in range(PP.ambient_space().n_components()):
             pt.extend(self[i].dehomogenize(L[i]))
         return A(pt)
 
@@ -377,9 +376,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         """
         if not isinstance(t, (tuple, list)):
             raise TypeError("%s must be a list or tuple" % t)
-        if len(t) != self.codomain().ambient_space().num_components():
+        if len(t) != self.codomain().ambient_space().n_components():
             raise TypeError("%s must have same number of components as %r" % (t, self))
-        for i in range(self.codomain().ambient_space().num_components()):
+        for i in range(self.codomain().ambient_space().n_components()):
             self[i].scale_by(t[i])
 
     def change_ring(self, R, **kwds):
@@ -463,7 +462,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         if K not in NumberFields() and K != ZZ and not isinstance(K, (sage.rings.abc.Order, sage.rings.abc.AlgebraicField)):
             raise TypeError("must be over a number field or a number field order or QQbar")
 
-        n = self.codomain().ambient_space().num_components()
+        n = self.codomain().ambient_space().n_components()
         return max(self[i].global_height(prec=prec) for i in range(n))
 
     def local_height(self, v, prec=None):
@@ -501,7 +500,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         if K not in NumberFields():
             raise TypeError("must be over a number field or a number field order")
 
-        n = self.codomain().ambient_space().num_components()
+        n = self.codomain().ambient_space().n_components()
         return max(self[i].local_height(v, prec=prec) for i in range(n))
 
 

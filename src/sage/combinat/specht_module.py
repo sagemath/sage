@@ -24,17 +24,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.combinat.diagram import Diagram
-from sage.combinat.partition import _Partitions
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.modules.with_basis.representation import Representation_abstract
-from sage.sets.family import Family
-from sage.matrix.constructor import matrix
-from sage.rings.rational_field import QQ
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
 from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.combinat.diagram import Diagram
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import _Partitions
+from sage.combinat.permutation import Permutations
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.modules.with_basis.representation import Representation_abstract
+from sage.modules.with_basis.subquotient import (
+    QuotientModuleWithBasis,
+    SubmoduleWithBasis,
+)
+from sage.rings.rational_field import QQ
+from sage.sets.family import Family
 
 
 class SymmetricGroupRepresentation(Representation_abstract):
@@ -284,7 +289,6 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return f"S^{{{latex(self._diagram)}}}"
 
     def _ascii_art_(self):
@@ -362,7 +366,7 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
                 sage: SGA = SymmetricGroupAlgebra(QQ, 4)
                 sage: SM = SGA.specht_module([3,1])
                 sage: SGA.an_element() * SM.an_element()
-                9*S[[1, 2, 3], [4]] + 17*S[[1, 2, 4], [3]] + 14*S[[1, 3, 4], [2]]
+                18*S[[1, 2, 3], [4]] + 16*S[[1, 2, 4], [3]] + 5*S[[1, 3, 4], [2]]
                 sage: 4 * SM.an_element()
                 12*S[[1, 2, 3], [4]] + 8*S[[1, 2, 4], [3]] + 8*S[[1, 3, 4], [2]]
 
@@ -376,6 +380,18 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
                 TypeError: unsupported operand parent(s) for *:
                  'Specht module of [3, 1] over Rational Field'
                  and 'Symmetric group algebra of order 4 over Rational Field'
+
+                sage: c = SGA(Permutation([2,3,4,1]))
+                sage: d = SGA(Permutation([2,1,3,4]))
+                sage: v = SM.an_element()
+                sage: c * (d * v) == (c*d) * v
+                True
+                sage: from sage.combinat.diagram import Diagram
+                sage: D = Diagram([(0,0), (1,1), (1,2), (2,1)])
+                sage: SM_generic = SGA.specht_module(D)
+                sage: v = SM_generic.an_element()
+                sage: c * (d * v) == (c*d) * v
+                True
                 sage: groups.permutation.Dihedral(3).an_element() * SM.an_element()
                 Traceback (most recent call last):
                 ...
@@ -392,8 +408,7 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             if x in P._semigroup_algebra or x in P._semigroup_algebra.group():
                 if self_on_left:  # it is only a left module
                     return None
-                else:
-                    return P.retract(P._semigroup_algebra(x) * self.lift())
+                return P.retract(P._semigroup_algebra(x) * self.lift())
             return None
 
 
@@ -405,7 +420,9 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
     A *tabloid* is an :class:`OrderedSetPartition` whose underlying set
     is `\{1, \ldots, n\}`. The symmetric group acts by permuting the
     entries of the set. Hence, this is a representation of the symmetric
-    group defined over any field.
+    group defined over any field. This is a left representation, so the
+    permutation applied to the entries depends on the multiplication
+    convention of the defining symmetric group algebra.
 
     EXAMPLES::
 
@@ -496,7 +513,6 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "T^{{{}}}".format(latex(self._shape))
 
     def _ascii_art_term(self, T):
@@ -593,10 +609,17 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
             sage: g = SGA.group().an_element(); g
             [5, 1, 2, 3, 4]
             sage: TM._symmetric_group_action(osp, g)
+            [{2, 5}, {1, 4}, {3}]
+
+            sage: Permutations.options.mult = 'r2l'
+            sage: TM._symmetric_group_action(osp, g)
             [{3, 5}, {2, 4}, {1}]
+            sage: Permutations.options.mult = 'l2r'
         """
         P = self._indices
         g = self._symgp(g)
+        if not isinstance(self._semigroup, Permutations) or self._semigroup.options.mult != 'r2l':
+            g = ~g
         return P.element_class(P, [[g(val) for val in row] for row in osp], check=False)
 
     def specht_module(self):
@@ -653,7 +676,7 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
                 sage: SGA = SymmetricGroupAlgebra(QQ, 5)
                 sage: SM = SGA.tabloid_module([2,2,1])
                 sage: SGA.an_element() * SM.an_element()
-                2*T[{1, 5}, {2, 3}, {4}] + 2*T[{1, 5}, {2, 4}, {3}] + 3*T[{1, 5}, {3, 4}, {2}]
+                2*T[{2, 3}, {4, 5}, {1}] + 2*T[{2, 3}, {1, 4}, {5}] + 3*T[{2, 3}, {1, 5}, {4}]
                  + 12*T[{1, 2}, {3, 4}, {5}] + 15*T[{1, 2}, {3, 5}, {4}] + 15*T[{1, 2}, {4, 5}, {3}]
                 sage: 4 * SM.an_element()
                 8*T[{1, 2}, {3, 4}, {5}] + 8*T[{1, 2}, {3, 5}, {4}] + 12*T[{1, 2}, {4, 5}, {3}]
@@ -663,6 +686,30 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
                 TypeError: unsupported operand parent(s) for *:
                  'Tabloid module of [2, 2, 1] over Rational Field'
                  and 'Symmetric group algebra of order 5 over Rational Field'
+
+                sage: a = SM([{2,1}, {3,4}, {5}])
+                sage: c = SGA(Permutation([2,3,4,1,5]))
+                sage: d = SGA(Permutation([2,3,1,4,5]))
+                sage: c * (d * a) == (c*d) * a
+                True
+                sage: Permutations.options.mult = 'r2l'
+                sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+                sage: SM = SGA.tabloid_module([2,2,1])
+                sage: a = SM([{2,1}, {3,4}, {5}])
+                sage: G = SGA.group()
+                sage: c = SGA(G([2,3,4,1,5]))
+                sage: d = SGA(G([2,3,1,4,5]))
+                sage: c * (d * a) == (c*d) * a
+                True
+                sage: Permutations.options.mult = 'l2r'
+                sage: G = SymmetricGroup(5)
+                sage: SG = G.algebra(QQ)
+                sage: SM = SG.tabloid_module([2,2,1])
+                sage: a = SM([{2,1}, {3,4}, {5}])
+                sage: c = G([2,3,4,1,5])
+                sage: d = G([2,3,1,4,5])
+                sage: c * (d * a) == (c*d) * a
+                True
             """
             # first check for the base action
             ret = super()._acted_upon_(x, self_on_left)
@@ -986,7 +1033,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
         sage: u = U.an_element(); u
         2*U[0] + 2*U[1]
         sage: [p * u for p in list(SGA.basis())[:4]]
-        [2*U[0] + 2*U[1], 2*U[2] + 2*U[3], 2*U[0] + 2*U[1], U[0] + 2*U[2]]
+        [2*U[0] + 2*U[1], 2*U[2] + 2*U[3], 2*U[0] + 2*U[1], 2*U[2] + 2*U[3]]
         sage: sum(SGA.basis()) * u
         0
     """
@@ -1064,7 +1111,6 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "U^{{{}}}".format(latex(self._ambient._diagram))
 
     Element = SpechtModule.Element
@@ -1086,7 +1132,7 @@ class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
         sage: v = D.an_element(); v
         2*D[[[1, 3, 5], [2], [4]]] + 2*D[[[1, 4, 5], [2], [3]]]
         sage: SGA.an_element() * v
-        2*D[[[1, 2, 4], [3], [5]]] + 2*D[[[1, 3, 5], [2], [4]]]
+        2*D[[[1, 2, 4], [3], [5]]] + 2*D[[[1, 2, 5], [3], [4]]] + 2*D[[[1, 3, 4], [2], [5]]] + D[[[1, 4, 5], [2], [3]]]
 
     We give an example on how to construct the decomposition matrix
     (the Specht modules are a complete set of irreducible projective
@@ -1173,7 +1219,6 @@ class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
             \end{array}$}
             }}
         """
-        from sage.misc.latex import latex
         return "D^{{{}}}".format(latex(self._diagram))
 
     Element = SpechtModule.Element

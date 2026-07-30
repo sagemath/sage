@@ -234,7 +234,9 @@ cpdef Integer integer_rational_power(Integer a, Rational b):
         sage: integer_rational_power(-1, 9/8) is None
         True
 
-    TESTS (:issue:`11228`)::
+    TESTS:
+
+    Check for :issue:`11228`::
 
         sage: integer_rational_power(-10, QQ(2))
         100
@@ -316,7 +318,6 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         sage: all(rational_power_parts(-1, i/77) == (1,-1) for i in range(1,9))
         True
 
-        sage: # needs sage.symbolic
         sage: (-1)^(-1/3)
         -(-1)^(2/3)
         sage: 1 / ((-1)^(1/3))
@@ -381,33 +382,6 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         c *= p**((e // denom)*numer)
         d *= p**(e % denom)
     return (c, d) if not b_negative else (c, ~d)
-
-
-def is_Rational(x):
-    """
-    Return ``True`` if ``x`` is of the Sage :class:`Rational` type.
-
-    EXAMPLES::
-
-        sage: from sage.rings.rational import is_Rational
-        sage: is_Rational(2)
-        doctest:warning...
-        DeprecationWarning: The function is_Rational is deprecated;
-        use 'isinstance(..., Rational)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        False
-        sage: is_Rational(2/1)
-        True
-        sage: is_Rational(int(2))
-        False
-        sage: is_Rational('5')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_Rational is deprecated; "
-                       "use 'isinstance(..., Rational)' instead.")
-    return isinstance(x, Rational)
 
 
 cdef class Rational(sage.structure.element.FieldElement):
@@ -495,6 +469,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
         sage: QQ((-2r^100r, -3r^100r))
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
+
+    Conversion from real number::
+
+        sage: QQ(RR(2^100))
+        1267650600228229401496703205376
     """
     def __cinit__(self):
         r"""
@@ -602,7 +581,10 @@ cdef class Rational(sage.structure.element.FieldElement):
                 mpq_set_si(self.value, 0, 1)
                 return
             if not base:
-                set_from_Rational(self, x.simplest_rational())
+                if x.is_integer():
+                    set_from_Rational(self, x.exact_rational())
+                else:
+                    set_from_Rational(self, x.simplest_rational())
             else:
                 # Truncate in base 10 to match repr(x).
                 # See https://github.com/sagemath/sage/issues/21124
@@ -965,8 +947,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             return str(self.numer())
         if self < 0:
             return "-\\frac{%s}{%s}" % (-self.numer(), self.denom())
-        else:
-            return "\\frac{%s}{%s}" % (self.numer(), self.denom())
+        return "\\frac{%s}{%s}" % (self.numer(), self.denom())
 
     def _symbolic_(self, sring):
         """
@@ -1052,6 +1033,21 @@ cdef class Rational(sage.structure.element.FieldElement):
         """
         return self.numerator()._magma_init_(magma) + '/' + self.denominator()._magma_init_(magma)
 
+    def _regina_(self, regina):
+        r"""
+        Return a Regina Rational.
+
+        EXAMPLES::
+
+            sage: r53 = regina(5/3); (r53, type(r53), type(r53._inst))  # optional regina
+            (5/3,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Rational'>)
+        """
+        num = self.numerator()
+        den = self.denominator()
+        return regina.Rational(num, den)
+
     @property
     def __array_interface__(self):
         """
@@ -1075,12 +1071,10 @@ cdef class Rational(sage.structure.element.FieldElement):
         if mpz_cmp_ui(mpq_denref(self.value), 1) == 0:
             if mpz_fits_slong_p(mpq_numref(self.value)):
                 return numpy_long_interface
-            elif sizeof(long) == 4 and mpz_sizeinbase(mpq_numref(self.value), 2) <= 63:
+            if sizeof(long) == 4 and mpz_sizeinbase(mpq_numref(self.value), 2) <= 63:
                 return numpy_int64_interface
-            else:
-                return numpy_object_interface
-        else:
-            return numpy_double_interface
+            return numpy_object_interface
+        return numpy_double_interface
 
     def _mathml_(self):
         """
@@ -1364,7 +1358,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: a = QQ(6/25)
             sage: a.global_height_arch() + a.global_height_non_arch()
             3.21887582486820
@@ -1433,7 +1426,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - 2, 'beta')
             sage: (1/7).is_norm(K)
@@ -1460,7 +1452,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         A non-Galois number field::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^3 - 2)
             sage: B, e = (3/5).is_norm(K, element=True); B
             True
@@ -1927,7 +1918,6 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: n.sqrt()                                                              # needs sage.symbolic
             sqrt(2/3)
 
-            sage: # needs sage.rings.real_mpfr
             sage: n.sqrt(prec=10)
             0.82
             sage: n.sqrt(prec=100)
@@ -2113,8 +2103,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         if negative:
             return den / num
-        else:
-            return num / den
+        return num / den
 
     def is_nth_power(self, int n):
         r"""
@@ -2266,17 +2255,19 @@ cdef class Rational(sage.structure.element.FieldElement):
 
             sage: QQ(42).__hash__()
             42
-            sage: QQ(1/42).__hash__()
-            1488680910            # 32-bit
-            -7658195599476688946  # 64-bit
+            sage: hash32 = 1488680910
+            sage: hash64 = -7658195599476688946
+            sage: QQ(1/42).__hash__() in [hash32, hash64]
+            True
             sage: n = ZZ.random_element(10^100)
             sage: hash(n) == hash(QQ(n)) or n
             True
             sage: hash(-n) == hash(-QQ(n)) or n
             True
-            sage: hash(-4/17)
-            -47583156            # 32-bit
-            8709371129873690700  # 64-bit
+            sage: hash32 = -47583156
+            sage: hash64 = 8709371129873690700
+            sage: hash(-4/17) in [hash32, hash64]
+            True
         """
         cdef Py_hash_t n = mpz_pythonhash(mpq_numref(self.value))
         cdef Py_hash_t d = mpz_pythonhash(mpq_denref(self.value))
@@ -2603,13 +2594,11 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/2)^(2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: (1/2)^(-2^100)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most ...
             sage: QQ(-1)^(2^100)                                                        # needs sage.symbolic
             1
         """
@@ -3249,7 +3238,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         if a_base == b_base:
             return a_exp/b_exp
-        elif a_base*b_base == 1:
+        if a_base*b_base == 1:
             return -a_exp/b_exp
 
         return (function_log(self, dont_call_method_on_arg=True) /
@@ -3263,7 +3252,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: gamma(1/2)
             sqrt(pi)
             sage: gamma(7/2)
@@ -3436,8 +3424,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             q, r = self.numerator().quo_rem(self.denominator())
             if r < self.denominator() / 2:
                 return q
-            else:
-                return q+1
+            return q+1
 
     __round__ = round
 
@@ -3537,8 +3524,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         import sage.rings.infinity
         if self.is_zero():
             return integer.Integer(1)
-        else:
-            return sage.rings.infinity.infinity
+        return sage.rings.infinity.infinity
 
     def multiplicative_order(self):
         """
@@ -3981,13 +3967,11 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
     if shift <= -1130:  # |d| < 2^-1075
         if resultsign < 0:
             return -0.0
-        else:
-            return 0.0
-    elif shift >= 971:  # |d| > 2^1024
+        return 0.0
+    if shift >= 971:  # |d| > 2^1024
         if resultsign < 0:
             return float('-inf')
-        else:
-            return float('inf')
+        return float('inf')
 
     sig_on()
 
@@ -4072,7 +4056,6 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
     return ldexp(d, shift)
 
 
-@cython.binding(True)
 def make_rational(s):
     """
     Make a rational number from ``s`` (a string in base 32).

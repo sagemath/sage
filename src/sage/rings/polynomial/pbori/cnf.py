@@ -18,6 +18,7 @@ class CNFEncoder:
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori import *
             sage: r = declare_ring(["x", "y", "z"], dict())
             sage: from sage.rings.polynomial.pbori.cnf import CNFEncoder
@@ -45,13 +46,12 @@ class CNFEncoder:
                 if e.constant() and not e.terminal_one():
                     indices.append(nav.value())
                     nav = t
-                else:
-                    if self.random_generator.randint(0, 1):
-                        indices.append(nav.value())
-                        nav = t
+                elif self.random_generator.randint(0, 1):
+                    indices.append(nav.value())
+                    nav = t
 
-                    else:
-                        nav = e
+                else:
+                    nav = e
             assert nav.terminal_one()
             res = self.one_set
             for i in reversed(indices):
@@ -83,6 +83,7 @@ class CNFEncoder:
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori import *
             sage: r = declare_ring(["x", "y", "z"], dict())
             sage: from sage.rings.polynomial.pbori.cnf import CNFEncoder
@@ -103,6 +104,7 @@ class CNFEncoder:
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori import *
             sage: r = declare_ring(["x", "y", "z"], dict())
             sage: from sage.rings.polynomial.pbori.cnf import CNFEncoder
@@ -144,6 +146,7 @@ class CNFEncoder:
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori import *
             sage: d = {}
             sage: r = declare_ring(["x", "y", "z"], d)
@@ -159,6 +162,7 @@ class CNFEncoder:
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori import *
             sage: r = declare_ring(["x", "y", "z"], dict())
             sage: from sage.rings.polynomial.pbori.cnf import CNFEncoder
@@ -188,6 +192,7 @@ class CryptoMiniSatEncoder(CNFEncoder):
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori import *
             sage: d=dict()
             sage: r = declare_ring(["x", "y", "z"], d)
@@ -222,6 +227,7 @@ class CryptoMiniSatEncoder(CNFEncoder):
 
         TESTS::
 
+            sage: # needs brial
             sage: from sage.rings.polynomial.pbori import *
             sage: r = declare_ring(["x", "y", "z"], dict())
             sage: from sage.rings.polynomial.pbori.cnf import CryptoMiniSatEncoder

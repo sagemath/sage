@@ -93,6 +93,7 @@ def multiply_polynomials(l, ring):
 
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import *
         sage: r = Ring(1000)
         sage: x = r.variable
@@ -146,8 +147,7 @@ def build_and_print_matrices_deg_colored(v, strat):
     polys_in_mat.sort(key=pkey)
     global mat_counter
     mat_counter = mat_counter + 1
-    from PIL import Image
-    from PIL import ImageColor
+    from PIL import Image, ImageColor
 
     rows = len(polys_in_mat)
     cols = len(m2i)
@@ -639,6 +639,7 @@ def normal_form(poly, ideal, reduced=True):
 
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import declare_ring, normal_form
         sage: r=declare_ring(['x','y'], globals())
         sage: normal_form(x+y, [y],reduced=True)

@@ -697,16 +697,16 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
                 return EnumeratedSetFromIterator(self.f, args, kwds, name=name, **self.options)
             return EnumeratedSetFromIterator(self.f, args, kwds, **self.options)
 
-        else:  # potential global options
-            if args == ():
-                f, = kwds.values()
-            else:
-                assert len(args) == 1
-                f = args[0]
-            return EnumeratedSetFromIterator_function_decorator(
-                f,
-                name=getattr(self, 'name', None),
-                **self.options)
+        # potential global options
+        if args == ():
+            f, = kwds.values()
+        else:
+            assert len(args) == 1
+            f = args[0]
+        return EnumeratedSetFromIterator_function_decorator(
+            f,
+            name=getattr(self, 'name', None),
+            **self.options)
 
 
 set_from_function = EnumeratedSetFromIterator_function_decorator
@@ -748,11 +748,12 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
 
         But not the enumerated set::
 
-            sage: loads(dumps(d.f()))
-            Traceback (most recent call last):
-            ...
-            _pickle.PicklingError: Can't pickle <function DummyExampleForPicklingTest.f at ...>:
-            it's not the same object as sage.sets.set_from_iterator.DummyExampleForPicklingTest.f
+            sage: from _pickle import PicklingError
+            sage: try:
+            ....:     loads(dumps(d.f()))
+            ....: except PicklingError as e:
+            ....:     print("PicklingError caught")
+            PicklingError caught
         """
         self.inst = inst
         self.f = f

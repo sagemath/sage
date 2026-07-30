@@ -30,12 +30,12 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef int _strassen_default_echelon_cutoff(self) except -2
 
     # Implementation of hash function
-    cdef long _hash_(self) except -1
+    cdef Py_hash_t _hash_(self) except -1
     cdef void get_hash_constants(self, long C[5]) noexcept
 
     # Cache
     cdef public object _cache
-    cdef long hash  # cached hash value
+    cdef Py_hash_t hash  # cached hash value
     cdef void clear_cache(self) noexcept
     cdef fetch(self, key)
     cdef cache(self, key, x)
@@ -59,8 +59,10 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2)
     cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2)
     cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2)
-    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j,    s, Py_ssize_t col_start)
-    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t row_start)
+    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col)
+    cdef add_multiple_of_row_c_end(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col, Py_ssize_t end_col)
+    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row)
+    cdef add_multiple_of_column_c_end(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row, Py_ssize_t end_row)
     cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col)
     cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row)
 

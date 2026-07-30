@@ -189,24 +189,32 @@ class IndexedFreeGroup(IndexedGroup, Group):
         """
         return self.element_class(self, ())
 
-    def gen(self, x):
+    def gen(self, i=0):
         """
-        The generator indexed by ``x`` of ``self``.
+        The generator indexed by ``i`` of ``self``.
 
         EXAMPLES::
 
             sage: G = Groups().free(index_set=ZZ)
-            sage: G.gen(0)
+            sage: G.gen()
             F[0]
             sage: G.gen(2)
             F[2]
+
+        TESTS::
+
+            sage: G = Groups().free(index_set=ZZ)
+            sage: G.gen(1/2)
+            Traceback (most recent call last):
+            ...
+            IndexError: 1/2 is not in the index set
         """
-        if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+        if i not in self._indices:
+            raise IndexError(f"{i} is not in the index set")
         try:
-            return self.element_class(self, ((self._indices(x),1),))
-        except TypeError: # Backup (if it is a string)
-            return self.element_class(self, ((x,1),))
+            return self.element_class(self, ((self._indices(i), 1),))
+        except TypeError:  # Backup (if it is a string)
+            return self.element_class(self, ((i, 1),))
 
     class Element(IndexedFreeMonoidElement):
         def __len__(self):
@@ -280,7 +288,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
             return self.__class__(self.parent(),
                    tuple((x[0], -x[1]) for x in reversed(self._monomial)))
 
-        def to_word_list(self):
+        def to_word_list(self) -> list[tuple]:
             """
             Return ``self`` as a word represented as a list whose entries
             are the pairs ``(i, s)`` where ``i`` is the index and ``s`` is
@@ -294,9 +302,8 @@ class IndexedFreeGroup(IndexedGroup, Group):
                 sage: x.to_word_list()
                 [(0, 1), (1, 1), (1, 1), (4, 1), (0, -1)]
             """
-            sign = lambda x: 1 if x > 0 else -1 # It is never 0
-            return [ (k, sign(e)) for k,e in self._sorted_items()
-                     for dummy in range(abs(e))]
+            return [(k, 1 if e > 0 else -1) for k, e in self._sorted_items()
+                    for dummy in range(abs(e))]
 
 
 class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
@@ -388,24 +395,24 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
         """
         return self.element_class(self, {})
 
-    def gen(self, x):
+    def gen(self, i=0):
         """
-        The generator indexed by ``x`` of ``self``.
+        The generator indexed by ``i`` of ``self``.
 
         EXAMPLES::
 
             sage: G = Groups().Commutative().free(index_set=ZZ)
-            sage: G.gen(0)
+            sage: G.gen()
             F[0]
             sage: G.gen(2)
             F[2]
         """
-        if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+        if i not in self._indices:
+            raise IndexError(f"{i} is not in the index set")
         try:
-            return self.element_class(self, {self._indices(x):1})
-        except TypeError: # Backup (if it is a string)
-            return self.element_class(self, {x:1})
+            return self.element_class(self, {self._indices(i): 1})
+        except TypeError:  # Backup (if it is a string)
+            return self.element_class(self, {i: 1})
 
     class Element(IndexedFreeAbelianMonoidElement, IndexedFreeGroup.Element):
         def _mul_(self, other):

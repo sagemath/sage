@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 import os
 
 from . import StaticFile
@@ -24,12 +23,9 @@ class JmolDataJar(StaticFile):
             sage: isinstance(JmolDataJar(), JmolDataJar)
             True
         """
-        from sage.env import SAGE_SHARE, JMOL_DIR
+        from sage.env import sage_data_paths, JMOL_DIR
 
-        jmol_search_path = JMOL_DIR or (
-                os.path.join(SAGE_SHARE, "sagemath", "jmol"),
-                os.path.join(SAGE_SHARE, "jmol")
-                )
+        jmol_search_path = JMOL_DIR or list(sage_data_paths('jmol'))
 
         StaticFile.__init__(
             self, name='jmol',

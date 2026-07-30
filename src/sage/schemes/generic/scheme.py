@@ -32,33 +32,6 @@ lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
-def is_Scheme(x):
-    """
-    Test whether ``x`` is a scheme.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean; whether ``x`` derives from :class:`Scheme`
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.scheme import is_Scheme
-        sage: is_Scheme(5)
-        doctest:warning...
-        DeprecationWarning: The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: X = Spec(QQ)
-        sage: is_Scheme(X)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_Scheme is deprecated; use 'isinstance(..., Scheme)' or categories instead.")
-    return isinstance(x, Scheme)
-
-
 class Scheme(Parent):
     r"""
     The base class for all schemes.
@@ -120,7 +93,7 @@ class Scheme(Parent):
             # X is a morphism of Rings
             self._base_ring = X.codomain()
         else:
-            raise ValueError('The base must be define by a scheme, '
+            raise ValueError('The base must be defined by a scheme, '
                              'scheme morphism, or commutative ring.')
 
         from sage.categories.schemes import Schemes
@@ -258,9 +231,9 @@ class Scheme(Parent):
             S = args[0]
             if S in CommutativeRings():
                 return self.point_homset(S)
-            elif isinstance(S, Scheme):
+            if isinstance(S, Scheme):
                 return S.Hom(self)
-            elif isinstance(S, (list, tuple)):
+            if isinstance(S, (list, tuple)):
                 args = S
             elif isinstance(S, SchemeMorphism_point):
                 if S.codomain() is self:
@@ -594,8 +567,7 @@ class Scheme(Parent):
         if Y is None:
             if isinstance(x, Scheme):
                 return self.Hom(x).natural_map()
-            else:
-                raise TypeError("unable to determine codomain")
+            raise TypeError("unable to determine codomain")
         return self.Hom(Y)(x, check=check)
 
     def _Hom_(self, Y, category=None, check=True):
@@ -765,27 +737,6 @@ class Scheme(Parent):
             raise NotImplementedError('count_points() required but not implemented')
         temp = R.sum(a[i - 1] * u**i / i for i in range(1, n + 1))
         return temp.exp()
-
-
-def is_AffineScheme(x):
-    """
-    Return ``True`` if `x` is an affine scheme.
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.scheme import is_AffineScheme
-        sage: is_AffineScheme(5)
-        doctest:warning...
-        DeprecationWarning: The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        False
-        sage: E = Spec(QQ)
-        sage: is_AffineScheme(E)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_AffineScheme is deprecated; use 'isinstance(..., AffineScheme)' instead.")
-    return isinstance(x, AffineScheme)
 
 
 class AffineScheme(UniqueRepresentation, Scheme):
@@ -1013,7 +964,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         if isinstance(x, self.element_class):
             if x.parent() is self:
                 return x
-            elif x.parent() == self:
+            if x.parent() == self:
                 return self.element_class(self, x.prime_ideal())
         elif isinstance(x, Ideal_generic) and x.ring() is self.coordinate_ring():
             return self.element_class(self, x)
@@ -1052,7 +1003,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         return self.__R
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` if ``self`` is Noetherian, ``False`` otherwise.
 

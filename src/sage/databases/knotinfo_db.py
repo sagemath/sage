@@ -3,8 +3,8 @@ KnotInfo database
 
 This module contains the class :class:`KnotInfoDataBase` and auxiliary classes
 for it, which serves as an interface to the lists of named knots and links provided
-at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-`LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
+at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
+`LinkInfo <https://link-info-repo.onrender.com/>`__.
 
 To use the database, you need to install the optional :ref:`database_knotinfo
 <spkg_database_knotinfo>` package by the Sage command ::
@@ -48,8 +48,8 @@ columns_black_list = ['homfly_polynomial_old']
 class KnotInfoColumnTypes(Enum):
     r"""
     Enum class to specify if a column from the table of knots and links provided
-    at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.  is used for knots only,
+    at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
+    `LinkInfo <https://link-info-repo.onrender.com/>`__.  is used for knots only,
     links only or both.
 
     EXAMPLES::
@@ -68,8 +68,8 @@ class KnotInfoColumnTypes(Enum):
 class KnotInfoColumns(Enum):
     r"""
     Enum class to select a column from the table of knots and links provided
-    at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
+    at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
+    `LinkInfo <https://link-info-repo.onrender.com/>`__.
 
     EXAMPLES::
 
@@ -83,27 +83,30 @@ class KnotInfoColumns(Enum):
 
         sage: def only_links(c):
         ....:     return c.column_type() == c.types.OnlyLinks
-        sage: [c.column_name() for c in cols if only_links(c)]  # optional - database_knotinfo
-        ['Name - Unoriented',
-         'Orientation',
-         'Unoriented Rank',
-         'PD Notation (vector)',
-         'PD Notation (KnotTheory)',
-         'Braid Notation',
-         'Quasipositive Braid',
-         'Multivariable Alexander Polynomial',
-         'HOMFLYPT Polynomial',
-         'Khovanov Polynomial',
-         'Unoriented',
-         'Arc Notation',
-         'Linking Matrix',
-         'Rolfsen Name',
-         'Components',
-         'DT code',
-         'Splitting Number',
-         'Nullity',
-         'Unlinking Number',
-         'Weak Splitting Number']
+        sage: {c.name: c.column_name() for c in cols if only_links(c)}  # optional - database_knotinfo
+        {'arc_notation': 'Arc Notation',
+         'braid_notation_old': 'Braid Notation',
+         'components': 'Components',
+         'diagram': 'Diagram',
+         'dt_code': 'DT code',
+         'homflypt_polynomial': 'HOMFLYPT Polynomial',
+         'khovanov_polynomial': 'Khovanov Polynomial',
+         'knot_atlas': 'Knot Atlas',
+         'knot_atlas_anon': '',
+         'linking_matrix': 'Linking Matrix',
+         'multivariable_alexander': 'Multivariable Alexander Polynomial',
+         'name_unoriented': 'Name - Unoriented',
+         'nullity': 'Nullity',
+         'orientation': 'Orientation',
+         'pd_notation_math': 'PD Notation (KnotTheory)',
+         'pd_notation_vector': 'PD Notation (vector)',
+         'quasi_positive_braid': 'Quasipositive Braid',
+         'rolfsen_name': 'Rolfsen Name',
+         'splitting_number': 'Splitting Number',
+         'unlinking_number': 'Unlinking Number',
+         'unoriented': 'Unoriented',
+         'unoriented_name_rank': 'Unoriented Rank',
+         'weak_splitting_number': 'Weak Splitting Number'}
     """
     @property
     def types(self):
@@ -199,12 +202,11 @@ class KnotInfoFilename(Enum):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.knots.url()
-            'https://knotinfo.math.indiana.edu/'
+            'https://knotinfo.org/'
         """
         if self == KnotInfoFilename.knots:
             return self.value[0]
-        else:
-            return self.value[0]
+        return self.value[0]
 
     def excel(self):
         r"""
@@ -219,8 +221,7 @@ class KnotInfoFilename(Enum):
         """
         if self == KnotInfoFilename.knots:
             return '%s.xls' % (self.value[1])
-        else:
-            return '%s.xlsx' % (self.value[1])
+        return '%s.xlsx' % (self.value[1])
 
     def csv(self):
         r"""
@@ -292,8 +293,7 @@ class KnotInfoFilename(Enum):
         """
         if column.column_type() == column.types.OnlyLinks:
             return 'linkinfo_%s' % (column.name)
-        else:
-            return 'knotinfo_%s' % (column.name)
+        return 'knotinfo_%s' % (column.name)
 
     def description_url(self, column):
         r"""
@@ -304,7 +304,7 @@ class KnotInfoFilename(Enum):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.knots.description_url(ki_db.columns().braid_notation)
-            'https://knotinfo.math.indiana.edu/descriptions/braid_notation.html'
+            'https://knotinfo.org/descriptions/braid_notation.html'
         """
         return '%sdescriptions/%s.html' % (self.url(), column.name)
 
@@ -317,17 +317,16 @@ class KnotInfoFilename(Enum):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.knots.diagram_url('3_1-50.png')
-            'https://knotinfo.math.indiana.edu/diagram_display.php?3_1-50.png'
+            'https://knotinfo.org/diagram_display.php?3_1-50.png'
             sage: ki_db.filename.knots.diagram_url('3_1', single=True)
-            'https://knotinfo.math.indiana.edu/diagrams/3_1'
+            'https://knotinfo.org/diagrams/3_1'
         """
         if single:
             return '%sdiagrams/%s' % (self.url(), fname)
-        else:
-            return '%sdiagram_display.php?%s' % (self.url(), fname)
+        return '%sdiagram_display.php?%s' % (self.url(), fname)
 
-    knots = ['https://knotinfo.math.indiana.edu/', 'knotinfo_data_complete']
-    links = ['https://linkinfo.sitehost.iu.edu/',  'linkinfo_data_complete']
+    knots = ['https://knotinfo.org/', 'knotinfo_data_complete']
+    links = ['https://link-info-repo.onrender.com/', 'linkinfo_data_complete']
 
 
 #----------------------------------------------------------------------------------------------------------------------------
@@ -347,7 +346,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         sage: from sage.databases.knotinfo_db import KnotInfoDataBase
         sage: ki_db = KnotInfoDataBase()
         sage: ki_db.filename.knots
-        <KnotInfoFilename.knots: ['https://knotinfo.math.indiana.edu/',
+        <KnotInfoFilename.knots: ['https://knotinfo.org/',
                                   'knotinfo_data_complete']>
     """
 
@@ -362,7 +361,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.links
-            <KnotInfoFilename.links: ['https://linkinfo.sitehost.iu.edu/',
+            <KnotInfoFilename.links: ['https://link-info-repo.onrender.com/',
                                       'linkinfo_data_complete']>
         """
         # some constants
@@ -883,15 +882,15 @@ data_demo_sample = {
     dc.crossing_number: ['0', '3', '4', '5', '5', '6', '6', '6', '7', '7', '2', '2', '4', '4', '5', '5', '6', '6', '6', '6', '6'],
     dc.braid_notation: [
         '',
-        '{1,1,1}',
-        '{1,-2,1,-2}',
-        '{1,1,1,1,1}',
-        '{1,1,1,2,-1,2}',
-        '{1,1,2,-1,-3,2,-3}',
-        '{1,1,1,-2,1,-2}',
-        '{1,1,-2,1,-2,-2}',
-        '{1,1,1,1,1,1,1}',
-        '{1,1,1,2,-1,2,3,-2,3}',
+        '[1,1,1]',
+        '[1,-2,1,-2]',
+        '[1,1,1,1,1]',
+        '[1,1,1,2,-1,2]',
+        '[1,1,2,-1,-3,2,-3]',
+        '[1,1,1,-2,1,-2]',
+        '[1,1,-2,1,-2,-2]',
+        '[1,1,1,1,1,1,1]',
+        '[1,1,1,2,-1,2,3,-2,3]',
         '{2, {-1, -1}}',
         '{2, {1, 1}}',
         '{3, {-2, -2, -1, 2, -1}}',
@@ -1036,15 +1035,15 @@ data_demo_sample = {
     dc.cosmetic_crossing: ['', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     dc.homfly_polynomial: [
         '',
-        '(2*v^2-v^4)+v^2*z^2',
-        '(v^(-2)-1+v^2)-z^2',
-        '(3*v^4-2*v^6)+(4*v^4-v^6)*z^2+v^4*z^4',
-        '(v^2+v^4-v^6)+(v^2+v^4)*z^2',
-        '(v^(-2)-v^2+v^4)+(-1-v^2)*z^2',
-        '(2-2*v^2+v^4)+(1-3*v^2+v^4)*z^2-v^2*z^4',
-        '(-v^(-2)+3-v^2)+(-v^(-2)+3-v^2)*z^2+z^4',
-        '(4*v^6-3*v^8)+(10*v^6-4*v^8)*z^2+(6*v^6-v^8)*z^4+v^6*z^6',
-        '(v^2+v^6-v^8)+(v^2+v^4+v^6)*z^2'
+        '(2*v^2-v^4)+ v^2*z^2',
+        '(v^(-2)-1+ v^2)-z^2',
+        '(3*v^4-2*v^6)+ (4*v^4-v^6)*z^2+ v^4*z^4',
+        '(v^2+ v^4-v^6)+ (v^2+ v^4)*z^2',
+        '(v^(-2)-v^2+ v^4)+ (-1-v^2)*z^2',
+        '(2-2*v^2+ v^4)+ (1-3*v^2+ v^4)*z^2-v^2*z^4',
+        '(-v^(-2)+ 3-v^2)+ (-v^(-2)+ 3-v^2)*z^2+ z^4',
+        '(4*v^6-3*v^8)+ (10*v^6-4*v^8)*z^2+ (6*v^6-v^8)*z^4+ v^6*z^6',
+        '(v^2+ v^6-v^8)+ (v^2+ v^4+ v^6)*z^2'
         ],
     dc.homflypt_polynomial: [
         '1/(v^3*z)-1/(v*z)-z/v',

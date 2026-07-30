@@ -296,18 +296,18 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         #print(printer)
 
         if self.prime_pow.e == 1:
-            for j from 0 <= j < self.prime_pow.prec_cap:
+            for j in range(self.prime_pow.prec_cap):
                 ans.append([])
-            for i from 0 <= i < self.prime_pow.deg:
+            for i in range(self.prime_pow.deg):
                 ZZ_coeff.x = ZZ_p_rep(ZZ_pX_coeff(shifter, i))
                 ZZ_to_mpz(coeff.value, &ZZ_coeff.x)
                 L = printer.base_p_list(coeff, pos)
-                for j from 0 <= j < prec:
+                for j in range(prec):
                     if j < len(L):
                         ans[j].append(L[j])
                     else:
                         ans[j].append(zero)
-            for j from 0 <= j < prec:
+            for j in range(prec):
                 while ans[j]:
                     if ans[j][-1] == 0:
                         ans[j].pop()
@@ -322,7 +322,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
                 # It's important that one doesn't normalize in between shifting (for capped relative elements):
                 # _const_term doesn't normalize and thus we pick up the zeros
                 # since we're throwing away leading zeros, it doesn't matter if we start normalized or not.
-                for j from 0 <= j < self.prime_pow.e:
+                for j in range(self.prime_pow.e):
                     list_elt = PY_NEW(Integer)
                     if i + j == prec:
                         break
@@ -457,7 +457,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron
             sage: R = ZpCA(5,5)
             sage: S.<x> = ZZ[]
             sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
@@ -549,7 +548,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         Check that :issue:`13647` has been fixed::
 
-            sage: # needs sage.libs.flint
             sage: K = ZpCA(3)
             sage: R.<u> = K[]
             sage: L.<u> = K.extension(u^2 + 1)
@@ -655,7 +653,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
         pshift_z = ntl_ZZ.__new__(ntl_ZZ)
         pshift_z.x = elt.prime_pow.pow_ZZ_tmp(-mpz_get_si((<Integer>min_val).value))[0]
         pshift_m = elt.prime_pow.pow_Integer(-mpz_get_si((<Integer>min_val).value))
-        for i from 0 <= i < len(L):
+        for i in range(len(L)):
             if isinstance(L[i], ntl_ZZ):
                 L[i] = ntl_ZZ_p(L[i]*pshift_z, ctx)
             elif isinstance(L[i], (Integer, Rational, int)):
@@ -670,7 +668,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
         pshift_z = ntl_ZZ.__new__(ntl_ZZ)
         pshift_z.x = elt.prime_pow.pow_ZZ_tmp(mpz_get_ui((<Integer>min_val).value))[0]
         pshift_m = elt.prime_pow.pow_Integer(mpz_get_ui((<Integer>min_val).value))
-        for i from 0 <= i < len(L):
+        for i in range(len(L)):
             if isinstance(L[i], ntl_ZZ):
                 ZZ_div(tmp, (<ntl_ZZ>L[i]).x, pshift_z.x)
                 py_tmp = ntl_ZZ.__new__(ntl_ZZ)
@@ -688,7 +686,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
                 py_tmp.x = tmp
                 L[i] = ntl_ZZ_p(py_tmp, ctx)
     else:
-        for i from 0 <= i < len(L):
+        for i in range(len(L)):
             if isinstance(L[i], (ntl_ZZ, Integer, Rational, int)):
                 L[i] = ntl_ZZ_p(L[i], ctx)
             elif (isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime)) or isinstance(L[i], IntegerMod_abstract) or (L[i].modulus_context() is not ctx):
@@ -754,7 +752,7 @@ cdef find_val_aprec(PowComputer_ext pp, L):
     min_val = big
     min_aprec = big
     total_type = two # we begin by defaulting to the list elements being integers
-    for i from 0 <= i < len(L):
+    for i in range(len(L)):
         cur_val, cur_aprec, cur_type = get_val_prec(pp, L[i])
         #return "a","b","c"
         # proc_type == 0 indicates something with finite precision

@@ -191,15 +191,7 @@ class GolayCode(AbstractLinearCode):
             sage: C.minimum_distance()
             8
         """
-        n = self.length()
-        if n == 24:
-            return 8
-        elif n == 23:
-            return 7
-        elif n == 12:
-            return 6
-        elif n == 11:
-            return 5
+        return {24: 8, 23: 7, 12: 6, 11: 5}[self.length()]
 
     def covering_radius(self):
         r"""
@@ -227,15 +219,7 @@ class GolayCode(AbstractLinearCode):
             sage: C.covering_radius()
             2
         """
-        n = self.length()
-        if n == 23:
-            return 3
-        elif n == 24:
-            return 4
-        elif n == 11:
-            return 2
-        elif n == 12:
-            return 3
+        return {23: 3, 24: 4, 11: 2, 12: 3}[self.length()]
 
     def weight_distribution(self):
         r"""

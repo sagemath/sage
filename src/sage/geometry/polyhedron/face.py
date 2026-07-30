@@ -405,8 +405,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if index is None:
             return self._ambient_Hrepresentation
-        else:
-            return self._ambient_Hrepresentation[index]
+        return self._ambient_Hrepresentation[index]
 
     def ambient_Vrepresentation(self, index=None):
         r"""
@@ -445,8 +444,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if index is None:
             return self._ambient_Vrepresentation
-        else:
-            return self._ambient_Vrepresentation[index]
+        return self._ambient_Vrepresentation[index]
 
     def n_ambient_Hrepresentation(self):
         """
@@ -583,13 +581,12 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if self.n_ambient_Vrepresentation() == 0:
             return -1
-        else:
-            origin = self.vertices()[0].vector()
-            v_list = [vector(v) - origin for v in
-                     self.ambient_Vrepresentation() if v.is_vertex()]
-            v_list += [vector(v) for v in self.ambient_Vrepresentation()
-                      if v.is_ray() or v.is_line()]
-            return matrix(v_list).rank()
+        origin = self.vertices()[0].vector()
+        v_list = [vector(v) - origin for v in
+                 self.ambient_Vrepresentation() if v.is_vertex()]
+        v_list += [vector(v) for v in self.ambient_Vrepresentation()
+                  if v.is_ray() or v.is_line()]
+        return matrix(v_list).rank()
 
     def _repr_(self):
         r"""
@@ -682,7 +679,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -699,7 +696,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.as_polyhedron().is_relatively_open()
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
@@ -797,8 +794,7 @@ class PolyhedronFace(ConvexSet_closed):
         except TypeError:  # point not iterable or no common ring for elements
             if len(point) > 0:
                 return False
-            else:
-                p = vector(self.polyhedron().base_ring(), [])
+            p = vector(self.polyhedron().base_ring(), [])
 
         if len(p) != self.ambient_dim():
             return False

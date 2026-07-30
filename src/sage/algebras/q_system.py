@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Q-Systems
 
@@ -180,7 +179,7 @@ class QSystem(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, basis,
                                          prefix='Q', category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -200,7 +199,7 @@ class QSystem(CombinatorialFreeModule):
             res += "Twisted "
         return "{}Q-system of type {} over {}".format(res, self._cartan_type, self.base_ring())
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -221,7 +220,7 @@ class QSystem(CombinatorialFreeModule):
             return ret
         return '*'.join(repr_gen(x) for x in t._sorted_items())
 
-    def _latex_term(self, t):
+    def _latex_term(self, t) -> str:
         r"""
         Return a `\LaTeX` representation of the basis element indexed
         by ``t``.
@@ -563,10 +562,11 @@ class QSystem(CombinatorialFreeModule):
                  + Q^(2)[1]^2*Q^(4)[1] - Q^(2)[1]*Q^(3)[1]^2
             """
             return self.parent().sum_of_terms((tl*tr, cl*cr)
-                                              for tl,cl in self for tr,cr in x)
+                                              for tl, cl in self
+                                              for tr, cr in x)
 
 
-def is_tamely_laced(ct):
+def is_tamely_laced(ct) -> bool:
     r"""
     Check if the Cartan type ``ct`` is tamely-laced.
 

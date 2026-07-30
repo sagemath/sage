@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of msolve
 
@@ -54,7 +53,8 @@ class msolve(Executable):
             sage: msolve().is_functional()  # optional - msolve
             FeatureTestResult('msolve', True)
         """
-        msolve_out = subprocess.run(["msolve", "-h"], capture_output=True)
+        msolve_out = subprocess.run(["msolve", "-h"], capture_output=True,
+                                    check=False)
 
 #        if msolve_out.returncode != 0:
 #            return FeatureTestResult(self, False, reason="msolve -h returned "

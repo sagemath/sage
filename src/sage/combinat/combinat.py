@@ -122,21 +122,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
+
 
 from sage.arith.misc import bernoulli, factorial
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
+from sage.combinat.combinat_cython import _stirling_number2
+from sage.misc.cachefunc import cached_function
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.misc_c import prod
-from sage.misc.cachefunc import cached_function
-from sage.structure.sage_object import SageObject
-from sage.misc.lazy_import import lazy_import
-from .combinat_cython import _stirling_number2
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.rings.rational_field import QQ
 from sage.structure.element import Element
+from sage.structure.sage_object import SageObject
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
 lazy_import('sage.libs.pari', 'pari')
@@ -339,7 +343,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
     if n < 0:
         raise ArithmeticError('Bell numbers not defined for negative indices')
     if algorithm == 'mpmath':
-        from sage.libs.mpmath.all import bell, mp, mag
+        from mpmath import bell, mag, mp
         old_prec = mp.dps
         if 'prec' in options:
             mp.dps = options['prec']
@@ -355,15 +359,15 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
             return ret
         return ZZ(int(ret_mp))
 
-    elif algorithm == 'flint':
+    if algorithm == 'flint':
         import sage.libs.flint.arith_sage
         return sage.libs.flint.arith_sage.bell_number(n)
 
-    elif algorithm == 'gap':
+    if algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
         return libgap.Bell(n).sage()
 
-    elif algorithm == 'dobinski':
+    if algorithm == 'dobinski':
         # Hardcode small cases. We only proved the algorithm below
         # for n >= 5, but it turns out that n = 4 also works.
         if n < 4:
@@ -520,11 +524,10 @@ def euler_number(n, algorithm='flint') -> Integer:
         raise ValueError("n (=%s) must be a nonnegative integer" % n)
     if algorithm == 'maxima':
         return ZZ(maxima.euler(n))  # type:ignore
-    elif algorithm == 'flint':
+    if algorithm == 'flint':
         import sage.libs.flint.arith_sage
         return sage.libs.flint.arith_sage.euler_number(n)
-    else:
-        raise ValueError("algorithm must be 'flint' or 'maxima'")
+    raise ValueError("algorithm must be 'flint' or 'maxima'")
 
 
 @cached_function(key=lambda n, k, a: (n, k))
@@ -558,6 +561,8 @@ def eulerian_number(n, k, algorithm='recursive') -> Integer:
         [0, 1, 4, 1, 0]
     """
     n = ZZ(n)
+    if n == 0:
+        return ZZ.one() if k == 0 else ZZ.zero()
     if k < 0 or k > n - 1:
         return ZZ.zero()
     if k == 0 or k == n - 1:
@@ -610,13 +615,13 @@ def eulerian_polynomial(n, algorithm='derivative'):
     R = PolynomialRing(ZZ, 't')
     if n < 0:
         return R.zero()
-    if n == 1:
+    if n <= 1:
         return R.one()
     t = R.gen()
     if algorithm == 'derivative':
         A = eulerian_polynomial(n - 1, algorithm=algorithm)
         return t * (1 - t) * A.derivative() + (1 + (n - 1) * t) * A
-    elif algorithm == 'coeffs':
+    if algorithm == 'coeffs':
         return R([eulerian_number(n, k, "formula") for k in range(n)])
 
 
@@ -670,11 +675,10 @@ def fibonacci(n, algorithm='pari') -> Integer:
     n = ZZ(n)
     if algorithm == 'pari':
         return ZZ(pari(n).fibonacci())
-    elif algorithm == 'gap':
+    if algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
         return libgap.Fibonacci(n).sage()
-    else:
-        raise ValueError("no algorithm {}".format(algorithm))
+    raise ValueError("no algorithm {}".format(algorithm))
 
 
 def lucas_number1(n, P, Q):
@@ -1239,8 +1243,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list == other._list
-        else:
-            return self._list == other
+        return self._list == other
 
     def __lt__(self, other):
         """
@@ -1271,8 +1274,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list < other._list
-        else:
-            return self._list < other
+        return self._list < other
 
     def __le__(self, other):
         """
@@ -1289,8 +1291,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list <= other._list
-        else:
-            return self._list <= other
+        return self._list <= other
 
     def __gt__(self, other):
         """
@@ -1307,8 +1308,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list > other._list
-        else:
-            return self._list > other
+        return self._list > other
 
     def __ge__(self, other):
         """
@@ -1325,8 +1325,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list >= other._list
-        else:
-            return self._list >= other
+        return self._list >= other
 
     def __ne__(self, other):
         """
@@ -1343,8 +1342,7 @@ class CombinatorialObject(SageObject):
         """
         if isinstance(other, CombinatorialObject):
             return self._list != other._list
-        else:
-            return self._list != other
+        return self._list != other
 
     def __add__(self, other):
         """
@@ -2052,8 +2050,8 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
     - [Bel1927]_
     - [Com1974]_
     """
-    from sage.combinat.partition import Partitions
     from sage.arith.misc import multinomial
+    from sage.combinat.partition import Partitions
     if k is None:
         partitions = Partitions(n)
         # We set k = 1 to use the correct ring

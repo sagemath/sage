@@ -29,7 +29,7 @@ AUTHORS:
 import os
 
 from sage.misc.persist import load
-from sage.env import SAGE_SHARE
+from sage.env import sage_data_paths
 
 
 def zeta_zeros():
@@ -54,6 +54,9 @@ def zeta_zeros():
         2001052
     """
     from sage.misc.verbose import verbose
-    sobj = os.path.join(SAGE_SHARE, 'odlyzko', 'zeros.sobj')
-    verbose("Loading Odlyzko database from " + sobj)
-    return load(sobj)
+    for path in sage_data_paths('odlyzko'):
+        sobj = os.path.join(path, 'zeros.sobj')
+        if os.path.exists(sobj):
+            verbose("Loading Odlyzko database from " + sobj)
+            return load(sobj)
+    raise FileNotFoundError('Could not find the odlyzko database')

@@ -17,7 +17,6 @@ Quiver Paths
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.data_structures.bounded_integer_sequences cimport *
@@ -767,7 +766,6 @@ cdef class QuiverPath(MonoidElement):
         return out
 
 
-@cython.binding(True)
 def NewQuiverPath(Q, start, end, biseq_data):
     """
     Return a new quiver path for given defining data.

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Realizations Covariant Functorial Construction
 
@@ -102,8 +101,7 @@ def Realizations(self):
     """
     if isinstance(self, Category):
         return RealizationsCategory.category_of(self)
-    else:
-        return getattr(self.__class__, "Realizations")(self)
+    return getattr(self.__class__, "Realizations")(self)
 
 
 Category.Realizations = Realizations

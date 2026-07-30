@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Unique factorization domains
 """
@@ -61,7 +60,7 @@ class UniqueFactorizationDomains(Category_singleton):
         """
         return None
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -263,9 +262,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: Integer(-100).radical()
                 10
                 sage: Integer(0).radical()
-                Traceback (most recent call last):
-                ...
-                ArithmeticError: radical of 0 is not defined
+                0
 
             The next example shows how to compute the radical of a number,
             assuming no prime > 100000 has exponent > 1 in the factorization::
@@ -282,7 +279,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 10
             """
             if self.is_zero():
-                raise ArithmeticError("radical of 0 is not defined")
+                return self
             try:
                 decomp = self.squarefree_decomposition()
             except AttributeError:

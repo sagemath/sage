@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Specific category classes
 
@@ -324,8 +323,7 @@ class Category_over_base(CategoryWithParameters):
 #         from sage.categories.homset import Homset, HomsetWithBase
 #         if X._base is not X and X._base is not None: # does this ever fail?
 #             return HomsetWithBase(X, Y, self)
-#         else:
-#             return Homset(X, Y, self)
+#         return Homset(X, Y, self)
 
 #############################################################
 # Category of objects over some base ring
@@ -333,7 +331,7 @@ class Category_over_base(CategoryWithParameters):
 
 
 class AbelianCategory(Category):
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` as ``self`` is an abelian category.
 
@@ -492,7 +490,7 @@ class Category_over_base_ring(Category_over_base):
             return C.base() in base_ring
         return False
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether ``x`` is an object of this category.
 
@@ -523,10 +521,8 @@ class Category_over_base_ring(Category_over_base):
                issubclass(x.category().parent_class, self.parent_class):
                 if isinstance(self.base(), Category):
                     return True
-                else:
-                    return x.base_ring() is self.base_ring()
-            else:
-                return super().__contains__(x)
+                return x.base_ring() is self.base_ring()
+            return super().__contains__(x)
         except AttributeError:
             return False
 
@@ -606,7 +602,7 @@ class Category_ideal(Category_in_ambient):
         """
         return self.ambient()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

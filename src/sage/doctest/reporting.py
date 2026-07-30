@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Reporting doctest results
 
@@ -41,10 +40,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import os
 import re
 import sys
 from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
-from sys import stdout
+from sys import argv, stdout
 
 from sage.doctest.external import available_software
 from sage.doctest.sources import DictAsObject
@@ -149,15 +149,6 @@ class DocTestReporter(SageObject):
             sage: DTR.were_doctests_with_optional_tag_run('nice_unavailable_package')
             False
 
-        When latex is available, doctests marked with optional tag
-        ``latex`` are run by default since :issue:`32174`::
-
-            sage: # needs SAGE_SRC
-            sage: filename = os.path.join(SAGE_SRC, 'sage', 'misc', 'latex.py')
-            sage: DC = DocTestController(DocTestDefaults(), [filename])
-            sage: DTR = DocTestReporter(DC)
-            sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
-            True
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
@@ -185,17 +176,17 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: print(DTR.report_head(FDS))
-            sage -t .../sage/doctest/reporting.py
+            .../sage/doctest/reporting.py
 
         The same with various options::
 
             sage: DD.long = True
             sage: print(DTR.report_head(FDS))
-            sage -t --long .../sage/doctest/reporting.py
+            ... --long .../sage/doctest/reporting.py
             sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
-            sage -t --long .../sage/doctest/reporting.py  # Failed by self-sabotage
+            ... --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
-        cmd = "sage -t"
+        cmd = os.path.relpath(argv[0]).replace("-runtests", " -t") if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
         if self.controller.options.long:
             cmd += " --long"
 
@@ -222,7 +213,7 @@ class DocTestReporter(SageObject):
                 cmd += f" [failed in baseline: {failed}]"
         return cmd
 
-    def _log_failure(self, source, fail_msg, event, output=None):
+    def _log_failure(self, source, fail_msg, event, output=None, *, process_tree_before_kill=None):
         r"""
         Report on the result of a failed doctest run.
 
@@ -235,6 +226,8 @@ class DocTestReporter(SageObject):
         - ``event`` -- string
 
         - ``output`` -- (optional) string
+
+        - ``process_tree_before_kill`` -- (optional) string
 
         EXAMPLES::
 
@@ -254,16 +247,20 @@ class DocTestReporter(SageObject):
             Tests run before process (pid=1234) timed out:
             Output so far...
             **********************************************************************
+
+        TESTS:
+
+        Test GitHub output format (used for GitHub Actions annotations)::
+
+            sage: DTR.controller.options.format = 'github'
+            sage: DTR._log_failure(FDS, "Timed out", "process (pid=1234) timed out", "Output so far...")
+            ::error title=Timed out,file=.../sage/doctest/reporting.py::Output so far...
         """
         log = self.controller.log
         format = self.controller.options.format
+        stars = "*" * 70
         if format == 'sage':
-            stars = "*" * 70
             log(f"    {fail_msg}\n{stars}\n")
-            if output:
-                log(f"Tests run before {event}:")
-                log(output)
-                log(stars)
         elif format == 'github':
             # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
             command = f'::error title={fail_msg}'
@@ -284,8 +281,18 @@ class DocTestReporter(SageObject):
             log(command)
         else:
             raise ValueError(f'unknown format option: {format}')
+        # we log the tests ran even in github mode. The last test information is redundant since it's included
+        # in the {lineno} above, but the printed outputs of previously ran tests are not
+        if output:
+            log(f"Tests run before {event}:")
+            log(output)
+            log(stars)
+        if process_tree_before_kill:
+            log("Process tree before kill:")
+            log(process_tree_before_kill)
+            log(stars)
 
-    def report(self, source, timeout, return_code, results, output, pid=None):
+    def report(self, source, timeout, return_code, results, output, pid=None, *, process_tree_before_kill=None):
         """
         Report on the result of running doctests on a given source.
 
@@ -479,7 +486,7 @@ class DocTestReporter(SageObject):
             stats = self.stats
             basename = source.basename
             baseline = self.controller.source_baseline(source)
-            cmd = self.report_head(source)
+            self.report_head(source)
             try:
                 ntests, result_dict = results
             except (TypeError, ValueError):
@@ -499,7 +506,7 @@ class DocTestReporter(SageObject):
                         fail_msg += " (and interrupt failed)"
                     else:
                         fail_msg += " (with %s after interrupt)" % signal_name(sig)
-                self._log_failure(source, fail_msg, f"{process_name} timed out", output)
+                self._log_failure(source, fail_msg, f"{process_name} timed out", output, process_tree_before_kill=process_tree_before_kill)
                 postscript['lines'].append(self.report_head(source, fail_msg))
                 stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
                 if not baseline.get('failed', False):
@@ -695,9 +702,9 @@ class DocTestReporter(SageObject):
             sage: DC.sources = [None] * 4 # to fool the finalize method
             sage: DTR.finalize()
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds
                 cpu time: 0.0 seconds
@@ -710,9 +717,9 @@ class DocTestReporter(SageObject):
             sage: DTR.finalize()
             <BLANKLINE>
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             Doctests interrupted: 4/6 files tested
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds

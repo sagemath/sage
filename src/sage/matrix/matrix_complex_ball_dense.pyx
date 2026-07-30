@@ -245,6 +245,13 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             100 x 0 dense matrix over Complex ball field with 53 bits
             of precision (use the '.str()' method to see the entries)
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``acb_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef ComplexBall z
         for t in ma.iter(coerce, True):

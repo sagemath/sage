@@ -11,7 +11,7 @@ AUTHORS:
 - Franco Saliola
 - Chris Berg
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Jason Bandlow <jbandlow@gmail.com>,
 #                     2012 Franco Saliola <saliola@gmail.com>,
 #
@@ -24,8 +24,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+#  ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.realizations import Category_realization_of_parent
@@ -116,13 +116,15 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 This could possibly be shared with Sym, FQSym, and
                 other algebras with bases indexed by list-like objects
             """
-            if isinstance(c, Composition):
-                assert len(rest) == 0
-            else:
-                if len(rest) > 0 or isinstance(c, (int, Integer)):
-                    c = self._indices([c] + list(rest))
+            if isinstance(c, (int, Integer)):
+                if c:
+                    c = self._indices([c] + [e for e in rest if e])
                 else:
-                    c = self._indices(list(c))
+                    c = self._indices([e for e in rest if e])
+            else:
+                assert not rest
+                if not isinstance(c, Composition):
+                    c = self._indices([e for e in c if e])
             return self.monomial(c)
 
         # could go to Algebras(...).Graded().Connected() or Modules(...).Graded().Connected()
@@ -473,8 +475,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]]
                                 for (IJ, coeff) in x.coproduct()
                                 if IJ[1-v] in y.support())
-            else:
-                return self._skew_by_coercion(x, y, side=side)
+            return self._skew_by_coercion(x, y, side=side)
 
         def _skew_by_coercion(self, x, y, side='left'):
             r"""
@@ -576,8 +577,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 x = self(x)
                 y = self.dual()(y)
                 return self.base_ring().sum(coeff * y[I] for (I, coeff) in x)
-            else:
-                return self.duality_pairing_by_coercion(x, y)
+            return self.duality_pairing_by_coercion(x, y)
 
         def duality_pairing_by_coercion(self, x, y):
             r"""
@@ -739,8 +739,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             """
             if I:
                 return self.base_ring().zero()
-            else:
-                return self.base_ring().one()
+            return self.base_ring().one()
 
         def degree_negation(self, element):
             r"""
@@ -949,7 +948,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             EXAMPLES::
 
                 sage: S = NonCommutativeSymmetricFunctions(QQ).S()
-                sage: (x, y) = (S[2], S[3])
+                sage: x, y = S[2], S[3]
                 sage: x.degree()
                 2
                 sage: (x^3 + 4*y^2).degree()
@@ -960,7 +959,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             ::
 
                 sage: F = QuasiSymmetricFunctions(QQ).F()
-                sage: (x, y) = (F[2], F[3])
+                sage: x, y = F[2], F[3]
                 sage: x.degree()
                 2
                 sage: (x^3 + 4*y^2).degree()
@@ -1241,8 +1240,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                                                      position=0,
                                                      codomain=self),
                                 position=1)
-            else:
-                return self.internal_product_by_coercion
+            return self.internal_product_by_coercion
 
         itensor = internal_product
         kronecker_product = internal_product

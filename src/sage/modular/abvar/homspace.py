@@ -155,6 +155,15 @@ of T in its saturation, which is 1 in this case.
     sage: T.index_in_saturation()
     1
 
+TESTS::
+
+    sage: J = J0(37) ; J.Hom(J)(matrix(ZZ,4,[5..20]))
+    Abelian variety endomorphism of Abelian variety J0(37) of dimension 2
+    sage: K = J0(11) * J0(11) ; J.Hom(K)(matrix(ZZ,4,[5..20]))
+    Abelian variety morphism:
+      From: Abelian variety J0(37) of dimension 2
+      To:   Abelian variety J0(11) x J0(11) of dimension 2
+
 AUTHORS:
 
 - William Stein (2007-03)
@@ -176,7 +185,7 @@ AUTHORS:
 from copy import copy
 
 from sage.categories.homset import HomsetWithBase
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
@@ -344,7 +353,7 @@ class Homspace(HomsetWithBase):
         if isinstance(M, morphism.Morphism):
             if M.parent() is self:
                 return M
-            elif M.domain() == self.domain() and M.codomain() == self.codomain():
+            if M.domain() == self.domain() and M.codomain() == self.codomain():
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
@@ -362,24 +371,6 @@ class Homspace(HomsetWithBase):
         else:
             raise TypeError("can only coerce in matrices or morphisms")
         return self.element_class(self, M, side)
-
-    def _coerce_impl(self, x):
-        """
-        Coerce x into self, if possible.
-
-        EXAMPLES::
-
-            sage: J = J0(37) ; J.Hom(J)._coerce_impl(matrix(ZZ,4,[5..20]))
-            Abelian variety endomorphism of Abelian variety J0(37) of dimension 2
-            sage: K = J0(11) * J0(11) ; J.Hom(K)._coerce_impl(matrix(ZZ,4,[5..20]))
-            Abelian variety morphism:
-              From: Abelian variety J0(37) of dimension 2
-              To:   Abelian variety J0(11) x J0(11) of dimension 2
-        """
-        if self.matrix_space().has_coerce_map_from(parent(x)):
-            return self(x)
-        else:
-            return HomsetWithBase._coerce_impl(self, x)
 
     def _repr_(self):
         """
@@ -442,10 +433,9 @@ class Homspace(HomsetWithBase):
 
         if isinstance(g, morphism.Morphism):
             return g.matrix()
-        elif hasattr(g, 'list'):
+        if hasattr(g, 'list'):
             return self.matrix_space()(g.list())
-        else:
-            return self.matrix_space()(g)
+        return self.matrix_space()(g)
 
     def free_module(self):
         r"""
@@ -818,8 +808,7 @@ class EndomorphismSubring(Homspace):
         """
         if self._is_full_ring:
             return "Endomorphism ring of %s" % self._A
-        else:
-            return "Subring of endomorphism ring of %s" % self._A
+        return "Subring of endomorphism ring of %s" % self._A
 
     def abelian_variety(self):
         """

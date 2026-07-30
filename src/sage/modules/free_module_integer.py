@@ -37,6 +37,10 @@ from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
 from sage.modules.free_module_element import vector
+from math import prod
+from sage.functions.all import gamma
+from sage.symbolic.constants import pi, e
+
 
 try:
     from sage.rings.number_field.number_field_element import OrderElement_absolute
@@ -172,6 +176,18 @@ def IntegerLattice(basis, lll_reduce=True):
         [      0       0       0       0       0 1048576       0       0]
         [      0       0       0       0       0       0 1048576       0]
         [      0       0       0       0       0       0       0 1048576]
+
+    We construct a large lattice, this lattice will not be constructible
+    if echelon form was also being computed::
+
+        sage: n = 500
+        sage: q = 65537
+        sage: M = matrix.random(ZZ, n, x=0, y=q+1).augment(q*matrix.identity(n))
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: L = IntegerLattice(M, lll_reduce=False); L
+        Free module of degree 1000 and rank 500 over Integer Ring
+        User basis matrix:
+        500 x 1000 dense matrix over Integer Ring
     """
 
     if isinstance(basis, OrderElement_absolute):
@@ -489,8 +505,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         if self.rank() == self.degree():
             return abs(self.reduced_basis.determinant())
-        else:
-            return self.gram_matrix().determinant().sqrt()
+        return self.gram_matrix().determinant().sqrt()
 
     @cached_method
     def discriminant(self):
@@ -529,7 +544,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     @cached_method
     def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
-        Return a shortest vector.
+        Return a shortest vector by solving the Shortest Vector Problem (SVP) exactly.
 
         INPUT:
 
@@ -550,22 +565,22 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=30, q=2^40, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector().norm().n()                                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector().norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
         """
         if algorithm == "pari":
             if self._basis_is_LLL_reduced:
@@ -575,7 +590,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
                 B = self.reduced_basis.LLL()
                 qf = B*B.transpose()
 
-            count, length, vectors = qf.__pari__().qfminim()
+            count, length, vectors = qf.__pari__().qfminim(m=1)
             v = vectors.sage().columns()[0]
             w = v*B
         elif algorithm == "fplll":
@@ -892,3 +907,89 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         Alias for :meth:`approximate_closest_vector`.
         """
         return self.approximate_closest_vector(*args, **kwargs)
+
+    def hadamard_ratio(self, use_reduced_basis=True):
+        r"""
+        Computes the normalized Hadamard ratio of the given basis.
+
+        The normalized Hadamard ratio of the basis `B = \left\{ v_1, v_2, \dots, v_n \right\}` is defined as
+
+        .. MATH::
+
+            \mathcal{H}(B) = \left( \dfrac{\det L}{\|v_1\| \|v_2\| \cdots \|v_n\|} \right)^{\frac{1}{n}}
+
+        The closer this ratio is to 1, the more orthogonal the basis is.
+
+        INPUT:
+
+        - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis for computing the ratio
+
+        OUTPUT: the ratio described above.
+
+        EXAMPLES::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
+            sage: L.hadamard_ratio()
+            4331^(1/8)*(1/4331)^(1/4)
+            sage: float(L.hadamard_ratio()) # rel tol 1e-13
+            0.351096481348176
+            sage: L.LLL()
+            [  1  -5   2  18]
+            [ -5  25 -10  11]
+            [-17 -16 -34  -3]
+            [-39  -7  23   5]
+            sage: float(L.hadamard_ratio()) # rel tol 1e-13
+            0.9933322263147489
+        """
+        if use_reduced_basis:
+            basis = self.reduced_basis
+        else:
+            basis = self.basis_matrix()
+
+        n = basis.nrows()
+        r = self.rank()
+        assert r == n
+
+        ratio = (self.discriminant().sqrt() / prod([v.norm() for v in basis]))**(1/r)
+        assert 0 < ratio <= 1
+        return ratio
+
+    def gaussian_heuristic(self, exact_form=False):
+        r"""
+        Computes the Gaussian expected shortest length, also known as the Gaussian
+        heuristic. This estimates the expected norm of the shortest non-zero vector
+        in the lattice. The heuristic is independent of the chosen basis.
+
+        INPUT:
+
+        - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
+          based on gamma function, instead of using stirling's approximation
+
+        OUTPUT: The Gaussian heuristic described above.
+
+        EXAMPLES::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]])
+            sage: L.gaussian_heuristic()
+            1030301^(1/4)*sqrt(2)*e^(-1/2)/sqrt(pi)
+            sage: float(L.gaussian_heuristic()) # rel tol 1e-13
+            15.418206247181422
+
+        For small `n`, the exact and approximate forms differ significantly::
+
+            sage: float(L.gaussian_heuristic(exact_form=True)) # rel tol 1e-13
+            21.375859827168494
+        """
+        basis = self.basis_matrix()
+
+        n = basis.nrows()
+        r = self.rank()
+        assert r == n
+
+        D = self.discriminant().sqrt()
+
+        if exact_form:
+            return (D * gamma(1 + (r/2)))**(1/r) / pi.sqrt()
+        return D**(1/r) * (r/(2*pi*e)).sqrt()

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Axioms
 
@@ -1658,6 +1657,7 @@ TESTS:
 
 import importlib
 import re
+
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
@@ -1678,7 +1678,8 @@ all_axioms += ("Flying", "Blue",
                "Differentiable", "Smooth", "Analytic", "AlmostComplex",
                "FinitelyGeneratedAsMagma",
                "WellGenerated",
-               "Facade", "Finite", "Infinite","Enumerated",
+               "Bounded",
+               "Facade", "Finite", "Infinite", "Enumerated",
                "Complete",
                "Nilpotent",
                "FiniteDimensional", "FinitelyPresented", "Connected",
@@ -1686,13 +1687,15 @@ all_axioms += ("Flying", "Blue",
                "WithBasis",
                "Irreducible",
                "Supercommutative", "Supercocommutative",
-               "Commutative", "Cocommutative", "Associative", "Inverse", "Unital", "Division", "NoZeroDivisors", "Cellular",
+               "Commutative", "Cocommutative", "Associative",
+               "Inverse", "Unital", "Division", "NoZeroDivisors", "Cellular",
                "AdditiveCommutative", "AdditiveAssociative", "AdditiveInverse", "AdditiveUnital",
-               "Distributive",
+               "Extremal", "Trim", "Semidistributive", "CongruenceUniform",
+               "ChainGraded", "Distributive", "Stone",
                "Endset",
                "Pointed",
-               "Stratified",
-              )
+               "Stratified"
+               )
 
 
 def uncamelcase(s, separator=" "):
@@ -2004,15 +2007,14 @@ class CategoryWithAxiom(Category):
         (base_category_class, axiom) = cls._base_category_class_and_axiom
         if len(args) == 1 and not options and isinstance(args[0], base_category_class):
             return super().__classcall__(cls, args[0])
-        else:
-            # The "obvious" idiom
-            ##   return cls(base_category_class(*args, **options))
-            # fails with ModulesWithBasis(QQ) as follows: The
-            # base_category_class is Modules, but Modules(QQ) is an instance
-            # of VectorSpaces and not of Modules. Hence,
-            # ModulesWithBasis.__classcall__ will not accept this instance as
-            # the first argument. Instead, we apply the axiom to the instance:
-            return base_category_class(*args, **options)._with_axiom(axiom)
+        # The "obvious" idiom
+        ##   return cls(base_category_class(*args, **options))
+        # fails with ModulesWithBasis(QQ) as follows: The
+        # base_category_class is Modules, but Modules(QQ) is an instance
+        # of VectorSpaces and not of Modules. Hence,
+        # ModulesWithBasis.__classcall__ will not accept this instance as
+        # the first argument. Instead, we apply the axiom to the instance:
+        return base_category_class(*args, **options)._with_axiom(axiom)
 
     @staticmethod
     def __classget__(cls, base_category, base_category_class):

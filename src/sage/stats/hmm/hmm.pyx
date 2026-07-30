@@ -1,4 +1,3 @@
-# sage.doctest: needs numpy sage.modules
 r"""
 Hidden Markov Models
 
@@ -148,11 +147,11 @@ cdef class HiddenMarkovModel:
             sage: m = hmm.DiscreteHiddenMarkovModel([[.3,0,.7],[0,0,1],[.5,.5,0]],
             ....:                                   [[.5,.5,.2]]*3,
             ....:                                   [1/3]*3)
-            sage: G = m.graph(); G                                                      # needs sage.graphs
+            sage: G = m.graph(); G
             Looped digraph on 3 vertices
-            sage: G.edges(sort=True)                                                    # needs sage.graphs
+            sage: G.edges(sort=True)
             [(0, 0, 0.3), (0, 2, 0.7), (1, 2, 1.0), (2, 0, 0.5), (2, 1, 0.5)]
-            sage: G.plot()                                                              # needs sage.graphs sage.plot
+            sage: G.plot()
             Graphics object consisting of 11 graphics primitives
         """
         cdef int i, j
@@ -313,7 +312,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         Initial probabilities: [0.0000, 1.0000]
         sage: m.sample(10)
         [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-        sage: m.graph().plot()                                                          # needs sage.plot
+        sage: m.graph().plot()
         Graphics object consisting of 6 graphics primitives
 
     A 3-state model that happens to always outputs 'b'::
@@ -542,8 +541,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             obs = IntList(obs)
         if scale:
             return self._forward_scale(obs)
-        else:
-            return self._forward(obs)
+        return self._forward(obs)
 
     def _forward(self, IntList obs):
         r"""
@@ -742,8 +740,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             # A special case
             if self._emission_symbols is None:
                 return states, obs
-            else:
-                return states, []
+            return states, []
 
         # Setup variables, including random state.
         cdef Py_ssize_t i, j
@@ -887,8 +884,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             obs = IntList(obs)
         if log_scale:
             return self._viterbi_scale(obs)
-        else:
-            return self._viterbi(obs)
+        return self._viterbi(obs)
 
     cpdef _viterbi(self, IntList obs):
         r"""

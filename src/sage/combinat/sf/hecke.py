@@ -227,9 +227,9 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             return self([1])
         q = self.q
         if q**n == self.base_ring().one():
-            raise ValueError("the parameter q=%s must not be a %s root of unity" % (q,n))
+            raise ValueError("the parameter q=%s must not be a %s root of unity" % (q, n))
         out = n * self([n]) - sum((q**i-1) * self._p_to_qbar_on_generator(i)
-                                  * self([n-i]) for i in range(1,n) if q**i != 1)
+                                  * self([n-i]) for i in range(1, n) if q**i != 1)
         return out*(q-1) / (q**n-1)
 
     def _p_to_qbar_on_basis(self, mu):
@@ -331,5 +331,5 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         T = self.tensor_square()
         one = self.base_ring().one()
         q = self.q
-        return T.sum_of_terms(((P(j), P(r-j)), one if j in [0,r] else q-one)
+        return T.sum_of_terms(((P(j), P(r-j)), one if j in [0, r] else q-one)
                               for j in range(r+1))

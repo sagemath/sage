@@ -346,10 +346,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 x = Rational(x)
             elif x.type() == 't_POLMOD' or x.type == 't_POL':
                 # This code doesn't check to see if the primes are the same.
-                L = []
                 x = x.lift().lift()
-                for i from 0 <= i <= x.poldegree():
-                    L.append(Integer(x.polcoef(i)))
+                L = [Integer(x.polcoef(i)) for i in range(x.poldegree() + 1)]
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
@@ -537,13 +535,12 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         if self._is_exact_zero():
             return (self.parent(), 0)
-        elif self._is_inexact_zero():
+        if self._is_inexact_zero():
             return (self.parent(), 0, self.valuation())
-        else:
-            return (self.parent(),
-                    tuple(tuple(c) if isinstance(c, list) else c
-                          for c in self.unit_part().expansion()),
-                    self.valuation(), self.precision_relative())
+        return (self.parent(),
+                tuple(tuple(c) if isinstance(c, list) else c
+                      for c in self.unit_part().expansion()),
+                self.valuation(), self.precision_relative())
 
     cdef int _set_inexact_zero(self, long absprec) except -1:
         """
@@ -648,8 +645,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         if self.ordp == maxordp:
             return 1
-        else:
-            return 0
+        return 0
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
@@ -683,8 +679,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self._normalize()
         if self.relprec == 0:
             return not self._is_exact_zero()
-        else:
-            return False
+        return False
 
     cdef int _set(self, ZZ_pX_c* unit, long ordp, long relprec) except -1:
         """
@@ -1974,7 +1969,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 raise NotImplementedError("negative valuation exponents not yet supported")
             # checks to see if the residue of self.unit is in the prime field.
             if self.prime_pow.e == 1:
-                for i from 1 <= i <= ZZ_pX_deg(self.unit):
+                for i in range(ZZ_pX_deg(self.unit) + 1):
                     if not ZZ_divide_test(ZZ_p_rep(ZZ_pX_coeff(self.unit, i)), self.prime_pow.pow_ZZ_tmp(1)[0]):
                         raise ValueError("in order to raise to a p-adic exponent, base must reduce to an element of F_p mod the uniformizer")
             # compute the "level"
@@ -2548,8 +2543,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         e = self.parent().e()
         if e == 1:
             return [R(c, prec-k) << k for c in L]
-        else:
-            return [R(c, (((prec - i - 1) // e) + 1) - k) << k for i, c in enumerate(L)]
+        return [R(c, (((prec - i - 1) // e) + 1) - k) << k for i, c in enumerate(L)]
 
     def polynomial(self, var='x'):
         """

@@ -10,13 +10,14 @@ py.install_sources(
   'dirichlet.py',
   'etaproducts.py',
   'hypergeometric_misc.pxd',
+  'hypergeometric_misc.pyx',
   'hypergeometric_motive.py',
   'multiple_zeta.py',
   'multiple_zeta_F_algebra.py',
   subdir: 'sage/modular',
 )
 
-extension_data = {'hypergeometric_misc' : files('hypergeometric_misc.pyx')}
+extension_data = {'hypergeometric_misc': files('hypergeometric_misc.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

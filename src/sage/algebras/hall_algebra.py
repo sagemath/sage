@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Hall Algebras
 
@@ -255,7 +254,7 @@ class HallAlgebra(CombinatorialFreeModule):
         M.register_as_coercion()
         (~M).register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -623,7 +622,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         H = HallAlgebra(self.base_ring(), self._q)
         return reduce(lambda cur,r: cur * H.monomial(Partition([1]*r)), a, H.one())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

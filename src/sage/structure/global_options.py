@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Global options
 
@@ -632,7 +631,7 @@ class Option:
         """
         return bool(self._options[self._name])
 
-    def __call__(self, *args, **kwds):
+    def __call__(self, *args):
         r"""
         Get or set value of the option ``self``.
 
@@ -662,38 +661,20 @@ class Option:
             True
             sage: config._reset()
 
-        Check the deprecation::
+        Check the input::
 
-            sage: config.size(value=None)
-            doctest:...: DeprecationWarning: keyword argument "value" should be replaced by positional argument
-            See https://github.com/sagemath/sage/issues/30763 for details.
-            sage: config.size() is None
-            True
             sage: config.size(1, 2)
             Traceback (most recent call last):
             ...
-            TypeError: option takes at most one argument "value"
-            sage: config.size(unknown=3)
-            Traceback (most recent call last):
-            ...
-            TypeError: option takes at most one argument "value"
-            sage: config.size(4, value=5)
-            Traceback (most recent call last):
-            ...
-            TypeError: option takes at most one argument "value"
+            TypeError: option takes at most one argument
         """
-        if not args and not kwds:
+        if not args:
             return self._options[self._name]
-        if 'value' in kwds:
-            from sage.misc.superseded import deprecation
-            deprecation(30763, 'keyword argument "value" should be replaced '
-                               'by positional argument')
-            args += (kwds.pop('value'),)
-        if len(args) > 1 or kwds:
-            raise TypeError('option takes at most one argument "value"')
+        if len(args) > 1:
+            raise TypeError('option takes at most one argument')
         self._options[self._name] = args[0]
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality testing for an option in based on the value of the attribute.
 
@@ -708,7 +689,7 @@ class Option:
         """
         return self._options[self._name] == other
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality testing for an option in based on the value of
         the attribute.
@@ -724,7 +705,7 @@ class Option:
         """
         return self._options[self._name] != other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return the hash of ``self``, which is the hash of the corresponding
         value.
@@ -736,7 +717,7 @@ class Option:
         """
         return hash(self._options[self._name])
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the string representation of ``self``, which is the string of
         the corresponding value.
@@ -1147,8 +1128,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             # use __getitem__ to return these options
             if len(get_value) == 1:
                 return self[get_value[0]]
-            else:
-                return [self[option] for option in get_value]
+            return [self[option] for option in get_value]
 
         # use __setitem__ to set these options
         if set_value:
@@ -1175,7 +1155,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         if option in self._linked_value:
             link, linked_opt = self._linked_value[option]
             return link[linked_opt]
-        elif option in self._value:
+        if option in self._value:
             if option in self._display_values:
                 return self._display_values[option][self._value[option]]
             return self._value[option]
@@ -1217,7 +1197,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             print('%s\nCurrent value: %s' % (self._doc[option], self[option]))
             return      # we do not want to call the setter below
 
-        elif option in self._linked_value:
+        if option in self._linked_value:
             link, linked_opt = self._linked_value[option]
             link[linked_opt] = value
 
@@ -1545,13 +1525,12 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         matches = [opt for opt in self._doc if opt.lower().startswith(loption)]
         if matches and all(m.startswith(matches[0]) for m in matches):
             return matches[0]
-        elif len(matches) > 1:
+        if len(matches) > 1:
             # as there is more than one match check case as well
             matches = [mat for mat in matches if mat.startswith(option)]
             if matches and all(m.startswith(matches[0]) for m in matches):
                 return matches[0]
-            else:
-                raise ValueError('%s is an ambiguous option for %s' % (option, self._name))
+            raise ValueError('%s is an ambiguous option for %s' % (option, self._name))
 
         # if we are still here this is not a good option!
         raise ValueError('%s is not an option for %s' % (option, self._name))
@@ -1636,9 +1615,8 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         option = self._match_option(option)
         if option in self.__default_value:
             return self.__default_value[option]
-        else:
-            link, linked_opt = self._linked_value[option]
-            return link._default_value(linked_opt)
+        link, linked_opt = self._linked_value[option]
+        return link._default_value(linked_opt)
 
     def _dispatch(self, obj, dispatch_to, option, *args, **kargs):
         r"""

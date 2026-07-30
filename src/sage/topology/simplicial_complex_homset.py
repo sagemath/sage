@@ -61,32 +61,6 @@ import sage.categories.homset
 from .simplicial_complex_morphism import SimplicialComplexMorphism
 
 
-def is_SimplicialComplexHomset(x) -> bool:
-    """
-    Return ``True`` if and only if ``x`` is a simplicial complex homspace.
-
-    EXAMPLES::
-
-        sage: S = SimplicialComplex(is_mutable=False)
-        sage: T = SimplicialComplex(is_mutable=False)
-        sage: H = Hom(S, T)
-        sage: H
-        Set of Morphisms from Simplicial complex with vertex set () and facets {()}
-         to Simplicial complex with vertex set () and facets {()}
-         in Category of finite simplicial complexes
-        sage: from sage.topology.simplicial_complex_homset import is_SimplicialComplexHomset
-        sage: is_SimplicialComplexHomset(H)
-        doctest:warning...
-        DeprecationWarning: the function is_SimplicialComplexHomset is deprecated;
-        use 'isinstance(..., SimplicialComplexHomset)' instead
-        See https://github.com/sagemath/sage/issues/37922 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37922, "the function is_SimplicialComplexHomset is deprecated; use 'isinstance(..., SimplicialComplexHomset)' instead")
-    return isinstance(x, SimplicialComplexHomset)
-
-
 class SimplicialComplexHomset(sage.categories.homset.Homset):
     def __call__(self, f):
         """
@@ -117,7 +91,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         EXAMPLES::
 
             sage: S = simplicial_complexes.Sphere(2)
-            sage: H = Hom(S,S.product(S, is_mutable=False))
+            sage: H = Hom(S,S.product(S, immutable=True))
             sage: d = H.diagonal_morphism(); d
             Simplicial complex morphism:
               From: Minimal triangulation of the 2-sphere
@@ -127,8 +101,8 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
                     2 |--> L2R2
                     3 |--> L3R3
 
-            sage: T = SimplicialComplex([[0], [1]], is_mutable=False)
-            sage: U = T.product(T, rename_vertices=False, is_mutable=False)
+            sage: T = SimplicialComplex([[0], [1]], immutable=True)
+            sage: U = T.product(T, rename_vertices=False, immutable=True)
             sage: G = Hom(T, U)
             sage: e = G.diagonal_morphism(rename_vertices=False); e
             Simplicial complex morphism:
@@ -139,9 +113,9 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
                     1 |--> (1, 1)
         """
         # Preserve whether the codomain is mutable when renaming the vertices.
-        mutable = self._codomain.is_mutable()
+        immutable = self._codomain.is_immutable()
         X = self._domain.product(self._domain, rename_vertices=rename_vertices,
-                                 is_mutable=mutable)
+                                 immutable=immutable)
         if self._codomain != X:
             raise TypeError("diagonal morphism is only defined for Hom(X,XxX)")
         f = {}
@@ -163,7 +137,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
             sage: i.is_identity()
             True
 
-            sage: T = SimplicialComplex([[0,1]], is_mutable=False)
+            sage: T = SimplicialComplex([[0,1]], immutable=True)
             sage: G = Hom(T, T)
             sage: G.identity()
             Simplicial complex endomorphism of
@@ -198,7 +172,6 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         except StopIteration:
             if not X_vertices:
                 return {}
-            else:
-                raise TypeError("there are no morphisms from a non-empty simplicial complex to an empty simplicial complex")
+            raise TypeError("there are no morphisms from a non-empty simplicial complex to an empty simplicial complex")
         f = {x: i for x in X_vertices}
         return SimplicialComplexMorphism(f, self._domain, self._codomain)

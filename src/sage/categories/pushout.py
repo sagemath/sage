@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Coercion via construction functors
 """
@@ -181,8 +180,7 @@ class ConstructionFunctor(Functor):
         """
         if self.rank > other.rank:
             return self * other
-        else:
-            return other * self
+        return other * self
 
     def __eq__(self, other):
         """
@@ -278,8 +276,7 @@ class ConstructionFunctor(Functor):
         """
         if self == other:
             return self
-        else:
-            return None
+        return None
 
     def commutes(self, other):
         """
@@ -516,8 +513,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
         """
         if isinstance(other, CompositeConstructionFunctor):
             return self.all == other.all
-        else:
-            return type(self) is type(other)
+        return type(self) is type(other)
 
     def __ne__(self, other):
         """
@@ -713,8 +709,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
         """
         if isinstance(self, IdentityConstructionFunctor):
             return other
-        else:
-            return self
+        return self
 
 
 class MultivariateConstructionFunctor(ConstructionFunctor):
@@ -910,10 +905,9 @@ class PolynomialFunctor(ConstructionFunctor):
         """
         if isinstance(other, PolynomialFunctor):
             return self.var == other.var
-        elif isinstance(other, MultiPolynomialFunctor):
+        if isinstance(other, MultiPolynomialFunctor):
             return (other == self)
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         """
@@ -956,13 +950,12 @@ class PolynomialFunctor(ConstructionFunctor):
         """
         if isinstance(other, MultiPolynomialFunctor):
             return other.merge(self)
-        elif self == other:
+        if self == other:
             # i.e., they only differ in sparsity
             if not self.sparse:
                 return self
             return other
-        else:
-            return None
+        return None
 
     def _repr_(self):
         """
@@ -1054,10 +1047,9 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         if isinstance(other, MultiPolynomialFunctor):
             return (self.vars == other.vars and
                     self.term_order == other.term_order)
-        elif isinstance(other, PolynomialFunctor):
+        if isinstance(other, PolynomialFunctor):
             return self.vars == (other.var,)
-        else:
-            return False
+        return False
 
     def __ne__(self, other):
         """
@@ -1099,11 +1091,10 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             if set(self.vars).intersection(other.vars):
                 raise CoercionException("Overlapping variables (%s,%s)" % (self.vars, other.vars))
             return MultiPolynomialFunctor(other.vars + self.vars, self.term_order)
-        elif (isinstance(other, CompositeConstructionFunctor)
+        if (isinstance(other, CompositeConstructionFunctor)
               and isinstance(other.all[-1], MultiPolynomialFunctor)):
             return CompositeConstructionFunctor(other.all[:-1], self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """
@@ -1118,10 +1109,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             sage: F.merge(F)
             MPoly[x,y]
         """
-        if self == other:
-            return self
-        else:
-            return None
+        return self if self == other else None
 
     def expand(self):
         """
@@ -1156,8 +1144,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         """
         if len(self.vars) <= 1:
             return [self]
-        else:
-            return [MultiPolynomialFunctor((x,), self.term_order) for x in reversed(self.vars)]
+        return [MultiPolynomialFunctor((x,), self.term_order) for x in reversed(self.vars)]
 
     def _repr_(self):
         """
@@ -1678,8 +1665,7 @@ class MatrixFunctor(ConstructionFunctor):
         """
         if self != other:
             return None
-        else:
-            return MatrixFunctor(self.nrows, self.ncols, self.is_sparse and other.is_sparse)
+        return MatrixFunctor(self.nrows, self.ncols, self.is_sparse and other.is_sparse)
 
 
 class LaurentPolynomialFunctor(ConstructionFunctor):
@@ -1765,8 +1751,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         )
         if self.multi_variate and isinstance(R, LaurentPolynomialRing_generic):
             return LaurentPolynomialRing(R.base_ring(), list(R.variable_names()) + [self.var])
-        else:
-            return LaurentPolynomialRing(R, self.var)
+        return LaurentPolynomialRing(R, self.var)
 
     def __eq__(self, other):
         """
@@ -1833,8 +1818,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         """
         if self == other or isinstance(other, PolynomialFunctor) and self.var == other.var:
             return LaurentPolynomialFunctor(self.var, (self.multi_variate or other.multi_variate))
-        else:
-            return None
+        return None
 
 
 class VectorFunctor(ConstructionFunctor):
@@ -1955,7 +1939,7 @@ class VectorFunctor(ConstructionFunctor):
             return FreeModule(R, self.n, sparse=self.is_sparse, inner_product_matrix=self.inner_product_matrix,
                               with_basis=self.with_basis, basis_keys=self.basis_keys)
         return FreeModule(R, self.n, sparse=self.is_sparse, inner_product_matrix=self.inner_product_matrix,
-                              with_basis=self.with_basis, basis_keys=self.basis_keys, name=name, latex_name=latex_name)
+                          with_basis=self.with_basis, basis_keys=self.basis_keys, name=name, latex_name=latex_name)
 
     def _apply_functor_to_morphism(self, f):
         """
@@ -2096,14 +2080,12 @@ class VectorFunctor(ConstructionFunctor):
 
         if self.with_basis != other.with_basis:
             return None
-        else:
-            with_basis = self.with_basis
+        with_basis = self.with_basis
 
         if self.basis_keys != other.basis_keys:
             # TODO: If both are enumerated families, should we try to take the union of the families?
             return None
-        else:
-            basis_keys = self.basis_keys
+        basis_keys = self.basis_keys
 
         is_sparse = self.is_sparse and other.is_sparse
 
@@ -2120,8 +2102,7 @@ class VectorFunctor(ConstructionFunctor):
 
         if self.n != other.n:
             return None
-        else:
-            n = self.n
+        n = self.n
 
         name_mapping = {}
         for base_ring, name in self.name_mapping.items():
@@ -2298,7 +2279,7 @@ class SubspaceFunctor(ConstructionFunctor):
         c = (L == R)
         if L.has_coerce_map_from(R):
             return tuple(self.basis) == tuple(L(x) for x in other.basis)
-        elif R.has_coerce_map_from(L):
+        if R.has_coerce_map_from(L):
             return tuple(other.basis) == tuple(R(x) for x in self.basis)
         return c
 
@@ -2377,8 +2358,7 @@ class SubspaceFunctor(ConstructionFunctor):
                 return None
             S = submodule(self.basis + other.basis).echelonized_basis()
             return SubspaceFunctor(S)
-        else:
-            return None
+        return None
 
 
 class FractionField(ConstructionFunctor):
@@ -2679,7 +2659,7 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that :issue:`12353` has been resolved::
 
-            sage: RIF(1) > RR(1)                                                        # needs sage.rings.real_interval_field
+            sage: RIF(1) > RR(1)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for >:
@@ -2687,7 +2667,6 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that various pushouts work::
 
-            sage: # needs sage.rings.real_interval_field sage.rings.real_mpfr
             sage: R0 = RealIntervalField(30)
             sage: R1 = RealIntervalField(30, sci_not=True)
             sage: R2 = RealIntervalField(53)
@@ -2739,18 +2718,17 @@ class CompletionFunctor(ConstructionFunctor):
                                          {'type': new_type,
                                           'sci_not': new_scinot,
                                           'rnd': new_rnd})
+            new_type = self._dvr_types[min(self._dvr_types.index(self.type), self._dvr_types.index(other.type))]
+            if new_type in ('fixed-mod', 'floating-point'):
+                if self.type != other.type:
+                    return None # no coercion into fixed-mod or floating-point
+                new_prec = min(self.prec, other.prec)
             else:
-                new_type = self._dvr_types[min(self._dvr_types.index(self.type), self._dvr_types.index(other.type))]
-                if new_type in ('fixed-mod', 'floating-point'):
-                    if self.type != other.type:
-                        return None # no coercion into fixed-mod or floating-point
-                    new_prec = min(self.prec, other.prec)
-                else:
-                    new_prec = max(self.prec, other.prec) # since elements track their own precision, we don't want to truncate them
-                extras = self.extras.copy()
-                extras.update(other.extras)
-                extras['type'] = new_type
-                return CompletionFunctor(self.p, new_prec, extras)
+                new_prec = max(self.prec, other.prec) # since elements track their own precision, we don't want to truncate them
+            extras = self.extras.copy()
+            extras.update(other.extras)
+            extras['type'] = new_type
+            return CompletionFunctor(self.p, new_prec, extras)
 
 #   Completion has a lower rank than FractionField
 #   and is thus applied first. However, fact is that
@@ -3295,7 +3273,12 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                 if latex_names[i] == latex_variable_name(name):
                     latex_names[i] = None
         self.latex_names = latex_names
-        self.kwds = kwds
+        kwds_self = dict(kwds.items())
+        if 'implementation' in kwds_self:
+            assert len(self.polys) == 1
+            self.implementations = [kwds_self['implementation']]
+            del kwds_self['implementation']
+        self.kwds = kwds_self
 
     def _apply_functor(self, R):
         """
@@ -3489,7 +3472,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         """
         if isinstance(other, AlgebraicClosureFunctor):
             return other
-        elif not isinstance(other, AlgebraicExtensionFunctor):
+        if not isinstance(other, AlgebraicExtensionFunctor):
             return None
         if self == other:
             return self
@@ -3530,11 +3513,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         # integers to encode degrees of extensions.
         from sage.rings.integer import Integer
         kwds_self = dict(self.kwds.items())
-        if 'impl' in kwds_self:
-            del kwds_self['impl']
         kwds_other = dict(other.kwds.items())
-        if 'impl' in kwds_other:
-            del kwds_other['impl']
         if (isinstance(self.polys[0], Integer)
                 and isinstance(other.polys[0], Integer)
                 and self.embeddings == other.embeddings == [None]
@@ -3573,11 +3552,10 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                                              implementations=self.implementations + other.implementations,
                                              latex_names=self.latex_names + other.latex_names,
                                              **self.kwds)
-        elif (isinstance(other, CompositeConstructionFunctor)
+        if (isinstance(other, CompositeConstructionFunctor)
               and isinstance(other.all[-1], AlgebraicExtensionFunctor)):
             return CompositeConstructionFunctor(other.all[:-1], self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def expand(self):
         """
@@ -3808,8 +3786,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         ....:             if g(0) == 1:
         ....:                 if g(2) == 2:
         ....:                     return x.transpose()
-        ....:                 else:
-        ....:                     return -x.transpose()
+        ....:                 return -x.transpose()
         ....:             else:
         ....:                 return x
         ....:         raise NotImplementedError
@@ -3936,6 +3913,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM == FG                                                              # needs sage.libs.gap sage.symbolic
@@ -3967,6 +3945,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         TESTS::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM == FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic
@@ -3986,6 +3965,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: FG = BlackBoxConstructionFunctor(gap)
             sage: FM = BlackBoxConstructionFunctor(maxima)                              # needs sage.symbolic
             sage: FM != FG       # indirect doctest                                     # needs sage.libs.gap sage.symbolic

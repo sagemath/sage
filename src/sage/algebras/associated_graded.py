@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Associated Graded Algebras To Filtered Algebras
 
@@ -196,7 +195,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         phi = self.module_morphism(diagonal=lambda x: base_one, codomain=A)
         self._A.register_conversion(phi)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -213,7 +212,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             return "Graded Algebra of {}".format(self._A)
         return "Graded Module of {}".format(self._A)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

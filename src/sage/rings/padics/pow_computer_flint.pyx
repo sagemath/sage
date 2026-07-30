@@ -605,7 +605,7 @@ def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field
       ``ram_prec_cap`` and ``prec_cap`` is that
       ``prec_cap = ceil(n/e)``
 
-    - ``in_field`` -- (boolean) whether the associated ring is
+    - ``in_field`` -- boolean; whether the associated ring is
       actually a field
 
     - ``poly`` -- the polynomial defining the extension

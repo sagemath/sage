@@ -427,15 +427,14 @@ class DLXMatrix:
                 if nodetable[ROOTNODE][RIGHT] == ROOTNODE:
                     self._level -= 1
                     return self._cursolution
-                else:
-                    c = nodetable[ROOTNODE][RIGHT]
-                    maxcount = nodetable[nodetable[ROOTNODE][RIGHT]][COUNT]
-                    for j in self._walknodes(ROOTNODE, RIGHT):
-                        if nodetable[j][COUNT] < maxcount:
-                            c = j
-                            maxcount = nodetable[j][COUNT]
-                    self._covercolumn(c)
-                    self._stack[self._level] = (c, c)
+                c = nodetable[ROOTNODE][RIGHT]
+                maxcount = nodetable[nodetable[ROOTNODE][RIGHT]][COUNT]
+                for j in self._walknodes(ROOTNODE, RIGHT):
+                    if nodetable[j][COUNT] < maxcount:
+                        c = j
+                        maxcount = nodetable[j][COUNT]
+                self._covercolumn(c)
+                self._stack[self._level] = (c, c)
             elif nodetable[r][DOWN] != c:
                 if c != r:
                     self._cursolution = self._cursolution[:-1]

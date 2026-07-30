@@ -276,11 +276,10 @@ class Lseries_complex(Lseries):
 
         if self.vanishes_at_1():
             return QQ(0)
-        else:
-            s = ambient_module.sturm_bound()
-            I = ambient_module.hecke_images(0, range(1, s+1))
-            PhiTe = span([Phi(ambient_module(I[n]))
-                for n in range(I.nrows())], ZZ)
+        s = ambient_module.sturm_bound()
+        I = ambient_module.hecke_images(0, range(1, s+1))
+        PhiTe = span([Phi(ambient_module(I[n]))
+            for n in range(I.nrows())], ZZ)
 
         ambient_plus = ambient_module.sign_submodule(1)
         ambient_plus_cusp = ambient_plus.cuspidal_submodule()

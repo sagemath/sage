@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Iwahori-Hecke Algebras
 
@@ -534,7 +533,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         except (TypeError, ValueError):
             self._inverse_base_ring_generators = {}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -549,7 +548,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         return "Iwahori-Hecke algebra of type {} in {},{} over {}".format(
             ct, self._q1, self._q2, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -696,7 +695,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             """
             return [Realizations(self.base()), self.base()._category]
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return the representation of ``self``.
 
@@ -714,7 +713,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             cases, these are just default implementations that will get
             specialized in a basis.
             """
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 Text representation of this basis of Iwahori-Hecke algebra.
 
@@ -779,7 +778,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     return self.one()
                 return self(W.from_reduced_word(i))
 
-            def is_field(self, proof=True):
+            def is_field(self, proof=True) -> bool:
                 """
                 Return whether this Iwahori-Hecke algebra is a field.
 
@@ -1269,7 +1268,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         #   specialize_to() to work
         _basis_name = 'B'
 
-        def _repr_term(self, t):
+        def _repr_term(self, t) -> str:
             r"""
             Return the string representation of the term indexed by ``t``.
 
@@ -1286,7 +1285,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 return "1"
             return self._print_options['prefix'] + '[%s]' % ','.join('%d' % i for i in redword)
 
-        def _latex_term(self, t):
+        def _latex_term(self, t) -> str:
             r"""
             Return latex for the term indexed by ``t``.
 
@@ -1516,8 +1515,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 # 10% faster than a plain addition on the example of #12528
                 return self.sum_of_terms(((w, A._q_sum), (wi, A._q_prod)),
                                          distinct=True)
-            else:
-                return self.monomial(wi)
+            return self.monomial(wi)
 
         def product_by_generator(self, x, i, side='right'):
             r"""
@@ -2020,9 +2018,10 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 return
 
             # check if products can be computed directly using ``coxeter3``
-            try:
+            from sage.features.coxeter3 import Coxeter3
+            if Coxeter3().is_present():
                 from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
-            except ImportError:
+            else:
                 return
 
             self._delta = v + ~v
@@ -2806,7 +2805,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         Parent.__init__(self, base=base_ring, category=self._category.WithRealizations())
         self._is_generic = True  # needed for initialising _KLHeckeBasis
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -2819,7 +2818,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         except TypeError:
             ct = repr(self._coxeter_type)
         return "A generic Iwahori-Hecke algebra of type {} in {},{} over {}".format(
-                ct, self._q1, self._q2, self.base_ring())
+            ct, self._q1, self._q2, self.base_ring())
 
     def _bar_on_coefficients(self, c):
         r"""

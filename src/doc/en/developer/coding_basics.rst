@@ -137,8 +137,7 @@ If you want to create a new directory (`package
 <https://docs.python.org/3/tutorial/modules.html#packages>`_) in the
 Sage library :sage_root:`src/sage` (say, ``measure_theory``), that
 directory will usually contain an empty file ``__init__.py``, which
-marks the directory as an ordinary package (see
-:ref:`section_namespace_packages`), and also a file ``all.py``,
+marks the directory as an ordinary package, and also a file ``all.py``,
 listing imports from this package that are user-facing and important
 enough to be in the global namespace of Sage at startup.  The file
 ``all.py`` might look like this::
@@ -183,16 +182,7 @@ included in one of the following places:
 
   If the file needs to be used outside of Python, then the
   preferred way is using the context manager
-  :func:`importlib.resources.as_file`. It should be imported in the
-  same way as shown above.
-
-- Older code in the Sage library accesses
-  the package data in more direct ways. For example,
-  :sage_root:`src/sage/interfaces/maxima.py` uses the file
-  :sage_root:`src/sage/interfaces/maxima.lisp` at runtime, so it
-  refers to it as::
-
-    os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
+  :func:`importlib.resources.as_file`.
 
 - In an appropriate subdirectory of :sage_root:`src/sage/ext_data/`.
   (At runtime, it is then available in the directory indicated by
@@ -203,11 +193,6 @@ included in one of the following places:
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
   This practice is deprecated, see :issue:`33037`.
-
-In all cases, the files must be listed (explicitly or via wildcards) in
-the section ``options.package_data`` of the file
-:sage_root:`pkgs/sagemath-standard/setup.cfg.m4` (or the corresponding
-file of another distribution).
 
 Large data files should not be added to the Sage source tree. Instead, it
 is proposed to do the following:
@@ -1166,7 +1151,10 @@ framework. Here is a comprehensive list:
       This doctest passes too, as the output is not checked
 
   Doctests are expected to pass with any state of the pseudorandom number
-  generators (PRNGs).
+  generators (PRNGs): the doctest framework starts each run from a randomly
+  chosen seed, which is echoed in the ``sage -t`` output as
+  ``--random-seed=SEED`` and can be passed back to ``sage -t`` to reproduce
+  a failure (see :ref:`chapter-doctesting`).
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
   dict.
@@ -1192,6 +1180,14 @@ framework. Here is a comprehensive list:
   This is mathematically correct, as it is
   guaranteed to terminate. However, there is a
   nonzero probability of a timeout.
+
+  As a last resort, an example that needs reproducible pseudorandom values
+  can fix the seed explicitly with
+  :func:`~sage.misc.randstate.set_random_seed`::
+
+      sage: set_random_seed(0)
+      sage: ZZ.random_element(100)
+      75
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.
@@ -1371,6 +1367,15 @@ framework. Here is a comprehensive list:
        the doctests in this file will be skipped unless the
        appropriate conditions are met.
 
+  - **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
+    64-bit machines, the ``32_bit`` feature can be used::
+
+        sage: h = hash(2^31 + 2^13)
+        sage: h  # needs 32_bit
+        8193
+        sage: h  # needs !32_bit
+        2147491840
+
 - **indirect doctest:** in the docstring of a function ``A(...)``, a line
   calling ``A`` and in which the name ``A`` does not appear should have this
   flag. This prevents ``sage --coverage <file>`` from reporting the docstring as
@@ -1385,16 +1390,8 @@ framework. Here is a comprehensive list:
       This is the docstring of an ``__add__`` method. The following
       example tests it, but ``__add__`` is not written anywhere::
 
-          sage: 1+1 # indirect doctest
+          sage: 1+1  # indirect doctest
           2
-
-- **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
-  64-bit machines. Note that this particular flag is to be applied on the
-  **output** lines, not the input lines::
-
-      sage: hash(2^31 + 2^13)
-      8193                      # 32-bit
-      2147491840                # 64-bit
 
 Per coding style (:ref:`section-coding-python`), the magic comment
 should be separated by at least 2 spaces.
@@ -1441,7 +1438,7 @@ Run ``sage -t <filename.py>`` to test all code examples in
 ``filename.py``. Similar remarks apply to ``.sage`` and ``.pyx``
 files:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
       $ sage -t [--verbose] [--optional]  [files and directories ... ]
 

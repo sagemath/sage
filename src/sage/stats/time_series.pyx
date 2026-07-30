@@ -97,7 +97,7 @@ cdef class TimeSeries:
 
         This implicitly calls init::
 
-            sage: stats.TimeSeries([pi, 3, 18.2])                                       # needs sage.symbolic
+            sage: stats.TimeSeries([pi, 3, 18.2])
             [3.1416, 3.0000, 18.2000]
 
         Conversion from a NumPy 1-D array, which is very fast::
@@ -1003,7 +1003,7 @@ cdef class TimeSeries:
 
         Draw a plot of a time series::
 
-            sage: stats.TimeSeries([1..10]).show()                                      # needs sage.plot
+            sage: stats.TimeSeries([1..10]).show()
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot(*args, **kwds)
@@ -1029,7 +1029,6 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: # needs sage.plot
             sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.plot()
@@ -1041,7 +1040,8 @@ cdef class TimeSeries:
             sage: v.plot() + v.plot(points=True, rgbcolor='red', pointsize=50)
             Graphics object consisting of 2 graphics primitives
         """
-        from sage.plot.all import line, point
+        from sage.plot.line import line
+        from sage.plot.point import point
         cdef Py_ssize_t s
 
         if self._length < plot_points:
@@ -1533,8 +1533,7 @@ cdef class TimeSeries:
             s += a * a
         if bias:
             return s / self._length
-        else:
-            return s / (self._length - 1)
+        return s / (self._length - 1)
 
     def standard_deviation(self, bias=False):
         r"""
@@ -1703,8 +1702,7 @@ cdef class TimeSeries:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def max(self, bint index=False):
         r"""
@@ -1740,8 +1738,7 @@ cdef class TimeSeries:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def clip_remove(self, min=None, max=None):
         r"""
@@ -1902,15 +1899,15 @@ cdef class TimeSeries:
         EXAMPLES::
 
             sage: v = stats.TimeSeries([1..50])
-            sage: v.plot_histogram(bins=10)                                             # needs sage.plot
+            sage: v.plot_histogram(bins=10)
             Graphics object consisting of 10 graphics primitives
 
         ::
 
-            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)               # needs sage.plot
+            sage: v.plot_histogram(bins=3,normalize=False,aspect_ratio=1)
             Graphics object consisting of 3 graphics primitives
         """
-        from sage.plot.all import polygon
+        from sage.plot.polygon import polygon
         counts, intervals = self.histogram(bins, normalize=normalize)
         s = 0
         kwds.setdefault('aspect_ratio','automatic')
@@ -1944,10 +1941,12 @@ cdef class TimeSeries:
         Here we look at the candlestick plot for Brownian motion::
 
             sage: v = stats.TimeSeries(1000).randomize()
-            sage: v.plot_candlestick(bins=20)                                           # needs sage.plot
+            sage: v.plot_candlestick(bins=20)
             Graphics object consisting of 40 graphics primitives
         """
-        from sage.plot.all import line, polygon, Graphics
+        from sage.plot.line import line
+        from sage.plot.polygon import polygon
+        from sage.plot.graphics import Graphics
 
         cdef TimeSeries t = new_time_series(self._length)
         cdef TimeSeries s
@@ -2305,7 +2304,7 @@ cdef class TimeSeries:
             sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('lognormal').mean()
             1.647351973...
-            sage: exp(0.5)                                                              # needs sage.symbolic
+            sage: exp(0.5)
             1.648721270...
 
         A log-normal distribution can be simply thought of as the logarithm
@@ -2475,7 +2474,6 @@ cdef new_time_series(Py_ssize_t length):
     return t
 
 
-@cython.binding(True)
 def unpickle_time_series_v1(bytes v, Py_ssize_t n):
     r"""
     Version 1 unpickle method.

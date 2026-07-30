@@ -324,11 +324,10 @@ def rgbcolor(c, space='rgb'):
         if len(c) > 0 and c[0] == '#':
             # Assume an HTML-like color, e.g., #00ffff or #ab0.
             return html_to_float(c)
-        else:
-            try:
-                return colors[c].rgb()
-            except KeyError:
-                raise ValueError("unknown color '%s'" % c)
+        try:
+            return colors[c].rgb()
+        except KeyError:
+            raise ValueError("unknown color '%s'" % c)
 
     elif isinstance(c, (list, tuple)):
         if len(c) != 3:
@@ -336,14 +335,13 @@ def rgbcolor(c, space='rgb'):
         c = [mod_one(comp) for comp in c]
         if space == 'rgb':
             return tuple(c)
-        elif space == 'hsv':
+        if space == 'hsv':
             return tuple(map(float, hsv_to_rgb(*c)))
-        elif space == 'hls':
+        if space == 'hls':
             return tuple(map(float, hls_to_rgb(*c)))
-        elif space == 'hsl':
+        if space == 'hsl':
             return tuple(map(float, hls_to_rgb(c[0], c[2], c[1])))
-        else:
-            raise ValueError("space must be one of 'rgb', 'hsv', 'hsl', 'hls'")
+        raise ValueError("space must be one of 'rgb', 'hsv', 'hsl', 'hls'")
 
     raise TypeError("'%s' must be a Color, list, tuple, or string" % c)
 
@@ -353,7 +351,7 @@ to_mpl_color = rgbcolor
 
 
 class Color:
-    def __init__(self, r='#0000ff', g=None, b=None, space='rgb'):
+    def __init__(self, r='#0000ff', g=None, b=None, space='rgb') -> None:
         """
         A Red-Green-Blue (RGB) color model color object.  For most
         consumer-grade devices (e.g., CRTs, LCDs, and printers), as
@@ -400,7 +398,7 @@ class Color:
         else:
             self._rgb = rgbcolor((r, g, b), space=space)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of this color.
 
@@ -415,7 +413,7 @@ class Color:
         """
         return f"RGB color {self._rgb}"
 
-    def __lt__(self, right):
+    def __lt__(self, right) -> bool:
         """
         Check whether a :class:`Color` object is less than some other
         object. This doesn't make sense, and so we conclude that it is
@@ -438,7 +436,7 @@ class Color:
         """
         return False
 
-    def __le__(self, right):
+    def __le__(self, right) -> bool:
         """
         Check whether a :class:`Color` object is less than or equal to
         some other object. It wouldn't make sense for it to be less than
@@ -462,7 +460,7 @@ class Color:
         """
         return self == right
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Compare two :class:`Color` objects to determine whether
         they refer to the same color.
@@ -489,7 +487,7 @@ class Color:
             return self._rgb == right._rgb
         return False
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Compare two :class:`Color` objects to determine whether
         they refer to different colors.
@@ -516,7 +514,7 @@ class Color:
         """
         return not (self == right)
 
-    def __gt__(self, right):
+    def __gt__(self, right) -> bool:
         """
         Check whether a :class:`Color` object is greater than some other
         object. This doesn't make sense, and so we conclude that it is
@@ -539,7 +537,7 @@ class Color:
         """
         return False
 
-    def __ge__(self, right):
+    def __ge__(self, right) -> bool:
         """
         Check whether a :class:`Color` object is greater than or equal
         to some other object. It wouldn't make sense for it to be
@@ -563,7 +561,7 @@ class Color:
         """
         return self == right
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash value of a color.
         Equal colors return equal hash values.
@@ -766,7 +764,7 @@ class Color:
             sage: Color('black') / 0.0
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: float division by zero
+            ZeroDivisionError: ...division by zero
 
             sage: papayawhip / yellow
             Traceback (most recent call last):
@@ -1004,7 +1002,7 @@ class ColorsDict(dict):
         sage: sorted(colors)
         ['aliceblue', 'antiquewhite', 'aqua', 'aquamarine', ...]
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Construct a dict-like collection of colors.  The keys are the
         color names (i.e., strings) and the values are RGB 3-tuples of
@@ -1252,7 +1250,7 @@ def rainbow(n, format='hex'):
 
     if format == 'rgbtuple':
         return R
-    elif format == 'hex':
+    if format == 'hex':
         for j in range(len(R)):
             R[j] = float_to_html(*R[j])
         return R
@@ -1311,7 +1309,7 @@ def get_cmap(cmap):
     if isinstance(cmap, Colormap):
         return cmap
 
-    elif isinstance(cmap, str):
+    if isinstance(cmap, str):
         from matplotlib import colormaps
         try:
             return colormaps[cmap]
@@ -1350,10 +1348,9 @@ def check_color_data(cfcm):
     from matplotlib.colors import Colormap
     if isinstance(cm, Colormap):
         return cf, cm
-    elif isinstance(cf, Colormap):
+    if isinstance(cf, Colormap):
         return cm, cf
-    else:
-        raise ValueError('color data must be (color function, colormap)')
+    raise ValueError('color data must be (color function, colormap)')
 
 
 class Colormaps(MutableMapping):
@@ -1364,7 +1361,7 @@ class Colormaps(MutableMapping):
         sage: sorted(colormaps)
         ['Accent', ...]
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Construct an empty mutable collection of color maps.
 
@@ -1418,7 +1415,7 @@ class Colormaps(MutableMapping):
                    '__setitem__', '__delitem__']
         return dir(super()) + methods + sorted(self)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of color maps.
 
@@ -1452,7 +1449,7 @@ class Colormaps(MutableMapping):
         self.load_maps()
         return iter(self.maps)
 
-    def __contains__(self, name):
+    def __contains__(self, name) -> bool:
         """
         Return whether a map is in the color maps collection.
 
@@ -1536,7 +1533,7 @@ class Colormaps(MutableMapping):
         except KeyError:
             raise AttributeError("'{}' has no attribute or colormap {}".format(type(self).__name__, name))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of the color map collection.
 

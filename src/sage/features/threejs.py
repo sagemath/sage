@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 from pathlib import Path
 
 from . import StaticFile
@@ -24,15 +23,9 @@ class Threejs(StaticFile):
             sage: isinstance(Threejs(), Threejs)
             True
         """
-        from sage.env import SAGE_SHARE, THREEJS_DIR
+        from sage.env import sage_data_paths, THREEJS_DIR
 
-        share_dir = Path(SAGE_SHARE)
-        threejs_search_path = THREEJS_DIR or (
-            (share_dir / "jupyter" / "nbextensions" / "threejs-sage"),
-            (share_dir / "sagemath" / "threejs-sage"),
-            (share_dir / "sage" / "threejs"),
-            (share_dir / "threejs-sage")
-            )
+        threejs_search_path = THREEJS_DIR or list(sage_data_paths('jupyter/nbextensions/threejs-sage')) + list(sage_data_paths('threejs-sage')) + list(sage_data_paths('threejs'))
 
         try:
             version = self.required_version()

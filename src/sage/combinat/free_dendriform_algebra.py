@@ -313,7 +313,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             sage: A.degree_on_basis(u.over(u))
             2
         """
-        return t.node_number()
+        return t.number_of_nodes()
 
     def _an_element_(self):
         """
@@ -627,7 +627,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         B = self.basis()
         Trees = B.keys()
-        if not x.node_number():
+        if not x.number_of_nodes():
             return self.one().tensor(self.one())
         L, R = list(x)
         try:
@@ -897,12 +897,11 @@ class DendriformFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return DendriformFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], DendriformFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """

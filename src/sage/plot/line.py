@@ -249,7 +249,7 @@ class Line(GraphicPrimitive_xydata):
             sage: line([(1,2), (3,-4), (2, 5), (1,2)])
             Graphics object consisting of 1 graphics primitive
         """
-        import matplotlib.lines as lines
+        from matplotlib import lines
         options = dict(self.options())
         for o in ('alpha', 'legend_color', 'legend_label', 'linestyle',
                   'rgbcolor', 'thickness'):
@@ -610,7 +610,7 @@ def line2d(points, **options):
         sage: line(enumerate(range(2)), marker='o', legend_label='circle')
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.plot import xydata_from_point_list
     points = list(points)  # make sure points is a python list
     if not points:

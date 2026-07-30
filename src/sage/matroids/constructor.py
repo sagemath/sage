@@ -908,7 +908,7 @@ def Matroid(groundset=None, data=None, **kwds):
         else:
             G = Graph(data)
         # Decide on the groundset
-        m = G.num_edges()
+        m = G.n_edges()
         if groundset is None:
             # 1. Attempt to use edge labels.
             sl = G.edge_labels()
@@ -926,13 +926,11 @@ def Matroid(groundset=None, data=None, **kwds):
             # 1) we would need to fix the loops anyway
             # 2) Sage will sort the columns, making it impossible to keep labels!
             V = G.vertices(sort=True)
-            n = G.num_verts()
+            n = G.n_vertices()
             A = matrix(ZZ, n, m, 0)
-            mm = 0
-            for i, j, k in G.edge_iterator():
+            for mm, (i, j, k) in enumerate(G.edge_iterator()):
                 A[V.index(i), mm] = -1
                 A[V.index(j), mm] += 1  # So loops get 0
-                mm += 1
             M = RegularMatroid(matrix=A, groundset=groundset)
             want_regular = False  # Save some time, since result is already regular
         else:

@@ -209,7 +209,6 @@ def linear_representation(p, polys):
 
     EXAMPLES::
 
-        sage: # needs sage.modules sage.rings.finite_rings
         sage: from sage.rings.polynomial.toy_variety import linear_representation
         sage: R.<x,y> = PolynomialRing(GF(32003))
         sage: B = [x^2 + 1, y^2 + 1, x*y + 1]
@@ -245,7 +244,6 @@ def triangular_factorization(B, n=-1):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import triangular_factorization
@@ -319,7 +317,6 @@ def elim_pol(B, n=-1):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import elim_pol
