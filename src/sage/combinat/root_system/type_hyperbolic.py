@@ -83,11 +83,10 @@ class CoxeterType_Hyperbolic(CoxeterType):
                 f"Coxeter type of ['{self._prefix}', {self._index}] "
                 f"with Humphrey's datum (Page : {a}, Column : {b}, Row : {c})"
             )
-        else:
-            return (
-                f"Coxeter type with Humphrey's datum "
-                f"(Page : {a}, Column : {b}, Row : {c})"
-            )
+        return (
+            f"Coxeter type with Humphrey's datum "
+            f"(Page : {a}, Column : {b}, Row : {c})"
+        )
 
     def rank(self):
         """
