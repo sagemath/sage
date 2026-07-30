@@ -21,8 +21,8 @@ general. In particular, it allows
 - computation of divisor groups and class groups, and
 - other divisor-theoretic functionality inherited from FLIRs.
 
-Constructing the FLIR structure requires running the Banff algorithm and computing 
-the Laurent cover, which may take a noticeable amount of time and memory. 
+Constructing the FLIR structure requires running the Banff algorithm and computing
+the Laurent cover, which may take a noticeable amount of time and memory.
 Consequently, the FLIR structure is initialized lazily and is only constructed when one of the
 corresponding methods is first called. It can also be initialized explicitly
 during construction by passing ``flir=True``.
@@ -127,7 +127,6 @@ For example, one can compute the divisor of an element::
     ...
     ValueError: Not Laurent in chart ('x0_0p', 'x0_1', 'x0_2', 'x0_3', 'x0_4').
     Substituted: x0_0p*x0_3*x0_4/(x0_1^2*x0_2 + x0_1*x0_2)
-    
 
 The divisor group can be accessed directly::
 
@@ -181,8 +180,7 @@ a generator::
     sage: A.is_principal_divisor(D2)
     True
     sage: A.principal_generator(D2)
-    x0
-    
+    x0  
 
 The FLIR structure also provides algorithms for atoms and factorizations.
 For an element `f` of the algebra, one can compute its atoms::
@@ -193,8 +191,6 @@ For an element `f` of the algebra, one can compute its atoms::
     [x0, x2, (x1 + 1)/x2, (x1 + 1)/x0]
     sage: f.factor()
     [[((x1 + 1)/x0, 1), (x0, 1)], [((x1 + 1)/x2, 1), (x2, 1)]]
-
-  
 
 REFERENCES:
 
@@ -209,7 +205,7 @@ AUTHORS:
 """
 
 from copy import copy
-from typing import List, Sequence
+from collections.abc import Sequence
 
 from sage.algebras.cluster_algebra import (
     ClusterAlgebra,
@@ -306,7 +302,7 @@ def find_partner_sets(A, allowed_directions: Sequence[int]):
                 partners.add(j)
 
         current_set.update(partners)
-        partner_sets.append(tuple(sorted(list(current_set))))
+        partner_sets.append(tuple(sorted(current_set)))
         unassigned -= partners
 
     return partner_sets
@@ -349,17 +345,17 @@ def find_sink_or_source_covering_pair(B, allowed_directions: Sequence[int]):
 class ClusterAlgebraChart:
     r"""
     Stores a chart algebra A_chart plus morphisms between fraction fields.
- 
+    
     - seed: the seed in the original algebra that defines the chart
     - chart: a Sage ClusterAlgebra whose initial seed corresponds to seed
     - to_chart: map from base fraction field -> chart fraction field
     - from_chart: inverse map chart fraction field -> base fraction field
- 
+    
     EXAMPLES:
- 
+    
     Build a rank-2 acyclic cluster algebra and a chart from one mutation
     step away from it::
- 
+    
         sage: B = matrix([[0, 1], [-1, 0]])
         sage: A = ClusterAlgebra(B)
         sage: seed = A.initial_seed()
@@ -506,7 +502,7 @@ class ClusterAlgebraChart:
     
 
 
-def _freeze_and_continue(A, allowed_directions: List[int], current_seed, counter: dict, max_steps=None):
+def _freeze_and_continue(A, allowed_directions: list[int], current_seed, counter: dict, max_steps=None):
     """
     Recursively walk mutations of ``current_seed`` within
     ``allowed_directions`` until every branch reaches an acyclic
@@ -657,7 +653,7 @@ def _FLIR_charts_for_acyclic(acyclic_chart: ClusterAlgebraChart):
 
 
 
-def _system_FLIR_charts_for_acyclic(A, acyclic_charts: List[ClusterAlgebraChart]):
+def _system_FLIR_charts_for_acyclic(A, acyclic_charts: list[ClusterAlgebraChart]):
     """
     Apply :func:`_FLIR_charts_for_acyclic` to every chart in
     ``acyclic_charts`` and concatenate the results.
@@ -672,7 +668,7 @@ def _system_FLIR_charts_for_acyclic(A, acyclic_charts: List[ClusterAlgebraChart]
     OUTPUT: the concatenation of ``_FLIR_charts_for_acyclic(chart)`` over
     every ``chart`` in ``acyclic_charts``
     """
-    charts: List[ClusterAlgebraChart] = []
+    charts: list[ClusterAlgebraChart] = []
     for chart in acyclic_charts:
         charts += _FLIR_charts_for_acyclic(chart)
     return charts
