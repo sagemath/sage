@@ -247,8 +247,7 @@ cdef class SymmetricReductionStrategy:
         if not isinstance(other, SymmetricReductionStrategy):
             if op in [Py_NE, Py_EQ]:
                 return (op == Py_NE)
-            else:
-                return NotImplemented
+            return NotImplemented
         cdef SymmetricReductionStrategy left = self
         cdef SymmetricReductionStrategy right = other
         return richcmp((left._parent, left._lm, left._tail),
@@ -442,7 +441,6 @@ cdef class SymmetricReductionStrategy:
         polynomial. This can be avoided by specifying the optional
         parameter 'good_input'::
 
-            sage: # needs sage.combinat
             sage: S.add_generator(y[2] + y[1]*x[2])
             sage: S
             Symmetric Reduction Strategy in

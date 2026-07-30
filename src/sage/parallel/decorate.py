@@ -7,7 +7,6 @@ import types
 from sage.rings.integer import Integer
 
 from .reference import parallel_iter as p_iter_reference
-from .use_fork import p_iter_fork
 from . import multiprocessing_sage
 from sage.misc.instancedoc import instancedoc
 
@@ -43,12 +42,11 @@ def normalize_input(a):
     """
     if isinstance(a, tuple) and len(a) == 2 and isinstance(a[0], tuple) and isinstance(a[1], dict):
         return a
-    elif isinstance(a, tuple):
+    if isinstance(a, tuple):
         return (a, {})
-    elif isinstance(a, dict):
+    if isinstance(a, dict):
         return (tuple(), a)
-    else:
-        return ((a,), {})
+    return ((a,), {})
 
 
 class Parallel:
@@ -76,6 +74,7 @@ class Parallel:
             ncpus = compute_ncpus()
 
         if p_iter == 'fork':
+            from .use_fork import p_iter_fork
             self.p_iter = p_iter_fork(ncpus, **kwds)
         elif p_iter == 'multiprocessing':
             self.p_iter = multiprocessing_sage.pyprocessing(ncpus)

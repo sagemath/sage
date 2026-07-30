@@ -14,7 +14,7 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
 
     REFERENCE:
 
-    These are defined in Table 1 on p363 of Hanke's "Local Densities..." paper.
+    These are defined in Table 1 on page 363 of [Hanke2004]_.
 
     INPUT:
 
@@ -58,15 +58,15 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
     """
     # Check that Qdet is non-degenerate
     if Qdet % p == 0:
-        raise RuntimeError("Qdet must be nonzero.")
+        raise RuntimeError("Qdet must be nonzero")
 
     # Check that p is prime > 2
     if not is_prime(p) or p == 2:
-        raise RuntimeError("p must be a prime number > 2.")
+        raise RuntimeError("p must be a prime number > 2")
 
     # Check that n >= 1
     if n < 1:
-        raise RuntimeError("the dimension n must be >= 1.")
+        raise RuntimeError("the dimension n must be >= 1")
 
     # Compute the Gauss sum
     neg1 = -1
@@ -125,8 +125,8 @@ cdef CountAllLocalTypesNaive_cdef(Q, p, k, m, zvec, nzvec):
 
         # Evaluate Q(v) quickly
         tmp_val = Mod(0, R)
-        for a from 0 <= a < n:
-            for b from a <= b < n:
+        for a in range(n):
+            for b in range(a, n):
                 tmp_val += Q1[a, b] * v[a] * v[b]
 
         # Sort the solution by it's type
@@ -252,7 +252,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
 
     # Check if wS1 is zero or not
     wS1_nonzero_flag = False
-    for i from 0 <= i < n:
+    for i in range(n):
 
         # Compute the valuation of each index, allowing for off-diagonal terms
         if Q[i, i] == 0:

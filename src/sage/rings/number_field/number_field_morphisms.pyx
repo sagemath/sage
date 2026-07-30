@@ -425,18 +425,16 @@ cpdef closest(target, values, margin=1):
     cdef int i
     if len(values) == 0:
         raise ValueError
-    elif len(values) == 1:
+    if len(values) == 1:
         return values[0]
-    else:
-        dists = [abs(target - r) for r in values]
-        sdists = sorted(dists)
-        min_dist = sdists[0]
-        if margin*min_dist < sdists[1]:
-            for i in range(len(values)):
-                if dists[i] is min_dist:
-                    return values[i]
-        else:
-            return None
+    dists = [abs(target - r) for r in values]
+    sdists = sorted(dists)
+    min_dist = sdists[0]
+    if margin*min_dist < sdists[1]:
+        for i in range(len(values)):
+            if dists[i] is min_dist:
+                return values[i]
+    return None
 
 
 def root_from_approx(f, a):
@@ -492,10 +490,10 @@ def root_from_approx(f, a):
         return LazyAlgebraic(CLF, f, a, prec=0)
     # p-adic lazy, when implemented, would go here
     else:
-        from sage.symbolic.relation import test_relation_maxima
+        from sage.symbolic.relation import check_relation_maxima
         rel = (f(a) != 0)
         if (rel is True
-            or (not isinstance(rel, bool) and test_relation_maxima(rel))):
+            or (not isinstance(rel, bool) and check_relation_maxima(rel))):
             raise ValueError("{} is not a root of {}".format(a, f))
         return a
 

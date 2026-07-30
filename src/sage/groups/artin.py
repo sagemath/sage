@@ -162,7 +162,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             W = self.parent().coxeter_group()
         s = W.simple_reflections()
         In = W.index_set()
-        return W.prod(s[In[abs(i)-1]] for i in self.Tietze())
+        return W.prod(s[In[abs(i) - 1]] for i in self.Tietze())
 
     def burau_matrix(self, var='t'):
         r"""
@@ -400,8 +400,13 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 3, -1, 2, -3])
-            sage: b.left_normal_form()
-            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
+            sage: actual = b.left_normal_form()
+            sage: s0, s1, s2 = B.gens()
+            sage: expected = (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1,
+            ....:             s0*s1*s2*s1*s0,
+            ....:             s0*s2*s1)
+            sage: actual == expected
+            True
             sage: c = B([1])
             sage: c.left_normal_form()
             (1, s0)
@@ -613,10 +618,10 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             return super().__classcall__(cls, coxeter_data, names)
         if coxeter_data.coxeter_type().cartan_type().type() == 'A':
             from sage.groups.braid import BraidGroup
-            return BraidGroup(coxeter_data.rank()+1, names)
+            return BraidGroup(coxeter_data.rank() + 1, names)
         return FiniteTypeArtinGroup(coxeter_data, names)
 
-    def __init__(self, coxeter_matrix, names):
+    def __init__(self, coxeter_matrix, names) -> None:
         """
         Initialize ``self``.
 
@@ -635,7 +640,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
         I = coxeter_matrix.index_set()
         gens = free_group.gens()
         for ii, i in enumerate(I):
-            for jj, j in enumerate(I[ii + 1:], start=ii+1):
+            for jj, j in enumerate(I[ii + 1:], start=ii + 1):
                 m = coxeter_matrix[i, j]
                 if m == Infinity:  # no relation
                     continue
@@ -646,7 +651,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
                 rels.append(elt)
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -779,7 +784,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
         return self.element_class(self, x)
 
     @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -791,7 +796,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
         """
         return self.gen(0)
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return a list of some elements of ``self``.
 
@@ -956,10 +961,10 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             def val(x):
                 if x == -1:
                     return 2 * q
-                elif x == 1:
+                if x == 1:
                     return 1 + q**2
-                else:
-                    return q * (E(2*x) + ~E(2*x))
+                E2x = E(2 * x)
+                return q * (E2x + ~E2x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             E = UniversalCyclotomicField().gen
@@ -967,24 +972,22 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             def val(x):
                 if x == -1:
                     return 2 * q
-                elif x == 1:
+                if x == 1:
                     return 1 + q**2
-                else:
-                    return q * base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
+                return q * base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
             def val(x):
                 if x == -1:
                     return 2 * q
-                elif x == 1:
+                if x == 1:
                     return 1 + q**2
-                elif x == 2:
+                if x == 2:
                     return 0
-                elif x == 3:
+                if x == 3:
                     return q
-                else:
-                    from sage.functions.trig import cos
-                    from sage.symbolic.constants import pi
-                    return q * base_ring(2 * cos(pi / x))
+                from sage.functions.trig import cos
+                from sage.symbolic.constants import pi
+                return q * base_ring(2 * cos(pi / x))
         index_set = data.index_set()
         gens = [one - MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
                           for j in range(n)])

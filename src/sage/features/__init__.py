@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Testing for features of the environment at runtime
 
@@ -70,8 +69,9 @@ from __future__ import annotations
 import os
 import shutil
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
-from sage.env import SAGE_SHARE, SAGE_LOCAL, SAGE_VENV
+from sage.env import SAGE_LOCAL, sage_data_paths
 
 
 class TrivialClasscallMetaClass(type):
@@ -84,8 +84,7 @@ class TrivialClasscallMetaClass(type):
         """
         if hasattr(cls, '__classcall__'):
             return cls.__classcall__(cls, *args, **kwds)
-        else:
-            return type.__call__(cls, *args, **kwds)
+        return type.__call__(cls, *args, **kwds)
 
 
 _trivial_unique_representation_cache = dict()
@@ -346,7 +345,7 @@ class Feature(TrivialUniqueRepresentation):
             return True
         return self._spkg_type() == 'standard'
 
-    def is_optional(self):
+    def is_optional(self) -> bool:
         r"""
         Return whether this feature corresponds to an optional SPKG.
 
@@ -358,7 +357,7 @@ class Feature(TrivialUniqueRepresentation):
         """
         return self._spkg_type() == 'optional'
 
-    def hide(self):
+    def hide(self) -> None:
         r"""
         Hide this feature. For example this is used when the doctest option
         ``--hide`` is set. Setting an installed feature as hidden pretends
@@ -384,7 +383,7 @@ class Feature(TrivialUniqueRepresentation):
         """
         self._hidden = True
 
-    def unhide(self):
+    def unhide(self) -> None:
         r"""
         Revert what :meth:`hide` did.
 
@@ -400,7 +399,7 @@ class Feature(TrivialUniqueRepresentation):
         """
         self._hidden = False
 
-    def is_hidden(self):
+    def is_hidden(self) -> bool:
         r"""
         Return whether ``self`` is present but currently hidden.
 
@@ -414,9 +413,7 @@ class Feature(TrivialUniqueRepresentation):
             sage: sage__plot().is_hidden()
             False
         """
-        if self._hidden and self._is_present():
-            return True
-        return False
+        return bool(self._hidden and self._is_present())
 
 
 class FeatureNotPresentError(RuntimeError):
@@ -565,10 +562,14 @@ def package_systems():
         [Feature('homebrew'), Feature('sage_spkg'), Feature('pip')]
     """
     # The current implementation never returns more than one system.
-    from subprocess import run, CalledProcessError
+    from subprocess import CalledProcessError, run
     global _cache_package_systems
     if _cache_package_systems is None:
-        from .pkg_systems import PackageSystem, SagePackageSystem, PipPackageSystem
+        from sage.features.pkg_systems import (
+            PackageSystem,
+            PipPackageSystem,
+            SagePackageSystem,
+        )
         _cache_package_systems = []
         # Try to use scripts from SAGE_ROOT (or an installation of sage_bootstrap)
         # to obtain system package advice.
@@ -657,9 +658,7 @@ class Executable(FileFeature):
     r"""
     A feature describing an executable in the ``PATH``.
 
-    In an installation of Sage with ``SAGE_LOCAL`` different from ``SAGE_VENV``, the
-    executable is searched first in ``SAGE_VENV/bin``, then in ``SAGE_LOCAL/bin``,
-    then in ``PATH``.
+    The executable is searched first in ``SAGE_LOCAL/bin``, then in ``PATH``.
 
     .. NOTE::
 
@@ -742,15 +741,11 @@ class Executable(FileFeature):
             sage.features.FeatureNotPresentError: does-not-exist is not available.
             Executable 'does-not-exist-xxxxyxyyxyy' not found on PATH.
         """
-        if SAGE_LOCAL:
-            if Path(SAGE_VENV).resolve() != Path(SAGE_LOCAL).resolve():
-                # As sage.env currently gives SAGE_LOCAL a fallback value from SAGE_VENV,
-                # SAGE_LOCAL is never unset.  So we only use it if it differs from SAGE_VENV.
-                search_path = ':'.join([os.path.join(SAGE_VENV, 'bin'),
-                                        os.path.join(SAGE_LOCAL, 'bin')])
-                path = shutil.which(self.executable, path=search_path)
-                if path is not None:
-                    return path
+        if SAGE_LOCAL and Path(SAGE_LOCAL).resolve():
+            search_path = os.path.join(SAGE_LOCAL, 'bin')
+            path = shutil.which(self.executable, path=search_path)
+            if path is not None:
+                return path
         # Now look up in the regular PATH.
         path = shutil.which(self.executable)
         if path is not None:
@@ -795,7 +790,7 @@ class StaticFile(FileFeature):
         Feature.__init__(self, name, type=type, **kwds)
         self.filename = filename
         if search_path is None:
-            self.search_path = [SAGE_SHARE]
+            self.search_path = list(sage_data_paths())
         elif isinstance(search_path, str):
             self.search_path = [search_path]
         else:
@@ -838,105 +833,6 @@ class StaticFile(FileFeature):
         raise FeatureNotPresentError(self, reason=reason, resolution=self.resolution())
 
 
-class CythonFeature(Feature):
-    r"""
-    A :class:`Feature` which describes the ability to compile and import
-    a particular piece of Cython code.
-
-    To test the presence of ``name``, the cython compiler is run on
-    ``test_code`` and the resulting module is imported.
-
-    EXAMPLES::
-
-        sage: from sage.features import CythonFeature
-        sage: fabs_test_code = '''
-        ....: cdef extern from "<math.h>":
-        ....:     double fabs(double x)
-        ....:
-        ....: assert fabs(-1) == 1
-        ....: '''
-        sage: fabs = CythonFeature("fabs", test_code=fabs_test_code,                    # needs sage.misc.cython
-        ....:                      spkg='gcc', url='https://gnu.org',
-        ....:                      type='standard')
-        sage: fabs.is_present()                                                         # needs sage.misc.cython
-        FeatureTestResult('fabs', True)
-
-    Test various failures::
-
-        sage: broken_code = '''this is not a valid Cython program!'''
-        sage: broken = CythonFeature("broken", test_code=broken_code)
-        sage: broken.is_present()
-        FeatureTestResult('broken', False)
-
-    ::
-
-        sage: broken_code = '''cdef extern from "no_such_header_file": pass'''
-        sage: broken = CythonFeature("broken", test_code=broken_code)
-        sage: broken.is_present()
-        FeatureTestResult('broken', False)
-
-    ::
-
-        sage: broken_code = '''import no_such_python_module'''
-        sage: broken = CythonFeature("broken", test_code=broken_code)
-        sage: broken.is_present()
-        FeatureTestResult('broken', False)
-
-    ::
-
-        sage: broken_code = '''raise AssertionError("sorry!")'''
-        sage: broken = CythonFeature("broken", test_code=broken_code)
-        sage: broken.is_present()
-        FeatureTestResult('broken', False)
-    """
-    def __init__(self, name, test_code, **kwds):
-        r"""
-        TESTS::
-
-            sage: from sage.features import CythonFeature
-            sage: from sage.features.bliss import BlissLibrary
-            sage: isinstance(BlissLibrary(), CythonFeature)  # indirect doctest
-            True
-        """
-        Feature.__init__(self, name, **kwds)
-        self.test_code = test_code
-
-    def _is_present(self):
-        r"""
-        Run test code to determine whether the shared library is present.
-
-        EXAMPLES::
-
-            sage: from sage.features import CythonFeature
-            sage: empty = CythonFeature("empty", test_code="")
-            sage: empty.is_present()                                                    # needs sage.misc.cython
-            FeatureTestResult('empty', True)
-        """
-        from sage.misc.temporary_file import tmp_filename
-        try:
-            # Available since https://setuptools.pypa.io/en/latest/history.html#v59-0-0
-            from setuptools.errors import CCompilerError
-        except ImportError:
-            try:
-                from distutils.errors import CCompilerError
-            except ImportError:
-                CCompilerError = ()
-        with open(tmp_filename(ext='.pyx'), 'w') as pyx:
-            pyx.write(self.test_code)
-        try:
-            from sage.misc.cython import cython_import
-        except ImportError:
-            return FeatureTestResult(self, False, reason="sage.misc.cython is not available")
-        try:
-            cython_import(pyx.name, verbose=-1)
-        except CCompilerError:
-            return FeatureTestResult(self, False, reason="Failed to compile test code.")
-        except ImportError:
-            return FeatureTestResult(self, False, reason="Failed to import test code.")
-        except Exception:
-            return FeatureTestResult(self, False, reason="Failed to run test code.")
-        return FeatureTestResult(self, True, reason="Test code compiled and imported.")
-
 
 class PythonModule(Feature):
     r"""
@@ -976,7 +872,12 @@ class PythonModule(Feature):
         """
         import importlib
         try:
-            importlib.import_module(self.name)
+            import warnings
+            with warnings.catch_warnings():
+                # user warnings don't make sense for testing the presence
+                # for example in snappy -> plink
+                warnings.filterwarnings('ignore', category=UserWarning)
+                importlib.import_module(self.name)
         except ImportError as exception:
             return FeatureTestResult(self, False, reason=f"Failed to import `{self.name}`: {exception}")
         return FeatureTestResult(self, True, reason=f"Successfully imported `{self.name}`.")

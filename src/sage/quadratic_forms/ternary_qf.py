@@ -70,7 +70,8 @@ class TernaryQF(SageObject):
         sage: TestSuite(TernaryQF).run()
     """
 
-    __slots__ = ['_a', '_b', '_c', '_r', '_s', '_t', '_automorphisms', '_number_of_automorphisms']
+    __slots__ = ['_a', '_b', '_c', '_r', '_s', '_t',
+                 '_automorphisms', '_number_of_automorphisms']
 
     possible_automorphisms = None
 
@@ -90,7 +91,6 @@ class TernaryQF(SageObject):
             [1 2 3]
             [4 5 6]
         """
-
         if len(v) != 6:
             # Check we have six coefficients
             raise ValueError("Ternary quadratic form must be given by a list of six coefficients")
@@ -98,9 +98,9 @@ class TernaryQF(SageObject):
         self._automorphisms = None
         self._number_of_automorphisms = None
 
-    def coefficients(self):
+    def coefficients(self) -> tuple:
         r"""
-        Return the list of coefficients of the ternary quadratic form.
+        Return the tuple of coefficients of the ternary quadratic form.
 
         EXAMPLES::
 
@@ -113,18 +113,18 @@ class TernaryQF(SageObject):
         """
         return self._a, self._b, self._c, self._r, self._s, self._t
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return a hash for ``self``.
 
         EXAMPLES::
 
             sage: Q = TernaryQF([1, 2, 3, 4, 5, 6])
-            sage: Q.__hash__()
-            5881802312257552497  # 64-bit
-            1770036893           # 32-bit
+            sage: hash32 = 1770036893
+            sage: hash64 = 5881802312257552497
+            sage: Q.__hash__() in [hash32, hash64]
+            True
         """
-
         return hash(self.coefficients())
 
     def coefficient(self, n):
@@ -166,7 +166,7 @@ class TernaryQF(SageObject):
         x, y, z = polygens(ZZ, names)
         return self._a * x**2 + self._b * y**2 + self._c * z**2 + self._t * x*y + self._s * x*z + self._r * y*z
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Display the quadratic form.
 
@@ -230,19 +230,19 @@ class TernaryQF(SageObject):
             # Check if v has 3 cols
             if v.ncols() == 3:
                 M = v.transpose() * self.matrix() * v
-                return TernaryQF([M[0, 0]//2, M[1, 1]//2, M[2, 2]//2,
+                return TernaryQF([M[0, 0] // 2, M[1, 1] // 2, M[2, 2] // 2,
                                   M[1, 2], M[0, 2], M[0, 1]])
-            else:
-                return QuadraticForm(ZZ, v.transpose() * self.matrix() * v)
-        elif isinstance(v, (Vector, list, tuple)):
+
+            return QuadraticForm(ZZ, v.transpose() * self.matrix() * v)
+        if isinstance(v, (Vector, list, tuple)):
             # Check that v has length 3
             if len(v) != 3:
                 raise TypeError("your vector needs to have length 3")
             v0, v1, v2 = v
             a, b, c, r, s, t = self.coefficients()
             return a*v0**2 + b*v1**2 + c*v2**2 + r*v1*v2 + s*v0*v2 + t*v0*v1
-        else:
-            raise TypeError("presently we can only evaluate a quadratic form on a list, tuple, vector or matrix")
+
+        raise TypeError("presently we can only evaluate a quadratic form on a list, tuple, vector or matrix")
 
     def quadratic_form(self):
         r"""
@@ -260,11 +260,13 @@ class TernaryQF(SageObject):
             sage: bool(QF1 == QF2)
             True
         """
-        return QuadraticForm(ZZ, 3, [self._a, self._t, self._s, self._b, self._r, self._c])
+        return QuadraticForm(ZZ, 3, [self._a, self._t, self._s,
+                                     self._b, self._r, self._c])
 
     def matrix(self):
         r"""
         Return the Hessian matrix associated to the ternary quadratic form.
+
         That is, if `Q` is a ternary quadratic form, `Q(x,y,z) = a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y`,
         then the Hessian matrix associated to `Q` is
         ::
@@ -289,12 +291,15 @@ class TernaryQF(SageObject):
             sage: (v*M*v.column())[0]//2
             28
         """
-        M = matrix(ZZ, 3, [2*self._a, self._t, self._s, self._t, 2*self._b, self._r, self._s, self._r, 2*self._c])
-        return M
+        return matrix(ZZ, 3, 3, [2 * self._a, self._t, self._s,
+                                 self._t, 2 * self._b, self._r,
+                                 self._s, self._r, 2 * self._c])
 
     def disc(self):
         r"""
-        Return the discriminant of the ternary quadratic form, this is the determinant of the matrix divided by 2.
+        Return the discriminant of the ternary quadratic form.
+
+        This is the determinant of the matrix divided by 2.
 
         EXAMPLES::
 
@@ -304,7 +309,8 @@ class TernaryQF(SageObject):
             sage: Q.matrix().det()
             -50
         """
-        return 4*self._a*self._b*self._c + self._r*self._s*self._t - self._a*self._r**2 - self._b*self._s**2 - self._c*self._t**2
+        return (4*self._a*self._b*self._c + self._r*self._s*self._t
+                - self._a*self._r**2 - self._b*self._s**2 - self._c*self._t**2)
 
     def is_definite(self) -> bool:
         """
@@ -324,28 +330,13 @@ class TernaryQF(SageObject):
         d1 = self._a
         if d1 == 0:
             return False
-        d2 = 4*self._a*self._b-self._t**2
-        if d2 == 0:
+        d2 = 4 * self._a * self._b - self._t**2
+        if d2 <= 0:
             return False
         d3 = self.disc()
         if d3 == 0:
             return False
-        if d1 > 0:
-            if d2 > 0:
-                if d3 > 0:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
-            if d2 > 0:
-                if d3 < 0:
-                    return True
-                else:
-                    return False
-            else:
-                return False
+        return (d1 > 0) == (d3 > 0)
 
     def is_positive_definite(self) -> bool:
         """
@@ -370,22 +361,13 @@ class TernaryQF(SageObject):
         d1 = self._a
         if d1 == 0:
             return False
-        d2 = 4*self._a*self._b-self._t**2
-        if d2 == 0:
+        d2 = 4 * self._a * self._b - self._t**2
+        if d2 <= 0:
             return False
         d3 = self.disc()
         if d3 == 0:
             return False
-        if d1 > 0:
-            if d2 > 0:
-                if d3 > 0:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
+        return d1 > 0 and d3 > 0
 
     def is_negative_definite(self) -> bool:
         """
@@ -405,22 +387,13 @@ class TernaryQF(SageObject):
         d1 = self._a
         if d1 == 0:
             return False
-        d2 = 4*self._a*self._b-self._t**2
-        if d2 == 0:
+        d2 = 4 * self._a * self._b - self._t**2
+        if d2 <= 0:
             return False
         d3 = self.disc()
         if d3 == 0:
             return False
-        if d1 < 0:
-            if d2 > 0:
-                if d3 < 0:
-                    return True
-                else:
-                    return False
-            else:
-                return False
-        else:
-            return False
+        return d1 < 0 and d3 < 0
 
     def __neg__(self):
         """
@@ -487,7 +460,7 @@ class TernaryQF(SageObject):
         """
         l = self.coefficients()
         g = gcd(l)
-        return TernaryQF([a//g for a in l])
+        return TernaryQF([a // g for a in l])
 
     def scale_by_factor(self, k):
         """
@@ -770,10 +743,7 @@ class TernaryQF(SageObject):
             return False
         if a == s and t > 2*r:
             return False
-        if b == r and t > 2*s:
-            return False
-
-        return True
+        return not (b == r and t > 2 * s)
 
     def reduced_form_eisenstein(self, matrix=True):
         r"""
@@ -923,8 +893,7 @@ class TernaryQF(SageObject):
             q, M = _find_p_neighbor_from_vec(self._a, self._b, self._c, self._r, self._s, self._t, p, v, mat)
             M = matrix(3, M)
             return TernaryQF(q), M*M.det()
-        else:
-            return TernaryQF(_find_p_neighbor_from_vec(self._a, self._b, self._c, self._r, self._s, self._t, p, v, mat))
+        return TernaryQF(_find_p_neighbor_from_vec(self._a, self._b, self._c, self._r, self._s, self._t, p, v, mat))
 
     def find_p_neighbors(self, p, mat=False):
         """
@@ -950,7 +919,6 @@ class TernaryQF(SageObject):
             sage: neig.count(Q2)
             3
         """
-
         z = self.find_zeros_mod_p(p)
         return [self.find_p_neighbor_from_vec(p, v, mat) for v in z]
 
@@ -964,7 +932,6 @@ class TernaryQF(SageObject):
             sage: Q.basic_lemma(3)
             4
         """
-
         return _basic_lemma(self._a, self._b, self._c, self._r, self._s, self._t, p)
 
     def xi(self, p):
@@ -1055,7 +1022,7 @@ class TernaryQF(SageObject):
 
         return identity_matrix(3) - v.column()*matrix(v)*self.matrix()/self(v)
 
-    def automorphism_symmetries(self, A):
+    def automorphism_symmetries(self, A) -> list:
         """
         Given the automorphism `A`, if `A` is the identity, return the empty list.
         Otherwise, return a list of two vectors `v_1`, `v_2` such that the product of
@@ -1085,20 +1052,15 @@ class TernaryQF(SageObject):
             sage: Q.automorphism_symmetries(identity_matrix(ZZ,3))
             []
         """
-
         if A == identity_matrix(3):
             return []
-        else:
-            bs = (A - 1).columns()
-            for b1 in bs:
-                if b1 != 0:
-                    break
-            A1 = self.symmetry(b1)*A
-            bs = (A1 - 1).columns()
-            for b2 in bs:
-                if b2 != 0:
-                    break
-            return [b1, b2]
+
+        bs = (A - 1).columns()
+        b1 = next(v for v in bs if v)
+        A1 = self.symmetry(b1) * A
+        bs = (A1 - 1).columns()
+        b2 = next(v for v in bs if v)
+        return [b1, b2]
 
     def automorphism_spin_norm(self, A):
         """
@@ -1117,14 +1079,17 @@ class TernaryQF(SageObject):
         """
         if A == identity_matrix(ZZ, 3):
             return 1
-        bs = self.automorphism_symmetries(A)
-        s = self(bs[0]) * self(bs[1])
+        b1, b2 = self.automorphism_symmetries(A)
+        s = self(b1) * self(b2)
         return s.squarefree_part()
 
-    def _border(self, n):
+    def _border(self, n) -> bool:
         """
         Auxiliary function to find the automorphisms of a positive definite ternary quadratic form.
-        It return a boolean whether the n-condition is true. If Q = TernaryQF([a,b,c,r,s,t]), the conditions are:
+
+        It returns a boolean whether the n-condition is true.
+
+        If ``Q = TernaryQF([a,b,c,r,s,t])``, the conditions are:
 
         1.  a = t, s = 2r.
         2.  a = s, t = 2r.
@@ -1194,39 +1159,38 @@ class TernaryQF(SageObject):
             sage: Q16._border(16)
             True
         """
-
         a, b, c, r, s, t = self.coefficients()
         if n == 1:
             return (a == t) and (s == 2*r)
-        elif n == 2:
+        if n == 2:
             return (a == s) and (t == 2*r)
-        elif n == 3:
+        if n == 3:
             return (b == r) and (t == 2*s)
-        elif n == 4:
+        if n == 4:
             return (a == -t)
-        elif n == 5:
+        if n == 5:
             return (a == -s)
-        elif n == 6:
+        if n == 6:
             return (b == -r)
-        elif n == 7:
+        if n == 7:
             return (a + b + r + s + t == 0) and (2*a + 2*s + t == 0)
-        elif n == 8:
+        if n == 8:
             return (a == b) and (r == s)
-        elif n == 9:
+        if n == 9:
             return (b == c) and (s == t)
-        elif n == 10:
+        if n == 10:
             return (r == s) and (r == 0)
-        elif n == 11:
+        if n == 11:
             return (r == t) and (r == 0)
-        elif n == 12:
+        if n == 12:
             return (s == t) and (s == 0)
-        elif n == 13:
+        if n == 13:
             return (r == s) and (s == t) and (t == a)
-        elif n == 14:
+        if n == 14:
             return (a == s) and (a == t)
-        elif n == 15:
+        if n == 15:
             return (a == b) and (a + b + r + s + t == 0)
-        elif n == 16:
+        if n == 16:
             return (a == b) and (b == c) and (a + b + r + s + t == 0)
 
     def _borders(self):
@@ -1307,7 +1271,6 @@ class TernaryQF(SageObject):
             sage: Q._automorphisms_reduced_fast()
             [(1, 0, 0, 0, 1, 0, 0, 0, 1)]
         """
-
         if self._border(1):
             if self._border(2):
                 if self._border(14):
@@ -1321,12 +1284,11 @@ class TernaryQF(SageObject):
                                 (1, 0, 1, 0, 0, -1, 0, 1, 0),
                                 (1, 1, 0, 0, 0, 1, 0, -1, 0),
                                 (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-                    else:
-                        # borders 1, 2, 14
-                        return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                                (-1, -1, 0, 0, 1, 0, 0, 0, -1),
-                                (-1, 0, -1, 0, -1, 0, 0, 0, 1),
-                                (1, 1, 1, 0, -1, 0, 0, 0, -1)]
+                    # borders 1, 2, 14
+                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                            (-1, -1, 0, 0, 1, 0, 0, 0, -1),
+                            (-1, 0, -1, 0, -1, 0, 0, 0, 1),
+                            (1, 1, 1, 0, -1, 0, 0, 0, -1)]
             else:
                 # borders 1
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
@@ -1358,16 +1320,14 @@ class TernaryQF(SageObject):
                             (1, -1, 0, 0, -1, 0, 0, 0, -1),
                             (1, -1, 0, 1, 0, 0, 0, 0, 1),
                             (1, 0, 0, 1, -1, 0, 0, 0, -1)]
-                else:
-                    # borders 4, 10
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, -1, 0, 0, 0, 1),
-                            (-1, 1, 0, 0, 1, 0, 0, 0, -1),
-                            (1, -1, 0, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 4
+                # borders 4, 10
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, -1, 0, 0, 0, 1),
+                        (-1, 1, 0, 0, 1, 0, 0, 0, -1),
                         (1, -1, 0, 0, -1, 0, 0, 0, -1)]
+            # borders 4
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (1, -1, 0, 0, -1, 0, 0, 0, -1)]
 
         if self._border(5):
             if self._border(6):
@@ -1416,16 +1376,14 @@ class TernaryQF(SageObject):
                             (1, 0, 0, 0, 0, -1, 0, 1, -1),
                             (1, 0, 0, 0, 0, 1, 0, -1, 1),
                             (1, 0, 0, 0, 1, -1, 0, 1, 0)]
-                else:
-                    # borders 6, 12
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, -1, 1, 0, 0, 1),
-                            (-1, 0, 0, 0, 1, -1, 0, 0, -1),
-                            (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 6
+                # borders 6, 12
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 0, 0, 1, -1, 0, 0, -1)]
+                        (-1, 0, 0, 0, -1, 1, 0, 0, 1),
+                        (-1, 0, 0, 0, 1, -1, 0, 0, -1),
+                        (1, 0, 0, 0, -1, 0, 0, 0, -1)]
+            # borders 6
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 0, 0, 1, -1, 0, 0, -1)]
 
         if self._border(7):
             if self._border(8) and self._border(15):
@@ -1456,23 +1414,21 @@ class TernaryQF(SageObject):
                                 (1, 0, -1, 0, 0, -1, 0, 1, -1),
                                 (1, 0, -1, 1, 0, 0, 1, -1, 0),
                                 (1, 0, 0, 1, -1, 0, 1, 0, -1)]
-                    else:
-                        # borders 7, 8, 15, 16
-                        return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                                (-1, 0, 0, -1, 0, 1, -1, 1, 0),
-                                (-1, 0, 1, 0, -1, 1, 0, 0, 1),
-                                (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                                (0, -1, 1, 0, -1, 0, 1, -1, 0),
-                                (0, 1, -1, 1, 0, -1, 0, 0, -1),
-                                (0, 1, 0, 0, 1, -1, -1, 1, 0),
-                                (1, 0, -1, 1, 0, 0, 1, -1, 0)]
-                else:
-                    # borders 7, 8, 15
+                    # borders 7, 8, 15, 16
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                            (-1, 0, 0, -1, 0, 1, -1, 1, 0),
                             (-1, 0, 1, 0, -1, 1, 0, 0, 1),
                             (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                            (0, 1, -1, 1, 0, -1, 0, 0, -1)]
-            elif self._border(9):
+                            (0, -1, 1, 0, -1, 0, 1, -1, 0),
+                            (0, 1, -1, 1, 0, -1, 0, 0, -1),
+                            (0, 1, 0, 0, 1, -1, -1, 1, 0),
+                            (1, 0, -1, 1, 0, 0, 1, -1, 0)]
+                # borders 7, 8, 15
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 1, 0, -1, 1, 0, 0, 1),
+                        (0, -1, 0, -1, 0, 0, 0, 0, -1),
+                        (0, 1, -1, 1, 0, -1, 0, 0, -1)]
+            if self._border(9):
                 # borders 7, 9
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                         (-1, 0, 0, 0, 0, -1, 0, -1, 0),
@@ -1480,10 +1436,9 @@ class TernaryQF(SageObject):
                         (-1, 1, 0, 0, 1, 0, 0, 1, -1),
                         (1, -1, 0, 0, -1, 1, 0, -1, 0),
                         (1, 0, -1, 0, 0, -1, 0, 1, -1)]
-            else:
-                # borders 7
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 1, 0, -1, 1, 0, 0, 1)]
+            # borders 7
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 1, 0, -1, 1, 0, 0, 1)]
 
         if self._border(8):
             if self._border(9):
@@ -1513,7 +1468,7 @@ class TernaryQF(SageObject):
                             (1, 0, 0, 0, -1, 0, 0, 0, -1),
                             (1, 0, 0, 0, 0, -1, 0, 1, 0),
                             (1, 0, 0, 0, 0, 1, 0, -1, 0)]
-                elif self._border(13) and self._border(14):
+                if self._border(13) and self._border(14):
                     # borders 8, 9, 13, 14
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                             (-1, -1, -1, 0, 0, 1, 0, 1, 0),
@@ -1539,15 +1494,14 @@ class TernaryQF(SageObject):
                             (1, 1, 1, -1, 0, 0, 0, -1, 0),
                             (1, 1, 1, 0, -1, 0, 0, 0, -1),
                             (1, 1, 1, 0, 0, -1, -1, 0, 0)]
-                else:
-                    # borders 8, 9
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, 0, -1, 0, -1, 0),
-                            (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                            (0, 0, -1, 0, -1, 0, -1, 0, 0),
-                            (0, 0, 1, 1, 0, 0, 0, 1, 0),
-                            (0, 1, 0, 0, 0, 1, 1, 0, 0)]
-            elif self._border(10):
+                # borders 8, 9
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, 0, -1, 0, -1, 0),
+                        (0, -1, 0, -1, 0, 0, 0, 0, -1),
+                        (0, 0, -1, 0, -1, 0, -1, 0, 0),
+                        (0, 0, 1, 1, 0, 0, 0, 1, 0),
+                        (0, 1, 0, 0, 0, 1, 1, 0, 0)]
+            if self._border(10):
                 if self._border(11) and self._border(12):
                     # borders 8, 10, 11, 12
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
@@ -1558,13 +1512,12 @@ class TernaryQF(SageObject):
                             (0, 1, 0, -1, 0, 0, 0, 0, 1),
                             (0, 1, 0, 1, 0, 0, 0, 0, -1),
                             (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-                else:
-                    # borders 8, 10
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, -1, 0, 0, 0, 1),
-                            (0, -1, 0, -1, 0, 0, 0, 0, -1),
-                            (0, 1, 0, 1, 0, 0, 0, 0, -1)]
-            elif self._border(14):
+                # borders 8, 10
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, -1, 0, 0, 0, 1),
+                        (0, -1, 0, -1, 0, 0, 0, 0, -1),
+                        (0, 1, 0, 1, 0, 0, 0, 0, -1)]
+            if self._border(14):
                 # borders 8, 13, 14
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                         (-1, -1, -1, 1, 0, 0, 0, 0, 1),
@@ -1572,10 +1525,9 @@ class TernaryQF(SageObject):
                         (0, -1, 0, -1, 0, 0, 0, 0, -1),
                         (0, 1, 0, -1, -1, -1, 0, 0, 1),
                         (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 8
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (0, -1, 0, -1, 0, 0, 0, 0, -1)]
+            # borders 8
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (0, -1, 0, -1, 0, 0, 0, 0, -1)]
 
         if self._border(9):
             if self._border(12):
@@ -1589,26 +1541,24 @@ class TernaryQF(SageObject):
                             (1, 0, 0, 0, -1, 0, 0, 0, -1),
                             (1, 0, 0, 0, 0, -1, 0, 1, 0),
                             (1, 0, 0, 0, 0, 1, 0, -1, 0)]
-                else:
-                    # borders 9, 12
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, 0, 0, 0, 0, -1, 0, -1, 0),
-                            (-1, 0, 0, 0, 0, 1, 0, 1, 0),
-                            (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-            elif self._border(14):
+                # borders 9, 12
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, 0, 0, 0, 0, -1, 0, -1, 0),
+                        (-1, 0, 0, 0, 0, 1, 0, 1, 0),
+                        (1, 0, 0, 0, -1, 0, 0, 0, -1)]
+            if self._border(14):
                 if self._border(13):
                     # borders 9, 13, 14
                     return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                             (-1, -1, -1, 0, 0, 1, 0, 1, 0),
                             (-1, 0, 0, 0, 0, -1, 0, -1, 0),
                             (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-                else:
-                    # borders 9, 14
-                    return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                            (-1, -1, -1, 0, 0, 1, 0, 1, 0),
-                            (-1, 0, 0, 0, 0, -1, 0, -1, 0),
-                            (1, 1, 1, 0, -1, 0, 0, 0, -1)]
-            elif self._border(15):
+                # borders 9, 14
+                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                        (-1, -1, -1, 0, 0, 1, 0, 1, 0),
+                        (-1, 0, 0, 0, 0, -1, 0, -1, 0),
+                        (1, 1, 1, 0, -1, 0, 0, 0, -1)]
+            if self._border(15):
                 # borders 9, 15, 16
                 return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
                         (-1, 0, 0, -1, 0, 1, -1, 1, 0),
@@ -1618,10 +1568,9 @@ class TernaryQF(SageObject):
                         (0, 1, -1, -1, 1, 0, 0, 1, 0),
                         (0, 1, -1, 1, 0, -1, 0, 0, -1),
                         (1, 0, 0, 1, -1, 0, 1, 0, -1)]
-            else:
-                # borders 9
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 0, 0, 0, -1, 0, -1, 0)]
+            # borders 9
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 0, 0, 0, -1, 0, -1, 0)]
 
         if self._border(10):
             if self._border(11) and self._border(12):
@@ -1630,10 +1579,9 @@ class TernaryQF(SageObject):
                         (-1, 0, 0, 0, -1, 0, 0, 0, 1),
                         (-1, 0, 0, 0, 1, 0, 0, 0, -1),
                         (1, 0, 0, 0, -1, 0, 0, 0, -1)]
-            else:
-                # borders 10
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (-1, 0, 0, 0, -1, 0, 0, 0, 1)]
+            # borders 10
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (-1, 0, 0, 0, -1, 0, 0, 0, 1)]
 
         if self._border(11):
             # borders 11
@@ -1662,16 +1610,16 @@ class TernaryQF(SageObject):
                         (-1, 0, 0, -1, 0, 1, -1, 1, 0),
                         (0, -1, 1, 0, -1, 0, 1, -1, 0),
                         (0, 1, -1, 1, 0, -1, 0, 0, -1)]
-            else:
-                # borders 15
-                return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
-                        (0, 1, -1, 1, 0, -1, 0, 0, -1)]
+            # borders 15
+            return [(1, 0, 0, 0, 1, 0, 0, 0, 1),
+                    (0, 1, -1, 1, 0, -1, 0, 0, -1)]
 
         return [(1, 0, 0, 0, 1, 0, 0, 0, 1)]
 
     def _automorphisms_reduced_slow(self):
         """
         Return the automorphisms of the reduced ternary quadratic form.
+
         It searches over all 3x3 matrices with coefficients -1, 0, 1,
         determinant 1 and finite order, because Eisenstein reduced forms
         are Minkowski reduced. See Cassels.
@@ -1794,9 +1742,8 @@ class TernaryQF(SageObject):
                     if self._border(9):
                         # borders 1, 2, 9, 14
                         return 8
-                    else:
-                        # borders 1, 2, 14
-                        return 4
+                    # borders 1, 2, 14
+                    return 4
             else:
                 # borders 1
                 return 2
@@ -1814,12 +1761,10 @@ class TernaryQF(SageObject):
                 if self._border(8):
                     # borders 4, 8, 10
                     return 12
-                else:
-                    # borders 4, 10
-                    return 4
-            else:
-                # borders 4
-                return 2
+                # borders 4, 10
+                return 4
+            # borders 4
+            return 2
 
         if self._border(5):
             if self._border(6):
@@ -1843,12 +1788,10 @@ class TernaryQF(SageObject):
                 if self._border(9):
                     # borders 6, 9, 12
                     return 12
-                else:
-                    # borders 6, 12
-                    return 4
-            else:
-                # borders 6
-                return 2
+                # borders 6, 12
+                return 4
+            # borders 6
+            return 2
 
         if self._border(7):
             if self._border(8) and self._border(15):
@@ -1856,73 +1799,63 @@ class TernaryQF(SageObject):
                     if self._border(9):
                         # borders 7, 8, 9, 15, 16
                         return 24
-                    else:
-                        # borders 7, 8, 15, 16
-                        return 8
-                else:
-                    # borders 7, 8, 15
-                    return 4
-            elif self._border(9):
+                    # borders 7, 8, 15, 16
+                    return 8
+                # borders 7, 8, 15
+                return 4
+            if self._border(9):
                 # borders 7, 9
                 return 6
-            else:
-                # borders 7
-                return 2
+            # borders 7
+            return 2
 
         if self._border(8):
             if self._border(9):
                 if self._border(10) and self._border(11) and self._border(12):
                     # borders 8, 9, 10, 11, 12
                     return 24
-                elif self._border(13) and self._border(14):
+                if self._border(13) and self._border(14):
                     # borders 8, 9, 13, 14
                     return 24
-                else:
-                    # borders 8, 9
-                    return 6
-            elif self._border(10):
+                # borders 8, 9
+                return 6
+            if self._border(10):
                 if self._border(11) and self._border(12):
                     # borders 8, 10, 11, 12
                     return 8
-                else:
-                    # borders 8, 10
-                    return 4
-            elif self._border(14):
+                # borders 8, 10
+                return 4
+            if self._border(14):
                 # borders 8, 13, 14
                 return 6
-            else:
-                # borders 8
-                return 2
+            # borders 8
+            return 2
 
         if self._border(9):
             if self._border(12):
                 if self._border(10) and self._border(11):
                     # borders 9, 10, 11, 12
                     return 8
-                else:
-                    # borders 9, 12
-                    return 4
-            elif self._border(14):
+                # borders 9, 12
+                return 4
+            if self._border(14):
                 if self._border(13):
                     # borders 9, 13, 14
                     return 4
-                else:
-                    # borders 9, 14
-                    return 4
-            elif self._border(15):
+                # borders 9, 14
+                return 4
+            if self._border(15):
                 # borders 9, 15, 16
                 return 8
-            else:
-                # borders 9
-                return 2
+            # borders 9
+            return 2
 
         if self._border(10):
             if self._border(11) and self._border(12):
                 # borders 10, 11, 12
                 return 4
-            else:
-                # borders 10
-                return 2
+            # borders 10
+            return 2
 
         if self._border(11):
             # borders 11
@@ -1944,9 +1877,8 @@ class TernaryQF(SageObject):
             if self._border(16):
                 # borders 15, 16
                 return 4
-            else:
-                # borders 15
-                return 2
+            # borders 15
+            return 2
 
         return 1
 
@@ -2023,7 +1955,7 @@ def find_all_ternary_qf_by_level_disc(N, d):
         ...
         ValueError: There are no ternary forms of this level and discriminant
     """
-    return [TernaryQF(_) for _ in _find_all_ternary_qf_by_level_disc(N, d)]
+    return [TernaryQF(qf) for qf in _find_all_ternary_qf_by_level_disc(N, d)]
 
 
 def find_a_ternary_qf_by_level_disc(N, d):

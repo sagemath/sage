@@ -381,13 +381,11 @@ class EllipticCurveLocalData(SageObject):
             if all(a.is_integral() for a in self._Emin.a_invariants()):
                 self._Emin_reduced = self._Emin._reduce_model()
                 return self._Emin_reduced
-            else:
-                return self._Emin
-        else:
-            try:
-                return self._Emin
-            except AttributeError:
-                raise ValueError("the argument reduce must not be False if algorithm=pari is used")
+            return self._Emin
+        try:
+            return self._Emin
+        except AttributeError:
+            raise ValueError("the argument reduce must not be False if algorithm=pari is used")
 
     def prime(self):
         """
@@ -531,7 +529,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type
 
-    def has_good_reduction(self):
+    def has_good_reduction(self) -> bool:
         r"""
         Return ``True`` if there is good reduction.
 
@@ -552,7 +550,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type is None
 
-    def has_bad_reduction(self):
+    def has_bad_reduction(self) -> bool:
         r"""
         Return ``True`` if there is bad reduction.
 
@@ -575,7 +573,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type is not None
 
-    def has_multiplicative_reduction(self):
+    def has_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is multiplicative reduction.
 
@@ -600,9 +598,9 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).has_multiplicative_reduction()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), False), (Fractional ideal (2*a + 1), False)]
         """
-        return self._reduction_type in (-1,+1)
+        return self._reduction_type in (-1, 1)
 
-    def has_split_multiplicative_reduction(self):
+    def has_split_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is split multiplicative reduction.
 
@@ -625,9 +623,9 @@ class EllipticCurveLocalData(SageObject):
             [(Fractional ideal (4*a^2 - 2*a + 1), False),
              (Fractional ideal (2*a + 1), False)]
         """
-        return self._reduction_type == +1
+        return self._reduction_type == 1
 
-    def has_nonsplit_multiplicative_reduction(self):
+    def has_nonsplit_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is non-split multiplicative reduction.
 
@@ -651,7 +649,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type == -1
 
-    def has_additive_reduction(self):
+    def has_additive_reduction(self) -> bool:
         r"""
         Return ``True`` if there is additive reduction.
 
@@ -678,7 +676,7 @@ class EllipticCurveLocalData(SageObject):
         r"""
         Tate's algorithm for an elliptic curve over a number field.
 
-        Computes both local reduction data at a prime ideal and a
+        This computes both local reduction data at a prime ideal and a
         local minimal model.
 
         The model is not required to be integral on input.  If `P` is
@@ -811,10 +809,9 @@ class EllipticCurveLocalData(SageObject):
             (a, b, c) = (F(a), F(b), F(c))
             if a == 0:
                 return (b != 0) or (c == 0)
-            elif p == 2:
+            if p == 2:
                 return len(PolynomialRing(F, "x")([c,b,a]).roots()) > 0
-            else:
-                return (b**2 - 4*a*c).is_square()
+            return (b**2 - 4*a*c).is_square()
 
         def _pcubicroots(b, c, d):
             r"""
@@ -1180,15 +1177,13 @@ def check_prime(K, P):
             P = Integer(P)
             if P.is_prime():
                 return P
-            else:
-                raise TypeError("The element %s is not prime" % (P,))
+            raise TypeError("The element %s is not prime" % (P,))
         elif P in QQ:
             raise TypeError("The element %s is not prime" % (P,))
         elif isinstance(P, Ideal_generic) and P.base_ring() is ZZ:
             if P.is_prime():
                 return P.gen()
-            else:
-                raise TypeError("The ideal %s is not a prime ideal of %s" % (P, ZZ))
+            raise TypeError("The ideal %s is not a prime ideal of %s" % (P, ZZ))
         else:
             raise TypeError("%s is neither an element of QQ or an ideal of %s" % (P, ZZ))
 
@@ -1200,7 +1195,6 @@ def check_prime(K, P):
         P = K.fractional_ideal(P)
         if P.is_prime():
             return P
-        else:
-            raise TypeError("The ideal %s is not a prime ideal of %s" % (P, K))
+        raise TypeError("The ideal %s is not a prime ideal of %s" % (P, K))
 
     raise TypeError("%s is not a valid prime of %s" % (P, K))

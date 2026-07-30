@@ -3,6 +3,7 @@ py.install_sources(
   'airy.pxd',
   'all.pxd',
   'array.pxd',
+  'array.pyx',
   'bessel.pxd',
   'blas.pxd',
   'blas_types.pxd',
@@ -67,7 +68,7 @@ py.install_sources(
   subdir: 'sage/libs/gsl',
 )
 
-extension_data = {'array' : files('array.pyx')}
+extension_data = {'array': files('array.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

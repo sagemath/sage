@@ -15,7 +15,7 @@ AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
 #                     2017 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -23,8 +23,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from cpython.list cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -75,14 +75,8 @@ cdef inline int ccmp(celement a, celement b, long prec, bint reduce_a, bint redu
     r"""
     Return the comparison of ``a`` and ``b``.
 
-    This function returns -1, 0, or 1 for use with ``cmp`` of Python 2. In
-    particular, this function return 0 if ``a`` and ``b`` differ by an element
-    of valuation at least ``prec``.
-
-    .. NOTE::
-
-        You should not rely on whether this function returns -1 or 1 as this
-        might not be consistent.
+    This function returns 0 or 1. This function returns 0 if ``a`` and
+    ``b`` differ by an element of valuation at least ``prec``.
 
     INPUT:
 
@@ -101,11 +95,12 @@ cdef inline int ccmp(celement a, celement b, long prec, bint reduce_a, bint redu
     """
     if not (reduce_a or reduce_b):
         return 0 if a == b else 1
+
     csub(prime_pow.tmp_ccmp_a, a, b, prec, prime_pow)
     coeffs = prime_pow.tmp_ccmp_a._coeffs
     cdef long i, coeff_prec, break_pt
     if prime_pow.e == 1:
-        for i in range(prime_pow.tmp_ccmp_a.degree()+1):
+        for i in range(prime_pow.tmp_ccmp_a.degree() + 1):
             if coeffs[i] and coeffs[i].valuation() < prec:
                 return 1
     else:

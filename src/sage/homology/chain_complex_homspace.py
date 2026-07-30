@@ -98,35 +98,10 @@ EXAMPLES::
 #  is available at:
 #
 #                  https://www.gnu.org/licenses/
-#
 # ****************************************************************************
 
 import sage.categories.homset
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
-
-
-def is_ChainComplexHomspace(x):
-    """
-    Return ``True`` if and only if ``x`` is a morphism of chain complexes.
-
-    EXAMPLES::
-
-        sage: from sage.homology.chain_complex_homspace import is_ChainComplexHomspace
-        sage: T = SimplicialComplex([[1,2,3,4],[7,8,9]])
-        sage: C = T.chain_complex(augmented=True, cochain=True)
-        sage: G = Hom(C, C)
-        sage: is_ChainComplexHomspace(G)
-        doctest:warning...
-        DeprecationWarning: The function is_ChainComplexHomspace is deprecated;
-        use 'isinstance(..., ChainComplexHomspace)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_ChainComplexHomspace is deprecated; "
-                "use 'isinstance(..., ChainComplexHomspace)' instead.")
-    return isinstance(x, ChainComplexHomspace)
 
 
 class ChainComplexHomspace(sage.categories.homset.Homset):

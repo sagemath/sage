@@ -274,9 +274,8 @@ class FiniteWord_class(Word_class):
             letters = [str(a) for a in self]
             if all(len(a) == 1 for a in letters):
                 return ''.join(letters)
-            else:
-                return ls.join(letters)
-        elif word_options['display'] == 'list':
+            return ls.join(letters)
+        if word_options['display'] == 'list':
             return str(list(self))
 
     def _repr_(self):
@@ -422,8 +421,7 @@ class FiniteWord_class(Word_class):
         if length == Infinity:
             parent = parent.shift()
             return parent(f, datatype='callable', caching=True)
-        else:
-            return parent(f, length=length, datatype='callable', caching=True)
+        return parent(f, length=length, datatype='callable', caching=True)
 
     __mul__ = concatenate
 
@@ -936,7 +934,7 @@ class FiniteWord_class(Word_class):
         """
         return self.is_suffix(other) and self.length() < other.length()
 
-    def has_suffix(self, other):
+    def has_suffix(self, other) -> bool:
         """
         Test whether ``self`` has ``other`` as a suffix.
 
@@ -1017,7 +1015,7 @@ class FiniteWord_class(Word_class):
         """
         return self.is_prefix(other) and self.length() < other.length()
 
-    def has_prefix(self, other):
+    def has_prefix(self, other) -> bool:
         r"""
         Test whether ``self`` has ``other`` as a prefix.
 
@@ -1244,10 +1242,9 @@ class FiniteWord_class(Word_class):
         """
         if algorithm == 'suffix tree':
             return ZZ(self.suffix_tree().number_of_factors(n))
-        elif algorithm == 'naive':
+        if algorithm == 'naive':
             return ZZ(len(self.factor_set(n, algorithm='naive')))
-        else:
-            raise ValueError(f'Unknown algorithm (={algorithm})')
+        raise ValueError(f'unknown algorithm (={algorithm})')
 
     def factor_iterator(self, n=None):
         r"""
@@ -1410,20 +1407,18 @@ class FiniteWord_class(Word_class):
         """
         if algorithm == 'suffix tree':
             return Set(self.factor_iterator(n))
-        elif algorithm == 'naive':
+        if algorithm == 'naive':
             if n is None:
                 S = {self[0:0]}
                 for n in range(1, self.length()+1):
                     for i in range(self.length()-n+1):
                         S.add(self[i:i+n])
                 return Set(S)
-            else:
-                S = set()
-                for i in range(self.length()-n+1):
-                    S.add(self[i:i+n])
-                return Set(S)
-        else:
-            raise ValueError(f'Unknown algorithm (={algorithm})')
+            S = set()
+            for i in range(self.length()-n+1):
+                S.add(self[i:i+n])
+            return Set(S)
+        raise ValueError(f'unknown algorithm (={algorithm})')
 
     def topological_entropy(self, n):
         r"""
@@ -1474,7 +1469,7 @@ class FiniteWord_class(Word_class):
             sage: w.topological_entropy(3)
             Traceback (most recent call last):
             ...
-            TypeError: The word must be defined over a finite alphabet
+            TypeError: the word must be defined over a finite alphabet
 
         The following is ok::
 
@@ -1485,7 +1480,7 @@ class FiniteWord_class(Word_class):
         """
         d = self.parent().alphabet().cardinality()
         if d is Infinity:
-            raise TypeError("The word must be defined over a finite alphabet")
+            raise TypeError("the word must be defined over a finite alphabet")
         if n == 0:
             return 1
         pn = self.number_of_factors(n)
@@ -1674,7 +1669,7 @@ class FiniteWord_class(Word_class):
         g = copy(self.rauzy_graph(n))
         # Otherwise it changes the rauzy_graph function.
         l = [v for v in g if g.in_degree(v) == 1 == g.out_degree(v)]
-        if g.num_verts() != 0 and len(l) == g.num_verts():
+        if len(l) == g.n_vertices() != 0:
             # In this case, the Rauzy graph is simply a cycle.
             g = DiGraph()
             g.allow_loops(True)
@@ -1684,9 +1679,9 @@ class FiniteWord_class(Word_class):
             g.allow_loops(True)
             g.allow_multiple_edges(True)
             for v in l:
-                [i] = g.neighbors_in(v)
-                [o] = g.neighbors_out(v)
-                g.add_edge(i, o, g.edge_label(i, v)[0]*g.edge_label(v, o)[0])
+                i = next(g.neighbor_in_iterator(v))
+                o = next(g.neighbor_out_iterator(v))
+                g.add_edge(i, o, g.edge_label(i, v)[0] * g.edge_label(v, o)[0])
                 g.delete_vertex(v)
         return g
 
@@ -2474,13 +2469,12 @@ class FiniteWord_class(Word_class):
         l = self.length()
         if f is None:
             return self[:l//2] == self[l//2 + l % 2:].reversal()
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            if not isinstance(f, WordMorphism):
-                f = WordMorphism(f)
-            if not f.is_involution():
-                raise ValueError("f must be an involution")
-            return self[:l//2 + l % 2] == f(self[l//2:].reversal())
+        from sage.combinat.words.morphism import WordMorphism
+        if not isinstance(f, WordMorphism):
+            f = WordMorphism(f)
+        if not f.is_involution():
+            raise ValueError("f must be an involution")
+        return self[:l//2 + l % 2] == f(self[l//2:].reversal())
 
     def lps(self, f=None, l=None):
         r"""
@@ -2572,16 +2566,13 @@ class FiniteWord_class(Word_class):
         if f is None:
             if g == d:
                 return self[-l-2:]
-            else:
-                # Otherwise, the length of the lps of self is smallest than l+2
-                return self[-l-1:].lps()
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            f = WordMorphism(f)
-            if f(g)[0] == d:
-                return self[-l-2:]
-            else:
-                return self[-l-1:].lps(f=f)
+            # Otherwise, the length of the lps of self is smallest than l+2
+            return self[-l-1:].lps()
+        from sage.combinat.words.morphism import WordMorphism
+        f = WordMorphism(f)
+        if f(g)[0] == d:
+            return self[-l-2:]
+        return self[-l-1:].lps(f=f)
 
     @cached_method
     def palindromic_lacunas_study(self, f=None):
@@ -3242,11 +3233,10 @@ class FiniteWord_class(Word_class):
                 l = self.lps().length()
                 # return self * self[-(l+1)::-1]
                 return self * self[:self.length() - l].reversal()
-            elif side == 'left':
+            if side == 'left':
                 l = self.reversal().lps().length()
                 return self[:l-1:-1] * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+            raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
         else:
             from sage.combinat.words.morphism import WordMorphism
             f = WordMorphism(f)
@@ -3255,11 +3245,10 @@ class FiniteWord_class(Word_class):
             if side == 'right':
                 l = self.lps(f=f).length()
                 return self * f(self[-(l+1)::-1])
-            elif side == 'left':
+            if side == 'left':
                 l = self.reversal().lps(f=f).length()
                 return f(self[:l-1:-1]) * self
-            else:
-                raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
+            raise ValueError("side must be either 'left' or 'right' (not %s) " % side)
 
     def is_symmetric(self, f=None):
         r"""
@@ -3548,7 +3537,7 @@ class FiniteWord_class(Word_class):
             return 0
         return self.length() // self.primitive_length()
 
-    def has_period(self, p):
+    def has_period(self, p) -> bool:
         r"""
         Return ``True`` if ``self`` has the period `p`,
         ``False`` otherwise.
@@ -3581,13 +3570,9 @@ class FiniteWord_class(Word_class):
         """
         if p < 0:
             return False
-        elif p >= len(self):
+        if p >= len(self):
             return True
-        else:
-            for i in range(len(self) - p):
-                if self[i] != self[i + p]:
-                    return False
-            return True
+        return all(self[i] == self[i + p] for i in range(len(self) - p))
 
     def periods(self, divide_length=False):
         r"""
@@ -4153,71 +4138,6 @@ class FiniteWord_class(Word_class):
         d.update((letter, i) for i, letter in enumerate(self))
         return d
 
-    def _pos_in(self, other, p):
-        r"""
-        Return the position of the first occurrence of ``self`` starting at
-        position ``p`` in ``other``.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`first_occurrence` instead.
-
-        EXAMPLES::
-
-            sage: Word('12')._pos_in(Word('131231'), 2)
-            doctest:warning
-            ...
-            DeprecationWarning: f._pos_in(w, start) is deprecated.
-            Use w.first_occurrence(f, start) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            2
-            sage: Word('12')._pos_in(Word('131231'), 3) is None
-            True
-            sage: Word('32')._pos_in(Word('131231'), 0) is None
-            True
-
-        The empty word occurs in a word::
-
-            sage: Word('')._pos_in(Word('123'), 0)
-            0
-            sage: Word('')._pos_in(Word(''), 0)
-            0
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f._pos_in(w, start) is deprecated.'
-                    ' Use w.first_occurrence(f, start) instead.')
-        return other.first_occurrence(self, p)
-
-    def first_pos_in(self, other):
-        r"""
-        Return the position of the first occurrence of ``self`` in ``other``,
-        or ``None`` if ``self`` is not a factor of ``other``.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`first_occurrence` instead.
-
-        EXAMPLES::
-
-            sage: Word('12').first_pos_in(Word('131231'))
-            doctest:warning
-            ...
-            DeprecationWarning: f.first_pos_in(w) is deprecated.
-            Use w.first_occurrence(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            2
-            sage: Word('32').first_pos_in(Word('131231')) is None
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.first_pos_in(w) is deprecated.'
-                    ' Use w.first_occurrence(f) instead.')
-        return other.first_occurrence(self)
-
     def find(self, sub, start=0, end=None):
         r"""
         Return the index of the first occurrence of ``sub`` in ``self``,
@@ -4411,138 +4331,6 @@ class FiniteWord_class(Word_class):
         """
         return other.first_occurrence(self) is not None
 
-    def factor_occurrences_in(self, other):
-        r"""
-        Return an iterator over all occurrences (including overlapping ones)
-        of ``self`` in ``other`` in their order of appearance.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`factor_occurrences_iterator` instead.
-
-        EXAMPLES::
-
-            sage: u = Word('121')
-            sage: w = Word('121213211213')
-            sage: list(u.factor_occurrences_in(w))
-            doctest:warning
-            ...
-            DeprecationWarning: f.factor_occurrences_in(w) is deprecated.
-            Use w.factor_occurrences_iterator(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            [0, 2, 8]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.factor_occurrences_in(w) is deprecated.'
-                    ' Use w.factor_occurrences_iterator(f) instead.')
-        return other.factor_occurrences_iterator(self)
-
-    def nb_factor_occurrences_in(self, other):
-        r"""
-        Return the number of times ``self`` appears as a factor
-        in ``other``.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`number_of_factor_occurrences` instead.
-
-        EXAMPLES::
-
-            sage: Word('123').nb_factor_occurrences_in(Word('112332312313112332121123'))
-            doctest:warning
-            ...
-            DeprecationWarning: f.nb_factor_occurrences_in(w) is deprecated.
-            Use w.number_of_factor_occurrences(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            4
-            sage: Word('321').nb_factor_occurrences_in(Word('11233231231311233221123'))
-            0
-
-        An error is raised for the empty word::
-
-            sage: Word().nb_factor_occurrences_in(Word('123'))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: The factor must be non empty
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.nb_factor_occurrences_in(w) is deprecated.'
-                    ' Use w.number_of_factor_occurrences(f) instead.')
-        return other.number_of_factor_occurrences(self)
-
-    def nb_subword_occurrences_in(self, other):
-        r"""
-        Return the number of times ``self`` appears in ``other`` as a subword.
-
-        This corresponds to the notion of `binomial coefficient` of two
-        finite words whose properties are presented in the chapter of
-        Lothaire's book written by Sakarovitch and Simon [Lot1997]_.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`number_of_subword_occurrences` instead.
-
-        INPUT:
-
-        - ``other`` -- finite word
-
-        EXAMPLES::
-
-            sage: tm = words.ThueMorseWord()
-
-            sage: u = Word([0,1,0,1])
-            sage: u.nb_subword_occurrences_in(tm[:1000])
-            doctest:warning
-            ...
-            DeprecationWarning: f.nb_subword_occurrences_in(w) is deprecated.
-            Use w.number_of_subword_occurrences(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            2604124996
-
-            sage: u = Word([0,1,0,1,1,0])
-            sage: u.nb_subword_occurrences_in(tm[:100])
-            20370432
-
-        .. NOTE::
-
-            This code, based on [MSSY2001]_, actually compute the number of
-            occurrences of all prefixes of ``self`` as subwords in all
-            prefixes of ``other``.  In particular, its complexity is
-            bounded by ``len(self) * len(other)``.
-
-        TESTS::
-
-            sage: Word('').nb_subword_occurrences_in(Word(''))
-            1
-            sage: parent(_)
-            Integer Ring
-            sage: v,u = Word(), Word('123')
-            sage: v.nb_subword_occurrences_in(u)
-            1
-            sage: v,u = Word('123'), Word('1133432311132311112')
-            sage: v.nb_subword_occurrences_in(u)
-            11
-            sage: v,u = Word('4321'), Word('1132231112233212342231112')
-            sage: v.nb_subword_occurrences_in(u)
-            0
-            sage: v,u = Word('3'), Word('122332112321213')
-            sage: v.nb_subword_occurrences_in(u)
-            4
-            sage: v,u = Word([]), words.ThueMorseWord()[:1000]
-            sage: v.nb_subword_occurrences_in(u)
-            1
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.nb_subword_occurrences_in(w) is deprecated.'
-                    ' Use w.number_of_subword_occurrences(f) instead.')
-        return other.number_of_subword_occurrences(self)
-
     def number_of_factor_occurrences(self, other):
         r"""
         Return the number of times ``other`` appears as a factor
@@ -4571,7 +4359,7 @@ class FiniteWord_class(Word_class):
             sage: Word('123').number_of_factor_occurrences(Word())
             Traceback (most recent call last):
             ...
-            NotImplementedError: The factor must be non empty
+            NotImplementedError: the factor must be non empty
         """
         return sum(1 for _ in self.factor_occurrences_iterator(other))
 
@@ -4940,8 +4728,7 @@ class FiniteWord_class(Word_class):
         from sage.combinat.partition import Partition
         if 0 in p:
             return Partition(p[:p.index(0)])
-        else:
-            return Partition(p)
+        return Partition(p)
 
     def overlap_partition(self, other, delay=0, p=None, involution=None):
         r"""
@@ -5100,14 +4887,14 @@ class FiniteWord_class(Word_class):
             {{-4, -2, 0, 2, 4}, {-5, -3, -1, 1, 3, 5}}
         """
         if not isinstance(delay, (int, Integer)):
-            raise TypeError("delay (=%s) must be an integer" % delay)
+            raise TypeError(f"delay (={delay}) must be an integer")
         elif delay < 0:
             return other.overlap_partition(self, -delay, p)
 
         from sage.sets.disjoint_set import DisjointSet_class
         if p is None:
             if self.parent().alphabet().cardinality() is Infinity:
-                raise ValueError("The alphabet of the parent must be finite")
+                raise ValueError("the alphabet of the parent must be finite")
             from sage.sets.disjoint_set import DisjointSet
             p = DisjointSet(self.parent().alphabet())
         elif not isinstance(p, DisjointSet_class):
@@ -5465,10 +5252,9 @@ class FiniteWord_class(Word_class):
         """
         if f is None:
             return self.reversal().iterated_right_palindromic_closure(f=f)
-        else:
-            from sage.combinat.words.morphism import WordMorphism
-            f = WordMorphism(f)
-            return f(self).reversal().iterated_right_palindromic_closure(f=f)
+        from sage.combinat.words.morphism import WordMorphism
+        f = WordMorphism(f)
+        return f(self).reversal().iterated_right_palindromic_closure(f=f)
 
     def balance(self):
         r"""
@@ -5832,31 +5618,30 @@ class FiniteWord_class(Word_class):
         # at this point, previous_letter is the suffix letter and current_run_length is the suffix length
         if not (is_isolated[alphabet[0]] or is_isolated[alphabet[1]]):
             return self
-        elif is_isolated[alphabet[0]] and is_isolated[alphabet[1]]:
+        if is_isolated[alphabet[0]] and is_isolated[alphabet[1]]:
             return W()
+        if is_isolated[alphabet[0]]:
+            l_isolated = alphabet[0]  # the isolated letter
+            l_running = alphabet[1]  # the running letter (non-isolated)
         else:
-            if is_isolated[alphabet[0]]:
-                l_isolated = alphabet[0]  # the isolated letter
-                l_running = alphabet[1]  # the running letter (non-isolated)
-            else:
-                l_isolated = alphabet[1]
-                l_running = alphabet[0]
-            w_isolated = word_from_letter[l_isolated]  # the word associated to the isolated letter
-            w_running = word_from_letter[l_running]  # the word associated to the running letter
-            min_run = minimal_run[l_running]
-            if prefix_letter == l_isolated or prefix_length <= min_run:
-                desubstitued_word = W()
-            else:
-                desubstitued_word = w_running ** (prefix_length - min_run)
-            for i in runs[l_running]:
-                desubstitued_word = desubstitued_word + w_isolated + w_running ** (i - min_run)
-            if current_run_length > 0:
-                desubstitued_word = desubstitued_word + w_isolated
-                if previous_letter == l_running and current_run_length > min_run:
-                    desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
-            return desubstitued_word.sturmian_desubstitute_as_possible()
+            l_isolated = alphabet[1]
+            l_running = alphabet[0]
+        w_isolated = word_from_letter[l_isolated]  # the word associated to the isolated letter
+        w_running = word_from_letter[l_running]  # the word associated to the running letter
+        min_run = minimal_run[l_running]
+        if prefix_letter == l_isolated or prefix_length <= min_run:
+            desubstitued_word = W()
+        else:
+            desubstitued_word = w_running ** (prefix_length - min_run)
+        for i in runs[l_running]:
+            desubstitued_word = desubstitued_word + w_isolated + w_running ** (i - min_run)
+        if current_run_length > 0:
+            desubstitued_word = desubstitued_word + w_isolated
+            if previous_letter == l_running and current_run_length > min_run:
+                desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
+        return desubstitued_word.sturmian_desubstitute_as_possible()
 
-    def is_sturmian_factor(self):
+    def is_sturmian_factor(self) -> bool:
         r"""
         Tell whether ``self`` is a factor of a Sturmian word.
 
@@ -5914,7 +5699,7 @@ class FiniteWord_class(Word_class):
         """
         return self.sturmian_desubstitute_as_possible().is_empty()
 
-    def is_tangent(self):
+    def is_tangent(self) -> bool:
         r"""
         Tell whether ``self`` is a tangent word.
 
@@ -6031,8 +5816,7 @@ class FiniteWord_class(Word_class):
         key = self._parent.sortkey_letters
         if key(self[i]) > key(self[i + 1]):
             return self.swap(i)
-        else:
-            return self
+        return self
 
     def swap_decrease(self, i):
         r"""
@@ -6056,8 +5840,7 @@ class FiniteWord_class(Word_class):
         key = self._parent.sortkey_letters
         if key(self[i]) < key(self[i + 1]):
             return self.swap(i)
-        else:
-            return self
+        return self
 
     def abelian_vector(self):
         r"""
@@ -6194,7 +5977,7 @@ class FiniteWord_class(Word_class):
         if overlap is True:
             from sage.combinat.shuffle import ShuffleProduct_overlapping
             return ShuffleProduct_overlapping(self, other, self.parent())
-        elif isinstance(overlap, (int, Integer)):
+        if isinstance(overlap, (int, Integer)):
             from sage.combinat.shuffle import ShuffleProduct_overlapping_r
             return ShuffleProduct_overlapping_r(self, other, overlap, self.parent())
         raise ValueError('overlapping must be True or an integer')
@@ -6238,8 +6021,7 @@ class FiniteWord_class(Word_class):
         if shift is None:
             from sage.combinat.words.shuffle_product import ShuffleProduct_shifted
             return ShuffleProduct_shifted(self, other)
-        else:
-            return self.shuffle(self._parent([x + shift for x in other], check=False))
+        return self.shuffle(self._parent([x + shift for x in other], check=False))
 
     ######################################################################
     # XXX TODO: The description is inconsistent w.r.t. "W" and "alphabet".
@@ -6493,7 +6275,7 @@ class FiniteWord_class(Word_class):
             res = res.delta_inv(s=tab[i])
         return res
 
-    def is_smooth_prefix(self):
+    def is_smooth_prefix(self) -> bool:
         r"""
         Return ``True`` if ``self`` is the prefix of a smooth word, and ``False``
         otherwise.
@@ -6599,18 +6381,18 @@ class FiniteWord_class(Word_class):
             sage: w.standard_factorization()
             Traceback (most recent call last):
             ...
-            ValueError: Standard factorization not defined on words of
+            ValueError: standard factorization not defined on words of
             length less than 2
             sage: w = Word('a')
             sage: w.standard_factorization()
             Traceback (most recent call last):
             ...
-            ValueError: Standard factorization not defined on words of
+            ValueError: standard factorization not defined on words of
             length less than 2
         """
         selflen = self.length()
         if selflen < 2:
-            raise ValueError("Standard factorization not defined on"
+            raise ValueError("standard factorization not defined on"
                              " words of length less than 2")
         for l in range(1, selflen):
             suff = self[l:]
@@ -6743,14 +6525,14 @@ class FiniteWord_class(Word_class):
             sage: Word(range(100)).colored_vector(cmap='jolies')                        # needs sage.plot
             Traceback (most recent call last):
             ...
-            RuntimeError: Color map jolies not known
+            RuntimeError: color map jolies not known
             sage: Word(range(100)).colored_vector(cmap='__doc__')                       # needs sage.plot
             Traceback (most recent call last):
             ...
-            RuntimeError: Color map __doc__ not known
+            RuntimeError: color map __doc__ not known
         """
         # Recognize the color map
-        import matplotlib.cm as cm
+        from matplotlib import cm
         from matplotlib.colors import LinearSegmentedColormap as C
         key_error = False
         try:
@@ -6763,7 +6545,7 @@ class FiniteWord_class(Word_class):
                                       if isinstance(val, C))
             import sage.misc.verbose
             sage.misc.verbose.verbose("The possible color maps include: %s" % possibilities, level=0)
-            raise RuntimeError("Color map %s not known" % cmap)
+            raise RuntimeError(f"color map {cmap} not known")
 
         # Drawing the colored vector...
         from sage.plot.line import line
@@ -6812,7 +6594,7 @@ class FiniteWord_class(Word_class):
         rep.axes(False)
         return rep
 
-    def is_square(self):
+    def is_square(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a square, and ``False`` otherwise.
 
@@ -6831,11 +6613,10 @@ class FiniteWord_class(Word_class):
         """
         if self.length() % 2:
             return False
-        else:
-            l = self.length() // 2
-            return self[:l] == self[l:]
+        l = self.length() // 2
+        return self[:l] == self[l:]
 
-    def is_square_free(self):
+    def is_square_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` does not contain squares, and ``False``
         otherwise.
@@ -6882,7 +6663,7 @@ class FiniteWord_class(Word_class):
         T = DecoratedSuffixTree(self)
         return set(T.square_vocabulary(output='word'))
 
-    def is_cube(self):
+    def is_cube(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a cube, and ``False`` otherwise.
 
@@ -6902,7 +6683,7 @@ class FiniteWord_class(Word_class):
         l = self.length() // 3
         return self[:l] == self[l:2*l] == self[2*l:]
 
-    def is_cube_free(self):
+    def is_cube_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` does not contain cubes, and ``False`` otherwise.
 
@@ -6965,7 +6746,7 @@ class FiniteWord_class(Word_class):
         M = FreeMonoid(len(l), l)
         return M(self)
 
-    def is_christoffel(self):
+    def is_christoffel(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a Christoffel word, and ``False`` otherwise.
 
@@ -7015,10 +6796,7 @@ class FiniteWord_class(Word_class):
         """
         if len(self) == 0 or len(self.letters()) > 2 or (self.is_palindrome() and len(self) > 1):
             return False
-        elif self.is_symmetric() and self[1:len(self) - 1].is_palindrome():
-            return True
-        else:
-            return False
+        return self.is_symmetric() and self[1:len(self) - 1].is_palindrome()
 
     def minimal_conjugate(self):
         r"""

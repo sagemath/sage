@@ -50,15 +50,15 @@ AUTHORS:
 - Sebastian Oehms (2022-03): PyPi version and Markov trace functionality
 """
 
-##############################################################################
+# ############################################################################
 #       Copyright (C) 2020 Sebastian Oehms <seb.oehms@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ############################################################################
 
 import os
 from enum import Enum
@@ -455,7 +455,7 @@ class MarkovTraceModuleBasis(Enum):
         Return a description of the link corresponding to this basis element.
 
         In the case of knots it refers to the naming according to
-        `KnotInfo <https://knotinfo.math.indiana.edu/>`__.
+        `KnotInfo <https://knotinfo.org/>`__.
 
         EXAMPLES::
 
@@ -483,10 +483,9 @@ class MarkovTraceModuleBasis(Enum):
             # since :class:`Link` does not construct disjoint union of unlinks
             # from the braid representation, we need a pd_code here
             return Link(pd_code)
-        else:
-            from sage.groups.braid import BraidGroup
-            B = BraidGroup(self.strands())
-            return Link(B(self.braid_tietze()))
+        from sage.groups.braid import BraidGroup
+        B = BraidGroup(self.strands())
+        return Link(B(self.braid_tietze()))
 
     def regular_homfly_polynomial(self):
         r"""
@@ -498,6 +497,7 @@ class MarkovTraceModuleBasis(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.databases.cubic_hecke_db import MarkovTraceModuleBasis
             sage: MarkovTraceModuleBasis.U1.regular_homfly_polynomial()
             1
@@ -653,8 +653,9 @@ class CubicHeckeFileCache(SageObject):
 
     class section(Enum):
         r"""
-        Enum for the different sections of file cache. The following choices are
-        possible:
+        Enum for the different sections of file cache.
+
+        The following choices are possible:
 
         - ``matrix_representations`` -- file cache for representation matrices
           of basis elements
@@ -663,7 +664,7 @@ class CubicHeckeFileCache(SageObject):
           in the case of cubic Hecke algebras on more than 4 strands
         - ``markov_trace`` -- file cache for intermediate results of long
           calculations in order to recover the results already obtained by
-          previous attemps of calculation until the corresponding intermediate
+          previous attempts of calculation until the corresponding intermediate
           step
 
         EXAMPLES::
@@ -696,8 +697,7 @@ class CubicHeckeFileCache(SageObject):
             """
             if nstrands is None:
                 return '%s.sobj' % self.value
-            else:
-                return '%s_%s.sobj' % (self.value, nstrands)
+            return '%s_%s.sobj' % (self.value, nstrands)
 
         matrix_representations = 'matrix_representations'
         braid_images = 'braid_images'
@@ -729,7 +729,7 @@ class CubicHeckeFileCache(SageObject):
 
     def _warn_incompatibility(self, fname):
         """
-        Warn the user that he has an incomaptible file cache under ``Sage_DOT``
+        Warn the user that he has an incompatible file cache under ``Sage_DOT``
         and move it away to another file (marked with timestamp).
 
         EXAMPLES::

@@ -54,9 +54,10 @@ Test hashing::
     ...
     TypeError: mutable matrices are unhashable
     sage: m.set_immutable()
-    sage: hash(m)
-    2212268000387745777  # 64-bit
-    1997752305           # 32-bit
+    sage: hash32 = 1997752305
+    sage: hash64 = 2212268000387745777
+    sage: hash(m) in [hash32, hash64]
+    True
 """
 
 # ****************************************************************************
@@ -73,7 +74,7 @@ Test hashing::
 from libc.string cimport strcpy, strlen
 
 from sage.categories.rings import Rings
-from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string cimport char_to_str
 
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
 from sage.ext.stdsage cimport PY_NEW
@@ -108,6 +109,7 @@ from sage.rings.rational cimport Rational
 from sage.matrix.matrix cimport Matrix
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense, _lift_crt
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 from sage.structure.element cimport Element, Vector
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ, IntegerRing_class
@@ -184,6 +186,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [1/2   0]
             [  0 1/2]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``fmpq_mat_init``). Returning here avoids building a
+            # ``MatrixArgs`` object and iterating over an empty generator,
+            # which makes creating a zero matrix from scratch significantly
+            # faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
         for t in ma.iter(coerce, True):
@@ -263,6 +272,46 @@ cdef class Matrix_rational_dense(Matrix_dense):
         x = Rational.__new__(Rational)
         fmpq_get_mpq(x.value, fmpq_mat_entry(self._matrix, i, j))
         return x
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) for i in range(12)])
+            sage: M
+            [     1    3/2    7/3   13/4]
+            [  21/5   31/6   43/7   57/8]
+            [  73/9  91/10 111/11 133/12]
+            sage: M.transpose()
+            [     1   21/5   73/9]
+            [   3/2   31/6  91/10]
+            [   7/3   43/7 111/11]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     1    3/2    7/3   13/4]
+            [  73/9  91/10 111/11 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [   3/2   13/4]
+            [  31/6   57/8]
+            [ 91/10 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [  21/5   57/8]
+            [  73/9 133/12]
+        """
+        cdef Matrix_rational_dense _src = <Matrix_rational_dense> src
+        fmpq_set(fmpq_mat_entry(self._matrix, iDst, jDst), fmpq_mat_entry(_src._matrix, iSrc, jSrc))
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -374,13 +423,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 s = data[k]
                 k += 1
                 if '/' in s:
-                    num, den = [str_to_bytes(n) for n in s.split('/')]
+                    num, den = (n.encode() for n in s.split('/'))
                     if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), num, 32) or \
                        fmpz_set_str(fmpq_mat_entry_den(self._matrix, i, j), den, 32):
                         raise RuntimeError("invalid pickle data")
                 else:
-                    s = str_to_bytes(s)
-                    if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), s, 32):
+                    num = s.encode()
+                    if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), num, 32):
                         raise RuntimeError("invalid pickle data")
                     fmpz_one(fmpq_mat_entry_den(self._matrix, i, j))
 
@@ -461,7 +510,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         sig_off()
         return ans
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         r"""
         TESTS::
 
@@ -494,12 +543,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         for i in range(self._nrows):
             for j in range(self._ncols):
                 k = fmpq_cmp(fmpq_mat_entry(self._matrix, i, j),
-                             fmpq_mat_entry((<Matrix_rational_dense> right)._matrix, i, j))
+                             fmpq_mat_entry((<Matrix_rational_dense> other)._matrix, i, j))
                 if k:
-                    if k > 0:
-                        return rich_to_bool(op, 1)
-                    else:
-                        return rich_to_bool(op, -1)
+                    return rich_to_bool(op, 1 if k > 0 else -1)
         return rich_to_bool(op, 0)
 
     cdef _vector_times_matrix_(self, Vector v):
@@ -1034,7 +1080,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             return poly.change_variable_name(var)
 
         if algorithm is None:
-            algorithm = 'flint' if self._nrows <= 40 else 'linbox'
+            algorithm = 'flint'
 
         if algorithm == 'flint' or algorithm == 'linbox':
             A, denom = self._clear_denom()
@@ -1564,6 +1610,43 @@ cdef class Matrix_rational_dense(Matrix_dense):
             ....:      _ = a._clear_denom() # fills the cache
             ....:      a.echelonize(algorithm=algo)
             ....:      assert sorted(a._cache.keys()) == ['echelon_form', 'in_echelon_form', 'pivots', 'rank'], (algo, a._cache.keys())
+
+        Check that :issue:`41267` is fixed::
+
+            sage: Parallelism().set(nproc=2)
+            sage: M = matrix(QQ, [
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-70,0,0,0,0,28,-28,0,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,70,0,0,0,0,-28,28,0,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-14,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-35,0,0,0,0,7,-21,0,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,0,0,-21,7,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-14,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-15,0,0,0,0,0,-15,1,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,-14,1,-1,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,-10,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-5,0,0,0,0,0,-10,3,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,-7,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,-6,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-6,6,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,10,-3,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-3,10,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-5,0,0,0,0,7,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,0,0,0,0,15,-1,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-15,0,0,0,0,14,-1,1,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,0,0,-7,21,0,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,14,0,0,0,0,-1,1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-35,0,0,0,0,21,-7,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,70,0,0,0,0,-28,28,0,0,0,0,0,1,-1],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            ....:     [0,0,0,0,0,0,0,0,0,0,0,0,0,-70,0,0,0,0,28,-28,0,0,0,0,0,-1,1]])
+            sage: Mf = copy(M)
+            sage: M.echelonize(algorithm='multimodular')
+            sage: Mf.echelonize(algorithm='flint:multimodular')
+            sage: assert(M == Mf)
+            sage: Parallelism().set(nproc=1)
         """
         if self.fetch('in_echelon_form'):
             return  # already known to be in echelon form
@@ -2144,7 +2227,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 #          v = V.random_element()
 #          num_iterates = max([squarefree_degree - g.degree() for g in G]) + 1
 
-#          S = [ ]
+#          S = []
 
 #          F.sort()
 #          for i in range(len(F)):
@@ -2823,12 +2906,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: matrix(ZZ, 0, 0) * matrix(QQ, 0, 5)
             []
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("self must be a square matrix")
-        if not self._ncols*self._nrows or not right._ncols*right._nrows:
+        check_matrix_multiplication_sizes(self, right)
+        if self._ncols == 0 or self._nrows == 0 or right._ncols == 0:
+            # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
             # pari doesn't work in case of 0 rows or columns
             # This case is easy, since the answer must be the 0 matrix.
-            return self.matrix_space(self._nrows, right._ncols).zero_matrix().__copy__()
+            MS = self.matrix_space(self._nrows, right._ncols)
+            return MS.element_class(MS, None, False, False)
         sig_on()
         cdef GEN M = gmul(_new_GEN_from_fmpq_mat_t(self._matrix),
                           _new_GEN_from_fmpq_mat_t(right._matrix))

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Special Methods for Classes
 
@@ -395,8 +394,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         """
         if cls.classget:
             return cls.classget(cls, instance, owner)
-        else:
-            return cls
+        return cls
 
     def __contains__(cls, x):
         r"""
@@ -439,12 +437,11 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             sage: 1 in Bar
             Traceback (most recent call last):
             ...
-            TypeError: argument of type 'type' is not iterable
+            TypeError: argument of type 'type' is not... iterable
         """
         if cls.classcontains:
             return cls.classcontains(cls, x)
-        else:
-            return x in object
+        return x in object
 
 
 def typecall(pytype cls, *args, **kwds):

@@ -69,31 +69,6 @@ from sage.groups.group import Group
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 
-
-def is_MatrixGroup(x):
-    """
-    Test whether ``x`` is a matrix group.
-
-    EXAMPLES::
-
-        sage: from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
-        sage: is_MatrixGroup(MatrixSpace(QQ, 3))
-        doctest:warning...
-        DeprecationWarning: the function is_MatrixGroup is deprecated;
-        use 'isinstance(..., MatrixGroup_base)' instead
-        See https://github.com/sagemath/sage/issues/37898 for details.
-        False
-        sage: is_MatrixGroup(Mat(QQ, 3))
-        False
-        sage: is_MatrixGroup(GL(2, ZZ))
-        True
-        sage: is_MatrixGroup(MatrixGroup([matrix(2, [1,1,0,1])]))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37898, "the function is_MatrixGroup is deprecated; use 'isinstance(..., MatrixGroup_base)' instead")
-    return isinstance(x, MatrixGroup_base)
-
 ###################################################################
 #
 # Base class for all matrix groups
@@ -120,7 +95,7 @@ class MatrixGroup_base(Group):
     """
     _ambient = None  # internal attribute to register the ambient group in case this instance is a subgroup
 
-    def _check_matrix(self, x, *args):
+    def _check_matrix(self, x, *args) -> None:
         """
         Check whether the matrix ``x`` defines a group element.
 
@@ -261,8 +236,7 @@ class MatrixGroup_base(Group):
         """
         if self._ambient is None:
             return self
-        else:
-            return self._ambient
+        return self._ambient
 
     def _repr_(self):
         """
@@ -298,18 +272,15 @@ class MatrixGroup_base(Group):
             if self.ngens() > 5:
                 return 'Matrix group over {0} with {1} generators'.format(
                     self.base_ring(), self.ngens())
-            else:
-                from sage.repl.display.util import format_list
-                return 'Matrix group over {0} with {1} generators {2}'.format(
-                    self.base_ring(), self.ngens(), format_list(self.gens()))
-        else:
-            if self.ngens() > 5:
-                return 'Subgroup with {0} generators of {1}'.format(
-                    self.ngens(), ambient_group)
-            else:
-                from sage.repl.display.util import format_list
-                return 'Subgroup with {0} generators {1} of {2}'.format(
-                    self.ngens(), format_list(self.gens()), ambient_group)
+            from sage.repl.display.util import format_list
+            return 'Matrix group over {0} with {1} generators {2}'.format(
+                self.base_ring(), self.ngens(), format_list(self.gens()))
+        if self.ngens() > 5:
+            return 'Subgroup with {0} generators of {1}'.format(
+                self.ngens(), ambient_group)
+        from sage.repl.display.util import format_list
+        return 'Subgroup with {0} generators {1} of {2}'.format(
+            self.ngens(), format_list(self.gens()), ambient_group)
 
     def _repr_option(self, key):
         """
@@ -582,6 +553,48 @@ class MatrixGroup_generic(MatrixGroup_base):
             if lx != rx:
                 return richcmp_not_equal(lx, rx, op)
         return rich_to_bool(op, 0)
+
+    def __hash__(self):
+        r"""
+        Return a hash for this matrix group.
+
+        The hash is computed from the same data used by equality:
+        the matrix space together with the ordered generator matrices.
+        Groups whose equality falls back to identity are also hashed by
+        identity.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(QQ)
+            sage: m = matrix(R, [[1, t], [0, 1]])
+            sage: G = MatrixGroup([m])
+            sage: H = MatrixGroup(G.gens())
+            sage: G == H
+            True
+            sage: hash(G) == hash(H)
+            True
+
+            sage: K = G.subgroup(G.gens())
+            sage: G == K
+            True
+            sage: hash(G) == hash(K)
+            True
+        """
+        try:
+            ngens = self.ngens()
+        except (AttributeError, NotImplementedError):
+            return hash(id(self))
+
+        from sage.structure.element import InfinityElement as Infinity
+        if isinstance(ngens, Infinity):
+            return hash(id(self))
+
+        try:
+            gens = self.gens()
+        except (AttributeError, NotImplementedError):
+            return hash(id(self))
+
+        return hash((self.matrix_space(), tuple(g.matrix() for g in gens)))
 
     def is_trivial(self):
         r"""

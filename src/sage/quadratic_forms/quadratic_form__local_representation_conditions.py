@@ -336,24 +336,21 @@ class QuadraticFormLocalRepresentationConditions:
         if self.dim >= 3:
             if p == 2:
                 return [2, 0, 0, 0, 0, 0, 0, 0, 0]
-            else:
-                return [p, 0, 0, 0, 0, None, None, None, None]
+            return [p, 0, 0, 0, 0, None, None, None, None]
 
-        elif self.dim == 2:
+        if self.dim == 2:
             if p == 2:
                 return [2, 0, 0, 0, 0, infinity, infinity, infinity, infinity]
-            else:
-                return [p, 0, 0, infinity, infinity, None, None, None, None]
+            return [p, 0, 0, infinity, infinity, None, None, None, None]
 
-        elif self.dim == 1:
+        if self.dim == 1:
             v = [p, None, None, None, None, None, None, None, None]
             sqclass = self.squareclass_vector(p)
 
             for i, sqi in enumerate(sqclass):
                 if QQ(self.coeff / sqi).is_padic_square(p):    # Note:This should happen only once!
-                    nu = valuation(self.coeff / sqi, p) / 2    # UNUSED VARIABLE !
-                else:
-                    v[i + 1] = infinity
+                    continue
+                v[i + 1] = infinity
 
         elif self.dim == 0:
             if p == 2:

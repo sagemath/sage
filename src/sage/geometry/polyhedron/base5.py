@@ -781,8 +781,7 @@ class Polyhedron_base5(Polyhedron_base4):
             new_rays = self.rays() + other.rays()
             new_lines = self.lines() + other.lines()
             return self.parent().element_class(self.parent(), [new_vertices, new_rays, new_lines], None)
-        else:
-            return self.parent().element_class(self.parent(), None, None)
+        return self.parent().element_class(self.parent(), None, None)
 
     _add_ = minkowski_sum
 
@@ -1414,7 +1413,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         Check that :issue:`19012` is fixed::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(5)
             sage: P = Polyhedron([[0, 0], [0, a], [1, 1]])
             sage: Q = Polyhedron(ieqs=[[-1, a, 1]])
@@ -1436,8 +1434,7 @@ class Polyhedron_base5(Polyhedron_base4):
             if self.base_ring() is ZZ:
                 parent = parent.base_extend(QQ)
                 return parent.element_class(parent, None, [new_ieqs, new_eqns])
-            else:
-                raise TypeError(msg)
+            raise TypeError(msg)
 
     __and__ = intersection
 
@@ -1500,9 +1497,9 @@ class Polyhedron_base5(Polyhedron_base4):
         """
         if isinstance(actor, Polyhedron_base5):
             return self.product(actor)
-        elif isinstance(actor, Vector):
+        if isinstance(actor, Vector):
             return self.translation(actor)
-        elif isinstance(actor, Matrix):
+        if isinstance(actor, Matrix):
             if self_on_left:
                 raise ValueError("matrices should act on the left")
             else:
@@ -1777,7 +1774,6 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: b3_proj = proj_mat * b3; b3_proj
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
 
-            sage: # needs sage.rings.number_field
             sage: square = polytopes.regular_polygon(4)
             sage: square.vertices_list()
             [[0, -1], [1, 0], [-1, 0], [0, 1]]
@@ -1790,7 +1786,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         Specifying the new base ring may avoid coercion failure::
 
-            sage: # needs sage.rings.number_field
             sage: K.<sqrt2> = QuadraticField(2)
             sage: L.<sqrt3> = QuadraticField(3)
             sage: P = polytopes.cube()*sqrt2
@@ -1907,11 +1902,11 @@ class Polyhedron_base5(Polyhedron_base4):
                 new_lines = ()
 
             if self.is_compact() and self.n_vertices() and self.n_inequalities():
-                homogeneous_basis = matrix(R, ( [1] + list(v) for v in self.an_affine_basis() )).transpose()
+                homogeneous_basis = matrix(R, ([1] + list(v) for v in self.an_affine_basis())).transpose()
 
                 # To convert first to a list and then to a matrix seems to be necessary to obtain a meaningful error,
                 # in case the number of columns doesn't match the dimension.
-                new_homogeneous_basis = matrix(list( [1] + list(linear_transf*vector(R, v)) for v in self.an_affine_basis()) ).transpose()
+                new_homogeneous_basis = matrix([[1] + list(linear_transf*vector(R, v)) for v in self.an_affine_basis()]).transpose()
 
                 if self.dim() + 1 == new_homogeneous_basis.rank():
                     # The transformation is injective on the polytope.
@@ -2191,7 +2186,6 @@ class Polyhedron_base5(Polyhedron_base4):
             (1, 9, 16, 9, 1)
             sage: stacked_square_large = cube.stack(square_face, position=10)
 
-            sage: # needs sage.rings.number_field
             sage: hexaprism = polytopes.regular_polygon(6).prism()
             sage: hexaprism.f_vector()
             (1, 12, 18, 8, 1)
@@ -2320,7 +2314,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: P_4 = polytopes.regular_polygon(4)
             sage: W1 = P_4.wedge(P_4.faces(1)[0]); W1
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 6 vertices
@@ -2443,7 +2436,6 @@ class Polyhedron_base5(Polyhedron_base4):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: pentagon  = polytopes.regular_polygon(5)
             sage: f = pentagon.faces(1)[0]
             sage: fsplit_pentagon = pentagon.face_split(f)
@@ -2641,7 +2633,6 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: ops_cube.f_vector()
             (1, 9, 24, 24, 9, 1)
 
-            sage: # needs sage.rings.number_field
             sage: pentagon  = polytopes.regular_polygon(5)
             sage: v = pentagon.vertices()[0]
             sage: ops_pentagon = pentagon.one_point_suspension(v)
@@ -2673,7 +2664,6 @@ class Polyhedron_base5(Polyhedron_base4):
         from sage.geometry.polyhedron.face import PolyhedronFace
         if isinstance(vertex, Vertex):
             return self.face_split(vertex)
-        elif isinstance(vertex, PolyhedronFace) and vertex.dim() == 0:
+        if isinstance(vertex, PolyhedronFace) and vertex.dim() == 0:
             return self.face_split(vertex)
-        else:
-            raise TypeError("the vertex {} should be a Vertex or PolyhedronFace of dimension 0".format(vertex))
+        raise TypeError("the vertex {} should be a Vertex or PolyhedronFace of dimension 0".format(vertex))

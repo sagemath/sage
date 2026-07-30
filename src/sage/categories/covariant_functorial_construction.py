@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Covariant Functorial Constructions
 
@@ -42,13 +41,15 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from typing import Self
+
+from sage.categories.category import Category
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.misc.lazy_import import LazyImport
-from sage.categories.category import Category
+from sage.structure.dynamic_class import DynamicMetaclass
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.dynamic_class import DynamicMetaclass
 
 
 class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
@@ -319,8 +320,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         base_category_class = cls._base_category_class[0]
         if isinstance(category, base_category_class):
             return super().__classcall__(cls, category, *args)
-        else:
-            return cls.category_of(base_category_class(category, *args))
+        return cls.category_of(base_category_class(category, *args))
 
     @staticmethod
     def __classget__(cls, base_category, base_category_class):
@@ -415,8 +415,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         functor_category = getattr(category.__class__, cls._functor_category)
         if isinstance(functor_category, type) and issubclass(functor_category, Category):
             return functor_category(category, *args)
-        else:
-            return cls.default_super_categories(category, *args)
+        return cls.default_super_categories(category, *args)
 
     def __init__(self, category, *args):
         r"""
@@ -624,7 +623,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         f = self._functor_category
         return not any(hasattr(C, f) for C in base.super_categories())
 
-    def additional_structure(self):
+    def additional_structure(self) -> Self | None:
         r"""
         Return the additional structure defined by ``self``.
 
@@ -653,8 +652,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         """
         if self.is_construction_defined_by_base():
             return self
-        else:
-            return None
+        return None
 
 
 class RegressiveCovariantConstructionCategory(CovariantConstructionCategory):

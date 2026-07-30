@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
@@ -91,16 +90,14 @@ cdef inline int classify_elements(left, right) noexcept:
         # Elements.
         if (<Element>left)._parent is (<Element>right)._parent:
             return 0o37
-        else:
-            return 0o17
+        return 0o17
     if not isinstance(right, Element):
         return 0o01
     if not isinstance(left, Element):
         return 0o02
     if (<Element>left)._parent is (<Element>right)._parent:
         return 0o27
-    else:
-        return 0o07
+    return 0o07
 
 # Functions to help understand the result of classify_elements()
 cdef inline bint BOTH_ARE_ELEMENT(int cl) noexcept:
@@ -151,7 +148,6 @@ cdef bin_op_exception(op, x, y)
 cdef class Element(SageObject):
     cdef Parent _parent
     cpdef _richcmp_(left, right, int op)
-    cpdef int _cmp_(left, right) except -2
     cpdef base_extend(self, R)
 
     cdef getattr_from_category(self, name)

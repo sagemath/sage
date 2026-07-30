@@ -47,7 +47,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
 
         sage: from sage.rings.factorint import aurifeuillian
 
-        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: aurifeuillian(2, 2)
         [5, 13]
         sage: aurifeuillian(2, 2^5)
@@ -57,7 +56,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         sage: aurifeuillian(15, 1)
         [19231, 142111]
 
-        sage: # needs sage.libs.pari
         sage: aurifeuillian(12, 3)
         Traceback (most recent call last):
         ...
@@ -91,8 +89,8 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     cdef Py_ssize_t y = euler_phi(2*n)//2
     if F is None:
         from sage.rings.polynomial.cyclotomic import cyclotomic_value
-        if n%2:
-            if n%4 == 3:
+        if n % 2:
+            if n % 4 == 3:
                 s = -1
             else:
                 s = 1
@@ -129,7 +127,6 @@ cpdef factor_aurifeuillian(n, check=True):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
         sage: fa(2^6 + 1)
         [5, 13]
@@ -148,7 +145,6 @@ cpdef factor_aurifeuillian(n, check=True):
 
     TESTS::
 
-        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: for n in [2,3,5,6,30,31,33]:
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
@@ -196,7 +192,7 @@ cpdef factor_aurifeuillian(n, check=True):
             F = aurifeuillian(a, m, check=False)
             rem = prod(F)
             if check and not rem.divides(n):
-                raise RuntimeError("rem=%s, F=%s, n=%s, m=%s"%(rem, F, n, m))
+                raise RuntimeError(f"rem={rem}, F={F}, n={n}, m={m}")
             rem = n // rem
             if rem != 1:
                 return [rem] + F
@@ -207,9 +203,10 @@ cpdef factor_aurifeuillian(n, check=True):
 def factor_cunningham(m, proof=None):
     r"""
     Return factorization of ``self`` obtained using trial division
-    for all primes in the so called Cunningham table. This is
-    efficient if ``self`` has some factors of type `b^n+1` or `b^n-1`,
-    with `b` in `\{2,3,5,6,7,10,11,12\}`.
+    for all primes in the so called Cunningham table.
+
+    This is efficient if ``self`` has some factors of type `b^n+1` or
+    `b^n-1`, with `b` in `\{2,3,5,6,7,10,11,12\}`.
 
     You need to install an optional package to use this method,
     this can be done with the following command line:
@@ -243,8 +240,7 @@ def factor_cunningham(m, proof=None):
             L.append( (p,v) )
     if n.is_one():
         return IntegerFactorization(L)
-    else:
-        return IntegerFactorization(L)*n.factor(proof=proof)
+    return IntegerFactorization(L)*n.factor(proof=proof)
 
 
 cpdef factor_trial_division(m, long limit=LONG_MAX):

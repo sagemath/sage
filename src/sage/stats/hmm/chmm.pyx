@@ -330,10 +330,10 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9]).__repr__()
             'Gaussian Hidden Markov Model with 2 States\nTransition matrix:\n[0.1 0.9]\n[0.5 0.5]\nEmission parameters:\n[(1.0, 0.5), (-1.0, 3.0)]\nInitial probabilities: [0.1000, 0.9000]'
         """
-        s = "Gaussian Hidden Markov Model with %s States"%self.N
-        s += '\nTransition matrix:\n%s'%self.transition_matrix()
-        s += '\nEmission parameters:\n%s'%self.emission_parameters()
-        s += '\nInitial probabilities: %s'%self.initial_probabilities()
+        s = "Gaussian Hidden Markov Model with %s States" % self.N
+        s += '\nTransition matrix:\n%s' % self.transition_matrix()
+        s += '\nEmission parameters:\n%s' % self.emission_parameters()
+        s += '\nInitial probabilities: %s' % self.initial_probabilities()
         return s
 
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
@@ -421,7 +421,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         else:
             q = starting_state
             if q < 0 or q>= self.N:
-                raise ValueError("starting state must be between 0 and %s"%(self.N-1))
+                raise ValueError("starting state must be between 0 and %s" % (self.N-1))
 
         states._values[0] = q
         obs._values[0] = self.random_sample(q, rstate)
@@ -910,8 +910,12 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: m.emission_parameters()
             [(-0.2663018798..., 1.0), (-1.99850979..., 1.0)]
 
-        We watch the log likelihoods of the model converge, step by step::
+        We watch the log likelihoods of the model converge, step by
+        step. We set the random seed beforehand so that the output is
+        predictable (and guaranteed to avoid random floating point
+        issues)::
 
+            sage: set_random_seed(0)
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
             ....:                                   [(1,.5), (-1,3)],
             ....:                                   [.1,.9])
@@ -920,16 +924,18 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             ....:                       for _ in range(len(v))])
             sage: all(l[i] <= l[i+1] + 0.0001 for i in range(9))
             True
-            sage: l  # random
+            sage: l
             [-20.1167, -17.7611, -16.9814, -16.9364, -16.9314,
              -16.9309, -16.9309, -16.9309, -16.9309, -16.9309]
 
-        We illustrate fixing emissions::
+        We illustrate fixing emissions; again the random seed is fixed
+        to ensure that the output is what we expect it to be::
 
+            sage: set_random_seed(0)
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.9,.1]],
             ....:                                   [(1,2),(-1,.5)],
             ....:                                   [.3,.7])
-            sage: set_random_seed(0); v = m.sample(100)
+            sage: v = m.sample(100)
             sage: m.baum_welch(v,fix_emissions=True)
             (-164.72944548204..., 23)
             sage: m.emission_parameters()
@@ -942,6 +948,28 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: m.emission_parameters()  # rel tol 3e-14
             [(1.2722419172602375, 2.371368751761901),
              (-0.9486174675179113, 0.5762360385123765)]
+
+        TESTS:
+
+        If your luck is bad enough to cause a :exc:`RuntimeError`,
+        re-sampling will fix it. This is a repeat of one of the
+        examples above, without the fixed random seed, but then
+        acknowledging that the algorithm can fail in rare cases::
+
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
+            sage: v = m.sample(10)
+            sage: while True:
+            ....:     try:
+            ....:         l = stats.TimeSeries([m.baum_welch(v, max_iter=1)[0]
+            ....:                               for _ in range(len(v))])
+            ....:         break
+            ....:     except RuntimeError:
+            ....:         v = m.sample(10)
+            sage: all(l[i] <= l[i+1] + 0.0001 for i in range(9))
+            True
+
         """
         if not isinstance(obs, TimeSeries):
             obs = TimeSeries(obs)
@@ -1143,10 +1171,10 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
             sage: hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]], [[(.4,(0,1)), (.6,(1,0.1))],[(1,(0,1))]], [.7,.3]).__repr__()
             'Gaussian Mixture Hidden Markov Model with 2 States\nTransition matrix:\n[0.9 0.1]\n[0.4 0.6]\nEmission parameters:\n[0.4*N(0.0,1.0) + 0.6*N(1.0,0.1), 1.0*N(0.0,1.0)]\nInitial probabilities: [0.7000, 0.3000]'
         """
-        s = "Gaussian Mixture Hidden Markov Model with %s States"%self.N
-        s += '\nTransition matrix:\n%s'%self.transition_matrix()
-        s += '\nEmission parameters:\n%s'%self.emission_parameters()
-        s += '\nInitial probabilities: %s'%self.initial_probabilities()
+        s = "Gaussian Mixture Hidden Markov Model with %s States" % self.N
+        s += '\nTransition matrix:\n%s' % self.transition_matrix()
+        s += '\nEmission parameters:\n%s' % self.emission_parameters()
+        s += '\nInitial probabilities: %s' % self.initial_probabilities()
         return s
 
     def __reduce__(self):

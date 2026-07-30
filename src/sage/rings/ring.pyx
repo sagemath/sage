@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Rings
 
@@ -9,7 +8,7 @@ specific base classes.
 .. WARNING::
 
     Those classes, except maybe for the lowest ones like
-    :class:`CommutativeRing` and :class:`Field`,
+    :class:`Field`,
     are being progressively deprecated in favor of the corresponding
     categories. which are more flexible, in particular with respect to multiple
     inheritance.
@@ -19,7 +18,7 @@ The class inheritance hierarchy is:
 - :class:`Ring` (to be deprecated)
 
   - :class:`Algebra` (deprecated and essentially removed)
-  - :class:`CommutativeRing`
+  - :class:`CommutativeRing` (deprecated and essentially removed)
 
     - :class:`NoetherianRing` (deprecated and essentially removed)
     - :class:`CommutativeAlgebra` (deprecated and essentially removed)
@@ -28,7 +27,7 @@ The class inheritance hierarchy is:
       - :class:`DedekindDomain` (deprecated and essentially removed)
       - :class:`PrincipalIdealDomain` (deprecated and essentially removed)
 
-Subclasses of :class:`CommutativeRing` are
+Other subclaasses of :class:`Ring` are
 
 - :class:`Field`
 
@@ -97,6 +96,15 @@ This is to test a deprecation::
     sage: F.category()
     Category of algebras over Rational Field
 
+    sage: from sage.rings.ring import CommutativeRing
+    sage: class Niets(CommutativeRing):
+    ....:     pass
+    sage: F = Niets(ZZ)
+    ...:
+    DeprecationWarning: use the category CommutativeRings
+    See https://github.com/sagemath/sage/issues/42153 for details.
+    sage: F.category()
+    Category of commutative rings
 """
 
 # ****************************************************************************
@@ -108,10 +116,8 @@ This is to test a deprecation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 
-from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport check_default_category
 from sage.categories.rings import Rings
@@ -126,7 +132,7 @@ from sage.categories.noetherian_rings import NoetherianRings
 _Rings = Rings()
 _CommutativeRings = CommutativeRings()
 
-cdef class Ring(ParentWithGens):
+cdef class Ring(Parent):
     """
     Generic ring class.
 
@@ -247,17 +253,36 @@ cdef class Ring(ParentWithGens):
             sage: R
             Multivariate Polynomial Ring in x, y over Rational Field
         """
-        # Unfortunately, ParentWithGens inherits from sage.structure.parent_old.Parent.
-        # Its __init__ method does *not* call Parent.__init__, since this would somehow
-        # yield an infinite recursion. But when we call it from here, it works.
-        # This is done in order to ensure that __init_extra__ is called.
-        #
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
+        if base is None:
+            raise TypeError('a ring must have a base ring')
         if category is None:
             category = check_default_category(_Rings, category)
         Parent.__init__(self, base=base, names=names, normalize=normalize,
                         category=category)
+
+    def gens(self):
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+
+        EXAMPLES::
+
+           sage: ZZ.gens()
+           (1,)
+
+           sage: ZZ["y"].gens()
+           (y,)
+
+           sage: InfinitePolynomialRing(QQ, "a").gens()
+           (a_*,)
+        """
+        cdef int i
+        if self._gens is not None:
+            return self._gens
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
 
     def __iter__(self):
         r"""
@@ -305,7 +330,7 @@ cdef class Ring(ParentWithGens):
         raise RuntimeError("use ** for exponentiation, not '^', which means xor "
               "in Python, and has the wrong precedence")
 
-    def base_extend(self, R):
+    def base_extend(self, X):
         """
         EXAMPLES::
 
@@ -316,8 +341,8 @@ cdef class Ring(ParentWithGens):
             sage: ZZ.base_extend(GF(7))
             Finite Field of size 7
         """
-        if R.has_coerce_map_from(self):
-            return R
+        if X.has_coerce_map_from(self):
+            return X
         raise TypeError('no base extension defined')
 
     def category(self):
@@ -375,7 +400,6 @@ cdef class Ring(ParentWithGens):
 
         The following was implemented in :issue:`7797`::
 
-            sage: # needs sage.combinat sage.modules
             sage: A = SteenrodAlgebra(2)
             sage: A * [A.1 + A.2, A.1^2]
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
@@ -469,54 +493,6 @@ cdef class Ring(ParentWithGens):
             return x
         return self._one_element
 
-    def is_field(self, proof=True):
-        """
-        Return ``True`` if this ring is a field.
-
-        INPUT:
-
-        - ``proof`` -- boolean (default: ``True``); determines what to do in
-          unknown cases
-
-        ALGORITHM:
-
-        If the parameter ``proof`` is set to ``True``, the returned value is
-        correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns ``True`` if it can establish that
-        ``self`` is a field and ``False`` otherwise.
-
-        EXAMPLES::
-
-            sage: QQ.is_field()
-            True
-            sage: GF(9, 'a').is_field()                                                 # needs sage.rings.finite_rings
-            True
-            sage: ZZ.is_field()
-            False
-            sage: QQ['x'].is_field()
-            False
-            sage: Frac(QQ['x']).is_field()
-            True
-
-        This illustrates the use of the ``proof`` parameter::
-
-            sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
-            sage: S.is_field(proof=True)                                                # needs sage.libs.singular
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-            sage: S.is_field(proof=False)                                               # needs sage.libs.singular
-            False
-        """
-        if self.is_zero():
-            return False
-
-        if proof:
-            raise NotImplementedError("No way to prove that %s is an integral domain!" % self)
-        else:
-            return False
-
     def order(self):
         """
         The number of elements of ``self``.
@@ -532,332 +508,43 @@ cdef class Ring(ParentWithGens):
             return 1
         raise NotImplementedError
 
-    def zeta(self, n=2, all=False):
-        """
-        Return a primitive ``n``-th root of unity in ``self`` if there
-        is one, or raise a :exc:`ValueError` otherwise.
-
-        INPUT:
-
-        - ``n`` -- positive integer
-
-        - ``all`` -- boolean (default: ``False``); whether to return
-          a list of all primitive `n`-th roots of unity. If ``True``, raise a
-          :exc:`ValueError` if ``self`` is not an integral domain.
-
-        OUTPUT: element of ``self`` of finite order
-
-        EXAMPLES::
-
-            sage: QQ.zeta()
-            -1
-            sage: QQ.zeta(1)
-            1
-            sage: CyclotomicField(6).zeta(6)                                            # needs sage.rings.number_field
-            zeta6
-            sage: CyclotomicField(3).zeta(3)                                            # needs sage.rings.number_field
-            zeta3
-            sage: CyclotomicField(3).zeta(3).multiplicative_order()                     # needs sage.rings.number_field
-            3
-
-            sage: # needs sage.rings.finite_rings
-            sage: a = GF(7).zeta(); a
-            3
-            sage: a.multiplicative_order()
-            6
-            sage: a = GF(49,'z').zeta(); a
-            z
-            sage: a.multiplicative_order()
-            48
-            sage: a = GF(49,'z').zeta(2); a
-            6
-            sage: a.multiplicative_order()
-            2
-
-            sage: QQ.zeta(3)
-            Traceback (most recent call last):
-            ...
-            ValueError: no n-th root of unity in rational field
-            sage: Zp(7, prec=8).zeta()                                                  # needs sage.rings.padics
-            3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + 6*7^6 + 2*7^7 + O(7^8)
-
-        TESTS::
-
-            sage: from sage.rings.ring import Ring
-            sage: Ring.zeta(QQ, 1)
-            1
-            sage: Ring.zeta(QQ, 2)
-            -1
-            sage: Ring.zeta(QQ, 3)                                                      # needs sage.libs.pari
-            Traceback (most recent call last):
-            ...
-            ValueError: no 3rd root of unity in Rational Field
-            sage: IntegerModRing(8).zeta(2, all = True)
-            Traceback (most recent call last):
-            ...
-            ValueError: ring is not an integral domain
-        """
-        if all and not self.is_integral_domain():
-            raise ValueError("ring is not an integral domain")
-        if n == 2:
-            if all:
-                return [self(-1)]
-            else:
-                return self(-1)
-        elif n == 1:
-            if all:
-                return [self(1)]
-            else:
-                return self(1)
-        else:
-            f = self['x'].cyclotomic_polynomial(n)
-            if all:
-                return [-P[0] for P, e in f.factor() if P.degree() == 1]
-            for P, e in f.factor():
-                if P.degree() == 1:
-                    return -P[0]
-            from sage.rings.integer_ring import ZZ
-            raise ValueError("no %s root of unity in %r" % (ZZ(n).ordinal_str(), self))
-
-    def zeta_order(self):
-        """
-        Return the order of the distinguished root of unity in ``self``.
-
-        EXAMPLES::
-
-            sage: CyclotomicField(19).zeta_order()                                      # needs sage.rings.number_field
-            38
-            sage: GF(19).zeta_order()
-            18
-            sage: GF(5^3,'a').zeta_order()                                              # needs sage.rings.finite_rings
-            124
-            sage: Zp(7, prec=8).zeta_order()                                            # needs sage.rings.padics
-            6
-        """
-        return self.zeta().multiplicative_order()
-
-    @cached_method
-    def epsilon(self):
-        """
-        Return the precision error of elements in this ring.
-
-        EXAMPLES::
-
-            sage: RDF.epsilon()
-            2.220446049250313e-16
-            sage: ComplexField(53).epsilon()                                            # needs sage.rings.real_mpfr
-            2.22044604925031e-16
-            sage: RealField(10).epsilon()                                               # needs sage.rings.real_mpfr
-            0.0020
-
-        For exact rings, zero is returned::
-
-            sage: ZZ.epsilon()
-            0
-
-        This also works over derived rings::
-
-            sage: RR['x'].epsilon()                                                     # needs sage.rings.real_mpfr
-            2.22044604925031e-16
-            sage: QQ['x'].epsilon()
-            0
-
-        For the symbolic ring, there is no reasonable answer::
-
-            sage: SR.epsilon()                                                          # needs sage.symbolic
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        one = self.one()
-        try:
-            return one.ulp()
-        except AttributeError:
-            pass
-
-        try:
-            eps = one.real().ulp()
-        except AttributeError:
-            pass
-        else:
-            return self(eps)
-
-        B = self._base
-        if B is not None and B is not self:
-            eps = self.base_ring().epsilon()
-            return self(eps)
-        if self.is_exact():
-            return self.zero()
-        raise NotImplementedError
 
 cdef class CommutativeRing(Ring):
-    """
-    Generic commutative ring.
-    """
-    _default_category = _CommutativeRings
-
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: Integers(389)['x,y']
-            Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-        """
-        if base_ring is not self and base_ring not in _CommutativeRings:
-            raise TypeError("base ring %s is no commutative ring" % base_ring)
-
-        # This is a low-level class. For performance, we trust that
-        # the category is fine, if it is provided. If it isn't, we use
-        # the category of commutative rings.
-        category = check_default_category(self._default_category, category)
-        Ring.__init__(self, base_ring, names=names, normalize=normalize,
-                      category=category)
-
-    def fraction_field(self):
-        """
-        Return the fraction field of ``self``.
-
-        EXAMPLES::
-
-            sage: R = Integers(389)['x,y']
-            sage: Frac(R)
-            Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-            sage: R.fraction_field()
-            Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-        """
-        try:
-            if self.is_field():
-                return self
-        except NotImplementedError:
-            pass
-
-        if not self.is_integral_domain():
-            raise TypeError("self must be an integral domain.")
-
-        if self.__fraction_field is not None:
-            return self.__fraction_field
-        else:
-            import sage.rings.fraction_field
-            K = sage.rings.fraction_field.FractionField_generic(self)
-            self.__fraction_field = K
-        return self.__fraction_field
-
-    def _pseudo_fraction_field(self):
-        r"""
-        This method is used by the coercion model to determine if `a / b`
-        should be treated as `a * (1/b)`, for example when dividing an element
-        of `\ZZ[x]` by an element of `\ZZ`.
-
-        The default is to return the same value as ``self.fraction_field()``,
-        but it may return some other domain in which division is usually
-        defined (for example, ``\ZZ/n\ZZ`` for possibly composite `n`).
-
-        EXAMPLES::
-
-            sage: ZZ._pseudo_fraction_field()
-            Rational Field
-            sage: ZZ['x']._pseudo_fraction_field()
-            Fraction Field of Univariate Polynomial Ring in x over Integer Ring
-            sage: Integers(15)._pseudo_fraction_field()
-            Ring of integers modulo 15
-            sage: Integers(15).fraction_field()
-            Traceback (most recent call last):
-            ...
-            TypeError: self must be an integral domain.
-        """
-        try:
-            return self.fraction_field()
-        except (NotImplementedError,TypeError):
-            return coercion_model.division_parent(self)
-
-    def extension(self, poly, name=None, names=None, **kwds):
-        """
-        Algebraically extend ``self`` by taking the quotient
-        ``self[x] / (f(x))``.
-
-        INPUT:
-
-        - ``poly`` -- a polynomial whose coefficients are coercible into
-          ``self``
-
-        - ``name`` -- (optional) name for the root of `f`
-
-        .. NOTE::
-
-            Using this method on an algebraically complete field does *not*
-            return this field; the construction ``self[x] / (f(x))`` is done
-            anyway.
-
-        EXAMPLES::
-
-            sage: R = QQ['x']
-            sage: y = polygen(R)
-            sage: R.extension(y^2 - 5, 'a')                                             # needs sage.libs.pari
-            Univariate Quotient Polynomial Ring in a over
-             Univariate Polynomial Ring in x over Rational Field with modulus a^2 - 5
-
-        ::
-
-            sage: # needs sage.rings.finite_rings
-            sage: P.<x> = PolynomialRing(GF(5))
-            sage: F.<a> = GF(5).extension(x^2 - 2)
-            sage: P.<t> = F[]
-            sage: R.<b> = F.extension(t^2 - a); R
-            Univariate Quotient Polynomial Ring in b over
-             Finite Field in a of size 5^2 with modulus b^2 + 4*a
-        """
-        from sage.rings.polynomial.polynomial_element import Polynomial
-        if not isinstance(poly, Polynomial):
-            try:
-                poly = poly.polynomial(self)
-            except (AttributeError, TypeError):
-                raise TypeError("polynomial (=%s) must be a polynomial." % repr(poly))
-        if names is not None:
-            name = names
-        if isinstance(name, tuple):
-            name = name[0]
-        if name is None:
-            name = str(poly.parent().gen(0))
-        for key, val in kwds.items():
-            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_name', 'latex_names']:
-                raise TypeError("extension() got an unexpected keyword argument '%s'" % key)
-            if not (val is None or isinstance(val, list) and all(c is None for c in val)):
-                raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
-        R = self[name]
-        I = R.ideal(R(poly.list()))
-        return R.quotient(I, name)
-
-
-cdef class IntegralDomain(CommutativeRing):
-    _default_category = IntegralDomains()
-
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = _CommutativeRings
+        deprecation(42153, "use the category CommutativeRings")
+        super().__init__(*args, **kwds)
+
+
+cdef class IntegralDomain(Ring):
+    def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = IntegralDomains()
         deprecation(39227, "use the category IntegralDomains")
         super().__init__(*args, **kwds)
 
 
-cdef class NoetherianRing(CommutativeRing):
-    _default_category = NoetherianRings()
-
+cdef class NoetherianRing(Ring):
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = NoetherianRings()
         deprecation(37234, "use the category NoetherianRings")
         super().__init__(*args, **kwds)
 
 
-cdef class DedekindDomain(CommutativeRing):
-    _default_category = DedekindDomains()
-
+cdef class DedekindDomain(Ring):
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = DedekindDomains()
         deprecation(37234, "use the category DedekindDomains")
         super().__init__(*args, **kwds)
 
 
-cdef class PrincipalIdealDomain(CommutativeRing):
-    _default_category = PrincipalIdealDomains()
-
+cdef class PrincipalIdealDomain(Ring):
     def __init__(self, *args, **kwds):
+        if "category" not in kwds:
+            kwds["category"] = PrincipalIdealDomains()
         deprecation(37719, "use the category PrincipalIdealDomains")
         super().__init__(*args, **kwds)
 
@@ -898,7 +585,8 @@ from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-cdef class Field(CommutativeRing):
+
+cdef class Field(Ring):
     """
     Generic field
 
@@ -907,128 +595,10 @@ cdef class Field(CommutativeRing):
         sage: QQ.is_noetherian()
         True
     """
-    _default_category = _Fields
-
-    def fraction_field(self):
-        """
-        Return the fraction field of ``self``.
-
-        EXAMPLES:
-
-        Since fields are their own field of fractions, we simply get the
-        original field in return::
-
-            sage: QQ.fraction_field()
-            Rational Field
-            sage: RR.fraction_field()                                                   # needs sage.rings.real_mpfr
-            Real Field with 53 bits of precision
-            sage: CC.fraction_field()                                                   # needs sage.rings.real_mpfr
-            Complex Field with 53 bits of precision
-
-            sage: x = polygen(ZZ, 'x')
-            sage: F = NumberField(x^2 + 1, 'i')                                         # needs sage.rings.number_field
-            sage: F.fraction_field()                                                    # needs sage.rings.number_field
-            Number Field in i with defining polynomial x^2 + 1
-        """
-        return self
-
-    def _pseudo_fraction_field(self):
-        """
-        The fraction field of ``self`` is always available as ``self``.
-
-        EXAMPLES::
-
-            sage: QQ._pseudo_fraction_field()
-            Rational Field
-            sage: K = GF(5)
-            sage: K._pseudo_fraction_field()
-            Finite Field of size 5
-            sage: K._pseudo_fraction_field() is K
-            True
-        """
-        return self
-
-    def is_field(self, proof=True):
-        """
-        Return ``True`` since this is a field.
-
-        EXAMPLES::
-
-            sage: Frac(ZZ['x,y']).is_field()
-            True
-        """
-        return True
-
-    def algebraic_closure(self):
-        """
-        Return the algebraic closure of ``self``.
-
-        .. NOTE::
-
-           This is only implemented for certain classes of field.
-
-        EXAMPLES::
-
-            sage: K = PolynomialRing(QQ,'x').fraction_field(); K
-            Fraction Field of Univariate Polynomial Ring in x over Rational Field
-            sage: K.algebraic_closure()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Algebraic closures of general fields not implemented.
-        """
-        raise NotImplementedError("Algebraic closures of general fields not implemented.")
-
-    def an_embedding(self, K):
-        r"""
-        Return some embedding of this field into another field `K`,
-        and raise a :class:`ValueError` if none exists.
-
-        EXAMPLES::
-
-            sage: GF(2).an_embedding(GF(4))
-            Ring morphism:
-              From: Finite Field of size 2
-              To:   Finite Field in z2 of size 2^2
-              Defn: 1 |--> 1
-            sage: GF(4).an_embedding(GF(8))
-            Traceback (most recent call last):
-            ...
-            ValueError: no embedding from Finite Field in z2 of size 2^2 to Finite Field in z3 of size 2^3
-            sage: GF(4).an_embedding(GF(16))
-            Ring morphism:
-              From: Finite Field in z2 of size 2^2
-              To:   Finite Field in z4 of size 2^4
-              Defn: z2 |--> z4^2 + z4
-
-        ::
-
-            sage: CyclotomicField(5).an_embedding(QQbar)
-            Coercion map:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-            sage: CyclotomicField(3).an_embedding(CyclotomicField(7))
-            Traceback (most recent call last):
-            ...
-            ValueError: no embedding from Cyclotomic Field of order 3 and degree 2 to Cyclotomic Field of order 7 and degree 6
-            sage: CyclotomicField(3).an_embedding(CyclotomicField(6))
-            Generic morphism:
-              From: Cyclotomic Field of order 3 and degree 2
-              To:   Cyclotomic Field of order 6 and degree 2
-              Defn: zeta3 -> zeta6 - 1
-        """
-        if self.characteristic() != K.characteristic():
-            raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
-
-        H = self.Hom(K)
-        try:
-            return H.natural_map()
-        except TypeError:
-            pass
-        from sage.categories.sets_cat import EmptySetError
-        try:
-            return H.an_element()
-        except EmptySetError:
-            raise ValueError(f'no embedding from {self} to {K}')
+    def __init__(self, *args, **kwds):
+        if 'category' not in kwds:
+            kwds['category'] = _Fields
+        super().__init__(*args, **kwds)
 
 
 cdef class Algebra(Ring):
@@ -1039,31 +609,9 @@ cdef class Algebra(Ring):
         super().__init__(base_ring, *args, **kwds)
 
 
-cdef class CommutativeAlgebra(CommutativeRing):
+cdef class CommutativeAlgebra(Ring):
     def __init__(self, base_ring, *args, **kwds):
-        self._default_category = CommutativeAlgebras(base_ring)
+        if "category" not in kwds:
+            kwds["category"] = CommutativeAlgebras(base_ring)
         deprecation(37999, "use the category CommutativeAlgebras")
         super().__init__(base_ring, *args, **kwds)
-
-
-def is_Ring(x):
-    """
-    Return ``True`` if ``x`` is a ring.
-
-    EXAMPLES::
-
-        sage: from sage.rings.ring import is_Ring
-        sage: is_Ring(ZZ)
-        doctest:warning...
-        DeprecationWarning: The function is_Ring is deprecated; use '... in Rings()' instead
-        See https://github.com/sagemath/sage/issues/38288 for details.
-        True
-        sage: MS = MatrixSpace(QQ, 2)                                                   # needs sage.modules
-        sage: is_Ring(MS)                                                               # needs sage.modules
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38288,
-                       "The function is_Ring is deprecated; "
-                       "use '... in Rings()' instead")
-    return x in _Rings

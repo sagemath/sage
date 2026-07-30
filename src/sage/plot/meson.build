@@ -8,6 +8,7 @@ py.install_sources(
   'bezier_path.py',
   'circle.py',
   'colors.py',
+  'complex_plot.pyx',
   'contour_plot.py',
   'density_plot.py',
   'disk.py',
@@ -33,7 +34,7 @@ py.install_sources(
   subdir: 'sage/plot',
 )
 
-extension_data = {'complex_plot' : files('complex_plot.pyx')}
+extension_data = {'complex_plot': files('complex_plot.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(
@@ -41,8 +42,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/plot',
     install: true,
-    include_directories: [inc_cpython, inc_gsl, inc_numpy, inc_rings],
-    dependencies: [py_dep, cysignals, gmp, gsl],
+    include_directories: [inc_cpython, inc_gsl, inc_rings],
+    dependencies: [py_dep, cysignals, gmp, gsl, numpy],
   )
 endforeach
 

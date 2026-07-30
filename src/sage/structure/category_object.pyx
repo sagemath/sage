@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 r"""
 Base class for objects of a category
@@ -254,8 +253,7 @@ cdef class CategoryObject(SageObject):
         cls = type(self)
         if isinstance(cls, DynamicMetaclass):
             return cls.__bases__[0]
-        else:
-            return cls
+        return cls
 
     ##############################################################################
     # Generators
@@ -277,8 +275,8 @@ cdef class CategoryObject(SageObject):
 
         EXAMPLES::
 
-            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs sage.rings.polynomial.pbori
-            sage: B.gens_dict()                                                         # needs sage.rings.polynomial.pbori
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs brial
+            sage: B.gens_dict()                                                         # needs brial
             {'a': a, 'b': b, 'c': c, 'd': d}
 
         TESTS::
@@ -291,8 +289,7 @@ cdef class CategoryObject(SageObject):
         """
         if copy:
             return dict(self.__gens_dict())
-        else:
-            return self.__gens_dict()
+        return self.__gens_dict()
 
     def gens_dict_recursive(self):
         r"""
@@ -583,7 +580,7 @@ cdef class CategoryObject(SageObject):
             sage: F.base_ring()                                                         # needs sage.modules
             Integer Ring
             sage: F.__class__.base_ring                                                 # needs sage.modules
-            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+            <cyfunction CategoryObject.base_ring at ...>
 
         Note that the coordinates of the elements of a module can lie
         in a bigger ring, the ``coordinate_ring``::
@@ -604,7 +601,7 @@ cdef class CategoryObject(SageObject):
             sage: F.base_ring()                                                         # needs sage.combinat sage.modules
             Rational Field
             sage: F.__class__.base_ring                                                 # needs sage.combinat sage.modules
-            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+            <cyfunction CategoryObject.base_ring at ...>
 
             sage: # needs sage.modules
             sage: E = CombinatorialFreeModule(ZZ, [1,2,3])
@@ -613,7 +610,7 @@ cdef class CategoryObject(SageObject):
             sage: H.base_ring()
             Integer Ring
             sage: H.__class__.base_ring
-            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+            <cyfunction CategoryObject.base_ring at ...>
 
         .. TODO::
 

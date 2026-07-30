@@ -56,8 +56,7 @@ def WeierstrassForm2(polynomial, variables=None, transformation=False):
     """
     if transformation:
         return WeierstrassMap_P3(*polynomial, variables=variables)
-    else:
-        return WeierstrassForm_P3(*polynomial, variables=variables)
+    return WeierstrassForm_P3(*polynomial, variables=variables)
 
 
 ######################################################################

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Crystals
@@ -82,6 +81,8 @@ class RegularCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -309,12 +310,10 @@ class RegularCrystals(Category_singleton):
             """
             tester = self._tester(**options)
             goodness = True
-            i = 0
-            for x in self:
+            for i, x in enumerate(self, start=1):
                 goodness = x._test_stembridge_local_axioms(index_set, verbose)
                 if not goodness and not complete:
                     tester.fail()
-                i += 1
                 if i > tester._max_runs:
                     return
             tester.assertTrue(goodness)
@@ -427,10 +426,7 @@ class RegularCrystals(Category_singleton):
                 index_set = self.index_set()
 
             def wt_zero(x):
-                for i in index_set:
-                    if x.epsilon(i) != x.phi(i):
-                        return False
-                return True
+                return all(x.epsilon(i) == x.phi(i) for i in index_set)
 
             if X is None:
                 X = [x for x in self if wt_zero(x)]
@@ -579,13 +575,12 @@ class RegularCrystals(Category_singleton):
                     element = element.f(i)
                     l.append(element)
                 return C.sum_of_monomials(l)
-            else:
-                l = []
-                element = self
-                for k in range(-r-1):
-                    element = element.e(i)
-                    l.append(element)
-                return - C.sum_of_monomials(l)
+            l = []
+            element = self
+            for k in range(-r-1):
+                element = element.e(i)
+                l.append(element)
+            return - C.sum_of_monomials(l)
 
         def stembridgeDelta_depth(self, i, j):
             r"""
@@ -839,12 +834,12 @@ class RegularCrystals(Category_singleton):
                 sage: T = crystals.Tableaux(['A',4], shape=[3,2])
                 sage: G = T(2,1,4,3,5).dual_equivalence_class()
                 sage: G.edges(sort=True)
-                [([[1, 3, 5], [2, 4]], [[1, 3, 4], [2, 5]], 4),
-                 ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 2),
-                 ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 3),
+                [([[1, 3, 4], [2, 5]], [[1, 3, 5], [2, 4]], 4),
                  ([[1, 3, 4], [2, 5]], [[1, 2, 4], [3, 5]], 2),
-                 ([[1, 2, 4], [3, 5]], [[1, 2, 3], [4, 5]], 3),
-                 ([[1, 2, 4], [3, 5]], [[1, 2, 3], [4, 5]], 4)]
+                 ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 2),
+                 ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 3),
+                 ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 3),
+                 ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 4)]
             """
             if index_set is None:
                 index_set = self.index_set()

@@ -347,130 +347,8 @@ def class_number(p, r, M):
     return Integer(h)
 
 
-def maximal_order(A):
-    """
-    Return a maximal order in the quaternion algebra ramified
-    at `p` and infinity.
-
-    This is an implementation of Proposition 5.2 of [Piz1980]_.
-
-    INPUT:
-
-    - ``A`` -- quaternion algebra ramified precisely at `p` and infinity
-
-    OUTPUT: a maximal order in `A`
-
-    EXAMPLES::
-
-        sage: A = BrandtModule(17).quaternion_algebra()
-
-        sage: sage.modular.quatalg.brandt.maximal_order(A)
-        doctest:...:  DeprecationWarning: The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
-
-        sage: A = QuaternionAlgebra(17,names='i,j,k')
-        sage: A.maximal_order()
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras")
-    return A.maximal_order()
-
-
-def basis_for_left_ideal(R, gens):
-    """
-    Return a basis for the left ideal of `R` with given generators.
-
-    INPUT:
-
-    - ``R`` -- quaternion order
-    - ``gens`` -- list of elements of `R`
-
-    OUTPUT: list of four elements of `R`
-
-    EXAMPLES::
-
-        sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
-        sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i+j,i-j,2*k,A(3)])
-        doctest:...:  DeprecationWarning: The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        [1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k]
-        sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
-        [3, 3/2 + 3/2*i, 3*j, i + 3/2*j + 1/2*k]
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras")
-    return R._left_ideal_basis(gens)
-
-
-def right_order(R, basis):
-    """
-    Given a basis for a left ideal `I`, return the right order in the
-    quaternion order `R` of elements `x` such that `I x` is contained in `I`.
-
-    INPUT:
-
-    - ``R`` -- order in quaternion algebra
-    - ``basis`` -- basis for an ideal `I`
-
-    OUTPUT: order in quaternion algebra
-
-    EXAMPLES:
-
-    We do a consistency check with the ideal equal to a maximal order::
-
-        sage: B = BrandtModule(17); basis = B.maximal_order()._left_ideal_basis([1])
-        sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        doctest:...:  DeprecationWarning: The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
-        sage: basis
-        [1, 1/2 + 1/2*i, j, 1/3*i + 1/2*j + 1/6*k]
-
-        sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
-        sage: basis = B.maximal_order()._left_ideal_basis([i*j - j])
-        sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
-        Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras")
-    return R._right_order_from_ideal_basis(basis)
-
-
-def quaternion_order_with_given_level(A, level):
-    """
-    Return an order in the quaternion algebra A with given level.
-
-    This is implemented only when the base field is the rational numbers.
-
-    INPUT:
-
-    - ``level`` -- the level of the order to be returned. Currently this
-      is only implemented when the level is divisible by at
-      most one power of a prime that ramifies in this quaternion algebra.
-
-    EXAMPLES::
-
-        sage: from sage.modular.quatalg.brandt import quaternion_order_with_given_level, maximal_order
-        sage: A.<i,j,k> = QuaternionAlgebra(5)
-        sage: level = 2 * 5 * 17
-        sage: O = quaternion_order_with_given_level(A, level)
-        doctest:...:  DeprecationWarning: The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras
-        See https://github.com/sagemath/sage/issues/37090 for details.
-        sage: M = A.maximal_order()
-        sage: L = O.free_module()
-        sage: N = M.free_module()
-        sage: L.index_in(N) == level/5  #check that the order has the right index in the maximal order
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37090, "The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras")
-    return A.order_with_level(level)
-
-
 class BrandtSubmodule(HeckeSubmodule):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this Brandt submodule.
 
@@ -483,7 +361,7 @@ class BrandtSubmodule(HeckeSubmodule):
 
 
 class BrandtModuleElement(HeckeModuleElement):
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         EXAMPLES::
 
@@ -497,7 +375,7 @@ class BrandtModuleElement(HeckeModuleElement):
             x = x.element()
         HeckeModuleElement.__init__(self, parent, parent.free_module()(x))
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         EXAMPLES::
 

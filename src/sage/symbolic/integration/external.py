@@ -1,4 +1,5 @@
-"""Symbolic Integration via External Software
+"""
+Symbolic Integration via External Software
 
 TESTS::
 
@@ -249,7 +250,7 @@ def libgiac_integrator(expression, v, a=None, b=None):
     try:
         from sage.libs.giac import libgiac
     except ImportError:
-        # If libgiac isn't available, return a symbolic answer
+        # If libgiac is not available, return a symbolic answer
         # (without actually integrating anything). This is essentially
         # the failure case of any integration: see below for what we
         # do if libgiac is *available* but unable to do much.
@@ -265,5 +266,4 @@ def libgiac_integrator(expression, v, a=None, b=None):
         result = libgiac.integrate(Pygen(expression), v, a, b)
     if 'integrate' in format(result) or 'integration' in format(result):
         return expression.integrate(v, a, b, hold=True)
-    else:
-        return result.sage()
+    return result.sage()

@@ -1,7 +1,6 @@
 r"""
 Base class for elements of multivariate polynomial rings
 """
-
 # ********************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -18,15 +17,6 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
 from sage.misc.misc_c import prod
-from sage.misc.superseded import deprecated_function_alias
-
-
-def is_MPolynomial(x):
-    from sage.misc.superseded import deprecation
-    deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
-
-    return isinstance(x, MPolynomial)
-
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
@@ -34,6 +24,7 @@ from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_element cimport Polynomial
+
 
 cdef class MPolynomial(CommutativePolynomial):
 
@@ -44,7 +35,6 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         TESTS::
 
-            sage: # needs sage.rings.real_mpfr
             sage: ZZ(RR['x,y'](0))  # indirect doctest
             0
             sage: ZZ(RR['x,y'](0.5))
@@ -56,7 +46,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Integer Ring
 
-            sage: # needs sage.rings.real_mpfr
             sage: RR(RR['x,y'](0))  # indirect doctest
             0.000000000000000
             sage: RR(ZZ['x,y'].gen(0))
@@ -64,7 +53,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Real Field with 53 bits of precision
 
-            sage: # needs sage.rings.real_mpfr
             sage: CC(RR['x,y'](0))  # indirect doctest
             0.000000000000000
             sage: CC(ZZ['x,y'].gen(0))
@@ -72,7 +60,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex Field with 53 bits of precision
 
-            sage: # needs sage.rings.real_mpfr
             sage: RDF(RR['x,y'](0))
             0.0
             sage: RDF(ZZ['x,y'].gen(0))
@@ -80,7 +67,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Real Double Field
 
-            sage: # needs sage.rings.real_mpfr
             sage: CDF(RR['x,y'](0))  # indirect doctest
             0.0
             sage: CDF(ZZ['x,y'].gen(0))
@@ -88,7 +74,6 @@ cdef class MPolynomial(CommutativePolynomial):
             ...
             TypeError: unable to convert non-constant polynomial x to Complex Double Field
 
-            sage: # needs sage.libs.flint sage.rings.real_mpfr
             sage: a = RR['x,y'](1)
             sage: RBF(a)
             1.000000000000000
@@ -188,7 +173,6 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: R.<x,y> = QQ[]
             sage: f = x^3 + y
             sage: g = f._symbolic_(SR); g
@@ -369,7 +353,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials implemented via Singular::
 
-            sage: # needs sage.libs.singular
             sage: R.<x, y> = PolynomialRing(FiniteField(5))
             sage: f = x^3*y^5 + x^7*y
             sage: type(f)
@@ -403,7 +386,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials over the symbolic ring (just for fun....)::
 
-            sage: # needs sage.symbolic
             sage: x = var("x")
             sage: S.<u, v> = PolynomialRing(SR)
             sage: f = u*v*x
@@ -501,7 +483,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: # needs sage.rings.padics
             sage: R = Qp(7)['x,y,z,t,p']; S = ZZ['x,z,t']['p']
             sage: R(S.0)
             p
@@ -825,8 +806,7 @@ cdef class MPolynomial(CommutativePolynomial):
         for m in M:
             if m.degree() != d:
                 return False
-        else:
-            return True
+        return True
 
     def homogeneous_components(self):
         r"""
@@ -910,14 +890,12 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(9,'a')[]
             sage: (x+2*y).change_ring(GF(3))
             x - y
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(7^2)
             sage: R.<x,y> = F[]
             sage: f = x^2 + a^2*y^2 + a*x + a^3*y
@@ -928,7 +906,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: R.<x,y> = K[]
             sage: f = x^2 + z*y
@@ -937,7 +914,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field
             sage: K.<w> = CyclotomicField(5)
             sage: R.<x,y> = K[]
             sage: f = x^2 + w*y
@@ -948,7 +924,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Check that :issue:`25022` is fixed::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: K.<x,y> = ZZ[]
             sage: (x*y).change_ring(SR).monomials()
             [x*y]
@@ -976,7 +951,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: R.<x,y,z> = QQ[]
             sage: p = (x+y+z)**2 - 3 * (x+y)*(x+z)*(y+z)
             sage: p.is_symmetric()
@@ -1058,49 +1032,37 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``gap`` -- a GAP or libgap instance
+        - ``gap`` -- a GAP instance
+
+        Note that ``libgap`` should rather be used.
 
         TESTS:
 
         Multivariate polynomial over integers::
 
-            sage: # needs sage.libs.gap
             sage: R.<x,y,z> = ZZ[]
             sage: gap(-x*y + 3*z)   # indirect doctest
             -x*y+3*z
             sage: gap(R.zero())     # indirect doctest
             0
-            sage: (x+y+z)._gap_(libgap)
-            x+y+z
-
-            sage: g = gap(x - y + 3*x*y*z)                                              # needs sage.libs.gap
-            sage: R(g)                                                                  # needs sage.libs.gap
+            sage: g = gap(x - y + 3*x*y*z)
+            sage: R(g)
             3*x*y*z + x - y
-
-            sage: g = libgap(5*x - y*z)                                                 # needs sage.libs.gap
-            sage: R(g)                                                                  # needs sage.libs.gap
-            -y*z + 5*x
 
         Multivariate polynomial over a cyclotomic field::
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: F.<zeta> = CyclotomicField(8)
             sage: P.<x,y> = F[]
             sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
             sage: gap(p)     # indirect doctest
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
-            sage: libgap(p)  # indirect doctest
-            (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
 
         Multivariate polynomial over a polynomial ring over a cyclotomic field::
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: S.<z> = F[]
             sage: P.<x,y> = S[]
             sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
             sage: gap(p)     # indirect doctest
-            ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
-            sage: libgap(p)  # indirect doctest
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
         """
         R = gap(self.parent())
@@ -1109,25 +1071,51 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def _libgap_(self):
         r"""
-        TESTS::
+
+        Return a representation of ``self`` in libgap.
+
+        EXAMPLES:
+
+        Multivariate polynomial over integers::
 
             sage: R.<x,y,z> = ZZ[]
-            sage: libgap(-x*y + 3*z)   # indirect doctest                               # needs sage.libs.gap
+            sage: libgap(-x*y + 3*z)   # indirect doctest
             -x*y+3*z
-            sage: libgap(R.zero())     # indirect doctest                               # needs sage.libs.gap
+            sage: libgap(R.zero())     # indirect doctest
             0
+            sage: g = libgap(5*x - y*z)
+            sage: R(g)
+            -y*z + 5*x
+
+        Multivariate polynomial over a cyclotomic field::
+
+            sage: F.<zeta> = CyclotomicField(8)
+            sage: P.<x,y> = F[]
+            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
+            sage: libgap(p)  # indirect doctest
+            (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
+
+        Multivariate polynomial over a polynomial ring over a cyclotomic field::
+
+            sage: S.<z> = F[]
+            sage: P.<x,y> = S[]
+            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
+            sage: libgap(p)  # indirect doctest
+            ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
         """
         from sage.libs.gap.libgap import libgap
-        return self._gap_(libgap)
+        R = libgap(self.parent())
+        variables = R.IndeterminatesOfPolynomialRing()
+        return self(*variables)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a Magma string representation of ``self`` valid in the
         given magma session.
 
         EXAMPLES::
 
-            sage: # optional - magma, needs sage.rings.finite_rings
+            sage: # optional - magma
             sage: k.<b> = GF(25); R.<x,y> = k[]
             sage: f = y*x^2*b + x*(b+1) + 1
             sage: magma = Magma()                       # so var names same below
@@ -1158,7 +1146,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return '%s!(%s)' % (R.name(), s)
 
-    def _giac_init_(self):
+    def _giac_init_(self) -> str:
         r"""
         Return a Giac string representation of this polynomial.
 
@@ -1180,7 +1168,34 @@ cdef class MPolynomial(CommutativePolynomial):
                      for c, m in self)
         return s if s else '0'
 
-    def gradient(self):
+    def _fricas_init_(self):
+        """
+        Return a FriCAS string representation of this polynomial.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: a, b = GF(13)['a,b'].gens()
+            sage: p = 4 * a + b^2
+            sage: fricas(p).typeOf()
+            MultivariatePolynomial([a, b],PrimeField(13))
+
+        TESTS::
+
+            sage: # optional - fricas
+            sage: a, b = GF(13)['a,b'].gens()
+            sage: p = a^3 + b^3
+            sage: fricas(p).factor()
+            (a + b)(a + 9 b)(a + 3 b)
+        """
+        P = self.parent()
+        v = ",".join(P.variable_names())
+        lm = f"List Record(c: {P.base_ring()._fricas_init_()}, d: List NonNegativeInteger)"
+        coeffs = ",".join(f"[{c._fricas_init_()}, [{e}]]"
+                          for e, c in self.dict().items())
+        return f"reduce(+, [monomial(m.c, [{v}], m.d)${P._fricas_init_()} for m in [{coeffs}]${lm}])"
+
+    def gradient(self) -> list:
         r"""
         Return a list of partial derivatives of this polynomial,
         ordered by the variables of ``self.parent()``.
@@ -1192,7 +1207,7 @@ cdef class MPolynomial(CommutativePolynomial):
            sage: f.gradient()
            [y, x, 0]
         """
-        return [ self.derivative(var) for var in self.parent().gens() ]
+        return [self.derivative(var) for var in self.parent().gens()]
 
     def jacobian_ideal(self):
         r"""
@@ -1232,9 +1247,7 @@ cdef class MPolynomial(CommutativePolynomial):
             ((0, 2), (1, 1), (2, 0))
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
-        e = self.exponents()
-        P = Polyhedron(vertices=e, base_ring=ZZ)
-        return P
+        return Polyhedron(vertices=self.exponents(), base_ring=ZZ)
 
     def __iter__(self):
         r"""
@@ -1334,7 +1347,7 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         return self.base_ring().ideal(self.coefficients())
 
-    def is_gen(self):
+    def is_gen(self) -> bool:
         r"""
         Return ``True`` if this polynomial is a generator of its parent.
 
@@ -1354,19 +1367,8 @@ cdef class MPolynomial(CommutativePolynomial):
             True
             sage: (x*y).is_gen()
             False
-
-        TESTS::
-
-            sage: R.<x,y> = ZZ[]
-            sage: x.is_generator()
-            doctest:warning...:
-            DeprecationWarning: is_generator is deprecated. Please use is_gen instead.
-            See https://github.com/sagemath/sage/issues/38942 for details.
-            True
         """
         return self in self.parent().gens()
-
-    is_generator = deprecated_function_alias(38942, is_gen)
 
     def map_coefficients(self, f, new_base_ring=None):
         r"""
@@ -1393,7 +1395,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Examples with different base ring::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<r> = GF(9); S.<s> = GF(81)
             sage: h = Hom(R,S)[0]; h
             Ring morphism:
@@ -1436,7 +1437,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: R.<x,y> = PolynomialRing(k)
             sage: f = (x-a) * (y-a)
@@ -1510,7 +1510,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Polynomials must be defined over compatible base rings::
 
-            sage: # needs sage.modules
             sage: K.<x, y> = QQ[]
             sage: f = x + y
             sage: L.<x, y> = ZZ[]
@@ -1539,7 +1538,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Corner cases::
 
-            sage: # needs sage.modules
             sage: K.<x, y> = QQ[]
             sage: f = x^2 + 1
             sage: g = K(0)
@@ -1644,7 +1642,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         Test polynomials over QQbar (:issue:`25265`)::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: f = x^5*y + 3*x^2*y^2 - 2*x + y - 1
             sage: f.discriminant(y)                                                     # needs sage.libs.singular
@@ -1859,7 +1856,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x,y> = NumberField(symbolic_expression(x^2+3),'a')['x,y']
             sage: f = (1/17)*x^19 + (1/6)*y - (2/3)*x + 1/3; f
             1/17*x^19 - 2/3*x + 1/6*y + 1/3
@@ -1872,7 +1868,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.real_mpfr
             sage: R.<a,b,c> = RR[]
             sage: f = a + b + RR('0.3'); f
             a + b + 0.300000000000000
@@ -1938,7 +1933,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x,y> = NumberField(symbolic_expression(x^2+3), 'a')['x,y']
             sage: f = (1/17)*y^19 - (2/3)*x + 1/3; f
             1/17*y^19 - 2/3*x + 1/3
@@ -1963,7 +1957,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.number_field sage.symbolic
             sage: K = NumberField(symbolic_expression('x^3+2'), 'a')['x']['s,t']
             sage: f = K.random_element()
             sage: f.numerator() / f.denominator() == f
@@ -1980,9 +1973,12 @@ cdef class MPolynomial(CommutativePolynomial):
         Given an ideal `I = (f_1,\dots,f_r)` that contains ``self``,
         find `s_1,\dots,s_r` such that ``self`` `= s_1 f_1 + ... + s_r f_r`.
 
+        INPUT:
+
+        - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
+
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: A.<x,y> = PolynomialRing(CC, 2, order='degrevlex')
             sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7 ])
             sage: f = x*y^13 + y^12
@@ -2001,31 +1997,39 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives
+        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives,
+          or a single polynomial
 
         OUTPUT: a multivariate polynomial representing the inverse of ``f`` modulo `I`
 
         EXAMPLES::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
-           1/16*x1 + 3/16
-           sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
-           1
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
+            1/16*x1 + 3/16
+            sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
+            1
 
         Test a non-invertible element::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + x2
-           sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
-           Traceback (most recent call last):
-           ...
-           ArithmeticError: element is non-invertible
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + x2
+            sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is non-invertible
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: x.inverse_mod(x*y-1)
+            y
         """
         P = self.parent()
-        B = I.gens()
+        from sage.rings.ideal import Ideal_generic
+        B = I.gens() if isinstance(I, Ideal_generic) else (I,)
         try:
             XY = P.one().lift((self,) + tuple(B))
             return P(XY[0])
@@ -2098,7 +2102,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: R = PolynomialRing(QQ, 'a', 5)
             sage: f = R.random_element(terms=20)
             sage: w = random_vector(ZZ,5)
@@ -2638,7 +2641,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
             sage: (x + y).is_unit()
             False
@@ -2677,7 +2679,7 @@ cdef class MPolynomial(CommutativePolynomial):
         d.pop(zero_key, None)
         return all(d[k].is_nilpotent() for k in d)
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nilpotent, i.e., some power of ``self``
         is 0.
@@ -2815,7 +2817,6 @@ cdef class MPolynomial(CommutativePolynomial):
         is not a subring of the real numbers, as the notion is not defined in
         this case::
 
-            sage: # needs sage.rings.real_mpfr
             sage: Q.<z,w> = CC[]
             sage: q = z^2 + w^2
             sage: q.is_lorentzian()
@@ -2890,6 +2891,54 @@ cdef class MPolynomial(CommutativePolynomial):
                 return result(False, "multiple positive eigenvalues")
 
         return result(True)
+
+    def crt(self, y, m, n):
+        """
+        Return a polynomial congruent to ``self`` modulo ``m`` and
+        to ``y`` modulo ``n``.
+
+        INPUT:
+
+        - ``y`` -- a polynomial in the same ring as ``self``
+        - ``m``, ``n`` -- polynomials or ideals in the same ring as ``self``; ideals
+          may also be specified as a list/tuple of generators
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ, implementation="singular")
+            sage: f = R(3)
+            sage: f.crt(5, x-1, x-2) % ((x-1)*(x-2))
+            2*x + 1
+            sage: f.crt(5, R.ideal(x-1), [x-2]) % ((x-1)*(x-2))
+            2*x + 1
+        """
+        # could be moved up to ModuleElement as long as lift() is defined
+        # the current definition of lift() requires ideal(), so maybe only RingElement
+        R = self._parent
+        y = R(y)
+        m = R.ideal(m).gens()
+        n = R.ideal(n).gens()
+        # result == self - sum a_i * m_i == y + sum b_i * n_i
+        # self - y == sum b_i * n_i + sum a_i * m_i
+        ab_values = (self - y).lift(m + n)
+        return R.sum([y] + [bi * ni for bi, ni in zip(ab_values[len(m):], n)])
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: R.<x,y>=QQ[]
+            sage: (-2*x^2+3*x+5*y).canonical_associate()
+            (x^2 - 3/2*x - 5/2*y, -2)
+            sage: R.<x,y>=ZZ[]
+            sage: (-2*x^2+3*x+5*y).canonical_associate()
+            (2*x^2 - 3*x - 5*y, -1)
+        """
+        lc = self.leading_coefficient()
+        _, u = lc.canonical_associate()
+        return (u.inverse_of_unit() * self, u)
 
 
 def _is_M_convex_(points) -> bool:
@@ -2985,8 +3034,7 @@ cdef remove_from_tuple(e, int ind):
     del w[ind]
     if len(w) == 1:
         return w[0]
-    else:
-        return tuple(w)
+    return tuple(w)
 
 
 cdef class MPolynomial_libsingular(MPolynomial):

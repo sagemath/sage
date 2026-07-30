@@ -40,6 +40,10 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_field
 from sage.rings.fraction_field import FractionField_generic
 
+from sage.rings.real_double cimport RealDoubleElement
+from sage.rings.complex_double cimport ComplexDoubleElement
+import sage.rings.abc
+
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
 from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
@@ -963,7 +967,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
     n1 = _ring.cf.cfInit(0, _ring.cf)
 
     while quo!=0:
-        coeff = _ring.cf.cfInit(quo%b, _ring.cf)
+        coeff = _ring.cf.cfInit(quo % b, _ring.cf)
 
         if not _ring.cf.cfIsZero(coeff, _ring.cf):
             apow2 = _ring.cf.cfMult(coeff, apow1, _ring.cf)
@@ -1409,8 +1413,9 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     cdef number *n1
     cdef number *n2
     cdef number *a
-    cdef number *nlCoeff
     cdef number *naCoeff
+    cdef number *cfnum
+    cdef number *cfden
     cdef number *apow1
     cdef number *apow2
 
@@ -1422,29 +1427,12 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     a = _ring.cf.cfParameter(1, _ring.cf)
     apow1 = _ring.cf.cfInit(1, _ring.cf)
 
-    cdef char *_name
-
-    # the result of nlInit2gmp() is in a plain polynomial ring over QQ (not an extension ring!),
-    # so we have to get/create one:
-    #
-    # todo: reuse qqr/ get an existing Singular polynomial ring over Q.
-    _name = omStrDup("a")
-    cdef char **_ext_names
-    _ext_names = <char**>omAlloc0(sizeof(char*))
-    _ext_names[0] = omStrDup(_name)
-    qqr = rDefault( 0, 1, _ext_names)
-    rComplete(qqr,1)
-    qqr.ShortOut = 0
-
-    assert _ring.cf.type == n_algExt  # if false naSetMap will segmentation fault (should never happen)
-    cdef nMapFunc nMapFuncPtr = naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
-    if nMapFuncPtr is NULL:
-        raise RuntimeError("Failed to determine nMapFuncPtr")
-    cdef poly *_p
     for i from 0 <= i < len(elem):
-        nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )
-        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf, _ring.cf)
-        nlDelete(&nlCoeff, _ring.cf)
+        cfnum = _ring.cf.cfInitMPZ(mpq_numref((<Rational>elem[i]).value), _ring.cf)
+        cfden = _ring.cf.cfInitMPZ(mpq_denref((<Rational>elem[i]).value), _ring.cf)
+        naCoeff = _ring.cf.cfDiv(cfnum, cfden, _ring.cf)
+        _ring.cf.cfDelete(&cfnum, _ring.cf)
+        _ring.cf.cfDelete(&cfden, _ring.cf)
 
         # faster would be to assign the coefficient directly
         apow2 = _ring.cf.cfMult(naCoeff, apow1,_ring.cf)
@@ -1538,25 +1526,26 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         sage: P(3)
         3
     """
-    if _ring != currRing: rChangeCurrRing(_ring)
+    if _ring != currRing:
+        rChangeCurrRing(_ring)
 
     cdef number *nn
-
-    cdef int64_t _d
     cdef char *_name
     cdef char **_ext_names
-
     cdef nMapFunc nMapFuncPtr = NULL
 
     if _ring.cf.type == n_unknown:
         return n_Init(int(d), _ring.cf)
-
     if _ring.cf.type == n_Z2m:
-        _d = d
-        return nr2mMapZp(<number *>_d, currRing.cf, _ring.cf)
-    elif _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
+        if sizeof(number *) >= sizeof(unsigned long):
+            # one may also always choose the second branch,
+            # but the first branch may allow inlining (?)
+            # casting to unsigned long is safe because n_Z2m
+            # is only chosen if the exponent is small, see singular_ring_new
+            return nr2mMapZp(<number *> <unsigned long> d, currRing.cf, _ring.cf)
+        return _ring.cf.cfInit(<long> <unsigned long> d, _ring.cf)
+    if _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
         lift = d.lift()
-
         # if I understand nrnMapGMP/nMapFuncPtr correctly we need first
         # a source value in ZZr
         # create ZZr, a plain polynomial ring over ZZ with one variable.
@@ -1575,8 +1564,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         nMapFuncPtr  = nrnSetMap( ZZr.cf, _ring.cf)
 
         return nMapFuncPtr(nn, ZZr.cf, _ring.cf)
-    else:
-        raise ValueError
+    raise ValueError
 
 cdef object si2sa(number *n, ring *_ring, object base):
     r"""
@@ -1594,6 +1582,9 @@ cdef object si2sa(number *n, ring *_ring, object base):
 
     An element of ``base``
     """
+    cdef gmp_float* f
+    cdef gmp_complex* c
+    cdef char* s
     if isinstance(base, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return base(_ring.cf.cfInt(n, _ring.cf))
 
@@ -1624,6 +1615,17 @@ cdef object si2sa(number *n, ring *_ring, object base):
     elif isinstance(base, IntegerModRing_generic):
         return si2sa_ZZmod(n, _ring, base)
 
+    elif isinstance(base, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_R:
+        return base(nrFloat(n))
+
+    elif isinstance(base, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_long_R:
+        f = <gmp_float*>n
+        return base(f[0].to_double())
+
+    elif isinstance(base, sage.rings.abc.ComplexDoubleField) and _ring.cf.type == n_long_C:
+        c = <gmp_complex*>n
+        return base(c[0].real().to_double(), c[0].imag().to_double())
+
     else:
         raise ValueError("cannot convert from SINGULAR number")
 
@@ -1643,6 +1645,9 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     a (pointer to) a singular number
     """
     cdef int i = 0
+    cdef ComplexDoubleElement z
+    cdef RealDoubleElement re
+    cdef RealDoubleElement im
 
     if isinstance(elem._parent, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return n_Init(int(elem),_ring.cf)
@@ -1666,6 +1671,15 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
         return sa2si_NF(elem, _ring)
     elif isinstance(elem._parent, IntegerModRing_generic):
         return sa2si_ZZmod(elem, _ring)
+    elif isinstance(elem._parent, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_R:
+        return sage_nrInit((<RealDoubleElement>elem)._value)
+    elif isinstance(elem._parent, sage.rings.abc.RealDoubleField) and _ring.cf.type == n_long_R:
+        return <number*><void*>new gmp_float((<RealDoubleElement>elem)._value)
+    elif isinstance(elem._parent, sage.rings.abc.ComplexDoubleField) and _ring.cf.type == n_long_C:
+        z = <ComplexDoubleElement>elem
+        re = <RealDoubleElement>z.real()
+        im = <RealDoubleElement>z.imag()
+        return <number*><void*>new gmp_complex(re._value, im._value)
     elif isinstance(elem._parent, FractionField_generic) and isinstance(elem._parent.base(), (MPolynomialRing_libsingular, PolynomialRing_field)):
         if isinstance(elem._parent.base().base_ring(), RationalField):
             return sa2si_transext_QQ(elem, _ring)
@@ -1731,29 +1745,36 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     - ``_ring`` -- a pointer to some ring
 
     Whether an overflow occurs or not partially depends
-
     on the number of variables in the ring. See github issue
     :issue:`11856`. With Singular 4, it is by default optimized
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
     which in both cases makes a maximal default exponent of
     2^16-1.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    This overflows only on 32-bit systems::
 
         sage: P.<x,y> = QQ[]
-        sage: y^(2^30)
-        Traceback (most recent call last):             # 32-bit
-        ...                                            # 32-bit
-        OverflowError: exponent overflow (1073741824)  # 32-bit
-        y^1073741824  # 64-bit
+        sage: try:
+        ....:     result = y^(2^30)
+        ....: except OverflowError as e:
+        ....:     # 32 bit
+        ....:     result = e
+        sage: isinstance(result, OverflowError)  # needs 32_bit
+        True
+        sage: result  # needs !32_bit
+        y^1073741824
+
+    This one always overflows::
+
         sage: y^2^32
         Traceback (most recent call last):
         ...
-        OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-        OverflowError: exponent overflow (4294967296)  # 64-bit
+        OverflowError: exponent overflow (...)
     """
     if unlikely(e > _ring.bitmask):
-        raise OverflowError("exponent overflow (%d)"%(e))
+        raise OverflowError("exponent overflow (%d)" % (e))
 
 cdef init_libsingular():
     """

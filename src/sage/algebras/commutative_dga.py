@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Commutative Differential Graded Algebras
 
@@ -74,35 +73,35 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation, CachedRepresentation
-from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.misc.functional import is_odd, is_even
-from sage.misc.misc_c import prod
-from sage.categories.chain_complexes import ChainComplexes
-from sage.categories.algebras import Algebras
-from sage.categories.morphism import Morphism
-from sage.categories.modules import Modules
-from sage.categories.homset import Hom
-
+import sage.interfaces.abc
 from sage.algebras.free_algebra import FreeAlgebra
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.categories.algebras import Algebras
+from sage.categories.chain_complexes import ChainComplexes
+from sage.categories.homset import Hom
+from sage.categories.modules import Modules
+from sage.categories.morphism import Morphism
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.functional import is_even, is_odd
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc_c import prod
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-from sage.rings.integer_ring import ZZ
 from sage.rings.homset import RingHomset_generic
+from sage.rings.integer_ring import ZZ
 from sage.rings.morphism import RingHomomorphism_im_gens
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
-from sage.misc.cachefunc import cached_function
-
-import sage.interfaces.abc
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
 
 def sorting_keys(element):
@@ -321,7 +320,7 @@ class Differential(UniqueRepresentation, Morphism,
                 idx += 1
         return res
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         r"""
         Return a string showing where ``self`` sends each generator.
 
@@ -338,7 +337,7 @@ class Differential(UniqueRepresentation, Morphism,
         """
         return '\n'.join(f"{i} --> {self(i)}" for i in self.domain().gens())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1051,7 +1050,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         category = Algebras(R.base_ring()).Graded().or_subcategory(category)
         QuotientRing_nc.__init__(self, R, I, names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1286,8 +1285,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
-            x = self.element_class(self, x.sage_poly(self.cover_ring()))
-            return x
+            return self.element_class(self, x.sage_poly(self.cover_ring()))
 
         return self.element_class(self, x)
 
@@ -1322,7 +1320,29 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             ...
             NotImplementedError: homomorphisms of graded commutative algebras
             have only been implemented when the base rings are the same
+
+        It is possible to construct a matrix with GCAlgebra elements.
+        When B is not a GCAlgebra the call is handed to the parent class
+        (:issue:`41434`)::
+
+            sage: R.<dx> = GradedCommutativeAlgebra(QQ)
+            sage: matrix([dx])
+            [dx]
+            sage: matrix([[dx, dx], [dx, dx]])
+            [dx dx]
+            [dx dx]
+
+        Similarly, this works with multiple generators and different base rings::
+
+            sage: S.<a,b> = GradedCommutativeAlgebra(GF(5), degrees=(1,2))
+            sage: matrix([a, b])
+            [a b]
+            sage: matrix([[a*b], [b]])
+            [a*b]
+            [  b]
         """
+        if not isinstance(B, GCAlgebra):
+            return super()._Hom_(B, category)
         R = self.base_ring()
         # The base rings need to be checked before the categories, or
         # else the function sage.categories.homset.Hom catches the
@@ -1483,7 +1503,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             l = [sum(e[i] * degrees[i] for i in range(n)) for e in exps]
             return max(l)
 
-        def is_homogeneous(self, total=False):
+        def is_homogeneous(self, total=False) -> bool:
             r"""
             Return ``True`` if ``self`` is homogeneous and ``False`` otherwise.
 
@@ -1531,9 +1551,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             for m in self.monomials():
                 if degree is None:
                     degree = m.degree(total)
-                else:
-                    if degree != m.degree(total):
-                        return False
+                elif degree != m.degree(total):
+                    return False
             return True
 
         def homogeneous_parts(self):
@@ -1788,7 +1807,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         self._degrees_multi = degrees
         self._grading_rank = len(list(degrees[0]))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2199,7 +2218,7 @@ class DifferentialGCAlgebra(GCAlgebra):
         """
         return GCAlgebra._repr_(self).replace('Graded Commutative', 'Commutative Differential Graded')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2872,8 +2891,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             if isinstance(phiext, tuple):
                 if partial_result:
                     return phiext[0]
-                else:
-                    raise ValueError("could not cover all relations in max iterations in degree {}".format(degree + 1))
+                raise ValueError("could not cover all relations in max iterations in degree {}".format(degree + 1))
             phi = phiext
             self._minimalmodels[degree] = phi
         return phi
@@ -3005,10 +3023,11 @@ class DifferentialGCAlgebra(GCAlgebra):
         return {i: self._numerical_invariants[i]
                 for i in range(1, max_degree + 1)}
 
-    def is_formal(self, i, max_iterations=3):
+    def is_formal(self, i, max_iterations=3) -> bool:
         r"""
-        Check if the algebra is ``i``-formal. That is, if it is ``i``-quasi-isomorphic
-        to its cohomology algebra.
+        Check if the algebra is ``i``-formal.
+
+        That is, if it is ``i``-quasi-isomorphic to its cohomology algebra.
 
         INPUT:
 
@@ -3084,7 +3103,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             """
             return self.parent().differential()(self)
 
-        def is_coboundary(self):
+        def is_coboundary(self) -> bool:
             """
             Return ``True`` if ``self`` is a coboundary and ``False``
             otherwise.
@@ -3115,7 +3134,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             v = vector(self.basis_coefficients())
             return v in self.parent().coboundaries(self.degree())
 
-        def is_cohomologous_to(self, other):
+        def is_cohomologous_to(self, other) -> bool:
             """
             Return ``True`` if ``self`` is cohomologous to ``other``
             and ``False`` otherwise.
@@ -3652,7 +3671,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
         ValueError: you must specify names or degrees
     """
     if max_degree:
-        from .finite_gca import FiniteGCAlgebra
+        from sage.algebras.finite_gca import FiniteGCAlgebra
         return FiniteGCAlgebra(ring, names=names, degrees=degrees,
                                max_degree=max_degree, **kwargs)
     multi = False
@@ -3874,7 +3893,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             result += coeff * term
         return result
 
-    def is_graded(self, total=False):
+    def is_graded(self, total=False) -> bool:
         """
         Return ``True`` if this morphism is graded.
 
@@ -3912,7 +3931,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
                        and x.degree(total=total) == y.degree(total=total))
                    for (x, y) in zip(self.domain().gens(), self.im_gens()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -3930,7 +3949,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             return "Commutative Differential Graded Algebra"
         return "Graded Commutative Algebra"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         EXAMPLES::
 
@@ -4115,7 +4134,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(x - 2)                                                # needs sage.symbolic
+            sage: CohomologyClass(x - 2)
             [x - 2]
         """
         self._x = x
@@ -4126,29 +4145,29 @@ class CohomologyClass(SageObject, CachedRepresentation):
         TESTS::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: hash(CohomologyClass(sin)) == hash(sin)                               # needs sage.symbolic
+            sage: hash(CohomologyClass(sin)) == hash(sin)
             True
         """
         return hash(self._x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(sin)                                                  # needs sage.symbolic
+            sage: CohomologyClass(sin)
             [sin]
         """
         return '[{}]'.format(self._x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: latex(CohomologyClass(sin))                                           # needs sage.symbolic
+            sage: latex(CohomologyClass(sin))
             \left[ \sin \right]
-            sage: latex(CohomologyClass(x^2))                                           # needs sage.symbolic
+            sage: latex(CohomologyClass(x^2))
             \left[ x^{2} \right]
         """
         from sage.misc.latex import latex
@@ -4161,8 +4180,8 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: x = CohomologyClass(sin)                                              # needs sage.symbolic
-            sage: x.representative() == sin                                             # needs sage.symbolic
+            sage: x = CohomologyClass(sin)
+            sage: x.representative() == sin
             True
         """
         return self._x

@@ -626,22 +626,20 @@ def parse_ltor(toks, n=0, polish=False):
                     del toks[i + 1]
                     return parse_ltor(toks, n)
                 # This executes when creating the full syntax parse tree
-                else:
-                    j = i
-                    while toks[j] == '~':
-                        j += 1
-                    while j > i:
-                        args = [toks[j - 1], toks[j]]
-                        toks[j - 1] = args
-                        del toks[j]
-                        j -= 1
-                    return parse_ltor(toks, n=n, polish=polish)
-            else:
-                args = [toks[i - 1], toks[i], toks[i + 1]]
-                toks[i - 1] = [args[1], args[0], args[2]]
-                del toks[i]
-                del toks[i]
-                return parse_ltor(toks, n)
+                j = i
+                while toks[j] == '~':
+                    j += 1
+                while j > i:
+                    args = [toks[j - 1], toks[j]]
+                    toks[j - 1] = args
+                    del toks[j]
+                    j -= 1
+                return parse_ltor(toks, n=n, polish=polish)
+            args = [toks[i - 1], toks[i], toks[i + 1]]
+            toks[i - 1] = [args[1], args[0], args[2]]
+            del toks[i]
+            del toks[i]
+            return parse_ltor(toks, n)
         i += 1
     if n + 1 < len(__op_list):
         return parse_ltor(toks, n + 1)
@@ -678,10 +676,10 @@ def apply_func(tree, func):
     if len(tree) == 1:
         return func(tree)
     # used when full syntax parse tree is passed as argument
-    elif len(tree) == 2:
+    if len(tree) == 2:
         rval = apply_func(tree[1], func)
         return func([tree[0], rval])
-    elif isinstance(tree[1], list) and isinstance(tree[2], list):
+    if isinstance(tree[1], list) and isinstance(tree[2], list):
         lval = apply_func(tree[1], func)
         rval = apply_func(tree[2], func)
     elif isinstance(tree[1], list):

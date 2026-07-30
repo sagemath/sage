@@ -1,12 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystals of Modified Nakajima Monomials
-
-AUTHORS:
-
-- Arthur Lubovsky: Initial version
-
-- Ben Salisbury: Initial version
+Crystals of modified Nakajima monomials
 
 Let `Y_{i,k}`, for `i \in I` and `k \in \ZZ`, be a commuting set of
 variables, and let `\boldsymbol{1}` be a new variable which commutes with
@@ -74,6 +68,11 @@ WARNING:
     `C = (c_{ij})_{i\neq j}` satisfying the condition `c_{ij}+c_{ji}=1`.
     We have chosen such integers uniformly such that `c_{ij} = 1` if
     `i < j` and `c_{ij} = 0` if `i>j`.
+
+AUTHORS:
+
+- Arthur Lubovsky: initial version
+- Ben Salisbury: initial version
 """
 
 # *****************************************************************************
@@ -461,12 +460,11 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(x[1] for x in d if x[0] == i)
         for a in range(K):
-            if (i,a) in d:
-                continue
-            else:
-                d[(i,a)] = 0
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
-        return max(sum(S[k][1] for k in range(s)) for s in range(1,len(S)+1))
+            if (i, a) not in d:
+                d[(i, a)] = 0
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
+        return max(sum(S[k][1] for k in range(s)) for s in range(1, len(S)+1))
 
     def _ke(self, i):
         r"""
@@ -491,14 +489,13 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(x[1] for x in d if x[0] == i)
         for a in range(K):
-            if (i,a) in d:
-                continue
-            else:
-                d[(i,a)] = 0
+            if (i, a) not in d:
+                d[(i, a)] = 0
         total = ZZ.zero()
         L = []
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
-        for var,exp in S:
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
+        for var, exp in S:
             total += exp
             if total == phi:
                 L.append(var[1])
@@ -526,14 +523,13 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(key[1] for key in d if key[0] == i)
         for a in range(K):
-            if (i,a) in d:
-                continue
-            else:
-                d[(i,a)] = 0
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
+            if (i, a) not in d:
+                d[(i, a)] = 0
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
         sum = 0
         phi = self.phi(i)
-        for var,exp in S:
+        for var, exp in S:
             sum += exp
             if sum == phi:
                 return var[1]
@@ -892,7 +888,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             hw,path = self.element_class(self, Y, {}).to_highest_weight()
             hw._A = {}
             return hw.f_string(reversed(path))
-        elif Y is None or Y == 0:
+        if Y is None or Y == 0:
             # The Y == 0 check is because the parent's __call__ has that
             #   as the first default value
             ct = self.cartan_type()

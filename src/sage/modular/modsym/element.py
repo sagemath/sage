@@ -21,34 +21,12 @@ A single element of an ambient space of modular symbols
 
 import sage.modules.free_module_element
 from sage.misc.repr import repr_lincomb
-import sage.structure.formal_sum as formal_sum
+from sage.structure import formal_sum
 import sage.modular.hecke.all as hecke
-import sage.misc.latex as latex
+from sage.misc import latex
 
 
 _print_mode = "manin"
-
-
-def is_ModularSymbolsElement(x) -> bool:
-    r"""
-    Return ``True`` if x is an element of a modular symbols space.
-
-    EXAMPLES::
-
-        sage: sage.modular.modsym.element.is_ModularSymbolsElement(ModularSymbols(11, 2).0)
-        doctest:warning...
-        DeprecationWarning: The function is_ModularSymbolsElement is deprecated;
-        use 'isinstance(..., ModularSymbolsElement)' instead.
-        See https://github.com/sagemath/sage/issues/38184 for details.
-        True
-        sage: sage.modular.modsym.element.is_ModularSymbolsElement(13)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38184,
-                "The function is_ModularSymbolsElement is deprecated; "
-                "use 'isinstance(..., ModularSymbolsElement)' instead.")
-    return isinstance(x, ModularSymbolsElement)
 
 
 def set_modsym_print_mode(mode='manin'):
@@ -148,7 +126,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         """
         if _print_mode == "vector":
             return str(self.element())
-        elif _print_mode == "manin":
+        if _print_mode == "manin":
             m = self.manin_symbol_rep()
         elif _print_mode == "modular":
             m = self.modular_symbol_rep()
@@ -175,7 +153,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
         if _print_mode == "vector":
             return self.element()._latex_()
-        elif _print_mode == "manin":
+        if _print_mode == "manin":
             m = self.manin_symbol_rep()
         elif _print_mode == "modular":
             m = self.modular_symbol_rep()

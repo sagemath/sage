@@ -12,21 +12,23 @@ Finite-Dimensional Algebras
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
-from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
+from functools import reduce
 
-from sage.rings.integer_ring import ZZ
-
-from sage.categories.magmatic_algebras import MagmaticAlgebras
+from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_element import (
+    FiniteDimensionalAlgebraElement,
+)
+from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_ideal import (
+    FiniteDimensionalAlgebraIdeal,
+)
 from sage.categories.algebras import Algebras
+from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.matrix.constructor import matrix
-from sage.structure.element import Matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
 from sage.structure.category_object import normalize_names
+from sage.structure.element import Matrix
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-from sage.misc.cachefunc import cached_method
-from functools import reduce
 
 
 class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
@@ -266,7 +268,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         # No further validity checks necessary!
         Parent.__init__(self, base=k, names=names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -336,7 +338,9 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         """
         cat = MagmaticAlgebras(self.base_ring()).FiniteDimensional().WithBasis()
         if category.is_subcategory(cat):
-            from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_morphism import FiniteDimensionalAlgebraHomset
+            from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_morphism import (
+                FiniteDimensionalAlgebraHomset,
+            )
             return FiniteDimensionalAlgebraHomset(self, B, category=category)
         return super()._Hom_(B, category)
 
@@ -478,8 +482,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: C = FiniteDimensionalAlgebra(GF(2), [Matrix([1])])
-            sage: k.<y> = GF(4)                                                         # needs sage.rings.finite_rings
-            sage: C.base_extend(k)                                                      # needs sage.rings.finite_rings
+            sage: k.<y> = GF(4)
+            sage: C.base_extend(k)
             Finite-dimensional algebra of degree 1 over Finite Field in y of size 2^2
         """
         # Base extension of the multiplication table is done by __classcall_private__.
@@ -543,7 +547,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
                                     given_by_matrix=given_by_matrix)
 
     @cached_method
-    def is_associative(self):
+    def is_associative(self) -> bool:
         """
         Return ``True`` if ``self`` is associative.
 
@@ -600,7 +604,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
                     return False
         return True
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if the cardinality of ``self`` is finite.
 
@@ -623,7 +627,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         return self.degree() == 0 or self.base_ring().is_finite()
 
     @cached_method
-    def is_unitary(self):
+    def is_unitary(self) -> bool:
         """
         Return ``True`` if ``self`` has a two-sided multiplicative
         identity element.
@@ -694,7 +698,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         self._one = sol1
         return True
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if ``self`` is the zero ring.
 
@@ -749,8 +753,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         """
         if not self.is_unitary():
             raise TypeError("algebra is not unitary")
-        else:
-            return self(self._one)
+        return self(self._one)
 
     def random_element(self, *args, **kwargs):
         """
@@ -896,7 +899,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])],
             ....:                              category=cat)
-            sage: A.maximal_ideal()                                                     # needs sage.rings.finite_rings
+            sage: A.maximal_ideal()
             Ideal (0, e1) of
              Finite-dimensional algebra of degree 2 over Finite Field of size 3
 
@@ -905,7 +908,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])],
             ....:                              category=cat)
-            sage: B.maximal_ideal()                                                     # needs sage.libs.pari
+            sage: B.maximal_ideal()
             Traceback (most recent call last):
             ...
             ValueError: algebra is not local
@@ -943,7 +946,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
-            sage: A.primary_decomposition()                                             # needs sage.rings.finite_rings
+            sage: A.primary_decomposition()
             [Morphism
               from Finite-dimensional algebra of degree 2 over Finite Field of size 3
                 to Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -954,7 +957,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])], category=cat)
-            sage: B.primary_decomposition()                                             # needs sage.libs.pari
+            sage: B.primary_decomposition()
             [Morphism
               from Finite-dimensional algebra of degree 3 over Rational Field
                 to Finite-dimensional algebra of degree 1 over Rational Field
@@ -1016,7 +1019,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
             sage: cat = Algebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
-            sage: A.maximal_ideals()                                                    # needs sage.rings.finite_rings
+            sage: A.maximal_ideals()
             [Ideal (e1) of Finite-dimensional algebra of degree 2 over Finite Field of size 3]
 
             sage: cat = Algebras(QQ).FiniteDimensional().WithBasis()

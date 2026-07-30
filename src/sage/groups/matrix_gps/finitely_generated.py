@@ -408,7 +408,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         return tuple(self.element_class(self, x, check=False, convert=False)
                      for x in self._gens_matrix)
 
-    def gen(self, i):
+    def gen(self, i=0):
         """
         Return the `i`-th generator.
 
@@ -420,7 +420,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
             sage: H = GL(2, GF(3))
             sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
             sage: G = H.subgroup([h1, h2])
-            sage: G.gen(0)
+            sage: G.gen()
             [1 0]
             [2 1]
             sage: G.gen(0).matrix() == h1.matrix()

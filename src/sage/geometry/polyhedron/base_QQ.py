@@ -81,7 +81,8 @@ class Polyhedron_QQ(Polyhedron_base):
     _base_ring = QQ
 
     def integral_points_count(self, verbose=False, use_Hrepresentation=False,
-                              explicit_enumeration_threshold=1000, preprocess=True, **kwds):
+                              explicit_enumeration_threshold=1000,
+                              preprocess=True, **kwds):
         r"""
         Return the number of integral points in the polyhedron.
 
@@ -210,6 +211,8 @@ class Polyhedron_QQ(Polyhedron_base):
                 cdd=True,
                 verbose=verbose,
                 **kwds)
+
+    n_points = integral_points_count
 
     @cached_method(do_pickle=True)
     def ehrhart_polynomial(self, engine=None, variable='t', verbose=False,
@@ -387,10 +390,9 @@ class Polyhedron_QQ(Polyhedron_base):
             # TO DO: replace this change of variable by creating the appropriate
             #        polynomial ring in the latte interface.
 
-        elif engine == 'normaliz':
+        if engine == 'normaliz':
             return self._ehrhart_polynomial_normaliz(variable)
-        else:
-            raise ValueError("engine must be 'latte' or 'normaliz'")
+        raise ValueError("engine must be 'latte' or 'normaliz'")
 
     @cached_method(do_pickle=True)
     def ehrhart_quasipolynomial(self, variable='t', engine=None, verbose=False,
@@ -587,8 +589,7 @@ class Polyhedron_QQ(Polyhedron_base):
             return poly.change_variable_name(variable)
             # TO DO: replace this change of variable by creating the appropriate
             #        polynomial ring in the latte interface.
-        else:
-            raise TypeError("the engine should be 'latte' or 'normaliz'")
+        raise TypeError("the engine should be 'latte' or 'normaliz'")
 
     def _ehrhart_quasipolynomial_normaliz(self, variable='t'):
         r"""
@@ -1215,8 +1216,7 @@ class Polyhedron_QQ(Polyhedron_base):
             raise NotImplementedError('unbounded polyhedra are not supported')
         if self.backend() == 'normaliz':
             return self._is_effective_normaliz(Hstar, Hstar_as_lin_comb)
-        else:
-            raise TypeError("the backend of the polyhedron should be 'normaliz'")
+        raise TypeError("the backend of the polyhedron should be 'normaliz'")
 
     def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
         r"""

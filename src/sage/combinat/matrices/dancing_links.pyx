@@ -661,8 +661,7 @@ cdef class dancing_linksWrapper:
             dlx = self.restrict([i])
             if dlx.search():
                 return dlx.get_solution()
-            else:
-                return None
+            return None
 
         indices = [i for (i, row) in enumerate(self._rows) if column in row]
         for (args_kwds, val) in first_solution(indices):
@@ -886,7 +885,7 @@ cdef class dancing_linksWrapper:
         Return the SAT solver solving an equivalent problem.
 
         Note that row index `i` in the dancing links solver corresponds to
-        the boolean variable index `ì+1` for the SAT solver to avoid
+        the boolean variable index `i+1` for the SAT solver to avoid
         the variable index `0`.
 
         See also :mod:`sage.sat.solvers.satsolver`.
@@ -904,11 +903,11 @@ cdef class dancing_linksWrapper:
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: x = dlx_solver(rows)
-            sage: s = x.to_sat_solver()                                                 # needs sage.sat
+            sage: s = x.to_sat_solver()
 
         Using some optional SAT solvers::
 
-            sage: x.to_sat_solver('cryptominisat')      # optional - pycryptosat        # needs sage.sat
+            sage: x.to_sat_solver('cryptominisat')      # optional - pycryptosat
             CryptoMiniSat solver: 4 variables, 7 clauses.
         """
         from sage.sat.solvers.satsolver import SAT
@@ -960,20 +959,20 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_sat_solver() in solutions                        # needs sage.sat
+            sage: d.one_solution_using_sat_solver() in solutions
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_sat_solver('glucose')                # optional - glucose, needs sage.sat
-            sage: s in solutions                                                # optional - glucose, needs sage.sat
+            sage: s = d.one_solution_using_sat_solver('glucose')                # optional - glucose
+            sage: s in solutions                                                # optional - glucose
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_sat_solver() is None                             # needs sage.sat
+            sage: d.one_solution_using_sat_solver() is None
             True
         """
         sat_solver = self.to_sat_solver(solver)
@@ -1017,19 +1016,16 @@ cdef class dancing_linksWrapper:
         the `i`-th row is in the solution::
 
             sage: p.show()                                                              # needs sage.numerical.mip
-            Maximization:
-            <BLANKLINE>
-            <BLANKLINE>
             Constraints:...
               one 1 in 0-th column: 1.0 <= x_0 + x_1 <= 1.0
               one 1 in 1-th column: 1.0 <= x_0 + x_2 <= 1.0
               one 1 in 2-th column: 1.0 <= x_0 + x_1 <= 1.0
               one 1 in 3-th column: 1.0 <= x_3 <= 1.0
             Variables:
-              x_0 is a boolean variable (min=0.0, max=1.0)
-              x_1 is a boolean variable (min=0.0, max=1.0)
-              x_2 is a boolean variable (min=0.0, max=1.0)
-              x_3 is a boolean variable (min=0.0, max=1.0)
+              x_0 is a... variable (min=0.0, max=1.0)
+              x_1 is a... variable (min=0.0, max=1.0)
+              x_2 is a... variable (min=0.0, max=1.0)
+              x_3 is a... variable (min=0.0, max=1.0)
 
         Using some optional MILP solvers::
 

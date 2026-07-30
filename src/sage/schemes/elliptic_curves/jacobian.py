@@ -96,6 +96,16 @@ def Jacobian(X, **kwds):
                 (-u^4*v^4*w - u^4*v*w^4 - u*v^4*w^4 :
                  1/2*u^6*v^3 - 1/2*u^3*v^6 - 1/2*u^6*w^3 + 1/2*v^6*w^3 + 1/2*u^3*w^6 - 1/2*v^3*w^6 :
                  u^3*v^3*w^3)
+
+    TESTS:
+
+    Check that the following doesn't segmentation fault
+    (the error message could be improved)::
+
+        sage: Jacobian(GF(11)['x,y'](3))
+        Traceback (most recent call last):
+        ...
+        AssertionError
     """
     try:
         return X.jacobian(**kwds)
@@ -108,8 +118,7 @@ def Jacobian(X, **kwds):
         if morphism:
             from sage.schemes.curves.constructor import Curve
             return Jacobian_of_equation(X, curve=Curve(X), **kwds)
-        else:
-            return Jacobian_of_equation(X, **kwds)
+        return Jacobian_of_equation(X, **kwds)
 
     from sage.schemes.generic.scheme import Scheme
     if isinstance(X, Scheme) and X.dimension() == 1:
@@ -143,8 +152,7 @@ def Jacobian_of_curve(curve, morphism=False):
     if eqn is not None:
         if morphism:
             return Jacobian_of_equation(eqn, curve=curve)
-        else:
-            return Jacobian_of_equation(eqn)
+        return Jacobian_of_equation(eqn)
     raise NotImplementedError('Jacobian for this curve is not implemented')
 
 

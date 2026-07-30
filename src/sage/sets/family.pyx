@@ -55,7 +55,7 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
 
-def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=False, name=None):
+def Family(indices, function=None, hidden_keys=None, hidden_function=None, lazy=False, name=None):
     r"""
     A Family is an associative container which models a family
     `(f_i)_{i \in I}`. Then, ``f[i]`` returns the element of the family
@@ -385,6 +385,8 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: f[5]
         1
     """
+    if hidden_keys is None:
+        hidden_keys = []
     assert isinstance(hidden_keys, list)
     assert isinstance(lazy, bool)
 
@@ -671,10 +673,9 @@ cdef class FiniteFamily(AbstractFamily):
         """
         if self._keys is not None:
             return [self._dictionary[key] for key in self._keys]
-        else:
-            return list(self._dictionary.values())
+        return list(self._dictionary.values())
 
-    def has_key(self, k):
+    def has_key(self, k) -> bool:
         """
         Return whether ``k`` is a key of ``self``.
 
@@ -687,7 +688,7 @@ cdef class FiniteFamily(AbstractFamily):
         """
         return k in self._dictionary
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         EXAMPLES::
 

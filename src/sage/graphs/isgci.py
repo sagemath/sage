@@ -144,7 +144,7 @@ Predefined classes
 
    * - Biconnected
 
-     - :meth:`~sage.graphs.graph.Graph.is_biconnected`,
+     - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`,
        :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`,
        :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
 
@@ -488,8 +488,7 @@ class GraphClass(SageObject, CachedRepresentation):
         inclusion_digraph = GraphClasses().inclusion_digraph()
         if inclusion_digraph.shortest_path(self._gc_id, other._gc_id):
             return True
-        else:
-            return Unknown
+        return Unknown
 
     def __eq__(self, other):
         r"""
@@ -564,7 +563,7 @@ class GraphClass(SageObject, CachedRepresentation):
 
         return [smallgraphs[g] for g in excluded]
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Check if ``g`` belongs to the graph class represented by ``self``.
 
@@ -603,11 +602,7 @@ class GraphClass(SageObject, CachedRepresentation):
             raise NotImplementedError("No recognition algorithm is available "
                                       "for this class.")
 
-        for gg in excluded:
-            if g.subgraph_search(gg, induced=True):
-                return False
-
-        return True
+        return not any(g.subgraph_search(gg, induced=True) for gg in excluded)
 
     def description(self):
         r"""
@@ -686,10 +681,9 @@ class GraphClasses(UniqueRepresentation):
                 name = "class " + str(id)
 
             return GraphClass(name, id)
-        else:
-            raise ValueError("The given class id does not exist in the ISGCI "
-                             "database. Is the db too old ? You can update it "
-                             "with graph_classes.update_db().")
+        raise ValueError("The given class id does not exist in the ISGCI "
+                         "database. Is the db too old ? You can update it "
+                         "with graph_classes.update_db().")
 
     @cached_method
     def classes(self):

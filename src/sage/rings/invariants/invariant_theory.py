@@ -114,7 +114,7 @@ from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.misc.cachefunc import cached_method
-import sage.rings.invariants.reconstruction as reconstruction
+from sage.rings.invariants import reconstruction
 
 
 ######################################################################
@@ -163,12 +163,10 @@ def _guess_variables(polynomial, *args) -> tuple:
                     if var not in variables:
                         variables += (var,)
             return variables
-        else:
-            return polynomial.variables()
-    elif len(args) == 1 and isinstance(args[0], (tuple, list)):
+        return polynomial.variables()
+    if len(args) == 1 and isinstance(args[0], (tuple, list)):
         return tuple(args[0])
-    else:
-        return tuple(args)
+    return tuple(args)
 
 
 def transvectant(f, g, h=1, scale='default'):
@@ -214,7 +212,6 @@ def transvectant(f, g, h=1, scale='default'):
     factor will not be invertible in that case. The scale argument ``'none'``
     can be used to compute the transvectant in this case::
 
-        sage: # needs sage.rings.finite_rings
         sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = GF(5)[]
         sage: f = AlgebraicForm(2, 5, a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2
         ....:                         + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5, x0, x1)
@@ -565,8 +562,7 @@ class AlgebraicForm(FormsBase):
                 (self._homogeneous and degrees == set([self._d])) or \
                 (not self._homogeneous and max(degrees) <= self._d):
             return
-        else:
-            raise ValueError('polynomial is of the wrong degree')
+        raise ValueError('polynomial is of the wrong degree')
 
     def _check_covariant(self, method_name, g=None, invariant=False):
         r"""
@@ -1161,8 +1157,7 @@ class QuadraticForm(AlgebraicForm):
         A = 2*self._matrix_()
         if is_odd(self._n):
             return A.det() / 2
-        else:
-            return (-1)**(self._n//2) * A.det()
+        return (-1)**(self._n//2) * A.det()
 
     @cached_method
     def invariants(self, type='discriminant'):
@@ -1190,9 +1185,8 @@ class QuadraticForm(AlgebraicForm):
         """
         if type == 'discriminant':
             return (self.discriminant(),)
-        else:
-            raise ValueError('unknown type of invariants {} for a binary'
-                             ' quadratic'.format(type))
+        raise ValueError('unknown type of invariants {} for a binary'
+                         ' quadratic'.format(type))
 
     @cached_method
     def dual(self):
@@ -1358,8 +1352,7 @@ class BinaryQuartic(AlgebraicForm):
         x1 = self._y
         if self._homogeneous:
             return (x1**4, x1**3*x0, x1**2*x0**2, x1*x0**3, x0**4)
-        else:
-            return (self._ring.one(), x0, x0**2, x0**3, x0**4)
+        return (self._ring.one(), x0, x0**2, x0**3, x0**4)
 
     @cached_method
     def coeffs(self):
@@ -1699,8 +1692,7 @@ class BinaryQuintic(AlgebraicForm):
         x1 = self._y
         if self._homogeneous:
             return (x1**5, x1**4*x0, x1**3*x0**2, x1**2*x0**3, x1*x0**4, x0**5)
-        else:
-            return (self._ring.one(), x0, x0**2, x0**3, x0**4, x0**5)
+        return (self._ring.one(), x0, x0**2, x0**3, x0**4, x0**5)
 
     @cached_method
     def coeffs(self):
@@ -1795,8 +1787,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(self, self, 2)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def i_covariant(self, as_form=False):
@@ -1827,8 +1818,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(self, self, 4)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def T_covariant(self, as_form=False):
@@ -1864,8 +1854,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(H, self, 1)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def j_covariant(self, as_form=False):
@@ -1905,8 +1894,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(minusi, self, 2)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def tau_covariant(self, as_form=False):
@@ -1944,8 +1932,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(j, j, 2)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def theta_covariant(self, as_form=False):
@@ -1984,8 +1971,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(i, tau, 1)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def alpha_covariant(self, as_form=False):
@@ -2026,8 +2012,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(i2, self, 4)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def beta_covariant(self, as_form=False):
@@ -2066,8 +2051,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(i, alpha, 1)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def gamma_covariant(self, as_form=False):
@@ -2106,8 +2090,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(tau, alpha, 1)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def delta_covariant(self, as_form=False):
@@ -2146,8 +2129,7 @@ class BinaryQuintic(AlgebraicForm):
         cov = transvectant(theta, alpha, 1)
         if as_form:
             return cov
-        else:
-            return cov.polynomial()
+        return cov.polynomial()
 
     @cached_method
     def A_invariant(self):
@@ -2293,11 +2275,10 @@ class BinaryQuintic(AlgebraicForm):
         """
         if type == 'clebsch':
             return self.clebsch_invariants(as_tuple=True)
-        elif type == 'arithmetic':
+        if type == 'arithmetic':
             return self.arithmetic_invariants(as_tuple=True)
-        else:
-            raise ValueError('unknown type of invariants {} for a binary'
-                             ' quintic'.format(type))
+        raise ValueError('unknown type of invariants {} for a binary'
+                         ' quintic'.format(type))
 
     @cached_method
     def clebsch_invariants(self, as_tuple=False):
@@ -2338,8 +2319,7 @@ class BinaryQuintic(AlgebraicForm):
         if as_tuple:
             return (invariants['A'], invariants['B'], invariants['C'],
                     invariants['R'])
-        else:
-            return invariants
+        return invariants
 
     @cached_method
     def arithmetic_invariants(self):
@@ -2437,9 +2417,8 @@ class BinaryQuintic(AlgebraicForm):
         if reduce_gcd:
             return invariant_theory.binary_form_from_invariants(5, clebsch,
                                 variables=self.variables(), scaling='coprime')
-        else:
-            return invariant_theory.binary_form_from_invariants(5, clebsch,
-                                variables=self.variables(), scaling='normalized')
+        return invariant_theory.binary_form_from_invariants(5, clebsch,
+                            variables=self.variables(), scaling='normalized')
 
 
 ######################################################################
@@ -2542,8 +2521,7 @@ class TernaryQuadratic(QuadraticForm):
         x, y, z = self._x, self._y, self._z
         if self._homogeneous:
             return (x**2, y**2, z**2, x*y, x*z, y*z)
-        else:
-            return (x**2, y**2, R.one(), x*y, x, y)
+        return (x**2, y**2, R.one(), x*y, x, y)
 
     @cached_method
     def coeffs(self):
@@ -2718,9 +2696,8 @@ class TernaryCubic(AlgebraicForm):
         if self._homogeneous:
             return (x**3, y**3, z**3, x**2*y, x**2*z, x*y**2,
                     y**2*z, x*z**2, y*z**2, x*y*z)
-        else:
-            return (x**3, y**3, R.one(), x**2*y, x**2, x*y**2,
-                    y**2, x, y, x*y)
+        return (x**3, y**3, R.one(), x**2*y, x**2, x*y**2,
+                y**2, x, y, x*y)
 
     @cached_method
     def coeffs(self):
@@ -4032,8 +4009,7 @@ class InvariantTheoryFactory:
         n = len(variables)
         if n == 3:
             return TernaryQuadratic(3, 2, polynomial, *args)
-        else:
-            return QuadraticForm(n, 2, polynomial, *args)
+        return QuadraticForm(n, 2, polynomial, *args)
 
     def inhomogeneous_quadratic_form(self, polynomial, *args):
         """
@@ -4061,8 +4037,7 @@ class InvariantTheoryFactory:
         n = len(variables) + 1
         if n == 3:
             return TernaryQuadratic(3, 2, polynomial, *args)
-        else:
-            return QuadraticForm(n, 2, polynomial, *args)
+        return QuadraticForm(n, 2, polynomial, *args)
 
     def binary_quadratic(self, quadratic, *args):
         """
@@ -4369,12 +4344,10 @@ class InvariantTheoryFactory:
                 if as_form:
                     return QuadraticForm.from_invariants(invariants[0], x, z,
                                                            *args, **kwargs)
-                else:
-                    return reconstruction.binary_quadratic_coefficients_from_invariants(
-                                            invariants[0], *args, **kwargs)
-            else:
-                raise ValueError('incorrect number of invariants provided, '
-                                 'only one invariant should be provided')
+                return reconstruction.binary_quadratic_coefficients_from_invariants(
+                                        invariants[0], *args, **kwargs)
+            raise ValueError('incorrect number of invariants provided, '
+                             'only one invariant should be provided')
         elif degree == 3:
             if len(invariants) == 1:
                 if as_form:
@@ -4389,9 +4362,8 @@ class InvariantTheoryFactory:
             if as_form:
                 return BinaryQuintic.from_invariants(invariants, x, z,
                                                    *args, **kwargs)
-            else:
-                return reconstruction.binary_quintic_coefficients_from_invariants(
-                                            invariants, *args, **kwargs)
+            return reconstruction.binary_quintic_coefficients_from_invariants(
+                                        invariants, *args, **kwargs)
         else:
             raise NotImplementedError('no reconstruction for binary forms of '
                                       'degree {} implemented'.format(degree))

@@ -83,9 +83,9 @@ TESTS::
 
 from sage.rings.integer import Integer
 
-import sage.modular.arithgroup.all as arithgroup
-import sage.modular.dirichlet as dirichlet
-import sage.modular.modsym.modsym as modsym
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor
+from sage.modular import dirichlet
+from sage.modular.modsym import modsym
 from sage.misc.cachefunc import cached_method
 
 from .ambient import ModularFormsAmbient
@@ -133,7 +133,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:
             raise ValueError("the base ring must have characteristic 0.")
-        group = arithgroup.Gamma1(character.modulus())
+        group = Gamma1_constructor(character.modulus())
         base_ring = character.base_ring()
         ModularFormsAmbient.__init__(self, group, weight, base_ring, character, eis_only)
 
@@ -162,9 +162,8 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         if self._eis_only:
             return "Modular Forms space of character %s and weight %s over %s" % (
                         self.character()._repr_short_(), self.weight(), self.base_ring())
-        else:
-            return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
-            self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
+        return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
+        self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
 
     @cached_method
     def cuspidal_submodule(self):
@@ -183,8 +182,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         if self.weight() > 1:
             return cuspidal_submodule.CuspidalSubmodule_eps(self)
-        else:
-            return cuspidal_submodule.CuspidalSubmodule_wt1_eps(self)
+        return cuspidal_submodule.CuspidalSubmodule_wt1_eps(self)
 
     def change_ring(self, base_ring):
         """
@@ -284,10 +282,9 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         from . import constructor
         if N % self.level() == 0:
             return constructor.ModularForms(self.character().extend(N), self.weight(), self.base_ring(), prec=self.prec())
-        elif self.level() % N == 0:
+        if self.level() % N == 0:
             return constructor.ModularForms(self.character().restrict(N), self.weight(), self.base_ring(), prec=self.prec())
-        else:
-            raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
+        raise ValueError("N (=%s) must be a divisor or a multiple of the level of self (=%s)" % (N, self.level()))
 
     def _pari_init_(self):
         """

@@ -43,7 +43,6 @@ from sage.libs.gmp.all cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.libs.pari import pari
 from sage.misc.persist import loads, dumps
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
@@ -212,13 +211,33 @@ cdef paramset_to_PyTuple(const_paramset_ref s):
 
 def paramset_from_Expression(Expression e):
     """
+    Return the parameter set of an unevaluated symbolic function derivative.
+
+    INPUT:
+
+    - ``e`` -- a symbolic expression representing an unevaluated
+      derivative of a symbolic function
+
+    OUTPUT: list of indices of the function arguments with respect to
+    which the function is differentiated
+
     EXAMPLES::
 
         sage: from sage.symbolic.expression import paramset_from_Expression
         sage: f = function('f')
         sage: paramset_from_Expression(f(x).diff(x))
         [0]
+
+    Invalid arguments raise an exception::
+
+        sage: paramset_from_Expression(x)
+        Traceback (most recent call last):
+        ...
+        TypeError: argument must be an unevaluated derivative of a symbolic function
     """
+    if not is_a_fderivative(e._gobj):
+        raise TypeError("argument must be an unevaluated derivative "
+                        "of a symbolic function")
     return paramset_to_PyTuple(ex_to_fderivative(e._gobj).get_parameter_set())
 
 
@@ -274,8 +293,7 @@ def get_fn_serial():
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import get_fn_serial, get_sfunction_from_serial
         sage: get_fn_serial() > 125
         True
         sage: print(get_sfunction_from_serial(get_fn_serial()))
@@ -453,8 +471,7 @@ def py_print_function_pystring(id, args, fname_paren=False):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -517,8 +534,7 @@ def py_latex_function_pystring(id, args, fname_paren=False):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -653,10 +669,9 @@ def py_print_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial
+        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:     if get_sfunction_from_serial(i) == foo: break
@@ -729,11 +744,9 @@ def py_latex_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial
-
+        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:   if get_sfunction_from_serial(i) == foo: break
@@ -818,7 +831,16 @@ cdef unsigned py_get_serial_for_new_sfunction(stdstring &s,
     create one and set up the function tables properly.
     """
     from sage.symbolic.function_factory import function_factory
-    cdef Function fn = function_factory(s.c_str(), nargs)
+    # The input string s comes from GiNaC::function::function, the constructor
+    # that reads the function name from an archive.
+    # The archive is created by GiNaC::function::archive, which sets the name
+    # to GiNaC::function::registered_functions()[serial].name.
+    # Functions are registered using GiNaC::function::register_new.
+    # For symbolic functions this happens in the register_or_update_function
+    # which is defined in src/sage/symbolic/pynac_function_impl.pxi.
+    # In there, str_to_bytes is applied to the name.
+    # Hence we must apply the inverse char_to_str here.
+    cdef Function fn = function_factory(char_to_str(s.c_str()), nargs)
     return fn._serial
 
 
@@ -853,10 +875,9 @@ cdef int py_get_parent_char(o) except -1:
     # instead of the actual characteristic.
     if not c:
         return 0
-    elif c == 2:
+    if c == 2:
         return 2
-    else:
-        return 3
+    return 3
 
 
 #################################################################
@@ -889,8 +910,7 @@ cdef py_binomial_int(int n, unsigned int k):
     # Return the answer or the negative of it (only if k is odd and n is negative).
     if sign:
         return -ans
-    else:
-        return ans
+    return ans
 
 cdef py_binomial(n, k):
     # Keep track of the sign we should use.
@@ -908,8 +928,7 @@ cdef py_binomial(n, k):
     # Return the answer or the negative of it (only if k is odd and n is negative).
     if sign:
         return -ans
-    else:
-        return ans
+    return ans
 
 
 def test_binomial(n, k):
@@ -945,7 +964,7 @@ cdef py_gcd(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return n
-        elif mpz_cmp_si((<Integer>k).value, 1) == 0:
+        if mpz_cmp_si((<Integer>k).value, 1) == 0:
             return k
         return n.gcd(k)
 
@@ -965,7 +984,7 @@ cdef py_lcm(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return k
-        elif mpz_cmp_si((<Integer>k).value, 1) == 0:
+        if mpz_cmp_si((<Integer>k).value, 1) == 0:
             return n
         return n.lcm(k)
     try:
@@ -1488,8 +1507,7 @@ cdef py_factorial(x):
 
     if coercion_success and x_in_ZZ >= 0:
         return factorial(x)
-    else:
-        return py_tgamma(x+1)
+    return py_tgamma(x+1)
 
 
 def py_factorial_py(x):
@@ -1544,6 +1562,7 @@ def doublefactorial(n):
 
 
 cdef py_fibonacci(n):
+    from sage.libs.pari import pari
     return Integer(pari(n).fibonacci())
 
 cdef py_step(n):
@@ -1553,7 +1572,7 @@ cdef py_step(n):
     from sage.symbolic.ring import SR
     if n < 0:
         return SR(0)
-    elif n > 0:
+    if n > 0:
         return SR(1)
     return SR(Rational((1,2)))
 
@@ -1886,15 +1905,12 @@ cdef py_atan2(x, y):
             else:
                 res = P(pi)/2
             return res if y > 0 else -res
-        else:
-            return -I*py_log((x + I*y)/py_sqrt(x**2 + y**2))
-    else:
-        if x > 0:
-            return P(0)
-        elif x < 0:
-            return P(pi)
-        else:
-            return P(NaN)
+        return -I*py_log((x + I*y)/py_sqrt(x**2 + y**2))
+    if x > 0:
+        return P(0)
+    if x < 0:
+        return P(pi)
+    return P(NaN)
 
 
 def py_atan2_for_doctests(x, y):

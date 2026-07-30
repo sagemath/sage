@@ -302,10 +302,10 @@ class _Coordinates:
             sage: [h(u=1,v=2) for h in T.to_cartesian(operator.mul)]
             [3.0, -1.0, 2.0]
 
-        The output of the function ``func`` is coerced to a float when
-        it is evaluated if the function is something like a lambda or
-        python callable. This takes care of situations like f returning a
-        singleton numpy array, for example.
+        The output of a Python callable ``func`` is coerced to a float when
+        it is evaluated. Thus it must return a scalar or another object
+        accepted by ``float()``. For example, extract the scalar value
+        returned by a SciPy interpolant explicitly (:issue:`42539`)::
 
             sage: from numpy import array
             sage: v_phi=array([ 0.,  1.57079637,  3.14159274, 4.71238911,  6.28318548])
@@ -316,7 +316,8 @@ class _Coordinates:
             ....: [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
             ....: [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422]])
             sage: import scipy.interpolate
-            sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r).ev
+            sage: spline = scipy.interpolate.RectBivariateSpline(v_phi, v_theta, m_r)
+            sage: f = lambda x, y: spline.ev(x, y).item()
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
             Graphics3d Object
         """
@@ -331,37 +332,36 @@ class _Coordinates:
                 self.indep_vars[0]: params[0],
                 self.indep_vars[1]: params[1]
             })
-        else:
-            # func might be a lambda or a Python callable; this makes it slightly
-            # more complex.
-            import sage.symbolic.ring
-            dep_var_dummy = sage.symbolic.ring.var(self.dep_var)
-            indep_var_dummies = sage.symbolic.ring.var(','.join(self.indep_vars))
-            transformation = self.transform(**{
-                self.dep_var: dep_var_dummy,
-                self.indep_vars[0]: indep_var_dummies[0],
-                self.indep_vars[1]: indep_var_dummies[1]
-            })
-            if params is None:
-                if callable(func):
-                    params = _find_arguments_for_callable(func)
-                    if not params:
-                        params = ['u', 'v']
-                else:
-                    raise ValueError("function is not callable")
+        # func might be a lambda or a Python callable; this makes it slightly
+        # more complex.
+        import sage.symbolic.ring
+        dep_var_dummy = sage.symbolic.ring.var(self.dep_var)
+        indep_var_dummies = sage.symbolic.ring.var(','.join(self.indep_vars))
+        transformation = self.transform(**{
+            self.dep_var: dep_var_dummy,
+            self.indep_vars[0]: indep_var_dummies[0],
+            self.indep_vars[1]: indep_var_dummies[1]
+        })
+        if params is None:
+            if callable(func):
+                params = _find_arguments_for_callable(func)
+                if not params:
+                    params = ['u', 'v']
+            else:
+                raise ValueError("function is not callable")
 
-            def subs_func(t):
-                # We use eval so that the lambda function has the same
-                # variable names as the original function
-                ll = f"""lambda {params[0]},{params[1]}: t.subs({{
+        def subs_func(t):
+            # We use eval so that the lambda function has the same
+            # variable names as the original function
+            ll = f"""lambda {params[0]},{params[1]}: t.subs({{
                     dep_var_dummy: float(func({params[0]}, {params[1]})),
                     indep_var_dummies[0]: float({params[0]}),
                     indep_var_dummies[1]: float({params[1]})
                 }})"""
-                return eval(ll, {'t': t, 'func': func,
-                                 'dep_var_dummy': dep_var_dummy,
-                                 'indep_var_dummies': indep_var_dummies})
-            return [subs_func(m) for m in transformation]
+            return eval(ll, {'t': t, 'func': func,
+                             'dep_var_dummy': dep_var_dummy,
+                             'indep_var_dummies': indep_var_dummies})
+        return [subs_func(m) for m in transformation]
 
     def __repr__(self):
         """
@@ -1107,8 +1107,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         if isinstance(transformation, _Coordinates):
             R = transformation.to_cartesian(f, params)
             return parametric_plot3d.parametric_plot3d(R, urange, vrange, **kwds)
-        else:
-            raise ValueError('unknown transformation type')
+        raise ValueError('unknown transformation type')
     elif adaptive:
         P = plot3d_adaptive(f, urange, vrange, **kwds)
     else:

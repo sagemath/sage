@@ -223,9 +223,7 @@ class QuiverHomSpace(Homset):
             return False
         if not other._domain.has_coerce_map_from(self._domain):
             return False
-        if not self._codomain.has_coerce_map_from(other._codomain):
-            return False
-        return True
+        return self._codomain.has_coerce_map_from(other._codomain)
 
     def __call__(self, *data, **kwds):
         r"""
@@ -634,5 +632,4 @@ class QuiverHomSpace(Homset):
                 basis_dict[v] = [self.element_class(self._domain, self._codomain, vec)
                                  for vec in spaces[v].gens()]
             return (QuiverRep(self._base, self._semigroup.reverse(), spaces, maps), basis_dict)
-        else:
-            return QuiverRep(self._base, self._semigroup.reverse(), spaces, maps)
+        return QuiverRep(self._base, self._semigroup.reverse(), spaces, maps)

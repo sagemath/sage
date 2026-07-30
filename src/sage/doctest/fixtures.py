@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Fixtures to help testing functionality
 
@@ -217,11 +216,10 @@ class AttributeAccessTracerHelper:
                               pretty(res)))
                 return res
             return wrapper
-        else:
-            if self.reads:
-                print("{}read {} = {}".format(self.prefix, name,
-                                              pretty(val)))
-            return val
+        if self.reads:
+            print("{}read {} = {}".format(self.prefix, name,
+                                          pretty(val)))
+        return val
 
     def set(self, name, val):
         r"""

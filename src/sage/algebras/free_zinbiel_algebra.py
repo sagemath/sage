@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Free Zinbiel Algebras
 
@@ -259,7 +258,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         if self._n is not None:
             self._assign_names(names)
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -271,7 +270,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         """
         return "{!s}[{!s}]".format(self._print_options['prefix'], repr(t)[6:])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -517,14 +516,12 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             if self._side == P._side:
                 return self.element_class(self,
                                           x.monomial_coefficients(copy=False))
-            else:
-                dic = x.monomial_coefficients(copy=False)
-                # canonical isomorphism when switching side
-                return self.element_class(self,
-                                          {w.reversal(): cf
-                                           for w, cf in dic.items()})
-        else:
-            raise TypeError('not able to convert this to this algebra')
+            dic = x.monomial_coefficients(copy=False)
+            # canonical isomorphism when switching side
+            return self.element_class(self,
+                                      {w.reversal(): cf
+                                       for w, cf in dic.items()})
+        raise TypeError('not able to convert this to this algebra')
         # Ok, not a Zinbiel algebra element (or should not be viewed as one).
 
     def _coerce_map_from_(self, R):
@@ -671,7 +668,8 @@ class ZinbielFunctor(ConstructionFunctor):
         Functor.__init__(self, Rings(), Magmas())
         self.vars = variables
         self._side = side
-        self._finite_vars = bool(isinstance(variables, (list, tuple)) or variables in Sets().Finite())
+        self._finite_vars = (isinstance(variables, (list, tuple))
+                             or variables in Sets().Finite())
 
     def _apply_functor(self, R):
         """
@@ -788,12 +786,11 @@ class ZinbielFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return ZinbielFunctor(other.vars + self.vars, self._side)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], ZinbielFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """

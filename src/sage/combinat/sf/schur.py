@@ -18,14 +18,15 @@ Schur symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import classical
-from sage.misc.misc_c import prod
-from sage.misc.lazy_import import lazy_import
-from sage.data_structures.blas_dict import convert_remove_zeroes
-from sage.rings.infinity import infinity
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import factorial
 from sage.combinat.tableau import StandardTableaux
+from sage.data_structures.blas_dict import convert_remove_zeroes
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import classical
 
 lazy_import('sage.libs.lrcalc', 'lrcalc')
 
@@ -132,7 +133,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
         """
         return self.element_class(self, convert_remove_zeroes(lrcalc.mult(left, right),
-                                                            self.base_ring()))
+                                                              self.base_ring()))
 
     def coproduct_on_basis(self, mu):
         r"""
@@ -166,7 +167,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         """
         T = self.tensor_square()
         return T.element_class(T, convert_remove_zeroes(lrcalc.coprod(mu, all=1),
-                                                      self.base_ring()))
+                                                        self.base_ring()))
 
     def _element_constructor_(self, x):
         """
@@ -216,12 +217,12 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             s[]
         """
         r = len(nu) + len(la)
-        ga = [a-b for (a,b) in zip(nu+la.to_list(), range(-r,0))]
+        ga = [a - b for a, b in zip(nu + la.to_list(), range(-r, 0))]
         if r == len(set(ga)) and min(ga) > 0:
             m = sum(1 for i in range(len(ga)) for j in range(i, len(ga))
                     if ga[i] < ga[j])
             ga.sort(reverse=True)
-            return (-1)**m * self([a+b for (a,b) in zip(ga, range(-r,0))])
+            return (-1)**m * self([a + b for a, b in zip(ga, range(-r, 0))])
         return self.zero()
 
     def _magma_init_(self, magma):
@@ -407,9 +408,8 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 f = lambda p1, p2: one
                 x = s(x)
                 return s._apply_multi_module_morphism(self, x, f, orthogonal=True)
-            else:
-                p = self.parent().realization_of().power()
-                return p(self).scalar( x, zee=zee )
+            p = self.parent().realization_of().power()
+            return p(self).scalar(x, zee=zee)
 
         def verschiebung(self, n):
             r"""
@@ -557,7 +557,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         minus_sign = False
                     else:
                         minus_sign = True
-                    if (n * s * (n-1) * (s-1)) % 8 == 4:
+                    if (n * s * (n - 1) * (s - 1)) % 8 == 4:
                         minus_sign = not minus_sign
                     if minus_sign:
                         result -= coeff * quotient_prod
@@ -684,11 +684,19 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 sage: s.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                R = self.base_ring()
+                mc = self.monomial_coefficients(copy=False).items()
+                return R.sum(c for partition, c in mc
+                             if len(partition) <= 1)
+
             def get_variable(ring, name):
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -725,7 +733,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         # computation with universal coefficients instead:
                         quotient = ZZq((prod(1-q_lim**(n+j-i)
                                              for (i, j) in partition.cells()))
-                                    / prod(1-q_lim**h for h in partition.hooks()))
+                                       / prod(1-q_lim**h for h in partition.hooks()))
                         return power * quotient.subs({q_lim: q})
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
@@ -828,7 +836,9 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -861,6 +871,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.schur',
                            'SymmetricFunctionAlgebraElement_schur',
                            SymmetricFunctionAlgebra_schur.Element)

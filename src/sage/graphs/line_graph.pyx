@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Line graphs
 
@@ -190,7 +189,6 @@ def is_line_graph(g, certificate=False):
 
     But what is the graph whose line graph is the house ?::
 
-        sage: # needs sage.modules
         sage: is_line, R, isom = g.is_line_graph(certificate=True)
         sage: R.sparse6_string()
         ':DaHI~'
@@ -400,6 +398,14 @@ def line_graph(g, labels=True, return_labels=False, immutable=None):
         sage: C.line_graph().is_isomorphic(g.line_graph())
         True
 
+    :issue:`40953`::
+
+        sage: G = Graph([(0,0)],loops=True)
+        sage: G.line_graph()
+        Graph on 1 vertex
+        sage: G.to_directed().line_graph()
+        Looped digraph on 1 vertex
+
     Check the behavior of parameter ``immutable``::
 
         sage: G = Graph([(0, 1), (1, 2)])
@@ -432,18 +438,20 @@ def line_graph(g, labels=True, return_labels=False, immutable=None):
     cdef dict origlabels_dic = {}  # stores original labels of edges in case of multiple edges
 
     multiple = g.has_multiple_edges()
+    loops = g.has_loops()
 
     if immutable is None:
         immutable = g.is_immutable()
 
     if multiple:
-        # As the edges of g are the vertices of its line graph, we need to distinguish between the mutliple edges of g.
+        # As the edges of g are the vertices of its line graph, we need to distinguish between the multiple edges of g.
         # To this aim, we assign to each edge of g an integer label (between 0 and g.size() - 1) and set labels to True
         # in order to keep these labels during the construction of the line graph.
         labels = True
         origlabels_dic = {(u, v, id): (u, v, label)
                           for id, (u, v, label) in enumerate(g.edge_iterator())}
-        g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges', multiedges=True)
+        g = parent(g)([g, origlabels_dic.keys()], format='vertices_and_edges',
+                      multiedges=True, loops=loops)
 
     if g._directed:
         from sage.graphs.digraph import DiGraph
@@ -452,7 +460,8 @@ def line_graph(g, labels=True, return_labels=False, immutable=None):
                 for e in g.incoming_edge_iterator(v, labels=labels)
                 for f in g.outgoing_edge_iterator(v, labels=labels))
         G = DiGraph([g.edge_iterator(labels=labels), arcs],
-                    format='vertices_and_edges', immutable=immutable)
+                    format='vertices_and_edges', immutable=immutable,
+                    multiedges=multiple, loops=loops)
         if return_labels and multiple:
             return [G, origlabels_dic]
         return G

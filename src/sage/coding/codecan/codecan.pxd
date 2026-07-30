@@ -36,8 +36,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
     cdef int _k, _q
     cdef long *_hyp_refine_vals_scratch
     cdef object _inner_group_stabilizer_order
-    cdef bitset_t *_hyp2points # hyperplanes to points
-    cdef bitset_t *_points2hyp # points to hyperplanes, transpose of _hyp2points
+    cdef bitset_t *_hyp2points  # hyperplanes to points
+    cdef bitset_t *_points2hyp  # points to hyperplanes, transpose of _hyp2points
     cdef PartitionStack *_hyp_part
     cdef object _matrix, _root_matrix
     cdef InnerGroup _inner_group

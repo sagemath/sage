@@ -45,8 +45,13 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 
-import sage.rings.finite_rings.finite_field_constructor
-
+'''
+Singular supports characteristics up to 2^31-1 in principle,
+but many algorithms are broken unless the characteristic is
+actually <= 2^29-1. See the manual:
+https://www.singular.uni-kl.de/Manual/latest/sing_418.htm
+'''
+singular_max_char = 2**29 - 1
 
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""
@@ -76,39 +81,39 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     if isinstance(base_ring, sage.rings.rational_field.RationalField):
         return make_ring("(QQ)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.RealField):
+    if isinstance(base_ring, sage.rings.abc.RealField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         precision = base_ring.precision()
         digits = (2*precision + 4) // 7
         return make_ring(f"(real,{digits},0)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.ComplexField):
+    if isinstance(base_ring, sage.rings.abc.ComplexField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         precision = base_ring.precision()
         digits = (2*precision + 4) // 7
         return make_ring(f"(complex,{digits},0,I)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.RealDoubleField):
+    if isinstance(base_ring, sage.rings.abc.RealDoubleField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         return make_ring("(real,15,0)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
+    if isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
         # singular converts to bits from base_10 in mpr_complex.cc by:
         #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
         return make_ring("(complex,15,0,I)"), None
 
-    elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
+    if isinstance(base_ring, sage.rings.abc.IntegerModRing):
         char = base_ring.characteristic()
-        if isinstance(base_ring, FiniteField) and char <= 2147483647:
+        if isinstance(base_ring, FiniteField) and char <= singular_max_char:
             return make_ring(str(char)), None
         if char.is_power_of(2):
             return make_ring(f"(integer,2,{char.nbits()-1})"), None
         return make_ring(f"(integer,{char})"), None
 
-    elif isinstance(base_ring, FiniteField):
+    if isinstance(base_ring, FiniteField):
         # not the prime field!
         gen = str(base_ring.gen())
         R = make_ring(f"({char},{gen})")
@@ -120,7 +125,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
+    if isinstance(base_ring, NumberField) and base_ring.is_absolute():
         # not the rationals!
         gen = str(base_ring.gen())
         poly = base_ring.polynomial()
@@ -135,7 +140,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
+    if isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         if base_ring.ngens() == 1:
             gens = str(base_ring.gen())
         else:
@@ -147,7 +152,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
         if B.is_prime_field() or B is ZZ:
             return make_ring(f"({base_char},{gens})"), None
 
-        if isinstance(B, FiniteField) and B.characteristic() <= 2147483647:
+        if isinstance(B, FiniteField) and B.characteristic() <= singular_max_char:
             ext_gen = str(B.gen())
             _vars = '(' + ext_gen + ', ' + _vars[1:]
 
@@ -204,7 +209,7 @@ class PolynomialRing_singular_repr:
             sage: R.<x,y> = PolynomialRing(RealField(100))                              # needs sage.rings.real_mpfr
             sage: singular(R)                                                           # needs sage.libs.singular sage.rings.real_mpfr
             polynomial ring, over a field, global ordering
-            // coefficients: Float()...
+            // coefficients: Float(...
             // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
@@ -278,7 +283,7 @@ class PolynomialRing_singular_repr:
             sage: R = IntegerModRing(15)['x,y']
             sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a ring (with zero-divisors), global ordering
-            // coefficients: ZZ/(15)...
+            // coefficients: ZZ/...(15)...
             // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
@@ -302,7 +307,6 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = FiniteField(25)
             sage: R = k['x']
             sage: K = R.fraction_field()
@@ -409,11 +413,10 @@ def can_convert_to_singular(R):
 
     Check for :issue:`33319`::
 
-        sage: # needs sage.rings.finite_rings
-        sage: R.<x,y> = GF((2^31-1)^3)[]
+        sage: R.<x,y> = GF((2^29-3)^3)[]
         sage: R._has_singular
         True
-        sage: R.<x,y> = GF((2^31+11)^2)[]
+        sage: R.<x,y> = GF((2^29+11)^2)[]
         sage: R._has_singular
         False
         sage: R.<x,y> = GF(10^20 - 11)[]
@@ -423,7 +426,20 @@ def can_convert_to_singular(R):
         sage: R.<x,y> = Zmod(10^20 + 1)[]
         sage: R._has_singular
         True
+
+    Check that :issue:`39106` is fixed::
+
+        sage: s = SymmetricFunctions(QQ).s()
+        sage: R.<x> = PolynomialRing(s.fraction_field())
+        sage: can_convert_to_singular(R)
+        False
+        sage: R.<x, y> = PolynomialRing(s.fraction_field())
+        sage: can_convert_to_singular(R)
+        False
     """
+    from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+
     if R.ngens() == 0:
         return False
 
@@ -434,18 +450,18 @@ def can_convert_to_singular(R):
                                   sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
         return True
-    elif isinstance(base_ring, FiniteField):
-        return base_ring.characteristic() <= 2147483647
-    elif isinstance(base_ring, NumberField):
+    if isinstance(base_ring, FiniteField):
+        return base_ring.characteristic() <= singular_max_char
+    if isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
-    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
+    if (isinstance(base_ring, sage.rings.fraction_field.FractionField_generic)
+        and isinstance(base_ring.base(), (PolynomialRing_general, MPolynomialRing_base))):
         B = base_ring.base_ring()
         return (B.is_prime_field() or B is ZZ
-                or (isinstance(B, FiniteField) and B.characteristic() <= 2147483647))
-    elif isinstance(base_ring, RationalFunctionField):
+                or (isinstance(B, FiniteField) and B.characteristic() <= singular_max_char))
+    if isinstance(base_ring, RationalFunctionField):
         return base_ring.constant_field().is_prime_field()
-    else:
-        return False
+    return False
 
 
 class Polynomial_singular_repr:
@@ -480,7 +496,6 @@ def _singular_func(self, singular=None):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.singular
         sage: P.<a,b> = PolynomialRing(GF(7), 2)
         sage: f = (a^3 + 2*b^2*a)^7; f
         a^21 + 2*a^7*b^14
@@ -491,7 +506,6 @@ def _singular_func(self, singular=None):
         sage: P(h^20) == f^20
         True
 
-        sage: # needs sage.libs.singular
         sage: R.<x> = PolynomialRing(GF(7))
         sage: f = (x^3 + 2*x^2*x)^7
         sage: f

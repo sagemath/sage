@@ -30,7 +30,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -58,8 +57,15 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.graphs.digraph import DiGraph
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.combinat.dyck_word', 'DyckWords')
+
+lazy_import('sage.combinat.tamari_blossoming_tree',
+            ['TamariBlossomingTree', 'TamariBlossomingTrees'])
 
 
 class TamariIntervalPoset(Element,
@@ -752,7 +758,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def increasing_parent(self, v) -> None | int:
+    def increasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the initial forest of ``self``.
 
@@ -888,7 +894,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def decreasing_parent(self, v) -> None | int:
+    def decreasing_parent(self, v) -> int | None:
         r"""
         Return the vertex parent of ``v`` in the final forest of ``self``.
 
@@ -1256,9 +1262,9 @@ class TamariIntervalPoset(Element,
                 return u + 1
             return u
         rels = [(add1(a), add1(b))
-                for (a, b) in self.decreasing_cover_relations()]
+                for a, b in self.decreasing_cover_relations()]
         rels += [(add1(a), add1(b))
-                 for (a, b) in self.increasing_cover_relations()]
+                 for a, b in self.increasing_cover_relations()]
         rels += [(k, k - 1) for k in [i] if i > 1]
         rels += [(k, k + 1) for k in [i] if i <= n]
         return TamariIntervalPoset(n + 1, rels)
@@ -1531,7 +1537,7 @@ class TamariIntervalPoset(Element,
         """
         if other.size() != self.size():
             return False
-        return all(other.le(i, j) for (i, j) in self._cover_relations)
+        return all(other.le(i, j) for i, j in self._cover_relations)
 
     def lower_contains_interval(self, other) -> bool:
         r"""
@@ -1572,7 +1578,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.decreasing_cover_relations())
+                   for i, j in other.decreasing_cover_relations())
 
     def upper_contains_interval(self, other) -> bool:
         r"""
@@ -1613,7 +1619,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.increasing_cover_relations())
+                   for i, j in other.increasing_cover_relations())
 
     def is_linear_extension(self, perm) -> bool:
         r"""
@@ -1934,6 +1940,26 @@ class TamariIntervalPoset(Element,
         """
         return self.upper_binary_tree().to_dyck_word_tamari()
 
+    def blossoming_tree(self) -> TamariBlossomingTree:
+        r"""
+        Return the Tamari blossoming tree of type
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree` in
+        bijection with the Tamari interval represented by ``self``.
+
+        EXAMPLES::
+
+            sage: TIP = TamariIntervalPoset(6, [(3, 2), (4, 3), (5, 2), (6, 5),
+            ....:                               (1, 2), (4, 5)])
+            sage: B = TIP.blossoming_tree()
+            sage: B
+            Tamari blossoming tree ... of size 6
+            sage: B.to_plane_tree()
+            [[], [[], []], [[], [], [[], []], [[], [], [[[], []], [], []]]]]
+            sage: B.to_TIP() == TIP
+            True
+        """
+        return TamariBlossomingTree.from_TIP(self)
+
     def subposet(self, start, end) -> TIP:
         r"""
         Return the renormalized subposet of ``self`` consisting solely
@@ -1979,10 +2005,10 @@ class TamariIntervalPoset(Element,
         if start == end:
             return TamariIntervalPoset(0, [])
         relations = [(i - start + 1, j - start + 1)
-                     for (i, j) in self.increasing_cover_relations()
+                     for i, j in self.increasing_cover_relations()
                      if i >= start and j < end]
         relations.extend((j - start + 1, i - start + 1)
-                         for (j, i) in self.decreasing_cover_relations()
+                         for j, i in self.decreasing_cover_relations()
                          if i >= start and j < end)
         return TamariIntervalPoset(end - start, relations, check=False)
 
@@ -2566,7 +2592,7 @@ class TamariIntervalPoset(Element,
                                       extract_tree(cx, cy, t_up, common))
                 for cx, cy in common]
 
-    def decomposition_to_triple(self) -> None | tuple[TIP, TIP, int]:
+    def decomposition_to_triple(self) -> tuple[TIP, TIP, int] | None:
         """
         Decompose an interval-poset into a triple (``left``, ``right``, ``r``).
 
@@ -2934,27 +2960,33 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         """
         NAME = 'TamariIntervalPosets'
         module = 'sage.combinat.interval_posets'
-        latex_tikz_scale = dict(default=1,
-                              description='the default value for the tikz scale when latexed',
-                              checker=lambda x: True)  # More trouble than it's worth to check
-        latex_line_width_scalar = dict(default=0.5,
-                                     description='the default value for the line width as a'
-                                                 'multiple of the tikz scale when latexed',
-                                     checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color_decreasing = dict(default='red',
-                                    description='the default color of decreasing relations when latexed',
-                                    checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color_increasing = dict(default='blue',
-                                    description='the default color of increasing relations when latexed',
-                                    checker=lambda x: True)  # More trouble than it's worth to check
-        latex_hspace = dict(default=1,
-                          description='the default difference between horizontal'
-                                      ' coordinates of vertices when latexed',
-                          checker=lambda x: True)  # More trouble than it's worth to check
-        latex_vspace = dict(default=1,
-                          description='the default difference between vertical'
-                                      ' coordinates of vertices when latexed',
-                          checker=lambda x: True)   # More trouble than it's worth to check
+        latex_tikz_scale = dict(
+            default=1,
+            description='the default value for the tikz scale when latexed',
+            checker=lambda x: True)  # More trouble than it's worth to check
+        latex_line_width_scalar = dict(
+            default=0.5,
+            description='the default value for the line width as a'
+            'multiple of the tikz scale when latexed',
+            checker=lambda x: True)  # More trouble than it's worth to check
+        latex_color_decreasing = dict(
+            default='red',
+            description='the default color of decreasing relations when latexed',
+            checker=lambda x: True)  # More trouble than it's worth to check
+        latex_color_increasing = dict(
+            default='blue',
+            description='the default color of increasing relations when latexed',
+            checker=lambda x: True)  # More trouble than it's worth to check
+        latex_hspace = dict(
+            default=1,
+            description='the default difference between horizontal'
+                        ' coordinates of vertices when latexed',
+            checker=lambda x: True)  # More trouble than it's worth to check
+        latex_vspace = dict(
+            default=1,
+            description='the default difference between vertical'
+                        ' coordinates of vertices when latexed',
+            checker=lambda x: True)   # More trouble than it's worth to check
 
     @staticmethod
     def check_poset(poset) -> bool:
@@ -3332,6 +3364,39 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             return TamariIntervalPosets.from_binary_trees(tree1, tree2)
         except ValueError:
             raise ValueError("the two Dyck words are not comparable on the Tamari lattice")
+
+    @staticmethod
+    def from_blossoming_tree(B: TamariBlossomingTree) -> TIP:
+        r"""
+        Return the interval poset corresponding to the Tamari interval in
+        bijection with the blossoming tree ``B`` of type
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`.
+
+        INPUT:
+
+        - ``B``: a blossoming tree of type
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`,
+          which is in bijection with an interval in the Tamari lattice. See
+          [FFN2025]_ and the documentation of
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`.
+          for details.
+
+        EXAMPLES::
+
+            sage: T = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
+            sage: B = TamariBlossomingTree(T)
+            sage: TIP = TamariIntervalPosets.from_blossoming_tree(B)
+            sage: TIP
+            The Tamari interval of size 8 induced by relations ...
+            sage: TIP.increasing_cover_relations()
+            [(1, 5), (2, 4), (3, 4), (4, 5), (7, 8)]
+            sage: TIP.decreasing_cover_relations()
+            [(7, 5), (6, 5), (3, 2), (2, 1)]
+            sage: TIP.blossoming_tree() == B
+            True
+        """
+        return B.to_TIP()
 
     @staticmethod
     def recomposition_from_triple(left: TIP, right: TIP, r) -> TIP:
@@ -3712,7 +3777,8 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
             sage: S = TamariIntervalPosets(3)
             sage: assert S is TamariIntervalPosets(3)
-            sage: for i in range(5): TestSuite(TamariIntervalPosets(i)).run()
+            sage: for i in range(5):
+            ....:     TestSuite(TamariIntervalPosets(i)).run()
         """
         # there is a natural order on interval-posets through inclusions
         # that is why we use the FinitePosets category
@@ -3832,16 +3898,12 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
     def random_element(self) -> TIP:
         """
-        Return a random Tamari interval of fixed size.
+        Return a random Tamari interval poset of fixed size.
 
-        This is obtained by first creating a random rooted
-        planar triangulation, then computing its unique
-        minimal Schnyder wood, then applying a bijection
-        of Bernardi and Bonichon [BeBo2009]_.
-
-        Because the random rooted planar triangulation is
-        chosen uniformly at random, the Tamari interval is
-        also chosen according to the uniform distribution.
+        This is obtained using the class
+        :class:`~sage.tamari_blossoming_tree.TamariBlossomingTrees`,
+        which generates blossoming trees uniformly at random. A bijection is
+        then performed to obtain a Tamari interval poset.
 
         EXAMPLES::
 
@@ -3856,14 +3918,11 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: len(u)
             8
         """
-        from sage.graphs.schnyder import minimal_schnyder_wood
-        from sage.graphs.generators.random import RandomTriangulation
-        n = self._size
-        tri = RandomTriangulation(n + 3)
-        tip = TamariIntervalPosets
-        schnyder = minimal_schnyder_wood(tri, root_edge=(-1, -2),
-                                         check=False)
-        return tip.from_minimal_schnyder_wood(schnyder)
+        if self._size == 0:
+            return self.first()
+        if not hasattr(self, 'factory'):
+            self.factory = TamariBlossomingTrees(self._size)
+        return self.factory.random_element().to_TIP()
 
     @lazy_attribute
     def _parent_for(self):

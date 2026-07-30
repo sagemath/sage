@@ -1,5 +1,4 @@
 # distutils: libraries = mtx
-# sage_setup: distribution = sagemath-meataxe
 # sage.doctest: optional - meataxe
 
 r"""
@@ -44,7 +43,6 @@ cimport cython
 #
 ####################
 
-from sage.cpython.string cimport str_to_bytes
 from sage.cpython.string import FS_ENCODING
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -59,6 +57,7 @@ from sage.matrix.args cimport MatrixArgs_init
 from libc.string cimport memset, memcpy
 
 cimport sage.matrix.matrix0
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 # The following import is just to ensure that meataxe_init() is called.
 import sage.libs.meataxe
@@ -467,8 +466,8 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             raise ValueError("cannot construct meataxe matrix from empty filename")
 
         if type(filename) is not bytes:
-            filename = str_to_bytes(filename, FS_ENCODING,
-                                    'surrogateescape')
+            filename = filename.encode(FS_ENCODING, 'surrogateescape')
+
         sig_on()
         try:
             mat = MatLoad(filename)
@@ -674,6 +673,48 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         finally:
             sig_off()
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_gfpn_dense with
+                    the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: from sage.matrix.matrix_gfpn_dense import Matrix_gfpn_dense
+            sage: K.<z> = GF(59)
+            sage: M = MatrixSpace(K, 3, 4, implementation=Matrix_gfpn_dense)(range(12))
+            sage: M
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: M.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: M.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: M.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_gfpn_dense _src = <Matrix_gfpn_dense>src
+        FfInsert(FfGetPtr(self.Data.Data, iDst), jDst, FfExtract(MatGetPtr(_src.Data,iSrc), jSrc))
+
     def randomize(self, density=None, nonzero=False, *args, **kwds):
         """
         Fill the matrix with random values.
@@ -740,28 +781,28 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                     MPB += 1
                     tmp *= fl
                 O = (fl**MPB)
-                if nc%MPB:
+                if nc % MPB:
                     for i in range(nr):
                         y = <unsigned char*>x
                         for j in range(FfCurrentRowSizeIo-1):
-                            y[j] = RandState.c_random()%O
+                            y[j] = RandState.c_random() % O
                             sig_check()
-                        for j in range(nc-(nc%MPB), nc):
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl) ))
+                        for j in range(nc-(nc % MPB), nc):
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl) ))
                             sig_check()
                         FfStepPtr(&(x))
                 else:
                     for i in range(nr):
                         y = <unsigned char*>x
                         for j in range(FfCurrentRowSizeIo):
-                            y[j] = RandState.c_random()%O
+                            y[j] = RandState.c_random() % O
                             sig_check()
                         FfStepPtr(&(x))
             else:
                 for i in range(nr):
                     for j in range(nc):
                         if RandState.c_rand_double() < density:
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl) ))
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl) ))
                             sig_check()
                     FfStepPtr(&(x))
         else:
@@ -769,7 +810,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                 fl -= 1
                 for i in range(nr):
                     for j in range(nc):
-                        FfInsert(x, j, FfFromInt( (RandState.c_random()%fl)+1 ))
+                        FfInsert(x, j, FfFromInt( (RandState.c_random() % fl)+1 ))
                         sig_check()
                     FfStepPtr(&(x))
             else:
@@ -777,7 +818,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                 for i in range(nr):
                     for j in range(nc):
                         if RandState.c_rand_double() < density:
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl)+1 ))
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl)+1 ))
                             sig_check()
                     FfStepPtr(&(x))
 
@@ -830,9 +871,8 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         if self.Data == NULL:
             if N.Data == NULL:
                 return rich_to_bool(op, 0)
-            else:
-                return rich_to_bool(op, 1)
-        elif N.Data == NULL:
+            return rich_to_bool(op, 1)
+        if N.Data == NULL:
             return rich_to_bool(op, -1)
         if self.Data.Field != N.Data.Field:
             if self.Data.Field > N.Data.Field:
@@ -1301,7 +1341,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         # asymptotically faster. So, we used it by default.
         return 0
 
-    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right) noexcept:
+    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right):
         """
         Multiplication using the cubic school book multiplication algorithm.
 
@@ -1319,8 +1359,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         "multiply two meataxe matrices by the school book algorithm"
         if self.Data == NULL or right.Data == NULL:
             raise ValueError("The matrices must not be empty")
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
         sig_on()
         try:
             mat = MatDup(self.Data)
@@ -1329,7 +1368,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0) noexcept:
+    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0):
         """
         Matrix multiplication using the asymptotically fast Strassen-Winograd algorithm.
 
@@ -1353,8 +1392,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         """
         if self.Data == NULL or right.Data == NULL:
             raise ValueError("The matrices must not be empty")
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
         StrassenSetCutoff(cutoff // sizeof(long))
         sig_on()
         try:
@@ -1370,10 +1408,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS::
 
-            sage: M = random_matrix(GF(9,'x'), 64,51)
-            sage: M == M*int(4) == int(4)*M
+            sage: M = random_matrix(GF(9,'x'), 64,51) # optional: meataxe
+            sage: M == M*int(4) == int(4)*M           # optional: meataxe
             True
-            sage: M*int(-1)+M == 0
+            sage: M*int(-1)+M == 0                    # optional: meataxe
             True
         """
         if self.Data == NULL:
@@ -1434,20 +1472,20 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS::
 
-            sage: MS = MatrixSpace(GF(9,'x'),500)
-            sage: while 1:
+            sage: MS = MatrixSpace(GF(9,'x'),500) # optional: meataxe
+            sage: while 1:                        # optional: meataxe
             ....:     M = MS.random_element()
             ....:     if M.rank() == 500:
             ....:         break
-            sage: Minv = ~M    # indirect doctest
-            sage: Minv*M == M*Minv == 1
+            sage: Minv = ~M                       # optional: meataxe
+            sage: Minv*M == M*Minv == 1           # optional: meataxe
             True
 
         We use the occasion to demonstrate that errors in MeatAxe are
         correctly handled in Sage::
 
-            sage: MS = MatrixSpace(GF(25,'x'),5)
-            sage: while 1:
+            sage: MS = MatrixSpace(GF(25,'x'),5) # optional: meataxe
+            sage: while 1:                       # optional: meataxe
             ....:     M = MS.random_element(density=0.4)
             ....:     if M.rank() < 5:
             ....:         break
@@ -1906,7 +1944,9 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
     # in Python-3, Sage will receive a str in `latin1` encoding. Therefore,
     # in the following line, we use a helper function that would return bytes,
     # regardless whether the input is bytes or str.
-    cdef bytes Data = str_to_bytes(data, encoding='latin1')
+    if isinstance(data, str):
+        data = data.encode('latin1')
+    cdef bytes Data = data
     if isinstance(f, int):
         # This is for old pickles created with the group cohomology spkg
         MS = MatrixSpace(GF(f, 'z'), nr, nc, implementation=Matrix_gfpn_dense)

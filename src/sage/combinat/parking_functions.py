@@ -1,5 +1,5 @@
 r"""
-Parking Functions
+Parking functions
 
 INFORMALLY (reference [Beck]_):
 
@@ -33,22 +33,6 @@ if `D[i+1] = D[i]+1` then `L[i+1] > L[i]`.
 
 The number of parking functions of size `n` is equal to the number of
 rooted forests on `n` vertices and is equal to `(n+1)^{n-1}`.
-
-REFERENCES:
-
-.. [Beck] \M. Beck, Stanford Math Circle - Parking Functions, October 2010,
-    http://math.stanford.edu/circle/parkingBeck.pdf
-
-.. [Hag08] The `q,t` -- Catalan Numbers and the Space of Diagonal Harmonics:
-    With an Appendix on the Combinatorics of Macdonald Polynomials, James Haglund,
-    University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
-
-.. [Shin] \H. Shin, Forests and Parking Functions, slides from talk September 24, 2008,
-    http://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf
-
-.. [GXZ] \A. M. Garsia, G. Xin, M. Zabrocki, A three shuffle case of the
-    compositional parking function conjecture, :arxiv:`1208.5796v1`
-
 AUTHORS:
 
 - used non-decreasing_parking_functions code by Florent Hivert (2009 - 04)
@@ -63,7 +47,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from collections.abc import Iterator
 
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -80,6 +63,10 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def is_a(x, n=None) -> bool:
@@ -183,7 +170,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         if pf is not None:
             PF = ParkingFunctions()
             return PF.element_class(PF, pf)
-        elif labelling is not None:
+        if labelling is not None:
             if (area_sequence is None):
                 raise ValueError("must also provide area sequence along with labelling")
             if (len(area_sequence) != len(labelling)):
@@ -191,9 +178,9 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             if any(area_sequence[i] < area_sequence[i + 1] and labelling[i] > labelling[i + 1] for i in range(len(labelling) - 1)):
                 raise ValueError("%s is not a valid labeling of area sequence %s" % (labelling, area_sequence))
             return from_labelling_and_area_sequence(labelling, area_sequence)
-        elif labelled_dyck_word is not None:
+        if labelled_dyck_word is not None:
             return from_labelled_dyck_word(labelled_dyck_word)
-        elif area_sequence is not None:
+        if area_sequence is not None:
             DW = DyckWord(area_sequence)
             return ParkingFunction(labelling=list(range(1, DW.size() + 1)),
                                    area_sequence=DW)
@@ -1001,7 +988,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
             sage: # needs sage.modules
             sage: R = QQ['q','t'].fraction_field()
-            sage: (q,t) = R.gens()
+            sage: q, t = R.gens()
             sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()
             ....:           for PF in ParkingFunctions(3)); cqf
             (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2]
@@ -1398,9 +1385,7 @@ class ParkingFunctions_all(ParkingFunctions):
             sage: x == y
             True
         """
-        if isinstance(S, ParkingFunctions_n):
-            return True
-        return False
+        return isinstance(S, ParkingFunctions_n)
 
 
 class ParkingFunctions_n(ParkingFunctions):

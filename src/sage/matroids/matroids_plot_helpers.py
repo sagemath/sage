@@ -398,7 +398,7 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
         sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
         ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: [M,L,P] = matroids_plot_helpers.slp(M1)                                   # needs sage.rings.finite_rings
+        sage: M, L, P = matroids_plot_helpers.slp(M1)                                   # needs sage.rings.finite_rings
         sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
         sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
@@ -408,7 +408,7 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
         sage: posdict = {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
         ....:            4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: [M,L,P] = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # needs sage.rings.finite_rings
+        sage: M, L, P = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # needs sage.rings.finite_rings
         sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
         sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
@@ -420,19 +420,19 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
-    P = set(M1.groundset())-nP
+    P = set(M1.groundset()) - nP
     if P:
         if pos_dict is not None:
-            pcls = list(set([frozenset(set(M1.closure([p])) - L)
-                             for p in list(P)]))
+            pcls = list({frozenset(set(M1.closure([p])) - L)
+                         for p in list(P)})
             newP = []
             for pcl in pcls:
                 pcl_in_dict = [p for p in list(pcl) if p in pos_dict.keys()]
-                newP.extend(list(pcl-set([pcl_in_dict[0]])))
+                newP.extend(list(pcl - set([pcl_in_dict[0]])))
             return [M1.delete(L | set(newP)), L, set(newP)]
-        elif B is not None:
-            pcls = list(set([frozenset(set(M1.closure([p])) - L)
-                             for p in list(P)]))
+        if B is not None:
+            pcls = list({frozenset(set(M1.closure([p])) - L)
+                         for p in list(P)})
             newP = []
             for pcl in pcls:
                 pcl_list = list(pcl)
@@ -442,10 +442,8 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
                 else:
                     newP.extend(list(pcl - set([pcl_list[0]])))
             return [M1.delete(L | set(newP)), L, set(newP)]
-        else:
-            return [M1.delete(L | P), L, P]
-    else:
         return [M1.delete(L | P), L, P]
+    return [M1.delete(L | P), L, P]
 
 
 def addlp(M, M1, L, P, ptsdict, G=None, limits=None) -> tuple:
@@ -479,7 +477,7 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None) -> tuple:
         sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
         ....:                                 [0, 1, 0, 1, 0, 1, 1,0,0],
         ....:                                 [0, 0, 1, 1, 1, 0, 1,0,0]])
-        sage: [M1,L,P] = matroids_plot_helpers.slp(M)                                   # needs sage.rings.finite_rings
+        sage: M1, L, P = matroids_plot_helpers.slp(M)                                   # needs sage.rings.finite_rings
         sage: G, lims = matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})                 # needs sage.plot sage.rings.finite_rings
         sage: G.show(axes=False)                                                        # needs sage.plot sage.rings.finite_rings
 
@@ -628,12 +626,11 @@ def lineorders_union(lineorders1, lineorders2) -> list:
                 lineorders.append(order)
                 lineorders.remove(lo)
         return lineorders
-    elif lineorders1 is None and lineorders2 is not None:
+    if lineorders1 is None and lineorders2 is not None:
         return lineorders2
-    elif lineorders1 is not None:
+    if lineorders1 is not None:
         return lineorders1
-    else:
-        return None
+    return None
 
 
 def posdict_is_sane(M1, pos_dict) -> bool:
@@ -673,15 +670,14 @@ def posdict_is_sane(M1, pos_dict) -> bool:
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
-    P = set(M1.groundset())-nP
-    pcls = list(set([frozenset(set(M1.closure([p])) - L) for p in list(P)]))
+    P = set(M1.groundset()) - nP
+    pcls = list({frozenset(set(M1.closure([p])) - L) for p in list(P)})
     for pcl in pcls:
-        pcl_list = list(pcl)
-        if not any(x in pos_dict for x in pcl_list):
+        if not any(x in pos_dict for x in pcl):
             return False
     allP = []
     for pcl in pcls:
-        allP.extend(list(pcl))
+        allP.extend(pcl)
     return all(x in pos_dict
                for x in list(set(M1.groundset()) - (L | set(allP))))
 
@@ -759,7 +755,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
     """
     G = Graphics()
     # create lists of loops and parallel elements and simplify given matroid
-    [M, L, P] = slp(M1, pos_dict=pd, B=B1)
+    M, L, P = slp(M1, pos_dict=pd, B=B1)
     if B1 is None:
         B1 = list(M.basis())
     M._cached_info = M1._cached_info
@@ -786,7 +782,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         G.axes_range(xmin=limits[0]-0.5, xmax=limits[1]+0.5,
                      ymin=limits[2]-0.5, ymax=limits[3]+0.5)
         return G
-    elif M.rank() == 1:
+    if M.rank() == 1:
         if M._cached_info is not None and \
            'plot_positions' in M._cached_info.keys() and \
            M._cached_info['plot_positions'] is not None:

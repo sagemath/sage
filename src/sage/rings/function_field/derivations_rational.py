@@ -31,7 +31,7 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
         sage: K.derivation()
         d/dx
     """
-    def __init__(self, parent, u=None):
+    def __init__(self, parent, u=None) -> None:
         """
         Initialize a derivation.
 
@@ -95,12 +95,11 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
         numerator = f.derivative() * g - f * g.derivative()
         if numerator.is_zero():
             return self.codomain().zero()
-        else:
-            v = numerator / g**2
-            defining_morphism = self.parent()._defining_morphism
-            if defining_morphism is not None:
-                v = defining_morphism(v)
-            return self._u * v
+        v = numerator / g**2
+        defining_morphism = self.parent()._defining_morphism
+        if defining_morphism is not None:
+            v = defining_morphism(v)
+        return self._u * v
 
     def _add_(self, other):
         """

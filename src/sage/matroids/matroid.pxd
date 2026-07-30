@@ -121,7 +121,7 @@ cdef class Matroid(SageObject):
     cpdef SetSystem dependent_sets(self, long k)
     cpdef list _extend_flags(self, list flags)
     cpdef list _flags(self, long k)
-    cpdef SetSystem flats(self, long k)
+    cpdef SetSystem flats(self, long k=*)
     cpdef SetSystem coflats(self, long k)
     cpdef SetSystem hyperplanes(self)
     cpdef list f_vector(self)
@@ -148,7 +148,6 @@ cdef class Matroid(SageObject):
     cpdef minor(self, contractions=*, deletions=*)
     cpdef contract(self, X)
     cpdef delete(self, X)
-    cpdef _backslash_(self, X)
     cpdef dual(self)
     cpdef truncation(self)
     cpdef has_minor(self, N, bint certificate=*)
@@ -195,6 +194,7 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
+    cpdef bint is_quaternary(self) noexcept
     cpdef bint is_regular(self) noexcept
     cpdef bint is_graphic(self) noexcept
 

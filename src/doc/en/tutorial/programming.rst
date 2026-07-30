@@ -177,7 +177,7 @@ etc:
 In order to use this script, your ``SAGE_ROOT`` must be in your PATH.
 If the above script is called ``factor``, here is an example usage:
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ ./factor 2006
     2 * 17 * 59
@@ -417,8 +417,8 @@ Dictionaries
 A dictionary (also sometimes called an associative array) is a
 mapping from 'hashable' objects (e.g., strings, numbers, and tuples
 of such; see the Python documentation
-http://docs.python.org/tut/node7.html and
-http://docs.python.org/lib/typesmapping.html for details) to
+http://docs.python.org/3/tutorial/datastructures.html and
+https://docs.python.org/3/library/stdtypes.html#typesmapping for details) to
 arbitrary objects.
 
 ::
@@ -791,7 +791,7 @@ visualization.
 
 On a system shell, type
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     $ hotshot2calltree -o cachegrind.out.42 pythongrind.prof
 

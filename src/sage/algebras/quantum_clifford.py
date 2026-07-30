@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Quantum Clifford Algebras
 
@@ -7,7 +6,7 @@ AUTHORS:
 - Travis Scrimshaw (2021-05): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2021 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,7 +14,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -190,7 +189,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, F, indices, category=cat)
         self._assign_names(self.algebra_generators().keys())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -203,7 +202,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         return "Quantum Clifford algebra of rank {} and twist {} with q={} over {}".format(
             self._n, self._k, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -380,7 +379,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
                    for w in product(*[list(range((4-2*abs(p[i]))*k)) for i in range(n)])]
         super().__init__(n, k, q, F, psi, indices)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -412,7 +411,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
             return rv
         return '1'
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation for the basis element indexed by ``m``.
 
@@ -680,7 +679,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
                    for w in product(list(range(2*k)), repeat=n)]
         super().__init__(n, k, q, F, psi, indices)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -705,9 +704,9 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             val = p[i]
             if val == -1:
                 return 'psid%s' % i
-            elif val == 1:
+            if val == 1:
                 return 'psi%s' % i
-            elif val == 2:
+            if val == 2:
                 return 'psi%s*psid%s' % (i,i)
 
         rp = '*'.join(ppr(i) for i in range(self._n) if p[i] != 0)
@@ -721,7 +720,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             return rv
         return '1'
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a latex representation for the basis element indexed by ``m``.
 
@@ -746,9 +745,9 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
             val = p[i]
             if val == -1:
                 return '\\psi^{\\dagger}_{%s}' % i
-            elif val == 1:
+            if val == 1:
                 return '\\psi_{%s}' % i
-            elif val == 2:
+            if val == 2:
                 return '\\psi_{%s}\\psi^{\\dagger}_{%s}' % (i, i)
 
         rp = ''.join(ppr(i) for i in range(self._n) if p[i] != 0)

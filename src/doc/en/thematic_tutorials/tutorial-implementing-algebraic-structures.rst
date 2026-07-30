@@ -433,7 +433,7 @@ Coercions
 Once we have defined a morphism from `X \to Y`, we can register it as
 a coercion.  This will allow Sage to apply the morphism automatically
 whenever we combine elements of `X` and `Y` together. See
-http://sagemath.com/doc/reference/coercion.html for more
+https://doc.sagemath.org/html/en/reference/coercion/index.html for more
 information. As a training step, let us first define a morphism `X` to
 `Y`, and register it as a coercion::
 
@@ -494,7 +494,20 @@ with respect to `h`; namely, we set `X_\lambda = \sum_{\mu\geq \lambda, |\mu|=|\
     ....:     """
     ....:
     ....:     def __init__(self, R, *args, **kwargs):
-    ....:         """ TODO: Informative doc-string and examples """
+    ....:         """
+    ....:         Initialize the basis.
+    ....:
+    ....:         INPUT:
+    ....:
+    ....:         - ``R`` -- the base ring
+    ....:         - ``*args``, ``**kwargs`` -- optional arguments passed to the
+    ....:           :class:`CombinatorialFreeModule` constructor
+    ....:
+    ....:         EXAMPLE::
+    ....:
+    ....:             sage: X = MySFBasis(QQ, prefix='x')
+    ....:             sage: TestSuite(X).run()
+    ....:         """
     ....:         CombinatorialFreeModule.__init__(self, R, Partitions(), category=AlgebrasWithBasis(R), *args, **kwargs)
     ....:         self._h = SymmetricFunctions(R).homogeneous()
     ....:         self._to_h = self.module_morphism( self._to_h_on_basis, triangular='lower', unitriangular=True, codomain=self._h)

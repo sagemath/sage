@@ -1,15 +1,15 @@
 .. _section-poly:
 
 多项式
-===========
+======
 
 在本节中，我们将介绍如何在 Sage 中创建和使用多项式。
 
 
 .. _section-univariate:
 
-单变量多项式
-----------------------
+一元多项式
+----------
 
 创建多项式环有三种方法。
 
@@ -20,7 +20,7 @@
     Univariate Polynomial Ring in t over Rational Field
 
 这会创建一个多项式环，并告诉 Sage 在显示时使用字符串 't' 作为不定元。
-然而，这并没有定义符号 ``t``，因此你不能用它来输入属于 ``R`` 的多项式（例如 :math:`t^2+1`）。
+然而，这并没有定义符号 ``t``，因此你不能用它来输入属于 ``R`` 的多项式（例如 `t^2+1`）。
 
 另一种方法是
 
@@ -65,7 +65,7 @@
     sage: poly in R
     True
 
-无论你使用哪种方法定义多项式环，你都可以通过 :math:`0^{th}` 生成器恢复不定元：
+无论你使用哪种方法定义多项式环，你都可以通过 `0^{th}` 生成器恢复不定元：
 
 ::
 
@@ -92,7 +92,7 @@
     sage: R, t = objgen(QQ['t'])
     sage: t    = gen(QQ['t'])
 
-最后我们在 :math:`\QQ[t]` 中进行一些算术运算。
+最后我们在 `\QQ[t]` 中进行一些算术运算。
 
 ::
 
@@ -141,7 +141,7 @@
     sage: 1/(1-x) + O(x^10)
     1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + O(x^10)
 
-如果我们给变量不同的命名，我们会得到不同的单变量多项式环。
+如果我们给变量不同的命名，我们会得到不同的一元多项式环。
 
 ::
 
@@ -171,7 +171,7 @@
 
 Sage 还支持任意基环上的幂级数和 Laurent 级数环。
 在下面的示例中，我们创建了 `\GF{7}[[T]]` 的一个元素，
-并通过相除创建 :math:`\GF{7}((T))` 的一个元素。
+并通过相除创建 `\GF{7}((T))` 的一个元素。
 
 ::
 
@@ -192,8 +192,8 @@ Sage 还支持任意基环上的幂级数和 Laurent 级数环。
     sage: GF(7)[['T']]
     Power Series Ring in T over Finite Field of size 7
 
-多变量多项式
-------------------------
+多元多项式
+----------
 
 要处理多个变量的多项式，我们首先声明多项式环和变量。
 
@@ -203,7 +203,7 @@ Sage 还支持任意基环上的幂级数和 Laurent 级数环。
     sage: R
     Multivariate Polynomial Ring in z0, z1, z2 over Finite Field of size 5
 
-与定义单变量多项式环一样，有多种方法：
+与定义一元多项式环一样，有多种方法：
 
 ::
 
@@ -242,7 +242,7 @@ Sage 还支持任意基环上的幂级数和 Laurent 级数环。
     sage: QQ['x'].objgens()
     (Univariate Polynomial Ring in x over Rational Field, (x,))
 
-多变量多项式在 Sage 中使用 Python 字典和多项式的“分配表示”实现。
+多元多项式在 Sage 中使用 Python 字典和多项式的“分配表示”实现。
 Sage 使用了一些 Singular [Si]_ ，例如，用于计算理想的最大公约数和 Gröbner 基。
 
 ::
@@ -254,7 +254,7 @@ Sage 使用了一些 Singular [Si]_ ，例如，用于计算理想的最大公�
     x^2
 
 接下来我们通过简单地将 ``(f,g)`` 乘以 ``R``
-来创建由 :math:`f` 和 :math:`g` 生成的理想 :math:`(f,g)`，（也可以写做 ``ideal([f,g])`` 或 ``ideal(f,g)``）。
+来创建由 `f` 和 `g` 生成的理想 `(f,g)`，（也可以写做 ``ideal([f,g])`` 或 ``ideal(f,g)``）。
 
 .. link
 
@@ -283,7 +283,7 @@ Sage 使用了一些 Singular [Si]_ ，例如，用于计算理想的最大公�
     ValueError: object is immutable; please change a copy instead.
 
 Sage 中有一些（没有我们想要的那么多）交换代数可用，通过 Singular 实现。
-例如，我们可以计算 :math:`I` 的初等分解和相关素数：
+例如，我们可以计算 `I` 的初等分解和相关素数：
 
 .. link
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Inspect Python, Sage, and Cython objects
 
@@ -25,7 +24,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -59,7 +58,7 @@ Cython functions::
     sage: sage_getdoc(sage.rings.rational.make_rational).lstrip()
     'Make a rational number ...'
     sage: sage_getsource(sage.rings.rational.make_rational)
-    '@cython.binding(True)\ndef make_rational(s):...'
+    'def make_rational(s):...'
 
 Python functions::
 
@@ -109,13 +108,13 @@ AUTHORS:
 """
 
 import ast
-import inspect
 import functools
+import inspect
 import os
+import re
 import sys
 import tokenize
-import re
-from inspect import Signature, Parameter
+from inspect import Parameter, Signature
 
 try:
     import importlib.machinery as import_machinery
@@ -149,7 +148,7 @@ def is_function_or_cython_function(obj):
         sage: is_function_or_cython_function(_mul_parent)
         True
         sage: is_function_or_cython_function(Integer.digits)     # unbound method
-        False
+        True
         sage: is_function_or_cython_function(Integer(1).digits)  # bound method
         False
 
@@ -202,7 +201,9 @@ def isclassinstance(obj):
             # Starting with Cython 3, Cython's builtin types have __module__ set
             # to the shared module names like _cython_3_0_0.
             not (isinstance(obj.__class__.__module__, str) and
-                 obj.__class__.__module__.startswith('_cython_')))
+                 obj.__class__.__module__.startswith('_cython_')) and
+            # In Cython 3.1, they have 'member_descriptor' type
+            'cython_function_or_method' not in str(obj.__class__.__module__))
 
 
 # Parse strings of form "File: sage/rings/rational.pyx (starting at line 1080)"
@@ -433,7 +434,7 @@ def _extract_source(lines, lineno):
 
     if isinstance(lines, str):
         lines = lines.splitlines(True)  # true keeps the '\n'
-    if len(lines):
+    if lines:
         # Fixes an issue with getblock
         lines[-1] += '\n'
 
@@ -458,8 +459,9 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         sage: v = visitor.visit(ast.parse("{'a':('e',2,[None,({False:True},'pi')]), 37.0:'temp'}").body[0].value)
         sage: sorted(v.items(), key=lambda x: str(x[0]))
         [(37.0, 'temp'), ('a', ('e', 2, [None, ({False: True}, 'pi')]))]
-        sage: v = ast.parse("jc = ['veni', 'vidi', 'vici']").body[0]; v
-        <...ast.Assign object at ...>
+        sage: v = ast.parse("jc = ['veni', 'vidi', 'vici']").body[0]
+        sage: isinstance(v, ast.Assign)
+        True
         sage: attrs = [x for x in dir(v) if not x.startswith('__')]
         sage: '_attributes' in attrs and '_fields' in attrs and 'col_offset' in attrs
         True
@@ -490,31 +492,6 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         """
         return node.id
 
-    def visit_NameConstant(self, node):
-        """
-        Visit a Python AST :class:`ast.NameConstant` node.
-
-        This is an optimization added in Python 3.4 for the special cases
-        of True, False, and None.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: ``None``, ``True``, ``False``
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_NameConstant(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['True', 'False', 'None']]
-            [True, False, None]
-            sage: [type(vis(n)) for n in ['True', 'False', 'None']]
-            [<class 'bool'>, <class 'bool'>, <class 'NoneType'>]
-        """
-        return node.value
-
     def visit_arg(self, node):
         r"""
         Visit a Python AST :class:`ast.arg` node.
@@ -541,51 +518,6 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             ['a', 'b', 'c', 'd']
         """
         return node.arg
-
-    def visit_Num(self, node):
-        """
-        Visit a Python AST :class:`ast.Num` node.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: the number the ``node`` represents
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_Num(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['123', '0.0']]
-            [123, 0.0]
-
-        .. NOTE::
-
-            On Python 3 negative numbers are parsed first, for some reason, as
-            a UnaryOp node.
-        """
-        return node.value
-
-    def visit_Str(self, node):
-        r"""
-        Visit a Python AST :class:`ast.Str` node.
-
-        INPUT:
-
-        - ``node`` -- the node instance to visit
-
-        OUTPUT: the string the ``node`` represents
-
-        EXAMPLES::
-
-            sage: import ast, sage.misc.sageinspect as sms
-            sage: visitor = sms.SageArgSpecVisitor()
-            sage: vis = lambda x: visitor.visit_Str(ast.parse(x).body[0].value)
-            sage: [vis(s) for s in ['"abstract"', "'syntax'", r'''r"tr\ee"''']]
-            ['abstract', 'syntax', 'tr\\ee']
-        """
-        return node.value
 
     def visit_List(self, node):
         """
@@ -818,6 +750,28 @@ class SageArgSpecVisitor(ast.NodeVisitor):
         if op == 'USub':
             return -self.visit(node.operand)
 
+    def visit_Constant(self, node):
+        """
+        Visit a Python AST :class:`ast.Constant` node.
+
+        INPUT:
+
+        - ``node`` -- the node instance to visit
+
+        OUTPUT: the constant value the ``node`` represents
+
+        EXAMPLES::
+
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: vis = lambda x: visitor.visit_Constant(ast.parse(x).body[0].value)
+            sage: [vis(n) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [123, 0, 3.14, 'hello', True, False, None]
+            sage: [type(vis(n)) for n in ['123', '0', '3.14', '"hello"', 'True', 'False', 'None']]
+            [<class 'int'>, <class 'int'>, <class 'float'>, <class 'str'>, <class 'bool'>, <class 'bool'>, <class 'NoneType'>]
+        """
+        return node.value
+
 
 def _grep_first_pair_of_parentheses(s):
     r"""
@@ -1009,7 +963,7 @@ def _split_syntactical_unit(s):
         s = s.strip()
         if tmp_group == stop:
             return ''.join(out), s
-        elif s.startswith(stop):
+        if s.startswith(stop):
             out.append(stop)
             return ''.join(out), s[1:].strip()
     raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start), repr(stop)))
@@ -1334,17 +1288,17 @@ def sage_getfile(obj):
         if isinstance(obj, functools.partial):
             return sage_getfile(obj.func)
         return sage_getfile(obj.__class__)  # inspect.getabsfile(obj.__class__)
-    else:
-        if hasattr(obj, '__init__'):
-            pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
-            if pos is not None:
-                (_, filename, _) = pos
-                return filename
+    if hasattr(obj, '__init__'):
+        pos = _extract_embedded_position(_sage_getdoc_unformatted(obj.__init__))
+        if pos is not None:
+            (_, filename, _) = pos
+            return filename
 
     # No go? fall back to inspect.
     try:
         sourcefile = inspect.getabsfile(obj)
-    except TypeError:  # this happens for Python builtins
+    except (TypeError, OSError):  # TypeError happens for Python builtins,
+        # OSError happens for objects defined in the shell (having ``__module__ == '__main__'``)
         return ''
     for suffix in import_machinery.EXTENSION_SUFFIXES:
         if sourcefile.endswith(suffix):
@@ -1386,7 +1340,7 @@ def sage_getfile_relative(obj):
     if not filename:
         return filename
 
-    from os.path import relpath, normpath, commonprefix
+    from os.path import commonprefix, normpath, relpath
 
     def directories():
         try:
@@ -1446,7 +1400,7 @@ def sage_getargspec(obj):
                     annotations={})
         sage: sage_getargspec(factor)
         FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'],
-                    varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0),
+                    varargs=None, varkw='kwds', defaults=(None, False, None, 0),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In the case of a class or a class instance, the :class:`FullArgSpec` of the
@@ -1468,8 +1422,8 @@ def sage_getargspec(obj):
         sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
         FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
-        sage: sage_getargspec(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs brial
+        sage: sage_getargspec(BooleanMonomialMonoid.gen)                                # needs brial
         FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: I = P*[x,y]
@@ -1572,8 +1526,8 @@ def sage_getargspec(obj):
     Test that :issue:`17009` is fixed::
 
         sage: sage_getargspec(gap)                                                      # needs sage.libs.gap
-        FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None,
-                    defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw='kwds',
+                    defaults=(0,), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     By :issue:`17814`, the following gives the correct answer (previously, the
     defaults would have been found ``None``)::
@@ -1607,8 +1561,8 @@ def sage_getargspec(obj):
         sage: shell.run_cell('f??')
         ...the source code string...
     """
-    from sage.misc.lazy_attribute import lazy_attribute
     from sage.misc.abstract_method import AbstractMethod
+    from sage.misc.lazy_attribute import lazy_attribute
     if inspect.isclass(obj):
         return sage_getargspec(obj.__call__)
     if isinstance(obj, (lazy_attribute, AbstractMethod)):
@@ -1654,24 +1608,22 @@ def sage_getargspec(obj):
             base_spec = sage_getargspec(obj.func)
             return base_spec
         return sage_getargspec(obj.__class__.__call__)
-    elif (hasattr(obj, '__objclass__') and hasattr(obj, '__name__') and
+    if (hasattr(obj, '__objclass__') and hasattr(obj, '__name__') and
           obj.__name__ == 'next'):
         # Handle sage.rings.ring.FiniteFieldIterator.next and similar
         # slot wrappers.  This is mainly to suppress Sphinx warnings.
         return ['self'], None, None, None
-    else:
-        # We try to get the argspec by reading the source, which may be
-        # expensive, but should only be needed for functions defined outside
-        # of the Sage library (since otherwise the signature should be
-        # embedded in the docstring)
-        try:
-            source = sage_getsource(obj)
-        except TypeError:  # happens for Python builtins
-            source = ''
-        if source:
-            return inspect.FullArgSpec(*_sage_getargspec_cython(source))
-        else:
-            func_obj = obj
+    # We try to get the argspec by reading the source, which may be
+    # expensive, but should only be needed for functions defined outside
+    # of the Sage library (since otherwise the signature should be
+    # embedded in the docstring)
+    try:
+        source = sage_getsource(obj)
+    except TypeError:  # happens for Python builtins
+        source = ''
+    if source:
+        return inspect.FullArgSpec(*_sage_getargspec_cython(source))
+    func_obj = obj
 
     # Otherwise we're (hopefully!) plain Python, so use inspect
     try:
@@ -1806,7 +1758,7 @@ def sage_signature(obj):
         sage: sage_signature(identity_matrix)                                          # needs sage.modules
         <Signature (ring, n=0, sparse=False)>
         sage: sage_signature(factor)
-        <Signature (n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds)>
+        <Signature (n, proof=None, int_=False, algorithm=None, verbose=0, **kwds)>
 
     In the case of a class or a class instance, the :class:`Signature` of the
     ``__new__``, ``__init__`` or ``__call__`` method is returned::
@@ -1823,8 +1775,8 @@ def sage_signature(obj):
         sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
         sage: sage_signature(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
         <Signature (self)>
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
-        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs brial
+        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs brial
         <Signature (self, i=0)>
         sage: I = P*[x,y]
         sage: sage_signature(I.groebner_basis)                                         # needs sage.libs.singular
@@ -1953,9 +1905,8 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         specs.append(spec)
     if varargs is not None:
         specs.append(formatvarargs(formatargandannotation(varargs)))
-    else:
-        if kwonlyargs:
-            specs.append('*')
+    elif kwonlyargs:
+        specs.append('*')
     if kwonlyargs:
         for kwonlyarg in kwonlyargs:
             spec = formatargandannotation(kwonlyarg)
@@ -2052,9 +2003,8 @@ def _sage_getdoc_unformatted(obj):
     # not a 'getset_descriptor' or similar.
     if isinstance(r, str):
         return r
-    else:
-        # Not a string of any kind
-        return ''
+    # Not a string of any kind
+    return ''
 
 
 def sage_getdoc_original(obj):
@@ -2166,7 +2116,8 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
         '...the n x n identity matrix...'
         sage: def f(a, b, c, d=1): return a+b+c+d
-        ...
+        sage: sage_getdoc(f)
+        ''
         sage: import functools
         sage: f1 = functools.partial(f, 1,c=2)
         sage: f.__doc__ = "original documentation"
@@ -2175,20 +2126,36 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         'original documentation\n'
         sage: sage_getdoc(f1)
         'specialised documentation\n'
+
+    TESTS::
+
+        sage: class C:
+        ....:     '''
+        ....:     docs
+        ....:     '''
+        sage: import sys
+        sage: if sys.version_info >= (3, 13):
+        ....:     assert sage_getdoc(C) == 'docs\n', sage_getdoc(C)
+        ....: else:
+        ....:     assert sage_getdoc(C) == '   docs\n', sage_getdoc(C)
+
+        sage: from sage.repl.interpreter import get_test_shell
+        sage: shell = get_test_shell()
+        sage: shell.run_cell('''
+        ....: class C:
+        ....:     \'\'\'
+        ....:     documentation of my class
+        ....:     \'\'\'
+        ....:     pass
+        ....: ''')
+        sage: shell.run_cell('C?')
+        ...documentation of my class...
     """
     import sage.misc.sagedoc
     if obj is None:
         return ''
     r = sage_getdoc_original(obj)
     s = sage.misc.sagedoc.format(r, embedded=embedded)
-    f = sage_getfile(obj)
-    if f and os.path.exists(f):
-        from sage.doctest.control import skipfile
-        skip = skipfile(f)
-        if isinstance(skip, str):
-            warn = """WARNING: the enclosing module is marked '{}',
-so doctests may not pass.""".format(skip)
-            s = warn + "\n\n" + s
 
     # Fix object naming
     if obj_name != '':
@@ -2338,8 +2305,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             # less whitespace first
             candidates.sort()
             return inspect.getblock(lines[candidates[0][1]:]), candidates[0][1]+base_lineno
-        else:
-            raise OSError('could not find class definition')
+        raise OSError('could not find class definition')
 
     if inspect.ismethod(obj):
         obj = obj.__func__
@@ -2386,7 +2352,7 @@ def sage_getsourcelines(obj):
 
         sage: # needs sage.modules
         sage: sage_getsourcelines(matrix)[1]
-        21
+        20
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
@@ -2506,8 +2472,7 @@ def sage_getsourcelines(obj):
     if isclassinstance(obj):
         if isinstance(obj, functools.partial):
             return sage_getsourcelines(obj.func)
-        else:
-            return sage_getsourcelines(obj.__class__)
+        return sage_getsourcelines(obj.__class__)
 
     # First, we deal with nested classes. Their name contains a dot, and we
     # have a special function for that purpose.
@@ -2534,7 +2499,7 @@ def sage_getsourcelines(obj):
                             B = None
                         if B is not None and B is not obj:
                             return sage_getsourcelines(B)
-                    if obj.__class__ != type:
+                    if obj.__class__ is not type:
                         return sage_getsourcelines(obj.__class__)
                     raise err
 
@@ -2621,15 +2586,11 @@ def sage_getvariablename(self, omit_underscore_names=True):
     # This is a modified version of code taken from
     # https://web.archive.org/web/20100416095847/http://pythonic.pocoo.org/2009/5/30/finding-objects-names
     # written by Georg Brandl.
-    result = []
-    for frame in inspect.stack():
-        for name, obj in frame[0].f_globals.items():
-            if obj is self:
-                result.append(name)
+    result = [name for frame in inspect.stack()
+              for name, obj in frame[0].f_globals.items() if obj is self]
     if len(result) == 1:
         return result[0]
-    else:
-        return sorted(result)
+    return sorted(result)
 
 
 __internal_teststring = '''
@@ -2663,14 +2624,10 @@ def __internal_tests():
         sage: sage_getdoc(None)
         ''
 
-        sage: import sage.all__sagemath_objects
-        sage: sage_getsource(sage.all__sagemath_objects)
-        '...all...'
-
     A cython function with default arguments (one of which is a string)::
 
-        sage: sage_getdef(sage.rings.integer.Integer.factor, obj_name='factor')
-        "factor(algorithm='pari', proof=None, limit=None, int_=False, verbose=0)"
+        sage: sage_getdef(sage.rings.integer.Integer.binomial, obj_name='binomial')
+        "binomial(m, algorithm='gmp')"
 
     This used to be problematic, but was fixed in :issue:`10094`::
 

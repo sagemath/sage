@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Display Manager
 
@@ -35,12 +34,7 @@ EXAMPLES::
 from __future__ import annotations
 
 import warnings
-from typing import Any
-
-try:
-    from typing import Self  # type: ignore (Python >= 3.11)
-except ImportError:
-    from typing_extensions import Self  # type: ignore (Python 3.9, 3.10)
+from typing import Any, Self
 
 from sage.repl.rich_output.output_basic import (
     OutputAsciiArt,
@@ -230,8 +224,7 @@ class DisplayManager(SageObject):
         """
         if cls._instance is not None:
             return cls._instance
-        else:
-            return cls()
+        return cls()
 
     def _repr_(self):
         """
@@ -687,7 +680,6 @@ class DisplayManager(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.plot sage.symbolic
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: plt = plot(sin)
@@ -737,9 +729,9 @@ class DisplayManager(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
-            sage: get_display_manager().threejs_scripts(online=True)                    # needs sage.plot
+            sage: get_display_manager().threejs_scripts(online=True)
             '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
-            sage: get_display_manager().threejs_scripts(online=False)                   # needs sage.plot
+            sage: get_display_manager().threejs_scripts(online=False)
             Traceback (most recent call last):
             ...
             ValueError: current backend does not support
@@ -779,7 +771,7 @@ class DisplayManager(SageObject):
         """
         return self._supported_output
 
-    def displayhook(self, obj: Any) -> None | Any:
+    def displayhook(self, obj: Any) -> Any | None:
         """
         Implementation of the displayhook.
 

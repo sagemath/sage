@@ -25,37 +25,12 @@ from . import submodule
 from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.rings.integer import Integer
 
-import sage.arith.all as arith
+import sage.arith.misc as arith
 
-import sage.matrix.matrix_space as matrix_space
+from sage.matrix import matrix_space
 from sage.matrix.constructor import matrix
 
-from sage.modular.arithgroup.all import Gamma0  # for Sturm bound
-
-
-def is_AmbientHeckeModule(x) -> bool:
-    r"""
-    Return ``True`` if ``x`` is of type ``AmbientHeckeModule``.
-
-    EXAMPLES::
-
-        sage: from sage.modular.hecke.ambient_module import is_AmbientHeckeModule
-        sage: is_AmbientHeckeModule(ModularSymbols(6))
-        doctest:warning...
-        DeprecationWarning: the function is_AmbientHeckeModule is deprecated;
-        use 'isinstance(..., AmbientHeckeModule)' instead
-        See https://github.com/sagemath/sage/issues/37895 for details.
-        True
-        sage: is_AmbientHeckeModule(ModularSymbols(6).cuspidal_subspace())
-        False
-        sage: is_AmbientHeckeModule(ModularForms(11))
-        True
-        sage: is_AmbientHeckeModule(BrandtModule(2, 3))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37895, "the function is_AmbientHeckeModule is deprecated; use 'isinstance(..., AmbientHeckeModule)' instead")
-    return isinstance(x, AmbientHeckeModule)
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0  # for Sturm bound
 
 
 class AmbientHeckeModule(module.HeckeModule_free_module):
@@ -788,8 +763,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         if d is None or d == 0:
             self.__is_new[p] = True
             return self
-        else:
-            self.__is_new[p] = False
+        self.__is_new[p] = False
         ns = self.submodule(d.kernel(), check=False)
         ns.__is_new = {p: True}
         ns._is_full_hecke_module = True

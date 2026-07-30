@@ -85,7 +85,7 @@ protected:
 	expair combine_pair_with_coeff_to_pair(const expair & p,
                         const numeric & c) const override;
 	bool expair_needs_further_processing(epp it) override;
-	numeric default_overall_coeff() const override;
+	const numeric& default_overall_coeff() const override;
 	void combine_overall_coeff(const numeric & c) override;
 	void combine_overall_coeff(const numeric & c1, const numeric & c2) override;
 	bool can_make_flat(const expair & p) const override;

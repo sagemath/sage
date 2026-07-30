@@ -74,7 +74,7 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     else: # n mod 4 = 2
         i = ii = 1
         j = <uint_fast32_t> sqrt(<double> n)
-        j += 1 - j%2
+        j += 1 - j % 2
         jj = j*j
         while ii <= jj:
             nn = n - ii

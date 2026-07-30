@@ -2,4 +2,8 @@
 autoconf
 automake
 libtool
-pkg-config
+# Python packages needed for configure and build
+python
+setuptools
+xz
+xz

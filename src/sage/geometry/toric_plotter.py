@@ -752,7 +752,6 @@ def color_list(color, n):
 
     EXAMPLES::
 
-        sage: # needs sage.plot
         sage: from sage.geometry.toric_plotter import color_list
         sage: color_list("grey", 1)
         [RGB color (0.5019607843137255, 0.5019607843137255, 0.5019607843137255)]
@@ -833,9 +832,8 @@ def label_list(label, n, math_mode, index_set=None):
         index_set = range(n)
     if math_mode:
         label = label.strip("$")
-        return list("$%s_{%d}$" % (label, i) for i in index_set)
-    else:
-        return list("%s_%d" % (label, i) for i in index_set)
+        return ["$%s_{%d}$" % (label, i) for i in index_set]
+    return ["%s_%d" % (label, i) for i in index_set]
 
 
 def options(option=None, **kwds):
@@ -997,10 +995,9 @@ def options(option=None, **kwds):
 
         sage: toric_plotter.options(wall_color='grey')
     """
-    global _options
     if option is None and not kwds:
         return copy(_options)
-    elif option is not None and not kwds:
+    if option is not None and not kwds:
         try:
             return _options[option]
         except KeyError:
@@ -1077,7 +1074,8 @@ def sector(ray1, ray2, **extra_options):
         sage: sector((3,2,1), (1,2,3))                                                  # needs sage.plot
         Graphics3d Object
     """
-    from sage.functions.all import arccos, arctan2
+    from sage.functions.trig import acos as arccos
+    from sage.functions.trig import arctan2
 
     ray1 = vector(RDF, ray1)
     ray2 = vector(RDF, ray2)
@@ -1091,12 +1089,11 @@ def sector(ray1, ray2, **extra_options):
         if phi2 - phi1 > pi:
             phi1, phi2 = phi2, phi1 + 2 * pi
         return disk((0,0), r, (phi1, phi2), **extra_options)
-    else:
-        # Plot a polygon, 30 vertices per radian.
-        vertices_per_radian = 30
-        n = ceil(arccos(ray1 * ray2 / r**2) * vertices_per_radian)
-        dr = (ray2 - ray1) / n
-        points = (ray1 + i * dr for i in range(n + 1))
-        points = [r / pt.norm() * pt for pt in points]
-        points.append(vector(RDF, 3))
-        return polygon(points, **extra_options)
+    # Plot a polygon, 30 vertices per radian.
+    vertices_per_radian = 30
+    n = ceil(arccos(ray1 * ray2 / r**2) * vertices_per_radian)
+    dr = (ray2 - ray1) / n
+    points = (ray1 + i * dr for i in range(n + 1))
+    points = [r / pt.norm() * pt for pt in points]
+    points.append(vector(RDF, 3))
+    return polygon(points, **extra_options)

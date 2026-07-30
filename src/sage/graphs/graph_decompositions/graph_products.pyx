@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Products of graphs
 
@@ -210,8 +209,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     Wagner's Graph (:issue:`13599`)::
 
-        sage: g = graphs.WagnerGraph()                                                  # needs networkx
-        sage: g.is_cartesian_product()                                                  # needs networkx
+        sage: g = graphs.WagnerGraph()
+        sage: g.is_cartesian_product()
         False
 
     Empty and one-element graph (:issue:`19546`)::
@@ -460,7 +459,7 @@ def rooted_product(G, H, root=None, immutable=None):
         ...
         TypeError: the graphs should be both directed or both undirected
 
-    Check the bahavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: G = graphs.CycleGraph(4)
         sage: H = graphs.PathGraph(3)
@@ -496,6 +495,7 @@ def rooted_product(G, H, root=None, immutable=None):
         raise ValueError("the specified root is not a vertex of H")
 
     vertices = ((u, x) for u in G for x in H)
+
     def edges():
         for u, v in G.edge_iterator(labels=False):
             yield ((u, root), (v, root))

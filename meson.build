@@ -1,9 +1,10 @@
 project(
   'SageMath',
   ['c', 'cpp', 'cython'],
-  version: files('src/VERSION.txt'),
+  version: files('VERSION.txt'),
   license: 'GPL v3',
   default_options: ['c_std=c17', 'cpp_std=c++17', 'python.install_env=auto'],
+  meson_version: '>=1.5',
 )
 
 # Python module
@@ -11,6 +12,10 @@ project(
 py_module = import('python')
 py = py_module.find_installation(pure: false)
 py_dep = py.dependency()
+
+fs = import('fs')
+
+is_windows = host_machine.system() == 'windows'
 
 # Additional targets
 py_with_pytest = py_module.find_installation(
@@ -38,7 +43,7 @@ create_files_command = [
   py,
   '-c',
   '''
-import os
+from pathlib import Path
 content = "# Here so that cython creates the correct module name"
 file_paths = [
   'src/sage/interfaces/__init__.py',
@@ -128,7 +133,6 @@ file_paths = [
   'src/sage/ext/__init__.py',
   'src/sage/ext/interpreters/__init__.py',
   'src/sage/categories/examples/__init__.py',
-  'src/sage/categories/__init__.py',
   'src/sage/modules/fg_pid/__init__.py',
   'src/sage/modules/__init__.py',
   'src/sage/modules/with_basis/__init__.py',
@@ -142,7 +146,6 @@ file_paths = [
   'src/sage/rings/function_field/drinfeld_modules/__init__.py',
   'src/sage/rings/semirings/__init__.py',
   'src/sage/rings/number_field/__init__.py',
-  'src/sage/rings/__init__.py',
   'src/sage/rings/padics/__init__.py',
   'src/sage/rings/valuation/__init__.py',
   'src/sage/rings/asymptotic/__init__.py',
@@ -190,11 +193,11 @@ file_paths = [
   'src/sage/graphs/generators/__init__.py',
   'src/sage/graphs/__init__.py',
   'src/sage/graphs/base/__init__.py',
+  'src/sage/graphs/tests/__init__.py',
   'src/sage/databases/__init__.py',
   'src/sage/stats/hmm/__init__.py',
   'src/sage/stats/__init__.py',
   'src/sage/stats/distributions/__init__.py',
-  'src/sage/libs/gap/__init__.py',
   'src/sage/libs/mpfi/__init__.py',
   'src/sage/libs/__init__.py',
   'src/sage/libs/polybori/__init__.py',
@@ -204,12 +207,19 @@ file_paths = [
   'src/sage/calculus/__init__.py',
 ]
 for path in file_paths:
-    path = "''' + meson.current_source_dir() + '''/" + path
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w') as f:
-        f.write(content)
+    resolved_path = Path("''' + fs.as_posix(meson.current_source_dir()) + '''") / path
+    resolved_path.parent.mkdir(parents=True, exist_ok=True)
+    resolved_path.write_text(content)
   ''',
 ]
 run_command(create_files_command, check: true)
 
+root = meson.current_source_dir()
+root_build = meson.current_build_dir()
+
 subdir('src')
+
+py.install_sources(
+  'conftest.py',
+  subdir: 'sage',
+)

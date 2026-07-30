@@ -43,10 +43,7 @@ from sage.categories.map import Map
 from sage.categories.homset import Hom
 from sage.categories.morphism import IdentityMorphism
 
-import sage.rings.rational_field as rational_field
-
-from sage.libs.pari import pari
-
+from sage.rings import rational_field
 
 QQ = rational_field.RationalField()
 
@@ -66,7 +63,7 @@ class NumberFieldIsomorphism(Map):
         sage: isinstance(fr, sage.rings.number_field.maps.NumberFieldIsomorphism)
         True
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -78,7 +75,7 @@ class NumberFieldIsomorphism(Map):
         """
         return "Isomorphism"
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -90,7 +87,7 @@ class NumberFieldIsomorphism(Map):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -307,6 +304,8 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
             sage: fr(to(a0 + 2*b0)), fr(V([0, 1])), fr(V([b0, 2*b0])) # indirect doctest
             (a + 2*b0, a, 2*b0*a + b0)
         """
+        from sage.libs.pari import pari
+
         K = self.codomain()
         B = K.base_field().absolute_field('a')
         # Convert v to a PARI polynomial in x with coefficients that

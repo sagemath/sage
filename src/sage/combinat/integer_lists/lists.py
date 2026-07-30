@@ -6,7 +6,7 @@ Enumerated set of lists of integers with constraints: front-end
   where all user-accessible functionality should be implemented.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Bryan Gillespie <Brg008@gmail.com>
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne@math.ucdavis.edu>
@@ -16,8 +16,8 @@ Enumerated set of lists of integers with constraints: front-end
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from inspect import ismethod

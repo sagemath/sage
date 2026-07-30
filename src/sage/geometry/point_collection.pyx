@@ -67,14 +67,14 @@ for one of them, it becomes available to all others as well, eliminating the
 need to spend time and memory four times.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Andrey Novoseltsev <novoselt@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp
@@ -82,32 +82,6 @@ from sage.structure.richcmp cimport richcmp_not_equal, richcmp
 from sage.geometry.toric_lattice import ToricLattice
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
-
-
-def is_PointCollection(x):
-    r"""
-    Check if ``x`` is a :class:`point collection <PointCollection>`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: ``True`` if ``x`` is a point collection and ``False`` otherwise
-
-    EXAMPLES::
-
-        sage: from sage.geometry.point_collection import PointCollection
-        sage: isinstance(1, PointCollection)
-        False
-        sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)])
-        sage: isinstance(c.rays(), PointCollection)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38126,
-                       "The function is_PointCollection is deprecated; "
-                       "use 'isinstance(..., PointCollection)' instead.")
-    return isinstance(x, PointCollection)
 
 
 _output_format = "default"
@@ -262,16 +236,15 @@ cdef class PointCollection(SageObject):
         # Avoid creating a copy of self
         if len(args) == len(self) and args == tuple(range(len(self))):
             return self
-        else:
-            return PointCollection([self[i] for i in args], self._module)
+        return PointCollection([self[i] for i in args], self._module)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op: int) -> bool:
         r"""
-        Compare ``self`` and ``right`` according to the operator ``op``.
+        Compare ``self`` and ``other`` according to the operator ``op``.
 
         INPUT:
 
-        - ``right`` -- another PointCollection
+        - ``other`` -- another PointCollection
 
         OUTPUT: boolean
 
@@ -287,18 +260,18 @@ cdef class PointCollection(SageObject):
             sage: c == d
             False
         """
-        cdef PointCollection left_pc, right_pc
+        cdef PointCollection left_pc, other_pc
         try:
             left_pc = <PointCollection?>self
-            right_pc = <PointCollection?>right
+            other_pc = <PointCollection?>other
         except TypeError:
             return NotImplemented
 
         left_m = left_pc._module
-        right_m = right_pc._module
-        if left_m != right_m:
-            return richcmp_not_equal(left_m, right_m, op)
-        return richcmp(left_pc._points, right_pc._points, op)
+        other_m = other_pc._module
+        if left_m != other_m:
+            return richcmp_not_equal(left_m, other_m, op)
+        return richcmp(left_pc._points, other_pc._points, op)
 
     def __getitem__(self, n):
         r"""
@@ -520,8 +493,7 @@ cdef class PointCollection(SageObject):
         """
         if ring is None:
             return self.matrix()
-        else:
-            return self.matrix().change_ring(ring)
+        return self.matrix().change_ring(ring)
 
     def _repr_(self):
         r"""
@@ -986,13 +958,13 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
         # Typical situation: a point on each line
         lattice = lattice or ToricLattice(n).dual()
         points = [lattice.element_class(lattice, f.readline().split())
-                for i in range(m)]
+                  for i in range(m)]
     else:
         # Also may appear as PALP output, e.g. points of 3-d polytopes
         lattice = lattice or ToricLattice(m).dual()
         data = [f.readline().split() for j in range(m)]
         points = [lattice.element_class(lattice, [data[j][i] for j in range(m)])
-                for i in range(n)]
+                  for i in range(n)]
     for p in points:
         p.set_immutable()
     pc = PointCollection(points, lattice)

@@ -92,7 +92,7 @@ install_compiled_pkg()
 #
 # These packages have an old ./configure that take the GAP_ROOT as a positional
 # argument
-for pkg in cohomolo crypting grape guava orb datastructures
+for pkg in cohomolo crypting grape orb datastructures
 do
     echo "Building GAP package $pkg"
     CFLAGS="$CFLAGS -Wno-implicit-function-declaration"
@@ -104,6 +104,14 @@ do
     cd "$PKG_SRC_DIR"
 done
 
+echo "Building GAP package guava"
+export CFLAGS="-std=gnu17 $CFLAGS -Wno-implicit-function-declaration"
+cd "$PKG_SRC_DIR/guava"
+./configure "$GAP_ROOT"
+sdh_make
+install_compiled_pkg "guava"
+cd "$PKG_SRC_DIR"
+
 # These packages have a new-style autoconf ./configure
 # that takes --with-gaproot
 
@@ -112,13 +120,12 @@ done
 #
 # nq         : none
 # io         : none
-# semigroups needs to use external libsemigroups
 # digraphs   needs to use external planarity
-pararr=( " " " " "--with-external-planarity" "--with-external-libsemigroups" )
+pararr=( " " " " "--with-external-planarity" )
 ##############################################################################
 
 parind=0
-for pkg in nq io digraphs semigroups
+for pkg in nq io digraphs
 do
     echo "Building GAP package $pkg"
     cd "$PKG_SRC_DIR/$pkg"
