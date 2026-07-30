@@ -4267,9 +4267,9 @@ class DiGraph(GenericGraph):
             - :meth:`neighbors_out()`
             - Dual function: :meth:`left_orthogonal()`
 
-        REFERENCE::
+        REFERENCE:
 
-        .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
+        ..[RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
         TESTS:
@@ -4345,7 +4345,7 @@ class DiGraph(GenericGraph):
             - :meth:`neighbors_in()`
             - Dual function: :meth:`right_orthogonal()`
 
-        REFERENCE::
+        REFERENCE:
 
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
@@ -4394,7 +4394,7 @@ class DiGraph(GenericGraph):
           #. ``right`` -- label each maximal orthogonal pair by its second component.
           #. ``pair`` -- label each maximal orthogonal pair by itself.
 
-        ALGORITHM::
+        ALGORITHM:
 
         Using each pair already calculated, find remaining pairs by adding/removing
         vertices from each component, constructing the lattice in the process. Start
@@ -4413,7 +4413,7 @@ class DiGraph(GenericGraph):
           previous insight means we can merge all elements that give the same `R` to
           obtain the left orthogonal of the new pair.
 
-        EXAMPLES::
+        EXAMPLES:
 
         sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0)])
         sage: G.maximal_orthogonal_pairs_lattice()
@@ -4449,7 +4449,7 @@ class DiGraph(GenericGraph):
 
         .. Also see Section 1.6 in [Muh2021]_, and Section 2.3 in [TW2018]_.
 
-        TESTS::
+        TESTS:
 
         sage: G = DiGraph()
         sage: G.maximal_orthogonal_pairs_lattice()
@@ -4469,7 +4469,8 @@ class DiGraph(GenericGraph):
             for rt in next_pairs:
                 covering_pairs = []
                 for x in self.vertex_iterator():
-                    if x in pairs[rt]: continue
+                    if x in pairs[rt]:
+                        continue
                     # calculate the new right orthogonal by removing vertices
                     new_rt = rt.difference(self.neighbors_out(x))
                     new_rt = new_rt.difference([x])
@@ -4508,7 +4509,7 @@ class DiGraph(GenericGraph):
 
         - ``loops`` -- boolean (default: ``False``); whether to count loops
 
-        EXAMPLES::
+        EXAMPLES:
 
         sage: G = DiGraph([(0, 1), (0, 2), (1, 3), (2, 3)], loops=True)
         sage: G.surjective_edges()
@@ -4524,12 +4525,12 @@ class DiGraph(GenericGraph):
             - Dual function: :meth:`injective_edges()`
             - :meth:`is_two_acyclic_factorization_system()`
 
-        REFERENCE::
+        REFERENCE:
 
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS::
+        TESTS:
 
         sage: G = DiGraph()
         sage: G.surjective_edges()
@@ -4547,7 +4548,8 @@ class DiGraph(GenericGraph):
                         break
                 if s:
                     E.append((x, y))
-            elif loops: E.append((x, y))
+            elif loops:
+                E.append((x, y))
         return E
 
     def injective_edges(self, loops=False):
@@ -4564,7 +4566,7 @@ class DiGraph(GenericGraph):
 
         - ``loops`` -- boolean (default: ``False``); whether to count loops
 
-        EXAMPLES::
+        EXAMPLES:
 
         sage: G = DiGraph([(0, 1), (0, 2), (1, 3), (2, 3)], loops=True)
         sage: G.injective_edges()
@@ -4580,12 +4582,12 @@ class DiGraph(GenericGraph):
             - Dual function: :meth:`surjective_edges()`
             - :meth:`is_two_acyclic_factorization_system()`
 
-        REFERENCE::
+        REFERENCE:
 
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS::
+        TESTS:
 
         sage: G = DiGraph()
         sage: G.injective_edges()
@@ -4603,7 +4605,8 @@ class DiGraph(GenericGraph):
                         break
                 if s:
                     E.append((y, z))
-            elif loops: E.append((y, z))
+            elif loops:
+                E.append((y, z))
         return E
 
     def is_two_acyclic_factorization_system(self, certificate=False):
@@ -4615,8 +4618,9 @@ class DiGraph(GenericGraph):
 
         `x \rightarrow y` if `x = y` or `xy` is an edge
 
-        Let `\twoheadrightarrow` and `\hookrightarrow` denote the previous relation
-        restricted to the surjective and injective edges, respectively.
+        This is equivalent to viewing ``self`` as the representation of some arbitrary
+        binary relation. Now let `\twoheadrightarrow` and `\hookrightarrow` denote the
+        previous relation restricted to surjective and injective edges, respectively.
         The triple `(rightarrow, \twoheadrightarrow, \hookrightarrow)` is said to be
         two-acyclic factorization system if:
 
@@ -4706,12 +4710,12 @@ class DiGraph(GenericGraph):
         - :meth:`injective_edges()`
         - :meth:`maximal_orthogonal_pairs_lattice()`
 
-        REFERENCE::
+        REFERENCE:
 
         .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
             *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS::
+        TESTS:
 
         sage: G = DiGraph()
         sage: G.is_two_acyclic_factorization_system()
