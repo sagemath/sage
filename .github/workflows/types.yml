@@ -37,7 +37,7 @@ jobs:
             ${{ runner.os }}-conda-${{ hashFiles('environment-3.12-linux.yml') }}
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           python-version: 3.12
           miniforge-version: latest

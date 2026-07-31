@@ -773,8 +773,7 @@ cdef class Element(SageObject):
         """
         if x is None:
             return self._parent
-        else:
-            return self._parent(x)
+        return self._parent(x)
 
     def subs(self, in_dict=None, **kwds):
         """
@@ -975,8 +974,7 @@ cdef class Element(SageObject):
             s = str(self)
         if self._is_atomic():
             return s
-        else:
-            return "\\left(%s\\right)" % s
+        return "\\left(%s\\right)" % s
 
     def _is_atomic(self):
         """
@@ -4254,8 +4252,7 @@ cdef class FieldElement(CommutativeRingElement):
         """
         if self.is_zero() and other.is_zero():
             return self
-        else:
-            return self._parent(1)
+        return self._parent(1)
 
     def quo_rem(self, right):
         r"""
@@ -4578,6 +4575,5 @@ def coerce_binop(method):
             a, b = coercion_model.canonical_coercion(self, other)
             if a is self:
                 return method(a, b, *args, **kwargs)
-            else:
-                return getattr(a, method.__name__)(b, *args, **kwargs)
+            return getattr(a, method.__name__)(b, *args, **kwargs)
     return new_method

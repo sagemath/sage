@@ -555,19 +555,16 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         if isinstance(S, ComplexField_class):
             if self._prec <= S._prec:
                 return self._generic_coerce_map(S)
-            else:
-                return None
+            return None
         if S is complex:
             if self._prec <= 53:
                 return self._generic_coerce_map(S)
-            else:
-                return None
+            return None
         late_import()
         if S is CDF:
             if self._prec <= 53:
                 return self._generic_coerce_map(S)
-            else:
-                return None
+            return None
         if S in [AA, QQbar, CLF, RLF]:
             return self._generic_coerce_map(S)
         # Needed to discover the correct coerce map. Without this, the maps
@@ -1027,8 +1024,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         if self._prec <= 53:
             return numpy_complex_interface
-        else:
-            return numpy_object_interface
+        return numpy_object_interface
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -1109,8 +1105,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         sum = sib.sum([real_part, imag_part], simplify=True)
         if sum._sie_is_negation():
             return -sib(self.parent())(sum._sie_operand)
-        else:
-            return sib(self.parent())(sum)
+        return sib(self.parent())(sum)
 
         # The following (untested) implementation sets CC_I = CC.gen(),
         # allowing to write 2 + 3*CC_I instead of CC(2 + 3*I).
@@ -1975,12 +1970,12 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         i = mpfr_cmp(left.__re, (<ComplexNumber>right).__re)
         if i < 0:
             return rich_to_bool(op, -1)
-        elif i > 0:
+        if i > 0:
             return rich_to_bool(op, 1)
         i = mpfr_cmp(left.__im, (<ComplexNumber>right).__im)
         if i < 0:
             return rich_to_bool(op, -1)
-        elif i > 0:
+        if i > 0:
             return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
@@ -2937,8 +2932,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         if self == 0:
             return 1
-        else:
-            return infinity.infinity
+        return infinity.infinity
 
     def sqrt(self, all=False):
         """
@@ -2976,8 +2970,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 mpfr_sqrt(z.__im, z.__im, rnd)
             if all:
                 return [z, -z] if z else [z]
-            else:
-                return z
+            return z
         # self = x + yi = (a+bi)^2
         # expand, substitute, solve
         # a^2 = (x + sqrt(x^2+y^2))/2
@@ -3007,8 +3000,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 mpfr_neg(z.__im, z.__im, rnd)
         if all:
             return [z, -z]
-        else:
-            return z
+        return z
 
     def nth_root(self, n, all=False):
         """
@@ -3405,7 +3397,7 @@ cdef inline mp_exp_t max_exp(ComplexNumber z) noexcept:
     """
     if mpfr_zero_p(z.__im):
         return mpfr_get_exp(z.__re)
-    elif mpfr_zero_p(z.__re):
+    if mpfr_zero_p(z.__re):
         return mpfr_get_exp(z.__im)
     return max_exp_t(mpfr_get_exp(z.__re), mpfr_get_exp(z.__im))
 
