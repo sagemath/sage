@@ -4269,22 +4269,22 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        ..[RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-            *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
+          *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS::
+        TESTS:
 
-            The right orthogonal of the empty set is always the entire graph::
+        The right orthogonal of the empty set is always the entire graph::
 
-                sage: for i in range(20):                                                   # needs sage.numerical.mip
-                ....:     G = digraphs.RandomDirectedGNP(10, .3)
-                ....:     assert G.right_orthogonal(set()) == set(G)
+            sage: for i in range(20):                                                   # needs sage.numerical.mip
+            ....:     G = digraphs.RandomDirectedGNP(10, .3)
+            ....:     assert G.right_orthogonal(set()) == set(G)
 
-            The right orthogonal of the entire graph is always the empty set::
+        The right orthogonal of the entire graph is always the empty set::
 
-                sage: for i in range(20):                                                   # needs sage.numerical.mip
-                ....:     G = digraphs.RandomDirectedGNP(10, .3)
-                ....:     assert G.right_orthogonal(set(G)) == set()
+            sage: for i in range(20):                                                   # needs sage.numerical.mip
+            ....:     G = digraphs.RandomDirectedGNP(10, .3)
+            ....:     assert G.right_orthogonal(set(G)) == set()
         """
         l = set(self.vertices())
         for x in X:
@@ -4347,22 +4347,22 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-            *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
+          *The fundamental theorem of finite semidistributive lattices*.
 
-        TESTS::
+        TESTS:
 
-            The left orthogonal of the empty set is always the entire graph::
+        The left orthogonal of the empty set is always the entire graph::
 
-                sage: for i in range(20):                                                   # needs sage.numerical.mip
-                ....:     G = digraphs.RandomDirectedGNP(10, .3)
-                ....:     assert G.left_orthogonal(set()) == set(G)
+            sage: for i in range(20):                                                   # needs sage.numerical.mip
+            ....:     G = digraphs.RandomDirectedGNP(10, .3)
+            ....:     assert G.left_orthogonal(set()) == set(G)
 
-            The left orthogonal of the entire graph is always the empty set::
+        The left orthogonal of the entire graph is always the empty set::
 
-                sage: for i in range(20):                                                   # needs sage.numerical.mip
-                ....:     G = digraphs.RandomDirectedGNP(10, .3)
-                ....:     assert G.left_orthogonal(set(G)) == set()
+            sage: for i in range(20):                                                   # needs sage.numerical.mip
+            ....:     G = digraphs.RandomDirectedGNP(10, .3)
+            ....:     assert G.left_orthogonal(set(G)) == set()
         """
         l = set(self.vertices())
         for x in X:
@@ -4444,10 +4444,10 @@ class DiGraph(GenericGraph):
 
         REFERENCES:
 
-        .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-            *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
+          *The fundamental theorem of finite semidistributive lattices*.
 
-        .. Also see Section 1.6 in [Muh2021]_, and Section 2.3 in [TW2018]_.
+        - Also see Section 1.6 in [Muh2021]_, and Section 2.3 in [TW2018]_.
 
         TESTS::
 
@@ -4527,8 +4527,8 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-            *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
+          *The fundamental theorem of finite semidistributive lattices*.
 
         TESTS::
 
@@ -4584,8 +4584,8 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-            *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
+          *The fundamental theorem of finite semidistributive lattices*.
 
         TESTS::
 
@@ -4616,7 +4616,9 @@ class DiGraph(GenericGraph):
         Given a DiGraph, consider the following binary reflexive relation defined on
         the set of its vertices:
 
-        `x \rightarrow y` if `x = y` or `xy` is an edge
+        .. MATH::
+
+            x \rightarrow y \iff x = y \text{or} xy \text{is an edge}
 
         This is equivalent to viewing ``self`` as the representation of some arbitrary
         binary relation. Now let `\twoheadrightarrow` and `\hookrightarrow` denote the
@@ -4704,7 +4706,7 @@ class DiGraph(GenericGraph):
             sage: L.is_semidistributive()
             True
 
-        ..SEEALSO::
+        .. SEEALSO::
 
         - :meth:`surjective_edges()`
         - :meth:`injective_edges()`
@@ -4712,8 +4714,8 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        .. [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-            *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
+          *The fundamental theorem of finite semidistributive lattices*.
 
         TESTS::
 
