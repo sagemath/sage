@@ -4272,8 +4272,7 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-          *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_
 
         TESTS:
 
@@ -4350,8 +4349,7 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-          *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_
 
         TESTS:
 
@@ -4447,10 +4445,11 @@ class DiGraph(GenericGraph):
 
         REFERENCES:
 
-        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-          *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_
 
-        - Also see Section 1.6 in [Muh2021]_, and Section 2.3 in [TW2018]_.
+        - [Muh2021]_
+
+        - [TW2018]_
 
         TESTS::
 
@@ -4530,8 +4529,7 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-          *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_
 
         TESTS::
 
@@ -4587,8 +4585,7 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-          *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_
 
         TESTS::
 
@@ -4717,8 +4714,7 @@ class DiGraph(GenericGraph):
 
         REFERENCE:
 
-        - [RST2024]_ Nathan Reading, David E Speyer, and Hugh Thomas,
-          *The fundamental theorem of finite semidistributive lattices*.
+        - [RST2024]_
 
         TESTS::
 
