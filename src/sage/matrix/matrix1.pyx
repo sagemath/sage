@@ -1144,8 +1144,7 @@ cdef class Matrix(Matrix0):
         self.cache('dense_columns', C)
         if copy:
             return list(C)
-        else:
-            return C
+        return C
 
     def dense_rows(self, copy=True):
         """
@@ -1200,8 +1199,7 @@ cdef class Matrix(Matrix0):
         self.cache('dense_rows', R)
         if copy:
             return list(R)
-        else:
-            return R
+        return R
 
     def sparse_columns(self, copy=True):
         r"""
@@ -1277,8 +1275,7 @@ cdef class Matrix(Matrix0):
         self.cache('sparse_columns', C)
         if copy:
             return list(C)
-        else:
-            return C
+        return C
 
     def sparse_rows(self, copy=True):
         r"""
@@ -1360,8 +1357,7 @@ cdef class Matrix(Matrix0):
         self.cache('sparse_rows', R)
         if copy:
             return list(R)
-        else:
-            return R
+        return R
 
     def column(self, Py_ssize_t i, from_list=False):
         """

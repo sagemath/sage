@@ -213,8 +213,7 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
     if y is None:
         if isinstance(Y, Parent):
             raise RuntimeError("an_element() for %s returned None" % Y)
-        else:
-            return # don't know how to make elements of this type...
+        return # don't know how to make elements of this type...
 
     # element x defining _lmul_ or _rmul_
     if isinstance(x, ModuleElement) and isinstance(y, Element):

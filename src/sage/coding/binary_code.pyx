@@ -58,8 +58,7 @@ cdef enum:
 cdef inline int min(int a, int b) noexcept:
     if a > b:
         return b
-    else:
-        return a
+    return a
 
 # NOTE - Since most of the functions are used from within the module, cdef'd
 # functions come without an underscore, and the def'd equivalents, which are
@@ -2417,8 +2416,7 @@ cdef class PartitionStack:
         lvls[j] = k
         if v & flag:
             return j ^ flag
-        else:
-            return j
+        return j
 
     def _col_degree(self, C, col, wd_ptr, k):
         """

@@ -248,8 +248,7 @@ def common_base(K, L, degree):
         raise NotImplementedError("unable to find a common base")
     if degree:
         return base, degrees_K[iK], degrees_L[iL]
-    else:
-        return base
+    return base
 
 
 def generators(ring, base):
@@ -279,8 +278,7 @@ def generators(ring, base):
         ring = ring.base_ring()
     if base is None:
         return gens
-    else:
-        return tuple([x for x in gens if x not in base])
+    return tuple([x for x in gens if x not in base])
 
 
 def variable_names(ring, base):
@@ -891,8 +889,7 @@ cdef class RingExtension_generic(Parent):
         if print_as is not None:
             if isinstance(print_as, RingExtension_generic):
                 return print_as._repr_(**options)
-            else:
-                return str(print_as)
+            return str(print_as)
         print_options = self._print_options.copy()
         for (name, value) in options.items():
             method = None
@@ -954,8 +951,7 @@ cdef class RingExtension_generic(Parent):
         if print_as is not None:
             if isinstance(print_as, RingExtension_generic):
                 return print_as._latex_(**options)
-            else:
-                return latex(print_as)
+            return latex(print_as)
         print_options = self._print_options.copy()
         for (name, value) in options.items():
             method = None
@@ -2026,8 +2022,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
             sr = str(self._ring)
         if self._ring in Fields():
             return sr
-        else:
-            return "Fraction Field of %s" % sr
+        return "Fraction Field of %s" % sr
 
     def _latex_topring(self, **options):
         r"""
@@ -2043,8 +2038,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
         """
         if self._ring in Fields():
             return self._ring._latex_topring(**options)
-        else:
-            return "\\mathrm{Frac}(%s)" % latex(self._ring)
+        return "\\mathrm{Frac}(%s)" % latex(self._ring)
 
 
 # Finite free extensions
@@ -2181,10 +2175,9 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         """
         if base is self:
             return ZZ(1)
-        elif base is self._base:
+        if base is self._base:
             return len(self._basis)
-        else:
-            return len(self._basis) * self._base._degree_over(base)
+        return len(self._basis) * self._base._degree_over(base)
 
     cpdef _is_finite_over(self, Parent base):
         r"""
@@ -2412,8 +2405,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         d = self._degree_over(base)
         if map:
             return base**d, MapFreeModuleToRelativeRing(self, base), MapRelativeRingToFreeModule(self, base)
-        else:
-            return base**d
+        return base**d
 
     @cached_method
     def fraction_field(self, extend_base=False):
@@ -2588,8 +2580,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             return RingExtension_generic._latex_topring(self)
         if isinstance(self._base, RingExtension_generic):
             return "%s[%s]" % (self._base._latex_topring(), self.latex_variable_names()[0])
-        else:
-            return "%s[%s]" % (latex(self._base), self.latex_variable_names()[0])
+        return "%s[%s]" % (latex(self._base), self.latex_variable_names()[0])
 
     def modulus(self, var='x'):
         r"""

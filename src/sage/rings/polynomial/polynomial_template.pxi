@@ -667,8 +667,7 @@ cdef class Polynomial_template(Polynomial):
         #assert(r._parent(pari(self)**ee) == r)
         if recip:
             return ~r
-        else:
-            return r
+        return r
 
     def __copy__(self):
         """

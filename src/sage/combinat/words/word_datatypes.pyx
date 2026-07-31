@@ -227,8 +227,7 @@ cdef class WordDatatype_list(WordDatatype):
         """
         if isinstance(key, slice):
             return self._parent(self._data[key])
-        else:
-            return self._data[key]
+        return self._data[key]
 
     def __mul__(self, other):
         r"""
@@ -255,8 +254,7 @@ cdef class WordDatatype_list(WordDatatype):
         """
         if isinstance(other, WordDatatype_list):
             return self._parent(self._data + other._data)
-        else:
-            return super().__mul__(other)
+        return super().__mul__(other)
 
     __add__ = __mul__
 
@@ -396,8 +394,7 @@ cdef class WordDatatype_str(WordDatatype):
             return False
         if len(a) != 1:
             return False
-        else:
-            return a in self._data
+        return a in self._data
 
     cpdef _has_factor_naive(self, w):
         r"""
@@ -459,10 +456,9 @@ cdef class WordDatatype_str(WordDatatype):
             end = len(self._data)
         if isinstance(sub, WordDatatype_str):
             return self._data.find(sub._data, start, end)
-        elif isinstance(sub, str):
+        if isinstance(sub, str):
             return self._data.find(sub, start, end)
-        else:
-            return super().find(sub, start, end)
+        return super().find(sub, start, end)
 
     def rfind(self, sub, start=0, end=None):
         r"""
@@ -495,10 +491,9 @@ cdef class WordDatatype_str(WordDatatype):
             end = len(self._data)
         if isinstance(sub, WordDatatype_str):
             return self._data.rfind(sub._data, start, end)
-        elif isinstance(sub, str):
+        if isinstance(sub, str):
             return self._data.rfind(sub, start, end)
-        else:
-            return super().rfind(sub, start, end)
+        return super().rfind(sub, start, end)
 
     def __len__(self):
         r"""
@@ -575,8 +570,7 @@ cdef class WordDatatype_str(WordDatatype):
         """
         if isinstance(other, WordDatatype_str):
             return self._parent(self._data + other._data)
-        else:
-            return super().__mul__(other)
+        return super().__mul__(other)
 
     __add__ = __mul__
 
@@ -611,8 +605,7 @@ cdef class WordDatatype_str(WordDatatype):
         """
         if len(letter) == 1:
             return self._data.count(letter)
-        else:
-            return 0
+        return 0
 
     def split(self, sep=None, maxsplit=None):
         r"""
@@ -760,10 +753,9 @@ cdef class WordDatatype_str(WordDatatype):
         """
         if isinstance(other, WordDatatype_str):
             return other._data.endswith(self._data)
-        elif isinstance(other, str):
+        if isinstance(other, str):
             return other.endswith(self._data)
-        else:
-            return super().is_suffix(other)
+        return super().is_suffix(other)
 
     def has_suffix(self, other) -> bool:
         """
@@ -789,10 +781,9 @@ cdef class WordDatatype_str(WordDatatype):
         """
         if isinstance(other, WordDatatype_str):
             return self._data.endswith(other._data)
-        elif isinstance(other, str):
+        if isinstance(other, str):
             return self._data.endswith(other)
-        else:
-            return super().has_suffix(other)
+        return super().has_suffix(other)
 
     def is_prefix(self, other) -> bool:
         r"""
@@ -866,8 +857,7 @@ cdef class WordDatatype_str(WordDatatype):
             return self._data.startswith(other._data)
         if isinstance(other, str):
             return self._data.startswith(other)
-        else:
-            return super().has_prefix(other)
+        return super().has_prefix(other)
 
 cdef class WordDatatype_tuple(WordDatatype):
     r"""
@@ -1060,7 +1050,6 @@ cdef class WordDatatype_tuple(WordDatatype):
         """
         if isinstance(other, WordDatatype_tuple):
             return self._parent(self._data + other._data)
-        else:
-            return super().__mul__(other)
+        return super().__mul__(other)
 
     __add__ = __mul__

@@ -234,8 +234,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "*%s^%s" % (parent._names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def _latex_(self):
         r"""
@@ -265,8 +264,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "%s^{%s}" % (parent._latex_names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def coefficient(self):
         r"""
@@ -673,8 +671,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 return False
         if self._parent.base_ring().is_field():
             return True
-        else:
-            return self.valuation() == 0 or other.valuation() == 0
+        return self.valuation() == 0 or other.valuation() == 0
 
     @coerce_binop
     def gcd(self, other):
@@ -2187,8 +2184,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                                    if not term.coefficient().is_zero()]
         if include_zero:
             return self._terms
-        else:
-            return self._terms_nonzero
+        return self._terms_nonzero
 
     def monomials(self):
         r"""
@@ -2266,8 +2262,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             raise IndexError("lengths do not match")
         if e in self._poly.__repn:
             return self._poly.__repn[e]
-        else:
-            return self.base_ring()(0, self.precision_absolute())
+        return self.base_ring()(0, self.precision_absolute())
 
     def __getitem__(self, exponent):
         r"""

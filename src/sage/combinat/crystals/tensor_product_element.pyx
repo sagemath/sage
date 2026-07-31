@@ -1495,8 +1495,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             from sage.categories.regular_supercrystals import RegularSuperCrystals
             if self._parent in RegularSuperCrystals():
                 return TensorProductOfRegularCrystalsElement.e(self, i)
-            else:
-                return TensorProductOfCrystalsElement.e(self, i)
+            return TensorProductOfCrystalsElement.e(self, i)
         cdef tuple w
         cdef int k, a, l
         l = len(self._list)
@@ -1555,8 +1554,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             from sage.categories.regular_supercrystals import RegularSuperCrystals
             if self._parent in RegularSuperCrystals():
                 return TensorProductOfRegularCrystalsElement.f(self, i)
-            else:
-                return TensorProductOfCrystalsElement.f(self, i)
+            return TensorProductOfCrystalsElement.f(self, i)
         cdef tuple w
         cdef int k, a, l
         l = len(self._list)

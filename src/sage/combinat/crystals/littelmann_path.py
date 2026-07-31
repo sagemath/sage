@@ -485,8 +485,8 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 return None
 
             # copy the vector sequence into a working vector sequence ws
-            #!!! ws only needs to be the actual vector sequence, not some
-            #!!! fancy crystal graph element
+            # !!! ws only needs to be the actual vector sequence, not some
+            # !!! fancy crystal graph element
             P = self.parent()
             ws = P(self.value)
 
@@ -506,8 +506,8 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 else:
                     ws = ws.reflect_step(j, i)
                 ix -= 1
-            #!!! at this point we should return the fancy crystal graph element
-            #!!! corresponding to the humble vector sequence ws
+            # !!! at this point we should return the fancy crystal graph element
+            # !!! corresponding to the humble vector sequence ws
             return P(ws.compress())
 
         def dualize(self):

@@ -476,8 +476,7 @@ cdef class PowerSeries(AlgebraElement):
         exact = self._parent(self.list())
         if absprec is None:
             return exact
-        else:
-            return exact.add_bigoh(absprec)
+        return exact.add_bigoh(absprec)
 
     def __copy__(self):
         """
@@ -609,8 +608,7 @@ cdef class PowerSeries(AlgebraElement):
         """
         if self.is_zero():
             return 0
-        else:
-            return self.prec() - self.valuation()
+        return self.prec() - self.valuation()
 
     def _repr_(self):
         """
@@ -639,8 +637,7 @@ cdef class PowerSeries(AlgebraElement):
         if self.is_zero():
             if self.prec() is infinity:
                 return "0"
-            else:
-                return "O(%s^%s)" % (self._parent.variable_name(), self.prec())
+            return "O(%s^%s)" % (self._parent.variable_name(), self.prec())
 
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         X = self._parent.variable_name()
@@ -724,8 +721,7 @@ cdef class PowerSeries(AlgebraElement):
         if self.is_zero():
             if self.prec() is infinity:
                 return "0"
-            else:
-                return "0 + \\cdots"
+            return "0 + \\cdots"
         s = " "
         v = self.list()
         m = len(v)
@@ -885,19 +881,18 @@ cdef class PowerSeries(AlgebraElement):
         """
         if self.prec() is infinity:
             return f.prec()
-        elif f.prec() is infinity:
+        if f.prec() is infinity:
             return self.prec()
         return min(self.prec(), f.prec())
 
     cdef common_prec_c(self, PowerSeries f):
         if self._prec is infinity:
             return f._prec
-        elif f._prec is infinity:
+        if f._prec is infinity:
             return self._prec
-        elif self._prec < f._prec:
+        if self._prec < f._prec:
             return self._prec
-        else:
-            return f._prec
+        return f._prec
 
     def _mul_prec(self, RingElement right_r):
         cdef PowerSeries right = <PowerSeries>right_r
@@ -1302,8 +1297,7 @@ cdef class PowerSeries(AlgebraElement):
         res = pol.map_coefficients(f, new_base_ring)
         if res.base_ring() != pol.base_ring():
             return self.parent().change_ring(res.base_ring())(res, self.prec())
-        else:
-            return self.parent()(res, self.prec())
+        return self.parent()(res, self.prec())
 
     def jacobi_continued_fraction(self):
         r"""
@@ -1678,8 +1672,7 @@ cdef class PowerSeries(AlgebraElement):
             ans = self._parent(0).O(self.prec()/2)
             if all:
                 return [ans]
-            else:
-                return ans
+            return ans
 
         if all and not self.base_ring().is_integral_domain():
             raise NotImplementedError('all roots not implemented over a non-integral domain')
@@ -1699,8 +1692,7 @@ cdef class PowerSeries(AlgebraElement):
                 a = self.parent()([s], self.prec())
                 if all:
                     return [a, -a]
-                else:
-                    return a
+                return a
 
         val = self.valuation()
 
@@ -1754,8 +1746,7 @@ cdef class PowerSeries(AlgebraElement):
 
         if all:
             return [ans, -ans]  # since over an integral domain
-        else:
-            return ans
+        return ans
 
     def square_root(self):
         """
@@ -1876,8 +1867,7 @@ cdef class PowerSeries(AlgebraElement):
         if self.is_zero():
             if val is infinity:
                 return self
-            else:
-                return self.parent()(0).O(val // n)
+            return self.parent()(0).O(val // n)
 
         if val is not infinity and val % n != 0:
             raise ValueError("power series valuation is not a multiple of %s" % n)
@@ -2974,8 +2964,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
         # base case
         if N == 0:
             return [f0]
-        else:
-            return [b[0] / N]
+        return [b[0] / N]
 
     L2 = (L + 1) >> 1    # ceil(L/2)
 

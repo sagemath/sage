@@ -1711,13 +1711,11 @@ class RecursivelyEnumeratedSet_forest(Parent):
         ....:     def children(self, x):
         ....:         if sum(x) < 3:
         ....:             return [x + (0,), x + (1,)]
-        ....:         else:
-        ....:             return []
+        ....:         return []
         ....:     def post_process(self, x):
         ....:         if sum(x) == 0 or x[-1] == 0:
         ....:             return None
-        ....:         else:
-        ....:             return sum(x[i]*2^i for i in range(len(x)))
+        ....:         return sum(x[i]*2^i for i in range(len(x)))
         sage: MyForest = A(); MyForest
         An enumerated set with a forest structure
         sage: MyForest.category()

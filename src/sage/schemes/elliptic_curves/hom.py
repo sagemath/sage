@@ -401,7 +401,6 @@ class EllipticCurveHom(Morphism):
             Traceback (most recent call last):
             ...
             ValueError: trace only makes sense for endomorphisms
-
         """
         F = self.domain().base_field()
         if F.characteristic().is_zero():
@@ -411,6 +410,57 @@ class EllipticCurveHom(Morphism):
             s = self.scaling_factor()
             return ZZ(s + d/s)
         return compute_trace_generic(self)
+
+    def trace_pairing(self, psi):
+        r"""
+        Return the integer `\deg(\phi+\psi) - \deg(\phi) - \deg(\psi)`
+        where `\phi` is this elliptic-curve morphism and `\psi`
+        is another elliptic-curve morphism *between the same pair
+        of elliptic curves*.
+
+        This map defines a symmetric positive definite bilinear form
+        on `\mathrm{Hom}(E, E')` with values in `\ZZ`.
+
+        EXAMPLES::
+
+            sage: p = 0xc8f9
+            sage: GF((p, 2)).inject_variables()
+            Defining z2
+            sage: x = polygen(GF((p, 2)))
+            sage: E = EllipticCurve([9931*z2 + 48137, 50831*z2 + 23876])
+            sage: K_phi = E.lift_x(51312*z2 + 41070)
+            sage: K_psi = E.lift_x(44298*z2 + 37360)
+            sage: K_phi.order(), K_psi.order()
+            (50, 35)
+            sage: phi = E.isogeny(K_phi, algorithm='factored')
+            sage: psi = E.isogeny(K_psi, algorithm='factored', codomain=phi.codomain())
+            sage: phi.trace_pairing(psi)
+            -9
+            sage: psi.trace_pairing(phi)
+            -9
+            sage: {(phi.dual() * psi).trace(), (phi * psi.dual()).trace(),
+            ....:  (psi.dual() * phi).trace(), (psi * phi.dual()).trace()}
+            {-9}
+
+        TESTS::
+
+            sage: psi = E.isogeny(K_psi)
+            sage: psi.codomain() == phi.codomain()
+            False
+            sage: phi.trace_pairing(psi)
+            Traceback (most recent call last):
+            ...
+            ValueError: given morphism must have the same domain and codomain as this morphism
+
+        ALGORITHM: Thin wrapper around :meth:`dual` and :meth:`trace`.
+        """
+        if self.parent() != psi.parent():
+            raise ValueError('given morphism must have the same domain and codomain as this morphism')
+        if self.degree() < psi.degree():
+            pair = self.dual() * psi
+        else:
+            pair = self * psi.dual()
+        return pair.trace()
 
     def characteristic_polynomial(self):
         r"""

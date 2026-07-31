@@ -373,6 +373,7 @@ ignore = [
 
 select = [
   "C4", # flake8-comprehensions - https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+  "EXE", # flake8-executable - https://docs.astral.sh/ruff/rules/#flake8-executable-exe
   "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
   "FA", # flake8-future-annotations - https://docs.astral.sh/ruff/rules/#flake8-future-annotations-fa
   "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i

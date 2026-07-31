@@ -1621,8 +1621,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_sparse():
             return self.parent()(self.dict())
-        else:
-            return self.parent()(self.list())
+        return self.parent()(self.list())
 
     def subs(self, in_dict=None, **kwds):
         """
@@ -2568,8 +2567,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         from sage.plot.all import line, points
         if connect:
             return line(v, **kwds)
-        else:
-            return points(v, **kwds)
+        return points(v, **kwds)
 
     cpdef _dot_product_coerce_(left, Vector right):
         """
@@ -3905,8 +3903,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_dense():
             return self
-        else:
-            return self.parent().ambient_module().dense_module()(self.list())
+        return self.parent().ambient_module().dense_module()(self.list())
 
     def sparse_vector(self):
         """
@@ -3924,8 +3921,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_sparse():
             return self
-        else:
-            return self.parent().ambient_module().sparse_module()(self.list())
+        return self.parent().ambient_module().sparse_module()(self.list())
 
     def apply_map(self, phi, R=None, sparse=None):
         """
@@ -4037,10 +4033,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if sparse == self.is_sparse():
                 from copy import copy
                 return copy(self)
-            elif sparse:
+            if sparse:
                 return self.sparse_vector()
-            else:
-                return self.dense_vector()
+            return self.dense_vector()
 
         v = None
 
@@ -4066,8 +4061,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         if R is None:
             return vector(v, sparse=sparse)
-        else:
-            return vector(R, v, sparse=sparse)
+        return vector(R, v, sparse=sparse)
 
     def _derivative(self, var=None):
         """
@@ -4764,8 +4758,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         if copy:
             return list(self._entries)
-        else:
-            return self._entries
+        return self._entries
 
     def __call__(self, *args, **kwargs):
         """
@@ -5433,8 +5426,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         if copy:
             return dict(self._entries)
-        else:
-            return self._entries
+        return self._entries
 
     def list(self, copy=True):
         """

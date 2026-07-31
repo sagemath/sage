@@ -713,23 +713,20 @@ cdef class PowerSeries_pari(PowerSeries):
             l = lg(g.g) - 2  # t_POL has 2 codewords
             if n <= l:
                 return [R(g.new_ref(gel(g.g, i + 2))) for i in range(n)]
-            else:
-                return ([R(g.new_ref(gel(g.g, i + 2))) for i in range(l)]
-                        + [R.zero()] * (n - l))
-        elif typ(g.g) == t_SER and varn(g.g) == get_var(self._parent.variable_name()):
+            return ([R(g.new_ref(gel(g.g, i + 2))) for i in range(l)]
+                    + [R.zero()] * (n - l))
+        if typ(g.g) == t_SER and varn(g.g) == get_var(self._parent.variable_name()):
             l = lg(g.g) - 2  # t_SER has 2 codewords
             m = valp(g.g)
             if n <= m:
                 return [R.zero()] * n
-            elif n <= l + m:
+            if n <= l + m:
                 return ([R.zero()] * m
                         + [R(g.new_ref(gel(g.g, i + 2))) for i in range(n - m)])
-            else:
-                return ([R.zero()] * m
-                        + [R(g.new_ref(gel(g.g, i + 2))) for i in range(l)]
-                        + [R.zero()] * (n - l - m))
-        else:
-            return [R(g)] + [R.zero()] * (n - 1)
+            return ([R.zero()] * m
+                    + [R(g.new_ref(gel(g.g, i + 2))) for i in range(l)]
+                    + [R.zero()] * (n - l - m))
+        return [R(g)] + [R.zero()] * (n - 1)
 
     def monomial_coefficients(self, copy=None):
         """
