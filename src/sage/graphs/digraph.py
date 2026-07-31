@@ -4711,9 +4711,9 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-        - :meth:`surjective_edges()`
-        - :meth:`injective_edges()`
-        - :meth:`maximal_orthogonal_pairs_lattice()`
+            - :meth:`surjective_edges()`
+            - :meth:`injective_edges()`
+            - :meth:`maximal_orthogonal_pairs_lattice()`
 
         REFERENCE:
 
