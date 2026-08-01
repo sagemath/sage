@@ -286,6 +286,23 @@ class LimitValuationFactory(UniqueFactory):
             sage: R.<x> = QQ[]
             sage: v = GaussValuation(R, QQ.valuation(2))
             sage: w = valuations.LimitValuation(v, x^2 + 1)  # indirect doctest
+
+        If the defining polynomial is already a key polynomial, its final
+        augmentation is restored when needed.  In particular, this preserves
+        a nontrivial residue field extension::
+
+            sage: G = x^2 + x + 1
+            sage: w = valuations.LimitValuation(v, G)
+            sage: w.residue_ring()                                              # needs sage.rings.finite_rings
+            Finite Field in u1 of size 2^2
+            sage: w._approximation.mu()
+            +Infinity
+            sage: a = w.residue_ring().gen()                                    # needs sage.rings.finite_rings
+            sage: w.reduce(w.lift(a)) == a                                      # needs sage.rings.finite_rings
+            True
+            sage: u = valuations.LimitValuation(v.augmentation(G, infinity), G)
+            sage: u is w
+            True
         """
         base_valuation, G = key
         from .valuation_space import DiscretePseudoValuationSpace
@@ -600,9 +617,27 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
 
             sage: w.lift(w.residue_ring().zero())
             0
+
+        When improving the approximation produces a nontrivial residue field
+        extension, lifting uses that final approximation::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: G = (x^2 + x + 1)^2 + 2
+            sage: u = valuations.LimitValuation(v, G)
+            sage: u._improve_approximation()
+            sage: u._approximation.mu()
+            1/2
+            sage: k = u.residue_ring(); k                                      # needs sage.rings.finite_rings
+            Finite Field in u1 of size 2^2
+            sage: a = k.gen()                                                   # needs sage.rings.finite_rings
+            sage: u.reduce(u.lift(a)) == a                                      # needs sage.rings.finite_rings
+            True
+            sage: u.lift(k.zero())                                              # needs sage.rings.finite_rings
+            0
         """
         F = self.residue_ring().coerce(F)
-        return self._initial_approximation.lift(F)
+        return self._approximation.lift(F)
 
     def uniformizer(self):
         r"""
@@ -716,6 +751,12 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
                 assert phi.divides(self._G)
                 self._G = phi
             # an infinite valuation can not be improved further
+            return
+
+        if self._approximation.is_key(self._G):
+            self._approximation = self._approximation.augmentation(
+                self._G, infinity, check=False)
+            self._G = self._approximation.phi()
             return
 
         principal_part_bound = (1 if self._approximation.E() * self._approximation.F()
@@ -922,12 +963,19 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         """
         from sage.categories.fields import Fields
         from sage.rings.infinity import infinity
+        if self._approximation.mu() is not infinity and self._approximation.is_key(self._G):
+            final_approximation = self._approximation.augmentation(
+                self._G, infinity, check=False)
+            if final_approximation.psi().degree() > 1:
+                self._approximation = final_approximation
+                self._G = final_approximation.phi()
+
         if self._approximation.mu() is infinity:
             R = self._approximation.residue_ring()
             assert R in Fields()
             return R
 
-        R = self._initial_approximation.residue_ring()
+        R = self._approximation.residue_ring()
         if R in Fields():
             # the approximation ends in v(phi)=infty
             return R
