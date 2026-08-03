@@ -322,8 +322,7 @@ def surjective_edges(G, loops=False):
 
     - ``G`` -- DiGraph
 
-    - ``loops`` -- boolean (default: ``False``)
-    ; whether to count loops
+    - ``loops`` -- boolean (default: ``False``); whether to count loops
 
     EXAMPLES::
 
