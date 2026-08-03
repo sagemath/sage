@@ -2962,5 +2962,4 @@ def example_A2_generalized(K=None):
                        base_fraction_field=base.F)
     chart2.this_to_base = [x1, (x1 + 1) ** 2 / x2]
 
-    A = FLIR(base, [base, chart1, chart2], compute_base_to_charts=True)
-    return A
+    return FLIR(base, [base, chart1, chart2], compute_base_to_charts=True)
