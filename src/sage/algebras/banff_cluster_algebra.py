@@ -319,6 +319,7 @@ def find_sink_or_source_covering_pair(B, allowed_directions: Sequence[int]):
     Returns ``None`` if no such vertex exists.
 
     EXAMPLES::
+
         sage: B = Matrix([[0, 1], [-1, 0]])
         sage: find_sink_or_source_covering_pair(B, [0, 1])
         (0, 1, 'source')
