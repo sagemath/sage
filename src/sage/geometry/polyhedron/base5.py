@@ -1790,16 +1790,16 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: P = Polyhedron(ieqs=[[0, 1]])  # x >= 0 in R^1
             sage: A = matrix([[2, -1]])           # A : R^2 -> R^1
             sage: P.preimage(A)
-            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays
+            A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line
             sage: P.preimage(A) == Polyhedron(ieqs=[[0, 2, -1]])
             True
 
-        The preimage of a 2-d polytope (a square) under a projection::
+        The preimage of a 2-d square under a linear map from `\mathbb{R}^1`::
 
             sage: square = polytopes.hypercube(2)
-            sage: proj = matrix([[1, 0]])   # projection R^2 -> R^1: (x,y) |-> x
-            sage: square.preimage(proj)
-            A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex and 2 rays
+            sage: T = matrix([[1], [0]])   # T : R^1 -> R^2: x |-> (x, 0)
+            sage: square.preimage(T)
+            A 1-dimensional polyhedron in ZZ^1 defined as the convex hull of 2 vertices
 
         Scalar dilation: preimage under scaling by 2 is the polytope scaled by 1/2::
 
@@ -1831,7 +1831,7 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: Q.ambient_dim()
             2
             sage: Q.base_ring()
-            Integer Ring
+            Rational Field
 
             sage: # Wrong number of rows should raise ValueError
             sage: P = Polyhedron(ieqs=[[0, 1]])   # ambient_dim = 1
