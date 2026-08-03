@@ -25,6 +25,8 @@ cdef singular_ring* access_singular_ring(r) except <singular_ring*> -1
 
 cdef class RingWrap:
     cdef singular_ring *_ring
+    cdef int *_ring_ref
+
 
 cdef class Resolution:
     cdef syStrategy *_resolution

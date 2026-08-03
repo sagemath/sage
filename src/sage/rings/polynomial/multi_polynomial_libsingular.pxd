@@ -8,6 +8,7 @@ cdef class MPolynomialRing_libsingular
 cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     cdef poly *_poly
     cdef ring *_parent_ring
+    cdef int *_parent_ring_ref
     cpdef _add_(self, other)
     cpdef _mul_(self, other)
     cpdef _floordiv_(self, right)
@@ -24,6 +25,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
     cdef object __minpoly
     cdef poly *_one_element_poly
     cdef ring *_ring
+    cdef int *_ring_ref
 
 # new polynomials
 cdef MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, poly *p)
