@@ -1257,15 +1257,16 @@ cdef class BasisExchangeMatroid(Matroid):
                 self._whitney_numbers2_rec(f_vec, flats, todo, e + 1, i + 1)
             e = bitset_next(todo[i], e)
 
-    cpdef SetSystem flats(self, long k):
+    cpdef SetSystem flats(self, long k=-1):
         """
-        Return the collection of flats of the matroid of specified rank.
+        Return the flats of the matroid.
 
         A *flat* is a closed set.
 
         INPUT:
 
-        - ``k`` -- integer
+        - ``k`` -- integer (optional); if specified, return the rank-`k`
+          flats of the matroid
 
         OUTPUT: :class:`SetSystem`
 
@@ -1285,6 +1286,12 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: len(M.flats(4))
             1
         """
+        cdef list F = []
+        if k == -1:
+            for i in range(self.rank() + 1):
+                F.extend(list(self.flats(i)))
+            return SetSystem(self._E, F)
+
         cdef bitset_t *flats
         cdef bitset_t *todo
         if k < 0 or k > self.full_rank():
@@ -1811,8 +1818,7 @@ cdef class BasisExchangeMatroid(Matroid):
         NSC.resize()
         if k:
             return SetSystem(self.groundset(), [C for C in NSC if len(C) == k])
-        else:
-            return NSC
+        return NSC
 
     # isomorphism
 
@@ -1833,8 +1839,7 @@ cdef class BasisExchangeMatroid(Matroid):
         """
         if 2 * self._matroid_rank > self._groundset_size:
             return self.nonspanning_circuits()
-        else:
-            return self.noncospanning_cocircuits()
+        return self.noncospanning_cocircuits()
 
     cpdef Py_hash_t _weak_invariant(self) noexcept:
         """
@@ -2122,8 +2127,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self.__is_isomorphism(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._strong_invariant() != other._strong_invariant():
             return False
@@ -2135,8 +2139,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 morphism[min(PS[i])] = min(PO[i])
             if self.__is_isomorphism(other, morphism):
                 return morphism
-            else:
-                return None
+            return None
 
         if self._heuristic_invariant() == other._heuristic_invariant():
             PHS = self._heuristic_partition()

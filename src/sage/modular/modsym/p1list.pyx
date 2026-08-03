@@ -778,7 +778,7 @@ cdef class P1List():
         cdef P1List O = <P1List> other
         if S.__N < O.__N:
             return rich_to_bool(op, -1)
-        elif S.__N > O.__N:
+        if S.__N > O.__N:
             return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 

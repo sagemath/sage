@@ -326,17 +326,16 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
         Eq = self.tate_curve(p)
         reg = Eq.padic_regulator(prec=prec)
         return reg
-    elif self.ap(p) % p == 0:
+    if self.ap(p) % p == 0:
         lp = self.padic_lseries(p)
         reg = lp.Dp_valued_regulator(prec=prec)
         return reg
-    else:
-        if self.rank() == 0:
-            return Qp(p,prec)(1)
-        if height is None:
-            height = self.padic_height(p, prec, check_hypotheses=False)
-        d = self.padic_height_pairing_matrix(p=p, prec=prec, height=height, check_hypotheses=False)
-        return d.determinant()
+    if self.rank() == 0:
+        return Qp(p,prec)(1)
+    if height is None:
+        height = self.padic_height(p, prec, check_hypotheses=False)
+    d = self.padic_height_pairing_matrix(p=p, prec=prec, height=height, check_hypotheses=False)
+    return d.determinant()
 
 
 def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=True):
@@ -800,7 +799,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     if self.conductor() % p == 0:
         Eq = self.tate_curve(p)
         return Eq.padic_height(prec=prec)
-    elif self.ap(p) % p == 0:
+    if self.ap(p) % p == 0:
         lp = self.padic_lseries(p)
         return lp.Dp_valued_height(prec=prec)
 

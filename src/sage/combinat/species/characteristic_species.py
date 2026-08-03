@@ -44,8 +44,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
         s = GenericSpeciesStructure.__repr__(self)
         if self.parent()._n == 1:
             return s[1:-1]
-        else:
-            return "{" + s[1:-1] + "}"
+        return "{" + s[1:-1] + "}"
 
     def canonical_label(self):
         """

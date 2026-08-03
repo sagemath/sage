@@ -12,6 +12,7 @@ from sage.matrix import matrix_dense
 from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
@@ -69,7 +70,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
         We check that the problem related to :issue:`9049` is not an issue any
         more::
 
-            sage: # needs sage.rings.number_field
             sage: S.<t> = PolynomialRing(QQ)
             sage: F.<q> = QQ.extension(t^4 + 1)
             sage: R.<x,y> = PolynomialRing(F)
@@ -255,7 +255,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
@@ -279,7 +278,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
@@ -298,9 +296,9 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.overflowcheck(False)
-    def _multiply_classical(left, matrix.Matrix _right):
+    def _multiply_classical(self, matrix.Matrix _right):
         """
-        Multiply the matrices left and right using the classical
+        Multiply the matrices self and right using the classical
         `O(n^3)` algorithm.
 
         EXAMPLES:
@@ -341,31 +339,51 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
+
+        TESTS::
+
+            sage: Ext=ExteriorAlgebra(QQ,['p'])
+            sage: Ext.inject_variables(verbose=False)
+            sage: Mp = matrix(1,1,[[p]])
+            sage: Mp[0,0]*Mp[0,0]
+            0
+            sage: Mp*Mp
+            [0]
+
+            sage: # needs sage.modules
+            sage: MS = MatrixSpace(MatrixSpace(ZZ, 2, 2), 2, 2)
+            sage: A = MS([matrix(ZZ, 2, [n, 0, 0, n]) for n in range(1, 5)])
+            sage: B = A * A
+            sage: B[0, 0]
+            [7 0]
+            [0 7]
+            sage: B[1, 1]
+            [22  0]
+            [ 0 22]
         """
         cdef Py_ssize_t i, j, k, m, nr, nc, snc, p
         cdef Matrix_generic_dense right = _right
 
-        if left._ncols != right._nrows:
-            raise IndexError("Number of columns of left must equal number of rows of other.")
+        check_matrix_multiplication_sizes(self, right)
 
-        nr = left._nrows
+        nr = self._nrows
         nc = right._ncols
-        snc = left._ncols
+        snc = self._ncols
 
-        R = left.base_ring()
-        cdef list v = [None] * (left._nrows * right._ncols)
+        R = self.base_ring()
+        cdef list v = [None] * (self._nrows * right._ncols)
         zero = R.zero()
         p = 0
         for i in range(nr):
+            m = i*snc
             for j in range(nc):
                 z = zero
-                m = i*snc
                 for k in range(snc):
-                    z += left._entries[m+k]._mul_(right._entries[k*nc+j])
+                    z += self._entries[m+k] * (right._entries[k*nc+j])
                 v[p] = z
                 p += 1
 
-        cdef Matrix_generic_dense A = left._new(nr, nc)
+        cdef Matrix_generic_dense A = self._new(nr, nc)
         A._entries = v
         return A
 

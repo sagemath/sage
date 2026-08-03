@@ -7,6 +7,7 @@ AUTHORS:
 """
 
 from sage.misc.misc_c import prod
+from sage.misc.cachefunc import cached_method
 
 
 class ProductTree:
@@ -20,7 +21,6 @@ class ProductTree:
     (the famous *Fast* Fourier Transform) can be implemented as follows
     using the :meth:`remainders` method of this class::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.generic import ProductTree
         sage: F = GF(65537)
         sage: a = F(1111)
@@ -70,7 +70,6 @@ class ProductTree:
 
     ::
 
-        sage: # needs sage.libs.pari
         sage: vs = prime_range(100)
         sage: tree = ProductTree(vs)
         sage: tree.root().factor()
@@ -190,7 +189,6 @@ class ProductTree:
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: from sage.rings.generic import ProductTree
             sage: vs = prime_range(100)
             sage: tree = ProductTree(vs)
@@ -205,7 +203,59 @@ class ProductTree:
             X = [X[i // 2] % V[i] for i in range(len(V))]
         return X
 
-    _crt_bases = None
+    @cached_method
+    def CRT_bases(self):
+        r"""
+        Return a tuple of tuples containing all CRT bases needed
+        to compute the :meth:`interpolation` from the roots of this
+        product tree to the root by following the tree structure.
+
+        In more detail, the return value is a three-fold nested
+        tuple ``msss`` such that:
+
+        - The tuple ``msss`` runs parallel to pairs of adjacent layers
+          of the tree, i.e., each of its entries corresponds to a layer
+          of "parents" and a layer of "children".
+
+        - Each tuple ``mss`` inside ``msss`` runs parallel to the parents
+          inside its associated pair of layers.
+
+        - Each tuple ``ms`` inside ``mss`` runs parallel to the children
+          of its associated parent.
+
+        ...and the following property holds: The entries of ``ms`` are
+        valid CRT coefficients for computing a CRT interpolation modulo
+        its associated children.
+
+        EXAMPLES::
+
+            sage: from sage.rings.generic import ProductTree
+            sage: tree = ProductTree([2,3,5,7])
+            sage: ms0, ms1 = tree.CRT_bases()
+            sage: tree.remainders(ms0[0][0])
+            [1, 0, 3, 3]
+            sage: tree.remainders(ms0[0][1])
+            [0, 1, 4, 4]
+            sage: tree.remainders(ms0[1][0])
+            [1, 0, 1, 0]
+            sage: tree.remainders(ms0[1][1])
+            [1, 0, 0, 1]
+            sage: tree.remainders(ms1[0][0] * ms0[0][0])
+            [1, 0, 0, 0]
+            sage: tree.remainders(ms1[0][0] * ms0[0][1])
+            [0, 1, 0, 0]
+            sage: tree.remainders(ms1[0][1] * ms0[1][0])
+            [0, 0, 1, 0]
+            sage: tree.remainders(ms1[0][1] * ms0[1][1])
+            [0, 0, 0, 1]
+        """
+        from sage.arith.misc import CRT_basis
+        # tuples all the way for immutability
+        bases = []
+        for V in self.layers[:-1]:
+            B = tuple(tuple(CRT_basis(V[i:i+2])) for i in range(0, len(V), 2))
+            bases.append(B)
+        return tuple(bases)
 
     def interpolation(self, xs):
         r"""
@@ -240,15 +290,10 @@ class ProductTree:
             sage: %timeit tree.interpolation(rs())  # not tested
             146 µs ± 479 ns per loop (mean ± std. dev. of 7 runs, 10,000 loops each)
         """
-        if self._crt_bases is None:
-            from sage.arith.misc import CRT_basis
-            self._crt_bases = []
-            for V in self.layers[:-1]:
-                B = tuple(CRT_basis(V[i:i+2]) for i in range(0, len(V), 2))
-                self._crt_bases.append(B)
+        bases = self.CRT_bases()
         if len(xs) != len(self.layers[0]):
             raise ValueError('number of given elements must equal the number of leaves')
-        for basis, layer in zip(self._crt_bases, self.layers[1:]):
+        for basis, layer in zip(bases, self.layers[1:]):
             xs = [sum(c*x for c, x in zip(cs, xs[2*i:2*i+2])) % mod
                   for i, (cs, mod) in enumerate(zip(basis, layer))]
         assert len(xs) == 1

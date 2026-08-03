@@ -33,13 +33,13 @@ to run these examples inside a module.) ::
 Test2 will be slightly faster than test1, but they give the same answer::
 
     sage: with seed(0): test1()
-    5169
+    5138
     sage: with seed(0): test2()
-    5169
+    5138
     sage: with seed(1): test1()
-    5097
+    4962
     sage: with seed(1): test2()
-    5097
+    4962
     sage: timeit('test1()') # random
     625 loops, best of 3: 590 us per loop
     sage: timeit('test2()') # random

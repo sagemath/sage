@@ -411,8 +411,12 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
 
         EXAMPLES::
 
-            sage: set_random_seed(10)
-            sage: C = codes.random_linear_code(GF(7), 11, 5)
+            sage: G = matrix(GF(7), [[1, 0, 0, 0, 0, 0, 5, 2, 6, 0, 6],
+            ....:                    [0, 1, 0, 0, 0, 1, 5, 3, 5, 5, 4],
+            ....:                    [0, 0, 1, 0, 0, 4, 6, 6, 2, 2, 2],
+            ....:                    [0, 0, 0, 1, 0, 3, 0, 3, 2, 5, 2],
+            ....:                    [0, 0, 0, 0, 1, 6, 0, 5, 0, 6, 0]])
+            sage: C = codes.LinearCode(G)
             sage: Cp = codes.PuncturedCode(C, 3)
             sage: E = codes.encoders.PuncturedCodePuncturedMatrixEncoder(Cp)
             sage: E.generator_matrix()
@@ -650,7 +654,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
             yl = _insert_punctured_positions(yl, pts, zero)
             y = A(yl)
             return _puncture(D.decode_to_code((y, e)), pts)
-        elif self._strategy == 'try-all':
+        if self._strategy == 'try-all':
             end = False
             yl = y.list()
             I = iter(VectorSpace(F, len(pts)))
@@ -699,14 +703,13 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         if self._strategy != 'try-all' and "error-erasure" not in D.decoder_type():
             if D.decoding_radius() - punctured >= 0:
                 return D.decoding_radius() - punctured
-            else:
-                return 0
-        elif "error-erasure" in D.decoder_type() and number_erasures is not None:
+            return 0
+        if "error-erasure" in D.decoder_type() and number_erasures is not None:
             diff = self.code().original_code().minimum_distance() - number_erasures - punctured - 1
             if diff <= 0:
                 raise ValueError("The number of erasures exceeds decoding capability")
             return diff // 2
-        elif "error-erasure" in D.decoder_type() and number_erasures is None:
+        if "error-erasure" in D.decoder_type() and number_erasures is None:
             raise ValueError("You must provide the number of erasures")
 
 

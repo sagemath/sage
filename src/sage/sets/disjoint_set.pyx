@@ -115,6 +115,17 @@ cpdef DisjointSet(arg):
         sage: DisjointSet(SP) == DisjointSet(5)
         True
 
+    The parts of the set partition are preserved (see :issue:`39714`)::
+
+        sage: s = SetPartition([[0, 1, 2, 3]])
+        sage: DisjointSet(s)
+        {{0, 1, 2, 3}}
+        sage: SetPartition(DisjointSet(s)) == s
+        True
+        sage: s = SetPartition([[1, 3], [2, 5], [4]])
+        sage: SetPartition(DisjointSet(s)) == s
+        True
+
     TESTS::
 
         sage: DisjointSet(0)
@@ -149,10 +160,18 @@ cpdef DisjointSet(arg):
         if arg < 0:
             raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
-    elif isinstance(arg, SetPartition):
-        return DisjointSet(arg.base_set())
-    else:
-        return DisjointSet_of_hashables(arg)
+    if isinstance(arg, SetPartition):
+        d = DisjointSet_of_hashables(arg.base_set())
+        for part in arg:
+            it = iter(part)
+            try:
+                first = next(it)
+            except StopIteration:
+                continue
+            for x in it:
+                d.union(first, x)
+        return d
+    return DisjointSet_of_hashables(arg)
 
 cdef class DisjointSet_class(SageObject):
     r"""

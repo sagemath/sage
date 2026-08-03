@@ -849,8 +849,7 @@ cdef class CachedFunction():
         k = self._argument_fixer.fix_to_pos_args_kwds(args, kwds)
         if self.key is None:
             return k
-        else:
-            return self.key(*k[0], **dict(k[1]))
+        return self.key(*k[0], **dict(k[1]))
 
     def __reduce__(self):
         """
@@ -905,7 +904,6 @@ cdef class CachedFunction():
             sage: I = P * [x,y]
             sage: from sage.misc.sageinspect import sage_getdoc
             sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest
-            WARNING: the enclosing module is marked...
                Return the reduced Groebner basis of this ideal.
             ...
 
@@ -1890,8 +1888,7 @@ cdef class CachedMethodCaller(CachedFunction):
         k = self._argument_fixer.fix_to_pos_args_kwds(args, kwds)
         if self.key is None:
             return k
-        else:
-            return self.key(self._instance, *k[0], **dict(k[1]))
+        return self.key(self._instance, *k[0], **dict(k[1]))
 
     def __call__(self, *args, **kwds):
         """
@@ -3066,6 +3063,7 @@ cdef class CachedSpecialMethod(CachedMethod):
                 pass
             D[name] = Caller
         return Caller
+
 
 @decorator_keywords
 def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedMethod:

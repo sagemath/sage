@@ -197,8 +197,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         twist = self._ore._repr_twist()
         if self.domain() is self.codomain():
             return "Set of Pseudoendomorphisms (%s) of %s" % (twist, self.domain())
-        else:
-            return "Set of Pseudomorphism (%s) from %s to %s" % (twist, self.domain(), self.codomain())
+        return "Set of Pseudomorphism (%s) from %s to %s" % (twist, self.domain(), self.codomain())
 
     def ore_ring(self, var='x'):
         r"""
@@ -225,7 +224,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: H.ore_ring('y')
             Ore Polynomial Ring in y over Finite Field in z of size 7^3 twisted by z |--> z^7
         """
-        return self._ore.change_var(var)
+        return self._ore.change_variable_name(var)
 
     def matrix_space(self):
         r"""

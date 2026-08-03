@@ -208,15 +208,13 @@ class WeightSpace_class(Parent):
         if isinstance(arg1, WeightCharacter):
             if arg1.parent() is self:
                 return arg1
-            elif arg1.parent().prime() == self.prime():
+            if arg1.parent().prime() == self.prime():
                 return self._coerce_in_wtchar(arg1)
-            else:
-                raise TypeError("Incompatible type!")
+            raise TypeError("Incompatible type!")
 
         if algebraic:
             return AlgebraicWeight(self, arg1, arg2)
-        else:
-            return ArbitraryWeight(self, arg1, arg2)
+        return ArbitraryWeight(self, arg1, arg2)
 
     @cached_method
     def zero(self):
@@ -262,8 +260,7 @@ class WeightSpace_class(Parent):
         """
         if R.has_coerce_map_from(self.base_ring()):
             return WeightSpace_constructor(self.prime(), R)
-        else:
-            raise TypeError("No coercion map from '%s' to '%s' is defined" % (self.base_ring(), R))
+        raise TypeError("No coercion map from '%s' to '%s' is defined" % (self.base_ring(), R))
 
     def _coerce_map_from_(self, other):
         r"""
@@ -296,8 +293,7 @@ class WeightSpace_class(Parent):
         """
         if isinstance(x, AlgebraicWeight):
             return AlgebraicWeight(self, x.k(), x.chi().change_ring(self.base_ring()))
-        else:
-            return ArbitraryWeight(self, self.base_ring()(x.w()), x.teichmuller_type())
+        return ArbitraryWeight(self, self.base_ring()(x.w()), x.teichmuller_type())
 
 
 class WeightCharacter(Element):
@@ -465,8 +461,7 @@ class WeightCharacter(Element):
         """
         if self.is_trivial():
             return ZZ(0)
-        else:
-            return 1 / self.Lvalue()
+        return 1 / self.Lvalue()
 
 
 class AlgebraicWeight(WeightCharacter):
@@ -636,8 +631,7 @@ class AlgebraicWeight(WeightCharacter):
         if self._p == 2:
             if self.is_even():
                 return IntegerModRing(2).zero()
-            else:
-                return IntegerModRing(2).one()
+            return IntegerModRing(2).one()
         m = IntegerModRing(self._p).multiplicative_generator()
         x = [y for y in IntegerModRing(self._chi.modulus()) if y == m and y**(self._p - 1) == 1]
         if len(x) != 1:
@@ -681,8 +675,7 @@ class AlgebraicWeight(WeightCharacter):
             return -self._chi.bernoulli(self._k) / self._k
         if self.is_trivial():
             return Infinity
-        else:
-            raise NotImplementedError("Don't know how to compute value of this L-function")
+        raise NotImplementedError("Don't know how to compute value of this L-function")
 
 
 class ArbitraryWeight(WeightCharacter):

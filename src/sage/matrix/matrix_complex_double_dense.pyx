@@ -17,7 +17,6 @@ We deal with the case of zero rows or zero columns::
 
 TESTS::
 
-    sage: # needs sage.symbolic
     sage: a = matrix(CDF,2,[i+(4-i)*I for i in range(4)], sparse=False)
     sage: TestSuite(a).run()
     sage: Mat(CDF,0,0).zero_matrix().inverse()
@@ -54,7 +53,6 @@ cdef class Matrix_complex_double_dense(Matrix_double_dense):
 
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: m = Matrix(CDF, [[1,2*I],[3+I,4]])
         sage: m**2
         [-1.0 + 6.0*I       10.0*I]

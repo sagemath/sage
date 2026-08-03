@@ -807,19 +807,6 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             Graphics object consisting of 1 graphics primitive
             sage: C.plot(patch=1)
             Graphics object consisting of 1 graphics primitive
-
-        A hyperelliptic curve::
-
-            sage: # needs sage.plot
-            sage: P.<x> = QQ[]
-            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
-            sage: C = HyperellipticCurve(f)
-            sage: C.plot()
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=0)
-            Graphics object consisting of 1 graphics primitive
-            sage: C.plot(patch=1)
-            Graphics object consisting of 1 graphics primitive
         """
         # if user has not specified a favorite affine patch, take the
         # one avoiding "infinity", i.e. the one corresponding to the
@@ -906,8 +893,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         if P is None:
             poly = self.defining_polynomial()
             return poly.parent().ideal(poly.gradient()+[poly]).dimension() > 0
-        else:
-            return not self.is_smooth(P)
+        return not self.is_smooth(P)
 
     def degree(self):
         r"""
@@ -1471,12 +1457,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             K = number_field_elements_from_algebraics(L)[0]
             if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
-            elif isinstance(F, RationalField):
+            if isinstance(F, RationalField):
                 return F.embeddings(K)[0]
-            else:
-                # make sure the defining polynomial variable names are the same for K, N
-                N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
-                return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
+            # make sure the defining polynomial variable names are the same for K, N
+            N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
+            return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
         if self.base_ring() not in NumberFields():
             raise NotImplementedError("the base ring of this curve must be a number field")
         if not self.is_irreducible():
@@ -1634,7 +1619,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x^2 + y^2)
-            sage: C.genus()  # indirect test
+            sage: C.genus()  # indirect doctest
             -1
         """
         return self.defining_ideal().genus()
@@ -1835,8 +1820,8 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         f = ring(self.affine_patch(2).defining_polynomial())
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
-        else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
-            return fundamental_group(f, projective=False)
+        # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
+        return fundamental_group(f, projective=False)
 
     def rational_parameterization(self):
         r"""
@@ -2132,6 +2117,19 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
             sage: C.riemann_roch_basis(D)
             [(-2*x + y)/(x + y), (-x + z)/(x + y)]
 
+        TESTS:
+
+        We check that issue:`41793` is fixed:
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: C.riemann_roch_basis(G)
+            [1, Z/X, Y*Z/X^2, Z^2/X^2]
+
         .. NOTE::
 
             Currently this only works over prime field and divisors
@@ -2378,9 +2376,11 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         Sampling from points on a hyperelliptic curve::
 
-            sage: R.<x,y> = GF(13)[]
-            sage: C = HyperellipticCurve(y^2 + 3*x^2*y - (x^5 + x + 1))
-            sage: P = C.random_element(); P  # random
+            sage: R.<x> = GF(13)[]
+            sage: f = x^5 + x + 1
+            sage: h = 3*x^2
+            sage: C = HyperellipticCurve(f, h)
+            sage: P = C.random_point(); P  # random
             (0 : 1 : 0)
             sage: P in C
             True

@@ -42,16 +42,15 @@ class GroupMixinLibGAP:
         """
         if parent(elt) is self:
             return True
-        elif isinstance(elt, GapElement):
+        if isinstance(elt, GapElement):
             return elt in self.gap()
-        elif isinstance(elt, ElementLibGAP):
+        if isinstance(elt, ElementLibGAP):
             return elt.gap() in self.gap()
-        else:
-            try:
-                elt2 = self(elt)
-            except Exception:
-                return False
-            return elt == elt2
+        try:
+            elt2 = self(elt)
+        except Exception:
+            return False
+        return elt == elt2
 
     def is_abelian(self) -> bool:
         r"""

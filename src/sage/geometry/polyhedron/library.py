@@ -518,7 +518,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: octagon = polytopes.regular_polygon(8)
             sage: octagon
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 8 vertices
@@ -804,7 +803,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: d12 = polytopes.dodecahedron()
             sage: d12.f_vector()
             (1, 20, 30, 12, 1)
@@ -1320,7 +1318,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: sc_inexact = polytopes.snub_cube(exact=False); sc_inexact
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 24 vertices
             sage: sc_inexact.f_vector()
@@ -1515,10 +1512,9 @@ class Polytopes:
 
         if exact:
             return Polyhedron(vertices=verts, base_ring=K, backend=backend)
-        else:
-            from sage.rings.real_mpfr import RR
-            verts = [(RR(x), RR(y), RR(z)) for x, y, z in verts]
-            return Polyhedron(vertices=verts, backend=backend)
+        from sage.rings.real_mpfr import RR
+        verts = [(RR(x), RR(y), RR(z)) for x, y, z in verts]
+        return Polyhedron(vertices=verts, backend=backend)
 
     def icosidodecahedron_V2(self, exact=True, base_ring=None, backend=None):
         r"""
@@ -2489,7 +2485,6 @@ class Polytopes:
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: h_4_2 = polytopes.hypersimplex(4, 2)
             sage: h_4_2
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 6 vertices
@@ -2499,7 +2494,6 @@ class Polytopes:
             2/3*t^3 + 2*t^2 + 7/3*t + 1
             sage: TestSuite(h_4_2).run()
 
-            sage: # needs sage.combinat
             sage: h_7_3 = polytopes.hypersimplex(7, 3, project=True)
             sage: h_7_3
             A 6-dimensional polyhedron in RDF^6 defined as the convex hull of 35 vertices
@@ -2583,24 +2577,23 @@ class Polytopes:
         if project:
             verts = project_points(*verts)
             return Polyhedron(vertices=verts, backend=backend)
-        else:
-            parent = Polyhedra(ZZ, n, backend=backend)
+        parent = Polyhedra(ZZ, n, backend=backend)
 
-            def tri(m):
-                return (m * (m + 1)) // 2
+        def tri(m):
+            return (m * (m + 1)) // 2
 
-            # Each proper `S \subset [n]` corresponds exactly to
-            # a facet that minimizes the coordinates in `S`.
-            # The minimal sum for `m` coordinates is `(m*(m+1))/2`.
-            ieqs = ((-tri(sum(x)),) + x
-                    for x in itertools.product([0, 1], repeat=n)
-                    if 0 < sum(x) < n)
+        # Each proper `S \subset [n]` corresponds exactly to
+        # a facet that minimizes the coordinates in `S`.
+        # The minimal sum for `m` coordinates is `(m*(m+1))/2`.
+        ieqs = ((-tri(sum(x)),) + x
+                for x in itertools.product([0, 1], repeat=n)
+                if 0 < sum(x) < n)
 
-            # Adding the defining equality.
-            eqns = ((-tri(n),) + tuple(1 for _ in range(n)),)
+        # Adding the defining equality.
+        eqns = ((-tri(n),) + tuple(1 for _ in range(n)),)
 
-            return parent([verts, [], []], [ieqs, eqns],
-                          Vrep_minimal=True, Hrep_minimal=True, pref_rep='Hrep')
+        return parent([verts, [], []], [ieqs, eqns],
+                      Vrep_minimal=True, Hrep_minimal=True, pref_rep='Hrep')
 
     def generalized_permutahedron(self, coxeter_type, point=None, exact=True, regular=False, backend=None):
         r"""
@@ -2637,7 +2630,6 @@ class Polytopes:
         You can put the starting point along the hyperplane of the first
         generator::
 
-            sage: # needs sage.combinat
             sage: perm_a3_011 = polytopes.generalized_permutahedron(['A',3], [0,1,1])
             sage: perm_a3_011
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 12 vertices
@@ -2731,7 +2723,6 @@ class Polytopes:
 
         Larger examples take longer::
 
-            sage: # needs sage.combinat sage.rings.number_field
             sage: perm_a3_reg = polytopes.generalized_permutahedron(    # long time
             ....:     ['A',3], regular=True); perm_a3_reg
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 24 vertices
@@ -2744,7 +2735,6 @@ class Polytopes:
         It is faster with the backend ``'number_field'``, which internally uses an embedded
         number field instead of doing the computations directly with the base ring (``AA``)::
 
-            sage: # needs sage.combinat sage.rings.number_field
             sage: perm_a3_reg_nf = polytopes.generalized_permutahedron(
             ....:    ['A',3], regular=True, backend='number_field'); perm_a3_reg_nf
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 24 vertices
@@ -3207,10 +3197,9 @@ class Polytopes:
 
             return Polyhedron(vertices=verts, base_ring=base_ring, backend=backend)
 
-        elif construction == 'as_permutahedron':
+        if construction == 'as_permutahedron':
             return self.generalized_permutahedron(['H', 4], point=[0, 0, 0, 1], exact=exact, backend=backend, regular=True)
-        else:
-            raise ValueError("construction (={}) must be either 'coxeter' or 'as_permutahedron' ".format(construction))
+        raise ValueError("construction (={}) must be either 'coxeter' or 'as_permutahedron' ".format(construction))
 
     def hypercube(self, dim, intervals=None, backend=None):
         r"""

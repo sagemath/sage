@@ -36,10 +36,9 @@ class FacadeSets(CategoryWithAxiom):
         import sage.categories.examples.facade_sets as examples
         if choice == "union":
             return examples.IntegersCompletion()
-        elif choice == 'subset':
+        if choice == 'subset':
             return examples.PositiveIntegerMonoid()
-        else:
-            raise TypeError("choice should be 'union' or 'subset'")
+        raise TypeError("choice should be 'union' or 'subset'")
 
     class ParentMethods:
 
@@ -92,15 +91,14 @@ class FacadeSets(CategoryWithAxiom):
             """
             if self.is_parent_of(element):
                 return element
-            else:
-                parents = self.facade_for()
-                if parents is True:
-                    raise NotImplementedError
-                for parent in self.facade_for():
-                    try:
-                        return parent(element)
-                    except Exception:
-                        pass
+            parents = self.facade_for()
+            if parents is True:
+                raise NotImplementedError
+            for parent in self.facade_for():
+                try:
+                    return parent(element)
+                except Exception:
+                    pass
             raise ValueError("Can't coerce `%s` in any parent `%s` is a facade for" % (element, self))
 
         def facade_for(self):

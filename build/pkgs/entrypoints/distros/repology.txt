@@ -1,2 +1,0 @@
-entrypoints
-python:entrypoints

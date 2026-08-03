@@ -239,11 +239,11 @@ class GhLabelSynchronizer:
             return self._bot_login
         from subprocess import run
         cmd = 'gh version'
-        capt = run(cmd, shell=True, capture_output=True)
+        capt = run(cmd, shell=True, capture_output=True, check=False)
         self._gh_version = str(capt.stdout).split('\\n')[0]
         info('version: %s' % self._gh_version)
         cmd = 'gh auth status'
-        capt = run(cmd, shell=True, capture_output=True)
+        capt = run(cmd, shell=True, capture_output=True, check=False)
         errtxt = str(capt.stderr)
         outtxt = str(capt.stdout)
         debug('auth status err: %s' % errtxt)
@@ -315,8 +315,7 @@ class GhLabelSynchronizer:
                 return AuthorAssociation(ass).is_valid()
             info('Actor %s did not create latest review' % self._actor)
             return False
-        else:
-            return self.is_auth_team_member(self._actor)
+        return self.is_auth_team_member(self._actor)
 
     def query_multi_pages(self, path_args, since=None):
         r"""
@@ -393,7 +392,6 @@ class GhLabelSynchronizer:
         """
         if self._author is not None:
             return self._author
-        data = self.view('author')
         self._author = self.view('author')['login']
         info('Author of %s: %s' % (self._issue, self._author))
         return self._author
@@ -813,7 +811,7 @@ class GhLabelSynchronizer:
         r"""
         Post a comment that the given label must not be removed any more.
         """
-        if type(item) == Status:
+        if isinstance(item, Status):
             sel_list = 'status'
         else:
             sel_list = 'priority'

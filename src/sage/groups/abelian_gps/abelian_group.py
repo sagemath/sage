@@ -885,6 +885,18 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         GapPackage("polycyclic", spkg='gap_packages').require()
         return 'AbelianPcpGroup(%s)' % list(self.gens_orders())
 
+    def _snappy_(self, snappy):
+        r"""
+        Return ``self`` as in interface wrapper object for SnapPy.
+
+        EXAMPLES::
+
+           sage: A = AbelianGroup([5,15,0,0])
+           sage: snappy(A)                      # optional snappy
+           Z/5 + Z/15 + Z + Z
+        """
+        return snappy.AbelianGroup(elementary_divisors=list(self.gens_orders()))
+
     def gen(self, i=0):
         """
         The `i`-th generator of the abelian group.
@@ -1369,9 +1381,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         if not self.is_finite():
             if order is None:
                 return infinity
-            else:
-                # Finite order subgroups are all contained in the torsion subgroup
-                return self.torsion_subgroup().number_of_subgroups(order=order)
+            # Finite order subgroups are all contained in the torsion subgroup
+            return self.torsion_subgroup().number_of_subgroups(order=order)
 
         from itertools import chain
         from collections import defaultdict
@@ -1879,7 +1890,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         """
         return self._gens
 
-    def gen(self, n):
+    def gen(self, n=0):
         """
         Return the `n`-th generator of this subgroup.
 

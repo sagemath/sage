@@ -53,7 +53,7 @@ jobs:
       targets: build
       targets_optional: ptestlong
       tox_system_factors: >-
-          ["ubuntu-jammy"]
+          ["ubuntu-noble"]
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
@@ -83,11 +83,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
+
+      - name: Install Python packages
+        run: |
+          pip install setuptools
 
       - name: Install dependencies
         run: |

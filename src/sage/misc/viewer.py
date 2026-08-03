@@ -26,6 +26,7 @@ Functions and classes
 """
 
 import platform
+from sage.features import Executable
 from sage.structure.sage_object import SageObject
 
 
@@ -55,7 +56,15 @@ def default_viewer(viewer=None):
         ValueError: Unknown type of viewer: jpg.
     """
     import os
-    from shutil import which
+
+    executable_features = {}
+
+    def executable_is_present(cmd):
+        feature = executable_features.get(cmd)
+        if feature is None:
+            feature = Executable(name=cmd, executable=cmd)
+            executable_features[cmd] = feature
+        return feature.is_present()
 
     if isinstance(viewer, str):
         viewer = viewer.lower()
@@ -74,7 +83,7 @@ def default_viewer(viewer=None):
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
 
-    elif which('xdg-open'):
+    elif executable_is_present('xdg-open'):
         # On other OS'es try xdg-open if present.
         # See http://portland.freedesktop.org/xdg-utils-1.0.
         BROWSER = 'xdg-open'
@@ -89,7 +98,7 @@ def default_viewer(viewer=None):
         except KeyError:
             BROWSER = 'less'  # silly default; lets hope it doesn't come to this!
             for cmd in ['firefox', 'konqueror', 'mozilla', 'mozilla-firefox']:
-                if which(cmd):
+                if executable_is_present(cmd):
                     BROWSER = cmd
                     break
         DVI_VIEWER = BROWSER
@@ -101,27 +110,26 @@ def default_viewer(viewer=None):
             DVI_VIEWER = os.environ['DVI_VIEWER']
         except KeyError:
             for cmd in ['xdvi', 'kdvi']:
-                if which(cmd):
+                if executable_is_present(cmd):
                     DVI_VIEWER = cmd
                     break
         try:
             PDF_VIEWER = os.environ['PDF_VIEWER']
         except KeyError:
             for cmd in ['acroread', 'xpdf']:
-                if which(cmd):
+                if executable_is_present(cmd):
                     PDF_VIEWER = cmd
                     break
 
     if viewer is None or viewer.startswith('browse'):
         return BROWSER
-    elif viewer.startswith('dvi'):
+    if viewer.startswith('dvi'):
         return DVI_VIEWER
-    elif viewer.startswith('png'):
+    if viewer.startswith('png'):
         return PNG_VIEWER
-    elif viewer.startswith('pdf'):
+    if viewer.startswith('pdf'):
         return PDF_VIEWER
-    else:
-        raise ValueError('Unknown type of viewer: {}.'.format(viewer))
+    raise ValueError('Unknown type of viewer: {}.'.format(viewer))
 
 
 # _viewer_prefs: a dictionary holding global preferences for viewers.
@@ -284,11 +292,11 @@ class Viewer(SageObject):
 
         if x is None or x.startswith('browse'):
             return self.browser()
-        elif x.startswith('dvi'):
+        if x.startswith('dvi'):
             return self.dvi_viewer()
-        elif x.startswith('png'):
+        if x.startswith('png'):
             return self.png_viewer()
-        elif x.startswith('pdf'):
+        if x.startswith('pdf'):
             return self.pdf_viewer()
 
 

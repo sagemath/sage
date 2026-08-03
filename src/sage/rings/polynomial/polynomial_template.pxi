@@ -214,7 +214,6 @@ cdef class Polynomial_template(Polynomial):
         The following has been a problem in a preliminary version of
         :issue:`12313`::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
             sage: P.<x> = K[]
             sage: del P
@@ -668,8 +667,7 @@ cdef class Polynomial_template(Polynomial):
         #assert(r._parent(pari(self)**ee) == r)
         if recip:
             return ~r
-        else:
-            return r
+        return r
 
     def __copy__(self):
         """

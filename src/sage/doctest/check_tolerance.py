@@ -171,10 +171,9 @@ def complex_match_to_real_and_imag(m: re.Match) -> tuple[str, str]:
         real_imag_unit = m.group('real_imag_unit')
         if real_imag_coeff is not None:
             return (real, real_imag_coeff)
-        elif real_imag_unit is not None:
+        if real_imag_unit is not None:
             return (real, real_imag_unit + '1')
-        else:
-            return (real, '0')
+        return (real, '0')
     only_imag = m.group('only_imag')
     if only_imag is not None:
         return ('0', only_imag)
@@ -195,8 +194,7 @@ def complex_star_repl(m: re.Match):
             '*',
             (m.group('unit_imag_post') or '').strip(),
         ])
-    else:
-        return '*'
+    return '*'
 
 
 def check_tolerance_complex_domain(want: MarkedOutput, got: str) -> tuple[str, str]:

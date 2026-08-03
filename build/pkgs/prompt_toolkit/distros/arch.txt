@@ -1,1 +1,1 @@
-python-importlib_resources
+python-prompt_toolkit

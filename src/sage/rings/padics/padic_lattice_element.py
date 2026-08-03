@@ -423,7 +423,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         prec = self.precision_absolute()
         if val < prec:
             return val
-        elif secure:
+        if secure:
             raise PrecisionError("not enough precision")
         else:
             return prec
@@ -484,8 +484,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         """
         if (self - other).is_zero():
             return rich_to_bool(op, 0)
-        else:
-            return richcmp(QQ(self.lift()), QQ(other.lift()), op)
+        return richcmp(QQ(self.lift()), QQ(other.lift()), op)
 
     def is_equal_to(self, other, prec):
         r"""
@@ -1199,8 +1198,7 @@ class pAdicLatticeElement(pAdicGenericElement):
                 start_val = 0
         if start_val > val:
             return expansion[start_val-val:]
-        else:
-            return (val-start_val)*[ZZ(0)] + expansion
+        return (val-start_val)*[ZZ(0)] + expansion
 
     def dist(self, other):
         r"""
@@ -1229,8 +1227,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         p = self._parent.prime()
         if x.is_zero():
             return ZZ(0)
-        else:
-            return p**(-x.valuation())
+        return p**(-x.valuation())
 
 
 class pAdicLatticeCapElement(pAdicLatticeElement):
@@ -1306,8 +1303,7 @@ class pAdicLatticeFloatElement(pAdicLatticeElement):
         cap = self._precision.internal_prec() + self._value.valuation()
         if prec is None:
             return cap
-        else:
-            return min(cap, prec)
+        return min(cap, prec)
 
     def _is_exact_zero(self):
         r"""

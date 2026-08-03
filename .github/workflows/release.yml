@@ -33,29 +33,23 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
-      - name: make dist (--disable-download-from-upstream-url)
-        id: make_dist
+      - name: Configure with --enable-download-from-upstream-url
         run: |
-          ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
-        env:
-          MAKE: make -j8
-      - name: make download (--disable-download-from-upstream-url)
-        id: make_download
-        run: |
-          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
-        env:
-          MAKE: make -j8
-      - name: Reconfigure with --enable-download-from-upstream-url
-        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
-        run: |
+          # Run "bootstrap -s" so that the configure tarball
+          # (configure-$(git rev-parse HEAD).tar.gz) is generated and saved
+          # locally to upstream/. Otherwise "make dist" below tries to
+          # download it from the Sage mirrors / GitHub release assets, which
+          # fails for unreleased commits (e.g. on workflow_dispatch / PR runs).
+          ./bootstrap -s
           ./configure
       - name: make dist (--enable-download-from-upstream-url)
-        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        id: make_dist
+        if: success() || failure()
         run: |
           make dist
         env:
@@ -70,7 +64,7 @@ jobs:
         if: success() || failure()
         run: |
           rm -f upstream/*do-not-distribute*
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
           path: |
@@ -81,13 +75,16 @@ jobs:
   sdists:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           python-version: 3.12
           miniforge-version: latest
@@ -104,15 +101,13 @@ jobs:
           python -m build --sdist --no-isolation --outdir dist .
           ls -l dist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           path: "dist/*.tar.gz"
           name: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
           skip-existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true'
@@ -124,11 +119,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: release_dist
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
@@ -152,14 +147,16 @@ jobs:
           echo "$release_notes" > release_notes
 
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
+          preserve_order: true
           files: |
             dist/*
             upstream/*
           token: ${{ secrets.RELEASE_CREATION_TOKEN }}
           body_path: release_notes
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          max_retries: 3
 
   build_wheels:
     # Temporarily disabled due to build errors
@@ -181,7 +178,6 @@ jobs:
             arch: arm64
             build: macosx
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
@@ -198,7 +194,7 @@ jobs:
       # Use 'build', not 'pip wheel'
       CIBW_BUILD_FRONTEND: build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up QEMU
         if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
@@ -206,7 +202,7 @@ jobs:
         with:
           platforms: all
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist
@@ -247,7 +243,7 @@ jobs:
               (cd unpacked && tar xfz - ) < $sdist
           done
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
@@ -256,11 +252,14 @@ jobs:
     # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
     needs: build_wheels
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
+      CAN_DEPLOY: ${{ github.event_name != 'pull_request' }}
     steps:
 
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           pattern: "*-*-*-wheels"
           path: wheelhouse
@@ -268,8 +267,6 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
           packages-dir: wheelhouse/
           skip-existing: true
           verbose: true

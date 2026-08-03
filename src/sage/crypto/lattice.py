@@ -26,7 +26,7 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 
 
 def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
-                quotient=None, dual=False, ntl=False, lattice=False):
+                quotient=None, dual=False, ntl=False, lattice=False, mat_impl=None):
     r"""
     This function generates different types of integral lattice bases
     of row vectors relevant in cryptography.
@@ -71,6 +71,9 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
       :class:`FreeModule_submodule_with_basis_integer` object instead
       of an integer matrix representing the basis
 
+    - ``mat_impl`` -- an implementation type for matrices mod `q`; main options
+      are ``"linbox"`` and ``"flint"``.
+
     OUTPUT: ``B`` a unique size-reduced triangular (primal: lower_left,
     dual: lower_right) basis of row vectors for the lattice in question
 
@@ -106,40 +109,40 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     Ideal bases with quotient `x^n-1`, `m=2*n` are NTRU bases::
 
-        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4 - 1)          # needs sage.symbolic
+        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4 - 1)
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-3 -3 -2  4  1  0  0  0]
-        [ 4 -3 -3 -2  0  1  0  0]
-        [-2  4 -3 -3  0  0  1  0]
-        [-3 -2  4 -3  0  0  0  1]
+        [-5  3  2  5  1  0  0  0]
+        [ 5 -5  3  2  0  1  0  0]
+        [ 2  5 -5  3  0  0  1  0]
+        [ 3  2  5 -5  0  0  0  1]
 
     Ideal bases also work with polynomials::
 
         sage: R.<t> = PolynomialRing(ZZ)
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4 - 1)        # needs sage.libs.pari
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4 - 1)
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-3  4  1  4  1  0  0  0]
-        [ 4 -3  4  1  0  1  0  0]
-        [ 1  4 -3  4  0  0  1  0]
-        [ 4  1  4 -3  0  0  0  1]
+        [-5  1  0 -4  1  0  0  0]
+        [-4 -5  1  0  0  1  0  0]
+        [ 0 -4 -5  1  0  0  1  0]
+        [ 1  0 -4 -5  0  0  0  1]
 
     Cyclotomic bases with n=2^k are SWIFFT bases::
 
-        sage: sage.crypto.gen_lattice(type='cyclotomic', seed=42)                       # needs sage.libs.pari
+        sage: sage.crypto.gen_lattice(type='cyclotomic', seed=42)
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-3 -3 -2  4  1  0  0  0]
-        [-4 -3 -3 -2  0  1  0  0]
-        [ 2 -4 -3 -3  0  0  1  0]
-        [ 3  2 -4 -3  0  0  0  1]
+        [-5  3  2  5  1  0  0  0]
+        [-5 -5  3  2  0  1  0  0]
+        [-2 -5 -5  3  0  0  1  0]
+        [-3 -2 -5 -5  0  0  0  1]
 
     Dual modular bases are related to Regev's famous public-key
     encryption [Reg2005]_::
@@ -240,7 +243,10 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     A = identity_matrix(ZZ_q, n)
 
     if type == 'random' or type == 'modular':
-        R = MatrixSpace(ZZ_q, m-n, n)
+        from sage.matrix.matrix_modn_dense_double import MAX_MODULUS
+        if mat_impl is None and q < MAX_MODULUS:
+            mat_impl = 'linbox'
+        R = MatrixSpace(ZZ_q, m-n, n, implementation=mat_impl)
         A = A.stack(R.random_element())
 
     elif type == 'ideal':
@@ -285,8 +291,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     def minrep(a):
         if abs(a-q) < abs(a):
             return a-q
-        else:
-            return a
+        return a
     A_prime = A[n:m].lift().apply_map(minrep)
 
     if not dual:
@@ -304,8 +309,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     if ntl:
         return B._ntl_()
-    elif lattice:
+    if lattice:
         from sage.modules.free_module_integer import IntegerLattice
         return IntegerLattice(B)
-    else:
-        return B
+    return B

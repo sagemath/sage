@@ -227,8 +227,7 @@ def get_flag(t=None, subsystem=None):
         if subsystem in ["arithmetic", "elliptic_curve",
                          "linear_algebra", "number_field", "polynomial"]:
             return _proof_prefs._require_proof[subsystem]
-        else:
-            return _proof_prefs._require_proof["other"]
+        return _proof_prefs._require_proof["other"]
     return t
 
 

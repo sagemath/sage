@@ -258,18 +258,24 @@ subgroup::
 
 import itertools
 
-from .combinat import CombinatorialElement
-from .integer_vector import IntegerVectors
-from .partition import (Partition, Partitions, Partitions_n, _Partitions,
-                        RegularPartitions_all, RegularPartitions_n)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.combinat.combinat import CombinatorialElement
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.partition import (
+    Partition,
+    Partitions,
+    Partitions_n,
+    RegularPartitions_all,
+    RegularPartitions_n,
+    _Partitions,
+)
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer import Integer
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -441,8 +447,7 @@ class PartitionTuple(CombinatorialElement):
 
         if len(mu) == 1:
             return _Partitions(mu[0])
-        else:
-            return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
+        return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
 
     def __init__(self, parent, mu):
         """
@@ -809,8 +814,7 @@ class PartitionTuple(CombinatorialElement):
             diag.append(line.rstrip())
         if PartitionTuples.options('convention') == "English":
             return '\n'.join(map(str, diag))
-        else:
-            return '\n'.join(map(str, diag[::-1]))
+        return '\n'.join(map(str, diag[::-1]))
 
     ferrers_diagram = diagram
 
@@ -1435,8 +1439,7 @@ class PartitionTuple(CombinatorialElement):
             else:
                 mu[k][r] += 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not an addable cell" % ((k, r, c),))
+        raise ValueError("%s is not an addable cell" % ((k, r, c),))
 
     def remove_cell(self, k, r, c):
         """
@@ -1454,8 +1457,7 @@ class PartitionTuple(CombinatorialElement):
             mu = self.to_list()
             mu[k][r] -= 1
             return PartitionTuple(mu)
-        else:
-            raise ValueError("%s is not a removable cell" % ((k, r, c),))
+        raise ValueError("%s is not a removable cell" % ((k, r, c),))
 
     def to_list(self):
         r"""
@@ -1802,6 +1804,11 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
         sage: 1 in PartitionTuples()
         False
+
+    Check pickling::
+
+        sage: loads(dumps( PartitionTuples(7,3) ))
+        Partition tuples of level 7 and size 3
     """
 
     @staticmethod
@@ -1851,7 +1858,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
                 return PartitionTuples_size(size)
             return RegularPartitionTuples_size(size, regular)
 
-        elif level == 1:
+        if level == 1:
             if isinstance(regular, (list, tuple)):
                 regular = regular[0]
             if size is None:
@@ -1990,7 +1997,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
         """
         if isinstance(r,(int,Integer)):
             return self.unrank(r)
-        elif isinstance(r,slice):
+        if isinstance(r,slice):
             start = 0 if r.start is None else r.start
             stop = r.stop
             if stop is None and not self.is_finite():
@@ -2475,25 +2482,6 @@ class PartitionTuples_level_size(PartitionTuples):
         eta = pari(f'Ser(x,x,{self.size()})').eta()
         return ZZ((1 / eta**self.level()).polcoef(self.size(), pari('x')))
 
-    def __setstate__(self, state):
-        r"""
-        In order to maintain backwards compatibility and be able to unpickle a
-        old pickle from PartitionTuples_nk we have to override the default
-        ``__setstate__``.
-
-        TESTS::
-
-            sage: loads(b"x\x9cM\x90\xcdN\xc30\x0c\x80\xd5\xc1\x06\xeb\x80\xf1{\xe0\r\xe0\xd2\x0b\x07\x1e\x02)B\x88\x9c-7\xb5\xba\xa8MR')\x12\x07$8p\xe0\xadq\x996q\xb1b\xfb\xb3\xf59\x9f3\x93\xb0\xa5\xca\x04W[\x8f\xb9\x1a0f\x9bm\xf0\xe5\xf3\xee\xf5:\x0e=%\xf0]\xc9\xc5\xfd\x17\xcf>\xf8\xe0N_\x83\xf5\xd2\xc5\x1e\xd0L\x10\xf46e>T\xba\x04r55\x8d\xf5-\xcf\x95p&\xf87\x8a\x19\x1c\xe5Mh\xc0\xa3#^(\xbd\x00\xd3`F>Rz\t\x063\xb5!\xbe\xf3\xf1\xd4\x98\x90\xc4K\xa5\x0b\xbf\xb5\x8b\xb2,U\xd6\x0bD\xb1t\xd8\x11\xec\x12.u\xf1\xf0\xfd\xc2+\xbd\x82\x96<E\xcc!&>Qz\x0e5&\xe2S\xa5\xd70X\xd3\xf5\x04\xe2\x91\xc4\x95\xcf\x9e\n\x11\xa3\x9e\x1c\xf9<\t\xa6\x1cG#\x83\xbcV\xfaf\x7f\xd9\xce\xfc\xef\xb4s\xa5o\xf7#\x13\x01\x03\xa6$!J\x81/~t\xd1m\xc4\xe5Q\\.\xff\xfd\x8e\t\x14\rmW\\\xa9\xb1\xae~\x01/\x8f\x85\x02")
-            Partition tuples of level 7 and size 3
-            sage: loads(dumps( PartitionTuples(7,3) ))  # indirect doctest for unpickling a Tableau element
-            Partition tuples of level 7 and size 3
-        """
-        if isinstance(state, dict):   # for old pickles from Tableau_class
-            parts = PartitionTuples(state['k'], state['n'])
-            self.__class__ = parts.__class__
-            self.__dict__ = parts.__dict__
-        else:
-            super().__setstate__(state)
 
 ###############################################################################
 # Regular partition tuples

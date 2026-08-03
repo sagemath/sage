@@ -44,7 +44,6 @@ We see the differences in :meth:`~sage.geometry.hyperplane_arrangement.arrangeme
 
 Also in meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.cone`::
 
-    sage: # needs sage.combinat
     sage: a.<x,y,z> = hyperplane_arrangements.semiorder(3)
     sage: H.<x,y,z> = OrderedHyperplaneArrangements(QQ)
     sage: a1 = H(a)
@@ -54,7 +53,6 @@ Also in meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrang
 
 And in :meth:`~sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement.restriction`::
 
-    sage: # needs sage.graphs
     sage: A.<u, x, y, z> = hyperplane_arrangements.braid(4)
     sage: L.<u, x, y, z> = OrderedHyperplaneArrangements(QQ)
     sage: A1 = L(A)
@@ -158,7 +156,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             ...
             TypeError: the arrangement is not projective
 
-            sage: # needs sage.graphs
             sage: A0.<u,x,y,z> = hyperplane_arrangements.braid(4); A0
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
             sage: L.<u,x,y,z> = OrderedHyperplaneArrangements(QQ)
@@ -177,7 +174,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: T1.isomorphism(M2)
             {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
 
-            sage: # needs sage.combinat
             sage: a0 = hyperplane_arrangements.semiorder(3); a0
             Arrangement of 6 hyperplanes of dimension 3 and rank 2
             sage: L.<t0, t1, t2> = OrderedHyperplaneArrangements(QQ)

@@ -7,6 +7,99 @@ Sage.
 
 
 .. index::
+   pair: calculus; assumptions
+
+Assumptions
+===========
+
+By default a symbolic variable is as general as possible: it may stand
+for a positive, negative, or complex value. Many calculus results hold
+only under extra hypotheses, and Sage will not apply them unless you
+say so. Use :func:`~sage.symbolic.assumptions.assume` to attach a
+hypothesis to a variable, ``assumptions()`` to list what is currently
+assumed, and :func:`~sage.symbolic.assumptions.forget` to remove
+assumptions again. For example, `\sqrt{x^2} = x` holds only for
+positive `x`::
+
+    sage: assume(x > 0)
+    sage: bool(sqrt(x^2) == x)
+    True
+    sage: assumptions()
+    [x > 0]
+    sage: forget()
+    sage: bool(sqrt(x^2) == x)
+    False
+
+Assumptions decide integrals and sums whose answers depend on a sign
+or range condition::
+
+    sage: n = var('n')
+    sage: assume(n + 1 > 0)
+    sage: integral(x^n, x)
+    x^(n + 1)/(n + 1)
+    sage: forget()
+
+::
+
+    sage: var('q, a, k')
+    (q, a, k)
+    sage: assume(abs(q) < 1)
+    sage: sum(a*q^k, k, 0, oo)
+    -a/(q - 1)
+    sage: forget()
+
+A variable can also be declared to have a property such as
+``'integer'``, ``'real'``, ``'positive'``, or ``'even'``::
+
+    sage: n = var('n')
+    sage: assume(n, 'integer')
+    sage: sin(n*pi)
+    0
+    sage: forget()
+
+Pass each relationship as a separate assumption. A chained comparison is
+not an error, but it is silently truncated to its first relation (Python
+evaluates ``0 < x < 1`` as ``(0 < x) and (x < 1)``, and the undecided
+first comparison short-circuits the ``and``), so only ``0 < x`` gets
+recorded::
+
+    sage: assume(0 < x < 1)
+    sage: assumptions()
+    [0 < x]
+    sage: forget()
+    sage: assume(0 < x, x < 1)
+    sage: assumptions()
+    [0 < x, x < 1]
+    sage: forget()
+
+For a temporary hypothesis, use
+:func:`~sage.symbolic.assumptions.assuming` in a ``with`` block: the
+assumption is in force inside the block and automatically forgotten
+afterwards::
+
+    sage: solve(x^2 == 4, x)
+    [x == -2, x == 2]
+    sage: with assuming(x > 0):
+    ....:     solve(x^2 == 4, x)
+    [x == 2]
+    sage: assumptions()
+    []
+
+A restriction can also be built into a variable when it is created,
+with the ``domain`` keyword (this too registers an assumption)::
+
+    sage: t = var('t', domain='positive')
+    sage: abs(t)
+    t
+    sage: forget()
+
+If you have used Maple's ``assume``/``about`` or Mathematica's
+``Assuming``, this is the corresponding mechanism in Sage; see
+:mod:`sage.symbolic.assumptions` for the full reference, including
+:func:`~sage.symbolic.assumptions.forget` of individual assumptions.
+
+
+.. index::
    pair: calculus; differentiation
 
 Differentiation

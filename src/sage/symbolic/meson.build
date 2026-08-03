@@ -37,7 +37,6 @@ py.install_sources(
   'series_impl.pyi',
   'subring.py',
   'symbols.py',
-  'symengine.py',
   'tests.py',
   'units.py',
   subdir: 'sage/symbolic',

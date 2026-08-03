@@ -410,14 +410,13 @@ def variable(R, v):
         if len(matches) > 1:
             raise ValueError("the given index is ambiguous")
         return matches[0]
-    else:
-        try:
-            v = R(v)
-            if v in R.gens():
-                return v
-        except TypeError:
-            pass
-        raise ValueError("cannot interpret given data as a variable")
+    try:
+        v = R(v)
+        if v in R.gens():
+            return v
+    except TypeError:
+        pass
+    raise ValueError("cannot interpret given data as a variable")
 
 
 available_styles = {
@@ -671,7 +670,7 @@ class InteractiveLPProblem(SageObject):
             if len(x) != n:
                 raise ValueError("A and x have incompatible dimensions")
         R = PolynomialRing(base_ring, x, order='neglex')
-        x = vector(R, R.gens()) # All variables as a vector
+        x = vector(R, R.gens())  # All variables as a vector
         self._Abcx = A, b, c, x
         self._constant_term = objective_constant_term
 
@@ -875,7 +874,7 @@ class InteractiveLPProblem(SageObject):
         A, b, c, x = self._Abcx
         if F.n_vertices() == 0:
             return (None, None)
-        elif c.is_zero():
+        if c.is_zero():
             M, S = 0, F.vertices()[0]
         elif self._problem_type == "max":
             if any(c * vector(R, ray) > 0 for ray in F.rays()) or \
@@ -970,13 +969,15 @@ class InteractiveLPProblem(SageObject):
             problem_type = "-" + self.problem_type()
         else:
             problem_type = self.problem_type()
-        return InteractiveLPProblem(A, b, c, x,
-                    constraint_type=self._constraint_types + (constraint_type,),
-                    variable_type=self.variable_types(),
-                    problem_type=problem_type,
-                    base_ring=self.base_ring(),
-                    is_primal=self._is_primal,
-                    objective_constant_term=self.objective_constant_term())
+        return InteractiveLPProblem(
+            A, b, c, x,
+            constraint_type=self._constraint_types + (constraint_type,),
+            variable_type=self.variable_types(),
+            problem_type=problem_type,
+            base_ring=self.base_ring(),
+            is_primal=self._is_primal,
+            objective_constant_term=self.objective_constant_term()
+        )
 
     def base_ring(self):
         r"""
@@ -1613,7 +1614,7 @@ class InteractiveLPProblem(SageObject):
                 ieqs = [[-bi] + list(Ai), [bi+pad*Ai.norm().n()] + list(-Ai)]
             else:
                 continue
-            ieqs = [ [QQ(_) for _ in ieq] for ieq in ieqs]
+            ieqs = [[QQ(cf) for cf in ieq] for ieq in ieqs]
             halfplane = box.intersection(Polyhedron(ieqs=ieqs))
             result += halfplane.render_solid(alpha=alpha, color=color)
         # Same for variables, but no legend
@@ -2723,10 +2724,9 @@ class LPAbstractDictionary(SageObject):
         leaving = "Leaving: ${}$. ".format(latex(self.leaving()))
         if direction == "primal":
             return HtmlFragment(entering + leaving)
-        elif direction == "dual":
+        if direction == "dual":
             return HtmlFragment(leaving + entering)
-        else:
-            raise ValueError("direction must be either primal or dual")
+        raise ValueError("direction must be either primal or dual")
 
     def _repr_(self):
         r"""
@@ -4491,8 +4491,10 @@ class LPRevisedDictionary(LPAbstractDictionary):
         if leaving is not None:
             l = x_B.list().index(leaving)
         lines = []
-        lines.append(r"\begin{array}{l|r|%s||r||r%s%s}" % ("r"*m,
-            "|r" if entering is not None else "", "|r" if show_ratios else ""))
+        lines.append(r"\begin{array}{l|r|%s||r||r%s%s}" % (
+            "r"*m,
+            "|r" if entering is not None else "", "|r" if show_ratios else "")
+                     )
         headers = ["x_B", "c_B"]
         if generate_real_LaTeX:
             headers.append(r"\multicolumn{%d}{c||}{B^{-1}}" % m)
@@ -4642,10 +4644,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
         m, n = P.m(), P.n()
         if k == 0:
             return vector(R, [-1] * m)
-        elif k <= n:
+        if k <= n:
             return P.A().column(k - 1)
-        else:
-            return identity_matrix(R, m).column(k - n - 1)
+        return identity_matrix(R, m).column(k - n - 1)
 
     def A_N(self):
         r"""
@@ -4937,10 +4938,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
             c_B = vector(R, P.m())
             c_B[BB.index(0)] = -1
             return c_B
-        else:
-            c_D = P.c()
-            n = P.n()
-            return vector(R, [c_D[k - 1] if k <= n else 0 for k in BB])
+        c_D = P.c()
+        n = P.n()
+        return vector(R, [c_D[k - 1] if k <= n else 0 for k in BB])
 
     def c_N(self):
         r"""
@@ -4963,10 +4963,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
         R = P.base_ring()
         if 0 in self.basic_indices():
             return vector(R, n + 1)
-        else:
-            c_D = P.c()
-            return vector(R, (c_D[k - 1] if k <= n else 0
-                              for k in self.nonbasic_indices()))
+        c_D = P.c()
+        return vector(R, (c_D[k - 1] if k <= n else 0
+                          for k in self.nonbasic_indices()))
 
     def column_coefficients(self, v):
         r"""

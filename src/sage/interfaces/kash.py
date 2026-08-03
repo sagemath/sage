@@ -559,8 +559,7 @@ class Kash(Expect):
             s = s[i + 2:]
         if newlines:
             return s
-        else:
-            return s.replace("\\\n", "")
+        return s.replace("\\\n", "")
 
     def help(self, name=None):
         """

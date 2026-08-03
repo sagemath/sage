@@ -12,25 +12,45 @@ Features for testing the presence of ``tdlib``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from . import PythonModule
-from .join_feature import JoinFeature
+from sage.config import tdlib_enabled
+from sage.features.build_feature import BuildModule
 
-
-class Tdlib(JoinFeature):
+class Tdlib(BuildModule):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the SageMath interface to the :ref:`tdlib <spkg_tdlib>` library.
+    A :class:`~sage.features.Feature` describing the presence of
+    the SageMath interface to the treedec (formerly tdlib) library.
+
+    EXAMPLES::
+
+        sage: from sage.features.tdlib import Tdlib
+        sage: Tdlib().is_present()  # needs tdlib
+        FeatureTestResult('tdlib', True)
+        sage: Tdlib().is_present()  # needs !tdlib
+        FeatureTestResult('tdlib', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !tdlib`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.tdlib import Tdlib
+        sage: Tdlib().is_present_at_runtime()  # needs tdlib
+        FeatureTestResult('tdlib', True)
+
     """
+    _enabled_in_build = tdlib_enabled
+
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.tdlib import Tdlib
-            sage: isinstance(Tdlib(), Tdlib)
-            True
+            sage: Tdlib()
+            Feature('tdlib')
+
         """
-        JoinFeature.__init__(self, 'tdlib',
-                             [PythonModule('sage.graphs.graph_decompositions.tdlib',
-                                           spkg='tdlib')])
+        module_name = "sage.graphs.graph_decompositions.tdlib"
+        super().__init__("tdlib", module_name, spkg="tdlib")
 
 
 def all_features():
