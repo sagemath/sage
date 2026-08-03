@@ -170,8 +170,7 @@ to manipulate
     array([  0.,   1.,   2.,   3.,   4.,   5.,   6.,   7.,   8.,   9.,  10.,
             11.,  12.,  13.,  14.,  15.,  16.,  17.,  18.,  19.,  20.,  21.,
             22.,  23.,  24.])
-    sage: n.shape=(5,5)
-    sage: n
+    sage: n.reshape((5,5))
     array([[ 0.,  1.,  2.,  3.,  4.],
            [ 5.,  6.,  7.,  8.,  9.],
            [10., 11., 12., 13., 14.],
@@ -186,8 +185,7 @@ NumPy arrays can be sliced as well
 
 ::
 
-    sage: n = numpy.array(range(25),dtype=float)
-    sage: n.shape = (5,5)
+    sage: n = numpy.array(range(25),dtype=float).reshape((5,5))
     sage: n[2:4,1:3]
     array([[11., 12.],
            [16., 17.]])

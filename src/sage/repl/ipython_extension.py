@@ -240,8 +240,8 @@ class SageMagics(Magics):
         That means you do not have to use :func:`ascii_art` to get an ASCII art
         output::
 
-            sage: shell.run_cell("i = var('i')")                                        # needs sage.symbolic
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
+            sage: shell.run_cell("i = var('i')")
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')
                  10       9       8       7       6       5       4      3      2
             100*x   + 81*x  + 64*x  + 49*x  + 36*x  + 25*x  + 16*x  + 9*x  + 4*x  + x
 
@@ -249,14 +249,14 @@ class SageMagics(Magics):
 
             sage: shell.run_cell('%display text plain')
             sage: shell.run_cell('%display plain')        # shortcut for "text plain"
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')
             100*x^10 + 81*x^9 + 64*x^8 + 49*x^7 + 36*x^6 + 25*x^5 + 16*x^4 + 9*x^3 + 4*x^2 + x
 
         Sometime you could have to use a special output width and you
         could specify it::
 
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
+            sage: shell.run_cell('StandardTableaux(4).list()')
             [
             [                                                                  1  4    1  3
             [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -267,7 +267,7 @@ class SageMagics(Magics):
                3       3 ]
                4   ,   4 ]
             sage: shell.run_cell('%display ascii_art 50')
-            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
+            sage: shell.run_cell('StandardTableaux(4).list()')
             [
             [
             [                 1  3  4    1  2  4    1  2  3
@@ -392,7 +392,6 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
-            sage: # needs sage.misc.cython
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell(
@@ -410,7 +409,6 @@ class SageMagics(Magics):
 
         Test unrecognized arguments::
 
-            sage: # needs sage.misc.cython
             sage: shell.run_cell('''
             ....: %%cython --some-unrecognized-argument
             ....: print(1)
@@ -419,7 +417,6 @@ class SageMagics(Magics):
 
         Test ``--help`` is disabled::
 
-            sage: # needs sage.misc.cython
             sage: shell.run_cell('''
             ....: %%cython --help
             ....: print(1)
@@ -428,7 +425,6 @@ class SageMagics(Magics):
 
         Test ``--view-annotate`` invalid arguments::
 
-            sage: # needs sage.misc.cython
             sage: shell.run_cell('''
             ....: %%cython --view-annotate=xx
             ....: print(1)
@@ -438,7 +434,6 @@ class SageMagics(Magics):
         Test ``--view-annotate=displayhtml`` (note that in a notebook environment
         an inline HTML frame will be displayed)::
 
-            sage: # needs sage.misc.cython
             sage: shell.run_cell('''
             ....: %%cython --view-annotate=displayhtml
             ....: print(1)
@@ -448,7 +443,7 @@ class SageMagics(Magics):
 
         Test ``--view-annotate=webbrowser``::
 
-            sage: # needs sage.misc.cython webbrowser
+            sage: # needs webbrowser
             sage: shell.run_cell('''
             ....: %%cython --view-annotate
             ....: print(1)
@@ -467,7 +462,6 @@ class SageMagics(Magics):
 
         Test invalid quotes::
 
-            sage: # needs sage.misc.cython
             sage: shell.run_cell('''
             ....: %%cython --a='
             ....: print(1)

@@ -145,6 +145,7 @@ from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTa
 from sage.combinat.ribbon_shaped_tableau import RibbonShapedTableau, RibbonShapedTableaux, StandardRibbonShapedTableaux
 from sage.combinat.ribbon_tableau import RibbonTableaux, RibbonTableau, MultiSkewTableaux, MultiSkewTableau, SemistandardMultiSkewTableaux
 from sage.combinat.composition_tableau import CompositionTableau, CompositionTableaux
+from sage.combinat.quasi_ribbon_tableau import QuasiRibbonTableau, QuasiRibbonTableaux
 
 lazy_import('sage.combinat.tableau_tuple',
             ['TableauTuple', 'StandardTableauTuple', 'RowStandardTableauTuple',
@@ -292,4 +293,7 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 # Bijectionist
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
 
+# TamariBlossomingTree
+lazy_import('sage.combinat.tamari_blossoming_tree',
+            ['TamariBlossomingTree', 'TamariBlossomingTrees'])
 del lazy_import

@@ -863,7 +863,7 @@ class AlternatingSignMatrix(Element,
             parkfn = [nplus - row[0] for row in list(MT) if row]
             return NonDecreasingParkingFunction(parkfn).to_dyck_word().reverse()
 
-        elif algorithm == 'link_pattern':
+        if algorithm == 'link_pattern':
             from sage.combinat.perfect_matching import PerfectMatching
             from sage.combinat.dyck_word import DyckWords
             p = PerfectMatching(self.link_pattern()).to_noncrossing_set_partition()
@@ -1471,7 +1471,8 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [0 1 0 0 0]
             [1 0 0 0 0]
         """
-        m = self._matrix_space.zero().__copy__()
+        MS = self._matrix_space
+        m = MS.element_class(MS, None, False, False)
         for i in range(self._n):
             m[i, self._n - i - 1] = 1
         m.set_immutable()

@@ -376,8 +376,7 @@ class DocTestSource:
                 i = random.randint(0, len(doctests) - 1)
                 randomized.append(doctests.pop(i))
             return randomized, extras
-        else:
-            return doctests, extras
+        return doctests, extras
 
 
 class StringDocTestSource(DocTestSource):
@@ -653,12 +652,10 @@ class FileDocTestSource(DocTestSource):
         """
         if self.options.abspath:
             return os.path.abspath(self.path)
-        else:
-            relpath = os.path.relpath(self.path)
-            if relpath.startswith(".." + os.path.sep):
-                return self.path
-            else:
-                return relpath
+        relpath = os.path.relpath(self.path)
+        if relpath.startswith(".." + os.path.sep):
+            return self.path
+        return relpath
 
     @lazy_attribute
     def basename(self):
@@ -721,10 +718,11 @@ class FileDocTestSource(DocTestSource):
 
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
-            sage: filename = sage.repl.user_globals.__file__
+            sage: import sage.tests.numpy
+            sage: filename = sage.tests.numpy.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: FDS.file_optional_tags
-            {'sage.modules': None}
+            {'numpy': None}
         """
         from .parsing import parse_file_optional_tags
         return parse_file_optional_tags(self)
@@ -829,6 +827,7 @@ class FileDocTestSource(DocTestSource):
             skipping = False
             in_block = False
             last_line = ''
+        starting_indent = None
         for lineno, line in self:
             if not line.strip():
                 continue

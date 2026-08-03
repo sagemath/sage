@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Quantum Group Representations
 
@@ -283,7 +282,7 @@ class AdjointRepresentation(CyclicRepresentation):
         sage: A
         V(-Lambda[0] + Lambda[4])
 
-    Sort the summands uniformly in Python 2 and Python 3::
+    Sort the summands uniformly::
 
         sage: A.print_options(sorting_key=lambda x: str(x))
         sage: v = A.an_element(); v

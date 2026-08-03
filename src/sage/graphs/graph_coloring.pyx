@@ -309,7 +309,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
             coloring = [[] for _ in range(n)]
             used_colors = set()
             if count_only:
-                used_colors = set(colormap[x][1] for x in a if x in colormap)
+                used_colors = {colormap[x][1] for x in a if x in colormap}
             else:
                 for x in a:
                     if x in colormap:
@@ -553,7 +553,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
         if not g.order():
             if value_only:
                 return 0
-            elif hex_colors:
+            if hex_colors:
                 return dict()
             return []
         # - Independent set
@@ -585,8 +585,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
             if tmp is not False:
                 if value_only:
                     return k
-                else:
-                    return tmp
+                return tmp
             k += 1
     else:
         # Is the graph empty?
@@ -1380,7 +1379,6 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
 
     The Petersen graph has chromatic index 4::
 
-        sage: # needs sage.numerical.mip
         sage: from sage.graphs.graph_coloring import edge_coloring
         sage: g = graphs.PetersenGraph()
         sage: edge_coloring(g, value_only=True, solver='GLPK')
@@ -1614,7 +1612,7 @@ def _vizing_edge_coloring(g):
         fan_center, rear = edge
         cdef set rear_colors = colors_of(rear)
         cdef list neighbors = [n for n in g.neighbor_iterator(fan_center)
-                                   if e_colors[frozenset((n, fan_center))] is not None]
+                               if e_colors[frozenset((n, fan_center))] is not None]
         cdef list fan = [rear]
         cdef bint can_extend_fan = True
         while can_extend_fan:
@@ -2120,8 +2118,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
                 return {} if hex_colors else []
             if hex_colors:
                 return format_coloring([[] for _ in range(k)], hex_colors=True)
-            else:
-                return [copy(g) for _ in range(k)]
+            return [copy(g) for _ in range(k)]
 
     if k is None:
         k = max(g.degree())

@@ -117,7 +117,7 @@ from itertools import product
 from cpython.object cimport Py_EQ, Py_NE
 
 from sage.data_structures.bitset_base cimport *
-from sage.matrix.constructor import matrix
+from sage.matrix.constructor import matrix as matrix_constructor
 from sage.matrix.matrix2 cimport Matrix
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from sage.matroids.lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
@@ -659,7 +659,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if lift_map is not None:
                 Am = lift_cross_ratios(Am, lift_map)
             if column_keys is not None:
-                Am = matrix(Am, row_keys=range(A.nrows()), column_keys=column_keys)
+                Am = matrix_constructor(Am, row_keys=range(A.nrows()),
+                                        column_keys=column_keys)
             if labels:
                 return Am, order
             return Am
@@ -687,7 +688,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             if lift_map is not None:
                 Am = lift_cross_ratios(Am, lift_map)
             if column_keys is not None:
-                Am = matrix(Am, row_keys=tuple(Rl), column_keys=tuple(Cl))
+                Am = matrix_constructor(Am, row_keys=tuple(Rl),
+                                        column_keys=tuple(Cl))
             if labels or (labels is None and column_keys is None):
                 return Am, Rl, Cl
             return Am
@@ -893,7 +895,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         self._set_current_basis(B)
         other._set_current_basis(Bo)
         normalization = {}
-        B = set([b for b in B if len(C[b]) > 1])  # coloops are boring
+        B = {b for b in B if len(C[b]) > 1}  # coloops are boring
         N = set(N)
         while B:
             found = False
@@ -1083,8 +1085,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         if self != other:
             return self._is_field_isomorphism(other, mf)
-        else:
-            return self._is_field_isomorphism(copy(other), mf)
+        return self._is_field_isomorphism(copy(other), mf)
 
     cpdef _fast_isom_test(self, other):
         """
@@ -1275,8 +1276,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             return NotImplemented
         if left.is_field_equivalent(right):
             return rich_to_bool(op, 0)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
     def __hash__(self):
         r"""
@@ -2218,11 +2218,11 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     T2 = set(mult.keys()) & T
                     t = T2.pop()
                     m = -mult[t] * c[t]
-                    values = set([fund * m for fund in fundamentals])
+                    values = {fund * m for fund in fundamentals}
                     while T2:
                         t = T2.pop()
                         m = -mult[t] * c[t]
-                        values &= set([fund * m for fund in fundamentals])
+                        values &= {fund * m for fund in fundamentals}
             for x in values:
                 if x != 0:
                     cp = c.copy()
@@ -2720,8 +2720,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         if not self.is_connected():
             if certificate:
                 return False, self.components()[0]
-            else:
-                return False
+            return False
         if self.rank() > self.size() - self.rank():
             return self.dual()._is_3connected_shifting(certificate)
 
@@ -2943,7 +2942,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
              frozenset({2, 4}): (1, 1, 0)}
         """
         cdef dict vecs = self.representation_vectors()
-        return {F: matrix([vecs[i] for i in F]).right_kernel_matrix()[0]
+        return {F: matrix_constructor([vecs[i] for i in F]).right_kernel_matrix()[0]
                 for F in self._zonotopal_rho_values()}
 
     cdef dict _zonotopal_rho_values(self):
@@ -3105,10 +3104,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         if k < -min(rho.values())-1 or k not in ZZ:
             raise ValueError(f"k must be an integer >= {-min(rho.values())-1}")
 
-        cdef dict vecs, max_flats
+        cdef dict max_flats
 
         if lines or k <= 0:
-            vecs = self.representation_vectors()
             max_flats = self.line_flats()
             P = PolynomialRing(base_ring, self.representation().nrows(), 'e')
             e = P.gens()
@@ -3529,8 +3527,7 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         if (<BinaryMatrix>self._A).get(self._prow[x], y):   # Not a Sage matrix operation
             return self._one
-        else:
-            return self._zero
+        return self._zero
 
     def _repr_(self):
         """
@@ -3713,8 +3710,7 @@ cdef class BinaryMatroid(LinearMatroid):
             return self._is_isomorphic(other), self._isomorphism(other)
         if isinstance(other, BinaryMatroid):
             return self.is_field_isomorphic(other)
-        else:
-            return LinearMatroid._is_isomorphic(self, other)
+        return LinearMatroid._is_isomorphic(self, other)
 
     cpdef _is_isomorphism(self, other, morphism):
         r"""
@@ -3741,8 +3737,7 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         if isinstance(other, BinaryMatroid):
             return self.is_field_isomorphism(other, morphism)
-        else:
-            return LinearMatroid._is_isomorphism(self, other, morphism)
+        return LinearMatroid._is_isomorphism(self, other, morphism)
 
     # invariants
     cpdef _make_invariant(self):
@@ -4743,8 +4738,7 @@ cdef class TernaryMatroid(LinearMatroid):
             return self._is_isomorphic(other), self._isomorphism(other)
         if isinstance(other, TernaryMatroid):
             return self.is_field_isomorphic(other)
-        else:
-            return LinearMatroid._is_isomorphic(self, other)
+        return LinearMatroid._is_isomorphic(self, other)
 
     # invariants
 
@@ -6397,8 +6391,7 @@ cdef class RegularMatroid(LinearMatroid):
             return self._is_isomorphic(other), self._isomorphism(other)
         if isinstance(other, RegularMatroid):
             return self.is_field_isomorphic(other)
-        else:
-            return LinearMatroid._is_isomorphic(self, other)
+        return LinearMatroid._is_isomorphic(self, other)
 
     cpdef _fast_isom_test(self, other):
         r"""

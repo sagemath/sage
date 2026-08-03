@@ -11,33 +11,46 @@ Features for testing the presence of ``mcqd``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from . import PythonModule
-from .join_feature import JoinFeature
+from sage.config import mcqd_enabled
+from sage.features.build_feature import BuildModule
 
-
-class Mcqd(JoinFeature):
+class Mcqd(BuildModule):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of the :mod:`~sage.graphs.mcqd` module,
-    which is the SageMath interface to the :ref:`mcqd <spkg_mcqd>` library
+    A :class:`~sage.features.Feature` describing the presence of
+    the :mod:`~sage.graphs.mcqd` module, which is the SageMath
+    interface to the :ref:`mcqd <spkg_mcqd>` library
 
     EXAMPLES::
 
         sage: from sage.features.mcqd import Mcqd
-        sage: Mcqd().is_present()  # optional - mcqd
+        sage: Mcqd().is_present()  # needs mcqd
         FeatureTestResult('mcqd', True)
+        sage: Mcqd().is_present()  # needs !mcqd
+        FeatureTestResult('mcqd', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !mcqd`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.mcqd import Mcqd
+        sage: Mcqd().is_present_at_runtime()  # needs mcqd
+        FeatureTestResult('mcqd', True)
+
     """
+    _enabled_in_build = mcqd_enabled
 
     def __init__(self):
         """
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.mcqd import Mcqd
-            sage: isinstance(Mcqd(), Mcqd)
-            True
+            sage: Mcqd()
+            Feature('mcqd')
+
         """
-        JoinFeature.__init__(self, 'mcqd',
-                             [PythonModule('sage.graphs.mcqd',
-                                           spkg='mcqd')])
+        module_name = "sage.graphs.mcqd"
+        super().__init__("mcqd", module_name)
 
 
 def all_features():

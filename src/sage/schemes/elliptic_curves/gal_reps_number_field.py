@@ -129,8 +129,7 @@ class GaloisRepresentation(SageObject):
         """
         if self.E.has_cm():
             return "Compatible family of Galois representations associated to the CM " + repr(self.E)
-        else:
-            return "Compatible family of Galois representations associated to the " + repr(self.E)
+        return "Compatible family of Galois representations associated to the " + repr(self.E)
 
     def __eq__(self, other):
         r"""

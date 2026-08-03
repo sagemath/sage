@@ -56,8 +56,7 @@ def run():
         if contents:
             print(contents, end='')
             return 0
-        else:
-            return 1
+        return 1
 
     if dirname and os.path.exists(dirname):
         print('Error: Directory {} already exists'.format(dirname),

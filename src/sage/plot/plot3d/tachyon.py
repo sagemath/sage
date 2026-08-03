@@ -1159,20 +1159,20 @@ class Texfunc:
         """
         if self._ttype == 0:
             return "0"
-        elif self._ttype < 7 and self._ttype > 0:
+        if self._ttype < 7 and self._ttype > 0:
             return r"""%d center %s rotate %s scale %s""" % (
                 self._ttype,
                 tostr(self._center),
                 tostr(self._rotate),
                 tostr(self._scale))
-        elif self._ttype < 9:
+        if self._ttype < 9:
             return r"""%d %s center %s rotate %s scale %s""" % (
                 self._ttype,
                 self._imagefile,
                 tostr(self._center),
                 tostr(self._rotate),
                 tostr(self._scale))
-        elif self._ttype == 9:
+        if self._ttype == 9:
             return r"""%d %s center %s rotate %s scale %s
             uaxis 1.0 0.0 0.0
             vaxis 0.0 1.0 0.0""" % (
@@ -1181,8 +1181,7 @@ class Texfunc:
                 tostr(self._center),
                 tostr(self._rotate),
                 tostr(self._scale))
-        else:
-            raise ValueError
+        raise ValueError
 
 
 class Texture:
@@ -1614,8 +1613,7 @@ class TachyonTriangleFactory(TriangleFactory):
         """
         if color is None:
             return TachyonTriangle(a, b, c, self._texture)
-        else:
-            return TachyonTriangle(a, b, c, color)
+        return TachyonTriangle(a, b, c, color)
 
     def smooth_triangle(self, a, b, c, da, db, dc, color=None):
         r"""
@@ -1633,8 +1631,7 @@ class TachyonTriangleFactory(TriangleFactory):
         """
         if color is None:
             return TachyonSmoothTriangle(a, b, c, da, db, dc, self._texture)
-        else:
-            return TachyonSmoothTriangle(a, b, c, da, db, dc, color)
+        return TachyonSmoothTriangle(a, b, c, da, db, dc, color)
 
     def get_colors(self, list):
         r"""

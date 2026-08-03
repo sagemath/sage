@@ -701,8 +701,7 @@ cdef class Riemann_Map:
                      (ctheta * self.cosalpha[k] - stheta * self.sinalpha[k])))
         if self.exterior:
             return 1/mapped
-        else:
-            return mapped
+        return mapped
 
     def plot_boundaries(self, plotjoined=True, rgbcolor=None, thickness=1):
         """
@@ -1477,12 +1476,11 @@ cpdef cauchy_kernel(t, args):
         (I*exp(I*t)-I*epsilon*exp(-I*t))
     if part == 'c':
         return result
-    elif part == 'r':
+    if part == 'r':
         return result.real
-    elif part == 'i':
+    if part == 'i':
         return result.imag
-    else:
-        return None
+    return None
 
 
 cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):

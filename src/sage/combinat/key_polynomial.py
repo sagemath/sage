@@ -755,9 +755,8 @@ class OperatorPolynomialBasis(CombinatorialFreeModule):
                 # R as the base ring
                 return super().__classcall__(cls, R=R)
             return super().__classcall__(cls, k=k, poly_ring=R)
-        else:
-            # if R is not a polynomial ring, we know it is self.base_ring()
-            return super().__classcall__(cls, R=R, k=k)
+        # if R is not a polynomial ring, we know it is self.base_ring()
+        return super().__classcall__(cls, R=R, k=k)
 
     def __init__(self, R=None, k=None, poly_ring=None):
         r"""

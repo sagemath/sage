@@ -72,7 +72,9 @@ AUTHORS:
 ##########################################################################
 
 import os
+from pathlib import Path
 import shutil
+
 
 from sage.calculus.functional import diff
 from sage.misc.lazy_import import lazy_import
@@ -562,7 +564,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 
     if algorithm == "fricas":
         return fricas_desolve(de, dvar, ics, ivar)
-    elif algorithm != "maxima":
+    if algorithm != "maxima":
         raise ValueError("unknown algorithm %s" % algorithm)
 
     de00 = de._maxima_()
@@ -923,7 +925,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
 
     if algorithm == "fricas":
         return fricas_desolve_system(des, vars, ics, ivar)
-    elif algorithm != "maxima":
+    if algorithm != "maxima":
         raise ValueError("unknown algorithm %s" % algorithm)
 
     dvars = [v._maxima_() for v in vars]
@@ -1218,8 +1220,7 @@ def desolve_rk4_determine_bounds(ics, end_points=None):
         end_points = [end_points]
     if len(end_points) == 1:
         return min(ics[0], end_points[0]), max(ics[0], end_points[0])
-    else:
-        return min(ics[0], end_points[0]), max(ics[0], end_points[1])
+    return min(ics[0], end_points[0]), max(ics[0], end_points[1])
 
 
 def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output='list', **kwds):
@@ -1670,7 +1671,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
         if len(ivars) == 1:
             return desolve_odeint_inner(next(iter(ivars)))
-        elif not ivars:
+        if not ivars:
             from sage.symbolic.ring import SR
             with SR.temp_var() as ivar:
                 return desolve_odeint_inner(ivar)
@@ -1744,20 +1745,20 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
         raise RuntimeError('Unable to run because gcc cannot be found')
     from sage.interfaces.tides import genfiles_mintides
     from sage.misc.temporary_file import tmp_dir
-    tempdir = tmp_dir()
-    intfile = os.path.join(tempdir, 'integrator.c')
-    drfile = os.path.join(tempdir, 'driver.c')
-    fileoutput = os.path.join(tempdir, 'output')
-    runmefile = os.path.join(tempdir, 'runme')
+    tempdir = Path(tmp_dir())
+    intfile = tempdir / 'integrator.c'
+    drfile = tempdir / 'driver.c'
+    fileoutput = tempdir / 'output'
+    runmefile = tempdir / 'runme'
     genfiles_mintides(intfile, drfile, f, [N(_) for _ in ics],
                       N(initial), N(final), N(delta), N(tolrel),
-                      N(tolabs), fileoutput)
-    subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
+                      N(tolabs), str(fileoutput))
+    subprocess.check_call('gcc -o ' + str(runmefile) + ' ' + str(tempdir / '*.c ') +
                           os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
                           + os.path.join('-L$SAGE_LOCAL', 'lib ') + ' -lm  -O2 ' +
                           os.path.join('-I$SAGE_LOCAL', 'include '),
                           shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(tempdir / 'runme', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with open(fileoutput) as outfile:
         res = outfile.readlines()
     for i in range(len(res)):
@@ -1840,19 +1841,19 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
     from sage.functions.other import ceil
     from sage.interfaces.tides import genfiles_mpfr
     from sage.misc.temporary_file import tmp_dir
-    tempdir = tmp_dir()
-    intfile = os.path.join(tempdir, 'integrator.c')
-    drfile = os.path.join(tempdir, 'driver.c')
-    fileoutput = os.path.join(tempdir, 'output')
-    runmefile = os.path.join(tempdir, 'runme')
+    tempdir = Path(tmp_dir())
+    intfile = tempdir / 'integrator.c'
+    drfile = tempdir / 'driver.c'
+    fileoutput = tempdir / 'output'
+    runmefile = tempdir / 'runme'
     genfiles_mpfr(intfile, drfile, f, ics, initial, final, delta, [], [],
-                  digits, tolrel, tolabs, fileoutput)
-    subprocess.check_call('gcc -o ' + runmefile + ' ' + os.path.join(tempdir, '*.c ') +
+                  digits, tolrel, tolabs, str(fileoutput))
+    subprocess.check_call('gcc -o ' + str(runmefile) + ' ' + str(tempdir / '*.c ') +
                           os.path.join('$SAGE_LOCAL', 'lib', 'libTIDES.a') + ' $LDFLAGS '
                           + os.path.join('-L$SAGE_LOCAL', 'lib ') + '-lmpfr -lgmp -lm  -O2 -w ' +
                           os.path.join('-I$SAGE_LOCAL', 'include '),
                           shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    subprocess.check_call(os.path.join(tempdir, 'runme'), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.check_call(tempdir / 'runme', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     with open(fileoutput) as outfile:
         res = outfile.readlines()
     for i in range(len(res)):

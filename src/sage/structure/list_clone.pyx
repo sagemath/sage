@@ -777,10 +777,9 @@ cdef class ClonableArray(ClonableElement):
         """
         if start is None:
             return self._list.index(x)
-        elif stop is None:
+        if stop is None:
             return self._list.index(x, start)
-        else:
-            return self._list.index(x, start, stop)
+        return self._list.index(x, start, stop)
 
     cpdef int count(self, key) except -1:
         """
@@ -908,7 +907,7 @@ cdef class ClonableArray(ClonableElement):
         """
         raise NotImplementedError("this should never be called, please overload the check method")
 
-    cpdef long _hash_(self) except? -1:
+    cpdef Py_hash_t _hash_(self) except? -1:
         """
         Return the hash value of ``self``.
 
@@ -953,9 +952,9 @@ cdef class ClonableArray(ClonableElement):
 
 
 ##### Needed for unpickling #####
-def _make_array_clone(clas, parent, list, needs_check, is_immutable, dic):
+def _make_array_clone(clas, parent, list, needs_check, immutable, dic):
     """
-    Helpler to unpickle :class:`list_clone` instances.
+    Helper to unpickle :class:`list_clone` instances.
 
     TESTS::
 
@@ -985,7 +984,7 @@ def _make_array_clone(clas, parent, list, needs_check, is_immutable, dic):
     res._parent = parent
     res._list = list
     res._needs_check = needs_check
-    res._is_immutable = is_immutable
+    res._is_immutable = immutable
     if dic is not None:
         res.__dict__ = dic
     return res
@@ -1612,9 +1611,8 @@ cdef class ClonableIntArray(ClonableElement):
         if left._list is NULL:
             if rgt._list is NULL:
                 return rich_to_bool(op, 0)
-            else:
-                return rich_to_bool(op, -1)
-        elif rgt._list is NULL:
+            return rich_to_bool(op, -1)
+        if rgt._list is NULL:
             return rich_to_bool(op, 1)
         if left._len < rgt._len:
             minlen = left._len
@@ -1629,8 +1627,7 @@ cdef class ClonableIntArray(ClonableElement):
             if left._list[i] != rgt._list[i]:
                 if left._list[i] < rgt._list[i]:
                     return rich_to_bool(op, -1)
-                else:
-                    return rich_to_bool(op, 1)
+                return rich_to_bool(op, 1)
         return rich_to_bool(op, reslen)
 
     cpdef ClonableIntArray __copy__(self):
@@ -1699,7 +1696,7 @@ cdef class ClonableIntArray(ClonableElement):
         """
         raise NotImplementedError("this should never be called, please overload the check method")
 
-    cpdef long _hash_(self) except? -1:
+    cpdef Py_hash_t _hash_(self) except? -1:
         """
         Return the hash value of ``self``.
 
@@ -1712,7 +1709,7 @@ cdef class ClonableIntArray(ClonableElement):
             sage: type(el._hash_()) == int
             True
         """
-        cdef long hv
+        cdef Py_hash_t hv
         if self._list == NULL:
             hv = hash(None)
         else:
@@ -1749,9 +1746,9 @@ cdef class ClonableIntArray(ClonableElement):
 
 
 ##### Needed for unpickling #####
-def _make_int_array_clone(clas, parent, lst, needs_check, is_immutable, dic):
+def _make_int_array_clone(clas, parent, lst, needs_check, immutable, dic):
     """
-    Helpler to unpickle :class:`list_clone` instances.
+    Helper to unpickle :class:`list_clone` instances.
 
     TESTS::
 
@@ -1778,7 +1775,7 @@ def _make_int_array_clone(clas, parent, lst, needs_check, is_immutable, dic):
     """
     cdef ClonableIntArray res
     res = <ClonableIntArray> clas.__new__(clas)
-    ClonableIntArray.__init__(res, parent, lst, needs_check, is_immutable)
+    ClonableIntArray.__init__(res, parent, lst, needs_check, immutable)
     if dic is not None:
         res.__dict__ = dic
     return res

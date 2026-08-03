@@ -272,7 +272,6 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(30, -1.0)                                                # needs sage.rings.real_mpfr
         1.00000000000000
 
-        sage: # needs sage.libs.pari
         sage: S.<t> = R.quotient(R.cyclotomic_polynomial(15))
         sage: cyclotomic_value(15, t)
         0
@@ -328,8 +327,7 @@ def cyclotomic_value(n, x):
         # if n is prime, return n
         if L == 1:
             return n * x  # in case the parent of x has nonzero characteristic
-        else:
-            return x
+        return x
     xd = [x]  # the x^d for d | n
     cdef char mu
     cdef char* md = <char*>sig_malloc(sizeof(char) * (1 << L))  # the mu(d) for d | n

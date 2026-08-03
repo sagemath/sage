@@ -239,7 +239,7 @@ class DeltaComplex(GenericCellComplex):
     Type ``delta_complexes.`` and then hit the :kbd:`Tab` key to get the
     full list.
     """
-    def __init__(self, data=None, check_validity=True):
+    def __init__(self, data=None, check_validity=True) -> None:
         r"""
         Define a `\Delta`-complex.  See :class:`DeltaComplex` for more
         documentation.
@@ -290,7 +290,7 @@ class DeltaComplex(GenericCellComplex):
             pass
         else:
             if isinstance(data, (list, tuple)):
-                new_data.update({dim: s for dim, s in enumerate(data)})
+                new_data.update(dict(enumerate(data)))
             elif isinstance(data, dict):
                 if all(isinstance(a, (int, Integer)) for a in data):
                     # a dictionary indexed by integers
@@ -453,11 +453,10 @@ class DeltaComplex(GenericCellComplex):
             except KeyError:
                 cells_to_add = set()
             for x in d_cells:
-                if d+1 in new_dict:
-                    old = new_dict[d+1]
-                    new_dict[d+1] = []
-                    for f in old:
-                        new_dict[d+1].append(tuple([translate[n] for n in f]))
+                if d + 1 in new_dict:
+                    old = new_dict[d + 1]
+                    new_dict[d + 1] = [tuple([translate[n] for n in f])
+                                       for f in old]
                 new_dict[d].append(cells[d][x])
                 cells_to_add.update(cells[d][x])
         new_cells = [new_dict[n] for n in range(max_dim + 1)]
@@ -551,11 +550,10 @@ class DeltaComplex(GenericCellComplex):
         if subcomplex._is_subcomplex_of is None or self not in subcomplex._is_subcomplex_of:
             if subcomplex == self:
                 for d in range(-1, max(cells) + 1):
-                    l = len(cells[d])
-                    cells[d] = [None] * l   # get rid of all cells
+                    ell = len(cells[d])
+                    cells[d] = [None] * ell   # get rid of all cells
                 return cells
-            else:
-                raise ValueError("this is not a subcomplex of self")
+            raise ValueError("this is not a subcomplex of self")
         else:
             subcomplex_cells = subcomplex._is_subcomplex_of[self]
             for d in range(max(subcomplex_cells) + 1):
@@ -674,9 +672,8 @@ class DeltaComplex(GenericCellComplex):
                 cochain_diffs[dim - 1] = differentials[dim].transpose()
             return ChainComplex(data=cochain_diffs, degree=1,
                                 base_ring=base_ring, check=check)
-        else:
-            return ChainComplex(data=differentials, degree=-1,
-                                base_ring=base_ring, check=check)
+        return ChainComplex(data=differentials, degree=-1,
+                            base_ring=base_ring, check=check)
 
     def alexander_whitney(self, cell, dim_left):
         r"""
@@ -847,19 +844,18 @@ class DeltaComplex(GenericCellComplex):
                         # store index of the new simplex in positions
                         positions[(k, l_idx, n, r_idx)] = new_idx
                         # form boundary of l*r and store it in d_cells
-                        bdry = []
                         # first faces come from left-hand factor
                         if k == 0:
-                            bdry.append(bdries[(-1, 0, n, r_idx)])
+                            bdry = [bdries[(-1, 0, n, r_idx)]]
                         else:
-                            for i in range(k+1):
-                                bdry.append(bdries[(k-1, l[i], n, r_idx)])
+                            bdry = [bdries[(k - 1, l[i], n, r_idx)]
+                                    for i in range(k + 1)]
                         # remaining faces come from right-hand factor
                         if n == 0:
                             bdry.append(bdries[(k, l_idx, -1, 0)])
                         else:
-                            for i in range(n+1):
-                                bdry.append(bdries[(k, l_idx, n-1, r[i])])
+                            bdry.extend(bdries[(k, l_idx, n - 1, r[i])]
+                                        for i in range(n + 1))
                         d_cells.append(tuple(bdry))
                         r_idx += 1
                         new_idx += 1
@@ -1010,10 +1006,9 @@ class DeltaComplex(GenericCellComplex):
                                         # face of this k-simplex
                                         k_face_idx = k_cell[path[i][0]]
                                         k_face_dim = k-1
-                                        tail = []
-                                        for j in range(i, d):
-                                            tail.append((face_path[j][0]-1,
-                                                         face_path[j][1]))
+                                        tail = [(face_path[j][0] - 1,
+                                                 face_path[j][1])
+                                                for j in range(i, d)]
                                         face_path = face_path[:i] + tuple(tail)
                                     if ((i < d and path[i][1] == path[i+1][1]) or
                                             (i > 0 and path[i][1] == path[i-1][1])):
@@ -1023,11 +1018,10 @@ class DeltaComplex(GenericCellComplex):
                                     else:
                                         # face of this n-simplex
                                         n_face_idx = n_cell[path[i][1]]
-                                        n_face_dim = n-1
-                                        tail = []
-                                        for j in range(i, d):
-                                            tail.append((face_path[j][0],
-                                                         face_path[j][1]-1))
+                                        n_face_dim = n - 1
+                                        tail = [(face_path[j][0],
+                                                 face_path[j][1] - 1)
+                                                for j in range(i, d)]
                                         face_path = face_path[:i] + tuple(tail)
                                     bdry_list.append(bdries[(k_face_dim, k_face_idx,
                                                              n_face_dim, n_face_idx,
@@ -1525,8 +1519,7 @@ class DeltaComplex(GenericCellComplex):
         n_cells = tuple(enumerate(self.n_cells(n)))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
-        else:
-            return Chains(self, n, n_cells, base_ring)
+        return Chains(self, n, n_cells, base_ring)
 
     # the second barycentric subdivision is a simplicial complex.  implement this somehow?
 #     def simplicial_complex(self):

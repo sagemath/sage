@@ -483,8 +483,7 @@ def aut_gp_and_can_lab_python(S, partition, n,
     deallocate_agcl_output(output)
     if len(return_tuple) == 1:
         return return_tuple[0]
-    else:
-        return tuple(return_tuple)
+    return tuple(return_tuple)
 
 
 def double_coset_python(S1, S2, partition1, ordering2, n,

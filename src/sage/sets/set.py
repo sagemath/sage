@@ -35,6 +35,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections.abc import Iterator
+
 import sage.rings.infinity
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -190,10 +192,9 @@ def Set(X=None, category=None):
     elif isinstance(X, CategoryObject):
         if isinstance(X, Set_generic) and category is None:
             return X
-        elif X in Sets().Finite():
+        if X in Sets().Finite():
             return Set_object_enumerated(X, category=category)
-        else:
-            return Set_object(X, category=category)
+        return Set_object(X, category=category)
 
     if isinstance(X, Element) and not isinstance(X, Set_base):
         raise TypeError("Element has no defined underlying set")
@@ -634,12 +635,12 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         """
         return x in self.__object
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
-        If ``right`` is not a :class:`Set_object`, return ``NotImplemented``.
-        If ``right`` is also a :class:`Set_object`, returns comparison
+        If ``other`` is not a :class:`Set_object`, return ``NotImplemented``.
+        If ``other`` is also a :class:`Set_object`, returns comparison
         on the underlying objects.
 
         .. NOTE::
@@ -658,9 +659,9 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: Primes() == Set(QQ)
             False
         """
-        if not isinstance(right, Set_object):
+        if not isinstance(other, Set_object):
             return NotImplemented
-        return richcmp(self.__object, right.__object, op)
+        return richcmp(self.__object, other.__object, op)
 
     def cardinality(self):
         """
@@ -859,7 +860,25 @@ class Set_object_enumerated(Set_object):
             sage: print(latex(S))
             \left\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18\right\}
             sage: TestSuite(S).run()
+
+        TESTS::
+
+            sage: from sage.sets.set import Set_object_enumerated
+            sage: a = Set_object_enumerated(i for i in range(3))
+            sage: a
+            {0, 1, 2}
+            sage: a
+            {0, 1, 2}
+            sage: Set_object_enumerated([0, 1, 2])
+            {0, 1, 2}
+            sage: Set_object_enumerated({0, 1, 2})
+            {0, 1, 2}
+            sage: from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+            sage: Set_object_enumerated(FiniteEnumeratedSet([0, 1, 2]))
+            {0, 1, 2}
         """
+        if isinstance(X, Iterator):
+            X = tuple(X)
         Set_object.__init__(self, X, category=FiniteEnumeratedSets().or_subcategory(category))
 
     def random_element(self):
@@ -1464,9 +1483,9 @@ class Set_object_union(Set_object_binary):
         """
         return self._X.is_finite() and self._Y.is_finite()
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -1493,12 +1512,12 @@ class Set_object_union(Set_object_binary):
             sage: Set(ZZ).union(Set(QQ)) == Set(QQ)
             False
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_union):
+        if not isinstance(other, Set_object_union):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y or \
-           self._X == right._Y and self._Y == right._X:
+        if self._X == other._X and self._Y == other._Y or \
+           self._X == other._Y and self._Y == other._X:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
@@ -1665,13 +1684,13 @@ class Set_object_intersection(Set_object_binary):
         """
         if self._X.is_finite():
             return True
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return True
         raise NotImplementedError
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -1697,12 +1716,12 @@ class Set_object_intersection(Set_object_binary):
             sage: Set(ZZ).intersection(Set(QQ)) == Set(QQ)
             False
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_intersection):
+        if not isinstance(other, Set_object_intersection):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y or \
-           self._X == right._Y and self._Y == right._X:
+        if self._X == other._X and self._Y == other._Y or \
+           self._X == other._Y and self._Y == other._X:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
@@ -1840,13 +1859,13 @@ class Set_object_difference(Set_object_binary):
         """
         if self._X.is_finite():
             return True
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return False
         raise NotImplementedError
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -1876,11 +1895,11 @@ class Set_object_difference(Set_object_binary):
             sage: X == Set(QQ).difference(Set(ZZ))
             True
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_difference):
+        if not isinstance(other, Set_object_difference):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y:
+        if self._X == other._X and self._Y == other._Y:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 
@@ -2017,13 +2036,13 @@ class Set_object_symmetric_difference(Set_object_binary):
         """
         if self._X.is_finite():
             return self._Y.is_finite()
-        elif self._Y.is_finite():
+        if self._Y.is_finite():
             return False
         raise NotImplementedError
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Try to compare ``self`` and ``right``.
+        Try to compare ``self`` and ``other``.
 
         .. NOTE::
 
@@ -2042,12 +2061,12 @@ class Set_object_symmetric_difference(Set_object_binary):
             sage: Y == X
             True
         """
-        if not isinstance(right, Set_generic):
+        if not isinstance(other, Set_generic):
             return rich_to_bool(op, -1)
-        if not isinstance(right, Set_object_symmetric_difference):
+        if not isinstance(other, Set_object_symmetric_difference):
             return rich_to_bool(op, -1)
-        if self._X == right._X and self._Y == right._Y or \
-           self._X == right._Y and self._Y == right._X:
+        if self._X == other._X and self._Y == other._Y or \
+           self._X == other._Y and self._Y == other._X:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, -1)
 

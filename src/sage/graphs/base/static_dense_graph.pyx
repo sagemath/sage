@@ -265,8 +265,7 @@ def is_strongly_regular(g, parameters=False):
 
     if parameters:
         return (n, k, llambda, mu)
-    else:
-        return True
+    return True
 
 
 def is_triangle_free(G, certificate=False):
@@ -407,8 +406,7 @@ def _format_result(G, edges, edges_only, labels):
     if edges_only:
         if labels:
             return [(u, v, G.edge_label(u, v)) for u, v in edges]
-        else:
-            return edges
+        return edges
     else:
         return G.subgraph(vertices=G, edges=edges)
 

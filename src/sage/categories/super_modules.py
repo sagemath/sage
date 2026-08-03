@@ -160,8 +160,7 @@ class SuperModules(SuperModulesCategory):
         base_ring = self.base_ring()
         if base_ring in Fields():
             return [Modules(base_ring)]
-        else:
-            return []
+        return []
 
     class ParentMethods:
         pass

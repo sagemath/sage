@@ -46,7 +46,7 @@ import sage.misc.sage_eval
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.instancedoc import instancedoc
 from sage.structure.element import Element, parent
-from sage.structure.parent_base import ParentWithBase
+from sage.structure.parent import Parent
 from sage.structure.richcmp import rich_to_bool
 from sage.structure.sage_object import SageObject
 
@@ -56,7 +56,7 @@ class AsciiArtString(str):
         return str(self)
 
 
-class Interface(WithEqualityById, ParentWithBase):
+class Interface(WithEqualityById, Parent):
     """
     Interface interface object.
 
@@ -82,7 +82,7 @@ class Interface(WithEqualityById, ParentWithBase):
         self.__seq = -1
         self._available_vars = []
         self._seed = None
-        ParentWithBase.__init__(self, self)
+        Parent.__init__(self, base=self, category=None)
 
     def _repr_(self):
         return self.__name.capitalize()
@@ -244,7 +244,7 @@ class Interface(WithEqualityById, ParentWithBase):
     def execute(self, *args, **kwds):
         return self.eval(*args, **kwds)
 
-    def __call__(self, x, name=None):
+    def _element_constructor_(self, x, name=None):
         r"""
         Create a new object in ``self`` from ``x``.
 
@@ -313,6 +313,42 @@ class Interface(WithEqualityById, ParentWithBase):
             except TypeError:
                 raise TypeError(msg)
 
+    def _coerce_map_from_(self, S):
+        """
+        Explicitly declare allowed coercions for the modern coercion model.
+        """
+        # 1. Allow coercion from ANY other Interface (fixes `gp(2) + gap(3)`)
+        # _element_constructor_ handles this by safely calling `x._sage_()`
+        if isinstance(S, Interface):
+            return True
+
+        # 2. Allow coercion from native Sage rings and Python types (fixes `1 + fricas(x)`)
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
+        from sage.rings.real_mpfr import RR
+        from sage.rings.cc import CC
+        from sage.rings.real_double import RDF
+        from sage.rings.complex_double import CDF
+
+        if S in (ZZ, QQ, RR, CC, RDF, CDF, int, float, complex, bool):
+            return True
+
+        # 3. Check for special interface methods (e.g., _fricas_, _gp_)
+        s = '_%s_' % self.name()
+        if s == '_maxima_lib_':
+            s = '_maxima_'
+        if s == '_pari_':
+            s = '_gp_'
+
+        if hasattr(S, "element_class") and hasattr(S.element_class, s):
+            return True
+
+        # Fallback for pure Python types without an element_class
+        if hasattr(S, s):
+            return True
+
+        return False
+
     def _coerce_from_special_method(self, x):
         """
         Try to coerce to ``self`` by calling a special underscore method.
@@ -343,13 +379,13 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         if isinstance(x, bool):
             return self(self._true_symbol() if x else self._false_symbol())
-        elif isinstance(x, int):
+        if isinstance(x, int):
             from sage.rings.integer import Integer
             return self(Integer(x))
-        elif isinstance(x, float):
+        if isinstance(x, float):
             from sage.rings.real_double import RDF
             return self(RDF(x))
-        elif isinstance(x, complex):
+        if isinstance(x, complex):
             from sage.rings.complex_double import CDF
             return self(CDF(x))
         if use_special:
@@ -637,13 +673,13 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         TESTS::
 
-            sage: from sage.structure.parent_base import ParentWithBase
+            sage: from sage.structure.parent import Parent
             sage: from sage.interfaces.singular import singular
-            sage: ParentWithBase.__getattribute__(singular, '_coerce_map_from_')
+            sage: Parent.__getattribute__(singular, '_coerce_map_from_')
             <bound method Singular._coerce_map_from_ of Singular>
         """
         try:
-            return ParentWithBase.__getattribute__(self, attrname)
+            return Parent.__getattribute__(self, attrname)
         except AttributeError:
             if attrname[:1] == "_":
                 raise
@@ -1275,8 +1311,7 @@ class InterfaceElement(Element):
         P = self._check_valid()
         if not isinstance(n, tuple):
             return P.new('%s[%s]' % (self._name, n))
-        else:
-            return P.new('%s[%s]' % (self._name, str(n)[1:-1]))
+        return P.new('%s[%s]' % (self._name, str(n)[1:-1]))
 
     def __int__(self):
         """

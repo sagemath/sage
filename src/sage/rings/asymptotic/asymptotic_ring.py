@@ -1515,7 +1515,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: 2^(x + 1/x)
             2^x + log(2)*2^x*x^(-1) + 1/2*log(2)^2*2^x*x^(-2) + ... + O(2^x*x^(-20))
             sage: _.parent()
-            Asymptotic Ring <QQ^x * x^SR * log(x)^QQ * Signs^x> over Symbolic Ring
+            Asymptotic Ring <QQ^x * x^SR * log(x)^ZZ * Signs^x> over Symbolic Ring
 
         ::
 
@@ -1603,9 +1603,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if not self.summands:
             if exponent == 0:
                 return self.parent().one()
-            elif exponent > 0:
+            if exponent > 0:
                 return self.parent().zero()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError('Cannot take %s to the negative exponent %s.' %
                                         (self, exponent))
             else:
@@ -1749,7 +1749,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             - 11/24*2^s*s^(-4) + 11/120*2^s*s^(-5)
             + 271/720*2^s*s^(-6) + O(2^s*s^(-7))
             sage: _.parent()
-            Asymptotic Ring <QQ^s * s^QQ * Signs^s> over Rational Field
+            Asymptotic Ring <QQ^s * s^ZZ * Signs^s> over Rational Field
 
             sage: S.<s> = AsymptoticRing(growth_group='(QQ_+)^s * s^ZZ', coefficient_ring=QQ)
             sage: (2 + 2/s^2).__pow_number__(s, precision=7)
@@ -1757,14 +1757,14 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             - 11/24*2^s*s^(-4) + 11/120*2^s*s^(-5)
             + 271/720*2^s*s^(-6) + O(2^s*s^(-7))
             sage: _.parent()
-            Asymptotic Ring <QQ^s * s^QQ> over Rational Field
+            Asymptotic Ring <QQ^s * s^ZZ> over Rational Field
         """
         if not self.summands:
             if exponent > 0:
                 return self.parent().zero()
-            elif exponent.is_zero():
+            if exponent.is_zero():
                 return self.parent().one()
-            elif exponent < 0:
+            if exponent < 0:
                 raise ZeroDivisionError(
                     'Cannot take {} to the negative '
                     'exponent {}.'.format(self, exponent))
@@ -2260,8 +2260,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         if return_inverse_main_term:
             return (imax_elem, x)
-        else:
-            return (max_elem, x)
+        return (max_elem, x)
 
     @staticmethod
     def _power_series_(coefficients, start, ratio, ratio_start, precision):
@@ -2450,7 +2449,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: (e^x * x^2 + log(x)).subs(x=2*x)
             4*(e^x)^2*x^2 + log(x) + log(2)
             sage: _.parent()
-            Asymptotic Ring <(e^x)^QQ * x^QQ * log(x)^QQ> over Symbolic Ring
+            Asymptotic Ring <(e^x)^QQ * x^ZZ * log(x)^ZZ> over Symbolic Ring
 
         ::
 
@@ -3019,8 +3018,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                 if c.is_zero():
                     return None
                 return T(term.growth, coefficient=c)
-            else:
-                return T(term.growth)
+            return T(term.growth)
 
         P = self.parent().change_parameter(coefficient_ring=new_coefficient_ring)
         S = self.summands.copy()
@@ -3121,10 +3119,9 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             P = cm.common_parent(self, S)
             return S.subs({var: P.coerce(self)})
 
-        else:
-            raise ValueError(
-                'Cannot build the factorial of {} since it is not '
-                'univariate.'.format(self))
+        raise ValueError(
+            'Cannot build the factorial of {} since it is not '
+            'univariate.'.format(self))
 
     def variable_names(self):
         r"""
@@ -4102,7 +4099,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return True
         if self.growth_group.has_coerce_map_from(R):
             return True
-        elif isinstance(R, AsymptoticRing):
+        if isinstance(R, AsymptoticRing):
             if self.growth_group.has_coerce_map_from(R.growth_group) and \
                     self.coefficient_ring.has_coerce_map_from(R.coefficient_ring):
                 return True
@@ -4390,8 +4387,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return SingularityAnalysisResult(
                 asymptotic_expansion=result,
                 singular_expansions=singular_expansions)
-        else:
-            return result
+        return result
 
     def create_summand(self, type, data=None, **kwds):
         r"""

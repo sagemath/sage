@@ -228,8 +228,7 @@ class IsogenyClass_EC(SageObject):
         """
         if self._label:
             return "Elliptic curve isogeny class %s" % (self._label)
-        else:
-            return "Isogeny class of %r" % (self.E)
+        return "Isogeny class of %r" % (self.E)
 
     def __contains__(self, x) -> bool:
         """

@@ -1527,8 +1527,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
         """
         if self.order in ZZ:
             return (2 * ZZ(self.order) - 1).multifactorial(2)
-        else:
-            return (2 * ZZ(self.order - 1 / 2) - 1).multifactorial(2)
+        return (2 * ZZ(self.order - 1 / 2) - 1).multifactorial(2)
 
     def symmetric_diagrams(self, l=None, perm=None):
         r"""
@@ -1696,8 +1695,7 @@ class TemperleyLiebDiagrams(AbstractPartitionDiagrams):
         """
         if self.order in ZZ:
             return catalan_number(ZZ(self.order))
-        else:
-            return catalan_number(ZZ(self.order - 1/2))
+        return catalan_number(ZZ(self.order - 1/2))
 
     def __contains__(self, obj):
         r"""
@@ -2828,12 +2826,11 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             D = [[-j, j] for j in range(1, ceil(self._k)+1)]
             D[i] += D.pop(i+1)
             return B[SP(D)]
-        else:
-            i = ceil(i)
-            D = [[-j, j] for j in range(1, ceil(self._k)+1)]
-            D[i-1] = [-i]
-            D.append([i])
-            return B[SP(D)]
+        i = ceil(i)
+        D = [[-j, j] for j in range(1, ceil(self._k)+1)]
+        D[i-1] = [-i]
+        D.append([i])
+        return B[SP(D)]
 
     generator_e = e
 
@@ -2955,21 +2952,20 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
                       * self.e(i) * self.e(i-half) * self.e(i-1)
                     - si * self.e(i-1) * self.e(i-half) * self.e(i) * sim
                       * self.jucys_murphy_element(i-1) * self.e(i-1) * si)
-        else:
-            j = ceil(i) - 1
-            if j == 0:
-                return self.zero()
-            if j == 1:
-                return self.s(1)
-            si = self.s(j)
-            sim = self.s(j-1)
-            x = self.e(j-1) * self.jucys_murphy_element(j-1) * si * self.e(j-1)
-            return (sim * si * self.sigma(i-1) * si * sim
-                    + si * x * si + x
-                    - si * self.e(j-1) * self.jucys_murphy_element(j-1) * sim
-                      * self.e(j) * self.e(i-1) * self.e(j-1)
-                    - self.e(j-1) * self.e(i-1) * self.e(j) * sim
-                      * self.jucys_murphy_element(j-1) * self.e(j-1) * si)
+        j = ceil(i) - 1
+        if j == 0:
+            return self.zero()
+        if j == 1:
+            return self.s(1)
+        si = self.s(j)
+        sim = self.s(j-1)
+        x = self.e(j-1) * self.jucys_murphy_element(j-1) * si * self.e(j-1)
+        return (sim * si * self.sigma(i-1) * si * sim
+                + si * x * si + x
+                - si * self.e(j-1) * self.jucys_murphy_element(j-1) * sim
+                  * self.e(j) * self.e(i-1) * self.e(j-1)
+                - self.e(j-1) * self.e(i-1) * self.e(j) * sim
+                  * self.jucys_murphy_element(j-1) * self.e(j-1) * si)
 
     @cached_method
     def jucys_murphy_element(self, i):
@@ -3092,15 +3088,14 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             return ((self.s(i) * L(i)) * (self.s(i) - self.e(i))
                     - (self.e(i) * L(i)) * (self.s(i) - self.e(i+half)*self.e(i))
                     + self.sigma(i+half))
-        else:
-            j = ceil(i) - 1
-            if j == 0:
-                return self.zero()
-            L = self.jucys_murphy_element
-            return (self.s(j) * L(i-1) * self.s(j)
-                    - self.e(j)*L(j)
-                    + (self._q*self.one() - L(i-1) - L(j))*self.e(j)
-                    + self.sigma(j))
+        j = ceil(i) - 1
+        if j == 0:
+            return self.zero()
+        L = self.jucys_murphy_element
+        return (self.s(j) * L(i-1) * self.s(j)
+                - self.e(j)*L(j)
+                + (self._q*self.one() - L(i-1) - L(j))*self.e(j)
+                + self.sigma(j))
 
     L = jucys_murphy_element
 
@@ -4815,16 +4810,15 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     def key_func(P):
         if P[1] < 0:  # cap
             return (0, P[0], P[1])
-        elif P[0] > 0:  # cup
+        if P[0] > 0:  # cup
             return (3, -P[1], -P[0])
-        else:
-            bot, top = -P[0], P[1]
-            if top < bot:  # left moving
-                return (1, top, bot)
-            elif top > bot:  # right moving
-                return (2, -bot, -top)
-            else:  # vertical line
-                return (1, top, bot)
+        bot, top = -P[0], P[1]
+        if top < bot:  # left moving
+            return (1, top, bot)
+        if top > bot:  # right moving
+            return (2, -bot, -top)
+        # vertical line
+        return (1, top, bot)
     diagram = sorted(diagram, key=key_func)
     # Since diagram is sorted in lex order, we will first do the matchings
     #   from right-to-left on the bottom, then the propogating lines, and

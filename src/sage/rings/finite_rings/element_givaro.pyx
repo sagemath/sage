@@ -340,6 +340,28 @@ cdef class Cache_givaro(Cache_base):
             ...
             TypeError: unable to coerce from a finite field other than the prime subfield
 
+        Incompatible extension degrees (no field embedding exists when the source
+        extension degree does not divide the target degree; see :issue:`41899`)::
+
+            sage: GF(101^2)(GF(101^3).gen())
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce element: source field is not a subfield of the target field
+
+            sage: L = GF(101^2, implementation='givaro')
+            sage: K = GF(101^3, implementation='pari_ffelt')
+            sage: L(K.gen())
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce element: source field is not a subfield of the target field
+
+        A subfield embeds into a larger field with compatible degrees::
+
+            sage: L = GF(5^4)
+            sage: K, inc = L.subfield(2, map=True)
+            sage: inc(K.gen()).parent() is L
+            True
+
         For more examples, see
         ``finite_field_givaro.FiniteField_givaro._element_constructor_``
         """
@@ -399,8 +421,7 @@ cdef class Cache_givaro(Cache_base):
         elif isinstance(e, Polynomial):
             if e.is_constant():
                 return self.parent(e.constant_coefficient())
-            else:
-                return e.change_ring(self.parent)(self.parent.gen())
+            return e.change_ring(self.parent)(self.parent.gen())
 
         elif isinstance(e, Rational):
             num = e.numer()
@@ -411,7 +432,14 @@ cdef class Cache_givaro(Cache_base):
             pass  # handle this in next if clause
 
         elif isinstance(e, FiniteFieldElement_pari_ffelt):
-            # Reduce to pari
+            # Reduce to PARI only when a field embedding of the source into
+            # ``self.parent`` exists: GF(p^m) -> GF(p^n) iff m | n.  Otherwise
+            # FF_to_FpXQ below silently builds an unrelated element.
+            F = self.parent
+            E = e.parent()
+            if not E.degree().divides(F.degree()):
+                raise TypeError(
+                    "cannot coerce element: source field is not a subfield of the target field")
             e = e.__pari__()
 
         elif isinstance(e, GapElement):
@@ -590,12 +618,11 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache._element_repr(a^20)
             '20'
         """
-        if self.repr==0:
+        if self.repr == 0:
             return self._element_poly_repr(e)
-        elif self.repr==1:
+        if self.repr == 1:
             return self._element_log_repr(e)
-        else:
-            return self._element_int_repr(e)
+        return self._element_int_repr(e)
 
     def _element_log_repr(self, FiniteField_givaroElement e):
         """
@@ -1002,12 +1029,10 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             True
         """
         cdef Cache_givaro cache = <Cache_givaro>self._cache
-        if cache.objectptr.characteristic() == 2:
+        if cache.objectptr.characteristic() == 2 or \
+           self.element == cache.objectptr.one:
             return True
-        elif self.element == cache.objectptr.one:
-            return True
-        else:
-            return self.element % 2 == 0
+        return self.element % 2 == 0
 
     def sqrt(FiniteField_givaroElement self, extend=False, all=False):
         """
