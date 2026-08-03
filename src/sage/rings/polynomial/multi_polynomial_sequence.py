@@ -187,6 +187,7 @@ except ImportError:
 
 
 def polynomial_list_to_sage(gb_lib:list, ring):
+    
     """
     New function added to transform sequence of multivariate
     polynomials from libraries C to SageMath object. The
