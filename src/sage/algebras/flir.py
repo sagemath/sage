@@ -251,6 +251,7 @@ class FLIRChart:
         - ``this_to_base`` -- (optional) list of images of chart generators in the base field
 
         TESTS::
+
             sage: K = QQ
             sage: C = FLIRChart(K, ("y1","y2"))
             sage: C.n
