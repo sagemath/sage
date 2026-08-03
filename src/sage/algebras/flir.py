@@ -6,39 +6,41 @@ and a list of additional charts, each defined by explicit substitutions from the
 The class supports operations on FLIR elements, including factorization into prime divisors.
 It also supports computations of divisors and class groups.
 
-This file provides two main classes: 
+This file provides two main classes:
 
-- :class: `FLIR`
+- :class:`FLIR`
 
-- :class: `FLIRElement`
+- :class:`FLIRElement`
 
-:class: `FLIR` represents a FLIR, which is a finite intersection of Laurent polynomial rings over a field. 
-It provides, besides all the algebraic features,methods for working with the divisor group, class group, and prime divisors. 
+:class:`FLIR` represents a FLIR, which is a finite intersection of Laurent polynomial rings over a field.
+It provides, besides all the algebraic features,methods for working with the divisor group, class group, and prime divisors.
 A FLIR is represented by a base chart and a list of additional charts, each defined by explicit substitutions from the base chart.
 
-:class: `FLIRElement` represents an element of a FLIR. It provides methods for factorization into irreducibles and for computing the divisor of an element.
+:class:`FLIRElement` represents an element of a FLIR. It provides methods for factorization into irreducibles and for computing the divisor of an element.
 
 
 Auxiliary classes:
-- :class: `FLIRChart` -- a Laurent polynomial ring with a specified fraction field and birational maps.
+- :class:`FLIRChart` -- a Laurent polynomial ring with a specified fraction field and birational maps.
 
-- :class: `FLIRPrimeDivisor` -- a height-one prime ideal of a FLIR, represented by a chart and an irreducible polynomial.
+- :class:`FLIRPrimeDivisor` -- a height-one prime ideal of a FLIR, represented by a chart and an irreducible polynomial.
 
-- :class: `FLIRDivisor` -- an element of the divisor group of a FLIR, represented as a formal sum of prime divisors.
+- :class:`FLIRDivisor` -- an element of the divisor group of a FLIR, represented as a formal sum of prime divisors.
 
-- :class: `FLIRDivisorGroup` -- the free abelian group on the prime divisors of a FLIR.
+- :class:`FLIRDivisorGroup` -- the free abelian group on the prime divisors of a FLIR.
 
-- :class: `ClassGroupData` -- a data structure for storing class group information, including the group itself, the map from divisors to classes, and the list of prime divisors.
+- :class:`ClassGroupData` -- a data structure for storing class group information, including the group itself, the map from divisors to classes, and the list of prime divisors.
 
-- :class: `FLIRFactorization` -- a data structure for storing the factorization of an element of a FLIR into irreducibles.
+- :class:`FLIRFactorization` -- a data structure for storing the factorization of an element of a FLIR into irreducibles.
 
-        
-      
+
+
 REFERENCES:
+
 - Mara Pompili and Daniel Smertnig, "Factoriality and Class Groups of Upper Cluster Algebras
   and Finite Laurent Intersection Rings: A Computational Approach", 2026. arXiv:2601.07520.
 
-AUTHORS: 
+AUTHORS:
+
 - Mara Pompili (2026-06-25): initial version
 - Daniel Smertnig (2026-06-25): initial version
 
@@ -59,7 +61,7 @@ Then a FLIR can be created from the base chart and the additional chart::
 
     sage: A = FLIR(C0, [C1])
     sage: A
-    FLIR over Rational Field 
+    FLIR over Rational Field
       rank n = 2
       #charts = 1
       base vars = ('x1', 'x2')
@@ -85,6 +87,7 @@ More attention must be paid to division, as the result may not be in the FLIR::
     Substituted: y1*y2/(y2 + 1)
 
 We can compute the divisor class group of a FLIR::
+
     sage: A.class_group()
     Trivial Abelian group
     sage: A3 = example_A3()
@@ -99,16 +102,16 @@ We can also compute the divisor of an element of the FLIR::
     1*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1) +
      1*PrimeDivisor(chart=('x_31', 'x_32', 'x_33'), p=x_32 + 1) +
      2*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1)
-    
+
 
 and the image of the divisor in the class group::
 
     sage: A3.divisor_class(z)
     (0)
 
-    
 
-One can also compute the factorization of an element of the FLIR into irreducibles. 
+
+One can also compute the factorization of an element of the FLIR into irreducibles.
 
     sage: w = A3(z2 + 1)
     sage: w.factor()
@@ -127,7 +130,7 @@ Moreover, the factorization can be represented in a verbose way::
 
 """
 
-from typing import Any, Dict,List
+from typing import Any
 from dataclasses import dataclass
 
 from sage.categories.additive_groups import AdditiveGroups
@@ -137,7 +140,7 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.matrix.constructor import matrix
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
-from sage.misc.latex import latex 
+from sage.misc.latex import latex
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -150,6 +153,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 # -----------------------------------------------------------------------------
 # Auxiliary Classes
 # -----------------------------------------------------------------------------
+
 
 class FLIRChart:
     r"""
@@ -221,8 +225,6 @@ class FLIRChart:
         True
     """
 
-
-
     def __init__(
         self,
         K,
@@ -232,7 +234,6 @@ class FLIRChart:
         base_to_this=None,
         this_to_base=None,
     ):
-        
         r"""
         Initialize a chart.
 
@@ -323,11 +324,11 @@ class FLIRChart:
             tuple(self.base_to_this) if self.base_to_this is not None else None,
             self.base_fraction_field,
         ))
-    
+
     def _substitute_from_base(self, f_in_base):
         """
         Substitute a base expression into this chart using ``base_to_this``.
-        
+
         INPUT:
 
         - ``f_in_base`` -- an element of ``self.base_fraction_field``
@@ -352,13 +353,14 @@ class FLIRChart:
             y1 + y2
 
         TESTS::
+
             sage: C = FLIRChart(QQ, ("y1","y2"))
             sage: C._substitute_from_base(1)
             Traceback (most recent call last):
             ...
             ValueError: No base substitution data stored for this chart.
         """
-        
+
         if self.base_fraction_field is None or self.base_to_this is None:
             raise ValueError("No base substitution data stored for this chart.")
         phi = self.base_fraction_field.hom(self.base_to_this, codomain=self.F)
@@ -391,15 +393,15 @@ class FLIRChart:
             True
             sage: g
             y1 + y2
-        
+
         TESTS::
+
             sage: C = FLIRChart.base(QQ, ("y1","y2"))
             sage: C._laurent_poly_to_poly_up_to_unit(0)
             Traceback (most recent call last):
             ...
             ValueError: Divisor of 0 is undefined.
         """
-        
 
         hL = self.L(h)
         if hL == 0:
@@ -421,7 +423,7 @@ class FLIRChart:
         INPUT:
 
         - ``base_chart`` -- a :class:`FLIRChart`; the base chart. It must satisfy
-        ``base_chart.F == self.base_fraction_field`` and have the same dimension.
+          ``base_chart.F == self.base_fraction_field`` and have the same dimension.
 
         OUTPUT:
 
@@ -440,6 +442,7 @@ class FLIRChart:
         composing the two maps on generators.
 
         EXAMPLES::
+
             sage: K = QQ
             sage: C0 = FLIRChart.base(K, ("x1","x2"))
             sage: x1, x2 = C0.F.gens()
@@ -450,6 +453,7 @@ class FLIRChart:
             [y1, y1*y2]
 
         TESTS::
+
             sage: K = QQ
             sage: C0 = FLIRChart.base(K, ("x1","x2"))
             sage: x1, x2 = C0.F.gens()
@@ -554,7 +558,7 @@ class FLIRChart:
         for yj in self.F.gens():
             if phi_base_to_chart(phi_chart_to_base(yj)) != yj:
                 raise ValueError("Inversion check failed on chart generators.")
-    
+
     def _repr_(self):
 
         if self.this_to_base is not None:
@@ -563,15 +567,12 @@ class FLIRChart:
                 lines.append(f"  {name} -> {img}")
             return "\n".join(lines)
 
-        else:
-            return f"FLIRChart({self.var_names}) over {self.base_ring}. No substitution data."
-
-
+        return f"FLIRChart({self.var_names}) over {self.base_ring}. No substitution data."
 
     __repr__ = _repr_
 
 
-@dataclass(frozen=True) 
+@dataclass(frozen=True)
 class FLIRPrimeDivisor:
     r"""
     A prime divisor (i.e., height-one prime) used in the divisor ideals group of a FLIR.
@@ -585,6 +586,7 @@ class FLIRPrimeDivisor:
 
 
     EXAMPLES::
+
         sage: K = QQ
         sage: C = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
@@ -593,6 +595,7 @@ class FLIRPrimeDivisor:
         PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)
 
     TESTS::
+
         sage: K = QQ
         sage: C = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
@@ -609,7 +612,6 @@ class FLIRPrimeDivisor:
 
     def __repr__(self):
         return f"PrimeDivisor(chart={self.chart.var_names}, p={self.irreducible})"
-
 
 
 class FLIRDivisor(Element):
@@ -632,6 +634,7 @@ class FLIRDivisor(Element):
     Zero coefficients are discarded automatically.
 
     EXAMPLES::
+
         sage: K = QQ
         sage: C = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
@@ -642,24 +645,26 @@ class FLIRDivisor(Element):
         sage: G = FLIRDivisorGroup(_DummyA())
         sage: D = G({P: 2, Q: -1}); D
         2*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1) +
-         -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
+        -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
         sage: D.support() == {P, Q}
         True
         sage: D.coeff(P), D.coeff(Q)
         (2, -1)
 
     Arithmetic in ``Div(A)``::
+
         sage: E = G({P: 1})
         sage: D + E
         3*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1) +
-         -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
+        -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
         sage: D - E
-        1*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1) + 
-         -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
+        1*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1) +
+        -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
         sage: -E
         -1*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)
 
     TESTS::
+
         sage: K = QQ
         sage: C = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
@@ -731,6 +736,7 @@ class FLIRDivisor(Element):
         Return the support of this divisor as a set of primes.
 
         EXAMPLES::
+
             sage: K = QQ
             sage: C = FLIRChart.base(K, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
@@ -748,6 +754,7 @@ class FLIRDivisor(Element):
         Return the coefficient of the prime ``P`` in this divisor.
 
         EXAMPLES::
+
             sage: C = FLIRChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
             sage: P = FLIRPrimeDivisor(C, x1 + 1)
@@ -758,12 +765,13 @@ class FLIRDivisor(Element):
             3
         """
         return self._data.get(P, ZZ(0))
-    
+
     def coeffs(self):
         r"""
         Return the list of coefficients of this divisor.
 
         EXAMPLES::
+
             sage: C = FLIRChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
             sage: x1, x2 = C.P.gens()
@@ -791,7 +799,7 @@ class FLIRDivisor(Element):
 
     def _sub_(self, other):
         return self._add_(other._neg_())
-    
+
     def _scalar_mul(self, n):
         n = ZZ(n)
         if n == 0:
@@ -803,12 +811,13 @@ class FLIRDivisor(Element):
 
     def _rmul_(self, n):
         return self._scalar_mul(n)
-    
+
     def is_effective(self):
         r"""
         Return ``True`` if all coefficients are nonnegative.
 
         EXAMPLES::
+
             sage: K = QQ
             sage: C = FLIRChart.base(K, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
@@ -821,12 +830,13 @@ class FLIRDivisor(Element):
             False
         """
         return all(e >= 0 for e in self._data.values())
-    
+
     def is_principal(self):
         r"""
         Return whether this divisor is principal in the ambient FLIR.
 
         EXAMPLES::
+
             sage: A = example_A3()
             sage: C = A.charts
             sage: c = C[0]
@@ -847,7 +857,7 @@ class FLIRDivisor(Element):
             :class:`FLIR` instance, i.e. ``self.parent().flir()`` must exist.
         """
         return self.parent().flir().is_principal_divisor(self)
-    
+
     def gen(self):
         r"""
         Return a principal generator if this divisor is principal.
@@ -855,6 +865,7 @@ class FLIRDivisor(Element):
         Raises ``ValueError`` if the divisor is not principal.
 
         EXAMPLES::
+
             sage: A = example_A3()
             sage: C = A.charts
             sage: c = C[0]
@@ -876,6 +887,7 @@ class FLIRDivisor(Element):
             raise ValueError("Not a principal divisor.")
         return self.parent().flir().principal_generator(self)
 
+
 class FLIRDivisorGroup(Parent):
     r"""
     The divisor group ``Div(A)`` of a FLIR.
@@ -893,6 +905,7 @@ class FLIRDivisorGroup(Parent):
     - ``base_ring`` -- (default: ``ZZ``) the coefficient ring for divisor coefficients
 
     EXAMPLES::
+
         sage: class _DummyA: pass
         sage: G = FLIRDivisorGroup(_DummyA()); G
         Divisor group Div(A) of <..._DummyA...> with coefficients in Integer Ring
@@ -900,6 +913,7 @@ class FLIRDivisorGroup(Parent):
         0
 
     Creating divisors::
+
         sage: K = QQ
         sage: C = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
@@ -942,6 +956,7 @@ class FLIRDivisorGroup(Parent):
         Return the zero divisor.
 
         EXAMPLES::
+
             sage: class _DummyA: pass
             sage: G = FLIRDivisorGroup(_DummyA())
             sage: G.zero()
@@ -958,6 +973,7 @@ class FLIRDivisorGroup(Parent):
         - ``P`` -- a :class:`FLIRPrimeDivisor`
 
         EXAMPLES::
+
             sage: K = QQ
             sage: C = FLIRChart.base(K, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
@@ -972,7 +988,8 @@ class FLIRDivisorGroup(Parent):
     def flir(self):
         """Return the ambient FLIR object associated to this divisor group."""
         return self._A
-    
+
+
 class FLIRFactorization:
     r"""
     Formal factorizations of an element of a FLIR.
@@ -1085,19 +1102,18 @@ class FLIRFactorization:
     @classmethod
     def from_element(cls, f, verbose=False):
         """
-        Build FLIRFactorization from a FLIRElement 
+        Build FLIRFactorization from a FLIRElement
         """
         A = f.parent()
         atoms, factorizations, units = A.factorizations(f)
         return cls(f, atoms=atoms, factorizations=factorizations, units=units, verbose=verbose)
-    
 
     def element(self):
         return self._element
 
     def atoms(self):
         return self._atoms
-    
+
     def units(self):
         return self._units
 
@@ -1107,7 +1123,7 @@ class FLIRFactorization:
 
     def factorizations(self):
         return self._factorizations
-    
+
     def factorization(self):
         """
         Return the factorization if it is unique, otherwise raise an error.
@@ -1284,10 +1300,11 @@ class FLIRFactorization:
         block = rf"\\begin{{{env}}}" + body + rf"\\end{{{env}}}"
         return r"\[" + block + r"\]" if include_display_math else block
 
+
 class ClassGroupData:
     r"""
     Data and algorithms for `Cl(A)` presented as cokernel of `M: ZZ^n -> ZZ^r`,
-    where M is the matrix of valuations of the extra primes `P_i` on the base generators `x_j`. 
+    where M is the matrix of valuations of the extra primes `P_i` on the base generators `x_j`.
 
     Internally, we have:
         -  Z^r is the free abelian group on the `P_i`, represented by `H = FreeModule(ZZ, r)`
@@ -1304,12 +1321,13 @@ class ClassGroupData:
     - ``primes``: a list of the extra primes `P_i` corresponding to the rows of `M`.
 
     EXAMPLES::
+
         sage: M = matrix(ZZ, [[2, 0], [0, 3]])
         sage: primes = ['P1', 'P2']
         sage: data = ClassGroupData(M, primes)
         sage: data.Cl()
-        Multiplicative Abelian group isomorphic to C6 
-        
+        Multiplicative Abelian group isomorphic to C6
+
         sage: M = matrix(ZZ, [[2, 0], [0, 6]])
         sage: data = ClassGroupData(M, primes)
         sage: data.r, data.n
@@ -1318,14 +1336,16 @@ class ClassGroupData:
         [2, 6]
         sage: data.Cl()
         Multiplicative Abelian group isomorphic to C2 x C6
-    
+
     Mapping a vector `v \\in \\ZZ^r` to its class in the quotient module::
-        sage: data.class_in_quotient([2, 0]) == 0 # (2,0) is in the image 
+
+        sage: data.class_in_quotient([2, 0]) == 0 # (2,0) is in the image
         True
-        sage: data.class_in_quotient([1, 0]) == 0 
+        sage: data.class_in_quotient([1, 0]) == 0
         False
-    
+
     Solving `M x = b` over `\\ZZ` (strict by default)::
+
         sage: # A solvable, uniquely-solvable system (square full rank)
         sage: M = matrix(ZZ, [[1, 2],
         ....:                 [0, 3]])
@@ -1336,6 +1356,7 @@ class ClassGroupData:
         False
 
     An inconsistent system ::
+
         sage: M = matrix(ZZ, [[2, 0],
         ....:                 [0, 6]])
         sage: data = ClassGroupData(M, primes=("P1","P2"))
@@ -1348,15 +1369,16 @@ class ClassGroupData:
 
         sage: data.solve_Mx_eq_rhs([1, 0], require_solution=False) is None
         True
-    
+
     TESTS::
+
         sage: M = matrix(ZZ, [[0, 0], [0, 0]])
         sage: data = ClassGroupData(M, primes=("P1","P2"))
         sage: data.diag
         []
         sage: data.Cl().invariants()
         (0, 0)
-        sage: M = matrix(ZZ, [[2, 4]])      
+        sage: M = matrix(ZZ, [[2, 4]])
         sage: data = ClassGroupData(M, primes=("P1",))
         sage: data.solve_Mx_eq_rhs([2])
         Traceback (most recent call last):
@@ -1382,7 +1404,7 @@ class ClassGroupData:
     """
     def __init__(self, M, primes):
         self.M = matrix(ZZ, M)                     # r x n integer matrix
-        self.primes = tuple(primes)      
+        self.primes = tuple(primes)
         self.r = M.nrows()
         self.n = M.ncols()
 
@@ -1390,11 +1412,11 @@ class ClassGroupData:
 
         # R = im(M) as a submodule of H, generated by columns of M
         # Each column is in ZZ^r -> convert to element of H
-        
+
         gens = [list(self.M.column(j)) for j in range(self.n)]
 
         if gens:
-            G = matrix(ZZ, gens)          
+            G = matrix(ZZ, gens)
             E = G.echelon_form(algorithm='flint')
 
             nonzero = [
@@ -1414,7 +1436,7 @@ class ClassGroupData:
         self.Q = self.H.quotient(self.R)
         # Map H -> Q
         self.qmap = self.Q.quotient_map()
-    
+
         # SNF:
         self.S, self.U, self.V = self.M.smith_form(
            transformation=True,
@@ -1450,6 +1472,7 @@ class ClassGroupData:
         A Sage :class:`~sage.groups.abelian_gps.abelian_group.AbelianGroup`.
 
         EXAMPLES::
+
             sage: M = matrix(ZZ, [[4, 0],
             ....:                 [0, 2]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
@@ -1457,6 +1480,7 @@ class ClassGroupData:
             (2, 4)
 
         TESTS::
+
             sage: M = matrix(ZZ, [[1, 0],
             ....:                 [0, 1]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
@@ -1465,7 +1489,6 @@ class ClassGroupData:
             1
         """
         return self._Cl
-
 
     def class_in_quotient(self, v):
         r"""
@@ -1481,6 +1504,7 @@ class ClassGroupData:
         An element of the quotient module ``self.Q``.
 
         EXAMPLES::
+
             sage: M = matrix(ZZ, [[2],
             ....:                 [0]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
@@ -1491,6 +1515,7 @@ class ClassGroupData:
             False
 
         TESTS::
+
             sage: M = matrix(ZZ, [[3, 0],
             ....:                 [0, 0]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
@@ -1505,6 +1530,7 @@ class ClassGroupData:
         Test whether a vector maps to zero in the quotient ``Q = H/R``.
 
         EXAMPLES::
+
             sage: M = matrix(ZZ, [[2, 0], [0, 2]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
             sage: data.is_zero([2,0])
@@ -1513,6 +1539,7 @@ class ClassGroupData:
             False
 
         TESTS::
+
             sage: M = matrix(ZZ, [[0], [0]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
             sage: data.is_zero([0,0])
@@ -1524,7 +1551,7 @@ class ClassGroupData:
         return (q == 0)
 
     # ---------------------------------------
-    # Solve M*x = rhs over ZZ 
+    # Solve M*x = rhs over ZZ
     # ---------------------------------------
 
     def solve_Mx_eq_rhs(self, rhs, *, require_solution=True, require_unique=True):
@@ -1539,11 +1566,11 @@ class ClassGroupData:
         - ``rhs`` --  vector; an element of `\\ZZ^r`.
 
         - ``require_solution`` -- boolean (default: ``True``); if ``True`` then raise
-        a ``ValueError`` when no integer solution exists. If ``False`` then return ``None`` in this case.
+          a ``ValueError`` when no integer solution exists. If ``False`` then return ``None`` in this case.
 
         - ``require_unique`` -- boolean (default: ``True``); if ``True`` then raise a
-        ``ValueError`` when the set of integer solutions is infinite (equivalently,
-        when `\\ker(M)\\neq 0`, i.e. when `n > \\mathrm{rank}(M)`), even if a solution exists. If ``False`` then return one solution in this case.
+          ``ValueError`` when the set of integer solutions is infinite (equivalently,
+          when `\\ker(M)\\neq 0`, i.e. when `n > \\mathrm{rank}(M)`), even if a solution exists. If ``False`` then return one solution in this case.
 
         OUTPUT:
 
@@ -1552,6 +1579,7 @@ class ClassGroupData:
         - if infinitely many solutions exist, then either raise a ``ValueError`` (if ``require_unique=True``) or return one solution (if ``require_unique=False``).
 
         EXAMPLES::
+
             sage: # A full-rank square system (unique solution)
             sage: M = matrix(ZZ, [[3, 1],
             ....:                 [2, 1]])
@@ -1561,15 +1589,17 @@ class ClassGroupData:
             (3, 1)
 
         No solution::
+
             sage: M = matrix(ZZ, [[4, 0],
             ....:                 [0, 6]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
-            sage: data.solve_Mx_eq_rhs([2, 3])   
+            sage: data.solve_Mx_eq_rhs([2, 3])
             Traceback (most recent call last):
             ...
             ValueError: No integer solution to M*x = rhs.
 
         Infinitely many solutions::
+
             sage: M = matrix(ZZ, [[1, 0]])
             sage: data = ClassGroupData(M, primes=("P1",))
             sage: data.solve_Mx_eq_rhs([1])
@@ -1578,6 +1608,7 @@ class ClassGroupData:
             ValueError: Infinitely many integer solutions (nontrivial kernel).
 
         A less trivial example::
+
             sage: M = matrix(ZZ, [[4, 6, 2],
             ....:                 [2, 8, 4],
             ....:                 [6, 2, 10]])
@@ -1591,7 +1622,7 @@ class ClassGroupData:
             True
 
         """
-        if  hasattr(rhs, "list"):
+        if hasattr(rhs, "list"):
             rhs = rhs.list()
         b = vector(ZZ, rhs).column()
         # We already have U*M*V = S, so solve S*y = U*b, then x = V*y.
@@ -1637,7 +1668,7 @@ class ClassGroupData:
                 y[i, 0] = b1[i, 0] // d
 
         xcol = self.V * y
-     
+
         sol = vector(ZZ, [xcol[i, 0] for i in range(xcol.nrows())])
 
         assert (self.M * sol).column() == b
@@ -1647,6 +1678,7 @@ class ClassGroupData:
 # --------------------------------------------------------------------------------
 # FLIRElement
 # --------------------------------------------------------------------------------
+
 
 class FLIRElement(CommutativeAlgebraElement):
     r"""
@@ -1659,7 +1691,7 @@ class FLIRElement(CommutativeAlgebraElement):
 
         f \\in A \\iff \text{for every chart } i,\\text{the substitution of } f
         \\text{ is a Laurent polynomial in chart } i.
-    
+
     INPUT:
 
     - ``parent`` -- a :class:`FLIR`
@@ -1671,6 +1703,7 @@ class FLIRElement(CommutativeAlgebraElement):
     EXAMPLES:
 
     A FLIR with a single chart (the base chart)::
+
         sage: K = QQ
         sage: base = FLIRChart.base(K, ("x1","x2"))
         sage: A = FLIR(base, (base,), compute_base_to_charts=False)
@@ -1683,6 +1716,7 @@ class FLIRElement(CommutativeAlgebraElement):
     A FLIR with two charts.
 
     Define a second chart by ``y1 = (x2+1)/x1`` and ``y2 = x2``::
+
         sage: K = QQ
         sage: base = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = base.F.gens()
@@ -1692,6 +1726,7 @@ class FLIRElement(CommutativeAlgebraElement):
         sage: A = FLIR(base, (base, ch1), compute_base_to_charts=True)
 
     The element ``(x2+1)/x1`` lies in the FLIR (it becomes ``y1`` in the second chart)::
+
         sage: f = A((x2+1)/x1); f
         (x2 + 1)/x1
         sage: # Check substitution is Laurent in chart1:
@@ -1700,20 +1735,21 @@ class FLIRElement(CommutativeAlgebraElement):
 
     Membership checking rejects elements that are not Laurent after substitution.
     For example, ``1/(x1)`` becomes ``y1/(y2+1)`` in chart1, which is not Laurent::
-        
+
         sage: A(1/(x1))
         Traceback (most recent call last):
         ...
         ValueError: Not in FLIR: not Laurent in chart ('y1', 'y2').
         ...
-        
+
 
     One can bypass membership checking with ``check=False``::
-        
+
         sage: A(1/(x1), check=False)
         1/x1
 
     TESTS::
+
         sage: K = QQ
         sage: base = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = base.F.gens()
@@ -1732,7 +1768,6 @@ class FLIRElement(CommutativeAlgebraElement):
 
     """
 
-    
     def __init__(self, parent, f, check=True):
         self._f = f
         if check:
@@ -1741,13 +1776,12 @@ class FLIRElement(CommutativeAlgebraElement):
 
     def _repr_(self):
         return repr(self._f)
-    
+
     def _richcmp_(self, other, op):
         # mathematical comparison
         if not isinstance(other, FLIRElement):
             return NotImplemented
         return richcmp((self.parent(), self._f), (other.parent(), other._f), op)
-
 
     @property
     def f(self):
@@ -1767,7 +1801,7 @@ class FLIRElement(CommutativeAlgebraElement):
 
     def __pow__(self, n):
         return self.parent()(self._f ** int(n), check=False)
-    
+
     def __truediv__(self, other):
         """Division in the ambient fraction field, with membership check."""
         A = self.parent()
@@ -1793,18 +1827,17 @@ class FLIRElement(CommutativeAlgebraElement):
         A = self.parent()
         DivA = A.Div()
 
-        # P_i-part via valuations 
+        # P_i-part via valuations
         Pis = A.extra_primes()
-        data: Dict[FLIRPrimeDivisor, int] = {}
+        data: dict[FLIRPrimeDivisor, int] = {}
         for Pj in Pis:
             e = A._valuation_of_base_element_at_prime(self.f, Pj)
             if e != 0:
                 data[Pj] = int(e)
 
-        # base primes from factorization in base Laurent ring 
+        # base primes from factorization in base Laurent ring
         # We compute numerator/denominator in base chart, clear monomial, factor polynomial part in base.P
         poly = A._base_chart._laurent_poly_to_poly_up_to_unit(self.f)[0]
-
 
         if poly == 0:
             raise ValueError("Divisor of 0 is undefined.")
@@ -1825,10 +1858,9 @@ class FLIRElement(CommutativeAlgebraElement):
 
     def factor(self, verbose=False):
         return FLIRFactorization.from_element(self, verbose=verbose)
-    
+
     def atoms(self):
         return self.factor().atoms()
-
 
 
 # -----------------------------------------------------------------------------
@@ -1883,10 +1915,11 @@ class FLIR(Parent, UniqueRepresentation):
     - ``category`` -- optional Sage category. By default this is taken to be a
       commutative algebra over the coefficient field.
 
-    EXAMPLES::
+    EXAMPLES:
 
     The simplest FLIR is just a Laurent polynomial ring itself, viewed as the
     intersection of one chart::
+
         sage: K = QQ
         sage: C0 = FLIRChart.base(K, ("x1","x2"))
         sage: A = FLIR(C0, (C0,), compute_base_to_charts=False)
@@ -1897,16 +1930,19 @@ class FLIR(Parent, UniqueRepresentation):
           base vars = ('x1', 'x2')
 
     Its fraction field is the fraction field of the base Laurent ring::
+
         sage: A.fraction_field is C0.F
         True
 
     Elements are represented by expressions in the base fraction field::
+
         sage: x1, x2 = C0.F.gens()
         sage: f = A((x1 + 1)/x2)
         sage: f
         (x1 + 1)/x2
 
     Arithmetic is performed in the ambient fraction field::
+
         sage: g = A(x1)
         sage: f + g
         (x1*x2 + x1 + 1)/x2
@@ -1916,6 +1952,7 @@ class FLIR(Parent, UniqueRepresentation):
         (-x1 - 1)/x2
 
     Since there is only one chart, every Laurent expression in the base chart is in `A`::
+
         sage: A(x1^-3 * x2 + x2^-1)
         (x1^3 + x2^2)/(x1^3*x2)
 
@@ -1927,6 +1964,7 @@ class FLIR(Parent, UniqueRepresentation):
 
     Then the corresponding FLIR consists of rational functions that are Laurent in
     both the `x`-chart and the `y`-chart::
+
         sage: base = FLIRChart.base(QQ, ("x1","x2"))
         sage: x1, x2 = base.F.gens()
         sage: ch1 = FLIRChart(QQ, ("y1","y2"),
@@ -1935,16 +1973,19 @@ class FLIR(Parent, UniqueRepresentation):
         sage: A = FLIR(base, (base, ch1), compute_base_to_charts=True)
 
     The chart inverse is computed automatically::
+
         sage: ch1.base_to_this
         [(y2 + 1)/y1, y2]
 
     The element `(x_2+1)/x_1` belongs to `A`, because it becomes the Laurent monomial
     `y_1` in the second chart::
+
         sage: A((x2 + 1)/x1)
         (x2 + 1)/x1
 
     But `1/x_1` does not belong to `A`, since after substitution it becomes
     `y_1/(y_2+1)`, which is not Laurent::
+
         sage: A(1/x1)
         Traceback (most recent call last):
         ...
@@ -1952,15 +1993,18 @@ class FLIR(Parent, UniqueRepresentation):
         ...
 
     Membership checks can be bypassed when needed for internal constructions::
+
         sage: A(1/x1, check=False)
         1/x1
 
     The distinguished extra primes are the height-1 primes containing `x_1 \\cdots x_n`
     that are not already visible as coordinate primes in the base chart::
+
         sage: A.extra_primes()
         [PrimeDivisor(chart=('y1', 'y2'), p=y2 + 1)]
 
     The divisor group is implemented as a free abelian group on prime divisors::
+
         sage: DivA = A.Div()
         sage: DivA
         Divisor group Div(A) of FLIR over Rational Field
@@ -1969,6 +2013,7 @@ class FLIR(Parent, UniqueRepresentation):
           base vars = ('x1', 'x2') with coefficients in Integer Ring
 
     An element determines a divisor in `\\mathrm{Div}(A)`::
+
         sage: f = A((x2 + 1)/x1)
         sage: D = f.divisor()
         sage: D
@@ -1976,16 +2021,19 @@ class FLIR(Parent, UniqueRepresentation):
 
     Since `f` is itself an element of the ring, its divisor is principal and therefore
     trivial in the class group::
+
         sage: A.divisor_class(D) == 0
         True
         sage: D.is_principal()
         True
 
     A principal generator can be reconstructed from a principal divisor::
+
         sage: A.principal_generator(D)
         (x2 + 1)/x1
 
     A larger example is given by the helper function ``example_A3()``::
+
         sage: A3 = example_A3()
         sage: A3.n
         3
@@ -1995,6 +2043,7 @@ class FLIR(Parent, UniqueRepresentation):
         True
 
     In that example one can compute divisors and atoms::
+
         sage: x1, x2, x3 = A3._base_chart.L.gens()
         sage: a = A3(x1**2 * (x1 + x3) / x2)
         sage: D = a.divisor()
@@ -2007,12 +2056,14 @@ class FLIR(Parent, UniqueRepresentation):
         sage: a.atoms()
         [x1, (x1 + x3)/x2]
 
-        
+
     Factorizations are returned as a list of atoms and a list of exponent patterns::
+
         sage: a.factor()
         [[((x1 + x3)/x2, 1), (x1, 2)]]
-    
+
     An example of non-half-factorial element::
+
         sage: x1, x2, x3 = A3._base_chart.L.gens()
         sage: P1, P2, P3, P4 = A3.extra_primes()
         sage: P2 = A3.divisor({P2: 1})
@@ -2021,7 +2072,7 @@ class FLIR(Parent, UniqueRepresentation):
         sage: f = A3((x1*x2*x3)**2 + (((x2+1)**2)/(x1*x3))*(x3+1))
         sage: Q1 = g.divisor()
         sage: Q2 = f.divisor()
-        sage: div = P2 + P2 + Q1 + Q2 + P4 + P4 
+        sage: div = P2 + P2 + Q1 + Q2 + P4 + P4
         sage: h = A3.principal_generator(div)
         sage: h.factor().set_of_lengths()
         {4, 5}
@@ -2030,6 +2081,7 @@ class FLIR(Parent, UniqueRepresentation):
     TESTS:
 
     Construction is unique-representation compatible::
+
         sage: C0 = FLIRChart.base(QQ, ("x","y"))
         sage: A1 = FLIR(C0, (C0,), compute_base_to_charts=False)
         sage: A2 = FLIR(C0, (C0,), compute_base_to_charts=False)
@@ -2037,6 +2089,7 @@ class FLIR(Parent, UniqueRepresentation):
         True
 
     Coercion of scalars from the base field works::
+
         sage: A = FLIR(C0, (C0,), compute_base_to_charts=False)
         sage: A(1)
         1
@@ -2044,12 +2097,14 @@ class FLIR(Parent, UniqueRepresentation):
         3/2
 
     The zero and unit elements are always accepted without membership checks::
+
         sage: A(0)
         0
         sage: A(1)
         1
 
     Incomplete charts are rejected::
+
         sage: Cbad = FLIRChart(QQ, ("u","v"), base_fraction_field=C0.F)
         sage: FLIR(C0, (C0, Cbad), compute_base_to_charts=True)
         Traceback (most recent call last):
@@ -2057,6 +2112,7 @@ class FLIR(Parent, UniqueRepresentation):
         ValueError: Chart ('u', 'v') incomplete: need this_to_base at least.
 
     Base-field mismatch in charts is caught when inversion is requested::
+
         sage: C0a = FLIRChart.base(QQ, ("x1","x2"))
         sage: C0b = FLIRChart.base(QQ, ("u1","u2"))
         sage: x1, x2 = C0a.F.gens()
@@ -2102,13 +2158,13 @@ class FLIR(Parent, UniqueRepresentation):
                     ch.compute_base_to_this(self._base_chart)
                 if ch.base_to_this is None or ch.this_to_base is None:
                     raise ValueError(f"Chart {ch.var_names} incomplete: need this_to_base at least.")
-                
+
     def __init__(self, base_chart: FLIRChart, charts, compute_base_to_charts=True, category=None):
         self._init_flir_structure(base_chart, charts, compute_base_to_charts=compute_base_to_charts)
 
         if category is None:
             category = CommutativeAlgebras(base_chart.base_ring.category())
-        
+
         Parent.__init__(self, base=self._base_chart.base_ring, category=category)
         self.element_class = self.Element # type: ignore[assignment]
 
@@ -2116,7 +2172,9 @@ class FLIR(Parent, UniqueRepresentation):
     def fraction_field(self):
         r"""
         The fraction field of the FLIR is the fraction field of the base Laurent ring.
+
         EXAMPLES::
+
             sage: C = FLIRChart.base(QQ, ("x","y"))
             sage: A = FLIR(C, (C,), compute_base_to_charts=False)
             sage: A.fraction_field is C.F
@@ -2135,18 +2193,19 @@ class FLIR(Parent, UniqueRepresentation):
     __repr__ = _repr_
 
     def _coerce_map_from_(self, S):
-        # allow coercion from the base ring 
+        # allow coercion from the base ring
         if self.base_ring().has_coerce_map_from(S):
             return True
         return super()._coerce_map_from_(S)
-    
+
     def _element_constructor_(self, x, check=True):
         r"""
-        We allow coercion from the base ring, and we also allow direct 
-        construction from the fraction field of the base chart (which is the fraction field of the FLIR). 
+        We allow coercion from the base ring, and we also allow direct
+        construction from the fraction field of the base chart (which is the fraction field of the FLIR).
         In either case, we check membership by verifying that the element becomes Laurent in every chart.
 
         TESTS::
+
             sage: C = FLIRChart.base(QQ, ("x","y"))
             sage: A = FLIR(C, (C,), compute_base_to_charts=False)
             sage: x, y = C.F.gens()
@@ -2165,14 +2224,14 @@ class FLIR(Parent, UniqueRepresentation):
             check = False
         return self.element_class(self, x, check=check)
 
-    
     def _check_membership(self, f):
         r"""
-        Check that the given expression in the base fraction field 
-        is actually an element of the FLIR by verifying that it 
+        Check that the given expression in the base fraction field
+        is actually an element of the FLIR by verifying that it
         becomes Laurent in every chart.
 
         TESTS::
+
             sage: base = FLIRChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = base.F.gens()
             sage: ch1 = FLIRChart(QQ, ("y1","y2"),
@@ -2194,7 +2253,7 @@ class FLIR(Parent, UniqueRepresentation):
                 raise ValueError(
                     f"Not in FLIR: not Laurent in chart {ch.var_names}.\nSubstituted: {expr}"
                 ) from e
-    
+
     def _normalize(self, p):
         r"""
         Normalize a nonzero polynomial by dividing by its leading coefficient.
@@ -2236,11 +2295,13 @@ class FLIR(Parent, UniqueRepresentation):
     # extra primes: primes over x1*...*xn, i.e. primes missing in FLIR._base_chart
     # -------------------------------------------------------
 
-    def _extra_primes_in_chart(self, i: int) -> List[FLIRPrimeDivisor]:
+    def _extra_primes_in_chart(self, i: int) -> list[FLIRPrimeDivisor]:
         """
-        For chart i:
-          f_i = image of x1*...*xn in chart i
-          g_{j,i} = image of (prod of chart j variables) in chart i for j<i
+        For chart ``i``::
+
+            f_i = image of x1*...*xn in chart i
+            g_{j,i} = image of (prod of chart j variables) in chart i for j<i
+
         Return irreducible factors of gcd(f_i, g_{0,i},...,g_{i-1,i}) (after clearing Laurent units).
         """
         chart_i = self.charts[i]
@@ -2250,7 +2311,7 @@ class FLIR(Parent, UniqueRepresentation):
         fP, _ = chart_i._laurent_poly_to_poly_up_to_unit(f_i)
 
         gcd_list = [fP]
-        for j in range(0, i):
+        for j in range(i):
             chart_j = self.charts[j]
             yjprod_base = self._prod_of_chart_gens_as_base_expr(chart_j)
             gij = chart_i._substitute_from_base(yjprod_base)
@@ -2268,11 +2329,12 @@ class FLIR(Parent, UniqueRepresentation):
             primes.append(FLIRPrimeDivisor(chart_i, self._normalize(f)))
         return primes
 
-    def extra_primes(self, recompute: bool = False) -> List[FLIRPrimeDivisor]:
+    def extra_primes(self, recompute: bool = False) -> list[FLIRPrimeDivisor]:
         r"""
         Return the list P1,...,Pr of prime divisors containing x1*...*xn.
 
         EXAMPLES::
+
             sage: base = FLIRChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = base.F.gens()
             sage: ch1 = FLIRChart(QQ, ("y1","y2"),
@@ -2283,6 +2345,7 @@ class FLIR(Parent, UniqueRepresentation):
             [PrimeDivisor(chart=('y1', 'y2'), p=y2 + 1)]
 
         TESTS::
+
             sage: A.extra_primes() is A.extra_primes()
             True
             sage: A.extra_primes(recompute=True) == A.extra_primes()
@@ -2295,7 +2358,7 @@ class FLIR(Parent, UniqueRepresentation):
         for i in range(len(self.charts)):
             primes.extend(self._extra_primes_in_chart(i))
 
-        # deduplicate 
+        # deduplicate
         primes = list(dict.fromkeys(primes))
 
         self._extra_primes_cache = primes
@@ -2321,7 +2384,7 @@ class FLIR(Parent, UniqueRepresentation):
                 e += int(k)
         return e
 
-    def _coeffs_on_extra_primes(self, base_expr) -> Dict[FLIRPrimeDivisor, int]:
+    def _coeffs_on_extra_primes(self, base_expr) -> dict[FLIRPrimeDivisor, int]:
         """
         Return dict Pi -> v_{Pi}(base_expr) for Pi in extra_primes.
         """
@@ -2350,7 +2413,7 @@ class FLIR(Parent, UniqueRepresentation):
         if getattr(self, "_div_group_cache", None) is None:
             self._div_group_cache = FLIRDivisorGroup(self, base_ring=ZZ)
         return self._div_group_cache
-    
+
     def Div(self):
         """
         Return the divisor group Div(A) of this FLIR.
@@ -2374,6 +2437,7 @@ class FLIR(Parent, UniqueRepresentation):
          - FLIRElement or anything coercible to the base fraction field -> principal divisor of that element
 
         Examples::
+
             sage: A = example_A3()
             sage: C1, C2, C3, C4, C5 = A.charts
             sage: x1, x2, x3 = C1.P.gens()
@@ -2383,16 +2447,16 @@ class FLIR(Parent, UniqueRepresentation):
             sage: P = FLIRPrimeDivisor(A._base_chart, x1 + x3)
             sage: A.divisor(P)
             1*PrimeDivisor(chart=('x1', 'x2', 'x3'), p=x1 + x3)
-            
+
             sage: Q = FLIRPrimeDivisor(C3, y1*y3 + y2)
-            sage: A.divisor({P: 2, Q: 3})  
+            sage: A.divisor({P: 2, Q: 3})
             2*PrimeDivisor(chart=('x1', 'x2', 'x3'), p=x1 + x3) +
-             3*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_21*x_23 + x_22)
+            3*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_21*x_23 + x_22)
 
             sage: x = A._base_chart.F.gens()[0]
-            sage: A.divisor(x) 
+            sage: A.divisor(x)
             1*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1) +
-             1*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1) 
+            1*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1)
         """
         DivA = self.Div()
 
@@ -2448,7 +2512,7 @@ class FLIR(Parent, UniqueRepresentation):
             for j, Pj in enumerate(primes):
                 C[i,j] = ZZ(self._valuation_of_base_element_at_prime(xs[i], Pj))
         return C.transpose(), primes
-    
+
     def class_data(self, recompute=False):
         """ Return the ClassGroupData object (cached)"""
 
@@ -2462,6 +2526,7 @@ class FLIR(Parent, UniqueRepresentation):
         Return Cl(A) as the quotient module Q = Z^r /im(M).
 
         EXAMPLES::
+
             sage: # trivial FLIR (single base chart) has trivial class group
             sage: C = FLIRChart.base(QQ, ("x1","x2"))
             sage: A = FLIR(C, (C,), compute_base_to_charts=False)
@@ -2470,17 +2535,15 @@ class FLIR(Parent, UniqueRepresentation):
             sage: A3 = example_A3()
             sage: A3.class_group()
             Multiplicative Abelian group isomorphic to Z
-            sage: A3.class_group().invariants()  
+            sage: A3.class_group().invariants()
             (0,)
 
         """
         return self.class_data().Cl()
-    
 
     # ------------------------
     # class of a divisor
     # ------------------------
-
 
     def _to_H(self, D: FLIRDivisor):
         """
@@ -2574,7 +2637,7 @@ class FLIR(Parent, UniqueRepresentation):
             False
         """
         return self.class_data().class_in_quotient(self._to_H(D)) == 0
-    
+
     def principal_generator(self, D: FLIRDivisor):
         """
         If D is principal, attempt to produce ``f \\in K(x)`` such that ``div(f) = D``.
@@ -2607,7 +2670,7 @@ class FLIR(Parent, UniqueRepresentation):
         """
         if not self.is_principal_divisor(D):
             return None
-        
+
         data = self.class_data()
         Pis = data.primes
 
@@ -2623,7 +2686,7 @@ class FLIR(Parent, UniqueRepresentation):
         m = data.solve_Mx_eq_rhs(rhs, require_unique=False)
         if m is None:
             return None
-        
+
         xs = self._base_gens()
         mon = self._base_chart.F(1)
         for i in range(self.n):
@@ -2643,26 +2706,25 @@ class FLIR(Parent, UniqueRepresentation):
         """
         Ps = sorted(D.support(), key=lambda P: repr(P))
         return Ps
-    
+
     def _divisor_to_vector(self, D: FLIRDivisor, basis):
         """
         Given a divisor D and a list of prime divisors as basis, return the vector of coefficients.
         """
         return vector(ZZ, [D.coeff(P) for P in basis])
-    
+
     def _vector_to_divisor(self, v, basis):
         """
         Given a vector of coefficients and a list of prime divisors as basis, return the corresponding divisor.
         """
         data = {P: int(e) for P, e in zip(basis, v) if e != 0}
         return self.divisor(data)
-    
+
     def _is_effective_on_basis(self, v):
         return all(int(c) >= 0 for c in v)
-    
+
     def _componentwise_leq(self, a, b):
         return all(int(x) <= int(y) for x, y in zip(a, b))
-    
 
     def _principal_support_lattice(self, D):
         """
@@ -2720,7 +2782,6 @@ class FLIR(Parent, UniqueRepresentation):
 
         return support, K
 
-
     def _principal_effective_subdivisors_via_kernel(self, D):
         """
         Enumerate all effective principal subdivisors E <= D
@@ -2773,8 +2834,7 @@ class FLIR(Parent, UniqueRepresentation):
             out.append(E)
 
         return out
-    
-    
+
     def _find_atoms(self, a: FLIRElement):
         if a.f == 0:
             raise ValueError("Zero has no factorizations.")
@@ -2818,8 +2878,8 @@ class FLIR(Parent, UniqueRepresentation):
                 atoms.append(elt)
 
         return atoms
-    
-    def _all_solutions_bounded (self, target,  cols, bounds):
+
+    def _all_solutions_bounded(self, target,  cols, bounds):
         """
         Solve target = sum ci * cols[i] with ci in [0, bounds[i]], ci\\in ZZ_{\\ge 0}.
         """
@@ -2837,7 +2897,7 @@ class FLIR(Parent, UniqueRepresentation):
                 if rem[j] > max_cover:
                     return False
             return True
-        
+
         def rec(i, rem, tvec):
             if i == n:
                 if all(x == 0 for x in rem):
@@ -2853,16 +2913,16 @@ class FLIR(Parent, UniqueRepresentation):
                     ub = min(ub, rem[j] // cj)
             for t in range(ub + 1):
                 rec(i + 1, rem - t * col, tvec + [t])
-        
+
         rec(0, target, [])
         return sols
-    
+
     def factorizations(self, a: FLIRElement):
         """
         Return  all factorizations of a as follows:
             - list of atoms that divide a
             - list of factorizations, where each factorization is a list of (atom, exponent) pairs.
-            - units 
+            - units
         """
 
         if a.f == 0:
@@ -2873,14 +2933,13 @@ class FLIR(Parent, UniqueRepresentation):
         va = self._divisor_to_vector(Da, basis)
         if not self._is_effective_on_basis(va):
             raise ValueError(f"Negative coefficients in divisor. The element is not an element of {self}.")
-        
+
         atoms = self._find_atoms(a)
         if len(atoms) == 0:
             return atoms, [[]], [a]
-        
-        
+
         atom_divs = [self._divisor_to_vector(b.divisor(), basis) for b in atoms]
-        bounds =[]
+        bounds = []
         for col in atom_divs:
             ub = None
             for j in range(len(va)):
@@ -2905,16 +2964,16 @@ class FLIR(Parent, UniqueRepresentation):
             eps = a / prod
             factorizations.append(fac)
             units.append(eps)
-        
+
         return atoms, factorizations, units
-    
+
 
 def example_A3(K=None):
     r"""
     Return a standard rank-`3` FLIR example with five charts.
 
     This example is modeled on the Cluster Algebra of type `A_3`.
-        
+
     """
     if K is None:
         K = QQ
@@ -2944,6 +3003,7 @@ def example_A3(K=None):
 
     A = FLIR(base, [base, chart1, chart2, chart3, chart4], compute_base_to_charts=True)
     return A
+
 
 def example_A2_generalized(K=None):
 

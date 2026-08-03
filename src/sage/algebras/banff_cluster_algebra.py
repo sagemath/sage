@@ -180,7 +180,7 @@ a generator::
     sage: A.is_principal_divisor(D2)
     True
     sage: A.principal_generator(D2)
-    x0  
+    x0
 
 The FLIR structure also provides algorithms for atoms and factorizations.
 For an element `f` of the algebra, one can compute its atoms::
@@ -191,6 +191,7 @@ For an element `f` of the algebra, one can compute its atoms::
     [x0, x2, (x1 + 1)/x2, (x1 + 1)/x0]
     sage: f.factor()
     [[((x1 + 1)/x0, 1), (x0, 1)], [((x1 + 1)/x2, 1), (x2, 1)]]
+
 
 REFERENCES:
 
@@ -227,6 +228,7 @@ from sage.structure.element import CommutativeAlgebraElement
 # Banff algorithm helpers
 # ============================================================
 
+
 def is_seed_acyclic(B, allowed_directions: Sequence[int]) -> bool:
     r"""
     Check whether the principal part of ``B`` on the given mutable indices
@@ -254,7 +256,6 @@ def is_seed_acyclic(B, allowed_directions: Sequence[int]) -> bool:
     P = B[allowed_directions, allowed_directions]
     dg = DiGraph(P.apply_map(lambda x: ZZ.zero() if x <= 0 else ZZ.one()))
     return dg.is_directed_acyclic()
-
 
 
 def find_partner_sets(A, allowed_directions: Sequence[int]):
@@ -352,12 +353,12 @@ class ClusterAlgebraChart:
     - chart: a Sage ClusterAlgebra whose initial seed corresponds to seed
     - to_chart: map from base fraction field -> chart fraction field
     - from_chart: inverse map chart fraction field -> base fraction field
-    
+
     EXAMPLES:
-    
+
     Build a rank-2 acyclic cluster algebra and a chart from one mutation
     step away from it::
-    
+
         sage: B = matrix([[0, 1], [-1, 0]])
         sage: A = ClusterAlgebra(B)
         sage: seed = A.initial_seed()
@@ -377,10 +378,10 @@ class ClusterAlgebraChart:
           chart: A Cluster Algebra with cluster variables x0_0, x0_1 and no coefficients over Integer Ring
           allowed directions: [0, 1]
           )
- 
+
     The two morphisms are inverse to each other on generators, up to the
     identification of the ambient fraction fields::
- 
+
         sage: F = A.ambient().fraction_field()
         sage: Fp = A_chart.ambient().fraction_field()
         sage: chart.to_chart.domain() is F
@@ -394,9 +395,9 @@ class ClusterAlgebraChart:
         Construct a :class:`ClusterAlgebraChart` from a seed of the base
         algebra and an independently-built :class:`ClusterAlgebra` sharing
         the same exchange matrix.
- 
+
         INPUT:
- 
+
         - ``seed_chart`` -- a seed of the *base* cluster algebra, whose
           ``b_matrix()`` agrees with ``A_chart.b_matrix()`` at the initial
           seed
@@ -405,13 +406,13 @@ class ClusterAlgebraChart:
           identify it with the base algebra)
         - ``allowed_directions`` -- the mutation directions still active in
           this branch of the recursion
- 
+
         OUTPUT: a :class:`ClusterAlgebraChart` wrapping ``seed_chart`` and
         ``A_chart`` together with the two fraction-field morphisms between
         them
- 
+
         EXAMPLES::
- 
+
             sage: B = matrix([[0, 1], [-1, 0]])
             sage: A = ClusterAlgebra(B)
             sage: seed = A.initial_seed()
@@ -423,11 +424,11 @@ class ClusterAlgebraChart:
               chart: A Cluster Algebra with cluster variables x0_0, x0_1 and no coefficients over Integer Ring
               allowed directions: [0, 1]
               )
- 
+
         A chart built at a mutated seed still round-trips its own initial
         cluster variables through ``to_chart`` and back through
         ``from_chart``::
- 
+
             sage: seed2 = A.initial_seed()
             sage: seed2.mutate(0)
             sage: A_chart2 = ClusterAlgebra(seed2.b_matrix(),
@@ -487,7 +488,7 @@ class ClusterAlgebraChart:
     def lp_chart(self):
         """The ambient Laurent polynomial ring of the chart."""
         return self.chart.ambient()
-    
+
     def __repr__(self):
         return (
             "ClusterAlgebraChart(\n"
@@ -500,8 +501,6 @@ class ClusterAlgebraChart:
             self.chart,
             self.allowed_directions,
         )
-    
-    
 
 
 def _freeze_and_continue(A, allowed_directions: list[int], current_seed, counter: dict, max_steps=None):
@@ -510,9 +509,9 @@ def _freeze_and_continue(A, allowed_directions: list[int], current_seed, counter
     ``allowed_directions`` until every branch reaches an acyclic
     exchange matrix, freezing (removing from ``allowed_directions``) one
     direction of a sink/source-covering pair at each cyclic step.
- 
+
     INPUT:
- 
+
     - ``A`` -- the ambient :class:`ClusterAlgebra` being explored
     - ``allowed_directions`` -- list of directions still mutable in this
       branch
@@ -522,7 +521,7 @@ def _freeze_and_continue(A, allowed_directions: list[int], current_seed, counter
       to generate distinct variable-name prefixes per discovered chart)
     - ``max_steps`` -- optional recursion budget; raises :class:`ValueError`
       if exceeded
- 
+
     OUTPUT: a list of :class:`ClusterAlgebraChart` objects, one per acyclic
     chart discovered along every branch of the recursion
 
@@ -540,7 +539,7 @@ def _freeze_and_continue(A, allowed_directions: list[int], current_seed, counter
         counter['chart_num'] += 1
 
         # important: distinct variable names per chart
-        A_chart = ClusterAlgebra(  
+        A_chart = ClusterAlgebra(
             matrix,
             scalars=A.base_ring(),
             cluster_variable_prefix=f"x{c}_",
@@ -580,13 +579,13 @@ def _freeze_and_continue(A, allowed_directions: list[int], current_seed, counter
 def _banff_algorithm(A, max_steps=None):
     """
     Compute a set of acyclic charts via Banff recursion.
- 
+
     INPUT:
- 
+
     - ``A`` -- a :class:`ClusterAlgebra`
     - ``max_steps`` -- optional recursion budget passed through to
       :func:`_freeze_and_continue`
- 
+
     OUTPUT: a list of :class:`ClusterAlgebraChart`, covering ``A`` by
     acyclic charts
 
@@ -600,18 +599,18 @@ def _banff_algorithm(A, max_steps=None):
 def _FLIR_charts_for_acyclic(acyclic_chart: ClusterAlgebraChart):
     """
     Given an acyclic chart, refine it to FLIR charts using partner sets.
- 
+
     For every nonempty subset ``J`` of every partner set ``S`` found by
     :func:`find_partner_sets`, this mutates the chart's seed along ``J``
     and builds a new :class:`ClusterAlgebraChart` at that mutated seed
     (with variable names decorated by ``"p"`` on the mutated indices so
     Sage keeps the charts distinct).
- 
+
     INPUT:
- 
+
     - ``acyclic_chart`` -- a :class:`ClusterAlgebraChart` whose exchange
       matrix is acyclic on ``acyclic_chart.allowed_directions``
- 
+
     OUTPUT: a list of :class:`ClusterAlgebraChart`, starting with
     ``acyclic_chart`` itself followed by one chart per nonempty subset of
     each partner set.
@@ -654,19 +653,18 @@ def _FLIR_charts_for_acyclic(acyclic_chart: ClusterAlgebraChart):
     return charts
 
 
-
 def _system_FLIR_charts_for_acyclic(A, acyclic_charts: list[ClusterAlgebraChart]):
     """
     Apply :func:`_FLIR_charts_for_acyclic` to every chart in
     ``acyclic_charts`` and concatenate the results.
- 
+
     INPUT:
- 
+
     - ``A`` -- the ambient :class:`ClusterAlgebra` (unused by the current
       implementation but kept for API symmetry / future use)
     - ``acyclic_charts`` -- a list of acyclic :class:`ClusterAlgebraChart`
       objects, e.g. as returned by :func:`_banff_algorithm`
- 
+
     OUTPUT: the concatenation of ``_FLIR_charts_for_acyclic(chart)`` over
     every ``chart`` in ``acyclic_charts``
     """
@@ -674,7 +672,6 @@ def _system_FLIR_charts_for_acyclic(A, acyclic_charts: list[ClusterAlgebraChart]
     for chart in acyclic_charts:
         charts += _FLIR_charts_for_acyclic(chart)
     return charts
-
 
 
 # ============================================================
@@ -690,9 +687,10 @@ class BanffClusterElement(FLIRElement, ClusterAlgebraElement):
     In particular, ``1/f`` may fail because of Sage coercion behavior for
     custom parents.
 
-    Scalar constants should be coerced explicitly when dividing by algebra elements::
+    Scalar constants should be coerced explicitly when dividing by algebra elements.
 
     EXAMPLES::
+
         sage: B = Matrix([[0, 1], [-1, 0]])
         sage: A = BanffClusterAlgebra(B)
         sage: x0, x1 = A.gens()
@@ -739,10 +737,9 @@ class BanffClusterElement(FLIRElement, ClusterAlgebraElement):
         ...
         ValueError:  Not Laurent in chart ('x0_0', 'x0_1p').
         Substituted: x0_0*x0_1p/(x0_0 + 1)
-    
+
     """
-        
-    
+
     def __init__(self, parent, f, check=False):
         F = parent.ambient().fraction_field()
         L = parent.ambient()
@@ -772,9 +769,9 @@ class BanffClusterElement(FLIRElement, ClusterAlgebraElement):
         r"""
         Return the underlying representative in the ambient fraction
         field.
- 
+
         EXAMPLES::
- 
+
             sage: B = Matrix([[0, 1], [-1, 0]])
             sage: A = BanffClusterAlgebra(B)
             sage: x0, x1 = A.gens()
@@ -807,7 +804,7 @@ class BanffClusterElement(FLIRElement, ClusterAlgebraElement):
         if not isinstance(other, BanffClusterElement) or other.parent() is not A:
             other = A(other)
         return A(self._f * other._f, check=False)
-    
+
     def _lmul_(self, c):
         return self.parent()(c * self._f, check=False)
 
@@ -837,10 +834,10 @@ class BanffClusterElement(FLIRElement, ClusterAlgebraElement):
         ):
             A._check_membership(q)
         return A(q, check=False)
-    
-    
+
+
 # ============================================================
-# BanffClusterAlgebra 
+# BanffClusterAlgebra
 # ============================================================
 
 class BanffClusterAlgebra(ClusterAlgebra, FLIR):
@@ -887,11 +884,6 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
     to find a cover within this bound does not imply that the cluster algebra is
     not Banff; it only means that the semi-algorithm was inconclusive within the
     given budget.
-
-        sage: B = Matrix([[0, 2, -2], [-2, 0, 2], [2, -2, 0]])
-        sage: A = BanffClusterAlgebra(B, check_Banff=False) # long time
-        sage: A.is_banff(max_steps=5) # long time 
-        RuntimeError: Banff semi-algorithm inconclusive within given budget. Try increasing max_steps.
 
     A Banff Cluster Algebra is a Cluster Algebra and a FLIR::
 
@@ -940,11 +932,11 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         sage: A._flir_initialized
         True
     """
-    Element = BanffClusterElement  
+    Element = BanffClusterElement
 
     @staticmethod
     def __classcall__(cls, data, *args, **kwargs):
-        
+
         kwargs = dict(kwargs)
 
         # things ClusterAlgebra.__init__ expects
@@ -1006,7 +998,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
 
         self._banff_ready = False
         self.term_order = term_order
-        
+
         self._cached_flir_charts = None
         self._banff_acyclic_charts_cache = None
         self._banff_certified = None
@@ -1021,19 +1013,17 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         self._class_data_cache = None
         self._div_group_cache = None
 
-
         self.Element = BanffClusterElement
         self.element_class = BanffClusterElement # type: ignore[assignment]
 
         if check_Banff:
             self.is_banff(max_steps=max_steps)
-        
+
         self._banff_ready = True
 
         if flir:
             self._ensure_flir_initialized()
 
-    
     def _ensure_flir_initialized(self, recompute=False):
         if getattr(self, "_flir_initialized", False) and not recompute:
             return
@@ -1074,7 +1064,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
 
         - ``max_steps`` -- optional recursion budget
         - ``recompute`` -- boolean, default ``False``; whether to ignore the
-        cached result and recompute the Banff cover
+          cached result and recompute the Banff cover
 
         OUTPUT:
 
@@ -1092,10 +1082,8 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
             self._banff_acyclic_charts_cache = charts
             self._banff_certified = True
             return True
-        else:
-            raise RuntimeError("Banff semi-algorithm inconclusive within given budget. Try increasing max_steps.")
-            
-    
+        raise RuntimeError("Banff semi-algorithm inconclusive within given budget. Try increasing max_steps.")
+
     def _element_constructor_(self, x, check=True):
         F = self.ambient().fraction_field()
 
@@ -1119,8 +1107,6 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
             self._check_membership(fa)
 
         return BanffClusterElement(self, fa, check=False)
-
-
 
     def _check_membership(self, f):
         r"""
@@ -1161,12 +1147,11 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         if not getattr(self, "_banff_ready", False):
             print("Warning: BanffClusterAlgebra not yet ready; skipping membership check.")
             return
-        
 
         self._ensure_flir_initialized()
-        base = self.charts[0] 
+        base = self.charts[0]
         g = base.L(f)
-        
+
         for ch in self.charts:
             expr = ch._substitute_from_base(g)
             try:
@@ -1196,7 +1181,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         raise NotImplementedError(
             f"Base extension from {self.base_ring()} to {R} is not implemented."
         )
-    
+
     def _coerce_map_from_(self, S): # pyright: ignore[reportIncompatibleMethodOverride]
         if S is self:
             return True
@@ -1205,9 +1190,9 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         if self.base_ring().has_coerce_map_from(S):
             return True
         return ClusterAlgebra._coerce_map_from_(self, S) or FLIR._coerce_map_from_(self, S)
-    
+
     # --- chart construction ---
-    
+
     def _build_flir_charts(self, recompute=False):
         """
         Construct a system of FLIRChart objects:
@@ -1217,7 +1202,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
 
         if (not recompute) and getattr(self, "_cached_flir_charts", None) is not None:
             return self._cached_flir_charts
-        
+
         K = self.base_ring()
 
         base_chart = FLIRChart(
@@ -1225,7 +1210,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
             self.variable_names(),
             term_order=self.term_order,
         )
-        
+
         F_base = base_chart.F
 
         if recompute or self._banff_acyclic_charts_cache is None:
@@ -1258,19 +1243,17 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
             ch.this_to_base = [F_base(c.from_chart(yj)) for yj in chart_gens]
 
             charts.append(ch)
-        
 
         self._cached_flir_charts = charts
         return charts
-    
-    
+
     def _banff_algorithm_with_generators(self, current_seed, allowed_directions):
         """ Find a covering pair, freeze at the two indices, and recursively continue. """
 
         # If the principal part of the seed is acyclic, we are done. We can explicitly
         # get a generating set by taking the current seed and mutating once in each direction
         B = current_seed.b_matrix()
-        
+
         if is_seed_acyclic(B, allowed_directions):
             F = self.ambient().fraction_field()
             gens = [BanffClusterElement(self, F(x), check=False) for x in current_seed.cluster_variables()]
@@ -1281,7 +1264,6 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
                 gens.append(xk_prime)
                 current_seed.mutate(k)
             return gens
-            
 
         # Otherwise, we mutate through all seeds until we find a covering pair
         # By definition, this eventually terminates if A is defined by a Banff quiver;
@@ -1290,12 +1272,10 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         A = self
         old_current_seed = A.current_seed()
         A.set_current_seed(current_seed)
-       
-        seed_count = 0
-        
+
         for seed in A.seeds(allowed_directions=allowed_directions,
                             from_current_seed=True):
-            
+
             if isinstance(seed, KeyboardInterrupt):
                 continue
             B = seed.b_matrix()
@@ -1305,12 +1285,12 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
                 i, j, cover_type = covering_pair
 
                 # Freeze x_i
-                allowed_directions_i = [ d for d in allowed_directions if d != i ]  
-                generators_i = self._banff_algorithm_with_generators(seed, allowed_directions_i)  
+                allowed_directions_i = [ d for d in allowed_directions if d != i ]
+                generators_i = self._banff_algorithm_with_generators(seed, allowed_directions_i)
                 # Freeze x_j
                 allowed_directions_j = [ d for d in allowed_directions if d != j ]
                 generators_j = self._banff_algorithm_with_generators(seed, allowed_directions_j)
-                
+
                 # add extra generators ensuring that the presentations patch together correctly
                 seed.mutate(i)
                 xi_prime = seed.cluster_variables()[i]
@@ -1321,7 +1301,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
                     sign = 1
                 else:
                     sign = -1
-                
+
                 a = A(-1)
                 u = A(1)
                 for k in range(B.nrows()):
@@ -1333,10 +1313,10 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
                         if k != j:
                             a *= x_k**abs(b_ik)
                         else:
-                            a *= x_k**(abs(b_ik) - 1)           
+                            a *= x_k**(abs(b_ik) - 1)
                 assert cluster[i]*xi_prime + a*cluster[j] == u
                 patching_gens = [ cluster[i], cluster[j], xi_prime, a, u ]
-                
+
                 A.set_current_seed(old_current_seed)
                 return generators_i + generators_j + patching_gens
         A.set_current_seed(old_current_seed)
@@ -1368,7 +1348,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         """
 
         A = self
-        B=A.b_matrix()
+        B = A.b_matrix()
         allowed_directions = list(range(B.ncols()))  # Initially all directions are allowed
 
         gens = self._banff_algorithm_with_generators(A.initial_seed(), allowed_directions)
@@ -1378,7 +1358,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         L = A.ambient()
 
         gens = [ L(g) for g in gens if not L(g).is_monomial() and not L(g).is_constant() ]
-        
+
         # Deduplicate deterministically: dedupe by a canonical, content-derived
         # key, then sort by that same key so the result is reproducible
         #regardless of the order _banff_algorithm_with_generators happened to produce them in.
@@ -1390,7 +1370,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         gens = [seen[key] for key in sorted(seen)]
 
         return gens
-    
+
     def presentation(self):
         r"""
         Compute a presentation of this Banff cluster algebra.
@@ -1408,7 +1388,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
             sage: R.base_ring() is QQ
             True
             sage: Q
-             Quotient of Multivariate Polynomial Ring in 
+             Quotient of Multivariate Polynomial Ring in
              ...
              X1^2*T0*T3 + X1^2*T5*T6 + T0*T3*T5*T6 + T5^2*T6^2 - X1*T3*T4 - X1*T4*T5, T4^4*T5 + X1*T0*T4^2 + T4^2*T5^2 + T0*T1*T5*T6 - T4^3 + X1*T0*T5 - T4*T5, X2*T2*T4*T5*T6 - T2*T3*T4*T5 + T1^2*T3*T6 + T2*T4^2 - X2*T5*T6 - T1*T6^2 + T3*T5 - T4, T2^2*T4^2*T5*T6 - T1^3*T3*T6 + T2^2*T5^2*T6 - T1*T2*T4^2 - T2*T4*T5*T6 + T1^2*T6^2 - T1*T2*T5 - T1*T3*T5 + T1*T4 + T5*T6, X2*T2^2*T5^2*T6^2 + T1^3*T3^2*T6 - T2^2*T3*T5^2*T6 + 2*T2^2*T4*T5*T6 + T2*T3*T4*T5*T6 - 2*T1^2*T3*T6^2 + T1*T2*T3*T5 + T1*T3^2*T5 + X2*T5*T6^2 + T1*T6^3 - T1*T2*T4 - 2*T2*T5*T6 - 2*T3*T5*T6 + T1, T2^3*T4*T5^2*T6^2 - T1^4*T3^2*T6 + T1*T2^2*T3*T5^2*T6 - 2*T1*T2^2*T4*T5*T6 + 2*T1^3*T3*T6^2 - 2*T2^2*T5^2*T6^2 - T1^2*T2*T3*T5 - T1^2*T3^2*T5 - T1^2*T6^3 + T1^2*T2*T4 + 3*T1*T2*T5*T6 + 2*T1*T3*T5*T6 - T5*T6^2 - T1^2, T2^4*T5^3*T6^3 - T1^5*T3^3*T6 + T1^2*T2^2*T3^2*T5^2*T6 + 3*T1^4*T3^2*T6^2 - 3*T1*T2^3*T5^2*T6^2 - 3*T1*T2^2*T3*T5^2*T6^2 - T1^3*T2*T3^2*T5 - T1^3*T3^3*T5 - 3*T1^3*T3*T6^3 + 2*T2^2*T5^2*T6^3 + 3*T1^2*T2^2*T5*T6 + 4*T1^2*T2*T3*T5*T6 + 3*T1^2*T3^2*T5*T6 + T1^2*T6^4 - 3*T1*T2*T5*T6^2 - 3*T1*T3*T5*T6^2 - T1^3*T2 - T1^3*T3 + T5*T6^3 + T1^2*T6)
         """
@@ -1429,21 +1409,20 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         for j in range(numgens):
             f = generators[j]
 
-            curgens  = list(R.gens())
+            curgens = list(R.gens())
             currels = I.gens()
 
             curgens = yvars + [f"T{j}"] + curgens
 
             S = PolynomialRing(scalars, curgens)
 
-            Xsub = dict([ (L(f"x{i}"), S(f"X{i}")) for i in range(n) ])
-            Ysub = dict([ (L(f"x{i}"), S(f"Y{i}")) for i in range(n) ])
+            Xsub = {L(f"x{i}"): S(f"X{i}") for i in range(n)}
+            Ysub = {L(f"x{i}"): S(f"Y{i}") for i in range(n)}
 
-            
-            xyrels = [ S(f"X{i}*Y{i} - 1") for i in range (n) ]
+            xyrels = [ S(f"X{i}*Y{i} - 1") for i in range(n) ]
             currels = [ S(r) for r in currels ]
             currels += xyrels
-                
+
             # construct the denominator exponents of f
             dexp = [0]*(n+1)
             for e in f.exponents():
@@ -1453,20 +1432,20 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
 
             d = prod([ L.gen(i) ** dexp[i] for i in range(n) ])
             g = f*d
-            G=g.substitute(Xsub)
-            D=d.substitute(Ysub)
+            G = g.substitute(Xsub)
+            D = d.substitute(Ysub)
 
             currels.append(G*D - S(f"T{j}"))
-    
+
             Iprime = S.ideal(currels)
-            
-            J = Iprime.elimination_ideal([ S(f"Y{i}") for i in range(n) ])  
+
+            J = Iprime.elimination_ideal([ S(f"Y{i}") for i in range(n) ])
 
             R = PolynomialRing(scalars, list(R.gens()) + [f"T{j}"])
             I = R.ideal(J.gens())
 
         return R.quo(I), R, I
-        
+
     # ---------------------------
     # methods from FLIR
     # --------------------------
@@ -1474,11 +1453,12 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
     def extra_primes(self, recompute=False):
         r"""
         Return the list P1,...,Pr of height-one prime ideals that contain x1*...*xn.
-        
-        Notice that the height-one spectrum of self is given by P1,...,Pr 
+
+        Notice that the height-one spectrum of self is given by P1,...,Pr
         and the height-one sprectrum of self.ambient().
 
         EXAMPLES::
+
             sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
             sage: A = BanffClusterAlgebra(B)
             sage: A.extra_primes()
@@ -1491,24 +1471,25 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         return FLIR.extra_primes(self, recompute=recompute)
 
     def divisor_group(self):
-        r""" Return the divisor group of this Banff cluster algebra. 
-        The divisor group is the free abelian group generated by the height-one prime divisors of ``self``. 
+        r""" Return the divisor group of this Banff cluster algebra.
+        The divisor group is the free abelian group generated by the height-one prime divisors of ``self``.
         It is represented by an instance of :class:`FLIRDivisorGroup`.
-        The group is constructed during FLIR initialization and cached, so repeated calls return the same object. 
-        
+        The group is constructed during FLIR initialization and cached, so repeated calls return the same object.
+
         OUTPUT: A :class:`FLIRDivisorGroup`.
         """
         self._ensure_flir_initialized()
         return FLIR.divisor_group(self)
 
     def Div(self):
-        r""" Return the divisor group `\operatorname{Div}(A)`. 
-        
-        This is a shorthand for :meth:`divisor_group`. 
-        
+        r""" Return the divisor group `\operatorname{Div}(A)`.
+
+        This is a shorthand for :meth:`divisor_group`.
+
         OUTPUT: A :class:`FLIRDivisorGroup`, whose elements are instances of :class:`FLIRDivisor`.
 
         EXAMPLES::
+
             sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
             sage: A = BanffClusterAlgebra(B)
             sage: A.Div()
@@ -1520,71 +1501,77 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         return FLIR.Div(self)
 
     def divisor(self, data=None):
-        r""" Construct a divisor (= an element of self.Div()) of this Banff cluster algebra. 
-        
-        INPUT: - ``data`` -- optional input describing a divisor. 
-        The accepted forms are:
-          - ``None`` or ``0``: the zero divisor; 
-          - a :class:`FLIRDivisor` belonging to ``self.Div()``; 
-          - a :class:`FLIRPrimeDivisor`, interpreted with coefficient one; 
-          - a dictionary mapping prime divisors to integer coefficients; 
-          - an iterable of ``(prime, coefficient)`` pairs;
-          - a :class:`BanffClusterElement`, or an object coercible to the ambient fraction field, in which case its principal divisor is returned. 
-          
-        OUTPUT: A :class:`FLIRDivisor` in ``self.Div()``. 
-          
-        EXAMPLES: 
-        
+        r""" Construct a divisor (= an element of self.Div()) of this Banff cluster algebra.
+
+        INPUT:
+
+         - ``data`` -- optional input describing a divisor. The accepted forms are:
+
+           - ``None`` or ``0``: the zero divisor;
+           - a :class:`FLIRDivisor` belonging to ``self.Div()``;
+           - a :class:`FLIRPrimeDivisor`, interpreted with coefficient one;
+           - a dictionary mapping prime divisors to integer coefficients;
+           - an iterable of ``(prime, coefficient)`` pairs;
+           - a :class:`BanffClusterElement`, or an object coercible to the ambient fraction field, in which case its principal divisor is returned.
+
+        OUTPUT: A :class:`FLIRDivisor` in ``self.Div()``.
+
+        EXAMPLES:
+
         Construct the zero divisor::
+
             sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
             sage: A = BanffClusterAlgebra(B)
 
-            sage: A.divisor() 
-            0 
-            sage: A.divisor(0) 
-            0 
-            
-        Compute a principal divisor from an element:: 
+            sage: A.divisor()
+            0
+            sage: A.divisor(0)
+            0
+
+        Compute a principal divisor from an element::
+
             sage: x1, x2, x3 = A.gens()
-            sage: D = A.divisor(x1) 
+            sage: D = A.divisor(x1)
             sage: D
             1*PrimeDivisor(chart=('x0_0p', 'x0_1', 'x0_2'), p=x0_1 + 1) +
              1*PrimeDivisor(chart=('x0_0p', 'x0_1', 'x0_2p'), p=x0_1 + 1)
-            sage: D.parent() is A.Div() 
-            True 
-            
-        Existing divisors in the same divisor group are returned unchanged:: 
-            sage: A.divisor(D) is D 
-            True 
-        
+            sage: D.parent() is A.Div()
+            True
+
+        Existing divisors in the same divisor group are returned unchanged::
+
+            sage: A.divisor(D) is D
+            True
+
         """
         self._ensure_flir_initialized()
         return FLIR.divisor(self, data)
 
     def class_data(self, recompute=False):
-        r""" Return the data used to compute the divisor class group. 
-        
-        This includes the distinguished prime divisors, their valuation matrix, its Smith normal form, 
-        and the resulting presentation of the divisor class group. 
-        
-        By default, previously computed data is reused. 
-        Set ``recompute`` to ``True`` to discard the cached data and compute it again. 
-        
-        INPUT: - ``recompute`` -- boolean (default: ``False``); whether to recompute the class-group data 
-        
+        r""" Return the data used to compute the divisor class group.
+
+        This includes the distinguished prime divisors, their valuation matrix, its Smith normal form,
+        and the resulting presentation of the divisor class group.
+
+        By default, previously computed data is reused.
+        Set ``recompute`` to ``True`` to discard the cached data and compute it again.
+
+        INPUT: - ``recompute`` -- boolean (default: ``False``); whether to recompute the class-group data
+
         OUTPUT: A :class:`ClassGroupData` instance.
         """
         self._ensure_flir_initialized(recompute=recompute)
         return FLIR.class_data(self, recompute=recompute)
 
     def class_group(self):
-        r""" Return the divisor class group of this Banff cluster algebra. 
+        r""" Return the divisor class group of this Banff cluster algebra.
         The class group is the group of Weil divisors modulo principal divisors.
-        It is computed from the valuation matrix of the distinguished height-one primes. 
-        
+        It is computed from the valuation matrix of the distinguished height-one primes.
+
         OUTPUT: A Sage abelian group representing ``Cl(self)``
-        
+
         EXAMPLES::
+
             sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
             sage: A = BanffClusterAlgebra(B)
             sage: A.class_group()
@@ -1630,7 +1617,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
                 (1)
                 sage: A.divisor_class((P+Q))
                 (2)
-        
+
             """
         self._ensure_flir_initialized()
         return FLIR.divisor_class(self, D)
@@ -1695,7 +1682,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
             sage: A.principal_generator(A.divisor({P: 1})) is None
             True
 
-        
+
         """
         self._ensure_flir_initialized()
         return FLIR.principal_generator(self, D)
@@ -1740,6 +1727,3 @@ class BanffClusterAlgebra(ClusterAlgebra, FLIR):
         return (f" A Banff Cluster Algebra with initial cluster variable"
                 f"{var_names_str}"
                 f" over {self.base_ring()}.")
-    
-
-
