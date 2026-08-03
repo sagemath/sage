@@ -194,6 +194,7 @@ class FLIRChart:
           x2 -> x2
 
     A simple birational chart given by `y_1 = x_1` and `y_2 = x_2/x_1`::
+
         sage: x1, x2 = C0.F.gens()
         sage: C1 = FLIRChart(K, ("y1","y2"), base_fraction_field=C0.F,
         ....:              this_to_base=[x1, x2/x1])
