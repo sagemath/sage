@@ -340,6 +340,7 @@ class FLIRChart:
         Raises an error if no base substitution data is stored.
 
         EXAMPLES::
+
             sage: K = QQ
             sage: C0 = FLIRChart.base(K, ("x1","x2"))
             sage: x1, x2 = C0.F.gens()
