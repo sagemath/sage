@@ -201,8 +201,7 @@ class RootSpace(CombinatorialFreeModule):
         """
         if i == self.cartan_type().special_node():
             return self._classical_alpha_0()
-        else:
-            return self.classical().simple_root(i)
+        return self.classical().simple_root(i)
 
     @cached_method
     def to_ambient_space_morphism(self):

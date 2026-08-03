@@ -116,7 +116,6 @@ class RationalFunctionField(FunctionField):
          - Place (x, y + 1)
          + Place (x^2 + 1, y)
 
-        sage: # needs sage.rings.number_field
         sage: A.<z> = QQ[]
         sage: NF.<i> = NumberField(z^2 + 1)
         sage: R.<x> = FunctionField(NF)
@@ -388,7 +387,6 @@ class RationalFunctionField(FunctionField):
 
         Factoring over a function field over a non-prime finite field::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: R.<t> = FunctionField(k)
             sage: S.<X> = R[]
@@ -400,7 +398,6 @@ class RationalFunctionField(FunctionField):
 
         Factoring over a function field over a tower of finite fields::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(4)
             sage: R.<b> = k[]
             sage: l.<b> = k.extension(b^2 + b + a)
@@ -633,7 +630,6 @@ class RationalFunctionField(FunctionField):
         We construct a map from a rational function field into a
         non-rational extension field::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
             sage: f = K.hom(y^2 + y  + 2); f
@@ -799,10 +795,9 @@ class RationalFunctionField(FunctionField):
         if name == self.variable_name():
             id = Hom(self, self).identity()
             return self, id, id
-        else:
-            from .constructor import FunctionField
-            ret = FunctionField(self.constant_base_field(), name)
-            return ret, ret.hom(self.gen()), self.hom(ret.gen())
+        from .constructor import FunctionField
+        ret = FunctionField(self.constant_base_field(), name)
+        return ret, ret.hom(self.gen()), self.hom(ret.gen())
 
     def residue_field(self, place, name=None):
         """
@@ -879,8 +874,7 @@ class RationalFunctionField_global(RationalFunctionField):
         """
         if degree == 1:
             return [self.place_infinite()] + self.places_finite(degree)
-        else:
-            return self.places_finite(degree)
+        return self.places_finite(degree)
 
     def _places_finite(self, degree=1) -> Iterator[FunctionFieldPlace_rational]:
         """

@@ -571,7 +571,6 @@ cdef class PolynomialRealDense(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: f = RR['x']([-3, pi, 0, 1])
             sage: f.reverse()
             -3.00000000000000*x^3 + 3.14159265358979*x^2 + 1.00000000000000
@@ -624,7 +623,6 @@ cdef class PolynomialRealDense(Polynomial):
             sage: fg.quo_rem(g)
             (x^2 - 2.00000000000000, 0)
 
-            sage: # needs sage.symbolic
             sage: f = PolynomialRealDense(RR['x'], range(5))
             sage: g = PolynomialRealDense(RR['x'], [pi,3000,4])
             sage: q, r = f.quo_rem(g)

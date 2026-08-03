@@ -24,7 +24,11 @@ interpreters = custom_target(
     '__init__.py',
   ],
   input: '../../../sage_setup/autogen/interpreters/internal/__init__.py',
-  command: ['../../../sage_setup/autogen/interpreters/__main__.py', '@OUTDIR@'],
+  command: [
+    py,
+    files('../../../sage_setup/autogen/interpreters/__main__.py'),
+    '@OUTDIR@',
+  ],
   # Manually install the generated files instead of using install_sources
   # this is a workaround for https://github.com/mesonbuild/meson/issues/7372
   install: true,

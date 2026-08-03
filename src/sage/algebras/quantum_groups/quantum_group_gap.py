@@ -24,20 +24,6 @@ import re
 
 from copy import copy
 
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.lazy_import import lazy_import
-from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.sage_object import SageObject
-from sage.structure.richcmp import op_EQ, op_NE, richcmp
-from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.sets.family import Family
-from sage.combinat.root_system.cartan_type import CartanType
-from sage.libs.gap.libgap import libgap
-from sage.features.gap import GapPackage
-from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.fields import Fields
@@ -46,6 +32,20 @@ from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.modules import Modules
 from sage.categories.morphism import Morphism
 from sage.categories.rings import Rings
+from sage.combinat.root_system.cartan_type import CartanType
+from sage.features.gap import GapPackage
+from sage.libs.gap.libgap import libgap
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+from sage.rings.rational_field import QQ
+from sage.sets.family import Family
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.graphs.digraph', 'DiGraph')
 
@@ -66,7 +66,7 @@ class QuaGroupModuleElement(Element):
         self._libgap = libgap(libgap_elt)
         Element.__init__(self, parent)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -96,7 +96,7 @@ class QuaGroupModuleElement(Element):
             ret = ret.replace('E%s' % (i + 1), 'E[%s]' % short)
         return ret
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -151,7 +151,7 @@ class QuaGroupModuleElement(Element):
             ret.append(R(str(data[2 * i + 1])))
         return (_unpickle_generic_element, (self.parent(), ret))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return the hash of ``self``.
 
@@ -159,12 +159,12 @@ class QuaGroupModuleElement(Element):
 
             sage: Q = QuantumGroup(['B',3])
             sage: x = Q.an_element()
-            sage: hash(x) == hash(x.gap())
+            sage: hash(x) == hash(libgap(x))
             True
         """
         return hash(self._libgap)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Rich comparison of ``self`` and ``other`` by ``op``.
 
@@ -185,20 +185,18 @@ class QuaGroupModuleElement(Element):
         """
         return richcmp(self._libgap, other._libgap, op)
 
-    def gap(self):
+    def _libgap_(self):
         r"""
-        Return the gap representation of ``self``.
+        Return the libgap representation of ``self``.
 
         EXAMPLES::
 
             sage: Q = QuantumGroup(['B',3])
             sage: x = Q.an_element()
-            sage: x.gap()
+            sage: libgap(x)
             1+(q)*F1+E1+(q^4-1-q^-4+q^-8)*[ K1 ; 2 ]+K1+(-q^-2+q^-6)*K1[ K1 ; 1 ]
         """
         return self._libgap
-
-    _libgap_ = gap
 
     def _add_(self, other):
         r"""
@@ -394,7 +392,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         self._q = q
         Parent.__init__(self, base=base_field, category=HopfAlgebras(Fields()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -405,7 +403,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         """
         return "Quantum Group of type {} with q={}".format(self._cartan_type, self._q)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -420,19 +418,17 @@ class QuantumGroup(UniqueRepresentation, Parent):
         from sage.misc.latex import latex
         return "U_{%s}(%s)" % (latex(self._q), latex(self._cartan_type))
 
-    def gap(self):
+    def _libgap_(self):
         """
-        Return the gap representation of ``self``.
+        Return the libgap representation of ``self``.
 
         EXAMPLES::
 
             sage: Q = QuantumGroup(['A',2])
-            sage: Q.gap()
+            sage: libgap(Q)
             QuantumUEA( <root system of type A2>, Qpar = q )
         """
         return self._libgap
-
-    _libgap_ = gap
 
     def cartan_type(self):
         """
@@ -1588,21 +1584,19 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
         from sage.misc.latex import latex
         return latex(self.crystal_graph())
 
-    def gap(self):
+    def _libgap_(self):
         r"""
-        Return the gap representation of ``self``.
+        Return the libgap representation of ``self``.
 
         EXAMPLES::
 
             sage: Q = QuantumGroup(['A',2])
             sage: V = Q.highest_weight_module([1,1])
-            sage: V.gap()
+            sage: libgap(V)
             <8-dimensional left-module over QuantumUEA( <root system of type A2>,
              Qpar = q )>
         """
         return self._libgap
-
-    _libgap_ = gap
 
     def _element_constructor_(self, elt):
         """
@@ -1744,7 +1738,7 @@ class HighestWeightModule(QuantumGroupModule):
             weight = P(weight)
         return super().__classcall__(cls, Q, weight)
 
-    def __init__(self, Q, weight):
+    def __init__(self, Q, weight) -> None:
         """
         Initialize ``self``.
 
@@ -1759,7 +1753,7 @@ class HighestWeightModule(QuantumGroupModule):
         cat = Modules(Q.base_ring()).FiniteDimensional().WithBasis()
         QuantumGroupModule.__init__(self, Q, cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1772,7 +1766,7 @@ class HighestWeightModule(QuantumGroupModule):
         """
         return "Highest weight module of weight {} of {}".format(self._weight, self._Q)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1821,7 +1815,7 @@ class HighestWeightModule(QuantumGroupModule):
 
 
 class TensorProductOfHighestWeightModules(QuantumGroupModule):
-    def __init__(self, *modules, **options):
+    def __init__(self, *modules, **options) -> None:
         """
         Initialize ``self``.
 

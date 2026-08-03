@@ -119,8 +119,7 @@ line::
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
     sage: shell.run_cell('sage: a = 123')              # single line
-    sage: shell.run_cell('sage: a = [\n... 123]')      # old-style multi-line
-    sage: shell.run_cell('sage: a = [\n....: 123]')    # new-style multi-line
+    sage: shell.run_cell('sage: a = [\n....: 123]')    # multi-line
 
 We test that :issue:`16196` is resolved::
 
@@ -470,7 +469,7 @@ def SagePreparseTransformer(lines):
     return lines
 
 
-SagePromptTransformer = PromptStripper(prompt_re=re.compile(r'^(\s*(:?sage: |\.\.\.\.: ))+'))
+SagePromptTransformer = PromptStripper(prompt_re=re.compile(r'^(\s*(:?sage: |\.\.\. |\.\.\.\.: ))+'))
 
 
 ###################
@@ -530,7 +529,6 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed
             sage: shell = interface_shell_embed(maxima)
             sage: ift = shell.prefilter_manager.transformers[0]
@@ -557,7 +555,6 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
             sage: from sage.interfaces.maxima_lib import maxima
             sage: shell = interface_shell_embed(maxima)
@@ -576,7 +573,6 @@ class InterfaceShellTransformer(PrefilterTransformer):
         Since :issue:`28439`, this also works with more complicated expressions
         containing nested parentheses::
 
-            sage: # needs sage.libs.gap sage.symbolic
             sage: shell = interface_shell_embed(gap)
             sage: shell.user_ns = locals()
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
@@ -613,7 +609,6 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: from sage.repl.interpreter import interface_shell_embed, InterfaceShellTransformer
             sage: shell = interface_shell_embed(maxima)
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
@@ -625,8 +620,8 @@ class InterfaceShellTransformer(PrefilterTransformer):
             'sage.repl.interpreter.logstr(r"""8""")'
             sage: ift.temporary_objects
             set()
-            sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap
+            sage: shell = interface_shell_embed(gap)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
             ....:     prefilter_manager=shell.prefilter_manager)
             sage: ift.transform('2+2', False)
             'sage.repl.interpreter.logstr(r"""4""")'
@@ -636,10 +631,10 @@ class InterfaceShellTransformer(PrefilterTransformer):
         Check that whitespace is not stripped and that special characters are
         escaped (:issue:`28439`)::
 
-            sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap sage.symbolic
-            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap sage.symbolic
+            sage: shell = interface_shell_embed(gap)
+            sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,
             ....:     prefilter_manager=shell.prefilter_manager)
-            sage: ift.transform(r'Print("  -\n\\\\-  ");', False)                       # needs sage.symbolic
+            sage: ift.transform(r'Print("  -\n\\\\-  ");', False)
             'sage.repl.interpreter.logstr(r"""  -\n\\\\-""")'
 
             sage: # optional - macaulay2
@@ -676,8 +671,8 @@ def interface_shell_embed(interface):
     EXAMPLES::
 
         sage: from sage.repl.interpreter import interface_shell_embed
-        sage: shell = interface_shell_embed(gap)                                        # needs sage.libs.gap
-        sage: shell.run_cell('List( [1..10], IsPrime )')                                # needs sage.libs.gap
+        sage: shell = interface_shell_embed(gap)
+        sage: shell.run_cell('List( [1..10], IsPrime )')
         [ false, true, true, false, true, false, true, false, false, false ]
         <ExecutionResult object at ..., execution_count=... error_before_exec=None error_in_exec=None ...result=[ false, true, true, false, true, false, true, false, false, false ]>
     """
@@ -724,7 +719,7 @@ def get_test_shell():
 
         sage: from sage.tests import check_executable
         sage: cmd = 'from sage.repl.interpreter import get_test_shell; shell = get_test_shell()'
-        sage: (out, err, ret) = check_executable(["sage", "-c", cmd])
+        sage: (out, err, ret) = check_executable(["python3", "-m", "sage.cli", "-c", cmd])
         sage: out + err
         ''
     """

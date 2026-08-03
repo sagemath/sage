@@ -44,7 +44,6 @@ class Polynomial_padic(Polynomial):
 
         TESTS::
 
-            sage: # needs sage.libs.ntl
             sage: k = Qp(5,10)
             sage: R.<x> = k[]
             sage: f = R([k(0,-3), 0, k(0,-1)]); f
@@ -97,7 +96,6 @@ class Polynomial_padic(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K = Zp(13,7)
             sage: R.<t> = K[]
             sage: f = 13^7*t^3 + K(169,4)*t - 13^4
@@ -110,7 +108,6 @@ class Polynomial_padic(Polynomial):
             sage: f.content()
             O(13^3)
 
-            sage: # needs sage.libs.ntl
             sage: P.<x> = ZZ[]
             sage: f = x + 2
             sage: f.content()
@@ -127,7 +124,6 @@ class Polynomial_padic(Polynomial):
         content is only defined up to multiplication with a unit. However, we
         return `\pi^k` where `k` is the minimal valuation of any coefficient::
 
-            sage: # needs sage.libs.ntl
             sage: K = Qp(13,7)
             sage: R.<t> = K[]
             sage: f = 13^7*t^3 + K(169,4)*t - 13^-4
@@ -145,8 +141,7 @@ class Polynomial_padic(Polynomial):
         """
         if self.is_zero():
             return self[0]
-        else:
-            return self.base_ring()(self.base_ring().prime_pow(min([x.valuation() for x in self.coefficients(sparse=False)])))
+        return self.base_ring()(self.base_ring().prime_pow(min([x.valuation() for x in self.coefficients(sparse=False)])))
 
     def factor(self):
         r"""
@@ -154,7 +149,6 @@ class Polynomial_padic(Polynomial):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<t> = PolynomialRing(Qp(3, 3, print_mode='terse', print_pos=False))
             sage: pol = t^8 - 1
             sage: for p,e in pol.factor():
@@ -176,7 +170,6 @@ class Polynomial_padic(Polynomial):
         part is a `p`-adic unit and the power of `p` is considered to be
         a factor::
 
-            sage: # needs sage.libs.ntl
             sage: R.<t> = PolynomialRing(Zp(5, 6, print_mode='terse', print_pos=False))
             sage: pol = 100 * (5*t - 1) * (t - 5); pol
             (500 + O(5^9))*t^2 + (-2600 + O(5^8))*t + 500 + O(5^9)
@@ -211,7 +204,6 @@ class Polynomial_padic(Polynomial):
 
         See :issue:`4038`::
 
-            sage: # needs sage.libs.ntl sage.schemes
             sage: E = EllipticCurve('37a1')
             sage: K = Qp(7,10)
             sage: EK = E.base_extend(K)

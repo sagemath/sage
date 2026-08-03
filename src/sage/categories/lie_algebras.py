@@ -285,7 +285,7 @@ class LieAlgebras(Category_over_base_ring):
                 if rhs in LieAlgebras:
                     return lhs.product_space(rhs)
                 return lhs.ideal(rhs)
-            elif rhs in LieAlgebras:
+            if rhs in LieAlgebras:
                 return rhs.ideal(lhs)
             return self(lhs)._bracket_(self(rhs))
 

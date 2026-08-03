@@ -1567,7 +1567,6 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         We check that the bug described in :issue:`8406` is gone::
 
-            sage: # needs sage.rings.finite_rings
             sage: G = Graph()
             sage: R.<a> = GF(3**3)
             sage: S.<x> = R[]
@@ -2260,7 +2259,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef int u_int
         cdef int v_int = self.get_vertex(v)
         if (v_int == -1 or v_int >= self.cg().active_vertices.size
-                or not bitset_in(self.cg().active_vertices,v_int)):
+                or not bitset_in(self.cg().active_vertices, v_int)):
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(v))
 
         for u_int in self.cg().in_neighbors(v_int):
@@ -2301,7 +2300,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         cdef int u_int
         cdef int v_int = self.get_vertex(v)
         if (v_int == -1 or v_int >= self.cg().active_vertices.size
-                or not bitset_in(self.cg().active_vertices,v_int)):
+                or not bitset_in(self.cg().active_vertices, v_int)):
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(v))
 
         for u_int in self.cg().out_neighbors(v_int):
@@ -2941,8 +2940,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         """
         if not ignore_labels:
             return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 1)
-        else:
-            return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 2)
+        return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 2)
 
     def subgraph_given_vertices(self, CGraphBackend other, object vertices):
         """
@@ -3376,8 +3374,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # The function being mostly symmetric in x and y, their roles are
         # reversed at the end of each loop. For this reason is defined, for
@@ -3538,8 +3535,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # The function being mostly symmetric in x and y, their roles are
         # reversed at the end of each loop. For this reason is defined, for
@@ -3726,7 +3722,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         elif not isinstance(exclude_vertices, set):
             exclude_vertices = set(exclude_vertices)
         if source in exclude_vertices:
-            raise ValueError(f"source must not be in exclude_vertices.")
+            raise ValueError("source must not be in exclude_vertices.")
         cdef PairingHeap[int, double] pq = PairingHeap[int, double]()
         cdef dict dist = {}
         cdef dict pred = {}
@@ -3773,7 +3769,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                         pq.push(u_int, new_dist)
 
         # no path found
-        raise ValueError(f"no path found from source to targets.")
+        raise ValueError("no path found from source to targets.")
 
     def bidirectional_dijkstra_special(self, x, y, weight_function=None,
                                        exclude_vertices=None, exclude_edges=None,
@@ -3859,8 +3855,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # As for shortest_path, the roles of x and y are symmetric, hence we
         # define dictionaries like pred_current and pred_other, which
@@ -4080,8 +4075,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # As for shortest_path, the roles of x and y are symmetric, hence we
         # define dictionaries like pred_current and pred_other, which
@@ -5038,7 +5032,7 @@ cdef class Search_iterator:
                 u_id = self.graph.get_vertex(u)
                 if u_id != -1:
                     if u_id == v_id:
-                        raise ValueError(f"the start vertex is in the set of forbidden vertices")
+                        raise ValueError("the start vertex is in the set of forbidden vertices")
                     bitset_add(self.seen, u_id)
 
         if direction == 0:
@@ -5140,7 +5134,7 @@ cdef class Search_iterator:
 
         if self.report_distance:
             return value, smallInteger(self.current_distance)
-        elif self.edges:
+        if self.edges:
             return value_prev, value
         return value
 

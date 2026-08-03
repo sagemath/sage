@@ -266,5 +266,4 @@ def libgiac_integrator(expression, v, a=None, b=None):
         result = libgiac.integrate(Pygen(expression), v, a, b)
     if 'integrate' in format(result) or 'integration' in format(result):
         return expression.integrate(v, a, b, hold=True)
-    else:
-        return result.sage()
+    return result.sage()

@@ -600,5 +600,4 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     K = NumberField(Kpol, name)
     if map:
         return K, F.hom(Fgen, K)
-    else:
-        return K
+    return K

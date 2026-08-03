@@ -321,10 +321,9 @@ class xmrange_iter:
         self.typ = typ
 
     def __repr__(self):
-        if self.typ == list:
+        if self.typ is list:
             return 'xmrange_iter(%s)' % self.iter_list
-        else:
-            return 'xmrange_iter(%s, %s)' % (self.iter_list, self.typ)
+        return 'xmrange_iter(%s, %s)' % (self.iter_list, self.typ)
 
     def __iter__(self):
         return _xmrange_iter(self.iter_list, self.typ)
@@ -384,14 +383,13 @@ class xmrange_iter:
                 n = Integer(len(L))
             if n == 0:
                 return Integer(0)
-            elif n is infinity:
+            if n is infinity:
                 found_infinity = True
             elif not found_infinity:
                 ans *= n
         if found_infinity:
             return infinity
-        else:
-            return ans
+        return ans
 
 
 def _xmrange(sizes, typ=list):
@@ -574,10 +572,9 @@ class xmrange:
         self.typ = typ
 
     def __repr__(self):
-        if self.typ == list:
+        if self.typ is list:
             return 'xmrange(%s)' % self.sizes
-        else:
-            return 'xmrange(%s, %s)' % (self.sizes, self.typ)
+        return 'xmrange(%s, %s)' % (self.sizes, self.typ)
 
     def __len__(self):
         sizes = self.sizes

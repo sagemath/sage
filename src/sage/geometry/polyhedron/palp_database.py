@@ -330,14 +330,13 @@ class PALPreader(SageObject):
             output = self._output
         if output == 'polyhedron':
             return self._iterate_Polyhedron
-        elif output == 'ppl':
+        if output == 'ppl':
             return self._iterate_PPL
-        elif output == 'pointcollection':
+        if output == 'pointcollection':
             return self._iterate_PointCollection
-        elif output == 'list':
+        if output == 'list':
             return self._iterate_list
-        else:
-            raise TypeError('Unknown output format (={}).'.format(self._output))
+        raise TypeError('Unknown output format (={}).'.format(self._output))
 
     def __iter__(self):
         """
@@ -370,11 +369,10 @@ class PALPreader(SageObject):
         iterator = self._iterate()
         if isinstance(item, slice):
             return iterator(item.start, item.stop, item.step)
-        else:
-            try:
-                return next(iterator(item, item + 1, 1))
-            except StopIteration:
-                raise IndexError('Index out of range.')
+        try:
+            return next(iterator(item, item + 1, 1))
+        except StopIteration:
+            raise IndexError('Index out of range.')
 
 
 class Reflexive4dHodge(PALPreader):

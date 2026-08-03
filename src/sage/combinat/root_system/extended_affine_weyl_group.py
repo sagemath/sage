@@ -1406,8 +1406,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 s = self.parent().simple_reflection(i)
                 if side == 'right':
                     return self*s
-                else:
-                    return s*self
+                return s*self
 
             def apply_simple_projection(self, i, side='right', length_increasing=True):
                 r"""
@@ -2094,9 +2093,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             """
             if i == 0:
                 return self.S0()
-            else:
-                E = self.realization_of()
-                return self.from_classical_weyl(E.classical_weyl().simple_reflection(i))
+            E = self.realization_of()
+            return self.from_classical_weyl(E.classical_weyl().simple_reflection(i))
 
         @cached_method
         def simple_reflections(self):

@@ -400,8 +400,13 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 3, -1, 2, -3])
-            sage: b.left_normal_form()
-            (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
+            sage: actual = b.left_normal_form()
+            sage: s0, s1, s2 = B.gens()
+            sage: expected = (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1,
+            ....:             s0*s1*s2*s1*s0,
+            ....:             s0*s2*s1)
+            sage: actual == expected
+            True
             sage: c = B([1])
             sage: c.left_normal_form()
             (1, s0)
@@ -956,11 +961,10 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             def val(x):
                 if x == -1:
                     return 2 * q
-                elif x == 1:
+                if x == 1:
                     return 1 + q**2
-                else:
-                    E2x = E(2 * x)
-                    return q * (E2x + ~E2x)
+                E2x = E(2 * x)
+                return q * (E2x + ~E2x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             E = UniversalCyclotomicField().gen
@@ -968,24 +972,22 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             def val(x):
                 if x == -1:
                     return 2 * q
-                elif x == 1:
+                if x == 1:
                     return 1 + q**2
-                else:
-                    return q * base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
+                return q * base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
             def val(x):
                 if x == -1:
                     return 2 * q
-                elif x == 1:
+                if x == 1:
                     return 1 + q**2
-                elif x == 2:
+                if x == 2:
                     return 0
-                elif x == 3:
+                if x == 3:
                     return q
-                else:
-                    from sage.functions.trig import cos
-                    from sage.symbolic.constants import pi
-                    return q * base_ring(2 * cos(pi / x))
+                from sage.functions.trig import cos
+                from sage.symbolic.constants import pi
+                return q * base_ring(2 * cos(pi / x))
         index_set = data.index_set()
         gens = [one - MS([SparseEntry(i, j, val(coxeter_matrix[index_set[i], index_set[j]]))
                           for j in range(n)])

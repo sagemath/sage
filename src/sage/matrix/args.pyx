@@ -211,7 +211,6 @@ cdef class MatrixArgs:
         [1 2]
         [3 4]
 
-        sage: # needs sage.libs.pari
         sage: ma = MatrixArgs(QQ, entries=pari("[1,2;3,4]")); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
          over Rational Field; typ=SEQ_FLAT; entries=[1, 2, 3, 4]>
@@ -274,7 +273,6 @@ cdef class MatrixArgs:
         [1.0000 2.0000]
         [3.0000 4.0000]
 
-        sage: # needs sage.graphs
         sage: ma = MatrixArgs(graphs.CycleGraph(3)); ma.finalized()
         <MatrixArgs for Full MatrixSpace of 3 by 3 dense matrices
          over Integer Ring; typ=MATRIX; entries=[0 1 1]
@@ -510,7 +508,7 @@ cdef class MatrixArgs:
 
         - If ``sparse`` is True: yield instances of
           :class:`SparseEntry`. The indices ``(i, j)`` are guaranteed to
-          lie within the matrix. Zero entries in the input are *not*
+          lie within the matrix. Zero entries in the input are *not necessarily*
           skipped.
 
         .. WARNING::
@@ -1093,7 +1091,6 @@ cdef class MatrixArgs:
 
         Check github issue #36065:
 
-            sage: # needs sage.rings.number_field
             sage: class MyAlgebraicNumber(sage.rings.qqbar.AlgebraicNumber):
             ....:     def __bool__(self):
             ....:         raise ValueError
@@ -1347,9 +1344,6 @@ cdef class MatrixArgs:
         self.set_ncols(incols)
         str_dtype = str(e.dtype)
 
-        if not (e.flags.c_contiguous is True or e.flags.f_contiguous is True):
-            raise TypeError('numpy matrix must be either c_contiguous or f_contiguous')
-
         from sage.matrix.constructor import matrix
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
@@ -1486,7 +1480,6 @@ cdef class MatrixArgs:
 
         Check that :issue:`26655` is fixed::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(9)
             sage: M = MatrixSpace(F, 2, 2)
             sage: A = M([[1, a], [0, 1]])
@@ -1508,7 +1501,6 @@ cdef class MatrixArgs:
 
         Check that :issue:`38221` is fixed::
 
-            sage: # needs sage.groups
             sage: G = CyclicPermutationGroup(7)
             sage: R = GF(2)
             sage: A = G.algebra(R)
@@ -1618,8 +1610,7 @@ cdef class MatrixArgs:
             # this only works if the number of columns is not 1.
             if len(self.entries) == self.nrows:
                 return MA_ENTRIES_SEQ_SEQ
-            else:
-                return MA_ENTRIES_SEQ_FLAT
+            return MA_ENTRIES_SEQ_FLAT
         if isinstance(x, (int, float, complex, str)):
             # Note that a string is not considered to be a sequence.
             return MA_ENTRIES_SEQ_FLAT

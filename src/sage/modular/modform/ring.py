@@ -1143,13 +1143,12 @@ class ModularFormsRing(Parent):
 
         if prec is None:
             return G
-        elif prec <= working_prec:
+        if prec <= working_prec:
             return [(k, f.truncate_powerseries(prec), F) for k, f, F in G]
-        else:
-            # user wants increased precision, so we may as well cache that
-            Gnew = [(k, F.qexp(prec).change_ring(self.base_ring()), F) for k, f, F in G]
-            self.__cached_cusp_gens = Gnew
-            return Gnew
+        # user wants increased precision, so we may as well cache that
+        Gnew = [(k, F.qexp(prec).change_ring(self.base_ring()), F) for k, f, F in G]
+        self.__cached_cusp_gens = Gnew
+        return Gnew
 
     def cuspidal_submodule_q_expansion_basis(self, weight, prec=None):
         r"""

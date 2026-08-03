@@ -28,7 +28,7 @@ EXAMPLES::
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
     sage: braid_monodromy(f)
-    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0}, {}, 3)
+    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0}, {}, 3, -5/2*I + 5/2)
     sage: fundamental_group(f)
     Finitely presented group < x0 |  >
 """
@@ -63,12 +63,10 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.qqbar import QQbar
+from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
-
-lazy_import('sage.libs.braiding', ['leftnormalform', 'rightnormalform'])
 
 roots_interval_cache: dict[tuple, Any] = {}
 
@@ -353,7 +351,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False) -> tuple:
         if pr > 0:
             # return circuit
             return circuit_vertex
-        elif pr < 0:
+        if pr < 0:
             return tuple(reversed(circuit_vertex))
     prec = precision
     while True:
@@ -657,14 +655,17 @@ def fieldI(field: NumberField) -> NumberField:
         sage: QuadraticField(-1) == fieldI(QuadraticField(-1))
         True
     """
-    I0 = QQbar.gen()
-    if I0 in field:
+    if field == QQ:
+        return QQ[QQbar.gen()]
+    if QQbar.gen() in field:
         return field
+    I0 = QQbar.gen()
     field_a = field[I0]
     field_b = field_a.absolute_field('b0')
     b0 = field_b.gen()
     q = b0.minpoly()
-    qembd = field_b.embeddings(QQbar)
+    L = q.roots(QQbar, multiplicities=False)
+    qembd = [field_b.hom(codomain=QQbar, im_gens=[c]) for c in L]
     for h1 in qembd:
         b1 = h1(b0)
         b2 = h1(field_b(field_a.gen(0)))
@@ -768,7 +769,6 @@ def roots_interval_cached(f, x0) -> dict:
         sage: (f, 1) in roots_interval_cache
         True
     """
-    global roots_interval_cache
     try:
         return roots_interval_cache[(f, x0)]
     except KeyError:
@@ -805,7 +805,6 @@ def populate_roots_interval_cache(inputs) -> None:
          0.4795466549853897? + 1.475892845355996?*I: 1.? + 2.?*I,
          14421467174121563/9293107134194871: 2.? + 0.?*I}
     """
-    global roots_interval_cache
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
     problem_par = True
     while problem_par:  # hack to deal with random fails in parallelization
@@ -872,13 +871,15 @@ def braid_in_segment(glist, x0, x1, precision={}):
     """
     precision1 = precision.copy()
     g = prod(glist)
-    F1 = g.base_ring()
+    F1 = fieldI(g.base_ring())
+    g = g.change_ring(F1)
+    glist1 = [f.change_ring(F1) for f in glist]
     x, y = g.parent().gens()
     intervals = {}
     if not precision1:
-        precision1 = {f: 53 for f in glist}
+        precision1 = {f: 53 for f in glist1}
     y0s = []
-    for f in glist:
+    for f in glist1:
         if f.variables() == (y,):
             f0 = F1[y](f)
         else:
@@ -905,8 +906,8 @@ def braid_in_segment(glist, x0, x1, precision={}):
     finalstrands = []
     initialintervals = roots_interval_cached(g, x0)
     finalintervals = roots_interval_cached(g, x1)
-    I1 = QQbar.gen()
     for cs in complexstrands:
+        I1 = ComplexField(prec=max(precision1.values())).gen()
         ip = cs[0][1] + I1 * cs[0][2]
         fp = cs[-1][1] + I1 * cs[-1][2]
         matched = 0
@@ -1250,6 +1251,8 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
     - A nonnegative integer: the number of strands of the braids,
       only necessary if the list of braids is empty.
 
+    - A Gauss rational: the base point of the monodromy.
+
     .. NOTE::
 
         The projection over the `x` axis is used if there are no vertical
@@ -1267,7 +1270,8 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0}, {}, 4)
+          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0}, {}, 4,
+          -177401836337599439/15279164453577791*I + 177401836337599439/15279164453577791)
         sage: flist = (x^2 - y^3, x + 3*y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist)
         sage: bm1[0] == bm[0]
@@ -1275,21 +1279,20 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
         sage: bm1[1]
         {0: 0, 1: 1, 2: 0, 3: 0}
         sage: braid_monodromy(R(1))
-        ([], {}, {}, 0)
+        ([], {}, {}, 0, 0)
         sage: braid_monodromy(x*y^2 - 1)
-        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0}, {}, 3)
+        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0}, {}, 3,
+         -490578559/114627502*I + 490578559/114627502)
         sage: L = [x, y, x - 1, x -y]
         sage: braid_monodromy(prod(L), arrangement=L, vertical=True)
-        ([s^2, 1], {0: 1, 1: 3}, {0: 0, 1: 2}, 2)
+        ([s^2, 1], {0: 1, 1: 3}, {0: 0, 1: 2}, 2, -1/2*I + 1/2)
     """
-    global roots_interval_cache
     F = fieldI(f.base_ring())
     I1 = F(QQbar.gen())
-    f = f.change_ring(F)
     if not arrangement:
         arrangement1 = (f,)
     else:
-        arrangement1 = tuple(g.change_ring(F) for g in arrangement)
+        arrangement1 = tuple(g for g in arrangement)
     x, y = f.parent().gens()
     if vertical:
         indices_v = vertical_lines_in_braidmon(arrangement1)
@@ -1340,12 +1343,15 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
                 strands1[j] = k
         else:
             strands1 = {}
-        return (result, strands1, vertical_braids, d)
+        return (result, strands1, vertical_braids, d, 0)
     V = corrected_voronoi_diagram(tuple(disc))
     G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=vl)
     p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
-    roots_base, strands = strand_components(g, arrangement_h, p1)
+    gF = g.change_ring(F)
+    arrangement_hF = tuple(g0.change_ring(F) for g0 in arrangement_h)
+    glistF = tuple(g0.change_ring(F) for g0 in glist)
+    roots_base, strands = strand_components(gF, arrangement_hF, p1)
     strands1 = {}
     for j in range(d):
         i = strands[j]
@@ -1360,13 +1366,13 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
     I0 = QQbar.gen()
     segs = [(a[0] + I0 * a[1], b[0] + I0 * b[1]) for a, b in segs_set]
     vertices = list(set(flatten(segs)))
-    tocacheverts = tuple([(g, v) for v in vertices])
+    tocacheverts = tuple([(gF, v) for v in vertices])
     populate_roots_interval_cache(tocacheverts)
     end_braid_computation = False
     while not end_braid_computation:
         try:
-            braidscomputed = (braid_in_segment([(glist, seg[0], seg[1])
-                                                for seg in segs]))
+            braidscomputed = braid_in_segment([(glistF, seg[0], seg[1])
+                                               for seg in segs])
             segsbraids = {}
             for braidcomputed in braidscomputed:
                 seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
@@ -1398,7 +1404,7 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
             vertical_braids[r + t] = transversal[f0]
             t += 1
             result.append(B.one())
-    return (result, strands1, vertical_braids, d)
+    return (result, strands1, vertical_braids, d, p1)
 
 
 def conjugate_positive_form(braid) -> list[list]:
@@ -1421,6 +1427,7 @@ def conjugate_positive_form(braid) -> list[list]:
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.schemes.curves.zariski_vankampen import conjugate_positive_form
         sage: B = BraidGroup(4)
         sage: t = B((1, 3, 2, -3, 1, 1))
@@ -1438,6 +1445,10 @@ def conjugate_positive_form(braid) -> list[list]:
         sage: conjugate_positive_form(s1)
         [[s1^3, []]]
     """
+    from sage.features.libbraiding import Libbraiding
+    Libbraiding().require()
+    from sage.libs.braiding import rightnormalform
+
     B = braid.parent()
     d = B.strands()
     rnf = rightnormalform(braid)
@@ -1504,12 +1515,17 @@ def braid2rels(L) -> list:
 
     EXAMPLES::
 
+        sage: # needs libbraiding
         sage: from sage.schemes.curves.zariski_vankampen import braid2rels
         sage: B.<s0, s1, s2> = BraidGroup(4)
         sage: L = ((s1*s0)^2, [s2])
         sage: braid2rels(L)
         [(4, 1, -2, -1), (2, -4, -2, 1)]
     """
+    from sage.features.libbraiding import Libbraiding
+    Libbraiding().require()
+    from sage.libs.braiding import leftnormalform
+
     br = L[0]
     L1 = L[1]
     B = br.parent()
@@ -1647,12 +1663,47 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         rel_h = [r[1] for r in relations_h]
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
+    B = BraidGroup(d)
+    cox = tuple(range(1, d + 1))
+    coxm = tuple([-j for j in reversed(cox)])
+    cnjdelta = []
+    for j in range(d):
+        a = tuple(range(1, d - j))
+        a1 = tuple([-j for j in reversed(a)])
+        cnjdelta.append(a + (d - j,) + a1)
+    homcnjdelta = F.hom(codomain=F, im_gens=cnjdelta)
+
+    from sage.features.libbraiding import Libbraiding
+    Libbraiding().require()
+    from sage.libs.braiding import rightnormalform
+
     for j, k in enumerate(vertical0):
         l1 = d + j + 1
         br = bm[k]
+        rnf = rightnormalform(br)
+        rnf1 = rnf[: -1]
+        xp = rnf[-1][0]
+        if rnf1:
+            elt = prod(B(m) for m in rnf1)
+        else:
+            elt = B.one()
+        parity = xp % 2
+        yp = xp // 2
+        if yp == 0:
+            cnja = ()
+            cnjb = ()
+        elif yp > 0:
+            cnja = yp * cox
+            cnjb = yp * coxm
+        else:
+            cnja = abs(yp) * coxm
+            cnjb = abs(yp) * cox
         for gen in F.gens():
             j0 = gen.Tietze()[0]
-            rl = (l1,) + (gen * br).Tietze() + (-l1, -j0)
+            gen0 = gen * elt
+            if parity:
+                gen0 = homcnjdelta(gen0)
+            rl = (l1,) + cnja + gen0.Tietze() + cnjb + (-l1, -j0)
             rel_v.append(rl)
     rel = rel_h + rel_v
     if projective:
@@ -1815,7 +1866,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
       each of these paths is the conjugated of a loop around one of the points
       in the discriminant of the projection of ``f``.
 
-    - A dictionary attaching to ``j`` a tuple a list of elements
+    - A dictionary attaching to ``j`` a list of elements
       of the group  which are meridians of the curve in position ``j``.
       If ``projective`` is ``False`` and the `y`-degree of the horizontal
       components coincide with the total degree, another key is added
@@ -1898,7 +1949,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         dv = {j: j for j, f in flist1}
         d1 = 0
     else:
-        bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical)
+        bm, dic, dv, d1, p1 = braid_monodromy(f, flist1, vertical=vertical)
     vert_lines = list(dv)
     vert_lines.sort()
     for i, j in enumerate(vert_lines):
@@ -1924,5 +1975,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
     n = g1.ngens()
     rels = [rel.Tietze() for rel in g1.relations()]
     g1 = FreeGroup(n) / rels
-    dic1 = {i: list({g1(el.Tietze()) for el in dic1[i]}) for i in dic1}
+    dic1 = {i: [*{t: g1(t) for el in dic1[i] for t in (el.Tietze(),)}.values()] for i in dic1}
+    # each list in dic1.values() may have duplicates, but deduplicating it properly
+    # requires solving the group problem on g1 which can be prohibitive
     return (g1, dic1)

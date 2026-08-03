@@ -223,8 +223,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         # For now the series constructor doesn't behave well for non exact bases... :(
         if (self.group().is_arithmetic() or not self.base_ring().is_exact()):
             return str(self.q_expansion_fixed_d().add_bigoh(self.parent()._disp_prec))
-        else:
-            return str(self.q_expansion().add_bigoh(self.parent()._disp_prec))
+        return str(self.q_expansion().add_bigoh(self.parent()._disp_prec))
 
     def _latex_(self):
         r"""
@@ -1386,21 +1385,20 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
                 pass
 
             return order_f
-        else:
-            if tau != infinity:
-                raise NotImplementedError("Only the order at infinity is supported for non-homogeneous or quasi forms!")
+        if tau != infinity:
+            raise NotImplementedError("Only the order at infinity is supported for non-homogeneous or quasi forms!")
 
-            num_val = prec_num_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
-            denom_val = prec_denom_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
+        num_val = prec_num_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
+        denom_val = prec_denom_bound = 1  # (self.parent()._prec/ZZ(2)).ceil()
 
-            while (num_val >= prec_num_bound):
-                prec_num_bound *= 2
-                num_val = self.numerator().q_expansion(prec=prec_num_bound, fix_prec=True).valuation()
-            while (denom_val >= prec_denom_bound):
-                prec_denom_bound *= 2
-                denom_val = self.denominator().q_expansion(prec=prec_denom_bound, fix_prec=True).valuation()
+        while (num_val >= prec_num_bound):
+            prec_num_bound *= 2
+            num_val = self.numerator().q_expansion(prec=prec_num_bound, fix_prec=True).valuation()
+        while (denom_val >= prec_denom_bound):
+            prec_denom_bound *= 2
+            denom_val = self.denominator().q_expansion(prec=prec_denom_bound, fix_prec=True).valuation()
 
-            return num_val - denom_val
+        return num_val - denom_val
 
     def as_ring_element(self):
         r"""
@@ -1456,8 +1454,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         if (force or self.parent().has_reduce_hom()) and self.is_homogeneous():
             return self.parent().homogeneous_part(self._weight, self._ep)(self._rat)
-        else:
-            return self
+        return self
 
     def reduced_parent(self):
         r"""
@@ -1489,8 +1486,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         if self.is_homogeneous():
             return FormsSpace(self.analytic_type(), self.group(), self.base_ring(), self.weight(), self.ep())
-        else:
-            return FormsRing(self.analytic_type(), self.group(), self.base_ring(), self.parent().has_reduce_hom())
+        return FormsRing(self.analytic_type(), self.group(), self.base_ring(), self.parent().has_reduce_hom())
 
     def full_reduce(self):
         r"""
@@ -2151,9 +2147,9 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
                 if order_tau > 0:
                     return ZZ(0)
-                elif (order_tau < 0):
+                if (order_tau < 0):
                     return infinity
-                elif (tau == infinity):
+                if (tau == infinity):
                     return self.q_expansion(prec=1)[0]
         except (TypeError, NotImplementedError):
             pass
@@ -2170,9 +2166,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             aut_factor = self.reduce(force=True).parent().aut_factor(A, w)
             if (type(q_exp) is LaurentSeries):
                 return q_exp.laurent_polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
-            else:
-                return q_exp.polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
-        elif self._rat == z:
+            return q_exp.polynomial()(exp((2 * pi * i).n(num_prec) / self.group().lam() * w)) * aut_factor
+        if self._rat == z:
             E2 = self.parent().graded_ring().E2().reduce(force=True)
             (A, w) = self.group().get_FD(tau)
             aut_factor = E2.parent().aut_factor(A, w)
@@ -2182,16 +2177,14 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             else:
                 E2_cor_term = 4 * self.group().lam() / (2 * pi * i).n(num_prec) * self.hecke_n() / (self.hecke_n() - 2) * A.c() * (A.c() * w + A.d())
             return E2_wvalue * aut_factor + E2_cor_term
-        else:
-            f_i = self.parent().graded_ring().f_i()
-            E2 = self.parent().graded_ring().E2()
-            dval = self.parent().group().dvalue().n(num_prec)
-            if (self.hecke_n() == infinity):
-                E4 = self.parent().graded_ring().E4()
-                return self._rat.subs(x=E4(tau), y=f_i(tau), z=E2(tau), d=dval)
-            else:
-                f_rho = self.parent().graded_ring().f_rho()
-                return self._rat.subs(x=f_rho(tau), y=f_i(tau), z=E2(tau), d=dval)
+        f_i = self.parent().graded_ring().f_i()
+        E2 = self.parent().graded_ring().E2()
+        dval = self.parent().group().dvalue().n(num_prec)
+        if (self.hecke_n() == infinity):
+            E4 = self.parent().graded_ring().E4()
+            return self._rat.subs(x=E4(tau), y=f_i(tau), z=E2(tau), d=dval)
+        f_rho = self.parent().graded_ring().f_rho()
+        return self._rat.subs(x=f_rho(tau), y=f_i(tau), z=E2(tau), d=dval)
 
     def __call__(self, tau, prec=None, num_prec=None, check=False):
         r"""

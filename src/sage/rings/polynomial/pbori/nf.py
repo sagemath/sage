@@ -93,6 +93,7 @@ def multiply_polynomials(l, ring):
 
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import *
         sage: r = Ring(1000)
         sage: x = r.variable
@@ -638,6 +639,7 @@ def normal_form(poly, ideal, reduced=True):
 
     TESTS::
 
+        sage: # needs brial
         sage: from sage.rings.polynomial.pbori import declare_ring, normal_form
         sage: r=declare_ring(['x','y'], globals())
         sage: normal_form(x+y, [y],reduced=True)

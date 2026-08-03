@@ -41,6 +41,8 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from bisect import bisect_left
+
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.misc.repr import repr_lincomb
@@ -337,6 +339,13 @@ class Divisor_curve(Divisor_generic):
 
         if know_points:
             self._points = points
+        else:
+            # TODO: in the next line, we should probably replace
+            # rational_points() with irreducible_components()
+            # once Sage can deal with divisors that are not only
+            # rational points (see trac #16225)
+            self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
+        self._sort_points()
 
     def _repr_(self):
         r"""
@@ -351,6 +360,40 @@ class Divisor_curve(Divisor_generic):
             '(x, y)'
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
+
+    def _sort_points(self):
+        """
+        Sort the list of the points of this divisor, and combine duplicates if
+        needed.
+
+        EXAMPLES::
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: G.support()  # indirect doctest
+            [(0 : 0 : 1)]
+            sage: G = C.divisor([(3, Points[1]), (1, Points[0])])
+            sage: G.support()  # indirect doctest
+            [(0 : 0 : 1), (0 : 1 : 0)]
+        """
+        sorted_points = []
+        for coefficient, point in self._points:
+            try:
+                position = bisect_left(sorted_points, point, key=lambda l: l[1])
+            except TypeError:
+                # Some sets of points cannot be sorted, ignore
+                return
+            if position == len(sorted_points):
+                sorted_points.append([coefficient, point])
+            elif sorted_points[position][1] != point:
+                sorted_points.insert(position, [coefficient, point])
+            else:
+                sorted_points[position][0] += coefficient
+        self._points = [tuple(l) for l in sorted_points]
 
     def support(self) -> list:
         """
@@ -390,16 +433,7 @@ class Divisor_curve(Divisor_generic):
         try:
             return self._support
         except AttributeError:
-            try:
-                pts = self._points
-            except AttributeError:
-                # TODO: in the next line, we should probably replace
-                # rational_points() with irreducible_components()
-                # once Sage can deal with divisors that are not only
-                # rational points (see trac #16225)
-                self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
-                pts = self._points
-            self._support = [s[1] for s in pts]
+            self._support = [s[1] for s in self._points]
             return self._support
 
     def coefficient(self, P):
@@ -421,12 +455,24 @@ class Divisor_curve(Divisor_generic):
             3
             sage: D.coefficient(pts[1])
             -1
+
+            sage: F = GF(13)
+            sage: PP.<X,Y,Z> = PolynomialRing(F,3)
+            sage: F = Y^2*Z - X^3 - X*Z^2
+            sage: C = Curve(F)
+            sage: Points = C.rational_points()
+            sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
+            sage: G.coefficient(Points[0])
+            4
+            sage: G.coefficient(Points[1])
+            0
         """
         P = self.parent().scheme()(P)
         if P not in self.support():
             return self.base_ring().zero()
         t, i = search(self.support(), P)
-        assert t
+        if not t:
+            return Integer(0)
         try:
             return self._points[i][0]
         except AttributeError:

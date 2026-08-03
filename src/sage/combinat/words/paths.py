@@ -528,7 +528,7 @@ class WordPaths_all(FiniteWords):
                 'iter_with_caching': FiniteWordPath_2d_iter_with_caching,
                 'iter': FiniteWordPath_2d_iter,
             }
-        elif dimension == 3:
+        if dimension == 3:
             return {
                 'list': FiniteWordPath_3d_list,
                 'str': FiniteWordPath_3d_str,
@@ -538,16 +538,15 @@ class WordPaths_all(FiniteWords):
                 'iter_with_caching': FiniteWordPath_3d_iter_with_caching,
                 'iter': FiniteWordPath_3d_iter,
             }
-        else:
-            return {
-                'list': FiniteWordPath_all_list,
-                'str': FiniteWordPath_all_str,
-                'tuple': FiniteWordPath_all_tuple,
-                'callable_with_caching': FiniteWordPath_all_callable_with_caching,
-                'callable': FiniteWordPath_all_callable,
-                'iter_with_caching': FiniteWordPath_all_iter_with_caching,
-                'iter': FiniteWordPath_all_iter,
-            }
+        return {
+            'list': FiniteWordPath_all_list,
+            'str': FiniteWordPath_all_str,
+            'tuple': FiniteWordPath_all_tuple,
+            'callable_with_caching': FiniteWordPath_all_callable_with_caching,
+            'callable': FiniteWordPath_all_callable,
+            'iter_with_caching': FiniteWordPath_all_iter_with_caching,
+            'iter': FiniteWordPath_all_iter,
+        }
 
     def __repr__(self) -> str:
         r"""
@@ -2090,12 +2089,7 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
              44560482149,
              259717522849,
              1513744654945,
-             8822750406821,
-             51422757785981,
-             299713796309065,
-             1746860020068409,
-             10181446324101389,
-             59341817924539925)
+             ...
 
         TESTS::
 

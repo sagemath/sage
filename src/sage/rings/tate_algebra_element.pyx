@@ -234,8 +234,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "*%s^%s" % (parent._names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def _latex_(self):
         r"""
@@ -265,8 +264,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "%s^{%s}" % (parent._latex_names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def coefficient(self):
         r"""
@@ -607,7 +605,7 @@ cdef class TateAlgebraTerm(MonoidElement):
         if len(args) != parent._ngens:
             raise TypeError("wrong number of arguments")
         A = _pushout_family(args, parent._field)
-        args = [ A(arg) for arg in args ]
+        args = [A(arg) for arg in args]
         ratio = A.absolute_e() // parent._base.absolute_e()
         for i in range(parent._ngens):
             if args[i].valuation() < -ratio * parent._log_radii[i]:
@@ -673,8 +671,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 return False
         if self._parent.base_ring().is_field():
             return True
-        else:
-            return self.valuation() == 0 or other.valuation() == 0
+        return self.valuation() == 0 or other.valuation() == 0
 
     @coerce_binop
     def gcd(self, other):
@@ -1196,7 +1193,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 s += " + "
             su = self._parent._uniformizer_repr
             lr = self._parent.log_radii()
-            sv = [ ]
+            sv = []
             for i in range(len(vars)):
                 if lr[i] == 0:
                     sv.append(vars[i])
@@ -1876,7 +1873,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         if len(args) != parent._ngens:
             raise TypeError("wrong number of arguments")
         A = _pushout_family(args, parent._field)
-        args = [ A(arg) for arg in args ]
+        args = [A(arg) for arg in args]
         ratio = A.absolute_e() // parent._base.absolute_e()
         for i in range(parent._ngens):
             if args[i].valuation() < -ratio * parent._log_radii[i]:
@@ -1931,7 +1928,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f << 2  # indirect doctest
             ...000000000100*x^3 + ...000000000100*x + ...0000000001000*x^2
         """
-        cdef dict coeffs = { }
+        cdef dict coeffs = {}
         cdef ETuple e
         cdef Element c
         cdef TateAlgebraElement ans = self._new_c()
@@ -1964,7 +1961,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: g << 2
             ...0000100*x^3 + ...0000100*x + ...0001000*x^2 + O(2^7 * <x, y>)
         """
-        cdef dict coeffs = { }
+        cdef dict coeffs = {}
         cdef ETuple e
         cdef Element c
         cdef TateAlgebraElement ans = self._new_c()
@@ -2183,11 +2180,11 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 if term._valuation_c() < self._prec:
                     self._terms.append(term)
             self._terms.sort(reverse=True)
-            self._terms_nonzero = [ term for term in self._terms if not term.coefficient().is_zero() ]
+            self._terms_nonzero = [term for term in self._terms
+                                   if not term.coefficient().is_zero()]
         if include_zero:
             return self._terms
-        else:
-            return self._terms_nonzero
+        return self._terms_nonzero
 
     def monomials(self):
         r"""
@@ -2201,7 +2198,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f.monomials()  # indirect doctest
             [...0000000001*x, ...0000000001*x^2]
         """
-        return [ t.monomial() for t in self.terms() ]
+        return [t.monomial() for t in self.terms()]
 
     def monomial_coefficients(self):
         """
@@ -2265,8 +2262,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             raise IndexError("lengths do not match")
         if e in self._poly.__repn:
             return self._poly.__repn[e]
-        else:
-            return self.base_ring()(0, self.precision_absolute())
+        return self.base_ring()(0, self.precision_absolute())
 
     def __getitem__(self, exponent):
         r"""
@@ -2306,7 +2302,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f.coefficients()
             [...0000000001, ...00000000010]
         """
-        return [ t.coefficient() for t in self.terms() ]
+        return [t.coefficient() for t in self.terms()]
 
     def add_bigoh(self, n):
         r"""
@@ -3138,11 +3134,12 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: r
             ...00001 + ...00010*x*y + ...00100*x*y^2 + O(2^5 * <x, y>)
         """
-        cdef dict coeffs = { }
+        cdef dict coeffs = {}
         cdef TateAlgebraElement f
         cdef TateAlgebraTerm lt
-        cdef list ltds = [ (<TateAlgebraElement>d)._terms_c()[0] for d in divisors ]
-        cdef list quos = [ ]
+        cdef list ltds = [(<TateAlgebraElement>d)._terms_c()[0]
+                          for d in divisors]
+        cdef list quos = []
         cdef list terms = self._terms_c()
         cdef int index = 0
         cdef bint in_rem

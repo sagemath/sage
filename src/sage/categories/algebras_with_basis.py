@@ -195,8 +195,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             one = self.parent().one_basis()
             if len(mcs) == 1 and one in mcs:
                 return self.parent().term(one, ~mcs[one])
-            else:
-                raise ValueError("cannot invert self (= %s)" % self)
+            raise ValueError("cannot invert self (= %s)" % self)
 
     class CartesianProducts(CartesianProductsCategory):
         """
@@ -334,8 +333,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 # all modules provide one_basis
                 if all(hasattr(module, "one_basis") for module in self._sets):
                     return tuple(module.one_basis() for module in self._sets)
-                else:
-                    raise NotImplementedError
+                raise NotImplementedError
 
             def product_on_basis(self, t1, t2):
                 """

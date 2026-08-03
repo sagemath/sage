@@ -13,31 +13,46 @@ Features for testing the presence of ``coxeter3``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from . import PythonModule
-from .join_feature import JoinFeature
+from sage.config import coxeter3_enabled
+from sage.features.build_feature import BuildModule
 
-
-class Coxeter3(JoinFeature):
+class Coxeter3(BuildModule):
     r"""
-    A :class:`~sage.features.Feature` which describes whether the :mod:`sage.libs.coxeter3`
-    module is available in this installation of Sage.
+    A :class:`~sage.features.Feature` which describes whether the
+    :mod:`sage.libs.coxeter3` module is available in this installation
+    of Sage.
 
     EXAMPLES::
 
         sage: from sage.features.coxeter3 import Coxeter3
-        sage: Coxeter3().require()  # optional - coxeter3
+        sage: Coxeter3().is_present()  # needs coxeter3
+        FeatureTestResult('coxeter3', True)
+        sage: Coxeter3().is_present()  # needs !coxeter3
+        FeatureTestResult('coxeter3', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !coxeter3`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.coxeter3 import Coxeter3
+        sage: Coxeter3().is_present_at_runtime()  # needs coxeter3
+        FeatureTestResult('coxeter3', True)
+
     """
+    _enabled_in_build = coxeter3_enabled
+
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.coxeter3 import Coxeter3
             sage: Coxeter3()
             Feature('coxeter3')
+
         """
-        JoinFeature.__init__(self, "coxeter3",
-                             [PythonModule("sage.libs.coxeter3.coxeter",
-                                           spkg='coxeter3')])
+        module_name = "sage.libs.coxeter3.coxeter"
+        super().__init__("coxeter3", module_name)
 
 
 def all_features():

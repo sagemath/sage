@@ -1007,8 +1007,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             return 1
         if entry:
             return 0
-        else:
-            return 1
+        return 1
 
     def function(self, *args):
         """
