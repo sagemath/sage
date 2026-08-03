@@ -206,6 +206,7 @@ class FLIRChart:
         y1 + y2
 
     TESTS::
+
         sage: K = QQ
         sage: C0 = FLIRChart.base(K, ("x1","x2"))
         sage: x1, x2 = C0.F.gens()
