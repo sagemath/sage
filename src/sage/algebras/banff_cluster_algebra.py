@@ -242,6 +242,7 @@ def is_seed_acyclic(B, allowed_directions: Sequence[int]) -> bool:
     Boolean.
 
     EXAMPLES::
+
         sage: B = Matrix([[0, 1], [-1, 0]])
         sage: is_seed_acyclic(B, [0, 1])
         True
