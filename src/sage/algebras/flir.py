@@ -382,6 +382,7 @@ class FLIRChart:
         such that `g = u \\cdot h` in the Laurent ring.
 
         EXAMPLES::
+
             sage: C = FLIRChart.base(QQ, ("y1","y2"))
             sage: y1, y2 = C.L.gens()
             sage: h = y1^-2 * y2 + y1^-1
