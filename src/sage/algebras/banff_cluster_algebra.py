@@ -265,6 +265,7 @@ def find_partner_sets(A, allowed_directions: Sequence[int]):
     non-constant common divisor.
 
     EXAMPLES::
+
         sage: B = Matrix([[0, 1], [-1, 0]])
         sage: A = ClusterAlgebra(B, scalars=QQ)
         sage: find_partner_sets(A, [0, 1])
