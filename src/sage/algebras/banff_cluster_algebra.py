@@ -348,7 +348,6 @@ def find_sink_or_source_covering_pair(B, allowed_directions: Sequence[int]):
 class ClusterAlgebraChart:
     r"""
     Stores a chart algebra A_chart plus morphisms between fraction fields.
-    
     - seed: the seed in the original algebra that defines the chart
     - chart: a Sage ClusterAlgebra whose initial seed corresponds to seed
     - to_chart: map from base fraction field -> chart fraction field
