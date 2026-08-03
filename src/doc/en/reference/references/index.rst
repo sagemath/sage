@@ -288,6 +288,11 @@ REFERENCES:
             varieties and e-positivity of chromatic symmetric functions*.
             Preprint (2023). :arxiv:`2304.10644`.
 
+.. [AndHonk97] Ian Anderson and Iiro Honkala,
+               *A short course in Combinatorial Designs*,
+               Internet Editions, Spring 1997.
+               http://www.utu.fi/~honkala/designs.ps
+
 .. [Ang1997] \B. Anglès. 1997. *On some characteristic polynomials attached to
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369-379. :doi:`10.1007/BF02677478`
@@ -1277,6 +1282,10 @@ REFERENCES:
              functions*.
              :arxiv:`0907.4652v2`.
 
+.. [Bri2022] Brinkmann, Gunnar. (2022). *A practical algorithm for
+             the computation of the genus*. Ars Mathematica Contemporanea. 22.
+             #P4.01. :doi:`10.26493/1855-3974.2320.c2d`.
+
 .. [Bou1989] \N. Bourbaki. *Lie Groups and Lie Algebras*. Chapters 1-3.
              Springer. 1989.
 
@@ -1888,6 +1897,10 @@ REFERENCES:
 .. [CL2023] Xavier Caruso and Antoine Leudière.
             *Algorithms for computing norms and characteristic polynomials on general Drinfeld modules*, (2023) :arxiv:`2307.02879`.
 
+.. [ClaytonSmith] Clayton Smith,
+                  *On the existence of* `(v,5,1)`-*BIBD*.
+                  http://www.argilo.net/files/bibd.pdf
+
 .. [Cle1872] Alfred Clebsch, *Theorie der binären algebraischen Formen*,
              Teubner, 1872.
 
@@ -2313,6 +2326,11 @@ REFERENCES:
 .. [Den2012] Tom Denton. Canonical Decompositions of Affine Permutations,
              Affine Codes, and Split `k`-Schur Functions.  Electronic Journal of
              Combinatorics, 2012.
+
+.. [Denniston69] \R. H. F. Denniston,
+                 *Some maximal arcs in finite projective planes*.
+                 Journal of Combinatorial Theory 6, no. 3 (1969): 317-319.
+                 :doi:`10.1016/S0021-9800(69)80095-5`
 
 .. [Deo1987a] \V. Deodhar, A splitting criterion for the Bruhat
               orderings on Coxeter groups. Comm. Algebra,
@@ -3190,6 +3208,11 @@ REFERENCES:
               Algorithm Engineering and Experiments (ALENEX), pp 85-97, 2021.
               :doi:`10.1137/1.9781611976472.7`
 
+.. [GKMN2022] Loukas Georgiadis, Dionysios Kefallinos, Anna Mpanti, Stavros D.
+              Nikolopoulos. *An Experimental Study of Algorithms for Packing
+              Arborescences*. Symposium on Experimental Algorithms (SEA), 2022.
+              :doi:`10.4230/LIPIcs.SEA.2022.14`
+
 .. [GKP2011] Sylvain Gravier, Matjaz Kovse and Aline Parreau.
              *Generalized Sierpinski graphs*. Poster, European Conference on
              Combinatorics, Graph Theory and Applications (EuroComb’11),
@@ -3486,7 +3509,7 @@ REFERENCES:
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              https://web.archive.org/web/20040401033532/http://www-math.mit.edu/~hajiagha/pp11.ps
 
-.. [HJ2020]  U. Hartl and A.-K. Juschka, 
+.. [HJ2020]  U. Hartl and A.-K. Juschka,
              *Pink’s theory of Hodge structures and the Hodge conjecture over function fields*,
              in `t`\ *-motives: Hodge structures, transcendence and other motivic aspects*
              EMS Ser. Congr. Rep. (2020), 31-182
@@ -4503,6 +4526,11 @@ REFERENCES:
 .. [Kre2002] \V. Kreps. *Social Network Analysis* (2002).
              [Online] Available: http://www.orgnet.com/sna.html
 
+.. [KreherStinson98] Donald L. Kreher and Douglas R. Stinson,
+                     *Combinatorial Designs: Generation, Enumeration, and Search*,
+                     1998.
+                     :doi:`10.1201/9781003068006`
+
 .. [KRG1996] \S. Klavzar, A. Rajapakse, and I. Gutman. *The Szeged and the
              Wiener index of graphs*. Applied Mathematics Letters, 9(5):45--49,
              1996. :doi:`10.1016/0893-9659(96)00071-7`.
@@ -4556,6 +4584,11 @@ REFERENCES:
 .. [KT1986] \N. Kerzman and M. R. Trummer. *Numerical Conformal
             Mapping via the Szego kernel*. Journal of Computational
             and Applied Mathematics, 14(1-2): 111--123, 1986.
+
+.. [KT1997] Daniel Krob and Jean-Yves Thibon.
+            *Noncommutative symmetric functions IV: Quantum linear groups and Hecke
+            algebras at q = 0*, Journal of Algebraic Combinatorics 6 (1997),
+            no. 4, 339--376.
 
 .. [KT2013] \K. Tsukazaki, Explicit Isogenies of Elliptic Curves,
             Ph.D. thesis, University of Warwick, 2013.
@@ -5294,6 +5327,11 @@ REFERENCES:
               :doi:`10.1016/j.aam.2013.02.003`,
               :arxiv:`1109.1634v2`.
 
+.. [MetUlr2026] \Alexander Metzger, Austin Ulrigg, *An efficient genus algorithm
+                based on graph rotations*, Discrete Mathematics, Volume 349,
+                Issue 12, 2026, 115308, ISSN 0012-365X,
+                :doi:`10.1016/j.disc.2026.115308`, :arxiv:`2411.07347`.
+
 .. [MF1999] \J.H. Mathews and K.D. Fink. *Numerical Methods Using
             MATLAB*.  3rd edition, Prentice-Hall, 1999.
 
@@ -5679,6 +5717,9 @@ REFERENCES:
 
 .. [NormalizMan]  Winfried Bruns, Max Horn, *Normaliz 3.8.5*,
                   2020, https://github.com/Normaliz/Normaliz/blob/master/doc/Normaliz.pdf.
+
+.. [Nov2000] Jean-Christophe Novelli, *On the hypoplactic monoid*,
+             Discrete Mathematics 217 (2000), no. 1--3, 315--336.
 
 .. [NoThWi08] J.-C. Novelli, J.-Y. Thibon, L. K. Williams,
               *Combinatorial Hopf algebras, noncommutative Hall-Littlewood
@@ -6759,6 +6800,10 @@ REFERENCES:
 
 .. [Sti2006] Douglas R. Stinson. *Cryptography: Theory and
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
+
+.. [Stinson2004] Douglas R. Stinson,
+                 *Combinatorial designs: construction and analysis*,
+                 Springer, 2004.
 
 .. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
                 J. Automat. Reason. **6** (1990) 233-250.

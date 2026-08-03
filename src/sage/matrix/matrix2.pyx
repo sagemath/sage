@@ -3043,10 +3043,9 @@ cdef class Matrix(Matrix1):
         if self._nrows == 0 or self._ncols == 0:
             if sparse is None or self.is_sparse() is sparse:
                 return self.__copy__()
-            elif sparse:
+            if sparse:
                 return self.sparse_matrix()
-            else:
-                return self.dense_matrix()
+            return self.dense_matrix()
 
         if self.is_sparse():
             values = {ij: phi(v) for ij, v in self.dict().items()}
@@ -4978,8 +4977,7 @@ cdef class Matrix(Matrix1):
             # cannot get here unless over integers
             if not format[:3] == 'LLL':
                 return M.LLL()
-            else:
-                return M
+            return M
 
     def left_kernel_matrix(self, *args, **kwds):
         r"""
@@ -6016,8 +6014,7 @@ cdef class Matrix(Matrix1):
             m = F[0][1]
             if dual:
                 return decomp_seq([(V, m==1)]), decomp_seq([(V, m==1)])
-            else:
-                return decomp_seq([(V, m==1)])
+            return decomp_seq([(V, m==1)])
         F.sort()
         for g, m in f.factor():
             t = verbose('decomposition -- Computing g(self) for an irreducible factor g of degree %s' % g.degree(), level=2)
@@ -6778,8 +6775,7 @@ cdef class Matrix(Matrix1):
         if x is not None:
             if algebraic_multiplicity:
                 return x
-            else:
-                return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
+            return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         # Possible improvements:
         # algorithm for dual_eigenvector in sage/modular/hecke/module.py
@@ -6826,8 +6822,7 @@ cdef class Matrix(Matrix1):
         self.cache(key, V)
         if algebraic_multiplicity:
             return V
-        else:
-            return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
+        return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     left_eigenspaces = eigenspaces_left
 
@@ -7026,16 +7021,14 @@ cdef class Matrix(Matrix1):
         if x is not None:
             if algebraic_multiplicity:
                 return x
-            else:
-                return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
+            return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         V = self.transpose().eigenspaces_left(format=format, var=var, algebraic_multiplicity=True)
 
         self.cache(key, V)
         if algebraic_multiplicity:
             return V
-        else:
-            return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
+        return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     right_eigenspaces = eigenspaces_right
 
@@ -8346,8 +8339,7 @@ cdef class Matrix(Matrix1):
             self.cache('in_echelon_form', True)
         if transformation:
             return a
-        else:
-            return
+        return
 
     def echelonize(self, algorithm='default', cutoff=0, **kwds):
         r"""
@@ -8664,8 +8656,7 @@ cdef class Matrix(Matrix1):
 
         if transformation and v is not None:
             return (E, v)
-        else:
-            return E
+        return E
 
     def _echelon_copy(self):
         """
@@ -9403,8 +9394,7 @@ cdef class Matrix(Matrix1):
         MS_max = max(MS)
         if check:
             return MS_max, self.is_permutation_of(MS_max, True)[1]
-        else:
-            return MS_max
+        return MS_max
 
     def is_permutation_of(self, N, check=False):
         r"""
@@ -9471,8 +9461,7 @@ cdef class Matrix(Matrix1):
         if N.ncols() != ncols or N.nrows() != nrows:
             if check:
                 return (False, None)
-            else:
-                return False
+            return False
         M_B = self.as_bipartite_graph()
         N_B = N.as_bipartite_graph()
         if check:
@@ -10006,8 +9995,7 @@ cdef class Matrix(Matrix1):
         """
         if self._subdivisions is None:
             return ([], [])
-        else:
-            return (self._subdivisions[0][1:-1], self._subdivisions[1][1:-1])
+        return (self._subdivisions[0][1:-1], self._subdivisions[1][1:-1])
 
     # for backwards compatibility: see #4983.
     get_subdivisions = subdivisions
@@ -12185,13 +12173,11 @@ cdef class Matrix(Matrix1):
         if n == 0:
             if not transformation:
                 return self
-            else:
-                return self, self
-        elif n == 1:
+            return self, self
+        if n == 1:
             if not transformation:
                 return self
-            else:
-                return self, self.parent().identity_matrix()
+            return self, self.parent().identity_matrix()
 
         inferred_base_ring = base_ring
 
@@ -12318,8 +12304,7 @@ cdef class Matrix(Matrix1):
 
         if transformation:
             return J, transformation_matrix
-        else:
-            return J
+        return J
 
     def jordan_decomposition(self):
         r"""
@@ -16832,8 +16817,7 @@ cdef class Matrix(Matrix1):
         if self == 0 or (self.nrows() <= 1 and self.ncols() <= 1):
             if transformation:
                 return self.__copy__(), left_mat, right_mat
-            else:
-                return self.__copy__()
+            return self.__copy__()
 
         # data type checks on R
         if not R.is_integral_domain() or not R.is_noetherian():
@@ -16862,8 +16846,7 @@ cdef class Matrix(Matrix1):
             dp = dp.change_ring(R) / den
         if transformation:
             return dp, up*u, v*vp
-        else:
-            return dp
+        return dp
 
     def fitting_ideal(self, i):
         r"""
@@ -16964,8 +16947,7 @@ cdef class Matrix(Matrix1):
         if R in _Fields:
             if self.rank() >= rank_minors:
                 return R.ideal([1])
-            else:
-                return R.ideal([0])
+            return R.ideal([0])
         try:
             elemdiv = self.elementary_divisors()
             if rank_minors > len(elemdiv):
@@ -17268,8 +17250,7 @@ cdef class Matrix(Matrix1):
         if self.nrows() == 1:
             if self.is_zero():
                 return self.new_matrix(self.nrows(), self.nrows(), 1), self, []
-            else:
-                return self.new_matrix(self.nrows(), self.nrows(), 1), self, [
+            return self.new_matrix(self.nrows(), self.nrows(), 1), self, [
                     self.nonzero_positions_in_row(0)[0]]
 
         R = self.base_ring()
@@ -17829,8 +17810,7 @@ cdef class Matrix(Matrix1):
             Z.subdivide(splits, splits)
         if transformation:
             return Z, U
-        else:
-            return Z
+        return Z
 
     def rational_form(self, format='right', subdivide=True):
         r"""
@@ -19868,7 +19848,7 @@ cdef class Matrix(Matrix1):
         built with the appropriate degrees; note that the sum of these degrees
         has to be `r = 3` and the Krylov matrix has `m+r = 6` rows::
 
-            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [2, 1, 0]
@@ -19914,7 +19894,7 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  1  0  0]
             [70 72 60  0  1  0]
             [69 72 60  0  0  1]
-            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [3, 0, 0]
@@ -19952,7 +19932,7 @@ cdef class Matrix(Matrix1):
 
             sage: row_profile
             ((1, 0, 0), (1, 1, 1), (1, 2, 2), (2, 0, 3), (0, 0, 4), (1, 3, 5))
-            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [0, 3, 0]
@@ -19980,7 +19960,7 @@ cdef class Matrix(Matrix1):
             [47 64 69  0  0  1]
             sage: 0 == K2 * E.krylov_matrix(M, shifts=shifts, degrees=[0, 3, 0])
             False
-            sage: degrees = [max(rp[1] for rp in row_profile2 if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile2 if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [0, 1, 1]
@@ -20171,8 +20151,7 @@ cdef class Matrix(Matrix1):
 
             if output_rows:
                 return kkbasis, row_coords_krylov
-            else:
-                return kkbasis
+            return kkbasis
 
         c, d, _ = zip(*(row for row in row_profile))
 
@@ -20230,8 +20209,7 @@ cdef class Matrix(Matrix1):
 
         if output_rows:
             return kkbasis, row_coords_krylov
-        else:
-            return kkbasis
+        return kkbasis
 
     # a limited number of access-only properties are provided for matrices
     @property
@@ -20804,7 +20782,7 @@ def _matrix_power_symbolic(A, n):
         [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n]
         [1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
         [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n]
-        
+
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix

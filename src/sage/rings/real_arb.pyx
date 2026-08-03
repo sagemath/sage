@@ -1695,10 +1695,9 @@ cdef class RealBall(RingElement):
                 sl, sr = mpfr_sgn(left.value), mpfr_sgn(left.value)
                 if sr > 0 and sl > 0:
                     return left
-                elif sr < 0 and sl < 0:
+                if sr < 0 and sl < 0:
                     return right
-                else:
-                    return field(0)
+                return field(0)
         raise ValueError("unknown rounding mode")
 
     def __float__(self):

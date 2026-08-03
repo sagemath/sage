@@ -429,8 +429,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             mid = (len(self._phis) + 1) // 2
             left = EllipticCurveHom_sum(self._phis[:mid])
             right = EllipticCurveHom_sum(self._phis[mid:])
-            pair = left * right.dual() if right.degree() < left.degree() else left.dual() * right
-            self._degree = left.degree() + right.degree() + pair.trace()
+            self._degree = left.degree() + right.degree() + left.trace_pairing(right)
             if self.dual.is_in_cache():
                 self.dual()._degree = self._degree
 
@@ -578,7 +577,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         return sum(phi.scaling_factor() for phi in self._phis)
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the dual of this sum morphism.
 
@@ -611,7 +610,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
         ALGORITHM: Taking the dual distributes over addition.
         """
-        psi = EllipticCurveHom_sum((phi.dual() for phi in self._phis),
+        psi = EllipticCurveHom_sum((phi.dual(algorithm=algorithm) for phi in self._phis),
                                    domain=self._codomain, codomain=self._domain)
         psi._degree = self._degree
         if self.trace.is_in_cache():

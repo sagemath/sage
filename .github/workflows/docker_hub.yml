@@ -70,7 +70,7 @@ jobs:
         if: "env.JOB_DONE == 'false' && !contains(env.TAG_NAME, 'beta') && !contains(env.TAG_NAME, 'rc')"
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         if: env.JOB_DONE == 'false'
 
       - name: Login to Docker Hub
@@ -82,7 +82,7 @@ jobs:
         if: env.JOB_DONE == 'false' && env.CAN_LOGIN == 'true'
 
       - name: Build and push make-build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile

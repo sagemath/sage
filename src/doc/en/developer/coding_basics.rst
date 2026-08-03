@@ -1151,7 +1151,10 @@ framework. Here is a comprehensive list:
       This doctest passes too, as the output is not checked
 
   Doctests are expected to pass with any state of the pseudorandom number
-  generators (PRNGs).
+  generators (PRNGs): the doctest framework starts each run from a randomly
+  chosen seed, which is echoed in the ``sage -t`` output as
+  ``--random-seed=SEED`` and can be passed back to ``sage -t`` to reproduce
+  a failure (see :ref:`chapter-doctesting`).
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
   dict.
@@ -1177,6 +1180,14 @@ framework. Here is a comprehensive list:
   This is mathematically correct, as it is
   guaranteed to terminate. However, there is a
   nonzero probability of a timeout.
+
+  As a last resort, an example that needs reproducible pseudorandom values
+  can fix the seed explicitly with
+  :func:`~sage.misc.randstate.set_random_seed`::
+
+      sage: set_random_seed(0)
+      sage: ZZ.random_element(100)
+      75
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.

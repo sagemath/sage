@@ -270,8 +270,7 @@ class RealLazyField_class(LazyField):
         from sage.rings.real_mpfi import RIF, RealIntervalField
         if prec is None:
             return RIF
-        else:
-            return RealIntervalField(prec)
+        return RealIntervalField(prec)
 
     def construction(self):
         """
@@ -867,8 +866,7 @@ cdef class LazyFieldElement(FieldElement):
         """
         if name in named_unops:
             return LazyNamedUnop(self._parent, self, name)
-        else:
-            return FieldElement.__getattribute__(self, name)
+        return FieldElement.__getattribute__(self, name)
 
     def continued_fraction(self):
         r"""
@@ -1243,7 +1241,7 @@ cdef class LazyUnop(LazyFieldElement):
         arg = self._arg.eval(R)
         if self._op is neg:
             return -arg
-        elif self._op is inv:
+        if self._op is inv:
             return ~arg
         return self._op(self._arg.eval(R))
 
@@ -1339,14 +1337,11 @@ cdef class LazyNamedUnop(LazyUnop):
             f = getattr(math, self._op)
             if has_extra_args:
                 return f(arg, *self._extra_args)
-            else:
-                return f(arg)
-        else:
-            f = getattr(arg, self._op)
-            if has_extra_args:
-                return f(*self._extra_args)
-            else:
-                return f()
+            return f(arg)
+        f = getattr(arg, self._op)
+        if has_extra_args:
+            return f(*self._extra_args)
+        return f()
 
     def approx(self):
         """
@@ -1489,35 +1484,31 @@ cdef class LazyConstant(LazyFieldElement):
         if self._name == 'I':
             if R is float:
                 raise ValueError('I is not a real number')
-            elif R is complex:
+            if R is complex:
                 return 1j
-            else:
-                I = R.gen()
-                if I*I != -R.one():
-                    raise TypeError("The complex constant I is not in this complex field.")
-                return I
+            I = R.gen()
+            if I*I != -R.one():
+                raise TypeError("The complex constant I is not in this complex field.")
+            return I
 
-        elif self._name == 'e':
+        if self._name == 'e':
             if R is float:
                 return math.e
-            elif R is complex:
+            if R is complex:
                 return complex(math.e)
-            else:
-                return R(1).exp()
+            return R(1).exp()
 
-        elif R is float:
+        if R is float:
             # generic float
             return getattr(math, self._name)
-        elif R is complex:
+        if R is complex:
             # generic complex
             return complex(getattr(cmath, self._name))
-        else:
-            # generic Sage parent
-            f = getattr(R, self._name)
-            if self._extra_args is None:
-                return f()
-            else:
-                return f(*self._extra_args)
+        # generic Sage parent
+        f = getattr(R, self._name)
+        if self._extra_args is None:
+            return f()
+        return f(*self._extra_args)
 
     def __call__(self, *args):
         """

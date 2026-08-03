@@ -137,7 +137,7 @@ jobs:
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
       - name: Download upstream artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -228,7 +228,7 @@ jobs:
           rm -rf "artifacts/$LOGS_ARTIFACT_NAME"/{bin,lib,pyvenv.cfg}
         if: always()
       - name: Upload logs artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}

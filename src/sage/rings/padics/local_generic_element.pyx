@@ -942,8 +942,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         from sage.categories.fields import Fields
         if not integral and self.parent() in Fields():
             return (self / other, self.parent().zero())
-        else:
-            return self._quo_rem(other)
+        return self._quo_rem(other)
 
     def _test_trivial_powers(self, **options):
         r"""

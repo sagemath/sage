@@ -99,8 +99,7 @@ except ImportError:
 cdef inline obj(x):
     if type(x) is LazyImport:
         return (<LazyImport>x).get_object()
-    else:
-        return x
+    return x
 
 
 # boolean to determine whether Sage is still starting up

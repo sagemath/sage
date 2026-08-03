@@ -1066,8 +1066,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """
         if prec == self._prec:
             return self
-        else:
-            return RealField(prec, self.sci_not, self.rnd)
+        return RealField(prec, self.sci_not, self.rnd)
 
     def pi(self):
         r"""
@@ -1198,8 +1197,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         mpfr_urandomb(x.value, rstate.gmp_state)
         if min == 0 and max == 1:
             return x
-        else:
-            return (max-min)*x + min
+        return (max-min)*x + min
 
     def factorial(self, int n):
         """
@@ -1517,8 +1515,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         if (<RealField_class>self._parent)._prec <= 53:
             return numpy_double_interface
-        else:
-            return numpy_object_interface
+        return numpy_object_interface
 
     cdef _set(self, x, int base):
         # This should not be called except when the number is being created.
@@ -2068,13 +2065,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if mpfr_nan_p(self.value):
             if base >= 24:
                 return "@NaN@"
-            else:
-                return "NaN"
-        elif mpfr_inf_p(self.value):
+            return "NaN"
+        if mpfr_inf_p(self.value):
             if mpfr_sgn(self.value) > 0:
                 return "+infinity"
-            else:
-                return "-infinity"
+            return "-infinity"
 
         if e is None:
             if base > 10:
@@ -2421,10 +2416,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             RealIntervalFieldElement = None
         if isinstance(right, RealIntervalFieldElement):
             return right.__add__(left)
-        elif isinstance(left, RealNumber):
+        if isinstance(left, RealNumber):
             return Element.__add__(left, right)
-        else:
-            return Element.__add__(right, left)
+        return Element.__add__(right, left)
 
     def __sub__(left, right):
         r"""
@@ -2443,10 +2437,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             RealIntervalFieldElement = None
         if isinstance(right, RealIntervalFieldElement):
             return (-right).__add__(left)
-        elif isinstance(left, RealNumber):
+        if isinstance(left, RealNumber):
             return Element.__sub__(left, right)
-        else:
-            return Element.__rsub__(right, left)
+        return Element.__rsub__(right, left)
 
     def __mul__(left, right):
         r"""
@@ -2465,10 +2458,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             RealIntervalFieldElement = None
         if isinstance(right,RealIntervalFieldElement):
             return right.__mul__(left)
-        elif isinstance(left, RealNumber):
+        if isinstance(left, RealNumber):
             return Element.__mul__(left, right)
-        else:
-            return Element.__rmul__(right, left)
+        return Element.__rmul__(right, left)
 
     def __truediv__(left, right):
         r"""
@@ -2487,10 +2479,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             RealIntervalFieldElement = None
         if isinstance(right, RealIntervalFieldElement):
             return right.__rtruediv__(left)
-        elif isinstance(left, RealNumber):
+        if isinstance(left, RealNumber):
             return Element.__truediv__(left, right)
-        else:
-            return Element.__rtruediv__(right, left)
+        return Element.__rtruediv__(right, left)
 
     cpdef _add_(self, other):
         """
@@ -2777,7 +2768,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         if self == 1:
             return 1
-        elif self == -1:
+        if self == -1:
             return 2
         return sage.rings.infinity.infinity
 
@@ -4303,8 +4294,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             if all:
                 if x.is_zero():
                     return [x]
-                else:
-                    return [x, -x]
+                return [x, -x]
             return x
         if not extend:
             raise ValueError("negative number %s does not have a square root in the real field" % self)
@@ -4482,8 +4472,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if self < 0:
             if base is None or base == 'e':
                 return self._complex_number_().log()
-            else:
-                return self._complex_number_().log(base)
+            return self._complex_number_().log(base)
         if base is None or base == 'e':
             x = self._new()
             if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
@@ -4492,12 +4481,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
                 sig_off()
             return x
-        elif base == 10:
+        if base == 10:
             return self.log10()
-        elif base == 2:
+        if base == 2:
             return self.log2()
-        else:
-            return self.log() / (self.parent()(base)).log()
+        return self.log() / (self.parent()(base)).log()
 
     def log2(self):
         """

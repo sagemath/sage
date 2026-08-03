@@ -401,7 +401,6 @@ class EllipticCurveHom(Morphism):
             Traceback (most recent call last):
             ...
             ValueError: trace only makes sense for endomorphisms
-
         """
         F = self.domain().base_field()
         if F.characteristic().is_zero():
@@ -411,6 +410,57 @@ class EllipticCurveHom(Morphism):
             s = self.scaling_factor()
             return ZZ(s + d/s)
         return compute_trace_generic(self)
+
+    def trace_pairing(self, psi):
+        r"""
+        Return the integer `\deg(\phi+\psi) - \deg(\phi) - \deg(\psi)`
+        where `\phi` is this elliptic-curve morphism and `\psi`
+        is another elliptic-curve morphism *between the same pair
+        of elliptic curves*.
+
+        This map defines a symmetric positive definite bilinear form
+        on `\mathrm{Hom}(E, E')` with values in `\ZZ`.
+
+        EXAMPLES::
+
+            sage: p = 0xc8f9
+            sage: GF((p, 2)).inject_variables()
+            Defining z2
+            sage: x = polygen(GF((p, 2)))
+            sage: E = EllipticCurve([9931*z2 + 48137, 50831*z2 + 23876])
+            sage: K_phi = E.lift_x(51312*z2 + 41070)
+            sage: K_psi = E.lift_x(44298*z2 + 37360)
+            sage: K_phi.order(), K_psi.order()
+            (50, 35)
+            sage: phi = E.isogeny(K_phi, algorithm='factored')
+            sage: psi = E.isogeny(K_psi, algorithm='factored', codomain=phi.codomain())
+            sage: phi.trace_pairing(psi)
+            -9
+            sage: psi.trace_pairing(phi)
+            -9
+            sage: {(phi.dual() * psi).trace(), (phi * psi.dual()).trace(),
+            ....:  (psi.dual() * phi).trace(), (psi * phi.dual()).trace()}
+            {-9}
+
+        TESTS::
+
+            sage: psi = E.isogeny(K_psi)
+            sage: psi.codomain() == phi.codomain()
+            False
+            sage: phi.trace_pairing(psi)
+            Traceback (most recent call last):
+            ...
+            ValueError: given morphism must have the same domain and codomain as this morphism
+
+        ALGORITHM: Thin wrapper around :meth:`dual` and :meth:`trace`.
+        """
+        if self.parent() != psi.parent():
+            raise ValueError('given morphism must have the same domain and codomain as this morphism')
+        if self.degree() < psi.degree():
+            pair = self.dual() * psi
+        else:
+            pair = self * psi.dual()
+        return pair.trace()
 
     def characteristic_polynomial(self):
         r"""
@@ -618,6 +668,39 @@ class EllipticCurveHom(Morphism):
             Additive abelian group isomorphic to Z/7
               embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y = x^3 + 1
                 over Finite Field in t of size 2^42
+
+        Make sure :issue:`42506` is fixed; the ``'kerpoly'`` algorithm used to
+        fail immediately with a :exc:`NameError`::
+
+            sage: E = EllipticCurve(QQ, [0, 0, 0, -1, 0])
+            sage: phi = E.isogeny(E(0, 0))
+            sage: phi.kernel_subgroup(algorithm='kerpoly').invariants()
+            (2,)
+
+        When the `y`-coordinate of a root only exists over a further extension
+        `L`, both the points found so far and the roots not yet processed must
+        be mapped into `L`.  Here that extension is needed for the very first
+        root, so no point has been accumulated yet::
+
+            sage: E = EllipticCurve(QQ, [0, 0, 0, 0, 2])
+            sage: x = polygen(QQ)
+            sage: phi = E.isogeny(x)
+            sage: G = (phi.dual() * phi).kernel_subgroup(extend=True, algorithm='kerpoly')
+            sage: G.invariants()
+            (3, 3)
+
+        Here it is needed only after a `2`-torsion point has been accumulated,
+        so the points found so far really do have to be remapped::
+
+            sage: E = EllipticCurve(GF(11), [0, 1])
+            sage: phi3 = E.isogenies_prime_degree(3)[1]
+            sage: phi2 = phi3.codomain().isogenies_prime_degree(2)[0]
+            sage: G = (phi2 * phi3).kernel_subgroup(extend=True, algorithm='kerpoly')
+            sage: G.invariants()
+            (6,)
+            sage: G.universe()
+            Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1
+             over Finite Field in v of size 11^2
         """
         if algorithm is None:
             if self.domain().base_ring().is_finite():
@@ -686,15 +769,13 @@ class EllipticCurveHom(Morphism):
         if algorithm != 'kerpoly':
             raise ValueError(f"invalid algorithm {algorithm}")
 
+        E = self.domain()
         f = self.kernel_polynomial()
-
-        if part:
-            f = f.gcd(E.division_polynomial(part))
 
         pts = []
 
         if not extend:
-            for x in self.kernel_polynomial().roots(multiplicities=False):
+            for x in f.roots(multiplicities=False):
                 try:
                     pts.append(E.lift_x(x))
                 except ValueError:
@@ -705,23 +786,22 @@ class EllipticCurveHom(Morphism):
                     return A
             raise ValueError('kernel subgroup has no generating points over the base field')
 
-        E = self.domain()
-        f = self.kernel_polynomial()
-
-        from sage.rings.polynomial.polynomial_ring import polygen
-
-        K, to_K = f.splitting_field('u', map=True)
+        _, to_K = f.splitting_field('u', map=True)
         EE = E.change_ring(to_K)
 
-        for x in f.change_ring(to_K).roots(multiplicities=False):
+        roots = f.change_ring(to_K).roots(multiplicities=False)
+        while roots:
+            x = roots.pop(0)
             h = EE.defining_polynomial()(x=x, z=1).univariate_polynomial()
             try:
                 y = h.any_root()
             except ValueError:
                 L, to_L = h.splitting_field('v', map=True)
                 EE = EE.change_ring(to_L)
-                pts = list(map(to_L, pts))
-                K, to_K = L, to_L * to_K
+                # everything computed so far still lives over the old field
+                pts = [P.change_ring(to_L) for P in pts]
+                x = to_L(x)
+                roots = [to_L(r) for r in roots]
                 y = h.change_ring(to_L).any_root()
             pts.append(EE(x, y))
 
@@ -734,10 +814,12 @@ class EllipticCurveHom(Morphism):
 
     def kernel_gens(self, **kwds):
         r"""
-        Return a list of points which generate the kernel
-        subgroup of this isogeny.
+        Return a list of points which generate the kernel subgroup
+        of this isogeny.
 
-        ALGORITHM: Thin convenience wrapper around :meth:`kernel_subgroup`.
+        ALGORITHM: Returns the kernel generators given at construction
+        time if available; otherwise a thin convenience wrapper around
+        :meth:`kernel_subgroup`.
 
         EXAMPLES::
 
@@ -803,9 +885,11 @@ class EllipticCurveHom(Morphism):
             sage: h == phi.kernel_polynomial()
             True
         """
-        return [g.element() for g in self.kernel_subgroup(**kwds).gens()]
+        if not hasattr(self, '_kernel_gens'):
+            self._kernel_gens = tuple(g.element() for g in self.kernel_subgroup(**kwds).gens())
+        return list(self._kernel_gens)
 
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the dual of this elliptic-curve morphism.
 
@@ -1840,16 +1924,25 @@ class EllipticCurveHom(Morphism):
             sage: f = phi.minimal_polynomial()
             sage: psi.push_subgroup(f)
             1
+
+        The image subgroup may have zero as its `x`-coordinate::
+
+            sage: F.<a> = GF(2^2)
+            sage: E = EllipticCurve(F, [0, 0, a, 0, 0])
+            sage: phi = E.isogeny(E(0, a))
+            sage: R.<x> = F[]
+            sage: phi.push_subgroup(x^3 + a + 1)
+            x
         """
         g = self.x_rational_map()
         g1, g2 = g.numerator(), g.denominator()
         gker = g2.gcd(f)
         f1 = f // gker
         R = f1.parent()
+        if f1.degree() == 0:
+            return R.one()
         S = R.quotient_ring(f1)
         alpha = S(g1 * g2.inverse_mod(f1))
-        if not alpha:
-            return R.one()
         return alpha.minpoly()
 
     def xEVAL(self, xP):

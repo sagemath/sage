@@ -897,8 +897,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         if mor is not None:
             if no_extra_args:
                 return mor._call_(x)
-            else:
-                return mor._call_with_args(x, args, kwds)
+            return mor._call_with_args(x, args, kwds)
 
         raise TypeError(_LazyString("No conversion defined from %s to %s", (R, self), {}))
 
@@ -1989,8 +1988,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             element_cls = S
         if hasattr(element_cls, method_name):
             return NamedConvertMap(S, self, method_name)
-        else:
-            return None
+        return None
 
     def _coerce_map_via(self, v, S):
         """
@@ -2671,8 +2669,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 if connecting is not None:
                     if self_on_left:
                         return PrecomposedAction(action, None, connecting)
-                    else:
-                        return PrecomposedAction(action, connecting, None)
+                    return PrecomposedAction(action, connecting, None)
 
         if op is operator.mul:  # elements define special action methods.
             try:
@@ -3012,8 +3009,7 @@ cdef class EltPair:
         cdef bint eq = self.x is other.x and self.y is other.y and self.tag is other.tag
         if op in [Py_EQ, Py_GE, Py_LE]:
             return eq
-        else:
-            return not eq
+        return not eq
 
     def __hash__(self):
         """
