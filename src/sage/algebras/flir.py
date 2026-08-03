@@ -185,6 +185,7 @@ class FLIRChart:
 
 
     EXAMPLES::
+
         sage: K = QQ
         sage: C0 = FLIRChart.base(K, ("x1","x2"))
         sage: C0
