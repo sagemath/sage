@@ -12015,13 +12015,15 @@ cdef class Expression(Expression_abc):
             sage: s.convert()
             5*kelvin
 
-        Units requiring offsets (like Celsius and Fahrenheit) are not supported::
+        Units requiring offsets (like Celsius and Fahrenheit) can be
+        instantiated and converted::
 
             sage: units.temperature.celsius
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Unit 'celsius' requires an offset and is not supported.
-            Supported units in the category 'temperature' are: kelvin, rankine.
+            celsius
+            sage: 5*units.temperature.celsius
+            27815/100*kelvin
+            sage: s.convert(units.temperature.celsius)
+            -27215/100*celsius
 
         Temperature units can be combined with other units to form compound
         expressions::
