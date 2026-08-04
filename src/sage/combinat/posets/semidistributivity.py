@@ -13,7 +13,7 @@ from sage.combinat.posets.lattices import LatticePoset
 from sage.graphs.digraph import DiGraph
 
 
-def right_orthogonal(G, X):
+def right_orthogonal(G, X) -> set:
     r"""
     Return the right orthogonal of a given set of vertices.
 
@@ -486,21 +486,19 @@ def is_two_acyclic_factorization_system(G, certificate=False):
 
         sage: from sage.combinat.posets.semidistributivity import is_two_acyclic_factorization_system
         sage: G = DiGraph([(0, 1), (1, 0), (0, 0), (1, 1)], loops=True)
-        sage: is_two_acyclic_factorization_system(G, certificate=True)            # (0, 1), (1, 0) are both surjective
+        sage: is_two_acyclic_factorization_system(G, certificate=True)
         (False, ((0, 1), 'surj_not_order'))
 
-        sage: G.add_edge(0, 2)                                                    # make (1, 0) no longer surjective
-        sage: is_two_acyclic_factorization_system(G, certificate=True)            # (0, 1) surjective, (1, 0) injective
+        sage: G.add_edge(0, 2)
+        sage: is_two_acyclic_factorization_system(G, certificate=True)
         (False, ((0, 1), 'not_brick'))
 
-        sage: G.add_edge(1, 3)                                                    # make (0, 1) no longer surjective
-        sage: is_two_acyclic_factorization_system(G, certificate=True)            # (0, 1), (1, 0) are both injective
+        sage: G.add_edge(1, 3)
+        sage: is_two_acyclic_factorization_system(G, certificate=True)
         (False, ((0, 1), 'inj_not_order'))
 
-        sage: G.add_edge(4, 1)                                                    # make (1, 0) no longer injective
-        sage: is_two_acyclic_factorization_system(G, certificate=True)            # surjective edges are (0, 2), (1, 3)
-        ....:                                                                     # injective edges are (0, 1), (4, 1)
-        ....:                                                                     # so no factorization exists for (1, 0)
+        sage: G.add_edge(4, 1)
+        sage: is_two_acyclic_factorization_system(G, certificate=True)
         (False, ((1, 0), 'not_factorization_system'))
 
     Example of a two-acyclic factorization system, from Figure 1. of [RST2024]_ ::
