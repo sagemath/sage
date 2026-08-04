@@ -9,6 +9,7 @@ This module implements the two key concepts related to the theorem:
 the lattice of maximal orthogonal pairs, and two-acyclic factorization
 systems.
 """
+from sage.categories.lattice_posets import LatticePosets
 from sage.combinat.posets.lattices import LatticePoset
 from sage.graphs.digraph import DiGraph
 
@@ -301,7 +302,7 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
                 if rt != new_rt:
                     Pairs.add_edge(rt, new_rt)
         next_pairs = new_pairs
-    L = LatticePoset(Pairs, category=LatticePosets().Finite().Semidistributive())
+    L = LatticePoset(Pairs, category=LatticePosets().Finite())
     if labels == "left":
         return L.relabel(pairs)
     if labels != "right":
