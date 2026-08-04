@@ -2411,9 +2411,108 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         left = self._compose_with_singletons(names, degrees)
         P = left.parent()
+        # The multiplicities may live in a larger ring than the base
+        # ring of ``self`` -- in particular, they may carry undetermined
+        # coefficients introduced by :meth:`define_implicitly`.  Compute
+        # the plethysm over a common ring.
+        from sage.structure.element import get_coercion_model
+
+        cm = get_coercion_model()
+        B = cm.common_parent(P.base_ring(), *[c.parent() for c in multiplicities])
+        if B is not P.base_ring():
+            P = P.change_ring(B)
+            left = P(left)
         right = P._exponential(multiplicities,
                                list(chain.from_iterable(degrees)))
         return left.hadamard_product(right)
+
+    def _relabel_sorts(self, codomain, sorts):
+        r"""
+        Return the image of ``self`` in ``codomain`` obtained by
+        relabelling the sorts according to ``sorts``.
+
+        This implements the substitution of the sorts of ``self`` by
+        singletons of ``codomain``.  In other words, if ``self`` is a
+        species `F` in the sorts `X_0, \ldots, X_{m-1}`, this returns
+        `F(Y_{s_0}, \ldots, Y_{s_{m-1}})`, where the `Y_j` are the
+        sorts of ``codomain`` and ``sorts`` is `(s_0, \ldots,
+        s_{m-1})`.
+
+        Since substituting a singleton for a sort only relabels the
+        domain partitions of the molecular species in the support of
+        ``self``, this is much faster than the generic composition.
+
+        INPUT:
+
+        - ``codomain`` -- a :class:`PolynomialSpecies`
+        - ``sorts`` -- a tuple of length the arity of the parent of
+          ``self``, whose entries are in ``range(codomain._arity)``
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, "Z")
+            sage: P2 = PolynomialSpecies(QQ, "X, Y")
+            sage: C3 = P(CyclicPermutationGroup(3))
+            sage: C3._relabel_sorts(P2, [0])
+            C_3(X)
+            sage: C3._relabel_sorts(P2, [1])
+            C_3(Y)
+
+        The result is linear in ``self``::
+
+            sage: X = P(SymmetricGroup(1))
+            sage: (3*C3 + X^2)._relabel_sorts(P2, [1])
+            Y^2 + 3*C_3(Y)
+
+        Relabelling may merge sorts::
+
+            sage: X = P2(SymmetricGroup(1), {0: [1]})
+            sage: Y = P2(SymmetricGroup(1), {1: [1]})
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: E2XY = P2(G, {0: [1, 2], 1: [3, 4]}); E2XY
+            E_2(X*Y)
+            sage: E2XY._relabel_sorts(P, [0, 0])
+            E_2(Z^2)
+            sage: (X*Y)._relabel_sorts(P, [0, 0])
+            Z^2
+
+        TESTS::
+
+            sage: P.zero()._relabel_sorts(P2, [0])
+            0
+            sage: P.one()._relabel_sorts(P2, [0])
+            1
+            sage: C3._relabel_sorts(P2, [0, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of sorts must match the arity of the parent of self
+        """
+        P = self.parent()
+        if len(sorts) != P._arity:
+            raise ValueError(
+                "the number of sorts must match the arity of the parent of self"
+            )
+        M = codomain._indices
+        A = M._indices
+        R = codomain.base_ring()
+
+        def relabel_atomic(a):
+            pi = {}
+            for s, block in zip(sorts, a._dompart):
+                if block:
+                    pi.setdefault(s, []).extend(block)
+            return A(a._dis, pi, check=False)
+
+        result = {}
+        for mol, c in self.monomial_coefficients().items():
+            factors = {}
+            for a, e in mol._monomial.items():
+                a_new = relabel_atomic(a)
+                factors[a_new] = factors.get(a_new, ZZ.zero()) + e
+            mol_new = M(factors, check=False)
+            result[mol_new] = result.get(mol_new, R.zero()) + c
+        return codomain._from_dict(result)
 
     def __call__(self, *args):
         r"""
@@ -3031,9 +3130,21 @@ class PolynomialSpecies(CombinatorialFreeModule):
             r"""
             Substitute in ``c`` all variables appearing in the
             base ring with their ``k``-th power.
+
+            If the base ring provides a ``_power_sum_plethysm`` method
+            (i.e. it carries undetermined coefficients introduced by
+            :meth:`define_implicitly`), use it: the undetermined
+            coefficients are constants of the `\lambda`-ring and are
+            fixed by `p_k`, while only the base ring monomials are
+            raised to the `k`-th power.
             """
+            if k == 1:
+                return c
+            B = self.base_ring()
+            psp = getattr(B, "_power_sum_plethysm", None)
+            if psp is not None:
+                return psp(c, k)
             if callable(c):
-                B = self.base_ring()
                 return c(*[g ** k for g in B.gens() if g != B.one()])
             return c
 
