@@ -987,7 +987,7 @@ def unit_derivations_expr(v):
         unit_derivations[v] = Z
     return Z
 
-# Begin LLM-generated code block (M. Dunn, 2026-08-04)
+# Begin LLM-generated code block (M. Dunn)
 @instancedoc
 class OffsetUnit:
     """
@@ -1428,7 +1428,7 @@ def convert(expr, target):
 
     if target is None:
         return expr
-    # Begin LLM-generated code block (M. Dunn, 2026-08-04)
+    # Begin LLM-generated code block (M. Dunn)
     if str(target) in offset_unit_to_type:
         category = offset_unit_to_type[str(target)]
         base_unit, scale, offset = offset_unitdict[category][str(target)]
