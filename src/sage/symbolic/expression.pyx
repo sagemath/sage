@@ -12015,18 +12015,18 @@ cdef class Expression(Expression_abc):
             sage: s.convert()
             5*kelvin
 
-        Units requiring offsets (like Celsius and Fahrenheit) can be
+        Units requiring offsets (like Celsius and Fahrenheit) can be`
         instantiated and converted::
 
             sage: units.temperature.celsius
             celsius
             sage: 5*units.temperature.celsius
-            27815/100*kelvin
+            5563/20*kelvin
             sage: s.convert(units.temperature.celsius)
-            -27215/100*celsius
+            -5443/20*celsius
 
-        Temperature units can be combined with other units to form compound
-        expressions::
+        Non-offset temperature units can be combined with other units
+        to form compound expressions::
 
             sage: compound = 5*units.temperature.kelvin*units.length.foot
             sage: compound.convert()
