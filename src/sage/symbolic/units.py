@@ -987,7 +987,7 @@ def unit_derivations_expr(v):
         unit_derivations[v] = Z
     return Z
 
-
+# Begin LLM-generated code block (M. Dunn, 2026-08-04)
 @instancedoc
 class OffsetUnit:
     """
@@ -1068,7 +1068,7 @@ class OffsetUnit:
 
     def __pos__(self):
         self._unsupported()
-
+# End LLM-generated code block
 
 @instancedoc
 class UnitExpression(Expression):
@@ -1428,7 +1428,7 @@ def convert(expr, target):
 
     if target is None:
         return expr
-
+    # Begin LLM-generated code block (M. Dunn, 2026-08-04)
     if str(target) in offset_unit_to_type:
         category = offset_unit_to_type[str(target)]
         base_unit, scale, offset = offset_unitdict[category][str(target)]
@@ -1443,7 +1443,7 @@ def convert(expr, target):
                 raise ValueError("Incompatible units")
         converted = (coeff - offset) / scale
         return converted.mul(SR.var(str(target)), hold=True)
-
+    # End LLM-generated code block
     for y in base_target.variables():
         if is_unit(y):
             tz[y] = base_units(y)
