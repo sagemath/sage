@@ -53,9 +53,9 @@ and converted::
     sage: units.temperature.celsius
     celsius
     sage: 5*units.temperature.celsius
-    27815/100*kelvin
+    5563/20*kelvin
     sage: units.temperature.kelvin.convert(units.temperature.celsius)
-    -27215/100*celsius
+    -5443/20*celsius
 
 TESTS:
 
