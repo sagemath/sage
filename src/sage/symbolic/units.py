@@ -998,7 +998,7 @@ class OffsetUnit:
         sage: units.temperature.celsius
         celsius
         sage: 5*units.temperature.celsius
-        27815/100*kelvin
+        5563/20*kelvin
     """
     def __init__(self, name, category, base_unit, scale, offset):
         self.__name = name
@@ -1350,7 +1350,7 @@ def is_unit(s) -> bool:
         True
     """
     name = str(s)
-    return name in unit_to_type
+    return name in unit_to_type or name in offset_unit_to_type
 
 
 def convert(expr, target):
