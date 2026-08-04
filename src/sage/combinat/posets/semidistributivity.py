@@ -229,7 +229,7 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
         sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0)])
         sage: maximal_orthogonal_pairs_lattice(G)
         Finite lattice containing 10 elements
-        sage: list(maximal_orthogonal_pairs_lattice(G))
+        sage: maximal_orthogonal_pairs_lattice(G).list()
         [(frozenset(), frozenset({0, 1, 2, 3})),
          (frozenset({3}), frozenset({1, 2})),
          (frozenset({2}), frozenset({0, 1})),
