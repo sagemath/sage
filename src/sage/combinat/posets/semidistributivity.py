@@ -94,7 +94,7 @@ def right_orthogonal(G, X):
             l.discard(y)
     return l
 
-def left_orthogonal(G, X):
+def left_orthogonal(G, X) -> set:
     r"""
     Return the left orthogonal of a given set of vertices.
 
@@ -245,9 +245,9 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
         sage: from sage.combinat.posets.semidistributivity import left_orthogonal
         sage: L = maximal_orthogonal_pairs_lattice(G, labels="left")
         sage: R = maximal_orthogonal_pairs_lattice(G, labels="right")
-        sage: all([right_orthogonal(G, L[i]) == set(R[i]) for i in (0..9)])
+        sage: all(right_orthogonal(G, L[i]) == set(R[i]) for i in range(10))
         True
-        sage: all([left_orthogonal(G, R[i]) == set(L[i]) for i in (0..9)])
+        sage: all(left_orthogonal(G, R[i]) == set(L[i]) for i in range(10))
         True
 
     .. SEEALSO::
@@ -301,14 +301,15 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
                 if rt != new_rt:
                     Pairs.add_edge(rt, new_rt)
         next_pairs = new_pairs
-    L = LatticePoset(Pairs)
+    L = LatticePoset(Pairs, category=LatticePosets().Finite().Semidistributive())
     if labels == "left":
         return L.relabel(pairs)
     if labels != "right":
         return L.relabel(lambda v: (pairs[v], v))
     return L
 
-def surjective_edges(G, loops=False):
+
+def surjective_edges(G, loops=False) -> list:
     r"""
     Return the list of surjective edges of ``G``.
 
@@ -362,7 +363,7 @@ def surjective_edges(G, loops=False):
             E.append((x, y))
     return E
 
-def injective_edges(G, loops=False):
+def injective_edges(G, loops=False) -> list:
     r"""
     Return the list of injective edges of ``G``.
 
@@ -415,6 +416,7 @@ def injective_edges(G, loops=False):
         elif loops:
             E.append((y, z))
     return E
+
 
 def is_two_acyclic_factorization_system(G, certificate=False):
     r"""
