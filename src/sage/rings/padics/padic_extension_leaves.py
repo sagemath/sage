@@ -103,7 +103,8 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
         sage: R.<a> = ZqCR(27,1000)                                                     # needs sage.libs.ntl
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.ntl
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed,
+                 names, implementation='FLINT', prefix=None):
         r"""
         A capped relative representation of `\ZZ_q`.
 
@@ -111,7 +112,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic ring.
+          while ``poly`` has coefficients in a `p`-adic ring
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
@@ -124,6 +125,9 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
 
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
           unramified_subextension_variable_name, uniformizer_name)``
+
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field
 
         EXAMPLES::
 
@@ -148,7 +152,8 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
             cache_limit = min(prec, 30)
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='capped-rel')
             element_class = qAdicCappedRelativeElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode,
+                                            names, element_class, prefix)
         if implementation != 'NTL':
             from .qadic_flint_CR import pAdicCoercion_ZZ_CR, pAdicConvert_QQ_CR
             self.register_coercion(pAdicCoercion_ZZ_CR(self))
@@ -162,7 +167,8 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
         sage: R.<a> = QqCR(27,1000)                                                     # needs sage.libs.ntl
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.ntl
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed,
+                 names, implementation='FLINT', prefix=None):
         r"""
         A representation of `\QQ_q`.
 
@@ -170,7 +176,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with rational coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic field.
+          while ``poly`` has coefficients in a `p`-adic field
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
@@ -183,6 +189,9 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
 
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
           unramified_subextension_variable_name, uniformizer_name)``
+
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field
 
         EXAMPLES::
 
@@ -208,7 +217,8 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
             cache_limit = min(prec, 30)
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, True, Zpoly, prec_type='capped-rel')
             element_class = qAdicCappedRelativeElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode,
+                                            names, element_class, prefix)
         if implementation != 'NTL':
             from .qadic_flint_CR import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR
             self.register_coercion(pAdicCoercion_ZZ_CR(self))
@@ -248,7 +258,8 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
         sage: R.<a> = ZqCA(27,1000)                                                     # needs sage.libs.flint
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.flint
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed,
+                 names, implementation='FLINT', prefix=None):
         r"""
         A capped absolute representation of `ZZ_q`.
 
@@ -256,7 +267,7 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic ring.
+          while ``poly`` has coefficients in a `p`-adic ring
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
@@ -269,6 +280,9 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
 
         - ``names`` -- a 4-tuple, ``(variable_name, residue_name,
           unramified_subextension_variable_name, uniformizer_name)``
+
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field
 
         EXAMPLES::
 
@@ -294,7 +308,8 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
             cache_limit = min(prec, 30)
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='capped-abs')
             element_class = qAdicCappedAbsoluteElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode,
+                                            names, element_class, prefix)
         if implementation != 'NTL':
             from .qadic_flint_CA import pAdicCoercion_ZZ_CA, pAdicConvert_QQ_CA
             self.register_coercion(pAdicCoercion_ZZ_CA(self))
@@ -308,7 +323,8 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
         sage: R.<a> = ZqFM(27,1000)                                                     # needs sage.libs.flint
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)     # long time             # needs sage.libs.flint
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed,
+                 names, implementation='FLINT', prefix=None):
         """
         A fixed modulus representation of Zq.
 
@@ -316,7 +332,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic field.
+          while ``poly`` has coefficients in a `p`-adic field
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
@@ -327,7 +343,11 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
 
         - ``shift_seed`` -- unused
 
-        - ``names`` -- a 4-tuple, ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
+        - ``names`` -- a 4-tuple,
+          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
+
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field
 
         EXAMPLES::
 
@@ -349,7 +369,8 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
             cache_limit = 0 # prevents caching
             self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='fixed-mod')
             element_class = qAdicFixedModElement
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
+        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode,
+                                            names, element_class, prefix)
         if implementation != 'NTL':
             from .qadic_flint_FM import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
             self.register_coercion(pAdicCoercion_ZZ_FM(self))
@@ -371,7 +392,8 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
         sage: R.<a> = ZqFP(27,10000); R == loads(dumps(R))                              # needs sage.libs.flint
         True
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed,
+                 names, implementation='FLINT', prefix=None):
         r"""
         A floating point representation of `\ZZ_q`.
 
@@ -379,7 +401,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with integer coefficients, for example,
-          while ``poly`` has coefficients in `\ZZ_p`.
+          while ``poly`` has coefficients in `\ZZ_p`
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
@@ -390,7 +412,11 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         - ``shift_seed`` -- unused
 
-        - ``names`` -- a 4-tuple, ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
+        - ``names`` -- a 4-tuple,
+          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
+
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field
 
         EXAMPLES::
 
@@ -414,7 +440,9 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
         Zpoly = _make_integral_poly(exact_modulus, poly.base_ring().prime(), prec)
         cache_limit = min(prec, 30)
         self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, False, Zpoly, prec_type='floating-point')
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, qAdicFloatingPointElement)
+        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode,
+                                            names, qAdicFloatingPointElement,
+                                            prefix)
         from .qadic_flint_FP import pAdicCoercion_ZZ_FP, pAdicConvert_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_conversion(pAdicConvert_QQ_FP(self))
@@ -427,7 +455,8 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         sage: R.<a> = QqFP(27,10000); R == loads(dumps(R))                              # needs sage.libs.flint
         True
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed,
+                 names, implementation='FLINT', prefix=None):
         r"""
         A representation of `\QQ_q`.
 
@@ -435,7 +464,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         - ``exact_modulus`` -- the original polynomial defining the extension.
           This could be a polynomial with rational coefficients, for example,
-          while ``poly`` has coefficients in a `p`-adic field.
+          while ``poly`` has coefficients in a `p`-adic field
 
         - ``poly`` -- the polynomial with coefficients in :meth:`base_ring`
           defining this extension
@@ -446,7 +475,11 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         - ``shift_seed`` -- unused
 
-        - ``names`` -- a 4-tuple, ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
+        - ``names`` -- a 4-tuple,
+          ``(variable_name, residue_name, unramified_subextension_variable_name, uniformizer_name)``
+
+        - ``prefix`` -- string (default: ``None``); argument to be passed to
+          the residue field
 
         EXAMPLES::
 
@@ -464,7 +497,9 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         Zpoly = _make_integral_poly(exact_modulus, poly.base_ring().prime(), prec)
         cache_limit = min(prec, 30)
         self.prime_pow = PowComputer_flint_maker(poly.base_ring().prime(), cache_limit, prec, prec, True, Zpoly, prec_type='floating-point')
-        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode, names, qAdicFloatingPointElement)
+        UnramifiedExtensionGeneric.__init__(self, poly, prec, print_mode,
+                                            names, qAdicFloatingPointElement,
+                                            prefix)
         from .qadic_flint_FP import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicCoercion_QQ_FP(self))
