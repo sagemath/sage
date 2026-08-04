@@ -403,7 +403,10 @@ unitdict = {
 
 'temperature':
         {'kelvin' : 1,
-         'rankine' : QQ(5) / 9},
+         'rankine' : QQ(5) / 9,
+         'celsius' : None,
+         'centigrade' : None,
+         'fahrenheit' : None},
 
 'time':
         {'century': 3153600000,
@@ -1022,11 +1025,13 @@ class OffsetUnit:
 
     def _instantiate(self, value):
         if not self._is_scalar(value):
-            raise NotImplementedError(f"Unit '{self.__name}' requires an offset and is not supported.")
+            raise NotImplementedError(f"Unit '{self.__name}'"
+            " cannot be instantiated with a non-scalar value.")
         return (self.__scale * value + self.__offset) * self._base_unit()
 
     def _unsupported(self):
-        raise NotImplementedError(f"Unit '{self.__name}' requires an offset and is not supported.")
+            raise NotImplementedError(f"Unit '{self.__name}'"
+                                      " does not support this operation.")
 
     def __mul__(self, other):
         return self._instantiate(other)
@@ -1246,13 +1251,13 @@ class Units(ExtraTabCompletion):
             sage: units.area.acre is units.area.acre
             True
         """
-        if name in self.__units:
-            return self.__units[name]
         if name in offset_unitdict.get(self.__name, {}):
             base_unit, scale, offset = offset_unitdict[self.__name][name]
             U = OffsetUnit(name, self.__name, base_unit, scale, offset)
             self.__units[name] = U
             return U
+        if name in self.__units:
+            return self.__units[name]
         if len(unit_to_type) == 0:
             evalunitdict()
         try:
@@ -1345,7 +1350,7 @@ def is_unit(s) -> bool:
         True
     """
     name = str(s)
-    return name in unit_to_type or name in offset_unit_to_type
+    return name in unit_to_type
 
 
 def convert(expr, target):
