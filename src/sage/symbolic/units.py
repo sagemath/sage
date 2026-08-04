@@ -1251,13 +1251,13 @@ class Units(ExtraTabCompletion):
             sage: units.area.acre is units.area.acre
             True
         """
+        if name in self.__units:
+            return self.__units[name]
         if name in offset_unitdict.get(self.__name, {}):
             base_unit, scale, offset = offset_unitdict[self.__name][name]
             U = OffsetUnit(name, self.__name, base_unit, scale, offset)
             self.__units[name] = U
             return U
-        if name in self.__units:
-            return self.__units[name]
         if len(unit_to_type) == 0:
             evalunitdict()
         try:
