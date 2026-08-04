@@ -229,17 +229,17 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
         sage: G = DiGraph([(0, 1), (1, 2), (2, 3), (3, 0)])
         sage: maximal_orthogonal_pairs_lattice(G)
         Finite lattice containing 10 elements
-        sage: maximal_orthogonal_pairs_lattice(G).list()
+        sage: sorted(maximal_orthogonal_pairs_lattice(G), key=lambda p: str(p[0]))
         [(frozenset(), frozenset({0, 1, 2, 3})),
-         (frozenset({3}), frozenset({1, 2})),
-         (frozenset({2}), frozenset({0, 1})),
-         (frozenset({2, 3}), frozenset({1})),
-         (frozenset({1}), frozenset({0, 3})),
-         (frozenset({1, 2}), frozenset({0})),
-         (frozenset({0}), frozenset({2, 3})),
-         (frozenset({0, 3}), frozenset({2})),
+         (frozenset({0, 1, 2, 3}), frozenset()),
          (frozenset({0, 1}), frozenset({3})),
-         (frozenset({0, 1, 2, 3}), frozenset())]
+         (frozenset({0, 3}), frozenset({2})),
+         (frozenset({0}), frozenset({2, 3})),
+         (frozenset({1, 2}), frozenset({0})),
+         (frozenset({1}), frozenset({0, 3})),
+         (frozenset({2, 3}), frozenset({1})),
+         (frozenset({2}), frozenset({0, 1})),
+         (frozenset({3}), frozenset({1, 2}))]
 
         sage: from sage.combinat.posets.semidistributivity import right_orthogonal
         sage: from sage.combinat.posets.semidistributivity import left_orthogonal
