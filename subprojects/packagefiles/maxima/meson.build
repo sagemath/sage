@@ -5,7 +5,7 @@ project('maxima', 'c',
 mod = import('unstable-external_project')
 
 cc = meson.get_compiler('c')
-ecl = find_program('ecl', required: false)
+ecl = find_program('ecl', version: '>=26.5.5', required: false)
 dependencies = []
 if ecl.found()
   ecl_version = run_command(
