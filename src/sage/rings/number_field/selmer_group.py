@@ -364,7 +364,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
     - ``p`` -- a prime number
 
     - ``proof`` -- if ``True``, compute the class group provably
-      correctly. Default is ``True``. Call :meth:`proof.number_field` to
+      correctly. Default is ``True``. Call ``proof.number_field`` to
       change this default globally.
 
     - ``debug`` -- boolean (default: ``False``); debug flag

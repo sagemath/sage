@@ -991,7 +991,8 @@ class Stream_function(Stream_inexact):
         :meth:`sage.rings.lazy_series_ring.LazySeriesRing.define_implicitly`
         work any streams used in ``function`` must appear in its
         ``__closure__`` as instances of :class:`Stream`, as opposed
-        to, for example, as instances of :class:`LazyPowerSeries`.
+        to, for example, as instances of
+        :class:`~sage.rings.lazy_series.LazyPowerSeries`.
 
     EXAMPLES::
 
@@ -1263,11 +1264,12 @@ class Stream_taylor(Stream_inexact):
 class VariablePool(UniqueRepresentation):
     """
     A class to keep track of used and unused variables in an
-    :class:`InfinitePolynomialRing`.
+    :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRingFactory>`.
 
     INPUT:
 
-    - ``ring`` -- :class:`InfinitePolynomialRing`
+    - ``ring`` --
+      :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRingFactory>`
     """
     def __init__(self, ring):
         """
@@ -1298,7 +1300,7 @@ class VariablePool(UniqueRepresentation):
         TESTS:
 
         Check, that we get a new pool for each
-        :class:`InfinitePolynomialRing`::
+        :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRingFactory>`::
 
             sage: R0.<b> = InfinitePolynomialRing(QQ)
             sage: P0 = VariablePool(R0)

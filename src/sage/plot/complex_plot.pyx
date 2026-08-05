@@ -642,7 +642,7 @@ def add_lightness_smoothing_to_rgb(rgb, delta):
     piecewise-linearly vary from black to the initial `(r, g, b)` to white.
 
     We assume that the ``delta`` values come from a function like
-    :func:`sage.plot.complex_plot.mag_to_lightness`, which maps magnitudes to
+    ``mag_to_lightness``, which maps magnitudes to
     the range `[-1, +1]`.
 
     INPUT:
@@ -694,7 +694,7 @@ def add_contours_to_rgb(rgb, delta, dark_rate=0.5):
     color, while positive ``delta`` values lighten the pixel.
 
     We assume that the ``delta`` values come from a function like
-    :func:`sage.plot.complex_plot.mag_to_lightness`, which maps magnitudes to
+    ``mag_to_lightness``, which maps magnitudes to
     the range `[-1, +1]`.
 
     INPUT:

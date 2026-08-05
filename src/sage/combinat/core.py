@@ -349,7 +349,7 @@ class Core(CombinatorialElement):
         - ``w`` -- tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
           If transposition is set to be ``True``, then `w = [w_0,w_1]` is
           interpreted as a transposition `t_{w_0, w_1}`
-          (see :meth:`_transposition_to_reduced_word`).
+          (see ``_transposition_to_reduced_word``).
 
         - ``transposition`` -- boolean (default: ``False``)
 
@@ -726,7 +726,8 @@ class Cores_size(UniqueRepresentation, Parent):
         r"""
         Convert the partition ``part`` into a core (as the identity map).
 
-        This is the inverse method to :meth:`to_partition`.
+        This is the inverse method to
+        :meth:`~sage.combinat.core.Core.to_partition`.
 
         EXAMPLES::
 

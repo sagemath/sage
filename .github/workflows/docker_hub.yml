@@ -92,6 +92,6 @@ jobs:
           push: ${{ steps.login.outcome == 'success' }}
           tags: ${{ env.TAG_LIST }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=max,ignore-error=true
         # run even if there are no push credentials (just don't push)
         if: (success() || failure()) && env.JOB_DONE == 'false'

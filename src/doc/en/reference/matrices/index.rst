@@ -71,6 +71,7 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/matrix_integer_dense_saturation
    sage/matrix/matrix_rational_dense
    sage/matrix/matrix_rational_sparse
+   sage/matrix/matrix_numpy_dense
    sage/matrix/matrix_double_dense
    sage/matrix/matrix_real_double_dense
    sage/matrix/matrix_mod2_dense

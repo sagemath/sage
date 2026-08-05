@@ -224,7 +224,7 @@ cdef class SageObject:
         Return an ASCII art representation.
 
         To implement multi-line ASCII art output in a derived class
-        you must override this method. Unlike :meth:`_repr_`, which is
+        you must override this method. Unlike ``_repr_``, which is
         sometimes used for the hash key, the output of
         :meth:`_ascii_art_` may depend on settings and is allowed to
         change during runtime.
@@ -290,7 +290,7 @@ cdef class SageObject:
         Return a unicode art representation.
 
         To implement multi-line unicode art output in a derived class
-        you must override this method. Unlike :meth:`_repr_`, which is
+        you must override this method. Unlike ``_repr_``, which is
         sometimes used for the hash key, the output of
         :meth:`_unicode_art_` may depend on settings and is allowed to
         change during runtime.
@@ -591,7 +591,7 @@ cdef class SageObject:
             AssertionError: 1 != 0
 
         The available assertion testing facilities are the same as in
-        :class:`unittest.TestCase`, which see (actually, by a slight
+        :class:`TestCase <unittest.TestCase>`, which see (actually, by a slight
         abuse, tester is currently an instance of this class).
 
         TESTS::

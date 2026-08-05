@@ -11,6 +11,10 @@ AUTHORS:
 
 - Martin von Gagern (2015-01-31): initial version
 
+.. autoclass:: sage.misc.converting_dict::KT
+
+.. autoclass:: sage.misc.converting_dict::VT
+
 EXAMPLES:
 
 A ``KeyConvertingDict`` will apply a conversion function to all method

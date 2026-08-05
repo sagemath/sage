@@ -68,7 +68,8 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
       format
 
     - ``lattice`` -- set this flag if you want a
-      :class:`FreeModule_submodule_with_basis_integer` object instead
+      :class:`~sage.modules.free_module_integer.FreeModule_submodule_with_basis_integer`
+      object instead
       of an integer matrix representing the basis
 
     - ``mat_impl`` -- an implementation type for matrices mod `q`; main options

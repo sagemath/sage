@@ -268,7 +268,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         to the categories of the parent. Furthermore, if ``facade`` is
         not ``True``, the internal attribute ``_facade_for`` is set
         accordingly for use by
-        :meth:`Sets.Facade.ParentMethods.facade_for`.
+        :meth:`sage.categories.facade_sets.FacadeSets.ParentMethods.facade_for`.
 
         .. TODO::
 
@@ -339,10 +339,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Most parents initialize their category upon construction, and
         this is the recommended behavior. For example, this happens
-        when the constructor calls :meth:`Parent.__init__` directly or
+        when the constructor calls ``Parent.__init__`` directly or
         indirectly. However, some parents defer this for performance
         reasons. For example,
-        :mod:`sage.matrix.matrix_space.MatrixSpace` does not.
+        :class:`sage.matrix.matrix_space.MatrixSpace` does not.
 
         EXAMPLES::
 
@@ -802,7 +802,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     def _repr_option(self, key):
         """
-        Metadata about the :meth:`_repr_` output.
+        Metadata about the ``_repr_`` output.
 
         INPUT:
 
@@ -811,7 +811,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Valid ``key`` arguments are:
 
-        - ``'ascii_art'``: The :meth:`_repr_` output is multi-line
+        - ``'ascii_art'``: The ``_repr_`` output is multi-line
           ascii art and each line must be printed starting at the same
           column, or the meaning is lost.
 
@@ -847,7 +847,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         then be called (with the arguments and keywords if any).
 
         By default this will dispatch as quickly as possible to
-        :meth:`_element_constructor_` though faster pathways are
+        ``_element_constructor_`` though faster pathways are
         possible if so desired.
 
         TESTS:
@@ -1061,7 +1061,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         ``True`` in other cases involving the Symbolic Ring, which is handled
         specially.
 
-        For many structures we test this by using :meth:`__call__` and
+        For many structures we test this by using :meth:`sage.structure.parent.Parent.__call__` and
         then testing equality between ``x`` and the result.
 
         The Symbolic Ring is treated differently because it is
@@ -1331,8 +1331,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             Set of Morphisms from Rational Field to Integer Ring in Category of sets
 
         A parent may specify how to construct certain homsets by
-        implementing a method :meth:`_Hom_`(codomain, category).
-        See :func:`~sage.categories.homset.Hom` for details.
+        implementing a method ``_Hom_(codomain, category)``.
+        See :func:`sage.categories.homset.Hom` for details.
         """
         from sage.categories.homset import Hom
         return Hom(self, codomain, category)
@@ -2094,7 +2094,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef coerce_map_from(self, S):
         """
-        Return a :class:`Map` object to coerce from ``S`` to ``self`` if one
+        Return a :class:`Map <sage.categories.map.Map>` object to coerce from ``S`` to ``self`` if one
         exists, or ``None`` if no such coercion exists.
 
         EXAMPLES:
@@ -2132,7 +2132,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef _internal_coerce_map_from(self, S):
         """
-        Return the :class:`Map` object to coerce from ``S`` to ``self`` that
+        Return the :class:`Map <sage.categories.map.Map>` object to coerce from ``S`` to ``self`` that
         is used internally by the coercion system if one exists, or ``None``
         if no such coercion exists.
 
@@ -2430,7 +2430,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef convert_map_from(self, S):
         """
-        This function returns a :class:`Map` from `S` to ``self``,
+        This function returns a :class:`Map <sage.categories.map.Map>` from `S` to ``self``,
         which may or may not succeed on all inputs.
         If a coercion map from S to ``self`` exists,
         then the it will be returned. If a coercion from ``self`` to `S` exists,
@@ -2438,7 +2438,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         Under the new coercion model, this is the fastest way to convert
         elements of `S` to elements of ``self`` (short of manually constructing
-        the elements) and is used by :meth:`__call__`.
+        the elements) and is used by :meth:`sage.structure.parent.Parent.__call__`.
 
         EXAMPLES::
 
@@ -2456,7 +2456,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef _internal_convert_map_from(self, S):
         """
-        This function returns a :class:`Map` from `S` to ``self``,
+        This function returns a :class:`Map <sage.categories.map.Map>` from `S` to ``self``,
         which may or may not succeed on all inputs.
         If a coercion map from S to ``self`` exists,
         then the it will be returned. If a coercion from ``self`` to `S` exists,

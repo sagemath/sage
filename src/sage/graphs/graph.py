@@ -5003,8 +5003,8 @@ class Graph(GenericGraph):
 
           - ``'DHV'`` -- diameter computation is done using the algorithm
             proposed in [Dragan2018]_. Works only for nonnegative edge weights
-            For more information see method
-            :func:`sage.graphs.distances_all_pairs.diameter_DHV` and
+            For more information, see :func:`sage.graphs.distances_all_pairs.diameter`
+            with ``algorithm='DHV'`` and
             :func:`sage.graphs.base.boost_graph.diameter_DHV`.
 
           - ``'standard'``, ``'2sweep'``, ``'multi-sweep'``, ``'iFUB'``:
@@ -7212,7 +7212,8 @@ class Graph(GenericGraph):
         r"""
         Return the core number for each vertex in an ordered list.
 
-        (for homomorphisms cores, see the :meth:`Graph.has_homomorphism_to`
+        (for homomorphism cores, see
+        :meth:`~sage.graphs.generic_graph.GenericGraph.has_homomorphism_to`
         method)
 
         DEFINITIONS:
@@ -7273,7 +7274,8 @@ class Graph(GenericGraph):
         .. SEEALSO::
 
             * Graph cores is also a notion related to graph homomorphisms. For
-              this second meaning, see :meth:`Graph.has_homomorphism_to`.
+              this second meaning, see
+              :meth:`~sage.graphs.generic_graph.GenericGraph.has_homomorphism_to`.
             * :wikipedia:`Degeneracy_(graph_theory)`
 
         EXAMPLES::
@@ -8051,7 +8053,8 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``algorithm`` -- select the algorithm used by the :meth:`edge_cut`
+        - ``algorithm`` -- select the algorithm used by
+          :meth:`~sage.graphs.generic_graph.GenericGraph.edge_cut`
           method. Refer to its documentation for allowed values and default
           behaviour.
 
@@ -9191,7 +9194,7 @@ class Graph(GenericGraph):
         ALGORITHM:
 
         Represent the graph as a graphical matroid, then apply matroid
-        :meth:`sage.matroid.partition` algorithm from the matroids module.
+        ``partition`` algorithm from the matroids module.
 
         EXAMPLES::
 
@@ -9311,7 +9314,7 @@ class Graph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`sage.graphs.graph.is_antipodal`
+            :meth:`~sage.graphs.graph.Graph.is_antipodal`
 
         INPUT:
 
@@ -9329,7 +9332,7 @@ class Graph(GenericGraph):
 
             The input is expected to be an antipodal graph.
             You can check that a graph is antipodal using
-            :meth:`sage.graphs.graph.is_antipodal`.
+            :meth:`~sage.graphs.graph.Graph.is_antipodal`.
 
         EXAMPLES::
 

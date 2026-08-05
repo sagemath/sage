@@ -234,7 +234,7 @@ class Interface(WithEqualityById, Parent):
         a print command to the object so that the output is easier
         to parse.
 
-        Likewise, the method :meth:`_eval_line` for evaluation of a single
+        Likewise, the method ``_eval_line`` for evaluation of a single
         line, often makes sense to be overridden.
         """
         raise NotImplementedError
@@ -1122,7 +1122,8 @@ class InterfaceElement(Element):
         """
         Attempt to return a Sage version of this object.
 
-        This method does nothing more than calling :meth:`_sage_`,
+        This method does nothing more than calling
+        ``_sage_()``,
         simply forwarding any additional arguments.
 
         EXAMPLES::
