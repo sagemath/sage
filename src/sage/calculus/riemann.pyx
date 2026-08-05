@@ -1440,7 +1440,7 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
 
 cpdef cauchy_kernel(t, args):
     """
-    Intermediate function for the integration in :meth:`~Riemann_Map.analytic_interior`.
+    Intermediate function for the integration in :func:`analytic_interior`.
 
     INPUT:
 
@@ -1460,7 +1460,7 @@ cpdef cauchy_kernel(t, args):
 
     TESTS:
 
-    This is primarily tested implicitly by :meth:`~Riemann_Map.analytic_interior`.
+    This is primarily tested implicitly by :func:`analytic_interior`.
     Here is a simple test::
 
         sage: from sage.calculus.riemann import cauchy_kernel

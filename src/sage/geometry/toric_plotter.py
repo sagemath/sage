@@ -3,7 +3,8 @@ Toric plotter
 
 This module provides a helper class :class:`ToricPlotter` for producing plots
 of objects related to toric geometry. Default plotting objects can be adjusted
-using :func:`options` and reset using :func:`reset_options`.
+using :func:`~sage.geometry.toric_plotter.options` and reset using
+:func:`~sage.geometry.toric_plotter.reset_options`.
 
 AUTHORS:
 
@@ -115,7 +116,8 @@ class ToricPlotter(SageObject):
     INPUT:
 
     - ``all_options`` -- a :class:`dictionary <dict>`, containing any of the
-      options related to toric objects (see :func:`options`) and any other
+      options related to toric objects (see
+      :func:`~sage.geometry.toric_plotter.options`) and any other
       options that will be passed to lower level plotting functions
 
     - ``dimension`` -- integer (1, 2, or 3); dimension of toric objects to
@@ -844,7 +846,7 @@ def options(option=None, **kwds):
 
         This function provides access to global default options. Any of these
         options can be overridden by passing them directly to plotting
-        functions. See also :func:`reset_options`.
+        functions. See also :func:`~sage.geometry.toric_plotter.reset_options`.
 
     INPUT:
 
@@ -902,8 +904,8 @@ def options(option=None, **kwds):
         in particular you should plot the lattice on your own
         (:meth:`~ToricPlotter.plot_lattice` will use box mode which is likely
         to be unsuitable). While this method may not be suitable for general
-        fans, it is quite natural for fans of :class:`CPR-Fano toric varieties.
-        <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field`
+        fans, it is quite natural for fans of :class:`CPR-Fano toric varieties
+        <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
     Round
         The cut-off regions is a sphere centered at the origin.

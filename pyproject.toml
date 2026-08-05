@@ -67,7 +67,7 @@ dependencies = [
   'ptyprocess > 0.5',
   'requests >=2.13.0',
   'scipy >=1.11',
-  'sphinx >=6.2',
+  'sphinx >=9.1, <10',
   'sympy >=1.6, <2.0',
   # TODO: Remove this once the migration to meson is complete
   'pkgconfig',
@@ -244,7 +244,7 @@ docs = [
   "furo",
   "jupyter-sphinx",
   "python-dateutil",
-  "sphinx",
+  "sphinx >=9.1, <10",
   "sphinx-copybutton",
   "sphinx-inline-tabs",
 ]

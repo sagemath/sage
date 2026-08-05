@@ -2607,8 +2607,7 @@ def antipodal_graph(G, immutable=None):
     The drawback of this method is that some BFS distances may be computed
     twice, one time to determine the eccentricities and another time is the
     vertex has eccentricity equal to the diameter. However, in practice, this is
-    much more efficient. See the documentation of method
-    :meth:`c_eccentricity_DHV`.
+    much more efficient. See :func:`eccentricity` with ``algorithm='DHV'``.
 
     INPUT:
 
@@ -2637,7 +2636,7 @@ def antipodal_graph(G, immutable=None):
         True
 
     The antipodal graph can also be constructed as the
-    :meth:`sage.graphs.generic_graph.distance_graph` for diameter distance::
+    :meth:`~sage.graphs.graph.Graph.distance_graph` for diameter distance::
 
         sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.RandomGNP(10, .2)

@@ -267,7 +267,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         .. SEEALSO::
 
             More examples can be found in
-            :class:`~sage.manifolds.differentiable.characteristic_class.CharacteristicClass`.
+            :mod:`sage.manifolds.differentiable.characteristic_cohomology_class`.
         """
         base_ring = kwargs.get('base_ring', QQ)
         R = self.characteristic_cohomology_class_ring(base_ring)
@@ -1455,7 +1455,7 @@ class TensorBundle(DifferentiableVectorBundle):
 
         OUTPUT:
 
-        - a :class:`~sage.manifolds.differentiable.diff_map.DifferentialMap`
+        - a :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
           representing the destination map
 
         EXAMPLES::

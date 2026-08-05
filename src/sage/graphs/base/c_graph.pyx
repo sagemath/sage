@@ -740,7 +740,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`add_arc_unsafe` is implemented::
+        It works, once there are vertices and ``add_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -795,7 +795,7 @@ cdef class CGraph:
             sage: G.has_arc(0, 1)
             False
 
-        It works once :class:`has_arc_unsafe` is implemented::
+        It works once ``has_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -840,7 +840,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`del_arc_unsafe` is implemented::
+        It works, once there are vertices and ``del_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1211,7 +1211,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
+        It works, once there are vertices and ``out_neighbors_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -1276,7 +1276,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
+        It works, once there are vertices and ``out_neighbors_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)

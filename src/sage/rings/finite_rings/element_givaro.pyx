@@ -127,9 +127,9 @@ cdef class Cache_givaro(Cache_base):
         - ``repr`` -- (default: ``'poly'``) controls the way elements are printed
           to the user:
 
-          - 'log': repr is :meth:`~FiniteField_givaroElement.log_repr()`
-          - 'int': repr is :meth:`~FiniteField_givaroElement.int_repr()`
-          - 'poly': repr is :meth:`~FiniteField_givaroElement.poly_repr()`
+          - 'log': repr is ``log_repr()``
+          - 'int': repr is ``int_repr()``
+          - 'poly': repr is ``poly_repr()``
 
         - ``cache`` -- boolean (default: ``False``); if ``True`` a cache of all
           elements of this field is created. Thus, arithmetic does not
@@ -798,7 +798,9 @@ def unpickle_Cache_givaro(parent, p, k, modulus, rep, cache):
 
 cdef class FiniteField_givaro_iterator:
     """
-    Iterator over :class:`FiniteField_givaro` elements.  We iterate
+    Iterator over
+    :class:`~sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro`
+    elements.  We iterate
     multiplicatively, as powers of a fixed internal generator.
 
     EXAMPLES::
@@ -877,8 +879,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     It is preferred to use the exposed interface of Givaro than to rely on this implementation detail.
 
-    The C function :func:`make_FiniteField_givaroElement` can be internally used to construct a
-    :func:`FiniteField_givaroElement` object given ``int element``.
+    The C function ``make_FiniteField_givaroElement`` can be internally used to construct a
+    :class:`FiniteField_givaroElement` object given ``int element``.
     """
 
     def __init__(FiniteField_givaroElement self, parent):

@@ -1900,7 +1900,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
 
     def current(self):
         r"""
-        Retrieve the last value of :meth:`__next__`.
+        Retrieve the last value of ``__next__``.
 
         EXAMPLES::
 

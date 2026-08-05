@@ -10,7 +10,7 @@ Current implementations of elliptic-curve morphisms (child classes):
 - :class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
 - :class:`~sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`
 - :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
-- :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_sum`
+- :class:`~sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum`
 - :class:`~sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar`
 - :class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`
 - :class:`~sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt`
@@ -1660,7 +1660,7 @@ class EllipticCurveHom(Morphism):
         .. SEEALSO::
 
             To compute a basis of the `n`-torsion, you may use
-            :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+            :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_basis`.
         """
         if codomain_gens is None:
             if not self.is_endomorphism():
@@ -1812,7 +1812,7 @@ class EllipticCurveHom(Morphism):
 
         .. SEEALSO::
 
-            :meth:`EllipticCurve_field.kernel_polynomial_from_divisor()`
+            :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.kernel_polynomial_from_divisor`
 
         EXAMPLES::
 
@@ -1952,17 +1952,18 @@ class EllipticCurveHom(Morphism):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES:
 
-        Example for :class:`WeierstrassIsomorphism`::
+        Example for
+        :class:`~sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`::
 
             sage: E = EllipticCurve(GF(101), [1,1,1,1,1])
             sage: iso = E.isomorphism_to(E.short_weierstrass_model())
@@ -2033,7 +2034,8 @@ class EllipticCurveHom(Morphism):
             sage: psi.xEVAL((1, 0))
             (1, 0)
 
-        Example for :class:`EllipticCurveHom_frobenius`::
+        Example for
+        :class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`::
 
             sage: pi = E.frobenius_isogeny(); pi
             Frobenius endomorphism of degree 101:
@@ -2056,7 +2058,8 @@ class EllipticCurveHom(Morphism):
             sage: pi.xEVAL((1, 0))
             (1, 0)
 
-        Example for :class:`EllipticCurveHom_fractional`::
+        Example for
+        :class:`~sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional`::
 
             sage: pi = E.frobenius_isogeny()
             sage: chi = (1 + pi) / 2; chi
@@ -2085,7 +2088,8 @@ class EllipticCurveHom(Morphism):
 
         .. TODO ::
 
-            For (at least) :class:`EllipticCurveHom_fractional`,
+            For (at least)
+            :class:`~sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional`,
             a specialized implementation could be (much) faster.
         """
         from sage.rings.infinity import Infinity as oo
@@ -2151,7 +2155,7 @@ def compare_via_evaluation(left, right):
 
     .. SEEALSO::
 
-        - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite._richcmp_`
+        - ``EllipticCurveHom_composite._richcmp_``
     """
     if left.domain() != right.domain():
         return False

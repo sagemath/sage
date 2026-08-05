@@ -1598,7 +1598,7 @@ class PolynomialRing_generic(Ring):
     def karatsuba_threshold(self):
         """
         Return the Karatsuba threshold used for this ring by the method
-        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
+        ``_mul_karatsuba`` to fall back to the schoolbook algorithm.
 
         EXAMPLES::
 
@@ -1614,7 +1614,7 @@ class PolynomialRing_generic(Ring):
     def set_karatsuba_threshold(self, Karatsuba_threshold):
         """
         Changes the default threshold for this ring in the method
-        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
+        ``_mul_karatsuba`` to fall back to the schoolbook algorithm.
 
         .. warning::
 
@@ -1987,9 +1987,10 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
 
             More documentation and additional options are available using the
             iterator
-            :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
+            :class:`~sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
             directly. In addition, polynomials have a method
-            :meth:`is_weil_polynomial` to test whether or not the given
+            :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.is_weil_polynomial`
+            to test whether or not the given
             polynomial is a Weil polynomial.
 
         EXAMPLES::

@@ -379,7 +379,7 @@ Other IPython tricks
 
 As noted above, Sage uses IPython as its front end, and so you can use
 any of IPython's commands and features.  You can read the `full
-IPython documentation <http://ipython.scipy.org/moin/Documentation>`_.
+IPython documentation <https://ipython.readthedocs.io/en/stable/>`_.
 Meanwhile, here are some fun tricks -- these are called "Magic
 commands" in IPython:
 
