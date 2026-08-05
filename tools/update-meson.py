@@ -11,6 +11,7 @@ import argparse
 import os
 from argparse import Namespace
 from pathlib import Path
+from typing import Any, cast
 
 from mesonbuild import mlog
 from mesonbuild.ast import (
@@ -25,6 +26,7 @@ from mesonbuild.mparser import (
     AssignmentNode,
     BaseNode,
     DictNode,
+    IdNode,
     SymbolNode,
 )
 from mesonbuild.rewriter import (
@@ -47,7 +49,7 @@ options = parser.parse_args()
 class AstPython(AstVisitor):
     install_sources_calls: list[MethodNode] = []
     extension_data: list[AssignmentNode] = []
-    doc_sources: list[MethodNode] = []
+    doc_sources: list[AssignmentNode] = []
 
     def visit_MethodNode(self, node: MethodNode) -> None:
         if node.name.value == "install_sources":
@@ -63,8 +65,8 @@ class AstPython(AstVisitor):
 
 
 # Utility function to get a list of the sources from a node
-def arg_list_from_node(n):
-    args = []
+def arg_list_from_node(n: BaseNode) -> list[BaseNode]:
+    args: list[BaseNode] = []
     if isinstance(n, FunctionNode) or isinstance(n, MethodNode):
         args = list(n.args.arguments)
     # if 'func_name' in n and n.func_name.value in BUILD_TARGET_FUNCTIONS:
@@ -76,34 +78,45 @@ def arg_list_from_node(n):
     return args
 
 
+def _token(tid: str, filename: str, value: str) -> Token[str]:
+    return Token(tid, filename, 0, 0, 0, (0, 0), value)
+
+
 def _symbol(val: str) -> SymbolNode:
-    return SymbolNode(Token("", "", 0, 0, 0, (0, 0), val))
+    return SymbolNode(_token("", "", val))
 
 
-def update_python_sources(self: Rewriter, visitor: AstPython):
+def _id(val: str) -> IdNode:
+    return IdNode(_token("id", "", val))
+
+
+def update_python_sources(self: Rewriter, visitor: AstPython) -> None:
     for target in visitor.install_sources_calls:
         # Generate the current source list
-        src_list: list[str] = []
+        python_sources: list[str] = []
         for arg in arg_list_from_node(target):
             if isinstance(arg, StringNode):
-                src_list += [arg.value]
+                python_sources += [arg.value]
 
         folder = Path(target.filename).parent
         python_files = sorted(
-            list(folder.glob("*.py")) + list(folder.glob('*.pxd')) + list(folder.glob('*.pyx')) + list(folder.glob('*.pyi'))
+            list(folder.glob("*.py"))
+            + list(folder.glob('*.pxd'))
+            + list(folder.glob('*.pyx'))
+            + list(folder.glob('*.pyi'))
         )  # + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
 
         to_append: list[StringNode] = []
         for file in python_files:
             file_name = file.name
-            if file_name in src_list:
+            if file_name in python_sources:
                 continue
-            token = Token("string", target.filename, 0, 0, 0, None, file_name)
+            token = _token("string", target.filename, file_name)
             to_append += [StringNode(token)]
 
         # Get all deleted files
         to_remove = []
-        for src in src_list:
+        for src in python_sources:
             if not folder.joinpath(src).exists():
                 to_remove += [src]
 
@@ -118,7 +131,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
                 if not (isinstance(arg, StringNode) and arg.value in to_remove)
             ]
             + to_append,
-            key=lambda x: x.value,
+            key=lambda x: cast("StringNode", x).value,
         )
 
         # Mark the node as modified
@@ -129,17 +142,24 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
     for target in visitor.extension_data:
         folder = Path(target.filename).parent
         # Generate the current source dict
-        src_list: dict[str, BaseNode] = {}
+        extension_sources_by_name: dict[str, BaseNode] = {}
         if isinstance(target.value, DictNode):
-            src_list.update({k.value: v for k, v in target.value.args.kwargs.items()})
+            extension_sources_by_name.update(
+                {
+                    cast("StringNode", key).value: value
+                    for key, value in target.value.args.kwargs.items()
+                }
+            )
         ext_data.setdefault(folder, [])
-        ext_data[folder] += src_list.keys()
+        ext_data[folder] += extension_sources_by_name.keys()
 
     for target in visitor.extension_data:
         if target.var_name.value != "extension_data":
             continue
+        if not isinstance(target.value, DictNode):
+            continue
         folder = Path(target.filename).parent
-        src_list = ext_data[folder]
+        extension_sources = ext_data[folder]
 
         cython_files = sorted(folder.glob("*.pyx"))
         # Some cython files are compiled in a special way, so we don't want to add them
@@ -152,20 +172,18 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
         # Add all cython files that are not in the source list
         for file in cython_files:
             file_name = file.stem
-            if file_name in src_list:
+            if file_name in extension_sources:
                 continue
-            token = Token("string", target.filename, 0, 0, 0, None, file_name)
-            arg = ArgumentNode(Token("", target.filename, 0, 0, 0, None, "[]"))
-            arg.append(
-                StringNode(Token("string", target.filename, 0, 0, 0, None, file.name))
-            )
-            func = FunctionNode(_symbol("files"), _symbol("("), arg, _symbol(")"))
+            token = _token("string", target.filename, file_name)
+            arg = ArgumentNode(_token("", target.filename, "[]"))
+            arg.append(StringNode(_token("string", target.filename, file.name)))
+            func = FunctionNode(_id("files"), _symbol("("), arg, _symbol(")"))
             target.value.args.kwargs.update({StringNode(token): func})
             if target not in self.modified_nodes:
                 self.modified_nodes += [target]
 
 
-def update_doc_sources(self: Rewriter, visitor: AstPython):
+def update_doc_sources(self: Rewriter, visitor: AstPython) -> None:
     doc_sources: dict[Path, list[str]] = {}
     ignored_files = {'bootstrap', 'Makefile', 'meson.build'}
     ignored_folders = {'__pycache__', 'sage'}
@@ -176,10 +194,14 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
         if isinstance(target.value, ArrayNode):
             src_list.extend(target.value.args.arguments)
         doc_sources.setdefault(folder, [])
-        doc_sources[folder] += [x.value for x in src_list]
+        doc_sources[folder] += [
+            source.value for source in src_list if isinstance(source, StringNode)
+        ]
 
     for target in visitor.doc_sources:
         if target.var_name.value != "doc_sources":
+            continue
+        if not isinstance(target.value, ArrayNode):
             continue
         folder = Path(target.filename).parent
         existing_sources: list[str] = doc_sources[folder]
@@ -191,7 +213,7 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
             if file_name in ignored_files or file.suffix == ".pyc":
                 continue
             existing_sources.append(file_name)
-            token = Token("string", target.filename, 0, 0, 0, None, file_name)
+            token = _token("string", target.filename, file_name)
             target.value.args.arguments.append(StringNode(token))
             if target not in self.modified_nodes:
                 self.modified_nodes += [target]
@@ -199,7 +221,14 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
         for file in existing_sources:
             if not (folder / file).exists():
                 existing_sources.remove(file)
-                token = next((x for x in target.value.args.arguments if getattr(x, "value", None) == file), None)
+                token = next(
+                    (
+                        x
+                        for x in target.value.args.arguments
+                        if getattr(x, "value", None) == file
+                    ),
+                    None,
+                )
                 if token is not None:
                     target.value.args.arguments.remove(token)
                     if target not in self.modified_nodes:
@@ -208,7 +237,7 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
     # Add all missing meson files in the src/doc folder
     doc_folder = Path(options.sourcedir) / "src" / "doc"
     # Delete all totally empty folders as pre-processing step
-    for folder, dirs, files in doc_folder.walk(top_down = False):
+    for folder, dirs, files in doc_folder.walk(top_down=False):
         if not dirs and not files:
             folder.rmdir()
 
@@ -241,7 +270,8 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
                         continue
                     f.write(f"subdir('{dir}')\n")
 
-def apply_changes(self: Rewriter):
+
+def apply_changes(self: Rewriter) -> None:
     assert all(
         hasattr(x, "lineno") and hasattr(x, "colno") and hasattr(x, "filename")
         for x in self.modified_nodes
@@ -262,7 +292,12 @@ def apply_changes(self: Rewriter):
     work_nodes = [{"node": x, "action": "modify"} for x in self.modified_nodes]
     work_nodes += [{"node": x, "action": "rm"} for x in self.to_remove_nodes]
     work_nodes = sorted(
-        work_nodes, key=lambda x: (x["node"].lineno, x["node"].colno), reverse=True
+        work_nodes,
+        key=lambda x: (
+            cast("BaseNode", x["node"]).lineno,
+            cast("BaseNode", x["node"]).colno,
+        ),
+        reverse=True,
     )
     work_nodes += [{"node": x, "action": "add"} for x in self.to_add_nodes]
 
@@ -272,11 +307,11 @@ def apply_changes(self: Rewriter):
         new_data = ""
         if i["action"] == "modify" or i["action"] == "add":
             printer = AstPrinter()
-            i["node"].accept(printer)
+            cast("BaseNode", i["node"]).accept(printer)
             printer.post_process()
             new_data = printer.result.strip()
         data = {
-            "file": i["node"].filename,
+            "file": cast("BaseNode", i["node"]).filename,
             "str": new_data,
             "node": i["node"],
             "action": i["action"],
@@ -284,7 +319,7 @@ def apply_changes(self: Rewriter):
         str_list += [data]
 
     # Load build files
-    files = {}
+    files: dict[str, Any] = {}
     for i in str_list:
         if i["file"] in files:
             continue
@@ -308,7 +343,7 @@ def apply_changes(self: Rewriter):
         files[i["file"]] = {"path": fpath, "raw": fdata, "offsets": line_offsets}
 
     # Replace in source code
-    def remove_node(i):
+    def remove_node(i: dict[str, Any]) -> None:
         offsets = files[i["file"]]["offsets"]
         raw = files[i["file"]]["raw"]
         node = i["node"]
@@ -357,15 +392,15 @@ def apply_changes(self: Rewriter):
 # Monkey patch the apply_changes method until https://github.com/mesonbuild/meson/pull/12899 is merged
 Rewriter.apply_changes = apply_changes
 # Monkey patch the update_python_sources method until this is upstreamed
-Rewriter.process_update_python_sources = update_python_sources
-Rewriter.process_update_doc_sources = update_doc_sources
+setattr(Rewriter, "process_update_python_sources", update_python_sources)
+setattr(Rewriter, "process_update_doc_sources", update_doc_sources)
 
 rewriter = Rewriter(options.sourcedir)
 visitor = AstPython()
 rewriter.interpreter.visitors += [visitor]
 rewriter.analyze_meson()
-rewriter.process_update_python_sources(visitor)
-rewriter.process_update_doc_sources(visitor)
+update_python_sources(rewriter, visitor)
+update_doc_sources(rewriter, visitor)
 rewriter.apply_changes()
 rewriter.print_info()
 
