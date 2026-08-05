@@ -85,7 +85,8 @@ from sage.structure.richcmp import richcmp_method, rich_to_bool
 
 class UnknownError(TypeError):
     """
-    Raised whenever :class:`Unknown` is used in a boolean operation.
+    Raised whenever the :class:`UnknownClass` instance ``Unknown`` is used in a
+    boolean operation.
 
     EXAMPLES::
 

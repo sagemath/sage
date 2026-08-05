@@ -1194,7 +1194,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         - ``p`` -- a prime number
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1231,7 +1232,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1267,7 +1269,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1310,7 +1313,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1342,7 +1346,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1422,7 +1427,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         ALGORITHM:
 
-        Uses the PARI function :pari:`bnfisnorm`. See :meth:`_bnfisnorm()`.
+        Uses the PARI function :pari:`bnfisnorm`. See ``_bnfisnorm()``.
 
         EXAMPLES::
 
@@ -2846,7 +2851,8 @@ cdef class Rational(sage.structure.element.FieldElement):
     def norm(self):
         r"""
         Return the norm from `\QQ` to `\QQ` of `x` (which is just `x`). This
-        was added for compatibility with :class:`NumberField`.
+        was added for compatibility with
+        :class:`NumberField <sage.rings.number_field.number_field_base.NumberField>`.
 
         OUTPUT: ``Rational`` -- reference to ``self``
 
@@ -2894,7 +2900,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def trace(self):
         r"""
         Return the trace from `\QQ` to `\QQ` of `x` (which is just `x`). This
-        was added for compatibility with :class:`NumberFields`.
+        was added for compatibility with number fields.
 
         OUTPUT: ``Rational`` -- reference to ``self``
 
@@ -3142,7 +3148,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         When ``prec`` is not given, the log as an element in symbolic
         ring unless the logarithm is exact. Otherwise the log is a
-        :class:`RealField` approximation to ``prec`` bit precision.
+        :class:`RealField <sage.rings.abc.RealField>` approximation to ``prec``
+        bit precision.
 
         EXAMPLES::
 

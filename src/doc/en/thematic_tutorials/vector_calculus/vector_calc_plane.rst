@@ -338,7 +338,7 @@ They are related to Cartesian coordinates by the following transformations::
 
 The orthonormal vector frame `(e_r, e_\phi)` associated with polar coordinates
 is returned by the method
-:meth:`~sage.manifolds.differentiable.euclidean.EuclideanPlane.polar_frame`::
+:meth:`~sage.manifolds.differentiable.examples.euclidean.EuclideanPlane.polar_frame`::
 
     sage: polar_frame = E.polar_frame()
     sage: polar_frame

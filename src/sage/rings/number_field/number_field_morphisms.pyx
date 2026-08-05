@@ -560,7 +560,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
     """
     Specialized class for converting cyclotomic field elements into a
     cyclotomic field of higher order. All the real work is done by
-    :meth:`_lift_cyclotomic_element`.
+    ``_lift_cyclotomic_element``.
     """
 
     cdef ratio

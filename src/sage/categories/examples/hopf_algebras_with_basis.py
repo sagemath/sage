@@ -50,7 +50,8 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     def one_basis(self):
         """
         Return the one of the group, which index the one of this algebra,
-        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        as per
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 
@@ -65,7 +66,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     def product_on_basis(self, g1, g2):
         r"""
         Product, on basis elements, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis`.
+        :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
         The product of two basis elements is induced by the product of
         the corresponding elements of the group.
@@ -99,7 +100,8 @@ class MyGroupAlgebra(CombinatorialFreeModule):
 
     def coproduct_on_basis(self, g):
         r"""
-        Coproduct, on basis elements, as per :meth:`HopfAlgebrasWithBasis.ParentMethods.coproduct_on_basis`.
+        Coproduct, on basis elements, as per
+        :meth:`sage.categories.coalgebras_with_basis.CoalgebrasWithBasis.ParentMethods.coproduct_on_basis`.
 
         The basis elements are group like: `\Delta(g) = g \otimes g`.
 
@@ -115,7 +117,8 @@ class MyGroupAlgebra(CombinatorialFreeModule):
 
     def counit_on_basis(self, g):
         r"""
-        Counit, on basis elements, as per :meth:`HopfAlgebrasWithBasis.ParentMethods.counit_on_basis`.
+        Counit, on basis elements, as per
+        :meth:`sage.categories.coalgebras_with_basis.CoalgebrasWithBasis.ParentMethods.counit_on_basis`.
 
         The counit on the basis elements is 1.
 

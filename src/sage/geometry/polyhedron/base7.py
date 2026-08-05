@@ -785,7 +785,8 @@ class Polyhedron_base7(Polyhedron_base6):
           * ``induced``: Lebesgue measure of the affine hull,
           * ``induced_nonnormalized``: Lebesgue measure of the affine hull
             without the normalization by `\sqrt{\det(A^\top A)}` (with
-            `A` being the affine transformation matrix; see :meth:`affine_hull`).
+            `A` being the affine transformation matrix; see
+            :meth:`~sage.geometry.convex_set.ConvexSet_base.affine_hull`).
 
         - ``**kwds`` -- additional keyword arguments that
           are passed to the engine

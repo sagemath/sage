@@ -23,7 +23,8 @@ AUTHORS:
 
 - Simon King: used a faster way of conversion from the base ring
 
-- Kwankyu Lee (2013-06-02): enhanced :meth:`quo_rem`
+- Kwankyu Lee (2013-06-02): enhanced
+  :meth:`quo_rem <sage.rings.polynomial.polynomial_element.Polynomial_generic_dense.quo_rem>`
 
 - Julian Rueth (2012-05-25,2014-05-09): fixed is_squarefree() for imperfect
   fields, fixed division without remainder over QQbar; added ``_cache_key``
@@ -31,7 +32,8 @@ AUTHORS:
 
 - Simon King (2013-10): implemented copying of :class:`PolynomialBaseringInjection`
 
-- Bruno Grenet (2014-07-13): enhanced :meth:`quo_rem`
+- Bruno Grenet (2014-07-13): enhanced
+  :meth:`quo_rem <sage.rings.polynomial.polynomial_element.Polynomial_generic_dense.quo_rem>`
 
 - Kiran Kedlaya (2016-03): added root counting
 
@@ -41,7 +43,10 @@ AUTHORS:
 
 - David Zureick-Brown (2017-09): added is_weil_polynomial
 
-- Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
+- Sebastian Oehms (2018-10): made
+  :meth:`roots <sage.rings.polynomial.polynomial_element.Polynomial.roots>` and
+  :meth:`factor <sage.rings.polynomial.polynomial_element.Polynomial.factor>`
+  work over more
   cases of proper integral domains (see :issue:`26421`)
 """
 
@@ -162,6 +167,8 @@ cdef class Polynomial(CommutativePolynomial):
     .. automethod:: _rmul_
     .. automethod:: _mul_
     .. automethod:: _mul_trunc_
+    .. automethod:: _derivative
+    .. automethod:: _is_squarefree_generic
     """
 
     def __init__(self, parent, is_gen=False, construct=False):
@@ -4137,7 +4144,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+           :meth:`~sage.rings.polynomial.polynomial_element.Polynomial._derivative`
 
         EXAMPLES::
 
@@ -4503,7 +4510,7 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
         - ``kwargs`` -- any keyword arguments are passed to the method
-          :meth:`_factor_univariate_polynomial` of the base ring if it
+          ``_factor_univariate_polynomial`` of the base ring if it
           defines such a method.
 
         OUTPUT:
@@ -5377,7 +5384,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             The actual algorithm for computing greatest common divisors depends
             on the base ring underlying the polynomial ring. If the base ring
-            defines a method :meth:`_gcd_univariate_polynomial`, then this method
+            defines a method ``_gcd_univariate_polynomial``, then this method
             will be called (see examples below).
 
         EXAMPLES::
@@ -6321,7 +6328,7 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -6405,7 +6412,7 @@ cdef class Polynomial(CommutativePolynomial):
         - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -6454,7 +6461,7 @@ cdef class Polynomial(CommutativePolynomial):
         - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -8143,7 +8150,9 @@ cdef class Polynomial(CommutativePolynomial):
         always ill-conditioned; there's a footnote at the end of the
         docstring about this.
 
-        If the output ring is a :class:`RealIntervalField` or :class:`ComplexIntervalField`
+        If the output ring is a
+        :func:`~sage.rings.real_mpfi.RealIntervalField` or
+        :func:`~sage.rings.complex_interval_field.ComplexIntervalField`
         of a given precision, then the answer will always be correct (or an
         exception will be raised, if a case is not implemented). Each root
         will be contained in one of the returned intervals, and the
@@ -8187,7 +8196,7 @@ cdef class Polynomial(CommutativePolynomial):
             [4, 2]
 
         A new ring.  In the example below, we add the special method
-        :meth:`_roots_univariate_polynomial` to the base ring, and observe
+        ``_roots_univariate_polynomial`` to the base ring, and observe
         that this method is called instead to find roots of
         polynomials over this ring.  This facility can be used to
         easily extend root finding to work over new rings you
@@ -8612,7 +8621,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         ALGORITHM:
 
-        For brevity, we will use ``RR`` to mean any :class:`RealField` of any precision;
+        For brevity, we will use ``RR`` to mean any
+        :func:`~sage.rings.real_mpfr.RealField` of any precision;
         similarly for ``RIF``, ``CC``, and ``CIF``. Since Sage has no specific
         implementation of Gaussian rationals (or of number fields with
         embedding, at all), when we refer to Gaussian rationals below we
@@ -9520,7 +9530,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         .. SEEALSO::
 
-            Polynomial rings have a method :meth:`weil_polynomials` to compute sets of Weil
+            Polynomial rings have a method
+            :meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain.weil_polynomials`
+            to compute sets of Weil
             polynomials. This computation uses the iterator
             :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`.
 
@@ -9647,7 +9659,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             The actual algorithm for computing the extended gcd depends on the
             base ring underlying the polynomial ring. If the base ring defines
-            a method :meth:`_xgcd_univariate_polynomial`, then this method will be
+            a method ``_xgcd_univariate_polynomial``, then this method will be
             called (see examples below).
 
         EXAMPLES::
@@ -9661,7 +9673,7 @@ cdef class Polynomial(CommutativePolynomial):
             x
 
         One can easily add xgcd functionality to new rings by providing a
-        method :meth:`_xgcd_univariate_polynomial`::
+        method ``_xgcd_univariate_polynomial``::
 
             sage: R.<x> = QQ[]
             sage: S.<y> = R[]
@@ -10308,7 +10320,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         If the base ring implements ``_is_squarefree_univariate_polynomial``,
         then this method gets used instead of the generic algorithm in
-        :meth:`_is_squarefree_generic`::
+        :meth:`~sage.rings.polynomial.polynomial_element.Polynomial._is_squarefree_generic`::
 
             sage: R.<x> = QQbar[]
             sage: (x^2).is_squarefree()
@@ -11518,13 +11530,16 @@ cdef class Polynomial(CommutativePolynomial):
 
         Given a family of polynomials defined over a polynomial ring. A specialization
         is a particular member of that family. The specialization can be specified either
-        by a dictionary or a :class:`SpecializationMorphism`.
+        by a dictionary or a
+        :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`.
 
         INPUT:
 
         - ``D`` -- dictionary (optional)
 
-        - ``phi`` -- :class:`SpecializationMorphism` (optional)
+        - ``phi`` --
+          :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`
+          (optional)
 
         OUTPUT: a new polynomial
 
@@ -12867,7 +12882,9 @@ cdef class ConstantPolynomialSection(Map):
     """
     This class is used for conversion from a polynomial ring to its base ring.
 
-    Since :issue:`9944`, it calls the :meth:`constant_coefficient` method,
+    Since :issue:`9944`, it calls the
+    :meth:`constant_coefficient <sage.rings.polynomial.polynomial_element.Polynomial.constant_coefficient>`
+    method,
     which can be optimized for a particular polynomial type.
 
     EXAMPLES::
@@ -12922,7 +12939,7 @@ cdef class PolynomialBaseringInjection(Morphism):
     This class is used for conversion from a ring to a polynomial
     over that ring.
 
-    It calls the :meth:`_new_constant_poly` method on the generator,
+    It calls the ``_new_constant_poly`` method on the generator,
     which should be optimized for a particular polynomial type.
 
     Technically, it should be a method of the polynomial ring, but
@@ -13115,7 +13132,8 @@ cpdef bint polynomial_is_variable(x) noexcept:
     r"""
     Test whether the given polynomial is a variable of its parent ring.
 
-    Implemented for instances of :class:`Polynomial` and :class:`MPolynomial`.
+    Implemented for instances of :class:`Polynomial` and
+    :class:`~sage.rings.polynomial.multi_polynomial.MPolynomial`.
 
     .. SEEALSO::
 

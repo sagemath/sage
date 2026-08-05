@@ -444,7 +444,7 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
     E (which is a machine integer).  These represent the coefficients
     A*2^n <= c < (A+E)*2^n.
 
-    (Note that :func:`mk_ibpi is a simple helper` function for creating
+    (Note that :func:`mk_ibpi` is a simple helper function for creating
     elements of :class:`interval_bernstein_polynomial_integer` in doctests.)
 
     EXAMPLES::

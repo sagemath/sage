@@ -42,8 +42,8 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         You should not create objects of this class directly because
         no type or consistency checking is performed. The preferred
         method to construct such dynamical systems is to use
-        :func:`~sage.dynamics.arithmetic_dynamics.generic_ds.DynamicalSystem_projective`
-        function.
+        :class:`~sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective`
+        constructor.
 
     INPUT:
 

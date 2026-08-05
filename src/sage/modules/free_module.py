@@ -3076,8 +3076,9 @@ class FreeModule_generic(Module_free_ambient):
         Return the ring over which the entries of the vectors are
         defined.
 
-        This is the same as :meth:`base_ring` unless an explicit basis
-        was given over the fraction field.
+        This is the same as
+        :meth:`~sage.structure.category_object.CategoryObject.base_ring` unless
+        an explicit basis was given over the fraction field.
 
         EXAMPLES::
 

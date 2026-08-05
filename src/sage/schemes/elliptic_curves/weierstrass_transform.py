@@ -3,10 +3,8 @@ Morphism to bring a genus-one curve into Weierstrass form
 
 You should use
 :func:`~sage.schemes.elliptic_curves.constructor.EllipticCurve_from_cubic`
-or
-:func:`~sage.schemes.elliptic_curves.constructor.EllipticCurve_from_curve`
-to construct the transformation starting with a cubic or with a genus
-one curve.
+to construct the transformation starting with a plane cubic defining a
+genus-one curve.
 
 EXAMPLES::
 

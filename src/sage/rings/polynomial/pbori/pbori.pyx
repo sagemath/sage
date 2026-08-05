@@ -2261,8 +2261,8 @@ cdef class BooleanMonomial(MonoidElement):
 
     .. NOTE::
 
-       Use the :meth:`BooleanMonomialMonoid__call__` method and not
-       this constructor to construct these objects.
+       Call the associated :class:`BooleanMonomialMonoid`, and not this
+       constructor, to construct these objects.
     """
     def __init__(self, parent) -> None:
         """
@@ -7427,11 +7427,10 @@ def ll_red_nf_noredsb_single_recursive_call(BooleanPolynomial p, BooleSet reduct
     Redude the polynomial ``p`` by the set of ``reductors`` with
     linear leading terms.
 
-    :func:`ll_red_nf_noredsb_single_recursive` call has the same
-    specification as :func:`ll_red_nf_noredsb`, but a different
-    implementation: It is very sensitive to the ordering of variables,
-    however it has the property, that it needs just one recursive
-    call.
+    This function has the same specification as
+    :func:`ll_red_nf_noredsb`, but a different implementation: it is
+    very sensitive to the ordering of variables, but has the property
+    that it needs just one recursive call.
 
     INPUT:
 

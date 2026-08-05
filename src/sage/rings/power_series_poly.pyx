@@ -18,6 +18,9 @@ except ImportError:
     PariError = ()
 
 cdef class PowerSeries_poly(PowerSeries):
+    """
+    .. automethod:: _derivative
+    """
 
     def __init__(self, parent, f=0, prec=infinity, int check=1, is_gen=0):
         """
@@ -837,7 +840,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         .. SEEALSO::
 
-            ``self.derivative()``
+            :meth:`~sage.rings.power_series_ring_element.PowerSeries.derivative`
 
         EXAMPLES::
 

@@ -5,7 +5,7 @@ This module contains all of Sage's customizations to the IPython
 interpreter.  These changes consist of the following major components:
 
   - :class:`SageTerminalApp`
-  - :class:`SageInteractiveShell`
+  - :class:`SageTerminalInteractiveShell`
   - :class:`SageTerminalInteractiveShell`
   - :func:`interface_shell_embed`
 
@@ -29,10 +29,10 @@ command-line.  It's primary purpose is to
     instructions on how to report the crash to the Sage support
     mailing list.
 
-SageInteractiveShell
---------------------
+SageTerminalInteractiveShell
+----------------------------
 
-The :class:`SageInteractiveShell` object is the object responsible for
+The :class:`SageTerminalInteractiveShell` object is the object responsible for
 accepting input from the user and evaluating it.  From the command-line,
 this object can be retrieved by running::
 
@@ -44,17 +44,17 @@ do, you can step through it in the debugger::
 
     sage: %debug shell.run_cell('?')        # not tested
 
-The :class:`SageInteractiveShell` provides the following
+The :class:`SageTerminalInteractiveShell` provides the following
 customizations:
 
   - Modify the libraries before calling system commands. See
-    :meth:`~SageInteractiveShell.system_raw`.
+    :meth:`~SageShellOverride.system_raw`.
 
 SageTerminalInteractiveShell
 ----------------------------
 
 The :class:`SageTerminalInteractiveShell` is a close relative of
-:class:`SageInteractiveShell` that is specialized for running in a
+:class:`~IPython.core.interactiveshell.InteractiveShell` that is specialized for running in a
 terminal. In particular, running commands like ``!ls`` will directly
 write to stdout. Technically, the ``system`` attribute will point to
 ``system_raw`` instead of ``system_piped``.
@@ -192,6 +192,40 @@ def preparser(on=True):
     _do_preparse = on is True
 
 
+def inline_plots(on=None):
+    """
+    Turn inline plots on or off if supported. This feature requires IPython
+    v9.13 or later running in a terminal emulator that implements the
+    `kitty graphics protocol <https://sw.kovidgoyal.net/kitty/graphics-protocol/>`__.
+
+    - ``on`` -- boolean; whether to turn on inline plots, returns the current state if None
+
+    EXAMPLES::
+
+        sage: from sage.repl.interpreter import inline_plots
+        sage: type(inline_plots()) is bool
+        True
+        sage: inline_plots(False) # random
+        sage: inline_plots()
+        False
+    """
+    from IPython.core.getipython import get_ipython
+    IP = get_ipython()
+    try:
+        from IPython.core.kitty import kitty_png_render, supports_kitty_graphics
+    except ImportError:
+        supports_kitty_graphics = False
+    if on is None:
+        return supports_kitty_graphics and hasattr(IP, 'mime_renderers') and 'image/png' in IP.mime_renderers
+    if not supports_kitty_graphics:
+        print('Inline plots are not supported for the current terminal and IPython version')
+        return
+    if on:
+        IP.mime_renderers['image/png'] = kitty_png_render
+    elif 'image/png' in IP.mime_renderers:
+        del IP.mime_renderers['image/png']
+
+
 ##############################
 # Sage[Terminal]InteractiveShell
 ##############################
@@ -293,6 +327,7 @@ class SageTerminalInteractiveShell(SageShellOverride, TerminalInteractiveShell):
             sage: from sage.repl.interpreter import SageTerminalInteractiveShell
             sage: SageTerminalInteractiveShell().init_display_formatter()   # not tested
         """
+        super().init_display_formatter()
         from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
         backend = BackendIPythonCommandline()
         backend.get_display_manager().switch_backend(backend, shell=self)
@@ -518,7 +553,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
     def __init__(self, *args, **kwds):
         """
         Initialize this class.  All of the arguments get passed to
-        :meth:`PrefilterTransformer.__init__`.
+        :meth:`PrefilterTransformer.__init__ <IPython.core.prefilter.PrefilterTransformer.__init__>`.
 
         .. attribute:: temporary_objects
 
@@ -545,10 +580,10 @@ class InterfaceShellTransformer(PrefilterTransformer):
     def preparse_imports_from_sage(self, line):
         """
         Finds occurrences of strings such as ``sage(object)`` in
-        *line*, converts ``object`` to :attr:`shell.interface`,
+        *line*, converts ``object`` to ``shell.interface``,
         and replaces those strings with their identifier in the new
         system.  This also works with strings such as
-        ``maxima(object)`` if :attr:`shell.interface` is
+        ``maxima(object)`` if ``shell.interface`` is
         ``maxima``.
 
         - ``line`` -- string; the line to transform
@@ -600,7 +635,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
 
     def transform(self, line, continue_prompt):
         r'''
-        Evaluates *line* in :attr:`shell.interface` and returns a
+        Evaluates *line* in ``shell.interface`` and returns a
         string representing the result of that evaluation.
 
         - ``line`` -- string; the line to be transformed *and evaluated*
@@ -746,7 +781,7 @@ def get_test_shell():
 class SageCrashHandler(IPAppCrashHandler):
     def __init__(self, app):
         """
-        A custom :class:`CrashHandler` which gives the user
+        A custom :class:`~IPython.core.crashhandler.CrashHandler` which gives the user
         instructions on how to post the problem to sage-support.
 
         EXAMPLES::
@@ -772,7 +807,7 @@ class SageCrashHandler(IPAppCrashHandler):
 
 
 class SageTerminalApp(TerminalIPythonApp):
-    name = 'Sage'
+    name: str = 'Sage'
     crash_handler_class = SageCrashHandler
 
     test_shell = Bool(False, help='Whether the shell is a test shell')
@@ -786,7 +821,8 @@ class SageTerminalApp(TerminalIPythonApp):
 
         .. NOTE::
 
-            This code is based on :meth:`Application.update_config`.
+            This code is based on
+            :meth:`Configurable.update_config <traitlets.config.Configurable.update_config>`.
 
         TESTS:
 
@@ -809,12 +845,12 @@ class SageTerminalApp(TerminalIPythonApp):
 
     def init_shell(self):
         r"""
-        Initialize the :class:`SageInteractiveShell` instance.
+        Initialize the Sage interactive shell instance.
 
         .. NOTE::
 
             This code is based on
-            :meth:`TerminalIPythonApp.init_shell`.
+            :meth:`TerminalIPythonApp.init_shell <IPython.terminal.ipapp.TerminalIPythonApp.init_shell>`.
 
         EXAMPLES::
 

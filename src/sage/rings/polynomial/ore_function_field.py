@@ -43,8 +43,8 @@ The left numerator and right denominator are accessible as follows::
     sage: g.right_denominator()
     d
 
-Similarly the methods :meth:`OrePolynomial.left_denominator` and
-:meth:`OrePolynomial.right_numerator` give access to the Ore polynomials
+Similarly the methods :meth:`~sage.rings.polynomial.ore_function_element.OreFunction.left_denominator` and
+:meth:`~sage.rings.polynomial.ore_function_element.OreFunction.right_numerator` give access to the Ore polynomials
 `s` and `t` in the representation `s^{-1} t`::
 
     sage: g.left_denominator()
@@ -413,7 +413,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.polynomial.ore_polynomial_element.OrePolynomial.twisting_morphism`,
+            :meth:`~sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing.twisting_morphism`,
             :meth:`twisting_derivation`
         """
         return self._ring.twisting_morphism(n)
@@ -441,7 +441,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.polynomial.ore_polynomial_element.OrePolynomial.twisting_derivation`,
+            :meth:`~sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing.twisting_derivation`,
             :meth:`twisting_morphism`
         """
         return self._ring.twisting_derivation()

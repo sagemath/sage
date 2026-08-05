@@ -1,5 +1,7 @@
 r"""
 Sets With a Grading
+
+.. automethod:: sage.categories.sets_with_grading::SetsWithGrading.ParentMethods._test_graded_components
 """
 # ****************************************************************************
 #  Copyright (C) 2010-2012 Nicolas M. Thiery <nthiery at users.sf.net>

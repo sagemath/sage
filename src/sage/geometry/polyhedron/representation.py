@@ -220,9 +220,9 @@ class PolyhedronRepresentation(SageObject):
         OUTPUT:
 
         For a V-representation object, a vector of length
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.ambient_dim`. For
+        :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.ambient_dim`. For
         a H-representation object, a vector of length
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.ambient_dim`
+        :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.ambient_dim`
         + 1.
 
         EXAMPLES::
@@ -769,8 +769,8 @@ class Inequality(Hrepresentation):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.slack_matrix`
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.slack_matrix`
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
 
         EXAMPLES::
 

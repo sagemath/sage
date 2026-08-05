@@ -412,8 +412,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
     (where `\ZZ_2 = \ZZ / 2 \ZZ`); this grading is determined by
     placing all elements of `V` in degree `1`. It is also an
     `\NN`-filtered algebra, with the filtration too being defined
-    by placing all elements of `V` in degree `1`. The :meth:`degree` gives
-    the `\NN`-*filtration* degree, and to get the super degree use instead
+    by placing all elements of `V` in degree `1`. The
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ElementMethods.degree`
+    method gives the `\NN`-*filtration* degree, and to get the super degree use instead
     :meth:`~sage.categories.super_modules.SuperModules.ElementMethods.is_even_odd`.
 
     The Clifford algebra also can be considered as a covariant functor
@@ -1585,7 +1586,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         .. NOTE::
 
             This is the map going out of ``self`` as opposed to
-            :meth:`~sage.algebras.clifford_algebra.CliffordAlgebraElement.lift_module_morphism()`
+            :meth:`~sage.algebras.clifford_algebra.CliffordAlgebra.lift_module_morphism`
             for general Clifford algebras.
 
         INPUT:
@@ -1840,12 +1841,13 @@ class ExteriorAlgebra(CliffordAlgebra):
         Return the interior product `\iota_b a` of ``a`` with respect to
         ``b``.
 
-        See :meth:`~sage.algebras.clifford_algebra.CliffordAlgebra.Element.interior_product`
+        See
+        :meth:`~sage.algebras.clifford_algebra_element.ExteriorAlgebraElement.interior_product`
         for more information.
 
         In this method, ``a`` and ``b`` are supposed to be
         basis elements (see
-        :meth:`~sage.algebras.clifford_algebra.CliffordAlgebra.Element.interior_product`
+        :meth:`~sage.algebras.clifford_algebra_element.ExteriorAlgebraElement.interior_product`
         for a method that computes interior product of arbitrary
         elements), and to be input as their keys.
 

@@ -174,7 +174,9 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
     To compute the Lie bracket of two elements, you cannot use the ``*``
     operator. Indeed, this automatically lifts up to the universal
     enveloping algebra and takes the (associative) product there.
-    To get elements in the Lie algebra, you must use :meth:`bracket`::
+    To get elements in the Lie algebra, you must use the
+    :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.bracket`
+    method::
 
         sage: L = LieAlgebra(QQ, {('e','h'): {'e':-2}, ('f','h'): {'f':2},
         ....:                     ('e','f'): {'h':1}}, names='e,f,h')

@@ -479,7 +479,8 @@ class AlternatingSignMatrix(Element,
         r"""
         Return the six vertex model configuration from ``self``.
 
-        This method calls :meth:`sage.combinat.six_vertex_model.from_alternating_sign_matrix`.
+        This method calls
+        :meth:`sage.combinat.six_vertex_model.SquareIceModel.from_alternating_sign_matrix`.
 
         EXAMPLES::
 

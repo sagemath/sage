@@ -2713,7 +2713,8 @@ def from_hexacode(ch, parent=None, label='@'):
 
     See :meth:`AbstractTree.to_hexacode` for the description of the encoding
 
-    See :func:`_from_hexacode_aux` for the actual code
+    See :meth:`AbstractTree.to_hexacode` and this function's implementation
+    for the decoding algorithm.
 
     EXAMPLES::
 
@@ -2760,7 +2761,7 @@ def _from_hexacode_aux(ch, parent, label='@'):
     - ``label`` -- a label (default: ``'@'``) to be used for every vertex
       of the tree
 
-    This method is used in :func:`from_hexacode`
+    This method is used in :func:`~sage.combinat.abstract_tree.from_hexacode`
 
     EXAMPLES::
 
