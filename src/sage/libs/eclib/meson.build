@@ -27,9 +27,9 @@ foreach name, pyx : extension_data_cpp
     sources: pyx,
     subdir: 'sage/libs/eclib',
     install: true,
+    build_rpath: ecl_build_rpath,
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
     dependencies: [py_dep, cysignals, ec, ecl, flint, gmp, ntl],
   )
 endforeach
-

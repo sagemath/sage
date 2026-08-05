@@ -7,29 +7,72 @@ if not sirocco.found()
     disabler: true,
   )
 endif
-# ECL cannot be found via pkg-config; use ecl-config for the matching
-# compiler and linker flags. ECL's Makefile expands the rpath placeholder
-# in ecl-config to the installed libdir.
+# Select the ECL dependency, executable, and configuration script together.
+# Maxima must use the same ECL provider as sage.libs.ecl; loading two ECL
+# versions into one process corrupts ECL's global state.
+use_system_ecl = false
 if is_windows
   ecl = disabler()
+  ecl_build_rpath = ''
+  conf_data.set('SAGE_ECL_CONFIG', '')
 else
-  ecl_config = find_program('ecl-config', required: false)
-  if ecl_config.found()
-    ecl_cflags = run_command(ecl_config, '--cflags', check: true)
-    ecl_libs = run_command(ecl_config, '--libs', check: true)
+  system_ecl_bin = find_program(
+    'ecl',
+    version: '>=26.5.5',
+    required: false,
+  )
+  if system_ecl_bin.found()
+    # Do not combine an ecl executable with an unrelated ecl-config from
+    # another prefix.
+    system_ecl_config = find_program(
+      fs.parent(system_ecl_bin.full_path()) / 'ecl-config',
+      required: false,
+    )
+    use_system_ecl = system_ecl_config.found()
+  endif
+
+  if use_system_ecl
+    ecl_version = run_command(
+      system_ecl_bin,
+      '--norc',
+      '--eval',
+      '(princ (lisp-implementation-version))',
+      '--eval',
+      '(quit)',
+      check: true,
+    ).stdout().strip()
+    ecl_cflags = run_command(system_ecl_config, '--cflags', check: true)
+    ecl_libs = run_command(system_ecl_config, '--libs', check: true)
     ecl = declare_dependency(
+      version: ecl_version,
       compile_args: ecl_cflags.stdout().strip().split(),
       link_args: ecl_libs.stdout().strip().split(),
+      variables: {
+        'ecl_bin': system_ecl_bin.full_path(),
+        'ecl_build_rpath': '',
+        'ecl_config': system_ecl_config.full_path(),
+        'ecl_version': ecl_version,
+      },
     )
+    meson.override_dependency('ecl', ecl)
   else
     ecl_proj = subproject('ecl')
     ecl = ecl_proj.get_variable('ecl_dep')
   endif
+
+  ecl_build_rpath = ecl.get_variable(
+    internal: 'ecl_build_rpath',
+    default_value: '',
+  )
+  conf_data.set(
+    'SAGE_ECL_CONFIG',
+    ecl.get_variable(internal: 'ecl_config'),
+  )
 endif
-ecl_bin = find_program('ecl', required: false)
-if ecl_bin.found()
+
+if use_system_ecl
   maxima_check = run_command(
-    ecl_bin,
+    system_ecl_bin,
     '--eval',
     '(require \'maxima)',
     '--eval',
@@ -41,15 +84,6 @@ if ecl_bin.found()
     conf_data.set('SAGE_MAXIMA_FAS', '')
   else
     # Try Sage's custom maxima location
-    ecl_version = run_command(
-      ecl_bin,
-      '--norc',
-      '--eval',
-      '(princ (lisp-implementation-version))',
-      '--eval',
-      '(quit)',
-      check: true,
-    ).stdout().strip()
     sage_maxima = join_paths(
       get_option('SAGE_LOCAL'),
       'lib',
@@ -57,7 +91,7 @@ if ecl_bin.found()
       'maxima.fas',
     )
     maxima_check = run_command(
-      ecl_bin,
+      system_ecl_bin,
       '--eval',
       '(require \'maxima "' + sage_maxima + '")',
       '--eval',
@@ -186,8 +220,10 @@ dependencies = [py_dep, cysignals, gc, gmp]
 
 foreach name, pyx : extension_data
   deps = dependencies
+  extension_build_rpath = ''
   if name == 'ecl'
     deps += [ecl, maxima]
+    extension_build_rpath = ecl_build_rpath
   elif name == 'meataxe'
     deps += [mtx]
   elif name == 'homfly'
@@ -201,6 +237,7 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/libs',
     install: true,
+    build_rpath: extension_build_rpath,
     include_directories: [inc_cpython, inc_rings],
     dependencies: deps,
   )

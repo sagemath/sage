@@ -34,17 +34,32 @@ proj = mod.add_project('sage-ecl-configure',
   env : ecl_env,
 )
 
+ecl_config_data = configuration_data()
+ecl_config_data.set(
+  'ECL_CONFIG',
+  staged_prefix / get_option('bindir') / 'ecl-config',
+)
+ecl_config_data.set('ECL_BUILDDIR', libpath)
+configure_file(
+  input: 'sage-ecl-config.in',
+  output: 'sage-ecl-config',
+  configuration: ecl_config_data,
+)
+
 ecl_dep = proj.dependency('ecl')
-# Ugly workaround to include the rpath in the dependency
+# The external_project dependency does not add a managed build RPATH.
+# Consumers use ecl_build_rpath on targets that link against ECL.
 # https://github.com/mesonbuild/meson/issues/12970
-ecl_rpath_dep = declare_dependency(
-  link_args: '-Wl,-rpath,' + libpath + ' -L' + libpath,
+ecl_generated_headers_dep = declare_dependency(
   include_directories: [include_directories('build')],
 )
 ecl_dep = declare_dependency(
-  dependencies : [ecl_dep, ecl_rpath_dep],
+  version: ecl_version,
+  dependencies : [ecl_dep, ecl_generated_headers_dep],
   variables: {
     'ecl_bin' : staged_prefix / get_option('bindir') / 'ecl',
+    'ecl_build_rpath' : libpath,
+    'ecl_config' : meson.current_build_dir() / 'sage-ecl-config',
     'ecldir' : ecldir,
     'ecl_version' : ecl_version,
   },
