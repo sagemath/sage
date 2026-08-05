@@ -95,7 +95,7 @@ Obtaining an instance of :class:`Link`::
     <class 'sage.knots.link.Link'>
 
 If you have `SnapPy <https://snappy.math.uic.edu/index.html>`__ installed inside
-Sage, you can obtain an instance of :class:`~spherogram.links.links_base.Link`,
+Sage, you can obtain an instance of ``spherogram.links.links_base.Link``,
 too::
 
     sage: # optional snappy
@@ -215,7 +215,7 @@ REFERENCES:
 AUTHORS:
 
 - Sebastian Oehms August 2020: initial version
-- Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:issue:`33969`)
+- Sebastian Oehms June   2022: add :meth:`~sage.knots.knotinfo.KnotInfoBase.conway_polynomial` and :meth:`~sage.knots.knotinfo.KnotInfoBase.khovanov_polynomial` (:issue:`33969`)
 
 Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the corresponding hompages.
 """
@@ -1376,7 +1376,7 @@ class KnotInfoBase(Enum):
         OUTPUT:
 
         A Laurent polynomial over the integers, more precisely an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
         If ``original`` is set to ``True`` then a string is returned.
 
         .. NOTE::
@@ -1459,7 +1459,7 @@ class KnotInfoBase(Enum):
         r"""
         Return the Kauffman polynomial according to the value of column
         ``kauffman_polynomial`` for this knot or link as an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
 
         The Kauffman polynomial `F(L)` respectivlely its corresponding invariant
         under regular isotopy `\Delta (L) = a^{w(L)} F(L)` where `w(L)` is the
@@ -1484,7 +1484,7 @@ class KnotInfoBase(Enum):
         OUTPUT:
 
         A Laurent polynomial over the integers, more precisely an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
         If ``original`` is set to ``False`` then a string is returned.
 
         EXAMPLES::
@@ -1545,7 +1545,7 @@ class KnotInfoBase(Enum):
         r"""
         Return the Jones polynomial according to the value of column
         ``jones_polynomial`` for this knot or link as an element of the symbolic
-        ring :class:`~sage.symbolic.ring.SR` or an instance of
+        :class:`symbolic ring <sage.symbolic.ring.SymbolicRing>` or an instance of
         :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`
         depending on the keyword ``skein_normalization``. Using the keyword
         ``puiseux`` instead of an element of the symbolic ring an instance of
@@ -1585,7 +1585,8 @@ class KnotInfoBase(Enum):
         - ``puiseux=True`` a puiseux series over the integers, more precisely an
           instance of :class:`~sage.rings.puiseux_series_ring_element.PuiseuxSeries`
 
-        In all other cases an element of the symbolic ring :class:`~sage.symbolic.ring.SR`.
+        In all other cases an element of the
+        :class:`symbolic ring <sage.symbolic.ring.SymbolicRing>`.
 
         .. NOTE::
 
@@ -1893,7 +1894,7 @@ class KnotInfoBase(Enum):
         r"""
         Return the Khovanov polynomial according to the value of columns
         ``khovanov_*`` for this knot or link as an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
 
         INPUT:
 
@@ -1919,7 +1920,7 @@ class KnotInfoBase(Enum):
 
         A two or three (for integral homology) variate Laurent polynomial over
         ``ZZ``, more precisely an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
         If ``original`` is set to ``True`` then a string is returned.
 
         .. NOTE ::
@@ -2098,9 +2099,9 @@ class KnotInfoBase(Enum):
         return R(eval_knotinfo(khovanov_polynomial, locals=lc))
 
     @cached_method
-    def link(self, use_item=db.columns().pd_notation, snappy=False):
+    def link(self, use_item=None, snappy=False):
         r"""
-        Return ``self`` as an instance of :class:`Link` or optional
+        Return ``self`` as an instance of :class:`~sage.knots.link.Link` or optional
         ``spherogram.links.invariants.Link``  (SnapPy).
 
         INPUT:
@@ -2213,6 +2214,9 @@ class KnotInfoBase(Enum):
             sage: K5_1.link(K5_1.items.gauss_notation).braid()
             s^-5
         """
+        if use_item is None:
+            use_item = self.items.pd_notation
+
         if not isinstance(use_item, KnotInfoColumns):
             raise TypeError('%s must be an instance of %s' % (use_item, KnotInfoColumns))
 

@@ -1514,7 +1514,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         - ``n`` -- integer
         - further keyword arguments are passed on to
-          :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
+          :meth:`~sage.quadratic_forms.quadratic_form.QuadraticForm.short_vector_list_up_to_length`
 
         OUTPUT: list `L` where ``L[k]`` is the list of vectors of lengths `k`
 
@@ -1528,7 +1528,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         TESTS:
 
-        Check that keyword arguments are passed to :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
+        Check that keyword arguments are passed to :meth:`~sage.quadratic_forms.quadratic_form.QuadraticForm.short_vector_list_up_to_length`
         (:issue:`39848`)::
 
             sage: A2 = IntegralLattice('A2')                                            # needs sage.graphs

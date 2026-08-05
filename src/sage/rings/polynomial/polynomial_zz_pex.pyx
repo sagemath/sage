@@ -11,8 +11,11 @@ Univariate Polynomials over GF(p^e) via NTL's ZZ_pEX
 AUTHOR:
 
 - Yann Laigle-Chapuy (2010-01) initial implementation
-- Lorenz Panny (2023-01): :meth:`minpoly_mod`
-- Giacomo Pope (2023-08): :meth:`reverse`, :meth:`inverse_series_trunc`
+- Lorenz Panny (2023-01):
+  :meth:`minpoly_mod <sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX.minpoly_mod>`
+- Giacomo Pope (2023-08):
+  :meth:`reverse <sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX.reverse>`,
+  :meth:`inverse_series_trunc <sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX.inverse_series_trunc>`
 """
 from cysignals.signals cimport sig_on, sig_off
 

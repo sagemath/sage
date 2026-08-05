@@ -467,7 +467,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.number_of_terms()
             101
 
-        The method :meth:`hamming_weight` is an alias::
+        The method :meth:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial.hamming_weight`
+        is an alias::
 
             sage: f.hamming_weight()
             101
@@ -1641,7 +1642,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         .. SEEALSO::
 
-            :meth:`_derivative`
+            ``_derivative()``
 
         EXAMPLES::
 
@@ -1741,7 +1742,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         If this polynomial is not in at most one variable, then a
         :exc:`ValueError` exception is raised.  The new polynomial is over
-        the same base ring as the given :class:`LaurentPolynomial` and in the
+        the same base ring as the given
+        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`
+        and in the
         variable ``x`` if no ring ``R`` is provided.
 
         EXAMPLES::

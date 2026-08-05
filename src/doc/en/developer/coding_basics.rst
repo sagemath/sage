@@ -156,7 +156,7 @@ Then in the file :sage_root:`src/sage/all.py`, add a line ::
 
     from sage.measure_theory.all import *
 
-Adding new top-level packages below :mod:`sage` should be done
+Adding new top-level packages below ``sage`` should be done
 sparingly.  It is often better to create subpackages of existing
 packages.
 

@@ -188,7 +188,8 @@ def Hom[DomainElementT: Parent, CodomainElementT: Parent](
     codomain, category)``. This method should either construct the
     requested homset or raise a :exc:`TypeError`. This hook is currently
     mostly used to create homsets in some specific subclass of
-    :class:`Homset` (e.g. :class:`sage.rings.homset.RingHomset`)::
+    :class:`Homset` (e.g.
+    :class:`~sage.rings.homset.RingHomset_generic`)::
 
         sage: Hom(QQ,QQ).__class__
         <class 'sage.rings.homset.RingHomset_generic_with_category'>
@@ -218,7 +219,7 @@ def Hom[DomainElementT: Parent, CodomainElementT: Parent](
         sage: Hom(QQ, ZZ) is Hom(QQ,ZZ, Category.meet([QQ.category(), ZZ.category()]))
         True
 
-    Some doc tests in :mod:`sage.rings` (need to) break the unique
+    Some doc tests in ``sage.rings`` (need to) break the unique
     parent assumption. But if domain or codomain are not unique
     parents, then the homset will not fit. That is to say, the hom set
     found in the cache will have a (co)domain that is equal to, but

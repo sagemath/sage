@@ -929,7 +929,7 @@ class Polyhedron_QQ(Polyhedron_base):
         INPUT:
 
         - ``conj_class_reps`` -- list of representatives of the conjugacy
-          classes of the subgroup of the :meth:`restricted_automorphism_group` of
+          classes of the subgroup of the :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group` of
           the polytope. Each element is written as a permutation of the vertices
           of the polytope.
 
@@ -1025,7 +1025,8 @@ class Polyhedron_QQ(Polyhedron_base):
         EXAMPLES:
 
         The `H^*`-polynomial of the standard (`d-1`)-dimensional simplex
-        `S = conv(e_1, \dots, e_d)` under its :meth:`restricted_automorphism_group`
+        `S = conv(e_1, \dots, e_d)` under its
+        :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
         is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
         Here is the computation for the 3-dimensional standard simplex::
 
@@ -1149,7 +1150,8 @@ class Polyhedron_QQ(Polyhedron_base):
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 
         The ``Hstar`` series of the polytope is determined by the action of a
-        subgroup of the polytope's :meth:`restricted_automorphism_group`. The
+        subgroup of the polytope's
+        :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`. The
         ``Hstar`` series is effective if it is a polynomial in `t` and the
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
@@ -1223,7 +1225,8 @@ class Polyhedron_QQ(Polyhedron_base):
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 
         The ``Hstar`` series of the polytope is determined by the action of a
-        subgroup of the polytope's :meth:`restricted_automorphism_group`. The
+        subgroup of the polytope's
+        :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`. The
         ``Hstar`` series is effective if it is a polynomial in `t` and the
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if

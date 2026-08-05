@@ -34,7 +34,7 @@ There is a number of abstract classes representing different types of codes in
 the coding module of Sage. Depending on the type of code you want to implement,
 you should inherit from different abstract classes.
 
-The most generic class is :class:`sage.coding.abstract_code:AbstractCode`. This
+The most generic class is :class:`sage.coding.abstract_code.AbstractCode`. This
 class makes no assumptions about linearity, metric, finiteness or the number of
 alphabets. The abstract notion of "code" that is implicitly used for this class
 is any enumerable subset of a cartesian product
@@ -67,15 +67,15 @@ Here is how we can implement it::
     [(0, 0, 0, 0), (1, 0, 0, 0), (1, 1, 0, 0), (1, 1, 1, 0), (1, 1, 1, 1)]
 
 Focusing on linear codes, the most generic representative is the class
-:class:`sage.coding.linear_code_no_metric:AbstractLinearCodeNoMetric` which
+:class:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric` which
 contains all the methods that all linear codes share regardless of what their
 metric is. If you want to implement a linear code over some metric which has
 not been implemented in Sage yet, this is the class you should be inheriting
 from.
 
 We have two metric specific abstract linear code classes,
-:class:`sage.coding.linear_code:AbstractLinearCode` for Hamming metric and
-:class:`sage.coding.linear_rank_metric:AbstractLinearRankMetricCode` for rank
+:class:`sage.coding.linear_code.AbstractLinearCode` for Hamming metric and
+:class:`sage.coding.linear_rank_metric.AbstractLinearRankMetricCode` for rank
 metric. If you wish to implement a linear code class over one of these metrics,
 you should inherit from the given abstract class.
 

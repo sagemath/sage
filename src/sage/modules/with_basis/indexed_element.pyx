@@ -797,7 +797,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             - :func:`vector`
             - :meth:`CombinatorialFreeModule.get_order`
             - :meth:`CombinatorialFreeModule.from_vector`
-            - :meth:`CombinatorialFreeModule._dense_free_module`
+            - ``CombinatorialFreeModule._dense_free_module``
 
         EXAMPLES::
 

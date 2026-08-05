@@ -89,22 +89,13 @@ call this minimum number `g(M,e)`.
 Lemma: For fixed `e` and `M`, `g(M,e)` is
 the smallest `n` such that `A_2(n,2e+1)\geq M`.
 
-Thus, solving the solving a generalization of the game of "20
-questions" is equivalent to determining `A_2(n,d)`! Using
-Sage, you can determine the best known estimates for this number in
-2 ways:
-
-1. Indirectly, using ``best_known_linear_code_www(n, k, F)``,
-   which connects to the website http://www.codetables.de by Markus Grassl;
-
-2. ``codesize_upper_bound(n,d,q)``, ``dimension_upper_bound(n,d,q)``,
-   and ``best_known_linear_code(n, k, F)``.
-
-The output of :func:`best_known_linear_code`,
-:func:`best_known_linear_code_www`, or :func:`dimension_upper_bound` would
-give only special solutions to the GAME because the bounds are applicable
-to only linear codes. The output of :func:`codesize_upper_bound` would give
-the best possible solution, that may belong to a linear or nonlinear code.
+Thus, solving this generalization of the game of "20
+questions" is equivalent to determining `A_2(n,d)`.  In Sage, the function
+:func:`dimension_upper_bound` computes upper bounds for the dimension of
+linear codes, and therefore only concerns the linear-code analogue
+`B_q(n,d)`.  The function :func:`codesize_upper_bound` computes upper
+bounds for `A_q(n,d)`, so it applies to arbitrary, possibly nonlinear,
+codes.
 
 This module implements:
 

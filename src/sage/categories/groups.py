@@ -95,7 +95,7 @@ class Groups(CategoryWithAxiom):
             """
             Return group generators for ``self``.
 
-            This default implementation calls :meth:`gens`, for
+            This default implementation calls ``gens``, for
             backward compatibility.
 
             EXAMPLES::
@@ -213,7 +213,8 @@ class Groups(CategoryWithAxiom):
 
               * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
-                positions in the list given by :meth:`list`,
+                positions in the list given by
+                :meth:`~sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.list`,
                 padded to a common width with leading 'a's.
               * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by

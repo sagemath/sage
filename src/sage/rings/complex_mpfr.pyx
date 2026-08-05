@@ -142,7 +142,7 @@ def ComplexField(prec=53, names=None):
     .. SEEALSO::
 
         - :class:`~sage.rings.complex_mpfr.ComplexField_class`
-        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+        - :class:`~sage.rings.complex_arb.ComplexBallField` (complex numbers with
           rigorous error bounds)
     """
     global cache
@@ -233,7 +233,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
     .. SEEALSO::
 
         - :func:`~sage.rings.complex_mpfr.ComplexField` (constructor)
-        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+        - :class:`~sage.rings.complex_arb.ComplexBallField` (complex numbers with
           rigorous error bounds)
         - :mod:`~sage.rings.real_mpfr`
     """
@@ -2030,7 +2030,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         Plots this complex number as a point in the plane.
 
-        The accepted options are the ones of :meth:`~sage.plot.point.point2d`.
+        The accepted options are the ones of :func:`~sage.plot.point.point2d`.
         Type ``point2d.options`` to see all options.
 
         .. NOTE::

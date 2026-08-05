@@ -2,7 +2,7 @@
 IPython Backend for the Sage Rich Output System
 
 This module defines the IPython backends for
-:mod:`sage.repl.rich_output`.
+:mod:`sage.repl.rich_output.display_manager`.
 """
 
 # ****************************************************************************
@@ -85,12 +85,14 @@ class BackendIPython(BackendBase):
         """
         Show output immediately.
 
-        This method is similar to the rich output :meth:`displayhook`,
+        This method is similar to the rich output
+        :meth:`~sage.repl.rich_output.backend_base.BackendBase.displayhook`,
         except that it can be invoked at any time.
 
         INPUT:
 
-        Same as :meth:`displayhook`.
+        Same as
+        :meth:`~sage.repl.rich_output.backend_base.BackendBase.displayhook`.
 
         OUTPUT: this method does not return anything
 
@@ -245,6 +247,10 @@ class BackendIPythonCommandline(BackendIPython):
         if isinstance(rich_output, OutputLatex):
             return ({'text/plain': rich_output.latex.get_str()}, {})
         if isinstance(rich_output, OutputImagePng):
+            # IPython>=9.13 supports inline plots
+            from sage.repl.interpreter import inline_plots
+            if inline_plots():
+                return ({'text/plain': '', 'image/png': rich_output.png.get()}, {})
             msg = self.launch_viewer(
                 rich_output.png.filename(ext='png'), plain_text.text.get_str())
             return ({'text/plain': msg}, {})
@@ -278,11 +284,12 @@ class BackendIPythonCommandline(BackendIPython):
 
         This method is similar to the rich output :meth:`displayhook`,
         except that it can be invoked at any time. On the Sage command
-        line it launches viewers just like :meth:`displayhook`.
+        line it launches viewers just like :meth:`~sage.repl.rich_output.backend_ipython.BackendIPythonCommandline.displayhook`.
 
         INPUT:
 
-        Same as :meth:`displayhook`.
+        Same as
+        :meth:`~sage.repl.rich_output.backend_ipython.BackendIPythonCommandline.displayhook`.
 
         OUTPUT: this method does not return anything
 
@@ -296,7 +303,7 @@ class BackendIPythonCommandline(BackendIPython):
             Example plain text output
         """
         formatdata, metadata = self.displayhook(plain_text, rich_output)
-        print(formatdata['text/plain'])
+        publish_display_data(data=formatdata, metadata=metadata)
 
     def launch_viewer(self, image_file, plain_text):
         """

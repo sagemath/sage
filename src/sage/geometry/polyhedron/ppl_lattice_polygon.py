@@ -1,7 +1,7 @@
 """
 Fast Lattice Polygons using PPL
 
-See :mod:`ppl_lattice_polytope` for the implementation of
+See :mod:`sage.geometry.polyhedron.ppl_lattice_polytope` for the implementation of
 arbitrary-dimensional lattice polytopes. This module is about the
 specialization to 2 dimensions. To be more precise, the
 :class:`LatticePolygon_PPL_class` is used if the ambient space is of
