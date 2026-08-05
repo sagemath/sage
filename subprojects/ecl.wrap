@@ -1,7 +1,8 @@
-[wrap-git]
-url = https://gitlab.com/embeddable-common-lisp/ecl.git
-revision = 26.5.5
-depth = 1
+[wrap-file]
+directory = ecl-26.5.5
+source_url = https://ecl.common-lisp.dev/static/files/release/ecl-26.5.5.tgz
+source_filename = ecl-26.5.5.tgz
+source_hash = a01a5bcda8c5b73e59dda3494fd13e5fec5db6aa1dad782c3cc3bb57f1633435
 patch_directory = ecl
 # Keep this copy byte-identical to
 # build/pkgs/ecl/patches/59de50b52380132d44bfa05f573544cba0a8c65f.patch.
