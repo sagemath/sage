@@ -1268,7 +1268,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the rank-`k`
           flats of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -1512,7 +1512,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 

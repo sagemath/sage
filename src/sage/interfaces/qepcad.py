@@ -393,7 +393,7 @@ symbolically and numerically.
 
 For programmatic access to cells, we have defined a \sage wrapper class
 :class:`QepcadCell`.  These cells can be created with the
-:meth:`cell` method; for example::
+:meth:`~sage.interfaces.qepcad.Qepcad.cell` method; for example::
 
     sage: c = qe.cell(3, 4); c                       # optional - qepcad
     QEPCAD cell (3, 4)
@@ -419,10 +419,12 @@ as \sage algebraic real numbers. ::
     sage: c.sample_point_dict()                      # optional - qepcad
     {'x': 0, 'y': 1.732050807568878?}
 
-We have seen that we can get cells using the :meth:`cell` method.
+We have seen that we can get cells using the
+:meth:`~sage.interfaces.qepcad.Qepcad.cell` method.
 There are several QEPCAD commands that print lists of cells; we can
-also get cells using the :meth:`make_cells` method, passing it the
-output of one of these commands. ::
+also get cells using the
+:meth:`~sage.interfaces.qepcad.Qepcad.make_cells` method, passing it
+the output of one of these commands. ::
 
     sage: qe.make_cells(qe.d_true_cells())           # optional - qepcad
     [QEPCAD cell (4, 2), QEPCAD cell (3, 4), QEPCAD cell (3, 2),
@@ -1192,7 +1194,7 @@ class Qepcad:
     def make_cells(self, text):
         r"""
         Given the result of some QEPCAD command that returns cells
-        (such as :meth:`d_cell`, :meth:`d_witness_list`, etc.),
+        (such as ``d_cell``, ``d_witness_list``, etc.),
         return a list of cell objects.
 
         EXAMPLES::

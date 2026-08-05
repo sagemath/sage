@@ -43,7 +43,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     .. SEEALSO::
 
-        - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
+        - ``RootLatticeRealizations.ParentMethods._plot_projection``
     """
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
@@ -176,7 +176,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
     """
     Cartan Type `A_n`.
 
-    .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
+    .. SEEALSO:: :func:`~sage.combinat.root_system.cartan_type.CartanType`
     """
 
     def __init__(self, n):

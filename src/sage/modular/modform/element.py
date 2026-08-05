@@ -1403,7 +1403,7 @@ class ModularForm_abstract(ModuleElement):
         .. SEEALSO::
 
             - :meth:`cm_discriminant` (to return the CM field)
-            - :meth:`sage.schemes.elliptic_curves.ell_rational_field.has_cm`
+            - :meth:`~sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.has_cm`
 
         EXAMPLES::
 
@@ -2166,7 +2166,7 @@ class Newform(ModularForm_abstract):
 
         .. SEEALSO::
 
-            - :meth:`sage.modular.hecke.module.atkin_lehner_operator`
+            - :meth:`~sage.modular.hecke.module.HeckeModule_free_module.atkin_lehner_operator`
               (especially for the conventions used to define the operator
               `W_d`)
 
@@ -2552,7 +2552,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         INPUT:
 
-        - ``parent`` -- :class:`ModularFormsSpace` (an ambient space of modular
+        - ``parent`` -- :class:`~sage.modular.modform.space.ModularFormsSpace` (an ambient space of modular
           forms)
 
         - ``x`` -- a vector on the basis for parent
@@ -3984,7 +3984,7 @@ class GradedModularFormElement(ModuleElement):
           string; corresponds to the names of the variables
         - ``gens`` -- (default: ``None``) a list of generator of the parent of
           ``self``. If set to ``None``, the list returned by
-          :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
+          :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms`
           is used instead
 
         OUTPUT: a polynomial in the variables ``names``

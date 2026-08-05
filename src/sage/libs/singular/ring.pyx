@@ -622,7 +622,7 @@ cdef class ring_wrapper_Py():
     This is useful to store ring pointers in Python containers.
 
     You must not construct instances of this class yourself, use
-    :func:`wrap_ring` instead.
+    ``wrap_ring`` instead.
 
     EXAMPLES::
 

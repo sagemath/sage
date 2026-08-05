@@ -440,7 +440,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         - ``n`` -- integer (default: ``None``); if given, returns the
           corresponding entry in the expansion. Can also accept a slice (see
-          :meth:`slice`).
+          :meth:`~sage.rings.padics.local_generic_element.LocalGenericElement.slice`).
 
         - ``lift_mode`` -- ``'simple'``, ``'smallest'`` or
           ``'teichmuller'`` (default: ``'simple'``)
@@ -897,7 +897,7 @@ cdef class ExpansionIter():
     An iterator over a `p`-adic expansion.
 
     This class should not be instantiated directly, but instead
-    using :meth:`expansion`.
+    using ``expansion``.
 
     INPUT:
 
@@ -1024,7 +1024,8 @@ cdef class ExpansionIterable():
     r"""
     An iterable storing a `p`-adic expansion of an element.
 
-    This class should not be instantiated directly, but instead using :meth:`expansion`.
+    This class should not be instantiated directly, but instead using
+    :meth:`~pAdicTemplateElement.expansion`.
 
     INPUT:
 

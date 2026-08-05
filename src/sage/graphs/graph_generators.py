@@ -6,6 +6,8 @@ build a complete graph on 15 elements, one can do::
 
     sage: g = graphs.CompleteGraph(15)
 
+.. autodata:: sage.graphs.graph_generators::graphs
+
 To get a path with 4 vertices, and the house graph::
 
     sage: p = graphs.PathGraph(4)
@@ -534,7 +536,8 @@ class GraphGenerators:
     representatives.
 
     Also: see the use of the nauty package for generating graphs
-    at the :meth:`nauty_geng` method.
+    at the
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.nauty_geng` method.
 
     INPUT:
 
@@ -1115,7 +1118,7 @@ class GraphGenerators:
         OUTPUT:
 
         A generator which will produce the graphs as
-        :class:`~sage/graphs.bipartite_graph.BipartiteGraph`. These will be
+        :class:`~sage.graphs.bipartite_graph.BipartiteGraph`. These will be
         simple bipartite graphs: no loops, no multiple edges, no directed edges.
 
         EXAMPLES:

@@ -689,7 +689,8 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                :meth:`~sage.combinat.root_system.reflection_group_real.permutahedron`
+                The corresponding ``permutahedron`` implementations for
+                concrete reflection groups.
 
             INPUT:
 
@@ -704,7 +705,8 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             .. NOTE::
 
                 If function is too slow, switching the base ring to
-                :class:`RDF` will almost certainly speed things up.
+                :func:`RDF <sage.rings.real_double.RealDoubleField>` will almost
+                certainly speed things up.
 
             EXAMPLES::
 
@@ -925,7 +927,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                :meth:`~sage.categories.coxeter_groups.absolute_le`
+                :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ElementMethods.absolute_le`
 
             EXAMPLES::
 
@@ -1094,7 +1096,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             This is, whether ``self`` has an eigenvalue `e^{2\pi i/h}`
             where `h` is the Coxeter number.
 
-            .. SEEALSO:: :meth:`~sage.categories.finite_complex_reflection_groups.coxeter_elements`
+            .. SEEALSO::
+
+                :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.WellGenerated.ParentMethods.coxeter_elements`
 
             EXAMPLES::
 

@@ -153,7 +153,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     .. SEEALSO::
 
-        - :meth:`sage.graphs.generic_graph.GenericGraph.cartesian_product`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.cartesian_product`
 
         - :mod:`~sage.graphs.graph_decompositions.graph_products` -- a module on
           graph products
@@ -379,7 +379,7 @@ def rooted_product(G, H, root=None, immutable=None):
 
     .. SEEALSO::
 
-        - :meth:`~sage.graphs.generic_graph.cartesian_product`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.cartesian_product`
           -- return the cartesian product of two graphs
 
         - :mod:`~sage.graphs.graph_decompositions.graph_products`

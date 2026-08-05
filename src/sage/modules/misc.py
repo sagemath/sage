@@ -34,7 +34,7 @@ def gram_schmidt(B):
 
         Use of this function is discouraged.  It fails on linearly
         dependent input and its output format is not as natural as it
-        could be.  Instead, see :meth:`sage.matrix.matrix2.Matrix2.gram_schmidt`
+        could be.  Instead, see :meth:`~sage.matrix.matrix2.Matrix.gram_schmidt`
         which is safer and more general-purpose.
 
     EXAMPLES::

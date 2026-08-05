@@ -7,6 +7,8 @@
 r"""
 Dense univariate polynomials over `\ZZ/n\ZZ`, implemented using FLINT
 
+This implementation uses internal coefficient access through ``get_unsafe()``.
+
 This module gives a fast implementation of `(\ZZ/n\ZZ)[x]` whenever `n` is at
 most ``sys.maxsize``. We use it by default in preference to NTL when the modulus
 is small, falling back to NTL if the modulus is too large, as in the example

@@ -137,7 +137,8 @@ class IntegerModFactory(UniqueFactory):
         Testing whether a quotient ring `\ZZ / n\ZZ` is a field can of
         course be very costly. By default, it is not tested whether `n`
         is prime or not, in contrast to
-        :func:`~sage.rings.finite_rings.finite_field_constructor.GF`. If the user
+        :class:`GF <sage.rings.finite_rings.finite_field_constructor.FiniteFieldFactory>`.
+        If the user
         is sure that the modulus is prime and wants to avoid a primality
         test, (s)he can provide ``category=Fields()`` when constructing
         the quotient ring, and then the result will behave like a field.
@@ -348,7 +349,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
     By :issue:`15229`, there is a unique instance of the
     integral quotient ring of a given order. Using the
-    :func:`IntegerModRing` factory twice, and using
+    :class:`~sage.rings.abc.IntegerModRing` factory twice, and using
     ``is_field=True`` the second time, will update the
     category of the unique instance::
 

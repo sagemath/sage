@@ -38,7 +38,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
     which define the mapping on elements of a basis.
 
     This class is not supposed to be instantiated directly; the user should
-    use instead the method :meth:`sage.rings.module.free_module.FreeModule_generic.pseudoHom`
+    use instead the method :meth:`~sage.modules.free_module.FreeModule_generic.pseudoHom`
     to create a space of pseudomorphisms.
 
     TESTS::

@@ -105,7 +105,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         One of the more useful properties will be the
         :meth:`bigraded Betti numbers
-        <sage.topology.simplicial_complex.bigraded_betti_numbers>`,
+        <sage.topology.simplicial_complex.SimplicialComplex.bigraded_betti_numbers>`,
         and the underlying theorem which makes this possible is Hochter's
         formula, which can be found on page 104 of [BP2014]_.
 

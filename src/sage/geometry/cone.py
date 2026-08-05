@@ -2889,7 +2889,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
            The columns correspond to facets/facet normals
            in the order of :meth:`facet_normals`, the rows
            correspond to the rays in the order of
-           :meth:`rays`.
+           :meth:`~sage.geometry.cone.IntegralRayCollection.rays`.
 
         EXAMPLES::
 
@@ -5661,7 +5661,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - If ``exact`` is ``True`` and if both ``self`` and ``other``
           are strictly convex, then the algorithm will fall back to
           inexact arithmetic. In that case, the returned angle and
-          vectors will be over :class:`sage.rings.real_double.RDF`.
+          vectors will be over ``RDF``.
 
         - If ``exact`` is ``False`` or if either cone is not strictly
           convex, then a :exc:`ValueError` is raised to indicate
@@ -6272,7 +6272,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=8,
     critical factors in the worst-case performance.
 
     For the time being, we forego the following adjustments because
-    they remove the cone's :meth:`ConvexRationalPolyhedralCone.lines`,
+    they remove the cone's
+    :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.lines`,
     thereby skewing the number of rays towards the lower end of
     ``[min_rays, max_rays]``:
 
@@ -6280,7 +6281,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=8,
       make a non-pointed cone pointed.
 
     * Projecting a non-pointed cone onto the orthogonal complement
-      of its :meth:`ConvexRationalPolyhedralCone.lines` to obtain a
+      of its :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.lines`
+      to obtain a
       pointed cone.
 
     EXAMPLES:
@@ -6524,7 +6526,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=8,
         have d rays. Please increase max_ambient_dim, or decrease
         min_rays.
 
-    Ensure that we can produce a cone whose :meth:`lines` are not
+    Ensure that we can produce a cone whose
+    :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.lines` are not
     orthogonal::
 
         sage: set_random_seed(1)
