@@ -621,6 +621,11 @@ cdef class CategoryObject(SageObject):
         return self._base
 
     def base(self):
+        """
+        Return the base ring of ``self``.
+
+        See :meth:`base_ring`.
+        """
         return self._base
 
     ############################################################################

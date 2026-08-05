@@ -2134,11 +2134,11 @@ def SRG_243_110_37_60():
     r"""
     Return a `(243, 110, 37, 60)`-strongly regular graph.
 
-    Consider the orthogonal complement of the
-    :func:`~sage.coding.code_constructions.TernaryGolayCode`, which has 243
-    words. On them we define a graph, in which two words are adjacent
-    whenever their Hamming distance is 9. This construction appears in
-    [GS1975]_.
+    Consider the orthogonal complement of the ternary
+    :class:`~sage.coding.golay_code.GolayCode`, obtained as
+    ``GolayCode(GF(3), False)``, which has 243 words. On them we define
+    a graph, in which two words are adjacent whenever their Hamming distance
+    is 9. This construction appears in [GS1975]_.
 
     .. NOTE::
 
@@ -2643,10 +2643,10 @@ def SRG_1288_792_476_504():
     r"""
     Return a `(1288, 792, 476, 504)`-strongly regular graph.
 
-    This graph is built on the words of weight 12 in the
-    :func:`~sage.coding.code_constructions.BinaryGolayCode`. Two of them are
-    then made adjacent if their symmetric difference has weight 12 (cf
-    [BE1992]_).
+    This graph is built on the words of weight 12 in the binary
+    :class:`~sage.coding.golay_code.GolayCode`, obtained as
+    ``GolayCode(GF(2), False)``. Two of them are then made adjacent if their
+    symmetric difference has weight 12 (cf [BE1992]_).
 
     .. SEEALSO::
 
@@ -2903,7 +2903,7 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
     Return a promise to build an `(v,k,l,mu)`-srg as a tuple `t`, with `t[0]` a
     function to evaluate on `*t[1:]`.
 
-    Input as in :func:`~sage.graphs.strongly_regular_graphs_db.strongly_regular_graph`,
+    Input as in :func:`~sage.graphs.strongly_regular_db.strongly_regular_graph`,
     although without `check`.
 
     TESTS::

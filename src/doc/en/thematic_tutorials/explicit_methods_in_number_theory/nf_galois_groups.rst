@@ -5,11 +5,11 @@ Galois Groups
 -------------
 
 We can compute the Galois group of a number field using the ``galois_group``
-function, which by default calls Pari (http://pari.math.u-bordeaux.fr/). You do
-not have to worry about installing Pari, since *Pari is part of Sage*.  In
-fact, despite appearances much of the difficult algebraic number theory in Sage
-is actually done by the Pari C library (be sure to also cite Pari in papers
-that use Sage).
+function, which by default calls PARI (https://pari.math.u-bordeaux.fr/). You
+do not have to worry about installing PARI, since it is part of Sage. In fact,
+despite appearances much of the difficult algebraic number theory in Sage is
+actually done by the PARI C library (be sure to also cite PARI in papers that
+use Sage).
 
 ::
 

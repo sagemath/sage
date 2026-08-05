@@ -33,7 +33,7 @@ AUTHORS:
 import os
 import re
 import pexpect
-from random import random
+from random import random as _random
 
 from sage.misc.temporary_file import tmp_filename
 from sage.rings.real_mpfr import RR
@@ -703,7 +703,7 @@ class PHC:
             r_color = {}
             for a_var in input_ring.gens():
                 var_name = str(a_var)
-                r_color[var_name] = (random(), random(), random())
+                r_color[var_name] = (_random(), _random(), _random())
         for a_sol in paths:
             for a_var in input_ring.gens():
                 var_name = str(a_var)

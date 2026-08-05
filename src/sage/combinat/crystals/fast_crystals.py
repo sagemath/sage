@@ -34,7 +34,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     An alternative implementation of rank 2 crystals. The root
     operators are implemented in memory by table lookup. This means
     that in comparison with the
-    :class:`~sage.combinat.crystals.tensor_product.CrystalsOfTableaux`, these
+    :class:`~sage.combinat.crystals.tensor_product.CrystalOfTableaux`, these
     crystals are slow to instantiate but faster for computation. Implemented
     for types `A_2`, `B_2`, and `C_2`.
 

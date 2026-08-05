@@ -71,7 +71,7 @@ into Mathics::
 
 If you want work with the internal Mathics expression, then you can call
 ``mathics.eval(expr)``, which returns an instance of
-:class:`mathics.core.expression.Expression`. If you want the result to
+``mathics.core.expression.Expression``. If you want the result to
 be a string formatted like Mathics's InputForm, call ``repr(mobj)`` on
 the wrapper object ``mobj``. If you want a string formatted in Sage style,
 call ``mobj._sage_repr()``::
@@ -1177,8 +1177,9 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
         OUTPUT:
 
-        This method does not return anything. Use :meth:`save` if you
-        want to save the figure as an image.
+        This method does not return anything. Use
+        :meth:`~sage.interfaces.mathics.MathicsElement.save_image` if you want
+        to save the figure as an image.
 
         EXAMPLES::
 

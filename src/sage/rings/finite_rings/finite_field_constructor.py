@@ -221,9 +221,10 @@ class FiniteFieldFactory(UniqueFactory):
     - ``modulus`` -- (optional) either a defining polynomial for the
       field, or a string specifying an algorithm to use to generate
       such a polynomial.  If ``modulus`` is a string, it is passed to
-      :meth:`~sage.rings.polynomial.irreducible_element()` as the
-      parameter ``algorithm``; see there for the permissible values of
-      this parameter. In particular, you can specify
+      :meth:`irreducible_element()
+      <sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_finite_field.irreducible_element>`
+      as the parameter ``algorithm``; see there for the permissible values
+      of this parameter. In particular, you can specify
       ``modulus="primitive"`` to get a primitive polynomial.  You
       may not specify a modulus if you do not specify a variable name.
 
@@ -247,13 +248,13 @@ class FiniteFieldFactory(UniqueFactory):
       controls the way elements are printed to the user:
 
       - 'log': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.log_repr()`
+        ``log_repr()``
 
       - 'int': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.int_repr()`
+        ``int_repr()``
 
       - 'poly': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.poly_repr()`
+        ``poly_repr()``
 
     - ``check_irreducible`` -- verify that the polynomial modulus is
       irreducible
@@ -356,7 +357,10 @@ class FiniteFieldFactory(UniqueFactory):
 
     Even for prime fields, you can specify a modulus. This will not
     change how Sage computes in this field, but it will change the
-    result of the :meth:`modulus` and :meth:`gen` methods::
+    result of the
+    :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.modulus` and
+    :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.gen`
+    methods::
 
         sage: k.<a> = GF(5, modulus='primitive')
         sage: k.modulus()

@@ -1947,7 +1947,7 @@ class MPolynomialIdeal_singular_repr(
         Return a graded free resolution of ``self``.
 
         For input options, see
-        :class:`~sage.homology.graded_resolution.GradedFreeResolution`.
+        :class:`~sage.homology.free_resolution.FreeResolution`.
 
         EXAMPLES::
 
@@ -2329,8 +2329,8 @@ class MPolynomialIdeal_singular_repr(
             possible output...
             True
 
-        The list of available Giac options is provided at
-        :func:`sage.libs.giac.groebner_basis`.
+        The available Giac options are forwarded to Giac's Groebner-basis
+        implementation.
 
         ALGORITHM:
 
@@ -4464,7 +4464,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             possible output...
             Polynomial Sequence with 143 Polynomials in 9 Variables
 
-        The list of available Giac options is provided at :func:`sage.libs.giac.groebner_basis`.
+        The available Giac options are forwarded to Giac's Groebner-basis
+        implementation.
 
         Note that ``toy:buchberger`` does not return the reduced Groebner
         basis, ::

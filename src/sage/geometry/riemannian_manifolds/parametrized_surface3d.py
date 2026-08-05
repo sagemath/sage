@@ -901,7 +901,7 @@ class ParametrizedSurface3D(SageObject):
         r"""
         Return a specific basis vector field of the orthonormal frame field on
         the surface, expressed in exterior or interior coordinates.  See
-        :meth:`orthogonal_frame` for more details.
+        ``orthogonal_frame`` for more details.
 
         INPUT:
 
@@ -1578,7 +1578,7 @@ class ParametrizedSurface3D(SageObject):
         ALGORITHM:
 
         The parallel transport equations are integrated forward in time using
-        the ode solvers from ``sage.calculus.ode``. See :meth:`_create_pt_ode_system`
+        the ode solvers from ``sage.calculus.ode``. See ``_create_pt_ode_system``
         for more details.
 
         INPUT:

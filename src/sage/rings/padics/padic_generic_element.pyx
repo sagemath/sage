@@ -2132,7 +2132,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         .. SEEALSO::
 
-            :meth:`_rational_`
+            ``_rational_``
 
         OUTPUT: rational; an approximation to ``self``
 
@@ -2794,7 +2794,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
           generic `p`-adic rings.
 
         - Soroosh Yazdani (2013-02-1): Fixed a precision issue in
-          :meth:`_log_generic`.  This should really fix the issue with
+          ``_log_generic``.  This should really fix the issue with
           divisions.
 
         - Julian Rueth (2013-02-14): Added doctests, some changes for

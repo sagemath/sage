@@ -630,7 +630,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         If ``subdivide`` is ``True``, the Jordan blocks in the
         returned matrix ``J`` are indicated by a subdivision in
-        the sense of :meth:`~sage.matrix.matrix2.subdivide`.
+        the sense of :meth:`~sage.matrix.matrix2.Matrix.subdivide`.
 
         EXAMPLES:
 
