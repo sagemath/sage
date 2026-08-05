@@ -2763,7 +2763,7 @@ class QuaternionOrder(Parent):
           discriminant.
 
         - ``reduce`` -- boolean or (default) ``None``; whether to reduce
-          the ideal using :meth:`reduce_equiv` prior to returning it or not.
+          the ideal using :meth:`~sage.algebras.quatalg.quaternion_algebra.QuaternionFractionalIdeal_rational.reduce_equiv` prior to returning it or not.
           Note that the norm of the ideal is only preserved when this is
           ``False``; thus, the default is ``False`` when ``norm`` is explicitly
           given and ``True`` otherwise.

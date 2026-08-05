@@ -38,7 +38,9 @@ cdef class IntegerListsBackend():
     integers with specified constraints.
 
     This base implements the basic operations, including checking for
-    containment using :meth:`_contains`, but not iteration. For
+    containment using
+    :meth:`_contains <sage.combinat.integer_lists.base.IntegerListsBackend._contains>`,
+    but not iteration. For
     iteration, subclass this class and implement an ``_iter()`` method.
 
     EXAMPLES::
@@ -47,6 +49,8 @@ cdef class IntegerListsBackend():
         sage: L = IntegerListsBackend(6, max_slope=-1)
         sage: L._contains([3,2,1])
         True
+
+    .. automethod:: _contains
     """
     def __init__(self,
                  n=None, length=None, *,
@@ -386,6 +390,8 @@ cdef class Envelope():
         sage: f = Envelope(3, sign=-1, max_slope=-1, min_length=4)
         sage: [f(i) for i in range(10)]
         [6, 5, 4, 3, 3, 3, 3, 3, 3, 3]
+
+    .. automethod:: __init__
     """
     def __init__(self, f, *,
                  min_part=0, max_part=Infinity,

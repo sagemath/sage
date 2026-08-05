@@ -717,7 +717,7 @@ cdef class Matrix(Matrix0):
             'efdg'
 
         Alternatively, numpy automatically calls this function (via
-        the magic :meth:`__array__` method) to convert Sage matrices
+        the magic ``__array__`` method) to convert Sage matrices
         to numpy arrays::
 
             sage: # needs numpy
@@ -1518,9 +1518,9 @@ cdef class Matrix(Matrix0):
             :meth:`~sage.matrix.matrix2.Matrix.subdivisions`
             and
             :meth:`~sage.matrix.matrix2.Matrix.subdivide`.
-            You might also find :func:`~sage.matrix.constructor.block_matrix`
+            You might also find :func:`~sage.matrix.special.block_matrix`
             or
-            :func:`~sage.matrix.constructor.block_diagonal_matrix`
+            :func:`~sage.matrix.special.block_diagonal_matrix`
             useful and simpler in some instances.
 
         EXAMPLES:
@@ -1832,8 +1832,8 @@ cdef class Matrix(Matrix0):
             need, you can manage subdivisions yourself with methods like
             :meth:`~sage.matrix.matrix2.Matrix.get_subdivisions` and
             :meth:`~sage.matrix.matrix2.Matrix.subdivide`.  You might
-            also find :func:`~sage.matrix.constructor.block_matrix` or
-            :func:`~sage.matrix.constructor.block_diagonal_matrix`
+            also find :func:`~sage.matrix.special.block_matrix` or
+            :func:`~sage.matrix.special.block_diagonal_matrix`
             useful and simpler in some instances.
 
         EXAMPLES:
@@ -2567,7 +2567,7 @@ cdef class Matrix(Matrix0):
         .. NOTE::
 
             This method can be optimized by improving
-            :meth:`get_is_zero_unsafe` for derived matrix classes.
+            ``get_is_zero_unsafe`` for derived matrix classes.
         """
         if ring is None:
             from sage.rings.integer_ring import ZZ

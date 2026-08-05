@@ -1,7 +1,8 @@
 r"""
 Index of bounds on the parameters of codes
 
-The :obj:`codes.bounds` object may be used to access the bounds that Sage can compute.
+The :mod:`codes.bounds <sage.coding.bounds_catalog>` object may be used to
+access the bounds that Sage can compute.
 
 {INDEX_OF_FUNCTIONS}
 

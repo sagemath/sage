@@ -380,7 +380,7 @@ class Gap(Parent):
 
         - ``x`` -- anything that defines a GAP object
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -485,7 +485,7 @@ class Gap(Parent):
         - ``gap_command`` -- string containing a valid gap command
           without the trailing semicolon
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -683,9 +683,9 @@ class Gap(Parent):
 
     def _an_element_(self):
         r"""
-        Return a :class:`GapElement`.
+        Return a :class:`~sage.libs.gap.element.GapElement`.
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -698,7 +698,7 @@ class Gap(Parent):
         """
         Return (integer) zero in GAP.
 
-        OUTPUT: a :class:`GapElement`
+        OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
         EXAMPLES::
 
@@ -771,7 +771,8 @@ class Gap(Parent):
 
         OUTPUT:
 
-        A :class:`GapElement`. A :exc:`AttributeError` is raised
+        A :class:`~sage.libs.gap.element.GapElement`. A :exc:`AttributeError`
+        is raised
         if there is no such function or global variable.
 
         EXAMPLES::

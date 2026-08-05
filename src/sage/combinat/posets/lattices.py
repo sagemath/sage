@@ -680,7 +680,7 @@ def LatticePoset(data=None, *args, **options):
     .. SEEALSO::
 
         :class:`Posets`, :class:`FiniteLatticePosets`,
-        :func:`JoinSemiLattice`, :func:`MeetSemiLattice`
+        :func:`JoinSemilattice`, :func:`MeetSemilattice`
 
     EXAMPLES:
 

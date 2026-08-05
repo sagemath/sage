@@ -14,15 +14,15 @@ A convenient user interface to various classical ciphers. These include:
 These classical cryptosystems support alphabets such as:
 
 - the capital letters of the English alphabet; see
-  :func:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
+  :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 - the hexadecimal number system; see
-  :func:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
+  :attr:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
 - the binary number system; see
-  :func:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
+  :attr:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
 - the octal number system; see
-  :func:`OctalStrings() <sage.monoids.string_monoid.OctalStrings>`
+  :attr:`OctalStrings() <sage.monoids.string_monoid.OctalStrings>`
 - the radix-64 number system; see
-  :func:`Radix64Strings() <sage.monoids.string_monoid.Radix64Strings>`
+  :attr:`Radix64Strings() <sage.monoids.string_monoid.Radix64Strings>`
 
 AUTHORS:
 
@@ -107,8 +107,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
     supported for the affine cipher:
 
     - capital letters of the English alphabet as implemented in
-      :func:`AlphabeticStrings()
-      <sage.monoids.string_monoid.AlphabeticStrings>`
+      :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
     EXAMPLES:
 
@@ -500,8 +499,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: A.rank_by_chi_square(H.encoding("shift"), Plist)
@@ -709,8 +707,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: A.rank_by_squared_differences(H.encoding("line"), Plist)
@@ -1115,7 +1112,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
         is supported for the affine cipher:
 
         - capital letters of the English alphabet as implemented in
-          :func:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
+          :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
         INPUT:
 
@@ -1666,16 +1663,14 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
     alphabets are supported for the shift cipher:
 
     - capital letters of the English alphabet as implemented in
-      :func:`AlphabeticStrings()
-      <sage.monoids.string_monoid.AlphabeticStrings>`
+      :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
     - the alphabet consisting of the hexadecimal number system as
       implemented in
-      :func:`HexadecimalStrings()
-      <sage.monoids.string_monoid.HexadecimalStrings>`
+      :attr:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
 
     - the alphabet consisting of the binary number system as implemented in
-      :func:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
+      :attr:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
 
     EXAMPLES:
 
@@ -2153,8 +2148,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: S.rank_by_chi_square(H.encoding("shift"), Pdict)
@@ -2388,8 +2382,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: S.rank_by_squared_differences(H.encoding("shift"), Pdict)
@@ -2802,14 +2795,14 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         are supported for the shift cipher:
 
         - capital letters of the English alphabet as implemented in
-          :func:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
+          :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
         - the alphabet consisting of the hexadecimal number system as
           implemented in
-          :func:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
+          :attr:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
 
         - the alphabet consisting of the binary number system as implemented in
-          :func:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
+          :attr:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
 
         INPUT:
 

@@ -112,6 +112,7 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init, MA_ENTRIES_NDARRAY
 from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 from libc.stdio cimport *
 from sage.structure.element cimport (Matrix, Vector)
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.libs.gmp.random cimport *
 from sage.misc.randstate cimport randstate, current_randstate
@@ -149,6 +150,8 @@ atexit.register(m4ri_destroy_all_codes)
 cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     """
     Dense matrix over GF(2).
+
+    .. automethod:: _right_kernel_matrix
     """
     def __cinit__(self):
         """
@@ -553,7 +556,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         - ``from_list`` -- boolean (default: ``False``); if ``True``,
           returns the ``i``-th element of ``self.rows()`` (see
-          :func:`rows`), which may be faster, but requires building a
+          :meth:`~sage.matrix.matrix1.Matrix.rows`), which may be faster,
+          but requires building a
           list of all rows the first time it is called after an entry
           of the matrix is changed.
 
@@ -774,11 +778,113 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         ALGORITHM: Uses the 'Method of the Four Russians
         Multiplication', see :func:`_multiply_m4rm`.
         """
+        check_matrix_multiplication_sizes(self, right)
+
         if get_verbose() >= 2:
             verbose('matrix multiply of %s x %s matrix by %s x %s matrix' % (
                 self._nrows, self._ncols, right._nrows, right._ncols))
 
-        return self._multiply_strassen(right, 0)
+        cdef Matrix_mod2_dense ans
+        MS = self.matrix_space(self._nrows, right._ncols, sparse=False)
+        ans = MS.element_class(MS, None, False, False)
+        ans._set_to_product_strassen(self, <Matrix0>right, 0)
+        return ans
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using M4RI.
+
+        This defers to :meth:`_set_to_product_strassen` with a cutoff of ``0``,
+        which lets M4RI choose the multiplication routine, exactly as ordinary
+        multiplication does.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: A = matrix(GF(2), 2, 3, [1, 0, 1, 0, 1, 1])
+            sage: B = matrix(GF(2), 3, 2, [1, 1, 0, 1, 1, 0])
+            sage: C = matrix(GF(2), 2, 2)
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+        """
+        self._set_to_product_strassen(left, right, 0)
+
+    cdef void _set_to_product_strassen(self, Matrix0 left, Matrix0 right, int cutoff) except *:
+        r"""
+        Set ``self`` to ``left * right`` using M4RI.
+
+        ``mzd_mul`` takes the destination as its first argument, so the product
+        is written straight into the destination's M4RI storage.  This is the
+        shared core of :meth:`_multiply_strassen`, :meth:`_matrix_times_matrix_`
+        and :meth:`set_to_product`.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+        - ``cutoff`` -- matrix dimension where M4RM should be used instead of
+          Strassen; ``0`` lets M4RI decide
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: A = Matrix(GF(2), 4, 3, [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1])
+            sage: B = Matrix(GF(2), 3, 4, [0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0])
+            sage: C = matrix(GF(2), 4, 4)
+            sage: C.set_to_product(A, B)
+            sage: C
+            [0 0 0 0]
+            [1 0 0 1]
+            [0 1 0 1]
+            [1 1 0 0]
+
+        TESTS:
+
+        A nonempty destination with zero columns is a valid result::
+
+            sage: A = random_matrix(GF(2), 3, 4)
+            sage: B = random_matrix(GF(2), 4, 0)
+            sage: C = matrix(GF(2), 3, 0)
+            sage: C.set_to_product(A, B)
+            sage: (C.nrows(), C.ncols(), C == A * B, C == A._multiply_strassen(B, 0))
+            (3, 0, True, True)
+
+        A reused destination is cleared when the inner dimension is zero::
+
+            sage: A = matrix(GF(2), 3, 0)
+            sage: B = matrix(GF(2), 0, 4)
+            sage: C = matrix(GF(2), 3, 4, [1] * 12)
+            sage: C.set_to_product(A, B)
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_mod2_dense _left = <Matrix_mod2_dense>left
+        cdef Matrix_mod2_dense _right = <Matrix_mod2_dense>right
+
+        # A matrix with no output entries needs no initialization.  In
+        # particular, ``mzd_set_ui`` is not valid for a zero-column matrix.
+        if self._nrows == 0 or self._ncols == 0:
+            return
+
+        # With a zero inner dimension the product is zero, but the destination
+        # may contain entries from a previous product and must be cleared.
+        if _left._ncols == 0:
+            sig_on()
+            mzd_set_ui(self._entries, 0)
+            sig_off()
+            return
+
+        sig_on()
+        self._entries = mzd_mul(self._entries, _left._entries, _right._entries, cutoff)
+        sig_off()
 
     cpdef Matrix_mod2_dense _multiply_m4rm(Matrix_mod2_dense self, Matrix_mod2_dense right, int k):
         """
@@ -978,17 +1084,11 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_mod2_dense ans
-        #ans = self.new_matrix(nrows = self._nrows, ncols = right._ncols)
+        # ans = self.new_matrix(nrows=self._nrows, ncols=right._ncols)
         # The following is a little faster:
         MS = self.matrix_space(self._nrows, right._ncols, sparse=False)
         ans = MS.element_class(MS, None, False, False)
-        if self._nrows == 0 or self._ncols == 0 or right._nrows == 0:
-            # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
-            return ans
-
-        sig_on()
-        ans._entries = mzd_mul(ans._entries, self._entries, right._entries, cutoff)
-        sig_off()
+        ans._set_to_product_strassen(self, right, cutoff)
         return ans
 
     def __neg__(self):
@@ -2236,7 +2336,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         OUTPUT:
 
         A pair ``(row_ordering, col_ordering)`` of
-        :class:`~sage.groups.perm_gps.constructor.PermutationGroupElement`
+        :class:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement`
         that represents a doubly lexical ordering of the rows or columns.
 
         .. SEEALSO::

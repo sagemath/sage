@@ -221,10 +221,10 @@ currently available:
 
 * ``'lp'``: A solver for constant sum 2 player games using linear
   programming. This constructs a
-  :mod:`MixedIntegerLinearProgram <sage.numerical.MILP>` using the
+  :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>` using the
   solver which was passed in with ``solver`` to solve the linear
   programming representation of the game. See
-  :class:`MixedIntegerLinearProgram` for more on MILP solvers in Sage.
+  :class:`~sage.numerical.mip.MixedIntegerLinearProgram` for more on MILP solvers in Sage.
 
 * ``'lrs'``: Reverse search vertex enumeration for 2 player games. This
   algorithm uses the optional 'lrslib' package. To install it, type
@@ -445,8 +445,8 @@ It is also possible to generate a Normal form game from a gambit Game::
      (1, 0): [10.0, 2.0],
      (1, 1): [5.0, 5.0]}
 
-For more information on using Gambit in Sage see: :mod:`Using Gambit in
-Sage<sage.game_theory.gambit_docs>`. This includes how to access Gambit
+For more information on using Gambit in Sage see ``Using Gambit in
+Sage``. This includes how to access Gambit
 directly using the version of iPython shipped with Sage and an explanation
 as to why the ``int`` calls are needed to handle the Sage preparser.
 
@@ -495,7 +495,7 @@ the value of their suitcase is 2.
 
 Several standard Normal Form Games have also been implemented.
 For more information on how to access these, see:
-:mod:`Game Theory Catalog<sage.game_theory.catalog>`.
+:mod:`Game Theory Catalog<sage.game_theory.catalog_normal_form_games>`.
 Included is information on the situation each Game models.
 For example::
 

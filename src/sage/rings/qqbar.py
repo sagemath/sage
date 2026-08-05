@@ -691,8 +691,10 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         """
         Given a polynomial with algebraic coefficients, return a
         wrapper that caches high-precision calculations and
-        factorizations. This wrapper can be passed to :meth:`polynomial_root`
-        in place of the polynomial.
+        factorizations. This wrapper can be passed to
+        :meth:`~sage.rings.qqbar.AlgebraicField.polynomial_root` or
+        :meth:`~sage.rings.qqbar.AlgebraicRealField.polynomial_root` in
+        place of the polynomial.
 
         Using :meth:`common_polynomial` makes no semantic difference, but will
         improve efficiency if you are dealing with multiple roots
@@ -4651,8 +4653,8 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
     def interval_fast(self, field):
         r"""
-        Given a :class:`RealIntervalField` or
-        :class:`ComplexIntervalField`, compute the value of this number
+        Given a :class:`~sage.rings.abc.RealIntervalField` or
+        :class:`~sage.rings.abc.ComplexIntervalField`, compute the value of this number
         using interval arithmetic of at least the precision of the field,
         and return the value in that field. (More precision may be used
         in the computation.)  The returned interval may be arbitrarily
@@ -5279,7 +5281,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def interval_exact(self, field):
         r"""
-        Given a :class:`ComplexIntervalField`, compute the best possible
+        Given a :class:`~sage.rings.abc.ComplexIntervalField`, compute the best possible
         approximation of this number in that field. Note that if
         either the real or imaginary parts of this number are
         sufficiently close to some floating-point number (and, in
@@ -5345,10 +5347,10 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     def complex_exact(self, field):
         r"""
-        Given a :class:`ComplexField`, return the best possible approximation of
+        Given a :class:`~sage.rings.abc.ComplexField`, return the best possible approximation of
         this number in that field. Note that if either component is
         sufficiently close to the halfway point between two floating-point
-        numbers in the corresponding :class:`RealField`, then this will trigger
+        numbers in the corresponding :class:`~sage.rings.abc.RealField`, then this will trigger
         exact computation, which may be very slow.
 
         EXAMPLES::
@@ -5922,7 +5924,9 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        We avoid calling :meth:`exactify()` for trivial differences. The
+        We avoid calling
+        :meth:`~sage.rings.qqbar.AlgebraicNumber_base.exactify` for
+        trivial differences. The
         following example will take a long time (more than 5 seconds)
         when calling ``y.exactify()``::
 
@@ -6041,7 +6045,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def interval_exact(self, field):
         """
-        Given a :class:`RealIntervalField`, compute the best possible
+        Given a :class:`~sage.rings.abc.RealIntervalField`, compute the best possible
         approximation of this number in that field. Note that if this
         number is sufficiently close to some floating-point number
         (and, in particular, if this number is exactly representable in
@@ -6114,7 +6118,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def real_number(self, field):
         """
-        Given a :class:`RealField`, compute a good approximation to ``self`` in
+        Given a :class:`~sage.rings.abc.RealField`, compute a good approximation to ``self`` in
         that field. The approximation will be off by at most two
         ulp's, except for numbers which are very close to 0, which
         will have an absolute error at most
@@ -6199,7 +6203,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     def real_exact(self, field):
         r"""
-        Given a :class:`RealField`, compute the best possible approximation of
+        Given a :class:`~sage.rings.abc.RealField`, compute the best possible approximation of
         this number in that field. Note that if this number is
         sufficiently close to the halfway point between two
         floating-point numbers in the field (for the default
@@ -8811,7 +8815,7 @@ AA_golden_ratio = None
 def get_AA_golden_ratio():
     r"""
     Return the golden ratio as an element of the algebraic real field. Used by
-    :meth:`sage.symbolic.constants.golden_ratio._algebraic_`.
+    ``sage.symbolic.constants.GoldenRatio._algebraic_``.
 
     EXAMPLES::
 

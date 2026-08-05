@@ -1887,6 +1887,8 @@ def unpickle_MPolynomialRing_libsingular(base_ring, names, term_order):
 cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     """
     A multivariate polynomial implemented using libSINGULAR.
+
+    .. automethod:: _derivative
     """
     def __init__(self, MPolynomialRing_libsingular parent):
         """
@@ -4659,7 +4661,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         Ensure interrupt does not make the internal state inconsistent::
 
             sage: R.<x,y,z> = QQ[]
-            sage: n = 11  # chosen so that the computation takes > 1 second but not excessively long.
+            sage: n = 12  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
             sage: alarm(0.5); h = (x^2^n-y^2^n).factor()
             Traceback (most recent call last):
@@ -4671,7 +4673,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             AlarmInterrupt
             sage: h = (x^2^n-y^2^n).factor()
             sage: h
-            (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024)
+            (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024) * (x^2048 + y^2048)
         """
         cdef ring *_ring = self._parent_ring
         cdef intvec *iv
@@ -5684,7 +5686,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         - ``variable`` -- the derivative is taken with respect to variable
 
-        .. NOTE:: See also :meth:`derivative`
+        .. NOTE::
+
+            See also :meth:`~sage.rings.polynomial.multi_polynomial.MPolynomial.derivative`.
 
         EXAMPLES::
 
@@ -5995,7 +5999,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -6073,7 +6077,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -6120,7 +6124,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 

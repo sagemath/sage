@@ -5,7 +5,9 @@ Base class for finite field elements
 AUTHORS:
 
 - David Roe (2010-01-14): factored out of sage.structure.element
-- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :issue:`26761`)
+- Sebastian Oehms (2018-07-19): added
+  :meth:`~sage.rings.finite_rings.element_base.FinitePolyExtElement.conjugate`
+  (see :issue:`26761`)
 """
 
 # ****************************************************************************

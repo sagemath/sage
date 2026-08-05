@@ -37,16 +37,16 @@ class IndexedMonoidElement(MonoidElement):
     An element of an indexed monoid.
 
     This is an abstract class which uses the (abstract) method
-    :meth:`_sorted_items` for all of its functions. So to implement an
+    ``_sorted_items`` for all of its functions. So to implement an
     element of an indexed monoid, one just needs to implement
-    :meth:`_sorted_items`, which returns a list of pairs ``(i, p)`` where
+    ``_sorted_items``, which returns a list of pairs ``(i, p)`` where
     ``i`` is the index and ``p`` is the corresponding power, sorted in some
     order. For example, in the free monoid there is no such choice, but for
     the free abelian monoid, one could want lex order or have the highest
     powers first.
 
     Indexed monoid elements are ordered lexicographically with respect to
-    the result of :meth:`_sorted_items` (which for abelian free monoids is
+    the result of ``_sorted_items`` (which for abelian free monoids is
     influenced by the order on the indexing set).
     """
     def __init__(self, F, x) -> None:

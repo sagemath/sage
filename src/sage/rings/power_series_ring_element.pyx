@@ -2743,7 +2743,7 @@ cdef class PowerSeries(AlgebraElement):
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+           :meth:`~sage.rings.power_series_poly.PowerSeries_poly._derivative`
 
         EXAMPLES::
 

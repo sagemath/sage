@@ -2455,7 +2455,7 @@ class DyckWord_complete(DyckWord):
             ....:     for i in range(6) for dw in DyckWords(i))
             True
 
-        .. SEEALSO:: :meth:`to_tamari_sorting_tuple`
+        .. SEEALSO:: :meth:`~sage.combinat.dyck_word.DyckWord.to_tamari_sorting_tuple`
         """
         if not self:
             return []

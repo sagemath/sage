@@ -83,7 +83,8 @@ basis `e_0, e_1, \ldots`::
     sage: A.basis()
     [e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10]
 
-Do not forget to use the method :meth:`inject_variables` to get the
+Do not forget to use the method
+:meth:`~sage.structure.category_object.CategoryObject.inject_variables` to get the
 `e_i` in your namespace::
 
     sage: e0
