@@ -1025,13 +1025,28 @@ class OffsetUnit:
 
     def _instantiate(self, value):
         if not self._is_scalar(value):
-            raise NotImplementedError(f"Unit '{self.__name}'"
-            " cannot be instantiated with a non-scalar value.")
+            raise NotImplementedError(
+                f"Unit '{self.__name}' cannot be instantiated with a non-scalar value."
+            )
         return (self.__scale * value + self.__offset) * self._base_unit()
 
     def _unsupported(self):
-            raise NotImplementedError(f"Unit '{self.__name}'"
-                                      " does not support this operation.")
+        raise NotImplementedError(
+            f"Unit '{self.__name}' does not support this operation."
+        )
+
+    def convert(self, target=None):
+        """
+        Convert this offset unit through its instantiated base-unit form.
+
+        EXAMPLES::
+
+            sage: units.temperature.celsius.convert(units.temperature.kelvin)
+            5563/20*kelvin
+            sage: units.temperature.celsius.convert(units.temperature.fahrenheit)
+            169/5*fahrenheit
+        """
+        return convert(self._instantiate(1), target)
 
     def __mul__(self, other):
         return self._instantiate(other)
@@ -1411,11 +1426,21 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(50 * units.length.light_year / units.time.year, units.length.foot / units.time.second)
         6249954068750/127*(foot/second)
 
+    Offset units can also be converted directly::
+
+        sage: sage.symbolic.units.convert(units.temperature.celsius, units.temperature.kelvin)
+        5563/20*kelvin
+        sage: sage.symbolic.units.convert(units.temperature.celsius, units.temperature.fahrenheit)
+        169/5*fahrenheit
+
     Quantities may contain variables::
 
         sage: sage.symbolic.units.convert(50 * x * units.area.square_meter, units.area.acre)
         acre*(1953125/158080329*x)
     """
+    if isinstance(expr, OffsetUnit):
+        expr = expr._instantiate(1)
+
     base_target = target
     z = {}
     tz = {}
@@ -1428,7 +1453,7 @@ def convert(expr, target):
 
     if target is None:
         return expr
-    # Begin LLM-generated code block (M. Dunn)
+
     if str(target) in offset_unit_to_type:
         category = offset_unit_to_type[str(target)]
         base_unit, scale, offset = offset_unitdict[category][str(target)]
@@ -1443,7 +1468,7 @@ def convert(expr, target):
                 raise ValueError("Incompatible units")
         converted = (coeff - offset) / scale
         return converted.mul(SR.var(str(target)), hold=True)
-    # End LLM-generated code block
+
     for y in base_target.variables():
         if is_unit(y):
             tz[y] = base_units(y)
