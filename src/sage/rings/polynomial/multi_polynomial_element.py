@@ -535,7 +535,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         macaulay2.use(m2_parent)
         return macaulay2('substitute(%s,%s)' % (repr(self), m2_parent._name))
 
-    def degrees(self, as_ETuples=True):
+    def degrees(self, as_ETuples=False):
         r"""
         Return the maximal degree of each variable in this polynomial.
 
@@ -544,7 +544,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``as_ETuples`` -- boolean (default: ``True``); if ``True``, return
+        - ``as_ETuples`` -- boolean (default: ``False``); if ``True``, return
           the result as an :class:`~sage.rings.polynomial.polydict.ETuple`,
           otherwise return a plain :class:`tuple`
 
@@ -558,11 +558,11 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.degrees()                                                            # needs sage.rings.number_field
             (2, 2, 0)
             sage: type(f.degrees())                                                      # needs sage.rings.number_field
-            <class 'sage.rings.polynomial.polydict.ETuple'>
-            sage: f.degrees(as_ETuples=False)                                            # needs sage.rings.number_field
-            (2, 2, 0)
-            sage: type(f.degrees(as_ETuples=False))                                     # needs sage.rings.number_field
             <class 'tuple'>
+            sage: f.degrees(as_ETuples=True)                                             # needs sage.rings.number_field
+            (2, 2, 0)
+            sage: type(f.degrees(as_ETuples=True))                                      # needs sage.rings.number_field
+            <class 'sage.rings.polynomial.polydict.ETuple'>
             sage: f = x^2 + z^2                                                          # needs sage.rings.number_field
             sage: f.degrees()                                                            # needs sage.rings.number_field
             (2, 0, 2)
