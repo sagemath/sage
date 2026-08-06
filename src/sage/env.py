@@ -7,8 +7,9 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2013 R. Andrew Ohana <andrew.ohana@gmail.com>
-#       Copyright (C) 2019 Jeroen Demeyer <J.Demeyer@UGent.be>
+#       Copyright (C) 2012-2013 R. Andrew Ohana <andrew.ohana@gmail.com>
+#                     2019      Jeroen Demeyer <J.Demeyer@UGent.be>
+#                     2013-2026 Julian Rüth <julian.rueth@fsfe.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -178,7 +179,32 @@ if sys.platform == 'win32':
     home_dir = os.environ.get("USERPROFILE")
 else:  # Unix-like systems (Linux, macOS, etc.)
     home_dir = os.environ.get("HOME")
-DOT_SAGE = var("DOT_SAGE", join(home_dir, ".sage"))
+
+def _create_tmp_dotsage() -> str:
+    r"""
+    Create a temporary directory to be used as ~/.sage on systems where no HOME
+    or DOT_SAGE variables have been set, e.g., in minimal container setups or
+    in rattler-build.
+
+    EXAMPLES::
+
+        sage: from sage.env import _create_tmp_dotsage
+        sage: name = _create_tmp_dotsage()
+
+        sage: import os.path
+        sage: os.path.isdir(name)
+        True
+
+    """
+    from tempfile import TemporaryDirectory
+    tmpdir = TemporaryDirectory(ignore_cleanup_errors=True)
+
+    import atexit
+    atexit.register(tmpdir.cleanup)
+
+    return tmpdir.name
+
+DOT_SAGE = var("DOT_SAGE", join(home_dir, ".sage")) or _create_tmp_dotsage()
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 
 # for sage_setup.setenv

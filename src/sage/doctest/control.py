@@ -18,6 +18,7 @@ AUTHORS:
 #                     2017      Erik M. Bray
 #                     2017-2021 Frédéric Chapoton
 #                     2018      Sébastien Labbé
+#                     2018-2026 Julian Rüth <julian.rueth@fsfe.org>
 #                     2019      François Bissey
 #                     2020-2023 Matthias Koeppe
 #                     2022      Michael Orlitzky
@@ -772,7 +773,7 @@ class DocTestController(SageObject):
             {'walltime': 1.0}
         """
         from sage.misc.temporary_file import atomic_write
-        with atomic_write(filename) as stats_file:
+        with atomic_write(filename, makedirs=0o700) as stats_file:
             json.dump(self.stats, stats_file, sort_keys=True, indent=4)
 
     def log(self, s, end='\n'):
