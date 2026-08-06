@@ -47,13 +47,15 @@ Giving improper units to convert to raises a :exc:`ValueError`::
     ...
     ValueError: Incompatible units
 
-Converting to a unit with an offset (like Celsius) is not supported::
+Units with offsets (like Celsius and Fahrenheit) can be instantiated
+and converted::
 
+    sage: units.temperature.celsius
+    celsius
+    sage: 5*units.temperature.celsius
+    5563/20*kelvin
     sage: units.temperature.kelvin.convert(units.temperature.celsius)
-    Traceback (most recent call last):
-    ...
-    NotImplementedError: Unit 'celsius' requires an offset and is not supported.
-    Supported units in the category 'temperature' are: kelvin, rankine.
+    -5443/20*celsius
 
 TESTS:
 
@@ -92,9 +94,15 @@ from sage.symbolic.ring import SR
 one = QQ.one()
 
 
-unsupported_units = {
-    'temperature': {'celsius', 'fahrenheit', 'centigrade'},
+offset_unitdict = {
+        'temperature': {
+                'celsius': ('kelvin', one, QQ(27315) / 100),
+                'centigrade': ('kelvin', one, QQ(27315) / 100),
+                'fahrenheit': ('kelvin', QQ(5) / 9, QQ(45967) / 180),
+        },
 }
+
+offset_unit_to_type = {name: category for category, value in offset_unitdict.items() for name in value}
 
 unitdict = {
 'acceleration':
@@ -395,7 +403,10 @@ unitdict = {
 
 'temperature':
         {'kelvin' : 1,
-         'rankine' : QQ(5) / 9},
+         'rankine' : QQ(5) / 9,
+         'celsius' : None,
+         'centigrade' : None,
+         'fahrenheit' : None},
 
 'time':
         {'century': 3153600000,
@@ -485,8 +496,8 @@ def evalunitdict():
     """
     Replace all the string values of the unitdict variable by their
     evaluated forms, and builds some other tables for ease of use.
-    This function is mainly used internally, for efficiency (and
-    flexibility) purposes, making it easier to describe the units.
+    This function is mainly used internally for efficiency and
+    flexibility, making it easier to describe the units.
 
     EXAMPLES::
 
@@ -796,6 +807,9 @@ unit_docs = {
 
 'temperature_docs':
         {'kelvin': 'SI base unit of temperature.\nDefined to be exactly 0 at absolute zero and 273.16 at the triple point of Vienna Standard Mean Ocean Water.',
+        'celsius': 'Offset unit of temperature.\nDefined by K = C + 273.15.',
+        'centigrade': 'Alias for celsius.\nDefined by K = C + 273.15.',
+        'fahrenheit': 'Offset unit of temperature.\nDefined by K = (F + 459.67) * 5/9.',
         'rankine': 'Defined to be 0 at absolute zero and to have the same degree increment as Fahrenheit.\nRankine is related to kelvin by the equation K = 5/9*R.'},
 
 'time_docs':
@@ -973,6 +987,103 @@ def unit_derivations_expr(v):
         unit_derivations[v] = Z
     return Z
 
+# Begin LLM-generated code block (M. Dunn)
+@instancedoc
+class OffsetUnit:
+    """
+    A unit with an affine offset relative to its base unit.
+
+    EXAMPLES::
+
+        sage: units.temperature.celsius
+        celsius
+        sage: 5*units.temperature.celsius
+        5563/20*kelvin
+    """
+    def __init__(self, name, category, base_unit, scale, offset):
+        self.__name = name
+        self.__category = category
+        self.__base_unit = base_unit
+        self.__scale = scale
+        self.__offset = offset
+
+    def __repr__(self):
+        return self.__name
+
+    def _instancedoc_(self):
+        return unitdocs(self)
+
+    def _base_unit(self):
+        return str_to_unit(self.__base_unit)
+
+    def _is_scalar(self, value):
+        if is_unit(value):
+            return False
+        if isinstance(value, Expression):
+            return not any(is_unit(v) for v in value.variables())
+        return True
+
+    def _instantiate(self, value):
+        if not self._is_scalar(value):
+            raise NotImplementedError(
+                f"Unit '{self.__name}' cannot be instantiated with a non-scalar value."
+            )
+        return (self.__scale * value + self.__offset) * self._base_unit()
+
+    def _unsupported(self):
+        raise NotImplementedError(
+            f"Unit '{self.__name}' does not support this operation.\n"
+            f"Try {self._base_unit()} instead."
+        )
+
+    def convert(self, target=None):
+        """
+        Convert this offset unit through its instantiated base-unit form.
+
+        EXAMPLES::
+            sage: units.temperature.celsius.convert(units.temperature.kelvin)
+            5483/20*kelvin
+            sage: units.temperature.celsius.convert(units.temperature.fahrenheit)
+            169/5*fahrenheit
+        """
+        return convert(self._instantiate(1), target)
+
+    def __mul__(self, other):
+        return self._instantiate(other)
+
+    def __rmul__(self, other):
+        return self._instantiate(other)
+
+    def __truediv__(self, other):
+        self._unsupported()
+
+    def __rtruediv__(self, other):
+        self._unsupported()
+
+    def __pow__(self, other):
+        self._unsupported()
+
+    def __rpow__(self, other):
+        self._unsupported()
+
+    def __add__(self, other):
+        self._unsupported()
+
+    def __radd__(self, other):
+        self._unsupported()
+
+    def __sub__(self, other):
+        self._unsupported()
+
+    def __rsub__(self, other):
+        self._unsupported()
+
+    def __neg__(self):
+        self._unsupported()
+
+    def __pos__(self):
+        self._unsupported()
+# End LLM-generated code block
 
 @instancedoc
 class UnitExpression(Expression):
@@ -1155,15 +1266,13 @@ class Units(ExtraTabCompletion):
             sage: units.area.acre is units.area.acre
             True
         """
-        unsupported_for_collection = unsupported_units.get(self.__name, set())
-        if name in unsupported_for_collection:
-            raise NotImplementedError(
-                f"Unit '{name}' requires an offset and is not supported.\n"
-                f"Supported units in the category '{self.__name}' are: "
-                f"{', '.join(sorted(set(self.__data)))}."
-            )
         if name in self.__units:
             return self.__units[name]
+        if name in offset_unitdict.get(self.__name, {}):
+            base_unit, scale, offset = offset_unitdict[self.__name][name]
+            U = OffsetUnit(name, self.__name, base_unit, scale, offset)
+            self.__units[name] = U
+            return U
         if len(unit_to_type) == 0:
             evalunitdict()
         try:
@@ -1219,8 +1328,11 @@ def unitdocs(unit):
         ...
         ValueError: no documentation exists for the unit earth
     """
+    name = str(unit)
+    if name in offset_unit_to_type:
+        return unit_docs[offset_unit_to_type[name] + "_docs"][name]
     if is_unit(unit):
-        return unit_docs[unit_to_type[str(unit)] + "_docs"][str(unit)]
+        return unit_docs[unit_to_type[name] + "_docs"][name]
     raise ValueError("no documentation exists for the unit %s" % unit)
 
 
@@ -1252,7 +1364,8 @@ def is_unit(s) -> bool:
         sage: sage.symbolic.units.is_unit(var('meter'))
         True
     """
-    return str(s) in unit_to_type
+    name = str(s)
+    return name in unit_to_type or name in offset_unit_to_type
 
 
 def convert(expr, target):
@@ -1313,11 +1426,21 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(50 * units.length.light_year / units.time.year, units.length.foot / units.time.second)
         6249954068750/127*(foot/second)
 
+    Offset units can also be converted directly::
+
+        sage: sage.symbolic.units.convert(units.temperature.celsius, units.temperature.kelvin)
+        5483/20*kelvin
+        sage: sage.symbolic.units.convert(units.temperature.celsius, units.temperature.fahrenheit)
+        169/5*fahrenheit
+
     Quantities may contain variables::
 
         sage: sage.symbolic.units.convert(50 * x * units.area.square_meter, units.area.acre)
         acre*(1953125/158080329*x)
     """
+    if isinstance(expr, OffsetUnit):
+        expr = expr._instantiate(1)
+
     base_target = target
     z = {}
     tz = {}
@@ -1330,6 +1453,22 @@ def convert(expr, target):
 
     if target is None:
         return expr
+
+    if str(target) in offset_unit_to_type:
+        category = offset_unit_to_type[str(target)]
+        base_unit, scale, offset = offset_unitdict[category][str(target)]
+        base_target = str_to_unit(base_unit)
+        for y in base_target.variables():
+            if is_unit(y):
+                tz[y] = base_units(y)
+        base_target = base_target.subs(tz)
+        coeff = (expr / base_target).expand()
+        for variable in coeff.variables():
+            if is_unit(variable):
+                raise ValueError("Incompatible units")
+        converted = (coeff - offset) / scale
+        return converted.mul(SR.var(str(target)), hold=True)
+
     for y in base_target.variables():
         if is_unit(y):
             tz[y] = base_units(y)
@@ -1376,6 +1515,9 @@ def base_units(unit):
         x
     """
     from sage.misc.sage_eval import sage_eval
+    if str(unit) in offset_unit_to_type:
+        base_unit, scale, offset = offset_unitdict[offset_unit_to_type[str(unit)]][str(unit)]
+        return str_to_unit(base_unit)
     if str(unit) not in unit_to_type:
         return unit
     if unit_to_type[str(unit)] in ['si_prefixes', 'unit_multipliers']:
