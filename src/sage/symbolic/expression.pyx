@@ -12023,7 +12023,7 @@ cdef class Expression(Expression_abc):
             sage: 5*units.temperature.celsius
             5563/20*kelvin
             sage: s.convert(units.temperature.celsius)
-            -5443/20*celsius
+            -5363/20*celsius
 
         Non-offset temperature units can be combined with other units
         to form compound expressions::
