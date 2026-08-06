@@ -209,13 +209,13 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
 
     Using each pair already calculated, find remaining pairs by adding/removing
     vertices from each component, constructing the lattice in the process. Start
-    at `({}, G)`, which corresponds to the bottom of the lattice, and iterate
+    at `(\{\}, G)`, which corresponds to the bottom of the lattice, and iterate
     while moving up.
 
     We make use of two tricks to efficiently calculate both sides of each pair:
 
     - if `(L, R)` is a maximal orthogonal pair, and we want to add some vertex `x`
-        to `L`, the right orthogonal of `L \cup {x}` can be obtained by removing
+        to `L`, the right orthogonal of `L \cup \{x\}` can be obtained by removing
         the out-neighbors of `x` from `R`. Additionally, the resulting set is sure
         to be the right component of some pair.
 
@@ -428,17 +428,17 @@ def is_two_acyclic_factorization_system(G, certificate=False):
 
     .. MATH::
 
-        x \rightarrow y \iff x = y \text{or} xy \text{is an edge}
+        x \rightarrow y \iff x = y \, \text{or} \, xy \, \text{is an edge}
 
     This is equivalent to viewing ``G`` as the representation of some arbitrary
     binary relation. Now let `\twoheadrightarrow` and `\hookrightarrow` denote the
     previous relation restricted to surjective and injective edges, respectively.
-    The triple `(rightarrow, \twoheadrightarrow, \hookrightarrow)` is said to be
+    The triple `(\rightarrow, \twoheadrightarrow, \hookrightarrow)` is said to be
     two-acyclic factorization system if:
 
     #. for all `x, z`, `x \rightarrow z` if and only if there exists some `y` such
         that `x \twoheadrightarrow y` and `y \hookrightarrow z`. If this holds we say
-        that `(rightarrow, \twoheadrightarrow, \hookrightarrow)` is a factorization
+        that `(\rightarrow, \twoheadrightarrow, \hookrightarrow)` is a factorization
         system.
 
     #. for all `x, y`, we do not have `x \twoheadrightarrow y \twoheadrightarrow x`
