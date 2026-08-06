@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-environment
 r"""
-Check for pygambit
+Check for pygambit and gtdraw
 """
 # ****************************************************************************
 #       Copyright (C) 2025 SageMath Developers
@@ -71,5 +71,88 @@ class pygambit(PythonModule):
         )
 
 
+class gtdraw(PythonModule):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of the
+    Python package :ref:`gtdraw <spkg_gtdraw>`.
+
+    gtdraw is the game tree drawing tool of the gambit project; it renders
+    extensive form games as TikZ pictures.
+
+    Generating the TikZ source needs nothing besides the Python package, but
+    rendering a tree -- which is what happens whenever such a picture is
+    displayed -- or exporting it to PDF, PNG or SVG additionally requires
+    external tools, LaTeX in particular; see :meth:`resolution` and the `gtdraw
+    installation guide
+    <https://www.gambit-project.org/gtdraw/installation/>`_.
+
+    EXAMPLES::
+
+        sage: from sage.features.gambit import gtdraw
+        sage: gtdraw().is_present()                             # optional - gtdraw
+        FeatureTestResult('gtdraw', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.gambit import gtdraw
+            sage: isinstance(gtdraw(), gtdraw)
+            True
+        """
+        PythonModule.__init__(self, 'gtdraw', spkg='gtdraw',
+                              url='https://www.gambit-project.org/gtdraw/installation/')
+
+    def resolution(self):
+        r"""
+        Return a suggestion on how to make :meth:`is_present` pass if it did
+        not pass.
+
+        The message gives the command for a non-managed installation of Sage
+        (plain ``pip``), the command for a managed installation of Sage such as
+        one based on conda or on system packages (``sage --pip``), the further
+        prerequisites needed for rendering and exporting trees, and pointers to
+        the upstream gtdraw installation guide and documentation.
+
+        OUTPUT: string
+
+        EXAMPLES::
+
+            sage: from sage.features.gambit import gtdraw
+            sage: print(gtdraw().resolution())
+            To install gtdraw you can run one of the following:
+              * in a non-managed installation of Sage:  pip install gtdraw
+              * in a managed installation of Sage...:  sage --pip install gtdraw
+            Generating TikZ source requires nothing further.  Rendering a tree -- which
+            happens whenever such a picture is displayed -- or exporting it to PDF, PNG
+            or SVG additionally requires:
+              * a LaTeX installation providing pdflatex and the TikZ package
+                (for example MacTeX, TeX Live or MiKTeX), for all of these
+              * ImageMagick, for PNG
+              * pdftocairo (poppler-utils), for SVG
+            Further installation instructions are available at
+            https://www.gambit-project.org/gtdraw/installation/, and the gtdraw
+            documentation at https://www.gambit-project.org/gtdraw/.
+        """
+        if self._hidden:
+            return super().resolution()
+        return (
+            "To install gtdraw you can run one of the following:\n"
+            "  * in a non-managed installation of Sage:  pip install gtdraw\n"
+            "  * in a managed installation of Sage (for example based on conda "
+            "or on system packages):  sage --pip install gtdraw\n"
+            "Generating TikZ source requires nothing further.  Rendering a "
+            "tree -- which\nhappens whenever such a picture is displayed -- or "
+            "exporting it to PDF, PNG\nor SVG additionally requires:\n"
+            "  * a LaTeX installation providing pdflatex and the TikZ package\n"
+            "    (for example MacTeX, TeX Live or MiKTeX), for all of these\n"
+            "  * ImageMagick, for PNG\n"
+            "  * pdftocairo (poppler-utils), for SVG\n"
+            "Further installation instructions are available at\n"
+            "{url}, and the gtdraw\n"
+            "documentation at https://www.gambit-project.org/gtdraw/.".format(url=self.url)
+        )
+
+
 def all_features():
-    return [pygambit()]
+    return [pygambit(), gtdraw()]

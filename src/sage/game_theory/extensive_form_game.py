@@ -11,17 +11,28 @@ to it, in the same spirit as
 A game can either be built in Sage with the tree-building methods
 (:meth:`~ExtensiveFormGame.add_player`,
 :meth:`~ExtensiveFormGame.append_move`, ...) or wrapped from an existing
-``pygambit`` game.  In the builder, nodes are referred to by string
-**labels** so that the user never has to handle ``pygambit`` objects directly:
-each move auto-labels the child nodes it creates by their path in the tree
-(the root is ``'root'``, its ``'L'`` child is ``'root.L'``, and so on).
+``pygambit`` game.  Following gambit, tree nodes carry no labels: a node is
+referred to by the ``pygambit`` ``Node`` object reached by navigating action
+labels down from the root, ``g.root``.  For instance ``g.root`` is the root and
+``g.root.children['L']`` is the child reached by Alice's action ``'L'``.  The
+moves themselves take the **action** labels (a required argument).
 
 Its other main purpose is to provide a Sage entry point to gambit's extensive
 form games: convert back to the underlying gambit game with
 :meth:`~ExtensiveFormGame._gambit_`, save and load games in gambit's ``.efg``
 format with :meth:`~ExtensiveFormGame.save_efg` /
-:meth:`~ExtensiveFormGame.load_efg`, and compute Nash equilibria with
-:meth:`~ExtensiveFormGame.obtain_nash`.
+:meth:`~ExtensiveFormGame.load_efg`, load example games from the gambit catalog
+with :meth:`~ExtensiveFormGame.load_from_gambit_catalog`, and compute Nash
+equilibria with :meth:`~ExtensiveFormGame.obtain_nash`.
+
+Game trees can be drawn with :meth:`~ExtensiveFormGame.plot`, either with
+Sage's own graph plotting or -- for publication-quality TikZ pictures -- with
+the optional `gtdraw <https://www.gambit-project.org/gtdraw/>`_ package.  The
+latter gives a :class:`GameTreeTikzPicture`; displaying one compiles it with
+LaTeX and opens the picture, so seeing it needs a LaTeX installation on top of
+the package itself (see the `gtdraw installation guide
+<https://www.gambit-project.org/gtdraw/installation/>`_), while reading its
+TikZ source does not.
 
 EXAMPLES:
 
@@ -31,20 +42,14 @@ knowing Alice's choice (his two nodes share an information set)::
 
     sage: # optional - pygambit
     sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-    sage: g = ExtensiveFormGame()
-    sage: g.add_player('Alice'); g.add_player('Bob')
-    'Alice'
-    'Bob'
-    sage: g.append_move('root', 'Alice', ['L', 'R'])
-    ['root.L', 'root.R']
-    sage: g.append_move('root.L', 'Bob', ['l', 'r'])
-    ['root.L.l', 'root.L.r']
-    sage: g.append_infoset('root.R', 'root.L')
-    ['root.R.l', 'root.R.r']
-    sage: payoffs = {'root.L.l': [3, 1], 'root.L.r': [0, 0],
-    ....:            'root.R.l': [0, 0], 'root.R.r': [1, 3]}
-    sage: for leaf, payoff in payoffs.items():
-    ....:     g.set_outcome(leaf, payoff)
+    sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+    sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+    sage: g.append_move(g.root.children['L'], 'Bob', ['l', 'r'])
+    sage: g.append_infoset(g.root.children['R'], g.root.children['L'])
+    sage: for a, payoff in zip(['l', 'r'], [[3, 1], [0, 0]]):
+    ....:     g.set_outcome(g.root.children['L'].children[a], payoff)
+    sage: for a, payoff in zip(['l', 'r'], [[0, 0], [1, 3]]):
+    ....:     g.set_outcome(g.root.children['R'].children[a], payoff)
     sage: g
     An extensive form game with 2 players
     sage: g.is_perfect_recall
@@ -73,11 +78,125 @@ AUTHORS:
 
 from sage.structure.sage_object import SageObject
 from sage.misc.temporary_file import atomic_write
+from sage.misc.latex_standalone import TikzPicture
 
-from sage.features.gambit import pygambit
+from sage.features.gambit import pygambit, gtdraw
 from sage.misc.lazy_import import lazy_import
 lazy_import('pygambit', ['Game', 'read_efg', 'catalog'], feature=pygambit())
 lazy_import('pygambit', 'nash', 'gambit_nash', feature=pygambit())
+lazy_import('gtdraw', 'tikz', 'gtdraw_tikz', feature=gtdraw())
+
+
+class GameTreeTikzPicture(TikzPicture):
+    r"""
+    The TikZ picture of a game tree, as drawn by gtdraw.
+
+    This is the :class:`~sage.misc.latex_standalone.TikzPicture` returned by
+    :meth:`ExtensiveFormGame.plot` with ``backend='gtdraw'``, and it inherits
+    that class' whole interface: :meth:`~sage.misc.latex_standalone.Standalone.pdf`,
+    :meth:`~sage.misc.latex_standalone.Standalone.png`,
+    :meth:`~sage.misc.latex_standalone.Standalone.svg`,
+    :meth:`~sage.misc.latex_standalone.Standalone.tex` and
+    :meth:`~sage.misc.latex_standalone.Standalone.save` write the picture to a
+    file, :meth:`~sage.misc.latex_standalone.Standalone.content` returns the
+    TikZ source and ``str`` of it the whole standalone LaTeX document.
+
+    It differs from a plain ``TikzPicture`` only in how it displays itself.  A
+    ``TikzPicture`` renders inline in a Jupyter notebook but prints its LaTeX
+    source at the Sage command line; this class renders in both, compiling the
+    picture to a PDF in a temporary file and handing it to the platform viewer,
+    the way :meth:`~sage.plot.graphics.Graphics.show` does for an ordinary Sage
+    plot.  Displaying it therefore needs a LaTeX installation, while merely
+    building it -- and reading its :meth:`content` -- does not.
+
+    EXAMPLES::
+
+        sage: # optional - pygambit gtdraw
+        sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
+        sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+        sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+        sage: g.set_outcome(g.root.children['L'], [2, 5])
+        sage: g.set_outcome(g.root.children['R'], [3, 1])
+        sage: t = g.plot(backend='gtdraw')
+        sage: t
+        Game tree TikZ picture
+        sage: r'\begin{tikzpicture}' in t.content()
+        True
+    """
+    def _repr_(self):
+        r"""
+        Return a short string representation.
+
+        Unlike :meth:`sage.misc.latex_standalone.Standalone._repr_`, which
+        prints the LaTeX document, this stays on one line: it is the text the
+        command line shows next to the launched viewer.  Use ``print(self)``
+        for the document and :meth:`content` for the TikZ source.
+
+        EXAMPLES::
+
+            sage: # optional - pygambit gtdraw
+            sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.set_outcome(g.root.children['L'], [2, 5])
+            sage: g.set_outcome(g.root.children['R'], [3, 1])
+            sage: g.plot(backend='gtdraw')._repr_()
+            'Game tree TikZ picture'
+        """
+        return "Game tree TikZ picture"
+
+    def _rich_repr_(self, display_manager, **kwds):
+        r"""
+        Return a rich output container for this picture.
+
+        At the Sage command line this compiles the picture to a PDF in a
+        temporary file and returns it as an
+        :class:`~sage.repl.rich_output.output_graphics.OutputImagePdf`, which
+        the command line backend opens in the platform's PDF viewer -- the same
+        route an ordinary Sage plot takes.  In a Jupyter notebook the picture is
+        rendered inline by
+        :meth:`sage.misc.latex_standalone.Standalone._rich_repr_`.  Anywhere
+        else, notably in a doctest or a plain script, this returns ``None`` and
+        nothing is compiled.
+
+        See :mod:`sage.repl.rich_output` for details.
+
+        INPUT:
+
+        - ``display_manager`` -- the display manager
+
+        - ``**kwds`` -- passed on to
+          :meth:`~sage.misc.latex_standalone.Standalone.pdf` (command line) or
+          to :meth:`sage.misc.latex_standalone.Standalone._rich_repr_`
+
+        OUTPUT: a rich output container, or ``None``
+
+        EXAMPLES:
+
+        Doctests neither run in a terminal nor in a notebook, so nothing is
+        compiled and no LaTeX is needed::
+
+            sage: # optional - pygambit gtdraw
+            sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
+            sage: from sage.repl.rich_output import get_display_manager
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.set_outcome(g.root.children['L'], [2, 5])
+            sage: g.set_outcome(g.root.children['R'], [3, 1])
+            sage: dm = get_display_manager()
+            sage: dm.is_in_terminal()
+            False
+            sage: g.plot(backend='gtdraw')._rich_repr_(dm) is None
+            True
+        """
+        if display_manager.is_in_terminal():
+            types = display_manager.types
+            if types.OutputImagePdf not in display_manager.supported_output():
+                return None
+            from sage.repl.rich_output.buffer import OutputBuffer
+            filename = self.pdf(view=False, **kwds)
+            return types.OutputImagePdf(OutputBuffer.from_file(filename))
+        return super()._rich_repr_(display_manager, **kwds)
 
 
 class ExtensiveFormGame(SageObject):
@@ -93,11 +212,13 @@ class ExtensiveFormGame(SageObject):
     or by wrapping an existing ``pygambit`` game passed to the constructor; use
     :meth:`_gambit_` to recover the underlying gambit game.
 
-    In the builder, nodes are referred to by string **labels**.  A freshly
-    created child node is auto-labeled by its path in the tree: the root is
-    ``'root'``, the child reached by action ``'L'`` is ``'root.L'``, and so on
-    (pass ``children`` to override).  The tree-building methods are
-    :meth:`add_player`, :meth:`append_move`, :meth:`append_chance_move`,
+    Following gambit, tree nodes carry no labels: a node is the ``pygambit``
+    ``Node`` reached by navigating action labels down from the root
+    (:meth:`root`).  For example ``g.root.children['L']`` is the child of the
+    root reached by the action labeled ``'L'``, and
+    ``g.root.children['L'].children['l']`` the grandchild after ``'l'``.  The
+    tree-building methods take such nodes and the required **action** labels;
+    they are :meth:`add_player`, :meth:`append_move`, :meth:`append_chance_move`,
     :meth:`append_infoset`, :meth:`set_outcome`, :meth:`set_chance_probs`,
     :meth:`insert_move` and :meth:`delete_tree`.
 
@@ -110,6 +231,10 @@ class ExtensiveFormGame(SageObject):
 
       * ``None`` (default), giving an empty tree ready to build on.
 
+    - ``players`` -- (default: ``None``) list of strategic player labels for a
+      new game (a shortcut for calling :meth:`add_player` for each); only
+      allowed when ``generator`` is ``None``.
+
     EXAMPLES:
 
     Build a two-player game in Sage.  Alice chooses between ``'L'`` and
@@ -117,18 +242,77 @@ class ExtensiveFormGame(SageObject):
 
         sage: # optional - pygambit
         sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-        sage: g = ExtensiveFormGame()
-        sage: g.add_player('Alice'); g.add_player('Bob')
-        'Alice'
-        'Bob'
-        sage: g.append_move('root', 'Alice', ['L', 'R'])
-        ['root.L', 'root.R']
-        sage: g.set_outcome('root.L', [2, 5])
-        sage: g.set_outcome('root.R', [3, 1])
+        sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+        sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+        sage: g.set_outcome(g.root.children['L'], [2, 5])
+        sage: g.set_outcome(g.root.children['R'], [3, 1])
         sage: g
         An extensive form game with 2 players
         sage: sorted(p.label for p in g.players)
         ['Alice', 'Bob']
+
+    The familiar textbook games are built the same way.  In the Battle of the
+    Sexes, Amy and Bob want to spend the evening together but disagree on how:
+    Amy prefers video games and Bob prefers a movie.  They choose
+    simultaneously, which in a tree means that Amy is drawn as moving first
+    while Bob's two nodes sit in a single information set, so that he cannot
+    tell them apart::
+
+        sage: # optional - pygambit
+        sage: battle = ExtensiveFormGame(players=['Amy', 'Bob'])
+        sage: battle.append_move(battle.root, 'Amy', ['game', 'movie'])
+        sage: battle.append_move(battle.root.children['game'], 'Bob',
+        ....:                    ['game', 'movie'])
+        sage: battle.append_infoset(battle.root.children['movie'],
+        ....:                       battle.root.children['game'])
+        sage: payoffs = {('game', 'game'): [3, 2], ('game', 'movie'): [1, 1],
+        ....:            ('movie', 'game'): [0, 0], ('movie', 'movie'): [2, 3]}
+        sage: for (amy, bob), payoff in payoffs.items():
+        ....:     battle.set_outcome(battle.root.children[amy].children[bob],
+        ....:                        payoff)
+        sage: battle
+        An extensive form game with 2 players
+        sage: len(battle.infosets)
+        2
+
+    Its two pure equilibria are the two ways of spending the evening together,
+    both playing video games or both watching the movie::
+
+        sage: # optional - pygambit
+        sage: actions = battle._gambit_().actions
+        sage: [[float(eq[a]) for a in actions]
+        ....:  for eq in battle.obtain_nash(algorithm='enumpure')]
+        [[1.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 1.0]]
+
+    The Prisoner's Dilemma has the same shape: two suspects, questioned
+    separately, each stay silent or confess without knowing what the other
+    does.  Gambit maximizes payoffs, so the sentences are scored as utilities
+    (higher is better) rather than as the years in prison of the
+    :mod:`~sage.game_theory.normal_form_game` example::
+
+        sage: # optional - pygambit
+        sage: prisoners = ExtensiveFormGame(players=['Alice', 'Bob'])
+        sage: prisoners.append_move(prisoners.root, 'Alice',
+        ....:                       ['silent', 'confess'])
+        sage: prisoners.append_move(prisoners.root.children['silent'], 'Bob',
+        ....:                       ['silent', 'confess'])
+        sage: prisoners.append_infoset(prisoners.root.children['confess'],
+        ....:                          prisoners.root.children['silent'])
+        sage: payoffs = {('silent', 'silent'): [3, 3],
+        ....:            ('silent', 'confess'): [0, 5],
+        ....:            ('confess', 'silent'): [5, 0],
+        ....:            ('confess', 'confess'): [1, 1]}
+        sage: for (alice, bob), payoff in payoffs.items():
+        ....:     node = prisoners.root.children[alice].children[bob]
+        ....:     prisoners.set_outcome(node, payoff)
+
+    As in the normal form, confessing dominates and the unique equilibrium is
+    the one both players would rather avoid::
+
+        sage: # optional - pygambit
+        sage: actions = prisoners._gambit_().actions
+        sage: [[float(eq[a]) for a in actions] for eq in prisoners.obtain_nash()]
+        [[0.0, 1.0, 0.0, 1.0]]
 
     A game built directly in gambit can also be wrapped::
 
@@ -141,6 +325,33 @@ class ExtensiveFormGame(SageObject):
         sage: ExtensiveFormGame(gt)
         An extensive form game with 2 players
 
+    Here is matching pennies built that way: Alice and Bob each show a coin,
+    Alice taking both pennies if the coins match and Bob if they differ::
+
+        sage: # optional - pygambit
+        sage: gt = Game.new_tree(players=['Alice', 'Bob'])
+        sage: gt.append_move(gt.root, gt.players['Alice'], ['heads', 'tails'])
+        sage: gt.append_move(gt.root.children['heads'], gt.players['Bob'],
+        ....:                ['heads', 'tails'])
+        sage: gt.append_infoset(gt.root.children['tails'],
+        ....:                   gt.root.children['heads'].infoset)
+        sage: for alice in ['heads', 'tails']:
+        ....:     for bob in ['heads', 'tails']:
+        ....:         win = 1 if alice == bob else -1
+        ....:         gt.set_outcome(gt.root.children[alice].children[bob],
+        ....:                        gt.add_outcome([win, -win]))
+        sage: pennies = ExtensiveFormGame(gt); pennies
+        An extensive form game with 2 players
+
+    This is a constant-sum game, so it can be solved by linear programming;
+    neither player can do better than tossing their coin::
+
+        sage: # optional - pygambit
+        sage: actions = pennies._gambit_().actions
+        sage: [[float(eq[a]) for a in actions]
+        ....:  for eq in pennies.obtain_nash(algorithm='lp')]
+        [[0.5, 0.5, 0.5, 0.5]]
+
     REFERENCES:
 
     - [NN2007]_
@@ -148,7 +359,7 @@ class ExtensiveFormGame(SageObject):
     - [Gambit]_
     """
 
-    def __init__(self, generator=None):
+    def __init__(self, generator=None, players=None):
         r"""
         Initialize an extensive form game.
 
@@ -158,6 +369,26 @@ class ExtensiveFormGame(SageObject):
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
             sage: ExtensiveFormGame()
             An extensive form game with 0 players
+
+        The strategic players can be given up front, as with gambit's
+        ``Game.new_tree(players=...)``::
+
+            sage: # optional - pygambit
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: sorted(p.label for p in g.players)
+            ['Alice', 'Bob']
+            sage: g.root.is_terminal
+            True
+
+        Passing both a game to wrap and ``players`` is an error, as is a
+        ``generator`` that is not a gambit game::
+
+            sage: # optional - pygambit
+            sage: from pygambit import Game
+            sage: ExtensiveFormGame(Game.new_tree(), players=['Alice'])
+            Traceback (most recent call last):
+            ...
+            ValueError: players cannot be given when wrapping an existing game
             sage: ExtensiveFormGame(42)
             Traceback (most recent call last):
             ...
@@ -177,83 +408,55 @@ class ExtensiveFormGame(SageObject):
         """
         pygambit().require()
         if generator is None:
-            self._game = Game.new_tree()
-            self._game.root.label = 'root'
+            self._game = Game.new_tree(players=list(players or []))
         elif Game is not None and isinstance(generator, Game):
+            if players is not None:
+                raise ValueError("players cannot be given when wrapping an "
+                                 "existing game")
             self._gambit_game(generator)
         else:
             raise TypeError("generator must be a gambit extensive form game "
                             "or None")
 
-    def _node(self, label):
+    def _check_actions(self, actions):
         r"""
-        Return the unique node of the tree whose label is ``label``.
+        Validate ``actions`` as the action labels of a single move.
 
-        This is the internal resolver that lets the tree-building methods refer
-        to nodes by string label instead of by ``pygambit`` object.
+        There must be at least one, and each must be a nonempty string,
+        distinct from the others.  Distinctness matters because nodes are
+        navigated by action label (``node.children['<label>']``); ``pygambit``
+        itself only warns on duplicates.  Returns ``list(actions)``.
 
         TESTS::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g._node('root.L').label
-            'root.L'
-            sage: g._node('nope')
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'L'])
             Traceback (most recent call last):
             ...
-            ValueError: no node labeled 'nope' in the tree; current node
-            labels are ['root', 'root.L', 'root.R']
-        """
-        nodes = list(self._gambit_().nodes)
-        matches = [n for n in nodes if n.label == label]
-        if not matches:
-            available = sorted(n.label for n in nodes if n.label)
-            raise ValueError("no node labeled {0!r} in the tree; current node "
-                             "labels are {1}".format(label, available))
-        if len(matches) > 1:
-            raise ValueError("more than one node with label {0!r}".format(label))
-        return matches[0]
-
-    def _label_children(self, node, node_label, actions, children):
-        r"""
-        Label the children of ``node`` and return their labels.
-
-        The children are labeled ``children`` if given, otherwise by their path
-        ``"<node_label>.<action>"``.  Each new label is checked not to clash
-        with a label already used in the tree.
-
-        TESTS::
-
-            sage: # optional - pygambit
-            sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_move('root', 'Alice', ['L', 'R'], children=['x', 'x'])
+            ValueError: duplicate action label 'L'
+            sage: g.append_move(g.root, 'Alice', ['L', ''])
             Traceback (most recent call last):
             ...
-            ValueError: duplicate node label 'x'
+            ValueError: action label must be a nonempty string, not ''
+            sage: g.append_move(g.root, 'Alice', [])
+            Traceback (most recent call last):
+            ...
+            ValueError: a move needs at least one action
         """
-        if children is None:
-            labels = ["{0}.{1}".format(node_label, a) for a in actions]
-        else:
-            labels = list(children)
-            if len(labels) != len(actions):
-                raise ValueError("children must have one label per action")
-        existing = {n.label for n in self._gambit_().nodes if n.label}
+        actions = list(actions)
+        if not actions:
+            raise ValueError("a move needs at least one action")
         seen = set()
-        for label in labels:
-            if label in existing or label in seen:
-                raise ValueError("duplicate node label {0!r}".format(label))
-            seen.add(label)
-        for child, label in zip(node.children, labels):
-            child.label = label
-        return labels
+        for action in actions:
+            if not isinstance(action, str) or not action:
+                raise ValueError("action label must be a nonempty string, "
+                                 "not {0!r}".format(action))
+            if action in seen:
+                raise ValueError("duplicate action label {0!r}".format(action))
+            seen.add(action)
+        return actions
 
     def _gambit_game(self, game):
         r"""
@@ -314,11 +517,8 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
             sage: g
             An extensive form game with 1 player
             sage: ExtensiveFormGame()
@@ -331,16 +531,23 @@ class ExtensiveFormGame(SageObject):
     @property
     def root(self):
         r"""
-        The label of the root node, i.e. where to start building the tree.
+        The root node of the tree, i.e. where to start building and navigating.
+
+        This is the underlying gambit ``Node``; reach any other node from it by
+        indexing children with action labels, e.g. ``g.root.children['L']``.
 
         EXAMPLES::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: ExtensiveFormGame().root
-            'root'
+            sage: ExtensiveFormGame().root.is_terminal
+            True
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: [child.is_terminal for child in g.root.children]
+            [True, True]
         """
-        return self._gambit_().root.label
+        return self._gambit_().root
 
     @property
     def players(self):
@@ -353,10 +560,7 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
             sage: sorted(p.label for p in g.players)
             ['Alice', 'Bob']
         """
@@ -371,11 +575,8 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
             sage: len(g.infosets)
             1
         """
@@ -390,13 +591,10 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.set_outcome('root.L', [2, 5]); g.set_outcome('root.R', [3, 1])
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.set_outcome(g.root.children['L'], [2, 5])
+            sage: g.set_outcome(g.root.children['R'], [3, 1])
             sage: len(g.outcomes)
             2
         """
@@ -411,11 +609,8 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
             sage: g.is_perfect_recall
             True
         """
@@ -444,46 +639,38 @@ class ExtensiveFormGame(SageObject):
         pygambit().require()
         return self._gambit_().add_player(label).label
 
-    def append_move(self, node, player, actions, children=None):
+    def append_move(self, node, player, actions):
         r"""
         Append a move for ``player`` at the terminal node ``node``.
 
         This makes ``node`` a decision node at which ``player`` chooses among
-        ``actions``, creating one child per action.
+        ``actions``, creating one child per action.  The child reached by an
+        action is then ``node.children['<action>']``.
 
         INPUT:
 
-        - ``node`` -- string; the label of the (terminal) node to move at
+        - ``node`` -- the (terminal) node to move at (see :meth:`root`)
 
         - ``player`` -- string; the label of the player who moves
 
-        - ``actions`` -- list of strings; the labels of the available actions
-
-        - ``children`` -- (default: ``None``) list of strings; labels for the
-          new child nodes.  When ``None`` the children are auto-labeled by
-          their path, ``"<node>.<action>"``.
-
-        OUTPUT: the list of labels of the new child nodes
+        - ``actions`` -- list of strings; the labels of the available actions,
+          which must be distinct and nonempty
 
         EXAMPLES::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.append_move('root.L', 'Bob', ['l', 'r'], children=['a', 'b'])
-            ['a', 'b']
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.append_move(g.root.children['L'], 'Bob', ['l', 'r'])
+            sage: g.root.children['L'].children['l'].is_terminal
+            True
         """
         pygambit().require()
-        parent = self._node(node)
-        self._gambit_().append_move(parent, player, actions)
-        return self._label_children(parent, node, actions, children)
+        self._check_actions(actions)
+        self._gambit_().append_move(node, player, actions)
 
-    def append_chance_move(self, node, actions, probs=None, children=None):
+    def append_chance_move(self, node, actions, probs=None):
         r"""
         Append a chance (nature) move at the terminal node ``node``.
 
@@ -492,39 +679,31 @@ class ExtensiveFormGame(SageObject):
 
         INPUT:
 
-        - ``node`` -- string; the label of the (terminal) node to move at
+        - ``node`` -- the (terminal) node to move at (see :meth:`root`)
 
-        - ``actions`` -- list of strings; the labels of the chance branches
+        - ``actions`` -- list of strings; the labels of the chance branches,
+          which must be distinct and nonempty
 
         - ``probs`` -- (default: ``None``) list of branch probabilities; each
           may be a string such as ``'1/2'`` or a Sage rational
-
-        - ``children`` -- (default: ``None``) list of strings; labels for the
-          new child nodes (auto-labeled by path when ``None``)
-
-        OUTPUT: the list of labels of the new child nodes
 
         EXAMPLES::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_chance_move('root', ['H', 'T'], probs=['1/2', '1/2'])
-            ['root.H', 'root.T']
-            sage: g._node('root').infoset.is_chance
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_chance_move(g.root, ['H', 'T'], probs=['1/2', '1/2'])
+            sage: g.root.infoset.is_chance
             True
         """
         pygambit().require()
         game = self._gambit_()
-        parent = self._node(node)
-        game.append_move(parent, game.players.chance, actions)
+        self._check_actions(actions)
+        game.append_move(node, game.players.chance, actions)
         if probs is not None:
-            game.set_chance_probs(parent.infoset, probs)
-        return self._label_children(parent, node, actions, children)
+            game.set_chance_probs(node.infoset, probs)
 
-    def append_infoset(self, node, like, children=None):
+    def append_infoset(self, node, like):
         r"""
         Append a move at ``node`` in the same information set as ``like``.
 
@@ -534,14 +713,9 @@ class ExtensiveFormGame(SageObject):
 
         INPUT:
 
-        - ``node`` -- string; the label of the (terminal) node to move at
+        - ``node`` -- the (terminal) node to move at (see :meth:`root`)
 
-        - ``like`` -- string; the label of a node whose information set to join
-
-        - ``children`` -- (default: ``None``) list of strings; labels for the
-          new child nodes (auto-labeled by path when ``None``)
-
-        OUTPUT: the list of labels of the new child nodes
+        - ``like`` -- a decision node whose information set to join
 
         EXAMPLES:
 
@@ -549,25 +723,15 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.append_move('root.L', 'Bob', ['l', 'r'])
-            ['root.L.l', 'root.L.r']
-            sage: g.append_infoset('root.R', 'root.L')
-            ['root.R.l', 'root.R.r']
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.append_move(g.root.children['L'], 'Bob', ['l', 'r'])
+            sage: g.append_infoset(g.root.children['R'], g.root.children['L'])
             sage: len(g.infosets)
             2
         """
         pygambit().require()
-        parent = self._node(node)
-        infoset = self._node(like).infoset
-        self._gambit_().append_infoset(parent, infoset)
-        actions = [a.label for a in infoset.actions]
-        return self._label_children(parent, node, actions, children)
+        self._gambit_().append_infoset(node, like.infoset)
 
     def set_outcome(self, node, payoffs):
         r"""
@@ -575,7 +739,7 @@ class ExtensiveFormGame(SageObject):
 
         INPUT:
 
-        - ``node`` -- string; the label of a terminal node
+        - ``node`` -- a terminal node (see :meth:`root`)
 
         - ``payoffs`` -- a list of payoffs, one per player (in the order of
           :meth:`players`), or ``None`` to clear the outcome
@@ -584,21 +748,17 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.set_outcome('root.L', [2, 5])
-            sage: float(g._node('root.L').outcome['Alice'])
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.set_outcome(g.root.children['L'], [2, 5])
+            sage: float(g.root.children['L'].outcome['Alice'])
             2.0
         """
         pygambit().require()
         game = self._gambit_()
         if payoffs is not None:
             payoffs = game.add_outcome(list(payoffs))
-        game.set_outcome(self._node(node), payoffs)
+        game.set_outcome(node, payoffs)
 
     def set_chance_probs(self, node, probs):
         r"""
@@ -606,8 +766,8 @@ class ExtensiveFormGame(SageObject):
 
         INPUT:
 
-        - ``node`` -- string; the label of a node at which a chance move sits
-          (see :meth:`append_chance_move`)
+        - ``node`` -- a node at which a chance move sits (see
+          :meth:`append_chance_move`)
 
         - ``probs`` -- list of branch probabilities; each may be a string such
           as ``'1/3'`` or a Sage rational
@@ -616,80 +776,81 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_chance_move('root', ['H', 'T'])
-            ['root.H', 'root.T']
-            sage: g.set_chance_probs('root', ['1/3', '2/3'])
-            sage: float(list(g._node('root').infoset.actions)[0].prob)
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_chance_move(g.root, ['H', 'T'])
+            sage: g.set_chance_probs(g.root, ['1/3', '2/3'])
+            sage: float(list(g.root.infoset.actions)[0].prob)
             0.3333333333333333
         """
         pygambit().require()
-        self._gambit_().set_chance_probs(self._node(node).infoset, probs)
+        self._gambit_().set_chance_probs(node.infoset, probs)
 
     def insert_move(self, node, player, actions):
         r"""
         Insert a new move for ``player`` immediately above ``node``.
 
-        A new decision node with ``actions`` many actions is inserted
-        immediately above ``node``; ``node`` (keeping its label and subtree)
-        becomes the first child of the new node, which is itself left
-        unlabeled.
+        A new decision node with the given ``actions`` is inserted immediately
+        above ``node``; ``node`` (keeping its subtree) becomes the first child
+        of the new node, reached by the first action, and the remaining actions
+        lead to fresh terminal siblings.
 
         INPUT:
 
-        - ``node`` -- string; the label of the node to insert the move above
+        - ``node`` -- the node to insert the move above (see :meth:`root`).  It
+          becomes the first child of the new move.
 
         - ``player`` -- string; the label of the player who moves
 
-        - ``actions`` -- integer; the number of actions of the new move
+        - ``actions`` -- list of strings; the labels of the new move's actions,
+          which must be distinct and nonempty
+
+        .. NOTE::
+
+            Inserting above the root makes the new node the root of the tree,
+            so :meth:`root` then returns it and the former root becomes its
+            first child.
 
         EXAMPLES::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.insert_move('root', 'Alice', 3)
-            sage: len(g._gambit_().root.children)   # a new 3-action move above 'root'
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: former_root = g.root
+            sage: g.insert_move(g.root, 'Alice', ['a', 'b', 'c'])
+            sage: len(g.root.children)   # a new 3-action move above the old root
             3
-            sage: g._node('root').parent == g._gambit_().root
+            sage: g.root.children['a'] == former_root   # old root reached by 'a'
+            True
+            sage: g.root.children['b'].is_terminal       # a fresh sibling
             True
         """
         pygambit().require()
-        self._gambit_().insert_move(self._node(node), player, int(actions))
+        actions = self._check_actions(actions)
+        self._gambit_().insert_move(node, player, len(actions))
+        for action, label in zip(node.parent.infoset.actions, actions):
+            action.label = label
 
     def delete_tree(self, node):
         r"""
-        Delete the subtree below ``node``, making it a terminal node.  The
-        node keeps its label (so it can still be referred to, e.g. to give it
-        an outcome).
+        Delete the subtree below ``node``, making it a terminal node.
 
         INPUT:
 
-        - ``node`` -- string; the label of the node to prune
+        - ``node`` -- the node to prune (see :meth:`root`)
 
         EXAMPLES::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice')
-            'Alice'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.delete_tree('root')
-            sage: g._node('root').is_terminal
+            sage: g = ExtensiveFormGame(players=['Alice'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.delete_tree(g.root)
+            sage: g.root.is_terminal
             True
         """
         pygambit().require()
-        n = self._node(node)
-        self._gambit_().delete_tree(n)
-        n.label = node   # gambit clears the label on deletion; restore it
+        self._gambit_().delete_tree(node)
 
     def to_efg(self):
         r"""
@@ -704,58 +865,364 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.set_outcome('root.L', [2, 5]); g.set_outcome('root.R', [3, 1])
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.set_outcome(g.root.children['L'], [2, 5])
+            sage: g.set_outcome(g.root.children['R'], [3, 1])
             sage: print(g.to_efg().splitlines()[0])
             EFG 2 R "Untitled extensive game" { "Alice" "Bob" }
         """
         pygambit().require()
         return self._gambit_().to_efg()
 
-    def plot(self, **kwargs):
+    def plot(self, backend='sage', **kwargs):
         r"""
         Plot the game tree.
 
-        This is a Sage-native drawing of the tree (gambit's ``pygambit`` has no
-        tree-drawing API): decision nodes are labeled with the moving player,
-        chance nodes with ``'Chance'``, terminal nodes with their payoffs, and
-        edges with the action labels.  Nodes belonging to the same information
-        set share a color, so imperfect information is visible.
+        Two drawing backends are available, selected with ``backend``.
+
+        The default ``'sage'`` backend draws the tree with Sage's own graph
+        plotting and needs nothing beyond Sage.  Decision nodes are labeled
+        with the moving player, chance nodes with ``'Chance'``, terminal nodes
+        with their payoffs, and edges with the action labels; a branch out of a
+        chance node also carries its probability, as it does in gtdraw.  Nodes
+        belonging to the same information set share a color, so imperfect
+        information is visible.  The result is a
+        :class:`~sage.plot.graphics.Graphics` object, so it composes with the
+        rest of Sage's plotting.
+
+        The ``'gtdraw'`` backend instead hands the underlying gambit game to
+        `gtdraw <https://www.gambit-project.org/gtdraw/>`_, the game tree
+        drawing tool of the gambit project, which produces publication-quality
+        TikZ pictures.  The result is a :class:`GameTreeTikzPicture`, a
+        :class:`~sage.misc.latex_standalone.TikzPicture` like the ones
+        :meth:`~sage.graphs.generic_graph.GenericGraph.tikz` returns for
+        graphs.  Displaying it compiles the picture to a PDF in a temporary
+        file and opens it in the platform's viewer, just as showing a Sage
+        plot does, and renders it inline in a Jupyter notebook; that step needs
+        a LaTeX installation providing ``pdflatex`` and TikZ, see the `gtdraw
+        installation guide
+        <https://www.gambit-project.org/gtdraw/installation/>`_.  Building the
+        picture and reading its TikZ source with
+        :meth:`~sage.misc.latex_standalone.Standalone.content` need no LaTeX,
+        only the optional gtdraw package.
 
         INPUT:
 
-        - ``**kwargs`` -- passed on to the underlying
-          :meth:`~sage.graphs.generic_graph.GenericGraph.plot`
+        - ``backend`` -- string (default: ``'sage'``); which backend to draw
+          with, one of
 
-        OUTPUT: a :class:`~sage.plot.graphics.Graphics` object
+          * ``'sage'`` -- draw the tree with Sage's graph plotting
 
-        EXAMPLES::
+          * ``'gtdraw'`` -- draw the tree with gtdraw (this requires the
+            optional gtdraw package)
+
+        - ``**kwargs`` -- passed on to the selected backend: to
+          :meth:`~sage.graphs.generic_graph.GenericGraph.plot` for ``'sage'``
+          (for instance ``figsize`` or ``vertex_size``), and to ``gtdraw.tikz``
+          for ``'gtdraw'``.  Useful gtdraw options are ``horizontal``,
+          ``mirror``, ``scale_factor``, ``node_size``, ``hide_action_labels``,
+          ``iset_fill``, ``font_size``, ``legend_position`` and
+          ``color_scheme`` (one of ``'default'``, ``'gambit'``,
+          ``'distinctipy'`` and ``'colorblind'``); see the `gtdraw
+          documentation <https://www.gambit-project.org/gtdraw/>`_ for the
+          full list.
+
+        OUTPUT:
+
+        For ``backend='sage'``, a :class:`~sage.plot.graphics.Graphics` object.
+        For ``backend='gtdraw'``, a :class:`GameTreeTikzPicture`.
+
+        EXAMPLES:
+
+        Take a small game of imperfect information: Alice chooses ``'L'`` or
+        ``'R'``, and Bob then chooses ``'l'`` or ``'r'`` without having seen
+        her choice, so his two nodes share an information set::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.append_move(g.root.children['L'], 'Bob', ['l', 'r'])
+            sage: g.append_infoset(g.root.children['R'], g.root.children['L'])
+            sage: for a, payoff in zip(['l', 'r'], [[3, 1], [0, 0]]):
+            ....:     g.set_outcome(g.root.children['L'].children[a], payoff)
+            sage: for a, payoff in zip(['l', 'r'], [[0, 0], [1, 3]]):
+            ....:     g.set_outcome(g.root.children['R'].children[a], payoff)
+
+        The default backend gives a Sage :class:`~sage.plot.graphics.Graphics`
+        object, which can be shown, saved or combined with other graphics::
+
+            sage: # optional - pygambit
             sage: from sage.plot.graphics import Graphics
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.append_move('root.L', 'Bob', ['l', 'r'])
-            ['root.L.l', 'root.L.r']
-            sage: g.append_infoset('root.R', 'root.L')
-            ['root.R.l', 'root.R.r']
-            sage: for leaf, payoff in zip(['root.L.l', 'root.L.r', 'root.R.l',
-            ....:         'root.R.r'], [[3, 1], [0, 0], [0, 0], [1, 3]]):
-            ....:     g.set_outcome(leaf, payoff)
             sage: isinstance(g.plot(), Graphics)
             True
+            sage: isinstance(g.plot(backend='sage'), Graphics)
+            True
+
+        Keyword arguments reach Sage's graph plotting::
+
+            sage: # optional - pygambit
+            sage: isinstance(g.plot(figsize=8, vertex_size=400), Graphics)
+            True
+
+        A branch out of a chance node is labeled with its probability as well
+        as its action, so a fair coin flip that Alice then bets on reads
+        ``'H (1/2)'`` and ``'T (1/2)'``::
+
+            sage: # optional - pygambit
+            sage: coin = ExtensiveFormGame(players=['Alice'])
+            sage: coin.append_chance_move(coin.root, ['H', 'T'],
+            ....:                         probs=['1/2', '1/2'])
+            sage: for side in ['H', 'T']:
+            ....:     coin.append_move(coin.root.children[side], 'Alice',
+            ....:                      ['bet', 'fold'])
+            sage: drawn = [p.string for p in coin.plot() if hasattr(p, 'string')]
+            sage: sorted(s for s in drawn if '/' in s)
+            ['H (1/2)', 'T (1/2)']
+            sage: sorted(set(s for s in drawn if s in ['bet', 'fold']))
+            ['bet', 'fold']
+
+        The gtdraw backend draws the same tree as TikZ.  Its
+        :meth:`~sage.misc.latex_standalone.Standalone.content` is the source,
+        which mentions the players and the tree itself::
+
+            sage: # optional - pygambit gtdraw
+            sage: picture = g.plot(backend='gtdraw')
+            sage: picture
+            Game tree TikZ picture
+            sage: tikz = picture.content()
+            sage: print(tikz.splitlines()[0])
+            % TikZ code with built-in styling for game trees
+            sage: r'\begin{tikzpicture}' in tikz
+            True
+            sage: r'\def\playerone{Alice}' in tikz
+            True
+            sage: r'\def\playertwo{Bob}' in tikz
+            True
+
+        Its many options control the look of the picture.  Growing the tree
+        left to right instead of top to bottom, shading the information sets
+        and picking a colorblind-safe palette all change the source::
+
+            sage: # optional - pygambit gtdraw
+            sage: g.plot(backend='gtdraw', horizontal=True).content() != tikz
+            True
+            sage: g.plot(backend='gtdraw', iset_fill=True).content() != tikz
+            True
+            sage: colorblind = g.plot(backend='gtdraw', color_scheme='colorblind')
+            sage: print([line for line in colorblind.content().splitlines()
+            ....:        if 'definecolor{p1rgb}' in line][0])
+            \definecolor{p1rgb}{RGB}{0,127,255}
+
+        Suppressing the action labels drops ``'L'`` from the picture::
+
+            sage: # optional - pygambit gtdraw
+            sage: r'{L\strut}' in tikz
+            True
+            sage: hidden = g.plot(backend='gtdraw', hide_action_labels=True)
+            sage: r'{L\strut}' in hidden.content()
+            False
+
+        Options can of course be combined::
+
+            sage: # optional - pygambit gtdraw
+            sage: fancy = g.plot(backend='gtdraw', horizontal=True,
+            ....:                color_scheme='gambit', scale_factor=1.5,
+            ....:                node_size=2.0, font_size='small')
+            sage: r'\begin{tikzpicture}' in fancy.content()
+            True
+
+        Games from the gambit catalog can be drawn the same way.  Catalog slugs
+        are full paths, which :meth:`load_from_gambit_catalog` lists::
+
+            sage: # optional - pygambit
+            sage: g = ExtensiveFormGame()
+            sage: 'books/myerson1991/fig2_1' in list(g.load_from_gambit_catalog()['Game'])
+            True
+
+        Myerson's simple poker game is a two-player tree with three information
+        sets, and it draws with either backend::
+
+            sage: # optional - pygambit
+            sage: g.load_from_gambit_catalog('books/myerson1991/fig2_1', info=False)
+            sage: g
+            An extensive form game with 2 players
+            sage: len(g.infosets)
+            3
+            sage: isinstance(g.plot(), Graphics)
+            True
+
+        ::
+
+            sage: # optional - pygambit gtdraw
+            sage: r'\begin{tikzpicture}' in g.plot(backend='gtdraw').content()
+            True
+
+        So does the stripped-down poker game of Reiley et al., here drawn
+        sideways::
+
+            sage: # optional - pygambit
+            sage: h = ExtensiveFormGame()
+            sage: h.load_from_gambit_catalog('journals/other/reiley2008/fig1', info=False)
+            sage: sorted(p.label for p in h.players)
+            ['Professor', 'Student']
+
+        ::
+
+            sage: # optional - pygambit gtdraw
+            sage: sideways = h.plot(backend='gtdraw', horizontal=True)
+            sage: r'\begin{tikzpicture}' in sideways.content()
+            True
+
+        Larger trees are where gtdraw earns its keep.  Kuhn poker is not in the
+        catalog, but it is quick to build: chance deals Alice and Bob one card
+        each from ``J``, ``Q``, ``K``, and each player then sees only their own
+        card.  We label a chance branch by the pair of cards dealt, so that
+        ``'JQ'`` means Alice holds the jack and Bob the queen::
+
+            sage: # optional - pygambit
+            sage: kuhn = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: deals = ['JQ', 'JK', 'QJ', 'QK', 'KJ', 'KQ']
+            sage: kuhn.append_chance_move(kuhn.root, deals, probs=['1/6'] * 6)
+
+        Alice opens by checking or betting.  She knows only her own card, so
+        the two deals giving her the same card are in one information set::
+
+            sage: # optional - pygambit
+            sage: opening = {}
+            sage: for d in deals:
+            ....:     node = kuhn.root.children[d]
+            ....:     if d[0] in opening:
+            ....:         kuhn.append_infoset(node, opening[d[0]])
+            ....:     else:
+            ....:         kuhn.append_move(node, 'Alice', ['check', 'bet'])
+            ....:         opening[d[0]] = node
+
+        Bob replies, seeing his own card and Alice's action but not her card::
+
+            sage: # optional - pygambit
+            sage: reply = {}
+            sage: for d in deals:
+            ....:     for a in ['check', 'bet']:
+            ....:         node = kuhn.root.children[d].children[a]
+            ....:         if (d[1], a) in reply:
+            ....:             kuhn.append_infoset(node, reply[(d[1], a)])
+            ....:         else:
+            ....:             acts = ['check', 'bet'] if a == 'check' else ['fold', 'call']
+            ....:             kuhn.append_move(node, 'Bob', acts)
+            ....:             reply[(d[1], a)] = node
+
+        Alice, having checked, may still fold or call when Bob bets::
+
+            sage: # optional - pygambit
+            sage: facing_bet = {}
+            sage: for d in deals:
+            ....:     node = kuhn.root.children[d].children['check'].children['bet']
+            ....:     if d[0] in facing_bet:
+            ....:         kuhn.append_infoset(node, facing_bet[d[0]])
+            ....:     else:
+            ....:         kuhn.append_move(node, 'Alice', ['fold', 'call'])
+            ....:         facing_bet[d[0]] = node
+
+        Finally the payoffs: at a showdown the higher card takes the pot, and
+        a fold hands one unit to the other player::
+
+            sage: # optional - pygambit
+            sage: for d in deals:
+            ....:     w = 1 if 'JQK'.index(d[0]) > 'JQK'.index(d[1]) else -1
+            ....:     n = kuhn.root.children[d]
+            ....:     kuhn.set_outcome(n.children['check'].children['check'], [w, -w])
+            ....:     kuhn.set_outcome(n.children['check'].children['bet'].children['fold'],
+            ....:                      [-1, 1])
+            ....:     kuhn.set_outcome(n.children['check'].children['bet'].children['call'],
+            ....:                      [2 * w, -2 * w])
+            ....:     kuhn.set_outcome(n.children['bet'].children['fold'], [1, -1])
+            ....:     kuhn.set_outcome(n.children['bet'].children['call'], [2 * w, -2 * w])
+
+        Each player ends up with six information sets, three for each card they
+        might hold, and the game has perfect recall::
+
+            sage: # optional - pygambit
+            sage: len(kuhn.infosets)
+            12
+            sage: len(kuhn._gambit_().players['Alice'].infosets)
+            6
+            sage: kuhn.is_perfect_recall
+            True
+
+        Its unique equilibrium gives Alice the classical value `-1/18`::
+
+            sage: # optional - pygambit
+            sage: eq = kuhn.obtain_nash()[0]
+            sage: QQ(eq.payoff(kuhn._gambit_().players['Alice']))
+            -1/18
+
+        Both backends draw it; a tree this wide is much more readable drawn
+        sideways, and shading the information sets makes the deal structure
+        stand out::
+
+            sage: # optional - pygambit
+            sage: isinstance(kuhn.plot(), Graphics)
+            True
+
+        ::
+
+            sage: # optional - pygambit gtdraw
+            sage: wide = kuhn.plot(backend='gtdraw', horizontal=True,
+            ....:                  iset_fill=True, color_scheme='colorblind')
+            sage: r'\begin{tikzpicture}' in wide.content()
+            True
+
+        To write a picture to a file rather than display it, use the
+        :class:`~sage.misc.latex_standalone.TikzPicture` methods.  These
+        compile the TikZ source, so they need a LaTeX installation, plus
+        ImageMagick for ``png`` and ``pdftocairo`` for ``svg``::
+
+            sage: _ = wide.pdf(view=False)   # long time (2s), optional - pygambit gtdraw latex
+            sage: wide.pdf('kuhn.pdf')                   # not tested
+            sage: wide.png('kuhn.png', density=300)      # not tested
+            sage: wide.svg('kuhn.svg')                   # not tested
+            sage: wide.tex('kuhn.tex')                   # not tested
+
+        TESTS:
+
+        An unknown backend is rejected, and is caught before the optional
+        gtdraw package is looked for::
+
+            sage: # optional - pygambit
+            sage: g.plot(backend='bogus')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown backend 'bogus'; must be 'sage' or 'gtdraw'
+
+        The gtdraw backend returns a :class:`GameTreeTikzPicture`, and building
+        it compiles nothing, so it needs no LaTeX::
+
+            sage: # optional - pygambit gtdraw
+            sage: from sage.game_theory.extensive_form_game import GameTreeTikzPicture
+            sage: isinstance(g.plot(backend='gtdraw'), GameTreeTikzPicture)
+            True
+            sage: str(g.plot(backend='gtdraw')).count(r'\begin{document}')
+            1
         """
         pygambit().require()
+        if backend == 'gtdraw':
+            gtdraw().require()
+            # The preamble mirrors the standalone document gtdraw itself wraps
+            # its TikZ code in, so that the picture matches gtdraw's own output.
+            return GameTreeTikzPicture(
+                gtdraw_tikz(self._gambit_(), **kwargs),
+                standalone_config=['border=10pt'],
+                usepackage=['graphicx'],
+                usetikzlibrary=['shapes', 'arrows.meta'],
+                macros=[r'\IfFileExists{newpxtext.sty}'
+                        r'{\usepackage{newpxtext,newpxmath}}{}',
+                        r'\linespread{1.10}'])
+        if backend != 'sage':
+            raise ValueError("unknown backend {0!r}; must be 'sage' or "
+                             "'gtdraw'".format(backend))
+
         from sage.graphs.digraph import DiGraph
         from sage.plot.colors import rainbow
 
@@ -785,7 +1252,15 @@ class ExtensiveFormGame(SageObject):
                 infoset_of[index] = infoset
                 for child, action in zip(node.children, infoset.actions):
                     child_index = visit(child)
-                    graph.add_edge(index, child_index, action.label)
+                    if infoset.is_chance:
+                        # As gtdraw does, a branch out of a chance node carries
+                        # its probability next to the action label.
+                        prob = "({0})".format(action.prob)
+                        edge_label = ("{0} {1}".format(action.label, prob)
+                                      if action.label else prob)
+                    else:
+                        edge_label = action.label
+                    graph.add_edge(index, child_index, edge_label)
             return index
 
         root_index = visit(game.root)
@@ -823,12 +1298,8 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
             sage: path = tmp_filename(ext='.efg')
             sage: g.save_efg(path)
             sage: with open(path) as f:
@@ -859,13 +1330,10 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.set_outcome('root.L', [2, 5]); g.set_outcome('root.R', [3, 1])
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.set_outcome(g.root.children['L'], [2, 5])
+            sage: g.set_outcome(g.root.children['R'], [3, 1])
             sage: path = tmp_filename(ext='.efg')
             sage: g.save_efg(path)
             sage: h = ExtensiveFormGame()
@@ -918,13 +1386,10 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: g.add_player('Alice'); g.add_player('Bob')
-            'Alice'
-            'Bob'
-            sage: g.append_move('root', 'Alice', ['L', 'R'])
-            ['root.L', 'root.R']
-            sage: g.set_outcome('root.L', [2, 5]); g.set_outcome('root.R', [3, 1])
+            sage: g = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: g.append_move(g.root, 'Alice', ['L', 'R'])
+            sage: g.set_outcome(g.root.children['L'], [2, 5])
+            sage: g.set_outcome(g.root.children['R'], [3, 1])
             sage: eqs = g.obtain_nash()
             sage: [[float(eq[a]) for a in g._gambit_().actions] for eq in eqs]
             [[0.0, 1.0]]
@@ -976,9 +1441,11 @@ class ExtensiveFormGame(SageObject):
 
         INPUT:
 
-        - ``game`` -- (default: ``None``) the slug of a catalog game to load,
-          e.g. ``'bagwell1995'``.  When ``None`` no game is loaded.  The
-          catalog game must be an extensive form (tree) game.
+        - ``game`` -- (default: ``None``) the slug of a catalog game to load.
+          Slugs are full paths, such as ``'journals/geb/bagwell1995'`` or
+          ``'books/myerson1991/fig2_1'``; the ``Game`` column of the table
+          returned by this method lists them all.  When ``None`` no game is
+          loaded.  The catalog game must be an extensive form (tree) game.
 
         - ``info`` -- boolean (default: ``True``); when ``True`` return the
           table of available games (a :class:`pandas.DataFrame` with ``Game``
@@ -991,11 +1458,20 @@ class ExtensiveFormGame(SageObject):
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
             sage: g = ExtensiveFormGame()
-            sage: 'bagwell1995' in list(g.load_from_gambit_catalog()['Game'])
+            sage: 'journals/geb/bagwell1995' in list(g.load_from_gambit_catalog()['Game'])
             True
-            sage: g.load_from_gambit_catalog('bagwell1995', info=False)
+            sage: g.load_from_gambit_catalog('journals/geb/bagwell1995', info=False)
             sage: g
             An extensive form game with 2 players
+
+        Once loaded, a catalog game behaves like any other game; it can be
+        drawn with :meth:`plot` or solved with :meth:`obtain_nash`::
+
+            sage: # optional - pygambit
+            sage: len(g.infosets)
+            3
+            sage: g.is_perfect_recall
+            True
 
         A slug that is not in the catalog is rejected (as is a catalog game
         that is not an extensive form game, via :meth:`_gambit_game`)::
