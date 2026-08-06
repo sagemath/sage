@@ -1041,9 +1041,8 @@ class OffsetUnit:
         Convert this offset unit through its instantiated base-unit form.
 
         EXAMPLES::
-
             sage: units.temperature.celsius.convert(units.temperature.kelvin)
-            5563/20*kelvin
+            5483/20*kelvin
             sage: units.temperature.celsius.convert(units.temperature.fahrenheit)
             169/5*fahrenheit
         """
@@ -1430,7 +1429,7 @@ def convert(expr, target):
     Offset units can also be converted directly::
 
         sage: sage.symbolic.units.convert(units.temperature.celsius, units.temperature.kelvin)
-        5563/20*kelvin
+        5483/20*kelvin
         sage: sage.symbolic.units.convert(units.temperature.celsius, units.temperature.fahrenheit)
         169/5*fahrenheit
 
