@@ -67,7 +67,7 @@ def right_orthogonal(G, X) -> set:
 
     .. SEEALSO::
 
-        - :meth:`neighbors_out()`
+        - :meth:`~sage.graphs.digraph.DiGraph.neighbors_out()`
         - Dual function: :meth:`left_orthogonal()`
 
     REFERENCE:
@@ -148,7 +148,7 @@ def left_orthogonal(G, X) -> set:
 
     .. SEEALSO::
 
-        - :meth:`neighbors_in()`
+        - :meth:`~sage.graphs.digraph.DiGraph.neighbors_in()`
         - Dual function: :meth:`right_orthogonal()`
 
     REFERENCE:
