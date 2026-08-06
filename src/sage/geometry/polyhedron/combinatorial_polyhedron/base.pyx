@@ -118,18 +118,18 @@ cdef class CombinatorialPolyhedron(SageObject):
     INPUT:
 
     - ``data`` -- an instance of
-       * :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`
+       * :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
        * or a :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`
        * or a :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
        * or an ``incidence_matrix`` as in
-         :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+         :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
          In this case you should also specify the ``Vrep`` and ``facets`` arguments
        * or list of facets, each facet given as
          a list of ``[vertices, rays, lines]`` if the polyhedron is unbounded,
          then rays and lines and the extra argument ``nr_lines`` are required
          if the polyhedron contains no lines, the rays can be thought of
          as the vertices of the facets deleted from a bounded polyhedron see
-         :class:`~sage.geometry.polyhedron.parent.Polyhedron_base` on how to use
+         :class:`~sage.geometry.polyhedron.base.Polyhedron_base` on how to use
          rays and lines
        * or an integer, representing the dimension of a polyhedron equal to its
          affine hull
@@ -146,7 +146,7 @@ cdef class CombinatorialPolyhedron(SageObject):
       need to specify ``far_face``
     - ``far_face`` -- (semi-optional); if the polyhedron is unbounded this
       needs to be set to the list of indices of the rays and line unless ``data`` is
-      an instance of :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`.
+      an instance of :class:`~sage.geometry.polyhedron.base.Polyhedron_base`.
 
     EXAMPLES:
 
@@ -399,7 +399,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef _init_from_polyhedron(self, data):
         r'''
-        Initialize from :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`.
+        Initialize from :class:`~sage.geometry.polyhedron.base.Polyhedron_base`.
         '''
         self._Vrep = data.Vrepresentation()
         self._facet_names = data.inequalities()
@@ -1070,7 +1070,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`.
 
         EXAMPLES::
 
@@ -1105,7 +1105,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             True
 
         The incidence matrix is consistent with
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`::
+        :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`::
 
             sage: P = Polyhedron([[0,0]])
             sage: P.incidence_matrix()
@@ -1313,7 +1313,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_adjacency_matrix`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.vertex_adjacency_matrix`.
 
         EXAMPLES::
 
@@ -1484,7 +1484,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_adjacency_matrix`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.vertex_adjacency_matrix`.
 
         EXAMPLES::
 
@@ -2606,7 +2606,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator_base.join_of_Vrep`.
+            :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator_base.join_of_Vrep`.
 
         EXAMPLES::
 
@@ -2629,7 +2629,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator_base.meet_of_Hrep`.
+            :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator_base.meet_of_Hrep`.
 
         EXAMPLES::
 
@@ -3302,7 +3302,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.polar`.
+            :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.polar`.
 
         EXAMPLES::
 
@@ -3754,7 +3754,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     def _record_all_faces(self):
         r"""
-        Initialize :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_faces_lattice.PolyhedronFaceLattice` for the polyhedron.
+        Initialize :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice.PolyhedronFaceLattice` for the polyhedron.
 
         Record and sort all faces of the polyhedron in that class.
 

@@ -642,6 +642,12 @@ def strip_string_literals(code, state=None):
         sage: (literals['L2'], literals['L3']) # empty; not ideal, but not harmful
         ('', '')
 
+    A format specifier only applies to its own replacement section
+    (:issue:`42602`)::
+
+        sage: s, literals, state = strip_string_literals("f'{value:d} {value^2}'"); s
+        'f%(L1)s{value:%(L2)s}%(L3)s{value^2}%(L4)s'
+
     Nested format specifiers -- inside a braced section in the main format
     specifier -- are treated as literals.
     (Python does not allow any deeper nesting.)::
@@ -843,6 +849,8 @@ def strip_string_literals(code, state=None):
                     else:
                         if quote.braces > 0:
                             quote.braces -= 1
+                            if not quote.braces:
+                                quote.fmt_spec = False
                         # We can no longer be in a nested format specifier following a }.
                         quote.nested_fmt_spec = False
                     start = q + 1
@@ -1754,6 +1762,12 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
         sage: preparse("f(x) = x \\\n+ 1")
         '__tmp__=var("x"); f = symbolic_expression(x + Integer(1)).function(x)'
+
+    Check that a format specifier does not affect subsequent replacement
+    sections in an F-string (:issue:`42602`)::
+
+        sage: preparse('f"{10^i} {0x2a:d} {10^i}"')
+        'f"{Integer(10)**i} {Integer(0x2a):d} {Integer(10)**i}"'
 
     Check that multi-line strings starting with a comment are still preparsed
     (:issue:`31043`)::

@@ -686,10 +686,10 @@ def simplify_chain_generic_sympy(expr):
     The chain is formed by the following functions, called
     successively:
 
-    #. :meth:`~sympy.simplify.combsimp`
-    #. :meth:`~sympy.simplify.trigsimp`
-    #. :meth:`~sympy.core.expand`
-    #. :meth:`~sympy.simplify.simplify`
+    #. :meth:`~sympy.core.expr.Expr.combsimp`
+    #. :meth:`~sympy.core.expr.Expr.trigsimp`
+    #. :meth:`~sympy.core.expr.Expr.expand`
+    #. :meth:`~sympy.core.basic.Basic.simplify`
 
     EXAMPLES:
 
@@ -747,12 +747,12 @@ def simplify_chain_real_sympy(expr):
     The chain is formed by the following functions, called
     successively:
 
-    #. :meth:`~sympy.simplify.combsimp`
-    #. :meth:`~sympy.simplify.trigsimp`
+    #. :meth:`~sympy.core.expr.Expr.combsimp`
+    #. :meth:`~sympy.core.expr.Expr.trigsimp`
     #. :func:`simplify_sqrt_real`
     #. :func:`simplify_abs_trig`
-    #. :meth:`~sympy.core.expand`
-    #. :meth:`~sympy.simplify.simplify`
+    #. :meth:`~sympy.core.expr.Expr.expand`
+    #. :meth:`~sympy.core.basic.Basic.simplify`
 
     EXAMPLES:
 

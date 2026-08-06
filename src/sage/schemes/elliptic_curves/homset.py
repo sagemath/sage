@@ -255,7 +255,8 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
         Assuming this homset is an endomorphism ring, check whether
         it is a commutative ring.
 
-        ALGORITHM: :meth:`EllipticCurve_field.endomorphism_ring_is_commutative`
+        ALGORITHM:
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.endomorphism_ring_is_commutative`
 
         EXAMPLES::
 

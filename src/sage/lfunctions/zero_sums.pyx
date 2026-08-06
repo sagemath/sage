@@ -424,7 +424,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.lfunctions.zero_sums.LFunctionZeroSum_EllipticCurve.logarithmic_derivative`
+            :meth:`~sage.lfunctions.zero_sums.LFunctionZeroSum_abstract.logarithmic_derivative`
 
         EXAMPLES::
 
@@ -518,7 +518,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
         .. SEEALSO::
 
-            :meth:`~sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.analytic_rank_bound`
+            :meth:`~sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.analytic_rank_upper_bound`
             for more documentation and examples on calling this method on elliptic curve
             `L`-functions.
 
@@ -1604,7 +1604,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         .. SEEALSO::
 
             :func:`LFunctionZeroSum`
-            :meth:`EllipticCurve.root_number`
+            :meth:`~sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.root_number`
             :func:`~sage.misc.verbose.set_verbose`
 
         EXAMPLES:

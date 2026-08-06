@@ -286,6 +286,21 @@ def pretty_print(*args, **kwds):
 
         sage: dm.preferences.text = None
 
+    Check that notebook-style LaTeX output through ``pretty_print`` handles
+    strings containing a single backslash (:issue:`42179`)::
+
+        sage: from sage.repl.rich_output.backend_doctest import BackendDoctest
+        sage: from sage.repl.rich_output.output_catalog import OutputHtml
+        sage: class HtmlBackend(BackendDoctest):
+        ....:     def supported_output(self):
+        ....:         return super().supported_output() | {OutputHtml}
+        sage: old_backend = dm.switch_backend(HtmlBackend())
+        sage: try:
+        ....:     pretty_print(['\\'])
+        ....: finally:
+        ....:     _ = dm.switch_backend(old_backend)
+        <html>\(\displaystyle \left[\verb|\|\right]\)</html>
+
     ::
 
         sage: plt = plot(sin)

@@ -1252,7 +1252,7 @@ cdef class UnderscoreSageMorphism(Morphism):
     def __init__(self, t, R):
         """
         A Morphism which constructs Expressions from an arbitrary Python
-        object by calling the :meth:`_sage_` method on the object.
+        object by calling the ``_sage_`` method on the object.
 
         EXAMPLES::
 

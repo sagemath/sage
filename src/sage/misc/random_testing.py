@@ -49,7 +49,7 @@ def random_testing(fn):
 
     The first doctest, with the specified seed and ``verbose=True``, simply
     verifies that the tests really are reproducible (that ``test_foo``
-    is correctly using the :mod:`randstate` framework).  The next two tests
+    is correctly using the :mod:`sage.misc.randstate` framework).  The next two tests
     use truly random seeds, and will print out the seed used if the test
     fails (raises an exception).
 
@@ -68,7 +68,7 @@ def random_testing(fn):
     rerun ``test_foo(100)`` with a known-failing random seed.
 
     See :func:`sage.misc.random_testing.check_add_commutes` for a
-    simple example using this decorator, and :mod:`sage.rings.tests`
+    simple example using this decorator, and ``sage.rings.tests``
     for realistic uses.
 
     Setting *print_seed* to true is useless in doctests, because the

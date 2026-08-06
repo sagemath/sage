@@ -92,6 +92,8 @@ cdef class LaurentSeries(AlgebraElement):
       to one); note that ``f`` does *not* have to be a unit
 
     - ``n`` -- (default: 0) integer
+
+    .. automethod:: _derivative
     """
     def __init__(self, parent, f, n=0):
         r"""
@@ -1767,7 +1769,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         .. SEEALSO::
 
-           :meth:`_derivative`
+           :meth:`~sage.rings.laurent_series_ring_element.LaurentSeries._derivative`
 
         EXAMPLES::
 

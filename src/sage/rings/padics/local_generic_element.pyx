@@ -458,7 +458,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
             O(3^-5)
 
         One cannot use ``add_bigoh`` to lift to a higher precision; this
-        can be accomplished with :meth:`lift_to_precision`::
+        can be accomplished with
+        :meth:`~sage.categories.complete_discrete_valuation.CompleteDiscreteValuationRings.ElementMethods.lift_to_precision`::
 
             sage: o.add_bigoh(5)
             1 + O(3^4)

@@ -18,8 +18,9 @@ UHP for convenience::
     sage: g
     Geodesic in UHP from 2 to 3
 
-This geodesic can be plotted using :meth:`plot`, in this example we will show
-the axis.
+This geodesic can be plotted using
+:meth:`~sage.geometry.hyperbolic_space.hyperbolic_geodesic.HyperbolicGeodesicUHP.plot`;
+in this example we will show the axis.
 
 ::
 
@@ -1035,10 +1036,10 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
     INPUT:
 
-    - ``start`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``start`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the start of the geodesic
 
-    - ``end`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``end`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the end of the geodesic
 
     EXAMPLES::
@@ -2117,10 +2118,10 @@ class HyperbolicGeodesicPD(HyperbolicGeodesic):
 
     INPUT:
 
-    - ``start`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``start`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the start of the geodesic
 
-    - ``end`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``end`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the end of the geodesic
 
     EXAMPLES::
@@ -2226,10 +2227,10 @@ class HyperbolicGeodesicKM(HyperbolicGeodesic):
 
     INPUT:
 
-    - ``start`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``start`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the start of the geodesic
 
-    - ``end`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``end`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the end of the geodesic
 
     EXAMPLES::
@@ -2288,10 +2289,10 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
 
     INPUT:
 
-    - ``start`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``start`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the start of the geodesic
 
-    - ``end`` -- a :class:`HyperbolicPoint` in hyperbolic space
+    - ``end`` -- a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint` in hyperbolic space
       representing the end of the geodesic
 
     EXAMPLES::

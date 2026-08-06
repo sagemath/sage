@@ -14,8 +14,11 @@ The process of `p`-saturating a given set of points is implemented
 here.  The naive algorithm simply checks all `(p^r-1)/(p-1)`
 projective combinations of the points, testing each to see if it can
 be divided by `p`.  If this occurs then we replace one of the points
-and continue.  The function :meth:`p_saturation` does one step of
-this, while :meth:`full_p_saturation` repeats until the points are
+and continue.  The method
+:meth:`~sage.schemes.elliptic_curves.saturation.EllipticCurveSaturator.p_saturation`
+does one step of this, while
+:meth:`~sage.schemes.elliptic_curves.saturation.EllipticCurveSaturator.full_p_saturation`
+repeats until the points are
 `p`-saturated.  A more sophisticated algorithm for `p`-saturation is
 implemented which is much more efficient for large `p` and `r`, and
 involves computing the reduction of the points modulo auxiliary primes
@@ -24,7 +27,10 @@ coefficients `a_i` of any nontrivial relation.  When the points are
 already `p`-saturated this sieving technique can prove their
 saturation quickly.
 
-The method :meth:`saturation` of the class :class:`EllipticCurve_number_field`
+The method
+:meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.saturation`
+of the class
+:class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 applies full `p`-saturation at any given set of primes, or can compute
 a bound on the primes `p` at which the given points may not be
 `p`-saturated.  This involves computing a lower bound for the

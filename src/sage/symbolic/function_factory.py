@@ -199,7 +199,8 @@ def function(s, **kwds) -> SymbolicFunction | list[SymbolicFunction]:
         sage: foo(x, y) + foo(y, z)^2
         foo(y, z)^2 + foo(x, y)
 
-    You need to use :meth:`substitute_function` to
+    You need to use
+    :meth:`~sage.symbolic.expression.Expression.substitute_function` to
     replace all occurrences of a function with another::
 
         sage: g.substitute_function(cr, cos)

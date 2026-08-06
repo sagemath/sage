@@ -533,7 +533,7 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None,
 
         - :meth:`blocks_and_cuts_tree`
         - :func:`sage.graphs.base.boost_graph.blocks_and_cut_vertices`
-        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`
         - :meth:`~Graph.bridges`
 
     EXAMPLES:
@@ -2451,7 +2451,7 @@ def strongly_connected_components_digraph(G, keep_labels=False):
 
     The following digraph has three strongly connected components, and the
     digraph of those is a
-    :meth:`~sage.graphs.digraph_generators.TransitiveTournament`::
+    :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.TransitiveTournament`::
 
         sage: g = DiGraph({0: {1: "01", 2: "02", 3: "03"}, 1: {2: "12"}, 2:{1: "21", 3: "23"}})
         sage: scc_digraph = strongly_connected_components_digraph(g)

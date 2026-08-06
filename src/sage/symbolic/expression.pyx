@@ -9825,7 +9825,7 @@ cdef class Expression(Expression_abc):
             log_gamma(5)
 
         To evaluate again, currently we must use numerical evaluation
-        via :meth:`n`::
+        via :meth:`n() <sage.symbolic.expression.Expression.numerical_approx>`::
 
             sage: a = SR(5).log_gamma(hold=True); a.n()
             3.17805383034795

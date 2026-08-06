@@ -11,7 +11,7 @@ Interactively, an instance of :class:`RationalField` is available as ``QQ``::
     Rational Field
 
 Values of various types can be converted to rational numbers by using the
-:meth:`__call__` method of :class:`RationalField` (that is, by treating ``QQ`` as a
+``__call__`` method of :class:`RationalField` (that is, by treating ``QQ`` as a
 function).
 
 ::
@@ -129,6 +129,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         0.200000000000000
         sage: QQ(RealField(45)(t))
         1/5
+
+    .. automethod:: __iter__
     """
     def __new__(cls):
         """
@@ -459,7 +461,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         heights in ``range(start, end)``. Follows the same
         convention as Python :func:`range`, type ``range?`` for details.
 
-        See also :meth:`__iter__`.
+        See also :meth:`~sage.rings.rational_field.RationalField.__iter__`.
 
         EXAMPLES:
 
@@ -1126,7 +1128,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         r"""
         Return some elements of `\QQ`.
 
-        See :func:`TestSuite` for a typical use case.
+        See :class:`~sage.misc.sage_unittest.TestSuite` for a typical use case.
 
         OUTPUT: an iterator over 100 elements of `\QQ`
 
