@@ -1032,7 +1032,8 @@ class OffsetUnit:
 
     def _unsupported(self):
         raise NotImplementedError(
-            f"Unit '{self.__name}' does not support this operation."
+            f"Unit '{self.__name}' does not support this operation.\n"
+            f"Try {self._base_unit()} instead."
         )
 
     def convert(self, target=None):
