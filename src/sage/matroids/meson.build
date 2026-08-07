@@ -73,3 +73,4 @@ foreach name, pyx : extension_data
   )
 endforeach
 
+subdir('oriented_matroids')

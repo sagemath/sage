@@ -77,4 +77,32 @@ Internals
    sage/matroids/union_matroid
    sage/matroids/unpickling
 
+Oriented Matroids
+=================
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/matroids/oriented_matroids/oriented_matroid
+
+Representations
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/matroids/oriented_matroids/circuit_oriented_matroid
+   sage/matroids/oriented_matroids/covector_oriented_matroid
+   sage/matroids/oriented_matroids/real_hyperplane_arrangement_oriented_matroid
+   sage/matroids/oriented_matroids/vector_oriented_matroid
+
+Elements
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/matroids/oriented_matroids/signed_subset_element
+
 .. include:: ../footer.txt
+
