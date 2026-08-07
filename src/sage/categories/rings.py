@@ -1167,7 +1167,8 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES:
 
-            Usually, a ring inherits a method :meth:`sage.rings.ring.Ring.quotient`.
+            Usually, a ring inherits a method
+            :meth:`~sage.categories.rings.Rings.ParentMethods.quotient_ring`.
             So, we need a bit of effort to make the following example work with the
             category framework::
 

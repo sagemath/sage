@@ -343,7 +343,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         - :mod:`sage.rings.complex_arb`
         - :mod:`sage.rings.complex_mpfr`
-        - :mod:`sage.rings.complex_mpfi`
+        - :mod:`sage.rings.complex_interval`
         - :mod:`sage.rings.real_arb`
     """
     Element = ComplexBall

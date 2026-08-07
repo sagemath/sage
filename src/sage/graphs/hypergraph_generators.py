@@ -8,7 +8,7 @@ hypergraph on 5 points, one can do::
     sage: H = hypergraphs.CompleteUniform(5, 3)
 
 To enumerate hypergraphs with certain properties up to isomorphism, one can use
-method :meth:`~nauty`, which calls Brendan McKay's Nauty
+method :meth:`~HypergraphGenerators.nauty`, which calls Brendan McKay's Nauty
 (`<http://cs.anu.edu.au/~bdm/nauty/>`_)::
 
     sage: list(hypergraphs.nauty(2, 2, connected=True))

@@ -17,7 +17,7 @@ from sage.features.build_feature import BuildModule
 class Mcqd(BuildModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
-    the :mod:`~sage.graphs.mcqd` module, which is the SageMath
+    the ``sage.graphs.mcqd`` module, which is the SageMath
     interface to the :ref:`mcqd <spkg_mcqd>` library
 
     EXAMPLES::

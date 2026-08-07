@@ -186,6 +186,42 @@ cdef class Matrix_sparse(matrix.Matrix):
             [-2  3]
             [-4  6]
         """
+        cdef dict e = left._multiply_classical_entries(right)
+        return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
+
+    cdef dict _multiply_classical_entries(self, Matrix_sparse right):
+        r"""
+        Return the dictionary of nonzero entries of the classical sparse
+        product ``self * right``.
+
+        This is the shared core of :meth:`_multiply_classical` and
+        :meth:`_set_to_product_classical`.  Keeping it separate lets
+        :meth:`set_to_product` write the product directly into its
+        destination, while ``*`` builds a new matrix from the same
+        dictionary; neither pays for an intermediate matrix.
+
+        INPUT:
+
+        - ``right`` -- a sparse matrix whose number of rows is the number of
+          columns of ``self``
+
+        OUTPUT:
+
+        a dictionary mapping each position ``(i, j)`` of a nonzero entry of
+        the product to its value
+
+        EXAMPLES:
+
+        This is exercised by both of its callers, which must agree::
+
+            sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
+            sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
+            sage: C = matrix(QQ['x,y'], 2, sparse=True)
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+        """
+        cdef Matrix_sparse left = self
         cdef Py_ssize_t row, col, row_start, k1, k2, len_left, len_right, a, b
         cdef list left_nonzero = <list> left.nonzero_positions(copy=False, column_order=False)
         cdef list right_nonzero = <list> right.nonzero_positions(copy=False, column_order=True)
@@ -225,7 +261,166 @@ cdef class Matrix_sparse(matrix.Matrix):
                     k2 += 1
             while k1 < len_left and get_ij(left_nonzero, k1, 0) == row:
                 k1 += 1
-        return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
+        return e
+
+    cdef void _set_to_product_classical(self, matrix0.Matrix left, matrix0.Matrix right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using the sparse classical algorithm.
+
+        This overrides
+        :meth:`~sage.matrix.matrix0.Matrix._set_to_product_classical`, whose
+        generic triple loop would iterate over every position of the product
+        and multiply implicit zero entries.  Here the nonzero entries are
+        computed by :meth:`_multiply_classical_entries` and written directly
+        into ``self``, so :meth:`set_to_product` keeps the sparse algorithm's
+        complexity.
+
+        The destination is first zeroed at its current nonzero positions,
+        since it may hold the result of an earlier product.
+
+        INPUT:
+
+        - ``left`` -- a sparse matrix of the same type and base ring as
+          ``self``
+        - ``right`` -- a sparse matrix of the same type and base ring as
+          ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
+            sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
+            sage: C = matrix(QQ['x,y'], 2, sparse=True)
+            sage: C.set_to_product(A, B)
+            sage: C
+            [2 2]
+            [2 2]
+
+        Reusing the destination overwrites the entries of the previous
+        product::
+
+            sage: C.set_to_product(B, A)
+            sage: C
+            [-2  3]
+            [-4  6]
+
+        TESTS:
+
+        Writing the product must not leave the destination's cached sparsity
+        pattern describing its previous contents::
+
+            sage: C = matrix(ZZ, 3, 3, {(0, 0): 7}, sparse=True)
+            sage: A = matrix(ZZ, 3, 3, {(0, 1): 2}, sparse=True)
+            sage: B = matrix(ZZ, 3, 3, {(1, 2): 5}, sparse=True)
+            sage: C.set_to_product(A, B)
+            sage: C.nonzero_positions()
+            [(0, 2)]
+            sage: C.rows()
+            [(0, 0, 10), (0, 0, 0), (0, 0, 0)]
+
+        The sparse algorithm must never multiply implicit zero entries.  To
+        check that, we build a ring whose zero elements raise when they are
+        multiplied, and whose zero test can be made to fail on demand::
+
+            sage: from sage.categories.rings import Rings
+            sage: from sage.structure.element import RingElement
+            sage: from sage.structure.parent import Parent
+            sage: from sage.structure.richcmp import richcmp
+            sage: class ExplodingElement(RingElement):
+            ....:     def __init__(self, parent, value, is_zero=False):
+            ....:         RingElement.__init__(self, parent)
+            ....:         self.value = value
+            ....:         self._is_zero = is_zero
+            ....:     def _repr_(self):
+            ....:         return repr(self.value)
+            ....:     def _add_(self, other):
+            ....:         if self._is_zero:
+            ....:             return other
+            ....:         if other._is_zero:
+            ....:             return self
+            ....:         return self.parent()(self.value + other.value)
+            ....:     def _neg_(self):
+            ....:         if self._is_zero:
+            ....:             return self
+            ....:         return self.parent()(-self.value)
+            ....:     def _mul_(self, other):
+            ....:         if self._is_zero or other._is_zero:
+            ....:             raise RuntimeError("implicit zero was multiplied")
+            ....:         return self.parent()(self.value * other.value)
+            ....:     def _richcmp_(self, other, op):
+            ....:         return richcmp((self.value, self._is_zero),
+            ....:                        (other.value, other._is_zero), op)
+            ....:     def __bool__(self):
+            ....:         P = self.parent()
+            ....:         if self._is_zero and P.fail_zero_test:
+            ....:             P.zero_tests += 1
+            ....:             if P.zero_tests == 2:
+            ....:                 raise RuntimeError("zero test failed")
+            ....:         return not self._is_zero
+            ....:     def is_zero(self):
+            ....:         return self._is_zero
+            ....:     def __hash__(self):
+            ....:         return hash((self.value, self._is_zero))
+            sage: class ExplodingRing(Parent):
+            ....:     Element = ExplodingElement
+            ....:     def __init__(self):
+            ....:         Parent.__init__(self, category=Rings())
+            ....:         self.fail_zero_test = False
+            ....:         self.zero_tests = 0
+            ....:     def _repr_(self):
+            ....:         return "Exploding zero test ring"
+            ....:     def _element_constructor_(self, x=0):
+            ....:         if isinstance(x, ExplodingElement):
+            ....:             if x.parent() is self:
+            ....:                 return x
+            ....:             x = x.value
+            ....:         return self.element_class(self, x, x == 0)
+            ....:     def zero(self):
+            ....:         return self.element_class(self, 0, True)
+            ....:     def one(self):
+            ....:         return self.element_class(self, 1, False)
+
+        Neither ``*`` nor :meth:`set_to_product` may touch an implicit zero::
+
+            sage: R = ExplodingRing()
+            sage: A = matrix(R, 3, 3, {(0, 1): R(2)}, sparse=True)
+            sage: B = matrix(R, 3, 3, {(1, 2): R(5)}, sparse=True)
+            sage: A * B
+            [ 0  0 10]
+            [ 0  0  0]
+            [ 0  0  0]
+            sage: C = matrix(R, 3, 3, sparse=True)
+            sage: C.set_to_product(A, B)
+            sage: C
+            [ 0  0 10]
+            [ 0  0  0]
+            [ 0  0  0]
+
+        The destination's cache is invalidated even if writing the result
+        fails after partially modifying it::
+
+            sage: A = matrix(R, 2, 2, {(0, 0): R(1)}, sparse=True)
+            sage: B = matrix(R, 2, 2, {(0, 0): R(1)}, sparse=True)
+            sage: C = matrix(R, 2, 2, {(0, 0): R(2), (1, 1): R(3)}, sparse=True)
+            sage: R.fail_zero_test = True
+            sage: C.set_to_product(A, B)
+            Traceback (most recent call last):
+            ...
+            RuntimeError: zero test failed
+            sage: R.fail_zero_test = False
+            sage: C.nonzero_positions()
+            [(1, 1)]
+        """
+        cdef dict e = (<Matrix_sparse>left)._multiply_classical_entries(<Matrix_sparse>right)
+        cdef Py_ssize_t i, j
+        zero = self._base_ring.zero()
+        # Overwrite any previous content of the destination, then write the
+        # nonzero entries of the product directly into it.
+        for i, j in self.nonzero_positions(copy=True):
+            self.set_unsafe(i, j, zero)
+        for (i, j), x in e.items():
+            self.set_unsafe(i, j, x)
 
     def _multiply_classical_with_cache(Matrix_sparse left, Matrix_sparse right):
         """

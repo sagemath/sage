@@ -90,6 +90,12 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
         sage: v = V.gen(1)                                                              # needs sage.modules
         sage: v.category()                                                              # needs sage.modules
         Category of elements of Vector space of dimension 3 over Rational Field
+
+.. automethod:: sage.categories.category::Category._test_category_graph
+
+.. automethod:: sage.categories.category::Category.__and__
+
+.. automethod:: sage.categories.category::Category.__or__
 """
 
 # ****************************************************************************
@@ -1031,7 +1037,7 @@ class Category(UniqueRepresentation, SageObject):
         Python will find a proper Method Resolution Order for those
         classes. For background, see :mod:`sage.misc.c3_controlled`.
 
-        .. SEEALSO:: :meth:`_cmp_key`.
+        .. SEEALSO:: :class:`~sage.misc.c3_controlled.CmpKey`.
 
         .. NOTE::
 
@@ -1401,7 +1407,7 @@ class Category(UniqueRepresentation, SageObject):
             classes. This method checks this.
 
         Note that if
-        :meth:`~sage.structure.category_object.CategoryObject._refine_category_`
+        ``_refine_category_``
         is called at unexpected times, the invariant might be false. Most
         commonly, this happens with rings like ``Zmod(n)`` or ``SR``, where
         a check like ``Zmod(n) in Fields()`` is needed (which checks the primality
@@ -1409,7 +1415,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO::
 
-            :meth:`CategoryWithParameters._make_named_class_key`
+            ``CategoryWithParameters._make_named_class_key``
 
         EXAMPLES::
 
@@ -1536,7 +1542,7 @@ class Category(UniqueRepresentation, SageObject):
               resolution orders. For background, see
               :mod:`sage.misc.c3_controlled`.
 
-        .. SEEALSO:: :meth:`CategoryWithParameters._make_named_class`
+        .. SEEALSO:: ``CategoryWithParameters._make_named_class``
 
         EXAMPLES::
 
@@ -2252,7 +2258,7 @@ class Category(UniqueRepresentation, SageObject):
         Return the categories after sorting them decreasingly according
         to their comparison key.
 
-        .. SEEALSO:: :meth:`_cmp_key`
+        .. SEEALSO:: :class:`~sage.misc.c3_controlled.CmpKey`
 
         INPUT:
 
@@ -3258,7 +3264,7 @@ class JoinCategory(CategoryWithParameters):
         """
         Return a comparison key for ``self``.
 
-        See :meth:`Category._cmp_key` for the specifications.
+        See :class:`~sage.misc.c3_controlled.CmpKey` for the specifications.
 
         EXAMPLES:
 

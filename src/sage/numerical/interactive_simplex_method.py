@@ -4268,6 +4268,8 @@ class LPDictionary(LPAbstractDictionary):
 
 
 random_dictionary = LPDictionary.random_element
+random_dictionary.__name__ = "random_dictionary"
+random_dictionary.__qualname__ = "random_dictionary"
 
 
 class LPRevisedDictionary(LPAbstractDictionary):

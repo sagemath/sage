@@ -110,8 +110,8 @@ AUTHORS:
 
 - Vincent Delecroix (2010-12-28): added unicode in Integer.__init__
 
-- David Roe (2012-03): deprecate :meth:`~sage.rings.integer.Integer.is_power`
-  in favour of :meth:`~sage.rings.integer.Integer.is_perfect_power` (see
+- David Roe (2012-03): deprecate ``is_power``
+  in favour of :meth:`sage.rings.integer.Integer.is_perfect_power` (see
   :issue:`12116`)
 
 - Vincent Delecroix (2017-05-03): faster integer-rational comparisons
@@ -335,7 +335,8 @@ cdef class IntegerWrapper(Integer):
     hijacked with custom functions that stick already allocated
     :class:`Integer` objects (with initialized ``parent`` and ``mpz_t`` fields)
     into a pool on "deallocation" and then pull them out whenever a
-    new one is needed. Because :class:`Integers` objects are so common, this is
+    new one is needed. Because :class:`Integer <sage.rings.integer.Integer>`
+    objects are so common, this is
     actually a significant savings. However, this does cause issues
     with subclassing a Python class directly from :class:`Integer` (but
     that's ok for a Cython class).
@@ -445,7 +446,8 @@ cdef Integer integer_add_python_int(Integer left, right):
 cdef class Integer(sage.structure.element.EuclideanDomainElement):
     r"""
     The :class:`Integer` class represents arbitrary precision
-    integers. It derives from the :class:`Element` class, so
+    integers. It derives from the
+    :class:`Element <sage.structure.element.Element>` class, so
     integers can be used as ring elements anywhere in Sage.
 
     The constructor of :class:`Integer` interprets strings that begin with ``0o`` as octal numbers,
@@ -2831,7 +2833,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
     def log(self, m=None, prec=None):
         r"""
         Return symbolic log by default, unless the logarithm is exact (for
-        an integer argument). When ``prec`` is given, the :class:`RealField`
+        an integer argument). When ``prec`` is given, the
+        :class:`RealField <sage.rings.abc.RealField>`
         approximation to that bit precision is used.
 
         This function is provided primarily so that Sage integers may be
@@ -2843,7 +2846,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``m`` -- (default: natural) log base e
 
         - ``prec`` -- integer (default: ``None``); if ``None``, returns
-          symbolic, else to given bits of precision as in :class:`RealField`
+          symbolic, else to given bits of precision as in
+          :class:`RealField <sage.rings.abc.RealField>`
 
         EXAMPLES::
 
@@ -2969,7 +2973,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
         - ``prec`` -- integer (default: ``None``); if ``None``, returns
-          symbolic, else to given bits of precision as in :class:`RealField`
+          symbolic, else to given bits of precision as in
+          :class:`RealField <sage.rings.abc.RealField>`
 
         EXAMPLES::
 
@@ -6012,7 +6017,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
         - ``proof`` -- boolean or ``None`` (default: ``None``, see
-          ``proof.arithmetic`` or :mod:`sage.structure.proof`); note that the
+          ``proof.arithmetic`` or :mod:`sage.structure.proof.proof`); note that the
           global Sage default is ``proof=True``
 
         EXAMPLES::
@@ -6054,7 +6059,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
-          :mod:`proof.arithmetic` or :mod:`sage.structure.proof`).
+          ``proof.arithmetic`` or :mod:`sage.structure.proof.proof`).
 
         .. SEEALSO::
 
@@ -6100,7 +6105,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
-          :mod:`proof.arithmetic` or :mod:`sage.structure.proof`).
+          ``proof.arithmetic`` or :mod:`sage.structure.proof.proof`).
 
         ALGORITHM:
 
@@ -6166,7 +6171,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
-          :mod:`proof.arithmetic` or :mod:`sage.structure.proof`).
+          ``proof.arithmetic`` or :mod:`sage.structure.proof.proof`).
 
         ALGORITHM:
 
@@ -6684,8 +6689,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         .. NOTE::
 
             There is no guarantee that the cofactors will be minimal. If you
-            need the cofactors to be minimal use :meth:`_xgcd`. Also, using
-            :meth:`_xgcd` directly might be faster in some cases, see
+            need the cofactors to be minimal use ``_xgcd``. Also, using
+            ``_xgcd`` directly might be faster in some cases, see
             :issue:`13628`.
 
         EXAMPLES::

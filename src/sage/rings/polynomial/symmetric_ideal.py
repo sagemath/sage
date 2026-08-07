@@ -556,11 +556,11 @@ class SymmetricIdeal(Ideal_generic):
     def interreduced_basis(self):
         """
         A fully symmetrically reduced generating set (type
-        :class:`~sage.structure.sequence.Sequence`) of ``self``.
+        :func:`~sage.structure.sequence.Sequence`) of ``self``.
 
         This does essentially the same as :meth:`interreduction` with
         the option 'tailreduce', but it returns a
-        :class:`~sage.structure.sequence.Sequence` rather than a
+        :func:`~sage.structure.sequence.Sequence` rather than a
         :class:`~sage.rings.polynomial.symmetric_ideal.SymmetricIdeal`.
 
         EXAMPLES::
@@ -665,11 +665,11 @@ class SymmetricIdeal(Ideal_generic):
 
     def symmetric_basis(self):
         """
-        A symmetrised generating set (type :class:`~sage.structure.sequence.Sequence`) of ``self``.
+        A symmetrised generating set (type :func:`~sage.structure.sequence.Sequence`) of ``self``.
 
         This does essentially the same as :meth:`symmetrisation` with
         the option ``tailreduce``, and it returns a
-        :class:`~sage.structure.sequence.Sequence` rather than a
+        :func:`~sage.structure.sequence.Sequence` rather than a
         :class:`~sage.rings.polynomial.symmetric_ideal.SymmetricIdeal`.
 
         EXAMPLES::
@@ -704,7 +704,7 @@ class SymmetricIdeal(Ideal_generic):
         OUTPUT:
 
         A Symmetric Ideal whose generators are the result of applying
-        :meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_sparse.squeezed`
+        :meth:`~sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial.squeezed`
         to the generators of ``self``.
 
         NOTE:
@@ -724,7 +724,7 @@ class SymmetricIdeal(Ideal_generic):
     @cached_method
     def groebner_basis(self, tailreduce=False, reduced=True, algorithm=None, report=None, use_full_group=False):
         """
-        Return a symmetric Groebner basis (type :class:`~sage.structure.sequence.Sequence`) of ``self``.
+        Return a symmetric Groebner basis (type :func:`~sage.structure.sequence.Sequence`) of ``self``.
 
         INPUT:
 

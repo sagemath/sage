@@ -64,6 +64,8 @@ jobs:
           # Reset the branch to develop
           git fetch origin develop
           git reset --soft origin/develop
+          # Exclude packages that are not installed in this conda test job.
+          git restore --source=origin/develop --staged --worktree -- src/sage_docbuild src/sage_setup
           # Show uncommitted changes
           git status
 

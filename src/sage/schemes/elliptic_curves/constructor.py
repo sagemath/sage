@@ -299,8 +299,11 @@ class EllipticCurveFactory(UniqueFactory):
         ValueError: only one of A and j may be specified
 
     If the universe of the coefficients is a general field, the object
-    constructed has type :class:`EllipticCurve_field`.  Otherwise it is
-    :class:`EllipticCurve_generic`.  See :issue:`9816` ::
+    constructed has type
+    :class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`.
+    Otherwise it is
+    :class:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic`.
+    See :issue:`9816` ::
 
         sage: E = EllipticCurve([QQbar(1), 3]); E                                       # needs sage.rings.number_field
         Elliptic Curve defined by y^2 = x^3 + x + 3 over Algebraic Field

@@ -85,13 +85,13 @@ cdef class LazyField(Field):
 
     .. WARNING::
 
-        LazyField uses :meth:`__getattr__`, to implement::
+        LazyField uses ``__getattr__``, to implement::
 
             sage: CLF.pi
             3.141592653589794?
 
         I (NT, 20/04/2012) did not manage to have ``__getattr__`` call
-        :meth:`Parent.__getattr__` in case of failure; hence we can't
+        ``Parent.__getattr__`` in case of failure; hence we can't
         use this ``__getattr__`` trick for extension types to recover
         the methods from categories. Therefore, at this point, no
         concrete subclass of this class should be an extension type
@@ -1289,7 +1289,7 @@ cdef class LazyNamedUnop(LazyUnop):
         """
         This class is used to represent the many named methods attached to real
         numbers, and is instantiated by the ``__getattr__`` method of
-        :class:`LazyElements`.
+        ``LazyElements``.
 
         EXAMPLES::
 
