@@ -475,7 +475,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
 
     When the input (di)graph `G` is not connected, this method returns nothing.
 
-    As for method :meth:`sage.graphs.generic_graph.connected_components`, edge
+    As for method :meth:`~sage.graphs.generic_graph.GenericGraph.connected_components`, edge
     orientation is ignored. Hence, the directed graph with a single arc `0 \to
     1` is considered connected.
 
@@ -752,7 +752,7 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
     from a subset of the vertices of the graph and all of the edges connecting
     pairs of vertices in that subset (:wikipedia:`Induced_subgraph`).
 
-    As for method :meth:`sage.graphs.generic_graph.connected_components`, edge
+    As for method :meth:`~sage.graphs.generic_graph.GenericGraph.connected_components`, edge
     orientation is ignored. Hence, the directed graph with a single arc `0 \to
     1` is considered connected.
 

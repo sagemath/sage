@@ -2,8 +2,8 @@ r"""
 Hypergeometric functions over arbitrary rings
 
 When the given variable `x` is not symbolic but lies in a polynomial
-ring or a power series ring, the function
-:func:`~sage.functions.hypergeometric.hypergeometric`
+ring or a power series ring, the hypergeometric function, implemented by
+:class:`~sage.functions.hypergeometric.Hypergeometric`,
 returns an instance of the class :class:`HypergeometricAlgebraic`::
 
     sage: S.<x> = QQ[]

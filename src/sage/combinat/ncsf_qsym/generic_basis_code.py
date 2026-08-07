@@ -943,7 +943,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             """
             The maximum of the degrees of the homogeneous summands.
 
-            .. SEEALSO:: :meth:`~sage.categories.graded_algebras_with_basis.GradedAlgebrasWithBasis.ElementMethods.homogeneous_degree`
+            .. SEEALSO:: :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ElementMethods.homogeneous_degree`
 
             EXAMPLES::
 

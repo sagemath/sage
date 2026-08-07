@@ -108,7 +108,8 @@ class FreeMonoid(FreeSemigroup):
     @cached_method
     def one(self):
         r"""
-        Return the one of the monoid, as per :meth:`Monoids.ParentMethods.one`.
+        Return the one of the monoid, as per
+        :meth:`sage.categories.magmas.Magmas.Unital.ParentMethods.one`.
 
         EXAMPLES::
 

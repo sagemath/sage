@@ -918,7 +918,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
-            :meth:`echelonize`, and reindexed by `0,1,...`.
+            :meth:`~sage.matrix.matrix2.Matrix.echelonize`, and reindexed by `0,1,...`.
 
             .. WARNING::
 
@@ -935,7 +935,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`ModulesWithBasis.FiniteDimensional.ParentMethods.quotient_module`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.quotient_module`
                  - :class:`sage.modules.with_basis.subquotient.SubmoduleWithBasis`
 
             EXAMPLES:
@@ -1095,7 +1095,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               ``self.submodule(submodule)``
 
             - ``check``, ``already_echelonized`` -- passed down to
-              :meth:`ModulesWithBasis.ParentMethods.submodule`
+              :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
 
             .. WARNING::
 
@@ -1131,7 +1131,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`Modules.WithBasis.ParentMethods.submodule`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
                  - :meth:`Rings.ParentMethods.quotient`
                  - :class:`sage.modules.with_basis.subquotient.QuotientModuleWithBasis`
             """

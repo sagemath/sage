@@ -47,7 +47,8 @@ element contains the following data:
   ``ZZ_pX_conv_modulus`` gives a semi-safe way to convert between
   different moduli without having to pass through ``ZZX``.
 
-- ``prime_pow`` (some subclass of :class:`PowComputer_ZZ_pX`) -- a class,
+- ``prime_pow`` (some subclass of
+  :class:`~sage.rings.padics.pow_computer_ext.PowComputer_ZZ_pX`) -- a class,
   identical among all elements with the same parent, holding common
   data.
 
@@ -2821,7 +2822,8 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
-        :class:`IntegerMod` elements, defined modulo `p^{N / e}` where `N` is
+        :func:`~sage.rings.finite_rings.integer_mod.IntegerMod` elements,
+        defined modulo `p^{N / e}` where `N` is
         the absolute precision of this element (unless this element is
         zero to arbitrary precision; in that case the entries are
         integer zeros.)

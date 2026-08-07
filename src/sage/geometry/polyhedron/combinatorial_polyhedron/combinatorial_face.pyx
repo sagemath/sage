@@ -978,7 +978,7 @@ cdef class CombinatorialFace(SageObject):
         .. NOTE::
 
             This method is tested in
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base._test_combinatorial_face_as_combinatorial_polyhedron`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3._test_combinatorial_face_as_combinatorial_polyhedron`.
         """
         if not self._ambient_bounded:
             raise NotImplementedError("only implemented for bounded polyhedra")

@@ -158,15 +158,17 @@ class Rule(UniqueRepresentation):
     r"""
     Generic base class for an insertion rule for an RSK-type correspondence.
 
-    An instance of this class should implement a method
-    :meth:`insertion` (which can be applied to a letter ``j``
-    and a list ``r``, and modifies ``r`` in place by "bumping"
-    ``j`` into it appropriately; it then returns the bumped-out
-    entry or ``None`` if no such entry exists) and a method
-    :meth:`reverse_insertion` (which does the same but for reverse
-    bumping).
-    It may also implement :meth:`_backward_format_output` and
-    :meth:`_forward_format_output` if the RSK correspondence should
+    An instance of this class should implement
+    :meth:`~sage.combinat.rsk.RuleRSK.insertion` (which can be applied
+    to a letter ``j`` and a list ``r``, and modifies ``r`` in place by
+    "bumping" ``j`` into it appropriately; it then returns the bumped-out
+    entry or ``None`` if no such entry exists) and
+    :meth:`~sage.combinat.rsk.RuleRSK.reverse_insertion` (which does the
+    same but for reverse bumping).
+    It may also implement
+    :meth:`~sage.combinat.rsk.Rule._backward_format_output` and
+    :meth:`~sage.combinat.rsk.Rule._forward_format_output` if the
+    RSK correspondence should
     return something other than (semi)standard tableaux (in the
     forward direction) and matrices or biwords (in the backward
     direction).
@@ -176,11 +178,15 @@ class Rule(UniqueRepresentation):
     `[a_1, a_2, \ldots, a_n]` and `[b_1, b_2, \ldots, b_n]`
     satisfying `(a_1, b_1) \leq (a_2, b_2) \leq \cdots
     \leq (a_n, b_n)` in lexicographic order).
-    Finally, :meth:`forward_rule` and :meth:`backward_rule`
+    Finally, :meth:`~sage.combinat.rsk.Rule.forward_rule` and
+    :meth:`~sage.combinat.rsk.Rule.backward_rule`
     have to be overridden if the overall structure of the
     RSK correspondence differs from that of classical RSK (see,
     e.g., the case of Hecke insertion, in which a letter bumped
     into a row may change a different row).
+
+    .. automethod:: _forward_format_output
+    .. automethod:: _backward_format_output
     """
 
     def to_pairs(self, obj1=None, obj2=None, check=True):
@@ -198,7 +204,7 @@ class Rule(UniqueRepresentation):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a biword
-          (see the doc of :meth:`forward_rule` for the
+          (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for the
           encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check that
@@ -1302,7 +1308,7 @@ class RuleDualRSK(Rule):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a strict biword
-          (see the doc of :meth:`forward_rule` for the
+          (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for the
           encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check
@@ -1685,7 +1691,7 @@ class RuleCoRSK(RuleRSK):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a strict
-          cobiword (see the doc of :meth:`forward_rule` for
+          cobiword (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for
           the encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check
@@ -2005,7 +2011,7 @@ class RuleSuperRSK(RuleRSK):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a restricted super biword
-          (see the doc of :meth:`forward_rule` for the
+          (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for the
           encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check

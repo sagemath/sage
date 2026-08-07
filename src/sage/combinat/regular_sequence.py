@@ -201,7 +201,9 @@ class RegularSequence(RecognizableSeries):
 
         - ``allow_degenerated_sequence`` -- boolean (default: ``False``); if
           set, then there will be no check if the input is a degenerated
-          sequence (see :meth:`is_degenerated`). Otherwise the input is checked
+          sequence (see
+          :meth:`~sage.combinat.regular_sequence.RegularSequence.is_degenerated`).
+          Otherwise the input is checked
           and a :exc:`DegeneratedSequenceError` is raised if such a sequence
           is detected.
 
@@ -417,7 +419,9 @@ class RegularSequence(RecognizableSeries):
             sage: Seq2 = RegularSequenceRing(2, ZZ)
 
         The following linear representation of `S` is chosen badly (is
-        degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
+        degenerated, see
+        :meth:`~sage.combinat.regular_sequence.RegularSequence.is_degenerated`),
+        as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
             sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
@@ -492,14 +496,20 @@ class RegularSequence(RecognizableSeries):
 
         - ``allow_degenerated_sequence`` -- boolean (default: ``False``); if
           set, then there will be no check if the transposed sequence is a
-          degenerated sequence (see :meth:`is_degenerated`). Otherwise the
+          degenerated sequence (see
+          :meth:`~sage.combinat.regular_sequence.RegularSequence.is_degenerated`).
+          Otherwise the
           transposed sequence is checked and a :exc:`DegeneratedSequenceError`
           is raised if such a sequence is detected.
 
         OUTPUT: a :class:`RegularSequence`
 
-        Each of the matrices in :meth:`mu <mu>` is transposed. Additionally
-        the vectors :meth:`left <left>` and :meth:`right <right>` are switched.
+        Each of the matrices in
+        :attr:`~sage.combinat.recognizable_series.RecognizableSeries.mu` is
+        transposed. Additionally the vectors
+        :attr:`~sage.combinat.recognizable_series.RecognizableSeries.left` and
+        :attr:`~sage.combinat.recognizable_series.RecognizableSeries.right`
+        are switched.
 
         EXAMPLES::
 
@@ -733,7 +743,9 @@ class RegularSequence(RecognizableSeries):
             ValueError: a=-1 is not nonnegative.
 
         The following linear representation of `S` is chosen badly (is
-        degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
+        degenerated, see
+        :meth:`~sage.combinat.regular_sequence.RegularSequence.is_degenerated`),
+        as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
             sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
@@ -1164,7 +1176,9 @@ class RegularSequence(RecognizableSeries):
             2-regular sequence 0, 1, 3, 6, 10, 15, 21, 28, 36, 45, ...
 
         The following linear representation of `S` is chosen badly (is
-        degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
+        degenerated, see
+        :meth:`~sage.combinat.regular_sequence.RegularSequence.is_degenerated`),
+        as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
             sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
@@ -1777,7 +1791,9 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             sage: logging.getLogger().setLevel(logging.WARN)
 
         The following linear representation of `S` is chosen badly (is
-        degenerated, see :meth:`is_degenerated`), as `\mu(0)` applied on
+        degenerated, see
+        :meth:`~sage.combinat.regular_sequence.RegularSequence.is_degenerated`),
+        as `\mu(0)` applied on
         `\mathit{right}` does not equal `\mathit{right}`::
 
             sage: S = Seq2((Matrix([2]), Matrix([3])), vector([1]), vector([1]),
