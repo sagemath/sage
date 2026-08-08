@@ -1,1 +1,1 @@
-pygambit
+pygambit >=16.7
