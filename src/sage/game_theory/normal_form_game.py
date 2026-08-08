@@ -823,17 +823,18 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         self.players = []
         self.utilities = {}
-        if generator is not None:
-            if type(generator) is not list and type(generator) is not Game:
-                raise TypeError("Generator function must be a list, gambit game or nothing")
-
-        if type(generator) is list:
+        # ``Game`` is a lazy import, so it must be compared with ``isinstance``
+        # (which resolves it) rather than with ``is``, and only once pygambit
+        # is known to be present -- otherwise resolving it would raise instead
+        # of giving the ``TypeError`` below.
+        if isinstance(generator, list):
             if len(generator) == 1:
                 generator.append(-generator[-1])
             self._n_matrix_game(generator)
-        elif type(generator) is Game:
-            game = generator
-            self._gambit_game(game)
+        elif pygambit().is_present() and isinstance(generator, Game):
+            self._gambit_game(generator)
+        elif generator is not None:
+            raise TypeError("Generator function must be a list, gambit game or nothing")
 
     def __delitem__(self, key):
         r"""
@@ -1107,11 +1108,13 @@ class NormalFormGame(SageObject, MutableMapping):
         for player in game.players:
             num_strategies = len(player.strategies)
             self.add_player(num_strategies)
+        # gambit's player collection is indexed by label, not by position
+        players = list(game.players)
         for strategy_profile in self.utilities:
+            outcome = game[strategy_profile]
             # gambit stores inexact payoffs as decimals and exact ones as rationals
             utility_vector = [float(payoff) if isinstance(payoff, Decimal) else QQ(payoff)
-                              for payoff in (game[strategy_profile][game.players[i]]
-                                             for i in range(len(self.players)))]
+                              for payoff in (outcome[p] for p in players)]
             self.utilities[strategy_profile] = utility_vector
 
     def _gambit_(self, as_integer=False, maximization=True):
@@ -1126,7 +1129,7 @@ class NormalFormGame(SageObject, MutableMapping):
         - ``maximization`` -- boolean; whether a player is trying to
           maximize their utility or minimize it
 
-        TESTS::
+        TESTS:
 
         Gambit games are indexed by strategy labels (and players by their
         labels) rather than by integers; the default labels are the strings
@@ -1312,9 +1315,9 @@ class NormalFormGame(SageObject, MutableMapping):
 
             sage: # optional - pygambit
             sage: g = NormalFormGame()
-            sage: 'bagwell1995' in list(g.load_from_gambit_catalog()['Game'])
+            sage: 'journals/geb/bagwell1995' in list(g.load_from_gambit_catalog()['Game'])
             True
-            sage: g.load_from_gambit_catalog('bagwell1995', info=False)
+            sage: g.load_from_gambit_catalog('journals/geb/bagwell1995', info=False)
             sage: len(g.players)
             2
             sage: g.load_from_gambit_catalog('not_a_real_game', info=False)
