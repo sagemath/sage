@@ -22,9 +22,10 @@ Its other main purpose is to provide a Sage entry point to gambit's extensive
 form games: convert back to the underlying gambit game with
 :meth:`~ExtensiveFormGame._gambit_`, save and load games in gambit's ``.efg``
 format with :meth:`~ExtensiveFormGame.save_efg` /
-:meth:`~ExtensiveFormGame.load_efg`, load example games from the gambit catalog
-with :meth:`~ExtensiveFormGame.load_from_gambit_catalog`, and compute Nash
-equilibria with :meth:`~ExtensiveFormGame.obtain_nash`.
+:meth:`~ExtensiveFormGame.load_efg`, load games from the literature out of the
+gambit catalog with :meth:`~ExtensiveFormGame.load_from_gambit_catalog` (two of
+them are worked through at the end of this page), and compute Nash equilibria
+with :meth:`~ExtensiveFormGame.obtain_nash`.
 
 Game trees can be drawn with :meth:`~ExtensiveFormGame.plot`, either with
 Sage's own graph plotting or -- for publication-quality TikZ pictures like the
@@ -169,25 +170,6 @@ per further node for the second::
     ....:                       '{},{}'.format(x, y), payoff)
     ....:     return g
 
-The Prisoner's Dilemma is two suspects questioned separately, each staying
-silent or confessing without knowing what the other does.  Gambit maximizes
-payoffs, so the sentences are scored as utilities (higher is better) rather
-than as the years in prison of the
-:mod:`~sage.game_theory.normal_form_game` example.  Confessing dominates, and
-the unique equilibrium is the outcome both would rather avoid::
-
-    sage: # optional - pygambit
-    sage: prisoners = simultaneous(['Alice', 'Bob'], ['silent', 'confess'],
-    ....:                          {('silent', 'silent'): [3, 3],
-    ....:                           ('silent', 'confess'): [0, 5],
-    ....:                           ('confess', 'silent'): [5, 0],
-    ....:                           ('confess', 'confess'): [1, 1]})
-    sage: len(prisoners.infosets)
-    2
-    sage: actions = prisoners._gambit_().actions
-    sage: [[float(eq[a]) for a in actions] for eq in prisoners.obtain_nash()]
-    [[0.0, 1.0, 0.0, 1.0]]
-
 Matching pennies is the constant-sum game in which Alice and Bob each show a
 coin, Alice taking both if they match and Bob if they differ.  It has no pure
 equilibrium at all: knowing the other's choice would be decisive, and since
@@ -206,9 +188,127 @@ neither does, tossing the coin is all either can do::
     ....:  for eq in pennies.obtain_nash(algorithm='lp')]
     [[0.5, 0.5, 0.5, 0.5]]
 
+The games so far have been small enough to build by hand.  Gambit also ships a
+catalog of games taken from the literature, which
+:meth:`~ExtensiveFormGame.load_from_gambit_catalog` lists and loads into a Sage
+game.  The two below are the kind of game the extensive form exists for: what
+makes each of them worth studying -- what a player knows, and which parts of
+the tree are ever reached -- is precisely what disappears when the game is
+flattened into a payoff matrix.
+
+A driver leaving a party has to take the second exit off the motorway.
+Exiting at the first is worth 0, continuing and then exiting 4, and driving
+past both 1.  The two intersections look exactly alike, and the driver -- this
+is Piccione and Rubinstein's absent-minded driver [PR1997]_, in the version
+Gilboa put in the catalog -- cannot remember whether one has gone by already.
+Both intersections therefore lie in a single information set.  That is not the
+imperfect information of the games above, where Bob did not know somebody
+else's move: here a player has forgotten their own, which is imperfect
+*recall*::
+
+    sage: # optional - pygambit
+    sage: driver = ExtensiveFormGame()
+    sage: driver.load_from_gambit_catalog('journals/geb/gilboa1997/fig1',
+    ....:                                 info=False)
+    sage: driver
+    An extensive form game with 1 player
+    sage: driver.is_perfect_recall
+    False
+    sage: len(driver.infosets)
+    1
+    sage: sorted(len(list(s.members)) for s in driver.infosets)
+    [2]
+    sage: driver.root.children['B'].infoset == driver.root.infoset
+    True
+
+One move is made at both intersections, so a plan is a single probability `p`
+of driving on (the action ``'B'``, against ``'E'`` for exiting), worth
+`4p(1 - p) + p^2 = 4p - 3p^2`.  Gambit's equilibrium solvers assume perfect
+recall, so rather than calling :meth:`~ExtensiveFormGame.obtain_nash` we hand
+gambit the plans themselves and ask what each is worth::
+
+    sage: # optional - pygambit
+    sage: from fractions import Fraction
+    sage: game = driver._gambit_()
+    sage: def value(p):
+    ....:     plan = game.mixed_behavior_profile(rational=True)
+    ....:     plan[game.actions['B']] = Fraction(str(p))
+    ....:     plan[game.actions['E']] = Fraction(str(1 - p))
+    ....:     return QQ(plan.payoff(game.players['Player 1']))
+    sage: [value(p) for p in [0, 1/3, 1/2, 2/3, 1]]
+    [0, 1, 5/4, 4/3, 1]
+
+Driving on with probability `2/3` is worth `4/3`, strictly more than either
+way of deciding in advance, which are worth 0 and 1.  There is no opponent
+here to keep guessing: tossing a coin buys the absent-minded driver something
+that no deterministic plan can, and that is what forgetting does to a game.
+
+The other game is Selten's horse, from the paper [Selten1975]_ that introduced
+trembling-hand perfection.  Player 1 either passes across to Player 2 or drops
+down to Player 3; Player 2, if reached, either ends the game at `(1, 1, 1)` or
+passes down to Player 3 as well.  Player 3 cannot tell which of the two routes
+led to them, and because that one information set straddles both branches, no
+node below the root starts a subgame of its own::
+
+    sage: # optional - pygambit
+    sage: horse = ExtensiveFormGame()
+    sage: horse.load_from_gambit_catalog('journals/ijgt/selten1975/fig1',
+    ....:                                info=False)
+    sage: horse
+    An extensive form game with 3 players
+    sage: [n.is_subgame_root for n in [horse.root, horse.root.children['R'],
+    ....:                              horse.root.children['L']]]
+    [True, False, False]
+
+The game has two equilibria in pure strategies.  Each of them leaves one
+player's information set off the equilibrium path -- it is reached with
+probability 0 -- so what that player would have done is never put to the
+test::
+
+    sage: # optional - pygambit
+    sage: eqs = horse.obtain_nash(algorithm='enumpure')
+    sage: [[QQ(eq.payoff(p)) for p in horse.players] for eq in eqs]
+    [[1, 1, 1], [3, 2, 2]]
+    sage: game = horse._gambit_()
+    sage: sets = [list(game.players[n].infosets)[0]
+    ....:         for n in ['Player 1', 'Player 2', 'Player 3']]
+    sage: [[QQ(eq.infoset_prob(s)) for s in sets] for eq in eqs]
+    [[1, 1, 0], [1, 0, 1]]
+
+Take the second one, worth `(3, 2, 2)`.  Player 1 goes down, Player 2 is never
+asked to move, and the plan the equilibrium credits to Player 2 is to end the
+game for 1 -- which is exactly what keeps Player 1 from passing across.  Give
+Player 1's move to ``'R'`` so that Player 2's node is reached, leave the other
+two players as they are, and ask what Player 2's two actions are then worth::
+
+    sage: # optional - pygambit
+    sage: plan = game.mixed_behavior_profile(rational=True)
+    sage: for s in sets:
+    ....:     plan[s.actions['L']] = Fraction('0')
+    ....:     plan[s.actions['R']] = Fraction('1')
+    sage: [(a.label, QQ(plan.action_value(a))) for a in sets[1].actions]
+    [('R', 1), ('L', 4)]
+
+Player 2 would pass down and take 4.  The profile is a Nash equilibrium all
+the same, because being one only requires plans to be optimal where they are
+actually carried out, and it survives subgame perfection too: with no proper
+subgame there is nothing for that refinement to check.  Ruling it out is what
+Selten's trembling hands are for, and the logit tracing procedure, which
+approaches an equilibrium along a path of slightly trembling play, keeps only
+the other one::
+
+    sage: # optional - pygambit
+    sage: [[QQ(eq.payoff(p)) for p in horse.players]
+    ....:  for eq in horse.obtain_nash(algorithm='logit')]
+    [[1, 1, 1]]
+
 REFERENCES:
 
 - [NN2007]_
+
+- [PR1997]_
+
+- [Selten1975]_
 
 - [Gambit]_
 
@@ -418,44 +518,14 @@ class ExtensiveFormGame(SageObject):
         sage: sorted(p.label for p in g.players)
         ['Alice', 'Bob']
 
-    The familiar textbook games are built the same way.  In the Battle of the
-    Sexes, Amy and Bob want to spend the evening together but disagree on how:
-    Amy prefers video games and Bob prefers a movie.  They choose
-    simultaneously, which in a tree means that Amy is drawn as moving first
-    while Bob's two nodes sit in a single information set, so that he cannot
-    tell them apart::
-
-        sage: # optional - pygambit
-        sage: battle = ExtensiveFormGame(players=['Amy', 'Bob'])
-        sage: battle.append_move(battle.root, 'Amy', ['game', 'movie'])
-        sage: battle.append_move(battle.root.children['game'], 'Bob',
-        ....:                    ['game', 'movie'])
-        sage: battle.append_infoset(battle.root.children['movie'],
-        ....:                       battle.root.children['game'])
-        sage: payoffs = {('game', 'game'): [3, 2], ('game', 'movie'): [1, 1],
-        ....:            ('movie', 'game'): [0, 0], ('movie', 'movie'): [2, 3]}
-        sage: for (amy, bob), payoff in payoffs.items():
-        ....:     battle.set_outcome(battle.root.children[amy].children[bob],
-        ....:                        '{},{}'.format(amy, bob), payoff)
-        sage: battle
-        An extensive form game with 2 players
-        sage: len(battle.infosets)
-        2
-
-    Its two pure equilibria are the two ways of spending the evening together,
-    both playing video games or both watching the movie::
-
-        sage: # optional - pygambit
-        sage: actions = battle._gambit_().actions
-        sage: [[float(eq[a]) for a in actions]
-        ....:  for eq in battle.obtain_nash(algorithm='enumpure')]
-        [[1.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 1.0]]
-
-    The Prisoner's Dilemma has the same shape: two suspects, questioned
-    separately, each stay silent or confess without knowing what the other
-    does.  Gambit maximizes payoffs, so the sentences are scored as utilities
-    (higher is better) rather than as the years in prison of the
-    :mod:`~sage.game_theory.normal_form_game` example::
+    The familiar textbook games are built the same way.  In the Prisoner's
+    Dilemma, two suspects are questioned separately, each staying silent or
+    confessing without knowing what the other does.  Choosing simultaneously
+    means, in a tree, that Alice is drawn as moving first while Bob's two nodes
+    are joined by :meth:`append_infoset` into a single information set, so that
+    he cannot tell them apart.  Gambit maximizes payoffs, so the sentences are
+    scored as utilities (higher is better) rather than as the years in prison
+    of the :mod:`~sage.game_theory.normal_form_game` example::
 
         sage: # optional - pygambit
         sage: prisoners = ExtensiveFormGame(players=['Alice', 'Bob'])
@@ -492,34 +562,6 @@ class ExtensiveFormGame(SageObject):
         ....:     gt.set_outcome(leaf, gt.add_outcome(label, [a, b]))
         sage: ExtensiveFormGame(gt)
         An extensive form game with 2 players
-
-    Here is matching pennies built that way: Alice and Bob each show a coin,
-    Alice taking both pennies if the coins match and Bob if they differ::
-
-        sage: # optional - pygambit
-        sage: gt = Game.new_tree(players=['Alice', 'Bob'])
-        sage: gt.append_move(gt.root, gt.players['Alice'], ['heads', 'tails'])
-        sage: gt.append_move(gt.root.children['heads'], gt.players['Bob'],
-        ....:                ['heads', 'tails'])
-        sage: gt.append_infoset(gt.root.children['tails'],
-        ....:                   gt.root.children['heads'].infoset)
-        sage: for alice in ['heads', 'tails']:
-        ....:     for bob in ['heads', 'tails']:
-        ....:         win = 1 if alice == bob else -1
-        ....:         label = '{},{}'.format(alice, bob)
-        ....:         gt.set_outcome(gt.root.children[alice].children[bob],
-        ....:                        gt.add_outcome(label, [win, -win]))
-        sage: pennies = ExtensiveFormGame(gt); pennies
-        An extensive form game with 2 players
-
-    This is a constant-sum game, so it can be solved by linear programming;
-    neither player can do better than tossing their coin::
-
-        sage: # optional - pygambit
-        sage: actions = pennies._gambit_().actions
-        sage: [[float(eq[a]) for a in actions]
-        ....:  for eq in pennies.obtain_nash(algorithm='lp')]
-        [[0.5, 0.5, 0.5, 0.5]]
 
     REFERENCES:
 

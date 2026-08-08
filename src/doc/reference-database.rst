@@ -5945,6 +5945,11 @@
              Providence, RI, 2013.
              :arxiv:`1112.6163`
 
+.. [PR1997] Michele Piccione and Ariel Rubinstein, *On the interpretation
+            of decision problems with imperfect recall*,
+            Games Econom. Behav. 20 (1997), no. 1, pp. 3--24,
+            :doi:`10.1006/game.1997.0536`.
+
 .. [PR2003] Perrin-Riou, *Arithmétique des courbes elliptiques à
             réduction supersingulière en p*,
             Experiment. Math. 12 (2003), no. 2, 155-186.
@@ -6403,6 +6408,11 @@
 .. [Sei2002] \T. R. Seifullin, *Computation of determinants, adjoint
              matrices, and characteristic polynomials without division*
              :doi:`10.1023/A:1021878507303`
+
+.. [Selten1975] Reinhard Selten, *Reexamination of the perfectness concept
+                for equilibrium points in extensive games*,
+                Internat. J. Game Theory 4 (1975), no. 1, pp. 25--55,
+                :doi:`10.1007/BF01766400`.
 
 .. [Ser1972] Jean-Pierre Serre,
              Propriétés galoisiennes des points d'ordre fini
