@@ -289,12 +289,15 @@ have downloaded a binary Sage release, the HTML version of the
 corresponding documentation comes pre-built and can be found under the
 directory ``SAGE_ROOT/local/share/doc/sage/html/``.
 During the compilation of Sage from source, the HTML version of the
-documentation is also built in the process. To build the HTML version
-of the documentation, issue the following command from ``SAGE_ROOT``:
+documentation can be built using its Meson target.  In the commands below,
+replace ``builddir`` with the Meson build directory.  An editable pip
+installation uses ``build/cpXY``, such as ``build/cp312`` for Python 3.12;
+see :ref:`section-meson-build-directory`.  To build the HTML version, issue
+the following command from ``SAGE_ROOT``:
 
 .. code-block:: console
 
-    $ ./sage --docbuild --no-pdf-links all html
+    $ meson compile -C builddir doc-html
 
 Building the PDF version requires that your system has a working LaTeX
 installation. To build the PDF version of the documentation, issue the
@@ -302,15 +305,15 @@ following command from ``SAGE_ROOT``:
 
 .. code-block:: console
 
-    $ ./sage --docbuild all pdf
+    $ meson compile -C builddir doc-pdf
 
-For more command line options, refer to the output of any of the
-following commands:
+The generated files are written below :file:`builddir/src/doc/html` and
+:file:`builddir/src/doc/pdf`.  To list all configured documentation targets,
+including targets for individual manuals, use
 
 .. code-block:: console
 
-    $ ./sage --help
-    $ ./sage --advanced
+    $ meson introspect builddir --targets
 
 
 I want to cite Sage in a publication, how do I do it?
