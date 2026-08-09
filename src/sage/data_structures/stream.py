@@ -96,7 +96,7 @@ AUTHORS:
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
-from sage.arith.misc import divisors
+from sage.arith.misc import divisors, is_power_of_two
 from sage.functions.other import binomial
 from sage.misc.misc_c import prod
 from sage.misc.lazy_attribute import lazy_attribute
@@ -2781,6 +2781,128 @@ class Stream_sub(Stream_binary):
         """
         return self._left[n] - self._right[n]
 
+class Stream_cauchy_mul_DAC():
+    def __init__(self, left, right, phi, N, threshold):
+        """
+        initialize ``self``.
+
+        INPUT:
+
+        - `left`, `right`, lists of coefficients of the same length at least `N`
+
+        """
+        # we work with a dense implementation here
+        self._left = [left[k] for k in range(N)]
+        self._right = [right[k] for k in range(N)]
+        if phi is None:
+            self._phi = [0]*(2*N)
+            self._lo = None
+            self._n = ZZ.zero()
+        else:
+            self._phi = [phi[k] for k in range(N)] + [0]*N
+            self._lo = phi
+            self._n = ZZ(N / 2)
+        self._N = N
+        self._mid = self._hi = None
+        self._threshold = threshold
+
+    def __getitem__(self, n):
+        while n >= self._n:
+            v = self._compute_next()
+            self._phi[self._n] = v
+            self._n += 1
+        return self._phi[n]
+
+    def _compute_next(self):
+        n = self._n
+        N = self._N
+        threshold = self._threshold
+        if N <= threshold:
+            if n < N:
+                return sum(l * self._right[n - k]
+                           for k in range(0, n+1)
+                           if (l := self._left[k]))
+            return sum(l * self._right[n - k]
+                       for k in range(n - N + 1, N)
+                       if (l := self._left[k]))
+        N2 = ZZ(N / 2)
+        if n < N2:
+            if not n:
+                self._lo = Stream_cauchy_mul_DAC(self._left, self._right,
+                                                 None, N2, threshold)
+            return self._lo[n]
+        if n < N:
+            if n == N2:
+                left_upper = [self._left[k] for k in range(N2, N)]
+                right_upper = [self._right[k] for k in range(N2, N)]
+                self._mid = Stream_cauchy_mul_DAC([l_lower + l_upper for l_lower, l_upper in zip(self._left, left_upper)],
+                                                  [l_lower + l_upper for l_lower, l_upper in zip(self._right, right_upper)],
+                                                  None, N2, threshold)
+                self._hi = Stream_cauchy_mul_DAC(left_upper, right_upper,
+                                                  None, N2, threshold)
+            n2 = n - N2
+            return self._lo[n] + self._mid[n2] - self._lo[n2] - self._hi[n2]
+        if n >= 2*N - 1:
+            return 0
+        if n > N:
+            return self._phi[n]
+
+        for k in range(N):
+            self._phi[N + k] = self._hi[k]
+        for k in range(N2):
+            self._phi[N + k] += self._mid[N2 + k] - self._lo[N2 + k] - self._hi[N2 + k]
+
+        self._lo = self._mid = self._hi = None
+
+        return self._phi[n]
+
+class Stream_cauchy_mul_fast(Stream_binary):
+    """
+        sage: from sage.data_structures.stream import (Stream_cauchy_mul, Stream_cauchy_mul_fast, Stream_function)
+        sage: f = Stream_function(lambda n: n, True, 0)
+        sage: g = Stream_function(lambda n: 1, True, 0)
+        sage: h1 = Stream_cauchy_mul_fast(f, g, threshold=2^5)
+        sage: l1 = [h1[i] for i in range(2000)]
+        sage: h2 = Stream_cauchy_mul(f, g)
+        sage: l2 = [h2[i] for i in range(2000)]
+        sage: l1 == l2
+        True
+
+    """
+    def __init__(self, left, right, threshold=2 ** 1):
+        """
+        initialize ``self``.
+
+        """
+        super().__init__(left, right, False)
+        self._threshold = threshold
+        self._h = Stream_cauchy_mul_DAC(left, right, None,
+                                        self._threshold, self._threshold)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        """
+        # this is not the true order, unless we have an integral domain
+        return self._left._approximate_order + self._right._approximate_order
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+        """
+        return self._left.is_nonzero() and self._right.is_nonzero()
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+        """
+        if n >= self._threshold and is_power_of_two(n):
+            self._h = Stream_cauchy_mul_DAC(self._left, self._right, self._h,
+                                            2*n, self._threshold)
+        return self._h[n]
 
 class Stream_hadamard_mul(Stream_binary):
     """
