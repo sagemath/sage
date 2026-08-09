@@ -75,7 +75,7 @@ AUTHORS:
 #   Sage: Open Source Mathematical Software
 #       Copyright (C) 2009 David Ackerman <davidnackerman@gmail.com>
 #                          William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL),
+#  Distributed under the terms of the GNunitGeneral Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  https://www.gnu.org/licenses/
 ###############################################################################
@@ -84,6 +84,7 @@ import re
 
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.sage_eval import sage_eval
 from sage.rings.rational_field import QQ
 from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
@@ -503,7 +504,6 @@ def evalunitdict():
 
         sage: sage.symbolic.units.evalunitdict()
     """
-    from sage.misc.sage_eval import sage_eval
     for key, value in unitdict.items():
         unitdict[key] = {a: (sage_eval(repr(b)) if isinstance(b, str) else b)
                          for a, b in value.items()}
@@ -982,7 +982,6 @@ def unit_derivations_expr(v):
     Z = unit_derivations[v]
     if isinstance(Z, str):
         d = {x: str_to_unit(x) for x in vars_in_str(Z)}
-        from sage.misc.sage_eval import sage_eval
         Z = sage_eval(Z, d)
         unit_derivations[v] = Z
     return Z
@@ -1000,9 +999,8 @@ class OffsetUnit:
         sage: 5*units.temperature.celsius
         5563/20*kelvin
     """
-    def __init__(self, name, category, base_unit, scale, offset):
+    def __init__(self, name, base_unit, scale, offset):
         self.__name = name
-        self.__category = category
         self.__base_unit = base_unit
         self.__scale = scale
         self.__offset = offset
@@ -1023,7 +1021,11 @@ class OffsetUnit:
             return not any(is_unit(v) for v in value.variables())
         return True
 
-    def _instantiate(self, value):
+    def instantiate(self, value):
+        """
+        Instantiate this offset unit with a scalar value, returning the
+        corresponding base unit expression.
+        """
         if not self._is_scalar(value):
             raise NotImplementedError(
                 f"Unit '{self.__name}' cannot be instantiated with a non-scalar value."
@@ -1046,13 +1048,13 @@ class OffsetUnit:
             sage: units.temperature.celsius.convert(units.temperature.fahrenheit)
             169/5*fahrenheit
         """
-        return convert(self._instantiate(1), target)
+        return convert(self.instantiate(1), target)
 
     def __mul__(self, other):
-        return self._instantiate(other)
+        return self.instantiate(other)
 
     def __rmul__(self, other):
-        return self._instantiate(other)
+        return self.instantiate(other)
 
     def __truediv__(self, other):
         self._unsupported()
@@ -1270,9 +1272,9 @@ class Units(ExtraTabCompletion):
             return self.__units[name]
         if name in offset_unitdict.get(self.__name, {}):
             base_unit, scale, offset = offset_unitdict[self.__name][name]
-            U = OffsetUnit(name, self.__name, base_unit, scale, offset)
-            self.__units[name] = U
-            return U
+            unit = OffsetUnit(name, base_unit, scale, offset)
+            self.__units[name] = unit
+            return unit
         if len(unit_to_type) == 0:
             evalunitdict()
         try:
@@ -1280,11 +1282,11 @@ class Units(ExtraTabCompletion):
         except KeyError:
             raise AttributeError
         if isinstance(v, dict):
-            U = Units(self.__data[name], name)
+            unit = Units(self.__data[name], name)
         else:
-            U = str_to_unit(name)
-        self.__units[name] = U
-        return U
+            unit = str_to_unit(name)
+        self.__units[name] = unit
+        return unit
 
     def __repr__(self):
         """
@@ -1439,7 +1441,7 @@ def convert(expr, target):
         acre*(1953125/158080329*x)
     """
     if isinstance(expr, OffsetUnit):
-        expr = expr._instantiate(1)
+        expr = expr.instantiate(1)
 
     base_target = target
     z = {}
@@ -1514,9 +1516,8 @@ def base_units(unit):
         sage: sage.symbolic.units.base_units(var('x'))
         x
     """
-    from sage.misc.sage_eval import sage_eval
     if str(unit) in offset_unit_to_type:
-        base_unit, scale, offset = offset_unitdict[offset_unit_to_type[str(unit)]][str(unit)]
+        base_unit, _, _ = offset_unitdict[offset_unit_to_type[str(unit)]][str(unit)]
         return str_to_unit(base_unit)
     if str(unit) not in unit_to_type:
         return unit
