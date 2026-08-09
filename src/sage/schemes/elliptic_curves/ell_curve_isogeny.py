@@ -642,8 +642,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     - ``codomain`` -- an elliptic curve (default: ``None``)
 
       - If ``kernel`` is ``None``, then ``degree`` must be given as well
-        and the given ``codomain`` must be the codomain of a cyclic,
-        separable, normalized isogeny of the given degree.
+        and the given ``codomain`` must be the codomain of a supported
+        separable normalized isogeny of the given degree.
 
       - If ``kernel`` is not ``None``, then this must be isomorphic to
         the codomain of the separable isogeny defined by ``kernel``; in
@@ -890,20 +890,21 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         sage: phi_s.rational_maps() == phi.rational_maps()
         True
 
-    However, only cyclic normalized isogenies can be constructed this way.
-    The non-cyclic multiplication-by-`3` isogeny won't be found::
+    Only normalized isogenies can be constructed this way.  In particular,
+    the multiplication-by-`3` endomorphism is not normalized and will not
+    be found::
 
         sage: E.isogeny(None, codomain=E, degree=9)
         Traceback (most recent call last):
         ...
-        ValueError: the two curves are not linked by a cyclic normalized isogeny of degree 9
+        ValueError: the two curves are not linked by a separable normalized isogeny of degree 9
 
     Non-normalized isogeny also won't be found::
 
         sage: E2.isogeny(None, codomain=E, degree=5)
         Traceback (most recent call last):
         ...
-        ValueError: the two curves are not linked by a cyclic normalized isogeny of degree 5
+        ValueError: the two curves are not linked by a separable normalized isogeny of degree 5
         sage: phihat = phi.dual(); phihat
         Isogeny of degree 5
          from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580
@@ -3350,15 +3351,48 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         return NotImplemented
 
 
+def _is_valid_isogeny_kernel(E1, E2, ell, ker):
+    """
+    Return whether ``ker`` defines the requested normalized isogeny.
+
+    The quotient curve being isomorphic to ``E2`` is not sufficient:
+    post-composition with an isomorphism of nontrivial scaling factor
+    changes the normalization.
+    """
+    try:
+        subgroup_degree = (2 * ker.degree() + 1
+                           - two_torsion_part(E1, ker).degree())
+        if subgroup_degree != ell:
+            return False
+        Rx = ker.parent()
+        if E1.division_polynomial(ell, x=Rx.quotient(ker).gen()) != 0:
+            return False
+        codomain = E1.isogeny_codomain(ker)
+        return any(iso.scaling_factor().is_one()
+                   for iso in codomain.isomorphisms(E2))
+    except (ArithmeticError, ValueError):
+        return False
+
+
 def compute_isogeny_bmss(E1, E2, l):
     r"""
-    Compute the kernel polynomial of the unique normalized isogeny
+    Compute the kernel polynomial of a separable normalized isogeny
     of degree ``l`` between ``E1`` and ``E2``.
 
     Both curves must be given in short Weierstrass form, and the
     characteristic must be either `0` or no smaller than `4l+4`.
 
     ALGORITHM: [BMSS2006]_, algorithm *fastElkies'*.
+
+    .. NOTE::
+
+        For odd degrees, this implementation uses the shortcut described
+        in [BMSS2006]_, where the denominator is the square of the kernel
+        polynomial.  For even degrees, it reconstructs the full
+        denominator; its numerator and denominator have respective
+        degrees at most ``l`` and ``l - 1``, so ``2*l`` terms determine
+        the rational function.  A :exc:`ValueError` is raised if the
+        requested normalized isogeny does not exist.
 
     EXAMPLES::
 
@@ -3370,13 +3404,61 @@ def compute_isogeny_bmss(E1, E2, l):
 
     TESTS:
 
-    A large number of tests that used to fail (see :issue:`42043`)::
+    The full denominator reconstruction is needed in even degree (see
+    :issue:`42043`)::
 
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_stark
         sage: F = GF(53)
         sage: E1 = EllipticCurve(F, [0, 1])
         sage: E2 = EllipticCurve(F, [38, 22])
         sage: compute_isogeny_bmss(E1, E2, 2)
         x + 1
+
+    An isomorphic codomain is not enough: the isomorphism must preserve
+    normalization::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [0, 1])
+        sage: R.<x> = F[]
+        sage: C = E1.isogeny_codomain(x)
+        sage: E2 = C.change_weierstrass_model(2, 0, 0, 0)
+        sage: C.is_isomorphic(E2)
+        True
+        sage: any(iso.scaling_factor().is_one() for iso in C.isomorphisms(E2))
+        False
+        sage: compute_isogeny_bmss(E1, E2, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: the two curves are not linked by a separable normalized isogeny of degree 3
+        sage: compute_isogeny_stark(E1, E2, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: the two curves are not linked by a separable normalized isogeny of degree 3
+
+    A nonsquare BMSS reconstruction and a spurious Stark candidate are
+    rejected directly instead of switching algorithms::
+
+        sage: E2 = EllipticCurve(F, [47, 11])
+        sage: compute_isogeny_bmss(E1, E2, 5)
+        Traceback (most recent call last):
+        ...
+        ValueError: the two curves are not linked by a separable normalized isogeny of degree 5
+        sage: compute_isogeny_stark(E1, E2, 5)
+        Traceback (most recent call last):
+        ...
+        ValueError: the two curves are not linked by a separable normalized isogeny of degree 5
+
+    Valid odd-degree kernels need not be cyclic::
+
+        sage: E = EllipticCurve(F, [1, 1])
+        sage: mu = E.scalar_multiplication(3)
+        sage: phi = E.isomorphism(F(1)/3) * mu
+        sage: phi.degree(), phi.scaling_factor(), phi.is_normalized()
+        (9, 1, True)
+        sage: ker = compute_isogeny_bmss(E, phi.codomain(), 9); ker
+        x^4 + 2*x^2 + 4*x + 35
+        sage: E.isogeny(ker).kernel_subgroup(extend=True).invariants()
+        (3, 3)
 
     ::
 
@@ -3433,6 +3515,23 @@ def compute_isogeny_bmss(E1, E2, l):
         sage: E2 = EllipticCurve(F, [11, 29])
         sage: compute_isogeny_bmss(E1, E2, 2)
         x + 11
+
+    The even-degree reconstruction also works over the smallest supported
+    prime characteristic::
+
+        sage: E1 = EllipticCurve(GF(13), [1, 0])
+        sage: E2 = EllipticCurve(GF(13), [9, 0])
+        sage: compute_isogeny_bmss(E1, E2, 2)
+        x
+
+    Using only the ``2*l`` coefficients required by the degree bounds is
+    important in finite characteristic::
+
+        sage: F = GF(53)
+        sage: E1 = EllipticCurve(F, [40, 39])
+        sage: E2 = EllipticCurve(F, [41, 6])
+        sage: compute_isogeny_bmss(E1, E2, 8)
+        x^4 + 38*x^3 + 30*x^2 + 37*x + 9
     """
     # Original author of this function: Rémy Oudompheng.
     # https://github.com/remyoudompheng/isogeny_weber/blob/64289127a337ac1bf258b711e02fea02b7df5275/isogeny_weber/isogenies.py#L272-L332
@@ -3445,8 +3544,9 @@ def compute_isogeny_bmss(E1, E2, l):
     char = E1.base_ring().characteristic()
     if char != 0 and char < 4*l + 4:
         raise ValueError('characteristic must be at least 4*degree+4')
+
     Rx, x = E1.base_ring()["x"].objgen()
-    # Compute C = 1/(1 + Ax^4 + Bx^6) mod x^4l
+    # Compute C = 1/(1 + Ax^4 + Bx^6) mod x^4l.
     A, B = E1.a4(), E1.a6()
     C = (1 + A * x**4 + B * x**6).inverse_series_trunc(4 * l)
     # Solve differential equation
@@ -3479,24 +3579,37 @@ def compute_isogeny_bmss(E1, E2, l):
     # S = x * T(x^2)
     # Compute U = 1/T^2
     # Reconstruct N(1/x) / D(1/x) = U
-    T = Rx([S[2 * i + 1] for i in range(2 * l)])
-    U = T._mul_trunc_(T, 2 * l).inverse_series_trunc(2 * l)
-    _, Q = Rx(U).rational_reconstruction(x ** (2 * l), l, l)
-    Q = Q.add_bigoh((l + 1) // 2)
-    if not Q.is_square():
-        if True:  #XXX stopgap for #42043; to be fixed properly eventually
-            return compute_isogeny_stark(E1, E2, l)
-        raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {l}")
-    Q = Q.sqrt()
-    ker = Rx(Q).reverse(degree=l//2)
+    # The numerator and denominator degree bounds l and l-1 make U unique
+    # modulo x^(2*l).
+    reconstruction_precision = 2 * l
+    T = Rx([S[2 * i + 1] for i in range(reconstruction_precision)])
+    U = T._mul_trunc_(T, reconstruction_precision).inverse_series_trunc(
+        reconstruction_precision
+    )
 
-    ker = ker.monic().radical()
+    if l % 2:
+        _, Q = Rx(U).rational_reconstruction(
+            x**reconstruction_precision, l, l
+        )
+        Q = Q.add_bigoh((l + 1) // 2)
+        if not Q.is_square():
+            raise ValueError(f"the two curves are not linked by a separable normalized isogeny of degree {l}")
+        ker = Rx(Q.sqrt()).reverse(degree=l // 2).monic().radical()
+    else:
+        # In general D has one factor for every nonzero 2-torsion point
+        # in the kernel and a squared factor for every other pair {P, -P}.
+        # Thus its radical, rather than its square root, is the kernel
+        # polynomial.  Reversing to degree l-1 preserves zero roots of D.
+        _, Q = Rx(U).rational_reconstruction(
+            x**reconstruction_precision, l, l - 1
+        )
+        D = Q.reverse(degree=l - 1)
+        ker = D.monic().radical()
 
-    if True:  #XXX stopgap for #42043; to be fixed properly eventually
-        if (E1.division_polynomial(l, x=Rx.quotient(ker).gen())
-            or not E1.isogeny_codomain(ker).is_isomorphic(E2)):
-            return compute_isogeny_stark(E1, E2, l)
-
+    # Finite-precision rational reconstruction can produce a candidate for
+    # curves not linked by a normalized degree-l isogeny, so validate it.
+    if not _is_valid_isogeny_kernel(E1, E2, l, ker):
+        raise ValueError(f"the two curves are not linked by a separable normalized isogeny of degree {l}")
     return ker
 
 
@@ -3513,11 +3626,12 @@ def compute_isogeny_stark(E1, E2, ell):
 
     - ``ell`` -- the degree of an isogeny from ``E1`` to ``E2``
 
-    OUTPUT: the kernel polynomial of an isogeny from ``E1`` to ``E2``
+    OUTPUT: the kernel polynomial of a separable normalized isogeny from
+    ``E1`` to ``E2``
 
     .. NOTE::
 
-        If there is no degree-``ell``, cyclic, separable, normalized
+        If there is no degree-``ell`` separable normalized
         isogeny from ``E1`` to ``E2``, a :exc:`ValueError` will be
         raised.
 
@@ -3571,13 +3685,21 @@ def compute_isogeny_stark(E1, E2, ell):
         sage: E1.isogeny(None, E2, degree=3)
         Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 27 over Rational Field
 
-    These tests used to fail (see :issue:`42045`)::
+    Degree one is handled directly::
 
         sage: E = EllipticCurve([1, 1])
         sage: E.isogeny(None, E, 1)
         Isogeny of degree 1 from Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field to Elliptic Curve defined by y^2 = x^3 + x + 1 over Rational Field
 
-    ::
+    A premature exact termination is rejected::
+
+        sage: compute_isogeny_stark(E, E, 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the two curves are not linked by a separable normalized isogeny of degree 2
+
+    These exact continued-fraction expansions used to be rejected even though
+    their final convergents are valid (see :issue:`42045`)::
 
         sage: F = GF(67)
         sage: E1 = EllipticCurve(F, [0, 11])
@@ -3600,7 +3722,7 @@ def compute_isogeny_stark(E1, E2, ell):
     if ell.is_one():
         if E1 == E2:
             return R.one()
-        raise ValueError("the two curves are not linked by a cyclic normalized isogeny of degree 1")
+        raise ValueError("the two curves are not linked by a separable normalized isogeny of degree 1")
 
     wp1 = E1.weierstrass_p(prec=4*ell+4)  # [BMSS2006] claim 2*ell is enough, but it is not [M09]
     wp2 = E2.weierstrass_p(prec=4*ell+4)
@@ -3631,22 +3753,25 @@ def compute_isogeny_stark(E1, E2, ell):
         q_n = a_n*q[n-1] + q[n-2]
         q.append(q_n)
 
-        if n == ell+1 or T == 0:
-            if T == 0 or T.valuation() < 2:
-                if True:  #XXX stopgap for #42045; to be fixed properly eventually
-                    return compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm='bruteforce')
-                raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
+        # Check the denominator degree before the remainder: an exact
+        # expansion can make T zero after producing the final convergent.
+        if q[n].degree() >= ell - 1:
             break
+        if T == 0 or n == ell+1:
+            raise ValueError(f"the two curves are not linked by a separable normalized isogeny of degree {ell}")
 
         T = 1/T
 
-    return q[n].monic().radical()
+    ker = q[n].monic().radical()
+    if _is_valid_isogeny_kernel(E1, E2, ell, ker):
+        return ker
+    raise ValueError(f"the two curves are not linked by a separable normalized isogeny of degree {ell}")
 
 
 def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
     r"""
-    Return the kernel polynomial of a cyclic, separable, normalized
-    isogeny of degree ``ell`` from ``E1`` to ``E2``.
+    Return the kernel polynomial of a separable normalized isogeny of
+    degree ``ell`` from ``E1`` to ``E2``.
 
     INPUT:
 
@@ -3656,15 +3781,18 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
 
     - ``ell`` -- the degree of an isogeny from ``E1`` to ``E2``
 
-    - ``algorithm`` -- ``None`` (default, choose automatically) or
-      ``'bmss'`` (:func:`compute_isogeny_bmss`) or
-      ``'stark'`` (:func:`compute_isogeny_stark`)
+    - ``algorithm`` -- ``None`` (default, choose automatically),
+      ``'bmss'`` (:func:`compute_isogeny_bmss`),
+      ``'stark'`` (:func:`compute_isogeny_stark`), or ``'bruteforce'``
+      (enumerate candidates via
+      :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.isogenies_degree`)
 
-    OUTPUT: the kernel polynomial of an isogeny from ``E1`` to ``E2``
+    OUTPUT: the kernel polynomial of a separable normalized isogeny from
+    ``E1`` to ``E2``
 
     .. NOTE::
 
-        If there is no degree-``ell``, cyclic, separable, normalized
+        If there is no supported degree-``ell`` separable normalized
         isogeny from ``E1`` to ``E2``, a :exc:`ValueError` will be
         raised.
 
@@ -3714,6 +3842,20 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         sage: compute_isogeny_kernel_polynomial(E1, E2, 11)
         x^5 + 4*x^4 + 4*x^2 + 3*x + 4
 
+    Check an even-degree case with a non-cyclic kernel using the full
+    BMSS denominator reconstruction (see :issue:`42212`)::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
+        sage: K.<u> = GF((263, 6))
+        sage: E1 = EllipticCurve(K, [0, 1])
+        sage: E2 = E1.isomorphism(K(-12).sqrt(), is_codomain=True).domain()
+        sage: ker = compute_isogeny_kernel_polynomial(
+        ....:     E1, E2, 12, algorithm='bmss')
+        sage: ker
+        x^7 + 256*x^4 + 255*x
+        sage: E1.isogeny(ker).kernel_subgroup(extend=True).invariants()
+        (2, 6)
+
     ...even for long Weierstraß curves::
 
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
@@ -3755,17 +3897,19 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         if char != 0 and char < 4*ell + 6:
             # No good algorithm available... See :issue:`38481`.
             algorithm = 'bruteforce'
+        elif ell < 10:
+            algorithm = 'stark'
         else:
-            algorithm = 'stark' if ell < 10 else 'bmss'
+            algorithm = 'bmss'
 
     if algorithm == 'bruteforce':
-        # This is a lazy workaround; there are better algorithms
-        # for most cases even when BMSS fails. See :issue:`38481`.
+        # This is also the general fallback for characteristic-degree pairs
+        # not supported by the power-series algorithms; see :issue:`38481`.
         for phi in E1.isogenies_degree(ell):
             for iso in phi.codomain().isomorphisms(E2):
                 if (iso * phi).scaling_factor().is_one():
                     return phi.kernel_polynomial()
-        raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {ell}")
+        raise ValueError(f"the two curves are not linked by a separable normalized isogeny of degree {ell}")
 
     if algorithm == 'bmss':
         return compute_isogeny_bmss(E1, E2, ell)
@@ -3880,8 +4024,8 @@ def compute_sequence_of_maps(E1, E2, ell):
 
     - ``E1``, ``E2`` -- elliptic curves
 
-    - ``ell`` -- a prime such that there is a degree-``ell`` separable
-      normalized isogeny from ``E1`` to ``E2``
+    - ``ell`` -- a positive integer such that there is a supported
+      degree-``ell`` separable normalized isogeny from ``E1`` to ``E2``
 
     OUTPUT:
 

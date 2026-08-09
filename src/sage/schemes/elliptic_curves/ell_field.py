@@ -1636,8 +1636,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``codomain`` -- an elliptic curve (default: ``None``).
 
           - If ``kernel`` is ``None``, then ``degree`` must be given as well
-            and the given ``codomain`` must be the codomain of a cyclic,
-            separable, normalized isogeny of the given degree.
+            and the given ``codomain`` must be the codomain of a supported
+            separable normalized isogeny of the given degree.
 
           - If ``kernel`` is not ``None``, then this must be isomorphic to
             the codomain of the separable isogeny defined by ``kernel``; in

@@ -3238,6 +3238,19 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
          Order of Quaternion Algebra (-1, -2) with base ring Rational Field
            with basis (1, i, 1/2 + 1/2*i + 1/2*j, 1/2 + 1/2*i + 1/2*k))
 
+    A trace-zero endomorphism of composite degree can have a non-cyclic
+    kernel (:issue:`42212`)::
+
+        sage: K.<u> = GF((263, 6))
+        sage: C, phi = special_supersingular_curve(K, 12, endomorphism=True)
+        sage: phi.domain() is phi.codomain() is C
+        True
+        sage: phi.degree(), phi.trace()
+        (12, 0)
+        sage: pi = C.frobenius_isogeny()
+        sage: pi * phi == -phi * pi
+        True
+
     .. NOTE::
 
         This function makes no guarantees about the distribution of the output.
