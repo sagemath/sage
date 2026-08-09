@@ -19,7 +19,6 @@ from libc.signal cimport SIGINT, SIGBUS, SIGFPE, SIGSEGV
 from libc.signal cimport raise_ as signal_raise
 from posix.signal cimport sigaction, sigaction_t
 cimport cysignals.signals
-from cysignals.signals cimport sig_check
 
 from sage.libs.gmp.types cimport mpz_t
 from sage.cpython.string cimport str_to_bytes, char_to_str
@@ -133,7 +132,6 @@ def test_sigint_before_ecl_sig_on():
     # since ecl_sig_on() calls sig_on() before anything else.  This
     # will catch the pending SIGINT.
     ecl_sig_on()
-    sig_check()
     # We should never get here.
     abort()
 
