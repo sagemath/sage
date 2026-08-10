@@ -75,7 +75,7 @@ AUTHORS:
 #   Sage: Open Source Mathematical Software
 #       Copyright (C) 2009 David Ackerman <davidnackerman@gmail.com>
 #                          William Stein <wstein@gmail.com>
-#  Distributed under the terms of the GNunitGeneral Public License (GPL),
+#  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  https://www.gnu.org/licenses/
 ###############################################################################
