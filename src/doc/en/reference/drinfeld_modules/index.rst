@@ -12,6 +12,7 @@ Drinfeld modules
 .. toctree::
    :maxdepth: 2
 
+   sage/rings/function_field/drinfeld_modules/carlitz_module
    sage/rings/function_field/drinfeld_modules/drinfeld_module
    sage/rings/function_field/drinfeld_modules/drinfeld_module_charzero
    sage/rings/function_field/drinfeld_modules/drinfeld_module_finite
