@@ -913,7 +913,7 @@ Modular forms ring and spaces for Hecke triangle groups:
 
 
 - **L-functions of forms:**
-  Using the (pari based) function ``Dokchitser`` L-functions of non-constant
+  Using Pari's implementation, L-functions of non-constant
   holomorphic modular forms are supported for all values of ``n``.
 
   Note: For non-arithmetic groups this involves an irrational conductor.
@@ -945,7 +945,7 @@ Modular forms ring and spaces for Hecke triangle groups:
       3
       sage: L.check_functional_equation() < 2^(-180)
       True
-      sage: L.eps
+      sage: L.eps()
       -1
       sage: abs(L(3)) < 2^(-180)
       True
