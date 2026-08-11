@@ -428,7 +428,7 @@ def is_two_acyclic_factorization_system(G, certificate=False):
 
     .. MATH::
 
-        x \rightarrow y \iff x = y \, \text{or} \, xy \, \text{is an edge}
+        x \rightarrow y \iff x = y \quad \text{or} \quad xy \quad \text{is an edge}
 
     This is equivalent to viewing ``G`` as the representation of some arbitrary
     binary relation. Now let `\twoheadrightarrow` and `\hookrightarrow` denote the
@@ -459,7 +459,7 @@ def is_two_acyclic_factorization_system(G, certificate=False):
     - ``G`` -- DiGraph
 
     - ``certificate`` -- boolean (default: ``False``); whether to return a
-        certificate
+    certificate
 
     OUTPUT:
 
