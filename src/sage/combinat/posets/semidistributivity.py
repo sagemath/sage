@@ -459,7 +459,7 @@ def is_two_acyclic_factorization_system(G, certificate=False):
     - ``G`` -- DiGraph
 
     - ``certificate`` -- boolean (default: ``False``); whether to return a
-    certificate
+      certificate
 
     OUTPUT:
 
