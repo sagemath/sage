@@ -1312,7 +1312,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 (-1, 0, 1)
 
-            .. TODO:: add a non simply laced example
+            Finite family {1: (1, -1), 2: (0, 2)}
 
             Finally, here is an affine example::
 
