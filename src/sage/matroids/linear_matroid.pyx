@@ -512,7 +512,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
           - when a sequence, it should be an ordering of the groundset
             elements, and the columns (and, in case of a reduced
             representation, rows) will be presented in the given order,
-          - when ``None``, use the same ordering that :meth:`groundset_list`
+          - when ``None``, use the same ordering that
+            :meth:`~sage.matroids.basis_exchange_matroid.BasisExchangeMatroid.groundset_list`
             uses,
           - when ``True``, return a morphism of free modules instead of a matrix.
 

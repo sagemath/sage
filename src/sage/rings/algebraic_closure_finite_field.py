@@ -835,7 +835,7 @@ class AlgebraicClosureFiniteField_generic(Field):
 
         OUTPUT:
 
-        - a :class:`~sage.sets.family.Family`, indexed by the positive
+        - a :func:`~sage.sets.family.Family`, indexed by the positive
           integers, whose `n`-th element is ``self.gen(n)``.
 
         EXAMPLES::

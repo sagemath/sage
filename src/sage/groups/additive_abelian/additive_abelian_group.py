@@ -2,7 +2,8 @@ r"""
 Additive Abelian Groups
 
 Additive abelian groups are just modules over `\ZZ`. Hence the classes in this
-module derive from those in the module :mod:`sage.modules.fg_pid`. The only
+module derive from those in the package :mod:`sage.modules.fg_pid.fgp_module`.
+The only
 major differences are in the way elements are printed.
 """
 

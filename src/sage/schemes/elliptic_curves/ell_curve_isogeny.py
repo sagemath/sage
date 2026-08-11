@@ -3723,7 +3723,8 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         x^3 + x + 1
 
     Verify that it works with the ``"bruteforce"`` algorithm even when
-    :meth:`~EllipticCurve_field.isogenies_degree` returns a non-normalized
+    :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.isogenies_degree`
+    returns a non-normalized
     isogeny (see :issue:`41565`)::
 
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
@@ -3734,7 +3735,9 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
 
     Verify that it works with the ``"bruteforce"`` algorithm even when
     the Weierstrass isomorphism from the model of the codomain curve
-    chosen by :meth:`~EllipticCurve_field.isogenies_degree` to ``E2``
+    chosen by
+    :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.isogenies_degree`
+    to ``E2``
     has `\{r,s,t\}\neq\{0\}`; see :issue:`42051`::
 
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial

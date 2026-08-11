@@ -142,7 +142,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
     """
     Spring force model layout.
 
-    This function primarily acts as a wrapper around :func:`run_spring`,
+    This function primarily acts as a wrapper around ``run_spring``,
     converting to and from raw C types.
 
     This kind of speed cannot be achieved by naive Cythonification of the

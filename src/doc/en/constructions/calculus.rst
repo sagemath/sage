@@ -73,7 +73,7 @@ recorded::
     sage: forget()
 
 For a temporary hypothesis, use
-:func:`~sage.symbolic.assumptions.assuming` in a ``with`` block: the
+:class:`~sage.symbolic.assumptions.assuming` in a ``with`` block: the
 assumption is in force inside the block and automatically forgotten
 afterwards::
 

@@ -77,7 +77,8 @@ class BipartiteGraph(Graph):
          The alist file format is described at
          http://www.inference.phy.cam.ac.uk/mackay/codes/alist.html
 
-      #. A ``graph6`` string (see documentation of :meth:`~graph6_string`).
+      #. A ``graph6`` string (see documentation of
+         :meth:`~sage.graphs.graph.Graph.graph6_string`).
 
       #. From a NetworkX bipartite graph.
 
@@ -1059,7 +1060,7 @@ class BipartiteGraph(Graph):
         - ``G.add_edge((1, 2, 'label'))``
         - ``G.add_edges([(1, 2, 'label')])``
 
-        See :meth:`~sage.graphs.graph.Graph.add_edge` for more detail.
+        See :meth:`~sage.graphs.generic_graph.GenericGraph.add_edge` for more detail.
 
         This method simply checks that the edge endpoints are in different
         partitions. If a new vertex is to be created, it will be added to the
@@ -1138,7 +1139,7 @@ class BipartiteGraph(Graph):
 
         - ``loops`` -- ignored
 
-        See :meth:`~sage.graphs.graph.Graph.add_edges` for more detail.
+        See :meth:`~sage.graphs.generic_graph.GenericGraph.add_edges` for more detail.
 
         This method simply checks that the edge endpoints are in different
         partitions. If a new vertex is to be created, it will be added to the

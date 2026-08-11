@@ -5256,7 +5256,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         r"""
         Return the exponential series of ``self``.
 
-        This method is deprecated, use :meth:`exp` instead.
+        This method is deprecated, use
+        :meth:`~sage.rings.lazy_series.LazyCauchyProductSeries.exp` instead.
 
         TESTS::
 

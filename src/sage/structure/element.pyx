@@ -829,7 +829,7 @@ cdef class Element(SageObject):
 
     def substitute(self, *args, **kwds):
         """
-        This calls :meth:`self.subs`.
+        This calls :meth:`sage.structure.element.Element.subs`.
 
         EXAMPLES::
 
@@ -2155,7 +2155,7 @@ cdef class ElementWithCachedMethod(Element):
 
     NOTE:
 
-    The :class:`~sage.misc.cachefunc.cached_method` decorator provides
+    The :func:`sage.misc.cachefunc.cached_method` decorator provides
     a convenient way to automatically cache the result of a computation.
     Since :issue:`11115`, the cached method decorator applied to a
     method without optional arguments is faster than a hand-written cache

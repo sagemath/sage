@@ -2387,7 +2387,7 @@ cdef class Matroid(SageObject):
         - ``k`` -- integer (optional); if provided, return only circuits of
           length `k`
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2461,7 +2461,7 @@ cdef class Matroid(SageObject):
         A *nonspanning circuit* is a circuit whose rank is strictly smaller
         than the rank of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2514,7 +2514,7 @@ cdef class Matroid(SageObject):
         """
         Return the cocircuits of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2564,7 +2564,7 @@ cdef class Matroid(SageObject):
         A *noncospanning cocircuit* is a cocircuit whose corank is strictly
         smaller than the corank of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2653,7 +2653,7 @@ cdef class Matroid(SageObject):
         A *nonbasis* is a set with cardinality ``self.full_rank()`` that is
         not a basis.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2766,7 +2766,7 @@ cdef class Matroid(SageObject):
 
         A *basis* is a maximal independent set.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -2819,7 +2819,7 @@ cdef class Matroid(SageObject):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -3009,7 +3009,7 @@ cdef class Matroid(SageObject):
         - ``k`` -- integer (optional); if specified, return the rank-`k`
           flats of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -3049,7 +3049,7 @@ cdef class Matroid(SageObject):
 
         - ``k`` -- integer
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -3087,7 +3087,7 @@ cdef class Matroid(SageObject):
         A *hyperplane* is a flat of rank ``self.full_rank() - 1``. A *flat* is
         a closed set.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -3237,7 +3237,7 @@ cdef class Matroid(SageObject):
 
         - ``ordering`` -- list (optional); a total ordering of the groundset
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -6337,7 +6337,7 @@ cdef class Matroid(SageObject):
           ``False``, any output will represent ``self`` if and only if the
           matroid is binary
 
-        OUTPUT: either a :class:`BinaryMatroid`, or ``None``
+        OUTPUT: either a :class:`~sage.matroids.linear_matroid.BinaryMatroid`, or ``None``
 
         ALGORITHM:
 
@@ -6349,8 +6349,7 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`M.local_binary_matroid()
-            <sage.matroids.matroid.Matroid._local_binary_matroid>`
+            ``M.local_binary_matroid()``
 
         EXAMPLES::
 
@@ -6529,8 +6528,7 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`M._local_ternary_matroid()
-            <sage.matroids.matroid.Matroid._local_ternary_matroid>`
+            ``M._local_ternary_matroid()``
 
         EXAMPLES::
 

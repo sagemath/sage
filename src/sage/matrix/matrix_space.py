@@ -1924,7 +1924,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         If ``already_echelonized`` is ``False``, then the
         generators are put in reduced echelon form using
-        :meth:`echelonize`, and reindexed by `0, 1, \ldots`.
+        ``echelonize``, and reindexed by `0, 1, \ldots`.
 
         .. WARNING::
 

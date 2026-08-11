@@ -544,7 +544,7 @@ class BackendBase(SageObject):
         """
         Show output without going back to the command line prompt.
 
-        This method is similar to the rich output :meth:`displayhook`,
+        This method is similar to the rich output :meth:`~BackendBase.displayhook`,
         except that it can be invoked at any time. Typically, it ends
         up being called by :meth:`sage.plot.graphics.Graphics.show`.
 
@@ -552,12 +552,12 @@ class BackendBase(SageObject):
 
         INPUT:
 
-        Same as :meth:`displayhook`.
+        Same as :meth:`~BackendBase.displayhook`.
 
         OUTPUT:
 
         This method may return something so you can implement
-        :meth:`displayhook` by calling this method. However, when
+        :meth:`~BackendBase.displayhook` by calling this method. However, when
         called by the display manager any potential return value is
         discarded: There is no way to return anything without
         returning to the command prompt.

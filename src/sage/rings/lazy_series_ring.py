@@ -1790,7 +1790,8 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: f != g
             True
 
-        This can be verified by :meth:`~sage.rings.lazy_series.is_nonzero()`,
+        This can be verified by
+        :meth:`is_nonzero() <sage.rings.lazy_series.LazyModuleElement.is_nonzero>`,
         which only returns ``True`` if the series is known to be nonzero::
 
             sage: (f - g).is_nonzero()
@@ -2569,7 +2570,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             0: A015128: Number of overpartitions of n: ... overlined.
             1: A004402: Expansion of 1 / Sum_{n=-oo..oo} x^(n^2).
 
-        We give an example over the :class:`SymbolicRing` with the input
+        We give an example over the :class:`~sage.symbolic.ring.SymbolicRing` with the input
         `w = e^{\pi i z}` and verify the periodicity::
 
             sage: L.<q> = LazyLaurentSeriesRing(SR)
@@ -2827,7 +2828,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
     def construction(self):
         """
         Return a pair ``(F, R)``, where ``F`` is a
-        :class:`CompletionFunctor` and `R` is a ring, such that
+        :class:`~sage.categories.pushout.CompletionFunctor` and `R` is a ring, such that
         ``F(R)`` returns ``self``.
 
         EXAMPLES::

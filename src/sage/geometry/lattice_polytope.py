@@ -1853,7 +1853,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         OUTPUT:
 
-        - a lattice. If possible (that is, if :meth:`lattice` has a
+        - a lattice. If possible (that is, if :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.lattice` has a
           ``dual()`` method), the dual lattice is returned. Otherwise,
           `\ZZ^n` is returned, where `n` is the dimension of ``self``.
 
@@ -2440,7 +2440,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             a few seconds while the dictionary of all polytopes is
             constructed, but after that it is cached and fast.
 
-        :rtype: integer
+        :rtype: ``integer``
 
         EXAMPLES: We check what is the index of the "diamond" in the
         database::
@@ -2682,7 +2682,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         r"""
         Return the ambient vector space.
 
-        It is the ambient lattice (:meth:`lattice`) tensored with a field.
+        It is the ambient lattice (:meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.lattice`) tensored with a field.
 
         INPUT:
 
@@ -2960,7 +2960,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         OUTPUT:
 
-        - a :class:`point collection <PointCollection>` in the :meth:`lattice`
+        - a :class:`point collection <PointCollection>` in the :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.lattice`
           of ``self`` or a tuple of it and a permutation.
 
         EXAMPLES:
@@ -3433,7 +3433,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         Return the Ehrhart polynomial of ``self``.
 
-        See :meth:`~sage.geometry.base_ZZ.polyhedron_ZZ.ehrhart_polynomial`
+        See :meth:`~sage.geometry.polyhedron.base_ZZ.Polyhedron_ZZ.ehrhart_polynomial`
         for the possible arguments.
 
         EXAMPLES::

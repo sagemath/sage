@@ -1020,7 +1020,7 @@ class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
     :class:`~sage.combinat.crystals.monomial_crystals.CrystalOfNakajimaMonomials`.
 
     The `f_i` operators need to be modified from the version in
-    :class:`~sage.combinat.crystals.monomial_crystalsNakajimaMonomial`
+    :class:`~sage.combinat.crystals.monomial_crystals.NakajimaMonomial`
     in order to create irreducible highest weight realizations.
     This modified `f_i` is defined as
 
