@@ -550,7 +550,6 @@ cdef class CircuitClosuresMatroid(Matroid):
         CC = {}
         for i in self.circuit_closures():
             CC[i] = [[d[y] for y in x] for x in self._circuit_closures[i]]
-        M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
-        return M
+        return CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
 
 # todo: customized minor, extend methods.

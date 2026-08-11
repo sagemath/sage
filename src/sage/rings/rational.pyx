@@ -318,7 +318,6 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         sage: all(rational_power_parts(-1, i/77) == (1,-1) for i in range(1,9))
         True
 
-        sage: # needs sage.symbolic
         sage: (-1)^(-1/3)
         -(-1)^(2/3)
         sage: 1 / ((-1)^(1/3))
@@ -383,33 +382,6 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5):
         c *= p**((e // denom)*numer)
         d *= p**(e % denom)
     return (c, d) if not b_negative else (c, ~d)
-
-
-def is_Rational(x):
-    """
-    Return ``True`` if ``x`` is of the Sage :class:`Rational` type.
-
-    EXAMPLES::
-
-        sage: from sage.rings.rational import is_Rational
-        sage: is_Rational(2)
-        doctest:warning...
-        DeprecationWarning: The function is_Rational is deprecated;
-        use 'isinstance(..., Rational)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        False
-        sage: is_Rational(2/1)
-        True
-        sage: is_Rational(int(2))
-        False
-        sage: is_Rational('5')
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_Rational is deprecated; "
-                       "use 'isinstance(..., Rational)' instead.")
-    return isinstance(x, Rational)
 
 
 cdef class Rational(sage.structure.element.FieldElement):
@@ -975,8 +947,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             return str(self.numer())
         if self < 0:
             return "-\\frac{%s}{%s}" % (-self.numer(), self.denom())
-        else:
-            return "\\frac{%s}{%s}" % (self.numer(), self.denom())
+        return "\\frac{%s}{%s}" % (self.numer(), self.denom())
 
     def _symbolic_(self, sring):
         """
@@ -1100,12 +1071,10 @@ cdef class Rational(sage.structure.element.FieldElement):
         if mpz_cmp_ui(mpq_denref(self.value), 1) == 0:
             if mpz_fits_slong_p(mpq_numref(self.value)):
                 return numpy_long_interface
-            elif sizeof(long) == 4 and mpz_sizeinbase(mpq_numref(self.value), 2) <= 63:
+            if sizeof(long) == 4 and mpz_sizeinbase(mpq_numref(self.value), 2) <= 63:
                 return numpy_int64_interface
-            else:
-                return numpy_object_interface
-        else:
-            return numpy_double_interface
+            return numpy_object_interface
+        return numpy_double_interface
 
     def _mathml_(self):
         """
@@ -1225,7 +1194,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         - ``p`` -- a prime number
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1262,7 +1232,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1298,7 +1269,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1341,7 +1313,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1373,7 +1346,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``prec`` -- integer (default: default :class:`RealField` precision);
+        - ``prec`` -- integer (default: default
+          :class:`RealField <sage.rings.abc.RealField>` precision);
           desired floating point precision
 
         OUTPUT:
@@ -1389,7 +1363,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.real_mpfr
             sage: a = QQ(6/25)
             sage: a.global_height_arch() + a.global_height_non_arch()
             3.21887582486820
@@ -1454,11 +1427,10 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         ALGORITHM:
 
-        Uses the PARI function :pari:`bnfisnorm`. See :meth:`_bnfisnorm()`.
+        Uses the PARI function :pari:`bnfisnorm`. See ``_bnfisnorm()``.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - 2, 'beta')
             sage: (1/7).is_norm(K)
@@ -1485,7 +1457,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         A non-Galois number field::
 
-            sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^3 - 2)
             sage: B, e = (3/5).is_norm(K, element=True); B
             True
@@ -1952,7 +1923,6 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: n.sqrt()                                                              # needs sage.symbolic
             sqrt(2/3)
 
-            sage: # needs sage.rings.real_mpfr
             sage: n.sqrt(prec=10)
             0.82
             sage: n.sqrt(prec=100)
@@ -2138,8 +2108,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         if negative:
             return den / num
-        else:
-            return num / den
+        return num / den
 
     def is_nth_power(self, int n):
         r"""
@@ -2882,7 +2851,8 @@ cdef class Rational(sage.structure.element.FieldElement):
     def norm(self):
         r"""
         Return the norm from `\QQ` to `\QQ` of `x` (which is just `x`). This
-        was added for compatibility with :class:`NumberField`.
+        was added for compatibility with
+        :class:`NumberField <sage.rings.number_field.number_field_base.NumberField>`.
 
         OUTPUT: ``Rational`` -- reference to ``self``
 
@@ -2930,7 +2900,7 @@ cdef class Rational(sage.structure.element.FieldElement):
     def trace(self):
         r"""
         Return the trace from `\QQ` to `\QQ` of `x` (which is just `x`). This
-        was added for compatibility with :class:`NumberFields`.
+        was added for compatibility with number fields.
 
         OUTPUT: ``Rational`` -- reference to ``self``
 
@@ -3178,7 +3148,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         When ``prec`` is not given, the log as an element in symbolic
         ring unless the logarithm is exact. Otherwise the log is a
-        :class:`RealField` approximation to ``prec`` bit precision.
+        :class:`RealField <sage.rings.abc.RealField>` approximation to ``prec``
+        bit precision.
 
         EXAMPLES::
 
@@ -3274,7 +3245,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         if a_base == b_base:
             return a_exp/b_exp
-        elif a_base*b_base == 1:
+        if a_base*b_base == 1:
             return -a_exp/b_exp
 
         return (function_log(self, dont_call_method_on_arg=True) /
@@ -3288,7 +3259,6 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: gamma(1/2)
             sqrt(pi)
             sage: gamma(7/2)
@@ -3461,8 +3431,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             q, r = self.numerator().quo_rem(self.denominator())
             if r < self.denominator() / 2:
                 return q
-            else:
-                return q+1
+            return q+1
 
     __round__ = round
 
@@ -3562,8 +3531,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         import sage.rings.infinity
         if self.is_zero():
             return integer.Integer(1)
-        else:
-            return sage.rings.infinity.infinity
+        return sage.rings.infinity.infinity
 
     def multiplicative_order(self):
         """
@@ -4006,13 +3974,11 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
     if shift <= -1130:  # |d| < 2^-1075
         if resultsign < 0:
             return -0.0
-        else:
-            return 0.0
-    elif shift >= 971:  # |d| > 2^1024
+        return 0.0
+    if shift >= 971:  # |d| > 2^1024
         if resultsign < 0:
             return float('-inf')
-        else:
-            return float('inf')
+        return float('inf')
 
     sig_on()
 

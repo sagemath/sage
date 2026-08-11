@@ -143,7 +143,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         return '(%s)' % (" , ".join((" : ".join(repr(f) for f in Q))
                                     for Q in self._points))
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
         Compare two points in products of projective spaces.
 
@@ -194,10 +194,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             True
         """
         #needed for Digraph
-        if not isinstance(right, (ProductProjectiveSpaces_point_ring)):
+        if not isinstance(other, (ProductProjectiveSpaces_point_ring)):
             return NotImplemented
-        else:
-            return richcmp(self._points, right._points, op)
+        return richcmp(self._points, other._points, op)
 
     def __copy__(self):
         r"""
@@ -322,7 +321,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``L`` -- list of nonnegative integers
 
-        OUTPUT: :class:`SchemeMorphism_point_affine`
+        OUTPUT: :class:`~sage.schemes.affine.affine_point.SchemeMorphism_point_affine`
 
         EXAMPLES::
 
@@ -384,7 +383,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
     def change_ring(self, R, **kwds):
         r"""
-        Return a new :class:`ProductProjectiveSpaces_point` which is this point coerced to ``R``.
+        Return a new
+        :class:`~sage.schemes.product_projective.point.ProductProjectiveSpaces_point_ring`
+        which is this point coerced to ``R``.
 
         If the keyword ``check`` is ``True``, then the initialization checks are performed.
         The user may specify the embedding into ``R`` with a keyword.
@@ -399,7 +400,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``embedding`` -- field embedding from the base ring of this point to ``R``
 
-        OUTPUT: :class:`ProductProjectiveSpaces_point`
+        OUTPUT:
+
+        :class:`~sage.schemes.product_projective.point.ProductProjectiveSpaces_point_ring`
 
         EXAMPLES::
 

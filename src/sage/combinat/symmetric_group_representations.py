@@ -285,14 +285,13 @@ def SymmetricGroupRepresentations(n, implementation='specht', ring=None,
     """
     if implementation == "seminormal":
         return YoungRepresentations_Seminormal(n, ring=ring, cache_matrices=cache_matrices)
-    elif implementation == "orthogonal":
+    if implementation == "orthogonal":
         return YoungRepresentations_Orthogonal(n, ring=ring, cache_matrices=cache_matrices)
-    elif implementation == "specht":
+    if implementation == "specht":
         return SpechtRepresentations(n, ring=ring, cache_matrices=cache_matrices)
-    elif implementation == "unitary":
+    if implementation == "unitary":
         return UnitaryRepresentations(n, ring=ring, cache_matrices=cache_matrices)
-    else:
-        raise NotImplementedError("only seminormal, orthogonal and specht are implemented")
+    raise NotImplementedError("only seminormal, orthogonal and specht are implemented")
 
 # #### Generic classes for symmetric group representations #################
 
@@ -931,8 +930,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         uv = [a + v[i] + 1 for i, a in enumerate(u)]
         if uv not in Permutations():
             return 0
-        else:
-            return Permutation(uv).signature()
+        return Permutation(uv).signature()
 
     def scalar_product_matrix(self, permutation=None):
         r"""
@@ -1518,7 +1516,8 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         r"""
         Return the graded Frobenius image of ``self``.
 
-        The graded Frobenius image is the sum of the :meth:`frobenius_image`
+        The graded Frobenius image is the sum of the
+        :meth:`sage.combinat.specht_module.SymmetricGroupRepresentation.frobenius_image`
         of each graded component, which is known to result in the modified
         Hall-Littlewood polynomial `\widetilde{H}_{\lambda}(x; q)`.
 

@@ -77,8 +77,7 @@ class GHlist(SageObject):
         """
         if not isinstance(other, GHlist):
             return NotImplemented
-        else:
-            return richcmp(self.__group, other.__group, op)
+        return richcmp(self.__group, other.__group, op)
 
     def __len__(self):
         """

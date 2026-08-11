@@ -92,7 +92,7 @@ def deprecation(issue_number, message, stacklevel=4):
 
     .. SEEALSO::
 
-        :func:`experimental`,
+        :class:`~sage.misc.superseded.experimental`,
         :func:`warning`.
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
@@ -149,7 +149,7 @@ def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     - ``message`` -- string; an explanation what is going on
 
     - ``warning_class`` -- (default: ``Warning``) a class inherited
-      from a Python :class:`~exceptions.Warning`
+      from a Python :exc:`Warning`
 
     - ``stack_level`` -- integer (default: `3`); this is passed on to
       :func:`warnings.warn`
@@ -168,8 +168,8 @@ def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     .. SEEALSO::
 
         :func:`deprecation`,
-        :func:`experimental`,
-        :class:`exceptions.Warning`.
+        :class:`~sage.misc.superseded.experimental`,
+        :exc:`Warning`.
     """
     _check_issue_number(issue_number)
     message += '\nSee https://github.com/sagemath/sage/issues/' + str(issue_number) + ' for details.'
@@ -207,7 +207,7 @@ def experimental_warning(issue_number, message, stacklevel=4):
 
     .. SEEALSO::
 
-        :class:`mark_as_experimental`,
+        :class:`~sage.misc.superseded.experimental`,
         :func:`warning`,
         :func:`deprecation`.
     """
@@ -256,7 +256,7 @@ class experimental:
         TESTS:
 
         The following test works together with the doc-test for
-        :meth:`__experimental_self_test` to demonstrate that warnings are issued only
+        ``__experimental_self_test`` to demonstrate that warnings are issued only
         once, even in doc-tests (see :issue:`20601`).
         ::
 
@@ -270,7 +270,7 @@ class experimental:
 
         .. SEEALSO::
 
-            :func:`experimental`,
+            :class:`~sage.misc.superseded.experimental`,
             :func:`warning`,
             :func:`deprecation`.
         """
@@ -463,8 +463,7 @@ class DeprecatedFunctionAlias:
                     f"{self.__name__} is deprecated. Please use {replacement} instead.")
         if self.instance is None:
             return self.func(*args, **kwds)
-        else:
-            return self.func(self.instance, *args, **kwds)
+        return self.func(self.instance, *args, **kwds)
 
     def __get__(self, inst, cls=None):
         """
@@ -498,11 +497,10 @@ class DeprecatedFunctionAlias:
         """
         if inst is None:
             return self  # Unbound method lookup on class
-        else:
-            # Return a bound method wrapper
-            return DeprecatedFunctionAlias(self.issue_number, self.func,
-                                           self.__module__, instance=inst,
-                                           unbound=self)
+        # Return a bound method wrapper
+        return DeprecatedFunctionAlias(self.issue_number, self.func,
+                                       self.__module__, instance=inst,
+                                       unbound=self)
 
 
 def deprecated_function_alias(issue_number, func, *, replacement=None, replacement_rst_doc=None):

@@ -433,9 +433,8 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         """
         if precision < 2:
             raise ValueError("precision must be at least 2")
-        Field.__init__(self,
-                base_ring=self,
-                category=sage.categories.fields.Fields().Infinite())
+        Field.__init__(self, self,
+                       category=sage.categories.fields.Fields().Infinite())
         self._prec = precision
         from sage.rings.real_lazy import RLF
         self._populate_coercion_lists_(coerce_list=[ZZ, QQ], convert_method_name='_arb_')
@@ -671,7 +670,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             sage: RealBallField().characteristic()
             0
         """
-        return 0
+        return ZZ.zero()
 
     def some_elements(self):
         """
@@ -1647,7 +1646,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: mypi = RBF(pi)
             sage: RR(mypi)
             3.14159265358979
@@ -1697,10 +1695,9 @@ cdef class RealBall(RingElement):
                 sl, sr = mpfr_sgn(left.value), mpfr_sgn(left.value)
                 if sr > 0 and sl > 0:
                     return left
-                elif sr < 0 and sl < 0:
+                if sr < 0 and sl < 0:
                     return right
-                else:
-                    return field(0)
+                return field(0)
         raise ValueError("unknown rounding mode")
 
     def __float__(self):
@@ -2542,7 +2539,7 @@ cdef class RealBall(RingElement):
         and ``other`` certainly represent the same real number, unless either
         ``self`` or ``other`` is exact (and neither contains NaN). To test
         whether both operands might represent the same mathematical quantity,
-        use :meth:`overlaps` or :meth:`contains`, depending on the
+        use :meth:`~sage.rings.real_arb.RealBall.overlaps` or ``contains``, depending on the
         circumstance.
 
         EXAMPLES::
@@ -2875,7 +2872,6 @@ cdef class RealBall(RingElement):
         """
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(e)^17
             [24154952.7535753 +/- ...e-8]
             sage: RBF(e)^(-1)
@@ -3989,7 +3985,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(pi).chebyshev_T(0)
             1.000000000000000
             sage: RBF(pi).chebyshev_T(1)
@@ -4022,7 +4017,6 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: RBF(pi).chebyshev_U(0)
             1.000000000000000
             sage: RBF(pi).chebyshev_U(1)

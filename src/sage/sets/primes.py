@@ -291,7 +291,8 @@ class Primes(Set_generic, UniqueRepresentation):
             (5, [1, 3])
 
         If this subset is finite, the output of this method is always `(1, [])`.
-        The elements of the subset can be retrieved using the method :meth:`list`
+        The elements of the subset can be retrieved using the method
+        :meth:`list <sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.list>`
         or :meth:`included`::
 
             sage: P = Primes(modulus=0, classes=range(50))
@@ -391,8 +392,7 @@ class Primes(Set_generic, UniqueRepresentation):
         if not classes:
             if not included:
                 return "Empty set of prime numbers"
-            else:
-                return "Finite set of prime numbers: %s" % _repr_items(included)
+            return "Finite set of prime numbers: %s" % _repr_items(included)
         if self._modulus == 1:
             s = "Set of all prime numbers"
         else:
@@ -1040,8 +1040,7 @@ class Primes(Set_generic, UniqueRepresentation):
         P = self.intersection(other)
         if almost:
             return P.is_almost_equal(self)
-        else:
-            return P == self
+        return P == self
 
     def is_superset(self, other, almost=False):
         r"""
@@ -1089,8 +1088,7 @@ class Primes(Set_generic, UniqueRepresentation):
         P = self.intersection(other)
         if almost:
             return P.is_almost_equal(other)
-        else:
-            return P == other
+        return P == other
 
     def is_disjoint(self, other, almost=False):
         r"""
@@ -1137,5 +1135,4 @@ class Primes(Set_generic, UniqueRepresentation):
         P = self.intersection(other)
         if almost:
             return P.is_finite()
-        else:
-            return P.is_empty()
+        return P.is_empty()

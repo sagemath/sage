@@ -160,8 +160,7 @@ class SuperModules(SuperModulesCategory):
         base_ring = self.base_ring()
         if base_ring in Fields():
             return [Modules(base_ring)]
-        else:
-            return []
+        return []
 
     class ParentMethods:
         pass
@@ -175,7 +174,8 @@ class SuperModules(SuperModulesCategory):
             .. NOTE::
 
                 The default implementation assumes that the even/odd is
-                determined by the parity of :meth:`degree`.
+                determined by the parity of
+                :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ElementMethods.degree`.
 
                 Overwrite this method if the even/odd behavior is desired
                 to be independent.

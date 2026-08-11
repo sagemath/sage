@@ -266,7 +266,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
         for p in all_paths:
             path_with_labels.extend(product(*[edge_labels[e] for e in zip(p[:-1], p[1:])]))
         return path_with_labels
-    elif use_multiedges and G.has_multiple_edges():
+    if use_multiedges and G.has_multiple_edges():
         multiple_all_paths = []
         for p in all_paths:
             m = prod(edge_multiplicity[e] for e in zip(p[:-1], p[1:]))
@@ -278,7 +278,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
                 else:
                     multiple_all_paths.append(p)
         return multiple_all_paths
-    elif report_edges:
+    if report_edges:
         return [list(zip(p[:-1], p[1:])) for p in all_paths]
     return all_paths
 
@@ -446,7 +446,6 @@ def shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2, 3)
         sage: for u,v in G.edges(sort=True, labels=False):
         ....:     G.set_edge_label(u, v, 1)
@@ -478,7 +477,6 @@ def shortest_simple_paths(self, source, target, weight_function=None,
 
     Check for consistency of results of Yen's and Feng's::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2, 4)
         sage: s = set()
         sage: for p in G.shortest_simple_paths('0000', '1111', by_weight=False, algorithm='Yen'):
@@ -1204,7 +1202,6 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
                                       for u, v, label in G.edge_iterator()}
     cdef dict original_edges = {(u, v): (int_to_vertex[u], int_to_vertex[v])
                                 for u, v in G.edge_iterator(labels=False)}
-    cdef dict edge_wt = {(e[0], e[1]): weight_function(e) for e in G.edge_iterator()}
 
     # The first shortest path tree T_0
     from sage.graphs.base.boost_graph import shortest_paths

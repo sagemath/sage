@@ -350,7 +350,7 @@ class AbstractSetPartition(ClonableArray,
 
         .. SEEALSO::
 
-            :meth:`__mul__`
+            ``__mul__``
 
         EXAMPLES::
 
@@ -382,7 +382,8 @@ class AbstractSetPartition(ClonableArray,
 
         This is not related to standard set partitions (which simply
         means set partitions of `[n] = \{ 1, 2, \ldots , n \}` for some
-        integer `n`) or standardization (:meth:`standardization`).
+        integer `n`) or standardization
+        (:meth:`~sage.combinat.set_partition.SetPartition.standardization`).
 
         EXAMPLES::
 
@@ -435,7 +436,7 @@ class AbstractSetPartition(ClonableArray,
 
         .. SEEALSO::
 
-            :meth:`refinements`
+            :meth:`sage.combinat.set_partition.SetPartition.refinements`
 
         EXAMPLES::
 
@@ -868,7 +869,14 @@ class SetPartition(AbstractSetPartition,
 
     cardinality = ClonableArray.__len__
 
-    size = AbstractSetPartition.base_set_cardinality
+    def size(self):
+        r"""
+        Return the cardinality of the base set of ``self``.
+
+        This is an alias for
+        :meth:`~sage.combinat.set_partition.AbstractSetPartition.base_set_cardinality`.
+        """
+        return self.base_set_cardinality()
 
     def pipe(self, other):
         r"""
@@ -1789,7 +1797,7 @@ class SetPartition(AbstractSetPartition,
 
         .. SEEALSO::
 
-            :meth:`coarsenings`
+            :meth:`sage.combinat.set_partition.AbstractSetPartition.coarsenings`
 
         EXAMPLES::
 
@@ -1882,7 +1890,8 @@ class SetPartition(AbstractSetPartition,
         - ``color`` -- (default: ``'black'``) color of the arcs
 
         - ``base_set_dict`` -- (optional) dictionary with keys elements
-          of :meth:`base_set()` and values as integer or float
+          of :meth:`~sage.combinat.set_partition.AbstractSetPartition.base_set`
+          and values as integer or float
 
         EXAMPLES::
 
@@ -2065,13 +2074,12 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         if part is None:
             return SetPartitions_set(s)
-        elif isinstance(part, (int, Integer)):
+        if isinstance(part, (int, Integer)):
             return SetPartitions_setn(s, part)
-        else:
-            part = sorted(part, reverse=True)
-            if part not in Partitions(len(s)):
-                raise ValueError("part must be an integer partition of %s" % len(s))
-            return SetPartitions_setparts(s, Partition(part))
+        part = sorted(part, reverse=True)
+        if part not in Partitions(len(s)):
+            raise ValueError("part must be an integer partition of %s" % len(s))
+        return SetPartitions_setparts(s, Partition(part))
 
     def __contains__(self, x):
         """
@@ -3263,18 +3271,18 @@ def cyclic_permutations_of_set_partition(set_part):
 
         sage: from sage.combinat.set_partition import cyclic_permutations_of_set_partition
         sage: cyclic_permutations_of_set_partition([[1,2,3,4],[5,6,7]])
-        [[[1, 2, 3, 4], [5, 6, 7]],
-         [[1, 2, 4, 3], [5, 6, 7]],
-         [[1, 3, 2, 4], [5, 6, 7]],
-         [[1, 3, 4, 2], [5, 6, 7]],
-         [[1, 4, 2, 3], [5, 6, 7]],
-         [[1, 4, 3, 2], [5, 6, 7]],
-         [[1, 2, 3, 4], [5, 7, 6]],
-         [[1, 2, 4, 3], [5, 7, 6]],
-         [[1, 3, 2, 4], [5, 7, 6]],
-         [[1, 3, 4, 2], [5, 7, 6]],
-         [[1, 4, 2, 3], [5, 7, 6]],
-         [[1, 4, 3, 2], [5, 7, 6]]]
+        [[(1, 2, 3, 4), (5, 6, 7)],
+         [(1, 2, 4, 3), (5, 6, 7)],
+         [(1, 3, 2, 4), (5, 6, 7)],
+         [(1, 3, 4, 2), (5, 6, 7)],
+         [(1, 4, 2, 3), (5, 6, 7)],
+         [(1, 4, 3, 2), (5, 6, 7)],
+         [(1, 2, 3, 4), (5, 7, 6)],
+         [(1, 2, 4, 3), (5, 7, 6)],
+         [(1, 3, 2, 4), (5, 7, 6)],
+         [(1, 3, 4, 2), (5, 7, 6)],
+         [(1, 4, 2, 3), (5, 7, 6)],
+         [(1, 4, 3, 2), (5, 7, 6)]]
     """
     return list(cyclic_permutations_of_set_partition_iterator(set_part))
 
@@ -3292,18 +3300,18 @@ def cyclic_permutations_of_set_partition_iterator(set_part):
 
         sage: from sage.combinat.set_partition import cyclic_permutations_of_set_partition_iterator
         sage: list(cyclic_permutations_of_set_partition_iterator([[1,2,3,4],[5,6,7]]))
-        [[[1, 2, 3, 4], [5, 6, 7]],
-         [[1, 2, 4, 3], [5, 6, 7]],
-         [[1, 3, 2, 4], [5, 6, 7]],
-         [[1, 3, 4, 2], [5, 6, 7]],
-         [[1, 4, 2, 3], [5, 6, 7]],
-         [[1, 4, 3, 2], [5, 6, 7]],
-         [[1, 2, 3, 4], [5, 7, 6]],
-         [[1, 2, 4, 3], [5, 7, 6]],
-         [[1, 3, 2, 4], [5, 7, 6]],
-         [[1, 3, 4, 2], [5, 7, 6]],
-         [[1, 4, 2, 3], [5, 7, 6]],
-         [[1, 4, 3, 2], [5, 7, 6]]]
+        [[(1, 2, 3, 4), (5, 6, 7)],
+         [(1, 2, 4, 3), (5, 6, 7)],
+         [(1, 3, 2, 4), (5, 6, 7)],
+         [(1, 3, 4, 2), (5, 6, 7)],
+         [(1, 4, 2, 3), (5, 6, 7)],
+         [(1, 4, 3, 2), (5, 6, 7)],
+         [(1, 2, 3, 4), (5, 7, 6)],
+         [(1, 2, 4, 3), (5, 7, 6)],
+         [(1, 3, 2, 4), (5, 7, 6)],
+         [(1, 3, 4, 2), (5, 7, 6)],
+         [(1, 4, 2, 3), (5, 7, 6)],
+         [(1, 4, 3, 2), (5, 7, 6)]]
     """
     from sage.combinat.permutation import CyclicPermutations
     if len(set_part) == 1:

@@ -31,7 +31,6 @@ Obtain the facets of a polyhedron as :class:`~sage.geometry.polyhedron.combinato
 Obtain the Vrepresentation of a polyhedron as facet-incidences stored in
 :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`::
 
-    sage: # needs sage.combinat
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
     sage: P = polytopes.associahedron(['A',4])
@@ -192,7 +191,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_dense matrix):
     INPUT:
 
     - ``matrix`` -- an incidence matrix as in
-      :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+      :meth:`sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
       with columns corresponding to equations deleted
       of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
@@ -258,7 +257,7 @@ def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
     INPUT:
 
     - ``matrix`` -- an incidence matrix as in
-      :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+      :meth:`sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
       with columns corresponding to equations deleted
       of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 

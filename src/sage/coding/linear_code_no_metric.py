@@ -561,7 +561,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
           the column permutation which brings ``self`` into the returned code
           is also returned
 
-        OUTPUT: a :class:`LinearCode` whose :meth:`systematic_generator_matrix`
+        OUTPUT: a :class:`LinearCode` whose
+        :meth:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.systematic_generator_matrix`
         is guaranteed to be of the form `[I \vert A]`.
 
         EXAMPLES::
@@ -592,9 +593,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         if E.systematic_positions() == tuple(range(self.dimension())):
             from sage.combinat.permutation import Permutation
             return self, Permutation([])
-        else:
-            perm = E.systematic_permutation()
-            return self.permuted_code(perm), perm
+        perm = E.systematic_permutation()
+        return self.permuted_code(perm), perm
 
     def redundancy_matrix(self):
         r"""
@@ -608,7 +608,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         For any given code, there can be many systematic generator matrices
         (depending on which positions should form the identity). This method
         will use the matrix returned by
-        :meth:`AbstractLinearCode.systematic_generator_matrix`.
+        :meth:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.systematic_generator_matrix`.
 
         OUTPUT:
 
@@ -1022,7 +1022,8 @@ class LinearCodeSystematicEncoder(Encoder):
     generator matrix in systematic form. What is called systematic form here
     is the reduced row echelon form of a matrix, which is not necessarily
     `[I \vert H]`, where `I` is the identity block and `H` the parity block.
-    One can refer to :meth:`LinearCodeSystematicEncoder.generator_matrix`
+    One can refer to
+    :meth:`~sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder.generator_matrix`
     for a concrete example.
     Once such a matrix has been computed, it is used to encode any message
     into a codeword.
@@ -1246,8 +1247,7 @@ class LinearCodeSystematicEncoder(Encoder):
             if self._use_pc_matrix == 1:
                 self._use_pc_matrix = 2
                 return C.parity_check_matrix().right_kernel_matrix()
-            else:
-                raise ValueError("a parity check matrix must be specified if LinearCodeSystematicEncoder is the default encoder")
+            raise ValueError("a parity check matrix must be specified if LinearCodeSystematicEncoder is the default encoder")
         else:
             self._use_pc_matrix = 1
             M = copy(C.generator_matrix())

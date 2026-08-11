@@ -74,29 +74,6 @@ from sage.rings.convert.mpfi cimport mpfi_set_sage
 from sage.rings.infinity import infinity
 
 
-def is_ComplexIntervalFieldElement(x):
-    """
-    Check if ``x`` is a :class:`ComplexIntervalFieldElement`.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_interval import is_ComplexIntervalFieldElement as is_CIFE
-        sage: is_CIFE(CIF(2))
-        doctest:warning...
-        DeprecationWarning: The function is_ComplexIntervalFieldElement is deprecated;
-        use 'isinstance(..., ComplexIntervalFieldElement)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: is_CIFE(CC(2))
-        False
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_ComplexIntervalFieldElement is deprecated; "
-                       "use 'isinstance(..., ComplexIntervalFieldElement)' instead.")
-    return isinstance(x, ComplexIntervalFieldElement)
-
-
 cdef class ComplexIntervalFieldElement(FieldElement):
     """
     A complex interval.
@@ -243,7 +220,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         .. SEEALSO::
 
-            - :meth:`RealIntervalFieldElement.str`
+            - :meth:`~sage.rings.real_mpfi.RealIntervalFieldElement.str`
         """
         s = ""
         if not self.real().is_zero():
@@ -298,13 +275,11 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         Exact and nearly exact points are still visible::
 
-            sage: # needs sage.plot sage.symbolic
             sage: plot(CIF(pi, 1), color='red') + plot(CIF(1, e), color='purple') + plot(CIF(-1, -1))
             Graphics object consisting of 6 graphics primitives
 
         A demonstration that `z \mapsto z^2` acts chaotically on `|z|=1`::
 
-            sage: # needs sage.plot sage.symbolic
             sage: z = CIF(0, 2*pi/1000).exp()
             sage: g = Graphics()
             sage: for i in range(40):
@@ -361,7 +336,6 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             (2.50000000000000, 3.00000000000000)
             (-4.50000000000000, -4.00000000000000)
 
-            sage: # needs sage.symbolic
             sage: z = CIF(RIF(sqrt(2), sqrt(3)), RIF(e, pi))
             sage: a, b, c, d = z.bisection()
             sage: a.intersection(b).intersection(c).intersection(d) == CIF(z.center())
@@ -1544,22 +1518,22 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         i = mpfr_cmp(&left.__re.left, &(<ComplexIntervalFieldElement>right).__re.left)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__re.right, &(<ComplexIntervalFieldElement>right).__re.right)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__im.left, &(<ComplexIntervalFieldElement>right).__im.left)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         i = mpfr_cmp(&left.__im.right, &(<ComplexIntervalFieldElement>right).__im.right)
         if i < 0:
             return -1
-        elif i > 0:
+        if i > 0:
             return 1
         return 0
 
@@ -1890,8 +1864,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             x = ComplexIntervalFieldElement(self._parent, rho*theta.cos(), rho*theta.sin())
         if all:
             return [x, -x]
-        else:
-            return x
+        return x
 
     def is_square(self):
         r"""

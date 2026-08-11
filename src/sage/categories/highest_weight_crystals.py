@@ -100,9 +100,10 @@ class HighestWeightCrystals(Category_singleton):
         additional structure: it only guarantees the existence of a
         unique highest weight element in each component.
 
-        .. SEEALSO:: :meth:`Category.additional_structure`
+        .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 
@@ -155,8 +156,7 @@ class HighestWeightCrystals(Category_singleton):
             hw = self.highest_weight_vectors()
             if len(hw) == 1:
                 return hw[0]
-            else:
-                raise RuntimeError("The crystal does not have exactly one highest weight vector")
+            raise RuntimeError("The crystal does not have exactly one highest weight vector")
 
         # TODO: Not every highest weight crystal is a lowest weight crystal
         @cached_method

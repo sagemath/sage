@@ -1,4 +1,4 @@
-name: CI Linux
+name: CI
 
 on:
   push:
@@ -10,11 +10,12 @@ on:
       - 'uv.lock'
       - 'subprojects/**'
       - '.github/workflows/ci.yml'
+      - 'build/pkgs/*/distros/*.txt'
   workflow_dispatch:
     # Allow to run manually
 
 jobs:
-  build:
+  linux:
     name: Build and Test
     runs-on: ubuntu-latest
     strategy:
@@ -29,7 +30,7 @@ jobs:
           - archlinux
           #- ubuntu:22.04 - gap is outdated there (only 4.11)
           - ubuntu:24.04
-          - ubuntu:25.04
+          - ubuntu:26.04
     container:
       image: ${{ matrix.container }}
 
@@ -41,6 +42,10 @@ jobs:
             xbps-install -yu
             # node-based actions require libstdc++.so.6
             xbps-install -Sy libstdc++ bash git
+            # setup-uv needs a version field in os-release to build its cache
+            # key, but rolling-release Void ships none (only ID); give it the
+            # same BUILD_ID that Arch uses (see astral-sh/setup-uv#773)
+            echo 'BUILD_ID=rolling' >> /etc/os-release
           fi
           if [ "${{ matrix.container }}" = "archlinux" ]; then
             # The archlinux container is configured to not install docs by default
@@ -53,10 +58,10 @@ jobs:
           fi
 
       - name: Checkout code
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7.1.4
+        uses: astral-sh/setup-uv@v9.0.0
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -108,10 +113,57 @@ jobs:
             echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
 
       - name: Upload log
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v7
         if: failure() || success()
         with:
           name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
           path: |
             build/cp313/meson-logs/
             build/cp313/meson-info/
+
+  macos:
+    name: Build and Test (macos-${{ matrix.version }})
+    runs-on: macos-${{ matrix.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '15'
+          - '26'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12' 
+
+      - name: Install dependencies
+        run: |
+          eval $(build/bin/sage-print-system-package-command homebrew update)
+          eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew $(uv run --no-project build/bin/sage-package list :standard:)))
+
+      - name: Build
+        run: |
+          source ./.homebrew-build-env
+          # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
+          uv sync --frozen --inexact --no-install-project -v
+          uv sync --frozen --inexact --no-build-isolation -v
+
+      - name: Test
+        run: |
+          uv run --frozen ./sage -t --all -p4 || true
+
+      - name: Upload log
+        uses: actions/upload-artifact@v7
+        if: failure() || success()
+        with:
+          name: macos-${{ matrix.version }}-log
+          path: |
+            build/cp312/meson-logs/
+            build/cp312/meson-info/

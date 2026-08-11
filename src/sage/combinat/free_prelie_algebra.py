@@ -164,8 +164,8 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         Beware that the underlying combinatorial free module is based
         either on ``RootedTrees`` or on ``LabelledRootedTrees``, with no
         restriction on the labellings. This means that all code calling
-        the :meth:`basis` method would not give meaningful results, since
-        :meth:`basis` returns many "chaff" elements that do not belong to
+        the :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis`
+        method would not give meaningful results, since it returns many "chaff" elements that do not belong to
         the algebra.
 
     REFERENCES:
@@ -981,12 +981,11 @@ class PreLieFunctor(ConstructionFunctor):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
             return PreLieFunctor(other.vars + self.vars)
-        elif (isinstance(other, CompositeConstructionFunctor) and
+        if (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], PreLieFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
                                                 self * other.all[-1])
-        else:
-            return CompositeConstructionFunctor(other, self)
+        return CompositeConstructionFunctor(other, self)
 
     def merge(self, other):
         """

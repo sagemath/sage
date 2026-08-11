@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Lie Conformal Algebra
 
@@ -343,13 +342,12 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
                     category=category, prefix=prefix, names=names,
                     latex_names=latex_names, parity=parity, weights=weights,
                     **kwds)
-            else:
-                from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefs import (
-                    LieConformalAlgebraWithStructureCoefficients,
-                )
-                return LieConformalAlgebraWithStructureCoefficients(
-                    R, Family(arg0),
-                    index_set=index_set, central_elements=central_elements,
-                    category=category, prefix=prefix, names=names,
-                    latex_names=latex_names, parity=parity, **kwds)
+            from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefs import (
+                LieConformalAlgebraWithStructureCoefficients,
+            )
+            return LieConformalAlgebraWithStructureCoefficients(
+                R, Family(arg0),
+                index_set=index_set, central_elements=central_elements,
+                category=category, prefix=prefix, names=names,
+                latex_names=latex_names, parity=parity, **kwds)
         raise NotImplementedError("not implemented")

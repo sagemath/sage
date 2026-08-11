@@ -48,7 +48,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
     INPUT:
 
-    - ``poly`` -- a :class:`TropicalMPolynomial`
+    - ``poly`` -- a :class:`~sage.rings.semirings.tropical_mpolynomial.TropicalMPolynomial`
 
     ALGORITHM:
 
@@ -788,7 +788,7 @@ class TropicalSurface(TropicalVariety):
 
         if not self._hypersurface:
             return [[-1, 1], [-1, 1], [-1, 1]]
-        elif len(self._hypersurface) == 1:
+        if len(self._hypersurface) == 1:
             bound = 1
             for eqn in self._hypersurface[0][0]:
                 for op in eqn.operands():

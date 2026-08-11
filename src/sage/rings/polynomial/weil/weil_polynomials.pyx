@@ -15,33 +15,37 @@ for smaller problem sizes. To enable support, ensure that your compiler supports
 OpenMP and remove the appropriate # characters in the distutils commands below.
 (You may also need to move those lines to the start of the file.)
 
-AUTHOR:
-  -- Kiran S. Kedlaya (2007-05-28): initial version
-  -- (2015-08-29): switch from NTL to FLINT
-  -- (2017-10-03): consolidate Sage layer into .pyx file
-                   define WeilPolynomials iterator
-                   reverse convention for polynomials
-                   pass multiprecision integers to/from C
-  -- (2019-02-02): update for Python3
-                   improve parallel mode
-  -- (2019-12-19): final packaging for Sage (with help from David Roe)
+AUTHORS:
+
+- Kiran S. Kedlaya (2007-05-28): initial version
+
+- Kiran S. Kedlaya (2015-08-29): switch from NTL to FLINT
+
+- Kiran S. Kedlaya (2017-10-03): consolidate Sage layer into .pyx file;
+  define WeilPolynomials iterator; reverse convention for polynomials; pass
+  multiprecision integers to/from C
+
+- Kiran S. Kedlaya (2019-02-02): update for Python3; improve parallel mode
+
+- Kiran S. Kedlaya (2019-12-19): final packaging for Sage (with help from
+  David Roe)
 
 A standalone version of this code can be found at
-   https://github.com/kedlaya/root-unitary
+https://github.com/kedlaya/root-unitary.
 """
-## Remove second # from the next two lines to enable OpenMP support.
+# Remove second # from the next two lines to enable OpenMP support.
 ##distutils: libraries = gomp
 ##distutils: extra_compile_args = -fopenmp
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2019 Kiran S. Kedlaya <kskedl@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 cimport cython
 from cython.parallel import prange
@@ -63,11 +67,13 @@ cdef extern from "sage/rings/polynomial/weil/power_sums.c":
         pass
 
     ctypedef struct ps_dynamic_data_t:
-        int flag        # State of the iterator (0 = inactive, 1 = running,
-                        #                        2 = found a solution,
-                        #                        -1 = too many nodes)
-        long node_count # Number of terminal nodes encountered
-        fmpz *sympol    # Return value (a polynomial)
+        int flag
+        # State of the iterator (0 = inactive, 1 = running,
+        #                        2 = found a solution,
+        #                       -1 = too many nodes)
+
+        long node_count  # Number of terminal nodes encountered
+        fmpz *sympol     # Return value (a polynomial)
 
     int has_openmp()
     ps_static_data_t *ps_static_init(int d, fmpz_t q, int coeffsign, fmpz_t lead,
@@ -97,7 +103,8 @@ cdef class dfs_manager:
         """
         Perform required C-level initialization (e.g., memory allocation).
 
-        This is called automatically at object creation. It should never be called directly.
+        This is called automatically at object creation. It should
+        never be called directly.
 
         TESTS:
 
@@ -156,8 +163,9 @@ cdef class dfs_manager:
         """
         Count nodes.
 
-        This method should not be called directly. Instead, use the ``node_count`` method
-        of an instance of ``WeilPolynomials`` or ``WeilPolynomials_iter``.
+        This method should not be called directly. Instead, use the
+        ``node_count`` method of an instance of ``WeilPolynomials`` or
+        ``WeilPolynomials_iter``.
 
         TESTS::
 
@@ -195,26 +203,28 @@ cdef class dfs_manager:
         cdef Integer temp
         ans = []
 
-        k=1
-        while (t and not u and ans_count  < ans_max):
-            if np == 1: # Serial mode
+        k = 1
+        while (t and not u and ans_count < ans_max):
+            if np == 1:  # Serial mode
                 next_pol(self.ps_st_data, self.dy_data_buf[0], max_steps)
                 t = self.dy_data_buf[0].flag
-            else: # Parallel mode
+            else:  # Parallel mode
                 t = 0
-                k = (k<<1) % np # Note that 2 is a primitive root mod np.
+                k = (k<<1) % np  # Note that 2 is a primitive root mod np.
                 with nogil:
                     sig_on()
                     for i in prange(np, schedule='dynamic'):  # Step each process forward
                         next_pol(self.ps_st_data, self.dy_data_buf[i], max_steps)
-                        if self.dy_data_buf[i].flag: t += 1
-                        if self.dy_data_buf[i].flag == -1: u += 1
+                        if self.dy_data_buf[i].flag:
+                            t += 1
+                        if self.dy_data_buf[i].flag == -1:
+                            u += 1
                     for i in prange(np, schedule='dynamic'):  # Redistribute work to idle processes
                         j = (i-k) % np
                         ps_dynamic_split(self.dy_data_buf[j], self.dy_data_buf[i])
                     sig_off()
             for i in range(np):
-                if self.dy_data_buf[i].flag == 2: # Extract a solution
+                if self.dy_data_buf[i].flag == 2:  # Extract a solution
                     l = []
                     # Convert a vector of fmpz's into mpz's, then Integers.
                     for j in range(2 * d + 3):
@@ -247,7 +257,8 @@ class WeilPolynomials_iter():
         sage: next(it)
         3*x^10 + x^9 + x^8 + 6*x^7 - 2*x^6 + 2*x^4 - 6*x^3 - x^2 - x - 3
     """
-    def __init__(self, d, q, sign, lead, node_limit, parallel, squarefree, polring=None):
+    def __init__(self, d, q, sign, lead, node_limit,
+                 parallel, squarefree, polring=None):
         r"""
         Create an iterator for Weil polynomials.
 
@@ -265,7 +276,7 @@ class WeilPolynomials_iter():
         x = self.pol.gen()
         d = Integer(d)
         if sign != 1 and sign != -1:
-            raise ValueError("Invalid sign")
+            raise ValueError("invalid sign")
         if not q.is_integer() or q <= 0:
             raise ValueError("q must be a positive integer")
         if d % 2 == 0:
@@ -277,7 +288,7 @@ class WeilPolynomials_iter():
                 num_cofactor = 3
         else:
             if not q.is_square():
-                raise ValueError("Degree must be even if q is not a square")
+                raise ValueError("degree must be even if q is not a square")
             d2 = d//2
             if sign == 1:
                 num_cofactor = 1
@@ -297,9 +308,9 @@ class WeilPolynomials_iter():
             j = Integer(j)
             k = Integer(k)
             if len(modlist) == 0 and k != 0:
-                raise ValueError("Leading coefficient must be specified exactly")
+                raise ValueError("leading coefficient must be specified exactly")
             if modlist and ((k != 0 and modlist[-1] % k != 0) or (k == 0 and modlist[-1] != 0)):
-                raise ValueError("Invalid moduli")
+                raise ValueError("invalid moduli")
             coefflist.append(j)
             modlist.append(k)
         # Remove cofactor from initial coefficients
@@ -324,9 +335,9 @@ class WeilPolynomials_iter():
         if node_limit is None:
             node_limit = -1
         force_squarefree = Integer(squarefree)
-        self.process = None if d2<0 else dfs_manager(d2, q, coefflist, modlist, coeffsign,
-                                   num_cofactor, node_limit, parallel,
-                                   force_squarefree)
+        self.process = None if d2<0 else dfs_manager(
+            d2, q, coefflist, modlist, coeffsign, num_cofactor,
+            node_limit, parallel, force_squarefree)
         self.q = q
         self.squarefree = squarefree
         self.ans = []
@@ -359,9 +370,9 @@ class WeilPolynomials_iter():
         """
         if self.process is None:
             raise StopIteration
-        if len(self.ans) == 0:
+        if not self.ans:
             self.ans = self.process.advance_exhaust()
-            if len(self.ans) == 0:
+            if not self.ans:
                 self.count = self.process.node_count()
                 self.process = None
                 raise StopIteration
@@ -544,7 +555,8 @@ class WeilPolynomials():
         sage: list(WeilPolynomials(0, 1, sign=-1))
         []
     """
-    def __init__(self, d, q, sign=1, lead=1, node_limit=None, parallel=False, squarefree=False, polring=None):
+    def __init__(self, d, q, sign=1, lead=1, node_limit=None,
+                 parallel=False, squarefree=False, polring=None):
         r"""
         Initialize this iterable.
 

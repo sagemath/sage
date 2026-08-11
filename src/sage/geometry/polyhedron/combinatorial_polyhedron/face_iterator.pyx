@@ -639,7 +639,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -679,8 +678,7 @@ cdef class FaceIterator_base(SageObject):
                    if not (self._n_facets <= i < self._n_facets + self._n_equations)]
         if self.dual:
             return self._join_of_atoms(*indices)
-        else:
-            return self._meet_of_coatoms(*indices)
+        return self._meet_of_coatoms(*indices)
 
     def join_of_Vrep(self, *indices):
         r"""
@@ -725,7 +723,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -810,8 +807,7 @@ cdef class FaceIterator_base(SageObject):
         """
         if not self.dual:
             return self._join_of_atoms(*indices)
-        else:
-            return self._meet_of_coatoms(*indices)
+        return self._meet_of_coatoms(*indices)
 
     def _meet_of_coatoms(self, *indices):
         r"""
@@ -850,7 +846,6 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._meet_of_coatoms(1,2)
@@ -960,7 +955,6 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator()
             sage: _ = next(it), next(it)
@@ -976,7 +970,6 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron()
             sage: it = P.face_generator(2)
             sage: it._join_of_atoms(1,2)
@@ -1907,7 +1900,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
 
     def current(self):
         r"""
-        Retrieve the last value of :meth:`__next__`.
+        Retrieve the last value of ``__next__``.
 
         EXAMPLES::
 

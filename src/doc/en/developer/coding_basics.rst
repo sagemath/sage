@@ -137,8 +137,7 @@ If you want to create a new directory (`package
 <https://docs.python.org/3/tutorial/modules.html#packages>`_) in the
 Sage library :sage_root:`src/sage` (say, ``measure_theory``), that
 directory will usually contain an empty file ``__init__.py``, which
-marks the directory as an ordinary package (see
-:ref:`section_namespace_packages`), and also a file ``all.py``,
+marks the directory as an ordinary package, and also a file ``all.py``,
 listing imports from this package that are user-facing and important
 enough to be in the global namespace of Sage at startup.  The file
 ``all.py`` might look like this::
@@ -157,7 +156,7 @@ Then in the file :sage_root:`src/sage/all.py`, add a line ::
 
     from sage.measure_theory.all import *
 
-Adding new top-level packages below :mod:`sage` should be done
+Adding new top-level packages below ``sage`` should be done
 sparingly.  It is often better to create subpackages of existing
 packages.
 
@@ -1152,7 +1151,10 @@ framework. Here is a comprehensive list:
       This doctest passes too, as the output is not checked
 
   Doctests are expected to pass with any state of the pseudorandom number
-  generators (PRNGs).
+  generators (PRNGs): the doctest framework starts each run from a randomly
+  chosen seed, which is echoed in the ``sage -t`` output as
+  ``--random-seed=SEED`` and can be passed back to ``sage -t`` to reproduce
+  a failure (see :ref:`chapter-doctesting`).
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
   dict.
@@ -1178,6 +1180,14 @@ framework. Here is a comprehensive list:
   This is mathematically correct, as it is
   guaranteed to terminate. However, there is a
   nonzero probability of a timeout.
+
+  As a last resort, an example that needs reproducible pseudorandom values
+  can fix the seed explicitly with
+  :func:`~sage.misc.randstate.set_random_seed`::
+
+      sage: set_random_seed(0)
+      sage: ZZ.random_element(100)
+      75
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.

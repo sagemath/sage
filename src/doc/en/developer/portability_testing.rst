@@ -1006,7 +1006,7 @@ The ``local-homebrew-macos-standard-python3_xcode`` environment
 installs the same packages, but uses XCode's ``/usr/bin/python3``.
 
 The ``local-homebrew-macos-standard-python3_pythonorg`` expects an
-installation of Python 3.10 in
+installation of a supported Python 3.12+ release in
 ``/Library/Frameworks/Python.framework``; this is where the binary
 packages provided by python.org install themselves.
 
@@ -1251,12 +1251,12 @@ are available:
   system packages installed, no source tree,
 
 * ``-configured`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
-  the run of the ``configure`` script,
+  (:envvar:`SAGE_ROOT <installation:SAGE_ROOT>`) and has completed the
+  bootstrapping phase and the run of the ``configure`` script,
 
 * ``-with-targets-pre`` contains a partial source tree
-  (:envvar:`SAGE_ROOT`) and a full installation
-  of all non-Python packages (:envvar:`SAGE_LOCAL`),
+  (:envvar:`SAGE_ROOT <installation:SAGE_ROOT>`) and a full installation
+  of all non-Python packages (:envvar:`SAGE_LOCAL <installation:SAGE_LOCAL>`),
 
 * ``-with-targets`` contains the full source tree and a full
   installation of Sage, including the HTML documentation, but ``make
@@ -1319,7 +1319,8 @@ you can see what it does:
 
 - Then, as part of the "updateContentCommand", it bootstraps and
   configures the source tree and starts to build Sage from source,
-  reusing the installation (:envvar:`SAGE_LOCAL`, :envvar:`SAGE_VENV`)
+  reusing the installation (:envvar:`SAGE_LOCAL <installation:SAGE_LOCAL>`,
+  :envvar:`SAGE_VENV <installation:SAGE_VENV>`)
   from the prebuilt image.
 
 After VS Code finished configuring the dev container (when the message "Done.
@@ -1409,4 +1410,3 @@ dev container, to use Sage in a terminal, `open a new terminal in VS Code
 <https://code.visualstudio.com/docs/terminal/basics>`_, type ``sage`` and hit
 :kbd:`Enter`. (Do not use ``./sage``; this will not work because the source
 tree is not configured.)
-

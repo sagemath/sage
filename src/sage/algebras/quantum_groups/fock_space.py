@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fock Space
 
@@ -81,6 +80,7 @@ class FockSpaceOptions(GlobalOptions):
         sage: Partitions.options._reset()
         sage: FockSpace.options._reset()
     """
+    __name__ = 'FockSpaceOptions'
     NAME = 'FockSpace'
     module = 'sage.algebras.quantum_groups.fock_space'
 

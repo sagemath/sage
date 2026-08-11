@@ -272,7 +272,7 @@ class Arc(GraphicPrimitive):
             sage: Arc(2,3,2.2,2.2,0,2,3,{})._matplotlib_arc()
             <matplotlib.patches.Arc object at ...>
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         p = patches.Arc((self.x, self.y),
                         2. * self.r1,
                         2. * self.r2,
@@ -499,5 +499,5 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
             sector[0], sector[1],
             options))
         return g
-    elif len(center) == 3:
+    if len(center) == 3:
         raise NotImplementedError

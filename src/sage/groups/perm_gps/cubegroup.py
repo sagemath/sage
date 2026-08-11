@@ -254,10 +254,10 @@ face_polys = {
     'flu': [[0,2],[1,2], [1,3], [0,3]],      # square labeled 17
     'fu': [[1,2],[2,2], [2,3], [1,3]],      # square labeled 18
     'fur': [[2,2],[3,2], [3,3], [2,3]],      # square labeled 19
-    'ruf': [[3,2],[4,2], [4,3], [3,3]],      # square labeled 25
+    'rfu': [[3,2],[4,2], [4,3], [3,3]],      # square labeled 25
     'ru': [[4,2],[5,2], [5,3], [4,3]],      # square labeled 26
     'rub': [[5,2],[6,2], [6,3], [5,3]],      # square labeled 27
-    'bur': [[6,2],[7,2], [7,3], [6,3]],      # square labeled 33
+    'bru': [[6,2],[7,2], [7,3], [6,3]],      # square labeled 33
     'bu': [[7,2],[8,2], [8,3], [7,3]],      # square labeled 34
     'bul': [[8,2],[9,2], [9,3], [8,3]],      # square labeled 35
 # down face
@@ -267,7 +267,7 @@ face_polys = {
     'dl': [[0,-2],[1,-2], [1,-1], [0,-1]],      # square labeled 44
     'd_center': [[1,-2],[2,-2], [2,-1], [1,-1]],        # center square
     'dr': [[2,-2],[3,-2], [3,-1], [2,-1]],      # square labeled 45
-    'dlb': [[0,-3],[1,-3], [1,-2], [0,-2]],      # square labeled 46
+    'dbl': [[0,-3],[1,-3], [1,-2], [0,-2]],      # square labeled 46
     'db': [[1,-3],[2,-3], [2,-2], [1,-2]],      # square labeled 47
     'drb': [[2,-3],[3,-3], [3,-2], [2,-2]],      # square labeled 48
 # up face
@@ -328,10 +328,10 @@ singmaster_indices = {
     43: "dfr",
     44: "dl",
     45: "dr",
-    46: "dlb",
+    46: "dbl",
     47: "db",
     48: "drb",
-    33: "bur",
+    33: "bru",
     34: "bu",
     35: "bul",
     36: "br",
@@ -339,7 +339,7 @@ singmaster_indices = {
     38: "bdr",
     39: "bd",
     40: "bld",
-    25: "ruf",
+    25: "rfu",
     26: "ru",
     27: "rub",
     28: "rf",
@@ -357,9 +357,37 @@ def index2singmaster(facet):
 
     EXAMPLES::
 
-        sage: from sage.groups.perm_gps.cubegroup import index2singmaster
+        sage: from sage.groups.perm_gps.cubegroup import index2singmaster, singmaster_indices
         sage: index2singmaster(41)
         'dlf'
+
+    TESTS:
+
+    Check that the corner labels use cyclic order (:issue:`39964`)::
+
+        sage: index2singmaster(25)
+        'rfu'
+        sage: index2singmaster(33)
+        'bru'
+        sage: index2singmaster(46)
+        'dbl'
+        sage: G = CubeGroup()
+        sage: [tuple(index2singmaster(f) for f in x)
+        ....:  for x in G.parse("R U R' U' R U R' U'").cycle_tuples()]
+        [('ulb', 'bul', 'lbu'),
+         ('ub', 'ur', 'fr'),
+         ('ubr', 'rub', 'bru'),
+         ('urf', 'rfu', 'fur'),
+         ('frd', 'rdf', 'dfr'),
+         ('ru', 'rf', 'bu')]
+        sage: corners = {}
+        sage: for label in singmaster_indices.values():
+        ....:     if len(label) == 3:
+        ....:         corners.setdefault(''.join(sorted(label)), []).append(label)
+        sage: all(sorted(c) == sorted([c[0], c[0][1:] + c[0][0],
+        ....:                            c[0][2] + c[0][:2]])
+        ....:     for c in corners.values())
+        True
     """
     return singmaster_indices[facet]
 
@@ -738,28 +766,27 @@ class CubeGroup(PermutationGroup_generic):
         if isinstance(mv, PermutationGroupElement):
             # mv is a perm_group element, return mv
             return mv if mv.parent() is self else PermutationGroup_generic.__call__(self, mv, check)
-        elif isinstance(mv, str):
+        if isinstance(mv, str):
             # It is a string: may be in cycle notation or Rubik's notation
             if '(' in mv and '^' not in mv:
                 return PermutationGroup_generic.__call__(self, mv, check)
-            else:
-                gens = self.gens()
-                names = self.gen_names()
-                map = {}
-                for i in range(6):
-                    map[names[i]] = gens[i]
-                g = self.identity()
-                mv = mv.strip().replace(" ","*").replace("**", "*").replace("'", "-1").replace('^','').replace('(','').replace(')','')
-                M = mv.split("*")
-                for m in M:
-                    if not m:
-                        pass
-                    elif len(m) == 1:
-                        g *= map[m[0]]
-                    else:
-                        g *= map[m[0]]**int(m[1:])
-                return g
-        elif isinstance(mv, dict):
+            gens = self.gens()
+            names = self.gen_names()
+            map = {}
+            for i in range(6):
+                map[names[i]] = gens[i]
+            g = self.identity()
+            mv = mv.strip().replace(" ","*").replace("**", "*").replace("'", "-1").replace('^','').replace('(','').replace(')','')
+            M = mv.split("*")
+            for m in M:
+                if not m:
+                    pass
+                elif len(m) == 1:
+                    g *= map[m[0]]
+                else:
+                    g *= map[m[0]]**int(m[1:])
+            return g
+        if isinstance(mv, dict):
             state = mv
             state_facets = []
             keyss = sorted(state.keys())
@@ -777,8 +804,7 @@ class CubeGroup(PermutationGroup_generic):
             p1 = [state0_facets.index(x) for x in range(1,49)]
             p2 = [state_facets[j] for j in p1]
             return PermutationGroup_generic.__call__(self, p2, check)
-        else:
-            return PermutationGroup_generic.__call__(self, mv, check)
+        return PermutationGroup_generic.__call__(self, mv, check)
 
     __call__ = parse
 
@@ -796,8 +822,7 @@ class CubeGroup(PermutationGroup_generic):
         fcts = range(1, 49)
         if g is not None:
             return [g(i) for i in fcts]
-        else:
-            return list(fcts)
+        return list(fcts)
 
     def faces(self, mv):
         r"""
@@ -1048,8 +1073,7 @@ class CubeGroup(PermutationGroup_generic):
             g = self.identity()
         if mode != 'quiet':
             return res, g
-        else:
-            return res
+        return res
 
     def solve(self, state, algorithm='default'):
         r"""
@@ -1359,8 +1383,7 @@ class RubiksCube(SageObject):
             B = Box(size, size, size, color=(.1, .1, .1))
             S = B + B.stickers(my_colors, size*.1, size*.01)
             return S.translate(-t*x, -t*z, -t*y)
-        else:
-            return ColorCube(size, [colors[sides[i]+6] for i in range(6)]).translate(-t*x, -t*z, -t*y)
+        return ColorCube(size, [colors[sides[i]+6] for i in range(6)]).translate(-t*x, -t*z, -t*y)
 
     def plot3d(self, stickers=True):
         r"""

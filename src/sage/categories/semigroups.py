@@ -84,8 +84,7 @@ class Semigroups(CategoryWithAxiom):
         import sage.categories.examples.semigroups as examples
         if choice == "leftzero":
             return examples.LeftZeroSemigroup(**kwds)
-        else:
-            return examples.FreeSemigroup(**kwds)
+        return examples.FreeSemigroup(**kwds)
 
     class ParentMethods:
 
@@ -371,7 +370,7 @@ class Semigroups(CategoryWithAxiom):
 
             - ``generators`` -- a finite family of elements of
               ``self``, or a list, iterable, ... that can be converted
-              into one (see :class:`Family`).
+              into one (see :func:`~sage.sets.family.Family`).
 
             - ``one`` -- a unit for the subsemigroup, or ``None``
 
@@ -381,7 +380,8 @@ class Semigroups(CategoryWithAxiom):
             the semigroup, and the right Cayley graph relations
             between them, and uses the latter as an automaton.
 
-            See :class:`~sage.sets.monoids.AutomaticSemigroup` for details.
+            See :class:`~sage.monoids.automatic_semigroup.AutomaticSemigroup`
+            for details.
 
             EXAMPLES::
 

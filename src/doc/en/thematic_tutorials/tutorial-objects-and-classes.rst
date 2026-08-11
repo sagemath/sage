@@ -381,9 +381,8 @@ Let's write a small class about glasses in a restaurant::
     ....:     def __repr__(self):
     ....:         if self._content == 0.0:
     ....:             return "An empty glass of size %s"%(self._size)
-    ....:         else:
-    ....:             return "A glass of size %s cl containing %s cl of water"%(
-    ....:                     self._size, self._content)
+    ....:         return "A glass of size %s cl containing %s cl of water"%(
+    ....:                 self._size, self._content)
     ....:     def fill(self):
     ....:         self._content = self._size
     ....:     def empty(self):
@@ -583,7 +582,7 @@ Compared to Python, Sage has particular ways to handle objects:
 - Any classes for mathematical objects in Sage should inherit from
   :class:`SageObject` rather than from ``object``. Most of the time, they
   actually inherit from a subclass such as :class:`Parent` or
-  :class:`Element`.
+  :class:`~sage.structure.element.Element`.
 
 - Printing should be done through ``_repr_`` instead of ``__repr__`` to allow
   for renaming.
@@ -611,9 +610,8 @@ Solutions to the exercises
     ....:     def __repr__(self):
     ....:         if self._content == 0.0:
     ....:             return "An empty glass of size %s"%(self._size)
-    ....:         else:
-    ....:             return "A glass of size %s cl containing %s cl of %s"%(
-    ....:                     self._size, self._content, self._beverage)
+    ....:         return "A glass of size %s cl containing %s cl of %s"%(
+    ....:                 self._size, self._content, self._beverage)
     ....:     def content(self):
     ....:         return self._content
     ....:     def beverage(self):
@@ -721,9 +719,8 @@ Solutions to the exercises
     ....:     def __repr__(self):
     ....:         if self._content == 0.0:
     ....:             return "An empty glass of size %s"%(self._size)
-    ....:         else:
-    ....:             return "A glass of size %s cl containing %s cl of %s"%(
-    ....:                     self._size, self._content, self._beverage)
+    ....:         return "A glass of size %s cl containing %s cl of %s"%(
+    ....:                 self._size, self._content, self._beverage)
     ....:     def beverage(self):
     ....:         return self._beverage
     ....:     def fill(self, beverage = "water"):

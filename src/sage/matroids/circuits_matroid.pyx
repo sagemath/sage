@@ -71,7 +71,7 @@ cdef class CircuitsMatroid(Matroid):
             self._C = set(M.circuits())
         else:
             self._groundset = frozenset(groundset)
-            self._C = set([frozenset(C) for C in circuits])
+            self._C = {frozenset(C) for C in circuits}
         # k-circuits
         self._k_C = {}
         for C in self._C:
@@ -303,8 +303,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         if self._nsc_defined:
             return f'{Matroid._repr_(self)} with {len(self.nonspanning_circuits())} nonspanning circuits'
-        else:
-            return f'{Matroid._repr_(self)} with {len(self._C)} circuits'
+        return f'{Matroid._repr_(self)} with {len(self._C)} circuits'
 
     # comparison
 
@@ -439,8 +438,7 @@ cdef class CircuitsMatroid(Matroid):
         C = []
         for i in self._k_C:
             C += [[d[y] for y in x] for x in self._k_C[i]]
-        M = CircuitsMatroid(groundset=E, circuits=C)
-        return M
+        return CircuitsMatroid(groundset=E, circuits=C)
 
     # enumeration
 
@@ -480,7 +478,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -502,7 +500,7 @@ cdef class CircuitsMatroid(Matroid):
 
         .. SEEALSO::
 
-            :meth:`M.bases() <sage.matroids.circuits_matroid.bases>`
+            :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
         """
         if k == -1:  # all independent sets
             return self._independent_sets()
@@ -526,7 +524,7 @@ cdef class CircuitsMatroid(Matroid):
 
         - ``k`` -- integer
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -576,7 +574,7 @@ cdef class CircuitsMatroid(Matroid):
 
         - ``k`` -- integer (optional); the length of the circuits
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -638,7 +636,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         Return the nonspanning circuits of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -686,7 +684,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``ordering`` -- list (optional); a total ordering of the groundset
         - ``reduced`` -- boolean (default: ``False``)
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -752,7 +750,7 @@ cdef class CircuitsMatroid(Matroid):
         - ``ordering`` -- list (optional); a total ordering of the groundset
         - ``reduced`` -- boolean (default: ``False``)
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -825,11 +823,19 @@ cdef class CircuitsMatroid(Matroid):
             Traceback (most recent call last):
             ...
             ValueError: broken circuit complex of matroid with loops is not defined
+
+        TESTS::
+
+            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: assert M.broken_circuit_complex().is_immutable()                      # needs sage.graphs
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         if self.loops():
             raise ValueError("broken circuit complex of matroid with loops is not defined")
-        return SimplicialComplex(self.no_broken_circuits_facets(ordering, reduced), maximality_check=False)
+        return SimplicialComplex(
+            self.no_broken_circuits_facets(ordering, reduced),
+            maximality_check=False, immutable=True
+        )
 
     # properties
 

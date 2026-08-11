@@ -89,8 +89,30 @@ class InterfaceFeature(Feature):
             return FeatureTestResult(self, False,
                                      reason=f"Interface {interface} is not functional: {exception}")
 
+    def is_external(self):
+        r"""
+        Return whether this interface is based on external software (default: ``True``).
 
-class Mathics(InterfaceFeature):
+        EXAMPLES::
+
+            sage: from sage.features.interfaces import Matlab
+            sage: Matlab().is_external()
+            True
+            sage: from sage.features.interfaces import Regina
+            sage: Regina().is_external()
+            False
+        """
+        return not isinstance(self, InternalInterfaceFeature)
+
+
+class InternalInterfaceFeature(InterfaceFeature):
+    r"""
+    Class to distinguish between interfaces based on internal (Python package) and external software.
+    """
+    pass
+
+
+class Mathics(InternalInterfaceFeature):
     r"""
     A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.mathics.Mathics`
     is present and functional.
@@ -107,7 +129,7 @@ class Mathics(InterfaceFeature):
         return InterfaceFeature.__classcall__(cls, 'mathics', 'sage.interfaces.mathics')
 
 
-class Regina(InterfaceFeature):
+class Regina(InternalInterfaceFeature):
     r"""
     A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.regina.Regina`
     is present and functional.
@@ -139,6 +161,40 @@ class Regina(InterfaceFeature):
         interface = 'sage.interfaces.regina'
         mod = JoinFeature(interface, (PythonModule('regina'), PythonModule(interface)))
         return InterfaceFeature.__classcall__(cls, 'regina', mod)
+
+
+class SnapPy(InternalInterfaceFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.regina.Regina`
+    is present and functional.
+
+    EXAMPLES::
+
+        sage: from sage.features.interfaces import SnapPy
+        sage: SnapPy().is_present()  # not tested
+        FeatureTestResult('snappy', False)
+    """
+
+    @staticmethod
+    def __classcall__(cls):
+        r"""
+        TESTS::
+
+            sage: from sage.features.interfaces import SnapPy
+            sage: F = SnapPy()
+            sage: F.module.hide()
+            sage: snappy(Link([]))
+            Traceback (most recent call last):
+            ...
+            FeatureNotPresentError: sage.interfaces.snappy is not available.
+            Feature `sage.interfaces.snappy` is hidden.
+            Use method `unhide` to make it available again.
+            sage: F.module.unhide()
+        """
+        from sage.features.join_feature import JoinFeature
+        interface = 'sage.interfaces.snappy'
+        mod = JoinFeature(interface, (PythonModule('snappy'), PythonModule(interface)))
+        return InterfaceFeature.__classcall__(cls, 'snappy', mod)
 
 
 # The following are provided by external software only (no SPKG)
@@ -278,6 +334,7 @@ def all_features():
          Feature('macaulay2'),
          Feature('octave'),
          Feature('regina'),
+         Feature('snappy'),
          Feature('scilab')]
     """
     return [Magma(),
@@ -288,4 +345,5 @@ def all_features():
             Macaulay2(),
             Octave(),
             Regina(),
+            SnapPy(),
             Scilab()]

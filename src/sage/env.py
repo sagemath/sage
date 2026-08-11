@@ -228,8 +228,9 @@ SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
 
-# Make sure mpmath uses Sage types
-os.environ['MPMATH_SAGE'] = '1'
+# Make sure that mpmath < 1.4 does not try to use Sage types
+os.environ.pop('MPMATH_SAGE', None)
+os.environ['MPMATH_NOSAGE'] = '1'
 
 # misc
 SAGE_BANNER = var("SAGE_BANNER", "")
@@ -239,12 +240,6 @@ SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")
 
 SAGE_GAP_MEMORY = var('SAGE_GAP_MEMORY', None)
 SAGE_GAP_COMMAND = var('SAGE_GAP_COMMAND', None)
-
-# The semicolon-separated search path for GAP packages. It is passed
-# directly to GAP via the -l flag.
-GAP_ROOT_PATHS = var("GAP_ROOT_PATHS",
-                     ";".join([join(SAGE_LOCAL, "lib", "gap"),
-                               join(SAGE_LOCAL, "share", "gap")]))
 
 # post process
 if DOT_SAGE is not None and ' ' in DOT_SAGE:
@@ -445,8 +440,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
     def uname_specific(name, value, alternative):
         if name in UNAME[0]:
             return value
-        else:
-            return alternative
+        return alternative
 
     aliases["LINUX_NOEXECSTACK"] = uname_specific("Linux", ["-Wl,-z,noexecstack"],
                                                   [])

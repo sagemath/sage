@@ -61,7 +61,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     .. NOTE::
 
         These print options may also be accessed and modified using the
-        :meth:`print_options` method, after the module has been defined.
+        :meth:`~sage.structure.indexed_generators.IndexedGenerators.print_options`
+        method, after the module has been defined.
 
     EXAMPLES:
 
@@ -94,7 +95,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         B['a'] + 3*B['b']
 
     Some uses of
-    :meth:`sage.categories.commutative_additive_semigroups.CommutativeAdditiveSemigroups.ParentMethods.summation`
+    :meth:`sage.categories.additive_magmas.AdditiveMagmas.ParentMethods.summation`
     and :meth:`sum`::
 
         sage: F = CombinatorialFreeModule(QQ, [1,2,3,4])
@@ -223,7 +224,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     parent condition. That caused a problem. The tensor product construction
     involves maps, but maps check that their domain and the parent of a
     to-be-mapped element are identical (not just equal). However, the tensor
-    product was cached by a :class:`~sage.misc.cachefunc.cached_method`, which
+    product was cached by a :func:`~sage.misc.cachefunc.cached_method`, which
     involves comparison by equality (not identity). Hence, the last line of
     the following example used to fail with an assertion error::
 
@@ -344,7 +345,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         construction of Python class. This is currently needed to
         inherit really all the features from categories, and in
         particular the initialization of ``_mul_`` in
-        :meth:`Magmas.ParentMethods.__init_extra__`.
+        :meth:`~sage.categories.magmas.Magmas.ParentMethods.__init_extra__`.
 
         EXAMPLES::
 
@@ -752,8 +753,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         if x in R:
             if x == 0:
                 return self.zero()
-            else:
-                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+            raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
         # x is an element of the basis enumerated set;
         # This is a very ugly way of testing this
         elif ((hasattr(self._indices, 'element_class') and
@@ -1009,7 +1009,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         Build an element of ``self`` from a (sparse) vector.
 
-        .. SEEALSO:: :meth:`get_order`, :meth:`CombinatorialFreeModule.Element._vector_`
+        .. SEEALSO::
+
+            - :meth:`get_order`
+            - :meth:`to_vector <sage.modules.with_basis.indexed_element.IndexedFreeModuleElement.to_vector>`
 
         EXAMPLES::
 
@@ -1254,11 +1257,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                 sage: list(s._from_dict({part: 0}, remove_zeros=False))                 # needs sage.combinat
                 [([2, 1], 0)]
         """
-        assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key, coeff in d.items()}
-        if remove_zeros:
+            if remove_zeros:
+                d = {key: c for key, coeff in d.items() if (c := R(coeff))}
+            else:
+                d = {key: R(coeff) for key, coeff in d.items()}
+        elif remove_zeros:
             d = {key: coeff for key, coeff in d.items() if coeff}
         return self.element_class(self, d)
 

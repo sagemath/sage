@@ -114,7 +114,8 @@ class DoubleDescriptionPair:
         .. warning::
 
             You should use the :meth:`Problem.initial_pair` or
-            :meth:`Problem.run` to generate double description pairs
+            :meth:`~sage.geometry.polyhedron.double_description.StandardAlgorithm.run`
+            to generate double description pairs
             for a set of inequalities, and not generate
             ``DoubleDescriptionPair`` instances directly.
 
@@ -269,9 +270,8 @@ class DoubleDescriptionPair:
 
         if not self.A:
             return Polyhedron(vertices=[[0] * self.problem.dim()], backend='ppl')
-        else:
-            ieqs = [[0] + list(a) for a in self.A]
-            return Polyhedron(ieqs=ieqs, base_ring=self.problem.base_ring(), backend='ppl')
+        ieqs = [[0] + list(a) for a in self.A]
+        return Polyhedron(ieqs=ieqs, base_ring=self.problem.base_ring(), backend='ppl')
 
     def verify(self):
         r"""
@@ -393,7 +393,9 @@ class DoubleDescriptionPair:
         of ``self``.
 
         These matrix spaces are cached to avoid their creation in the very
-        demanding :meth:`add_inequality` and more precisely :meth:`are_adjacent`.
+        demanding
+        :meth:`~sage.geometry.polyhedron.double_description.StandardDoubleDescriptionPair.add_inequality`
+        and more precisely :meth:`are_adjacent`.
 
         EXAMPLES::
 
@@ -405,7 +407,6 @@ class DoubleDescriptionPair:
             sage: DD.matrix_space(3,2)
             Full MatrixSpace of 3 by 2 dense matrices over Rational Field
 
-            sage: # needs sage.rings.number_field
             sage: K.<sqrt2> = QuadraticField(2)
             sage: A = matrix([[1,sqrt2],[2,0]])
             sage: DD, _  = Problem(A).initial_pair()

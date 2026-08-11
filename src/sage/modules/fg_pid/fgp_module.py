@@ -50,7 +50,7 @@ The invariants are computed using the Smith normal form algorithm, and
 determine the structure of this finitely generated module.
 
 You can get the `V` and `W` used in constructing the quotient module using
-the methods :meth:`V` and :meth:`W`::
+the methods :meth:`~sage.modules.fg_pid.fgp_module.FGP_Module_class.V` and :meth:`~sage.modules.fg_pid.fgp_module.FGP_Module_class.W`::
 
     sage: M0.V()
     Free module of degree 3 and rank 3 over Integer Ring
@@ -918,7 +918,7 @@ class FGP_Module_class(Module):
         Smith normal form, and `R` is the relative matrix that defines
         ``self``.
 
-        See :meth:`_relative_matrix`.
+        See ``_relative_matrix``.
 
         EXAMPLES::
 
@@ -952,7 +952,7 @@ class FGP_Module_class(Module):
     def invariants(self, include_ones=False):
         r"""
         Return the diagonal entries of the Smith form of the relative
-        matrix that defines ``self`` (see :meth:`._relative_matrix`)
+        matrix that defines ``self`` (see ``_relative_matrix``)
         padded with zeros, excluding 1s by default.   Thus if ``v`` is the
         list of integers returned, then ``self`` is abstractly isomorphic to
         the product of cyclic groups `\ZZ/n\ZZ` where `n` is in ``v``.
@@ -1313,10 +1313,9 @@ class FGP_Module_class(Module):
             return b.parent()([b[i] if I[i] == 0 else b[i] % I[i]
                                for i in range(len(I))])
 
-        else:
-            # Don't know (or not requested) canonical way to reduce
-            # each entry yet, or how to compute invariants.
-            return b
+        # Don't know (or not requested) canonical way to reduce
+        # each entry yet, or how to compute invariants.
+        return b
 
     def gen(self, i):
         """
@@ -1576,8 +1575,7 @@ class FGP_Module_class(Module):
 
         if self.gens() == self.smith_form_gens():
             return self._hom_from_smith(im_gens, check)
-        else:
-            return self._hom_general(im_gens, check)
+        return self._hom_general(im_gens, check)
 
     def _hom_general(self, im_gens, check=True):
         """

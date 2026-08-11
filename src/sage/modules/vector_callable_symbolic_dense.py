@@ -71,9 +71,8 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
         repr_x = self.change_ring(SR)._repr_()
         if len(args) == 1:
             return "%s |--> %s" % (args[0], repr_x)
-        else:
-            args = ", ".join(map(str, args))
-            return "(%s) |--> %s" % (args, repr_x)
+        args = ", ".join(map(str, args))
+        return "(%s) |--> %s" % (args, repr_x)
 
     def _latex_(self):
         r"""
@@ -99,6 +98,5 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
         latex_x = self.change_ring(SR)._latex_()
         if len(args) == 1:
             return r"%s \ {\mapsto}\ %s" % (args[0], latex_x)
-        else:
-            vars = ", ".join(args)
-            return r"\left( %s \right) \ {\mapsto} \ %s" % (vars, latex_x)
+        vars = ", ".join(args)
+        return r"\left( %s \right) \ {\mapsto} \ %s" % (vars, latex_x)

@@ -139,6 +139,8 @@ class DocTestSource:
 
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
       instance or equivalent
+
+    .. automethod:: _process_doc
     """
     def __init__(self, options):
         """
@@ -376,8 +378,7 @@ class DocTestSource:
                 i = random.randint(0, len(doctests) - 1)
                 randomized.append(doctests.pop(i))
             return randomized, extras
-        else:
-            return doctests, extras
+        return doctests, extras
 
 
 class StringDocTestSource(DocTestSource):
@@ -653,12 +654,10 @@ class FileDocTestSource(DocTestSource):
         """
         if self.options.abspath:
             return os.path.abspath(self.path)
-        else:
-            relpath = os.path.relpath(self.path)
-            if relpath.startswith(".." + os.path.sep):
-                return self.path
-            else:
-                return relpath
+        relpath = os.path.relpath(self.path)
+        if relpath.startswith(".." + os.path.sep):
+            return self.path
+        return relpath
 
     @lazy_attribute
     def basename(self):
@@ -683,7 +682,7 @@ class FileDocTestSource(DocTestSource):
 
         Such files aren't loaded before running tests.
 
-        This uses :func:`~sage.misc.package_dir.is_package_or_sage_namespace_package_dir`
+        This uses ``sage.misc.package_dir.is_package_or_sage_namespace_package_dir``
         but can be overridden via :class:`~sage.doctest.control.DocTestDefaults`.
 
         EXAMPLES::
@@ -721,10 +720,11 @@ class FileDocTestSource(DocTestSource):
 
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
-            sage: filename = sage.repl.user_globals.__file__
+            sage: import sage.tests.numpy
+            sage: filename = sage.tests.numpy.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: FDS.file_optional_tags
-            {'sage.modules': None}
+            {'numpy': None}
         """
         from .parsing import parse_file_optional_tags
         return parse_file_optional_tags(self)
@@ -829,6 +829,7 @@ class FileDocTestSource(DocTestSource):
             skipping = False
             in_block = False
             last_line = ''
+        starting_indent = None
         for lineno, line in self:
             if not line.strip():
                 continue
@@ -894,7 +895,8 @@ class SourceLanguage:
         """
         Return a list of doctest defined in this docstring.
 
-        This function is called by :meth:`DocTestSource._process_doc`.
+        This function is called by
+        :meth:`~sage.doctest.sources.DocTestSource._process_doc`.
         The default implementation, defined here, is to use the
         :class:`sage.doctest.parsing.SageDocTestParser` attached to
         this source to get doctests from the docstring.

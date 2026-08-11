@@ -81,7 +81,7 @@ class FiniteGroups(CategoryWithAxiom):
         def cardinality(self):
             """
             Return the cardinality of ``self``, as per
-            :meth:`EnumeratedSets.ParentMethods.cardinality`.
+            :meth:`~sage.categories.finite_enumerated_sets.FiniteEnumeratedSets.ParentMethods.cardinality`.
 
             This default implementation calls :meth:`.order` if
             available, and otherwise resorts to
@@ -213,8 +213,7 @@ class FiniteGroups(CategoryWithAxiom):
             if K in Fields() and K.characteristic() == 0:
                 from sage.categories.algebras import Algebras
                 return [Algebras(self.base_ring()).Semisimple()]
-            else:
-                return []
+            return []
 
         class ParentMethods:
             def __init_extra__(self):

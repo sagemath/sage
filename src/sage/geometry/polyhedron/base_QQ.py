@@ -390,10 +390,9 @@ class Polyhedron_QQ(Polyhedron_base):
             # TO DO: replace this change of variable by creating the appropriate
             #        polynomial ring in the latte interface.
 
-        elif engine == 'normaliz':
+        if engine == 'normaliz':
             return self._ehrhart_polynomial_normaliz(variable)
-        else:
-            raise ValueError("engine must be 'latte' or 'normaliz'")
+        raise ValueError("engine must be 'latte' or 'normaliz'")
 
     @cached_method(do_pickle=True)
     def ehrhart_quasipolynomial(self, variable='t', engine=None, verbose=False,
@@ -590,8 +589,7 @@ class Polyhedron_QQ(Polyhedron_base):
             return poly.change_variable_name(variable)
             # TO DO: replace this change of variable by creating the appropriate
             #        polynomial ring in the latte interface.
-        else:
-            raise TypeError("the engine should be 'latte' or 'normaliz'")
+        raise TypeError("the engine should be 'latte' or 'normaliz'")
 
     def _ehrhart_quasipolynomial_normaliz(self, variable='t'):
         r"""
@@ -931,7 +929,7 @@ class Polyhedron_QQ(Polyhedron_base):
         INPUT:
 
         - ``conj_class_reps`` -- list of representatives of the conjugacy
-          classes of the subgroup of the :meth:`restricted_automorphism_group` of
+          classes of the subgroup of the :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group` of
           the polytope. Each element is written as a permutation of the vertices
           of the polytope.
 
@@ -1027,7 +1025,8 @@ class Polyhedron_QQ(Polyhedron_base):
         EXAMPLES:
 
         The `H^*`-polynomial of the standard (`d-1`)-dimensional simplex
-        `S = conv(e_1, \dots, e_d)` under its :meth:`restricted_automorphism_group`
+        `S = conv(e_1, \dots, e_d)` under its
+        :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
         is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
         Here is the computation for the 3-dimensional standard simplex::
 
@@ -1151,7 +1150,8 @@ class Polyhedron_QQ(Polyhedron_base):
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 
         The ``Hstar`` series of the polytope is determined by the action of a
-        subgroup of the polytope's :meth:`restricted_automorphism_group`. The
+        subgroup of the polytope's
+        :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`. The
         ``Hstar`` series is effective if it is a polynomial in `t` and the
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
@@ -1218,15 +1218,15 @@ class Polyhedron_QQ(Polyhedron_base):
             raise NotImplementedError('unbounded polyhedra are not supported')
         if self.backend() == 'normaliz':
             return self._is_effective_normaliz(Hstar, Hstar_as_lin_comb)
-        else:
-            raise TypeError("the backend of the polyhedron should be 'normaliz'")
+        raise TypeError("the backend of the polyhedron should be 'normaliz'")
 
     def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
         r"""
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 
         The ``Hstar`` series of the polytope is determined by the action of a
-        subgroup of the polytope's :meth:`restricted_automorphism_group`. The
+        subgroup of the polytope's
+        :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`. The
         ``Hstar`` series is effective if it is a polynomial in `t` and the
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if

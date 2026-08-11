@@ -579,8 +579,7 @@ cdef class Dist(ModuleElement):
         n = self.precision_relative()
         if self.parent().is_symk():
             return self.ordp + min([self._unscaled_moment(a).valuation(p) for a in range(n)])
-        else:
-            return self.ordp + min([n] + [self._unscaled_moment(a).valuation(p) for a in range(n) if not self._unscaled_moment(a).is_zero()])
+        return self.ordp + min([n] + [self._unscaled_moment(a).valuation(p) for a in range(n) if not self._unscaled_moment(a).is_zero()])
 
     def specialize(self, new_base_ring=None):
         """
@@ -824,8 +823,7 @@ cdef class Dist_vector(Dist):
             valstr = "%s^%s * " % (self.parent().prime(), self.ordp)
         if len(self._moments) == 1:
             return valstr + repr(self._moments[0])
-        else:
-            return valstr + repr(self._moments)
+        return valstr + repr(self._moments)
 
     def _rational_(self):
         """

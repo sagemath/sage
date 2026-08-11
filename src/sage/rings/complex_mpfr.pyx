@@ -54,6 +54,7 @@ from sage.rings.integer_ring import ZZ
 
 cimport gmpy2
 gmpy2.import_gmpy2()
+from mpmath import mp
 
 try:
     from cypari2.gen import Gen as pari_gen
@@ -118,47 +119,6 @@ def set_global_complex_round_mode(n):
     rnd = n
 
 
-def is_ComplexNumber(x):
-    r"""
-    Return ``True`` if ``x`` is a complex number. In particular, if ``x`` is
-    of the :class:`ComplexNumber` type.
-
-    EXAMPLES::
-
-        sage: from sage.rings.complex_mpfr import is_ComplexNumber
-        sage: a = ComplexNumber(1, 2); a
-        1.00000000000000 + 2.00000000000000*I
-        sage: is_ComplexNumber(a)
-        doctest:warning...
-        DeprecationWarning: The function is_ComplexNumber is deprecated;
-        use 'isinstance(..., ComplexNumber)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: b = ComplexNumber(1); b
-        1.00000000000000
-        sage: is_ComplexNumber(b)
-        True
-
-    Note that the global element ``I`` is a number field element, of type
-    :class:`sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian`,
-    while elements of the class :class:`ComplexField_class`
-    are of type :class:`ComplexNumber`::
-
-        sage: # needs sage.symbolic
-        sage: c = 1 + 2*I
-        sage: is_ComplexNumber(c)
-        False
-        sage: d = CC(1 + 2*I)
-        sage: is_ComplexNumber(d)
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_ComplexNumber is deprecated; "
-                       "use 'isinstance(..., ComplexNumber)' instead.")
-    return isinstance(x, ComplexNumber)
-
-
 cache = {}
 
 
@@ -182,7 +142,7 @@ def ComplexField(prec=53, names=None):
     .. SEEALSO::
 
         - :class:`~sage.rings.complex_mpfr.ComplexField_class`
-        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+        - :class:`~sage.rings.complex_arb.ComplexBallField` (complex numbers with
           rigorous error bounds)
     """
     global cache
@@ -273,7 +233,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
     .. SEEALSO::
 
         - :func:`~sage.rings.complex_mpfr.ComplexField` (constructor)
-        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+        - :class:`~sage.rings.complex_arb.ComplexBallField` (complex numbers with
           rigorous error bounds)
         - :mod:`~sage.rings.real_mpfr`
     """
@@ -595,19 +555,16 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         if isinstance(S, ComplexField_class):
             if self._prec <= S._prec:
                 return self._generic_coerce_map(S)
-            else:
-                return None
+            return None
         if S is complex:
             if self._prec <= 53:
                 return self._generic_coerce_map(S)
-            else:
-                return None
+            return None
         late_import()
         if S is CDF:
             if self._prec <= 53:
                 return self._generic_coerce_map(S)
-            else:
-                return None
+            return None
         if S in [AA, QQbar, CLF, RLF]:
             return self._generic_coerce_map(S)
         # Needed to discover the correct coerce map. Without this, the maps
@@ -869,7 +826,6 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
         TESTS::
 
-            sage: # needs sage.libs.pari
             sage: k = ComplexField(100)
             sage: R.<x> = k[]
             sage: k._factor_univariate_polynomial(x)
@@ -984,7 +940,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 real, imag = real
             elif isinstance(real, complex):
                 real, imag = real.real, real.imag
-            elif type(real) is gmpy2.mpc:
+            elif isinstance(real, (gmpy2.mpc, mp.mpc)):
                 real, imag = (<gmpy2.mpc>real).real, (<gmpy2.mpc>real).imag
             else:
                 imag = 0
@@ -1068,8 +1024,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         if self._prec <= 53:
             return numpy_complex_interface
-        else:
-            return numpy_object_interface
+        return numpy_object_interface
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -1150,8 +1105,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         sum = sib.sum([real_part, imag_part], simplify=True)
         if sum._sie_is_negation():
             return -sib(self.parent())(sum._sie_operand)
-        else:
-            return sib(self.parent())(sum)
+        return sib(self.parent())(sum)
 
         # The following (untested) implementation sets CC_I = CC.gen(),
         # allowing to write 2 + 3*CC_I instead of CC(2 + 3*I).
@@ -1287,7 +1241,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: a = CC(pi + I*e); a
             3.14159265358979 + 2.71828182845905*I
             sage: a.str(truncate=True)
@@ -1412,7 +1365,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Coerce the object using the ``pari`` function::
 
-            sage: # needs sage.libs.pari
             sage: a = ComplexNumber(2,1)
             sage: pari(a)
             2.00000000000000 + 1.00000000000000*I
@@ -2018,12 +1970,12 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         i = mpfr_cmp(left.__re, (<ComplexNumber>right).__re)
         if i < 0:
             return rich_to_bool(op, -1)
-        elif i > 0:
+        if i > 0:
             return rich_to_bool(op, 1)
         i = mpfr_cmp(left.__im, (<ComplexNumber>right).__im)
         if i < 0:
             return rich_to_bool(op, -1)
-        elif i > 0:
+        if i > 0:
             return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
@@ -2078,7 +2030,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         Plots this complex number as a point in the plane.
 
-        The accepted options are the ones of :meth:`~sage.plot.point.point2d`.
+        The accepted options are the ones of :func:`~sage.plot.point.point2d`.
         Type ``point2d.options`` to see all options.
 
         .. NOTE::
@@ -2266,7 +2218,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: (1+CC(I)).cot()
             0.217621561854403 - 0.868014142895925*I
             sage: i = ComplexField(200).0
@@ -2890,7 +2841,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.pari
             sage: C, i = ComplexField(30).objgen()
             sage: (1+i).gamma_inc(2 + 3*i)  # abs tol 2e-10
             0.0020969149 - 0.059981914*I
@@ -2982,8 +2932,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         if self == 0:
             return 1
-        else:
-            return infinity.infinity
+        return infinity.infinity
 
     def sqrt(self, all=False):
         """
@@ -3021,8 +2970,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 mpfr_sqrt(z.__im, z.__im, rnd)
             if all:
                 return [z, -z] if z else [z]
-            else:
-                return z
+            return z
         # self = x + yi = (a+bi)^2
         # expand, substitute, solve
         # a^2 = (x + sqrt(x^2+y^2))/2
@@ -3052,8 +3000,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
                 mpfr_neg(z.__im, z.__im, rnd)
         if all:
             return [z, -z]
-        else:
-            return z
+        return z
 
     def nth_root(self, n, all=False):
         """
@@ -3450,7 +3397,7 @@ cdef inline mp_exp_t max_exp(ComplexNumber z) noexcept:
     """
     if mpfr_zero_p(z.__im):
         return mpfr_get_exp(z.__re)
-    elif mpfr_zero_p(z.__re):
+    if mpfr_zero_p(z.__re):
         return mpfr_get_exp(z.__im)
     return max_exp_t(mpfr_get_exp(z.__re), mpfr_get_exp(z.__im))
 

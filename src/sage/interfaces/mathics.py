@@ -71,7 +71,7 @@ into Mathics::
 
 If you want work with the internal Mathics expression, then you can call
 ``mathics.eval(expr)``, which returns an instance of
-:class:`mathics.core.expression.Expression`. If you want the result to
+``mathics.core.expression.Expression``. If you want the result to
 be a string formatted like Mathics's InputForm, call ``repr(mobj)`` on
 the wrapper object ``mobj``. If you want a string formatted in Sage style,
 call ``mobj._sage_repr()``::
@@ -796,8 +796,7 @@ optional Sage package Mathics installed.
         """
         if long:
             return self.eval('Information[%s]' % cmd)
-        else:
-            return self.eval('? %s' % cmd)
+        return self.eval('? %s' % cmd)
 
     def __getattr__(self, attrname):
         r"""
@@ -910,7 +909,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         if attrname == '_mathics_result':
             self._mathics_result = P._eval(self.name())
             return self._mathics_result
-        elif attrname[:1] == "_":
+        if attrname[:1] == "_":
             raise AttributeError
         else:
             expr = self._mathics_result.last_eval
@@ -1072,12 +1071,11 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
                 return self.parent()(i).sage()
             if isinstance(p, list):
                 return [conv(i) for i in p]
-            elif isinstance(p, tuple):
+            if isinstance(p, tuple):
                 return tuple([conv(i) for i in p])
-            elif type(p) is dict:
+            if type(p) is dict:
                 return {conv(k): conv(v) for k, v in p.items()}
-            else:
-                return p
+            return p
         return s
 
     def __len__(self):
@@ -1179,8 +1177,9 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
         OUTPUT:
 
-        This method does not return anything. Use :meth:`save` if you
-        want to save the figure as an image.
+        This method does not return anything. Use
+        :meth:`~sage.interfaces.mathics.MathicsElement.save_image` if you want
+        to save the figure as an image.
 
         EXAMPLES::
 
@@ -1214,9 +1213,9 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         P = self.parent()
         if str(P(f"{self.name()} < {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, -1)
-        elif str(P(f"{self.name()} > {other.name()}")) == P._true_symbol():
+        if str(P(f"{self.name()} > {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, 1)
-        elif str(P(f"{self.name()} == {other.name()}")) == P._true_symbol():
+        if str(P(f"{self.name()} == {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, 0)
         return NotImplemented
 

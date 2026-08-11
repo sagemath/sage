@@ -34,7 +34,11 @@ subdir('ja')
 doc_bootstrap = custom_target(
   'bootstrap',
   output: ['autogen'],
-  command: [files('bootstrap'), meson.current_build_dir()],
+  command: [
+    py,
+    files('../../tools/bootstrap-docs.py'),
+    meson.current_build_dir(),
+  ],
   env: {'SAGE_ROOT': root},
   # doc_src is not really a dependency of the bootstrap, but we want to make sure
   # that all the source files are present before running the actual doc build
@@ -127,6 +131,30 @@ other_documents = run_command(
   ],
   check: true,
 ).stdout().strip()
+other_documents_inventory = []
+foreach doc : other_documents.splitlines()
+  if doc == 'en/installation'
+    short_doc = doc.replace('/', '-')
+    target = custom_target(
+      'doc-inventory-other-' + short_doc,
+      output: ['inventory' + short_doc],
+      command: [
+        py,
+        src / 'build-docs.py',
+        '--no-prune-empty-dirs',
+        '--no-pdf-links',
+        doc,
+        'inventory',
+        '-o',
+        '@OUTDIR@',
+        '--source',
+        meson.current_build_dir(),
+      ],
+      depends: reference_inventory,
+    )
+    other_documents_inventory += target
+  endif
+endforeach
 other_documents_html = []
 other_documents_pdf = []
 foreach type : ['html', 'pdf']
@@ -147,7 +175,7 @@ foreach type : ['html', 'pdf']
         '--source',
         meson.current_build_dir(),
       ],
-      depends: reference_inventory,
+      depends: reference_inventory + other_documents_inventory,
     )
     if type == 'html'
       other_documents_html += target

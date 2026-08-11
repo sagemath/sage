@@ -544,8 +544,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         if self._space._plot_projection == self._space._plot_projection_barycentric:
             return self._plot_projection_barycentric
-        else:
-            RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
+        RootLatticeRealizations.ParentMethods.__dict__["_plot_projection"]
 
 
 class CartanType_finite(CartanType, cartan_type.CartanType_finite):
@@ -700,7 +699,8 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         r"""
         Return a special node of the Dynkin diagram.
 
-        .. SEEALSO:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
+        .. SEEALSO::
+            :meth:`~sage.combinat.root_system.cartan_type.CartanType_affine.special_node`
 
         It is obtained by relabelling of the special node of the non
         relabelled Dynkin diagram.

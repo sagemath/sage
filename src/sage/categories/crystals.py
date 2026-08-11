@@ -4,7 +4,8 @@ Crystals
 
 TESTS:
 
-Catch warnings produced by :func:`check_tkz_graph`::
+Catch warnings produced by
+:func:`~sage.graphs.graph_latex.check_tkz_graph`::
 
     sage: from sage.graphs.graph_latex import check_tkz_graph
     sage: check_tkz_graph()  # random
@@ -142,12 +143,10 @@ class Crystals(Category_singleton):
         import sage.categories.examples.crystals as examples
         if choice == "naive":
             return examples.NaiveCrystal(**kwds)
-        else:
-            from sage.rings.integer import Integer
-            if isinstance(choice, Integer):
-                return examples.HighestWeightCrystalOfTypeA(n=choice, **kwds)
-            else:
-                return examples.HighestWeightCrystalOfTypeA(**kwds)
+        from sage.rings.integer import Integer
+        if isinstance(choice, Integer):
+            return examples.HighestWeightCrystalOfTypeA(n=choice, **kwds)
+        return examples.HighestWeightCrystalOfTypeA(**kwds)
 
     class MorphismMethods:
         @cached_method
@@ -1798,7 +1797,7 @@ class Crystals(Category_singleton):
             .. SEEALSO::
 
                 - :class:`.tensor.TensorProductsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`.
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
 
             EXAMPLES::
 

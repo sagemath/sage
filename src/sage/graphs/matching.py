@@ -136,14 +136,14 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
                                       algorithm='Edmonds')
-    elif algorithm == "LP_matching":
+    if algorithm == "LP_matching":
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
                                       algorithm='LP',
                                       solver=solver,
                                       verbose=verbose,
                                       integrality_tolerance=integrality_tolerance)
-    elif algorithm == "LP":
+    if algorithm == "LP":
         from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
@@ -402,8 +402,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     if G.order() == 2:
         if G.is_connected():
             return (True, None) if coNP_certificate else True
-        else:
-            return (False, None) if coNP_certificate else False
+        return (False, None) if coNP_certificate else False
 
     # The graph must have an even number of vertices
     if G.order() % 2:
@@ -433,7 +432,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
             if u is not None and not len(component) % 2:
                 v = component[0]
                 return (False, {u, v})
-            elif len(component) == 1:
+            if len(component) == 1:
                 u = component[0]
 
     # Bipartite graphs of order at least three are not bicritical
@@ -1195,6 +1194,18 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: sorted(m)                                                             # needs sage.networkx
         [(0, 3, 3), (1, 2, 6)]
 
+    Self-loops are filtered out before the matching is computed, so they do
+    not affect the result.  This holds for vertices with any integer label,
+    including labels above 256, which CPython does not cache as identical
+    objects (so the loop filter must compare endpoints by value, not by
+    identity)::
+
+        sage: G = Graph([(300, 300), (300, 301), (302, 303)], loops=True)
+        sage: G.matching(value_only=True, algorithm='Edmonds')                      # needs networkx
+        2
+        sage: G.matching(value_only=True, algorithm='LP')                           # needs sage.numerical.mip
+        2
+
     TESTS:
 
     If ``algorithm`` is set to anything different from ``'Edmonds'`` or
@@ -1211,13 +1222,12 @@ def matching(G, value_only=False, algorithm='Edmonds',
     def weight(x):
         if x in RR:
             return x
-        else:
-            return 1
+        return 1
 
     W = {}
     L = {}
     for u, v, l in G.edge_iterator():
-        if u is v:
+        if u == v:
             continue
         fuv = frozenset((u, v))
         if fuv not in L or (use_edge_labels and W[fuv] < weight(l)):
@@ -1244,7 +1254,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
                                format='list_of_edges'))
 
-    elif algorithm == "LP":
+    if algorithm == "LP":
         g = G
         from sage.numerical.mip import MixedIntegerLinearProgram
         # returns the weight of an edge considering it may not be

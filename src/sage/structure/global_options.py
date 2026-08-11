@@ -12,8 +12,8 @@ These options should be "attached" to one or more classes as an options method.
 .. SEEALSO::
 
     For good examples of :class:`GlobalOptions` in action see
-    :obj:`sage.combinat.partition.Partitions.options` and
-    :obj:`sage.combinat.tableau.Tableaux.options`.
+    :attr:`sage.combinat.partition.Partitions.options` and
+    :attr:`sage.combinat.tableau.Tableaux.options`.
 
 .. _construction_section:
 
@@ -70,7 +70,8 @@ dictionary are:
 
 - ``checker`` -- a validation function which returns whether a user
   supplied value is valid or not. This is typically useful for large
-  lists of legal values such as :class:`~sage.rings.semirings.non_negative_integer_semiring.NN`.
+  lists of legal values such as the
+  :class:`~sage.rings.semirings.non_negative_integer_semiring.NonNegativeIntegerSemiring`.
 
 - ``default`` -- gives the default value for the option
 
@@ -94,7 +95,8 @@ For each option, either a complete list of possible values, via ``values``, or a
 validation function, via ``checker``, must be given. The values can be quite
 arbitrary, including user-defined functions which customize the default
 behaviour of the classes such as the output of ``_repr_`` or :func:`latex`. See
-:ref:`dispatcher` below, and :meth:`~GlobalOptions._dispatcher`, for more
+:ref:`dispatcher` below, and
+:meth:`~sage.structure.global_options.GlobalOptions._dispatch`, for more
 information.
 
 The documentation for the options is automatically constructed from
@@ -139,7 +141,8 @@ illustrated by an example::
 
 In the examples above, the options are constructed when the ``options``
 object is created. However, it is also possible to construct the options
-dynamically using the :meth:`GlobalOptions._add_to_options` methods.
+dynamically using
+:meth:`~sage.structure.global_options.GlobalOptions._add_option`.
 
 For more details see :class:`GlobalOptions`.
 
@@ -315,7 +318,8 @@ method of the associated class ``MyClass`` as follows:
 In this example, ``first_option`` is an option of ``MyOptions`` which takes
 values ``bells``, ``whistles``, and so on. Note that it is necessary to make
 ``self``, which is an instance of ``MyClass``, an argument of the dispatcher
-because :meth:`~GlobalOptions._dispatch()` is a method of :class:`GlobalOptions`
+because :meth:`~sage.structure.global_options.GlobalOptions._dispatch` is a
+method of :class:`GlobalOptions`
 and not a method of ``MyClass``. Apart from ``MyOptions``, as it is a method of
 this class, the arguments are the attached class (here ``MyClass``), the prefix
 of the method of ``MyClass`` being dispatched, the option of ``MyOptions``
@@ -334,7 +338,8 @@ method ``dispatch_to + MyOptions(options)`` is called).
 If ``MyOptions(options)`` is itself a function then the dispatcher will call
 this function instead. In this way, it is possible to allow the user to
 customise the default behaviour of this method. See
-:meth:`~GlobalOptions._dispatch` for an example of how this can be achieved.
+:meth:`~sage.structure.global_options.GlobalOptions._dispatch` for an example
+of how this can be achieved.
 
 The dispatching capabilities of :class:`GlobalOptions` allows options to be
 applied automatically without needing to parse different values of the option
@@ -356,7 +361,8 @@ capabilities can also be used to make one option control several methods:
     def _ge_option_b(self, other):
         return ...
 
-See :meth:`~GlobalOptions._dispatch` for more details.
+See :meth:`~sage.structure.global_options.GlobalOptions._dispatch` for more
+details.
 
 Doc testing
 -----------
@@ -364,7 +370,8 @@ Doc testing
 All of the options and their effects should be doc-tested. However, in order
 not to break other tests, all options should be returned to their default state
 at the end of each test. To make this easier, every :class:`GlobalOptions` class has
-a :meth:`~GlobalOptions._reset()` method for doing exactly this.
+a :meth:`~sage.structure.global_options.GlobalOptions._reset` method for doing
+exactly this.
 
 
 Pickling
@@ -373,7 +380,7 @@ Pickling
 Options classes can only be pickled if they are the options for some standard
 sage class. In this case the class is specified using the arguments to
 :class:`GlobalOptions`. For example
-:meth:`~sage.combinat.partition.Partitions.options` is defined as:
+:attr:`sage.combinat.partition.Partitions.options` is defined as:
 
 .. CODE-BLOCK:: python
 
@@ -970,6 +977,10 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
           - ``espresso`` -- life begins again
         <BLANKLINE>
         Current value: espresso
+
+    .. automethod:: _add_option
+    .. automethod:: _dispatch
+    .. automethod:: _reset
     """
     __name__ = 'options'
 
@@ -1128,8 +1139,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             # use __getitem__ to return these options
             if len(get_value) == 1:
                 return self[get_value[0]]
-            else:
-                return [self[option] for option in get_value]
+            return [self[option] for option in get_value]
 
         # use __setitem__ to set these options
         if set_value:
@@ -1156,7 +1166,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         if option in self._linked_value:
             link, linked_opt = self._linked_value[option]
             return link[linked_opt]
-        elif option in self._value:
+        if option in self._value:
             if option in self._display_values:
                 return self._display_values[option][self._value[option]]
             return self._value[option]
@@ -1198,7 +1208,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             print('%s\nCurrent value: %s' % (self._doc[option], self[option]))
             return      # we do not want to call the setter below
 
-        elif option in self._linked_value:
+        if option in self._linked_value:
             link, linked_opt = self._linked_value[option]
             link[linked_opt] = value
 
@@ -1253,7 +1263,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         As the attributes of an option class are the actual options we need
         to be able to "trap" invalid options in a sensible way. We do this
-        by sending any "non-standard" to :meth:`__setitem__` for processing.
+        by sending any "non-standard" to ``__setitem__`` for processing.
 
         EXAMPLES::
 
@@ -1526,13 +1536,12 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         matches = [opt for opt in self._doc if opt.lower().startswith(loption)]
         if matches and all(m.startswith(matches[0]) for m in matches):
             return matches[0]
-        elif len(matches) > 1:
+        if len(matches) > 1:
             # as there is more than one match check case as well
             matches = [mat for mat in matches if mat.startswith(option)]
             if matches and all(m.startswith(matches[0]) for m in matches):
                 return matches[0]
-            else:
-                raise ValueError('%s is an ambiguous option for %s' % (option, self._name))
+            raise ValueError('%s is an ambiguous option for %s' % (option, self._name))
 
         # if we are still here this is not a good option!
         raise ValueError('%s is not an option for %s' % (option, self._name))
@@ -1617,9 +1626,8 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         option = self._match_option(option)
         if option in self.__default_value:
             return self.__default_value[option]
-        else:
-            link, linked_opt = self._linked_value[option]
-            return link._default_value(linked_opt)
+        link, linked_opt = self._linked_value[option]
+        return link._default_value(linked_opt)
 
     def _dispatch(self, obj, dispatch_to, option, *args, **kargs):
         r"""

@@ -20,8 +20,8 @@ class RelativeInterior(ConvexSet_relatively_open):
     The relative interior of a polyhedron or cone.
 
     This class should not be used directly. Use methods
-    :meth:`~sage.geometry.polyhedron.Polyhedron_base.relative_interior`,
-    :meth:`~sage.geometry.polyhedron.Polyhedron_base.interior`,
+    :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.relative_interior`,
+    :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.interior`,
     :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.relative_interior`,
     :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.interior` instead.
 

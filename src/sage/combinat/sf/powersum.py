@@ -71,7 +71,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         Pi = Partition([i])
         P0 = Partition([])
         T = self.tensor_square()
-        return T.sum_of_monomials( [(Pi, P0), (P0, Pi)] )
+        return T.sum_of_monomials([(Pi, P0), (P0, Pi)])
 
     def antipode_on_basis(self, partition):
         r"""
@@ -268,7 +268,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution()` is a synonym for the :meth:`omega()`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega`
             method.
 
             OUTPUT: the image of ``self`` under the omega automorphism
@@ -370,8 +370,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             p = self.parent()
             if 1 not in part:
                 return p.zero()
-            else:
-                return len([i for i in part if i == 1]) * p(part[:-1])
+            return len([i for i in part if i == 1]) * p(part[:-1])
 
         def _derivative_with_respect_to_p1(self):
             """
@@ -528,7 +527,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             The `n`-th Verschiebung operator is adjoint to the `n`-th
             Adams operator (see :meth:`adams_operator` for its definition)
-            with respect to the Hall scalar product (:meth:`scalar`).
+            with respect to the Hall scalar product (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
             The action of the `n`-th Verschiebung operator on the Schur basis
             can also be computed explicitly. The following (probably clumsier
@@ -614,7 +613,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             p_coords_of_self = self.monomial_coefficients().items()
             dct = {Partition([i // n for i in lam]): coeff * (n ** len(lam))
                    for (lam, coeff) in p_coords_of_self
-                   if all( i % n == 0 for i in lam )}
+                   if all(i % n == 0 for i in lam)}
             result_in_p_basis = parent._from_dict(dct)
             return parent(result_in_p_basis)
 

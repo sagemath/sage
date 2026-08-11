@@ -41,7 +41,8 @@ This file contains
 #. some named latin squares (back circulant, forward circulant, abelian
    `2`-group);
 
-#. methods :meth:`is_partial_latin_square` and :meth:`is_latin_square` to test
+#. methods :meth:`~sage.combinat.matrices.latin.LatinSquare.is_partial_latin_square`
+   and :meth:`~sage.combinat.matrices.latin.LatinSquare.is_latin_square` to test
    if a :class:`LatinSquare` object satisfies the definition of a latin square
    or partial latin square, respectively;
 
@@ -1463,7 +1464,8 @@ def isotopism(p):
     - a list of integers -- the function adds `1` to each member of the
       list, and returns the corresponding permutation
 
-    - a :class:`PermutationGroupElement` ``p`` -- returns a permutation
+    - a :class:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement`
+      ``p`` -- returns a permutation
       describing ``p`` **without** any shift
 
     EXAMPLES::
@@ -1993,18 +1995,17 @@ def elementary_abelian_2group(s):
         L[1, 1] = 0
 
         return L
-    else:
-        L_prev = elementary_abelian_2group(s-1)
-        L = LatinSquare(2**s, 2**s)
+    L_prev = elementary_abelian_2group(s-1)
+    L = LatinSquare(2**s, 2**s)
 
-        offset = L.nrows() // 2
+    offset = L.nrows() // 2
 
-        for r in range(L_prev.nrows()):
-            for c in range(L_prev.ncols()):
-                L[r, c] = L_prev[r, c]
-                L[r+offset, c] = L_prev[r, c] + offset
-                L[r, c+offset] = L_prev[r, c] + offset
-                L[r+offset, c+offset] = L_prev[r, c]
+    for r in range(L_prev.nrows()):
+        for c in range(L_prev.ncols()):
+            L[r, c] = L_prev[r, c]
+            L[r+offset, c] = L_prev[r, c] + offset
+            L[r, c+offset] = L_prev[r, c] + offset
+            L[r+offset, c+offset] = L_prev[r, c]
     return L
 
 
@@ -2458,7 +2459,7 @@ def p3_group_bitrade_generators(p):
     return (x, y, (x*y)**(-1), PermutationGroup([x, y]))
 
 
-def check_bitrade_generators(a, b, c):
+def check_bitrade_generators(a, b, c) -> bool:
     r"""
     Three group elements a, b, c will generate a bitrade if a\*b\*c = 1
     and the subgroups a, b, c intersect (pairwise) in just the
@@ -2470,7 +2471,7 @@ def check_bitrade_generators(a, b, c):
         sage: a, b, c, G = p3_group_bitrade_generators(3)
         sage: check_bitrade_generators(a, b, c)
         True
-        sage: check_bitrade_generators(a, b, libgap(gap('()')))
+        sage: check_bitrade_generators(a, b, libgap.CycleFromList([]))
         False
     """
     A = PermutationGroup([a])
@@ -2484,7 +2485,7 @@ def check_bitrade_generators(a, b, c):
     return X.Size() == 1
 
 
-def is_bitrade(T1, T2):
+def is_bitrade(T1, T2) -> bool:
     """
     Combinatorially, a pair (T1, T2) of partial latin squares is a
     bitrade if they are disjoint, have the same shape, and have row and
@@ -2506,7 +2507,7 @@ def is_bitrade(T1, T2):
             is_row_and_col_balanced(T1, T2))
 
 
-def is_primary_bitrade(a, b, c, G):
+def is_primary_bitrade(a, b, c, G) -> bool:
     """
     A bitrade generated from elements a, b, c is primary if a, b, c =
     G.

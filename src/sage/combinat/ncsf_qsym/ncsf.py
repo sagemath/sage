@@ -2221,8 +2221,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 """
                 if hasattr(self, "antipode_on_generators"):
                     return self.algebra_morphism(self.antipode_on_generators, codomain=self, anti=True)
-                else:
-                    return NotImplemented
+                return NotImplemented
 
             @lazy_attribute
             def coproduct(self):
@@ -2245,8 +2244,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 from sage.categories.tensor import tensor
                 if hasattr(self, "coproduct_on_generators"):
                     return self.algebra_morphism(self.coproduct_on_generators, codomain=tensor([self, self]))
-                else:
-                    return NotImplemented
+                return NotImplemented
 
     class MultiplicativeBasesOnGroupLikeElements(Category_realization_of_parent):
         r"""
@@ -2604,11 +2602,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             if not I._list:
                 return self.monomial(J)
-            elif not J._list:
+            if not J._list:
                 return self.monomial(I)
-            else:
-                return self.monomial(self._indices(I[:] + J[:])) + \
-                       self.monomial(self._indices(I[:-1] + [I[-1]+J[0]] + J[1:]))
+            return self.monomial(self._indices(I[:] + J[:])) + \
+                   self.monomial(self._indices(I[:-1] + [I[-1]+J[0]] + J[1:]))
 
         def antipode_on_basis(self, composition):
             """
@@ -2644,8 +2641,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             if composition.size() % 2 == 0:
                 return self[composition.conjugate()]
-            else:
-                return - self[composition.conjugate()]
+            return - self[composition.conjugate()]
 
         def to_symmetric_function_on_basis(self, I):
             r"""
@@ -2814,8 +2810,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     Jn = C([j // n for j in J])
                     if (len(I) - len(J)) % 2:
                         return (Jn, - coeff)
-                    else:
-                        return (Jn, coeff)
+                    return (Jn, coeff)
                 return parent.sum_of_terms([ribbon_mapper(I, coeff)
                                             for (I, coeff) in self
                                             if sum(I) % n == 0])
@@ -4838,7 +4833,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                     -I[1, 1, 3, 2] - I[1, 2, 2, 2] - I[1, 2, 3, 1] + I[2, 3, 2]
                 """
                 if n <= 0:
-                    return super(NonCommutativeSymmetricFunctions.Immaculate.Element, self).bernstein_creation_operator(n)
+                    return super().bernstein_creation_operator(n)
 
                 C = Compositions()
                 P = self.parent()
@@ -5102,7 +5097,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         The basis of NCSF dual to the Young Quasisymmetric-Schur basis of QSym.
 
         The
-        :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.YoungQuasisymmetric_Schur`
+        :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Young_Quasisymmetric_Schur`
         functions are given in Definition 5.2.1 of [LMvW13]_.  The dual basis
         in the algebra of non-commutative symmetric functions are related by
         an involution reversing the indexing composition of the complete

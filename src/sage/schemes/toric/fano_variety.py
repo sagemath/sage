@@ -803,7 +803,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
             There is no need to have any relation between ``F`` and the base
             field of ``self``. If you do want to have such a relation, use
-            :meth:`base_extend` instead.
+            :meth:`~sage.schemes.toric.divisor.ToricDivisorGroup.base_extend` instead.
 
         EXAMPLES::
 
@@ -830,7 +830,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         """
         if self.base_ring() == F:
             return self
-        elif F not in _Fields:
+        if F not in _Fields:
             raise TypeError("need a field to construct a Fano toric variety!"
                             "\n Got %s" % F)
         else:
@@ -1460,7 +1460,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         r"""
         Return the class of ``self`` in the ambient space cohomology ring.
 
-        OUTPUT: a :class:`cohomology class <sage.schemes.generic.toric_variety.CohomologyClass>`
+        OUTPUT: a :class:`cohomology class <sage.schemes.toric.variety.CohomologyClass>`
 
         EXAMPLES::
 
@@ -1551,8 +1551,7 @@ def add_variables(field, variables):
             if len(new_variables) > R.ngens():
                 return PolynomialRing(R.base_ring(),
                                       new_variables).fraction_field()
-            else:
-                return field
+            return field
     # "Intelligent extension" didn't work, use the "usual one."
     new_variables = []
     for v in variables:
