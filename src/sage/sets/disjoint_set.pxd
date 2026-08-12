@@ -24,6 +24,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
     cpdef root_to_elements_dict(self)
     cpdef element_to_root_dict(self)
     cpdef to_digraph(self)
+    cpdef sample(self, ground_set=*)
+    cpdef move(self, int i, int j, inplace=*)
 
 cdef class DisjointSet_of_hashables(DisjointSet_class):
     cdef list _int_to_el
@@ -33,3 +35,5 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
     cpdef root_to_elements_dict(self)
     cpdef element_to_root_dict(self)
     cpdef to_digraph(self)
+    cpdef sample(self, ground_set=*)
+    cpdef move(self, e, f, inplace=*)
