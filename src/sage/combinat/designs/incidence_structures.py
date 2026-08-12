@@ -1874,7 +1874,7 @@ class IncidenceStructure(SageObject):
             sage: P = designs.DesarguesianProjectivePlaneDesign(2); P
             (7,3,1)-Balanced Incomplete Block Design
             sage: G = P.automorphism_group()
-            sage: G.is_isomorphic(PGL(3,2))
+            sage: G.is_isomorphic(PGL(3,2))  # optional - internet
             True
             sage: G
             Permutation Group with generators [...]

@@ -333,7 +333,7 @@ class ParentLibGAP(SageObject):
 
         EXAMPLES::
 
-            sage: SL(2,GF(49)).minimal_normal_subgroups()
+            sage: SL(2,GF(49)).minimal_normal_subgroups()  # optional - internet
             [Subgroup with 1 generators (
              [6 0]
              [0 6]
@@ -351,7 +351,7 @@ class ParentLibGAP(SageObject):
 
         EXAMPLES::
 
-            sage: SL(2,GF(49)).minimal_normal_subgroups()
+            sage: SL(2,GF(49)).minimal_normal_subgroups()  # optional - internet
             [Subgroup with 1 generators (
              [6 0]
              [0 6]
