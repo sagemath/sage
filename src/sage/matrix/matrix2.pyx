@@ -4879,8 +4879,9 @@ cdef class Matrix(Matrix1):
             algorithm = 'default'
         elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq', 'linbox', 'linbox-noefd', 'full_pivoting']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm )
-        elif algorithm == 'generic' and R not in _Fields:
-            raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
+        elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
+                                                         RationalField)):
+            raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField,
                                                          sage.rings.abc.IntegerModRing)):
@@ -4892,9 +4893,8 @@ cdef class Matrix(Matrix1):
                 raise ValueError("'linbox' matrix kernel algorithm only available over the rationals, not over %s" % R)
         elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
-        elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
-                                                         RationalField)):
-            raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
+        elif algorithm == 'generic' and R not in _Fields:
+            raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
         elif algorithm == 'pluq' and not isinstance(self, sage.matrix.matrix_mod2_dense.Matrix_mod2_dense):
             raise ValueError("'pluq' matrix kernel algorithm only available over integers mod 2, not over %s" % R)
         elif algorithm == 'full_pivoting' and R not in _Fields:
@@ -8421,9 +8421,10 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        The matrix ``self`` is put into echelon form, returning nothing
-        by default. If ``transformation=True`` is specified, returns a
-        transformation matrix ``T``.
+        The matrix ``self`` is put into echelon form. Nothing is
+        returned unless the keyword option ``transformation=True`` is
+        specified, in which case the transformation matrix is
+        returned.
 
         If ``algorithm='full_pivoting'`` is specified, the matrix ``self`` is
         put into a row-equivalent column permutation of an echelon matrix instead.
