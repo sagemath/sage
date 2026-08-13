@@ -15601,6 +15601,41 @@ cdef class Matrix(Matrix1):
             sage: l,d = A.indefinite_factorization()
             sage: L == l and D == matrix.diagonal(d)
             True
+
+        Several examples with entries too small to represent
+        as a C double::
+
+            sage: t = QQ(1) / 2^2000
+            sage: A = matrix(QQ, [[0, t],
+            ....:                 [t, 0]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
+
+        ::
+
+            sage: s = QQ(1) / 2^2001
+            sage: A = matrix(QQ, [[s, t],
+            ....:                 [t, s]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
+
+        ::
+
+            sage: A = matrix(QQ, [[t, t],
+            ....:                 [t, t]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
+
+        ::
+
+            sage: A = matrix(QQ, [[ s, -t],
+            ....:                 [-t,  s]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
         """
         cdef Py_ssize_t n     # size of the matrices
         cdef Py_ssize_t i, j  # loop indices
