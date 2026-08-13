@@ -359,8 +359,7 @@ epvector* conjugateepvector(const epvector& epv)
 ex expairseq::conjugate() const
 {
 	std::unique_ptr<epvector> newepv(conjugateepvector(seq));
-        // this is known to be numeric
-	const numeric& x = ex_to<numeric>(overall_coeff.conjugate());
+	const numeric x = overall_coeff.conj();
 	if (!newepv and overall_coeff.is_equal(x)) {
 		return *this;
 	}
@@ -972,8 +971,7 @@ void expairseq::make_flat(const exvector &v, bool do_hold)
 	// and their cumulative number of operands
 	int nexpairseqs = 0;
 	int noperands = 0;
-	bool do_idx_rename = false;
-	
+
 	if (!do_hold) {
                 for (const auto & elem : v) {
 			if (ex_to<basic>(elem).tinfo()==this->tinfo()) {
@@ -988,7 +986,7 @@ void expairseq::make_flat(const exvector &v, bool do_hold)
 	seq.reserve(v.size()+noperands-nexpairseqs);
 	
 	// copy elements and split off numerical part
-	make_flat_inserter mf(v, do_idx_rename);
+	make_flat_inserter mf(v, false);
         for (const auto & elem : v) {
 		if (ex_to<basic>(elem).tinfo()==this->tinfo() && !do_hold) {
 			ex newfactor = mf.handle_factor(elem, _ex1);
@@ -1009,7 +1007,7 @@ void expairseq::make_flat(const exvector &v, bool do_hold)
 
 /** Combine this expairseq with argument epvector.
  *  It cares for associativity as well as for special handling of numerics. */
-void expairseq::make_flat(const epvector &v, bool do_index_renaming)
+void expairseq::make_flat(const epvector &v, bool /*do_index_renaming*/)
 {
 	// count number of operands which are of same expairseq derived type
 	// and their cumulative number of operands

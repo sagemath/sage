@@ -56,6 +56,7 @@
 #include "flint/fmpz_factor.h"
 
 #include <cmath>
+#include <cstring>
 #include <utility>
 
 #include "numeric.h"
@@ -67,12 +68,23 @@
 #include "archive.h"
 #include "tostring.h"
 #include "utils.h"
+#include "pyobject_ptr.h"
 #include "../../cpython/pycore_long.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-register"
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wdeprecated-register"
+#endif
 #include "factory/factory.h"
-#pragma clang diagnostic pop
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#endif
+
+namespace {
+
+using GiNaC::internal::pyobject_ptr;
+
+}
 
 //#define Logging_refctr
 #if defined(Logging_refctr)
@@ -257,38 +269,40 @@ PyObject* Integer(const long int& x) {
 int precision(const GiNaC::numeric& num, PyObject*& a_parent) {
         int prec = 0;
         PyObject* the_parent = a_parent;
+        pyobject_ptr owned_parent;
         if (a_parent == nullptr) {
-                PyObject* m = PyImport_ImportModule("sage.structure.element");
+                pyobject_ptr m(PyImport_ImportModule("sage.structure.element"));
                 if (m == nullptr)
                         py_error("Error importing element");
-                PyObject* f = PyObject_GetAttrString(m, "parent");
+                pyobject_ptr f(PyObject_GetAttrString(m.get(), "parent"));
                 if (f == nullptr)
                         py_error("Error getting parent attribute");
-                PyObject* obj = num.to_pyobject();
-                the_parent = PyObject_CallFunctionObjArgs(f, obj, NULL);
-                Py_DECREF(obj);
-                Py_DECREF(f);
-                Py_DECREF(m);
+                pyobject_ptr obj(num.to_pyobject());
+                owned_parent.reset(PyObject_CallFunctionObjArgs(f.get(), obj.get(), NULL));
+                if (owned_parent == nullptr)
+                        py_error("Error calling parent");
+                the_parent = owned_parent.get();
         }
         else if (PyDict_Check(a_parent)) {
-                PyObject* pkey = PyString_FromString(const_cast<char*>("parent"));
-                the_parent = PyDict_GetItem(a_parent, pkey);
-                Py_DECREF(pkey);
+                the_parent = PyDict_GetItemString(a_parent, "parent");
         }
-        PyObject *mprec = nullptr;
+        pyobject_ptr mprec;
         if (the_parent != nullptr)
-                mprec = PyObject_CallMethod(the_parent, const_cast<char*>("precision"), NULL);
+                mprec.reset(PyObject_CallMethod(the_parent, const_cast<char*>("precision"), NULL));
         if (mprec == nullptr) {
                 prec = 53;
                 PyErr_Clear();
         }
         else {
-                prec = PyLong_AsLong(mprec);
-                Py_DECREF(mprec);
+                prec = PyLong_AsLong(mprec.get());
         }
         if (a_parent == nullptr) {
-                a_parent = PyDict_New();
-                PyDict_SetItemString(a_parent, "parent", the_parent);
+                pyobject_ptr parent_dict(PyDict_New());
+                if (parent_dict == nullptr)
+                        py_error("Error creating parent dictionary");
+                if (PyDict_SetItemString(parent_dict.get(), "parent", the_parent) < 0)
+                        py_error("Error setting parent dictionary");
+                a_parent = parent_dict.release();
         }
         return prec;
 }
@@ -450,13 +464,14 @@ PyObject* common_parent(const numeric& x, const numeric& y)
 
 const numeric numeric::arbfunc_0arg(const char* name, PyObject* parent) const
 {
-        int prec = precision(*this, parent);
-        PyObject* field = CBF(prec+15);
-        PyObject* ret = CallBallMethod0Arg(field, name, *this);
-        Py_DECREF(field);
+        PyObject* evalf_parent = parent;
+        int prec = precision(*this, evalf_parent);
+        pyobject_ptr owned_parent(parent == nullptr ? evalf_parent : nullptr);
+        pyobject_ptr field(CBF(prec+15));
+        pyobject_ptr ret(CallBallMethod0Arg(field.get(), name, *this));
 
-        numeric rnum(ret);
-        return ex_to<numeric>(rnum.evalf(0, parent));
+        numeric rnum(ret.release());
+        return ex_to<numeric>(rnum.evalf(0, evalf_parent));
 }
 
 static PyObject* py_tuple_from_numvector(const std::vector<numeric>& vec)
@@ -506,37 +521,9 @@ std::ostream& operator<<(std::ostream& os, const numeric& s) {
 }
 
 const numeric& numeric::operator=(const numeric& x) {
-        switch (t) {
-        case LONG:
-                break;
-        case MPZ:
-                mpz_clear(v._bigint);
-                break;
-        case MPQ:
-                mpq_clear(v._bigrat);
-                break;
-        case PYOBJECT:
-                Py_DECREF(v._pyobject);
-                break;
-        }
-        t = x.t;
-        hash = x.hash;
-        switch (x.t) {
-        case LONG:
-                v._long = x.v._long;
-                break;
-        case MPZ:
-                mpz_init(v._bigint);
-                mpz_set(v._bigint, x.v._bigint);
-                break;
-        case MPQ:
-                mpq_init(v._bigrat);
-                mpq_set(v._bigrat, x.v._bigrat);
-                break;
-        case PYOBJECT:
-                v = x.v;
-                Py_INCREF(v._pyobject);
-                break;
+        if (this != &x) {
+                numeric copy(x);
+                swap(copy);
         }
         return *this;
 }
@@ -686,8 +673,14 @@ static long _mpq_pythonhash(mpq_t the_rat)
     mpq_set(rat, the_rat);
     long n = _mpz_pythonhash_raw(mpq_numref(rat));
     long d = _mpz_pythonhash_raw(mpq_denref(rat));
-    if (d != 1L)
-        n = n + (d-1) * 7461864723258187525;
+    unsigned long unsigned_hash = static_cast<unsigned long>(n);
+    if (d != 1L) {
+        constexpr unsigned long hash_multiplier =
+            static_cast<unsigned long>(7461864723258187525ULL);
+        unsigned_hash += (static_cast<unsigned long>(d) - 1UL)
+                         * hash_multiplier;
+    }
+    std::memcpy(&n, &unsigned_hash, sizeof(n));
     mpq_clear(rat);
     if (n == -1)
         return -2;
@@ -733,6 +726,7 @@ numeric::numeric() : basic(&numeric::tinfo_static), t(LONG), v(0) {
 numeric::numeric(const numeric& other) : basic(&numeric::tinfo_static) {
         t = other.t;
         hash = other.hash;
+        is_hashable = other.is_hashable;
         switch (t) {
         case LONG:
                 v._long = other.v._long;
@@ -933,7 +927,6 @@ inherited(n, sym_lst) {
                         PyErr_Clear();
                         is_hashable = false;
                 }
-                Py_INCREF(v._pyobject);
                 return;
         default:
                 stub("unarchiving numeric");
@@ -3526,11 +3519,11 @@ const numeric numeric::real() const {
                 try {
                         return try_py_method("real");
                 }
-                catch (std::logic_error) {}
+                catch (const std::logic_error&) {}
                 try {
                         return try_py_method("real_part");
                 }
-                catch (std::logic_error) {}
+                catch (const std::logic_error&) {}
                 return *this;
         }
         default:
@@ -3554,11 +3547,11 @@ const numeric numeric::imag() const {
                 try {
                         return try_py_method("imag");
                 }
-                catch (std::logic_error) {}
+                catch (const std::logic_error&) {}
                 try {
                         return try_py_method("imag_part");
                 }
-                catch (std::logic_error) {}
+                catch (const std::logic_error&) {}
                 return *_num0_p;
         }
         default:
@@ -3853,17 +3846,18 @@ const numeric numeric::acosh(PyObject* parent) const {
 }
 
 const numeric numeric::atanh(PyObject* parent) const {
-        int prec = precision(*this, parent);
-        PyObject* field = CBF(prec+15);
-        PyObject* ret = CallBallMethod0Arg(field, const_cast<char*>("arctanh"), *this);
-        Py_DECREF(field);
+        PyObject* evalf_parent = parent;
+        int prec = precision(*this, evalf_parent);
+        pyobject_ptr owned_parent(parent == nullptr ? evalf_parent : nullptr);
+        pyobject_ptr field(CBF(prec+15));
+        pyobject_ptr ret(CallBallMethod0Arg(field.get(), "arctanh", *this));
 
-        numeric rnum(ret);
+        numeric rnum(ret.release());
         if ((is_real() or imag().is_zero())
             and abs()<(*_num1_p))
-                return ex_to<numeric>(rnum.real().evalf(0, parent));
+                return ex_to<numeric>(rnum.real().evalf(0, evalf_parent));
         
-        return ex_to<numeric>(rnum.evalf(0, parent));
+        return ex_to<numeric>(rnum.evalf(0, evalf_parent));
 }
 
 const numeric numeric::Li2(const numeric &n, PyObject* parent) const {
@@ -3886,13 +3880,7 @@ const numeric numeric::Li2(const numeric &n, PyObject* parent) const {
 }
 
 const numeric numeric::lgamma(PyObject* parent) const {
-        int prec = precision(*this, parent);
-        PyObject* field = CBF(prec+15);
-        PyObject* ret = CallBallMethod0Arg(field, const_cast<char*>("log_gamma"), *this);
-        Py_DECREF(field);
-
-        numeric rnum(ret);
-        return ex_to<numeric>(rnum.evalf(0, parent));
+        return arbfunc_0arg("log_gamma", parent);
 }
 
 const numeric numeric::gamma(PyObject* parent) const {
@@ -4838,11 +4826,11 @@ const numeric Li2(const numeric &x, PyObject* parent) {
         try {
                 return x.try_py_method("dilog");
         }
-        catch (std::logic_error) {}
+        catch (const std::logic_error&) {}
         try {
                 return x.try_py_method("polylog", *_num2_p);
         }
-        catch (std::logic_error) {}
+        catch (const std::logic_error&) {}
 
         return x.Li2(*_num2_p, parent);
 }
