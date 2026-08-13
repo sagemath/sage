@@ -260,7 +260,8 @@ class SageShellOverride:
 
         Cython stores paths relative to the Python package root in code
         objects.  Prime :mod:`linecache` so that :mod:`inspect` and
-        :mod:`stack_data` can resolve those paths consistently.
+        the `stack_data package <https://pypi.org/project/stack-data/>`_ can
+        resolve those paths consistently.
         """
         if exc_tuple is None:
             tb = sys.exc_info()[2]
