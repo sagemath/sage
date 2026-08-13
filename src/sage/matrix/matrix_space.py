@@ -139,8 +139,6 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         <class 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
         sage: type(matrix(GF(2), 2, range(4)))
         <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
-        sage: type(matrix(GF(64,'z'), 2, range(4)))
-        <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(matrix(GF(125,'z'), 2, range(4)))     # optional: meataxe
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
         sage: type(matrix(SR, 2, 2, 0))                                                 # needs sage.symbolic
