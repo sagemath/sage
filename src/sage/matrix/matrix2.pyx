@@ -15392,6 +15392,11 @@ cdef class Matrix(Matrix1):
         Kaufman [BK1977]_ that describes the stable pivoting strategy.
         The same scheme is described by Higham [Hig2002]_.
 
+        Floating-point arithmetic is used in some cases to speed up
+        comparisons. If your matrix contains entries too small to be
+        represented as a C double, this can change the output,
+        although no promises that we have made will be broken.
+
         .. SEEALSO::
 
             :meth:`indefinite_factorization`
@@ -15424,6 +15429,29 @@ cdef class Matrix(Matrix1):
             [1 1|0]
             [---+-]
             [0 0|0]
+            sage: P.transpose()*A*P == L*D*L.transpose()
+            True
+
+        As mentioned in the ALGORITHM block, if we scale this matrix
+        to have extremely small entries (too small for a C double),
+        the output can change meaningfully though the relationship
+        between ``A``, ``P``, ``L``, and ``D`` will still hold::
+
+            sage: A /= 2^2000
+            sage: P,L,D = A.block_ldlt()
+            sage: P
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: L
+            [1 0 0]
+            [0 1 0]
+            [2 0 1]
+            sage: D.n(20)
+            [    0.00000 8.7098e-603|    0.00000]
+            [8.7098e-603 8.7098e-603|    0.00000]
+            [-----------------------+-----------]
+            [    0.00000     0.00000|    0.00000]
             sage: P.transpose()*A*P == L*D*L.transpose()
             True
 
