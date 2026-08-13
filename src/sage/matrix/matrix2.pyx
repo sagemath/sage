@@ -4782,6 +4782,18 @@ cdef class Matrix(Matrix1):
             sage: (A * A.right_kernel_matrix(basis='computed').transpose()).norm() < 1e-15
             True
 
+        Over p-adic fields, full pivoting is used by default and this
+        can prevent significant precision loss::
+
+            sage: K = pAdicField(3, 7, print_mode='val-unit')
+            sage: M = matrix(K, 3, 5, [219, 234, 81, 90, 127, 39, 190, 119, 31, 181, 155, 67, 83, 211, 184])
+            sage: KE = M.right_kernel_matrix(algorithm='generic',basis='computed'); KE
+            [3^-4 * 2 + O(3^-3) 3^-5 * 2 + O(3^-4) 3^-5 * 2 + O(3^-4)         1 + O(3^7)                  0]
+            [3^-6 * 2 + O(3^-5) 3^-7 * 2 + O(3^-6) 3^-7 * 2 + O(3^-6)                  0         1 + O(3^7)]
+            sage: KF = M.right_kernel_matrix(algorithm='full_pivoting',basis='computed'); KF
+            [  3 * 196 + O(3^7)      1870 + O(3^7)         1 + O(3^7)                  0   3^7 * 2 + O(3^8)]
+            [  3 * 521 + O(3^7)      1364 + O(3^7)                  0         1 + O(3^7) 3^2 * 707 + O(3^8)]
+
         Trivial Cases:
 
         We test two trivial cases.  Any possible values for the
@@ -4867,9 +4879,8 @@ cdef class Matrix(Matrix1):
             algorithm = 'default'
         elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq', 'linbox', 'linbox-noefd', 'full_pivoting']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm )
-        elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
-                                                         RationalField)):
-            raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
+        elif algorithm == 'generic' and R not in _Fields:
+            raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField,
                                                          sage.rings.abc.IntegerModRing)):
@@ -4928,30 +4939,37 @@ cdef class Matrix(Matrix1):
         # Third: generic first, if requested explicitly
         #   then try specialized class methods, and finally
         #   delegate to ad-hoc methods in greater generality
+        M = None
+        format = ''
+
         if algorithm == 'generic':
             format, M = self._right_kernel_matrix_over_field()
-        else:
+
+        # Try to use implementation-specific `_right_kernel_matrix` methods
+        # (the method doesn't exist on many matrix types)
+        if M is None:
             try:
                 format, M = self._right_kernel_matrix(algorithm=algorithm, proof=proof)
             except AttributeError:
-                if isinstance(R, NumberField):
-                    format, M = self._right_kernel_matrix_over_number_field()
+                pass
 
-                elif R in _Fields:
-                    from sage.categories.discrete_valuation import DiscreteValuationFields
-                    if algorithm == 'default' and R in DiscreteValuationFields():
-                        format, M = self._right_kernel_matrix_over_field(algorithm='full_pivoting')
-                    else:
-                        format, M = self._right_kernel_matrix_over_field(algorithm=algorithm)
+        if M is None and isinstance(R, NumberField):
+            format, M = self._right_kernel_matrix_over_number_field()
 
-                elif R.is_integral_domain():
-                    format, M = self._right_kernel_matrix_over_domain()
+        if M is None and R in _Fields:
+            from sage.categories.discrete_valuation import DiscreteValuationFields
+            if algorithm == 'default' and R in DiscreteValuationFields():
+                algorithm = 'full_pivoting'
+            format, M = self._right_kernel_matrix_over_field(algorithm=algorithm)
 
-                elif isinstance(R, sage.rings.abc.IntegerModRing):
-                    format, M = self._right_kernel_matrix_over_integer_mod_ring()
+        if M is None and R.is_integral_domain():
+            format, M = self._right_kernel_matrix_over_domain()
 
-                else:
-                    raise NotImplementedError("Cannot compute a matrix kernel over %s" % R)
+        if M is None and isinstance(R, sage.rings.abc.IntegerModRing):
+            format, M = self._right_kernel_matrix_over_integer_mod_ring()
+
+        if M is None:
+            raise NotImplementedError("Cannot compute a matrix kernel over %s" % R)
 
         # Trivial kernels give empty matrices, which sometimes mistakenly have
         #   zero columns as well. (eg PARI?)  This could be fixed at the source
@@ -8388,7 +8406,8 @@ cdef class Matrix(Matrix1):
           - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
             scaled partial pivoting (if base ring has valuation)
 
-          - ``'full_pivoting'``: Gauss elimination, using full pivoting
+          - ``'full_pivoting'``: Gauss elimination, using full pivoting.
+            (if base ring has absolute value)
 
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
@@ -8592,6 +8611,7 @@ cdef class Matrix(Matrix1):
             scaled partial pivoting (if base ring has valuation)
 
           - ``'full_pivoting'``: Gauss elimination, using full pivoting
+            (if base ring has absolute value)
 
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
@@ -8661,6 +8681,48 @@ cdef class Matrix(Matrix1):
             [  5   8 510 316]
             sage: E == T * A
             True
+
+        The following is an example of how full pivoting can preserve much
+        more precision over p-adic fields::
+
+            sage: K = pAdicField(5,print_mode='val-unit')
+            sage: M = matrix(3, 5,
+            ....:    [K(5^9,10), K(5^9,10), K(1,10), K(17,10), K(0,10),
+            ....:    K(5^9,10), K(4*5^9,10), K(0,10), K(13,10), K(4,10),
+            ....:    K(2*5^9,10), K(4*5^9,10), K(0,10), K(0,10), K(7,10)])
+            sage: EF, A = M.echelon_form('full_pivoting',transformation = True); EF
+            [5^9 * 3 + O(5^10) 5^9 * 2 + O(5^10)       1 + O(5^10)           O(5^10)           O(5^10)]
+            [5^9 * 4 + O(5^10) 5^9 * 2 + O(5^10)           O(5^10)       1 + O(5^10)           O(5^10)]
+            [5^9 * 1 + O(5^10) 5^9 * 2 + O(5^10)           O(5^10)           O(5^10)       1 + O(5^10)]
+            sage: min(a.precision_absolute() for a in EF.list())
+            10
+            sage: ED = M.echelon_form('default'); ED
+            [          1 + O(5)               O(5)            O(5^-8) 5^-9 * 2 + O(5^-8) 5^-9 * 3 + O(5^-8)]
+            [           O(5^10)           1 + O(5)            O(5^-8) 5^-9 * 4 + O(5^-8) 5^-9 * 4 + O(5^-8)]
+            [           O(5^10)            O(5^10)           1 + O(5)           1 + O(5)           3 + O(5)]
+            sage: min(a.precision_absolute() for a in ED.list())
+            -8
+
+        We check that full pivoting does return a row-equivalent matrix and
+        that the column permutation to put the resulting matrix in true echelon
+        form is cached on the returned matrix::
+
+            sage: A*M == EF
+            True
+            sage: s = EF._cache['echelon_full_pivoting_columnperm']
+            sage: EF.with_permuted_columns(s)
+            [      1 + O(5^10)           O(5^10)           O(5^10) 5^9 * 2 + O(5^10) 5^9 * 3 + O(5^10)]
+            [          O(5^10)       1 + O(5^10)           O(5^10) 5^9 * 2 + O(5^10) 5^9 * 4 + O(5^10)]
+            [          O(5^10)           O(5^10)       1 + O(5^10) 5^9 * 2 + O(5^10) 5^9 * 1 + O(5^10)]
+            sage: min(a.precision_absolute() for a in EF.list())
+            10
+            sage: ED = M.echelon_form('default'); ED
+            [          1 + O(5)               O(5)            O(5^-8) 5^-9 * 2 + O(5^-8) 5^-9 * 3 + O(5^-8)]
+            [           O(5^10)           1 + O(5)            O(5^-8) 5^-9 * 4 + O(5^-8) 5^-9 * 4 + O(5^-8)]
+            [           O(5^10)            O(5^10)           1 + O(5)           1 + O(5)           3 + O(5)]
+            sage: min(a.precision_absolute() for a in ED.list())
+            -8
+
         """
         cdef bint transformation = ('transformation' in kwds and kwds['transformation'])
         if algorithm != 'full_pivoting':
