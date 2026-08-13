@@ -3290,6 +3290,26 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: M.det() == L.det()
             True
 
+        Test weighted LLL::
+
+            sage: from sage.matrix.constructor import diagonal_matrix
+            sage: B = Matrix(ZZ, [
+            ....:     [1, 0, 0],
+            ....:     [0, 100, 1],
+            ....:     [0, 1, 100],
+            ....: ])
+            sage: w = [1, 10, 1]
+            sage: R_weights = B.LLL(weights=w)
+            sage: R_manual = ((B * diagonal_matrix(w)).LLL() * diagonal_matrix([1/x for x in w])).change_ring(ZZ)
+            sage: R_weights == R_manual
+            True
+
+            sage: B = Matrix(ZZ, [[1,2],[3,4]])
+            sage: B.LLL(weights=[1,2,3])
+            Traceback (most recent call last):
+            ...
+            ValueError: Length of weights must equal number of columns
+
         .. NOTE::
 
             See ``sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ.LLL`` and
@@ -3324,6 +3344,31 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: matrix.zero(2, 1).LLL(algorithm="flatter")
             []
         """
+
+        weights = kwds.pop('weights', None)
+        if weights is not None:
+            if len(weights) != self.ncols():
+                raise ValueError("Length of weights must equal number of columns")
+            if any(w <= 0 for w in weights):
+                raise ValueError("All weights must be positive")
+            from sage.matrix.constructor import diagonal_matrix
+            W = diagonal_matrix(weights)
+            Winv = diagonal_matrix([1/w for w in weights])
+
+            B_scaled = self * W
+            res = B_scaled.LLL(
+                delta=delta, eta=eta, algorithm=algorithm,
+                fp=fp, prec=prec, early_red=early_red,
+                use_givens=use_givens, use_siegel=use_siegel,
+                transformation=transformation, **kwds
+            )
+
+            if transformation:
+                B_reduced, U_weighted = res
+                return (B_reduced * Winv).change_ring(ZZ), U_weighted
+            else:
+                return (res * Winv).change_ring(ZZ)
+
         if self.ncols() == 0 or self.nrows() == 0:
             verbose("Trivial matrix, nothing to do")
             if transformation:
