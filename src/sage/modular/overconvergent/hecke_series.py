@@ -290,7 +290,7 @@ def ech_form(A, p):
 
     .. TODO::
 
-        This should be moved to :mod:`sage.matrix.matrix_modn_dense` at some
+        This should be moved to ``sage.matrix.matrix_modn_dense`` at some
         point.
 
     INPUT:

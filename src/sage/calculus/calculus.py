@@ -182,20 +182,22 @@ It is no longer allowed to call expressions with positional arguments::
     sage: f(x=pi)
     0
 
-We can also make a :class:`CallableSymbolicExpression`,
-which is a :class:`SymbolicExpression` that is a function of
-specified variables in a fixed order. Each
-:class:`SymbolicExpression` has a
-``function(...)`` method that is used to create a
-:class:`CallableSymbolicExpression`, as illustrated below::
+We can also make a
+:meth:`callable symbolic expression <sage.symbolic.expression.Expression.is_callable>`,
+which is an instance of :class:`~sage.symbolic.expression.Expression` whose parent is a
+:class:`callable symbolic expression ring <sage.symbolic.callable.CallableSymbolicExpressionRing_class>`;
+it is a function of specified variables in a fixed order. Each
+:class:`~sage.symbolic.expression.Expression` has a
+:meth:`function(...) <sage.symbolic.expression.Expression.function>`
+method that is used to create such a callable expression, as illustrated
+below::
 
     sage: u = log((2-x)/(y+5))
     sage: f = u.function(x, y); f
     (x, y) |--> log(-(x - 2)/(y + 5))
 
 There is an easier way of creating a
-:class:`CallableSymbolicExpression`, which relies on the
-Sage preparser.
+callable symbolic expression, which relies on the Sage preparser.
 
 ::
 

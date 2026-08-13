@@ -602,7 +602,7 @@ class QuotientFields(Category_singleton):
 
             .. SEEALSO::
 
-               :meth:`_derivative`
+               ``_derivative``
 
             EXAMPLES::
 

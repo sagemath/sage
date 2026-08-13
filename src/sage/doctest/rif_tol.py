@@ -68,7 +68,8 @@ def add_tolerance(wantval, want: MarkedOutput):
     INPUT:
 
     - ``wantval`` -- a real interval element
-    - ``want`` -- a :class:`MarkedOutput` describing the tolerance
+    - ``want`` -- a
+      :class:`~sage.doctest.marked_output.MarkedOutput` describing the tolerance
 
     OUTPUT: an interval element containing ``wantval``
 

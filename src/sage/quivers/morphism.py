@@ -33,12 +33,15 @@ class QuiverRepHom(CallMorphism):
 
     INPUT:
 
-    - ``domain`` -- :class:`QuiverRep`, the domain of the homomorphism
+    - ``domain`` -- :class:`~sage.quivers.representation.QuiverRep_generic`,
+      the domain of the homomorphism
 
-    - ``codomain`` -- :class:`QuiverRep`, the codomain of the homomorphism
+    - ``codomain`` -- :class:`~sage.quivers.representation.QuiverRep_generic`,
+      the codomain of the homomorphism
 
-    - ``data`` -- dict, list, or :class:`QuiverRepElement`
-      (default: empty dict),
+    - ``data`` -- dict, list, or
+      :class:`~sage.quivers.representation.QuiverRepElement` (default: empty
+      dict),
       with the following meaning:
 
       - list: ``data`` can be a list of images for the generators of
@@ -55,18 +58,21 @@ class QuiverRepHom(CallMorphism):
         to vertices of the quiver are ignored.  An error will be
         generated if these maps do not commute with the edge maps of
         the domain and codomain.
-      - :class:`QuiverRepElement`: if the domain is a
-        :class:`QuiverRep_with_path_basis` then ``data`` can be a single
-        :class:`QuiverRepElement` belonging to the codomain.  The map is
-        then defined by sending each path, ``p``, in the basis to ``data*p``.
-        If ``data`` is not an element of the codomain or the domain is not a
-        :class:`QuiverRep_with_path_basis` then an error will be generated.
-      - :class:`QuiverRepHom`: the input can also be a map `f : D \to C` such
-        that there is a coercion from the domain of ``self`` to ``D``
-        and from ``C`` to the codomain of ``self``.  The composition
-        of these maps is the result.
+      - :class:`~sage.quivers.representation.QuiverRepElement`: if the domain
+        is a :class:`~sage.quivers.representation.QuiverRep_with_path_basis`
+        then ``data`` can be a single
+        :class:`~sage.quivers.representation.QuiverRepElement` belonging to
+        the codomain.  The map is then defined by sending each path, ``p``,
+        in the basis to ``data*p``.  If ``data`` is not an element of the
+        codomain or the domain is not a
+        :class:`~sage.quivers.representation.QuiverRep_with_path_basis` then
+        an error will be generated.
+      - :class:`~sage.quivers.morphism.QuiverRepHom`: the input can also be a
+        map `f : D \to C` such that there is a coercion from the domain of
+        ``self`` to ``D`` and from ``C`` to the codomain of ``self``.  The
+        composition of these maps is the result.
 
-    OUTPUT: :class:`QuiverRepHom`
+    OUTPUT: :class:`~sage.quivers.morphism.QuiverRepHom`
 
     EXAMPLES::
 
@@ -99,9 +105,10 @@ class QuiverRepHom(CallMorphism):
         sage: g == h
         True
 
-    If the domain is a module of type QuiverRep_with_path_basis (for example,
-    the indecomposable projectives) we can create maps by specifying a single
-    image::
+    If the domain is a module of type
+    :class:`~sage.quivers.representation.QuiverRep_with_path_basis` (for
+    example, the indecomposable projectives) we can create maps by specifying
+    a single image::
 
         sage: Proj = Q.P(GF(7), 3)
         sage: Simp = Q.S(GF(7), 3)
@@ -659,7 +666,8 @@ class QuiverRepHom(CallMorphism):
         """
         Return the domain of the homomorphism.
 
-        OUTPUT: :class:`QuiverRep`; the domain
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the
+        domain
 
         EXAMPLES::
 
@@ -678,7 +686,8 @@ class QuiverRepHom(CallMorphism):
         """
         Return the codomain of the homomorphism.
 
-        OUTPUT: :class:`QuiverRep`; the codomain
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the
+        codomain
 
         EXAMPLES::
 
@@ -934,7 +943,8 @@ class QuiverRepHom(CallMorphism):
         """
         Return the kernel of ``self``.
 
-        OUTPUT: :class:`QuiverRep`; the kernel
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the
+        kernel
 
         .. NOTE::
 
@@ -961,7 +971,8 @@ class QuiverRepHom(CallMorphism):
         """
         Return the image of ``self``.
 
-        OUTPUT: :class:`QuiverRep`; the image
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the
+        image
 
         .. NOTE::
 
@@ -988,7 +999,8 @@ class QuiverRepHom(CallMorphism):
         """
         Return the cokernel of ``self``.
 
-        OUTPUT: :class:`QuiverRep`; the cokernel
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the
+        cokernel
 
         .. NOTE::
 
@@ -1015,7 +1027,8 @@ class QuiverRepHom(CallMorphism):
         Compute the linear dual `Df : DN \to DM` of
         ``self`` = `f : M \to N` where `D(-) = Hom_k(-, k)`.
 
-        OUTPUT: :class:`QuiverRepHom`; the map `Df : DN \to DM`
+        OUTPUT: :class:`~sage.quivers.morphism.QuiverRepHom`; the map
+        `Df : DN \to DM`
 
         .. NOTE::
 
@@ -1061,7 +1074,8 @@ class QuiverRepHom(CallMorphism):
         Compute the algebraic dual `f^t : N^t \to M^t` of
         ``self`` = `f : M \to N` where `(-)^t = Hom_Q(-, kQ)`.
 
-        OUTPUT: :class:`QuiverRepHom`; the map `f^t : N^t \to M^t`
+        OUTPUT: :class:`~sage.quivers.morphism.QuiverRepHom`; the map
+        `f^t : N^t \to M^t`
 
         .. NOTE::
 
@@ -1100,14 +1114,17 @@ class QuiverRepHom(CallMorphism):
 
         INPUT:
 
-        - ``maps`` -- :class:`QuiverRepHom` or list of :class:`QuiverRepHom`'s
+        - ``maps`` -- :class:`~sage.quivers.morphism.QuiverRepHom` or list of
+          such maps
 
         - ``return_maps`` -- boolean (default: ``False``); if ``False``, then
-          the return value is a :class:`QuiverRepHom` which is the direct sum
-          of ``self`` with the :class:`QuiverRepHoms` in ``maps``.
+          the return value is a :class:`~sage.quivers.morphism.QuiverRepHom`
+          which is the direct sum of ``self`` with the
+          :class:`~sage.quivers.morphism.QuiverRepHom` objects in ``maps``.
           If ``True``, then the return value is a tuple of length either 3
-          or 5.  The first entry of the tuple is the QuiverRepHom giving
-          the direct sum.  If ``pinch`` is either ``None`` or
+          or 5.  The first entry of the tuple is the
+          :class:`~sage.quivers.morphism.QuiverRepHom` giving the direct sum.
+          If ``pinch`` is either ``None`` or
           ``'codomain'`` then the next two entries in the tuple are lists
           giving respectively the inclusion and the projection maps for
           the factors of the direct sum.  Summands are ordered as given
@@ -1132,7 +1149,7 @@ class QuiverRepHom(CallMorphism):
           `A \oplus C \to B \oplus D` defined by sending `(x, y)` to
           `(f(x), g(y))`.
 
-        OUTPUT: :class:`QuiverRepHom` or tuple
+        OUTPUT: :class:`~sage.quivers.morphism.QuiverRepHom` or tuple
 
         EXAMPLES::
 
@@ -1211,9 +1228,9 @@ class QuiverRepHom(CallMorphism):
 
         INPUT:
 
-        - ``x`` -- :class:`QuiverRepElement`
+        - ``x`` -- :class:`~sage.quivers.representation.QuiverRepElement`
 
-        OUTPUT: :class:`QuiverRepElement`
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRepElement`
 
         EXAMPLES::
 

@@ -2221,7 +2221,9 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         The rows and the columns of this matrix are indexed by the
         elements of the basis of ``self`` (in the order provided by
-        :meth:`basis`).
+        the
+        :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis`
+        method).
 
         EXAMPLES::
 

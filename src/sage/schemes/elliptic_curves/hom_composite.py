@@ -322,7 +322,8 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         in which the computation of a single isogeny should be performed
         using square root Velu instead of simple Velu. If not provided,
         the system default is used (see
-        :class:`EllipticCurve_field.isogeny` for a more detailed
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.isogeny`
+        for a more detailed
         discussion.
 
         EXAMPLES::
@@ -389,6 +390,8 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         for P in kernel:
             if P not in E:
                 raise ValueError(f'given point {P} does not lie on {E}')
+
+        self._kernel_gens = tuple(kernel)  # cache for .kernel_gens()
 
         self._phis = _compute_factored_isogeny(kernel, velu_sqrt_bound=velu_sqrt_bound)
 
@@ -822,7 +825,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         return self.x_rational_map().denominator().radical()
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         """
         Return the dual of this composite isogeny.
 
@@ -851,7 +854,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         if not self._phis:
             return self
-        return prod(phi.dual() for phi in self._phis)
+        return prod(phi.dual(algorithm=algorithm) for phi in self._phis)
 
     def formal(self, prec=20):
         """
@@ -1028,7 +1031,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: set(f.inverse_image(f(P), all=True))
             {(1 : 2 : 1), (1 : 3 : 1)}
 
-        The current implementation guarantees :attr:`_phis` is not empty::
+        The current implementation guarantees ``_phis`` is not empty::
 
             sage: f = EllipticCurveHom_composite.from_factors((), E); f
             Composite morphism of degree 1:
@@ -1088,12 +1091,12 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES::

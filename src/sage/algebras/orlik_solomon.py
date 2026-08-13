@@ -652,7 +652,9 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
         True
 
     The underlying ambient module is the Orlik-Solomon algebra,
-    which is accessible via :meth:`ambient()`::
+    which is accessible via the
+    :meth:`~sage.modules.with_basis.subquotient.SubmoduleWithBasis.ambient`
+    method::
 
         sage: M.orlik_solomon_algebra(QQ) is OSG.ambient()
         True

@@ -467,7 +467,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.number_of_terms()
             101
 
-        The method :meth:`hamming_weight` is an alias::
+        The method :meth:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial.hamming_weight`
+        is an alias::
 
             sage: f.hamming_weight()
             101
@@ -984,8 +985,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise ZeroDivisionError
         if right._poly.is_term():
             return self * ~right
-        else:
-            return RingElement._div_(self, rhs)
+        return RingElement._div_(self, rhs)
 
     def is_monomial(self):
         """
@@ -1342,6 +1342,34 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         # Find the minimal valuation of x by checking each term
         return Integer(min(e[i] for e in self.exponents()))
 
+    def gradient(self) -> list:
+        r"""
+        Return a list of partial derivatives of this Laurent polynomial,
+        ordered by the variables of ``self.parent()``.
+
+        EXAMPLES::
+
+           sage: P.<x, y, z> = LaurentPolynomialRing(ZZ, 3)
+           sage: f = x**2 + y + 1/z
+           sage: f.gradient()
+           [2*x, 1, -z^-2]
+        """
+        return [self.derivative(var) for var in self.parent().gens()]
+
+    def jacobian_ideal(self):
+        r"""
+        Return the Jacobian ideal of the Laurent polynomial ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ, 3)
+            sage: f = x^3 + y^3 + 1/z
+            sage: f.jacobian_ideal()
+            Ideal (3*x^2, 3*y^2, -z^-2) of Multivariate Laurent Polynomial Ring
+            in x, y, z over Integer Ring
+        """
+        return self.parent().ideal(self.gradient())
+
     def newton_polytope(self):
         r"""
         Return the Newton polytope of this Laurent polynomial.
@@ -1460,8 +1488,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             f = self.subs(**kwds)
             if x:  # More than 1 non-keyword argument
                 return f(*x)
-            else:
-                return f
+            return f
 
         cdef int l = len(x)
 
@@ -1615,7 +1642,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         .. SEEALSO::
 
-            :meth:`_derivative`
+            ``_derivative()``
 
         EXAMPLES::
 
@@ -1715,7 +1742,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         If this polynomial is not in at most one variable, then a
         :exc:`ValueError` exception is raised.  The new polynomial is over
-        the same base ring as the given :class:`LaurentPolynomial` and in the
+        the same base ring as the given
+        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`
+        and in the
         variable ``x`` if no ring ``R`` is provided.
 
         EXAMPLES::
@@ -1986,8 +2015,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if not self:
             if new_ring is None:
                 return self._parent.zero()
-            else:
-                return new_ring.zero()
+            return new_ring.zero()
 
         if self._prod is None:
             self._compute_polydict()

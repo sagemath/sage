@@ -741,7 +741,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
               where `m_i` denotes the multiplicity of the part `i` in
               `\lambda`, and where the square brackets stand for
-              plethysm (:meth:`plethysm`). This definition makes
+              plethysm (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`). This definition makes
               the symmetry (but not the integrality!) of
               `\mathbf{GR}_\lambda` obvious.
 
@@ -968,7 +968,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             `e_{m_j}` are elementary symmetric functions, and `\pi_j` are
             the images of the Gessel-Reutenauer symmetric function
             `\mathbf{GR}_{(j)}` (see :meth:`gessel_reutenauer`) under the
-            involution `\omega` (i.e. :meth:`omega_involution`)::
+            involution `\omega` (i.e. :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution`)::
 
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: s = Sym.s()
@@ -2620,10 +2620,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
             p_k \{ p_\mu/z_\mu \} = \sum_{\nu : \nu^k = \mu } p_{\nu}/z_{\nu}~,
 
-        where `\nu^k` is the `k`-th power of `nu` (see
-        :~sage.combinat.partition.partition_power`).
+        where `\nu^k` is the `k`-th power of `nu`.
 
-        .. SEEALSO:: :func:`~sage.combinat.partition.partition_power`,
+        .. SEEALSO:: ``sage.combinat.partition.partition_power``,
             :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.inner_plethysm`
 
         INPUT:
@@ -3596,7 +3595,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         below for a representation-theoretic interpretation.
         In the following equations, we denote the outer product
         (i.e., the standard product on the ring of symmetric functions,
-        :meth:`~sage.categories.algebras_with_basis.AlgebrasWithBasis.ParentMethods.product`)
+        :meth:`~sage.categories.magmas.Magmas.ParentMethods.product`)
         by `\cdot` and the Kronecker product (:meth:`itensor`) by `\ast`).
 
         .. MATH::
@@ -3623,8 +3622,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         (where `f` has constant term `0`) by expanding `f` in the
         power sum basis and `g` in the dual basis `p_\mu/z_\mu`.
 
-        .. SEEALSO:: :meth:`itensor`, :func:`~sage.combinat.partition.partition_power`,
-            :meth:`plethysm`
+        .. SEEALSO:: :meth:`itensor`, ``sage.combinat.partition.partition_power``,
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
 
         This operation admits a representation-theoretic interpretation
         in the case where `f` is a Schur function `s_\lambda` and
@@ -3802,7 +3801,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         The default implementation converts to the Schur basis, then
         performs the automorphism and changes back.
 
-        :meth:`omega_involution()` is a synonym for the :meth:`omega()` method.
+        :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega` method.
 
         EXAMPLES::
 
@@ -4019,7 +4018,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             The internal product is sometimes referred to as "inner product"
             in the literature, but unfortunately this name is shared by a
             different operation, namely the Hall inner product
-            (see :meth:`scalar`).
+            (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
         INPUT:
 
@@ -5333,7 +5332,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         .. SEEALSO::
 
-            :meth:`plethysm`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
 
         .. TODO::
 
@@ -5387,7 +5386,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         The `n`-th Verschiebung operator is adjoint to the `n`-th
         Adams operator (see :meth:`adams_operator` for its definition)
-        with respect to the Hall scalar product (:meth:`scalar`).
+        with respect to the Hall scalar product (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
         The action of the `n`-th Verschiebung operator on the Schur basis
         can also be computed explicitly. The following (probably clumsier

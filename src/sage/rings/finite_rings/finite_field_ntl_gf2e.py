@@ -229,7 +229,7 @@ class FiniteField_ntl_gf2e(FiniteField):
 
             This generator is not guaranteed to be a generator for the
             multiplicative group.  To obtain the latter, use
-            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.multiplicative_generator`
             or use the ``modulus="primitive"`` option when constructing
             the field.
 
@@ -271,7 +271,9 @@ class FiniteField_ntl_gf2e(FiniteField):
 
     def from_integer(self, number):
         r"""
-        Given an integer `n` less than :meth:`cardinality` with base `2`
+        Given an integer `n` less than
+        :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.cardinality`
+        with base `2`
         representation `a_0 + 2 \cdot a_1 + \cdots + 2^k a_k`, returns
         `a_0 + a_1 \cdot x + \cdots + a_k x^k`, where `x` is the
         generator of this finite field.

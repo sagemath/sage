@@ -740,6 +740,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         if self._degree % 2 != 1 or self._degree < 9:
             raise NotImplementedError('only implemented for odd degrees >= 9')
 
+        self._kernel_gens = P,  # cache for .kernel_gens()
+
         try:
             self._raw_domain = E.short_weierstrass_model()
         except ValueError:
@@ -1105,7 +1107,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         return iso * phi
 
     # not explicitly cached here since .as_EllipticCurveIsogeny() and EllipticCurveIsogeny.dual() already cache their results
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the dual of this square-root Vélu
         isogeny as an :class:`EllipticCurveHom`.
@@ -1153,7 +1155,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         if self.base_ring().characteristic().divides(self.degree()):
             # The dual is inseparable.
             #TODO: This is a lazy workaround; it could be optimized more.
-            return self.as_EllipticCurveIsogeny().dual()
+            return self.as_EllipticCurveIsogeny().dual(algorithm=algorithm)
 
         # The dual is separable.
         F = self._raw_domain.base_ring()
@@ -1327,12 +1329,12 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES::

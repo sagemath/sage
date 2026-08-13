@@ -481,7 +481,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             raise ValueError('kernel subgroup has no generating points over the base field')
         return ker
 
-    def dual(self):
+    def dual(self, algorithm=None):
         """
         Return the dual isogeny of this scalar-multiplication map.
 
@@ -567,12 +567,12 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES::

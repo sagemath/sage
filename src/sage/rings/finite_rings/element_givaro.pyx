@@ -127,9 +127,9 @@ cdef class Cache_givaro(Cache_base):
         - ``repr`` -- (default: ``'poly'``) controls the way elements are printed
           to the user:
 
-          - 'log': repr is :meth:`~FiniteField_givaroElement.log_repr()`
-          - 'int': repr is :meth:`~FiniteField_givaroElement.int_repr()`
-          - 'poly': repr is :meth:`~FiniteField_givaroElement.poly_repr()`
+          - 'log': repr is ``log_repr()``
+          - 'int': repr is ``int_repr()``
+          - 'poly': repr is ``poly_repr()``
 
         - ``cache`` -- boolean (default: ``False``); if ``True`` a cache of all
           elements of this field is created. Thus, arithmetic does not
@@ -421,8 +421,7 @@ cdef class Cache_givaro(Cache_base):
         elif isinstance(e, Polynomial):
             if e.is_constant():
                 return self.parent(e.constant_coefficient())
-            else:
-                return e.change_ring(self.parent)(self.parent.gen())
+            return e.change_ring(self.parent)(self.parent.gen())
 
         elif isinstance(e, Rational):
             num = e.numer()
@@ -619,12 +618,11 @@ cdef class Cache_givaro(Cache_base):
             sage: k._cache._element_repr(a^20)
             '20'
         """
-        if self.repr==0:
+        if self.repr == 0:
             return self._element_poly_repr(e)
-        elif self.repr==1:
+        if self.repr == 1:
             return self._element_log_repr(e)
-        else:
-            return self._element_int_repr(e)
+        return self._element_int_repr(e)
 
     def _element_log_repr(self, FiniteField_givaroElement e):
         """
@@ -800,7 +798,9 @@ def unpickle_Cache_givaro(parent, p, k, modulus, rep, cache):
 
 cdef class FiniteField_givaro_iterator:
     """
-    Iterator over :class:`FiniteField_givaro` elements.  We iterate
+    Iterator over
+    :class:`~sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro`
+    elements.  We iterate
     multiplicatively, as powers of a fixed internal generator.
 
     EXAMPLES::
@@ -879,8 +879,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     It is preferred to use the exposed interface of Givaro than to rely on this implementation detail.
 
-    The C function :func:`make_FiniteField_givaroElement` can be internally used to construct a
-    :func:`FiniteField_givaroElement` object given ``int element``.
+    The C function ``make_FiniteField_givaroElement`` can be internally used to construct a
+    :class:`FiniteField_givaroElement` object given ``int element``.
     """
 
     def __init__(FiniteField_givaroElement self, parent):
@@ -1031,12 +1031,10 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             True
         """
         cdef Cache_givaro cache = <Cache_givaro>self._cache
-        if cache.objectptr.characteristic() == 2:
+        if cache.objectptr.characteristic() == 2 or \
+           self.element == cache.objectptr.one:
             return True
-        elif self.element == cache.objectptr.one:
-            return True
-        else:
-            return self.element % 2 == 0
+        return self.element % 2 == 0
 
     def sqrt(FiniteField_givaroElement self, extend=False, all=False):
         """

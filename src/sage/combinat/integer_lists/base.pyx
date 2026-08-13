@@ -38,7 +38,9 @@ cdef class IntegerListsBackend():
     integers with specified constraints.
 
     This base implements the basic operations, including checking for
-    containment using :meth:`_contains`, but not iteration. For
+    containment using
+    :meth:`_contains <sage.combinat.integer_lists.base.IntegerListsBackend._contains>`,
+    but not iteration. For
     iteration, subclass this class and implement an ``_iter()`` method.
 
     EXAMPLES::
@@ -47,6 +49,8 @@ cdef class IntegerListsBackend():
         sage: L = IntegerListsBackend(6, max_slope=-1)
         sage: L._contains([3,2,1])
         True
+
+    .. automethod:: _contains
     """
     def __init__(self,
                  n=None, length=None, *,
@@ -188,13 +192,11 @@ cdef class IntegerListsBackend():
         """
         if self.min_sum == self.max_sum:
             return "Integer lists of sum {} satisfying certain constraints".format(self.min_sum)
-        elif self.max_sum == Infinity:
+        if self.max_sum == Infinity:
             if self.min_sum == 0:
                 return "Integer lists with arbitrary sum satisfying certain constraints"
-            else:
-                return "Integer lists of sum at least {} satisfying certain constraints".format(self.min_sum)
-        else:
-            return "Integer lists of sum between {} and {} satisfying certain constraints".format(self.min_sum, self.max_sum)
+            return "Integer lists of sum at least {} satisfying certain constraints".format(self.min_sum)
+        return "Integer lists of sum between {} and {} satisfying certain constraints".format(self.min_sum, self.max_sum)
 
     def _contains(self, comp):
         """
@@ -388,6 +390,8 @@ cdef class Envelope():
         sage: f = Envelope(3, sign=-1, max_slope=-1, min_length=4)
         sage: [f(i) for i in range(10)]
         [6, 5, 4, 3, 3, 3, 3, 3, 3, 3]
+
+    .. automethod:: __init__
     """
     def __init__(self, f, *,
                  min_part=0, max_part=Infinity,
@@ -583,8 +587,7 @@ cdef class Envelope():
         """
         if self.limit_start() < Infinity and self.max_slope <= 0:
             return self(self.limit_start())
-        else:
-            return self.max_part * self.sign
+        return self.max_part * self.sign
 
     def __call__(self, Py_ssize_t k):
         """
