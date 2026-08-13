@@ -546,6 +546,22 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         r"""
         Return a shortest vector by solving the Shortest Vector Problem (SVP) exactly.
 
+        .. NOTE::
+
+            This method attempts to find an **exact** solution to the
+            Shortest Vector Problem (SVP) for both algorithms. However:
+            - The ``'pari'`` algorithm uses PARI's ``qfminim()`` function 
+              which computes exact solutions but may be slow for large 
+              dimensions.
+            - The ``'fplll'`` algorithm uses fpylll's SVP solver which by 
+              default uses enumeration to find exact solutions. The behavior 
+              can be modified by passing additional parameters through 
+              ``*args`` and ``**kwds`` (e.g., ``pruning=True`` for 
+              approximate solutions).
+            
+            Unlike :meth:`approximate_closest_vector`, this method 
+            prioritizes exactness over speed, which may result in long 
+            computation times for high-dimensional lattices.
         INPUT:
 
         - ``update_reduced_basis`` -- boolean (default: ``True``); set this
@@ -558,7 +574,9 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``**kwds`` -- passed through to underlying implementation
 
-        OUTPUT: a shortest nonzero vector for this lattice
+        OUTPUT: 
+          A shortest nonzero vector for this lattice (exact solution to 
+          SVP with default parameters).
 
         EXAMPLES::
 
