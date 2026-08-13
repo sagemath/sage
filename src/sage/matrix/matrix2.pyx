@@ -15050,9 +15050,6 @@ cdef class Matrix(Matrix1):
         cdef Py_ssize_t i, j, k  # loop indices
         cdef Py_ssize_t r = 0    # another row/column index (set before use)
 
-        # We need to construct 1x1 and 2x2 matrices to stick in d.
-        from sage.matrix.constructor import matrix
-
         # We have to make at least one copy of the input matrix so
         # that we can change the base ring to its fraction field. Both
         # "L" and the intermediate Schur complements will potentially
