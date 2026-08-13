@@ -1,11 +1,3 @@
-# distutils: sources = sage/symbolic/ginac/add.cpp sage/symbolic/ginac/archive.cpp sage/symbolic/ginac/assume.cpp sage/symbolic/ginac/basic.cpp sage/symbolic/ginac/cmatcher.cpp sage/symbolic/ginac/constant.cpp sage/symbolic/ginac/context.cpp sage/symbolic/ginac/ex.cpp sage/symbolic/ginac/expair.cpp sage/symbolic/ginac/expairseq.cpp sage/symbolic/ginac/exprseq.cpp sage/symbolic/ginac/fderivative.cpp sage/symbolic/ginac/function.cpp sage/symbolic/ginac/function_info.cpp sage/symbolic/ginac/infinity.cpp sage/symbolic/ginac/infoflagbase.cpp sage/symbolic/ginac/inifcns.cpp sage/symbolic/ginac/inifcns_comb.cpp sage/symbolic/ginac/inifcns_gamma.cpp sage/symbolic/ginac/inifcns_hyperb.cpp sage/symbolic/ginac/inifcns_hyperg.cpp sage/symbolic/ginac/inifcns_nstdsums.cpp sage/symbolic/ginac/inifcns_orthopoly.cpp sage/symbolic/ginac/inifcns_trans.cpp sage/symbolic/ginac/inifcns_trig.cpp sage/symbolic/ginac/inifcns_zeta.cpp sage/symbolic/ginac/lst.cpp sage/symbolic/ginac/matrix.cpp sage/symbolic/ginac/mpoly-ginac.cpp sage/symbolic/ginac/mpoly-singular.cpp sage/symbolic/ginac/mpoly.cpp sage/symbolic/ginac/mul.cpp sage/symbolic/ginac/normal.cpp sage/symbolic/ginac/numeric.cpp sage/symbolic/ginac/operators.cpp sage/symbolic/ginac/order.cpp sage/symbolic/ginac/power.cpp sage/symbolic/ginac/print.cpp sage/symbolic/ginac/pseries.cpp sage/symbolic/ginac/py_funcs.cpp sage/symbolic/ginac/registrar.cpp sage/symbolic/ginac/relational.cpp sage/symbolic/ginac/remember.cpp sage/symbolic/ginac/sum.cpp sage/symbolic/ginac/symbol.cpp sage/symbolic/ginac/templates.cpp sage/symbolic/ginac/upoly-ginac.cpp sage/symbolic/ginac/useries.cpp sage/symbolic/ginac/utils.cpp sage/symbolic/ginac/wildcard.cpp
-# distutils: language = c++
-# distutils: libraries = flint gmp SINGULAR_LIBRARIES
-# distutils: extra_compile_args = -std=c++11 SINGULAR_CFLAGS
-# distutils: depends = ginac/add.h ginac/archive.h ginac/assertion.h ginac/assume.h ginac/basic.h ginac/class_info.h ginac/cmatcher.h ginac/compiler.h ginac/constant.h ginac/container.h ginac/context.h ginac/ex.h ginac/ex_utils.h ginac/expair.h ginac/expairseq.h ginac/exprseq.h ginac/extern_templates.h ginac/fderivative.h ginac/flags.h ginac/function.h ginac/ginac.h ginac/infinity.h ginac/infoflagbase.h ginac/inifcns.h ginac/lst.h ginac/matrix.h ginac/mpoly.h ginac/mul.h ginac/normal.h ginac/numeric.h ginac/operators.h ginac/order.h ginac/optional.hpp ginac/power.h ginac/print.h ginac/pseries.h ginac/ptr.h ginac/py_funcs.h ginac/pynac-config.h ginac/registrar.h ginac/relational.h ginac/remember.h ginac/sum.h ginac/symbol.h ginac/templates.h ginac/tostring.h ginac/upoly.h ginac/useries-flint.h ginac/useries.h ginac/utils.h ginac/wildcard.h
-# distutils: include_dirs = SINGULAR_INCDIR
-# pynac/basic.h includes
-#   factory/factory.h    so this ^ is needed to find it
 """
 Symbolic Expressions
 
@@ -674,6 +666,20 @@ cdef class Expression(Expression_abc):
             Traceback (most recent call last):
             ...
             TypeError: Python infinity cannot have complex phase.
+
+        An unarchived Python object is released with its symbolic wrapper::
+
+            sage: import gc, weakref
+            sage: wrapped = SR._force_pyobject({1, 2}, force=True)
+            sage: restored = loads(dumps(wrapped))
+            sage: restored_object = restored.pyobject()
+            sage: restored_object is wrapped.pyobject()
+            False
+            sage: reference = weakref.ref(restored_object)
+            sage: del restored_object, restored
+            sage: _ = gc.collect()
+            sage: reference() is None
+            True
         """
         if is_a_constant(self._gobj):
             from sage.symbolic.constants import constants_name_table
@@ -2010,6 +2016,14 @@ cdef class Expression(Expression_abc):
 
             sage: t = SR(matrix(2,2,range(4)))
             sage: hash(t)
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Python object not hashable
+
+        Copying an expression must preserve that state::
+
+            sage: wrapped = SR._force_pyobject([], force=True)
+            sage: hash(wrapped + 0)
             Traceback (most recent call last):
             ...
             RuntimeError: Python object not hashable
@@ -4804,6 +4818,15 @@ cdef class Expression(Expression_abc):
 
             sage: ((1 - x)^-x).series(x, 8)
             1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
+
+        Differentiation also applies the product rule when a series
+        coefficient starts depending on the expansion variable after a
+        substitution::
+
+            sage: x, y = var('x y')
+            sage: series_with_variable_coefficients = (y/(1-x)).series(x, 5).subs(y=x)
+            sage: series_with_variable_coefficients.diff(x).coefficients(x)[:4]
+            [[1, 0], [2, 1], [3, 2], [4, 3]]
 
         Try different algorithms::
 
@@ -14003,7 +14026,7 @@ cdef unsigned sage_domain_to_ginac_domain(object domain) except? 3474701533:
     else:
         raise ValueError(repr(domain)+": domain must be one of 'complex', 'real', 'positive' or 'integer'")
 
-cdef void send_sage_domain_to_maxima(Expression v, object domain) except +:
+cdef void send_sage_domain_to_maxima(Expression v, object domain) except *:
     from sage.symbolic.assumptions import assume
     # convert the domain argument to something easy to parse
     if domain is RR or domain == 'real':

@@ -206,7 +206,7 @@ void pseries::do_print_tree(const print_tree & c, unsigned level) const
 	point.print(c, level + c.delta_indent);
 }
 
-void pseries::do_print_python_repr(const print_python_repr & c, unsigned level) const
+void pseries::do_print_python_repr(const print_python_repr & c, unsigned /*level*/) const
 {
 	c.s << class_name() << "(relational(";
 	var.print(c);
@@ -285,8 +285,7 @@ numeric pseries::degree(const ex &s) const
 		// Return last exponent
 		if (!seq.empty())
 			return ex_to<numeric>((seq.end()-1)->coeff).to_int();
-		
-			return 0;
+		return 0;
 	} else {
                 
 		if (seq.empty())
@@ -312,8 +311,7 @@ numeric pseries::ldegree(const ex &s) const
 		// Return first exponent
 		if (!seq.empty())
 			return ex_to<numeric>((seq.begin())->coeff);
-		
-			return 0;
+		return 0;
 	} else {
 		if (seq.empty())
 			return 0;
@@ -368,7 +366,7 @@ ex pseries::coeff(const ex &s, const ex & n) const
 }
 
 /** Does nothing. */
-ex pseries::collect(const ex &s, bool distributed) const
+ex pseries::collect(const ex & /*s*/, bool /*distributed*/) const
 {
 	return *this;
 }
@@ -489,49 +487,63 @@ ex pseries::expand(unsigned options) const
  *  @see ex::diff */
 ex pseries::derivative(const symbol & s) const
 {
-	epvector new_seq;
-
 	if (s == var) {
-		
-		// FIXME: coeff might depend on var
-                for (const auto & elem : seq) {
+		const relational expansion(var, point);
+		epvector coefficient_derivatives;
+		epvector power_derivatives;
+		coefficient_derivatives.reserve(seq.size());
+		power_derivatives.reserve(seq.size());
+		for (const auto & elem : seq) {
 			if (is_order_function(elem.rest)) {
-				new_seq.emplace_back(elem.rest, elem.coeff - 1);
+				power_derivatives.emplace_back(elem.rest, elem.coeff - 1);
 			} else {
-				const ex& c = elem.rest * elem.coeff;
-				if (!c.is_zero())
-					new_seq.emplace_back(c, elem.coeff - 1);
+				const ex coefficient_derivative = elem.rest.diff(s);
+				if (!coefficient_derivative.is_zero())
+					coefficient_derivatives.emplace_back(coefficient_derivative,
+					                                     elem.coeff);
+
+				const ex power_derivative = elem.rest * elem.coeff;
+				if (!power_derivative.is_zero())
+					power_derivatives.emplace_back(power_derivative,
+					                               elem.coeff - 1);
 			}
 		}
 
-	} else {
-
-                for (const auto & elem : seq) {
-			if (is_order_function(elem.rest)) {
-				new_seq.push_back(elem);
-			} else {
-				const ex& c = elem.rest.diff(s);
-				if (!c.is_zero())
-					new_seq.emplace_back(c, elem.coeff);
-			}
-		}
+		if (coefficient_derivatives.empty())
+			return pseries(expansion, std::move(power_derivatives));
+		if (power_derivatives.empty())
+			return pseries(expansion, std::move(coefficient_derivatives));
+		return pseries(expansion, std::move(power_derivatives)).add_series(
+			pseries(expansion, std::move(coefficient_derivatives)));
 	}
 
+	epvector new_seq;
+	new_seq.reserve(seq.size());
+	for (const auto & elem : seq) {
+		if (is_order_function(elem.rest)) {
+			new_seq.push_back(elem);
+		} else {
+			const ex coefficient_derivative = elem.rest.diff(s);
+			if (!coefficient_derivative.is_zero())
+				new_seq.emplace_back(coefficient_derivative, elem.coeff);
+		}
+	}
 	return pseries(relational(var,point), new_seq);
 }
 
 ex pseries::convert_to_poly(bool no_order) const
 {
-	ex e;
-        for (const auto & elem : seq) {
+	exvector terms;
+	terms.reserve(seq.size());
+	for (const auto & elem : seq) {
 		if (is_order_function(elem.rest)) {
 			if (!no_order)
-				e += Order(power(var - point, elem.coeff));
+				terms.push_back(Order(power(var - point, elem.coeff)));
 		}
-                else
-			e += elem.rest * power(var - point, elem.coeff);
+		else
+			terms.push_back(elem.rest * power(var - point, elem.coeff));
 	}
-	return e;
+	return add(terms);
 }
 
 bool pseries::is_terminating() const
@@ -560,10 +572,11 @@ ex pseries::exponop(size_t i) const
 
 /** Default implementation of ex::series(). This performs Taylor expansion.
  *  @see ex::series */
-ex basic::series(const relational & r, int order, unsigned options) const
+ex basic::series(const relational & r, int order, unsigned /*options*/) const
 {
 	epvector seq;
-	const symbol &s = ex_to<symbol>(r.lhs());
+	const ex lhs = r.lhs();
+	const symbol &s = ex_to<symbol>(lhs);
 
 	// default for order-values that make no sense for Taylor expansion
 	if ((order <= 0) && this->has(s)) {
@@ -602,7 +615,7 @@ ex basic::series(const relational & r, int order, unsigned options) const
 }
 
 
-ex numeric::series(const relational & r, int order, unsigned options) const
+ex numeric::series(const relational & r, int order, unsigned /*options*/) const
 {
 	epvector seq;
         if (not is_zero())
@@ -613,7 +626,7 @@ ex numeric::series(const relational & r, int order, unsigned options) const
 
 /** Implementation of ex::series() for symbols.
  *  @see ex::series */
-ex symbol::series(const relational & r, int order, unsigned options) const
+ex symbol::series(const relational & r, int order, unsigned /*options*/) const
 {
 	epvector seq;
 	const ex point = r.rhs();
@@ -855,7 +868,7 @@ ex mul::series(const relational & r, int order, unsigned options) const
 		bool flag_redo = false;
 		try {
 			real_ldegree = buf.expand().ldegree(sym-r.rhs()).to_int();
-		} catch (std::runtime_error) {}
+		} catch (const std::runtime_error &) {}
 
 		if (real_ldegree == 0) {
 			if ( factor < 0 ) {
@@ -1053,7 +1066,7 @@ ex power::series(const relational & r, int order, unsigned options) const
 		if (is_exactly_a<infinity>(basis_subs)) {
 			must_expand_basis = true;
 		}
-	} catch (pole_error) {
+	} catch (const pole_error &) {
 		must_expand_basis = true;
 	}
 
@@ -1063,7 +1076,7 @@ ex power::series(const relational & r, int order, unsigned options) const
 		if (is_exactly_a<infinity>(exponent_subs)) {
 			exponent_is_regular = false;
 		}
-	} catch (pole_error) {
+	} catch (const pole_error &) {
 		exponent_is_regular = false;
 	}
 
@@ -1133,7 +1146,7 @@ ex power::series(const relational & r, int order, unsigned options) const
 	ex result;
 	try {
 		result = ex_to<pseries>(e).power_const(numexp, order);
-	} catch (pole_error) {
+	} catch (const pole_error &) {
 		epvector ser;
 		ser.emplace_back(Order(_ex1), order);
 		result = pseries(r, ser);
@@ -1147,26 +1160,26 @@ ex power::series(const relational & r, int order, unsigned options) const
 ex pseries::series(const relational & r, int order, unsigned options) const
 {
 	const ex p = r.rhs();
-	GINAC_ASSERT(is_exactly_a<symbol>(r.lhs()));
-	const symbol &s = ex_to<symbol>(r.lhs());
-	
+	const ex lhs = r.lhs();
+	GINAC_ASSERT(is_exactly_a<symbol>(lhs));
+	const symbol &s = ex_to<symbol>(lhs);
+
 	if (var.is_equal(s) && point.is_equal(p)) {
 		if (order > degree(s))
 			return *this;
-		
-			epvector new_seq;
-                        for (const auto & elem : seq) {
-				int o = ex_to<numeric>(elem.coeff).to_int();
-				if (o >= order) {
-					new_seq.emplace_back(Order(_ex1), o);
-					break;
-				}
-				new_seq.push_back(elem);
+
+		epvector new_seq;
+		for (const auto & elem : seq) {
+			int o = ex_to<numeric>(elem.coeff).to_int();
+			if (o >= order) {
+				new_seq.emplace_back(Order(_ex1), o);
+				break;
 			}
-			return pseries(r, new_seq);
-		
-	} else
-		return convert_to_poly().series(r, order, options);
+			new_seq.push_back(elem);
+		}
+		return pseries(r, new_seq);
+	}
+	return convert_to_poly().series(r, order, options);
 }
 
 
@@ -1203,7 +1216,7 @@ ex ex::series(const ex & r, int order, unsigned options) const
                                                 order,
                                                 options);
                         }
-                        catch(flint_error) {
+                        catch(const flint_error &) {
                                 ;
                         }
                 }
