@@ -16,8 +16,6 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_function
-
 from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.categories.finite_fields import FiniteFields

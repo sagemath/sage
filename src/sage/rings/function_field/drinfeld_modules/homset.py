@@ -33,7 +33,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
 from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
-from sage.structure.parent import Parent
 from sage.functions.log import logb
 
 
