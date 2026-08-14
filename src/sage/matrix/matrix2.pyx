@@ -15242,7 +15242,7 @@ cdef class Matrix(Matrix1):
                 #
                 # Note: we can miss this case if the approximate
                 # a_kk_abs is zero but the real entry is non-zero.
-                if not a_kk_abs and A_kk:
+                if a_kk_abs or A_kk:
                     # If the inequality does hold, as the comparison
                     # is non-strict, we need to check that A_kk is
                     # actually non-zero. In theory omega_1 should be
@@ -15701,6 +15701,16 @@ cdef class Matrix(Matrix1):
             ....:                 [-t,  s]])
             sage: P, L, D = A.block_ldlt()
             sage: P.T * A * P == L * D * L.T
+            True
+
+        Ensure that Step (2) in Higham is not skipped; this matrix
+        leads to a system with no solutions if it is::
+
+            sage: A = matrix(QQ, [[1/2, 0, 1],
+            ....:                 [0,   0, 4],
+            ....:                 [1,   4, 2]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.H
             True
         """
         cdef Py_ssize_t n     # size of the matrices
