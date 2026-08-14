@@ -85,9 +85,26 @@ cdef class Matrix(Matrix0):
             [3.0 1.0]
             sage: b = pari(a); b                                                        # needs sage.libs.pari
             [1.000000000..., 2.000000000...; 3.000000000..., 1.000000000...]
+
+        Conversion of a matrix over a number field::
+
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^2 - 2, embedding=AA(2).sqrt())
+            sage: pari(matrix(K, [[1, a], [a, 1]]))
+            [Mod(1, y^2 - 2), Mod(y, y^2 - 2); Mod(y, y^2 - 2), Mod(1, y^2 - 2)]
         """
         from sage.libs.pari import pari
-        return pari.matrix(self._nrows, self._ncols, self._list())
+        # Convert the entries to PARI before building the matrix.  This works
+        # around a memory leak (:issue:`39615`) in ``pari.matrix``: when the
+        # entries are converted lazily inside ``pari.matrix``, the resulting
+        # PARI matrix lives on the PARI stack while its (cloned) entries live
+        # on the PARI heap, and freeing the matrix does not reclaim those
+        # clones.  Passing already-converted entries forces the matrix onto
+        # the heap, so the clones are freed together with it.  (The leak is
+        # fixed in cypari2 > 2.2.4.)
+        return pari.matrix(self._nrows, self._ncols,
+                           [pari(x) for x in self._list()])
 
     def _gap_init_(self) -> str:
         """
