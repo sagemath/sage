@@ -8,7 +8,9 @@ VERSION = "@PACKAGE_VERSION@"
 # location of sagelib.  See comments in SAGE_ROOT/src/Makefile.in
 # These variables come first so that other substituted variable values can refer
 # to it.
-SAGE_LOCAL = "@prefix@"
+
+import os # we can't use var() here
+SAGE_LOCAL = os.environ.get("SAGE_LOCAL")
 
 # The path to the standalone maxima executable.
 MAXIMA = "@SAGE_MAXIMA@".replace("${prefix}", SAGE_LOCAL)
@@ -19,13 +21,15 @@ MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace("${prefix}", SAGE_LOCAL)
 MAXIMA_PREFIX = "@SAGE_MAXIMA_PREFIX@".replace("${prefix}", SAGE_LOCAL)
 
 # Delete this line if your ECL can load Kenzo without further prodding.
-KENZO_FAS = "@SAGE_KENZO_FAS@".replace("${prefix}", SAGE_LOCAL)
+KENZO_FAS = "@SAGE_KENZO_FAS@".replace("${kenzo_prefix}", SAGE_LOCAL)
 
 NTL_INCDIR = "@NTL_INCDIR@"
 NTL_LIBDIR = "@NTL_LIBDIR@"
 
 # Path to the ecl-config script
 ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace("${prefix}", SAGE_LOCAL)
+
+SAGE_LOCAL = "@prefix@"
 
 # Path to the nauty binaries; of the form "/path/to/" or "/path/to/nauty-" 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"

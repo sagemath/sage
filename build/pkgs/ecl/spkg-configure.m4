@@ -37,5 +37,5 @@ SAGE_SPKG_CONFIGURE([ecl], [
 
   # Kenzo cannot yet be provided by the system, so we always use
   # the SAGE_LOCAL path for now.
-  AC_SUBST(SAGE_KENZO_FAS, ['${prefix}'/lib/ecl/kenzo.fas])
+  AC_SUBST(SAGE_KENZO_FAS, [${kenzo_prefix}/lib/ecl/kenzo.fas])
 ])
