@@ -1626,6 +1626,47 @@ class IntegerVectorsConstraints(IntegerVectors):
         """
         return hash((self.n, self.k, tuple(self.constraints.items())))
 
+    def _has_conflicting_constraints(self):
+        """
+        Check if the constraints conflict with each other.
+
+        EXAMPLES::
+
+            sage: IV = IntegerVectors(0, length=0, min_length=1)
+            sage: IV._has_conflicting_constraints()
+            True
+            sage: IV = IntegerVectors(length=0, max_length=1)
+            sage: IV._has_conflicting_constraints()
+            False
+            sage: IV = IntegerVectors(0, length=2, max_length=1)
+            sage: IV._has_conflicting_constraints()
+            True
+            sage: IV = IntegerVectors(0, length=2, min_length=3)
+            sage: IV._has_conflicting_constraints()
+            True
+        """
+        # length=0 conflicts with min_length > 0
+        if self.constraints.get('length') == 0:
+            if self.constraints.get('min_length', 0) > 0:
+                return True
+
+        # max_length=0 conflicts with min_length > 0
+        if self.constraints.get('max_length') == 0:
+            if self.constraints.get('min_length', 0) > 0:
+                return True
+
+        # length conflicts with max_length
+        if 'length' in self.constraints and 'max_length' in self.constraints:
+            if self.constraints['length'] > self.constraints['max_length']:
+                return True
+
+        # length conflicts with min_length
+        if 'length' in self.constraints and 'min_length' in self.constraints:
+            if self.constraints['length'] < self.constraints['min_length']:
+                return True
+
+        return False
+
     def __contains__(self, x):
         """
         TESTS::
@@ -1638,6 +1679,10 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # needs sage.combinat
             False
         """
+        # Check for conflicting constraints
+        if self._has_conflicting_constraints():
+            return False
+
         if isinstance(x, IntegerVector) and x.parent() is self:
             return True
 
@@ -1671,7 +1716,31 @@ class IntegerVectorsConstraints(IntegerVectors):
             27
             sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()
             16
+
+            sage: IV = IntegerVectors(0, length=0, min_length=1)
+            sage: IV.list()
+            []
+            sage: IV.cardinality()
+            0
+            sage: [] in IV
+            False
+
+            sage: IV = IntegerVectors(0, length=2, max_length=1)
+            sage: IV.list()
+            []
+            sage: IV.cardinality()
+            0
+
+            sage: IV = IntegerVectors(0, length=2, min_length=3)
+            sage: IV.list()
+            []
+            sage: IV.cardinality()
+            0
         """
+        # Check for conflicting constraints
+        if self._has_conflicting_constraints():
+            return Integer(0)
+
         if self.k is None:
             if self.n is None:
                 return PlusInfinity()
@@ -1754,6 +1823,10 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
         """
+        # Check for conflicting constraints
+        if self._has_conflicting_constraints():
+            return
+
         from sage.combinat.integer_lists import IntegerListsLex
 
         if self.n is None:

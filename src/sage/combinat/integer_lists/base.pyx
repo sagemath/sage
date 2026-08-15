@@ -87,6 +87,13 @@ cdef class IntegerListsBackend():
         self.min_length = Integer(max(min_length, 0))
         self.max_length = Integer(max_length) if max_length != Infinity else Infinity
 
+                # Check for conflicting length constraints
+        # If min_length > max_length, no lists can satisfy the constraints
+        if min_length > max_length:
+            # Signal empty set by setting max_sum to -1
+            # This ensures cardinality returns 0 and iteration is empty
+            self.max_sum = -1
+
         self.min_slope = Integer(min_slope) if min_slope != -Infinity else -Infinity
         self.max_slope = Integer(max_slope) if max_slope != Infinity else Infinity
 
