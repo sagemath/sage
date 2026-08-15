@@ -1655,6 +1655,16 @@ class IntegerVectorsConstraints(IntegerVectors):
         if self.n is not None and sum(x) != self.n:
             return False
 
+        # Reject vectors that violate conflicting length constraints
+        length = self.constraints.get('length')
+        if length is not None:
+            if (self.constraints.get('min_length') is not None
+                    and length < self.constraints['min_length']):
+                return False
+            if (self.constraints.get('max_length') is not None
+                    and length > self.constraints['max_length']):
+                return False
+
         from sage.combinat.misc import check_integer_list_constraints
         return check_integer_list_constraints(
             x, singleton=True, **self.constraints
@@ -1691,11 +1701,11 @@ class IntegerVectorsConstraints(IntegerVectors):
             [[]]
             sage: P = IntegerVectors(1, length=1, max_length=0, max_part=1)
             sage: [1] in P
-            True
+            False
             sage: P.cardinality()
-            1
+            0
             sage: list(P)
-            [[1]]
+            []
             sage: Q = IntegerVectors(max_length=0, min_length=1)
             sage: [] in Q
             False
@@ -1705,11 +1715,11 @@ class IntegerVectorsConstraints(IntegerVectors):
             []
             sage: R = IntegerVectors(0, length=0, min_length=1)
             sage: [] in R
-            True
+            False
             sage: R.cardinality()
-            1
+            0
             sage: list(R)
-            [[]]
+            []
         """
         # Handle zero-length cases
         zero_length = (
@@ -1719,6 +1729,8 @@ class IntegerVectorsConstraints(IntegerVectors):
         if zero_length:
             if self.constraints.get('length') == 0:
                 if self.n is not None and self.n != 0:
+                    return Integer(0)
+                if self.constraints.get('min_length', 0) > 0:
                     return Integer(0)
                 return Integer(1)
             if self.constraints.get('max_length') == 0:
@@ -1818,7 +1830,7 @@ class IntegerVectorsConstraints(IntegerVectors):
             [[]]
             sage: R = IntegerVectors(0, length=0, min_length=1)
             sage: list(R)
-            [[]]
+            []
         """
         # Handle zero-length cases
         zero_length = (
@@ -1828,6 +1840,8 @@ class IntegerVectorsConstraints(IntegerVectors):
         if zero_length:
             if self.constraints.get('length') == 0:
                 if self.n is not None and self.n != 0:
+                    return
+                if self.constraints.get('min_length', 0) > 0:
                     return
                 yield self.element_class(self, [], check=False)
                 return
