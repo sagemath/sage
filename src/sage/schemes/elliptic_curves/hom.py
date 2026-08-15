@@ -92,6 +92,100 @@ class EllipticCurveHom(Morphism):
         """
         return 'Elliptic-curve'
 
+    def pushforward(self, P):
+        r"""
+        Provide a helpful error message when a point cannot be coerced into
+        the domain due to incompatible base fields.
+
+        This method is called by the coercion framework when the input point
+        cannot be converted to the domain of the morphism. It detects common
+        cases of base field mismatches and raises a clear, informative error
+        message suggesting how to fix the issue.
+
+        INPUT:
+
+        - ``P`` -- a point on an elliptic curve
+
+        OUTPUT:
+
+        This method always raises a :class:`TypeError` with an informative
+        error message.
+
+        EXAMPLES:
+
+        Applying a Frobenius endomorphism defined over `\GF{7}` to a point
+        defined over the extension field `\GF{7^2}` gives a helpful error::
+
+            sage: E = EllipticCurve(GF(7), [1, 3])
+            sage: frob = E.frobenius_endomorphism()
+            sage: F49 = GF(7^2, 'a')
+            sage: E2 = E.change_ring(F49)
+            sage: P = E2.lift_x(F49.gen() + 1)
+            sage: frob(P)
+            Traceback (most recent call last):
+            ...
+            TypeError: this morphism is defined over Finite Field of size 7,
+            but the point is on a curve over Finite Field in a of size 7^2.
+            Consider using the morphism on the base-changed curve, e.g.,
+            E.change_ring(...).frobenius_endomorphism() or E.change_ring(...).frobenius_isogeny().
+
+        Similarly, for isogenies::
+
+            sage: E = EllipticCurve(GF(11), [1, 0])
+            sage: phi = E.isogeny(E(0, 0))
+            sage: E2 = E.change_ring(GF(11^2, 'a'))
+            sage: Q = E2.lift_x(GF(11^2, 'a').gen())
+            sage: phi(Q)
+            Traceback (most recent call last):
+            ...
+            TypeError: this morphism is defined over Finite Field of size 11,
+            but the point is on a curve over Finite Field in a of size 11^2.
+            Consider using the morphism on the base-changed curve, e.g.,
+            E.change_ring(...).isogeny(...).
+        """
+        from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+
+        # Check if P is an elliptic curve point
+        if not isinstance(P, EllipticCurvePoint_field):
+            raise TypeError(f"{P} is not a point on an elliptic curve")
+
+        # Get the base rings
+        morphism_base = self.domain().base_ring()
+        point_curve = P.curve()
+        point_base = point_curve.base_ring()
+
+        # Check if the curves are related (same j-invariant, same a-invariants up to base change)
+        domain_curve = self.domain()
+
+        # Try to detect base field mismatch
+        if morphism_base != point_base:
+            # Check if one is an extension of the other or they are incompatible
+            try:
+                # Try to see if point_base is an extension of morphism_base
+                if hasattr(point_base, 'has_coerce_map_from') and point_base.has_coerce_map_from(morphism_base):
+                    # The point is on an extension field curve
+                    kind = 'endomorphism' if self.domain() == self.codomain() else 'isogeny'
+                    if kind == 'endomorphism':
+                        suggestion = "E.change_ring(...).frobenius_endomorphism() or E.change_ring(...).frobenius_isogeny()"
+                    else:
+                        suggestion = "E.change_ring(...).isogeny(...)"
+
+                    raise TypeError(
+                        f"this morphism is defined over {morphism_base},\n"
+                        f"but the point is on a curve over {point_base}.\n"
+                        f"Consider using the morphism on the base-changed curve, e.g.,\n"
+                        f"{suggestion}."
+                    )
+            except (AttributeError, NotImplementedError):
+                pass
+
+        # If we couldn't give a specific message, raise a generic but still helpful one
+        raise TypeError(
+            f"the point {P} cannot be used with this morphism.\n"
+            f"The morphism is defined on {self.domain()},\n"
+            f"but the point is on {point_curve}."
+        )
+
     @staticmethod
     def _composition_impl(left, right):
         r"""
