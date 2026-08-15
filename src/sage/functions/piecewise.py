@@ -410,7 +410,7 @@ class PiecewiseFunction(BuiltinFunction):
             """
             intervals = []
             for domain, func in parameters:
-                intervals += list(domain)
+                intervals += domain.intervals()
             return RealSet(*intervals)
 
         def __len__(self, parameters, variable):
@@ -641,7 +641,7 @@ class PiecewiseFunction(BuiltinFunction):
             """
             s = set()
             for domain, func in parameters:
-                for interval in domain:
+                for interval in domain.intervals():
                     s.add(interval.lower())
                     s.add(interval.upper())
             s.discard(minus_infinity)
@@ -720,7 +720,7 @@ class PiecewiseFunction(BuiltinFunction):
                     rs += domain[-1]
                     domain[-1] = rs
                 else:
-                    domain += rs
+                    domain += rs.intervals()
                     funcs.append(ex)
             return piecewise(zip(domain, funcs))
 
@@ -874,7 +874,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             from sage.symbolic.assumptions import assume, forget
             for domain, fun in parameters:
-                for interval in domain:
+                for interval in domain.intervals():
                     start = interval.lower()
                     end = interval.upper()
                     if start == -infinity and not definite:
@@ -926,7 +926,7 @@ class PiecewiseFunction(BuiltinFunction):
             x = self.default_variable()
             crit_pts = []
             for domain, f in parameters:
-                for interval in domain:
+                for interval in domain.intervals():
                     a = interval.lower()
                     b = interval.upper()
                     for root in maxima.allroots(SR(f).diff(x) == 0):
@@ -1112,7 +1112,7 @@ class PiecewiseFunction(BuiltinFunction):
                          * (self.default_variable()-x0)]]
             rsum = []
             for domain, f in parameters:
-                for interval in domain:
+                for interval in domain.intervals():
                     a = interval.lower()
                     b = interval.upper()
                     h = (b-a)/N
@@ -1170,7 +1170,7 @@ class PiecewiseFunction(BuiltinFunction):
             exp_sx = (-s * x).exp()
             result = 0
             for domain, f in parameters:
-                for interval in domain:
+                for interval in domain.intervals():
                     a = interval.lower()
                     b = interval.upper()
                     result += (SR(f) * exp_sx).integral(x, a, b)
@@ -1265,7 +1265,7 @@ class PiecewiseFunction(BuiltinFunction):
                                      "of the given period")
             result = 0
             for domain, f in parameters:
-                for interval in domain:
+                for interval in domain.intervals():
                     a = interval.lower()
                     b = interval.upper()
                     result += (f*cos(pi*variable*n/L)).integrate(variable, a, b)
@@ -1353,7 +1353,7 @@ class PiecewiseFunction(BuiltinFunction):
                                      "of the given period")
             result = 0
             for domain, f in parameters:
-                for interval in domain:
+                for interval in domain.intervals():
                     a = interval.lower()
                     b = interval.upper()
                     result += (f*sin(pi*variable*n/L)).integrate(variable, a, b)
