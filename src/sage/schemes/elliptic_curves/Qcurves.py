@@ -117,6 +117,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         sage: cert
         {'CM': 0, 'N': 1, 'core_poly': x, 'r': 0, 'rho': 0}
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve(j=8000)
         sage: flag, cert = is_Q_curve(E, certificate=True)
         sage: flag

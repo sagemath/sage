@@ -27,6 +27,7 @@ cdef class ECModularSymbol:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.libs.eclib.newforms import ECModularSymbol
         sage: E = EllipticCurve('11a')
         sage: M = ECModularSymbol(E,1); M
@@ -59,6 +60,7 @@ cdef class ECModularSymbol:
     tuple).  However it is more work to create the full modular
     symbol space::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: M = ECModularSymbol(E,0); M
         Modular symbol with sign 0 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -81,6 +83,7 @@ cdef class ECModularSymbol:
 
     Non-optimal curves are handled correctly in eclib, by comparing the ratios of real and/or imaginary periods::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.libs.eclib.newforms import ECModularSymbol
         sage: E1 = EllipticCurve('11a1') # optimal
         sage: E1.period_lattice().basis()
@@ -93,6 +96,7 @@ cdef class ECModularSymbol:
 
     One non-optimal curve has real period 1/5 that of the optimal one, so plus symbols scale up by a factor of 5 while minus symbols are unchanged::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E2 = EllipticCurve('11a2') # not optimal
         sage: E2.period_lattice().basis()
         (0.253841860855911, 0.126920930427955 + 1.45881661693850*I)
@@ -108,6 +112,7 @@ cdef class ECModularSymbol:
 
     The other non-optimal curve has real period 5 times that of the optimal one, so plus symbols scale down by a factor of 5; again, minus symbols are unchanged::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E3 = EllipticCurve('11a3') # not optimal
         sage: E3.period_lattice().basis()
         (6.34604652139777, 3.17302326069888 + 1.45881661693850*I)
@@ -144,6 +149,7 @@ cdef class ECModularSymbol:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E, +1)
@@ -163,6 +169,7 @@ cdef class ECModularSymbol:
 
         This one is from :issue:`8042`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('858k2')
             sage: ECModularSymbol(E)
@@ -226,6 +233,7 @@ cdef class ECModularSymbol:
         """
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E); M
@@ -265,6 +273,7 @@ cdef class ECModularSymbol:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E)
@@ -283,6 +292,7 @@ cdef class ECModularSymbol:
 
         When the class is created with sign 0 we can ask for +1 or -1 symbols or (by default) both::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a1')
             sage: M = ECModularSymbol(E,0)
@@ -303,6 +313,7 @@ cdef class ECModularSymbol:
 
         When the class is created with sign +1 we can only ask for +1 symbols::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a1')
             sage: M = ECModularSymbol(E)
@@ -323,6 +334,7 @@ cdef class ECModularSymbol:
 
         See :issue:`11211`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E)
@@ -383,6 +395,7 @@ cdef class ECModularSymbol:
         """
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E)

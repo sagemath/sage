@@ -25,9 +25,10 @@ Projective, over `\QQ`::
 
 Projective over a finite field::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-    sage: E = EllipticCurve('72').change_ring(GF(19))                                   # needs sage.schemes
-    sage: enum_projective_finite_field(E)                                               # needs sage.schemes
+    sage: E = EllipticCurve('72').change_ring(GF(19))  # needs sage.schemes
+    sage: enum_projective_finite_field(E)  # needs sage.schemes
     [(0 : 1 : 0), (1 : 0 : 1), (3 : 0 : 1), (4 : 9 : 1), (4 : 10 : 1),
      (6 : 6 : 1), (6 : 13 : 1), (7 : 6 : 1), (7 : 13 : 1), (9 : 4 : 1),
      (9 : 15 : 1), (12 : 8 : 1), (12 : 11 : 1), (13 : 8 : 1), (13 : 11 : 1),
@@ -352,9 +353,10 @@ def sieve(X, bound):
 
     ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.projective.projective_rational_point import sieve
-        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
-        sage: sorted(sieve(E, 14))              # long time                             # needs sage.libs.singular sage.schemes
+        sage: E = EllipticCurve('37a')  # needs sage.schemes
+        sage: sorted(sieve(E, 14))              # long time  # needs sage.libs.singular sage.schemes
         [(0 : 1 : 0),
          (-1 : -1 : 1),
          (-1 : 0 : 1),

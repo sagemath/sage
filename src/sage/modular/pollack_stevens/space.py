@@ -48,6 +48,7 @@ classical modular symbols (or even elliptic curves) as follows::
 
 ::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('37a1')
     sage: phi = E.pollack_stevens_modular_symbol(); phi
     Modular symbol of level 37 with values in Sym^0 Q^2
@@ -857,6 +858,7 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('113a1')
         sage: symb = E.pollack_stevens_modular_symbol() # indirect doctest
         sage: symb
@@ -972,6 +974,7 @@ def ps_modsym_from_simple_modsym_space(A, name='alpha'):
 
     A consistency check with :meth:`sage.modular.pollack_stevens.space.ps_modsym_from_simple_modsym_space`::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.modular.pollack_stevens.space import ps_modsym_from_simple_modsym_space
         sage: E = EllipticCurve('11a')
         sage: f_E = E.pollack_stevens_modular_symbol(); f_E.values()

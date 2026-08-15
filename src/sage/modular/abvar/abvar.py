@@ -597,14 +597,17 @@ class ModularAbelianVariety_abstract(Parent):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: J = J0(11)
             sage: J.elliptic_curve()
             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: J = J0(49)
             sage: J.elliptic_curve()
             Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 2*x - 1 over Rational Field
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: A = J0(37)[1]
             sage: E = A.elliptic_curve()
             sage: A.lseries()(1)
@@ -1747,6 +1750,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A.conductor().factor()
             11^10
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: A = J0(33)[0]; A
             Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
             sage: A.conductor()
@@ -2720,6 +2724,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: J = J0(33)
             sage: A = J.new_subvariety()
             sage: A
@@ -3663,6 +3668,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         By a theorem the modular degree must thus be `3`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('33a')
             sage: E.modular_degree()
             3

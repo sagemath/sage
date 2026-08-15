@@ -32,6 +32,7 @@ Sageのかなりの部分がPythonを使って実装されているものの，�
     [-3  1]
     [ 2  3]
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve([1,2,3,4,5]);
     sage: E
     Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5

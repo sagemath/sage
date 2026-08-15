@@ -18,6 +18,7 @@ AUTHORS:
 EXAMPLES: First we consider `J_0(50)` where everything
 works out nicely::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: J = J0(50)
     sage: T = J.rational_torsion_subgroup(); T
     Torsion subgroup of Abelian variety J0(50) of dimension 2
@@ -42,6 +43,7 @@ factor.
 
 ::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: for N in range(1,38):
     ....:    for A in J0(N).new_subvariety().decomposition():
     ....:        T = A.rational_torsion_subgroup()
@@ -184,6 +186,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: A = J0(11)
             sage: A.rational_torsion_subgroup().order()
             5
@@ -341,6 +344,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: t = J0(37)[1].rational_torsion_subgroup()
             sage: t.divisor_of_order()
             3
@@ -409,6 +413,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: J = J1(11); J
             Abelian variety J1(11) of dimension 1
             sage: J.rational_torsion_subgroup().multiple_of_order()

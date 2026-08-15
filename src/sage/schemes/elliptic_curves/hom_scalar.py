@@ -8,6 +8,7 @@ EXAMPLES:
 
 We can construct and evaluate scalar multiplications::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
     sage: E = EllipticCurve('77a1')
     sage: phi = E.scalar_multiplication(5); phi
@@ -328,6 +329,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('77a1')
             sage: phi = E.scalar_multiplication(5)
             sage: phi.rational_maps()
@@ -391,6 +393,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: phi = E.scalar_multiplication(5)
             sage: u = phi.scaling_factor()

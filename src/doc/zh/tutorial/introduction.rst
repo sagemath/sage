@@ -31,6 +31,7 @@ Python 初学者指南 [PyB]_ 列出了许多选择。如果你只是想快速�
     [-3  1]
     [ 2  3]
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve([1,2,3,4,5]);
     sage: E
     Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5

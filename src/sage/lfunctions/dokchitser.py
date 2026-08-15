@@ -99,6 +99,7 @@ class Dokchitser(SageObject):
 
     We compute with the `L`-series of a rank `1` curve. ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: L = E.lseries().dokchitser(algorithm='pari'); L
         PARI L-function associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
@@ -120,6 +121,7 @@ class Dokchitser(SageObject):
     We compute the leading coefficient and Taylor expansion of the
     `L`-series of a rank `2` elliptic curve. ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
         sage: L.cost()
@@ -343,6 +345,7 @@ class Dokchitser(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.cost()
@@ -492,6 +495,7 @@ class Dokchitser(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(100, algorithm='pari')
             sage: L(1)
@@ -540,6 +544,7 @@ class Dokchitser(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.derivative(1,E.rank())
@@ -578,6 +583,7 @@ class Dokchitser(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
             sage: L.taylor_series(2, 3)
             1.64493406684823 - 0.937548254315844*z + 0.994640117149451*z^2 + O(z^3)
@@ -589,6 +595,7 @@ class Dokchitser(SageObject):
         We compute a Taylor series where each coefficient is to high
         precision. ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries().dokchitser(200, algorithm='pari')
             sage: L.taylor_series(1,3)

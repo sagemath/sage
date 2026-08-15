@@ -105,6 +105,7 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E1 = EllipticCurve(j=42)
             sage: E2 = EllipticCurve(j=43)
             sage: Hom(E1, E2)
@@ -165,6 +166,7 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E1 = EllipticCurve(j=42)
             sage: E2 = EllipticCurve(j=43)
             sage: Hom(E1, E1)._coerce_map_from_(ZZ)
@@ -184,6 +186,7 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E1 = EllipticCurve(j=42)
             sage: E2 = EllipticCurve(j=43)
             sage: Hom(E1, E1)(5)
@@ -239,6 +242,7 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve(j=42)
             sage: End(E).identity()
             Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
@@ -260,6 +264,7 @@ class EllipticCurveHomset(CachedRepresentation, SchemeHomset_generic):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: End(EllipticCurve(j=123)).is_commutative()
             True
             sage: End(EllipticCurve(GF(11), [1,0])).is_commutative()

@@ -128,6 +128,7 @@ Agora ilustramos cada uma dessas construções:
     sage: EllipticCurve([1,2])
     Elliptic Curve defined by y^2  = x^3 + x + 2 over Rational Field
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: EllipticCurve('37a')
     Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
 
@@ -227,6 +228,7 @@ sobre o seu posto, números de Tomagawa, regulador, etc.
 
 ::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve("37b2")
     sage: E
     Elliptic Curve defined by y^2 + y = x^3 + x^2 - 1873*x - 31833 over Rational
@@ -244,6 +246,7 @@ Nós também podemos acessar a base de dados Cremona diretamente.
 
 ::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: db = sage.databases.cremona.CremonaDatabase()
     sage: db.curves(37)
     {'a1': [[0, 0, 1, -1, 0], 1, 1], 'b1': [[0, 1, 1, -23, -50], 0, 3]}

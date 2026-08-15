@@ -98,6 +98,7 @@ class pAdicLseries(SageObject):
 
     An ordinary example::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: e = EllipticCurve('389a')
         sage: L = e.padic_lseries(5)
         sage: L.series(0)
@@ -115,6 +116,7 @@ class pAdicLseries(SageObject):
 
     A prime p such that E[p] is reducible::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: L = EllipticCurve('11a').padic_lseries(5)
         sage: L.series(1)
         5 + O(5^2) + O(T)
@@ -125,6 +127,7 @@ class pAdicLseries(SageObject):
 
     An example showing the calculation of nontrivial Teichmueller twists::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: lp = E.padic_lseries(7)
         sage: lp.series(4,eta=1)
@@ -145,6 +148,7 @@ class pAdicLseries(SageObject):
 
     The load-dumps test::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: lp = EllipticCurve('11a').padic_lseries(5)
         sage: lp == loads(dumps(lp))
         True
@@ -165,6 +169,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(3)
             sage: Lp.series(2,prec=3)
@@ -200,6 +205,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: lp = E.padic_lseries(5)
             sage: lp.modular_symbol(1/7,sign=-1)  #indirect doctest
@@ -213,6 +219,7 @@ class pAdicLseries(SageObject):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: lp1 = EllipticCurve('11a1').padic_lseries(5)
             sage: lp2 = EllipticCurve('11a1').padic_lseries(7)
             sage: lp3 = EllipticCurve('11a2').padic_lseries(5)
@@ -233,6 +240,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.elliptic_curve()
             Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -245,6 +253,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.prime()
             5
@@ -257,6 +266,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('37a')
             sage: e.padic_lseries(3)._repr_()
             '3-adic L-series of Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field'
@@ -296,6 +306,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: lp = E.padic_lseries(5)
             sage: [lp.modular_symbol(r) for r in [0,1/5,oo,1/11]]
@@ -305,6 +316,7 @@ class pAdicLseries(SageObject):
             sage: [lp.modular_symbol(r,quadratic_twist=-20) for r in [0,1/5,oo,1/11]]
             [1, 1, 0, 1/2]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('20a1')
             sage: Et = E.quadratic_twist(-4)
             sage: lpt = Et.padic_lseries(5)
@@ -385,6 +397,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.padic_lseries(5)
             sage: L.measure(1,2, prec=9)
@@ -394,6 +407,7 @@ class pAdicLseries(SageObject):
             sage: L.measure(1,2, quadratic_twist=-4,prec=15)
             4 + 4*5 + 4*5^2 + 3*5^3 + 2*5^4 + 5^5 + 3*5^6 + 5^8 + 2*5^9 + 3*5^12 + 2*5^13 + 4*5^14 + O(5^15)
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: a = E.quadratic_twist(-3).padic_lseries(5).measure(1,2,prec=15)
             sage: b = E.padic_lseries(5).measure(1,2, quadratic_twist=-3,prec=15)
@@ -458,6 +472,7 @@ class pAdicLseries(SageObject):
 
         Consider the elliptic curve 37a::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
 
         An ordinary prime::
@@ -478,6 +493,7 @@ class pAdicLseries(SageObject):
 
         A reducible prime::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.alpha(5)
             1 + 4*5 + 3*5^2 + 2*5^3 + 4*5^4 + O(5^5)
@@ -531,6 +547,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(3)
             sage: L.order_of_vanishing()
             0
@@ -590,6 +607,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(7)
             sage: L.teichmuller(1)
             [0, 1, 2, 3, 4, 5, 6]
@@ -609,6 +627,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(2)
             sage: Lp._e_bounds(1,10)
@@ -646,6 +665,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp._pAdicLseries__series = {}  # clear cached series
@@ -673,6 +693,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp.series(3,prec=5)
@@ -698,6 +719,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37b1')
             sage: lp = E.padic_lseries(3)
             sage: lp._quotient_of_periods_to_twist(-20)
@@ -715,6 +737,7 @@ class pAdicLseries(SageObject):
             sage: lp._quotient_of_periods_to_twist(12)
             1
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Et = E.quadratic_twist(-3)
             sage: lpt = Et.padic_lseries(5)
@@ -775,6 +798,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         We compute some `p`-adic `L`-functions associated to the elliptic
         curve 11a::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: p = 3
             sage: E.is_ordinary(p)
@@ -787,6 +811,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         `p`-adic `L`-function has an extra 0 (compared to the non
         `p`-adic `L`-function)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: p = 11
             sage: E.is_ordinary(p)
@@ -797,6 +822,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         We compute a `p`-adic `L`-function that vanishes to order 2::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: p = 3
             sage: E.is_ordinary(p)
@@ -819,6 +845,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         Rather than computing the `p`-adic `L`-function for the curve '15523a1', one can
         compute it as a quadratic_twist::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('43a1')
             sage: lp = E.padic_lseries(3)
             sage: lp.series(2,quadratic_twist=-19)
@@ -830,6 +857,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         We calculate the `L`-series in the nontrivial Teichmueller components::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('110a1').padic_lseries(5, implementation='sage')
             sage: for j in [0..3]: print(L.series(4, eta=j))
             O(5^6) + (2 + 2*5 + 2*5^2 + O(5^3))*T + (5 + 5^2 + O(5^3))*T^2 + (4 + 4*5 + 2*5^2 + O(5^3))*T^3 + (1 + 5 + 3*5^2 + O(5^3))*T^4 + O(T^5)
@@ -839,11 +867,13 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         It should now also work with `p=2` (:issue:`20798`)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("53a1")
             sage: lp = E.padic_lseries(2)
             sage: lp.series(7)
             O(2^8) + (1 + 2^2 + 2^3 + O(2^5))*T + (1 + 2^3 + O(2^4))*T^2 + (2^2 + 2^3 + O(2^4))*T^3 + (2 + 2^2 + O(2^3))*T^4 + O(T^5)
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("109a1")
             sage: lp = E.padic_lseries(2)
             sage: lp.series(6)
@@ -851,6 +881,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         Check that twists by odd Teichmuller characters are ok (:issue:`32258`)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("443c1")
             sage: lp = E.padic_lseries(17, implementation='num')
             sage: l8 = lp.series(2,eta=8,prec=3)
@@ -991,6 +1022,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.is_ordinary()
             True
@@ -1004,6 +1036,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(5)
             sage: L.is_supersingular()
             False
@@ -1028,6 +1061,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp._c_bound()
@@ -1125,6 +1159,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(5)
             sage: Lp._prec_bounds(3,10)
@@ -1187,6 +1222,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         A supersingular example, where we must compute to higher precision to see anything::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('37a')
             sage: L = e.padic_lseries(3); L
             3-adic L-series of Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
@@ -1199,6 +1235,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         An example where we only compute the leading term (:issue:`15737`)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("17a1")
             sage: L = E.padic_lseries(3)
             sage: L.series(4,prec=1)
@@ -1206,6 +1243,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         It works also for `p=2`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("11a1")
             sage: lp = E.padic_lseries(2)
             sage: lp.series(10)
@@ -1329,6 +1367,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(19)
             sage: L.is_ordinary()
             False
@@ -1342,6 +1381,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a').padic_lseries(19)
             sage: L.is_supersingular()
             True
@@ -1357,6 +1397,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: Lp = E.padic_lseries(19)
             sage: Lp._prec_bounds(3,5)
@@ -1380,6 +1421,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("14a1")
             sage: lp = E.padic_lseries(5)
             sage: K = lp.alpha().parent()
@@ -1426,6 +1468,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a')
             sage: L = E.padic_lseries(5)
             sage: L.Dp_valued_series(4)  # long time (9s on sage.math, 2011)
@@ -1471,6 +1514,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a')
             sage: L = E.padic_lseries(5)
             sage: phi = L.frobenius(5)
@@ -1533,12 +1577,14 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: lp = E.padic_lseries(19)
             sage: lp.frobenius(prec=1,algorithm='approx')   #indirect doctest
             [          O(19^0) 4*19^-1 + O(19^0)]
             [       14 + O(19)           O(19^0)]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('17a1')
             sage: lp = E.padic_lseries(3)
             sage: lp.frobenius(prec=3,algorithm='approx')
@@ -1620,6 +1666,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a')
             sage: L = E.padic_lseries(5)
             sage: L.bernardi_sigma_function(prec=5) # Todo: some sort of consistency check!?
@@ -1659,6 +1706,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('53a')
             sage: L = E.padic_lseries(5)
             sage: h = L.Dp_valued_height(7)
@@ -1715,6 +1763,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('43a')
             sage: L = E.padic_lseries(7)
             sage: L.Dp_valued_regulator(7)

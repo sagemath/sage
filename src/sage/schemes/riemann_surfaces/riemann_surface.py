@@ -2641,6 +2641,7 @@ class RiemannSurface:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: S1 = EllipticCurve("11a1").riemann_surface()
             sage: S2 = EllipticCurve("11a3").riemann_surface()
             sage: [m.det() for m in S1.homomorphism_basis(S2)]

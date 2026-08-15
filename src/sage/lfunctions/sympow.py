@@ -207,6 +207,7 @@ class Sympow(SageObject):
         EXAMPLES: We compute the modular degrees of the lowest known
         conductor curves of the first few ranks::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: sympow.modular_degree(EllipticCurve('11a'))
             1
             sage: sympow.modular_degree(EllipticCurve('37a'))
@@ -255,6 +256,7 @@ class Sympow(SageObject):
         EXAMPLES: We compute the analytic ranks of the lowest known
         conductor curves of the first few ranks::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: sympow.analytic_rank(EllipticCurve('11a'))
             (0, '2.53842e-01')
             sage: sympow.analytic_rank(EllipticCurve('37a'))

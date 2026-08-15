@@ -2145,9 +2145,10 @@ def repr_lincomb(symbols, coeffs):
     Verify that :issue:`17299` (latex representation of modular symbols)
     is fixed::
 
-        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # needs sage.schemes
+        sage: # needs database_cremona_mini_ellcurve
+        sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]  # needs sage.schemes
         sage: from sage.misc.latex import repr_lincomb
-        sage: latex(x.modular_symbol_rep())                                             # needs sage.schemes
+        sage: latex(x.modular_symbol_rep())  # needs sage.schemes
         \left\{\frac{-3}{11}, \frac{-1}{4}\right\} - \left\{\frac{3}{13}, \frac{1}{4}\right\}
 
     Verify that it works when the symbols are numbers::

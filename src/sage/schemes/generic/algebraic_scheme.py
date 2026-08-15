@@ -1754,8 +1754,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         One can enumerate points up to a given bound on a projective scheme
         over the rationals::
 
-            sage: E = EllipticCurve('37a')                                              # needs sage.schemes
-            sage: E.rational_points(bound=8)                                            # needs sage.libs.singular sage.schemes
+            sage: # needs database_cremona_mini_ellcurve
+            sage: E = EllipticCurve('37a')  # needs sage.schemes
+            sage: E.rational_points(bound=8)  # needs sage.libs.singular sage.schemes
             [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 0),
              (1/4 : -5/8 : 1), (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
              (2 : -3 : 1), (2 : 2 : 1)]

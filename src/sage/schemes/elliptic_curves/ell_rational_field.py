@@ -142,11 +142,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
     Constructor from a Cremona label::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('389a1')
         Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
 
     Constructor from an LMFDB label::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('462.f3')
         Elliptic Curve defined by y^2 + x*y = x^3 - 363*x + 1305 over Rational Field
     """
@@ -168,6 +170,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         right curve (see :issue:`10999`: the following used not to work when
         the large database was installed)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a1')
             sage: [P.curve() is E for P in E.gens()]
             [True, True]
@@ -219,6 +222,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E._set_rank(99)  # bogus value -- not checked
             sage: E.rank()         # returns bogus cached value
@@ -240,6 +244,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E._set_torsion_order(99)  # bogus value -- not checked
             sage: E.torsion_order()         # returns bogus cached value
@@ -261,6 +266,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E._set_cremona_label('bogus')
             sage: E.label()
@@ -288,6 +294,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E._set_conductor(99)      # bogus value -- not checked
             sage: E.conductor()             # returns bogus cached value
@@ -307,6 +314,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a1')
             sage: E.modular_degree()
             1984
@@ -328,6 +336,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a1')
             sage: E.rank()
             3
@@ -351,6 +360,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a1')
             sage: E.lmfdb_page()  # optional -- webbrowser
         """
@@ -442,6 +452,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E.mwrank() # random
             ...
@@ -605,6 +616,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         When doing certain computations, PARI caches the results::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: _ = E.__dict__.pop('_pari_curve', None)  # clear cached data
             sage: Epari = E.pari_curve()
@@ -617,6 +629,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         This shows that the bug uncovered by :issue:`4715` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: Ep = EllipticCurve('903b3').pari_curve()
 
         This still works, even when the curve coefficients are large
@@ -668,6 +681,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve((0, 0, 1, -1, 0))
             sage: data = E.database_attributes()
             sage: data['conductor']
@@ -679,6 +693,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: data['torsion_order']
             1
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve((8, 13, 21, 34, 55))
             sage: E.database_attributes()
             Traceback (most recent call last):
@@ -705,6 +720,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([0,1,2,3,4])
             sage: E.database_curve()
             Elliptic Curve defined by y^2  = x^3 + x^2 + 3*x + 5 over Rational Field
@@ -754,6 +770,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         This even works when the prime is large::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.Np(next_prime(10^30))
             1000000000000001426441464441649
@@ -774,6 +791,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: EE = E.mwrank_curve()
             sage: EE
@@ -841,6 +859,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E.two_descent(verbose=False)
             True
@@ -876,6 +895,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: e = EllipticCurve('37a')
             sage: e.aplist(1)
             []
@@ -992,6 +1012,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E.q_expansion(20)
             q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + 6*q^6 - q^7 + 6*q^9 + 4*q^10
@@ -1006,6 +1027,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: f = E.modular_form()
             sage: f
@@ -1042,6 +1064,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: f = EllipticCurve('37b')
             sage: f.modular_symbol_space()
             Modular Symbols subspace of dimension 1 of Modular Symbols space
@@ -1077,10 +1100,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: E.abelian_variety()
             Abelian variety J0(11) of dimension 1
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('33a')
             sage: E.abelian_variety()
             Abelian subvariety of dimension 1 of J0(33)
@@ -1093,6 +1118,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: E.modular_symbol(implementation = 'eclib') is E.modular_symbol(implementation = 'eclib', normalize = 'L_ratio')
             True
@@ -1189,6 +1215,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: M = E.modular_symbol(); M
             Modular symbol with sign 1 over Rational Field attached to
@@ -1200,6 +1227,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('121b1')
             sage: M = E.modular_symbol(implementation='sage')
             Warning : Could not normalize the modular symbols, maybe all further results
@@ -1210,6 +1238,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         With the numerical version, rather high conductors can
         be computed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve([999,997])
             sage: E.conductor()
             16059400956
@@ -1220,6 +1249,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Different curves in an isogeny class have modular symbols
         which differ by a nonzero rational factor::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E1 = EllipticCurve('11a1')
             sage: M1 = E1.modular_symbol()
             sage: M1(0)
@@ -1242,6 +1272,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         periods.  Here is an example where the symbol is already
         normalized::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a2')
             sage: E.modular_symbol(implementation = 'eclib')(0)
             1

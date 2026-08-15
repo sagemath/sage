@@ -87,21 +87,21 @@ AUTHORS:
 
 from copy import copy, deepcopy
 
-from sage.structure.sequence import Sequence
-
-from sage.schemes.elliptic_curves.hom import EllipticCurveHom
-
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.fraction_field import FractionField
 from sage.rings.integer import Integer
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.fraction_field import FractionField
-
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-
-from sage.schemes.elliptic_curves.weierstrass_morphism \
-        import WeierstrassIsomorphism, _isomorphisms, baseWI, negation_morphism
+from sage.schemes.elliptic_curves.hom import EllipticCurveHom
+from sage.schemes.elliptic_curves.weierstrass_morphism import (
+    WeierstrassIsomorphism,
+    _isomorphisms,
+    baseWI,
+    negation_morphism,
+)
+from sage.structure.sequence import Sequence
 
 #
 # Private function for parsing input to determine the type of
@@ -812,6 +812,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
     A more complicated example over the rationals (of odd degree)::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: P_list = E.torsion_points()
         sage: phi_v = EllipticCurveIsogeny(E, P_list); phi_v
@@ -837,7 +838,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     We can also do this same example over the number field defined by
     the irreducible two-torsion polynomial of `E`::
 
-        sage: # needs sage.rings.number_field
+        sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
         sage: E = EllipticCurve('11a1')
         sage: P_list = E.torsion_points()
         sage: x = polygen(ZZ, 'x')
@@ -876,6 +877,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     The following example shows how to specify an isogeny from domain
     and codomain::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: R.<x> = QQ[]
         sage: f = x^2 - 21*x + 80
@@ -1093,6 +1095,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 31
                to Elliptic Curve defined by y^2 = x^3 + 10*x + 28 over Finite Field of size 31
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('17a1')
             sage: phi = EllipticCurveIsogeny(E, [41/3, -55, -1, -1, 1]); phi
             Isogeny of degree 9
@@ -1101,6 +1104,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                to Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 56*x - 10124
                   over Rational Field
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: triv = EllipticCurveIsogeny(E, E(0)); triv
             Isogeny of degree 1
@@ -1109,6 +1113,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: triv.rational_maps()
             (x, y)
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('49a3')
             sage: R.<X> = QQ[]
             sage: EllipticCurveIsogeny(E, X^3 - 13*X^2 - 58*X + 503, check=False)
@@ -1423,6 +1428,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: negphi(E((18,6)))
             (17 : 0 : 1)
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: R.<x> = QQ[]
             sage: E = EllipticCurve('17a1')
             sage: R.<x> = QQ[]
@@ -1462,6 +1468,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             ((x^2 + 6*x + 4)/(x + 6),
              (2*x^3 - x^2*y - 5*x^2 + 5*x*y - 4*x + 2*y + 7)/(x^2 - 5*x + 2))
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: R.<x> = QQ[]
             sage: f = x^2 - 21*x + 80
@@ -2920,6 +2927,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.kernel_polynomial()
             x
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: phi = EllipticCurveIsogeny(E, E.torsion_points())
             sage: phi.kernel_polynomial()
@@ -3048,6 +3056,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: R.<x> = QQ[]
             sage: f = x^2 - 21*x + 80
@@ -3145,6 +3154,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         Test (for :issue:`7096`)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: phi = E.isogeny(E(5,5))
             sage: phi.dual().dual() == phi
@@ -3261,7 +3271,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             p = F.characteristic()
             k = d.valuation(p)
 
-            from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            from sage.schemes.elliptic_curves.hom_frobenius import (
+                EllipticCurveHom_frobenius,
+            )
             frob = EllipticCurveHom_frobenius(self._codomain, k)
 
             dsep = d // p**k
@@ -3289,7 +3301,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             else:
                 sep = frob.codomain().isomorphism_to(self._domain)
 
-            from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            from sage.schemes.elliptic_curves.hom_composite import (
+                EllipticCurveHom_composite,
+            )
             phi_hat = EllipticCurveHom_composite.from_factors([frob, sep])
 
             from sage.schemes.elliptic_curves.hom import find_post_isomorphism
@@ -3903,6 +3917,7 @@ def compute_sequence_of_maps(E1, E2, ell):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_sequence_of_maps
         sage: E = EllipticCurve('11a1')
         sage: R.<x> = QQ[]; f = x^2 - 21*x + 80

@@ -43,7 +43,7 @@ def symbolic_expression(x):
 
     Note that equations exist in the symbolic ring::
 
-        sage: # needs sage.schemes
+        sage: # needs database_cremona_mini_ellcurve sage.schemes
         sage: E = EllipticCurve('15a'); E
         Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 - 10*x - 10 over Rational Field
         sage: symbolic_expression(E)
@@ -53,6 +53,7 @@ def symbolic_expression(x):
 
     If ``x`` is a list or tuple, create a vector of symbolic expressions::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: v = symbolic_expression([x,1]); v
         (x, 1)
         sage: v.base_ring()
@@ -184,7 +185,7 @@ def symbolic_expression(x):
         rows = [symbolic_expression(row) for row in x.rows()]
         return matrix(rows)
     if callable(x):
-        from inspect import signature, Parameter
+        from inspect import Parameter, signature
         try:
             s = signature(x)
         except ValueError:

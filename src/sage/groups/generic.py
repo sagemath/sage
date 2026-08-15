@@ -115,14 +115,14 @@ Some examples in the group of points of an elliptic curve over a finite field:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from copy import copy
 import operator
+from copy import copy
 
+import sage.rings.integer
 from sage.arith.misc import integer_ceil, integer_floor, xlcm
 from sage.arith.srange import xsrange
 from sage.misc.misc_c import prod
 from sage.rings import integer_ring
-import sage.rings.integer
 from sage.structure.element import parent
 
 #
@@ -186,7 +186,7 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check=True):
         sage: _parse_group_def(ZZ, 'other', 0, operator.neg, operator.add)
         ('other', 0, <built-in function neg>, <built-in function add>)
     """
-    from operator import inv, mul, neg, add
+    from operator import add, inv, mul, neg
 
     if operation in multiplication_names:
         if identity is not None or inverse is not None or op is not None:
@@ -210,10 +210,9 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check=True):
                 raise
         inverse = neg
         op = add
-    else:
-        if check and (identity is None or inverse is None or op is None):
-            raise ValueError("identity, inverse and operation must all be specified "
-                             "when operation is neither addition nor multiplication")
+    elif check and (identity is None or inverse is None or op is None):
+        raise ValueError("identity, inverse and operation must all be specified "
+                         "when operation is neither addition nor multiplication")
     return 'other', identity, inverse, op
 
 
@@ -315,7 +314,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         sage: multiple(1, 10^1000)
         1
 
-        sage: # needs sage.schemes
+        sage: # needs database_cremona_mini_ellcurve sage.schemes
         sage: E = EllipticCurve('389a1')
         sage: P = E(-1,1)
         sage: multiple(P, 10, '+')
@@ -399,9 +398,10 @@ class multiples:
         sage: list(multiples(1, 10, 100))
         [100, 101, 102, 103, 104, 105, 106, 107, 108, 109]
 
-        sage: E = EllipticCurve('389a1')                                                # needs sage.schemes
-        sage: P = E(-1,1)                                                               # needs sage.schemes
-        sage: for Q in multiples(P, 5): print((Q, Q.height()/P.height()))               # needs sage.schemes
+        sage: # needs database_cremona_mini_ellcurve
+        sage: E = EllipticCurve('389a1')  # needs sage.schemes
+        sage: P = E(-1,1)  # needs sage.schemes
+        sage: for Q in multiples(P, 5): print((Q, Q.height()/P.height()))  # needs sage.schemes
         ((0 : 1 : 0), 0.000000000000000)
         ((-1 : 1 : 1), 1.00000000000000)
         ((10/9 : -35/27 : 1), 4.00000000000000)
@@ -459,7 +459,7 @@ class multiples:
         if n < 0:
             raise ValueError('n cannot be negative in multiples')
 
-        from operator import mul, add
+        from operator import add, mul
 
         if operation in multiplication_names:
             if P0 is None:
@@ -743,8 +743,8 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
 
     - Yann Laigle-Chapuy (2009-09-05)
     """
-    from sage.rings.integer import Integer
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+    from sage.rings.integer import Integer
 
     operation, identity, inverse, op = _parse_group_def(parent(a), operation, identity, inverse, op)
 

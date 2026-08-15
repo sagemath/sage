@@ -73,7 +73,7 @@ upper half plane::
 
 We test that bug :issue:`8415` (caused by a PARI bug fixed in v2.3.5) is OK::
 
-    sage: # needs sage.rings.number_field
+    sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
     sage: E = EllipticCurve('37a')
     sage: K.<a> = QuadraticField(-7)
     sage: EK = E.change_ring(K)
@@ -107,7 +107,6 @@ AUTHORS:
 """
 
 import sage.rings.abc
-
 from sage.categories.morphism import IdentityMorphism
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
@@ -119,7 +118,7 @@ from sage.rings.qqbar import AA, QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField, RealNumber
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
-from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
+from sage.structure.richcmp import richcmp, richcmp_method, richcmp_not_equal
 
 lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.rings.number_field.number_field', 'refine_embedding')
@@ -174,6 +173,7 @@ class PeriodLattice_ell(PeriodLattice):
         called by the period_lattice() function of classes
         ell_number_field and ell_rational_field::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
             sage: E = EllipticCurve('37a')
             sage: PeriodLattice_ell(E)
@@ -332,6 +332,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
@@ -377,6 +378,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.period_lattice()
             sage: E.discriminant() > 0
@@ -401,6 +403,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         An example with negative discriminant, and a torsion point::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: L = E.period_lattice()
             sage: E.discriminant() < 0
@@ -444,12 +447,14 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().basis()
             (2.99345864623196, 2.45138938198679*I)
 
         This shows that the issue reported at :issue:`3954` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: b1 = E.period_lattice().basis(prec=30)
             sage: b2 = E.period_lattice().basis(prec=30)
@@ -458,6 +463,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         This shows that the issue reported at :issue:`4064` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().basis(prec=30)[0].parent()
             Real Field with 30 bits of precision
@@ -528,6 +534,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().gens()
             (2.99345864623196, 2.45138938198679*I)
@@ -563,6 +570,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().normalised_basis()
             (2.99345864623196, -2.45138938198679*I)
@@ -618,6 +626,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.period_lattice()
             sage: L.tau()
@@ -813,6 +822,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: f = EllipticCurve('11a')
             sage: f.period_lattice().is_real()
             True
@@ -853,6 +863,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: f = EllipticCurve('11a')
             sage: f.period_lattice().basis()
             (1.26920930427955, 0.634604652139777 + 1.45881661693850*I)
@@ -861,6 +872,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: f = EllipticCurve('37b')
             sage: f.period_lattice().basis()
             (1.08852159290423, 1.76761067023379*I)
@@ -898,6 +910,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().real_period()
             2.99345864623196
@@ -947,6 +960,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().omega()
             5.98691729246392
@@ -1019,6 +1033,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().basis_matrix()
             [ 2.99345864623196 0.000000000000000]
@@ -1038,6 +1053,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         See :issue:`4388`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('11a1').period_lattice()
             sage: L.basis_matrix()
             [ 1.26920930427955 0.000000000000000]
@@ -1048,6 +1064,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve('389a1').period_lattice()
             sage: L.basis_matrix()
             [ 2.49021256085505 0.000000000000000]
@@ -1078,6 +1095,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().complex_area()
             7.33813274078958
@@ -1129,6 +1147,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('389a1').period_lattice().sigma(CC(2,1))
             2.60912163570108 - 0.200865080824587*I
         """
@@ -1145,6 +1164,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.period_lattice()
             sage: L.curve() is E
@@ -1205,6 +1225,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.period_lattice()
             sage: L.ei()
@@ -1265,6 +1286,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.period_lattice()
             sage: w1, w2 = L.basis(prec=100)
@@ -1287,15 +1309,14 @@ class PeriodLattice_ell(PeriodLattice):
         if isinstance(C, sage.rings.abc.RealField):
             C = ComplexField(C.precision())
             z = C(z)
+        elif isinstance(C, sage.rings.abc.ComplexField):
+            pass
         else:
-            if isinstance(C, sage.rings.abc.ComplexField):
-                pass
-            else:
-                try:
-                    C = ComplexField()
-                    z = C(z)
-                except TypeError:
-                    raise TypeError("%s is not a complex number" % z)
+            try:
+                C = ComplexField()
+                z = C(z)
+            except TypeError:
+                raise TypeError("%s is not a complex number" % z)
         prec = C.precision()
         from sage.matrix.constructor import Matrix
         from sage.modules.free_module_element import vector
@@ -1330,6 +1351,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.period_lattice()
             sage: w1, w2 = L.basis(prec=100)
@@ -1416,6 +1438,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.period_lattice()
             sage: P = E([-1,1])
@@ -1498,11 +1521,10 @@ class PeriodLattice_ell(PeriodLattice):
             w1, w2 = self._compute_periods_complex(prec, normalise=False)
             if xP == e1:
                 z = w2/2
+            elif xP == e3:
+                z = w1/2
             else:
-                if xP == e3:
-                    z = w1/2
-                else:
-                    z = (w1+w2)/2
+                z = (w1+w2)/2
             if reduce:
                 z = self.reduce(z)
             return z
@@ -1619,6 +1641,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.period_lattice()
             sage: E.discriminant() > 0
@@ -1643,6 +1666,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         An example with negative discriminant, and a torsion point::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: L = E.period_lattice()
             sage: E.discriminant() < 0
@@ -1905,7 +1929,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         Examples over number fields::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^3 - 2)
             sage: embs = K.embeddings(CC)
@@ -1947,7 +1971,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         Test to show that :issue:`8820` is fixed::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('37a')
             sage: K.<a> = QuadraticField(-5)
             sage: L = E.change_ring(K).period_lattice(K.places()[0])
@@ -1969,7 +1993,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('37a')
             sage: K.<a> = QuadraticField(-5)
             sage: L = E.change_ring(K).period_lattice(K.places()[0])
@@ -2006,16 +2030,15 @@ class PeriodLattice_ell(PeriodLattice):
             z_is_real = True
             C = ComplexField(C.precision())
             z = C(z)
+        elif isinstance(C, sage.rings.abc.ComplexField):
+            z_is_real = z.is_real()
         else:
-            if isinstance(C, sage.rings.abc.ComplexField):
+            try:
+                C = ComplexField()
+                z = C(z)
                 z_is_real = z.is_real()
-            else:
-                try:
-                    C = ComplexField()
-                    z = C(z)
-                    z_is_real = z.is_real()
-                except TypeError:
-                    raise TypeError("%s is not a complex number" % z)
+            except TypeError:
+                raise TypeError("%s is not a complex number" % z)
         prec = C.precision()
 
         # test for the point at infinity:

@@ -774,10 +774,11 @@ class Homset[DomainElementT: Parent, CodomainElementT: Parent](Set_generic):
             sage: hash(Hom(QQ, ZZ)) == hash((QQ, ZZ, QQ))
             True
 
-            sage: E = EllipticCurve('37a')                                              # needs sage.schemes
-            sage: H = E(0).parent(); H                                                  # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve
+            sage: E = EllipticCurve('37a')  # needs sage.schemes
+            sage: H = E(0).parent(); H  # needs sage.schemes
             Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
-            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))                 # needs sage.schemes
+            sage: hash(H) == hash((H.domain(), H.codomain(), H.base()))  # needs sage.schemes
             True
         """
         return hash((self._domain, self._codomain, self.base()))

@@ -13,6 +13,7 @@ The map sends the cusp `\infty` to the origin of `E`.
 
 EXAMPLES::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: phi = EllipticCurve('11a1').modular_parametrization()
     sage: phi
     Modular parameterization
@@ -43,12 +44,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ######################################################################
 
-from . import heegner
-
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.rational_field import RationalField
 from sage.rings.complex_mpfr import ComplexField
-from sage.rings.rational_field import QQ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.rational_field import QQ, RationalField
+
+from . import heegner
 
 
 class ModularParameterization:
@@ -63,6 +63,7 @@ class ModularParameterization:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: phi = EllipticCurve('11a1').modular_parametrization()
         sage: phi
         Modular parameterization
@@ -74,6 +75,7 @@ class ModularParameterization:
         r"""
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.ell_rational_field import ModularParameterization
             sage: phi = ModularParameterization(EllipticCurve('389a'))
             sage: phi(CC.0/5)
@@ -90,6 +92,7 @@ class ModularParameterization:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('15a')
             sage: phi = E.modular_parametrization()
             sage: phi.curve() is E
@@ -101,6 +104,7 @@ class ModularParameterization:
         """
         TESTS::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: phi = E.modular_parametrization()
             sage: phi
@@ -116,6 +120,7 @@ class ModularParameterization:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: phi = E.modular_parametrization()
             sage: phi == phi
@@ -132,6 +137,7 @@ class ModularParameterization:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: phi = E.modular_parametrization()
             sage: phi != phi
@@ -149,14 +155,16 @@ class ModularParameterization:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: phi = E.modular_parametrization()
-            sage: phi((sqrt(7)*I - 17)/74, 53)                                          # needs sage.symbolic
+            sage: phi((sqrt(7)*I - 17)/74, 53)  # needs sage.symbolic
             (...e-16 - ...e-16*I : ...e-16 + ...e-16*I : 1.00000000000000)
 
         Verify that the mapping is invariant under the action of `\Gamma_0(N)`
         on the upper half plane::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: phi = E.modular_parametrization()
             sage: tau = CC((1+1j)/5)
@@ -169,6 +177,7 @@ class ModularParameterization:
 
         We can also apply the modular parametrization to a Heegner point on `X_0(N)`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: H = heegner_points(389,-7,5); H
             All Heegner points of conductor 5 on X_0(389) associated to QQ[sqrt(-7)]
             sage: x = H[0]; x
@@ -210,7 +219,7 @@ class ModularParameterization:
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
+            sage: # needs database_cremona_mini_ellcurve sage.symbolic
             sage: E = EllipticCurve('37a'); phi = E.modular_parametrization()
             sage: x = polygen(ZZ, 'x')
             sage: tau = (sqrt(7)*I - 17)/74
@@ -270,6 +279,7 @@ class ModularParameterization:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a1')
             sage: phi = E.modular_parametrization()
             sage: X, Y = phi.power_series(prec=10)

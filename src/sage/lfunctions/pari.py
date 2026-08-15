@@ -342,6 +342,7 @@ def lfun_elliptic_curve(E):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.lfunctions.pari import lfun_elliptic_curve, LFunction
         sage: E = EllipticCurve('11a1')
         sage: L = LFunction(lfun_elliptic_curve(E))
@@ -568,6 +569,7 @@ class LFunction(SageObject):
 
     We compute with the `L`-series of a rank `1` curve. ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: L = E.lseries().dokchitser(algorithm='pari'); L
         PARI L-function associated to Elliptic Curve defined by
@@ -591,6 +593,7 @@ class LFunction(SageObject):
     We compute the leading coefficient and Taylor expansion of the
     `L`-series of a rank `2` elliptic curve::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
         sage: L.cost()
@@ -701,6 +704,7 @@ class LFunction(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.lfunctions.pari import *
             sage: L = LFunction(lfun_number_field(QQ)); L.conductor
             1
@@ -744,6 +748,7 @@ class LFunction(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.cost()
@@ -855,6 +860,7 @@ class LFunction(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.lfunctions.pari import lfun_number_field, LFunction
             sage: lf = lfun_number_field(QQ)
             sage: L = LFunction(lf)
@@ -869,6 +875,7 @@ class LFunction(SageObject):
         We compute a Taylor series where each coefficient is to high
         precision::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: L = E.lseries().dokchitser(200,algorithm='pari')
             sage: L.taylor_series(1, 3)
@@ -876,12 +883,14 @@ class LFunction(SageObject):
 
         Check that :issue:`25402` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)
             0.000000000000000 - 0.702565506265199*z + 0.638929001045535*z^2 + O(z^3)
 
         Check that :issue:`25965` is fixed::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: L2 = EllipticCurve("37a1").modular_form().lseries(); L2
             L-series associated to the cusp form q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)
             sage: L2.taylor_series(0,3)
@@ -942,6 +951,7 @@ class LFunction(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(100, algorithm='pari')
             sage: L(1)

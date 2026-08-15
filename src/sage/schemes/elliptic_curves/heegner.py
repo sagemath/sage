@@ -10,6 +10,7 @@ AUTHORS:
 
 EXAMPLES::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('433a')
     sage: P = E.heegner_point(-8,3)
     sage: z = P.point_exact(201); z
@@ -44,12 +45,14 @@ Next try an inert prime::
 
 We find some Mordell-Weil generators in the rank 1 case using Heegner points::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('43a'); P = E.heegner_point(-7)
     sage: P.x_poly_exact()
     x
     sage: z = P.point_exact(); z == E(0,0,1) or -z == E(0,0,1)
     True
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('997a')
     sage: E.rank()
     1
@@ -63,6 +66,7 @@ We find some Mordell-Weil generators in the rank 1 case using Heegner points::
 
 Here we find that the Heegner point generates a subgroup of index 3::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: E = EllipticCurve('92b1')
     sage: E.heegner_discriminants_list(1)
     [-7]
@@ -270,6 +274,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: K5 = E.heegner_point(-7,5).ring_class_field()
             sage: K11 = E.heegner_point(-7,11).ring_class_field()
@@ -288,6 +293,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: K5 = E.heegner_point(-7,5).ring_class_field()
             sage: K11 = E.heegner_point(-7,11).ring_class_field()
@@ -311,6 +317,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K5 = E.heegner_point(-7,5).ring_class_field()
             sage: hash(K5) == hash((-7,5))
             True
@@ -323,6 +330,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K5 = E.heegner_point(-7,5).ring_class_field()
             sage: K5.conductor()
             5
@@ -335,6 +343,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K5 = E.heegner_point(-7,5).ring_class_field()
             sage: K5.discriminant_of_K()
             -7
@@ -348,6 +357,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K55 = E.heegner_point(-7,55).ring_class_field()
             sage: K55.ramified_primes()
             [5, 7, 11]
@@ -378,6 +388,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7,5)
             sage: K5 = P.ring_class_field(); K5
             Ring class field extension of QQ[sqrt(-7)] of conductor 5
@@ -386,6 +397,7 @@ class RingClassField(SageObject):
             sage: type(K5.degree_over_K())
             <... 'sage.rings.integer.Integer'>
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); E.heegner_point(-20).ring_class_field().degree_over_K()
             2
             sage: E.heegner_point(-20,3).ring_class_field().degree_over_K()
@@ -407,6 +419,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: E.heegner_point(-59).ring_class_field().degree_over_H()
             1
@@ -444,6 +457,7 @@ class RingClassField(SageObject):
 
         Check that :issue:`15218` is solved::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("19a");
             sage: s = E.heegner_point(-3,2).ring_class_field().galois_group().complex_conjugation()
             sage: H = s.domain(); H.absolute_degree()
@@ -503,6 +517,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K = E.heegner_point(-7,5).ring_class_field()
             sage: K.absolute_degree()
             12
@@ -520,6 +535,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K = E.heegner_point(-7,5).ring_class_field()
             sage: K.quadratic_field()
             Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
@@ -539,6 +555,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: A = E.heegner_point(-7,5).ring_class_field()
             sage: A.galois_group()
@@ -569,6 +586,7 @@ class RingClassField(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: A = E.heegner_point(-7,5).ring_class_field()
             sage: B = E.heegner_point(-7).ring_class_field()
@@ -605,6 +623,7 @@ class GaloisGroup(SageObject):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
         sage: G = E.heegner_point(-7,5).ring_class_field().galois_group(); G
         Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
@@ -657,6 +676,7 @@ class GaloisGroup(SageObject):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
             sage: G == G
             True
@@ -672,6 +692,7 @@ class GaloisGroup(SageObject):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
             sage: G != G
             False
@@ -690,6 +711,7 @@ class GaloisGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
             sage: hash(G) == hash((G.field(), G.base_field()))
             True
@@ -742,6 +764,7 @@ class GaloisGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: G = E.heegner_point(-7,5).ring_class_field().galois_group()
             sage: G._repr_()
@@ -890,6 +913,7 @@ class GaloisGroup(SageObject):
 
         Example with order 1 (a special case)::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,1).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G._list()
@@ -897,6 +921,7 @@ class GaloisGroup(SageObject):
 
         Example over quadratic imaginary field::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,5).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G._list()
@@ -1173,6 +1198,7 @@ class GaloisGroup(SageObject):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,5).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[0]
@@ -1201,6 +1227,7 @@ class GaloisGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: G = E.heegner_point(-7,5).ring_class_field().galois_group(); G
             Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
@@ -1223,6 +1250,7 @@ class GaloisGroup(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: G = E.heegner_point(-7,5).ring_class_field().galois_group()
             sage: G.complex_conjugation()
@@ -1272,6 +1300,7 @@ class GaloisAutomorphism(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: G = E.heegner_point(-7,5).ring_class_field().galois_group()
             sage: s = G.complex_conjugation()
@@ -1286,6 +1315,7 @@ class GaloisAutomorphism(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: G = E.heegner_point(-7,5).ring_class_field().galois_group()
             sage: s = G.complex_conjugation()
@@ -1338,6 +1368,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
             sage: conj = G.complex_conjugation()
             sage: hash(conj) == hash((conj.parent(), 1))
@@ -1349,6 +1380,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
             sage: conj = G.complex_conjugation()
             sage: conj2 = sage.schemes.elliptic_curves.heegner.GaloisAutomorphismComplexConjugation(G)
@@ -1364,6 +1396,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: G = EllipticCurve('389a').heegner_point(-7,5).ring_class_field().galois_group()
             sage: conj = G.complex_conjugation()
             sage: conj2 = sage.schemes.elliptic_curves.heegner.GaloisAutomorphismComplexConjugation(G)
@@ -1662,6 +1695,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); F = E.heegner_point(-20,3).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[1].ideal()
@@ -1833,6 +1867,7 @@ class HeegnerPoint(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: heegner_point(389,-7,5).conductor()
             5
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67,7); P
@@ -1852,6 +1887,7 @@ class HeegnerPoint(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: heegner_point(389,-7,5).discriminant()
             -7
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67,7); P
@@ -1876,6 +1912,7 @@ class HeegnerPoint(SageObject):
             Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
              with sqrt_minus_7 = 2.645751311064591?*I
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40)
             sage: P.quadratic_field()
             Number Field in sqrt_minus_40 with defining polynomial x^2 + 40
@@ -1902,6 +1939,7 @@ class HeegnerPoint(SageObject):
             sage: heegner_point(389,-7,5).quadratic_order().basis()
             [1, 5*sqrt_minus_7]
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40,11)
             sage: P.quadratic_order()
             Order of conductor 22 generated by 11*sqrt_minus_40
@@ -1925,6 +1963,7 @@ class HeegnerPoint(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K.<a> = QuadraticField(-5)
             sage: len(K.factor(5))
             1
@@ -2213,6 +2252,7 @@ class HeegnerPoints_level_disc(HeegnerPoints):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); K = E.heegner_point(-7,5).ring_class_field()
             sage: K.quadratic_field()
             Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
@@ -2246,6 +2286,7 @@ class HeegnerPoints_level_disc(HeegnerPoints):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: H = heegner_points(389, -7)
             sage: H.kolyvagin_conductors(0)
             [1]
@@ -2314,6 +2355,7 @@ def is_kolyvagin_conductor(N, E, D, r, n, c) -> bool:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.heegner import is_kolyvagin_conductor
         sage: is_kolyvagin_conductor(389, None, -7, 1, None, 5)
         True
@@ -2768,6 +2810,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x1 = EllipticCurve('389a').heegner_point(-7).heegner_point_on_X0N()
             sage: x5 = EllipticCurve('389a').heegner_point(-7, 5).heegner_point_on_X0N()
             sage: x1 == x1
@@ -2902,6 +2945,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = heegner_point(389, -7, 5); x
             Heegner point 5/778*sqrt(-7) - 147/778 of discriminant -7
              and conductor 5 on X_0(389)
@@ -2916,6 +2960,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
 
         You can also directly apply the modular parametrization of the elliptic curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = heegner_point(37,-7); x
             Heegner point 1/74*sqrt(-7) - 17/74 of discriminant -7 on X_0(37)
             sage: E = EllipticCurve('37a'); phi = E.modular_parametrization()
@@ -2993,6 +3038,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a'); P = E.heegner_point(-7,5); P
         Heegner point of discriminant -7 and conductor 5 on elliptic curve of conductor 37
         sage: type(P)
@@ -3011,6 +3057,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = heegner_point(389,-7,5)
             sage: E = EllipticCurve('389a')
             sage: sage.schemes.elliptic_curves.heegner.HeegnerPointOnEllipticCurve(E, x)
@@ -3039,6 +3086,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('389a').heegner_point(-7).satisfies_kolyvagin_hypothesis()
             True
             sage: EllipticCurve('389a').heegner_point(-7, 5).satisfies_kolyvagin_hypothesis()
@@ -3060,6 +3108,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: x = EllipticCurve('389a').heegner_point(-7, 5)
             sage: hash(x) == hash( (x.curve(), x.heegner_point_on_X0N()) )
             True
@@ -3070,6 +3119,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y1 = EllipticCurve('389a').heegner_point(-7)
             sage: y5 = EllipticCurve('389a').heegner_point(-7, 5)
             sage: y1 == y1
@@ -3088,6 +3138,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y1 = EllipticCurve('389a').heegner_point(-7)
             sage: y5 = EllipticCurve('389a').heegner_point(-7, 5)
             sage: y1 != y1
@@ -3107,6 +3158,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 97)
             sage: P._repr_()
             'Heegner point of discriminant -7 and conductor 97 on elliptic curve of conductor 389'
@@ -3121,6 +3173,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-7,5); P
             Heegner point of discriminant -7 and conductor 5 on elliptic curve
              of conductor 37
@@ -3141,6 +3194,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         We compute a nonzero Heegner point over a ring class field on
         a curve of rank 2::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); y = E.heegner_point(-7,5)
             sage: y.map_to_complex_numbers()
             1.49979679635196 + 0.369156204821526*I
@@ -3152,6 +3206,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         Here we see that the Heegner point is 0 since it lies in the
         lattice::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); y = E.heegner_point(-7)
             sage: y.map_to_complex_numbers(10)
             0.0034 - 3.9*I
@@ -3164,6 +3219,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         You can also directly coerce to the complex field::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); y = E.heegner_point(-7)
             sage: z = ComplexField(100)(y); z # real part approx. 0
             -... - 3.9434754031032964088448153963*I
@@ -3180,6 +3236,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); y = E.heegner_point(-7)
             sage: CC(y)                          # indirect doctest
             0.929592715285395 - 1.22569469099340*I
@@ -3203,6 +3260,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); y = E.heegner_point(-7); y
             Heegner point of discriminant -7 on elliptic curve of conductor 37
             sage: P = y.kolyvagin_point(); P
@@ -3227,6 +3285,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('77a1')
             sage: P = E.heegner_point(-19); y = P._trace_numerical_conductor_1()
             sage: [c.real() for c in y]
@@ -3260,6 +3319,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5)
             sage: P.curve()
             Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
@@ -3276,9 +3336,11 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: EllipticCurve('389a').heegner_point(-7, 5).quadratic_form()
             389*x^2 + 147*x*y + 14*y^2
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('389a').heegner_point(-7, 5, (778,925,275)); P
             Heegner point of discriminant -7 and conductor 5 on elliptic curve
              of conductor 389
@@ -3305,6 +3367,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-7); P
             Heegner point of discriminant -7 on elliptic curve of conductor 37
             sage: P.numerical_approx()  # abs tol 1e-15
@@ -3322,6 +3385,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         A rank 2 curve, where all Heegner points of conductor 1 are 0::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); E.rank()
             2
             sage: P = E.heegner_point(-7); P
@@ -3331,6 +3395,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         However, Heegner points of bigger conductor are often nonzero::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
             Heegner point of discriminant -7 and conductor 5 on elliptic curve
              of conductor 389
@@ -3368,6 +3433,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5)
             sage: P.tau()
             5/778*sqrt_minus_7 - 147/778
@@ -3405,6 +3471,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         We compute some `x`-coordinate polynomials of some conductor 1
         Heegner points::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: v = E.heegner_discriminants_list(10)
             sage: [E.heegner_point(D).x_poly_exact() for D in v]
@@ -3417,6 +3484,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         We compute `x`-coordinate polynomials for some Heegner points
         of conductor bigger than 1 on a rank 2 curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
             Heegner point of discriminant -7 and conductor 5
              on elliptic curve of conductor 389
@@ -3436,6 +3504,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         Here we compute a Heegner point of conductor 5 on a rank 3 curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a'); P = E.heegner_point(-7,5); P
             Heegner point of discriminant -7 and conductor 5
              on elliptic curve of conductor 5077
@@ -3444,6 +3513,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         See :issue:`34121`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: P = E.heegner_point(-7)
             sage: PE = P.point_exact()
@@ -3477,6 +3547,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
             Heegner point of discriminant -7 and conductor 5
              on elliptic curve of conductor 389
@@ -3533,6 +3604,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a'); P = E.heegner_point(-7, 5); P
             Heegner point of discriminant -7 and conductor 5
              on elliptic curve of conductor 389
@@ -3542,6 +3614,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: f = P.numerical_approx(500)[1].algebraic_dependency(12); f / f.leading_coefficient()
             x^12 + 6*x^11 + 90089/1715*x^10 + 71224/343*x^9 + 52563964/588245*x^8 - 483814934/588245*x^7 - 156744579/16807*x^6 - 2041518032/84035*x^5 + 1259355443184/14706125*x^4 + 3094420220918/14706125*x^3 + 123060442043827/367653125*x^2 + 82963044474852/367653125*x + 211679465261391/1838265625
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('5077a')
             sage: P = E.heegner_point(-7)
             sage: P.point_exact(prec=100)
@@ -3611,6 +3684,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('77a')
             sage: y = E.heegner_point(-52,5); y
             Heegner point of discriminant -52 and conductor 5
@@ -3641,6 +3715,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: y = E.heegner_point(-7,3); y
             Heegner point of discriminant -7 and conductor 3 on elliptic curve of conductor 37
@@ -3674,6 +3749,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: y = E.heegner_point(-7,3); y
             Heegner point of discriminant -7 and conductor 3 on elliptic curve of conductor 37
@@ -3707,6 +3783,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: y = E.heegner_point(-7,3); y
             Heegner point of discriminant -7 and conductor 3 on elliptic curve of conductor 37
@@ -3731,6 +3808,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); y = E.heegner_point(-7,3)
             sage: y._xy_poly_simplest()
             [X^8 + 6*X^7 + 9*X^6 - 12*X^5 - 42*X^4 - 18*X^3 + 36*X^2 + 36*X + 9,
@@ -3749,6 +3827,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-40); P
             Heegner point of discriminant -40 on elliptic curve of conductor 37
             sage: P._square_roots_mod_2N_of_D_mod_4N()
@@ -3773,6 +3852,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('57a1')
             sage: P = E.heegner_point(-8); P
             Heegner point of discriminant -8 on elliptic curve of conductor 57
@@ -3822,6 +3902,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('389a1').heegner_point(-7)
             sage: P._good_tau_representatives()
             ([(1, 1, 2)], [((389, 185, 22), 1)])
@@ -3886,6 +3967,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('57a1').heegner_point(-8)
             sage: R, U = P._good_tau_representatives()
             sage: f = U[0][0]; f
@@ -3909,6 +3991,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('57a1').heegner_point(-8)
             sage: R, U = P._good_tau_representatives()
             sage: f = U[0][0]; f
@@ -3943,6 +4026,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('57a1').heegner_point(-8)
             sage: R, U = P._good_tau_representatives()
             sage: f = U[0][0]; f
@@ -3971,6 +4055,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('57a1').heegner_point(-8)
             sage: R, U = P._good_tau_representatives()
             sage: f = U[0][0]; f
@@ -3992,6 +4077,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('389a').heegner_point(-7,5)
             sage: y.kolyvagin_cohomology_class(3)
             Kolyvagin cohomology class c(5) in H^1(K,E[3])
@@ -4011,6 +4097,7 @@ class KolyvaginPoint(HeegnerPoint):
 
     We create a few Kolyvagin points::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('11a1').kolyvagin_point(-7)
         Kolyvagin point of discriminant -7 on elliptic curve of conductor 11
         sage: EllipticCurve('37a1').kolyvagin_point(-7)
@@ -4023,6 +4110,7 @@ class KolyvaginPoint(HeegnerPoint):
 
     One can also associated a Kolyvagin point to a Heegner point::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: y = EllipticCurve('37a1').heegner_point(-7); y
         Heegner point of discriminant -7 on elliptic curve of conductor 37
         sage: y.kolyvagin_point()
@@ -4030,6 +4118,7 @@ class KolyvaginPoint(HeegnerPoint):
 
     TESTS::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: y = EllipticCurve('37a1').heegner_point(-7)
         sage: type(y)
         <class 'sage.schemes.elliptic_curves.heegner.HeegnerPointOnEllipticCurve'>
@@ -4048,6 +4137,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         We directly construct a Kolyvagin point from the KolyvaginPoint class::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a1').heegner_point(-7)
             sage: sage.schemes.elliptic_curves.heegner.KolyvaginPoint(y)
             Kolyvagin point of discriminant -7 on elliptic curve of conductor 37
@@ -4066,6 +4156,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('389a').heegner_point(-7,5); P = y.kolyvagin_point()
             sage: P.kolyvagin_cohomology_class(3)
             Kolyvagin cohomology class c(5) in H^1(K,E[3])
@@ -4087,6 +4178,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67, 3)
             sage: P.curve()
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
@@ -4101,6 +4193,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1')
             sage: P = E.kolyvagin_point(-67); P
             Kolyvagin point of discriminant -67 on elliptic curve of conductor 37
@@ -4117,6 +4210,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67,7); P._repr_()
             'Kolyvagin point of discriminant -67 and conductor 7 on elliptic curve of conductor 37'
         """
@@ -4135,6 +4229,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67); P.index()
             6
         """
@@ -4153,6 +4248,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('37a1').kolyvagin_point(-7); P
             Kolyvagin point of discriminant -7 on elliptic curve of conductor 37
             sage: P.numerical_approx() # approx. (0 : 0 : 1)
@@ -4160,6 +4256,7 @@ class KolyvaginPoint(HeegnerPoint):
             sage: P.numerical_approx(100)[0].abs() < 2.0^-99
             True
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: P = EllipticCurve('389a1').kolyvagin_point(-7, 5); P
             Kolyvagin point of discriminant -7 and conductor 5
              on elliptic curve of conductor 389
@@ -4185,6 +4282,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         A rank 1 curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67)
             sage: P.point_exact()
             (6 : -15 : 1)
@@ -4197,12 +4295,14 @@ class KolyvaginPoint(HeegnerPoint):
 
         A rank 0 curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1'); P = E.kolyvagin_point(-7)
             sage: P.point_exact()
             (-1/2*sqrt_minus_7 + 1/2 : -2*sqrt_minus_7 - 2 : 1)
 
         A rank 2 curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a1'); P = E.kolyvagin_point(-7)
             sage: P.point_exact()
             (0 : 1 : 0)
@@ -4262,8 +4362,9 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); P = E.heegner_point(-11).kolyvagin_point()
-            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()              # needs sage.plot
+            sage: P.plot(prec=30, pointsize=50, rgbcolor='red') + E.plot()  # needs sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         from sage.plot.graphics import Graphics
@@ -4290,6 +4391,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67)
             sage: PP = P.numerical_approx()
             sage: [c.real() for c in PP]
@@ -4327,6 +4429,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         A Kolyvagin point on a rank 1 curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67)
             sage: P.trace_to_real_numerical()
             (1.61355529131986 : -2.18446840788880 : 1.00000000000000)
@@ -4353,6 +4456,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('43a'); P = E.heegner_point(-20).kolyvagin_point()
             sage: PP = P.numerical_approx(); PP
             (0.000000000000000 : -1.00000000000000 : 1.00000000000000)
@@ -4389,6 +4493,7 @@ class KolyvaginPoint(HeegnerPoint):
 
         A Kolyvagin point on a rank 1 curve::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a1'); P = E.kolyvagin_point(-67)
             sage: P.mod(2)
             (1 : 1 : 1)
@@ -4408,6 +4513,7 @@ class KolyvaginPoint(HeegnerPoint):
         Here the Kolyvagin point is a torsion point (since `E` has
         rank 1), and we reduce it modulo several primes.::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1'); P = E.kolyvagin_point(-7)
             sage: P.mod(3,70)  # long time (4s on sage.math, 2013)
             (1 : 2 : 1)
@@ -4471,11 +4577,13 @@ class KolyvaginPoint(HeegnerPoint):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('389a').heegner_point(-7, 5)
             sage: P = y.kolyvagin_point()
             sage: P.kolyvagin_cohomology_class(3)
             Kolyvagin cohomology class c(5) in H^1(K,E[3])
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7, 5).kolyvagin_point()
             sage: y.kolyvagin_cohomology_class()
             Kolyvagin cohomology class c(5) in H^1(K,E[2])
@@ -4490,6 +4598,7 @@ class KolyvaginCohomologyClass(SageObject):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: y = EllipticCurve('37a').heegner_point(-7)
         sage: c = y.kolyvagin_cohomology_class(3); c
         Kolyvagin cohomology class c(1) in H^1(K,E[3])
@@ -4505,6 +4614,7 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('389a').heegner_point(-7, 5)
             sage: y.kolyvagin_cohomology_class(3)
             Kolyvagin cohomology class c(5) in H^1(K,E[3])
@@ -4523,6 +4633,7 @@ class KolyvaginCohomologyClass(SageObject):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7)
             sage: c = y.kolyvagin_cohomology_class(3)
             sage: c == y.kolyvagin_cohomology_class(3)
@@ -4543,6 +4654,7 @@ class KolyvaginCohomologyClass(SageObject):
         """
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7)
             sage: c = y.kolyvagin_cohomology_class(3)
             sage: c != y.kolyvagin_cohomology_class(3)
@@ -4559,6 +4671,7 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7)
             sage: t = y.kolyvagin_cohomology_class(3); t
             Kolyvagin cohomology class c(1) in H^1(K,E[3])
@@ -4574,6 +4687,7 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t.conductor()
@@ -4588,6 +4702,7 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t.kolyvagin_point()
@@ -4603,6 +4718,7 @@ class KolyvaginCohomologyClass(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t.heegner_point()
@@ -4618,6 +4734,7 @@ class KolyvaginCohomologyClassEn(KolyvaginCohomologyClass):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: y = EllipticCurve('37a').heegner_point(-7, 5)
             sage: t = y.kolyvagin_cohomology_class()
             sage: t._repr_()
@@ -5390,6 +5507,7 @@ class HeegnerQuatAlg(SageObject):
         We first try to verify Kolyvagin's conjecture for a rank 2
         curve by working modulo 5, but we are unlucky with `c=17`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: N = 389; D = -7; ell = 5; c = 17; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: E = EllipticCurve('389a')
@@ -5421,6 +5539,7 @@ class HeegnerQuatAlg(SageObject):
 
         Another example, but where the curve has rank 1::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: N = 37; D = -7; ell = 17; c = 41; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.heegner_divisor(D,1).element().nonzero_positions()
@@ -5440,6 +5559,7 @@ class HeegnerQuatAlg(SageObject):
 
         An example with `c` a product of two primes::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: N = 389; D = -7; ell = 5; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: V = H.modp_dual_elliptic_curve_factor(EllipticCurve('389a'), q, 5)
@@ -5508,6 +5628,7 @@ class HeegnerQuatAlg(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: N = 37; D = -7; ell = 17; c = 41; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: V = H.modp_dual_elliptic_curve_factor(EllipticCurve('37a'), q, 5); V
@@ -5555,6 +5676,7 @@ class HeegnerQuatAlg(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: N = 389; D = -7; ell = 5; c = 17; q = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: k = H.rational_kolyvagin_divisor(D, c); k  # long time (5s on sage.math, 2013)
@@ -5603,6 +5725,7 @@ class HeegnerQuatAlg(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: N = 37; D = -7; ell = 17; c = 41; p = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.kolyvagin_point_on_curve(D, c, EllipticCurve('37a'), p)
@@ -5674,11 +5797,13 @@ def kolyvagin_reduction_data(E, q, first_only=True):
 
     A rank 1 example::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: kolyvagin_reduction_data(EllipticCurve('37a1'), 3)
         (17, -7, 1, 52)
 
     A rank 3 example::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: kolyvagin_reduction_data(EllipticCurve('5077a1'), 3)
         (11, -47, 5, 4234)
         sage: H = heegner_points(5077, -47)
@@ -5702,6 +5827,7 @@ def kolyvagin_reduction_data(E, q, first_only=True):
 
     The first rank 2 example::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: kolyvagin_reduction_data(EllipticCurve('389a'), 3)
         (5, -7, 1, 130)
         sage: kolyvagin_reduction_data(EllipticCurve('389a'), 3, first_only=False)
@@ -5709,11 +5835,13 @@ def kolyvagin_reduction_data(E, q, first_only=True):
 
     A large `q = 7`::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: kolyvagin_reduction_data(EllipticCurve('1143c1'), 7, first_only=False)
         (13, 83, -59, 3, 1536, 10496)
 
     Additive reduction::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: kolyvagin_reduction_data(EllipticCurve('2350g1'), 5, first_only=False)
         (19, 239, -311, 19, 6480, 85680)
     """
@@ -6272,6 +6400,7 @@ def satisfies_weak_heegner_hypothesis(N, D):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: s = sage.schemes.elliptic_curves.heegner.satisfies_weak_heegner_hypothesis
         sage: s(37,-7)
         True
@@ -6387,6 +6516,7 @@ def ell_heegner_point(self, D, c=ZZ.one(), f=None, check=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: E.heegner_discriminants_list(10)
         [-7, -11, -40, -47, -67, -71, -83, -84, -95, -104]
@@ -6413,6 +6543,7 @@ def ell_heegner_point(self, D, c=ZZ.one(), f=None, check=True):
 
     The Heegner hypothesis is checked::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a'); P = E.heegner_point(-5,7);
         Traceback (most recent call last):
         ...
@@ -6420,6 +6551,7 @@ def ell_heegner_point(self, D, c=ZZ.one(), f=None, check=True):
 
     We can specify the quadratic form::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: P = EllipticCurve('389a').heegner_point(-7, 5, (778,925,275)); P
         Heegner point of discriminant -7 and conductor 5
          on elliptic curve of conductor 389
@@ -6447,6 +6579,7 @@ def kolyvagin_point(self, D, c=ZZ.one(), check=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a1')
         sage: P = E.kolyvagin_point(-67); P
         Kolyvagin point of discriminant -67 on elliptic curve of conductor 37
@@ -6477,6 +6610,7 @@ def ell_heegner_discriminants(self, bound) -> list:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E=EllipticCurve('11a')
         sage: E.heegner_discriminants(30)                     # indirect doctest
         [-7, -8, -19, -24]
@@ -6499,6 +6633,7 @@ def ell_heegner_discriminants_list(self, n) -> list:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E=EllipticCurve('11a')
         sage: E.heegner_discriminants_list(4)                     # indirect doctest
         [-7, -8, -19, -24]
@@ -6537,12 +6672,14 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a')
         sage: E.heegner_point_height(-7)
         0.22227?
 
     Some higher rank examples::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
         sage: E.heegner_point_height(-7)
         0
@@ -6641,6 +6778,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a')
         sage: E.heegner_discriminants(50)
         [-7, -8, -19, -24, -35, -39, -40, -43]
@@ -6649,6 +6787,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
 
     ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37b')
         sage: E.heegner_discriminants(100)
         [-3, -4, -7, -11, -40, -47, -67, -71, -83, -84, -95]
@@ -6659,6 +6798,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
 
     ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('675b').heegner_index(-11)
         3.0000?
 
@@ -6671,6 +6811,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
 
     The curve 681b returns the true index, which is `3`::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('681b')
         sage: I = E.heegner_index(-8); I
         3.0000?
@@ -6685,6 +6826,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
     which can be used to fine tune the 2-descent used to compute
     the regulator of the twist::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve([1,-1,0,-1228,-16267])
         sage: E.heegner_index(-8)
         Traceback (most recent call last):
@@ -6698,6 +6840,7 @@ def heegner_index(self, D, min_p=2, prec=5, descent_second_limit=12,
 
     Two higher rank examples (of ranks 2 and 3)::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
         sage: E.heegner_index(-7)
         +Infinity
@@ -6800,6 +6943,7 @@ def _adjust_heegner_index(self, a):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: a = RIF(sqrt(2)) - RIF(1.4142135623730951)
         sage: E._adjust_heegner_index(a)
@@ -6856,6 +7000,7 @@ def heegner_index_bound(self, D=0, prec=5, max_height=None) -> tuple:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: E.heegner_index_bound()
         ([2], -7, 2)
@@ -6958,6 +7103,7 @@ def _heegner_index_in_EK(self, D):
 
     We compute the index for a rank 2 curve and found that it is 2::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
         sage: E._heegner_index_in_EK(-7)
         2
@@ -7071,6 +7217,7 @@ def heegner_sha_an(self, D, prec=53):
 
     An example where E has conductor 11::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a')
         sage: E.heegner_sha_an(-7)                                  # long time
         1.00000000000000
@@ -7094,6 +7241,7 @@ def heegner_sha_an(self, D, prec=53):
     quadratic imaginary field `K`; however, there is no Sha for `E`
     over `\QQ` or for the quadratic twist of `E`::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: E.heegner_sha_an(-40)                                 # long time
         4.00000000000000
@@ -7214,6 +7362,7 @@ def _heegner_forms_list(self, D, beta=None, expected_count=None) -> list:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: E._heegner_forms_list(-7)
         [37*x^2 + 17*x*y + 2*y^2]
@@ -7226,6 +7375,7 @@ def _heegner_forms_list(self, D, beta=None, expected_count=None) -> list:
         sage: QQ[sqrt(-195)].class_number()
         4
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
         sage: E._heegner_forms_list(-7)
         [389*x^2 + 185*x*y + 22*y^2]
@@ -7269,6 +7419,7 @@ def _heegner_best_tau(self, D, prec=None):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: E._heegner_best_tau(-7)
         1/74*sqrt(-7) - 17/74
@@ -7291,6 +7442,7 @@ def satisfies_heegner_hypothesis(self, D):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: E.satisfies_heegner_hypothesis(-7)
         True

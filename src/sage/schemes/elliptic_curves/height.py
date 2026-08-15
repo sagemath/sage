@@ -26,11 +26,11 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-import numpy
-import math
 import bisect
-
+import math
 from itertools import product
+
+import numpy
 
 from sage.arith.functions import lcm
 from sage.arith.misc import factorial
@@ -1141,6 +1141,7 @@ class EllipticCurveCanonicalHeight:
 
         An example over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: v = QQ.places()[0]
             sage: L = E.period_lattice(v)
@@ -1204,6 +1205,7 @@ class EllipticCurveCanonicalHeight:
 
         An example over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: v = QQ.places()[0]
             sage: H = E.height_function()
@@ -1253,6 +1255,7 @@ class EllipticCurveCanonicalHeight:
 
         An example over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: v = QQ.places()[0]
             sage: H = E.height_function()
@@ -1303,6 +1306,7 @@ class EllipticCurveCanonicalHeight:
 
         An example over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: v = QQ.places()[0]
             sage: H = E.height_function()
@@ -1358,6 +1362,7 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: H = E.height_function()
             sage: H.tau(QQ.places()[0])
@@ -1392,7 +1397,7 @@ class EllipticCurveCanonicalHeight:
             sage: H.wp_c(QQ.places()[0])
             2.68744508779950
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0, 0, 0, 1 + 5*i, 3 + i])
             sage: H = E.height_function()
@@ -1431,6 +1436,7 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: L = E.period_lattice()
             sage: w1, w2 = L.normalised_basis()
@@ -1532,6 +1538,7 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: wp = E.height_function().wp_intervals()
             sage: z = CDF(0.3, 0.4)
@@ -1613,6 +1620,7 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: H = E.height_function()
             sage: v = QQ.places()[0]
@@ -1855,9 +1863,8 @@ class EllipticCurveCanonicalHeight:
                     if v(self.K.gen()) in RR:
                         if self.real_intersection_is_empty(Bk, v):
                             return True
-                    else:
-                        if self.complex_intersection_is_empty(Bk, v):
-                            return True
+                    elif self.complex_intersection_is_empty(Bk, v):
+                        return True
                     ok = True
                 except ArithmeticError:
                     v = refine_embedding(v)
@@ -2059,6 +2066,7 @@ class EllipticCurveCanonicalHeight:
 
         More examples over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a')
             sage: h = E.height_function()
             sage: h.min(.01, 5)
@@ -2072,6 +2080,7 @@ class EllipticCurveCanonicalHeight:
             sage: E.change_ring(K).height_function().min(0.5, 10)       # long time, needs sage.rings.number_field
             0.04419417382415922
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('389a')
             sage: h = E.height_function()
             sage: h.min(0.1, 5)

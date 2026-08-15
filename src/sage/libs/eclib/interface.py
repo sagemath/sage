@@ -18,6 +18,7 @@ TESTS:
 
 Check that ``eclib`` is imported as needed::
 
+    sage: # needs database_cremona_mini_ellcurve
     sage: [k for k in sys.modules if k.startswith("sage.libs.eclib")]
     []
     sage: EllipticCurve('11a1').mwrank_curve()

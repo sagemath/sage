@@ -1992,6 +1992,7 @@ def block_matrix(*args, **kwds):
 
     Error reporting when non-ring elements are passed in::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: matrix.block([
         ....:     ["abc"],
         ....:     ])

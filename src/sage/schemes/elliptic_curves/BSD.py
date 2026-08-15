@@ -14,6 +14,7 @@ class BSD_data:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.BSD import BSD_data
         sage: D = BSD_data()
         sage: D.Sha is None
@@ -46,6 +47,7 @@ class BSD_data:
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.BSD import BSD_data
             sage: D = BSD_data()
             sage: D.Sha is None
@@ -86,6 +88,7 @@ def mwrank_two_descent_work(E, two_tor_rk) -> tuple:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.BSD import mwrank_two_descent_work
         sage: E = EllipticCurve('14a')
         sage: mwrank_two_descent_work(E, E.two_torsion_rank())
@@ -125,6 +128,7 @@ def pari_two_descent_work(E) -> tuple:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.BSD import pari_two_descent_work
         sage: E = EllipticCurve('14a')
         sage: pari_two_descent_work(E)
@@ -177,6 +181,7 @@ def native_two_isogeny_descent_work(E, two_tor_rk) -> tuple:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.BSD import native_two_isogeny_descent_work
         sage: E = EllipticCurve('14a')
         sage: native_two_isogeny_descent_work(E, E.two_torsion_rank())
@@ -215,6 +220,7 @@ def heegner_index_work(E) -> tuple:
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.BSD import heegner_index_work
         sage: heegner_index_work(EllipticCurve('14a'))
         (1, -31)
@@ -298,6 +304,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('11a').prove_BSD(verbosity=2)
         p = 2: True by 2-descent
         True for p not in {2, 5} by Kolyvagin.
@@ -305,6 +312,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         True for p = 5 by Kolyvagin bound
         []
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('14a').prove_BSD(verbosity=2)
         p = 2: True by 2-descent
         True for p not in {2, 3} by Kolyvagin.
@@ -312,6 +320,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         True for p = 3 by Kolyvagin bound
         []
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve("20a1")
         sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
@@ -319,6 +328,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         Kato further implies that #Sha[3] is trivial.
         []
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve("50b1")
         sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
@@ -333,6 +343,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     A rank two curve::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('389a')
 
     We know nothing with proof=True::
@@ -347,6 +358,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     A curve of rank 0 and prime conductor::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('19a')
         sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
@@ -355,6 +367,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         True for p = 3 by Kolyvagin bound
         []
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: E.rank()
         1
@@ -370,6 +383,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     We test the consistency check for the 2-part of Sha::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: S = E.sha(); S
         Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x
@@ -384,6 +398,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     An example with a Tamagawa number at 5::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('123a1')
         sage: E.prove_BSD(verbosity=2)
         p = 2: True by 2-descent
@@ -394,6 +409,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     A curve for which 3 divides the order of the Tate-Shafarevich group::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('681b')
         sage: E.prove_BSD(verbosity=2)               # long time
         p = 2: True by 2-descent...
@@ -406,6 +422,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     A curve for which we need to use ``heegner_index_bound``::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('198b')
         sage: E.prove_BSD(verbosity=1, secs_hi=1)
         p = 2: True by 2-descent
@@ -415,6 +432,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     The ``return_BSD`` option gives an object with detailed information
     about the proof::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('26b')
         sage: B = E.prove_BSD(return_BSD=True)
         sage: B.two_tor_rk
@@ -432,6 +450,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     This was fixed by :issue:`8184` and :issue:`7575`::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: EllipticCurve('438e1').prove_BSD(verbosity=1)
         p = 2: True by 2-descent...
         True for p not in {2} by Kolyvagin.
@@ -439,6 +458,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('960d1')
         sage: E.prove_BSD(verbosity=1)  # long time (4s on sage.math, 2011)
         p = 2: True by 2-descent
@@ -447,6 +467,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('66b3')
         sage: E.prove_BSD(two_desc="pari",verbosity=1)
         p = 2: True by 2-descent

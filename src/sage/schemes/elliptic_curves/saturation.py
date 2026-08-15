@@ -164,6 +164,7 @@ class EllipticCurveSaturator(SageObject):
 
         Over `\QQ`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.saturation import EllipticCurveSaturator
             sage: E = EllipticCurve('11a1')
             sage: saturator = EllipticCurveSaturator(E)
@@ -230,6 +231,7 @@ class EllipticCurveSaturator(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.saturation import EllipticCurveSaturator
             sage: E = EllipticCurve('389a')
             sage: K.<i> = QuadraticField(-1)
@@ -329,6 +331,7 @@ class EllipticCurveSaturator(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.saturation import EllipticCurveSaturator
             sage: E = EllipticCurve('389a')
             sage: K.<i> = QuadraticField(-1)

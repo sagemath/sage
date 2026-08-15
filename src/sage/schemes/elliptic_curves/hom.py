@@ -213,6 +213,7 @@ class EllipticCurveHom(Morphism):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve(QQ, [0,0,0,1,0])
             sage: phi_v = EllipticCurveIsogeny(E, E((0,0)))
             sage: phi_k = EllipticCurveIsogeny(E, [0,1])
@@ -1000,6 +1001,7 @@ class EllipticCurveHom(Morphism):
         Check that the result is consistent with
         :meth:`~sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.division_points`::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('37a'); E
             Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
             sage: P = E(0, -1)
@@ -1142,6 +1144,7 @@ class EllipticCurveHom(Morphism):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a2')
             sage: R.<x> = QQ[]
             sage: phi = E.isogeny(x^2 + 101*x + 12751/5)
@@ -1218,6 +1221,7 @@ class EllipticCurveHom(Morphism):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: R.<x> = QQ[]
             sage: f = x^3 - x^2 - 10*x - 79/4
@@ -1301,6 +1305,7 @@ class EllipticCurveHom(Morphism):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: phi = EllipticCurveIsogeny(E, E.torsion_points())
             sage: phi.is_separable()
@@ -1373,6 +1378,7 @@ class EllipticCurveHom(Morphism):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: R.<x> = QQ[]
             sage: f = x^2 + x - 29/5
@@ -1407,6 +1413,7 @@ class EllipticCurveHom(Morphism):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a1')
             sage: R.<x> = QQ[]
             sage: f = x^2 + x - 29/5
@@ -1534,6 +1541,7 @@ class EllipticCurveHom(Morphism):
 
         ::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('49a3')
             sage: R.<X> = QQ[]
             sage: EllipticCurveIsogeny(E,X^3-13*X^2-58*X+503,check=False)
@@ -1729,6 +1737,7 @@ class EllipticCurveHom(Morphism):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('54.b2')
             sage: K = next(T for T in E.torsion_points() if T.order() == 9)
             sage: phi, psi = E.isogeny(K).factors()
@@ -1759,6 +1768,7 @@ class EllipticCurveHom(Morphism):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('54.b2')
             sage: K = next(T for T in E.torsion_points() if T.order() == 9)
             sage: phi, psi = E.isogeny(K).factors()

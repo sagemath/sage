@@ -120,6 +120,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     Here's a nice example involving elliptic curves::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a')
         sage: L = E.lseries().at1(300)[0]; L
         0.2538418608559106843377589233...

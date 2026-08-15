@@ -268,6 +268,7 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
         sage: isogenies_prime_degree_genus_0(E, 5)
         []
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('1450c1')
         sage: isogenies_prime_degree_genus_0(E)
         [Isogeny of degree 3
@@ -276,6 +277,7 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
             to Elliptic Curve defined by y^2 + x*y = x^3 + x^2 - 5950*x - 182250
                over Rational Field]
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('50a1')
         sage: isogenies_prime_degree_genus_0(E)
         [Isogeny of degree 3
@@ -591,6 +593,7 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_sporadic_Q
         sage: E = EllipticCurve('121a1')
         sage: isogenies_sporadic_Q(E, 11)
@@ -735,6 +738,7 @@ def isogenies_2(E, minimal_models=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_2
         sage: E = EllipticCurve('14a1'); E
         Elliptic Curve defined by y^2 + x*y + y = x^3 + 4*x - 6 over Rational Field
@@ -790,6 +794,7 @@ def isogenies_3(E, minimal_models=True):
         sage: [phi.codomain().ainvs() for phi in isogenies_3(E)]                        # needs sage.rings.finite_rings
         [(0, 0, 0, 9, 7), (0, 0, 0, 0, 1), (0, 0, 0, 5*a + 1, a + 13), (0, 0, 0, 12*a + 6, 16*a + 14)]
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('19a1')
         sage: [phi.codomain().ainvs() for phi in isogenies_3(E)]
         [(0, 1, 1, 1, 0), (0, 1, 1, -769, -8470)]
@@ -1133,9 +1138,10 @@ def isogenies_7_0(E, minimal_models=True):
 
     Examples over a number field::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_7_0
-        sage: E = EllipticCurve('27a1').change_ring(QuadraticField(-3,'r'))             # needs sage.rings.number_field
-        sage: isogenies_7_0(E)                                                          # needs sage.rings.number_field
+        sage: E = EllipticCurve('27a1').change_ring(QuadraticField(-3,'r'))  # needs sage.rings.number_field
+        sage: isogenies_7_0(E)  # needs sage.rings.number_field
         [Isogeny of degree 7
           from Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r
                with defining polynomial x^2 + 3 with r = 1.732050807568878?*I
@@ -1872,6 +1878,7 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
 
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_prime_degree_genus_plus_0
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('121a1')
         sage: isogenies_prime_degree_genus_plus_0(E, 11)
         [Isogeny of degree 11
@@ -2482,16 +2489,17 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_prime_degree_general
-        sage: E = EllipticCurve_from_j(GF(2^6,'a')(1))                                  # needs sage.rings.finite_rings
-        sage: isogenies_prime_degree_general(E, 7)                                      # needs sage.rings.finite_rings
+        sage: E = EllipticCurve_from_j(GF(2^6,'a')(1))  # needs sage.rings.finite_rings
+        sage: isogenies_prime_degree_general(E, 7)  # needs sage.rings.finite_rings
         [Isogeny of degree 7
           from Elliptic Curve defined by y^2 + x*y = x^3 + 1
                over Finite Field in a of size 2^6
             to Elliptic Curve defined by y^2 + x*y = x^3 + x
                over Finite Field in a of size 2^6]
-        sage: E = EllipticCurve_from_j(GF(3^12,'a')(2))                                 # needs sage.rings.finite_rings
-        sage: isogenies_prime_degree_general(E, 17)                                     # needs sage.rings.finite_rings
+        sage: E = EllipticCurve_from_j(GF(3^12,'a')(2))  # needs sage.rings.finite_rings
+        sage: isogenies_prime_degree_general(E, 17)  # needs sage.rings.finite_rings
         [Isogeny of degree 17
           from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2
                over Finite Field in a of size 3^12
@@ -2655,16 +2663,17 @@ def isogenies_prime_degree(E, l, minimal_models=True):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_prime_degree
-        sage: E = EllipticCurve_from_j(GF(2^6,'a')(1))                                  # needs sage.rings.finite_rings
-        sage: isogenies_prime_degree(E, 7)                                              # needs sage.rings.finite_rings
+        sage: E = EllipticCurve_from_j(GF(2^6,'a')(1))  # needs sage.rings.finite_rings
+        sage: isogenies_prime_degree(E, 7)  # needs sage.rings.finite_rings
         [Isogeny of degree 7
           from Elliptic Curve defined by y^2 + x*y = x^3 + 1
                over Finite Field in a of size 2^6
             to Elliptic Curve defined by y^2 + x*y = x^3 + x
                over Finite Field in a of size 2^6]
-        sage: E = EllipticCurve_from_j(GF(3^12,'a')(2))                                 # needs sage.rings.finite_rings
-        sage: isogenies_prime_degree(E, 17)                                             # needs sage.rings.finite_rings
+        sage: E = EllipticCurve_from_j(GF(3^12,'a')(2))  # needs sage.rings.finite_rings
+        sage: isogenies_prime_degree(E, 17)  # needs sage.rings.finite_rings
         [Isogeny of degree 17
           from Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2
                over Finite Field in a of size 3^12

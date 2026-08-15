@@ -46,6 +46,7 @@ class pAdicLseries(SageObject):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('37a')
         sage: p = 5
         sage: prec = 4
@@ -57,6 +58,7 @@ class pAdicLseries(SageObject):
 
     ::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
         sage: E = EllipticCurve('20a')
         sage: phi = E.pollack_stevens_modular_symbol()
@@ -92,6 +94,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('11a3')
             sage: phi = E.pollack_stevens_modular_symbol()
@@ -129,6 +132,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a5')
             sage: L = E.padic_lseries(7,implementation='pollackstevens',precision=5) # long time
             sage: L[0]                                   # long time
@@ -171,6 +175,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: L = E.padic_lseries(11,implementation='pollackstevens',precision=6) # long time
             sage: L == loads(dumps(L)) # indirect doctest, long time
@@ -190,6 +195,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('11a')
             sage: L = E.padic_lseries(11,implementation='pollackstevens',precision=6) # long time
             sage: L != L  # long time
@@ -203,6 +209,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('21a4')
             sage: phi = E.pollack_stevens_modular_symbol()
@@ -222,6 +229,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('19a')
             sage: L = E.padic_lseries(19, implementation='pollackstevens',precision=6) # long time
             sage: L.prime()                   # long time
@@ -235,6 +243,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('37a')
             sage: phi = E.pollack_stevens_modular_symbol()
@@ -251,6 +260,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a2')
             sage: L = E.padic_lseries(3, implementation='pollackstevens', precision=4)  # long time
             sage: L._repr_()                           # long time
@@ -271,6 +281,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a2')
             sage: p = 3
             sage: prec = 6
@@ -278,11 +289,13 @@ class pAdicLseries(SageObject):
             sage: L.series(4)          # long time
             2*3 + 3^4 + 3^5 + O(3^6) + (2*3 + 3^2 + O(3^4))*T + (2*3 + O(3^2))*T^2 + (3 + O(3^2))*T^3 + O(T^4)
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("15a3")
             sage: L = E.padic_lseries(5,implementation='pollackstevens',precision=15)  # long time
             sage: L.series(3)            # long time
             O(5^15) + (2 + 4*5^2 + 3*5^3 + 5^5 + 2*5^6 + 3*5^7 + 3*5^8 + 2*5^9 + 2*5^10 + 3*5^11 + 5^12 + O(5^13))*T + (4*5 + 4*5^3 + 3*5^4 + 4*5^5 + 3*5^6 + 2*5^7 + 5^8 + 4*5^9 + 3*5^10 + O(5^11))*T^2 + O(T^3)
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve("79a1")
             sage: L = E.padic_lseries(2,implementation='pollackstevens',precision=10) # not tested
             sage: L.series(4)  # not tested
@@ -314,6 +327,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('19a2')
             sage: L = E.padic_lseries(3,implementation='pollackstevens',precision=6)  # long time
             sage: ap = E.ap(3)               # long time
@@ -356,6 +370,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('11a3')
             sage: L = E.padic_lseries(5, implementation='pollackstevens', precision=4) #long time

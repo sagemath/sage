@@ -1631,6 +1631,7 @@ class EllipticCurveMW(Benchmark):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.tests.benchmark import EllipticCurveMW
             sage: B = EllipticCurveMW([1,2,3,4,5])
             sage: isinstance(B.sage()[1], float)

@@ -975,6 +975,7 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.libs.lcalc.lcalc_Lfunction import Lfunction_from_elliptic_curve
         sage: L = Lfunction_from_elliptic_curve(EllipticCurve('37'))
         sage: L

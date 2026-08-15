@@ -71,6 +71,7 @@ def c4c6_nonsingular(c4, c6):
 
     Over `\QQ`::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.kraus import c4c6_nonsingular
         sage: c4c6_nonsingular(0,0)
         False
@@ -127,6 +128,7 @@ def c4c6_model(c4, c6, assume_nonsingular=False):
         Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336)
          over Number Field in a with defining polynomial x^3 - 10
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: c4, c6 = EllipticCurve('389a1').c_invariants()
         sage: c4c6_model(c4,c6)
         Elliptic Curve defined by y^2 = x^3 - 7/3*x + 107/108 over Rational Field

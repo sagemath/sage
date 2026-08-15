@@ -472,6 +472,7 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
 
     The values can be any kind of object::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: selector([sin(x^2), GF(29), EllipticCurve('37a1')])
         Dropdown(options=(sin(x^2), Finite Field of size 29, Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field), value=sin(x^2))
     """

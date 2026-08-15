@@ -76,6 +76,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: E = EllipticCurve('11a1')
         sage: E.weierstrass_p(prec=10)
         z^-2 + 31/15*z^2 + 2501/756*z^4 + 961/675*z^6 + 77531/41580*z^8 + O(z^10)

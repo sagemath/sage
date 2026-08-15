@@ -92,17 +92,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
 from sage.misc.verbose import verbose
-
+from sage.rings.ideal import Ideal_generic
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
-from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
-
-from sage.rings.number_field.number_field_base import NumberField
-from sage.rings.ideal import Ideal_generic
+from sage.structure.sage_object import SageObject
 
 from .constructor import EllipticCurve
 from .kodaira_symbol import KodairaSymbol
@@ -142,6 +140,7 @@ class EllipticCurveLocalData(SageObject):
 
     EXAMPLES::
 
+        sage: # needs database_cremona_mini_ellcurve
         sage: from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
         sage: E = EllipticCurve('14a1')
         sage: EllipticCurveLocalData(E,2)
@@ -189,6 +188,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
             sage: E = EllipticCurve('14a1')
             sage: EllipticCurveLocalData(E, 2)
@@ -295,6 +295,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
             sage: E = EllipticCurve('14a1')
             sage: EllipticCurveLocalData(E,2).__repr__()
@@ -473,6 +474,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: from sage.schemes.elliptic_curves.ell_local_data import EllipticCurveLocalData
             sage: E = EllipticCurve('816a1')
             sage: data = EllipticCurveLocalData(E, 2)
@@ -483,6 +485,7 @@ class EllipticCurveLocalData(SageObject):
             sage: data.tamagawa_exponent()
             2
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('200c4')
             sage: data = EllipticCurveLocalData(E, 5)
             sage: data.kodaira_symbol()
@@ -515,6 +518,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p,E.local_data(p).bad_reduction_type()) for p in prime_range(15)]
             [(2, -1), (3, None), (5, None), (7, 1), (11, None), (13, None)]
@@ -535,6 +539,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p,E.local_data(p).has_good_reduction()) for p in prime_range(15)]
             [(2, False), (3, True), (5, True), (7, False), (11, True), (13, True)]
@@ -556,6 +561,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p,E.local_data(p).has_bad_reduction()) for p in prime_range(15)]
             [(2, True), (3, False), (5, False), (7, True), (11, False), (13, False)]
@@ -584,6 +590,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.local_data(p).has_multiplicative_reduction()) for p in prime_range(15)]
             [(2, True), (3, False), (5, False), (7, True), (11, False), (13, False)]
@@ -606,6 +613,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.local_data(p).has_split_multiplicative_reduction())
             ....:  for p in prime_range(15)]
@@ -631,6 +639,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('14a1')
             sage: [(p, E.local_data(p).has_nonsplit_multiplicative_reduction())
             ....:  for p in prime_range(15)]
@@ -655,6 +664,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES::
 
+            sage: # needs database_cremona_mini_ellcurve
             sage: E = EllipticCurve('27a1')
             sage: [(p, E.local_data(p).has_additive_reduction()) for p in prime_range(15)]
             [(2, False), (3, True), (5, False), (7, False), (11, False), (13, False)]
@@ -704,7 +714,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES (this raised a type error in sage prior to 4.4.4, see :issue:`7930`) ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs database_cremona_mini_ellcurve sage.rings.number_field
             sage: E = EllipticCurve('99d1')
             sage: R.<X> = QQ[]
             sage: K.<t> = NumberField(X^3 + X^2 - 2*X - 1)
@@ -789,7 +799,7 @@ class EllipticCurveLocalData(SageObject):
         # no problem to do an explicit conversion in that
         # case (Simon King, github issue #8800).
 
-        from sage.categories.pushout import pushout, CoercionException
+        from sage.categories.pushout import CoercionException, pushout
         try:
             if hasattr(F.p.ring(), 'maximal_order'): # it is not ZZ
                 pushout(F.p.ring().maximal_order(), K)

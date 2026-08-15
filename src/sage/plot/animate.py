@@ -130,12 +130,13 @@ import shlex
 import struct
 import zlib
 
-from sage.misc.fast_methods import WithEqualityById
-from sage.structure.sage_object import SageObject
-from sage.misc.temporary_file import tmp_dir, tmp_filename
-from . import plot
 import sage.misc.misc
 import sage.misc.viewer
+from sage.misc.fast_methods import WithEqualityById
+from sage.misc.temporary_file import tmp_dir, tmp_filename
+from sage.structure.sage_object import SageObject
+
+from . import plot
 
 
 def animate(frames, **kwds):
@@ -515,7 +516,7 @@ class Animation(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.schemes
+            sage: # needs database_cremona_mini_ellcurve sage.schemes
             sage: E = EllipticCurve('37a')
             sage: v = [E.change_ring(GF(p)).plot(pointsize=30)
             ....:      for p in [97, 101, 103]]
@@ -619,8 +620,8 @@ class Animation(WithEqualityById, SageObject):
 
               See www.imagemagick.org and www.ffmpeg.org for more information.
         """
-        from sage.features.imagemagick import ImageMagick
         from sage.features.ffmpeg import FFmpeg
+        from sage.features.imagemagick import ImageMagick
 
         if not ImageMagick().is_present() and not FFmpeg().is_present():
             raise OSError("Error: Neither ImageMagick nor ffmpeg appear to "
@@ -970,17 +971,15 @@ class Animation(WithEqualityById, SageObject):
         if savefile is None:
             if output_format is None:
                 output_format = '.mpg'
-            else:
-                if output_format[0] != '.':
-                    output_format = '.'+output_format
+            elif output_format[0] != '.':
+                output_format = '.'+output_format
             savefile = tmp_filename(ext=output_format)
-        else:
-            if output_format is None:
-                suffix = os.path.splitext(savefile)[1]
-                if len(suffix) > 0:
-                    output_format = suffix
-                else:
-                    output_format = '.mpg'
+        elif output_format is None:
+            suffix = os.path.splitext(savefile)[1]
+            if len(suffix) > 0:
+                output_format = suffix
+            else:
+                output_format = '.mpg'
         if not savefile.endswith(output_format):
             savefile += output_format
         early_options = ''
@@ -1020,7 +1019,7 @@ class Animation(WithEqualityById, SageObject):
         cmd = 'cd {}; {} -nostdin -y -f image2 {} -i {} {} {}'.format(
             shlex.quote(pngdir), shlex.quote(FFmpeg().absolute_filename()),
             early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
-        from subprocess import check_call, CalledProcessError, PIPE
+        from subprocess import PIPE, CalledProcessError, check_call
         try:
             if sage.misc.verbose.get_verbose() > 0:
                 set_stderr = None
@@ -1452,9 +1451,8 @@ class APngAssembler:
                     if ref is None:
                         self._matchref[ctype] = cdata
                         self._copy()
-                    else:
-                        if cdata != ref:
-                            raise ValueError(f"Chunk {utype} mismatch")
+                    elif cdata != ref:
+                        raise ValueError(f"Chunk {utype} mismatch")
                 met = ("_first_" if self._first else "_next_") + utype
                 try:
                     met = getattr(self, met)
@@ -1784,8 +1782,9 @@ class APngAssembler:
             sage: from sage.plot.animate import APngAssembler
             sage: APngAssembler._testCase1()
         """
-        from sage.doctest.fixtures import trace_method
         from io import BytesIO
+
+        from sage.doctest.fixtures import trace_method
         buf = BytesIO()
         apng = cls(buf, 2)
         if methodToTrace is not None:
