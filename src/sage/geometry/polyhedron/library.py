@@ -356,6 +356,11 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         If this is not the case, the vectors will be scaled
         (each by a positive scalar) accordingly.
 
+        The dual point configuration depends on the chosen basis of a kernel.
+        For exact ordered rings, Sage normalizes a comparable global sign of
+        the computed basis to keep the representative stable under backend
+        changes that only reverse this sign.
+
     ALGORITHM:
 
     Step 1: If the center of the (input) vectors is not the origin,
@@ -489,7 +494,21 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         # then there exists a nonnegative value vector.
         raise ValueError("input vectors not totally cyclic")
 
-    return m.right_kernel_matrix(basis='computed').columns()
+    K = m.right_kernel_matrix(basis='computed')
+    if m.base_ring().is_exact():
+        # A kernel basis is only determined up to a change of basis.  Preserve
+        # the historical exact representative when backends differ by a
+        # comparable global sign, but leave unordered and inexact rings
+        # untouched.
+        for entry in K.list():
+            if entry:
+                try:
+                    if entry < 0:
+                        K = -K
+                except (TypeError, ValueError):
+                    pass
+                break
+    return K.columns()
 
 
 class Polytopes:

@@ -877,20 +877,22 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - ``algorithm`` -- (default: ``'default'``) a keyword that selects the
           algorithm employed.  Allowable values are:
 
-          - ``'default'`` -- equivalent to ``'padic'``
+          - ``'default'`` -- equivalent to ``'flint'``
+          - ``'flint'`` -- FLINT library code for matrices over the rationals,
+            after converting to a dense matrix
           - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
-            over the rationals and integers
+            over the rationals, after converting to a dense matrix
           - ``'linbox'`` -- LinBox library code for sparse matrices over the
             rationals
 
         OUTPUT:
 
         Returns a pair.  First item is a string that identifies the nature
-        of the basis vectors, either 'computed-iml-rational' or
-        'computed-linbox-rational'.
+        of the basis vectors, either 'computed-flint-rational',
+        'computed-iml-rational' or 'computed-linbox-rational'.
 
         Second item is a matrix whose nonzero rows are a basis for the right kernel,
-        over the rationals, as computed by the IML library or the LinBox library.
+        over the rationals, as computed by the selected library.
 
         EXAMPLES::
 
@@ -902,7 +904,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             ....:             sparse=True)
             sage: result = A._right_kernel_matrix()
             sage: result[0]
-            'computed-iml-rational'
+            'computed-flint-rational'
             sage: result[1]
             [-1  2 -2 -1  0]
             [ 1  2  0  0 -1]
@@ -940,8 +942,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
             :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`
         """
-        if algorithm == 'default' or algorithm == 'padic':
-            return self.dense_matrix()._right_kernel_matrix()
+        if algorithm in ['default', 'flint', 'padic']:
+            return self.dense_matrix()._right_kernel_matrix(algorithm=algorithm)
         elif algorithm == 'linbox':
             return self._right_kernel_matrix_linbox()
         else:

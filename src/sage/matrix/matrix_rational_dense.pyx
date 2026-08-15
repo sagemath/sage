@@ -1458,20 +1458,23 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``kwds`` -- these are provided for consistency with other versions
-          of this method.  Here they are ignored as there is no optional
-          behavior available.
+        - ``algorithm`` -- determines which algorithm to use, options are:
+
+          - ``'flint'`` -- use the algorithm from the FLINT library
+          - ``'padic'`` -- use the `p`-adic algorithm from the IML library
+          - ``'default'`` -- choose ``'flint'`` or ``'padic'`` automatically
+            from the matrix dimensions (this is the default value); ``'flint'``
+            is used except for large, nearly-square matrices, where ``'padic'``
+            is faster
 
         OUTPUT:
 
-        Returns a pair.  First item is the string 'computed-iml-rational'
-        that identifies the nature of the basis vectors.
+        Returns a pair.  First item is either 'computed-flint-rational'
+        or 'computed-iml-rational', identifying the nature of the basis
+        vectors.
 
         Second item is a matrix whose rows are a basis for the right kernel,
-        over the rationals, as computed by the IML library.  Notice that the
-        IML library returns a matrix that is in the 'pivot' format, once the
-        whole matrix is multiplied by -1.  So the 'computed' format is very
-        close to the 'pivot' format.
+        over the rationals.
 
         EXAMPLES::
 
@@ -1482,7 +1485,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             ....:                 [4, -1, 0, -6, 2]])
             sage: result = A._right_kernel_matrix()
             sage: result[0]
-            'computed-iml-rational'
+            'computed-flint-rational'
             sage: result[1]
             [-1  2 -2 -1  0]
             [ 1  2  0  0 -1]
@@ -1490,8 +1493,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: A*X == zero_matrix(QQ, 4, 2)
             True
 
-        Computed result is the negative of the pivot basis, which
-        is just slightly more efficient to compute. ::
+        For this example, the computed result is the negative of the pivot
+        basis. ::
 
             sage: A.right_kernel_matrix(basis='pivot') == -A.right_kernel_matrix(basis='computed')
             True
@@ -1512,17 +1515,57 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [1 0 0]
             [0 1 0]
             [0 0 1]
-       """
+
+        The default backend is selected from the matrix dimensions: small
+        matrices, and large matrices that are far from square, use FLINT, while
+        large nearly-square matrices use the p-adic IML algorithm. ::
+
+            sage: matrix(QQ, 8, 9)._right_kernel_matrix()[0]      # small
+            'computed-flint-rational'
+            sage: matrix(QQ, 120, 121)._right_kernel_matrix()[0]  # large, nearly square
+            'computed-iml-rational'
+            sage: matrix(QQ, 80, 200)._right_kernel_matrix()[0]   # large, far from square
+            'computed-flint-rational'
+
+        An explicit ``algorithm`` is always honored, overriding the heuristic. ::
+
+            sage: matrix(QQ, 120, 121)._right_kernel_matrix(algorithm='flint')[0]
+            'computed-flint-rational'
+            sage: matrix(QQ, 8, 9)._right_kernel_matrix(algorithm='padic')[0]
+            'computed-iml-rational'
+        """
         tm = verbose("computing right kernel matrix over the rationals for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
+        algorithm = kwds.pop('algorithm', None)
+        if algorithm is None or algorithm == 'default':
+            # Choose the backend from the matrix dimensions alone: computing the
+            # rank to detect the nullity would cost as much as the kernel itself.
+            # FLINT is fastest in general, but its fraction-free nullspace blows
+            # up (up to ~10x slower than IML, growing with size) on large,
+            # nearly-square matrices with a small nullity, so route that regime
+            # to the p-adic IML algorithm.
+            m, n = self._nrows, self._ncols
+            if max(m, n) <= 100:
+                algorithm = 'flint'
+            elif abs(m - n) <= 0.1 * max(m, n) + 3:
+                algorithm = 'padic'
+            else:
+                algorithm = 'flint'
+        elif algorithm not in ['flint', 'padic']:
+            raise ValueError('unknown algorithm: %s' % algorithm)
+
         # _rational_kernel_flint() gets the zero-row case wrong, fix it there
         if self.nrows()==0:
             from sage.matrix.constructor import identity_matrix
             K = identity_matrix(QQ, self.ncols())
+        elif algorithm == 'flint':
+            A, _ = self._clear_denom()
+            K = A._rational_kernel_flint().transpose().change_ring(QQ)
         else:
             A, _ = self._clear_denom()
             K = A._rational_kernel_iml().transpose().change_ring(QQ)
+        format = 'computed-iml-rational' if algorithm == 'padic' else 'computed-flint-rational'
         verbose("done computing right kernel matrix over the rationals for %sx%s matrix" % (self.nrows(), self.ncols()),level=1, t=tm)
-        return 'computed-iml-rational', K
+        return format, K
 
     # ###############################################
     # Change ring
