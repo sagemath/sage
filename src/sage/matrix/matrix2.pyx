@@ -15170,21 +15170,33 @@ cdef class Matrix(Matrix1):
 
             for i in range(k+1, n):
                 a_ik_abs = A.get_unsafe(i, k).abs()
-                if a_ik_abs > omega_1 or (r == 0 and a_ik_abs):
+                if a_ik_abs > omega_1:
                     # We record the index "r" that corresponds to
                     # omega_1 for later. This is still part of Step
                     # (1) in B&K, but occurs later in the "else"
                     # branch of Higham's Step (1), separate from
                     # his computation of omega_1.
-                    #
-                    # The comparison a_ik_abs > omega_1 casts a_ik_abs
-                    # to double, and a small nonzero a_ik_abs can thus
-                    # become zero. We cannot fail the comparison in
-                    # that case however because if we never set r=i,
-                    # we'll short-circuit the computation after the
-                    # loop has completed! This explains the "or ..."
                     omega_1 = a_ik_abs
                     r = i
+
+            if r == 0:
+                # We didn't find a non-zero subdiagonal entry when
+                # comparing them as C doubles (fast). Try an exact
+                # (slow) comparison instead, and quit as soon as we
+                # find something non-zero. This can be necessary if
+                # every non-zero subdiagonal entry is too small to be
+                # represented as a C double. There is no need to set
+                # omega_1 = a_ik_abs in this case because omega_1 is a
+                # C double, and will end up zero. Likewise there is no
+                # need to record the largest entry because they all
+                # differ by an amount too small to matter. It is
+                # however important that we set r=i to avoid the "if
+                # (r == 0) ... continue" that follows.
+                for i in range(k+1, n):
+                    a_ik_abs = A.get_unsafe(i, k).abs()
+                    if a_ik_abs:
+                        r = i
+                        break
 
             if r == 0:
                 # In this case, our matrix looks like
