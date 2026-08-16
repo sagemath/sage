@@ -8,5 +8,6 @@
 # Everything on a line after a # character is ignored.
 #
 pkgconf
+make
 zlib
 boost

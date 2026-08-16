@@ -253,7 +253,11 @@ TEST_OPTIONAL = sage,optional
 # Keep track of the top-level *test* Makefile target for logging.
 TEST_TARGET = $@
 
-TEST = ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
+# In a non-verbose editable install, meson-python invokes Ninja on every
+# import, even when there is nothing to rebuild.  The check performed in
+# verbose mode captures the no-op Ninja output, preventing jobserver warnings
+# from leaking into the output of subprocess doctests (see issue #40869).
+TEST = MESONPY_EDITABLE_VERBOSE=1 ./sage -t --logfile=$(TEST_LOG) $(TEST_FLAGS) --optional=$(TEST_OPTIONAL) $(TEST_FILES)
 
 test-git-no-uncommitted-changes:
 	./tools/test-git-no-uncommitted-changes

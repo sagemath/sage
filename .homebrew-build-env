@@ -7,6 +7,12 @@ for l in bzip2 texinfo polymake; do
         PATH="$HOMEBREW/opt/$l/bin:$PATH"
     fi
 done
+# Homebrew installs GNU make as "gmake" to avoid shadowing the system make.
+# Use its "make" symlink as well: GNU make 4.4 and later use the FIFO
+# jobserver protocol supported by Ninja 1.13 and later.
+if [ -d "$HOMEBREW/opt/make/libexec/gnubin" ]; then
+    PATH="$HOMEBREW/opt/make/libexec/gnubin:$PATH"
+fi
 export PATH
 if [ -z "$PKG_CONFIG_PATH" ]; then
     PKG_CONFIG_PATH="$HOMEBREW/lib/pkgconfig"

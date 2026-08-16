@@ -15,7 +15,8 @@ computer:
 - **C compiler** (**C/C++** - compiler required on macOS): a sufficently modern compiler.
   Ideally these can be directly used to build Sage. The options are essentially GNU gcc/g++ on Linux,
   and clang/clang++ on macOS (which conventionally misnames them gcc/g++), on BSDs, and also on Linux.
-- **make**: GNU make, version 3.80 or later. Version 3.82 or later is recommended.
+- **make**: GNU make, version 3.80 or later. Version 4.4 or later is recommended
+  so that Ninja can use its FIFO-based jobserver protocol.
 - **m4**: GNU m4 1.4.2 or later (non-GNU or older versions might also work).
 - **perl**: version 5.8.0 or later.
 - **ar** and **ranlib**: can be obtained as part of GNU binutils.
