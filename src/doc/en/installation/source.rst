@@ -131,8 +131,8 @@ Using Conda
 
 
 To rebuild the documentation after editing it, see
-`Building the manuals <../developer/sage_manuals.html#building-the-manuals>`_
-in the Sage Developer's Guide.
+:ref:`Building the manuals <section-building-manuals>` in the Sage Developer's
+Guide.
 
 
 .. _system_package_manager:
