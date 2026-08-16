@@ -128,7 +128,11 @@ _CommRings = CommutativeRings()
 MPolynomialIdeal_quotient = None
 
 
-def QuotientRing(R, I, names=None, **kwds):
+# The return annotation is only there for the typing info: it exists so that
+# static type checkers can infer the return type of ``QuotientRing``.
+# ``QuotientRing_generic`` is the common base of the generic quotient ring and
+# the polynomial quotient ring implementations.
+def QuotientRing(R, I, names=None, **kwds) -> QuotientRing_generic:
     r"""
     Create a quotient ring of the ring `R` by the twosided ideal `I`.
 
@@ -279,6 +283,16 @@ def QuotientRing(R, I, names=None, **kwds):
         True
         sage: I = R.ideal(0)
         sage: R is R.quotient(I)
+        True
+
+    TESTS:
+
+    The return annotation matches the runtime type for the common cases::
+
+        sage: from sage.rings.quotient_ring import QuotientRing_generic
+        sage: isinstance(QuotientRing(ZZ, 2*ZZ), QuotientRing_generic)
+        True
+        sage: isinstance(QuotientRing(QQ['x'], QQ['x'].gen()**2), QuotientRing_generic)
         True
     """
     # 1. Not all rings inherit from the base class of rings.

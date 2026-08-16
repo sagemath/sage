@@ -176,9 +176,14 @@ except ImportError:
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
+# The return annotation is only there for the typing info: it exists so that
+# static type checkers can infer the return type of ``PowerSeriesRing``.
+# ``PowerSeriesRing_generic`` is the common base of the univariate
+# (``PowerSeriesRing_domain`` / ``PowerSeriesRing_over_field``) and the
+# multivariate (``MPowerSeriesRing_generic``) implementations.
 def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
                     sparse=False, default_prec=None, order='negdeglex',
-                    num_gens=None, implementation=None):
+                    num_gens=None, implementation=None) -> PowerSeriesRing_generic:
     r"""
     Create a univariate or multivariate power series ring over a given
     (commutative) base ring.
@@ -352,6 +357,18 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     .. SEEALSO::
 
         * :func:`sage.misc.defaults.set_series_precision`
+
+    TESTS:
+
+    The return annotation matches the runtime type for the common cases::
+
+        sage: from sage.rings.power_series_ring import PowerSeriesRing_generic
+        sage: isinstance(PowerSeriesRing(ZZ, 'x'), PowerSeriesRing_generic)
+        True
+        sage: isinstance(PowerSeriesRing(QQ, 'x'), PowerSeriesRing_generic)
+        True
+        sage: isinstance(PowerSeriesRing(ZZ, 2, 'x,y'), PowerSeriesRing_generic)
+        True
     """
     # multivariate case:
     # examples for first case:
