@@ -56,7 +56,8 @@ order to build an **HTML** version of this document, type
 Here and below, replace ``builddir`` with the Meson build directory.  An
 editable pip installation uses ``build/cpXY``, where ``X`` and ``Y`` are the
 major and minor Python versions; for example, Python 3.12 uses ``build/cp312``.
-See :ref:`section-meson-build-directory` for details.  You can now open
+A build using Sage's top-level Makefile uses ``build/sage-distro``.  See
+:ref:`section-meson-build-directory` for details.  You can now open
 :file:`builddir/src/doc/html/en/tutorial/index.html` in your web browser.
 
 - Do you want to **add a new file** to the documentation? :ref:`Click here
@@ -326,8 +327,9 @@ around Sphinx.  The pip-installed ``sage`` command does not provide the legacy
 
 In the commands below, replace ``builddir`` with the Meson build directory.
 For an editable pip installation this is ``build/cpXY``, such as
-``build/cp312`` for Python 3.12; see
-:ref:`section-meson-build-directory`.  To build all HTML or PDF manuals, use
+``build/cp312`` for Python 3.12.  A build using Sage's top-level Makefile uses
+``build/sage-distro``; see :ref:`section-meson-build-directory`.  To build all
+HTML or PDF manuals, use
 
 .. code-block:: console
 

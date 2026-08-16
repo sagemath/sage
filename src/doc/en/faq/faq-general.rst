@@ -292,8 +292,9 @@ During the compilation of Sage from source, the HTML version of the
 documentation can be built using its Meson target.  In the commands below,
 replace ``builddir`` with the Meson build directory.  An editable pip
 installation uses ``build/cpXY``, such as ``build/cp312`` for Python 3.12;
-see :ref:`section-meson-build-directory`.  To build the HTML version, issue
-the following command from ``SAGE_ROOT``:
+a build using Sage's top-level Makefile uses ``build/sage-distro``.  See
+:ref:`section-meson-build-directory`.  To build the HTML version, issue the
+following command from ``SAGE_ROOT``:
 
 .. code-block:: console
 

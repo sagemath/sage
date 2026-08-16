@@ -130,30 +130,9 @@ Using Conda
         $ pip install -Ceditable-verbose=true  -Csetup-args="-Dbuild-docs=False" --no-build-isolation --editable .
 
 
-.. _section-building-manuals-pip:
-
-Building the manuals
-^^^^^^^^^^^^^^^^^^^^
-
-To rebuild the documentation after editing it, use the Meson targets from the
-build directory.  For example, the Python 3.12 environment above uses
-``build/cp312``:
-
-.. code-block:: console
-
-    $ meson compile -C build/cp312 doc-html
-    $ meson compile -C build/cp312 doc-pdf
-
-Replace ``cp312`` with the tag for the Python version in the active
-environment, such as ``cp313`` for Python 3.13.  Targets for individual
-manuals include, for example:
-
-.. code-block:: console
-
-    $ meson compile -C build/cp312 doc-html-other-en-tutorial
-    $ meson compile -C build/cp312 doc-pdf-other-en-tutorial
-
-There is no need to install :sage_root:`pkgs/sage-docbuild` separately.
+To rebuild the documentation after editing it, see
+`Building the manuals <../developer/sage_manuals.html#building-the-manuals>`_
+in the Sage Developer's Guide.
 
 
 .. _system_package_manager:
