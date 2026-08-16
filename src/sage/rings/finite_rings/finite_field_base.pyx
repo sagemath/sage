@@ -39,6 +39,7 @@ from sage.categories.finite_fields import FiniteFields
 from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
+from sage.rings.finite_rings.element_base import FinitePolyExtElement
 from sage.rings.integer cimport Integer
 import sage.rings.abc
 
@@ -448,7 +449,7 @@ cdef class FiniteField(Field):
         """
         return self.degree()
 
-    def from_integer(self, n, reverse=False):
+    def from_integer(self, n, reverse=False) -> FinitePolyExtElement:
         r"""
         Return the finite field element obtained by reinterpreting the base-`p`
         expansion of `n` as a polynomial and evaluating it at the generator of
@@ -490,6 +491,15 @@ cdef class FiniteField(Field):
             Traceback (most recent call last):
             ...
             ValueError: n must be between 0 and self.order()
+
+        The return annotation matches the runtime type for every backend::
+
+            sage: all(isinstance(GF(2**8, 'a', implementation=impl).from_integer(0x57),
+            ....:                 FinitePolyExtElement)
+            ....:     for impl in ('givaro', 'ntl', 'pari_ffelt'))
+            True
+            sage: FiniteField.from_integer.__annotations__['return']
+            'FinitePolyExtElement'
         """
         n = Integer(n)
         if not 0 <= n < self.order():
@@ -684,7 +694,7 @@ cdef class FiniteField(Field):
 
         return Factorization(factors, unit=unit, sort=False)
 
-    def gen(self):
+    def gen(self) -> FinitePolyExtElement:
         r"""
         Return a generator of this field (over its prime field). As this is an
         abstract base class, this just raises a :exc:`NotImplementedError`.
@@ -700,7 +710,7 @@ cdef class FiniteField(Field):
         raise NotImplementedError
 
     @cached_method
-    def multiplicative_generator(self):
+    def multiplicative_generator(self) -> FinitePolyExtElement:
         """
         Return a primitive element of this finite field, i.e. a
         generator of the multiplicative group.
@@ -1050,7 +1060,7 @@ cdef class FiniteField(Field):
         """
         return self.order() - 1
 
-    def random_element(self, *args, **kwds):
+    def random_element(self, *args, **kwds) -> FinitePolyExtElement:
         r"""
         A random element of the finite field.  Passes arguments to
         ``random_element()`` function of underlying vector space.
