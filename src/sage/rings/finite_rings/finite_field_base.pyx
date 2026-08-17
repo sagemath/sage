@@ -499,6 +499,7 @@ cdef class FiniteField(Field):
             ....:                 FinitePolyExtElement)
             ....:     for impl in ('givaro', 'ntl', 'pari_ffelt'))
             True
+            sage: from sage.rings.finite_rings.finite_field_base import FiniteField
             sage: FiniteField.from_integer.__annotations__['return']
             'FinitePolyExtElement'
         """
