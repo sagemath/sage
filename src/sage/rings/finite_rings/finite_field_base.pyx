@@ -494,6 +494,7 @@ cdef class FiniteField(Field):
 
         The return annotation matches the runtime type for every backend::
 
+            sage: from sage.rings.finite_rings.element_base import FinitePolyExtElement
             sage: all(isinstance(GF(2**8, 'a', implementation=impl).from_integer(0x57),
             ....:                 FinitePolyExtElement)
             ....:     for impl in ('givaro', 'ntl', 'pari_ffelt'))
