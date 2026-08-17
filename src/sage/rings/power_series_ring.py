@@ -132,6 +132,7 @@ TESTS::
     True
     sage: TestSuite(M).run()
 """
+from __future__ import annotations
 
 from sage.categories import commutative_rings
 from sage.misc import latex

@@ -108,6 +108,8 @@ easily::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 import sage.interfaces.abc
 from sage.misc import latex
 import sage.structure.parent_gens
