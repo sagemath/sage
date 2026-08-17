@@ -419,8 +419,11 @@ class SupersingularModule(HeckeModule_free_module):
             raise ValueError("the argument prime must be a prime number")
         if prime.divides(level):
             raise ValueError("the argument level must be coprime to the argument prime")
-        if level != 1:
-            raise NotImplementedError("supersingular modules of level > 1 not yet implemented")
+        if level not in (1, 6):
+            raise NotImplementedError(
+                "supersingular modules of levels other than 1 and 6 "
+                "are not yet implemented"
+            )
         self.__prime = prime
         self.__finite_field = FiniteField(prime**2, 'a')
         self.__level = level
@@ -545,6 +548,8 @@ class SupersingularModule(HeckeModule_free_module):
         if self.__level == 1:
             G = Gamma0(self.__prime)
             return G.dimension_modular_forms(2)
+        if self.__level == 6:
+            return self.__prime - 1
         raise NotImplementedError
 
     rank = dimension
@@ -621,6 +626,398 @@ class SupersingularModule(HeckeModule_free_module):
         """
         return 2
 
+
+    # ----------------------------------------------------------------
+    # Level 6 geometry
+    # ----------------------------------------------------------------
+
+    @staticmethod
+    def _level6_same_subgroup(H, K):
+        return all(P in K for P in H) and all(P in H for P in K)
+
+    @staticmethod
+    def _level6_cyclic_subgroup(P, n):
+        return [k * P for k in range(n)]
+
+    @staticmethod
+    def _level6_j_kind(j):
+        F = j.parent()
+        if j == F(0):
+            return "j=0"
+        if j == F(1728):
+            return "j=1728"
+        return "generic"
+
+    @classmethod
+    def _level6_expected_orbit_count(cls, j):
+        kind = cls._level6_j_kind(j)
+        if kind == "j=0":
+            return ZZ(4)
+        if kind == "j=1728":
+            return ZZ(6)
+        return ZZ(12)
+
+    @classmethod
+    def _level6_expected_orbit_size(cls, j):
+        kind = cls._level6_j_kind(j)
+        if kind == "j=0":
+            return ZZ(3)
+        if kind == "j=1728":
+            return ZZ(2)
+        return ZZ(1)
+
+    @cached_method
+    def _level6_j_invariants(self):
+        """
+        Return all supersingular j-invariants in characteristic p,
+        including the special values 0 and 1728 when appropriate.
+        """
+        from sage.schemes.elliptic_curves.ell_finite_field import (
+            supersingular_j_polynomial,
+        )
+
+        Fp2 = self.__finite_field
+        p = self.__prime
+
+        roots = supersingular_j_polynomial(p).change_ring(Fp2).roots(
+            multiplicities=False
+        )
+
+        j_list = []
+
+        if p % 3 == 2:
+            j_list.append(Fp2(0))
+
+        if p % 4 == 3:
+            j1728 = Fp2(1728)
+            if j1728 not in j_list:
+                j_list.append(j1728)
+
+        for j in roots:
+            if j not in j_list:
+                j_list.append(j)
+
+        if not j_list:
+            raise RuntimeError("no supersingular j-invariants found")
+
+        return tuple(j_list)
+
+    @cached_method
+    def _level6_models_Fp2(self):
+        from sage.schemes.elliptic_curves.constructor import EllipticCurve
+
+        return tuple(
+            EllipticCurve(j=j)
+            for j in self._level6_j_invariants()
+        )
+
+    def _level6_field_and_models(self, degree):
+        degree = ZZ(degree)
+
+        if degree % 2:
+            raise ValueError("degree must be even")
+
+        K = FiniteField(
+            self.__prime**degree,
+            name=f"z{degree}",
+        )
+
+        emb = self.__finite_field.an_embedding(K)
+
+        models = tuple(
+            E.change_ring(emb)
+            for E in self._level6_models_Fp2()
+        )
+
+        j_list = tuple(
+            emb(j)
+            for j in self._level6_j_invariants()
+        )
+
+        return K, emb, models, j_list
+
+    @staticmethod
+    def _level6_torsion_points(E, ell):
+        ell = ZZ(ell)
+        O = E.zero()
+
+        psi = E.division_polynomial(ell)
+        roots = psi.roots(multiplicities=False)
+
+        points = [O]
+
+        for x0 in roots:
+            for P in E.lift_x(x0, all=True):
+                if ell * P == O and P not in points:
+                    points.append(P)
+
+        return points
+
+    def _level6_all_models_have_full_torsion(self, degree, ells):
+        _, _, models, _ = self._level6_field_and_models(degree)
+
+        for E in models:
+            for ell in ells:
+                ell = ZZ(ell)
+                if len(self._level6_torsion_points(E, ell)) != ell**2:
+                    return False
+
+        return True
+
+    def _level6_find_common_torsion_degree(self, ells):
+        """
+        Find a common field containing the required torsion.
+
+        This initially follows the already-tested level-6 prototype.
+        """
+        ells = tuple(ZZ(ell) for ell in ells)
+
+        for degree in range(2, 37, 2):
+            if self._level6_all_models_have_full_torsion(degree, ells):
+                return ZZ(2 * degree)
+
+        raise RuntimeError(
+            "could not find a common torsion field of degree at most 36"
+        )
+
+    def _level6_cyclic_C6_subgroups(self, E):
+        E2 = self._level6_torsion_points(E, 2)
+        E3 = self._level6_torsion_points(E, 3)
+
+        if len(E2) != 4 or len(E3) != 9:
+            raise RuntimeError("full E[2] and E[3] are required")
+
+        O = E.zero()
+
+        E6 = []
+
+        for P2 in E2:
+            for P3 in E3:
+                P = P2 + P3
+                if P not in E6:
+                    E6.append(P)
+
+        if len(E6) != 36:
+            raise RuntimeError(
+                f"expected 36 points in E[6], got {len(E6)}"
+            )
+
+        exact6 = [
+            P for P in E6
+            if P != O
+            and 2 * P != O
+            and 3 * P != O
+            and 6 * P == O
+        ]
+
+        if len(exact6) != 24:
+            raise RuntimeError(
+                f"expected 24 points of exact order 6, got {len(exact6)}"
+            )
+
+        subgroups = []
+
+        for P in exact6:
+            H = self._level6_cyclic_subgroup(P, 6)
+
+            if not any(
+                self._level6_same_subgroup(H, K)
+                for K in subgroups
+            ):
+                subgroups.append(H)
+
+        if len(subgroups) != 12:
+            raise RuntimeError(
+                f"expected 12 cyclic C6 subgroups, got {len(subgroups)}"
+            )
+
+        return tuple(subgroups)
+
+    def _level6_find_raw_C6_index(self, H, C6_list):
+        matches = [
+            i for i, C in enumerate(C6_list)
+            if self._level6_same_subgroup(H, C)
+        ]
+
+        if len(matches) != 1:
+            raise RuntimeError(
+                f"C6 matched {len(matches)} raw subgroups; expected 1"
+            )
+
+        return ZZ(matches[0])
+
+    def _level6_C6_automorphism_orbits(self, E, C6_list):
+        auts = tuple(E.automorphisms())
+
+        if not auts:
+            raise RuntimeError("E.automorphisms() returned no automorphisms")
+
+        unseen = set(range(len(C6_list)))
+        orbits = []
+
+        while unseen:
+            i = min(unseen)
+            C = C6_list[i]
+
+            orbit = set()
+
+            for alpha in auts:
+                image = [alpha(P) for P in C]
+                j = self._level6_find_raw_C6_index(
+                    image,
+                    C6_list,
+                )
+                orbit.add(int(j))
+
+            orbit = tuple(sorted(orbit))
+            orbits.append(orbit)
+
+            for j in orbit:
+                unseen.discard(j)
+
+        raw_to_orbit = [None] * len(C6_list)
+
+        for orbit_index, orbit in enumerate(orbits):
+            for raw_index in orbit:
+                if raw_to_orbit[raw_index] is not None:
+                    raise RuntimeError(
+                        "raw C6 appears in two automorphism orbits"
+                    )
+
+                raw_to_orbit[raw_index] = ZZ(orbit_index)
+
+        if any(x is None for x in raw_to_orbit):
+            raise RuntimeError(
+                "automorphism orbits did not cover all C6 subgroups"
+            )
+
+        j = E.j_invariant()
+
+        expected_count = self._level6_expected_orbit_count(j)
+        expected_size = self._level6_expected_orbit_size(j)
+
+        if len(orbits) != expected_count:
+            raise RuntimeError(
+                f"{self._level6_j_kind(j)}: expected "
+                f"{expected_count} C6 orbits, got {len(orbits)}"
+            )
+
+        sizes = [len(orbit) for orbit in orbits]
+
+        if sizes != [expected_size] * expected_count:
+            raise RuntimeError(
+                f"{self._level6_j_kind(j)}: unexpected orbit sizes "
+                f"{sizes}"
+            )
+
+        return auts, tuple(orbits), tuple(raw_to_orbit)
+
+    def _level6_build_geometry_over_degree(self, degree):
+        """
+        Build the level-6 supersingular basis over GF(p^degree).
+        """
+        K, emb, models, j_list = self._level6_field_and_models(degree)
+
+        C6_raw_by_j = []
+        automorphisms_by_j = []
+        C6_orbits_by_j = []
+        raw_to_orbit_by_j = []
+
+        for E in models:
+            raw = self._level6_cyclic_C6_subgroups(E)
+
+            auts, orbits, raw_to_orbit = (
+                self._level6_C6_automorphism_orbits(E, raw)
+            )
+
+            C6_raw_by_j.append(raw)
+            automorphisms_by_j.append(auts)
+            C6_orbits_by_j.append(orbits)
+            raw_to_orbit_by_j.append(raw_to_orbit)
+
+        basis = []
+
+        for j_index, orbits in enumerate(C6_orbits_by_j):
+            raw_list = C6_raw_by_j[j_index]
+
+            for orbit_index, orbit in enumerate(orbits):
+                rep_raw = ZZ(orbit[0])
+
+                basis.append((
+                    ZZ(j_index),
+                    ZZ(orbit_index),
+                    rep_raw,
+                    raw_list[rep_raw],
+                ))
+
+        if len(basis) != self.__prime - 1:
+            raise RuntimeError(
+                f"level-6 basis has dimension {len(basis)}, "
+                f"expected {self.__prime - 1}"
+            )
+
+        return {
+            "degree": ZZ(degree),
+            "field": K,
+            "embedding": emb,
+            "models": tuple(models),
+            "j_list": tuple(j_list),
+            "C6_raw_by_j": tuple(C6_raw_by_j),
+            "automorphisms_by_j": tuple(automorphisms_by_j),
+            "C6_orbits_by_j": tuple(C6_orbits_by_j),
+            "raw_to_orbit_by_j": tuple(raw_to_orbit_by_j),
+            "basis": tuple(basis),
+        }
+
+    @cached_method
+    def _level6_geometry(self):
+        degree = self._level6_find_common_torsion_degree((2, 3))
+        return self._level6_build_geometry_over_degree(degree)
+
+    def _level6_orbit_structure(self):
+        data = self._level6_geometry()
+
+        rows = []
+
+        for j_index, j in enumerate(data["j_list"]):
+            rows.append((
+                self._level6_j_kind(j),
+                len(data["automorphisms_by_j"][j_index]),
+                len(data["C6_raw_by_j"][j_index]),
+                len(data["C6_orbits_by_j"][j_index]),
+                tuple(
+                    len(orbit)
+                    for orbit in data["C6_orbits_by_j"][j_index]
+                ),
+            ))
+
+        return tuple(rows)
+
+
+    def _level6_supersingular_points(self):
+        """
+        Return representatives for the level-6 supersingular basis.
+
+        Each entry is a tuple
+
+            (j_index, orbit_index, E, C6, raw_orbit_indices),
+
+        representing an isomorphism class of pairs (E, C6).
+        """
+        data = self._level6_geometry()
+        out = []
+
+        for j_index, orbit_index, rep_raw, C in data["basis"]:
+            out.append((
+                j_index,
+                orbit_index,
+                data["models"][j_index],
+                C,
+                data["C6_orbits_by_j"][j_index][orbit_index],
+            ))
+
+        return tuple(out)
+
     @cached_method
     def supersingular_points(self):
         r"""
@@ -662,6 +1059,9 @@ class SupersingularModule(HeckeModule_free_module):
 
         - Iftikhar Burhanuddin -- burhanud@usc.edu
         """
+        if self.__level == 6:
+            return self._level6_supersingular_points()
+
         Fp2 = self.__finite_field
         level = self.__level
         prime = Fp2.characteristic()
@@ -770,6 +1170,229 @@ class SupersingularModule(HeckeModule_free_module):
             verbose('got dimension = %s; new bound = %s' % (dim, bnd), tm)
         return bnd
 
+
+    def _level6_geometry_for_hecke_prime(self, q):
+        q = ZZ(q)
+
+        if not q.is_prime():
+            raise ValueError("q must be prime")
+        if q.gcd(6 * self.__prime) != 1:
+            raise ValueError("q must be coprime to 6p")
+
+        degree = self._level6_find_common_torsion_degree((2, 3, q))
+        return self._level6_build_geometry_over_degree(degree)
+
+    @staticmethod
+    def _level6_find_j_index(j_value, j_list):
+        matches = [
+            i for i, j in enumerate(j_list)
+            if j == j_value
+        ]
+
+        if len(matches) != 1:
+            raise RuntimeError(
+                f"could not uniquely identify target j={j_value}"
+            )
+
+        return ZZ(matches[0])
+
+    def _level6_find_C6_orbit_index(
+        self,
+        H,
+        target_j,
+        C6_raw_by_j,
+        raw_to_orbit_by_j,
+    ):
+        raw_index = self._level6_find_raw_C6_index(
+            H,
+            C6_raw_by_j[target_j],
+        )
+
+        return raw_to_orbit_by_j[target_j][raw_index]
+
+    def _level6_q_isogeny_data(self, q, data):
+        """
+        Return the q-isogenies from every fixed supersingular model.
+        """
+        q = ZZ(q)
+
+        models = data["models"]
+        j_list = data["j_list"]
+
+        isogeny_data = {}
+
+        for source_j, E in enumerate(models):
+            Eq = self._level6_torsion_points(E, q)
+
+            if len(Eq) != q**2:
+                raise RuntimeError(
+                    f"full E[{q}] is not rational over the working field"
+                )
+
+            O = E.zero()
+            kernels = []
+
+            for P in Eq:
+                if P == O:
+                    continue
+
+                D = self._level6_cyclic_subgroup(P, q)
+
+                if not any(
+                    self._level6_same_subgroup(D, K)
+                    for K in kernels
+                ):
+                    kernels.append(D)
+
+            if len(kernels) != q + 1:
+                raise RuntimeError(
+                    f"expected {q + 1} cyclic order-{q} kernels, "
+                    f"got {len(kernels)}"
+                )
+
+            local = []
+
+            for D in kernels:
+                Pgen = next(P for P in D if P != O)
+                phi = E.isogeny(Pgen)
+
+                if phi.degree() != q:
+                    raise RuntimeError("wrong isogeny degree")
+
+                if not phi(Pgen).is_zero():
+                    raise RuntimeError(
+                        "kernel generator was not killed"
+                    )
+
+                E2 = phi.codomain()
+
+                target_j = self._level6_find_j_index(
+                    E2.j_invariant(),
+                    j_list,
+                )
+
+                target_model = models[target_j]
+                isos = tuple(
+                    E2.isomorphisms(target_model)
+                )
+
+                if not isos:
+                    raise RuntimeError(
+                        "same-j codomain is not isomorphic to the "
+                        "fixed target model over the working field"
+                    )
+
+                local.append((
+                    phi,
+                    isos,
+                    target_j,
+                ))
+
+            isogeny_data[ZZ(source_j)] = tuple(local)
+
+        return isogeny_data
+
+    def _level6_hecke_matrix(self, q):
+        """
+        Return T_q on level-6 supersingular pairs (E, C_6).
+        """
+        q = ZZ(q)
+
+        if q in self.__hecke_matrices:
+            return self.__hecke_matrices[q]
+
+        data = self._level6_geometry_for_hecke_prime(q)
+
+        C6_raw_by_j = data["C6_raw_by_j"]
+        raw_to_orbit_by_j = data["raw_to_orbit_by_j"]
+        basis = data["basis"]
+
+        basis_index = {}
+
+        for index, (
+            j_index,
+            orbit_index,
+            rep_raw,
+            C,
+        ) in enumerate(basis):
+            basis_index[
+                (j_index, orbit_index)
+            ] = ZZ(index)
+
+        n = len(basis)
+
+        T = MatrixSpace(
+            self.base_ring(),
+            n,
+            sparse=True,
+        )(0)
+
+        isogeny_data = self._level6_q_isogeny_data(
+            q,
+            data,
+        )
+
+        for row, (
+            source_j,
+            source_orbit,
+            rep_raw,
+            C,
+        ) in enumerate(basis):
+
+            for phi, isos, target_j in isogeny_data[source_j]:
+
+                target_orbits = set()
+
+                for alpha in isos:
+                    target_C = [
+                        alpha(phi(P))
+                        for P in C
+                    ]
+
+                    target_orbit = (
+                        self._level6_find_C6_orbit_index(
+                            target_C,
+                            target_j,
+                            C6_raw_by_j,
+                            raw_to_orbit_by_j,
+                        )
+                    )
+
+                    target_orbits.add(
+                        int(target_orbit)
+                    )
+
+                if len(target_orbits) != 1:
+                    raise RuntimeError(
+                        "target orbit depends on the chosen "
+                        "codomain isomorphism: "
+                        f"got {target_orbits}"
+                    )
+
+                target_orbit = ZZ(
+                    next(iter(target_orbits))
+                )
+
+                col = basis_index[
+                    (target_j, target_orbit)
+                ]
+
+                T[row, col] += 1
+
+        row_sums = [
+            sum(T.row(i))
+            for i in range(n)
+        ]
+
+        if row_sums != [q + 1] * n:
+            raise RuntimeError(
+                "geometric Hecke matrix row sums are incorrect"
+            )
+
+        self.__hecke_matrices[q] = T
+        return T
+
+
     def hecke_matrix(self, L):
         r"""
         Return the `L^{\text{th}}` Hecke matrix.
@@ -820,6 +1443,9 @@ class SupersingularModule(HeckeModule_free_module):
 
         - Iftikhar Burhanuddin -- burhanud@usc.edu
         """
+        if self.__level == 6:
+            return self._level6_hecke_matrix(L)
+
         if L in self.__hecke_matrices:
             return self.__hecke_matrices[L]
         SS, II = self.supersingular_points()
