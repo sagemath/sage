@@ -1,5 +1,3 @@
-# cython: binding=True
-# sage_setup: distribution = sagemath-objects
 from libc.stdint cimport uint32_t
 from cpython.object cimport (Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE,
                              PyObject_RichCompare)
@@ -114,7 +112,7 @@ cpdef inline richcmp_not_equal(x, y, int op):
     """
     if op == Py_EQ:
         return False
-    elif op == Py_NE:
+    if op == Py_NE:
         return True
     return richcmp(x, y, op)
 

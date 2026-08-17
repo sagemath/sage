@@ -36,10 +36,15 @@ from cpython.sequence cimport *
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
 from sage.matrix.matrix cimport Matrix
+cimport sage.matrix.matrix0 as matrix0
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
+
+cimport sage.libs.linbox.givaro as givaro
+cimport sage.libs.linbox.linbox as linbox
+from sage.libs.linbox.conversion cimport new_linbox_matrix_rational_sparse
 
 from sage.libs.flint.fmpq cimport fmpq_set_mpq
 from sage.libs.flint.fmpq_mat cimport fmpq_mat_entry
@@ -56,6 +61,11 @@ from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
+    """
+    .. automethod:: _right_kernel_matrix
+    .. automethod:: _right_kernel_matrix_linbox
+    """
+
     def __cinit__(self):
         self._matrix = <mpq_vector*>check_calloc(self._nrows, sizeof(mpq_vector))
         # initialize the rows
@@ -85,6 +95,12 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - ``coerce`` -- if ``False``, assume without checking that the
           entries are of type :class:`Rational`
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to the (empty)
+            # zero matrix. Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
         for t in ma.iter(coerce, True):
@@ -101,6 +117,49 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         x = Rational()
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: M
+            [     0      0    7/3   13/4]
+            [     0   31/6      0   57/8]
+            [     0      0      0 133/12]
+            sage: M.transpose()
+            [     0      0      0]
+            [     0   31/6      0]
+            [   7/3      0      0]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     0      0    7/3   13/4]
+            [     0      0      0 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [     0   13/4]
+            [  31/6   57/8]
+            [     0 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [     0   57/8]
+            [     0 133/12]
+        """
+        cdef Rational x
+        x = Rational()
+        cdef Matrix_rational_sparse _src = <Matrix_rational_sparse> src
+        mpq_vector_get_entry(x.value, &_src._matrix[iSrc], jSrc)
+        mpq_vector_set_entry(&self._matrix[iDst], jDst, x.value)
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -132,7 +191,23 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [0 0]
             sage: m.nonzero_positions()
             []
+
+        The cache is cleared and immutable matrices cannot be changed
+        (:issue:`42532`)::
+
+            sage: m = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: m.det()
+            -2
+            sage: m.add_to_entry(0, 0, 10)
+            sage: m.det()
+            38
+            sage: m.set_immutable()
+            sage: m.add_to_entry(0, 0, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
         """
+        self.check_mutability()
         if not isinstance(elt, Rational):
             elt = Rational(elt)
         if i < 0:
@@ -168,8 +243,74 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * x _dict -- sparse dictionary of underlying elements (need not be a copy)
 
     cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
+        """
+        Return the product of two sparse rational matrices.
+
+        The result matrix is allocated and then written by
+        :meth:`_set_to_product_classical`.
+
+        EXAMPLES::
+
+            sage: a = matrix(QQ, 2, [1/2, 2, 3, 4], sparse=True)
+            sage: b = matrix(QQ, 2, 3, [1..6], sparse=True)
+            sage: a * b  # indirect doctest
+            [17/2   11 27/2]
+            [  19   26   33]
+        """
         cdef Matrix_rational_sparse right, ans
         right = _right
+
+        ans = self.new_matrix(self._nrows, right._ncols)
+        ans._set_to_product_classical(self, right)
+        return ans
+
+    cdef void _set_to_product_classical(self, matrix0.Matrix _left,
+                                        matrix0.Matrix _right) except *:
+        r"""
+        Set ``self`` to ``_left * _right`` using the specialized sparse
+        rational algorithm.
+
+        This overrides
+        :meth:`~sage.matrix.matrix_sparse.Matrix_sparse._set_to_product_classical`
+        so that :meth:`set_to_product` keeps the specialized ``mpq_vector``
+        algorithm used by ``*``, rather than falling back to the generic sparse
+        one.  It is the shared core of :meth:`_matrix_times_matrix_`, which
+        allocates the result and then calls this method.
+
+        The destination's rows are cleared first, since it may hold the
+        result of an earlier product.
+
+        INPUT:
+
+        - ``_left`` -- a sparse rational matrix
+        - ``_right`` -- a sparse rational matrix
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: a = matrix(QQ, 2, [1/2, 2, 3, 4], sparse=True)
+            sage: b = matrix(QQ, 2, 3, [1..6], sparse=True)
+            sage: C = matrix(QQ, 2, 3, [7] * 6, sparse=True)
+            sage: C.set_to_product(a, b)
+            sage: C == a * b
+            True
+
+        TESTS:
+
+        Reusing the destination must not leave entries of the previous
+        product behind::
+
+            sage: C.set_to_product(2 * a, b)
+            sage: C == (2 * a) * b
+            True
+            sage: C.set_to_product(matrix(QQ, 2, 0, sparse=True),
+            ....:                  matrix(QQ, 0, 3, sparse=True))
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_rational_sparse left = <Matrix_rational_sparse>_left
+        cdef Matrix_rational_sparse right = <Matrix_rational_sparse>_right
 
         cdef mpq_vector* v
 
@@ -185,7 +326,19 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         right_indices = [j for j in range(right._ncols)
                          if nonzero_positions_in_columns[j]]
 
-        ans = self.new_matrix(self._nrows, right._ncols)
+        # Clear any previous entries, while avoiding a second initialization
+        # pass for the empty rows of a freshly allocated destination.  Reset
+        # each cleared row to the empty state by hand rather than calling
+        # ``mpq_vector_init``: an empty vector needs no storage, and an
+        # allocation here could raise after ``mpq_vector_clear`` has already
+        # freed the row, leaving it with a stale ``num_nonzero`` and dangling
+        # pointers for the next ``mpq_vector_clear`` to walk.
+        for i in range(self._nrows):
+            if self._matrix[i].num_nonzero:
+                mpq_vector_clear(&self._matrix[i])
+                self._matrix[i].entries = NULL
+                self._matrix[i].positions = NULL
+                self._matrix[i].num_nonzero = 0
 
         # Now do the multiplication, getting each row completely before filling it in.
         cdef set c
@@ -193,8 +346,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_init(x)
         mpq_init(y)
         mpq_init(s)
-        for i in range(self._nrows):
-            v = &(self._matrix[i])
+        for i in range(left._nrows):
+            v = &(left._matrix[i])
             if not v.num_nonzero:
                 continue
             for j in right_indices:
@@ -205,12 +358,11 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                         mpq_vector_get_entry(y, &right._matrix[v.positions[k]], j)
                         mpq_mul(x, v.entries[k], y)
                         mpq_add(s, s, x)
-                mpq_vector_set_entry(&ans._matrix[i], j, s)
+                mpq_vector_set_entry(&self._matrix[i], j, s)
 
         mpq_clear(x)
         mpq_clear(y)
         mpq_clear(s)
-        return ans
 
     def _matrix_times_matrix_dense(self, sage.structure.element.Matrix _right):
         """
@@ -272,7 +424,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _unpickle(self, data, int version):   # use version >= 0
     # cpdef _add_(self, right):
     # cdef _mul_(self, Matrix right):
-    # cpdef _richcmp_(self, Matrix right, int op):
+    # cpdef _richcmp_(self, Matrix other, int op):
     # def __neg__(self):
     # def __invert__(self):
     # def __copy__(self):
@@ -449,7 +601,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         self.mpz_denom(D.value)
 
         MZ = sage.matrix.matrix_space.MatrixSpace(ZZ, self._nrows, self._ncols, sparse=True)
-        A = MZ.zero_matrix().__copy__()
+        A = MZ.element_class(MZ, None, False, False)
 
         mpz_init(t)
         sig_on()
@@ -621,7 +773,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef Matrix_rational_dense B
         cdef mpq_vector* v
 
-        B = self.matrix_space(sparse=False).zero_matrix().__copy__()
+        MS = self.matrix_space(sparse=False)
+        B = MS.element_class(MS, None, False, False)
         for i from 0 <= i < self._nrows:
             v = &(self._matrix[i])
             for j from 0 <= j < v.num_nonzero:
@@ -714,27 +867,30 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             v.positions[l] = cols_index[w.positions[pos[l]]]
             mpq_mul(v.entries[l], w.entries[pos[l]], minus_one)
 
-    def _right_kernel_matrix(self, **kwds):
+    def _right_kernel_matrix(self, algorithm='default', proof=None):
         r"""
         Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         INPUT:
 
-        - ``kwds`` -- these are provided for consistency with other versions
-          of this method.  Here they are ignored as there is no optional
-          behavior available.
+        - ``algorithm`` -- (default: ``'default'``) a keyword that selects the
+          algorithm employed.  Allowable values are:
+
+          - ``'default'`` -- equivalent to ``'padic'``
+          - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
+            over the rationals and integers
+          - ``'linbox'`` -- LinBox library code for sparse matrices over the
+            rationals
 
         OUTPUT:
 
-        Returns a pair.  First item is the string 'computed-iml-rational'
-        that identifies the nature of the basis vectors.
+        Returns a pair.  First item is a string that identifies the nature
+        of the basis vectors, either 'computed-iml-rational' or
+        'computed-linbox-rational'.
 
-        Second item is a matrix whose rows are a basis for the right kernel,
-        over the rationals, as computed by the IML library.  Notice that the
-        IML library returns a matrix that is in the 'pivot' format, once the
-        whole matrix is multiplied by -1.  So the 'computed' format is very
-        close to the 'pivot' format.
+        Second item is a matrix whose nonzero rows are a basis for the right kernel,
+        over the rationals, as computed by the IML library or the LinBox library.
 
         EXAMPLES::
 
@@ -753,11 +909,14 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             sage: X = result[1].transpose()
             sage: A*X == zero_matrix(QQ, 4, 2)
             True
-
-        Computed result is the negative of the pivot basis, which
-        is just slightly more efficient to compute. ::
-
-            sage: A.right_kernel_matrix(basis='pivot') == -A.right_kernel_matrix(basis='computed')
+            sage: result = A._right_kernel_matrix(algorithm='linbox')
+            sage: result[0]
+            'computed-linbox-rational'
+            sage: result[1]
+            [ 1 -2  2  1  0]
+            [-1 -2  0  0  1]
+            sage: X = result[1].transpose()
+            sage: A*X == zero_matrix(QQ, 4, 2)
             True
 
         TESTS:
@@ -776,8 +935,79 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [1 0 0]
             [0 1 0]
             [0 0 1]
+
+        .. SEEALSO::
+
+            :meth:`~sage.matrix.matrix_rational_dense.Matrix_rational_dense._right_kernel_matrix`
         """
-        return self.dense_matrix()._right_kernel_matrix()
+        if algorithm == 'default' or algorithm == 'padic':
+            return self.dense_matrix()._right_kernel_matrix()
+        elif algorithm == 'linbox':
+            return self._right_kernel_matrix_linbox()
+        else:
+            raise ValueError(f"matrix kernel algorithm '{algorithm}' not recognized")
+
+    def _right_kernel_matrix_linbox(self):
+        r"""
+        Return a pair that includes a matrix of basis vectors
+        for the right kernel of ``self``.
+
+        OUTPUT:
+
+        Returns a pair.  First item is the string 'computed-linbox-rational'
+        that identifies the nature of the basis vectors.
+
+        Second item is a matrix whose rows are a basis for the right kernel,
+        over the rationals, as computed by the LinBox library.
+        """
+        # NOTE: Degenerate cases (0 rows or columns) are handled by right_kernel_matrix.
+
+        cdef givaro.QField givQQ
+        cdef linbox.SparseMatrix_rational * M = new_linbox_matrix_rational_sparse(givQQ, self)
+
+        MQ = sage.matrix.matrix_space.MatrixSpace(QQ, self._ncols, self._ncols, sparse=True)
+        A = MQ.element_class(MQ, None, False, False)
+
+        cdef linbox.SparseMatrix_rational * N = new_linbox_matrix_rational_sparse(givQQ, A)
+
+        cdef linbox.GaussDomain_rational * dom = new linbox.GaussDomain_rational(givQQ)
+
+        cdef Matrix_rational_sparse ans
+        cdef mpq_t s
+
+        try:
+            sig_on()
+            dom.nullspacebasisin(N[0], M[0])
+            sig_off()
+        except KeyboardInterrupt:
+            del N
+            raise
+        finally:
+            del M, dom
+
+        ans = self.new_matrix(N.coldim(), N.rowdim()) # NOTE: Transposing.
+        cdef size_t i, k
+        cdef Py_ssize_t j
+        mpq_init(s)
+        for i in range(N.rowdim()):
+            for k in range(N.getRow(i).size()):
+                j = <Py_ssize_t> N.getRow(i)[k].first
+                entry = N.getRow(i)[k].second
+                mpq_set_num(s, entry.nume().get_mpz())
+                mpq_set_den(s, entry.deno().get_mpz())
+                mpq_vector_set_entry(&ans._matrix[j], i, s) # NOTE: Transposing.
+        mpq_clear(s)
+
+        del N
+
+        # Remove zero rows, if any.
+        if ans.nrows() > 0:
+            r = ans.nrows() - 1
+            while r >= 0 and ans.row(r) == 0:
+                r -= 1
+            ans = ans.submatrix(0, 0, r + 1)
+
+        return 'computed-linbox-rational', ans
 
 
 #########################

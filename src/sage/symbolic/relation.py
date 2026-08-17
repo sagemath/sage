@@ -230,6 +230,7 @@ Miscellaneous
 
 Conversion to Maxima::
 
+    sage: from sage.interfaces.maxima_lib import maxima
     sage: x = var('x')
     sage: eq = (x^(3/5) >= pi^2 + e^i)
     sage: eq._maxima_init_()
@@ -239,10 +240,10 @@ Conversion to Maxima::
     sage: z.parent() is sage.calculus.calculus.maxima
     True
     sage: z = e1._maxima_(maxima)
-    sage: z.parent() is maxima
+    sage: z.parent() is sage.interfaces.maxima_lib.maxima
     True
     sage: z = maxima(e1)
-    sage: z.parent() is maxima
+    sage: z.parent() is sage.interfaces.maxima_lib.maxima
     True
 
 Conversion to Maple::
@@ -356,8 +357,8 @@ AUTHORS:
 
 - William Stein (2007-07-16): added arithmetic with symbolic equations
 """
-from itertools import product
 import operator
+from itertools import product
 
 
 def check_relation_maxima(relation):
@@ -422,6 +423,19 @@ def check_relation_maxima(relation):
         False
         sage: forget()
 
+    Here is an example that illustrates that ``False`` may mean inconclusive::
+
+        sage: x = SR.var('x')
+        sage: assume(x, 'integer')
+        sage: check_relation_maxima( x == 1 )
+        False
+        sage: check_relation_maxima( x != 1 )
+        False
+        sage: assume( x > 2 )
+        sage: check_relation_maxima( x != 1 )
+        True
+        sage: forget()
+
     TESTS:
 
     Ensure that ``canonicalize_radical()`` and ``simplify_log`` are not
@@ -484,38 +498,42 @@ def check_relation_maxima(relation):
         [k == 1/2*I*sqrt(3) - 1/2, k == -1/2*I*sqrt(3) - 1/2]
         sage: assumptions()
         [k is noninteger]
-    """
-    m = relation._maxima_()
 
-    # Handle some basic cases first
-    if repr(m) in ['0=0']:
-        return True
-    elif repr(m) in ['0#0', '1#1']:
-        return False
+    Check that boolean values are handled correctly::
+
+        sage: check_relation_maxima(2 == 2)
+        True
+        sage: check_relation_maxima(2 == 3)
+        False
+    """
+    # Handle boolean values directly (e.g., when comparing Python integers)
+    if isinstance(relation, bool):
+        return relation
+
+    from sage.interfaces.maxima_lib import test_max_equal, test_max_notequal, test_max_relation
 
     if relation.operator() == operator.eq:  # operator is equality
         try:
-            s = m.parent()._eval_line('is (equal(%s,%s))' % (repr(m.lhs()),
-                                                             repr(m.rhs())))
+            s = test_max_equal(relation.lhs(), relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     elif relation.operator() == operator.ne:  # operator is not equal
         try:
-            s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
-                                                                repr(m.rhs())))
+            s = test_max_notequal(relation.lhs(), relation.rhs())
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     else:  # operator is < or > or <= or >=, which Maxima handles fine
         try:
-            s = m.parent()._eval_line('is (%s)' % repr(m))
+            # For inequalities, use the full relation string
+            s = test_max_relation(relation)
         except TypeError:
             raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
-    if s == 'true':
+    if s is True:
         return True
-    elif s == 'false':
+    if s is False:
         return False  # if neither of these, s=='unknown' and we try a few other tricks
 
     if relation.operator() != operator.eq:
@@ -525,26 +543,47 @@ def check_relation_maxima(relation):
     if difference.is_trivial_zero():
         return True
 
-    # Try to apply some simplifications to see if left - right == 0.
-    #
-    # TODO: If simplify_log() is ever removed from simplify_full(), we
-    # can replace all of these individual simplifications with a
-    # single call to simplify_full(). That would work in cases where
-    # two simplifications are needed consecutively; the current
-    # approach does not.
-    #
-    simp_list = [difference.simplify_factorial(),
-                 difference.simplify_rational(),
-                 difference.simplify_rectform(),
-                 difference.simplify_trig()]
-    for f in simp_list:
-        try:
-            if f().is_trivial_zero():
-                return True
-                break
-        except Exception:
-            pass
+    # Try simplify_full() to see if left - right == 0.
+    # Note: simplify_full() does not include simplify_log(), which is
+    # unsafe for complex variables, so this is safe to call here.
+    try:
+        if difference.simplify_full().is_trivial_zero():
+            return True
+    except Exception:
+        pass
     return False
+
+
+def check_relation_maxima_neq_as_not_eq(relation):
+    """
+    A variant of :func:`check_relation_maxima` that treats `x != y`
+    as `not (x == y)` for consistency with Python's boolean semantics.
+
+    For inequality relations (!=), this function checks the corresponding
+    equality and returns its logical negation, ensuring that
+    ``bool(x != y) == not bool(x == y)``.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.relation import check_relation_maxima_neq_as_not_eq
+        sage: x = var('x')
+        sage: check_relation_maxima_neq_as_not_eq(x != x)
+        False
+        sage: check_relation_maxima_neq_as_not_eq(x == x)
+        True
+        sage: check_relation_maxima_neq_as_not_eq(x != 1)
+        True
+        sage: check_relation_maxima_neq_as_not_eq(x == 1)
+        False
+    """
+    # For inequality (!=), check equality and return the opposite.
+    # This ensures bool(x != y) == not bool(x == y) for semantic consistency.
+    if relation.operator() == operator.ne:
+        from sage.interfaces.maxima_lib import test_max_equal
+        return test_max_equal(relation.lhs(), relation.rhs()) is not True
+
+    # For all other relations, delegate to check_relation_maxima
+    return check_relation_maxima(relation)
 
 
 def string_to_list_of_solutions(s):
@@ -570,11 +609,52 @@ def string_to_list_of_solutions(s):
         sage: sage.symbolic.relation.string_to_list_of_solutions(s)
          [x == -1/2*a - 1/2*sqrt(a^2 - 4*b), x == -1/2*a + 1/2*sqrt(a^2 - 4*b)]
     """
+    from sage.calculus.calculus import symbolic_expression_from_maxima_string
     from sage.categories.objects import Objects
     from sage.structure.sequence import Sequence
-    from sage.calculus.calculus import symbolic_expression_from_maxima_string
     v = symbolic_expression_from_maxima_string(s, equals_sub=True)
     return Sequence(v, universe=Objects(), cr_str=True)
+
+
+def _to_poly_solve_unwrap_solution(t):
+    r"""
+    Normalize one term parsed from Maxima's ``to_poly_solve`` output.
+
+    After :func:`string_to_list_of_solutions`, each entry is sometimes a
+    tuple or list ``(equation, \ldots)`` (e.g. equation with multiplicity
+    information) and sometimes a bare symbolic equation.  The old code
+    assumed the former and used ``t[0]``, which raises
+    ``TypeError: 'Expression' object is not subscriptable`` when Maxima
+    returns the latter.
+
+    INPUT:
+
+    - ``t`` -- a tuple, list, :class:`~sage.structure.sequence.Sequence`,
+      or :class:`~sage.symbolic.expression.Expression`
+
+    OUTPUT:
+
+    The equation to record, or ``None`` if ``t`` is an empty sequence
+    (skipped by the caller).
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.relation import _to_poly_solve_unwrap_solution
+        sage: x = var('x')
+        sage: _to_poly_solve_unwrap_solution((x == 1, 2))
+        x == 1
+        sage: _to_poly_solve_unwrap_solution(x == 2)
+        x == 2
+        sage: _to_poly_solve_unwrap_solution(()) is None
+        True
+    """
+    if isinstance(t, (list, tuple)):
+        if not t:
+            return None
+        return t[0]
+    if t is None:
+        return None
+    return t
 
 
 def _normalize_to_relational(f):
@@ -959,6 +1039,15 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         sage: solve(cos(x) * sin(x) == 1/2, x, to_poly_solve='force')
         [x == 1/4*pi + pi*z...]
 
+    Maxima's ``to_poly_solve`` may return bare equations or
+    tuples; both must be accepted without ``TypeError``::
+
+        sage: x = var('x')
+        sage: type(solve(x/sin(x) == cos(x), x, to_poly_solve=True))
+        <class 'list'>
+        sage: type(solve(sin(x) == cos(x)/2, x, to_poly_solve=True))
+        <class 'list'>
+
     We use ``use_grobner`` in Maxima if no solution is obtained from
     Maxima's ``to_poly_solve``::
 
@@ -1187,21 +1276,20 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
     if any(s is False for s in f):
         if multiplicities:
             return [], []
-        else:
-            return []
+        return []
 
     if not x:
         if multiplicities:
             from sage.rings.integer_ring import ZZ
             return [[]], [ZZ.one()]
-        else:
-            return [[]]
+        return [[]]
 
     if len(f) == 1:
         return _solve_expression(f[0], x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
 
     if algorithm == 'sympy':
         from sympy import solve as ssolve
+
         from sage.interfaces.sympy import sympy_set_to_list
         sympy_f = [s._sympy_() for s in f]
         sympy_vars = tuple([v._sympy_() for v in x])
@@ -1218,22 +1306,19 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
                         r[v._sage_()] = ex._sage_()
                     l.append(r)
                 return l
-            else:
-                return [[v._sage_() == ex._sage_()
-                         for v, ex in d.items()]
-                        for d in ret]
-        elif isinstance(ret, list):
+            return [[v._sage_() == ex._sage_()
+                     for v, ex in d.items()]
+                    for d in ret]
+        if isinstance(ret, list):
             if solution_dict:
                 return [{v._sage_(): ex._sage_()
                          for v, ex in d.items()} for d in ret]
-            else:
-                return [[v._sage_() == ex._sage_()
-                         for v, ex in d.items()] for d in ret]
-        else:
-            # it is not clear how this branch could be reached
-            # because dict=True is passed above, however
-            # it is kept just in case
-            return sympy_set_to_list(ret, sympy_vars)
+            return [[v._sage_() == ex._sage_()
+                     for v, ex in d.items()] for d in ret]
+        # it is not clear how this branch could be reached
+        # because dict=True is passed above, however
+        # it is kept just in case
+        return sympy_set_to_list(ret, sympy_vars)
 
     if algorithm == 'giac':
         return _giac_solver(f, x, solution_dict)
@@ -1277,8 +1362,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
             sol_dict = [{eq.left(): eq.right()} for eq in sol_list]
 
         return sol_dict
-    else:
-        return sol_list
+    return sol_list
 
 
 def _solve_expression(f, x, explicit_solutions, multiplicities,
@@ -1383,6 +1467,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         if f.operator() is not operator.eq:
             if algorithm == 'sympy':
                 from sympy import S, solveset
+
                 from sage.interfaces.sympy import sympy_set_to_list
                 if isinstance(x, Expression) and x.is_symbol():
                     sympy_vars = (x._sympy_(),)
@@ -1390,17 +1475,16 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                     sympy_vars = tuple([v._sympy_() for v in x])
                 ret = solveset(f._sympy_(), sympy_vars[0], S.Reals)
                 return sympy_set_to_list(ret, sympy_vars)
-            elif algorithm == 'giac':
+            if algorithm == 'giac':
                 return _giac_solver(f, x, solution_dict)
-            else:
-                try:
-                    return solve_ineq(f)  # trying solve_ineq_univar
-                except Exception:
-                    pass
-                try:
-                    return solve_ineq([f])  # trying solve_ineq_fourier
-                except Exception:
-                    raise NotImplementedError("solving only implemented for equalities and few special inequalities, see solve_ineq")
+            try:
+                return solve_ineq(f)  # trying solve_ineq_univar
+            except Exception:
+                pass
+            try:
+                return solve_ineq([f])  # trying solve_ineq_fourier
+            except Exception:
+                raise NotImplementedError("solving only implemented for equalities and few special inequalities, see solve_ineq")
     else:
         f = (f == 0)
 
@@ -1410,16 +1494,17 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     # if so, we have a Diophantine
 
     def has_integer_assumption(v) -> bool:
-        from sage.symbolic.assumptions import assumptions, GenericDeclaration
+        from sage.symbolic.assumptions import GenericDeclaration, assumptions
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
                    a._assumption in ['even', 'odd', 'integer', 'integervalued']
                    for a in alist)
-    if len(f.variables()) and all(has_integer_assumption(var) for var in f.variables()):
+    if f.variables() and all(has_integer_assumption(var) for var in f.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
 
     if algorithm == 'sympy':
         from sympy import S, solveset
+
         from sage.interfaces.sympy import sympy_set_to_list
         if isinstance(x, Expression) and x.is_symbol():
             sympy_vars = (x._sympy_(),)
@@ -1462,16 +1547,14 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
             ans = [x == f.parent().var('r1')]
         if multiplicities:
             return ans, []
-        else:
-            return ans
+        return ans
 
     X = string_to_list_of_solutions(s)  # our initial list of solutions
 
     if multiplicities:  # to_poly_solve does not return multiplicities, so in this case we end here
         if len(X) == 0:
             return X, []
-        else:
-            ret_multiplicities = [int(e) for e in str(P.get('multiplicities'))[1:-1].split(',')]
+        ret_multiplicities = [int(e) for e in str(P.get('multiplicities'))[1:-1].split(',')]
 
     ########################################################
     # Maxima's to_poly_solver package converts difficult   #
@@ -1498,7 +1581,8 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                 m = eq._maxima_()
                 s = m.to_poly_solve(x, options='algexact:true')
                 T = string_to_list_of_solutions(repr(s))
-                X.extend([t[0] for t in T])
+                X.extend(u for t in T
+                         if (u := _to_poly_solve_unwrap_solution(t)) is not None)
             except TypeError as mess:
                 if ignore_exceptions:
                     continue
@@ -1530,8 +1614,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
 
     if multiplicities:
         return X, ret_multiplicities
-    else:
-        return X
+    return X
 
 
 def _giac_solver(f, x, solution_dict=False):
@@ -1681,12 +1764,12 @@ def solve_mod(eqns, modulus, solution_dict=False):
         sage: solve_mod([2*x^2+x*y, -x*y+2*y^2+x-2*y, -2*x^2+2*x*y-y^2-x-y], 1)
         [(0, 0)]
     """
+    from sage.matrix.constructor import matrix
+    from sage.modules.free_module_element import vector
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.integer import Integer
     from sage.rings.integer_ring import crt_basis
     from sage.structure.element import Expression
-    from sage.modules.free_module_element import vector
-    from sage.matrix.constructor import matrix
 
     if not isinstance(eqns, (list, tuple)):
         eqns = [eqns]
@@ -1793,9 +1876,9 @@ def _solve_mod_prime_power(eqns, p, m, vars):
         [1, 21, 71, 1179, 2429, 47571, 1296179, 8703821, 26452429, 526452429,
         13241296179, 19473547571, 2263241296179]
     """
+    from sage.modules.free_module_element import vector
     from sage.rings.finite_rings.integer_mod_ring import Integers
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-    from sage.modules.free_module_element import vector
 
     mrunning = 1
     ans = []

@@ -171,7 +171,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
         Change the base ring of ``self`` to ``R``, when this makes sense.
 
         This differs from
-        :meth:`~sage.modular.modform.space.ModularFormsSpace.base_extend`
+        :meth:`~sage.modules.module.Module.base_extend`
         in that there may not be a canonical map from ``self`` to the new
         space, as in the first example below. If this space has a
         character then this may fail when the character cannot be
@@ -540,7 +540,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             else:
                 for i in range(d):
                     for j in range(d):
-                        H[e*i:e*(i+1), e*j:e*(j+1)] = M[i,j].matrix().transpose()
+                        H[e*i: e*(i+1), e*j: e*(j+1)] = M[i, j].matrix().transpose()
             A = A.block_sum(H)
         t = self._transformation_matrix()
         return t * A * ~t

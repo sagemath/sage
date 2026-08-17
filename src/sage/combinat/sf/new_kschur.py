@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-`k`-Schur Functions
+`k`-Schur functions
 """
 # ****************************************************************************
 #       Copyright (C) 2011 Jason Bandlow <jbandlow@gmail.com>,
@@ -176,8 +176,7 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         if self.t == 1:
             return [self.kschur(), self.ksplit(), self.khomogeneous(),
                 self.K_kschur()]
-        else:
-            return [self.kschur(), self.ksplit()]
+        return [self.kschur(), self.ksplit()]
 
     def kschur(self):
         r"""
@@ -344,8 +343,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             if x in R:
                 if x == 0:
                     return self.zero()
-                else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
             # x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))
@@ -1126,7 +1124,7 @@ class kSchur(CombinatorialFreeModule):
         If `t \neq 1`, then take the product by lifting to the Schur functions and then
         retracting back into the `k`-bounded subspace (if possible).
 
-        If `t=1`, then the product calls :meth:`_product_on_basis_via_rectangles`.
+        If `t=1`, then the product calls ``_product_on_basis_via_rectangles``.
 
         INPUT:
 

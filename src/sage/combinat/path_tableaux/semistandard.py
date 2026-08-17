@@ -1,6 +1,5 @@
 r"""
-Semistandard Tableaux
-=====================
+Semistandard tableaux
 
 This is an implementation of the abstract base class
 :class:`sage.combinat.path_tableaux.path_tableau.PathTableau`.
@@ -390,15 +389,17 @@ class SemistandardPathTableau(PathTableau):
 
         if verbose:
             return rect
-        else:
-            return P.element_class(P, list(path)[:n])
+        return P.element_class(P, list(path)[:n])
 
     @combinatorial_map(name='to semistandard tableau')
     def to_tableau(self):
         r"""
         Convert ``self`` to a :class:`SemistandardTableau`.
 
-        The :class:`SemistandardSkewTableau` is not implemented so this returns a :class:`SkewTableau`
+        The elements of
+        :class:`~sage.combinat.skew_tableau.SemistandardSkewTableaux` are not
+        implemented as a separate class, so this returns a
+        :class:`~sage.combinat.skew_tableau.SkewTableau`
 
         EXAMPLES::
 
@@ -422,8 +423,7 @@ class SemistandardPathTableau(PathTableau):
         lt = [[i for i in a if i > 0] for a in self]
         if self.is_skew():
             return SkewTableaux().from_chain(lt)
-        else:
-            return from_chain(lt)
+        return from_chain(lt)
 
     @combinatorial_map(name='to Gelfand-Tsetlin pattern')
     def to_pattern(self):

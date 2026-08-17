@@ -33,8 +33,8 @@ information is available in the database::
 And indeed, trees are chordal graphs.
 
 The ISGCI database is not all-knowing, and so comparing two classes can return
-``True``, ``False``, or ``Unknown`` (see the :mod:`documentation of the Unknown
-truth value <sage.misc.unknown>`).
+``True``, ``False``, or the :class:`~sage.misc.unknown.UnknownClass` instance
+``Unknown``.
 
 An *unknown* answer to ``A <= B`` only means that ISGCI cannot deduce from the
 information in its database that ``A`` is a subclass of ``B`` nor that it is
@@ -144,7 +144,7 @@ Predefined classes
 
    * - Biconnected
 
-     - :meth:`~sage.graphs.graph.Graph.is_biconnected`,
+     - :meth:`~sage.graphs.generic_graph.GenericGraph.is_biconnected`,
        :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cut_vertices`,
        :meth:`~sage.graphs.generic_graph.GenericGraph.blocks_and_cuts_tree`
 
@@ -340,7 +340,7 @@ Information for developers
     * Implement a proper search method for the classes not listed in
       :obj:`graph_classes <GraphClasses>`
 
-      .. SEEALSO:: :func:`sage.graphs.isgci.show_all`.
+      .. SEEALSO:: :meth:`~sage.graphs.isgci.GraphClasses.show_all`.
 
     * Some of the graph classes appearing in :obj:`graph_classes
       <GraphClasses>` already have a recognition
@@ -488,8 +488,7 @@ class GraphClass(SageObject, CachedRepresentation):
         inclusion_digraph = GraphClasses().inclusion_digraph()
         if inclusion_digraph.shortest_path(self._gc_id, other._gc_id):
             return True
-        else:
-            return Unknown
+        return Unknown
 
     def __eq__(self, other):
         r"""
@@ -682,10 +681,9 @@ class GraphClasses(UniqueRepresentation):
                 name = "class " + str(id)
 
             return GraphClass(name, id)
-        else:
-            raise ValueError("The given class id does not exist in the ISGCI "
-                             "database. Is the db too old ? You can update it "
-                             "with graph_classes.update_db().")
+        raise ValueError("The given class id does not exist in the ISGCI "
+                         "database. Is the db too old ? You can update it "
+                         "with graph_classes.update_db().")
 
     @cached_method
     def classes(self):

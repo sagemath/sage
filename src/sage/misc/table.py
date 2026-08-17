@@ -478,7 +478,8 @@ class table(SageObject):
         """
         Rich Output Magic Method.
 
-        See :mod:`sage.repl.rich_output` for details.
+        See :class:`~sage.repl.rich_output.display_manager.DisplayManager`
+        for details.
 
         EXAMPLES::
 
@@ -804,7 +805,7 @@ class table(SageObject):
         import types
 
         try:
-            from sage.plot.all import Graphics
+            from sage.plot.graphics import Graphics
         except ImportError:
             Graphics = ()
 

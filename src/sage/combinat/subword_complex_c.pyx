@@ -1,4 +1,7 @@
 # sage.doctest: needs sage.modules
+r"""
+Subword complex: auxiliary Cython functions
+"""
 
 cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
                   int i, side='both') noexcept:
@@ -109,5 +112,4 @@ cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1):
         Y = X
     if first:
         return sorted([sorted(x) for x in Y])
-    else:
-        return Y
+    return Y

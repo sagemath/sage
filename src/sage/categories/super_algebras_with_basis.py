@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Super algebras with basis
 """
@@ -49,7 +48,7 @@ class SuperAlgebrasWithBasis(SuperModulesCategory):
 
             .. SEEALSO::
 
-                :meth:`~sage.categories.filtered_modules_with_basis.ParentMethods.graded_algebra`
+                :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.graded_algebra`
 
             EXAMPLES::
 

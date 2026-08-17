@@ -241,7 +241,7 @@ public:
          try {
              boost::dijkstra_shortest_paths(graph, vertices[s], distance_map(boost::make_iterator_property_map(distances.begin(), index))
                                             .predecessor_map(boost::make_iterator_property_map(predecessors.begin(), index)));
-         } catch (boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::negative_edge> > e) {
+         } catch (boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::negative_edge> > const&) {
              return to_return;
          }
 

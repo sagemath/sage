@@ -10,25 +10,26 @@ Free modules
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.indexed_generators import IndexedGenerators, parse_indices_names
-from sage.modules.module import Module
-from sage.rings.integer import Integer
-from sage.structure.element import parent
-from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.combinat.cartesian_product import CartesianProduct_iters
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.morphism import SetMorphism
-from sage.categories.category import Category
-from sage.categories.sets_cat import Sets
-from sage.categories.modules_with_basis import ModulesWithBasis
-from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-from sage.categories.tensor import tensor
 import sage.data_structures.blas_dict as blas
+from sage.categories.category import Category
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.morphism import SetMorphism
+from sage.categories.sets_cat import Sets
+from sage.categories.tensor import tensor
+from sage.combinat.cartesian_product import CartesianProduct_iters
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.modules.module import Module
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.rings.integer import Integer
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.structure.element import parent
+from sage.structure.indexed_generators import IndexedGenerators, parse_indices_names
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.typeset.ascii_art import AsciiArt, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
@@ -60,7 +61,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     .. NOTE::
 
         These print options may also be accessed and modified using the
-        :meth:`print_options` method, after the module has been defined.
+        :meth:`~sage.structure.indexed_generators.IndexedGenerators.print_options`
+        method, after the module has been defined.
 
     EXAMPLES:
 
@@ -93,7 +95,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         B['a'] + 3*B['b']
 
     Some uses of
-    :meth:`sage.categories.commutative_additive_semigroups.CommutativeAdditiveSemigroups.ParentMethods.summation`
+    :meth:`sage.categories.additive_magmas.AdditiveMagmas.ParentMethods.summation`
     and :meth:`sum`::
 
         sage: F = CombinatorialFreeModule(QQ, [1,2,3,4])
@@ -222,7 +224,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     parent condition. That caused a problem. The tensor product construction
     involves maps, but maps check that their domain and the parent of a
     to-be-mapped element are identical (not just equal). However, the tensor
-    product was cached by a :class:`~sage.misc.cachefunc.cached_method`, which
+    product was cached by a :func:`~sage.misc.cachefunc.cached_method`, which
     involves comparison by equality (not identity). Hence, the last line of
     the following example used to fail with an assertion error::
 
@@ -343,7 +345,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         construction of Python class. This is currently needed to
         inherit really all the features from categories, and in
         particular the initialization of ``_mul_`` in
-        :meth:`Magmas.ParentMethods.__init_extra__`.
+        :meth:`~sage.categories.magmas.Magmas.ParentMethods.__init_extra__`.
 
         EXAMPLES::
 
@@ -672,7 +674,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F = CombinatorialFreeModule(QQ,[0,1])
 
         Is ``0`` the zero of the base ring, or the index of a basis
-        element?  I.e. should the result be ``0`` or ``B[0]``?
+        element?  I.e. should the result be ``0`` or ``B[0]``?::
 
             sage: F = CombinatorialFreeModule(QQ,[0,1])
             sage: F(0) # this feature may eventually disappear
@@ -751,8 +753,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         if x in R:
             if x == 0:
                 return self.zero()
-            else:
-                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+            raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
         # x is an element of the basis enumerated set;
         # This is a very ugly way of testing this
         elif ((hasattr(self._indices, 'element_class') and
@@ -1008,7 +1009,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         Build an element of ``self`` from a (sparse) vector.
 
-        .. SEEALSO:: :meth:`get_order`, :meth:`CombinatorialFreeModule.Element._vector_`
+        .. SEEALSO::
+
+            - :meth:`get_order`
+            - :meth:`to_vector <sage.modules.with_basis.indexed_element.IndexedFreeModuleElement.to_vector>`
 
         EXAMPLES::
 
@@ -1253,11 +1257,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                 sage: list(s._from_dict({part: 0}, remove_zeros=False))                 # needs sage.combinat
                 [([2, 1], 0)]
         """
-        assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key, coeff in d.items()}
-        if remove_zeros:
+            if remove_zeros:
+                d = {key: c for key, coeff in d.items() if (c := R(coeff))}
+            else:
+                d = {key: R(coeff) for key, coeff in d.items()}
+        elif remove_zeros:
             d = {key: coeff for key, coeff in d.items() if coeff}
         return self.element_class(self, d)
 
@@ -1510,7 +1516,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             sage: latex(tensor([F, F, G])) # indirect doctest
             F \otimes F \otimes G
         """
-        from sage.misc.latex import latex
         symb = " \\otimes "
         return symb.join("%s" % latex(module) for module in self._sets)
 

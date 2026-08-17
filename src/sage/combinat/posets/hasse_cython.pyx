@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Some fast computations for finite posets
 """
@@ -78,8 +77,9 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
 
         self._roots = (tuple(),)
 
-        RecursivelyEnumeratedSet_forest.__init__(self, algorithm='depth',
-                    category=FiniteEnumeratedSets())
+        RecursivelyEnumeratedSet_forest.__init__(
+            self, algorithm='depth', category=FiniteEnumeratedSets()
+        )
 
     def __contains__(self, tup):
         """

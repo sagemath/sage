@@ -167,7 +167,6 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import annotations
 import numbers
-from collections.abc import Iterator
 from itertools import product
 
 from sage.misc.fast_methods import Singleton
@@ -194,6 +193,10 @@ from sage.modules.free_module import VectorSpace
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.positive_integers import PositiveIntegers
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 lazy_import('sage.libs.pari', 'pari')
 
@@ -1293,7 +1296,7 @@ class Multizetas(CombinatorialFreeModule):
             Return the image of ``self`` by the morphism ``phi`` as a vector.
 
             The morphism ``phi`` sends multiple zeta values to the algebra
-            :func:`F_ring`. Then the image is expressed as a vector in
+            ``F_ring``. Then the image is expressed as a vector in
             a fixed basis of one graded component of this algebra.
 
             This is only defined for homogeneous elements.
@@ -2406,7 +2409,7 @@ def phi_on_multiplicative_basis(compo):
 
     - ``compo`` -- a composition (in the hardcoded multiplicative base)
 
-    OUTPUT: an element in :func:`F_ring` with rational coefficients
+    OUTPUT: an element in ``F_ring`` with rational coefficients
 
     EXAMPLES::
 
@@ -2438,7 +2441,7 @@ def phi_on_basis(L):
 
     This encodes a product of multiple zeta values.
 
-    OUTPUT: an element in :func:`F_ring`
+    OUTPUT: an element in ``F_ring``
 
     EXAMPLES::
 
@@ -2506,7 +2509,7 @@ def compute_u_on_compo(compo):
 
     - ``compo`` -- a composition
 
-    OUTPUT: an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of ``F_ring`` over `\QQ`
 
     EXAMPLES::
 
@@ -2530,7 +2533,7 @@ def compute_u_on_basis(w):
 
     - ``w`` -- a word in 0,1
 
-    OUTPUT: an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of ``F_ring`` over `\QQ`
 
     EXAMPLES::
 

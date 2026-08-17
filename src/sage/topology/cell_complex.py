@@ -8,9 +8,9 @@ AUTHORS:
 
 This module defines a class of abstract finite cell complexes.  This
 is meant as a base class from which other classes (like
-:class:`~sage.homology.simplicial_complex.SimplicialComplex`,
-:class:`~sage.homology.cubical_complex.CubicalComplex`, and
-:class:`~sage.homology.delta_complex.DeltaComplex`) should derive.  As
+:class:`~sage.topology.simplicial_complex.SimplicialComplex`,
+:class:`~sage.topology.cubical_complex.CubicalComplex`, and
+:class:`~sage.topology.delta_complex.DeltaComplex`) should derive.  As
 such, most of its properties are not implemented.  It is meant for use
 by developers producing new classes, not casual users.
 
@@ -21,7 +21,7 @@ by developers producing new classes, not casual users.
     the :meth:`~GenericCellComplex.homology` method get passed on to
     the :meth:`~GenericCellComplex.chain_complex` method and also to
     the constructor for chain complexes in
-    :class:`sage.homology.chain_complex.ChainComplex_class <ChainComplex>`,
+    :class:`ChainComplex <sage.homology.chain_complex.ChainComplex_class>`,
     as well as its associated
     :meth:`~sage.homology.chain_complex.ChainComplex_class.homology` method.
     This means that those keywords should have consistent meaning in
@@ -56,20 +56,22 @@ class GenericCellComplex(SageObject):
 
     This is meant to be used by developers to produce new classes, not
     by casual users.  Classes which derive from this are
-    :class:`~sage.homology.simplicial_complex.SimplicialComplex`,
-    :class:`~sage.homology.delta_complex.DeltaComplex`, and
-    :class:`~sage.homology.cubical_complex.CubicalComplex`.
+    :class:`~sage.topology.simplicial_complex.SimplicialComplex`,
+    :class:`~sage.topology.delta_complex.DeltaComplex`, and
+    :class:`~sage.topology.cubical_complex.CubicalComplex`.
 
     Most of the methods here are not implemented, but probably should
     be implemented in a derived class.  Most of the other methods call
     a non-implemented one; their docstrings contain examples from
     derived classes in which the various methods have been defined.
     For example, :meth:`homology` calls :meth:`chain_complex`; the
-    class :class:`~sage.homology.delta_complex.DeltaComplex`
+    class :class:`~sage.topology.delta_complex.DeltaComplex`
     implements
-    :meth:`~sage.homology.delta_complex.DeltaComplex.chain_complex`,
+    :meth:`~sage.topology.delta_complex.DeltaComplex.chain_complex`,
     and so the :meth:`homology` method here is illustrated with
     examples involving `\Delta`-complexes.
+
+    .. automethod:: _n_cells_sorted
 
     EXAMPLES:
 
@@ -189,7 +191,8 @@ class GenericCellComplex(SageObject):
         .. NOTE::
 
             The resulting list need not be sorted. If you want a sorted
-            list of `n`-cells, use :meth:`_n_cells_sorted`.
+            list of `n`-cells, use
+            :meth:`~sage.topology.cell_complex.GenericCellComplex._n_cells_sorted`.
 
         EXAMPLES::
 
@@ -200,9 +203,8 @@ class GenericCellComplex(SageObject):
         """
         if n in self.cells(subcomplex):
             return list(self.cells(subcomplex)[n])
-        else:
-            # don't barf if someone asks for n_cells in a dimension where there are none
-            return []
+        # don't barf if someone asks for n_cells in a dimension where there are none
+        return []
 
     def _n_cells_sorted(self, n, subcomplex=None):
         """
@@ -721,7 +723,7 @@ class GenericCellComplex(SageObject):
         else:
             return dic
 
-    def is_acyclic(self, base_ring=ZZ):
+    def is_acyclic(self, base_ring=ZZ) -> bool:
         """
         Return ``True`` if the reduced homology with coefficients in
         ``base_ring`` of this cell complex is zero.
@@ -758,9 +760,8 @@ class GenericCellComplex(SageObject):
         H = self.homology(base_ring=base_ring)
         if base_ring == ZZ:
             return all(len(x.invariants()) == 0 for x in H.values())
-        else:
-            # base_ring is a field.
-            return all(x.dimension() == 0 for x in H.values())
+        # base_ring is a field.
+        return all(x.dimension() == 0 for x in H.values())
 
     def n_chains(self, n, base_ring=ZZ, cochains=False):
         r"""
@@ -794,8 +795,7 @@ class GenericCellComplex(SageObject):
         n_cells = tuple(self._n_cells_sorted(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
-        else:
-            return Chains(self, n, n_cells, base_ring)
+        return Chains(self, n, n_cells, base_ring)
 
     def algebraic_topological_model(self, base_ring=QQ):
         r"""
@@ -1027,9 +1027,9 @@ class GenericCellComplex(SageObject):
 
         For simplicial and cubical complexes, the decomposition can be
         done at the level of individual cells: see
-        :meth:`~sage.homology.simplicial_complex.Simplex.alexander_whitney`
+        :meth:`~sage.topology.simplicial_complex.Simplex.alexander_whitney`
         and
-        :meth:`~sage.homology.cubical_complex.Cube.alexander_whitney`. Then
+        :meth:`~sage.topology.cubical_complex.Cube.alexander_whitney`. Then
         the method for simplicial complexes just calls the method for
         individual simplices, and similarly for cubical complexes. For
         `\Delta`-complexes and simplicial sets, the method is instead
@@ -1104,7 +1104,7 @@ class GenericCellComplex(SageObject):
         """
         raise NotImplementedError
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         """
         Return ``True`` if this cell complex is connected.
 

@@ -108,10 +108,9 @@ class QmodnZ(Parent, UniqueRepresentation):
         """
         if self.n == 1:
             return "Q/Z"
-        elif self.n in ZZ:
+        if self.n in ZZ:
             return "Q/%sZ" % self.n
-        else:
-            return "Q/(%s)Z" % self.n
+        return "Q/(%s)Z" % self.n
 
     def _coerce_map_from_(self, S):
         r"""

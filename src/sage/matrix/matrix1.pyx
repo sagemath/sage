@@ -84,19 +84,17 @@ cdef class Matrix(Matrix0):
             [1.0 2.0]
             [3.0 1.0]
             sage: b = pari(a); b                                                        # needs sage.libs.pari
-            [1.000000000, 2.000000000; 3.000000000, 1.000000000] # 32-bit
-            [1.00000000000000, 2.00000000000000; 3.00000000000000, 1.00000000000000] # 64-bit
+            [1.000000000..., 2.000000000...; 3.000000000..., 1.000000000...]
         """
         from sage.libs.pari import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
-        Return a string defining a gap representation of ``self``.
+        Return a string defining a GAP representation of ``self``.
 
         EXAMPLES::
 
-            sage: # needs sage.libs.gap
             sage: A = MatrixSpace(QQ,3,3)([0,1,2,3,4,5,6,7,8])
             sage: g = gap(A)  # indirect doctest
             sage: g
@@ -111,7 +109,6 @@ cdef class Matrix(Matrix0):
         Particularly difficult is the case of matrices over cyclotomic
         fields and general number fields. See :issue:`5618` and :issue:`8909`::
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: K.<zeta> = CyclotomicField(8)
             sage: A = MatrixSpace(K, 2, 2)([0, 1+zeta, 2*zeta, 3])
             sage: g = gap(A); g
@@ -121,7 +118,6 @@ cdef class Matrix(Matrix0):
             sage: g.IsMatrix()
             true
 
-            sage: # needs sage.libs.gap sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: L.<tau> = NumberField(x^3 - 2)
             sage: A = MatrixSpace(L, 2, 2)([0, 1+tau, 2*tau, 3])
@@ -132,10 +128,9 @@ cdef class Matrix(Matrix0):
         """
         cdef Py_ssize_t i, j
         v = []
-        for i from 0 <= i < self._nrows:
-            tmp = []
-            for j from 0 <= j < self._ncols:
-                tmp.append(self.get_unsafe(i, j)._gap_init_())
+        for i in range(self._nrows):
+            tmp = [self.get_unsafe(i, j)._gap_init_()
+                   for j in range(self._ncols)]
             v.append('[%s]' % (','.join(tmp)))
         # It is needed to multiply with 'One(...)', because
         # otherwise the result would not be a gap matrix
@@ -722,7 +717,7 @@ cdef class Matrix(Matrix0):
             'efdg'
 
         Alternatively, numpy automatically calls this function (via
-        the magic :meth:`__array__` method) to convert Sage matrices
+        the magic ``__array__`` method) to convert Sage matrices
         to numpy arrays::
 
             sage: # needs numpy
@@ -731,9 +726,10 @@ cdef class Matrix(Matrix0):
             array([[ 0,  1,  2,  3],
                    [ 4,  5,  6,  7],
                    [ 8,  9, 10, 11]])
-            sage: b.dtype
-            dtype('int32')  # 32-bit
-            dtype('int64')  # 64-bit
+            sage: d32 = numpy.dtype(numpy.int32)
+            sage: d64 = numpy.dtype(numpy.int64)
+            sage: b.dtype in [d32, d64]  # depends on machine bitness
+            True
             sage: b.shape
             (3, 4)
         """
@@ -930,22 +926,6 @@ cdef class Matrix(Matrix0):
         self.cache('row_ambient_module', x)
         return x
 
-    def _row_ambient_module(self, base_ring=None):
-        r"""
-        TESTS::
-
-            sage: M = matrix(Zmod(5), 2, 3)
-            sage: M._row_ambient_module()
-            doctest:warning
-            ...
-            DeprecationWarning: the method _row_ambient_module is deprecated use row_ambient_module (without underscore) instead
-            See https://github.com/sagemath/sage/issues/32984 for details.
-            Vector space of dimension 3 over Ring of integers modulo 5
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(32984, 'the method _row_ambient_module is deprecated use row_ambient_module (without underscore) instead')
-        return self.row_ambient_module(base_ring)
-
     cpdef column_ambient_module(self, base_ring=None, sparse=None):
         r"""
         Return the free module that contains the columns of the matrix.
@@ -986,22 +966,6 @@ cdef class Matrix(Matrix0):
                                                 sparse=self.is_sparse_c())
         self.cache('column_ambient_module', x)
         return x
-
-    def _column_ambient_module(self):
-        r"""
-        TESTS::
-
-            sage: M = matrix(Zmod(5), 2, 3)
-            sage: M._column_ambient_module()
-            doctest:warning
-            ...
-            DeprecationWarning: the method _column_ambient_module is deprecated use column_ambient_module (without underscore) instead
-            See https://github.com/sagemath/sage/issues/32984 for details.
-            Vector space of dimension 2 over Ring of integers modulo 5
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(32984, 'the method _column_ambient_module is deprecated use column_ambient_module (without underscore) instead')
-        return self.column_ambient_module()
 
     def columns(self, copy=True):
         r"""
@@ -1180,8 +1144,7 @@ cdef class Matrix(Matrix0):
         self.cache('dense_columns', C)
         if copy:
             return list(C)
-        else:
-            return C
+        return C
 
     def dense_rows(self, copy=True):
         """
@@ -1236,8 +1199,7 @@ cdef class Matrix(Matrix0):
         self.cache('dense_rows', R)
         if copy:
             return list(R)
-        else:
-            return R
+        return R
 
     def sparse_columns(self, copy=True):
         r"""
@@ -1313,8 +1275,7 @@ cdef class Matrix(Matrix0):
         self.cache('sparse_columns', C)
         if copy:
             return list(C)
-        else:
-            return C
+        return C
 
     def sparse_rows(self, copy=True):
         r"""
@@ -1396,8 +1357,7 @@ cdef class Matrix(Matrix0):
         self.cache('sparse_rows', R)
         if copy:
             return list(R)
-        else:
-            return R
+        return R
 
     def column(self, Py_ssize_t i, from_list=False):
         """
@@ -1558,9 +1518,9 @@ cdef class Matrix(Matrix0):
             :meth:`~sage.matrix.matrix2.Matrix.subdivisions`
             and
             :meth:`~sage.matrix.matrix2.Matrix.subdivide`.
-            You might also find :func:`~sage.matrix.constructor.block_matrix`
+            You might also find :func:`~sage.matrix.special.block_matrix`
             or
-            :func:`~sage.matrix.constructor.block_diagonal_matrix`
+            :func:`~sage.matrix.special.block_diagonal_matrix`
             useful and simpler in some instances.
 
         EXAMPLES:
@@ -1587,6 +1547,25 @@ cdef class Matrix(Matrix0):
             [  4   6]
             [  8  10]
             [100 200]
+
+        Coercion works as expected when stacking. ::
+
+            sage: A = matrix(QQ, 2, 2)
+            sage: v = vector([-1, 1])
+            sage: A.stack(v)
+            [ 0  0]
+            [ 0  0]
+            [-1  1]
+
+            sage: B = matrix(Zmod(15), 2, 2, 1, implementation='flint')
+            sage: C = matrix(Zmod(15), 2, 2, 2, implementation='linbox')
+            sage: D1 = B.stack(C); D1
+            [1 0]
+            [0 1]
+            [2 0]
+            [0 2]
+            sage: type(D1)
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
 
         Errors are raised if the sizes are incompatible. ::
 
@@ -1784,6 +1763,11 @@ cdef class Matrix(Matrix0):
             elif other.is_sparse_c() and not self.is_sparse_c():
                 self = self.sparse_matrix()
 
+            # If self and other can both be dense/sparse and
+            # have different types even over the same parent
+            # (for example matrices over the integers mod N) then self must
+            # be able to handle a different type in _stack_impl
+
         Z = self._stack_impl(other)
         if subdivide:
             Z._subdivide_on_stack(self, other)
@@ -1848,8 +1832,8 @@ cdef class Matrix(Matrix0):
             need, you can manage subdivisions yourself with methods like
             :meth:`~sage.matrix.matrix2.Matrix.get_subdivisions` and
             :meth:`~sage.matrix.matrix2.Matrix.subdivide`.  You might
-            also find :func:`~sage.matrix.constructor.block_matrix` or
-            :func:`~sage.matrix.constructor.block_diagonal_matrix`
+            also find :func:`~sage.matrix.special.block_matrix` or
+            :func:`~sage.matrix.special.block_diagonal_matrix`
             useful and simpler in some instances.
 
         EXAMPLES:
@@ -1930,16 +1914,15 @@ cdef class Matrix(Matrix0):
             [2 3|3 4 5]
             [4 5|6 7 8]
 
-        The result retains the base ring of ``self`` by coercing the
-        elements of ``right`` into the base ring of ``self``. ::
+        The base ring of the result is the pushout of the base rings of the inputs::
 
             sage: A = matrix(QQ, 2, [1,2])
             sage: B = matrix(RR, 2, [sin(1.1), sin(2.2)])
-            sage: C = A.augment(B); C                                                   # needs sage.symbolic
-            [                  1 183017397/205358938]
-            [                  2 106580492/131825561]
-            sage: C.parent()                                                            # needs sage.symbolic
-            Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+            sage: C = A.augment(B); C
+            [ 1.00000000000000 0.891207360061435]
+            [ 2.00000000000000 0.808496403819590]
+            sage: C.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Real Field with 53 bits of precision
 
             sage: D = B.augment(A); D
             [0.89120736006...  1.00000000000000]
@@ -1948,13 +1931,11 @@ cdef class Matrix(Matrix0):
             Full MatrixSpace of 2 by 2 dense matrices
              over Real Field with 53 bits of precision
 
-        Sometimes it is not possible to coerce into the base ring of
-        ``self``.  A solution is to change the base ring of ``self`` to
-        a more expansive ring.  Here we mix the rationals with a ring of
-        polynomials with rational coefficients.  ::
+        The base ring of the result is the pushout of the base rings of
+        the inputs::
 
-            sage: R.<y> = PolynomialRing(QQ)
-            sage: A = matrix(QQ, 1, [1,2])
+            sage: R.<y> = PolynomialRing(ZZ)
+            sage: A = matrix(QQ, 1, [1, 2])
             sage: B = matrix(R, 1, [y, y^2])
 
             sage: C = B.augment(A); C
@@ -1963,17 +1944,24 @@ cdef class Matrix(Matrix0):
             Full MatrixSpace of 1 by 4 dense matrices over
              Univariate Polynomial Ring in y over Rational Field
 
-            sage: D = A.augment(B)
-            Traceback (most recent call last):
-            ...
-            TypeError: y is not a constant polynomial
+            sage: D = A.augment(B); D
+            [  1   2   y y^2]
+            sage: D.parent()
+            Full MatrixSpace of 1 by 4 dense matrices over Univariate Polynomial Ring in y over Rational Field
 
             sage: E = A.change_ring(R)
             sage: F = E.augment(B); F
             [  1   2   y y^2]
             sage: F.parent()
-            Full MatrixSpace of 1 by 4 dense matrices over
-             Univariate Polynomial Ring in y over Rational Field
+            Full MatrixSpace of 1 by 4 dense matrices over Univariate Polynomial Ring in y over Integer Ring
+
+        Vector entries are coerced through the common base ring before
+        matching matrix implementations::
+
+            sage: A = matrix(QQ, 2, 2, [1, 2, 3, 4])
+            sage: A.augment(vector(ZZ, [5, 6]))
+            [1 2 5]
+            [3 4 6]
 
         AUTHORS:
 
@@ -1994,9 +1982,25 @@ cdef class Matrix(Matrix0):
 
         if self._nrows != other._nrows:
             raise TypeError('number of rows must be the same, '
-                            '{0} != {1}'.format(self._nrows, other._nrows))
-        if not (self._base_ring is other.base_ring()):
-            other = other.change_ring(self._base_ring)
+                '{0} != {1}'.format(self._nrows, other._nrows))
+        left_ring = self._base_ring
+        right_ring = other._base_ring
+        if left_ring is not right_ring:
+            R = coercion_model.common_parent(left_ring, right_ring)
+            if left_ring is not R:
+                self = self.change_ring(R)
+            if right_ring is not R:
+                other = other.change_ring(R)
+
+        if type(self) is not type(other):
+            # If one of the matrices is sparse, return a sparse matrix
+            if self.is_sparse_c() and not other.is_sparse_c():
+                other = other.sparse_matrix()
+            elif other.is_sparse_c() and not self.is_sparse_c():
+                self = self.sparse_matrix()
+            if type(self) is not type(other):
+                # If still not the same type, try using _change_implementation
+                other = other._change_implementation(self.parent().Element)
 
         cdef Matrix Z
         Z = self.new_matrix(ncols=self._ncols + other._ncols)
@@ -2043,7 +2047,7 @@ cdef class Matrix(Matrix0):
             if col < 0 or col >= self._ncols:
                 raise IndexError("column index out of range")
             for i in range(self._nrows):
-                A.set_unsafe(i, j, self.get_unsafe(i, col))
+                A.copy_from_unsafe(i, j, self, i, col)
         return A
 
     def delete_columns(self, dcols, check=True):
@@ -2141,7 +2145,7 @@ cdef class Matrix(Matrix0):
             if row < 0 or row >= self._nrows:
                 raise IndexError("row index out of range")
             for j in range(self._ncols):
-                A.set_unsafe(i, j, self.get_unsafe(row, j))
+                A.copy_from_unsafe(i, j, self, row, j)
         return A
 
     def delete_rows(self, drows, check=True):
@@ -2176,7 +2180,7 @@ cdef class Matrix(Matrix0):
             [ 3  4  5]
             [ 9 10 11]
 
-        The default is to check whether the any index in ``drows`` is out of range. ::
+        The default is to check whether any index in ``drows`` is out of range. ::
 
             sage: A.delete_rows([-1,2,4])
             Traceback (most recent call last):
@@ -2268,7 +2272,7 @@ cdef class Matrix(Matrix0):
             if row < 0 or row >= self._nrows:
                 raise IndexError("row index out of range")
             for j, col in enumerate(columns):
-                A.set_unsafe(i, j, self.get_unsafe(row, col))
+                A.copy_from_unsafe(i, j, self, row, col)
         return A
 
     def submatrix(self, Py_ssize_t row=0, Py_ssize_t col=0,
@@ -2537,7 +2541,6 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(2^4)
             sage: l = [a^2 + 1, a^3 + 1, 0, 0, a, a^3 + a + 1, a + 1,
             ....:      a + 1, a^2, a^3 + a + 1, a^3 + a, a^3 + a]
@@ -2552,7 +2555,6 @@ cdef class Matrix(Matrix0):
 
         ::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(25)
             sage: M = Matrix(K, 2, 3, [0, 2, 3, 5, a, a^2])
             sage: M
@@ -2565,7 +2567,7 @@ cdef class Matrix(Matrix0):
         .. NOTE::
 
             This method can be optimized by improving
-            :meth:`get_is_zero_unsafe` for derived matrix classes.
+            ``get_is_zero_unsafe`` for derived matrix classes.
         """
         if ring is None:
             from sage.rings.integer_ring import ZZ

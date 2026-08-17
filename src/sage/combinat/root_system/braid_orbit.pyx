@@ -1,6 +1,6 @@
 # cython: wraparound=False, boundscheck=False
 """
-Braid Orbit
+Braid orbit
 
 Cython function to compute the orbit of the braid moves on a reduced word.
 """

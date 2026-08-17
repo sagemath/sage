@@ -93,8 +93,7 @@ def base_field(x):
         y = x.base_ring()
         if y.is_field():
             return y
-        else:
-            raise AttributeError("The base ring of %s is not a field" % x)
+        raise AttributeError("The base ring of %s is not a field" % x)
 
 
 def basis(x):
@@ -437,6 +436,16 @@ def symbolic_sum(expression, *args, **kwds):
 
       - ``'sympy'`` -- use SymPy
 
+    .. SEEALSO::
+
+        :func:`symbolic_prod` for symbolic products and
+        :func:`sage.misc.misc_c.prod` for products of iterables.
+
+    .. NOTE::
+
+        This function is available as ``sum`` in the global namespace.
+        In the absence of bounds it delegates to Python's built-in ``sum``.
+
     EXAMPLES::
 
         sage: k, n = var('k,n')                                                         # needs sage.symbolic
@@ -455,9 +464,9 @@ def symbolic_sum(expression, *args, **kwds):
 
     .. WARNING::
 
-        This function only works with symbolic expressions. To sum any
-        other objects like list elements or function return values,
-        please use python summation, see
+        This function is intended for summations of symbolic expressions.
+        However, if no bounds are given, the first argument is passed to
+        python's built-in ``sum``:
         http://docs.python.org/library/functions.html#sum
 
         In particular, this does not work::
@@ -603,7 +612,7 @@ def symbolic_prod(expression, *args, **kwds):
 
     - ``a`` -- lower endpoint of the product
 
-    - ``b`` -- upper endpoint of the prduct
+    - ``b`` -- upper endpoint of the product
 
     - ``algorithm`` -- (default: ``'maxima'``)  one of
 
@@ -614,6 +623,37 @@ def symbolic_prod(expression, *args, **kwds):
       - ``'sympy'`` -- use SymPy
 
     - ``hold`` -- boolean (default: ``False``); if ``True`` don't evaluate
+
+    .. SEEALSO::
+
+        :func:`symbolic_sum` for symbolic sums and
+        :func:`sage.misc.misc_c.prod` for multiplying elements of an
+        iterable.
+
+    .. NOTE::
+
+        This function is available as ``product`` in the global namespace.
+        In the absence of bounds it delegates to :func:`sage.misc.misc_c.prod`.
+
+    .. WARNING::
+
+        This function is intended for products of symbolic expressions.
+        However, if no bounds are given, the first argument is passed to
+        :func:`sage.misc.misc_c.prod`.
+
+        For example, this does not work::
+
+            sage: n = var('n')
+            sage: mylist = [1, 2, 3, 4, 5]
+            sage: product(mylist[n], n, 0, 3)
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert n to an integer
+
+        Use ``prod`` instead::
+
+            sage: prod(mylist[n] for n in range(4))
+            24
 
     EXAMPLES::
 
@@ -639,11 +679,10 @@ def symbolic_prod(expression, *args, **kwds):
     from .misc_c import prod as c_prod
     if hasattr(expression, 'prod'):
         return expression.prod(*args, **kwds)
-    elif len(args) <= 1:
+    if len(args) <= 1:
         return c_prod(expression, *args)
-    else:
-        from sage.symbolic.ring import SR
-        return SR(expression).prod(*args, **kwds)
+    from sage.symbolic.ring import SR
+    return SR(expression).prod(*args, **kwds)
 
 
 def integral(x, *args, **kwds):
@@ -654,7 +693,7 @@ def integral(x, *args, **kwds):
     integrate it using Maxima, maple, etc, as specified by algorithm.
 
     For symbolic expression calls
-    :func:`sage.calculus.calculus.integral` - see this function for
+    :func:`sage.calculus.functional.integral` - see this function for
     available options.
 
     EXAMPLES::
@@ -787,9 +826,8 @@ def integral(x, *args, **kwds):
     """
     if hasattr(x, 'integral'):
         return x.integral(*args, **kwds)
-    else:
-        from sage.symbolic.ring import SR
-        return SR(x).integral(*args, **kwds)
+    from sage.symbolic.ring import SR
+    return SR(x).integral(*args, **kwds)
 
 
 integrate = integral
@@ -1010,7 +1048,7 @@ def log(*args, **kwds):
 
     You can use
     :class:`RDF<sage.rings.real_double.RealDoubleField_class>`,
-    :class:`~sage.rings.real_mpfr.RealField` or ``n`` to get a
+    :func:`RealField <sage.rings.real_mpfr.RealField>` or ``n`` to get a
     numerical real approximation::
 
         sage: log(1024, 2)
@@ -1155,6 +1193,13 @@ def log(*args, **kwds):
         0
         sage: log(e, base=0)
         0
+
+    Check if :issue:`40883` is fixed::
+
+        sage: log(int(4294967300), 2)                                                   # needs sage.symbolic
+        log(4294967300)/log(2)
+        sage: float(log(int(4294967300), 2))                                            # needs sage.symbolic
+        32.00000000134...
     """
     base = kwds.pop('base', None)
     if base is not None:
@@ -1728,16 +1773,14 @@ def round(x, ndigits=0):
         if ndigits:
             x = float(x)
             return RealDoubleElement(builtins.round(x, ndigits))
-        else:
-            try:
-                return x.round()
-            except AttributeError:
-                return RealDoubleElement(builtins.round(x, 0))
+        try:
+            return x.round()
+        except AttributeError:
+            return RealDoubleElement(builtins.round(x, 0))
     except ArithmeticError:
         if not isinstance(x, RealDoubleElement):
             return round(RDF(x), ndigits)
-        else:
-            raise
+        raise
 
 
 def quotient(x, y, *args, **kwds):
@@ -1780,7 +1823,7 @@ def isqrt(x):
     try:
         return x.isqrt()
     except AttributeError:
-        from sage.functions.all import floor
+        from sage.functions.other import floor
         n = Integer(floor(x))
         return n.isqrt()
 
@@ -1824,7 +1867,7 @@ def squarefree_part(x):
     except AttributeError:
         pass
     from sage.arith.misc import factor
-    from sage.structure.all import parent
+    from sage.structure.element import parent
     F = factor(x)
     n = parent(x)(1)
     for p, e in F:
@@ -1876,9 +1919,8 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
         if x >= 0:
             from sage.rings.real_mpfr import RealField
             return RealField(prec)(x).sqrt(all=all)
-        else:
-            from sage.rings.complex_mpfr import ComplexField
-            return ComplexField(prec)(x).sqrt(all=all)
+        from sage.rings.complex_mpfr import ComplexField
+        return ComplexField(prec)(x).sqrt(all=all)
     if x == -1:
         from sage.symbolic.constants import I as z
     else:
@@ -1888,8 +1930,7 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
     if all:
         if z:
             return [z, -z]
-        else:
-            return [z]
+        return [z]
     return z
 
 
@@ -1975,7 +2016,7 @@ def sqrt(x, *args, **kwds):
     """
     if isinstance(x, float):
         return math.sqrt(x)
-    elif type(x).__module__ == 'numpy':
+    if type(x).__module__ == 'numpy':
         from numpy import sqrt
         return sqrt(x)
     try:

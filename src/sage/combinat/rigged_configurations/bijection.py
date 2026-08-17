@@ -12,7 +12,7 @@ AUTHORS:
 - Travis Scrimshaw (2014-09-10): Added type `D_4^{(3)}`
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2011-2015 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -24,8 +24,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA

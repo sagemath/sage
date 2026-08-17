@@ -70,7 +70,7 @@ TESTS::
 # *****************************************************************************
 
 from sage.matrix.constructor import matrix
-from sage.modular.arithgroup.all import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
 from sage.modular.cusps import Cusp
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ

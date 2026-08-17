@@ -90,32 +90,22 @@ cimport sage.libs.linbox.linbox as linbox
 
 from sage.arith.misc import is_prime
 from sage.data_structures.binary_search cimport *
-from sage.ext.stdsage cimport PY_NEW
-from sage.libs.flint.fmpz cimport fmpz_get_mpz, fmpz_set_mpz
-from sage.libs.flint.fmpz_mat cimport fmpz_mat_entry
-from sage.libs.gmp.mpz cimport mpz_set
-from sage.libs.linbox.conversion cimport (get_method,
-                                          METHOD_DEFAULT,
+from sage.libs.linbox.conversion cimport (METHOD_DEFAULT,
                                           METHOD_DENSE_ELIMINATION,
                                           METHOD_SPARSE_ELIMINATION,
                                           METHOD_BLACKBOX,
                                           METHOD_WIEDEMANN,
-                                          new_linbox_matrix_modn_sparse,
-                                          new_linbox_matrix_integer_sparse,
-                                          new_linbox_vector_integer_dense,
-                                          new_sage_vector_integer_dense)
+                                          new_linbox_matrix_modn_sparse)
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix2 import Matrix as Matrix2
 from sage.matrix.matrix_dense cimport Matrix_dense
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+cimport sage.matrix.matrix0 as matrix0
 from sage.matrix.matrix_sparse cimport Matrix_sparse
 from sage.misc.verbose import verbose, get_verbose
-from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.modules.vector_integer_sparse cimport *
 from sage.modules.vector_modn_sparse cimport *
 from sage.rings.fast_arith cimport arith_int
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
-from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.element cimport Matrix
 
@@ -129,6 +119,7 @@ ai = arith_int()
 # int's, even on 64-bit computers.  Improving this is
 # Github Issue #12679.
 MAX_MODULUS = 46341
+
 
 cdef class Matrix_modn_sparse(Matrix_sparse):
     def __cinit__(self):
@@ -165,6 +156,12 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to the (empty)
+            # zero matrix. Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
@@ -181,6 +178,46 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         IntegerMod_abstract.__init__(n, self._base_ring)
         n.ivalue = get_entry(&self.rows[i], j)
         return n
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_modn_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(257),3,4,[i if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: m
+            [ 0  0  2  3]
+            [ 0  5  0  7]
+            [ 0  0  0 11]
+            sage: m.transpose()
+            [ 0  0  0]
+            [ 0  5  0]
+            [ 2  0  0]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  0  2  3]
+            [ 0  0  0 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 0  3]
+            [ 5  7]
+            [ 0 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 0  7]
+            [ 0 11]
+        """
+        cdef Matrix_modn_sparse _src = <Matrix_modn_sparse>src
+        set_entry(&self.rows[iDst], jDst, get_entry(&_src.rows[iSrc], jSrc))
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -300,6 +337,63 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         cdef Matrix_modn_sparse right, ans
         right = _right
 
+        ans = self.new_matrix(self._nrows, right._ncols)
+        ans._set_to_product_classical(self, right)
+        return ans
+
+    cdef void _set_to_product_classical(self, matrix0.Matrix _left,
+                                        matrix0.Matrix _right) except *:
+        r"""
+        Set ``self`` to ``_left * _right`` using the specialized sparse
+        modular algorithm.
+
+        This overrides
+        :meth:`~sage.matrix.matrix_sparse.Matrix_sparse._set_to_product_classical`
+        so that :meth:`set_to_product` keeps the specialized
+        ``c_vector_modint`` algorithm used by ``*``, rather than falling back
+        to the generic sparse one.  It is the shared core of
+        :meth:`_matrix_times_matrix_`, which allocates the result and then
+        calls this method.
+
+        The destination's rows are cleared first, since it may hold the
+        result of an earlier product.
+
+        INPUT:
+
+        - ``_left`` -- a sparse matrix over the base ring of ``self``
+        - ``_right`` -- a sparse matrix over the base ring of ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: a = matrix(GF(43), 3, 3, range(9), sparse=True)
+            sage: b = matrix(GF(43), 3, 3, range(10,19), sparse=True)
+            sage: C = matrix(GF(43), 3, 3, [7] * 9, sparse=True)
+            sage: C.set_to_product(a, b)
+            sage: C
+            [ 2  5  8]
+            [33  2 14]
+            [21 42 20]
+            sage: C == a * b
+            True
+
+        TESTS:
+
+        Reusing the destination must not leave entries of the previous
+        product behind::
+
+            sage: C.set_to_product(2 * a, b)
+            sage: C == (2 * a) * b
+            True
+            sage: C.set_to_product(matrix(GF(43), 3, 0, sparse=True),
+            ....:                  matrix(GF(43), 0, 3, sparse=True))
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_modn_sparse left = <Matrix_modn_sparse>_left
+        cdef Matrix_modn_sparse right = <Matrix_modn_sparse>_right
+
         cdef c_vector_modint* v
 
         # Build a table that gives the nonzero positions in each column of right
@@ -310,14 +404,26 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             for j in range(v.num_nonzero):
                 (<set> nonzero_positions_in_columns[v.positions[j]]).add(i)
 
-        ans = self.new_matrix(self._nrows, right._ncols)
+        # Clear any previous entries, while avoiding a second initialization
+        # pass for the empty rows of a freshly allocated destination.  Reset
+        # each cleared row to the empty state by hand rather than calling
+        # ``init_c_vector_modint``: an empty vector needs no storage, and an
+        # allocation here could raise after ``clear_c_vector_modint`` has
+        # already freed the row, leaving dangling pointers for the next
+        # ``clear_c_vector_modint`` to free a second time.
+        for i in range(self._nrows):
+            if self.rows[i].num_nonzero:
+                clear_c_vector_modint(&self.rows[i])
+                self.rows[i].entries = NULL
+                self.rows[i].positions = NULL
+                self.rows[i].num_nonzero = 0
 
         # Now do the multiplication, getting each row completely before filling it in.
         cdef int x, y, s
         cdef set c
 
-        for i in range(self._nrows):
-            v = &(self.rows[i])
+        for i in range(left._nrows):
+            v = &(left.rows[i])
             for j in range(right._ncols):
                 s = 0
                 c = <set> nonzero_positions_in_columns[j]
@@ -326,8 +432,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
                         y = get_entry(&right.rows[v.positions[k]], j)
                         x = v.entries[k] * y
                         s = (s + x) % self.p
-                set_entry(&ans.rows[i], j, s)
-        return ans
+                set_entry(&self.rows[i], j, s)
 
     def _matrix_times_matrix_dense(self, Matrix _right):
         """
@@ -345,7 +450,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [ 9 12 15]
             [19 26 33]
             sage: type(c)
-            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+            <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
 
             sage: a = matrix(GF(2), 20, 20, sparse=True)
             sage: a*a == a._matrix_times_matrix_dense(a)

@@ -1,10 +1,5 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Elements, parents, and categories in Sage: a primer
-
-.. contents::
-   :depth: 2
-   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Abstract
 ========
@@ -84,7 +79,7 @@ Some challenges
 
       sage: A = random_matrix(ZZ, 6, 3, x=7)                                            # needs sage.modules
       sage: L = LatticePolytope(A.rows())                                               # needs sage.geometry.polyhedron sage.modules
-      sage: L.npoints()                # oops!   # random                               # needs sage.geometry.polyhedron sage.modules
+      sage: L.n_points()                # oops!   # random                               # needs sage.geometry.polyhedron sage.modules
       37
 
 - How to ensure robustness?
@@ -825,10 +820,10 @@ element of the parent?)::
       running ._test_not_implemented_methods() . . . pass
       running ._test_pickling() . . . pass
       pass
-        running ._test_elements_eq_reflexive() . . . pass
-        running ._test_elements_eq_symmetric() . . . pass
-        running ._test_elements_eq_transitive() . . . pass
-        running ._test_elements_neq() . . . pass
+    running ._test_elements_eq_reflexive() . . . pass
+    running ._test_elements_eq_symmetric() . . . pass
+    running ._test_elements_eq_transitive() . . . pass
+    running ._test_elements_neq() . . . pass
     running ._test_enumerated_set_contains() . . . pass
     running ._test_enumerated_set_iter_cardinality() . . . pass
     running ._test_enumerated_set_iter_list() . . . pass
@@ -836,6 +831,8 @@ element of the parent?)::
     running ._test_new() . . . pass
     running ._test_not_implemented_methods() . . . pass
     running ._test_pickling() . . . pass
+    running ._test_random() . . . pass
+    running ._test_rank() . . . pass
     running ._test_some_elements() . . . pass
 
 Tests can be run individually::
@@ -931,6 +928,7 @@ Where do all the operations on ``S`` and its elements come from?
 to use Sage's introspection tools to recover where it's implemented::
 
     sage: x._repr_.__module__
+    'sage.structure.element_wrapper'
     sage: sage.misc.sageinspect.sage_getfile(x._repr_)
     '.../sage/structure/element_wrapper.pyx'
 
@@ -1092,7 +1090,7 @@ from existing ones while carrying over as much as possible of their
 algebraic structure. This includes:
 
 - Cartesian products:
-  See :const:`~sage.categories.cartesian_product.cartesian_product`.
+  See :class:`~sage.categories.cartesian_product.CartesianProductFunctor`.
 
 - Tensor products:
   See :const:`~sage.categories.tensor.tensor`.
@@ -1564,8 +1562,8 @@ category. This determines the position of `C` in the category graph.
 A category *may* provide methods that can be used by all its objects,
 respectively by all elements of its objects.
 
-Each category *should* come with a good example, in
-:mod:`sage.categories.examples`.
+Each category *should* come with a good example in the
+``sage.categories.examples`` package.
 
 Inserting the new category into the category graph
 --------------------------------------------------

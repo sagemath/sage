@@ -29,13 +29,13 @@ AUTHORS:
 
 SMALL_DISC = 1000000
 
-import sage.misc.latex as latex
+from sage.misc import latex
 
-import sage.rings.rational_field as rational_field
-import sage.rings.integer_ring as integer_ring
+from sage.rings import rational_field
+from sage.rings import integer_ring
 from sage.arith.misc import kronecker as kronecker_symbol
 from sage.arith.misc import GCD as gcd
-import sage.misc.misc as misc
+from sage.misc import misc
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 from sage.rings.ideal import Ideal_generic, Ideal_fractional
@@ -273,7 +273,6 @@ class NumberFieldIdeal(Ideal_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: K.<I>=QQ[i]
             sage: A = K.ideal([5, 2 + I])
             sage: B = K.ideal([13, 5 + 12*I])
@@ -320,8 +319,9 @@ class NumberFieldIdeal(Ideal_generic):
         ALGORITHM:
 
         Uses linear algebra.
-        Provides simpler implementations for :meth:`_contains_`,
-        :meth:`is_integral` and :meth:`smallest_integer`.
+        Provides simpler implementations for ``_contains_``,
+        :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldIdeal.is_integral`
+        and :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldIdeal.smallest_integer`.
 
         EXAMPLES::
 
@@ -539,8 +539,7 @@ class NumberFieldIdeal(Ideal_generic):
         two_gens = self.gens_two()
         if two_gens[1]:
             return two_gens
-        else:
-            return (two_gens[0],)
+        return (two_gens[0],)
 
     def __pari__(self):
         """
@@ -756,7 +755,7 @@ class NumberFieldIdeal(Ideal_generic):
         gens = self.__elements_from_hnf(hnf)
         return K.ideal(gens)
 
-    def gens_reduced(self, proof=None):
+    def gens_reduced(self, proof=None) -> tuple:
         r"""
         Express this ideal in terms of at most two generators, and one
         if possible.
@@ -977,7 +976,7 @@ class NumberFieldIdeal(Ideal_generic):
         I.__pari_hnf = hnf
         return I
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         """
         Return ``True`` if this ideal is integral.
 
@@ -997,10 +996,11 @@ class NumberFieldIdeal(Ideal_generic):
             self.__is_integral = all(a in one for a in self.integral_basis())
             return self.__is_integral
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         """
-        Return ``True`` if this ideal is maximal.  This is equivalent to
-        ``self`` being prime and nonzero.
+        Return ``True`` if this ideal is maximal.
+
+        This is equivalent to ``self`` being prime and nonzero.
 
         EXAMPLES::
 
@@ -1014,7 +1014,7 @@ class NumberFieldIdeal(Ideal_generic):
         """
         return self.is_prime() and not self.is_zero()
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal is prime.
 
@@ -1161,7 +1161,7 @@ class NumberFieldIdeal(Ideal_generic):
                 # Non-principal ideal
                 self._reduced_generators = self.gens_two()
 
-    def is_principal(self, proof=None):
+    def is_principal(self, proof=None) -> bool:
         r"""
         Return ``True`` if this ideal is principal.
 
@@ -1272,7 +1272,7 @@ class NumberFieldIdeal(Ideal_generic):
             invs = [x[1] for x in D]
         return [Zmod(invs[i])(L[i]) for i in range(len(L))]
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` iff ``self`` is the zero ideal.
 
@@ -1347,7 +1347,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def absolute_ramification_index(self):
         """
-        A synonym for :meth:`ramification_index`.
+        A synonym for :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal.ramification_index`.
 
         EXAMPLES::
 
@@ -1360,7 +1360,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def relative_ramification_index(self):
         """
-        A synonym for :meth:`ramification_index`.
+        A synonym for :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal.ramification_index`.
 
         EXAMPLES::
 
@@ -1494,7 +1494,7 @@ class NumberFieldIdeal(Ideal_generic):
         r"""
         Return the decomposition group of ``self``, as a subset of the
         automorphism group of the number field of ``self``. Raises an
-        error if the field isn't Galois. See the :meth:`GaloisGroup_v2.decomposition_group`
+        error if the field isn't Galois. See the :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.decomposition_group`
         method for further examples and doctests.
 
         EXAMPLES::
@@ -1510,7 +1510,7 @@ class NumberFieldIdeal(Ideal_generic):
         elements `s` of the Galois group of the number field of ``self``
         (which we assume is Galois) such that `s` acts trivially
         modulo the `(v+1)`'st power of ``self``. See the
-        :meth:`GaloisGroup.ramification_group` method for
+        :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.ramification_group` method for
         further examples and doctests.
 
         EXAMPLES::
@@ -1529,7 +1529,7 @@ class NumberFieldIdeal(Ideal_generic):
         Galois group of the number field of ``self`` (which we assume is Galois)
         such that `s` acts trivially modulo ``self``. This is the same as the 0th
         ramification group of ``self``. See the
-        :meth:`GaloisGroup_v2.inertia_group` method further examples and doctests.
+        :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.inertia_group` method further examples and doctests.
 
         EXAMPLES::
 
@@ -1594,7 +1594,7 @@ class NumberFieldIdeal(Ideal_generic):
         where `p` is the residue characteristic of `P`.  (Here `P`
         (``self``) should be prime and unramified.)
 
-        See the :meth:`GaloisGroup_v2.artin_symbol` method
+        See the :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.artin_symbol` method
         for further documentation and examples.
 
         EXAMPLES::
@@ -1781,41 +1781,8 @@ def basis_to_module(B, K):
     return M.span_of_basis(C)
 
 
-def is_NumberFieldIdeal(x):
-    """
-    Return ``True`` if `x` is an ideal of a number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
-        sage: is_NumberFieldIdeal(2/3)
-        doctest:warning...
-        DeprecationWarning: The function is_NumberFieldIdeal is deprecated;
-        use 'isinstance(..., NumberFieldIdeal)' instead.
-        See https://github.com/sagemath/sage/issues/38124 for details.
-        False
-        sage: is_NumberFieldIdeal(ideal(5))
-        False
-
-        sage: x = polygen(ZZ)
-        sage: k.<a> = NumberField(x^2 + 2)
-        sage: I = k.ideal([a + 1]); I
-        Fractional ideal (a + 1)
-        sage: is_NumberFieldIdeal(I)
-        True
-        sage: Z = k.ideal(0); Z
-        Ideal (0) of Number Field in a with defining polynomial x^2 + 2
-        sage: is_NumberFieldIdeal(Z)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38124,
-                "The function is_NumberFieldIdeal is deprecated; "
-                "use 'isinstance(..., NumberFieldIdeal)' instead.")
-    return isinstance(x, NumberFieldIdeal)
-
-
-class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, Ideal_fractional):
+class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal,
+                                 Ideal_fractional):
     r"""
     A fractional ideal in a number field.
 
@@ -1950,7 +1917,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
             K = self.number_field()
             F = K.pari_nf().idealfactor(self.pari_hnf())
             A = []
-            for j in range(0, len(F[0])):
+            for j in range(len(F[0])):
                 I = K.ideal(F[j,0])
                 A.append((I,ZZ(F[j,1])))
             self.__factorization = Factorization(A)
@@ -2470,7 +2437,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         self._num_ideal = self * self.denominator()
         return self._num_ideal
 
-    def is_coprime(self, other):
+    def is_coprime(self, other) -> bool:
         """
         Return ``True`` if this ideal is coprime to ``other``, else ``False``.
 
@@ -2523,8 +2490,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         if self.is_integral() and other.is_integral():
             if gcd(ZZ(self.absolute_norm()), ZZ(other.absolute_norm())) == 1:
                 return True
-            else:
-                return self+other == one
+            return self+other == one
         # This special case is necessary since the zero ideal is not a
         # fractional ideal!
         if other.absolute_norm() == 0:
@@ -3305,39 +3271,6 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         """
         bid = self._pari_bid_()
         return ZZ(self.number_field().pari_bnf().bnrclassno(bid))
-
-
-def is_NumberFieldFractionalIdeal(x):
-    """
-    Return ``True`` if `x` is a fractional ideal of a number field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
-        sage: is_NumberFieldFractionalIdeal(2/3)
-        doctest:warning...
-        DeprecationWarning: The function is_NumberFieldFractionalIdeal is deprecated;
-        use 'isinstance(..., NumberFieldFractionalIdeal)' instead.
-        See https://github.com/sagemath/sage/issues/38124 for details.
-        False
-        sage: is_NumberFieldFractionalIdeal(ideal(5))
-        False
-        sage: x = polygen(ZZ)
-        sage: k.<a> = NumberField(x^2 + 2)
-        sage: I = k.ideal([a + 1]); I
-        Fractional ideal (a + 1)
-        sage: is_NumberFieldFractionalIdeal(I)
-        True
-        sage: Z = k.ideal(0); Z
-        Ideal (0) of Number Field in a with defining polynomial x^2 + 2
-        sage: is_NumberFieldFractionalIdeal(Z)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38124,
-                "The function is_NumberFieldFractionalIdeal is deprecated; "
-                "use 'isinstance(..., NumberFieldFractionalIdeal)' instead.")
-    return isinstance(x, NumberFieldFractionalIdeal)
 
 
 class QuotientMap:

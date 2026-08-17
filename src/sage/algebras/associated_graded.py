@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Associated Graded Algebras To Filtered Algebras
 
@@ -91,12 +90,13 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
 
     In this class, the `R`-module isomorphism from `A` to
     `\operatorname{gr} A` is implemented as
-    :meth:`to_graded_conversion` and also as the default
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.to_graded_conversion`
+    and also as the default
     conversion from `A` to `\operatorname{gr} A`. Its
     inverse map is implemented as
-    :meth:`from_graded_conversion`.
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.from_graded_conversion`.
     The projection `p_i : F_i \to G_i` is implemented as
-    :meth:`projection` ``(i)``.
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ParentMethods.projection` ``(i)``.
 
     INPUT:
 
@@ -196,7 +196,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         phi = self.module_morphism(diagonal=lambda x: base_one, codomain=A)
         self._A.register_conversion(phi)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -213,7 +213,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
             return "Graded Algebra of {}".format(self._A)
         return "Graded Module of {}".format(self._A)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

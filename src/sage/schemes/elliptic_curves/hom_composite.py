@@ -14,7 +14,6 @@ straightforward :class:`EllipticCurveIsogeny` implementation, but
 decomposing into prime steps is exponentially faster::
 
     sage: # needs sage.rings.finite_rings
-    sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
     sage: p = 3 * 2^143 - 1
     sage: GF(p^2).inject_variables()
     Defining z2
@@ -22,13 +21,16 @@ decomposing into prime steps is exponentially faster::
     sage: P = E.lift_x(31415926535897932384626433832795028841971 - z2)
     sage: P.order().factor()
     2^143
-    sage: EllipticCurveHom_composite(E, P)
+    sage: E.isogeny(P, algorithm="factored")  # preferred API
     Composite morphism of degree 11150372599265311570767859136324180752990208 = 2^143:
       From: Elliptic Curve defined by y^2 = x^3 + x
             over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
       To:   Elliptic Curve defined by y^2 = x^3 + (18676616716352953484576727486205473216172067*z2+32690199585974925193292786311814241821808308)*x
             + (3369702436351367403910078877591946300201903*z2+15227558615699041241851978605002704626689722)
             over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
+    sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+    sage: EllipticCurveHom_composite(E, P)  # same as above but use internal API, construct the isogeny directly
+    Composite morphism of degree 11150372599265311570767859136324180752990208 = 2^143: ...
 
 Yet, the interface provided by :class:`EllipticCurveHom_composite`
 is identical to :class:`EllipticCurveIsogeny` and other instantiations
@@ -185,7 +187,7 @@ def _compute_factored_isogeny_prime_power(P, l, n, split=.8, velu_sqrt_bound=Non
     All choices of ``split`` produce the same result, albeit
     not equally fast::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings, long time (:issue:`39569`)
         sage: E = EllipticCurve(GF(2^127 - 1), [1,0])
         sage: P, = E.gens()
         sage: (l,n), = P.order().factor()
@@ -320,7 +322,8 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         in which the computation of a single isogeny should be performed
         using square root Velu instead of simple Velu. If not provided,
         the system default is used (see
-        :class:`EllipticCurve_field.isogeny` for a more detailed
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.isogeny`
+        for a more detailed
         discussion.
 
         EXAMPLES::
@@ -387,6 +390,8 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         for P in kernel:
             if P not in E:
                 raise ValueError(f'given point {P} does not lie on {E}')
+
+        self._kernel_gens = tuple(kernel)  # cache for .kernel_gens()
 
         self._phis = _compute_factored_isogeny(kernel, velu_sqrt_bound=velu_sqrt_bound)
 
@@ -656,21 +661,19 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
             sage: phi * iso1                # indirect doctest
-            Composite morphism of degree 4 = 2^2:
+            Composite morphism of degree 4 = 1*2^2:
               From: Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (480*I-694)*x + (-7778*I+5556)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
             sage: iso2 * psi * phi * iso1   # indirect doctest
-            Composite morphism of degree 16 = 2^2*4:
+            Composite morphism of degree 16 = 1*2^2*4:
               From: Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         if isinstance(left, EllipticCurveHom_composite):
-            if isinstance(right, WeierstrassIsomorphism) and hasattr(left.factors()[0], '_set_pre_isomorphism'):    # XXX bit of a hack
-                return EllipticCurveHom_composite.from_factors((left.factors()[0] * right,) + left.factors()[1:], strict=False)
             if isinstance(right, EllipticCurveHom_composite):
                 return EllipticCurveHom_composite.from_factors(right.factors() + left.factors())
             if isinstance(right, EllipticCurveHom):
@@ -822,7 +825,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         return self.x_rational_map().denominator().radical()
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         """
         Return the dual of this composite isogeny.
 
@@ -849,8 +852,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: phi * psi == psi.domain().scalar_multiplication(psi.degree())
             True
         """
-        phis = (phi.dual() for phi in self._phis[::-1])
-        return EllipticCurveHom_composite.from_factors(phis)
+        if not self._phis:
+            return self
+        return prod(phi.dual(algorithm=algorithm) for phi in self._phis)
 
     def formal(self, prec=20):
         """
@@ -931,3 +935,198 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             1331
         """
         return prod(phi.inseparable_degree() for phi in self._phis)
+
+    @property
+    def _rest(self):
+        """
+        Internal property such that ``self == self._rest * self._phis[0]``.
+
+        TESTS::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: assert f == f._rest * f._phis[0]
+        """
+        return EllipticCurveHom_composite.from_factors(self._phis[1:], strict=False)
+
+    def kernel_points(self):
+        """
+        Return an iterator over the points in the kernel of this
+        elliptic-curve morphism.
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: f
+            Composite morphism of degree 4 = 2^2:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 1 over Finite Field in z2 of size 5^2
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 3 over Finite Field in z2 of size 5^2
+            sage: set(f.kernel_points())
+            {(0 : 1 : 0), (4 : 4 : 1), (2*z2 + 4 : 4*z2 + 4 : 1), (3*z2 + 1 : z2 + 3 : 1)}
+        """
+        yield from self.inverse_image(self.codomain().zero(), all=True)
+
+    def inverse_image(self, Q, /, *, all=False):
+        """
+        Return an arbitrary element ``P`` in the domain such that
+        ``self(P) == Q``, or raise ``ValueError`` if no such
+        element exists.
+
+        INPUT:
+
+        - ``Q`` -- a point
+        - ``all`` -- boolean; if ``True``, returns an iterator over all points
+          in the inverse image
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: f
+            Composite morphism of degree 4 = 2^2:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 1 over Finite Field in z2 of size 5^2
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 3 over Finite Field in z2 of size 5^2
+            sage: f(f.inverse_image(f(Q))) == f(Q)
+            True
+            sage: E.scalar_multiplication(-1).inverse_image(P) == -P
+            True
+            sage: f.inverse_image(f.codomain().0)
+            Traceback (most recent call last):
+            ...
+            ValueError...
+            sage: len(list(f.inverse_image(f(Q), all=True)))
+            4
+
+        Test a large example. It should finish in a few seconds::
+
+            sage: p = 3 * 2^143 - 1
+            sage: GF(p^2).inject_variables()
+            Defining z2
+            sage: E = EllipticCurve(GF(p^2), [1,0])
+            sage: P = E.lift_x(31415926535897932384626433832795028841971 - z2)
+            sage: f = E.isogeny(P, algorithm="factored")
+            sage: Q = f(E.lift_x(2718281828459045235360287471352662497757 - z2)); Q
+            (14253459515090351074737629944491750308703143*z2 + 17548601963968266930680314841240982076784493 : ... : 1)
+            sage: f.inverse_image(Q)  # long time
+            (...)
+
+        TESTS:
+
+        Normally, a :class:`EllipticCurveHom_composite` has ``len(self._phis) > 1``,
+        but if :meth:`from_factors` is called with ``strict=True``, or if the user
+        constructs a :class:`EllipticCurveHom_composite` object directly, then it is
+        possible to violate this condition. We test for this case::
+
+            sage: E.<P> = EllipticCurve(GF(5), [1, 2])
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: f = EllipticCurveHom_composite(E, P*2); f
+            Composite morphism of degree 2:
+              From: Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5
+              To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 5
+            sage: len(f._phis)
+            1
+            sage: f(f.inverse_image(f(P))) == f(P)
+            True
+            sage: set(f.inverse_image(f(P), all=True))
+            {(1 : 2 : 1), (1 : 3 : 1)}
+
+        The current implementation guarantees ``_phis`` is not empty::
+
+            sage: f = EllipticCurveHom_composite.from_factors((), E); f
+            Composite morphism of degree 1:
+              From: Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5
+              To:   Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5
+            sage: len(f._phis)
+            1
+            sage: f.inverse_image(P) == P
+            True
+        """
+        if len(self._phis) == 1:
+            return self._phis[0].inverse_image(Q, all=all)
+        if all:
+            return (R for P in self._rest.inverse_image(Q, all=True) for R in self._phis[0].inverse_image(P, all=True))
+        try:
+            return next(self.inverse_image(Q, all=True))
+        except StopIteration:
+            raise ValueError
+
+    def push_subgroup(self, f):
+        r"""
+        Given a minimal polynomial (see :meth:`~EllipticCurveHom.minimal_polynomial`)
+        of a subgroup `G` of the domain curve of this isogeny, return a minimal polynomial
+        of the image of `G` under this isogeny.
+
+        ALGORITHM: iterative :meth:`EllipticCurveHom.push_subgroup()`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF((2^61-1, 2)), [1,0])
+            sage: phi = next(E.isogenies_degree(7)); phi
+            Isogeny of degree 7
+              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2305843009213693951^2
+              to Elliptic Curve defined by y^2 = x^3 + (595688734420561721*z2+584021682365204922)*x + (2058397526093132314*z2+490140893682260802) over Finite Field in z2 of size 2305843009213693951^2
+            sage: psi = E.isogeny(E.lift_x(48), algorithm='factored'); psi
+            Composite morphism of degree 36028797018963968 = 2^55:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2305843009213693951^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 938942632807894005*x + 1238942515234646252 over Finite Field in z2 of size 2305843009213693951^2
+            sage: f = phi.minimal_polynomial()
+            sage: g = psi.push_subgroup(f)
+            sage: h = psi.codomain().kernel_polynomial_from_divisor(g, phi.degree())
+            sage: chi = psi.codomain().isogeny(h); chi
+            Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 938942632807894005*x + 1238942515234646252 over Finite Field in z2 of size 2305843009213693951^2 to Elliptic Curve defined by y^2 = x^3 + (1406897314822267524*z2+1659665944678449850)*x + (650305521764753329*z2+1047269804324934563) over Finite Field in z2 of size 2305843009213693951^2
+            sage: x = phi.kernel_polynomial().any_root()
+            sage: K = E.change_ring(E.base_field().extension(2)).lift_x(x)
+            sage: (chi * psi)._eval(K)
+            (0 : 1 : 0)
+        """
+        for phi in self.factors():
+            f = phi.push_subgroup(f)
+        return f
+
+    def xEVAL(self, xP):
+        r"""
+        Return the `x`-coordinate of `\varphi(P)` given the `x`-coordinate of `P`.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(2^127-1), [1, 0])
+            sage: E.set_order(2^127)
+            sage: phi = E.isogeny(E.lift_x(23), algorithm='factored'); phi
+            Composite morphism of degree 10633823966279326983230456482242756608 = 2^123:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 170141183460469231731687303715884105727
+              To:   Elliptic Curve defined by y^2 = x^3 + 162550045451550460557922666121135128575*x + 1200556389578808323656854947039887360 over Finite Field of size 170141183460469231731687303715884105727
+            sage: phi(E.lift_x(42)).x()
+            2658455996521591903525595972729044992
+            sage: phi.xEVAL(42)
+            2658455996521591903525595972729044992
+            sage: phi.xEVAL(23)
+            +Infinity
+            sage: phi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = seq((420, 10), E.base_field())
+            sage: phi.xEVAL(xP)
+            (90035703993267090112493393657965727906, 4918494759669739394657653301510642888)
+            sage: xK = seq((230, 10), E.base_field())
+            sage: phi.xEVAL(xK)
+            (1, 0)
+            sage: phi.xEVAL((1, 0))
+            (1, 0)
+        """
+        for phi in self.factors():
+            xP = phi.xEVAL(xP)
+        return xP

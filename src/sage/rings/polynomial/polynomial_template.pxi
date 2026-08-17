@@ -69,7 +69,7 @@ cdef class Polynomial_template(Polynomial):
     This file implements a simple templating engine for linking univariate
     polynomials to their C/C++ library implementations. It requires a
     'linkage' file which implements the ``celement_`` functions (see
-    :mod:`sage.libs.ntl.ntl_GF2X_linkage` for an example). Both parts are
+    ``sage.libs.ntl.ntl_GF2X_linkage`` for an example). Both parts are
     then plugged together by inclusion of the linkage file when inheriting from
     this class. See :mod:`sage.rings.polynomial.polynomial_gf2x` for an
     example.
@@ -80,7 +80,7 @@ cdef class Polynomial_template(Polynomial):
     .. NOTE::
 
         Implementations using this template MUST implement coercion from base
-        ring elements and :meth:`get_unsafe`. See
+        ring elements and ``get_unsafe``. See
         :class:`~sage.rings.polynomial.polynomial_gf2x.Polynomial_GF2X` for an
         example.
     """
@@ -153,7 +153,7 @@ cdef class Polynomial_template(Polynomial):
             celement_set_si(&self.x, 0, (<Polynomial_template>self)._cparent)
             celement_gen(gen, 0, (<Polynomial_template>self)._cparent)
 
-            for deg, coef in x.iteritems():
+            for deg, coef in x.items():
                 celement_pow(monomial, gen, deg, NULL, (<Polynomial_template>self)._cparent)
                 celement_mul(monomial, &(<Polynomial_template>self.__class__(parent, coef)).x, monomial, (<Polynomial_template>self)._cparent)
                 celement_add(&self.x, &self.x, monomial, (<Polynomial_template>self)._cparent)
@@ -214,7 +214,6 @@ cdef class Polynomial_template(Polynomial):
         The following has been a problem in a preliminary version of
         :issue:`12313`::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
             sage: P.<x> = K[]
             sage: del P
@@ -668,8 +667,7 @@ cdef class Polynomial_template(Polynomial):
         #assert(r._parent(pari(self)**ee) == r)
         if recip:
             return ~r
-        else:
-            return r
+        return r
 
     def __copy__(self):
         """

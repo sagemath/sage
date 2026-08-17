@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.rings.finite_rings (because all doctests use GF)
 """
 Ideals of Finite Dimensional Algebras
 
@@ -15,17 +14,16 @@ It is necessary to use algebras in the category of associative algebras.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
-
-from sage.matrix.constructor import matrix
-from sage.rings.ideal import Ideal_generic
-from sage.structure.element import Matrix, parent
-
-from sage.misc.cachefunc import cached_method
 from functools import reduce
 
-from sage.structure.richcmp import (op_LT, op_LE, op_EQ, op_NE,
-                                    op_GT, op_GE)
+from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_element import (
+    FiniteDimensionalAlgebraElement,
+)
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.ideal import Ideal_generic
+from sage.structure.element import Matrix, parent
+from sage.structure.richcmp import op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE
 
 
 class FiniteDimensionalAlgebraIdeal(Ideal_generic):
@@ -48,7 +46,7 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
         sage: A.ideal(A([0,1]))
         Ideal (e1) of Finite-dimensional algebra of degree 2 over Finite Field of size 3
     """
-    def __init__(self, A, gens=None, given_by_matrix=False):
+    def __init__(self, A, gens=None, given_by_matrix=False) -> bool:
         """
         EXAMPLES::
 
@@ -130,16 +128,16 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
         """
         if self.basis_matrix() == other.basis_matrix():
             return op == op_EQ or op == op_LE or op == op_GE
-        elif op == op_EQ:
+        if op == op_EQ:
             return False
-        elif op == op_NE:
+        if op == op_NE:
             return True
         if op == op_LE or op == op_LT:
             return self.vector_space().is_subspace(other.vector_space())
-        elif op == op_GE or op == op_GT:
+        if op == op_GE or op == op_GT:
             return other.vector_space().is_subspace(self.vector_space())
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         """
         EXAMPLES::
 

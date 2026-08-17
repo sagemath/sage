@@ -237,16 +237,20 @@ Test that conversion of symbolic functions with latex names works (:issue:`31047
 
 import os
 
-from sage.interfaces.expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
-
 import pexpect
 
 from sage.cpython.string import bytes_to_str
 from sage.env import DOT_SAGE
-from sage.misc.pager import pager
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+    gc_disabled,
+)
 from sage.misc.instancedoc import instancedoc
+from sage.misc.pager import pager
 from sage.structure.richcmp import rich_to_bool
-
 
 COMMANDS_CACHE = '%s/giac_commandlist_cache.sobj' % DOT_SAGE
 
@@ -326,6 +330,7 @@ class Giac(Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.giac import giac
             sage: giac == loads(dumps(giac))
             True
         """
@@ -933,10 +938,8 @@ class GiacElement(ExpectElement):
             if 'is not valid' in msg and 'to < or <=' in msg:
                 if (hash(str(self)) < hash(str(other))):
                     return rich_to_bool(op, -1)
-                else:
-                    return rich_to_bool(op, 1)
-            else:
-                raise RuntimeError(e)
+                return rich_to_bool(op, 1)
+            raise RuntimeError(e)
         if P.eval("evalb(%s %s %s)" % (self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
             return rich_to_bool(op, 1)
 
@@ -1011,10 +1014,8 @@ class GiacElement(ExpectElement):
             \frac{...x^{4}...-...y...}{...y^{2}-3...x...}
         """
         s = self.parent().eval('latex(%s)' % self.name())
-        if s.startswith('"'):
-            s = s[1:]
-        if s.endswith('"'):
-            s = s[:-1]
+        s = s.removeprefix('"')
+        s = s.removesuffix('"')
         return s.strip()
 
     def _matrix_(self, R):
@@ -1115,8 +1116,11 @@ class GiacElement(ExpectElement):
             sage: giac(e * i * pi).sage().variables()
             ()
         """
+        from sage.calculus.calculus import (
+            SR_parser_giac,
+            symbolic_expression_from_string,
+        )
         from sage.symbolic.expression import symbol_table
-        from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 
         if locals is None:
             locals = {}

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Word Quasi-symmetric functions
+Word quasi-symmetric functions
 
 AUTHORS:
 
@@ -121,12 +121,11 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         if display == 'tight':
             disp = disp.replace(", ", ",")
             return disp
-        elif display == 'compact':
+        if display == 'compact':
             disp = disp.replace("}, ", ".").replace("}", "").replace("{", "")
             return disp.replace(", ", "")
-        else:
-            # treat display as 'normal'
-            return disp
+        # treat display as 'normal'
+        return disp
 
     def _repr_words(self, osp):
         """
@@ -158,11 +157,10 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         disp = repr(list(osp.to_packed_word()))
         if display == 'tight':
             return disp.replace(", ", ",")
-        elif display == 'compact':
+        if display == 'compact':
             return disp.replace(", ", "")
-        else:
-            # treat display as 'normal'
-            return disp
+        # treat display as 'normal'
+        return disp
 
     def _coerce_map_from_(self, R):
         r"""
@@ -386,7 +384,8 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
     Note that expressions above are output in terms of ordered set partitions,
     even when input as packed words. Output as packed words can be achieved
-    by modifying the global options. (See :meth:`OrderedSetPartitions.options`
+    by modifying the global options. (See
+    :attr:`~sage.combinat.chas.wqsym.WordQuasiSymmetricFunctions.options`
     for further details.)::
 
         sage: M.options.objects = "words"
@@ -740,12 +739,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the algebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.algebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`coalgebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -776,12 +775,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the coalgebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -813,12 +812,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
                 EXAMPLES::
 
@@ -900,8 +899,10 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
         .. TODO::
 
-            Experiments suggest that :meth:`algebraic_complement`,
-            :meth:`coalgebraic_complement`, and :meth:`star_involution`
+            Experiments suggest that
+            :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`,
+            :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`,
+            and :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
             should have reasonable formulas on the C basis; at least
             the coefficients of the outputs on any element of the C
             basis seem to be always `0, 1, -1`.
@@ -1245,12 +1246,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the algebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.algebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`coalgebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1294,12 +1295,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the coalgebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1342,12 +1343,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
                 EXAMPLES::
 
@@ -1763,12 +1764,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the algebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.algebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`coalgebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1811,12 +1812,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the coalgebraic complement involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`star_involution`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
                 EXAMPLES::
 
@@ -1859,12 +1860,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`WQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                    :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
                 EXAMPLES::
 
@@ -2193,7 +2194,7 @@ class WQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`coalgebraic_complement`, :meth:`star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
             EXAMPLES:
 
@@ -2347,7 +2348,7 @@ class WQSymBases(Category_realization_of_parent):
             definition of the coefficients `c_{A, P}`. In fact, both
             formulas are particular cases of the general formula for
             involutions described in the documentation of
-            :meth:`algebraic_complement`.
+            :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`.
 
             If we let `\pi` be the canonical projection
             `WQSym \to QSym`, then each `f \in WQSym` satisfies
@@ -2355,7 +2356,7 @@ class WQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`algebraic_complement`, :meth:`star_involution`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`
 
             EXAMPLES:
 
@@ -2431,8 +2432,8 @@ class WQSymBases(Category_realization_of_parent):
 
             The star involution is the composition of the
             algebraic complement involution
-            (:meth:`algebraic_complement`) with the coalgebraic
-            complement involution (:meth:`coalgebraic_complement`).
+            (:meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`) with the coalgebraic
+            complement involution (:meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`).
             The composition can be performed in either order, as the
             involutions commute.
 
@@ -2477,7 +2478,7 @@ class WQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`algebraic_complement`, :meth:`coalgebraic_complement`
+                :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.algebraic_complement`, :meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.coalgebraic_complement`
 
             EXAMPLES:
 

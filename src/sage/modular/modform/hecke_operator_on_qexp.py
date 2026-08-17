@@ -149,7 +149,7 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
         sage: t2 = hecke_operator_on_basis(B, 100, 2)
         Traceback (most recent call last):
         ...
-        ValueError: The given basis vectors must be linearly independent.
+        ValueError: the given basis vectors must be linearly independent
     """
     prec = V.degree()
     TB = [hecke_operator_on_qexp(f, n, k, eps, prec, check=False, _return_list=True)
@@ -192,7 +192,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
         sage: hecke_operator_on_basis(ModularForms(1,12).q_expansion_basis(), 3, 12)
         Traceback (most recent call last):
         ...
-        ValueError: The given basis vectors must be linearly independent.
+        ValueError: the given basis vectors must be linearly independent
 
         sage: hecke_operator_on_basis(ModularForms(1,12).q_expansion_basis(30), 3, 12)
         [   252      0]

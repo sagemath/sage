@@ -75,7 +75,7 @@ cdef class ModularSymbols:
             'Cuspidal ' if self.is_cuspidal() else '',
             self.dimension(), self.level(), self.sign())
 
-    #cpdef long level(self):
+    # cpdef long level(self):
     def level(self):
         """
         Return the level of this modular symbols space.
@@ -88,7 +88,7 @@ cdef class ModularSymbols:
         """
         return self.H.modulus
 
-    #cpdef int dimension(self):
+    # cpdef int dimension(self):
     def dimension(self):
         """
         Return the dimension of this modular symbols space.
@@ -101,8 +101,7 @@ cdef class ModularSymbols:
         """
         if self.is_cuspidal():
             return self.H.h1cuspdim()
-        else:
-            return self.H.h1dim()
+        return self.H.h1dim()
 
     def number_of_cusps(self):
         r"""
@@ -117,7 +116,7 @@ cdef class ModularSymbols:
         """
         return self.H.h1ncusps()
 
-    #cpdef int sign(self):
+    # cpdef int sign(self):
     def sign(self):
         """
         Return the sign of this Cremona modular symbols space.  The sign is either 0, +1 or -1.
@@ -139,7 +138,7 @@ cdef class ModularSymbols:
         """
         return self.H.plusflag
 
-    #cpdef bint is_cuspidal(self):
+    # cpdef bint is_cuspidal(self):
     def is_cuspidal(self):
         """
         Return whether or not this space is cuspidal.
@@ -275,10 +274,10 @@ cdef class ModularSymbols:
         sig_off()
         for i in range(n):
             sv = M.row(i+1)
-            iter = sv.begin()
-            while iter != sv.end():
-                d[(i,deref(iter).first-1)] = deref(iter).second
-                inc(iter)
+            it = sv.begin()
+            while it != sv.end():
+                d[(i, deref(it).first-1)] = deref(it).second
+                inc(it)
         MS = MatrixSpace(base_ring, n, sparse=True)
         # The next step is the bottleneck.
         return MS(d)

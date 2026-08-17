@@ -260,7 +260,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(6)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(dimension=3, algorithm='primal')
@@ -319,7 +318,6 @@ cdef class CombinatorialFace(SageObject):
 
         TESTS::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: F = C.face_lattice()
@@ -461,8 +459,7 @@ cdef class CombinatorialFace(SageObject):
             if self.atoms is other.atoms:
                 if not self._dual:
                     return face_issubset(self.face, other.face)
-                else:
-                    return face_issubset(other.face, self.face)
+                return face_issubset(other.face, self.face)
             else:
                 raise NotImplementedError("is_subface only implemented for faces of the same polyhedron")
         else:
@@ -503,7 +500,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.associahedron(['A', 3])
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator()
@@ -518,8 +514,7 @@ cdef class CombinatorialFace(SageObject):
         """
         if self._dual:
             return smallInteger(self._ambient_dimension - self._dimension - 1)
-        else:
-            return smallInteger(self._dimension)
+        return smallInteger(self._dimension)
 
     dim = dimension
 
@@ -548,7 +543,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(dimension=2)
@@ -613,7 +607,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(dimension=2)
@@ -680,8 +673,7 @@ cdef class CombinatorialFace(SageObject):
         """
         if self._dual:
             return smallInteger(self.set_coatom_rep())
-        else:
-            return smallInteger(self.n_atom_rep())
+        return smallInteger(self.n_atom_rep())
 
     def ambient_Hrepresentation(self):
         r"""
@@ -693,7 +685,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(2)
@@ -754,7 +745,6 @@ cdef class CombinatorialFace(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(2)
@@ -835,7 +825,6 @@ cdef class CombinatorialFace(SageObject):
 
         Specifying whether to count the equations or not::
 
-            sage: # needs sage.combinat
             sage: P = polytopes.permutahedron(5)
             sage: C = CombinatorialPolyhedron(P)
             sage: it = C.face_generator(2)
@@ -855,8 +844,7 @@ cdef class CombinatorialFace(SageObject):
         cdef size_t n_equations = self._n_equations if add_equations else 0
         if not self._dual:
             return smallInteger(self.set_coatom_rep() + n_equations)
-        else:
-            return smallInteger(self.n_atom_rep() + n_equations)
+        return smallInteger(self.n_atom_rep() + n_equations)
 
     def as_combinatorial_polyhedron(self, quotient=False):
         r"""
@@ -990,7 +978,7 @@ cdef class CombinatorialFace(SageObject):
         .. NOTE::
 
             This method is tested in
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base._test_combinatorial_face_as_combinatorial_polyhedron`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3._test_combinatorial_face_as_combinatorial_polyhedron`.
         """
         if not self._ambient_bounded:
             raise NotImplementedError("only implemented for bounded polyhedra")

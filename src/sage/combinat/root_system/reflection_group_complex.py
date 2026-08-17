@@ -180,7 +180,8 @@ its negative, while sending `\alpha_1` to `2\alpha_0+\alpha_1`.
     - list of reduced words for an element
     - list of reduced words in reflections for an element
     - Hurwitz action?
-    - :meth:`is_crystallographic` should be hardcoded
+    - :meth:`~sage.combinat.root_system.reflection_group_complex.ComplexReflectionGroup.is_crystallographic`
+      should be hardcoded
 
 AUTHORS:
 
@@ -667,7 +668,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
     def reflections(self):
         r"""
         Return a finite family containing the reflections of ``self``,
-        indexed by :meth:`self.reflection_index_set`.
+        indexed by
+        :meth:`~sage.combinat.root_system.reflection_group_complex.ComplexReflectionGroup.reflection_index_set`.
 
         EXAMPLES::
 
@@ -852,7 +854,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         return sum(coeffs[i] * mons[i] for i in range(m))
 
     @cached_method
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         r"""
         Return ``True`` if ``self`` is crystallographic.
 
@@ -890,9 +892,10 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             sage: W.is_crystallographic()
             False
         """
-        return self.is_real() and all(t.to_matrix().base_ring() is QQ for t in self.simple_reflections())
+        return self.is_real() and all(t.to_matrix().base_ring() is QQ
+                                      for t in self.simple_reflections())
 
-    def number_of_irreducible_components(self):
+    def number_of_irreducible_components(self) -> int:
         r"""
         Return the number of irreducible components of ``self``.
 
@@ -908,7 +911,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         return len(self._type)
 
-    def irreducible_components(self):
+    def irreducible_components(self) -> list:
         r"""
         Return a list containing the irreducible components of ``self``
         as finite reflection groups.
@@ -1109,11 +1112,9 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             if self.is_well_generated():
                 h = self.coxeter_number()
                 return tuple([h-d for d in self.degrees()])
-            else:
-                return tuple(sorted(self._gap_group.ReflectionCoDegrees().sage(),
-                                    reverse=True))
-        else:
-            return sum([comp.codegrees() for comp in self.irreducible_components()],tuple())
+            return tuple(sorted(self._gap_group.ReflectionCoDegrees().sage(),
+                                reverse=True))
+        return sum([comp.codegrees() for comp in self.irreducible_components()],tuple())
 
     @cached_method
     def reflection_eigenvalues_family(self):
@@ -1393,8 +1394,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         if self.is_real():
             return super().braid_relations()
-        else:
-            return self._gap_group.BraidRelations().sage()
+        return self._gap_group.BraidRelations().sage()
 
     @cached_method
     def fundamental_invariants(self):
@@ -1720,8 +1720,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         def action_on_root(w, beta):
             if basis_is_Delta:
                 return w.action_on_root(beta)
-            else:
-                return beta * w.to_matrix()
+            return beta * w.to_matrix()
 
         @cached_function
         def invariant_value(i, j):
@@ -1858,7 +1857,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         .. NOTE::
 
             The ordering follows the one in Chevie and is not compatible with
-            the current implementation of :meth:`irredubile_characters()`.
+            the current implementation of ``irreducible_characters()``.
 
         EXAMPLES::
 
@@ -2025,14 +2024,12 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
             if self in W.conjugacy_classes_representatives():
                 if in_unitary_group or W.is_real():
                     return W.rank() - self.reflection_eigenvalues(is_class_representative=True).count(0)
-                else:
-                    return len(self.reduced_word_in_reflections())
-            else:
-                w = self.conjugacy_class_representative()
-                # the following assert a possible implementation bug and
-                # is hopefully never needed
-                assert w in self.parent().conjugacy_classes_representatives()
-                return w.reflection_length(in_unitary_group=in_unitary_group)
+                return len(self.reduced_word_in_reflections())
+            w = self.conjugacy_class_representative()
+            # the following assert a possible implementation bug and
+            # is hopefully never needed
+            assert w in self.parent().conjugacy_classes_representatives()
+            return w.reflection_length(in_unitary_group=in_unitary_group)
 
 
 class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
@@ -2076,8 +2073,8 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
             .. SEEALSO::
 
-                :meth:`~IrreducibleComplexReflectionGroup.coxeter_element`
-                :meth:`~sage.categories.finite_complex_reflection_groups.coxeter_elements`
+                :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.WellGenerated.ParentMethods.coxeter_element`
+                :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.WellGenerated.ParentMethods.coxeter_elements`
 
             EXAMPLES::
 
@@ -2271,7 +2268,5 @@ def power(f, k):
     if sum(b) == 1:
         if b[1] == 1:
             return f**2
-        else:
-            return power(f,2**b.index(1)/2)**2
-    else:
-        return prod(power(f,2**i) for i,a in enumerate(b) if a)
+        return power(f,2**b.index(1)/2)**2
+    return prod(power(f,2**i) for i,a in enumerate(b) if a)

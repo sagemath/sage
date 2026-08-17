@@ -1,6 +1,5 @@
-# sage_setup: distribution = sagemath-objects
 """
-Debug options for the :mod:`sage.structure` modules
+Debug options for the ``sage.structure`` modules
 
 EXAMPLES::
 

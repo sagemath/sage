@@ -35,13 +35,12 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         You should not create objects of this class directly. The
         preferred method to construct such subschemes is to use
-        :meth:`~ToricVariety_field.subscheme` method of :class:`toric
+        :meth:`~sage.schemes.toric.variety.ToricVariety_field.subscheme` method of :class:`toric
         varieties <sage.schemes.toric.variety.ToricVariety_field>`.
 
     INPUT:
 
-    - ``toric_variety`` -- ambient :class:`toric variety
-      <ToricVariety_field>`
+    - ``toric_variety`` -- ambient :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     - ``polynomials`` -- single polynomial, list, or ideal of defining
       polynomials in the coordinate ring of ``toric_variety``
@@ -419,8 +418,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         An affine toric algebraic scheme (polynomial equations in an
         affine toric variety) with fixed
-        :meth:`~AlgebraicScheme.embedding_morphism` and
-        :meth:`~AlgebraicScheme.embedding_center`.
+        :meth:`~sage.schemes.toric.variety.ToricVariety_field.embedding_morphism` and
+        :meth:`~sage.schemes.generic.algebraic_scheme.AlgebraicScheme.embedding_center`.
 
         EXAMPLES::
 
@@ -516,7 +515,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         self._dimension = max(dims)
         return self._dimension
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 
@@ -585,7 +584,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
                            for i in range(npatches))
         return self._smooth
 
-    def is_nondegenerate(self):
+    def is_nondegenerate(self) -> bool:
         r"""
         Check if ``self`` is nondegenerate.
 
@@ -700,7 +699,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         return True
 
-    def is_schon(self):
+    def is_schon(self) -> bool:
         r"""
         Check if ``self`` is schon (nondegenerate).
 
@@ -727,13 +726,12 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
 
         You should not create objects of this class directly. The preferred
         method to construct such subschemes is to use
-        :meth:`~ToricVariety_field.subscheme` method of
-        :class:`toric varieties <ToricVariety_field>`.
+        :meth:`~sage.schemes.toric.variety.ToricVariety_field.subscheme` method of
+        :class:`toric varieties <sage.schemes.toric.variety.ToricVariety_field>`.
 
     INPUT:
 
-    - ``toric_variety`` -- ambient :class:`affine toric variety
-      <ToricVariety_field>`
+    - ``toric_variety`` -- ambient :class:`affine toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     - ``polynomials`` -- single polynomial, list, or ideal of defining
       polynomials in the coordinate ring of ``toric_variety``
@@ -825,7 +823,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
             self._dimension = self.affine_algebraic_patch().dimension()
         return self._dimension
 
-    def is_smooth(self, point=None):
+    def is_smooth(self, point=None) -> bool:
         r"""
         Test whether the algebraic subscheme is smooth.
 
@@ -886,10 +884,9 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
                 point_subs = dict(zip(R.gens(), point))
                 Jac = self.Jacobian().subs(point_subs)
                 return not Jac.is_zero()
-            else:
-                self._embedding_center = self.point(point)
-                affine = self.affine_algebraic_patch()
-                return affine.is_smooth(affine.embedding_center())
+            self._embedding_center = self.point(point)
+            affine = self.affine_algebraic_patch()
+            return affine.is_smooth(affine.embedding_center())
 
         # testing smoothness everywhere tends to be expensive
         if '_smooth' in self.__dict__:

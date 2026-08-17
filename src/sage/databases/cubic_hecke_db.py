@@ -23,7 +23,7 @@ demonstration purposes.
 
 Furthermore, this module contains the class :class:`CubicHeckeFileCache`
 that enables
-:class:`~sage.algebras.hecke_algebras.cubic_hecke_algebras.CubicHeckeAlgebra`
+:class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
 to keep intermediate results of calculations in the file system.
 
 The enum :class:`MarkovTraceModuleBasis` serves as basis for the submodule
@@ -158,7 +158,7 @@ class CubicHeckeDataSection(Enum):
 class CubicHeckeDataBase(SageObject):
     r"""
     Database interface for
-    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebras.CubicHeckeAlgebra`
+    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
 
     The original data are obtained from `Ivan Marin's web page
     <http://www.lamfa.u-picardie.fr/marin/representationH4-en.html>`__
@@ -455,7 +455,7 @@ class MarkovTraceModuleBasis(Enum):
         Return a description of the link corresponding to this basis element.
 
         In the case of knots it refers to the naming according to
-        `KnotInfo <https://knotinfo.math.indiana.edu/>`__.
+        `KnotInfo <https://knotinfo.org/>`__.
 
         EXAMPLES::
 
@@ -483,10 +483,9 @@ class MarkovTraceModuleBasis(Enum):
             # since :class:`Link` does not construct disjoint union of unlinks
             # from the braid representation, we need a pd_code here
             return Link(pd_code)
-        else:
-            from sage.groups.braid import BraidGroup
-            B = BraidGroup(self.strands())
-            return Link(B(self.braid_tietze()))
+        from sage.groups.braid import BraidGroup
+        B = BraidGroup(self.strands())
+        return Link(B(self.braid_tietze()))
 
     def regular_homfly_polynomial(self):
         r"""
@@ -498,6 +497,7 @@ class MarkovTraceModuleBasis(Enum):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.databases.cubic_hecke_db import MarkovTraceModuleBasis
             sage: MarkovTraceModuleBasis.U1.regular_homfly_polynomial()
             1
@@ -647,7 +647,7 @@ links_gould = {
 class CubicHeckeFileCache(SageObject):
     """
     A class to cache calculations of
-    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebras.CubicHeckeAlgebra`
+    :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
     in the local file system.
     """
 
@@ -697,8 +697,7 @@ class CubicHeckeFileCache(SageObject):
             """
             if nstrands is None:
                 return '%s.sobj' % self.value
-            else:
-                return '%s_%s.sobj' % (self.value, nstrands)
+            return '%s_%s.sobj' % (self.value, nstrands)
 
         matrix_representations = 'matrix_representations'
         braid_images = 'braid_images'

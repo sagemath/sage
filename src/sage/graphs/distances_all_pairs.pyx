@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Distances/shortest paths between all pairs of vertices
 
@@ -544,7 +543,7 @@ def is_distance_regular(G, parameters=False):
 
         sage: graphs.PathGraph(2).is_distance_regular(parameters=True)
         ([1, None], [None, 1])
-        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)                 # needs networkx
+        sage: graphs.Tutte12Cage().is_distance_regular(parameters=True)
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
     """
     cdef int i, u, v, d, b, c, k
@@ -2017,7 +2016,8 @@ def radius_DHV(G):
         # vertex visited in simple_BFS), and compute its BFS distances.
         # By definition of antipode, we have ecc_antipode >= ecc_source.
         antipode = waiting_list[n-1]
-        ecc_antipode = simple_BFS(sd, antipode, distances, NULL, waiting_list, seen)
+        ecc_antipode = simple_BFS(sd, antipode, distances,
+                                  NULL, waiting_list, seen)
 
         # 3) Use distances from antipode to improve eccentricity lower bounds.
         # We also determine the next source
@@ -2606,9 +2606,8 @@ def antipodal_graph(G):
 
     The drawback of this method is that some BFS distances may be computed
     twice, one time to determine the eccentricities and another time is the
-    vertex has eccentricity equal to the diameter. However, in practive, this is
-    much more efficient. See the documentation of method
-    :meth:`c_eccentricity_DHV`.
+    vertex has eccentricity equal to the diameter. However, in practice, this is
+    much more efficient. See :func:`eccentricity` with ``algorithm='DHV'``.
 
     EXAMPLES:
 
@@ -2629,7 +2628,7 @@ def antipodal_graph(G):
         True
 
     The antipodal graph can also be constructed as the
-    :meth:`sage.graphs.generic_graph.distance_graph` for diameter distance::
+    :meth:`~sage.graphs.graph.Graph.distance_graph` for diameter distance::
 
         sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.RandomGNP(10, .2)

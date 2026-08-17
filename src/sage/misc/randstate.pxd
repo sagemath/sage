@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.libs.gmp.types cimport gmp_randstate_t
 
 # The c_random() method on randstate objects gives a value
@@ -13,6 +12,7 @@ cdef class randstate:
     cdef object _python_random
 
     cdef object _gap_saved_seed
+    cdef object _libgap_saved_seed
     cdef object _pari_saved_seed
 
     cdef object _gp_saved_seeds

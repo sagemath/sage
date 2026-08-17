@@ -788,7 +788,7 @@ class HypergeometricData:
 
         .. SEEALSO::
 
-            :meth:`degree`, :meth:`hodge_polynomial`, :meth:`hodge_polygon`
+            :meth:`degree`, :meth:`hodge_polynomial`, ``hodge_polygon``
 
         EXAMPLES::
 
@@ -1472,7 +1472,8 @@ class HypergeometricData:
 
         - ``t`` -- a rational parameter
 
-        - ``ring`` -- (default: :class:`UniversalCyclotomicfield`)
+        - ``ring`` -- (default:
+          :class:`~sage.rings.universal_cyclotomic_field.UniversalCyclotomicField`)
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
@@ -1483,7 +1484,9 @@ class HypergeometricData:
             This is apparently working correctly as can be tested
             using ``ComplexField(70)`` as the value ring.
 
-            Using instead :class:`UniversalCyclotomicfield`, this is much
+            Using instead
+            :class:`~sage.rings.universal_cyclotomic_field.UniversalCyclotomicField`,
+            this is much
             slower than the `p`-adic version :meth:`padic_H_value`.
 
             Unlike in :meth:`padic_H_value`, tame and wild primes are not supported.
@@ -1505,7 +1508,7 @@ class HypergeometricData:
             sage: [H.H_value(13,i,-1) for i in range(1,3)]  # not tested
             [-84, -1420]
 
-        With values in :class:`ComplexField`::
+        With values in :class:`~sage.rings.abc.ComplexField`::
 
             sage: [H.H_value(5,i,-1, ComplexField(60)) for i in range(1,3)]
             [-4, 276]
@@ -1701,7 +1704,7 @@ class HypergeometricData:
             return ZZ.one()
         q = p ** f
         prec = ceil(deg*(self.weight()+1-mul)/2 + log(2*d + 1, p))
-        k = (q-1) // mo
+        k = (q - 1) // mo
         flip = (f == 1 and prec == 1)
         gtab_prec, gtab = self.gauss_table(p, f, prec)
         try:
@@ -1711,7 +1714,8 @@ class HypergeometricData:
         M = self.M_value()
         teich = p_ring.teichmuller(M / t0)
         m = {r: self._beta.count(QQ((r, q - 1))) for r in range(q - 1)}
-        D = -min(self.zigzag(x, flip_beta=True) for x in self._alpha + self._beta)
+        D = -min(self.zigzag(x, flip_beta=True)
+                 for x in self._alpha + self._beta)
         gamma = self.gamma_array()
         l = []
         for j in range(mo):
@@ -1724,13 +1728,15 @@ class HypergeometricData:
                     ct += gv * sum(r1.digits(p))
                     term *= p_ring(gtab[r1]) ** (-gv if flip else gv)
                 ct //= p - 1
-                term *= ZZ(-1) ** ct
+                term *= ZZ(-1)**ct
                 ct += f * (D + m[0] - m[r])
                 l.append(term * p**ct)
-        traces = [0 if j % f else sum(i ** (j//f) for i in l) for j in range(1,d+1)]
+        traces = [0 if j % f else sum(i**(j // f) for i in l)
+                  for j in range(1, d + 1)]
         R = IntegerModRing(p**prec)
         traces = [R(i).lift_centered() for i in traces]
-        return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg, use_fe=False)
+        return characteristic_polynomial_from_traces(traces, d, p, 0, 1,
+                                                     deg, use_fe=False)
 
     @cached_method
     def euler_factor(self, t, p, deg=None, cache_p=False):
@@ -1939,7 +1945,7 @@ class HypergeometricData:
                 ans = ans.truncate(deg + 1)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
-        elif (t - 1) % p == 0:
+        if (t - 1) % p == 0:
             typ = "mult"
             d = self.degree() - 1
             if d % 2:

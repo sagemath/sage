@@ -57,11 +57,20 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sage.categories.sets_cat import Sets
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
+
+if TYPE_CHECKING:
+    from .divisor import FunctionFieldDivisor
+    from .function_field import FunctionField
+    from .ideal import FunctionFieldIdeal
 
 
 class FunctionFieldPlace(Element):
@@ -81,7 +90,7 @@ class FunctionFieldPlace(Element):
         sage: L.places_finite()[0]                                                      # needs sage.rings.function_field
         Place (x, y)
     """
-    def __init__(self, parent, prime):
+    def __init__(self, parent, prime) -> None:
         """
         Initialize the place.
 
@@ -96,7 +105,7 @@ class FunctionFieldPlace(Element):
 
         self._prime = prime
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of the place.
 
@@ -110,7 +119,7 @@ class FunctionFieldPlace(Element):
         """
         return hash((self.function_field(), self._prime))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 
@@ -129,7 +138,7 @@ class FunctionFieldPlace(Element):
         gens_str = ', '.join(repr(g) for g in gens)
         return "Place ({})".format(gens_str)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the place.
 
@@ -149,7 +158,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
             sage: p1, p2, p3 = L.places()[:3]
@@ -176,7 +184,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(5)); R.<Y> = PolynomialRing(K)
             sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
@@ -189,13 +196,12 @@ class FunctionFieldPlace(Element):
             raise TypeError("only left multiplication by integers is allowed")
         return other * self.divisor()
 
-    def _neg_(self):
+    def _neg_(self) -> FunctionFieldDivisor:
         """
         Return the negative of the prime divisor of this place.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1, p2, p3 = L.places()[:3]
@@ -206,13 +212,12 @@ class FunctionFieldPlace(Element):
         from .divisor import divisor
         return divisor(self.function_field(), {self: -1})
 
-    def _add_(self, other):
+    def _add_(self, other) -> FunctionFieldDivisor:
         """
         Return the divisor that is the sum of the place and ``other``.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1, p2, p3 = L.places()[:3]
@@ -221,16 +226,14 @@ class FunctionFieldPlace(Element):
              + Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
              + Place (x, y)
         """
-        from .divisor import prime_divisor
-        return prime_divisor(self.function_field(), self) + other
+        return self.divisor() + other
 
-    def _sub_(self, other):
+    def _sub_(self, other) -> FunctionFieldDivisor:
         """
         Return the divisor that is this place minus ``other``.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: p1, p2 = L.places()[:2]
@@ -238,10 +241,9 @@ class FunctionFieldPlace(Element):
             Place (1/x, 1/x^3*y^2 + 1/x)
              - Place (1/x, 1/x^3*y^2 + 1/x^2*y + 1)
         """
-        from .divisor import prime_divisor
-        return prime_divisor(self.function_field(), self) - other
+        return self.divisor() - other
 
-    def __radd__(self, other):
+    def __radd__(self, other) -> FunctionFieldDivisor:
         """
         Return the prime divisor of the place if ``other`` is zero.
 
@@ -262,15 +264,14 @@ class FunctionFieldPlace(Element):
             ...
             TypeError: unsupported operand parent(s) for +: ...
 
-        The reason is that the ``0`` is a Sage integer, for which
+        The reason is that the ``0`` is a Sage ``Integer``, for which
         the coercion system applies.
         """
         if other == 0:
-            from .divisor import prime_divisor
-            return prime_divisor(self.function_field(), self)
-        raise NotImplementedError
+            return self.divisor()
+        return NotImplemented
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which the place belongs.
 
@@ -284,7 +285,7 @@ class FunctionFieldPlace(Element):
         """
         return self.parent()._field
 
-    def prime_ideal(self):
+    def prime_ideal(self) -> FunctionFieldIdeal:
         """
         Return the prime ideal associated with the place.
 
@@ -305,7 +306,6 @@ class FunctionFieldPlace(Element):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(5)); R.<Y> = PolynomialRing(K)
             sage: F.<y> = K.extension(Y^2 - x^3 - 1)
             sage: O = F.maximal_order()
@@ -314,8 +314,8 @@ class FunctionFieldPlace(Element):
             sage: P.divisor()
             Place (x + 1, y)
         """
-        from .divisor import prime_divisor
-        return prime_divisor(self.function_field(), self, multiplicity)
+        from .divisor import divisor
+        return divisor(self.function_field(), {self: multiplicity})
 
 
 class PlaceSet(UniqueRepresentation, Parent):
@@ -335,7 +335,7 @@ class PlaceSet(UniqueRepresentation, Parent):
     """
     Element = FunctionFieldPlace
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         Initialize the set of places of the function ``field``.
 
@@ -351,7 +351,7 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         self._field = field
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 
@@ -364,13 +364,12 @@ class PlaceSet(UniqueRepresentation, Parent):
         """
         return "Set of places of {}".format(self._field)
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> FunctionFieldPlace:
         """
         Create a place from ``x`` if ``x`` is a prime ideal.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: places = L.place_set()
@@ -382,16 +381,14 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         if isinstance(x, FunctionFieldIdeal) and x.is_prime():
             return self.element_class(self, x)
-        else:
-            raise ValueError("not a prime ideal")
+        raise ValueError("not a prime ideal")
 
-    def _an_element_(self):
+    def _an_element_(self) -> FunctionFieldPlace:
         """
         Return a place.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: places = L.place_set()
@@ -409,13 +406,12 @@ class PlaceSet(UniqueRepresentation, Parent):
                 break
         return p
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which this place set belongs.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
             sage: PS = L.place_set()

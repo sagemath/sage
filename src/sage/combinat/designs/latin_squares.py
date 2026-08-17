@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.modules
 r"""
-Mutually Orthogonal Latin Squares (MOLS)
+Mutually orthogonal Latin squares (MOLS)
 
 The main function of this module is :func:`mutually_orthogonal_latin_squares`
 and can be can be used to generate MOLS (or check that they exist)::
@@ -438,8 +438,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
     if partitions:
         return partitions
-    else:
-        return matrices
+    return matrices
 
 
 def latin_square_product(M, N, *others):
@@ -483,8 +482,7 @@ def latin_square_product(M, N, *others):
 
     if others:
         return latin_square_product(P, others[0], *others[1:])
-    else:
-        return P
+    return P
 
 
 def MOLS_table(start, stop=None, compare=False, width=None):

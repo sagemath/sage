@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Signed Tensor Product Functorial Construction
 
@@ -40,7 +39,7 @@ class SignedTensorProductFunctor(CovariantFunctorialConstruction):
     signed tensor product of graded algebras.
 
     Those are implemented in the nested class
-    :class:`~sage.categories.algebras.Algebras.SignedTensorProducts`
+    :class:`~sage.categories.graded_algebras.GradedAlgebras.SignedTensorProducts`
     of ``Algebras(QQ).Graded()``. This nested class is itself a subclass of
     :class:`~sage.categories.signed_tensor.SignedTensorProductsCategory`.
 

@@ -5,8 +5,7 @@ SymPy --> Sage conversion
 The file consists of ``_sage_()`` methods that are added lazily to
 the respective SymPy objects. Any call of the ``_sympy_()`` method
 of a symbolic expression will trigger the addition. See
-:class:`sage.symbolic.expression_conversion.SymPyConverter` for the
-conversion to SymPy.
+:mod:`~sage.symbolic.expression_conversions` for the conversion to SymPy.
 
 Only ``Function`` objects where the names differ need their own ``_sage()_``
 method. There are several functions with differing name that have an alias
@@ -475,9 +474,8 @@ class UndefSageHelper:
     def __get__(self, ins, typ):
         if ins is None:
             return lambda: _sympysage_function_by_name(typ.__name__)
-        else:
-            args = [arg._sage_() for arg in ins.args]
-            return lambda: _sympysage_function_by_name(ins.__class__.__name__)(*args)
+        args = [arg._sage_() for arg in ins.args]
+        return lambda: _sympysage_function_by_name(ins.__class__.__name__)(*args)
 
 
 def _sympysage_function(self):
@@ -1299,7 +1297,7 @@ def check_all():
 
     def test_issue_4023():
         from sage.symbolic.ring import SR
-        from sage.functions.all import log
+        from sage.misc.functional import log
         from sympy import integrate, simplify
         a, x = SR.var("a x")
         i = integrate(log(x) / a, (x, a, a + 1))
@@ -1360,17 +1358,17 @@ def sympy_set_to_list(set, vars):
     from sympy.core.relational import Relational
     if set == S.Reals:
         return [x._sage_() < oo for x in vars]
-    elif set == S.Complexes:
+    if set == S.Complexes:
         return [x._sage_() != UnsignedInfinity for x in vars]
-    elif set is None or set == S.EmptySet:
+    if set is None or set == S.EmptySet:
         return []
     if isinstance(set, (And, Or, Relational)):
         if isinstance(set, And):
             return [[item for rel in set._args[0]
                     for item in sympy_set_to_list(rel, vars)]]
-        elif isinstance(set, Or):
+        if isinstance(set, Or):
             return [sympy_set_to_list(iv, vars) for iv in set._args[0]]
-        elif isinstance(set, Relational):
+        if isinstance(set, Relational):
             return [set._sage_()]
     elif isinstance(set, FiniteSet):
         x = vars[0]

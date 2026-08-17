@@ -296,7 +296,7 @@ class AbstractSimplex_class(SageObject):
     """
 
     def __init__(self, dim, degeneracies=(), underlying=None, name=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         """
         A simplex of dimension ``dim``.
 
@@ -400,7 +400,7 @@ class AbstractSimplex_class(SageObject):
             self.rename(name)
         self._latex_name = latex_name
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         If nondegenerate: return the id of this simplex.
 
@@ -424,7 +424,7 @@ class AbstractSimplex_class(SageObject):
             return id(self)
         return hash(self.nondegenerate()) ^ hash(self._degens)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Two nondegenerate simplices are equal if they are identical.
         Two degenerate simplices are equal if their underlying
@@ -453,7 +453,7 @@ class AbstractSimplex_class(SageObject):
         return (self._degens == other._degens
                 and self.nondegenerate() is other.nondegenerate())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         This returns the negation of ``__eq__``.
 
@@ -471,7 +471,7 @@ class AbstractSimplex_class(SageObject):
         """
         return not self == other
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """
         We implement sorting in the hopes that sorted lists of simplices,
         for example as defining data for a simplicial set, will be
@@ -580,7 +580,7 @@ class AbstractSimplex_class(SageObject):
             return False
         return id(self) < id(other)
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -594,7 +594,7 @@ class AbstractSimplex_class(SageObject):
         """
         return not (self < other or self == other)
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -608,7 +608,7 @@ class AbstractSimplex_class(SageObject):
         """
         return self < other or self == other
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -916,7 +916,7 @@ class AbstractSimplex_class(SageObject):
 # __ge__, __le__. Inheriting from AbstractSimplex_class first seems to
 # be slightly faster.
 class NonDegenerateSimplex(AbstractSimplex_class, WithEqualityById):
-    def __init__(self, dim, name=None, latex_name=None):
+    def __init__(self, dim, name=None, latex_name=None) -> None:
         """
         A nondegenerate simplex.
 
@@ -1086,9 +1086,8 @@ def AbstractSimplex(dim, degeneracies=(), underlying=None,
                                      underlying=underlying,
                                      name=name,
                                      latex_name=latex_name)
-    else:
-        return NonDegenerateSimplex(dim, name=name,
-                                    latex_name=latex_name)
+    return NonDegenerateSimplex(dim, name=name,
+                                latex_name=latex_name)
 
 
 ########################################################################
@@ -1120,17 +1119,20 @@ class SimplicialSet_arbitrary(Parent):
     This class is not fully implemented and is not intended to be
     called directly by users. It is intended instead to be used by
     other classes which inherit from this one. See
-    :class:`SimplicialSet_finite` and :class:`Nerve` for two
+    :class:`SimplicialSet_finite` and
+    :class:`~sage.topology.simplicial_set_examples.Nerve` for two
     examples. In particular, any such class must implement a method
     ``n_skeleton`` -- without this, most computations will be
-    impossible. It must also implement an ``__init__`` method which
-    should also set the category, so that methods defined at the
-    category level, like ``is_pointed`` and ``is_finite``, work
-    correctly.
+    impossible. For concrete implementations, see
+    :meth:`~sage.topology.simplicial_set.SimplicialSet_finite.n_skeleton` and
+    :meth:`~sage.topology.simplicial_set_examples.Nerve.n_skeleton`.
+    It must also implement an ``__init__`` method which should also
+    set the category, so that methods defined at the category level,
+    like ``is_pointed`` and ``is_finite``, work correctly.
 
     Note that the method :meth:`subsimplicial_set` calls
-    :meth:`n_skeleton`, so to avoid circularity, the
-    :meth:`n_skeleton` method should call
+    :meth:`~sage.topology.simplicial_set.SimplicialSet_finite.n_skeleton`,
+    so to avoid circularity, the ``n_skeleton`` method should call
     :class:`.simplicial_set_constructions.SubSimplicialSet` directly,
     not :meth:`subsimplicial_set`.
     """
@@ -1184,8 +1186,7 @@ class SimplicialSet_arbitrary(Parent):
         if simplex.is_nondegenerate():
             if self.is_finite():
                 return self.face_data()[simplex]
-            else:
-                return self.n_skeleton(dim).face_data()[simplex]
+            return self.n_skeleton(dim).face_data()[simplex]
         underlying = simplex.nondegenerate()
         faces = []
         for J, t in [face_degeneracies(m, simplex.degeneracies())
@@ -1225,7 +1226,7 @@ class SimplicialSet_arbitrary(Parent):
             return self.faces(simplex)[i]
         return None
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is a simplex which is contained in this complex.
 
@@ -1605,7 +1606,8 @@ class SimplicialSet_arbitrary(Parent):
 
         - ``codomain`` -- (default: ``None``) if ``None``, the
           codomain is the standard one-point space constructed by
-          :func:`Point`. Otherwise, either the codomain must be a
+          :func:`~sage.topology.simplicial_set_examples.Point`.
+          Otherwise, either the codomain must be a
           pointed simplicial set, in which case the map is constant at
           the base point, or ``point`` must be specified.
         - ``point`` -- (default: ``None``) if specified, it
@@ -2024,8 +2026,7 @@ class SimplicialSet_arbitrary(Parent):
                     min_dim = min(dim)
                     H = GenericCellComplex.homology(space, **kwds)
                     return {n: H[n] for n in H if min_dim <= n <= max_dim}
-                else:
-                    max_dim = dim
+                max_dim = dim
             space = self.n_skeleton(max_dim+1)
         else:
             space = self
@@ -2176,8 +2177,7 @@ class SimplicialSet_arbitrary(Parent):
         n_cells = tuple(self.n_cells(n))
         if cochains:
             return Cochains(self, n, n_cells, base_ring)
-        else:
-            return Chains(self, n, n_cells, base_ring)
+        return Chains(self, n, n_cells, base_ring)
 
     def quotient(self, subcomplex, vertex_name='*'):
         """
@@ -2296,9 +2296,8 @@ class SimplicialSet_arbitrary(Parent):
         if self.is_finite():
             return QuotientOfSimplicialSet_finite(subcomplex.inclusion_map(),
                                                   vertex_name=vertex_name)
-        else:
-            return QuotientOfSimplicialSet(subcomplex.inclusion_map(),
-                                           vertex_name=vertex_name)
+        return QuotientOfSimplicialSet(subcomplex.inclusion_map(),
+                                       vertex_name=vertex_name)
 
     def disjoint_union(self, *others):
         """
@@ -2359,8 +2358,7 @@ class SimplicialSet_arbitrary(Parent):
             DisjointUnionOfSimplicialSets_finite
         if all(space.is_finite() for space in [self] + list(others)):
             return DisjointUnionOfSimplicialSets_finite((self,) + others)
-        else:
-            return DisjointUnionOfSimplicialSets((self,) + others)
+        return DisjointUnionOfSimplicialSets((self,) + others)
 
     def coproduct(self, *others):
         """
@@ -2529,8 +2527,7 @@ class SimplicialSet_arbitrary(Parent):
             ProductOfSimplicialSets_finite
         if self.is_finite() and all(X.is_finite() for X in others):
             return ProductOfSimplicialSets_finite((self,) + others)
-        else:
-            return ProductOfSimplicialSets((self,) + others)
+        return ProductOfSimplicialSets((self,) + others)
 
     cartesian_product = product
 
@@ -2645,8 +2642,7 @@ class SimplicialSet_arbitrary(Parent):
             return PushoutOfSimplicialSets_finite()
         if all(f.codomain().is_finite() for f in maps):
             return PushoutOfSimplicialSets_finite(maps)
-        else:
-            return PushoutOfSimplicialSets(maps)
+        return PushoutOfSimplicialSets(maps)
 
     def pullback(self, *maps):
         r"""
@@ -2745,8 +2741,7 @@ class SimplicialSet_arbitrary(Parent):
             return PullbackOfSimplicialSets_finite()
         if self.is_finite() and all(f.domain().is_finite() for f in maps):
             return PullbackOfSimplicialSets_finite(maps)
-        else:
-            return PullbackOfSimplicialSets(maps)
+        return PullbackOfSimplicialSets(maps)
 
     # Ideally, this would be defined at the category level and only
     # for pointed simplicial sets, but the abstract_method "wedge" in
@@ -2825,8 +2820,7 @@ class SimplicialSet_arbitrary(Parent):
             WedgeOfSimplicialSets_finite
         if all(space.is_finite() for space in [self] + list(others)):
             return WedgeOfSimplicialSets_finite((self,) + others)
-        else:
-            return WedgeOfSimplicialSets((self,) + others)
+        return WedgeOfSimplicialSets((self,) + others)
 
     def cone(self):
         r"""
@@ -2886,12 +2880,10 @@ class SimplicialSet_arbitrary(Parent):
         if self.is_pointed():
             if self.is_finite():
                 return ReducedConeOfSimplicialSet_finite(self)
-            else:
-                return ReducedConeOfSimplicialSet(self)
+            return ReducedConeOfSimplicialSet(self)
         if self.is_finite():
             return ConeOfSimplicialSet_finite(self)
-        else:
-            return ConeOfSimplicialSet(self)
+        return ConeOfSimplicialSet(self)
 
     def suspension(self, n=1):
         """
@@ -3204,7 +3196,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     """
 
     def __init__(self, data, base_point=None, name=None, check=True,
-                 category=None, latex_name=None):
+                 category=None, latex_name=None) -> None:
         r"""
         TESTS::
 
@@ -3269,13 +3261,11 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             """
             if sigma.is_nondegenerate():
                 return data[sigma][i]
-            else:
-                underlying = sigma.nondegenerate()
-                J, t = face_degeneracies(i, sigma.degeneracies())
-                if t is None:
-                    return underlying.apply_degeneracies(*J)
-                else:
-                    return data[underlying][t].apply_degeneracies(*J)
+            underlying = sigma.nondegenerate()
+            J, t = face_degeneracies(i, sigma.degeneracies())
+            if t is None:
+                return underlying.apply_degeneracies(*J)
+            return data[underlying][t].apply_degeneracies(*J)
 
         if isinstance(data, GenericCellComplex):
             # Construct new data appropriately.
@@ -3379,7 +3369,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
             self.rename(name)
         self._latex_name = latex_name
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are equal as simplicial sets.
 
@@ -3408,12 +3398,11 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                     and other.is_pointed()
                     and sorted(self._data) == sorted(other._data)
                     and self.base_point() == other.base_point())
-        else:
-            return (isinstance(other, SimplicialSet_finite)
-                    and not other.is_pointed()
-                    and sorted(self._data) == sorted(other._data))
+        return (isinstance(other, SimplicialSet_finite)
+                and not other.is_pointed()
+                and sorted(self._data) == sorted(other._data))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are not equal as simplicial sets.
 
@@ -3439,7 +3428,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     # computes their hash. If the tuple self._data is long, this can
     # take a long time.
     @cached_method
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         The hash is formed from that of the tuple ``self._data``.
 
@@ -3459,8 +3448,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         """
         if self.is_pointed():
             return hash(self._data) ^ hash(self.base_point())
-        else:
-            return hash(self._data)
+        return hash(self._data)
 
     def __copy__(self):
         """
@@ -3696,8 +3684,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                 # Return the empty chain complex.
                 if cochain:
                     return ChainComplex(base_ring=base_ring, degree=1)
-                else:
-                    return ChainComplex(base_ring=base_ring, degree=-1)
+                return ChainComplex(base_ring=base_ring, degree=-1)
 
         differentials = {}
         # Convert the tuple self._data to a dictionary indexed by the
@@ -4064,7 +4051,7 @@ def shrink_simplicial_complex(K):
 
     First convert ``K`` naively, then mod out by a large contractible
     subcomplex, as found by
-    :meth:`.simplicial_complex.SimplicialComplex._contractible_subcomplex`.
+    :meth:`~sage.topology.simplicial_complex.SimplicialComplex._contractible_subcomplex`.
     This will produce a simplicial set no larger than, and sometimes
     much smaller than, the initial simplicial complex.
 

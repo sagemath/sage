@@ -1,5 +1,5 @@
 r"""
-Rooted (Unordered) Trees
+Rooted (unordered) trees
 
 AUTHORS:
 
@@ -215,8 +215,9 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This does not matter
-            unless you are inside the :meth:`clone` context manager,
+            method (see :meth:`~sage.combinat.rooted_tree.RootedTree.normalize`). This does not matter
+            unless you are inside the
+            :meth:`~sage.structure.list_clone.ClonableElement.clone` context manager,
             because outside of it every rooted tree is already
             normalized.
 
@@ -300,7 +301,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         # ensure unique representation
         self.set_immutable()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return if ``self`` is the empty tree.
 
@@ -657,7 +658,7 @@ class RootedTrees_size(RootedTrees):
             sage: S([[],[]]) in S
             True
         """
-        return isinstance(x, self.element_class) and x.node_number() == self._n
+        return isinstance(x, self.element_class) and x.number_of_nodes() == self._n
 
     def _an_element_(self):
         """
@@ -720,7 +721,7 @@ class RootedTrees_size(RootedTrees):
             ...
             ValueError: wrong number of nodes
         """
-        if el.node_number() != self._n:
+        if el.number_of_nodes() != self._n:
             raise ValueError("wrong number of nodes")
 
     def cardinality(self):
@@ -779,7 +780,7 @@ class RootedTrees_size(RootedTrees):
             []
         """
         res = self.element_class(self._parent_for, *args, **keywords)
-        if res.node_number() != self._n:
+        if res.number_of_nodes() != self._n:
             raise ValueError("wrong number of nodes")
         return res
 
@@ -908,8 +909,9 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This does not matter
-            unless you are inside the :meth:`clone` context manager,
+            method (see :meth:`~sage.combinat.rooted_tree.RootedTree.normalize`). This does not matter
+            unless you are inside the
+            :meth:`~sage.structure.list_clone.ClonableElement.clone` context manager,
             because outside of it every rooted tree is already
             normalized.
 
@@ -920,7 +922,7 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
             would return, as it wants to encode the whole labelled
             tree including its labelling rather than just the
             unlabelled tree. Therefore, be careful with using this
-            method on subclasses of :class:`RootedOrderedTree`;
+            method on subclasses of ``RootedOrderedTree``;
             under some circumstances they could inherit it from
             another superclass instead of from :class:`RootedTree`,
             which would cause the method to forget the labelling.

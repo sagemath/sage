@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Evaluating a String in Sage
 """
@@ -25,7 +24,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     - ``source`` -- string or object with a ``_sage_``
       method
 
-    - ``locals`` -- evaluate in namespace of :mod:`sage.all` plus
+    - ``locals`` -- evaluate in namespace of ``sage.all`` plus
       the locals dictionary
 
     - ``cmds`` -- string; sequence of commands to be run
@@ -184,8 +183,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     if cmds:
         exec(cmd_seq, sage.all.__dict__, locals)
         return locals['_sage_eval_returnval_']
-    else:
-        return eval(source, sage.all.__dict__, locals)
+    return eval(source, sage.all.__dict__, locals)
 
 
 def sageobj(x, vars=None):

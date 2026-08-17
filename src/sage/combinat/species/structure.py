@@ -182,11 +182,10 @@ class GenericSpeciesStructure(CombinatorialObject):
             [1, 2, 3]
         """
         if isinstance(i, (int, Integer)):
-            return self._labels[i-1]
-        else:
-            return i
+            return self._labels[i - 1]
+        return i
 
-    def is_isomorphic(self, x):
+    def is_isomorphic(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -203,7 +202,7 @@ class GenericSpeciesStructure(CombinatorialObject):
         if self.parent() != x.parent():
             return False
 
-        #We don't care about the labels for isomorphism testing
+        # We don't care about the labels for isomorphism testing
         return self.canonical_label()._list == x.canonical_label()._list
 
 
@@ -459,7 +458,9 @@ class StructuresWrapper(SpeciesWrapper):
         """
         A base class for the set of structures of a species with given
         set of labels.  An object of this type is returned when you
-        call the :meth:`structures` method of a species.
+        call the
+        :meth:`structures <sage.combinat.species.species.GenericCombinatorialSpecies.structures>`
+        method of a species.
 
         EXAMPLES::
 
@@ -480,7 +481,9 @@ class IsotypesWrapper(SpeciesWrapper):
         """
         A base class for the set of isotypes of a species with given
         set of labels.  An object of this type is returned when you
-        call the :meth:`isotypes` method of a species.
+        call the
+        :meth:`isotypes <sage.combinat.species.species.GenericCombinatorialSpecies.isotypes>`
+        method of a species.
 
         EXAMPLES::
 

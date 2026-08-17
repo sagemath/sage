@@ -8,7 +8,7 @@
 #   Determine if the system copy of a python package can be used by sage.
 #
 #   This macro uses setuptools.version's pkg_resources to check that the
-#   "version_requirements.txt" file (or entry in "src/pyproject.toml") for
+#   "version_requirements.txt" file (or entry in "pyproject.toml") for
 #   the named package is satisfied, and it can typically fail in four ways:
 #
 #     1. If --enable-system-site-packages was not passed to ./configure,
@@ -20,7 +20,7 @@
 #     4. If setuptools is not available to the system python,
 #
 #     5. If the contents of version_requirements.txt (or entry in
-#        "src/pyproject.toml") are not met (wrong version, no version,
+#        "pyproject.toml") are not met (wrong version, no version,
 #        etc.) by the system python.
 #
 #   In any of those cases, we set sage_spkg_install_$package to "yes"
@@ -28,8 +28,7 @@
 #   nothing, since the default value of sage_spkg_install_$package
 #   is "no" (to use the system copy).
 #
-#   The SAGE_SPKG_CONFIGURE_PYTHON3() macro is AC_REQUIRE'd to ensure
-#   that $PYTHON_FOR_VENV is available, if it is going to be available.
+#   The $PYTHON_FOR_VENV variable is set in configure.ac.
 #   The check is run inside a new venv, and with the PYTHONUSERBASE
 #   variable poisoned in the same manner as sage-env poisons it, to
 #   ensure that the ./configure- and run-time views of the system
@@ -44,7 +43,6 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
   AC_MSG_CHECKING([if --enable-system-site-packages was used])
   AS_IF([test "${enable_system_site_packages}" = "yes"], [
     AC_MSG_RESULT(yes)
-    AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
 
     dnl We run this check inside a python venv, because that's ultimately
     dnl how the system $PYTHON_FOR_VENV will be used.

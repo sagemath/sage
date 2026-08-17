@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Handling Superseded Functionality
 
@@ -93,7 +92,7 @@ def deprecation(issue_number, message, stacklevel=4):
 
     .. SEEALSO::
 
-        :func:`experimental`,
+        :class:`~sage.misc.superseded.experimental`,
         :func:`warning`.
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
@@ -150,7 +149,7 @@ def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     - ``message`` -- string; an explanation what is going on
 
     - ``warning_class`` -- (default: ``Warning``) a class inherited
-      from a Python :class:`~exceptions.Warning`
+      from a Python :exc:`Warning`
 
     - ``stack_level`` -- integer (default: `3`); this is passed on to
       :func:`warnings.warn`
@@ -169,8 +168,8 @@ def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     .. SEEALSO::
 
         :func:`deprecation`,
-        :func:`experimental`,
-        :class:`exceptions.Warning`.
+        :class:`~sage.misc.superseded.experimental`,
+        :exc:`Warning`.
     """
     _check_issue_number(issue_number)
     message += '\nSee https://github.com/sagemath/sage/issues/' + str(issue_number) + ' for details.'
@@ -208,7 +207,7 @@ def experimental_warning(issue_number, message, stacklevel=4):
 
     .. SEEALSO::
 
-        :class:`mark_as_experimental`,
+        :class:`~sage.misc.superseded.experimental`,
         :func:`warning`,
         :func:`deprecation`.
     """
@@ -257,7 +256,7 @@ class experimental:
         TESTS:
 
         The following test works together with the doc-test for
-        :meth:`__experimental_self_test` to demonstrate that warnings are issued only
+        ``__experimental_self_test`` to demonstrate that warnings are issued only
         once, even in doc-tests (see :issue:`20601`).
         ::
 
@@ -271,7 +270,7 @@ class experimental:
 
         .. SEEALSO::
 
-            :func:`experimental`,
+            :class:`~sage.misc.superseded.experimental`,
             :func:`warning`,
             :func:`deprecation`.
         """
@@ -350,15 +349,18 @@ class DeprecatedFunctionAlias:
     - Florent Hivert (2009-11-23), with the help of Mike Hansen.
     - Luca De Feo (2011-07-11), printing the full module path when different from old path
     """
-    def __init__(self, issue_number, func, module, instance=None, unbound=None):
+    def __init__(self, issue_number, func, module, instance=None, unbound=None, *, replacement=None, replacement_rst_doc=None):
         r"""
         TESTS::
 
+            sage: # needs sage.combinat
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: g = deprecated_function_alias(13109, number_of_partitions)            # needs sage.combinat
-            sage: from sage.misc.superseded import deprecated_function_alias
-            sage: g.__doc__                                                             # needs sage.combinat
+            sage: g = deprecated_function_alias(13109, number_of_partitions)
+            sage: g.__doc__
             'Deprecated: Use :func:`number_of_partitions` instead.\nSee :issue:`13109` for details.\n\n'
+            sage: g = deprecated_function_alias(13109, number_of_partitions, replacement_rst_doc='BLOB')
+            sage: g.__doc__
+            'Deprecated: Use BLOB instead.\nSee :issue:`13109` for details.\n\n'
         """
         _check_issue_number(issue_number)
         try:
@@ -369,14 +371,15 @@ class DeprecatedFunctionAlias:
         self.issue_number = issue_number
         self.instance = instance  # for use with methods
         self.unbound = unbound
+        self._replacement = replacement
         self.__module__ = module
-        if isinstance(func, type(deprecation)):
-            sphinxrole = "func"
-        else:
-            sphinxrole = "meth"
-        doc = 'Deprecated: '
-        doc += 'Use :' + sphinxrole + ':`' + self.func.__name__ + '` instead.\n'
-        doc += 'See :issue:`' + str(self.issue_number) + '` for details.\n\n'
+        if replacement_rst_doc is None:
+            if isinstance(func, type(deprecation)):
+                replacement_rst_doc = f":func:`{self.func.__name__}`"
+            else:
+                replacement_rst_doc = f":meth:`{self.func.__name__}`"
+        doc = f'Deprecated: Use {replacement_rst_doc} instead.\n'
+        doc += f'See :issue:`{self.issue_number}` for details.\n\n'
         self.__doc__ = doc
 
     @lazy_attribute
@@ -389,7 +392,6 @@ class DeprecatedFunctionAlias:
             sage: g.__name__                                                            # needs sage.combinat
             'g'
 
-            sage: from sage.misc.superseded import deprecated_function_alias
             sage: class cls():
             ....:    def new_meth(self): return 42
             ....:    old_meth = deprecated_function_alias(13109, new_meth)
@@ -444,19 +446,24 @@ class DeprecatedFunctionAlias:
             doctest:...: DeprecationWarning: blo is deprecated. Please use bla instead.
             See https://github.com/sagemath/sage/issues/13109 for details.
             42
+            sage: blo = deprecated_function_alias(13109, bla, replacement='BLOB')
+            sage: blo()
+            doctest:...: DeprecationWarning: blo is deprecated. Please use BLOB instead.
+            See https://github.com/sagemath/sage/issues/13109 for details.
+            42
         """
-        if self.instance is None and self.__module__ != self.func.__module__:
-            other = self.func.__module__ + "." + self.func.__name__
-        else:
-            other = self.func.__name__
+        replacement = self._replacement
+        if replacement is None:
+            if self.instance is None and self.__module__ != self.func.__module__:
+                replacement = self.func.__module__ + "." + self.func.__name__
+            else:
+                replacement = self.func.__name__
 
         deprecation(self.issue_number,
-                    "{} is deprecated. Please use {} instead.".format(
-                        self.__name__, other))
+                    f"{self.__name__} is deprecated. Please use {replacement} instead.")
         if self.instance is None:
             return self.func(*args, **kwds)
-        else:
-            return self.func(self.instance, *args, **kwds)
+        return self.func(self.instance, *args, **kwds)
 
     def __get__(self, inst, cls=None):
         """
@@ -490,14 +497,13 @@ class DeprecatedFunctionAlias:
         """
         if inst is None:
             return self  # Unbound method lookup on class
-        else:
-            # Return a bound method wrapper
-            return DeprecatedFunctionAlias(self.issue_number, self.func,
-                                           self.__module__, instance=inst,
-                                           unbound=self)
+        # Return a bound method wrapper
+        return DeprecatedFunctionAlias(self.issue_number, self.func,
+                                       self.__module__, instance=inst,
+                                       unbound=self)
 
 
-def deprecated_function_alias(issue_number, func):
+def deprecated_function_alias(issue_number, func, *, replacement=None, replacement_rst_doc=None):
     """
     Create an aliased version of a function or a method which raises a
     deprecation warning message.
@@ -512,6 +518,15 @@ def deprecated_function_alias(issue_number, func):
       deprecation is introduced
 
     - ``func`` -- the function or method to be aliased
+
+    - ``replacement`` -- a plain text string to be inserted
+      into the warning message to describe the replacement.
+      If unspecified, use the name of ``func``.
+
+    - ``replacement_rst_doc`` -- a reStructuredText snippet to be inserted
+      into the user documentation to describe the replacement.
+      If unspecified, this is constructed from the name of ``func``,
+      with either the ``:meth:`` or the ``:func:`` role, as appropriate.
 
     EXAMPLES::
 
@@ -554,4 +569,5 @@ def deprecated_function_alias(issue_number, func):
             module_name = inspect.getmodulename(frame1.f_code.co_filename)
     if module_name is None:
         module_name = '__main__'
-    return DeprecatedFunctionAlias(issue_number, func, module_name)
+    return DeprecatedFunctionAlias(issue_number, func, module_name,
+                                   replacement=replacement, replacement_rst_doc=replacement_rst_doc)

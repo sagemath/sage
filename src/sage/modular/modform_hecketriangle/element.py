@@ -24,7 +24,7 @@ class FormsElement(FormsRingElement):
     (Hecke) modular forms.
     """
 
-    def __init__(self, parent, rat):
+    def __init__(self, parent, rat) -> None:
         r"""
         An element of a space of (Hecke) modular forms.
 
@@ -79,7 +79,7 @@ class FormsElement(FormsRingElement):
             except TypeError:
                 raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -334,9 +334,9 @@ class FormsElement(FormsRingElement):
 
         # TODO for later: Figure out the correct coefficient growth and do L.set_coeff_growth(...)
 
-        # num_coeffs = L.num_coeffs()
-        num_coeffs = L.num_coeffs(1.2)
-        coeff_vector = list(self.q_expansion_vector(min_exp=0, max_exp=num_coeffs + 1, fix_d=True))
+        # n_coeffs = L.cost()
+        n_coeffs = L.cost(1.2)
+        coeff_vector = list(self.q_expansion_vector(min_exp=0, max_exp=n_coeffs + 1, fix_d=True))
         pari_precode = "coeff = {};".format(coeff_vector)
 
         L.init_coeffs(v="coeff[k+1]", pari_precode=pari_precode,

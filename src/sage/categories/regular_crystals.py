@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Crystals
@@ -82,6 +81,8 @@ class RegularCrystals(Category_singleton):
         running ._test_new() . . . pass
         running ._test_not_implemented_methods() . . . pass
         running ._test_pickling() . . . pass
+        running ._test_random() . . . pass
+        running ._test_rank() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_stembridge_local_axioms() . . . pass
     """
@@ -117,9 +118,10 @@ class RegularCrystals(Category_singleton):
         structure: it only relates `\varepsilon_a` and `\varphi_a` to
         `e_a` and `f_a` respectively.
 
-        .. SEEALSO:: :meth:`Category.additional_structure`
+        .. SEEALSO:: :meth:`~sage.categories.category.Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 
@@ -309,12 +311,10 @@ class RegularCrystals(Category_singleton):
             """
             tester = self._tester(**options)
             goodness = True
-            i = 0
-            for x in self:
+            for i, x in enumerate(self, start=1):
                 goodness = x._test_stembridge_local_axioms(index_set, verbose)
                 if not goodness and not complete:
                     tester.fail()
-                i += 1
                 if i > tester._max_runs:
                     return
             tester.assertTrue(goodness)
@@ -576,13 +576,12 @@ class RegularCrystals(Category_singleton):
                     element = element.f(i)
                     l.append(element)
                 return C.sum_of_monomials(l)
-            else:
-                l = []
-                element = self
-                for k in range(-r-1):
-                    element = element.e(i)
-                    l.append(element)
-                return - C.sum_of_monomials(l)
+            l = []
+            element = self
+            for k in range(-r-1):
+                element = element.e(i)
+                l.append(element)
+            return - C.sum_of_monomials(l)
 
         def stembridgeDelta_depth(self, i, j):
             r"""
@@ -802,9 +801,9 @@ class RegularCrystals(Category_singleton):
             of weight `0` with respect to `I`; that is, we need to have
             `\varepsilon_j(b) = \varphi_j(b)` for all `j \in I`.
 
-            See [As2008]_. See also :meth:`dual_equivalence_graph` for
-            a definition of `i`-elementary dual equivalence
-            transformations.
+            See [As2008]_. See also
+            :meth:`~sage.categories.regular_crystals.RegularCrystals.ParentMethods.dual_equivalence_graph`
+            for a definition of `i`-elementary dual equivalence transformations.
 
             INPUT:
 
@@ -836,12 +835,12 @@ class RegularCrystals(Category_singleton):
                 sage: T = crystals.Tableaux(['A',4], shape=[3,2])
                 sage: G = T(2,1,4,3,5).dual_equivalence_class()
                 sage: G.edges(sort=True)
-                [([[1, 3, 5], [2, 4]], [[1, 3, 4], [2, 5]], 4),
-                 ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 2),
-                 ([[1, 3, 5], [2, 4]], [[1, 2, 5], [3, 4]], 3),
+                [([[1, 3, 4], [2, 5]], [[1, 3, 5], [2, 4]], 4),
                  ([[1, 3, 4], [2, 5]], [[1, 2, 4], [3, 5]], 2),
-                 ([[1, 2, 4], [3, 5]], [[1, 2, 3], [4, 5]], 3),
-                 ([[1, 2, 4], [3, 5]], [[1, 2, 3], [4, 5]], 4)]
+                 ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 2),
+                 ([[1, 2, 5], [3, 4]], [[1, 3, 5], [2, 4]], 3),
+                 ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 3),
+                 ([[1, 2, 3], [4, 5]], [[1, 2, 4], [3, 5]], 4)]
             """
             if index_set is None:
                 index_set = self.index_set()

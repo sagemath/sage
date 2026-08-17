@@ -290,9 +290,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             if (self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {} ".format(comp) +
-                                 "to a vector field in {}".format(self))
+            raise ValueError("cannot convert the {} ".format(comp) +
+                             "to a vector field in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -344,8 +343,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         if isinstance(other, (VectorFieldModule, VectorFieldFreeModule)):
             return self._domain.is_subset(other._domain) and \
                    self._ambient_domain.is_subset(other._ambient_domain)
-        else:
-            return False
+        return False
 
     #### End of parent methods
 
@@ -391,8 +389,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         """
         if self._latex_name is None:
             return r"\text{" + str(self) + r"}"
-        else:
-            return self._latex_name
+        return self._latex_name
 
     def domain(self) -> DifferentiableManifold:
         r"""
@@ -784,9 +781,9 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         if tensor_type == (1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
-        elif tensor_type == (0,1):
+        if tensor_type == (0,1):
             return self.linear_form(name=name, latex_name=latex_name)
-        elif tensor_type == (1,1) and specific_type is not None:
+        if tensor_type == (1,1) and specific_type is not None:
             if issubclass(specific_type, AutomorphismField):
                 return self.automorphism(name=name,
                                          latex_name=latex_name)
@@ -816,7 +813,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         Construct a tensor field on the domain of ``self`` or a tensor product
         of ``self`` with other modules.
 
-        If ``args`` consist of other parents, just delegate to :meth:`tensor_product`.
+        If ``args`` consist of other parents, just delegate to
+        :meth:`~sage.tensor.modules.reflexive_module.ReflexiveModule_abstract.tensor_product`.
 
         Otherwise, construct a tensor (i.e., a tensor field on the domain of
         the vector field module) from the following input.
@@ -863,7 +861,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM.tensor((0,2), name='a', antisym=(0,1))
             2-form a on the 2-dimensional differentiable manifold M
 
-        Delegation to :meth:`tensor_product`::
+        Delegation to
+        :meth:`~sage.tensor.modules.reflexive_module.ReflexiveModule_abstract.tensor_product`::
 
             sage: M = Manifold(2, 'M')
             sage: XM = M.vector_field_module()
@@ -1609,9 +1608,8 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             if (self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
                 return comp.restrict(self._domain)
-            else:
-                raise ValueError("cannot convert the {}".format(comp) +
-                                 "to a vector field in {}".format(self))
+            raise ValueError("cannot convert the {}".format(comp) +
+                             "to a vector field in {}".format(self))
         if not isinstance(comp, (list, tuple)):
             raise TypeError("cannot convert the {} ".format(comp) +
                             "to an element of {}".format(self))
@@ -1642,8 +1640,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         if isinstance(other, (VectorFieldModule, VectorFieldFreeModule)):
             return (self._domain.is_subset(other._domain)
                     and self._ambient_domain.is_subset(other._ambient_domain))
-        else:
-            return False
+        return False
 
     #### End of parent methods
 
@@ -2072,13 +2069,12 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         if symbol is None:
             if from_frame is None:
                 return self.default_basis()
-            else:
-                symbol = from_frame._symbol
-                latex_symbol = from_frame._latex_symbol
-                indices = from_frame._indices
-                latex_indices = from_frame._latex_indices
-                symbol_dual = from_frame._symbol_dual
-                latex_symbol_dual = from_frame._latex_symbol_dual
+            symbol = from_frame._symbol
+            latex_symbol = from_frame._latex_symbol
+            indices = from_frame._indices
+            latex_indices = from_frame._latex_indices
+            symbol_dual = from_frame._symbol_dual
+            latex_symbol_dual = from_frame._latex_symbol_dual
         for other in self._known_bases:
             if symbol == other._symbol:
                 return other
@@ -2161,9 +2157,9 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         if tensor_type == (1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
-        elif tensor_type == (0,1):
+        if tensor_type == (0,1):
             return self.linear_form(name=name, latex_name=latex_name)
-        elif tensor_type == (1,1) and specific_type is not None:
+        if tensor_type == (1,1) and specific_type is not None:
             if issubclass(specific_type,
                           (AutomorphismField, AutomorphismFieldParal)):
                 return self.automorphism(name=name, latex_name=latex_name)

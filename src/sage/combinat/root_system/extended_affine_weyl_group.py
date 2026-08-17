@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 r"""
-Extended Affine Weyl Groups
+Extended affine Weyl groups
 
 AUTHORS:
 
@@ -1406,8 +1406,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 s = self.parent().simple_reflection(i)
                 if side == 'right':
                     return self*s
-                else:
-                    return s*self
+                return s*self
 
             def apply_simple_projection(self, i, side='right', length_increasing=True):
                 r"""
@@ -1671,7 +1670,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 return self.coset_representative(index_set=self.parent().realization_of().cartan_type().classical().index_set())
 
-            def is_affine_grassmannian(self):
+            def is_affine_grassmannian(self) -> bool:
                 r"""
                 Return whether ``self`` is affine Grassmannian.
 
@@ -2094,9 +2093,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             """
             if i == 0:
                 return self.S0()
-            else:
-                E = self.realization_of()
-                return self.from_classical_weyl(E.classical_weyl().simple_reflection(i))
+            E = self.realization_of()
+            return self.from_classical_weyl(E.classical_weyl().simple_reflection(i))
 
         @cached_method
         def simple_reflections(self):

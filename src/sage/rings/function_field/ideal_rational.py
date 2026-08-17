@@ -17,8 +17,8 @@ Ideals of function fields: rational
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.structure.richcmp import richcmp
 from sage.rings.infinity import infinity
+from sage.structure.richcmp import richcmp
 
 from .ideal import FunctionFieldIdeal, FunctionFieldIdealInfinite
 
@@ -40,7 +40,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         sage: I = O.ideal(1/(x^2+x)); I
         Ideal (1/(x^2 + x)) of Maximal order of Rational function field in x over Rational Field
     """
-    def __init__(self, ring, gen):
+    def __init__(self, ring, gen) -> None:
         """
         Initialize.
 
@@ -54,7 +54,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
         FunctionFieldIdeal.__init__(self, ring)
         self._gen = gen
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash computed from the data.
 
@@ -65,9 +65,9 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
             sage: I = O.ideal(1/(x^2+x))
             sage: d = { I: 1, I^2: 2 }
         """
-        return hash( (self._ring, self._gen) )
+        return hash((self._ring, self._gen))
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         """
         Test if ``element`` is in this ideal.
 
@@ -243,7 +243,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 + x)
@@ -258,7 +257,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 + x)
@@ -274,7 +272,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^2 + x)
@@ -304,7 +301,7 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         O = self.ring()
         d = ideal.denominator()
-        return self._valuation(d*ideal) - self._valuation(O.ideal(d))
+        return self._valuation(d * ideal) - self._valuation(O.ideal(d))
 
     def _valuation(self, ideal):
         """
@@ -337,7 +334,6 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4))
             sage: O = K.maximal_order()
             sage: I = O.ideal(x^3*(x+1)^2)
@@ -369,13 +365,12 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         sage: Oinf.ideal(x)
         Ideal (x) of Maximal infinite order of Rational function field in x over Finite Field of size 2
     """
-    def __init__(self, ring, gen):
+    def __init__(self, ring, gen) -> None:
         """
         Initialize.
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x)
@@ -384,22 +379,21 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         FunctionFieldIdealInfinite.__init__(self, ring)
         self._gen = gen
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of this fractional ideal.
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x)
             sage: J = Oinf.ideal(1/x)
             sage: d = { I: 1, J: 2 }
         """
-        return hash( (self.ring(), self._gen) )
+        return hash((self.ring(), self._gen))
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         """
         Test if ``element`` is in this ideal.
 
@@ -429,7 +423,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x + 1)
@@ -449,7 +442,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2+1))
@@ -470,7 +462,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2+1))
@@ -491,7 +482,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2+1))
@@ -507,7 +497,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2 + 1))
@@ -523,7 +512,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal(x/(x^2 + 1))
@@ -531,7 +519,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
             True
         """
         x = self._ring.fraction_field().gen()
-        return self._gen == 1/x
+        return self._gen == 1 / x
 
     def gen(self):
         """
@@ -539,7 +527,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)
@@ -554,7 +541,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)
@@ -570,7 +556,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+x), (x^2+1)/x^4)
@@ -603,8 +588,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         f = ideal.gen()
         if f == 0:
             return infinity
-        else:
-            return f.denominator().degree() - f.numerator().degree()
+        return f.denominator().degree() - f.numerator().degree()
 
     def _factor(self):
         """
@@ -612,7 +596,6 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(2))
             sage: Oinf = K.maximal_order_infinite()
             sage: I = Oinf.ideal((x+1)/(x^3+1))
@@ -624,5 +607,4 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         m = self._gen.denominator().degree() - self._gen.numerator().degree()
         if m == 0:
             return []
-        else:
-            return [(self.ring().ideal(g), m)]
+        return [(self.ring().ideal(g), m)]

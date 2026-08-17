@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Shuffle algebras
 
@@ -186,7 +185,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         """
         return self._alphabet
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -198,7 +197,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         """
         return "{!s}[{!s}]".format(self._print_options['prefix'], repr(t)[6:])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Text representation of this shuffle algebra.
 
@@ -222,7 +221,8 @@ class ShuffleAlgebra(CombinatorialFreeModule):
     def one_basis(self):
         r"""
         Return the empty word, which index of `1` of this algebra,
-        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        as per
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 
@@ -237,7 +237,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
     def product_on_basis(self, w1, w2):
         r"""
         Return the product of basis elements ``w1`` and ``w2``, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis()`.
+        :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
         INPUT:
 
@@ -452,8 +452,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         x = R(x)
         if x == 0:
             return self.element_class(self, {})
-        else:
-            return self.from_base_ring_from_one_basis(x)
+        return self.from_base_ring_from_one_basis(x)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -687,7 +686,7 @@ class DualPBWBasis(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, Words(names), prefix='S',
                                          category=cat)
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         """
         Return a string representation of the basis element indexed by ``t``.
 
@@ -699,7 +698,7 @@ class DualPBWBasis(CombinatorialFreeModule):
         """
         return "{!s}[{!s}]".format(self._print_options['prefix'], repr(t)[6:])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

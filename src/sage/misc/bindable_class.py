@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Bindable classes
 """
@@ -103,7 +102,7 @@ class BindableClass(metaclass=ClasscallMetaclass):
     .. NOTE::
 
         This is not actually a class, but an instance of
-        :class:`functools.partial`::
+        :func:`~functools.partial`::
 
             sage: type(outer.Inner).mro()
             [<class 'sage.misc.bindable_class.BoundClass'>,
@@ -191,7 +190,7 @@ class BoundClass(functools.partial):
             sage: c.__class__.__doc__
             sage: c.__class__.__init__.__doc__
 
-    Make sure classes which inherit from :class:`functools.partial` have the correct
+    Make sure classes which inherit from :func:`~functools.partial` have the correct
     syntax, see :issue:`14748`::
 
         sage: import warnings

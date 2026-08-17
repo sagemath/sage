@@ -58,33 +58,6 @@ def DivisorGroup(scheme, base_ring=None):
     return DG
 
 
-def is_DivisorGroup(x):
-    r"""
-    Return whether ``x`` is a :class:`DivisorGroup_generic`.
-
-    INPUT:
-
-    - ``x`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.schemes.generic.divisor_group import is_DivisorGroup, DivisorGroup
-        sage: Div = DivisorGroup(Spec(ZZ), base_ring=QQ)
-        sage: is_DivisorGroup(Div)
-        doctest:warning...
-        DeprecationWarning: The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.
-        See https://github.com/sagemath/sage/issues/38022 for details.
-        True
-        sage: is_DivisorGroup('not a divisor')
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_DivisorGroup is deprecated; use 'isinstance(..., DivisorGroup_generic)' instead.")
-    return isinstance(x, DivisorGroup_generic)
-
-
 class DivisorGroup_generic(FormalSums):
     r"""
     The divisor group on a variety.
@@ -104,7 +77,7 @@ class DivisorGroup_generic(FormalSums):
         # Must not call super().__classcall__()!
         return UniqueRepresentation.__classcall__(cls, scheme, base_ring)
 
-    def __init__(self, scheme, base_ring):
+    def __init__(self, scheme, base_ring) -> None:
         r"""
         Construct a :class:`DivisorGroup_generic`.
 
@@ -181,16 +154,14 @@ class DivisorGroup_generic(FormalSums):
             P = x.parent()
             if P is self:
                 return x
-            elif P == self:
+            if P == self:
                 return Divisor_generic(x._data, check=False, reduce=False, parent=self)
-            else:
-                x = x._data
+            x = x._data
         if isinstance(x, list):
             return Divisor_generic(x, check=check, reduce=reduce, parent=self)
         if x == 0:
             return Divisor_generic([], check=False, reduce=False, parent=self)
-        else:
-            return Divisor_generic([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
+        return Divisor_generic([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
 
     def _coerce_map_from_(self, other):
         r"""
@@ -268,7 +239,7 @@ class DivisorGroup_generic(FormalSums):
         """
         if self.base_ring().has_coerce_map_from(R):
             return self
-        elif R.has_coerce_map_from(self.base_ring()):
+        if R.has_coerce_map_from(self.base_ring()):
             return DivisorGroup(self.scheme(), base_ring=R)
 
 
@@ -299,13 +270,11 @@ class DivisorGroup_curve(DivisorGroup_generic):
             P = x.parent()
             if P is self:
                 return x
-            elif P == self:
+            if P == self:
                 return Divisor_curve(x._data, check=False, reduce=False, parent=self)
-            else:
-                x = x._data
+            x = x._data
         if isinstance(x, list):
             return Divisor_curve(x, check=check, reduce=reduce, parent=self)
         if x == 0:
             return Divisor_curve([], check=False, reduce=False, parent=self)
-        else:
-            return Divisor_curve([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
+        return Divisor_curve([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)

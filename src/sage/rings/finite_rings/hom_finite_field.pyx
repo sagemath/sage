@@ -439,7 +439,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             sage: Frob = k.frobenius_endomorphism()
             sage: embed = Frob.fixed_field()[1]
             sage: embed.__reduce__()  # indirect doctest
-            (<built-in function unpickle_map>,
+            (<cyfunction unpickle_map at ...>,
              (<class 'sage.rings.finite_rings.hom_prime_finite_field.FiniteFieldHomomorphism_prime'>,
               Set of field embeddings from Finite Field of size 5 to Finite Field in t of size 5^3,
               {},
@@ -620,8 +620,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         if self.is_identity():
             return x
-        else:
-            return x.pth_power(self._power)
+        return x.pth_power(self._power)
 
     def order(self):
         """
@@ -721,8 +720,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         if isinstance(right, FrobeniusEndomorphism_finite_field):
             return self.__class__(self.domain(), self._power + right.power())
-        else:
-            return RingHomomorphism._composition(self, right)
+        return RingHomomorphism._composition(self, right)
 
     def fixed_field(self):
         """

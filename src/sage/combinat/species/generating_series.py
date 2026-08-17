@@ -1,5 +1,5 @@
 r"""
-Generating Series
+Generating series
 
 This file makes a number of extensions to lazy power series by
 endowing them with some semantic content for how they're to be

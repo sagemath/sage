@@ -23,18 +23,20 @@ REFERENCES:
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
-from sage.manifolds.differentiable.diff_map import DiffMap
-from sage.manifolds.differentiable.manifold import DifferentiableManifold
-from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
-from sage.manifolds.differentiable.scalarfield import DiffScalarField
-from sage.manifolds.differentiable.tensorfield import TensorField
-from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
-from sage.manifolds.differentiable.vectorfield import VectorField
-from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
-from sage.symbolic.expression import Expression
+
+if TYPE_CHECKING:
+    from sage.manifolds.differentiable.diff_map import DiffMap
+    from sage.manifolds.differentiable.manifold import DifferentiableManifold
+    from sage.symbolic.expression import Expression
+    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+    from sage.manifolds.differentiable.vectorfield import VectorField
+    from sage.manifolds.differentiable.scalarfield import DiffScalarField
+    from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+    from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+    from sage.manifolds.differentiable.tensorfield import TensorField
 
 
 class SymplecticForm(DiffForm):
@@ -266,8 +268,7 @@ class SymplecticForm(DiffForm):
             # The restriction is ready
             self._restrictions[subdomain] = restriction
             return restriction
-        else:
-            return self._restrictions[subdomain]
+        return self._restrictions[subdomain]
 
     @staticmethod
     def wrap(
@@ -332,7 +333,7 @@ class SymplecticForm(DiffForm):
         If ``expansion_symbol`` is set, then the zeroth order symplectic form must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use ``_del_derived()``.
 
         OUTPUT:
 
@@ -535,7 +536,7 @@ class SymplecticForm(DiffForm):
             self._vol_form = vol_form
 
         result = self._vol_form
-        for k in range(0, contra):
+        for k in range(contra):
             result = result.up(self, k)
         if contra > 1:
             # restoring the antisymmetry after the up operation:
@@ -595,7 +596,7 @@ class SymplecticForm(DiffForm):
             \omega(\alpha, \beta) = \omega(\alpha^\sharp, \beta^\sharp),
 
         where `\alpha^\sharp` is the dual of `\alpha` with respect to `\omega`, see
-        :meth:`~sage.manifolds.differentiable.tensor_field.TensorField.up`.
+        :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.up`.
         This bilinear form induces a bilinear form on the space of all forms determined
         by its value on decomposable elements as:
 
@@ -807,7 +808,7 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
         If ``expansion_symbol`` is set, then the zeroth order symplectic form must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use ``_del_derived()``.
 
         OUTPUT:
 

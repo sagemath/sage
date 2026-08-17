@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite semigroups
 """
@@ -33,10 +32,12 @@ class FiniteSemigroups(CategoryWithAxiom):
         semigroup generators; this was often inconvenient.
 
         Instead, finite semigroups that provide a distinguished finite
-        set of generators with :meth:`semigroup_generators` should now
+        set of generators with
+        :meth:`~sage.categories.finitely_generated_semigroups.FinitelyGeneratedSemigroups.ParentMethods.semigroup_generators`
+        should now
         explicitly declare themselves in the category of
         :class:`finitely generated semigroups
-        <Semigroups.FinitelyGeneratedSemigroup>`::
+        <sage.categories.finitely_generated_semigroups.FinitelyGeneratedSemigroups>`::
 
             sage: Semigroups().FinitelyGenerated()
             Category of finitely generated semigroups
@@ -95,7 +96,7 @@ class FiniteSemigroups(CategoryWithAxiom):
             return self.cayley_graph(side='twosided', simple=True).strongly_connected_components()
 
         @cached_method
-        def j_classes_of_idempotents(self):
+        def j_classes_of_idempotents(self) -> list[list]:
             r"""
             Return all the idempotents of self, grouped by J-class.
 
@@ -108,7 +109,9 @@ class FiniteSemigroups(CategoryWithAxiom):
                 [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
                  ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
-            return [l for l in ([x for x in cl if attrcall('is_idempotent')(x)] for cl in self.j_classes()) if len(l) > 0]
+            it = ([x for x in cl if attrcall('is_idempotent')(x)]
+                  for cl in self.j_classes())
+            return [ell for ell in it if ell]
 
         @cached_method
         def j_transversal_of_idempotents(self):

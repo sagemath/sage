@@ -20,6 +20,7 @@ Generic dual bases symmetric functions
 import sage.combinat.partition
 import sage.data_structures.blas_dict as blas
 from sage.categories.homset import Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.morphism import SetMorphism
 from sage.matrix.constructor import matrix
 
@@ -167,7 +168,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                                                               prefix=prefix)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
 
@@ -393,16 +394,14 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
             # For every partition p of size n, compute self(p) in
             # terms of the dual basis using the scalar product.
-            i = 0
-            for s_part in partitions_n:
+            for i, s_part in enumerate(partitions_n):
                 # s_part corresponds to self(dual_basis(part))
                 # s_mcs  corresponds to self(dual_basis(part))._monomial_coefficients
                 s_mcs = {}
 
                 # We need to compute the scalar product of d[s_part] and
                 # all of the d[p_part]'s
-                j = 0
-                for p_part in partitions_n:
+                for j, p_part in enumerate(partitions_n):
                     # Compute the scalar product of d[s_part] and d[p_part]
                     sp = zero
                     for ds_part in d[s_part]:
@@ -410,12 +409,9 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                             sp += d[s_part][ds_part]*d[p_part][ds_part]
                     if sp != zero:
                         s_mcs[p_part] = sp
-                        transition_matrix_n[i,j] = sp
+                        transition_matrix_n[i, j] = sp
 
-                    j += 1
-
-                self._to_self_cache[ s_part ] = s_mcs
-                i += 1
+                self._to_self_cache[s_part] = s_mcs
 
         else:
             # Now the other case. Note that just being in this case doesn't
@@ -454,11 +450,11 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                             sp += d[s_part][ds_part]*d[p_part][ds_part]*self._scalar(ds_part)
                     if sp != zero:
                         s_mcs[p_part] = sp
-                        transition_matrix_n[i,j] = sp
+                        transition_matrix_n[i, j] = sp
 
                     j += 1
 
-                self._to_self_cache[ s_part ] = s_mcs
+                self._to_self_cache[s_part] = s_mcs
                 i += 1
 
         # Save the transition matrix
@@ -472,10 +468,10 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         for i in range(len(partitions_n)):
             d_mcs = {}
             for j in range(len(partitions_n)):
-                if inverse_transition[i,j] != zero:
-                    d_mcs[ partitions_n[j] ] = inverse_transition[i,j]
+                if inverse_transition[i, j] != zero:
+                    d_mcs[partitions_n[j]] = inverse_transition[i, j]
 
-            self._from_self_cache[ partitions_n[i] ] = d_mcs
+            self._from_self_cache[partitions_n[i]] = d_mcs
 
         self._inverse_transition_matrices[n] = inverse_transition
 
@@ -527,8 +523,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         if basis is self._dual_basis:
             return self._inverse_transition_matrices[n]
-        else:
-            return self._inverse_transition_matrices[n]*self._dual_basis.transition_matrix(basis, n)
+        return self._inverse_transition_matrices[n]*self._dual_basis.transition_matrix(basis, n)
 
     def product(self, left, right):
         """
@@ -703,7 +698,9 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution` is a synonym for the :meth:`omega`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution`
+            is a synonym for the
+            :meth:`~sage.combinat.sf.dual.SymmetricFunctionAlgebra_dual.Element.omega`
             method.
 
             OUTPUT: the result of applying omega to ``self``

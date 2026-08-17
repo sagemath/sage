@@ -1,20 +1,17 @@
 r"""
-Set Partitions
+Set partitions
+
+This module defines a class for immutable partitioning of a set. For
+mutable version see :func:`DisjointSet`.
 
 AUTHORS:
 
 - Mike Hansen
-
 - MuPAD-Combinat developers (for algorithms and design inspiration).
-
 - Travis Scrimshaw (2013-02-28): Removed ``CombinatorialClass`` and added
   entry point through :class:`SetPartition`.
-
 - Martin Rubey (2017-10-10): Cleanup, add crossings and nestings, add
   random generation.
-
-This module defines a class for immutable partitioning of a set. For
-mutable version see :func:`DisjointSet`.
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -32,26 +29,30 @@ mutable version see :func:`DisjointSet`.
 # ****************************************************************************
 import itertools
 from itertools import repeat
-from sage.sets.set import Set, Set_generic
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.list_clone import ClonableArray
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.arith.misc import factorial
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.combinat.combinat import bell_number
+from sage.combinat.combinat import stirling_number2 as stirling2
+from sage.combinat.combinatorial_map import combinatorial_map
+from sage.combinat.partition import Partition, Partitions
+from sage.combinat.permutation import Permutation
+from sage.combinat.set_partition_iterator import (
+    set_partition_iterator,
+    set_partition_iterator_blocks,
+)
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
+from sage.misc.prandom import randint, random, sample
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
-from sage.combinat.combinatorial_map import combinatorial_map
-from sage.combinat.set_partition_iterator import (set_partition_iterator,
-                                                  set_partition_iterator_blocks)
-from sage.combinat.partition import Partition, Partitions
-from sage.combinat.combinat import bell_number, stirling_number2 as stirling2
-from sage.combinat.permutation import Permutation
-from sage.arith.misc import factorial
-from sage.misc.prandom import random, randint, sample
 from sage.sets.disjoint_set import DisjointSet
+from sage.sets.set import Set, Set_generic
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
 lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
@@ -349,7 +350,7 @@ class AbstractSetPartition(ClonableArray,
 
         .. SEEALSO::
 
-            :meth:`__mul__`
+            ``__mul__``
 
         EXAMPLES::
 
@@ -381,7 +382,8 @@ class AbstractSetPartition(ClonableArray,
 
         This is not related to standard set partitions (which simply
         means set partitions of `[n] = \{ 1, 2, \ldots , n \}` for some
-        integer `n`) or standardization (:meth:`standardization`).
+        integer `n`) or standardization
+        (:meth:`~sage.combinat.set_partition.SetPartition.standardization`).
 
         EXAMPLES::
 
@@ -434,7 +436,7 @@ class AbstractSetPartition(ClonableArray,
 
         .. SEEALSO::
 
-            :meth:`refinements`
+            :meth:`sage.combinat.set_partition.SetPartition.refinements`
 
         EXAMPLES::
 
@@ -795,7 +797,6 @@ class SetPartition(AbstractSetPartition,
         if latex_options["plot"] is None:
             return repr(self).replace("{", r"\{").replace("}", r"\}")
 
-        from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
         res = "\\begin{{tikzpicture}}[scale={}]\n".format(latex_options['tikz_scale'])
 
@@ -868,7 +869,14 @@ class SetPartition(AbstractSetPartition,
 
     cardinality = ClonableArray.__len__
 
-    size = AbstractSetPartition.base_set_cardinality
+    def size(self):
+        r"""
+        Return the cardinality of the base set of ``self``.
+
+        This is an alias for
+        :meth:`~sage.combinat.set_partition.AbstractSetPartition.base_set_cardinality`.
+        """
+        return self.base_set_cardinality()
 
     def pipe(self, other):
         r"""
@@ -1789,7 +1797,7 @@ class SetPartition(AbstractSetPartition,
 
         .. SEEALSO::
 
-            :meth:`coarsenings`
+            :meth:`sage.combinat.set_partition.AbstractSetPartition.coarsenings`
 
         EXAMPLES::
 
@@ -1882,7 +1890,8 @@ class SetPartition(AbstractSetPartition,
         - ``color`` -- (default: ``'black'``) color of the arcs
 
         - ``base_set_dict`` -- (optional) dictionary with keys elements
-          of :meth:`base_set()` and values as integer or float
+          of :meth:`~sage.combinat.set_partition.AbstractSetPartition.base_set`
+          and values as integer or float
 
         EXAMPLES::
 
@@ -2065,14 +2074,12 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         if part is None:
             return SetPartitions_set(s)
-        else:
-            if isinstance(part, (int, Integer)):
-                return SetPartitions_setn(s, part)
-            else:
-                part = sorted(part, reverse=True)
-                if part not in Partitions(len(s)):
-                    raise ValueError("part must be an integer partition of %s" % len(s))
-                return SetPartitions_setparts(s, Partition(part))
+        if isinstance(part, (int, Integer)):
+            return SetPartitions_setn(s, part)
+        part = sorted(part, reverse=True)
+        if part not in Partitions(len(s)):
+            raise ValueError("part must be an integer partition of %s" % len(s))
+        return SetPartitions_setparts(s, Partition(part))
 
     def __contains__(self, x):
         """
@@ -3264,18 +3271,18 @@ def cyclic_permutations_of_set_partition(set_part):
 
         sage: from sage.combinat.set_partition import cyclic_permutations_of_set_partition
         sage: cyclic_permutations_of_set_partition([[1,2,3,4],[5,6,7]])
-        [[[1, 2, 3, 4], [5, 6, 7]],
-         [[1, 2, 4, 3], [5, 6, 7]],
-         [[1, 3, 2, 4], [5, 6, 7]],
-         [[1, 3, 4, 2], [5, 6, 7]],
-         [[1, 4, 2, 3], [5, 6, 7]],
-         [[1, 4, 3, 2], [5, 6, 7]],
-         [[1, 2, 3, 4], [5, 7, 6]],
-         [[1, 2, 4, 3], [5, 7, 6]],
-         [[1, 3, 2, 4], [5, 7, 6]],
-         [[1, 3, 4, 2], [5, 7, 6]],
-         [[1, 4, 2, 3], [5, 7, 6]],
-         [[1, 4, 3, 2], [5, 7, 6]]]
+        [[(1, 2, 3, 4), (5, 6, 7)],
+         [(1, 2, 4, 3), (5, 6, 7)],
+         [(1, 3, 2, 4), (5, 6, 7)],
+         [(1, 3, 4, 2), (5, 6, 7)],
+         [(1, 4, 2, 3), (5, 6, 7)],
+         [(1, 4, 3, 2), (5, 6, 7)],
+         [(1, 2, 3, 4), (5, 7, 6)],
+         [(1, 2, 4, 3), (5, 7, 6)],
+         [(1, 3, 2, 4), (5, 7, 6)],
+         [(1, 3, 4, 2), (5, 7, 6)],
+         [(1, 4, 2, 3), (5, 7, 6)],
+         [(1, 4, 3, 2), (5, 7, 6)]]
     """
     return list(cyclic_permutations_of_set_partition_iterator(set_part))
 
@@ -3293,18 +3300,18 @@ def cyclic_permutations_of_set_partition_iterator(set_part):
 
         sage: from sage.combinat.set_partition import cyclic_permutations_of_set_partition_iterator
         sage: list(cyclic_permutations_of_set_partition_iterator([[1,2,3,4],[5,6,7]]))
-        [[[1, 2, 3, 4], [5, 6, 7]],
-         [[1, 2, 4, 3], [5, 6, 7]],
-         [[1, 3, 2, 4], [5, 6, 7]],
-         [[1, 3, 4, 2], [5, 6, 7]],
-         [[1, 4, 2, 3], [5, 6, 7]],
-         [[1, 4, 3, 2], [5, 6, 7]],
-         [[1, 2, 3, 4], [5, 7, 6]],
-         [[1, 2, 4, 3], [5, 7, 6]],
-         [[1, 3, 2, 4], [5, 7, 6]],
-         [[1, 3, 4, 2], [5, 7, 6]],
-         [[1, 4, 2, 3], [5, 7, 6]],
-         [[1, 4, 3, 2], [5, 7, 6]]]
+        [[(1, 2, 3, 4), (5, 6, 7)],
+         [(1, 2, 4, 3), (5, 6, 7)],
+         [(1, 3, 2, 4), (5, 6, 7)],
+         [(1, 3, 4, 2), (5, 6, 7)],
+         [(1, 4, 2, 3), (5, 6, 7)],
+         [(1, 4, 3, 2), (5, 6, 7)],
+         [(1, 2, 3, 4), (5, 7, 6)],
+         [(1, 2, 4, 3), (5, 7, 6)],
+         [(1, 3, 2, 4), (5, 7, 6)],
+         [(1, 3, 4, 2), (5, 7, 6)],
+         [(1, 4, 2, 3), (5, 7, 6)],
+         [(1, 4, 3, 2), (5, 7, 6)]]
     """
     from sage.combinat.permutation import CyclicPermutations
     if len(set_part) == 1:

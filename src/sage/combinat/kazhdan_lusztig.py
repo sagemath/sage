@@ -1,23 +1,22 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Kazhdan-Lusztig Polynomials
+Kazhdan-Lusztig polynomials
 
 AUTHORS:
 
 - Daniel Bump (2008): initial version
-
-- Alan J.X. Guo (2014-03-18): ``R_tilde()`` method.
+- Alan J.X. Guo (2014-03-18): ``R_tilde()`` method
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2008 Daniel Bump <bump at match.stanford.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -41,8 +40,9 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
     - ``trace`` -- if ``True``, then this displays the trace: the intermediate
       results. This is instructive and fun.
 
-    The parent of ``q`` may be a :class:`PolynomialRing` or a
-    :class:`LaurentPolynomialRing`.
+    The parent of ``q`` may be a
+    :func:`~sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing` or a
+    :func:`~sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing`.
 
     EXAMPLES::
 
@@ -112,19 +112,17 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         if y.length() == 0:
             if x.length() == 0:
                 return self._base_ring.one()
-            else:
-                return self._base_ring.zero()
+            return self._base_ring.zero()
         s = self._coxeter_group.simple_reflection(y.first_descent(side='left'))
         if (s*x).length() < x.length():
             ret = self.R(s*x,s*y)
             if self._trace:
                 print("  R(%s,%s)=%s" % (x, y, ret))
             return ret
-        else:
-            ret = (self._q-1)*self.R(s*x,y)+self._q*self.R(s*x,s*y)
-            if self._trace:
-                print("  R(%s,%s)=%s" % (x, y, ret))
-            return ret
+        ret = (self._q-1)*self.R(s*x,y)+self._q*self.R(s*x,s*y)
+        if self._trace:
+            print("  R(%s,%s)=%s" % (x, y, ret))
+        return ret
 
     @cached_method
     def R_tilde(self, x, y):
@@ -161,11 +159,10 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
             if self._trace:
                 print(" R_tilde(%s,%s)=%s" % (x, y, ret))
             return ret
-        else:
-            ret = self.R_tilde(x * s, y * s) + self._q * self.R_tilde(x, y * s)
-            if self._trace:
-                print(" R_tilde(%s,%s)=%s" % (x, y, ret))
-            return ret
+        ret = self.R_tilde(x * s, y * s) + self._q * self.R_tilde(x, y * s)
+        if self._trace:
+            print(" R_tilde(%s,%s)=%s" % (x, y, ret))
+        return ret
 
     @cached_method
     def P(self, x, y):
@@ -181,7 +178,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
 
         .. SEEALSO::
 
-            :mod:`~sage.libs.coxeter3.coxeter_group.CoxeterGroup.kazhdan_lusztig_polynomial`
+            ``CoxeterGroup.kazhdan_lusztig_polynomial``
             for a faster implementation using Fokko Ducloux's Coxeter3 C++ library.
 
         EXAMPLES::
@@ -204,8 +201,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         if y.length() == 0:
             if x.length() == 0:
                 return self._base_ring.one()
-            else:
-                return self._base_ring.zero()
+            return self._base_ring.zero()
         p = sum(-self.R(x, t) * self.P(t, y)
                 for t in self._coxeter_group.bruhat_interval(x, y) if t != x)
         tr = (y.length() - x.length() + 1) // 2

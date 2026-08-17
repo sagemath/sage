@@ -4,7 +4,7 @@ A class to keep information about faces of a polyhedron
 This module gives you a tool to work with the faces of a polyhedron
 and their relative position. First, you need to find the faces. To get
 the faces in a particular dimension, use the
-:meth:`~sage.geometry.polyhedron.base.face` method::
+:meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.faces` method::
 
     sage: P = polytopes.cross_polytope(3)
     sage: P.faces(3)
@@ -32,7 +32,7 @@ the faces in a particular dimension, use the
      (0, 2),
      (0, 1)]
 
-or :meth:`~sage.geometry.polyhedron.base.face_lattice` to get the
+or :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.face_lattice` to get the
 whole face lattice as a poset::
 
     sage: P.face_lattice()                                                              # needs sage.combinat
@@ -40,7 +40,7 @@ whole face lattice as a poset::
 
 The faces are printed in shorthand notation where each integer is the
 index of a vertex/ray/line in the same order as the containing
-Polyhedron's :meth:`~sage.geometry.polyhedron.base.Vrepresentation` ::
+Polyhedron's :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.Vrepresentation` ::
 
     sage: face = P.faces(1)[8];  face
     A 1-dimensional face of a Polyhedron in ZZ^3 defined as the convex hull of 2 vertices
@@ -87,7 +87,7 @@ class PolyhedronFace(ConvexSet_closed):
     A face of a polyhedron.
 
     This class is for use in
-    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.face_lattice`.
+    :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.face_lattice`.
 
     INPUT:
 
@@ -405,8 +405,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if index is None:
             return self._ambient_Hrepresentation
-        else:
-            return self._ambient_Hrepresentation[index]
+        return self._ambient_Hrepresentation[index]
 
     def ambient_Vrepresentation(self, index=None):
         r"""
@@ -445,8 +444,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if index is None:
             return self._ambient_Vrepresentation
-        else:
-            return self._ambient_Vrepresentation[index]
+        return self._ambient_Vrepresentation[index]
 
     def n_ambient_Hrepresentation(self):
         """
@@ -583,13 +581,12 @@ class PolyhedronFace(ConvexSet_closed):
         """
         if self.n_ambient_Vrepresentation() == 0:
             return -1
-        else:
-            origin = self.vertices()[0].vector()
-            v_list = [vector(v) - origin for v in
-                     self.ambient_Vrepresentation() if v.is_vertex()]
-            v_list += [vector(v) for v in self.ambient_Vrepresentation()
-                      if v.is_ray() or v.is_line()]
-            return matrix(v_list).rank()
+        origin = self.vertices()[0].vector()
+        v_list = [vector(v) - origin for v in
+                 self.ambient_Vrepresentation() if v.is_vertex()]
+        v_list += [vector(v) for v in self.ambient_Vrepresentation()
+                  if v.is_ray() or v.is_line()]
+        return matrix(v_list).rank()
 
     def _repr_(self):
         r"""
@@ -682,7 +679,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.polyhedron().ambient_vector_space(base_field=base_field)
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -699,7 +696,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.as_polyhedron().is_relatively_open()
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
@@ -797,8 +794,7 @@ class PolyhedronFace(ConvexSet_closed):
         except TypeError:  # point not iterable or no common ring for elements
             if len(point) > 0:
                 return False
-            else:
-                p = vector(self.polyhedron().base_ring(), [])
+            p = vector(self.polyhedron().base_ring(), [])
 
         if len(p) != self.ambient_dim():
             return False
@@ -996,7 +992,8 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     INPUT:
 
     - ``polyhedron`` -- a polyhedron containing ``combinatorial_face``
-    - ``combinatorial_face`` -- a :class:`CombinatorialFace`
+    - ``combinatorial_face`` -- a
+      :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace`
 
     OUTPUT: a :class:`PolyhedronFace`
 

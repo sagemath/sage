@@ -116,19 +116,19 @@ cdef class ProbabilityDistribution:
             sage: from sage.probability.probability_distribution import GeneralDiscreteDistribution
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: h, b = X.generate_histogram_data(bins=10)                             # needs sage.plot
-            sage: h  # rel tol 1e-08                                                    # needs sage.plot
-            [1.6299999999999999,
+            sage: h, b = X.generate_histogram_data(bins=10)
+            sage: h  # rel tol 1e-08
+            [1.445,
              0.0,
              0.0,
              0.0,
              0.0,
-             1.9049999999999985,
+             2.044999999999998,
              0.0,
              0.0,
              0.0,
-             1.4650000000000003]
-            sage: b                                                                     # needs sage.plot
+             1.5100000000000002]
+            sage: b
             [0.0,
              0.2,
              0.4,
@@ -151,7 +151,8 @@ cdef class ProbabilityDistribution:
 
     def generate_histogram_plot(self, name, num_samples=1000, bins=50):
         r"""
-        Save the histogram from :func:`generate_histogram_data() <sage.libs.gsl.ProbabilityDistribution.generate_histogram_data>`
+        Save the histogram from
+        :meth:`generate_histogram_data() <sage.probability.probability_distribution.ProbabilityDistribution.generate_histogram_data>`
         to a file.
 
         INPUT:
@@ -172,7 +173,7 @@ cdef class ProbabilityDistribution:
             sage: import tempfile
             sage: P = [0.3, 0.4, 0.3]
             sage: X = GeneralDiscreteDistribution(P)
-            sage: with tempfile.NamedTemporaryFile() as f:                              # needs sage.plot
+            sage: with tempfile.NamedTemporaryFile() as f:
             ....:     X.generate_histogram_plot(f.name)
         """
         import pylab
@@ -217,7 +218,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
     """
 
     cdef gsl_rng *r
-    cdef gsl_rng_type *T
+    cdef const gsl_rng_type *T
     cdef long int seed
     cdef Py_ssize_t dimension
     cdef double* vec
@@ -571,7 +572,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: len(set(Xs)) > 2^^32
         True
     """
-    cdef gsl_rng_type *T
+    cdef const gsl_rng_type *T
     cdef gsl_rng *r
     cdef int distribution_type
     cdef double* parameters
@@ -1025,7 +1026,7 @@ cdef class RealDistribution(ProbabilityDistribution):
         EXAMPLES::
 
             sage: T = RealDistribution('uniform', [0, 2])
-            sage: P = T.plot()                                                          # needs sage.plot
+            sage: P = T.plot()
         """
         from sage.plot.plot import plot
         return plot(self.distribution_function, *args, **kwds)
@@ -1097,7 +1098,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         ...
         ValueError: The distribution probabilities must be nonnegative
     """
-    cdef gsl_rng_type * T
+    cdef const gsl_rng_type * T
     cdef gsl_rng * r
     cdef gsl_ran_discrete_t *dist
     cdef long seed

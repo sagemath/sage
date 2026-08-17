@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional modules with basis
 """
@@ -482,7 +481,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``G`` -- a finitely-generated group
             - ``chi`` -- list/tuple of character values or an instance of
-              :class:`~sage.groups.class_function.ClassFunction_gap`
+              :class:`~sage.groups.class_function.ClassFunction`
             - ``action`` -- a function (default: :obj:`operator.mul`)
             - ``action_on_basis`` -- (optional) define the action of ``g``
               on the basis of ``self``
@@ -590,7 +589,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             The order of the rows and columns matches with the order
             in which the bases are enumerated.
 
-            .. SEEALSO:: :func:`Modules.WithBasis.ParentMethods.module_morphism`
+            .. SEEALSO:: :meth:`sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.module_morphism`
 
             EXAMPLES::
 

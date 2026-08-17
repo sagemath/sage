@@ -38,7 +38,7 @@ lazy_import('sage.quadratic_forms.genera.normal_form', '_min_nonsquare')
 lazy_import('sage.interfaces.magma', 'magma')
 
 
-def genera(sig_pair, determinant, max_scale=None, even=False):
+def genera(sig_pair, determinant, max_scale=None, even=False) -> list:
     r"""
     Return a list of all global genera with the given conditions.
 
@@ -51,7 +51,7 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     - ``determinant`` -- integer; the sign is ignored
 
     - ``max_scale`` -- (default: ``None``) an integer; the maximum scale of a
-      jordan block
+      Jordan block
 
     - ``even`` -- boolean (default: ``False``)
 
@@ -139,7 +139,7 @@ def _local_genera(p, rank, det_val, max_scale, even):
 
     - ``det_val`` -- valuation of the determinant at `p`
 
-    - ``max_scale`` -- integer the maximal scale of a jordan block
+    - ``max_scale`` -- integer the maximal scale of a Jordan block
 
     - ``even`` -- boolean; ignored if `p` is not `2`
 
@@ -225,7 +225,7 @@ def _local_genera(p, rank, det_val, max_scale, even):
 
 def _blocks(b, even_only=False):
     r"""
-    Return all viable `2`-adic jordan blocks with rank and scale given by ``b``.
+    Return all viable `2`-adic Jordan blocks with rank and scale given by ``b``.
 
     This is a helper function for :meth:`_local_genera`.
     It is based on the existence conditions for a modular `2`-adic genus symbol.
@@ -589,23 +589,22 @@ def canonical_2_adic_compartments(genus_symbol_quintuple_list):
     return compartments
 
 
-def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
+def canonical_2_adic_trains(genus_symbol_quintuple_list) -> list:
     r"""
-    Given a `2`-adic local symbol (as the underlying list of quintuples)
-    this returns a list of lists of indices of the
-    ``genus_symbol_quintuple_list`` which are in the same train.  A train
-    is defined to be a maximal interval of Jordan components so that
-    at least one of each adjacent pair (allowing zero-dimensional
-    Jordan components) is (scaled) of type I (i.e. odd).
-    Note that an interval of length one respects this condition as
-    there is no pair in this interval.
+    Given a `2`-adic local symbol, return a list of lists of indices
+    of the ``genus_symbol_quintuple_list`` which are in the same train.
+
+    A train is defined to be a maximal interval of Jordan components
+    so that at least one of each adjacent pair (allowing
+    zero-dimensional Jordan components) is (scaled) of type I
+    (i.e. odd).  Note that an interval of length one respects this
+    condition as there is no pair in this interval.
     In particular, every Jordan component is part of a train.
 
     INPUT:
 
-    - ``genus_symbol_quintuple_list`` -- a quintuple of integers (with certain
-      restrictions).
-    - ``compartments`` -- this argument is deprecated
+    - ``genus_symbol_quintuple_list`` -- a `2`-adic local symbol as a list of
+      quintuples of integers (with certain restrictions).
 
     OUTPUT: list of lists of distinct integers
 
@@ -654,12 +653,8 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
 
         See [CS1999]_, pp. 381-382 for definitions and examples.
     """
-    if compartments is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(23955, "the compartments keyword has been deprecated")
-
     # avoid a special case for the end of symbol
-    # if a jordan component has rank zero it is considered even.
+    # if a Jordan component has rank zero it is considered even.
     symbol = genus_symbol_quintuple_list
     symbol.append([symbol[-1][0]+1, 0, 1, 0, 0])  # We have just modified the input globally!
     # Hence, we have to remove the last entry of symbol at the end.
@@ -680,7 +675,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
                 trains.append(new_train)
                 new_train = [i]
             else:
-                # there is an odd jordan block adjacent to this jordan block
+                # there is an odd Jordan block adjacent to this Jordan block
                 # the train continues
                 new_train.append(i)
         # the last train was never added.
@@ -918,11 +913,10 @@ def p_adic_symbol(A, p, val):
         e0 = Integer(A_p.det()).kronecker(p)
         n0 = A.nrows()
         return [[m0, n0, e0]]
-    else:
-        C_p = basis_complement(B_p)
-        e0 = Integer((C_p * A_p * C_p.transpose()).det()).kronecker(p)
-        n0 = C_p.nrows()
-        sym = [[0, n0, e0]]
+    C_p = basis_complement(B_p)
+    e0 = Integer((C_p * A_p * C_p.transpose()).det()).kronecker(p)
+    n0 = C_p.nrows()
+    sym = [[0, n0, e0]]
     r = B_p.nrows()
     B = MatrixSpace(ZZ, r, n)(B_p)
     C = MatrixSpace(ZZ, n - r, n)(C_p)
@@ -1159,31 +1153,29 @@ def two_adic_symbol(A, val):
         even, _ = is_even_matrix(A_2)    # Determine whether the matrix is even or odd.
         if even:
             return [[m0, n0, d0, 0, 0]]
-        else:
-            tr8 = trace_diag_mod_8(A_8)  # Here we already know that A_8 is odd and diagonalizable mod 8.
-            return [[m0, n0, d0, 1, tr8]]
+        tr8 = trace_diag_mod_8(A_8)  # Here we already know that A_8 is odd and diagonalizable mod 8.
+        return [[m0, n0, d0, 1, tr8]]
 
     # Deal with the matrix being degenerate mod 2.
+    B_2 = K_2.echelonized_basis_matrix()
+    C_2 = basis_complement(B_2)
+    n0 = C_2.nrows()
+    C = MatrixSpace(ZZ, n0, n)(C_2)
+    A_new = C * A * C.transpose()
+    # compute oddity modulo 8:
+    A_8 = MatrixSpace(R_8, n0, n0)(A_new)
+    # d0 = A_8.det() # no determinant over Z/8Z
+    d0 = ZZ(R_8(MatrixSpace(ZZ, n0, n0)(A_8).determinant()))
+    if d0 == 0:
+        print("A:")
+        print(A_new)
+        assert False
+    even, _ = is_even_matrix(A_new)
+    if even:
+        sym = [[0, n0, d0, 0, 0]]
     else:
-        B_2 = K_2.echelonized_basis_matrix()
-        C_2 = basis_complement(B_2)
-        n0 = C_2.nrows()
-        C = MatrixSpace(ZZ, n0, n)(C_2)
-        A_new = C * A * C.transpose()
-        # compute oddity modulo 8:
-        A_8 = MatrixSpace(R_8, n0, n0)(A_new)
-        # d0 = A_8.det() # no determinant over Z/8Z
-        d0 = ZZ(R_8(MatrixSpace(ZZ, n0, n0)(A_8).determinant()))
-        if d0 == 0:
-            print("A:")
-            print(A_new)
-            assert False
-        even, _ = is_even_matrix(A_new)
-        if even:
-            sym = [[0, n0, d0, 0, 0]]
-        else:
-            tr8 = trace_diag_mod_8(A_8)
-            sym = [[0, n0, d0, 1, tr8]]
+        tr8 = trace_diag_mod_8(A_8)
+        sym = [[0, n0, d0, 1, tr8]]
     r = B_2.nrows()
     B = MatrixSpace(ZZ, r, n)(B_2)
     C = MatrixSpace(ZZ, n - r, n)(C_2)
@@ -1726,8 +1718,7 @@ class Genus_Symbol_p_adic_ring:
             if self._canonical_symbol is None:
                 self._canonical_symbol = canonical_2_adic_reduction(symbol)
             return self._canonical_symbol
-        else:
-            return self._symbol
+        return self._symbol
 
     def gram_matrix(self, check=True):
         r"""
@@ -2187,12 +2178,11 @@ class Genus_Symbol_p_adic_ring:
                 if s[0] % 2 == 1 and s[2] in (3, 5):
                     k += 1
             return Integer(sum([s[4] for s in self._symbol]) + 4*k).mod(8)
-        else:
-            k = 0
-            for s in self._symbol:
-                if s[0] % 2 == 1 and s[2] == -1:
-                    k += 1
-            return Integer(sum([s[1] * (p**s[0]-1) for s in self._symbol]) + 4*k).mod(8)
+        k = 0
+        for s in self._symbol:
+            if s[0] % 2 == 1 and s[2] == -1:
+                k += 1
+        return Integer(sum([s[1] * (p**s[0]-1) for s in self._symbol]) + 4*k).mod(8)
 
     def scale(self):
         r"""
@@ -2239,8 +2229,7 @@ class Genus_Symbol_p_adic_ring:
         if p == 2:
             fq = self._symbol[0]
             return self.prime()**(fq[0] + 1 - fq[3])
-        else:
-            return self.scale()
+        return self.scale()
 
     def level(self):
         r"""
@@ -2629,9 +2618,8 @@ class GenusSymbol_global_ring:
         b, j = self._proper_is_improper()
         if b:
             return A, K
-        else:
-            K = A.subgroup(K.gens() + (j,))
-            return A, K
+        K = A.subgroup(K.gens() + (j,))
+        return A, K
 
     def spinor_generators(self, proper) -> list:
         r"""
@@ -3252,7 +3240,7 @@ class GenusSymbol_global_ring:
             for sym in self._local_symbols:
                 mass *= sym.mass() / sym._standard_mass()
             return QQ(mass.canonicalize_radical())
-        elif backend == 'magma':
+        if backend == 'magma':
             e = 1  # lattices in magma are positive definite
             if neg != 0:
                 e = -1
@@ -3260,8 +3248,7 @@ class GenusSymbol_global_ring:
             L = magma(e * self.representative().dense_matrix())
             L = L.LatticeWithGram()
             return QQ(L.Mass())
-        else:
-            raise ValueError("unknown backend: %s" % backend)
+        raise ValueError("unknown backend: %s" % backend)
 
     def level(self):
         r"""
@@ -3318,7 +3305,7 @@ class GenusSymbol_global_ring:
 
 def _gram_from_jordan_block(p, block, discr_form=False):
     r"""
-    Return the Gram matrix of this jordan block.
+    Return the Gram matrix of this Jordan block.
 
     This is a helper for :meth:`discriminant_form` and :meth:`gram_matrix`.
     No input checks.

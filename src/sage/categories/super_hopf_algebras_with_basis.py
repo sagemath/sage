@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Super Hopf algebras with basis
 """
@@ -36,10 +35,12 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
             """
             The antipode of this Hopf algebra.
 
-            If :meth:`.antipode_basis` is available, this constructs the
+            If :meth:`~sage.categories.hopf_algebras_with_basis.HopfAlgebrasWithBasis.ParentMethods.antipode_on_basis`
+            is available, this constructs the
             antipode morphism from ``self`` to ``self`` by extending it by
-            linearity. Otherwise, :meth:`self.antipode_by_coercion` is used,
-            if available.
+            linearity. Otherwise,
+            :meth:`~sage.categories.hopf_algebras.HopfAlgebras.Realizations.ParentMethods.antipode_by_coercion`
+            is used, if available.
 
             EXAMPLES::
 
@@ -58,7 +59,7 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
                 # Should give the information that this is an anti-morphism of algebra
                 return self._module_morphism(self.antipode_on_basis,
                                              codomain=self)
-            elif hasattr(self, "antipode_by_coercion"):
+            if hasattr(self, "antipode_by_coercion"):
                 return self.antipode_by_coercion
 
         def _test_antipode(self, **options):

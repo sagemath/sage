@@ -990,10 +990,33 @@ cdef extern from "singular/coeffs/coeffs.h":
 
     number *ndCopyMap(number *, const n_Procs_s* src,const n_Procs_s* dst)
 
+    ctypedef struct LongComplexInfo:
+        short float_len
+        short float_len2
+        const char* par_name
+
 cdef extern from "singular/coeffs/rmodulo2m.h":
 
     #init 2^m from a long
     number *nr2mMapZp(number *,const n_Procs_s* src,const n_Procs_s* dst)
+
+cdef extern from "singular/coeffs/shortfl.h":
+    """
+    static inline SI_FLOAT sage_nrFloat(number n) { // copy from shortfl.cc to allow inlining
+        SI_FLOAT f = 0;
+        memcpy(&f, &n, sizeof(f) < sizeof(n) ? sizeof(f) : sizeof(n));
+        return f;
+    }
+
+    static inline number sage_nrInit(SI_FLOAT f) {
+        number n = 0;
+        memcpy(&n, &f, sizeof(f) < sizeof(n) ? sizeof(f) : sizeof(n));
+        return n;
+    }
+    """
+    ctypedef double SI_FLOAT  # actually might be double or float
+    SI_FLOAT nrFloat "sage_nrFloat" (number *n)
+    number *sage_nrInit(SI_FLOAT)
 
 cdef extern from "singular/kernel/maps/gen_maps.h":
 
@@ -1012,6 +1035,20 @@ cdef extern from "singular/polys/ext_fields/algext.h":
     naInitChar(n_Procs_s* cf, void * infoStruct)
 
     nMapFunc naSetMap(const n_Procs_s* src, const n_Procs_s* dst)
+
+cdef extern from "singular/coeffs/mpr_complex.h":
+    cdef cppclass gmp_float:
+        gmp_float(double v)
+        double to_double "operator double"() const
+
+    cdef cppclass gmp_complex:
+        gmp_complex(double re, double im)
+        gmp_float real() const
+        gmp_float imag() const
+
+    char *floatToStr(const gmp_float & r, const unsigned int oprec)
+    char *complexToStr(gmp_complex & c, const unsigned int oprec, const n_Procs_s* src)
+
 
 cdef extern from "singular/coeffs/rmodulon.h":
 

@@ -82,8 +82,7 @@ class NewtonPolygon_element(Element):
 
         if length == 1:
             return "Newton Polygon consisting of a unique infinite line of slope %s starting at %s" % (self.last_slope(), str(vertices[0]))
-        else:
-            return "Infinite Newton polygon with %s vertices: %s ending by an infinite line of slope %s" % (length, str(vertices)[1:-1], self.last_slope())
+        return "Infinite Newton polygon with %s vertices: %s ending by an infinite line of slope %s" % (length, str(vertices)[1:-1], self.last_slope())
 
     def vertices(self, copy=True) -> list:
         """
@@ -118,8 +117,7 @@ class NewtonPolygon_element(Element):
             self._vertices.sort()
         if copy:
             return list(self._vertices)
-        else:
-            return self._vertices
+        return self._vertices
 
     @cached_method
     def last_slope(self):
@@ -435,9 +433,9 @@ class NewtonPolygon_element(Element):
         """
         if self._polyhedron == other._polyhedron:
             return op == op_EQ or op == op_LE or op == op_GE
-        elif op == op_NE:
+        if op == op_NE:
             return True
-        elif op == op_EQ:
+        if op == op_EQ:
             return False
 
         if op == op_LT or op == op_LE:
@@ -445,10 +443,9 @@ class NewtonPolygon_element(Element):
                 return False
             return all(v in self._polyhedron for v in other.vertices())
 
-        else:
-            if self.last_slope() < other.last_slope():
-                return False
-            return all(v in other._polyhedron for v in self.vertices())
+        if self.last_slope() < other.last_slope():
+            return False
+        return all(v in other._polyhedron for v in self.vertices())
 
     def plot(self, **kwargs):
         """
@@ -479,13 +476,12 @@ class NewtonPolygon_element(Element):
                         + [(xend, yend+0.5)], **kwargs) \
                  + line([(xend, yend+0.5), (xend, yend+1)],
                         linestyle='--', **kwargs)
-        else:
-            return line([(xstart, ystart+1), (xstart, ystart+0.5)],
-                        linestyle='--', **kwargs) \
-                 + line([(xstart, ystart+0.5)] + vertices
-                        + [(xend+0.5, yend + 0.5*self.last_slope())], **kwargs) \
-                 + line([(xend+0.5, yend + 0.5*self.last_slope()), (xend+1, yend+self.last_slope())],
-                        linestyle='--', **kwargs)
+        return line([(xstart, ystart+1), (xstart, ystart+0.5)],
+                    linestyle='--', **kwargs) \
+             + line([(xstart, ystart+0.5)] + vertices
+                    + [(xend+0.5, yend + 0.5*self.last_slope())], **kwargs) \
+             + line([(xend+0.5, yend + 0.5*self.last_slope()), (xend+1, yend+self.last_slope())],
+                    linestyle='--', **kwargs)
 
     def reverse(self, degree=None):
         r"""

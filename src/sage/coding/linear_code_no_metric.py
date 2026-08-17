@@ -138,7 +138,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming'):
+    def __init__(self, base_field, length, default_encoder_name,
+                 default_decoder_name, metric='Hamming') -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -238,13 +239,13 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: G = matrix(GF(3), 2, [1,-1,1,-1,1,1])
             sage: code = LinearCode(G)
             sage: code.generator_matrix()
-            [1 2 1]
-            [2 1 1]
+            [1 2 0]
+            [0 0 1]
         """
         E = self.encoder(encoder_name, **kwargs)
         return E.generator_matrix()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between two linear codes.
 
@@ -280,7 +281,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # the worst case does only one system solving.
         return all(c in self for c in other.gens())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test inequality of ``self`` and ``other``.
 
@@ -490,7 +491,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.parity_check_matrix()*r
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
         Return ``True`` if `v` can be coerced into ``self``.
         Otherwise, return ``False``.
@@ -528,8 +529,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             ....:                    [ 2, 1, 1, 1]])
             sage: C = LinearCode(G)
             sage: C.generator_matrix()
-            [1 2 1 0]
-            [2 1 1 1]
+            [1 2 0 1]
+            [0 0 1 2]
             sage: C.systematic_generator_matrix()
             [1 2 0 1]
             [0 0 1 2]
@@ -560,7 +561,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
           the column permutation which brings ``self`` into the returned code
           is also returned
 
-        OUTPUT: a :class:`LinearCode` whose :meth:`systematic_generator_matrix`
+        OUTPUT: a :class:`LinearCode` whose
+        :meth:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.systematic_generator_matrix`
         is guaranteed to be of the form `[I \vert A]`.
 
         EXAMPLES::
@@ -591,9 +593,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         if E.systematic_positions() == tuple(range(self.dimension())):
             from sage.combinat.permutation import Permutation
             return self, Permutation([])
-        else:
-            perm = E.systematic_permutation()
-            return self.permuted_code(perm), perm
+        perm = E.systematic_permutation()
+        return self.permuted_code(perm), perm
 
     def redundancy_matrix(self):
         r"""
@@ -607,7 +608,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         For any given code, there can be many systematic generator matrices
         (depending on which positions should form the identity). This method
         will use the matrix returned by
-        :meth:`AbstractLinearCode.systematic_generator_matrix`.
+        :meth:`~sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.systematic_generator_matrix`.
 
         OUTPUT:
 
@@ -762,7 +763,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: G = Matrix(GF(3), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C[24]
-            (2, 2, 0, 1, 2, 2, 0)
+            (0, 2, 2, 0, 0, 2, 1)
             sage: C[24] == C.list()[24]
             True
 
@@ -794,7 +795,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # list(self)[i] and self[i] both return the same element.
 
         F = self.base_ring()
-        maxindex = F.order()**self.dimension()-1
+        maxindex = F.order()**self.dimension() - 1
         if i < 0 or i > maxindex:
             raise IndexError("The value of the index 'i' (={}) must be between "
                              "0 and 'q^k -1' (={}), inclusive, where 'q' is "
@@ -806,21 +807,19 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         p = F.prime_subfield().order()
         A = [a ** k for k in range(m)]
         G = self.generator_matrix()
-        N = self.dimension()*F.degree() # the total length of p-adic vector
+        N = self.dimension() * F.degree()  # the total length of p-adic vector
         ivec = Integer(i).digits(p, padto=N)
 
         codeword = 0
-        row = 0
-        for g in G:
-            codeword += sum(ivec[j+row*m]*A[j] for j in range(m)) * g
-            row += 1
+        for row, g in enumerate(G):
+            codeword += sum(ivec[j + row * m] * A[j] for j in range(m)) * g
 
         # The codewords for a specific code can not change. So, we set them
         # to be immutable.
         codeword.set_immutable()
         return codeword
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return the hash value of ``self``.
 
@@ -1023,7 +1022,8 @@ class LinearCodeSystematicEncoder(Encoder):
     generator matrix in systematic form. What is called systematic form here
     is the reduced row echelon form of a matrix, which is not necessarily
     `[I \vert H]`, where `I` is the identity block and `H` the parity block.
-    One can refer to :meth:`LinearCodeSystematicEncoder.generator_matrix`
+    One can refer to
+    :meth:`~sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder.generator_matrix`
     for a concrete example.
     Once such a matrix has been computed, it is used to encode any message
     into a codeword.
@@ -1114,7 +1114,7 @@ class LinearCodeSystematicEncoder(Encoder):
         if LinearCodeSystematicEncoder is the default encoder
     """
 
-    def __init__(self, code, systematic_positions=None):
+    def __init__(self, code, systematic_positions=None) -> None:
         r"""
         EXAMPLES::
 
@@ -1136,7 +1136,7 @@ class LinearCodeSystematicEncoder(Encoder):
             # Test that the systematic positions are an information set
             self.generator_matrix()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test equality between LinearCodeSystematicEncoder objects.
 
@@ -1247,8 +1247,7 @@ class LinearCodeSystematicEncoder(Encoder):
             if self._use_pc_matrix == 1:
                 self._use_pc_matrix = 2
                 return C.parity_check_matrix().right_kernel_matrix()
-            else:
-                raise ValueError("a parity check matrix must be specified if LinearCodeSystematicEncoder is the default encoder")
+            raise ValueError("a parity check matrix must be specified if LinearCodeSystematicEncoder is the default encoder")
         else:
             self._use_pc_matrix = 1
             M = copy(C.generator_matrix())

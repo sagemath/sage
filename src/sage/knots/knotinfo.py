@@ -4,8 +4,8 @@ Access to the KnotInfo database
 
 This module contains the class :class:`KnotInfoBase` which is derived from
 :class:`Enum` and provides knots and links listed in the databases at the
-web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__
-and `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__ as its items.
+web-pages `KnotInfo <https://knotinfo.org/>`__
+and `LinkInfo <https://link-info-repo.onrender.com/>`__ as its items.
 
 This interface contains a set of about twenty knots and links statically as
 demonstration cases. The complete database can be installed as an optional Sage
@@ -95,18 +95,17 @@ Obtaining an instance of :class:`Link`::
     <class 'sage.knots.link.Link'>
 
 If you have `SnapPy <https://snappy.math.uic.edu/index.html>`__ installed inside
-Sage, you can obtain an instance of :class:`~spherogram.links.links_base.Link`,
+Sage, you can obtain an instance of ``spherogram.links.links_base.Link``,
 too::
 
-    sage: # optional - snappy
+    sage: # optional snappy
     sage: L6 = KnotInfo.L6a1_0
     sage: l6s = L6.link(snappy=True); l6s
-    ...
     <Link: 2 comp; 6 cross>
     sage: type(l6s)
-    <class 'spherogram.links.invariants.Link'>
+    <class 'sage.interfaces.snappy.SnapPyElement'>
     sage: l6  = L6.link()
-    sage: l6 == l6s.sage_link()
+    sage: l6 == Link(l6s)
     True
     sage: L6.link(L6.items.name, snappy=True)
     <Link L6a1: 2 comp; 6 cross>
@@ -114,20 +113,21 @@ too::
     sage: l6s == l6sn
     False
     sage: l6m = l6.mirror_image()
-    sage: l6sn.sage_link().is_isotopic(l6m)
+    sage: Link(l6sn).is_isotopic(l6m)
     True
 
 But observe that the name conversion to SnapPy does not distinguish orientation
 types::
 
     sage: L6b = KnotInfo.L6a1_1
-    sage: L6b.link(L6b.items.name, snappy=True)  # optional - snappy
+    sage: L6b.link(L6b.items.name, snappy=True)  # optional snappy
     <Link L6a1: 2 comp; 6 cross>
-    sage: _.PD_code() == l6sn.PD_code()          # optional - snappy
+    sage: _.PD_code() == l6sn.PD_code()          # optional snappy
     True
 
 Obtaining the HOMFLY-PT polynomial::
 
+    sage: # needs libbraiding libhomfly
     sage: L.homfly_polynomial()
     -v^-1*z - v^-3*z - v^-3*z^-1 + v^-5*z^-1
     sage: _ == l.homfly_polynomial(normalization='vz')
@@ -150,9 +150,7 @@ Further methods::
     sage: K.determinant()
     5
     sage: K.symmetry_type()
-    'fully amphicheiral'
-    sage: _ == K[K.items.symmetry_type]
-    True
+    <SymmetryType.ful_amphicheiral: 'fully amphicheiral'>
     sage: K.is_reversible()
     True
     sage: K.is_amphicheiral()
@@ -200,6 +198,7 @@ will be reduced to proper links with 7 crossings.
 Finally there is a method :meth:`Link.get_knotinfo` of class :class:`Link` to find an instance
 in the KnotInfo database::
 
+    sage: # needs libbraiding libhomfly
     sage: L = Link([[3,1,2,4], [8,9,1,7], [5,6,7,3], [4,18,6,5],
     ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
     ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
@@ -209,14 +208,14 @@ in the KnotInfo database::
 
 REFERENCES:
 
-- `KnotInfo <https://knotinfo.math.indiana.edu/>`__
-- `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__
+- `KnotInfo <https://knotinfo.org/>`__
+- `LinkInfo <https://link-info-repo.onrender.com/>`__
 
 
 AUTHORS:
 
 - Sebastian Oehms August 2020: initial version
-- Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:issue:`33969`)
+- Sebastian Oehms June   2022: add :meth:`~sage.knots.knotinfo.KnotInfoBase.conway_polynomial` and :meth:`~sage.knots.knotinfo.KnotInfoBase.khovanov_polynomial` (:issue:`33969`)
 
 Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the corresponding hompages.
 """
@@ -263,7 +262,7 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         '{3, {-2, -2, -1, 2, -1}}'
         sage: eval_knotinfo(_)
         (3, (-2, -2, -1, 2, -1))
-        sage: KnotInfo.K13a_1.kauffman_polynomial()  # optional - database_knotinfo # indirect doctest
+        sage: eval_knotinfo('')
         Traceback (most recent call last):
         ...
         NotImplementedError: this value is not provided by the database
@@ -332,7 +331,7 @@ def knotinfo_bool(string):
         raise NotImplementedError('this boolean is not provided by the database')
     if string == 'Y':
         return True
-    elif string == 'N':
+    if string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
 
@@ -388,11 +387,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.reverse
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.mirror_image
         return self
 
@@ -408,11 +407,11 @@ class SymmetryMutant(Enum):
         """
         if self is SymmetryMutant.itself:
             return SymmetryMutant.mirror_image
-        elif self is SymmetryMutant.reverse:
+        if self is SymmetryMutant.reverse:
             return SymmetryMutant.concordance_inverse
-        elif self is SymmetryMutant.mirror_image:
+        if self is SymmetryMutant.mirror_image:
             return SymmetryMutant.itself
-        elif self is SymmetryMutant.concordance_inverse:
+        if self is SymmetryMutant.concordance_inverse:
             return SymmetryMutant.reverse
         return self
 
@@ -469,7 +468,7 @@ class SymmetryMutant(Enum):
 class KnotInfoBase(Enum):
     r"""
     Enum class to select the knots and links listed in the databases at the web-pages
-    `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__.
+    `KnotInfo <https://knotinfo.org/>`__ and `LinkInfo <https://link-info-repo.onrender.com/>`__.
 
     EXAMPLES::
 
@@ -604,8 +603,7 @@ class KnotInfoBase(Enum):
 
         if n == 1:
             return BraidGroup(2)
-        else:
-            return BraidGroup(n)
+        return BraidGroup(n)
 
     @cached_method
     def _homfly_pol_ring(self, var1, var2):
@@ -615,6 +613,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libbraiding libhomfly
             sage: L = KnotInfo.L4a1_1
             sage: L._homfly_pol_ring('u', 'v')
             Multivariate Laurent Polynomial Ring in u, v over Integer Ring
@@ -791,7 +790,7 @@ class KnotInfoBase(Enum):
             # in some cases there are a pair of braid representations
             # in the database. If this is the case we select the
             # corresponding to the braid index.
-            if type(braid_notation[0]) is tuple:
+            if type(braid_notation[0]) in (list, tuple):
                 i = self.braid_index()
                 for b in braid_notation:
                     if -i < min(b) and max(b) < i:
@@ -829,10 +828,9 @@ class KnotInfoBase(Enum):
         """
         if self.is_knot():
             return knotinfo_int(self[self.items.braid_index])
-        else:
-            braid_notation = self[self.items.braid_notation]
-            braid_notation = eval_knotinfo(braid_notation)
-            return knotinfo_int(braid_notation[0])
+        braid_notation = self[self.items.braid_notation]
+        braid_notation = eval_knotinfo(braid_notation)
+        return knotinfo_int(braid_notation[0])
 
     @cached_method
     def braid_length(self):
@@ -864,9 +862,9 @@ class KnotInfoBase(Enum):
             sage: K.braid()
             s^3
             sage: K.braid_notation()
-            (1, 1, 1)
+            [1, 1, 1]
             sage: KnotInfo.K13n_1448.braid()    # optional - database_knotinfo
-            s0^-1*s1*s2*s3*s4*s3^2*s2^-1*s1^-1*s0*s2^-1*s1*(s3*s2)^2*s4^-1*s3*s2*s1^-1*s3*s2^-1*s3
+            s0^-1*s1*s0^-1*s2*s1^2*s3^2*s2^-1*s3*s2*s1^3
         """
         return self._braid_group()(self.braid_notation())
 
@@ -1047,17 +1045,18 @@ class KnotInfoBase(Enum):
             sage: KnotInfo.K6_1.series().inject()
             Defining K6
             sage: [(K.name, K.symmetry_type()) for K in K6]
-            [('K6_1', 'reversible'),
-             ('K6_2', 'reversible'),
-             ('K6_3', 'fully amphicheiral')]
+            [('K6_1', <SymmetryType.reversible: 'reversible'>),
+             ('K6_2', <SymmetryType.reversible: 'reversible'>),
+             ('K6_3', <SymmetryType.ful_amphicheiral: 'fully amphicheiral'>)]
         """
         if not self.is_knot():
             raise NotImplementedError('this is only available for knots')
 
         symmetry_type = self[self.items.symmetry_type].strip()  # for example K10_88 is a case with trailing whitespaces
+        from sage.knots.knot import SymmetryType
         if not symmetry_type and self.crossing_number() == 0:
-            return 'fully amphicheiral'
-        return symmetry_type
+            return SymmetryType.ful_amphicheiral
+        return SymmetryType(symmetry_type)
 
     @cached_method
     def is_reversible(self) -> bool:
@@ -1076,10 +1075,11 @@ class KnotInfoBase(Enum):
             sage: KnotInfo.L7a4_0.is_reversible() # optional - database_knotinfo
         """
         if self.is_knot():
+            from sage.knots.knot import SymmetryType
             symmetry_type = self.symmetry_type()
-            if symmetry_type == 'reversible':
+            if symmetry_type == SymmetryType.reversible:
                 return True
-            return symmetry_type == 'fully amphicheiral'
+            return symmetry_type == SymmetryType.ful_amphicheiral
 
         # revert orientation
         b = self.braid()
@@ -1138,14 +1138,15 @@ class KnotInfoBase(Enum):
         """
         if self.is_knot():
             symmetry_type = self.symmetry_type()
+            from sage.knots.knot import SymmetryType
             if positive:
-                if symmetry_type == 'positive amphicheiral':
+                if symmetry_type == SymmetryType.pos_amphicheiral:
                     return True
             else:
-                if symmetry_type == 'negative amphicheiral':
+                if symmetry_type == SymmetryType.neg_amphicheiral:
                     return True
 
-            return symmetry_type == 'fully amphicheiral'
+            return symmetry_type == SymmetryType.ful_amphicheiral
 
         h = self.homfly_polynomial()
         v, z = h.parent().gens()
@@ -1323,7 +1324,7 @@ class KnotInfoBase(Enum):
         Return whether the Cosmetic Crossing Conjecture has been verified
         for ``self``.
 
-        From the KnotInfo `description page <https://knotinfo.math.indiana.edu/descriptions/cosmetic_crossing.html>`__:
+        From the KnotInfo `description page <https://knotinfo.org/descriptions/cosmetic_crossing.html>`__:
 
             A crossing change in a diagram of a knot ``K`` is called cosmetic if
             the resulting diagram also represents ``K``. The cosmetic crossing
@@ -1359,7 +1360,7 @@ class KnotInfoBase(Enum):
 
         The HOMFLY-PT polynomial `P(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1375,7 +1376,7 @@ class KnotInfoBase(Enum):
         OUTPUT:
 
         A Laurent polynomial over the integers, more precisely an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
         If ``original`` is set to ``True`` then a string is returned.
 
         .. NOTE::
@@ -1387,16 +1388,18 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libbraiding libhomfly
             sage: K3_1 = KnotInfo.K3_1
             sage: PK3_1 = K3_1.homfly_polynomial(); PK3_1
             -v^4 + v^2*z^2 + 2*v^2
             sage: K3_1.homfly_polynomial(original=True)
-            '(2*v^2-v^4)+v^2*z^2'
+            '(2*v^2-v^4)+ v^2*z^2'
             sage: PK3_1 == K3_1.link().homfly_polynomial(normalization='vz')
             True
 
         for proper links::
 
+            sage: # needs libbraiding libhomfly
             sage: L4a1_1 = KnotInfo.L4a1_1
             sage: PL4a1_1 = L4a1_1.homfly_polynomial(var1='x', var2='y'); PL4a1_1
             -x^5*y + x^3*y^3 - x^5*y^-1 + 3*x^3*y + x^3*y^-1
@@ -1406,6 +1409,7 @@ class KnotInfoBase(Enum):
         check the skein-relation from the KnotInfo description page (applied to one
         of the positive crossings of the right-handed trefoil)::
 
+            sage: # needs libbraiding libhomfly
             sage: R = PK3_1.parent()
             sage: PO = R.one()
             sage: L2a1_1 = KnotInfo.L2a1_1
@@ -1416,6 +1420,7 @@ class KnotInfoBase(Enum):
 
         TESTS::
 
+            sage: # needs libbraiding libhomfly
             sage: H = KnotInfo.L11n459_1_1_1.homfly_polynomial()   # optional - database_knotinfo
             sage: all(L.homfly_polynomial() == L.link().homfly_polynomial(normalization='vz')\
             ....:     for L in KnotInfo if L.crossing_number() < 7)
@@ -1454,13 +1459,13 @@ class KnotInfoBase(Enum):
         r"""
         Return the Kauffman polynomial according to the value of column
         ``kauffman_polynomial`` for this knot or link as an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
 
         The Kauffman polynomial `F(L)` respectivlely its corresponding invariant
         under regular isotopy `\Delta (L) = a^{w(L)} F(L)` where `w(L)` is the
         writhe of the link `L` satisfies the following skein relation
         (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1479,7 +1484,7 @@ class KnotInfoBase(Enum):
         OUTPUT:
 
         A Laurent polynomial over the integers, more precisely an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
         If ``original`` is set to ``False`` then a string is returned.
 
         EXAMPLES::
@@ -1489,17 +1494,19 @@ class KnotInfoBase(Enum):
 
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
-            sage: K.kauffman_polynomial()
+            sage: kp1 = K.kauffman_polynomial(); kp1
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
+            sage: kp2 = KnotInfo.K13a_1.kauffman_polynomial()            # optional database_knotinfo
+            sage: (kp2.degree(), len(kp2.coefficients()))                # optional database_knotinfo
+            (16, 69)
 
         Comparison with Jones polynomial::
 
             sage: # needs sage.symbolic
-            sage: k    = _
-            sage: a, z = k.variables()
+            sage: a, z = kp1.variables()
             sage: j    = K.jones_polynomial(skein_normalization=True)
             sage: t,   = j.variables()
-            sage: k.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
+            sage: kp1.subs(a=-t^3, z=~t+t) == j.subs(t=t^4)
             True
 
         Check the skein relation::
@@ -1538,7 +1545,7 @@ class KnotInfoBase(Enum):
         r"""
         Return the Jones polynomial according to the value of column
         ``jones_polynomial`` for this knot or link as an element of the symbolic
-        ring :class:`~sage.symbolic.ring.SR` or an instance of
+        :class:`symbolic ring <sage.symbolic.ring.SymbolicRing>` or an instance of
         :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`
         depending on the keyword ``skein_normalization``. Using the keyword
         ``puiseux`` instead of an element of the symbolic ring an instance of
@@ -1547,7 +1554,7 @@ class KnotInfoBase(Enum):
 
         The Jones polynomial `V(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1578,7 +1585,8 @@ class KnotInfoBase(Enum):
         - ``puiseux=True`` a puiseux series over the integers, more precisely an
           instance of :class:`~sage.rings.puiseux_series_ring_element.PuiseuxSeries`
 
-        In all other cases an element of the symbolic ring :class:`~sage.symbolic.ring.SR`.
+        In all other cases an element of the
+        :class:`symbolic ring <sage.symbolic.ring.SymbolicRing>`.
 
         .. NOTE::
 
@@ -1886,7 +1894,7 @@ class KnotInfoBase(Enum):
         r"""
         Return the Khovanov polynomial according to the value of columns
         ``khovanov_*`` for this knot or link as an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
 
         INPUT:
 
@@ -1912,7 +1920,7 @@ class KnotInfoBase(Enum):
 
         A two or three (for integral homology) variate Laurent polynomial over
         ``ZZ``, more precisely an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
         If ``original`` is set to ``True`` then a string is returned.
 
         .. NOTE ::
@@ -2005,7 +2013,7 @@ class KnotInfoBase(Enum):
         - :wikipedia:`Khovanov_homology`
         - :wikipedia:`Reduced_homology`
         - [ORS2013]_
-        - `KnotInfo <https://knotinfo.math.indiana.edu/descriptions/khovanov_unreduced_integral_polynomial.html>`__
+        - `KnotInfo <https://knotinfo.org/descriptions/khovanov_unreduced_integral_polynomial.html>`__
         """
         if not ring:
             if self.is_knot():
@@ -2066,11 +2074,9 @@ class KnotInfoBase(Enum):
         if not khovanov_polynomial and self.crossing_number() == 0:
             if reduced or odd:
                 return R.one()
-            else:
-                if integral:
-                    return R({(1, 0, 0): 1, (-1, 0, 0): 1})
-                else:
-                    return R({(1, 0): 1, (-1, 0): 1})
+            if integral:
+                return R({(1, 0, 0): 1, (-1, 0, 0): 1})
+            return R({(1, 0): 1, (-1, 0): 1})
 
         if not khovanov_polynomial:
             # given just for links with less than 12 crossings
@@ -2093,9 +2099,9 @@ class KnotInfoBase(Enum):
         return R(eval_knotinfo(khovanov_polynomial, locals=lc))
 
     @cached_method
-    def link(self, use_item=db.columns().pd_notation, snappy=False):
+    def link(self, use_item=None, snappy=False):
         r"""
-        Return ``self`` as an instance of :class:`Link` or optional
+        Return ``self`` as an instance of :class:`~sage.knots.link.Link` or optional
         ``spherogram.links.invariants.Link``  (SnapPy).
 
         INPUT:
@@ -2161,21 +2167,21 @@ class KnotInfoBase(Enum):
 
             sage: L2  = KnotInfo.L2a1_1
             sage: l2  = L2.link()
-            sage: l2s = L2.link(snappy=True).sage_link()  # optional -  snappy
-            sage: l2 == l2s                               # optional -  snappy
+            sage: l2s = Link(L2.link(snappy=True))        # optional snappy
+            sage: l2 == l2s                               # optional snappy
             True
 
         but observe::
 
             sage: K7   = KnotInfo.K7_2
-            sage: k7s  = K7.link(snappy=True); k7s        # optional - snappy
+            sage: k7s  = K7.link(snappy=True); k7s        # optional snappy
             <Link: 1 comp; 7 cross>
-            sage: k7sn = K7.link(K7.items.name, snappy=True); k7sn     # optional - snappy
+            sage: k7sn = K7.link(K7.items.name, snappy=True); k7sn     # optional snappy
             <Link 7_2: 1 comp; 7 cross>
-            sage: k7s.sage_link().is_isotopic(k7sn)       # optional - snappy
+            sage: Link(k7s).is_isotopic(k7sn)             # optional snappy
             False
-            sage: k7snm = k7sn.sage_link().mirror_image() # optional - snappy
-            sage: k7s.sage_link().is_isotopic(k7snm)      # optional - snappy
+            sage: k7snm = Link(k7sn).mirror_image()       # optional snappy
+            sage: Link(k7s).is_isotopic(k7snm)            # optional snappy
             True
 
         using ``braid_notation``::
@@ -2208,14 +2214,15 @@ class KnotInfoBase(Enum):
             sage: K5_1.link(K5_1.items.gauss_notation).braid()
             s^-5
         """
+        if use_item is None:
+            use_item = self.items.pd_notation
+
         if not isinstance(use_item, KnotInfoColumns):
             raise TypeError('%s must be an instance of %s' % (use_item, KnotInfoColumns))
 
         if snappy:
-            try:
-                from snappy import Link
-            except ImportError:
-                raise ImportError('this option demands snappy to be installed')
+            from sage.interfaces.snappy import snappy
+            Link = snappy.Link
         elif self.is_knot():
             from sage.knots.knot import Knot as Link
         else:
@@ -2223,18 +2230,18 @@ class KnotInfoBase(Enum):
 
         if use_item == self.items.pd_notation:
             return Link(self.pd_notation())
-        elif use_item == self.items.braid_notation:
+        if use_item == self.items.braid_notation:
             return Link(self.braid())
-        elif use_item == self.items.name and snappy:
+        if use_item == self.items.name and snappy:
             if not self.is_knot():
                 use_item = self.items.name_unoriented
             return Link(self[use_item])
-        elif self.is_knot() and not snappy:
+        if self.is_knot() and not snappy:
             # Construction via Gauss and DT-Code only possible for knots
             from sage.knots.knot import Knots
             if use_item == self.items.dt_notation:
                 return Knots().from_dowker_code(self.dt_notation())
-            elif use_item == self.items.gauss_notation:
+            if use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
         raise ValueError('link construction using %s not possible' % use_item)
@@ -2248,6 +2255,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libbraiding libhomfly
             sage: KnotInfo.L4a1_0.is_unique()
             True
             sage: KnotInfo.L5a1_0.is_unique()
@@ -2301,6 +2309,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
+            sage: # needs libbraiding libhomfly
             sage: KnotInfo.L4a1_0.inject()
             Defining L4a1_0
             sage: L4a1_0.is_recoverable()
@@ -2355,8 +2364,7 @@ class KnotInfoBase(Enum):
                 return False
             if unique:
                 return check_result(res)
-            else:
-                return any(check_result(r) for r in res)
+            return any(check_result(r) for r in res)
 
         from sage.misc.misc import some_tuples
         if SymmetryMutant.unknown.matches(self):
@@ -2451,8 +2459,7 @@ class KnotInfoBase(Enum):
 
         if single:
             return webbrowser.open(filename.diagram_url(self[self.items.diagram], single=single), new=new, autoraise=autoraise)
-        else:
-            return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
+        return webbrowser.open(filename.diagram_url(self[self.items.name]), new=new, autoraise=autoraise)
 
     def knot_atlas_webpage(self, new=0, autoraise=True):
         r"""
@@ -2700,8 +2707,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         if self._is_knot:
             return 'Series of knots %s' % (self._name())
-        else:
-            return 'Series of links %s' % (self._name())
+        return 'Series of links %s' % (self._name())
 
     def __getitem__(self, item):
         r"""
@@ -2817,6 +2823,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs libbraiding libhomfly
             sage: KnotInfo.L4a1_0.series().inject()
             Defining L4a
             sage: L4a.is_recoverable()
@@ -2845,6 +2852,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs libbraiding
             sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirect doctest
             running ._test_category() . . . pass
             running ._test_new() . . . pass
@@ -2855,13 +2863,12 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         tester = options['tester']
         max_samples = tester._max_samples
-        try:
+        from sage.features.libhomfly import Libhomfly
+        if Libhomfly().is_present():
             if max_samples:
                 tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
             else:
                 tester.assertTrue(self.is_recoverable(unique=False))
-        except ImportError:
-            pass
 
     def inject(self, verbose=True):
         r"""

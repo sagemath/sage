@@ -1,7 +1,7 @@
 """
-Characteristic Species
+Characteristic species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,7 +14,7 @@ Characteristic Species
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from .species import GenericCombinatorialSpecies
 from sage.arith.misc import factorial
@@ -44,8 +44,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
         s = GenericSpeciesStructure.__repr__(self)
         if self.parent()._n == 1:
             return s[1:-1]
-        else:
-            return "{" + s[1:-1] + "}"
+        return "{" + s[1:-1] + "}"
 
     def canonical_label(self):
         """

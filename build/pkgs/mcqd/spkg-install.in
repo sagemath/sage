@@ -1,24 +1,10 @@
 cd src
 grep -v "std..cout.*current max" mcqd.h > mcqd2.h
 mv mcqd2.h mcqd.h
-
-case "$UNAME" in
-"Darwin")
-    SO_NAME="libmcqd.dylib"
-    ;;
-*)
-    SO_NAME="libmcqd.so"
-    ;;
-esac
-
-$CXX -fPIC -O3 -c mcqd.cpp -o mcqd.o
-$CXX -shared mcqd.o -o "$SO_NAME" $MCQD_LDFLAGS
-
-sdh_install "$SO_NAME" "$SAGE_LOCAL/lib/"
-
-if [ "$UNAME" = "Darwin" ]; then
-    install_name_tool -id ${SAGE_LOCAL}/lib/$SO_NAME \
-        "$SAGE_DESTDIR_LOCAL/lib/$SO_NAME"
-fi
-
-sdh_install mcqd.h "$SAGE_LOCAL/include/"
+mkdir build && cd build
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DBUILD_SHARED_LIBS=ON \
+          -DCMAKE_FIND_ROOT_PATH=$SAGE_LOCAL/lib/cmake \
+          -DCMAKE_INSTALL_PREFIX=$SAGE_LOCAL \
+          .. \
+    && sdh_make_install

@@ -65,7 +65,7 @@ List of Poset methods
     :meth:`~FinitePoset.cardinality` | Return the number of elements in the poset.
     :meth:`~FinitePoset.height` | Return the number of elements in a longest chain of the poset.
     :meth:`~FinitePoset.width` | Return the number of elements in a longest antichain of the poset.
-    :meth:`~FinitePoset.relations_number` | Return the number of relations in the poset.
+    :meth:`~FinitePoset.number_of_relations` | Return the number of relations in the poset.
     :meth:`~FinitePoset.dimension` | Return the dimension of the poset.
     :meth:`~FinitePoset.jump_number` | Return the jump number of the poset.
     :meth:`~FinitePoset.magnitude` | Return the magnitude of the poset.
@@ -312,6 +312,10 @@ from sage.combinat.posets.elements import PosetElement
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.subset import Subsets
 from .linear_extensions import LinearExtensionsOfPoset
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import builtins
 
 
 def Poset(data=None, element_labels=None, cover_relations=False, linear_extension=False, category=None, facade=None, key=None):
@@ -385,7 +389,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         given as input.
 
       * If ``facade = False``, the :meth:`Poset`'s elements will become
-        :class:`~sage.combinat.posets.posets.PosetElement` objects.
+        :class:`~sage.combinat.posets.elements.PosetElement` objects.
 
       * If ``facade = None`` (default) the expected behaviour is the behaviour
         of ``facade = True``, unless the opposite can be deduced from the
@@ -805,7 +809,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
       * If ``facade = False``, the
         :class:`~sage.combinat.posets.posets.FinitePoset`'s elements will become
-        :class:`~sage.combinat.posets.posets.PosetElement` objects.
+        :class:`~sage.combinat.posets.elements.PosetElement` objects.
 
       * If ``facade = None`` (default) the expected behaviour is the behaviour
         of ``facade = True``, unless the opposite can be deduced from the
@@ -1396,9 +1400,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         return self.hasse_diagram()._latex_()
 
     def tikz(self, format=None, edge_labels=False, color_by_label=False,
-            prog='dot', rankdir='up', standalone_config=None,
-            usepackage=None, usetikzlibrary=None, macros=None,
-            use_sage_preamble=None, **kwds):
+             prog='dot', rankdir='up', standalone_config=None,
+             usepackage=None, usetikzlibrary=None, macros=None,
+             use_sage_preamble=None, **kwds):
         r"""
         Return a TikzPicture illustrating the poset.
 
@@ -1445,7 +1449,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         OUTPUT:
 
-        An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+        An instance of :class:`sage.misc.latex_standalone.TikzPicture`.
 
         .. NOTE::
 
@@ -1460,10 +1464,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         G = self.hasse_diagram()
         return G.tikz(format=format, edge_labels=edge_labels,
-            color_by_label=color_by_label, prog=prog, rankdir=rankdir,
-            standalone_config=standalone_config, usepackage=usepackage,
-            usetikzlibrary=usetikzlibrary, macros=macros,
-            use_sage_preamble=use_sage_preamble, **kwds)
+                      color_by_label=color_by_label, prog=prog, rankdir=rankdir,
+                      standalone_config=standalone_config, usepackage=usepackage,
+                      usetikzlibrary=usetikzlibrary, macros=macros,
+                      use_sage_preamble=use_sage_preamble, **kwds)
 
     def _repr_(self) -> str:
         r"""
@@ -1922,7 +1926,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         .. NOTE::
 
             This is used and systematically tested in
-            :class:`~sage.combinat.posets.linear_extensions.LinearExtensionsOfPosets`
+            :class:`~sage.combinat.posets.linear_extensions.LinearExtensionsOfPoset`
 
         .. SEEALSO:: :meth:`linear_extension`, :meth:`linear_extensions`
 
@@ -2339,7 +2343,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`relations_number`, :meth:`relations_iterator`
+            :meth:`number_of_relations`, :meth:`relations_iterator`
 
         TESTS::
 
@@ -2693,7 +2697,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`relations_number`, :meth:`relations`.
+            :meth:`number_of_relations`, :meth:`relations`.
 
         AUTHOR:
 
@@ -2711,7 +2715,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                 for j in hd.breadth_first_search(i):
                     yield [elements[i], elements[j]]
 
-    def relations_number(self):
+    def number_of_relations(self):
         r"""
         Return the number of relations in the poset.
 
@@ -2724,10 +2728,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.PentagonPoset()
-            sage: P.relations_number()
+            sage: P.number_of_relations()
             13
 
-            sage: posets.TamariLattice(4).relations_number()
+            sage: posets.TamariLattice(4).number_of_relations()
             68
 
         .. SEEALSO::
@@ -2736,15 +2740,17 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Poset().relations_number()
+            sage: Poset().number_of_relations()
             0
         """
         return sum(1 for _ in self.relations_iterator())
 
     # Maybe this should also be deprecated.
-    intervals_number = relations_number
+    intervals_number = number_of_relations
 
-    def linear_intervals_count(self) -> list[int]:
+    relations_number = number_of_relations
+
+    def linear_intervals_count(self) -> builtins.list[int]:
         """
         Return the enumeration of linear intervals w.r.t. their cardinality.
 
@@ -3596,8 +3602,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         ALGORITHM:
 
-        As explained [FT00]_, the dimension of a poset is equal to the (weak)
-        chromatic number of a hypergraph. More precisely:
+        As explained in [FT00]_, the dimension of a poset is equal to
+        the (weak) chromatic number of a hypergraph. More precisely:
 
             Let `inc(P)` be the set of (ordered) pairs of incomparable elements
             of `P`, i.e. all `uv` and `vu` such that `u\not \leq_P v` and `v\not
@@ -4060,7 +4066,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.is_ranked()
             False
 
-        .. SEEALSO:: :meth:`rank_function`, :meth:`rank`, :meth:`is_graded`
+        .. SEEALSO:: :meth:`rank_function`, :meth:`rank`,
+            :meth:`~sage.combinat.posets.posets.FinitePoset.is_graded`
 
         TESTS::
 
@@ -4154,7 +4161,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for e in self._hasse_diagram.neighbor_out_iterator(self._element_to_vertex(x)):
             yield self._vertex_to_element(e)
 
-    def upper_covers(self, x) -> list:
+    def upper_covers(self, x) -> builtins.list:
         """
         Return the list of upper covers of the element ``x``.
 
@@ -4187,7 +4194,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for e in self._hasse_diagram.neighbor_in_iterator(self._element_to_vertex(x)):
             yield self._vertex_to_element(e)
 
-    def lower_covers(self, x) -> list:
+    def lower_covers(self, x) -> builtins.list:
         """
         Return the list of lower covers of the element ``x``.
 
@@ -4391,6 +4398,15 @@ class FinitePoset(UniqueRepresentation, Parent):
         transformation. This polynomial only depends on the derived
         category of modules on the poset.
 
+        .. NOTE::
+
+            By Corollary 4.3 of [Lad2021]_, this polynomial does
+            not depend on the order of the ordinal summands.
+
+        .. SEEALSO::
+
+            :meth:`ordinal_sum`, :meth:`ordinal_summands`
+
         EXAMPLES::
 
             sage: P = posets.PentagonPoset()
@@ -4418,7 +4434,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return dense_matrix.CharacteristicPolynomial().sage()
         return cox_matrix.charpoly()
 
-    def coxeter_smith_form(self, algorithm='singular') -> list:
+    def coxeter_smith_form(self, algorithm='singular') -> builtins.list:
         """
         Return the Smith normal form of `x` minus the Coxeter transformation
         matrix.
@@ -4472,7 +4488,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`coxeter_transformation`, :meth:`coxeter_matrix`
+            :meth:`~sage.combinat.posets.posets.FinitePoset.coxeter_transformation`,
+            ``coxeter_matrix``
         """
         c0 = self.coxeter_transformation()
         x = polygen(QQ, 'x')   # not possible to use ZZ for the moment
@@ -4732,7 +4749,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             raise TypeError("'other' is not a finite poset")
         return (self.subposet([self._list[i] for i in x]) for x in self._hasse_diagram.transitive_closure().subgraph_search_iterator(other.hasse_diagram().transitive_closure(), induced=True, return_graphs=False))
 
-    def isomorphic_subposets(self, other) -> list:
+    def isomorphic_subposets(self, other) -> builtins.list:
         """
         Return a list of subposets of ``self`` isomorphic to ``other``.
 
@@ -4821,7 +4838,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             Internally, this uses
             :class:`sage.combinat.subsets_pairwise.PairwiseCompatibleSubsets`
-            and :class:`RecursivelyEnumeratedSet_forest`. At this point, iterating
+            and
+            :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
+            At this point, iterating
             through this set is about twice slower than using
             :meth:`antichains_iterator` (tested on
             ``posets.AntichainPoset(15)``). The algorithm is the same
@@ -5040,7 +5059,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         result.rename("Set of chains of %s" % self)
         return result
 
-    def connected_components(self) -> list:
+    def connected_components(self) -> builtins.list:
         """
         Return the connected components of the poset as subposets.
 
@@ -5087,7 +5106,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                                     facade=False))
         return result
 
-    def ordinal_summands(self) -> list:
+    def ordinal_summands(self) -> builtins.list:
         r"""
         Return the ordinal summands of the poset as subposets.
 
@@ -5298,7 +5317,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         return Poset((rees_set, covers), cover_relations=True)
 
-    def factor(self) -> list:
+    def factor(self) -> builtins.list:
         """
         Factor the poset as a Cartesian product of smaller posets.
 
@@ -5370,7 +5389,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         dg = self._hasse_diagram
         if not dg.is_connected() or not dg.order():
             raise NotImplementedError('the poset is empty or not connected')
-        if Integer(dg.num_verts()).is_prime():
+        if Integer(dg.n_vertices()).is_prime():
             return [self]
         if sum(e for _, e in self.degree_polynomial().factor()) == 1:
             return [self]
@@ -6504,9 +6523,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         TESTS::
 
             sage: P = posets.IntegerPartitions(3)                                       # needs sage.combinat
-            sage: P.random_subposet(1) == P                                             # needs sage.combinat
-            True
-            sage: P.random_subposet(1.41) == P                                          # needs sage.combinat
+            sage: P.random_subposet(1).cardinality()                                             # needs sage.combinat
+            3
+            sage: P.random_subposet(1.41)                                       # needs sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: probability p must be in [0..1]
@@ -6613,7 +6632,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: set_random_seed(0)  # results are reproducible
             sage: P = posets.BooleanLattice(4)
             sage: P.random_maximal_chain()
-            [0, 4, 5, 7, 15]
+            [0, 1, 3, 11, 15]
 
         TESTS::
 
@@ -6648,7 +6667,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: set_random_seed(0)  # results are reproducible
             sage: P = posets.BooleanLattice(4)
             sage: P.random_maximal_antichain()
-            [1, 8, 2, 4]
+            [3, 14, 13]
 
         TESTS::
 
@@ -6680,7 +6699,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: set_random_seed(0)  # results are reproducible
             sage: P = posets.BooleanLattice(4)
             sage: P.random_linear_extension()
-            [0, 4, 1, 2, 3, 8, 10, 5, 12, 9, 13, 11, 6, 14, 7, 15]
+            [0, 1, 2, 8, 3, 10, 4, 5, 6, 7, 9, 11, 12, 13, 14, 15]
 
         TESTS::
 
@@ -7776,13 +7795,17 @@ class FinitePoset(UniqueRepresentation, Parent):
         elements in the poset. List of coefficients of this polynomial
         is also called a *f-vector* of the poset.
 
+        This is multiplicative with respect to ordinal sum.
+
         .. NOTE::
 
             This is not what has been called the chain polynomial
             in [St1986]_. The latter is identical with the order
             polynomial in SageMath (:meth:`order_polynomial`).
 
-        .. SEEALSO:: :meth:`f_polynomial`, :meth:`order_polynomial`
+        .. SEEALSO::
+
+            :meth:`f_polynomial`, :meth:`order_polynomial`, :meth:`ordinal_sum`
 
         EXAMPLES::
 
@@ -8018,7 +8041,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             - :meth:`linear_extension`
             - :meth:`with_linear_extension` and the ``linear_extension`` option of :func:`Poset`
             - :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.evacuation`
-            - :meth:`promotion`
+            - :meth:`~sage.combinat.posets.posets.FinitePoset.promotion`
 
         AUTHOR:
 
@@ -8536,11 +8559,11 @@ class FinitePoset(UniqueRepresentation, Parent):
             p, v = next(chron)
             if v > vold:
                 size += p
-                if part > 0:
+                if part:
                     ps.append(part)
             elif p > pold:
                 part += 1
-            (pold, vold) = (p, v)
+            pold, vold = (p, v)
         ps.reverse()
         return Partition(ps)
 

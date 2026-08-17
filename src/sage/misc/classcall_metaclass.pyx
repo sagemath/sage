@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Special Methods for Classes
 
@@ -55,9 +54,12 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
      - ``.__classget__`` for customizing the binding behavior in
        ``foo.cls`` (analogue of ``.__get__``).
 
-    See the documentation of :meth:`__call__` and of :meth:`__get__`
-    and :meth:`__contains__` for the description of the respective
-    protocols.
+    See the documentation of
+    :meth:`~sage.misc.classcall_metaclass.ClasscallMetaclass.__call__`,
+    :meth:`~sage.misc.classcall_metaclass.ClasscallMetaclass.__get__`,
+    and
+    :meth:`~sage.misc.classcall_metaclass.ClasscallMetaclass.__contains__`
+    for the description of the respective protocols.
 
     .. WARNING::
 
@@ -72,7 +74,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         For efficiency reasons, the resolution for the special methods
         is done once for all, upon creation of the class. Thus, later
         dynamic changes to those methods are ignored. But see also
-        :meth:`_set_classcall`.
+        :meth:`~sage.misc.classcall_metaclass.ClasscallMetaclass._set_classcall`.
 
     ``ClasscallMetaclass`` is an extension of the base :class:`type`.
 
@@ -96,6 +98,11 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             True
             sage: isinstance(Foo, type)
             True
+
+    .. automethod:: __call__
+    .. automethod:: __get__
+    .. automethod:: __contains__
+    .. automethod:: _set_classcall
     """
 
     def __cinit__(self, *args, **opts):
@@ -161,7 +168,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         r"""
         This method implements ``cls(<some arguments>)``.
 
-        Let ``cls`` be a class in :class:`ClasscallMetaclass`, and
+        Let ``cls`` be a class in :class:`~sage.misc.classcall_metaclass.ClasscallMetaclass`, and
         consider a call of the form::
 
             cls(<some arguments>)
@@ -395,14 +402,13 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         """
         if cls.classget:
             return cls.classget(cls, instance, owner)
-        else:
-            return cls
+        return cls
 
     def __contains__(cls, x):
         r"""
         This method implements membership testing for a class.
 
-        Let ``cls`` be a class in :class:`ClasscallMetaclass`, and consider
+        Let ``cls`` be a class in :class:`~sage.misc.classcall_metaclass.ClasscallMetaclass`, and consider
         a call of the form::
 
             x in cls
@@ -439,12 +445,11 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
             sage: 1 in Bar
             Traceback (most recent call last):
             ...
-            TypeError: argument of type 'type' is not iterable
+            TypeError: argument of type 'type' is not... iterable
         """
         if cls.classcontains:
             return cls.classcontains(cls, x)
-        else:
-            return x in object
+        return x in object
 
 
 def typecall(pytype cls, *args, **kwds):
@@ -544,7 +549,7 @@ def timeCall(T, int n, *args):
         ....:         self.i = i+i1
 
     For a Python class, compared to the reference class there is a 10%
-    overhead in using :class:`ClasscallMetaclass` if there is no classcall
+    overhead in using :class:`~sage.misc.classcall_metaclass.ClasscallMetaclass` if there is no classcall
     defined::
 
         sage: class P(metaclass=ClasscallMetaclass):

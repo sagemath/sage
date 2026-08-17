@@ -5,7 +5,7 @@ This module provides an implementation for shared dictionary like
 state attributes required by the orthogonal F-matrix solver.
 
 Currently, the attributes only work when the base field of the
-:class:`FMatrix` factory is a cyclotomic field.
+:class:`~sage.algebras.fusion_rings.f_matrix.FMatrix` factory is a cyclotomic field.
 """
 
 # ****************************************************************************
@@ -316,6 +316,24 @@ cdef class KSHandler:
         d = {i: sq for i, sq in self.items()}
         return make_KSHandler, (self.ks_dat.size, self.field, d)
 
+    def __iter__(self):
+        r"""
+        Iterate through existing keys using Python dict-style syntax.
+
+        EXAMPLES::
+
+            sage: f = FusionRing("A2", 1).get_fmatrix()
+            sage: f._reset_solver_state()
+            sage: f.get_orthogonality_constraints(output=False)
+            sage: f._ks.update(f.ideal_basis)
+            sage: list(f._ks)
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        """
+        cdef Py_ssize_t i
+        for i in range(self.ks_dat.size):
+            if self.ks_dat['known'][i]:
+                yield i
+
     def items(self):
         r"""
         Iterate through existing entries using Python dict-style syntax.
@@ -339,9 +357,8 @@ cdef class KSHandler:
             Index: 26, sq: 1
         """
         cdef Py_ssize_t i
-        for i in range(self.ks_dat.size):
-            if self.ks_dat['known'][i]:
-                yield i, self.get(i)
+        for i in self:
+            yield i, self.get(i)
 
 
 def make_KSHandler(n_slots, field, init_data):
@@ -419,7 +436,8 @@ cdef class FvarsHandler:
     .. NOTE::
 
         If you ever encounter an :exc:`OverflowError` when running the
-        :meth:`FMatrix.find_orthogonal_solution` solver, consider
+        :meth:`~sage.algebras.fusion_rings.f_matrix.FMatrix.find_orthogonal_solution`
+        solver, consider
         increasing the parameter ``n_bytes``.
 
     .. WARNING::

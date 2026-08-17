@@ -135,14 +135,13 @@ def normalise_hadamard(H, skew=False):
     if skew:
         dd = diagonal_matrix(H[0])
         return dd*H*dd
-    else:
-        for i in range(H.ncols()):
-            if H[0, i] < 0:
-                H.rescale_col(i, -1)
-        for i in range(H.nrows()):
-            if H[i, 0] < 0:
-                H.rescale_row(i, -1)
-        return H
+    for i in range(H.ncols()):
+        if H[0, i] < 0:
+            H.rescale_col(i, -1)
+    for i in range(H.nrows()):
+        if H[i, 0] < 0:
+            H.rescale_row(i, -1)
+    return H
 
 
 def hadamard_matrix_paleyI(n, normalize=True):
@@ -1037,7 +1036,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
     Hadamard matrix of order `4n` (see [Djo1994b]_).
 
     The supplementary difference sets are taken from
-    :func:`sage.combinat.designs.difference_family.supplementary_difference_set`.
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set_hadamard`.
 
     INPUT:
 
@@ -1672,7 +1671,7 @@ def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
             if verbose:
                 print("The matrix is not skew-normalized")
             return False
-        elif not skew and (set(M.row(0)) != {1} or set(M.column(0)) != {1}):
+        if not skew and (set(M.row(0)) != {1} or set(M.column(0)) != {1}):
             if verbose:
                 print("The matrix is not normalized")
             return False

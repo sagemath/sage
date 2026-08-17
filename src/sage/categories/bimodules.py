@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Bimodules
 """
@@ -188,7 +187,8 @@ class Bimodules(CategoryWithParameters):
 
         .. SEEALSO:: :meth:`Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+           :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 

@@ -1,8 +1,8 @@
 .. _installation-guide:
 
-==================================
-Welcome to Sage Installation Guide
-==================================
+=======================
+Sage Installation Guide
+=======================
 
 This is the installation guide for SageMath, a free open-source mathematics software system.
 It is designed to help you install SageMath on your computer.
@@ -12,13 +12,30 @@ If you are planning to do development on SageMath, please refer instead to the
 `Sage Developer's Guide <../developer/walkthrough.html>`_ for instructions on
 obtaining the source code and building SageMath.
 
+Local installation options
+==========================
+
+Depending on your operating system, various installation options are available. Select from the
+options below to find instructions for your operating system.
+
 .. tab:: Linux
 
   .. tab:: Conda
 
-    Install SageMath from
-    the `conda-forge <https://conda-forge.org/>`_ project, as described in section
-    :ref:`sec-installation-conda`.
+    To install SageMath from
+    the `conda-forge <https://conda-forge.org/>`_ project
+    you can use the following command:
+
+    .. code-block:: console
+
+      $ conda create -n sage sage python=3.13
+
+    This will create a new conda environment named ``sage``
+    containing SageMath and Python 3.13.
+    You can then activate this environment with the command
+    ``conda activate sage`` and start SageMath by typing ``sage``.
+    
+    For more details, see section :ref:`sec-installation-conda`.
 
   .. tab:: Arch Linux/Manjaro
 
@@ -56,6 +73,11 @@ obtaining the source code and building SageMath.
     If you are on an older version of your distribution and a recent
     version of SageMath is only available on a newer version of the
     distribution, consider upgrading your distribution.
+
+    Alternatively, the 3-manifolds project provides a `SageMath AppImage <https://github.com/3-manifolds/sage_appimage>`_.
+    It provides a self-contained binary distribution of SageMath that should be able to run on a wide variety of Linux
+    systems. Beware that it is not packaged with Cython, so building certain sagemath programs or installing certain
+    optional packages is not possible.
 
 .. tab:: macOS 
 
@@ -105,11 +127,23 @@ obtaining the source code and building SageMath.
     and you may need to hit :kbd:`Enter` to confirm or type ``yes``
     and then hit :kbd:`Enter`.
 
-    .. code-block:: shell
+    .. code-block:: console
 
       $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
       $ bash Miniforge3-$(uname)-$(uname -m).sh
-      $ conda create -n sage sage python=3.11
+
+    At the end of the installer run, you should see a message about adding certain commands in `~/.bashrc`.
+    Now, either run the following command, or restart your WSL terminal.
+
+    .. code-block:: console
+
+      $ source ~/.bashrc
+
+    You will see a different prompt in your terminal now, having `base` in it. Now, run
+
+    .. code-block:: console
+
+      $ conda create -n sage sage python=3.12
 
     (If there are any installation failures, please report them to
     the conda-forge maintainers by opening a `GitHub Issue for
@@ -117,15 +151,22 @@ obtaining the source code and building SageMath.
 
     You can now start SageMath as follows:
 
-    .. code-block:: shell
+    .. code-block:: console
 
       $ conda activate sage
       $ sage
 
-    This way of starting Sage gives you the most basic way of using
-    Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
-    in particular for setting up the Jupyter notebook, which is required if
-    you want to use graphics.
+
+After installation, you can start SageMath in a terminal as follows:
+
+.. code-block:: console
+
+  $ sage
+
+This way of starting Sage gives you the most basic way of using
+Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
+in particular for setting up the Jupyter notebook, which is required if
+you want to use graphics.
 
 .. _sec-cloud:
 
@@ -145,13 +186,14 @@ In the cloud
   <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
 
-More information:
+More information
+================
 
 .. toctree::
    :maxdepth: 2
 
    conda
    source
-   meson
+   source-distro
    launching
    troubles

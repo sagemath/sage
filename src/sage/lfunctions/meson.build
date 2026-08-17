@@ -5,10 +5,11 @@ py.install_sources(
   'lcalc.py',
   'pari.py',
   'sympow.py',
+  'zero_sums.pyx',
   subdir: 'sage/lfunctions',
 )
 
-extension_data = {'zero_sums' : files('zero_sums.pyx')}
+extension_data = {'zero_sums': files('zero_sums.pyx')}
 
 foreach name, pyx : extension_data
   py.extension_module(

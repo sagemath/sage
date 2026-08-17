@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 Parsing docstrings
 
@@ -186,8 +185,7 @@ def parse_optional_tags(
     if sharp_index < 0:                  # no comment
         if return_string_sans_tags:
             return {}, string, False
-        else:
-            return {}
+        return {}
 
     first_line_sans_comments, comment = first_line[:sharp_index] % literals, first_line[sharp_index:] % literals
     if not first_line_sans_comments.endswith("  ") and not first_line_sans_comments.rstrip().endswith("sage:"):
@@ -235,8 +233,7 @@ def parse_optional_tags(
         is_persistent = tags and first_line_sans_comments.strip() == 'sage:' and not rest  # persistent (block-scoped) tag
         return tags, (first_line + '\n' + rest % literals if rest is not None
                       else first_line), is_persistent
-    else:
-        return tags
+    return tags
 
 
 def parse_file_optional_tags(lines) -> dict[str, str | None]:
@@ -321,12 +318,11 @@ def _tag_group(tag):
     """
     if tag.startswith('sage.'):
         return 'sage'
-    elif tag in _standard_tags():
+    if tag in _standard_tags():
         return 'standard'
-    elif not special_optional_regex.fullmatch(tag):
+    if not special_optional_regex.fullmatch(tag):
         return 'optional'
-    else:
-        return 'special'
+    return 'special'
 
 
 def unparse_optional_tags(tags, prefix='# ') -> str:
@@ -555,7 +551,7 @@ def parse_tolerance(source, want):
     - ``want`` -- string, the desired output of the doctest
 
     OUTPUT: ``want`` if there are no tolerance tags specified; a
-    :class:`MarkedOutput` version otherwise
+    :class:`~sage.doctest.marked_output.MarkedOutput` version otherwise
 
     EXAMPLES::
 
@@ -829,7 +825,7 @@ class SageDocTestParser(doctest.DocTestParser):
         """
         return not (self == other)
 
-    def parse(self, string, *args):
+    def parse(self, string, *args) -> list[doctest.Example | str]:
         r"""
         A Sage specialization of :class:`doctest.DocTestParser`.
 
@@ -1015,8 +1011,8 @@ class SageDocTestParser(doctest.DocTestParser):
             string = find_python_continuation.sub(r"\1" + ellipsis_tag + r"\2", string)
         string = find_sage_prompt.sub(r"\1>>> sage: ", string)
         string = find_sage_continuation.sub(r"\1...", string)
-        res = doctest.DocTestParser.parse(self, string, *args)
-        filtered = []
+        res: list[doctest.Example | str] = doctest.DocTestParser.parse(self, string, *args)
+        filtered: list[doctest.Example | str] = []
         persistent_optional_tags = self.file_optional_tags
         persistent_optional_tag_setter = None
         persistent_optional_tag_setter_index = None
@@ -1229,11 +1225,13 @@ class SageOutputChecker(doctest.OutputChecker):
         r"""
         Check to see if the output matches the desired output.
 
-        If ``want`` is a :class:`MarkedOutput` instance, takes into account the desired tolerance.
+        If ``want`` is a
+        :class:`~sage.doctest.marked_output.MarkedOutput` instance, takes into account the desired tolerance.
 
         INPUT:
 
-        - ``want`` -- string or :class:`MarkedOutput`
+        - ``want`` -- string or
+          :class:`~sage.doctest.marked_output.MarkedOutput`
         - ``got`` -- string
         - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
@@ -1361,7 +1359,7 @@ class SageOutputChecker(doctest.OutputChecker):
             if isinstance(want, MarkedOutput):
                 if want.random:
                     return True
-                elif want.tol or want.rel_tol:
+                if want.tol or want.rel_tol:
                     want, got = check_tolerance_real_domain(want, got)
                 elif want.abs_tol:
                     want, got = check_tolerance_complex_domain(want, got)
@@ -1370,13 +1368,11 @@ class SageOutputChecker(doctest.OutputChecker):
 
         if doctest.OutputChecker.check_output(self, want, got, optionflags):
             return True
-        else:
-            # Last resort: try to fix-up the got string removing few typical warnings
-            did_fixup, want, got = self.do_fixup(want, got)
-            if did_fixup:
-                return doctest.OutputChecker.check_output(self, want, got, optionflags)
-            else:
-                return False
+        # Last resort: try to fix-up the got string removing few typical warnings
+        did_fixup, want, got = self.do_fixup(want, got)
+        if did_fixup:
+            return doctest.OutputChecker.check_output(self, want, got, optionflags)
+        return False
 
     def do_fixup(self, want, got):
         r"""
@@ -1386,7 +1382,8 @@ class SageOutputChecker(doctest.OutputChecker):
 
         INPUT:
 
-        - ``want`` -- string or :class:`MarkedOutput`
+        - ``want`` -- string or
+          :class:`~sage.doctest.marked_output.MarkedOutput`
         - ``got`` -- string
 
         OUTPUT: a tuple:
@@ -1414,7 +1411,8 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: OC.do_fixup('1.3090169943749475','Long-step dual simplex will be used\n1.3090169943749475')
             (True, '1.3090169943749475', '\n1.3090169943749475')
 
-        When ``want`` is an instance of class :class:`MarkedOutput`::
+        When ``want`` is an instance of class
+        :class:`~sage.doctest.marked_output.MarkedOutput`::
 
             sage: from sage.doctest.parsing import SageOutputChecker, SageDocTestParser
             sage: import doctest
@@ -1516,6 +1514,13 @@ class SageOutputChecker(doctest.OutputChecker):
             got = dup_rpath_regex.sub('', got)
             did_fixup = True
 
+        if "lto-wrapper" in got:
+            # Messages from GCC's LTO wrapper when -flto is in CFLAGS
+            # and cython() is used non-trivially. Github issue 41991.
+            lto_wrapper_regex = re.compile("lto-wrapper: (warning|note): .*")
+            got = lto_wrapper_regex.sub('', got)
+            did_fixup = True
+
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):
@@ -1523,7 +1528,8 @@ class SageOutputChecker(doctest.OutputChecker):
         Report on the differences between the desired result and what
         was actually obtained.
 
-        If ``want`` is a :class:`MarkedOutput` instance, takes into account the desired tolerance.
+        If ``want`` is a
+        :class:`~sage.doctest.marked_output.MarkedOutput` instance, takes into account the desired tolerance.
 
         INPUT:
 

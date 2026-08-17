@@ -142,7 +142,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(identity_matrix(2), 3.0)
         sage: S = [D() for _ in range(2^12)]
         sage: l = [vector(v.list() + [S.count(v)]) for v in set(S)]
-        sage: list_plot3d(l, point_list=True, interpolation='nn')                       # needs sage.plot
+        sage: list_plot3d(l, point_list=True, interpolation='nn')
         Graphics3d Object
 
     REFERENCES:
@@ -254,7 +254,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
             sage: Sigma = Matrix(ZZ, [[5, -2, 4], [-2, 10, -5], [4, -5, 5]])
             sage: D = DGL(ZZ^3, Sigma, [7, 2, 5])
-            sage: D._normalisation_factor_zz()
+            sage: D._normalisation_factor_zz()  # long time
             78.6804...
 
             sage: M = Matrix(ZZ, [[1, 3, 0], [-2, 5, 1]])
@@ -391,7 +391,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
     def _randomise(self, v):
         r"""
         Randomly round to the latice coset `\ZZ + v` with Gaussian parameter
-        `r`. Used at :meth:`_call_non_spherical`.
+        `r`. Used at ``_call_non_spherical``.
 
         REFERENCES:
 
@@ -447,7 +447,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: n = 2; sigma = 3.0
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(ZZ^n, sigma)
             sage: f = D.f
-            sage: nf = D._normalisation_factor_zz(); nf                                 # needs sage.symbolic
+            sage: nf = D._normalisation_factor_zz(); nf
             56.5486677646...
 
             sage: from collections import defaultdict
@@ -461,7 +461,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: v = vector(ZZ, n, (-3, -3))
             sage: v.set_immutable()
             sage: while v not in counter: add_samples(1000)
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:
             ....:     add_samples(1000)
 
             sage: counter = defaultdict(Integer); m = 0
@@ -469,7 +469,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: v.set_immutable()
             sage: while v not in counter:
             ....:     add_samples(1000)
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:
             ....:     add_samples(1000)
 
         Spherical covariance are automatically handled::
@@ -489,14 +489,15 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: c = vector(ZZ, [7, 2, 5])
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(ZZ^n, Sigma, c)
             sage: f = D.f
-            sage: nf = D._normalisation_factor_zz(); nf # This has not been properly implemented
+            sage: # This has not been properly implemented...
+            sage: nf = D._normalisation_factor_zz(); nf  # long time
             78.6804...
 
         We can compute the expected number of samples before sampling a vector::
 
             sage: v = vector(ZZ, n, (11, 4, 8))
             sage: v.set_immutable()
-            sage: 1 / (f(v) / nf)
+            sage: 1 / (f(v) / nf)  # long time
             2553.9461...
 
             sage: counter = defaultdict(Integer); m = 0
@@ -504,7 +505,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             ....:     add_samples(1000)
             sage: sum(counter.values())  # random
             3000
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:  # long time
             ....:     add_samples(1000)
 
         If the covariance provided is not positive definite, an error is thrown::
@@ -872,7 +873,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
     def add_offline_samples(self, cnt=1):
         """
-        Precompute samples from `B^{-1}D_1` to be used in :meth:`_call_non_spherical`.
+        Precompute samples from `B^{-1}D_1` to be used in ``_call_non_spherical``.
 
         EXAMPLES::
 

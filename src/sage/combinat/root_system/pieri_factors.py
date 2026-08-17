@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 r"""
-Pieri Factors
+Pieri factors
 """
 # ****************************************************************************
 #  Copyright (C) 2009-2010 Steven Pon <spon at math.ucdavis.edu>
@@ -145,7 +145,9 @@ class PieriFactors(UniqueRepresentation, Parent):
         Those are constructed as the elements below the maximal
         elements of ``self`` in Bruhat order.
 
-        OUTPUT: a :class:`RecursivelyEnumeratedSet_generic` object
+        OUTPUT: a
+        :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_generic`
+        object
 
         EXAMPLES::
 
@@ -153,12 +155,14 @@ class PieriFactors(UniqueRepresentation, Parent):
             sage: sorted(w.reduced_word() for w in PF.elements())
             [[], [1], [2], [2, 1], [3], [3, 1], [3, 2], [3, 2, 1]]
 
-        .. SEEALSO:: :meth:`maximal_elements`
+        .. SEEALSO::
+            :meth:`~sage.combinat.root_system.pieri_factors.PieriFactors_affine_type.maximal_elements`
 
         .. TODO::
 
             Possibly remove this method and instead have this class
-            inherit from :class:`RecursivelyEnumeratedSet_generic`.
+            inherit from
+            :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_generic`.
         """
         return RecursivelyEnumeratedSet(self.maximal_elements(),
                 attrcall('bruhat_lower_covers'), structure=None,
@@ -344,10 +348,10 @@ class PieriFactors_affine_type(PieriFactors):
         Return the maximal elements of ``self`` with respect to Bruhat order.
 
         The current implementation is via a conjectural type-free
-        formula. Use :meth:`maximal_elements_combinatorial` for proven
+        formula. Use ``maximal_elements_combinatorial`` for proven
         type-specific implementations. To compare type-free and
         type-specific (combinatorial) implementations, use method
-        :meth:`_test_maximal_elements`.
+        ``_test_maximal_elements``.
 
         EXAMPLES::
 
@@ -642,7 +646,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
     def _test_maximal_elements(self, **options):
         r"""
-        Same as :meth:`PieriFactors._test_maximal_elements`, but skips
+        Same as ``PieriFactors._test_maximal_elements``, but skips
         the tests if ``self`` is not the full set of Pieri factors.
 
         EXAMPLES::
@@ -699,12 +703,12 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             return False
 
         if not (self._min_length <= len(support) and
-               len(support) <= self._max_length and
-               self._min_support.issubset(support) and
-               support.issubset(self._max_support)):
+                len(support) <= self._max_length and
+                self._min_support.issubset(support) and
+                support.issubset(self._max_support)):
             return False
 
-        [rank, unrank] = sage.combinat.ranker.from_list(red)
+        rank, unrank = sage.combinat.ranker.from_list(red)
         for i in red:
             j = (i + 1) % (n + 1)
             if j in support:
@@ -888,7 +892,9 @@ class PieriFactors_type_C_affine(PieriFactors_affine_type):
         # The algorithm="delete" is a workaround when the set of
         # vertices is empty, in which case subgraph tries another
         # method which turns out to currently fail with Dynkin diagrams
-        return DiGraph(DynkinDiagram(w.parent().cartan_type())).subgraph(set(w.reduced_word()), algorithm='delete').connected_components_number()
+        D = DiGraph(DynkinDiagram(w.parent().cartan_type()))
+        return D.subgraph(set(w.reduced_word()),
+                          algorithm='delete').number_of_connected_components()
 
 
 class PieriFactors_type_B_affine(PieriFactors_affine_type):
@@ -997,7 +1003,8 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
             support_complement = set(ct.index_set()).difference(support).difference(set([0, 1]))
         else:
             support_complement = set(ct.index_set()).difference(support).difference(set([0]))
-        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement, algorithm='delete').connected_components_number() - 1
+        D = DiGraph(DynkinDiagram(ct))
+        return D.subgraph(support_complement, algorithm='delete').number_of_connected_components() - 1
 
 
 class PieriFactors_type_D_affine(PieriFactors_affine_type):
@@ -1120,7 +1127,8 @@ class PieriFactors_type_D_affine(PieriFactors_affine_type):
         if n in support or n - 1 in support:
             support = support.union(set([n - 2])).difference(set([n - 1]))
         support_complement = set(range(1, n - 1)).difference(support)
-        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement).connected_components_number() - 1
+        D = DiGraph(DynkinDiagram(ct))
+        return D.subgraph(support_complement).number_of_connected_components() - 1
 
 
 # Inserts those classes in CartanTypes

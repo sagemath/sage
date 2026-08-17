@@ -264,25 +264,31 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 # ************************************************************************
-import os
 import logging
-
-from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
-from sage.env import DOT_SAGE
+import os
 import re
-from sage.structure.element import parent
+
+from sage.env import DOT_SAGE
+from sage.features import PythonModule
+from sage.interfaces.interface import (
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 
 # see the _lazy_init for some reasoning behind the lazy imports
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
+from sage.structure.element import parent
 
 rpy2_feature = PythonModule('rpy2', spkg='rpy2', type='standard')
 
 lazy_import("rpy2", "robjects", feature=rpy2_feature)
 lazy_import("rpy2.robjects", "packages", "rpy2_packages", feature=rpy2_feature)
-lazy_import("rpy2.robjects.conversion", ["localconverter", "Converter"], feature=rpy2_feature)
+lazy_import("rpy2.robjects.conversion", ["localconverter", "Converter"],
+            feature=rpy2_feature)
 
 # for help page fetching
 lazy_import("rpy2.robjects.help", "Package", feature=rpy2_feature)
@@ -301,6 +307,7 @@ RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
 
 # silence rpy2 warnings
 logging.getLogger('rpy2.rinterface_lib.callbacks').setLevel(logging.ERROR)
+
 
 def _setup_r_to_sage_converter():
     """
@@ -370,10 +377,10 @@ def _setup_r_to_sage_converter():
         sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()
         ['X1', 'Y2', 'X3', 'Y4', 'X5', 'Y6', 'X7', 'Y8', 'X9', 'Y10']
     """
-    from rpy2.rinterface import SexpVector, ListSexpVector, FloatSexpVector
+    from rpy2.rinterface import FloatSexpVector, ListSexpVector, SexpVector
 
-    # convert rpy2's representation of r objects to the one sage expects (as defined by the old
-    # expect interface)
+    # convert rpy2's representation of r objects to the one sage
+    # expects (as defined by the old expect interface)
     cv = Converter('r to sage converter')
 
     # support rpy version 2 and 3
@@ -398,8 +405,7 @@ def _setup_r_to_sage_converter():
     def list_to_singleton_if_possible(l):
         if len(l) == 1:
             return l[0]
-        else:
-            return l
+        return l
 
     def _vector(vec):
         attrs = vec.list_attrs()
@@ -416,9 +422,8 @@ def _setup_r_to_sage_converter():
                 '_Names': names,
                 '_r_class': rclass,
             }
-        else:
-            # if no names are present, convert to a normal list or a single value
-            return data
+        # if no names are present, convert to a normal list or a single value
+        return data
     rpy2py.register(SexpVector, _vector)
 
     def _matrix(mat):
@@ -441,10 +446,8 @@ def _setup_r_to_sage_converter():
 
     def _list_vector(vec):
         # we have a R list (vector of arbitrary elements)
-        attrs = vec.list_attrs()
         names = vec.do_slot('names')
         values = [rpy2py(val) for val in vec]
-        rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
         data = zip(names, values)
         return {
             'DATA': dict(data),
@@ -483,6 +486,7 @@ class R(ExtraTabCompletion, Interface):
 
         TESTS::
 
+            sage: from sage.interfaces.r import r
             sage: r == loads(dumps(r))
             True
         """
@@ -1584,18 +1588,17 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         if isinstance(n, str):
             n = n.replace('self', self._name)
             return P.new('%s[%s]' % (self._name, n))
-        elif parent(n) is P:  # the key is RElement itself
+        if parent(n) is P:  # the key is RElement itself
             return P.new('%s[%s]' % (self._name, n.name()))
-        elif not isinstance(n, tuple):
+        if not isinstance(n, tuple):
             return P.new('%s[%s]' % (self._name, n))
-        else:
-            L = []
-            for i in range(len(n)):
-                if parent(n[i]) is P:
-                    L.append(n[i].name())
-                else:
-                    L.append(str(n[i]))
-            return P.new('%s[%s]' % (self._name, ','.join(L)))
+        L = []
+        for i in range(len(n)):
+            if parent(n[i]) is P:
+                L.append(n[i].name())
+            else:
+                L.append(str(n[i]))
+        return P.new('%s[%s]' % (self._name, ','.join(L)))
 
     def __bool__(self):
         """
@@ -1810,7 +1813,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         self._check_valid()
         P = self.parent()
 
-        with localconverter(P._r_to_sage_converter) as cv:
+        with localconverter(P._r_to_sage_converter):
             return robjects.r(self.name())
 
     def _latex_(self):
@@ -1995,32 +1998,6 @@ class RFunction(InterfaceFunction):
             [1] 3
         """
         return self._parent.function_call(self._name, args=list(args), kwds=kwds)
-
-
-def is_RElement(x):
-    """
-    Return ``True`` if x is an element in an R interface.
-
-    INPUT:
-
-    - ``x`` -- object
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: from sage.interfaces.r import is_RElement
-        sage: is_RElement(2)
-        doctest:...: DeprecationWarning: the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead
-        See https://github.com/sagemath/sage/issues/34804 for details.
-        False
-        sage: is_RElement(r(2))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34804, "the function is_RElement is deprecated; use isinstance(x, sage.interfaces.abc.RElement) instead")
-
-    return isinstance(x, RElement)
 
 
 # An instance of R

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # IPython calls this when "%load_ext sage.repl" is used.
 # The Sage application loads it when starting up.
 def load_ipython_extension(*args):

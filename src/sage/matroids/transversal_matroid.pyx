@@ -156,7 +156,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: len(M.bases())
             9
         """
-        contents = set([e for subset in sets for e in subset])
+        contents = {e for subset in sets for e in subset}
         if groundset is None:
             groundset = contents
         elif not contents.issubset(groundset):
@@ -683,7 +683,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
         OUTPUT:
 
-        A :class:`~sage.matroids.transversal_matroids.TransversalMatroid`
+        A :class:`~sage.matroids.transversal_matroid.TransversalMatroid`
         with a groundset element added to specified sets. Note that the
         ``newset`` option will make the new element a coloop. If
         ``newset == True``, a name will be generated; otherwise the

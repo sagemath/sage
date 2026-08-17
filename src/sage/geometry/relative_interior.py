@@ -20,8 +20,8 @@ class RelativeInterior(ConvexSet_relatively_open):
     The relative interior of a polyhedron or cone.
 
     This class should not be used directly. Use methods
-    :meth:`~sage.geometry.polyhedron.Polyhedron_base.relative_interior`,
-    :meth:`~sage.geometry.polyhedron.Polyhedron_base.interior`,
+    :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.relative_interior`,
+    :meth:`~sage.geometry.polyhedron.base1.Polyhedron_base1.interior`,
     :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.relative_interior`,
     :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.interior` instead.
 
@@ -56,7 +56,7 @@ class RelativeInterior(ConvexSet_relatively_open):
             if hasattr(polyhedron, "_add_dependent_object"):
                 polyhedron._add_dependent_object(self)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -67,7 +67,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         """
         return hash(self._polyhedron) ^ 1789
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Return whether ``self`` contains ``point``.
 

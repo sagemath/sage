@@ -1,5 +1,5 @@
 """
-Fusion Rings
+Fusion rings
 """
 # ****************************************************************************
 #  Copyright (C) 2019 Daniel Bump <bump at match.stanford.edu>
@@ -525,9 +525,12 @@ class FusionRing(WeylCharacterRing):
 
     def fvars_field(self):
         r"""
-        Return a field containing the ``CyclotomicField`` computed by
-        :meth:`field` as well as all the F-symbols of the associated
-        ``FMatrix`` factory object.
+        Return a field containing the
+        :class:`CyclotomicField
+        <sage.rings.number_field.number_field.CyclotomicFieldFactory>`
+        computed by :meth:`field` as well as all the F-symbols of the
+        associated :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix`
+        factory object.
 
         This method is only available if ``self`` is multiplicity-free.
 
@@ -537,12 +540,14 @@ class FusionRing(WeylCharacterRing):
         a call to an F-matrix solver has been made, this method
         will return the same field as :meth:`field`, a :func:`NumberField`,
         or the :class:`QQbar<AlgebraicField>`.
-        See :meth:`FMatrix.attempt_number_field_computation` for more details.
+        See :meth:`~sage.algebras.fusion_rings.f_matrix.FMatrix.attempt_number_field_computation`
+        for more details.
 
         Before running an F-matrix solver, the output of this method matches
         that of :meth:`field`. However, the output may change upon successfully
         computing F-symbols. Requesting braid generators triggers a call to
-        :meth:`FMatrix.find_orthogonal_solution`, so the output of this method
+        :meth:`~sage.algebras.fusion_rings.f_matrix.FMatrix.find_orthogonal_solution`,
+        so the output of this method
         may change after such a computation.
 
         By default, the output of methods like :meth:`r_matrix`,
@@ -819,7 +824,9 @@ class FusionRing(WeylCharacterRing):
 
         This is the unnormalized `S`-matrix, denoted `\tilde{s}_{ij}`
         in [BaKi2001]_ . To obtain the normalized `S`-matrix, divide by
-        :meth:`global_q_dimension()` or use :meth:`S_matrix()` with
+        :meth:`~sage.algebras.fusion_rings.fusion_ring.FusionRing.global_q_dimension`
+        or use
+        :meth:`~sage.algebras.fusion_rings.fusion_ring.FusionRing.s_matrix` with
         the option ``unitary=True``.
 
         This is computed using the formula
@@ -1081,12 +1088,12 @@ class FusionRing(WeylCharacterRing):
             return ret
         return self._basecoer(ret)
 
-    def is_multiplicity_free(self):
+    def is_multiplicity_free(self) -> bool:
         r"""
         Return ``True`` if the fusion multiplicities
         :meth:`Nk_ij` are bounded by 1.
 
-        The :class:`FMatrix` is available only for multiplicity free
+        The :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix` is available only for multiplicity free
         instances of :class:`FusionRing`.
 
         EXAMPLES::
@@ -1172,9 +1179,8 @@ class FusionRing(WeylCharacterRing):
             if len(top_row) == 2:
                 m1, m2 = top_row
                 return [[]] if fr.Nk_ij(m1, m2, root) else []
-            else:
-                m1, m2 = top_row[:2]
-                return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
+            m1, m2 = top_row[:2]
+            return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
 
         comp_basis = []
         for top in product((a*a).monomials(), repeat=n_strands//2):
@@ -1185,7 +1191,8 @@ class FusionRing(WeylCharacterRing):
 
     def get_fmatrix(self, *args, **kwargs):
         r"""
-        Construct an :class:`FMatrix` factory to solve the pentagon relations
+        Construct an :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix`
+        factory to solve the pentagon relations
         and organize the resulting F-symbols.
 
         EXAMPLES::
@@ -1293,7 +1300,7 @@ class FusionRing(WeylCharacterRing):
           to be verbose with the computation
 
         For more information on the optional parameters, see
-        :meth:`FMatrix.find_orthogonal_solution`.
+        :meth:`~sage.algebras.fusion_rings.f_matrix.FMatrix.find_orthogonal_solution`.
 
         Given a simple object in the fusion category, here called
         ``fusing_anyon`` allowing the universal R-matrix to act on adjacent
@@ -1414,7 +1421,7 @@ class FusionRing(WeylCharacterRing):
         """
         A class for FusionRing elements.
         """
-        def is_simple_object(self):
+        def is_simple_object(self) -> bool:
             r"""
             Determine whether ``self`` is a simple object of the fusion ring.
 

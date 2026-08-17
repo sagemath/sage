@@ -1,4 +1,3 @@
-# cython: binding=True
 # sage.doctest: needs sage.libs.flint sage.graphs
 """
 Chromatic polynomial
@@ -32,7 +31,7 @@ from memory_allocator cimport MemoryAllocator
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.rings.ring cimport CommutativeRing
+from sage.structure.parent cimport Parent
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -163,7 +162,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
         return R.prod(chromatic_polynomial(g, algorithm='C') for g in G.connected_components_subgraphs())
     x = R.gen()
     if G.is_tree():
-        return x * (x - 1) ** (G.num_verts() - 1)
+        return x * (x - 1) ** (G.n_vertices() - 1)
 
     cdef int nverts, nedges, i, j, u, v, top, bot, num_chords, next_v
     cdef int *queue
@@ -176,8 +175,8 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     cdef mpz_t *coeffs
     G = G.relabel(inplace=False, immutable=False)
     G.remove_multiple_edges()
-    nverts = G.num_verts()
-    nedges = G.num_edges()
+    nverts = G.n_vertices()
+    nedges = G.n_edges()
 
     cdef MemoryAllocator mem = MemoryAllocator()
     queue = <int *> mem.allocarray(nverts, sizeof(int))
@@ -448,7 +447,7 @@ def chromatic_polynomial_with_cache(G, cache=None):
         sage: chromatic_polynomial_with_cache(G)
         x^2 - x
     """
-    cdef CommutativeRing R = PolynomialRing(ZZ, "x", implementation="FLINT")
+    cdef Parent R = PolynomialRing(ZZ, "x", implementation="FLINT")
     cdef Polynomial_integer_dense_flint one = R.one()
     cdef Polynomial_integer_dense_flint zero = R.zero()
     cdef Polynomial_integer_dense_flint x = R.gen()

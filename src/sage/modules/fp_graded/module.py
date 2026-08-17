@@ -175,10 +175,12 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
 
         # Use the coefficients given for the relations and make module elements
         # from them.  Filter out the zero elements, as they are redundant.
-        rels = [v for v in [generator_module(r) for r in relations] if not v.is_zero()]
+        rels = [v for r in relations
+                if not (v := generator_module(r)).is_zero()]
 
         # The free module for the relations of the module.
-        relations_module = arg0.free_graded_module(tuple([r.degree() for r in rels]))
+        relations_module = arg0.free_graded_module(tuple([r.degree()
+                                                          for r in rels]))
 
         # The module we want to model is the cokernel of the following morphism
         j = Hom(relations_module, generator_module)(rels)
@@ -1118,7 +1120,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         underlying algebra is finite-dimensional. Indeed, the current
         implementation only works if the algebra has a ``top_class``
         method, which gets used in
-        :meth:`sage.modules.fp_graded.morphism._resolve_kernel`.
+        ``sage.modules.fp_graded.morphism.FPModuleMorphism._resolve_kernel``.
 
         EXAMPLES::
 

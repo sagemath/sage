@@ -100,9 +100,8 @@ cdef class LinearTensor(ModuleElement):
             sage: lt[1]
             2*x_0 + 5*x_3
         """
-        f = dict([key, value[indices]] for key, value in self._f.items())
         LF = self.parent().linear_functions()
-        return LF(f)
+        return LF({key: value[indices] for key, value in self._f.items()})
 
     def dict(self):
         r"""
@@ -275,7 +274,7 @@ cdef class LinearTensor(ModuleElement):
             (16.0, 16.0) + (1.0, 2.0)*x_0 + (5.0, 6.0)*x_2 + (-5.0, -10.0)*x_3
         """
         result = dict(self._f)
-        for key, coeff in b.dict().iteritems():
+        for key, coeff in b.dict().items():
             result[key] = self._f.get(key, 0) + coeff
         return self.parent()(result)
 
@@ -317,7 +316,7 @@ cdef class LinearTensor(ModuleElement):
             (-16.0, -16.0) + (1.0, 2.0)*x_0 + (-7.0, -8.0)*x_3
         """
         result = dict(self._f)
-        for key, coeff in b.dict().iteritems():
+        for key, coeff in b.dict().items():
             result[key] = self._f.get(key, 0) - coeff
         return self.parent()(result)
 

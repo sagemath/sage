@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Bases for `NCSym`
+Bases for ``NCSym``
 
 AUTHORS:
 
-- Travis Scrimshaw (08-04-2013): Initial version
+- Travis Scrimshaw (08-04-2013): initial version
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
@@ -374,12 +374,15 @@ class NCSymBases(Category_realization_of_parent):
             Return the image of the symmetric function ``f`` in ``self``.
 
             This is performed by converting to the monomial basis and
-            extending the method :meth:`sum_of_partitions` linearly.  This is a
+            extending the method
+            :meth:`~sage.combinat.ncsym.ncsym.SymmetricFunctionsNonCommutingVariables.monomial.sum_of_partitions`
+            linearly.  This is a
             linear map from the symmetric functions to the symmetric functions
             in non-commuting variables that does not preserve the product or
             coproduct structure of the Hopf algebra.
 
-            .. SEEALSO:: :meth:`to_symmetric_function`
+            .. SEEALSO::
+                :meth:`~sage.combinat.ncsym.bases.NCSymBases.ElementMethods.to_symmetric_function`
 
             INPUT:
 
@@ -488,7 +491,7 @@ class NCSymBases(Category_realization_of_parent):
             if self.internal_coproduct_on_basis is not NotImplemented:
                 return Hom(self, tensor([self, self]),
                            ModulesWithBasis(self.base_ring()))(on_basis=self.internal_coproduct_on_basis)
-            elif hasattr(self, "internal_coproduct_by_coercion"):
+            if hasattr(self, "internal_coproduct_by_coercion"):
                 return self.internal_coproduct_by_coercion
 
         def internal_coproduct_by_coercion(self, x):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Lazy format strings
 """
@@ -22,7 +21,7 @@ class LazyFormat(str):
 
     EXAMPLES:
 
-    Under normal circumstances, :class:`Lazyformat` strings behave as usual::
+    Under normal circumstances, :class:`LazyFormat` strings behave as usual::
 
         sage: from sage.misc.lazy_format import LazyFormat
         sage: LazyFormat("Got `%s`; expected a list")%3
