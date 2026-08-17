@@ -386,7 +386,11 @@ class SupersingularModule(HeckeModule_free_module):
 
     The characteristic must not divide the level.
 
-    .. NOTE:: Currently, only level 1 is implemented.
+    .. NOTE::
+
+        Levels 1 and 6 are implemented.  For level 6, the basis consists
+        of isomorphism classes of pairs `(E, C_6)`, where `E` is
+        supersingular and `C_6` is a cyclic subgroup of order 6.
 
     EXAMPLES::
 
@@ -401,10 +405,13 @@ class SupersingularModule(HeckeModule_free_module):
         Traceback (most recent call last):
         ...
         ValueError: the argument level must be coprime to the argument prime
+        sage: S = SupersingularModule(prime=17, level=6)
+        sage: S.dimension()
+        16
         sage: S = SupersingularModule(prime=17, level=5)
         Traceback (most recent call last):
         ...
-        NotImplementedError: supersingular modules of level > 1 not yet implemented
+        NotImplementedError: supersingular modules of levels other than 1 and 6 are not yet implemented
     """
     def __init__(self, prime=2, level=1, base_ring=ZZ):
         r"""
@@ -535,9 +542,11 @@ class SupersingularModule(HeckeModule_free_module):
             sage: S.dimension()
             6950
 
-        .. NOTE::
+        Level 6 is also implemented::
 
-           The case of level > 1 has not yet been implemented.
+            sage: S = SupersingularModule(13, level=6)
+            sage: S.dimension()
+            12
 
         AUTHORS:
 
@@ -625,7 +634,6 @@ class SupersingularModule(HeckeModule_free_module):
         - Iftikhar Burhanuddin -- burhanud@usc.edu
         """
         return 2
-
 
     # ----------------------------------------------------------------
     # Level 6 geometry
@@ -993,36 +1001,35 @@ class SupersingularModule(HeckeModule_free_module):
 
         return tuple(rows)
 
-
     def _level6_supersingular_points(self):
         """
-        Return representatives for the level-6 supersingular basis.
+        Return labels for the level-6 supersingular points.
 
-        Each entry is a tuple
+        A point is labelled by ``(j, orbit_index)``, where ``j`` is
+        the supersingular j-invariant and ``orbit_index`` identifies an
+        automorphism orbit of cyclic subgroups of order 6.
 
-            (j_index, orbit_index, E, C6, raw_orbit_indices),
-
-        representing an isomorphism class of pairs (E, C6).
+        The actual elliptic-curve and subgroup representatives are kept
+        internally in :meth:`_level6_geometry`.
         """
         data = self._level6_geometry()
-        out = []
 
-        for j_index, orbit_index, rep_raw, C in data["basis"]:
-            out.append((
-                j_index,
-                orbit_index,
-                data["models"][j_index],
-                C,
-                data["C6_orbits_by_j"][j_index][orbit_index],
-            ))
+        points = [
+            (data["j_list"][j_index], orbit_index)
+            for j_index, orbit_index, rep_raw, C in data["basis"]
+        ]
 
-        return tuple(out)
+        indices = {
+            point: i
+            for i, point in enumerate(points)
+        }
+
+        return points, indices
 
     @cached_method
     def supersingular_points(self):
         r"""
-        Compute the supersingular j-invariants over the
-        finite field associated to ``self``.
+        Compute the supersingular points associated to ``self``.
 
         INPUT:
 
@@ -1030,11 +1037,15 @@ class SupersingularModule(HeckeModule_free_module):
 
         OUTPUT:
 
-        - list_j, dict_j -- list_j is the list of supersingular
-            j-invariants, dict_j is a dictionary with these
-            j-invariants as keys and their indexes as values. The
-            latter is used to speed up j-invariant look-up. The
-            indexes are based on the order of their *discovery*.
+        A pair ``(points, indices)``.  For level 1, ``points`` is the
+        list of supersingular j-invariants and ``indices`` maps each
+        j-invariant to its index.
+
+        For level 6, a point is labelled by ``(j, orbit_index)``, where
+        ``j`` is a supersingular j-invariant and ``orbit_index`` labels
+        an automorphism orbit of cyclic subgroups of order 6 on a fixed
+        elliptic curve with j-invariant ``j``.  The dictionary
+        ``indices`` maps these labels to basis indices.
 
         EXAMPLES:
 
@@ -1052,6 +1063,15 @@ class SupersingularModule(HeckeModule_free_module):
             sage: S = SupersingularModule(37)
             sage: S.supersingular_points()[0]
             [8, 27*a + 23, 10*a + 20]
+
+        At level 6 the points include the cyclic subgroup structure::
+
+            sage: S = SupersingularModule(5, level=6)
+            sage: points, indices = S.supersingular_points()
+            sage: len(points) == len(indices) == S.dimension()
+            True
+            sage: points
+            [(0, 0), (0, 1), (0, 2), (0, 3)]
 
         AUTHORS:
 
@@ -1169,7 +1189,6 @@ class SupersingularModule(HeckeModule_free_module):
             bnd += dim
             verbose('got dimension = %s; new bound = %s' % (dim, bnd), tm)
         return bnd
-
 
     def _level6_geometry_for_hecke_prime(self, q):
         q = ZZ(q)
@@ -1392,7 +1411,6 @@ class SupersingularModule(HeckeModule_free_module):
         self.__hecke_matrices[q] = T
         return T
 
-
     def hecke_matrix(self, L):
         r"""
         Return the `L^{\text{th}}` Hecke matrix.
@@ -1401,7 +1419,8 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        - ``L`` -- integer; positive
+        - ``L`` -- integer; positive.  At level 6, ``L`` must
+          currently be prime and coprime to ``6 * self.prime()``
 
         OUTPUT: matrix; sparse integer matrix
 
@@ -1430,12 +1449,23 @@ class SupersingularModule(HeckeModule_free_module):
             [1 1 0 1 0 1]
             [1 1 1 0 1 0]
 
+        At level 6, the Hecke operator is computed geometrically from
+        cyclic isogenies of pairs `(E, C_6)`::
+
+            sage: S = SupersingularModule(5, level=6)
+            sage: M = S.hecke_matrix(7)
+            sage: M.nrows()
+            4
+            sage: [sum(M.row(i)) for i in range(M.nrows())]
+            [8, 8, 8, 8]
+
         .. NOTE::
 
-            The first list --- list_j --- returned by the supersingular_points
-            function are the rows *and* column indexes of the above hecke
-            matrices and its ordering should be kept in mind when interpreting
-            these matrices.
+            The rows and columns use the ordering returned by
+            :meth:`supersingular_points`.  At level 1 these are
+            supersingular j-invariants.  At level 6 they are labels
+            ``(j, orbit_index)`` for isomorphism classes of pairs
+            `(E, C_6)`.
 
         AUTHORS:
 
