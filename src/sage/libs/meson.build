@@ -13,7 +13,6 @@ endif
 use_system_ecl = false
 if is_windows
   ecl = disabler()
-  ecl_build_rpath = ''
   conf_data.set('SAGE_ECL_CONFIG', '')
 else
   system_ecl_bin = find_program(
@@ -49,7 +48,6 @@ else
       link_args: ecl_libs.stdout().strip().split(),
       variables: {
         'ecl_bin': system_ecl_bin.full_path(),
-        'ecl_build_rpath': '',
         'ecl_config': system_ecl_config.full_path(),
         'ecl_version': ecl_version,
       },
@@ -60,10 +58,6 @@ else
     ecl = ecl_proj.get_variable('ecl_dep')
   endif
 
-  ecl_build_rpath = ecl.get_variable(
-    internal: 'ecl_build_rpath',
-    default_value: '',
-  )
   conf_data.set(
     'SAGE_ECL_CONFIG',
     ecl.get_variable(internal: 'ecl_config'),
@@ -220,10 +214,8 @@ dependencies = [py_dep, cysignals, gc, gmp]
 
 foreach name, pyx : extension_data
   deps = dependencies
-  extension_build_rpath = ''
   if name == 'ecl'
     deps += [ecl, maxima]
-    extension_build_rpath = ecl_build_rpath
   elif name == 'meataxe'
     deps += [mtx]
   elif name == 'homfly'
@@ -237,7 +229,6 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/libs',
     install: true,
-    build_rpath: extension_build_rpath,
     include_directories: [inc_cpython, inc_rings],
     dependencies: deps,
   )

@@ -4,6 +4,9 @@ project('maxima', 'c',
 
 mod = import('unstable-external_project')
 
+# Resolve ECL through Sage's top-level dependency override.  The top level can
+# reject a system ECL that has no matching ecl-config and select the fallback;
+# looking up the executable independently here would then mix the two providers.
 ecl_dep = dependency(
   'ecl',
   version: '>=26.5.5',
@@ -27,7 +30,7 @@ staged_prefix = meson.current_build_dir() + '/dist' + get_option('prefix')
 ecl_side_modules_subdir = 'lib' / ('ecl-' + ecl_version)
 ecl_side_modules_dir = get_option('prefix') / ecl_side_modules_subdir
 
-proj = mod.add_project('sage-maxima-configure',
+proj = mod.add_project('configure',
   configure_options : [
                         '--enable-ecl',
                         '--with-ecl=' + ecl,

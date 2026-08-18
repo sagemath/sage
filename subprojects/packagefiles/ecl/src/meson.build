@@ -18,10 +18,7 @@ ecl_env.append(
 ecl_env.append('CFLAGS', '-DECLDIR=\"' + ecldir + '\"', separator : ' ')
 ecl_env.set('ECL_SIDE_MODULES_PATH', ecl_side_modules_dir)
 
-# The external_project module only applies env to configure, not to the later
-# make invocation where side-modules.lsp is compiled.  The wrapper persists
-# ECL_SIDE_MODULES_PATH in the generated Makefile.
-proj = mod.add_project('sage-ecl-configure',
+proj = mod.add_project('configure',
   configure_options : [
                         # ecl embeds the include path, so we have to set it to the *installed* path
                         # workaround for https://gitlab.com/embeddable-common-lisp/ecl/-/issues/780
@@ -47,18 +44,17 @@ configure_file(
 )
 
 ecl_dep = proj.dependency('ecl')
-# The external_project dependency does not add a managed build RPATH.
-# Consumers use ecl_build_rpath on targets that link against ECL.
+# Carry the staged library search path on the dependency itself.
 # https://github.com/mesonbuild/meson/issues/12970
-ecl_generated_headers_dep = declare_dependency(
+ecl_rpath_dep = declare_dependency(
+  link_args: ['-Wl,-rpath,' + libpath, '-L' + libpath],
   include_directories: [include_directories('build')],
 )
 ecl_dep = declare_dependency(
   version: ecl_version,
-  dependencies : [ecl_dep, ecl_generated_headers_dep],
+  dependencies : [ecl_dep, ecl_rpath_dep],
   variables: {
     'ecl_bin' : staged_prefix / get_option('bindir') / 'ecl',
-    'ecl_build_rpath' : libpath,
     'ecl_config' : meson.current_build_dir() / 'sage-ecl-config',
     'ecldir' : ecldir,
     'ecl_version' : ecl_version,
