@@ -82,6 +82,36 @@ Here is how we create the game in Sage::
     Normal Form Game with the following utilities: {(0, 0): [3, 2],
      (0, 1): [1, 1], (1, 0): [0, 0], (1, 1): [2, 3]}
 
+The game can be drawn the way the strategic form of a game is usually
+written down, as a table whose rows are Amy's choices and whose columns are
+Bob's, with the utilities of a pair of choices written in its cell.  Each
+player has a color, Amy red and Bob blue, and it is used for their name,
+for their choices and for their utility in every cell::
+
+    sage: battle_of_the_sexes.plot(player_labels=['Amy', 'Bob'],                        # needs sage.plot
+    ....:                          strategy_labels=[['video games', 'movie'],
+    ....:                                           ['video games', 'movie']],
+    ....:                          best_responses=True, pure_nash=True)
+    Graphics object consisting of 28 graphics primitives
+
+.. PLOT::
+
+    A = matrix([[3, 1], [0, 2]])
+    B = matrix([[2, 1], [0, 3]])
+    battle_of_the_sexes = NormalFormGame([A, B])
+    choices = ['video games', 'movie']
+    payoffs = battle_of_the_sexes.plot(player_labels=['Amy', 'Bob'],
+                                       strategy_labels=[choices, choices],
+                                       best_responses=True, pure_nash=True)
+    sphinx_plot(payoffs)
+
+An underlined utility is one a player gets by doing the best they can
+against what the other player is doing, so a shaded cell, in which both
+utilities are underlined, is one that neither of them wants to move away
+from: exactly the two situations described above.  See
+:meth:`~sage.game_theory.normal_form_game.NormalFormGame.plot` for games
+with more players, which are drawn as pivot tables.
+
 To obtain the Nash equilibria we run the ``obtain_nash()`` method. In the
 first few examples, we will use the 'support enumeration' algorithm.
 A discussion about the different algorithms will be given later::
@@ -679,6 +709,58 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('pygambit', ['Game', 'read_nfg', 'catalog'], feature=pygambit())
 lazy_import('pygambit', 'nash', 'gambit_nash', feature=pygambit())
 
+# The sizes :meth:`NormalFormGame.plot` draws a payoff table with, in the data
+# coordinates of the picture, where one row of the table is one unit tall: the
+# width one character of a label takes at the reference font size, the blank
+# space left around the widest label of a column, how many inches of figure a
+# cell is given, and the size in inches past which the figure does not grow any
+# further.
+_CHAR_WIDTH = 0.183
+_CELL_PADDING = 0.7
+_INCHES_PER_CELL = 0.5
+_MAX_FIGSIZE = 30
+
+# The characters of a label that :func:`_label_width` counts as half a
+# character wide, the rest of them being about as wide as a digit.
+_NARROW_CHARACTERS = " ,.:;'!|"
+
+# How heavily :meth:`NormalFormGame.plot` rules a payoff table: the weight of
+# its border, and the weight the rules between the strategies of a player lose
+# with every player nested inside them.
+_OUTER_RULE = 2
+_RULE_STEP = 0.5
+
+# The color :meth:`NormalFormGame.plot` shades a pure Nash equilibrium with.
+# The players own the colors of ``_PLAYER_COLORS``, so it is none of those.
+_NASH_COLOR = 'lightyellow'
+
+
+def _label_width(label):
+    r"""
+    Return the width :meth:`NormalFormGame.plot` draws ``label`` with, in the
+    data coordinates of its picture.
+
+    The font a plot is drawn with is proportional, so this is an estimate: a
+    digit, a letter and the like are taken to be ``_CHAR_WIDTH`` wide and the
+    punctuation of ``_NARROW_CHARACTERS`` half of that, which is close enough
+    for laying out payoffs and centering them in their cell.
+
+    EXAMPLES::
+
+        sage: from sage.game_theory.normal_form_game import _label_width
+        sage: _label_width('') == 0
+        True
+        sage: _label_width('12') == 2 * _label_width('1')
+        True
+
+    A comma and a space together are as wide as a single digit::
+
+        sage: _label_width('3, 4') == 3 * _label_width('3')
+        True
+    """
+    return _CHAR_WIDTH * sum(0.5 if character in _NARROW_CHARACTERS else 1
+                             for character in label)
+
 
 class NormalFormGame(SageObject, MutableMapping):
     r"""
@@ -1000,6 +1082,475 @@ class NormalFormGame(SageObject, MutableMapping):
             M1, M2 = self.payoff_matrices()
             return r"\left(%s, %s\right)" % (M1._latex_(), M2._latex_())
         return latex(str(self))
+
+    def plot(self, best_responses=False, pure_nash=False, player_labels=None,
+             strategy_labels=None, **kwargs):
+        r"""
+        Plot the game as a payoff table.
+
+        The table is drawn with Sage's own plotting and needs nothing beyond
+        Sage.  The first player owns the rows of the table and the second its
+        columns, so a two player game comes out as the usual bimatrix, with the
+        payoffs of a strategy profile written in its cell.  Each player has a
+        color -- the first red, the second blue, then green, orange, purple and
+        brown, cycling for a game with more players than that -- which is used
+        for their name, for their strategies and for their payoff in every
+        cell, so that a column of the table can be read off at a glance.
+
+        A game with more than two players is drawn as a pivot table: every
+        player after the first is nested inside the columns, the second player
+        outermost, so that each of their strategies splits every column of the
+        table again.  The whole game is therefore visible at once, and the
+        rules between the columns say how deep the split is: the boundary
+        between two strategies of an outer player is drawn more heavily than
+        one between the strategies of a player nested inside it.
+
+        The figure grows with the table, up to a point, so that the cells keep
+        their size however large the game is; past that size the labels shrink
+        instead.  Both can be overridden with the ``figsize`` and ``fontsize``
+        keywords.  The result is a :class:`~sage.plot.graphics.Graphics`
+        object, so it composes with the rest of Sage's plotting.
+
+        INPUT:
+
+        - ``best_responses`` -- boolean (default: ``False``); whether to
+          underline, in that player's color, every payoff a player receives by
+          playing a best response to what the other players play.  All the
+          strategies tying for the best payoff are underlined.  A cell whose
+          payoffs are all underlined is a pure Nash equilibrium
+
+        - ``pure_nash`` -- boolean (default: ``False``); whether to shade the
+          cells that are pure Nash equilibria
+
+        - ``player_labels`` -- list (default: ``None``); a name for each
+          player, in the order the game lists them.  By default the players are
+          named ``'Player 1'``, ``'Player 2'`` and so on
+
+        - ``strategy_labels`` -- list (default: ``None``); a list of names for
+          each player's strategies, in the order the game lists the players.
+          By default a strategy is named by its index, so that the labels of a
+          cell are the key it is indexed by, as in ``game[0, 1]``
+
+        - ``**kwargs`` -- passed on to the resulting
+          :class:`~sage.plot.graphics.Graphics`, so any option of
+          :meth:`~sage.plot.graphics.Graphics.show` can be given here; besides
+          ``figsize``, ``fontsize`` sets the size the labels are drawn at
+
+        OUTPUT: a :class:`~sage.plot.graphics.Graphics` object
+
+        EXAMPLES:
+
+        The prisoner's dilemma, drawn as the bimatrix it is::
+
+            sage: # needs sage.plot
+            sage: from sage.plot.graphics import Graphics
+            sage: A = matrix([[2, 5], [0, 4]])
+            sage: B = matrix([[2, 0], [5, 4]])
+            sage: prisoners_dilemma = NormalFormGame([A, B])
+            sage: p = prisoners_dilemma.plot(); p
+            Graphics object consisting of 22 graphics primitives
+            sage: isinstance(p, Graphics)
+            True
+
+        Both players are named beside the table, the first down its side and
+        the second above its columns::
+
+            sage: # needs sage.plot
+            sage: sorted(t.string for t in p
+            ....:        if hasattr(t, 'string') and 'Player' in t.string)
+            ['Player 1', 'Player 2']
+
+        Everything written in the table belongs to one of the two players, so
+        it is drawn in red or in blue::
+
+            sage: # needs sage.plot
+            sage: sorted(set(t.options()['rgbcolor'] for t in p
+            ....:            if hasattr(t, 'string')))
+            [(0.0, 0.0, 1.0), (1.0, 0.0, 0.0)]
+
+        With ``best_responses`` every payoff a player gets by playing a best
+        response is underlined in that player's color.  Here there are four
+        such payoffs, two of them the pair in the single pure Nash
+        equilibrium::
+
+            sage: # needs sage.plot
+            sage: from sage.plot.line import Line
+            sage: underlined = [q for q in
+            ....:               prisoners_dilemma.plot(best_responses=True)
+            ....:               if isinstance(q, Line)
+            ....:               and q.options()['rgbcolor'] != 'black']
+            sage: len(underlined)
+            4
+            sage: sorted(set(q.options()['rgbcolor'] for q in underlined))
+            ['blue', 'red']
+
+        With ``pure_nash`` that equilibrium is shaded.  It is the cell in the
+        top left, where both players play their first strategy::
+
+            sage: # needs sage.plot
+            sage: from sage.plot.polygon import Polygon
+            sage: shaded = [q for q in prisoners_dilemma.plot(pure_nash=True)
+            ....:           if isinstance(q, Polygon)]
+            sage: len(shaded)
+            1
+            sage: shaded[0].ydata   # the top row of the table
+            [0.0, 0.0, -1.0, -1.0]
+            sage: shaded[0].xdata[0]   # its first column
+            0.0
+
+        Since the players and their strategies have no names of their own,
+        they are named after their indices, but any names can be given::
+
+            sage: # needs sage.plot
+            sage: A = matrix([[3, 1], [0, 2]])
+            sage: B = matrix([[2, 1], [0, 3]])
+            sage: battle_of_the_sexes = NormalFormGame([A, B])
+            sage: named = battle_of_the_sexes.plot(
+            ....:     player_labels=['Amy', 'Bob'],
+            ....:     strategy_labels=[['video games', 'movie'],
+            ....:                      ['video games', 'movie']])
+            sage: sorted(set(t.string for t in named
+            ....:            if hasattr(t, 'string') and not t.string[0].isdigit()))
+            ['Amy', 'Bob', 'movie', 'video games']
+
+        A game with three players is drawn as a pivot table, the third player
+        nested inside the columns of the second, and its payoffs are written in
+        three colors::
+
+            sage: # needs sage.plot
+            sage: import numpy as np
+            sage: A = np.array([[[3, 1], [2, 3]], [[9, 3], [8, 2]]])
+            sage: B = np.array([[[1, 5], [6, 5]], [[7, 2], [4, 6]]])
+            sage: C = np.array([[[4, 9], [5, 8]], [[9, 3], [6, 4]]])
+            sage: three = NormalFormGame([A, B, C])
+            sage: three.plot()
+            Graphics object consisting of 46 graphics primitives
+            sage: from sage.plot.colors import Color
+            sage: written = set(t.options()['rgbcolor'] for t in three.plot()
+            ....:               if hasattr(t, 'string'))
+            sage: sorted(Color(c).html_color() for c in written)
+            ['#0000ff', '#008000', '#ff0000']
+
+        It has two pure Nash equilibria, so two of its eight cells are
+        shaded::
+
+            sage: # needs sage.plot
+            sage: len([q for q in three.plot(pure_nash=True)
+            ....:      if isinstance(q, Polygon)])
+            2
+
+        TESTS:
+
+        The table is drawn to scale with the axes off::
+
+            sage: # needs sage.plot
+            sage: p.aspect_ratio()
+            1.0
+            sage: p.axes()
+            False
+
+        The figure grows with the game, and a ``figsize`` given by hand wins::
+
+            sage: # needs sage.plot
+            sage: (three.plot()._extra_kwds['figsize'][0]
+            ....:  > prisoners_dilemma.plot()._extra_kwds['figsize'][0])
+            True
+            sage: prisoners_dilemma.plot(figsize=4)._extra_kwds['figsize']
+            4
+
+        A game whose utilities have not all been set cannot be drawn::
+
+            sage: # needs sage.plot
+            sage: g = NormalFormGame()
+            sage: g.add_player(2)
+            sage: g.add_player(2)
+            sage: g.plot()
+            Traceback (most recent call last):
+            ...
+            ValueError: utilities have not been populated; ...
+
+        Nor can a game with no players at all::
+
+            sage: NormalFormGame().plot()                                       # needs sage.plot
+            Traceback (most recent call last):
+            ...
+            ValueError: a game with no players cannot be plotted
+
+        The labels given by hand must match the game::
+
+            sage: # needs sage.plot
+            sage: prisoners_dilemma.plot(player_labels=['Amy'])
+            Traceback (most recent call last):
+            ...
+            ValueError: there must be one player label per player
+            sage: prisoners_dilemma.plot(strategy_labels=[['a', 'b', 'c'],
+            ....:                                         ['a', 'b']])
+            Traceback (most recent call last):
+            ...
+            ValueError: there must be one strategy label per strategy of every player
+
+        A game with a single player is a column of payoffs::
+
+            sage: # needs sage.plot
+            sage: g = NormalFormGame()
+            sage: g.add_player(3)
+            sage: for s in range(3):
+            ....:     g[(s,)] = [s * s]
+            sage: g.plot()
+            Graphics object consisting of 14 graphics primitives
+        """
+        from sage.plot.graphics import Graphics
+        from sage.plot.line import line2d
+        from sage.plot.polygon import polygon2d
+        from sage.plot.text import text
+        # The two game classes give their players the same colors.
+        from sage.game_theory.extensive_form_game import _PLAYER_COLORS
+
+        number_of_players = len(self.players)
+        if not number_of_players:
+            raise ValueError("a game with no players cannot be plotted")
+        if not self._is_complete():
+            raise ValueError(
+                "utilities have not been populated; set a payoff value for "
+                "every strategy profile, e.g. game[0, 1][0] = 3, or "
+                "construct the game from payoff matrices via "
+                "NormalFormGame([A, B])"
+            )
+
+        shape = [p.num_strategies for p in self.players]
+        if player_labels is None:
+            player_labels = ["Player {0}".format(i + 1)
+                             for i in range(number_of_players)]
+        elif len(player_labels) != number_of_players:
+            raise ValueError("there must be one player label per player")
+        player_labels = [str(label) for label in player_labels]
+        if strategy_labels is None:
+            strategy_labels = [[str(s) for s in range(k)] for k in shape]
+        elif [len(labels) for labels in strategy_labels] != shape:
+            raise ValueError("there must be one strategy label per strategy "
+                             "of every player")
+        strategy_labels = [[str(label) for label in labels]
+                           for labels in strategy_labels]
+
+        color_of_player = [_PLAYER_COLORS[i % len(_PLAYER_COLORS)]
+                           for i in range(number_of_players)]
+
+        # The first player owns the rows and every other player a band of
+        # column headers, the second player's outermost.  A two player game
+        # therefore comes out as the usual bimatrix, and every further player
+        # splits each of its columns again.
+        rows = shape[0]
+        column_profiles = list(product(*(range(k) for k in shape[1:])))
+        columns = len(column_profiles)
+        bands = number_of_players - 1
+
+        # The payoffs of a profile are written out as one string per player, so
+        # that each can be drawn in its player's color, the last one carrying no
+        # comma.  A cell is made wide enough for the longest of them.
+        pieces_of = {}
+        for row in range(rows):
+            for column_profile in column_profiles:
+                profile = (row,) + column_profile
+                payoffs = [str(payoff) for payoff in self.utilities[profile]]
+                pieces_of[profile] = ([payoff + ", " for payoff in payoffs[:-1]]
+                                      + payoffs[-1:])
+
+        def width_of(labels):
+            return _CELL_PADDING + max(_label_width(label) for label in labels)
+
+        cell_width = width_of(["".join(pieces) for pieces in pieces_of.values()]
+                              + [label for labels in strategy_labels[1:]
+                                 for label in labels])
+        # The corner of the table holds the name of every column player, beside
+        # its band of headers, and the strategies of the row player below them.
+        header_width = width_of(strategy_labels[0] + player_labels[1:])
+
+        best = self._pure_best_responses() if best_responses or pure_nash else set()
+
+        plot = Graphics()
+
+        # Shade the cells that are pure Nash equilibria, underneath the rules.
+        if pure_nash:
+            for row in range(rows):
+                for column, column_profile in enumerate(column_profiles):
+                    profile = (row,) + column_profile
+                    if any((profile, player) not in best
+                           for player in range(number_of_players)):
+                        continue
+                    left, right = column * cell_width, (column + 1) * cell_width
+                    plot += polygon2d([(left, -row), (right, -row),
+                                       (right, -row - 1), (left, -row - 1)],
+                                      color=_NASH_COLOR, zorder=1)
+
+        # Rule the table.  Every horizontal rule runs the whole way across, but
+        # a vertical one only reaches up as far as the band of the player whose
+        # strategies it separates: above that it would cut a header in two.
+        table_left, table_right = -header_width, columns * cell_width
+        for y in range(-rows, bands + 1):
+            weight = _OUTER_RULE if y in (-rows, 0, bands) else _RULE_STEP
+            plot += line2d([(table_left, y), (table_right, y)],
+                           color='black', thickness=weight, zorder=3)
+        for column in range(columns + 1):
+            if column in (0, columns):
+                depth, weight = 0, _OUTER_RULE
+            else:
+                # The rule is as heavy as the outermost player it separates.
+                depth = min(band for band in range(bands)
+                            if column_profiles[column - 1][band]
+                            != column_profiles[column][band])
+                weight = max(_RULE_STEP, _OUTER_RULE - depth * _RULE_STEP)
+            plot += line2d([(column * cell_width, bands - depth),
+                            (column * cell_width, -rows)],
+                           color='black', thickness=weight, zorder=3)
+        plot += line2d([(table_left, bands), (table_left, -rows)],
+                       color='black', thickness=_OUTER_RULE, zorder=3)
+
+        # The figure grows with the table so that the cells keep their size
+        # however large the game is; past the cap the labels shrink instead.
+        width = _INCHES_PER_CELL * (header_width + columns * cell_width + 1)
+        height = _INCHES_PER_CELL * (rows + bands + 1)
+        shrink = min(1, _MAX_FIGSIZE / max(width, height))
+        kwargs.setdefault('figsize', (width * shrink, height * shrink))
+        fontsize = kwargs.pop('fontsize', max(5, 10 * shrink))
+
+        def draw(string, xy, player, **options):
+            return text(string, xy, color=color_of_player[player],
+                        fontsize=fontsize, zorder=5, **options)
+
+        # The row player is named down the side of the table, and every column
+        # player in the corner beside its own band of headers.
+        plot += draw(player_labels[0], (table_left - 0.45, -rows / 2), 0,
+                     rotation=90)
+        for player in range(1, number_of_players):
+            depth = player - 1
+            plot += draw(player_labels[player],
+                         (table_left / 2, bands - depth - 0.5), player)
+            # The column profiles run in lexicographic order, so this player's
+            # strategy is constant on blocks of as many columns as the players
+            # nested inside it have profiles between them.
+            block = columns
+            for k in shape[1:player + 1]:
+                block //= k
+            for start in range(0, columns, block):
+                strategy = column_profiles[start][depth]
+                plot += draw(strategy_labels[player][strategy],
+                             ((start + block / 2) * cell_width,
+                              bands - depth - 0.5), player)
+        for row in range(rows):
+            plot += draw(strategy_labels[0][row],
+                         (table_left / 2, -row - 0.5), 0)
+
+        # The payoffs of a cell are written out beside one another, each in its
+        # player's color, and a best response is underlined in that color too.
+        for row in range(rows):
+            for column, column_profile in enumerate(column_profiles):
+                profile = (row,) + column_profile
+                pieces = pieces_of[profile]
+                written = "".join(pieces)
+                left = (column + 0.5) * cell_width - _label_width(written) / 2
+                y = -row - 0.5
+                for player, piece in enumerate(pieces):
+                    plot += draw(piece, (left, y), player,
+                                 horizontal_alignment='left')
+                    if best_responses and (profile, player) in best:
+                        # The comma of a piece is not part of the payoff.
+                        payoff = _label_width(piece.rstrip(", "))
+                        plot += line2d([(left, y - 0.25),
+                                        (left + payoff, y - 0.25)],
+                                       color=color_of_player[player],
+                                       thickness=1, zorder=5)
+                    left += _label_width(piece)
+
+        # The labels drawn outside the table would otherwise hang over its edge.
+        plot.axes(kwargs.get('axes', False))
+        plot.set_aspect_ratio(1)
+        plot.set_axes_range(table_left - 0.9, table_right + 0.3,
+                            -rows - 0.3, bands + 0.3)
+        plot._extra_kwds.update(kwargs)
+        return plot
+
+    def _pure_best_responses(self):
+        r"""
+        Return the pairs ``(profile, player)`` of the game at which ``player``
+        is playing a best response to what the other players play in
+        ``profile``.
+
+        A strategy profile is a pure Nash equilibrium exactly when every player
+        of the game is playing a best response at it, so this describes the
+        pure equilibria as well.  Every strategy tying for the best payoff is
+        returned, so a player may have more than one best response to the same
+        choice of their opponents.
+
+        This is used by :meth:`plot` to underline best responses and to shade
+        pure Nash equilibria.
+
+        EXAMPLES:
+
+        In the prisoner's dilemma the first strategy is dominant for both
+        players, so each of them is playing a best response wherever they play
+        it, and the only profile at which both of them are -- hence the only
+        pure Nash equilibrium -- is the one where both do::
+
+            sage: A = matrix([[2, 5], [0, 4]])
+            sage: B = matrix([[2, 0], [5, 4]])
+            sage: prisoners_dilemma = NormalFormGame([A, B])
+            sage: sorted(prisoners_dilemma._pure_best_responses())
+            [((0, 0), 0), ((0, 0), 1), ((0, 1), 0), ((1, 0), 1)]
+
+        Both players would nevertheless rather be at ``(1, 1)``, which is what
+        makes the game a dilemma::
+
+            sage: prisoners_dilemma[0, 0], prisoners_dilemma[1, 1]
+            ([2, 2], [4, 4])
+
+        Matching pennies has no pure Nash equilibrium: at every profile exactly
+        one of the two players would rather have chosen otherwise::
+
+            sage: A = matrix([[1, -1], [-1, 1]])
+            sage: matching_pennies = NormalFormGame([A])
+            sage: best = matching_pennies._pure_best_responses()
+            sage: [profile for profile in matching_pennies
+            ....:  if all((profile, player) in best for player in range(2))]
+            []
+
+        Ties are all counted, so in a game where a player is indifferent both
+        of their strategies are best responses::
+
+            sage: A = matrix([[1, 1], [0, 0]])
+            sage: B = matrix([[3, 3], [3, 3]])
+            sage: g = NormalFormGame([A, B])
+            sage: sorted(profile for profile, player
+            ....:        in g._pure_best_responses() if player == 1)
+            [(0, 0), (0, 1), (1, 0), (1, 1)]
+
+        TESTS:
+
+        It works for games with more than two players::
+
+            sage: import numpy as np
+            sage: A = np.array([[[3, 1], [2, 3]], [[9, 3], [8, 2]]])
+            sage: B = np.array([[[1, 5], [6, 5]], [[7, 2], [4, 6]]])
+            sage: C = np.array([[[4, 9], [5, 8]], [[9, 3], [6, 4]]])
+            sage: g = NormalFormGame([A, B, C])
+            sage: best = g._pure_best_responses()
+            sage: [profile for profile in sorted(g)
+            ....:  if all((profile, player) in best for player in range(3))]
+            [(0, 1, 1), (1, 0, 0)]
+        """
+        best = set()
+        for player in range(len(self.players)):
+            # Gather the profiles the other players cannot tell apart, and mark
+            # those of them at which this player does as well as they can.
+            grouped = {}
+            for profile in self.utilities:
+                others = profile[:player] + profile[player + 1:]
+                grouped.setdefault(others, []).append(profile)
+            for profiles in grouped.values():
+                highest = max(self.utilities[profile][player]
+                              for profile in profiles)
+                best.update((profile, player) for profile in profiles
+                            if self.utilities[profile][player] == highest)
+        return best
 
     def _n_matrix_game(self, matrices):
         r"""
