@@ -569,7 +569,6 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         sage: w = v.extensions(L); w
         [[ (x - 1)-adic valuation, v(y + 1) = 1 ]-adic valuation,
          [ (x - 1)-adic valuation, v(y - 1) = 1 ]-adic valuation]
-
     """
     def __init__(self, parent, approximant, G, approximants):
         r"""
