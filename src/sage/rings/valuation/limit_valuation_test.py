@@ -22,7 +22,7 @@ def test_equivalent_approximations_have_the_same_limit():
     a = gauss.augmentation(x, 1)
     b = gauss.augmentation(x + 2, 1)
     assert a is not b
-    assert a >= b and b >= a
+    assert a >= b >= a
     assert LimitValuation(a, x) is LimitValuation(b, x)
 
     G = x**2 + 1
@@ -149,7 +149,7 @@ def test_unchecked_composite_polynomial_is_refined_on_demand():
     current = LimitValuation(approximant, G)
     assert unchecked._G == G
     assert unchecked is not current
-    assert unchecked >= current and current >= unchecked
+    assert unchecked >= current >= unchecked
     assert unchecked._G == current._G
 
 
@@ -192,7 +192,7 @@ def test_legacy_keys_with_shared_support_compare_by_branch():
             (1, i, 0), (approximant, left_polynomial), {})
         right = LimitValuation.get_object(
             (1, i, 1), (approximant, right_polynomial), {})
-        assert left >= right and right >= left
+        assert left >= right >= left
         assert left._G == right._G == support
         limits.append(left)
 
