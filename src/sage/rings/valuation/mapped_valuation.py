@@ -592,20 +592,10 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         # this valuation nicely, dropping any unnecessary information
         self._approximants = approximants
 
-        from sage.rings.infinity import infinity
-        if approximant.mu() is infinity:
-            # Preserve an already-infinite approximant. The public
-            # LimitValuation factory canonicalizes it to its finite base
-            # valuation, but _repr_ below needs to locate the original
-            # approximant among self._approximants.
-            from .limit_valuation import MacLaneLimitValuation
-            from .valuation_space import DiscretePseudoValuationSpace
-            limit_parent = DiscretePseudoValuationSpace(approximant.domain())
-            limit = limit_parent.__make_element_class__(MacLaneLimitValuation)(
-                limit_parent, approximant, G)
-        else:
-            from .limit_valuation import LimitValuation
-            limit = LimitValuation(approximant, G)
+        from .limit_valuation import LimitValuation
+        # The outer factory canonicalized the approximant, and G defines a
+        # field extension, so no work remains for the inner factory.
+        limit = LimitValuation(approximant, G, check=False)
         FiniteExtensionFromInfiniteValuation.__init__(self, parent, limit)
 
     def _repr_(self):
