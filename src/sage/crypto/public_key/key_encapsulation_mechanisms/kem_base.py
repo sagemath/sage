@@ -7,7 +7,7 @@ from sage.structure.sage_object import SageObject
 class KEMBase(SageObject):
     """
     Abstract base class for Key Encapsulation Mechanisms.
-    
+
     Subclasses must implement:
     - keygen() -> (public_key, secret_key)
     - encaps(public_key) -> (ciphertext, shared_secret)

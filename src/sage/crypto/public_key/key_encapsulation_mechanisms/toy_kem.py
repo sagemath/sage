@@ -98,7 +98,6 @@ class ToyKEM(KEMBase):
 
     def decaps(self, secret_key, ciphertext):
         """Decapsulate to recover shared secret."""
-        s = secret_key
         u_coeffs, v_coeffs = ciphertext
 
         u_polys = [self._poly_from_coeffs(u_comp) for u_comp in u_coeffs]
