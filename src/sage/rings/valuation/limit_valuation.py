@@ -119,6 +119,19 @@ class LimitValuationFactory(UniqueFactory):
         Equivalent descriptions of the same limit give the same key::
 
             sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: w = valuations.LimitValuation(v, x)  # indirect doctest
+            sage: v = v.augmentation(x, infinity)
+            sage: u = valuations.LimitValuation(v, x)
+            sage: u == w
+            True
+            sage: u is w
+            True
+            sage: valuations.LimitValuation(v._base_valuation, 2*x) is w
+            True
+            sage: valuations.LimitValuation(v, x*(x + 1)) is w
+            True
+
             sage: vK = QQ.valuation(2)
             sage: v = GaussValuation(R, vK)
             sage: G = x^2 + 1
@@ -127,6 +140,16 @@ class LimitValuationFactory(UniqueFactory):
             sage: w is valuations.LimitValuation(a, 2*G)
             True
             sage: w is valuations.LimitValuation(a.augmentation(G, infinity), G)
+            True
+
+        A reducible defining polynomial is replaced by the irreducible factor
+        selected by ``base_valuation``::
+
+            sage: F = (x^2 + 7) * (x^2 + 9)
+            sage: G = x^2 + 7
+            sage: V = vK.mac_lane_approximants(F, require_incomparability=True)  # needs sage.geometry.polyhedron
+            sage: w = valuations.LimitValuation(V[1], F)                        # needs sage.geometry.polyhedron
+            sage: w is valuations.LimitValuation(V[1], G)                       # needs sage.geometry.polyhedron
             True
 
         The defining polynomial must be nonzero and nonconstant::
@@ -142,7 +165,14 @@ class LimitValuationFactory(UniqueFactory):
 
         The parameters must single out one limit valuation::
 
+            sage: bad = next(a for a in V if valuations.LimitValuation(a, F)(G) != oo)  # needs sage.geometry.polyhedron
+            sage: valuations.LimitValuation(bad, G)                              # needs sage.geometry.polyhedron
+            Traceback (most recent call last):
+            ...
+            ValueError: base_valuation must single out one irreducible factor of G
+
             sage: v = GaussValuation(R, QQ.valuation(5))
+            sage: G = x^2 + 1
             sage: valuations.LimitValuation(v, G)
             Traceback (most recent call last):
             ...
@@ -611,7 +641,6 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: u._improve_approximation()                                            # needs sage.rings.number_field
             sage: u._approximation                                                      # needs sage.rings.number_field
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2, v(t^2 + 1) = +Infinity ]
-
         """
         from sage.rings.infinity import infinity
         if self._approximation(self._G) is infinity:
@@ -840,7 +869,6 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             ....:         if valuations.LimitValuation(w, F)(G) != oo: continue
             ....:         assert (valuations.LimitValuation(v, F) >= valuations.LimitValuation(w, G)) == (v == w)
             ....:         assert (valuations.LimitValuation(w, G) >= valuations.LimitValuation(v, F)) == (v == w)
-
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
