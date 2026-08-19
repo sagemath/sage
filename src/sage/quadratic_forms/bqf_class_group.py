@@ -756,6 +756,7 @@ class BQFClassGroupQuotientMorphism(Morphism):
         Compute a preimage of a form class `elt` under this morphism.
 
         EXAMPLES::
+
             sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
             sage: G = BQFClassGroup(-4*117117)
             sage: H = BQFClassGroup(-4*77)
