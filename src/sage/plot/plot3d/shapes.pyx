@@ -379,7 +379,9 @@ cdef class Cylinder(ParametricSurface):
 
     - ``closed`` -- whether or not to include the ends (default: ``True``)
 
-    - ``**kwds`` -- passed to the :class:`ParametricSurface` constructor
+    - ``**kwds`` -- passed to the
+      :class:`~sage.plot.plot3d.parametric_surface.ParametricSurface`
+      constructor
 
     EXAMPLES::
 

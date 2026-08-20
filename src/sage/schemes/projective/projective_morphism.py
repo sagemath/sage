@@ -1106,7 +1106,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         - ``n`` -- tuple of nonnegative integers; if ``n`` is an integer, then
           the two values of the tuple are assumed to be the same
 
-        OUTPUT: :class:`SchemeMorphism_polynomial_affine_space`
+        OUTPUT: :class:`~sage.schemes.affine.affine_morphism.SchemeMorphism_polynomial_affine_space`
 
         EXAMPLES::
 

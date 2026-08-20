@@ -429,7 +429,8 @@ def _non_surjective(E, patience=100):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` (over a number field)
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     - ``A`` -- integer; a bound on the number of traces of Frobenius to use
       while trying to prove surjectivity
@@ -502,7 +503,8 @@ def Frobenius_filter(E, L, patience=100):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     - ``L`` -- list of prime numbers
 
@@ -595,7 +597,8 @@ def _exceptionals(E, L, patience=1000):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     - ``L`` -- list of prime numbers
 
@@ -744,7 +747,8 @@ def _over_numberfield(E):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     OUTPUT:
 
@@ -825,7 +829,8 @@ def _semistable_reducible_primes(E, verbose=False):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     OUTPUT:
 
@@ -1001,7 +1006,9 @@ def _possible_normalizers(E, SA):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field K
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
+      over a number field `K`
 
     - ``SA`` -- list of primes of K
 

@@ -159,7 +159,7 @@ from . import parametric_plot3d
 lazy_import("sage.functions.trig", ["cos", "sin"])
 
 
-class _Coordinates:
+class Coordinates:
     """
     This abstract class encapsulates a new coordinate system for plotting.
     Sub-classes must implement the :meth:`transform` method which, given
@@ -180,8 +180,8 @@ class _Coordinates:
 
         TESTS:
 
-        Because the base :class:`_Coordinates` class automatically checks the
-        initializing variables with the transform method, :class:`_Coordinates`
+        Because the base ``Coordinates`` class automatically checks the
+        initializing variables with the transform method, ``Coordinates``
         cannot be instantiated by itself.  We test a subclass::
 
             sage: from sage.plot.plot3d.plot3d import _ArbitraryCoordinates as arb
@@ -427,7 +427,10 @@ def _find_arguments_for_callable(func):
     return params
 
 
-class _ArbitraryCoordinates(_Coordinates):
+_Coordinates = Coordinates
+
+
+class _ArbitraryCoordinates(Coordinates):
     """
     An arbitrary coordinate system.
     """
@@ -476,7 +479,7 @@ class _ArbitraryCoordinates(_Coordinates):
         return tuple(t.subs(**kwds) for t in self.custom_trans)
 
 
-class Spherical(_Coordinates):
+class Spherical(Coordinates):
     """
     A spherical coordinate system for use with ``plot3d(transformation=...)``
     where the position of a point is specified by three numbers:
@@ -548,7 +551,7 @@ class Spherical(_Coordinates):
                 radius * cos(inclination))
 
 
-class SphericalElevation(_Coordinates):
+class SphericalElevation(Coordinates):
     """
     A spherical coordinate system for use with ``plot3d(transformation=...)``
     where the position of a point is specified by three numbers:
@@ -667,7 +670,7 @@ class SphericalElevation(_Coordinates):
                 radius * sin(elevation))
 
 
-class Cylindrical(_Coordinates):
+class Cylindrical(Coordinates):
     """
     A cylindrical coordinate system for use with ``plot3d(transformation=...)``
     where the position of a point is specified by three numbers:
@@ -1104,7 +1107,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
             else:
                 raise ValueError("unable to determine the function variable in the transform")
 
-        if isinstance(transformation, _Coordinates):
+        if isinstance(transformation, Coordinates):
             R = transformation.to_cartesian(f, params)
             return parametric_plot3d.parametric_plot3d(R, urange, vrange, **kwds)
         raise ValueError('unknown transformation type')

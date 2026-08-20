@@ -87,7 +87,8 @@ However, some algorithms (e.g., toy examples of ECM) involve performing
 elliptic-curve operations as if the base ring were a field even when it
 is not, and exploit the failures when attempting to invert a non-unit.
 Sage provides a *hack* to support such educational examples via the
-:meth:`EllipticCurve_generic.assume_base_ring_is_field` method.
+:meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.assume_base_ring_is_field`
+method.
 Example::
 
     sage: E.assume_base_ring_is_field()
@@ -195,7 +196,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         """
         Return the curve that this point is on.
 
-        This is a synonym for :meth:`scheme`.
+        This is a synonym for :meth:`~sage.schemes.generic.point.SchemePoint.scheme`.
 
         EXAMPLES::
 
@@ -1832,7 +1833,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             47 * 139
 
         The algorithm used internally for this functionality is
-        :meth:`~sage.groups.generic.order_from_multiple`.
+        :func:`~sage.groups.generic.order_from_multiple`.
         Indeed, simply calling :meth:`order` on ``P`` would take
         much longer since factoring ``n`` is fairly expensive::
 

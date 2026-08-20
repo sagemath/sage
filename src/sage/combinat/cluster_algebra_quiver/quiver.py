@@ -77,7 +77,7 @@ class ClusterQuiver(SageObject):
 
       - :class:`ClusterQuiver`
 
-      - :class:`Matrix` -- a skew-symmetrizable matrix
+      - :func:`~sage.matrix.constructor.Matrix` -- a skew-symmetrizable matrix
 
       - :class:`DiGraph` -- must be the input data for a quiver
 

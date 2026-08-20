@@ -244,12 +244,13 @@ class PuncturedCode(AbstractLinearCode):
         Return a random codeword of ``self``.
 
         This method does not trigger the computation of
-        ``self``'s :meth:`sage.coding.linear_code_no_metric.generator_matrix`.
+        ``self``'s
+        :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.generator_matrix`.
 
         INPUT:
 
         - ``agrs``, ``kwds`` -- extra positional arguments passed to
-          :meth:`sage.modules.free_module.random_element`
+          :meth:`~sage.modules.free_module.FreeModule_ambient.random_element`
 
         EXAMPLES::
 

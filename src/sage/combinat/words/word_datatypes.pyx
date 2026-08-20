@@ -616,7 +616,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         .. NOTE::
 
-           This just wraps Python's builtin :meth:`str::split` for
+           This just wraps Python's builtin :meth:`str.split` for
            :class:`str`.
 
         INPUT:
@@ -684,7 +684,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         .. NOTE::
 
-           This just wraps Python's builtin :meth:`str::partition` for
+           This just wraps Python's builtin :meth:`str.partition` for
            :class:`str`.
 
         INPUT:
@@ -726,7 +726,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` -- a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of
+          :class:`~sage.combinat.words.abstract_word.Word_class`) or a
           :class:`str`
 
         OUTPUT: boolean
@@ -763,7 +764,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` -- a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of
+          :class:`~sage.combinat.words.abstract_word.Word_class`) or a
           :class:`str`
 
         OUTPUT: boolean
@@ -791,7 +793,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` -- a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of
+          :class:`~sage.combinat.words.abstract_word.Word_class`) or a
           :class:`str`
 
         OUTPUT: boolean
@@ -828,7 +831,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` -- a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of
+          :class:`~sage.combinat.words.abstract_word.Word_class`) or a
           :class:`str`
 
         OUTPUT: boolean

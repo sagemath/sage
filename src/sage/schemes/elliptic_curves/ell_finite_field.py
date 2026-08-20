@@ -525,7 +525,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         - ``n`` -- positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- boolean (default: ``False``); also return an embedding of the
-          :meth:`base_field` into the resulting field
+          :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.base_field`
+          into the resulting field
         - ``kwds`` -- additional keyword arguments passed to
           :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.extension`
 
@@ -553,14 +554,14 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
         .. SEEALSO::
 
-            :meth:`EllipticCurve_field.division_field()`
+            :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field()`
 
         ALGORITHM: For supersingular elliptic curves, this method uses a
         combination of [MPSW25]_, Lemma 2.2, and [EPSV2023]_, Theorem 2.
         For ordinary elliptic curves, it uses the algorithm of [VT2001]_.
         In some cases (in particular: for ordinary curves in the case that
         `\ell` divides the discriminant), we defer to the general implementation
-        :meth:`EllipticCurve_field.division_field`.
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`.
 
         TESTS:
 
@@ -607,7 +608,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             ....:     assert (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
             ....:     check(E, l, K)  # long time
 
-        Also check that it matches the generic implementation from :class:`EllipticCurve_field`::
+        Also check that it matches the generic implementation from
+        :class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`::
 
             sage: # needs sage.rings.finite_rings
             sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field

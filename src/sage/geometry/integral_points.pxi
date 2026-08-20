@@ -75,7 +75,7 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
     Return integral points in the parallelotope starting at the origin
     and spanned by the ``spanning_points``.
 
-    See :meth:`~ConvexRationalPolyhedralCone.semigroup_generators` for a description of the
+    See :meth:`~sage.geometry.cone.ConvexRationalPolyhedralCone.semigroup_generators` for a description of the
     algorithm.
 
     INPUT:

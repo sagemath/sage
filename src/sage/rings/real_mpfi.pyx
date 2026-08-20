@@ -331,8 +331,10 @@ cpdef RealIntervalField_class RealIntervalField(prec=53, sci_not=False):
     - ``prec`` -- integer (default: 53); precision.
       The number of bits used to represent the mantissa of a
       floating-point number. The precision can be any integer between
-      :func:`mpfr_prec_min()` and :func:`mpfr_prec_max()`. In the current
-      implementation, :func:`mpfr_prec_min()` is equal to 2.
+      :func:`~sage.rings.real_mpfr.mpfr_prec_min()` and
+      :func:`~sage.rings.real_mpfr.mpfr_prec_max()`. In the current
+      implementation, :func:`~sage.rings.real_mpfr.mpfr_prec_min()` is equal
+      to 2.
 
     - ``sci_not`` -- boolean (default: ``False``); whether or not to display using
       scientific notation
@@ -564,7 +566,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def lower_field(self):
         """
-        Return the :class:`RealField_class` with rounding mode ``'RNDD'``
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``'RNDD'``
         (rounding towards minus infinity).
 
         EXAMPLES::
@@ -578,7 +580,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def middle_field(self):
         """
-        Return the :class:`RealField_class` with rounding mode ``'RNDN'``
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``'RNDN'``
         (rounding towards nearest).
 
         EXAMPLES::
@@ -592,7 +594,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def upper_field(self):
         """
-        Return the :class:`RealField_class` with rounding mode ``'RNDU'``
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``'RNDU'``
         (rounding towards plus infinity).
 
         EXAMPLES::
@@ -606,7 +608,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
     def _real_field(self, rnd):
         """
-        Return the :class:`RealField_class` with rounding mode ``rnd``.
+        Return the :class:`~sage.rings.real_mpfr.RealField_class` with rounding mode ``rnd``.
 
         EXAMPLES::
 

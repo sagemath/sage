@@ -6,7 +6,7 @@ We iterate over the elements of a finite `\ZZ`-module. The action
 of `\ZZ` must be the natural one.
 
 This class is intended to provide optimizations for the
-:meth:`sage.free_module.FreeModule_generic:__iter__` method.
+``FreeModule_generic.__iter__`` method.
 
 AUTHORS:
 

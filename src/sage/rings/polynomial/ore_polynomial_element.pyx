@@ -3,7 +3,7 @@ r"""
 Univariate Ore polynomials
 
 This module provides the
-:class:`~sage.rings.polynomial.skew_polynomial_element.OrePolynomial`,
+:class:`~sage.rings.polynomial.ore_polynomial_element.OrePolynomial`,
 which constructs a single univariate Ore polynomial over a commutative
 base equipped with an endomorphism and/or a derivation.
 It provides generic implementation of standard arithmetical operations

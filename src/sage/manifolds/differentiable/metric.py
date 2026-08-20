@@ -97,6 +97,8 @@ class PseudoRiemannianMetric(TensorField):
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the metric;
       if ``None``, it is formed from ``name``
 
+    .. automethod:: _del_derived
+
     EXAMPLES:
 
     Let us construct the standard metric on the sphere `S^2`, described in
@@ -669,7 +671,8 @@ class PseudoRiemannianMetric(TensorField):
         If ``expansion_symbol`` is set, then the zeroth order metric must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use
+        :meth:`_del_derived <sage.manifolds.differentiable.metric.PseudoRiemannianMetric._del_derived>`.
 
         OUTPUT:
 
@@ -1998,6 +2001,8 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the metric;
       if ``None``, it is formed from ``name``
 
+    .. automethod:: _del_derived
+
     EXAMPLES:
 
     Metric on a 2-dimensional manifold::
@@ -2295,7 +2300,8 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
         If ``expansion_symbol`` is set, then the zeroth order metric must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use
+        :meth:`_del_derived <sage.manifolds.differentiable.metric.PseudoRiemannianMetricParal._del_derived>`.
 
         OUTPUT:
 

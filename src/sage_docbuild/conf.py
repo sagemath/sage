@@ -18,21 +18,20 @@ behavior.
 import importlib
 import os
 import re
-import sys
 
 import dateutil.parser
 from IPython.lib.lexers import IPyLexer, IPythonConsoleLexer
 from sphinx import highlighting
-from sphinx.ext import intersphinx
-from sphinx.transforms import SphinxTransform
-from sphinx.util.docutils import SphinxDirective
+from sphinx.util import logging as sphinx_logging
 
 import sage.version
-from sage.env import MATHJAX_DIR, PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
+from sage.env import MATHJAX_DIR, SAGE_DOC, SAGE_DOC_SRC
 from sage.features.sphinx import JupyterSphinx
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
 from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
+
+logger = sphinx_logging.getLogger(__name__)
 
 # ---------------------
 # General configuration
@@ -46,6 +45,9 @@ extensions = [
     'sage_docbuild.ext.inventory_builder',
     'sage_docbuild.ext.multidocs',
     'sage_docbuild.ext.sage_autodoc',
+    'sage_docbuild.ext.crossrefs',
+    'sage_docbuild.ext.livedoc',
+    'sage_docbuild.ext.members',
     'sphinx.ext.todo',
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
@@ -177,10 +179,6 @@ from sage.all_cmdline import *
 plot_html_show_formats = False
 plot_formats = ['svg', 'pdf', 'png']
 
-# We do *not* fully initialize intersphinx since we call it by hand
-# in find_sage_dangling_links.
-#, 'sphinx.ext.intersphinx']
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = [os.path.join(SAGE_DOC_SRC, 'common', 'templates'), 'templates']
 
@@ -267,99 +265,6 @@ todo_include_todos = True
 #
 # intersphinx: Cross-links to other projects' online or installed documentation.
 #
-SAGE_DOC_REMOTE_INVENTORIES = os.environ.get('SAGE_DOC_REMOTE_INVENTORIES', 'no') == 'yes'
-
-_vendored_inventories_dir = os.path.join(SAGE_DOC_SRC, "common", "_vendor")
-
-
-# Run "sage -python -m sage_docbuild.vendor" to update src/doc/common/_vendor/*.inv
-_intersphinx_targets = {
-    'cvxopt':     ['https://cvxopt.org/userguide/'],
-    'cvxpy':      ['https://www.cvxpy.org/'],
-    'cypari2':    ['https://cypari2.readthedocs.io/en/latest/'],
-    'cysignals':  ['https://cysignals.readthedocs.io/en/latest/'],
-    'flint':      ['https://flintlib.org/doc/'],
-    'fpylll':     ['https://fpylll.readthedocs.io/en/latest/'],
-    'gmpy2':      ['https://gmpy2.readthedocs.io/en/latest/'],
-    'ipywidgets': ['https://ipywidgets.readthedocs.io/en/stable/'],
-    'matplotlib': ['https://matplotlib.org/stable/'],
-    'mpmath':     ['https://mpmath.org/doc/current/'],
-    'networkx':   ['https://networkx.org/documentation/stable/'],
-    'numpy':      ['https://numpy.org/doc/stable/'],
-    'pplpy':      [PPLPY_DOCS, 'https://www.sagemath.org/pplpy/'],
-    'python':     ['https://docs.python.org/'],
-    'rpy2':       ['https://rpy2.github.io/doc/latest/html/'],
-    'scipy':      ['https://docs.scipy.org/doc/scipy/'],
-    'sympy':      ['https://docs.sympy.org/latest/'],
-}
-
-
-def _intersphinx_mapping(key):
-    inventories = []
-    link_target = None
-    for target in _intersphinx_targets[key]:
-        if not target:
-            pass
-        elif target.startswith('http'):
-            if not link_target:
-                link_target = target
-                if SAGE_DOC_REMOTE_INVENTORIES:
-                    inventories.append(None)  # Try downloading inventory from link_target
-        elif os.path.exists(target):
-            if not link_target:
-                link_target = target
-            inventory = os.path.join(target, 'objects.inv')
-            if os.path.exists(inventory):
-                inventories.append(inventory)
-                break
-    else:
-        vendored_inventory = os.path.join(_vendored_inventories_dir, key + '.inv')
-        if os.path.exists(vendored_inventory):
-            inventories.append(vendored_inventory)
-        else:
-            # To avoid docbuild failures when building Sage without internet
-            # connection, we use the local python inventory file as a fallback for other
-            # projects. Cross-references will not be resolved in that case, but the
-            # docbuild will still succeed.
-            python_inventory_file = os.path.join(_vendored_inventories_dir, "python.inv")
-            inventories.append(python_inventory_file)
-    assert link_target
-    if len(inventories) == 1:
-        return link_target, inventories[0]
-    return link_target, tuple(inventories)
-
-
-def set_intersphinx_mappings(app, config):
-    """
-    Add precompiled inventory (the objects.inv)
-    """
-    app.config.intersphinx_mapping = {}
-
-    refpath = os.path.join(SAGE_DOC, "html", "en", "reference")
-    invpath = os.path.join(SAGE_DOC, "inventory", "en", "reference")
-    if app.config.multidoc_first_pass == 1 or not os.path.exists(invpath):
-        return
-
-    app.config.intersphinx_mapping = {key: _intersphinx_mapping(key)
-                                      for key in _intersphinx_targets}
-
-    # Add master intersphinx mapping
-    dst = os.path.join(invpath, 'objects.inv')
-    app.config.intersphinx_mapping['sagemath'] = (refpath, dst)
-
-    # Add intersphinx mapping for subdirectories
-    for directory in os.listdir(os.path.join(invpath)):
-        if directory == 'jupyter_execute':
-            # This directory is created by jupyter-sphinx extension for
-            # internal use and should be ignored here. See Issue #33507.
-            continue
-        if os.path.isdir(os.path.join(invpath, directory)):
-            src = os.path.join(refpath, directory)
-            dst = os.path.join(invpath, directory, 'objects.inv')
-            app.config.intersphinx_mapping[directory] = (src, dst)
-
-    intersphinx.validate_intersphinx_mapping(app, config)
-
 
 # By default document is master.
 multidocs_is_master = True
@@ -381,8 +286,17 @@ def linkcode_resolve(domain, info):
         return None
     if info['module']:
         m = importlib.import_module(info['module'])
-        filename = quote(info['module'].replace('.', '/'))
-        if m.__file__.endswith('py'):
+        source = getattr(m, '__file__', None)
+        if not source:
+            # A namespace package has no source file to link to.
+            return None
+        path = info['module'].replace('.', '/')
+        if os.path.basename(source).startswith('__init__.'):
+            # The module is a package, and its name points at the directory
+            # holding the initializer that defines it.
+            path += '/__init__'
+        filename = quote(path)
+        if source.endswith('py'):
             filename += '.py'
         else:
             filename += '.pyx'
@@ -713,364 +627,146 @@ def add_page_context(app, pagename, templatename, context, doctree):
             context['theme_source_edit_link'] = os.path.join(source_repository, 'edit/develop/src', '{filename}')
 
 
-dangling_debug = False
+# ---------------------------------------
+# Sub-documents of the reference manual
+# ---------------------------------------
 
-
-def debug_inf(app, message):
-    if dangling_debug:
-        app.info(message)
-
-
-def call_intersphinx(app, env, node, contnode):
+def reference_subdocument(directory=None):
     r"""
-    Call intersphinx and make links between Sage manuals relative.
+    Return the configuration values proper to one sub-document of the
+    reference manual.
 
-    TESTS:
+    Every sub-document is a Sphinx project of its own, with a configuration
+    file that takes the shared configuration from this module and then the
+    values returned here, which only depend on where the sub-document lives::
 
-    Check that the link from the thematic tutorials to the reference
-    manual is relative, see :issue:`20118`::
+        from sage_docbuild.conf import *
+        from sage_docbuild.conf import reference_subdocument
 
-        sage: from sage.env import SAGE_DOC
-        sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")
-        sage: for line in open(thematic_index).readlines():  # optional - sagemath_doc_html
-        ....:     if "padics" in line:
-        ....:         _ = sys.stdout.write(line)
-        <li><p><a class="reference external" href="../reference/padics/sage/rings/padics/tutorial.html#sage-rings-padics-tutorial" title="(in $p$-adics v...)"><span>Introduction to the p-adics</span></a></p></li>
+        globals().update(reference_subdocument())
+
+    Anything proper to a single sub-document belongs in its configuration
+    file, after that call.
+
+    INPUT:
+
+    - ``directory`` -- the directory of the sub-document; defaults to the
+      current directory, which is the one holding the configuration file that
+      Sphinx is reading
+
+    As a side effect, the shared ``html_theme_options`` and ``latex_elements``
+    are given the entries that depend on the sub-document; a Sphinx run builds
+    a single document, so they cannot be shared.
+
+    EXAMPLES::
+
+        sage: import os, tempfile
+        sage: from sage_docbuild.conf import reference_subdocument
+        sage: def subdocument(name, index):
+        ....:     directory = os.path.join(tempfile.mkdtemp(), name)
+        ....:     os.mkdir(directory)
+        ....:     with open(os.path.join(directory, 'index.rst'), 'w') as f:
+        ....:         _ = f.write(index)
+        ....:     return reference_subdocument(directory)
+
+        sage: config = subdocument('algebras', 'Algebras\n========\n')
+        sage: config['htmlhelp_basename']
+        'algebras'
+        sage: config['html_title']
+        'Algebras'
+        sage: config['latex_documents']
+        [('index', 'algebras.tex', 'Algebras', 'The Sage Development Team', 'manual')]
+        sage: config['multidocs_is_master']
+        False
+
+    A title in backticks is math, which the HTML title writes with dollars::
+
+        sage: subdocument('padics', '`p`-adics\n=========\n')['html_title']
+        '$p$-adics'
+
+    Without a title, the name of the directory is used::
+
+        sage: subdocument('padics', 'No title here.\n')['html_title']
+        'Padics'
     """
-    debug_inf(app, "???? Trying intersphinx for %s" % node['reftarget'])
-    builder = app.builder
-    res = intersphinx.missing_reference(
-        app, env, node, contnode)
-    if res:
-        # Replace absolute links to $SAGE_DOC by relative links: this
-        # allows to copy the whole documentation tree somewhere else
-        # without breaking links, see Issue #20118.
-        if res['refuri'].startswith(SAGE_DOC):
-            here = os.path.dirname(os.path.join(builder.outdir,
-                                                node['refdoc']))
-            res['refuri'] = os.path.relpath(res['refuri'], here)
-            debug_inf(app, "++++ Found at %s" % res['refuri'])
-    else:
-        debug_inf(app, "---- Intersphinx: %s not Found" % node['reftarget'])
-    return res
+    directory = os.path.abspath(directory or '.')
+    name = os.path.basename(directory)
+
+    # We use the main document's title, if we can find it.
+    title = ''
+    with open(os.path.join(directory, 'index.rst'), encoding='utf-8') as rst_file:
+        rst_lines = rst_file.read().splitlines()
+    for i, line in enumerate(rst_lines):
+        if line.startswith('==') and i > 0:
+            title = rst_lines[i - 1].strip()
+            break
+    # Otherwise, we use this directory's name.
+    if not title:
+        title = name.capitalize()
+    title = title.replace('`', '$')
+
+    # We use the directory's name to add small view/edit buttons.
+    source = f'src/doc/en/reference/{name}'
+    html_theme_options.update({
+        'source_view_link': os.path.join(source_repository, 'blob/develop', source, '{filename}'),
+        'source_edit_link': os.path.join(source_repository, 'edit/develop', source, '{filename}'),
+    })
+
+    latex_elements['hyperref'] = r"""
+\usepackage{xr}
+\externaldocument[../references/]{../references/references}
+% Include hyperref last.
+\usepackage{hyperref}
+% Fix anchor placement for figures with captions.
+\usepackage{hypcap}% it must be loaded after hyperref.
+% Set up styles of URL: it should be placed after hyperref.
+\urlstyle{same}"""
+
+    return {
+        # Paths that contain custom static files (such as style sheets). They
+        # are copied after the builtin static files, so a file named
+        # "default.css" will overwrite the builtin "default.css".
+        'html_static_path': [] + html_common_static_path,
+        'project': title,
+        'html_title': title,
+        'html_short_title': title,
+        # Output file base name for HTML help builder.
+        'htmlhelp_basename': name,
+        # Grouping the document tree into LaTeX files: (source start file,
+        # target name, title, author, document class [howto/manual]).
+        'latex_documents': [
+            ('index', name + '.tex', title, 'The Sage Development Team', 'manual')
+        ],
+        # Ignore all .rst in the _sage subdirectory
+        'exclude_patterns': exclude_patterns + ['_sage'],
+        'multidocs_is_master': False,
+    }
 
 
-def find_sage_dangling_links(app, env, node, contnode):
-    r"""
-    Try to find dangling link in local module imports or all.py.
-    """
-    debug_inf(app, "==================== find_sage_dangling_links ")
 
-    reftype = node['reftype']
-    reftarget = node['reftarget']
-    try:
-        doc = node['refdoc']
-    except KeyError:
-        debug_inf(app, "-- no refdoc in node %s" % node)
-        return None
-
-    debug_inf(app, "Searching %s from %s" % (reftarget, doc))
-
-    # Workaround: in Python's doc 'object', 'list', ... are documented as a
-    # function rather than a class
-    if reftarget in base_class_as_func and reftype == 'class':
-        node['reftype'] = 'func'
-
-    res = call_intersphinx(app, env, node, contnode)
-    if res:
-        debug_inf(app, "++ DONE %s" % (res['refuri']))
-        return res
-
-    if node.get('refdomain') != 'py':  # not a python file
-        return None
-
-    try:
-        module = node['py:module']
-        cls = node['py:class']
-    except KeyError:
-        debug_inf(app, "-- no module or class for :%s:%s" % (reftype,
-                                                             reftarget))
-        return None
-
-    basename = reftarget.split(".")[0]
-    try:
-        target_module = getattr(sys.modules['sage.all'], basename).__module__
-        debug_inf(app, "++ found %s using sage.all in %s" % (basename, target_module))
-    except AttributeError:
-        try:
-            target_module = getattr(sys.modules[node['py:module']], basename).__module__
-            debug_inf(app, "++ found %s in this module" % (basename,))
-        except AttributeError:
-            debug_inf(app, "-- %s not found in sage.all or this module" % (basename))
-            return None
-        except KeyError:
-            target_module = None
-    if target_module is None:
-        target_module = ""
-        debug_inf(app, "?? found in None !!!")
-
-    newtarget = target_module+'.'+reftarget
-    node['reftarget'] = newtarget
-
-    # adapted  from sphinx/domains/python.py
-    builder = app.builder
-    searchmode = node.hasattr('refspecific') and 1 or 0
-    matches = builder.env.domains['py'].find_obj(
-        builder.env, module, cls, newtarget, reftype, searchmode)
-    if not matches:
-        debug_inf(app, "?? no matching doc for %s" % newtarget)
-        return call_intersphinx(app, env, node, contnode)
-    if len(matches) > 1:
-        env.warn(target_module,
-                 'more than one target found for cross-reference '
-                 '%r: %s' % (newtarget,
-                             ', '.join(match[0] for match in matches)),
-                 node.line)
-    name, obj = matches[0]
-    debug_inf(app, "++ match = %s %s" % (name, obj))
-
-    from docutils import nodes
-    newnode = nodes.reference('', '', internal=True)
-    if name == target_module:
-        newnode['refid'] = name
-    else:
-        newnode['refuri'] = builder.get_relative_uri(node['refdoc'], obj[0])
-        newnode['refuri'] += '#' + name
-        debug_inf(app, "++ DONE at URI %s" % (newnode['refuri']))
-    newnode['reftitle'] = name
-    newnode.append(contnode)
-    return newnode
+autodoc_type_aliases = {
+    'IntegerMod_abstract': 'sage.rings.finite_rings.integer_mod.IntegerMod_abstract',
+    'EllipticCurve_finite_field': 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field',
+    'EllipticCurvePoint_finite_field': 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field',
+}
 
 
-# lists of basic Python class which are documented as functions
-base_class_as_func = [
-    'bool', 'complex', 'dict', 'file', 'float',
-    'frozenset', 'int', 'list', 'long', 'object',
-    'set', 'slice', 'str', 'tuple', 'type', 'unicode', 'xrange']
+# nitpicky option configuration: Put here broken links we want to ignore.
+# For links to the Python documentation, expand the role-fallback lists above
+# instead of marking the link as broken.  For external projects, prefer adding
+# a vendored inventory before removing entries from this list.  A link to an
+# implementation module resolves through _public_alias(), and a name that no
+# module defines usually means an annotation that Sphinx could not evaluate;
+# see _type_checking_aliases() in sage_docbuild.ext.sage_autodoc.
+nitpick_ignore = []
 
 
-# nitpicky option configuration: Put here broken links we want to ignore. For
-# link to the Python documentation several links where broken because there
-# where class listed as functions. Expand the list 'base_class_as_func' above
-# instead of marking the link as broken.
-nitpick_ignore = [
-    ('py:class', 'twisted.web2.resource.Resource'),
-    ('py:class', 'twisted.web2.resource.PostableResource')]
 
 
-skip_picklability_check_modules = [
-    #'sage.misc.test_nested_class', # for test only
-    'sage.misc.latex',
-    'sage.misc.explain_pickle',
-    '__builtin__',
-]
 
-
-def check_nested_class_picklability(app, what, name, obj, skip, options):
-    """
-    Print a warning if pickling is broken for nested classes.
-    """
-    if hasattr(obj, '__dict__') and hasattr(obj, '__module__'):
-        # Check picklability of nested classes.  Adapted from
-        # sage.misc.nested_class.modify_for_nested_pickle.
-        module = sys.modules[obj.__module__]
-        for (nm, v) in obj.__dict__.items():
-            if (isinstance(v, type) and
-                v.__name__ == nm and
-                v.__module__ == module.__name__ and
-                getattr(module, nm, None) is not v and
-                v.__module__ not in skip_picklability_check_modules):
-                # OK, probably this is an *unpicklable* nested class.
-                app.warn('Pickling of nested class %r is probably broken. '
-                         'Please set the metaclass of the parent class to '
-                         'sage.misc.nested_class.NestedClassMetaclass.' % (
-                        v.__module__ + '.' + name + '.' + nm))
-
-
-def skip_member(app, what, name, obj, skip, options):
-    """
-    To suppress Sphinx warnings / errors, we
-
-    - Don't include [aliases of] builtins.
-
-    - Don't include the docstring for any nested class which has been
-      inserted into its module by
-      :class:`sage.misc.NestedClassMetaclass` only for pickling.  The
-      class will be properly documented inside its surrounding class.
-
-    - Optionally, check whether pickling is broken for nested classes.
-
-    - Optionally, include objects whose name begins with an underscore
-      ('_'), i.e., "private" or "hidden" attributes, methods, etc.
-
-    Otherwise, we abide by Sphinx's decision.  Note: The object
-    ``obj`` is excluded (included) if this handler returns True
-    (False).
-    """
-    if 'SAGE_CHECK_NESTED' in os.environ:
-        check_nested_class_picklability(app, what, name, obj, skip, options)
-
-    if getattr(obj, '__module__', None) == '__builtin__':
-        return True
-
-    objname = getattr(obj, "__name__", None)
-    if objname is not None:
-        # check if name was inserted to the module by NestedClassMetaclass
-        if name.find('.') != -1 and objname.find('.') != -1:
-            if objname.split('.')[-1] == name.split('.')[-1]:
-                return True
-
-    if 'SAGE_DOC_UNDERSCORE' in os.environ:
-        if name.split('.')[-1].startswith('_'):
-            return False
-
-    return skip
-
-
-class SagecodeTransform(SphinxTransform):
-    """
-    Transform a code block to a live code block enabled by jupyter-sphinx.
-
-    Effectively a code block like::
-
-        EXAMPLE::
-
-            sage: 1 + 1
-            2
-
-    is transformed into::
-
-        EXAMPLE::
-
-            sage: 1 + 1
-            2
-
-        .. ONLY:: html
-
-            .. JUPYTER-EXECUTE::
-                :hide-code:
-                :hide-output:
-                :raises:
-                :stderr:
-
-                1 + 1
-
-    enabling live execution of the code.
-    """
-    # lower than the priority of jupyer_sphinx.execute.ExecuteJupyterCells
-    default_priority = 170
-
-    def apply(self):
-        if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
-            for node in list(self.document.findall(nodes.literal_block)):
-                if node.get('language') is None and node.astext().startswith('sage:'):
-                    from docutils.nodes import Text
-                    from docutils.nodes import container as Container
-                    from docutils.nodes import label as Label
-                    from docutils.nodes import literal_block as LiteralBlock
-                    from sphinx_inline_tabs._impl import TabContainer
-                    parent = node.parent
-                    index = parent.index(node)
-                    prev_node = node.previous_sibling()
-                    if isinstance(prev_node, TabContainer):
-                        # Make sure not to merge inline tabs for adjacent literal blocks
-                        parent.insert(index, nodes.paragraph())
-                        prev_node = parent[index]
-                        index += 1
-                    parent.remove(node)
-                    # Tab for Sage code
-                    container = TabContainer("", type="tab", new_set=False)
-                    textnodes = [Text('Sage')]
-                    label = Label("", "", *textnodes)
-                    container += label
-                    content = Container("", is_div=True, classes=["tab-content"])
-                    content += node
-                    container += content
-                    parent.insert(index, container)
-                    index += 1
-                    if isinstance(prev_node, nodes.paragraph):
-                        prev_node['classes'].append('with-sage-tab')
-
-                    # Tab for preparsed version
-                    from sage.repl.preparse import preparse
-                    container = TabContainer("", type="tab", new_set=False)
-                    textnodes = [Text('Python')]
-                    label = Label("", "", *textnodes)
-                    container += label
-                    content = Container("", is_div=True, classes=["tab-content"])
-                    example_lines = []
-                    preparsed_lines = ['>>> from sage.all import *']
-                    for line in node.rawsource.splitlines() + ['']:  # one extra to process last example
-                        newline = line.lstrip()
-                        if newline.startswith('....: '):
-                            example_lines.append(newline[6:])
-                        else:
-                            if example_lines:
-                                preparsed_example = preparse('\n'.join(example_lines))
-                                prompt = '>>> '
-                                for preparsed_line in preparsed_example.splitlines():
-                                    preparsed_lines.append(prompt + preparsed_line)
-                                    prompt = '... '
-                                example_lines = []
-                            if newline.startswith('sage: '):
-                                example_lines.append(newline[6:])
-                            else:
-                                preparsed_lines.append(line)
-                    preparsed = '\n'.join(preparsed_lines)
-                    preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
-                    content += preparsed_node
-                    container += content
-                    parent.insert(index, container)
-                    index += 1
-                    if isinstance(prev_node, nodes.paragraph):
-                        prev_node['classes'].append('with-python-tab')
-
-                    if SAGE_LIVE_DOC == 'yes':
-                        # Tab for Jupyter-sphinx cell
-                        from jupyter_sphinx.ast import CellInputNode, JupyterCellNode
-                        source = node.rawsource
-                        lines = []
-                        for line in source.splitlines():
-                            newline = line.lstrip()
-                            if newline.startswith('sage: ') or newline.startswith('....: '):
-                                lines.append(newline[6:])
-                        cell_node = JupyterCellNode(
-                                    execute=False,
-                                    hide_code=False,
-                                    hide_output=True,
-                                    emphasize_lines=[],
-                                    raises=False,
-                                    stderr=True,
-                                    code_below=False,
-                                    classes=["jupyter_cell"])
-                        cell_input = CellInputNode(classes=['cell_input','live-doc'])
-                        cell_input += nodes.literal_block(
-                            text='\n'.join(lines),
-                            linenos=False,
-                            linenostart=1)
-                        cell_node += cell_input
-                        container = TabContainer("", type="tab", new_set=False)
-                        textnodes = [Text('Sage Live')]
-                        label = Label("", "", *textnodes)
-                        container += label
-                        content = Container("", is_div=True, classes=["tab-content"])
-                        content += cell_node
-                        container += content
-                        parent.insert(index, container)
-                        index += 1
-                        if isinstance(prev_node, nodes.paragraph):
-                            prev_node['classes'].append('with-sage-live-tab')
-
-
-class Ignore(SphinxDirective):
-
-    has_content = True
-
-    def run(self):
-        return []
-
-
-# This replaces the setup() in sage.misc.sagedoc_conf
+# This replaces the setup() in sage.misc.sagedoc_conf.  Everything that is not
+# tied to a configuration value of this file lives in an extension module of
+# sage_docbuild.ext, listed in ``extensions`` above.
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
     app.connect('autodoc-process-docstring', process_directives)
@@ -1080,28 +776,9 @@ def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_aliases)
     if os.environ.get('SAGE_SKIP_TESTS_BLOCKS', False):
         app.connect('autodoc-process-docstring', skip_TESTS_block)
-    app.connect('autodoc-skip-member', skip_member)
     app.add_transform(SagemathTransform)
-    app.add_transform(SagecodeTransform)
-    if SAGE_LIVE_DOC != 'yes':
-        app.add_directive("jupyter-execute", Ignore)
-        app.add_directive("jupyter-kernel", Ignore)
-        app.add_directive("jupyter-input", Ignore)
-        app.add_directive("jupyter-output", Ignore)
-        app.add_directive("thebe-button", Ignore)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
     if app.srcdir.is_relative_to(SAGE_DOC_SRC):
-        app.add_config_value('intersphinx_resolve_self', 'sagemath', False)
-        app.add_config_value('intersphinx_mapping', {}, False)
-        app.add_config_value('intersphinx_cache_limit', 5, False)
-        app.add_config_value('intersphinx_disabled_reftypes', [], False)
-        app.add_config_value('intersphinx_timeout', None, False)
-        app.connect('config-inited', set_intersphinx_mappings)
-        app.connect('builder-inited', intersphinx.load_mappings)
-        # We do *not* fully initialize intersphinx since we call it by hand
-        # in find_sage_dangling_links.
-        #   app.connect('missing-reference', missing_reference)
-        app.connect('missing-reference', find_sage_dangling_links)
         app.connect('html-page-context', add_page_context)

@@ -8,8 +8,14 @@ AUTHORS:
 - Sebastien Besnier (2014-05-5): :class:`FormalCompositeMap` contains
   a list of Map instead of only two Map. See :issue:`16291`.
 
-- Sebastian Oehms   (2019-01-19): :meth:`section` added to :class:`FormalCompositeMap`.
+- Sebastian Oehms   (2019-01-19):
+  :meth:`~sage.categories.map.FormalCompositeMap.section` added to
+  :class:`FormalCompositeMap`.
   See :issue:`27081`.
+
+.. automethod:: sage.categories.map::Map._make_weak_references
+
+.. automethod:: sage.categories.map::Map._make_strong_references
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -2072,7 +2078,7 @@ cdef class FormalCompositeMap(Map):
             sage: sect(p-q)
             3
 
-        the following example has been attached to :meth:`_integer_`
+        the following example has been attached to ``_integer_``
         of :class:`sage.rings.polynomial.polynomial_element.Polynomial`
         before (see comment there)::
 

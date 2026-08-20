@@ -102,7 +102,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - a `p`-adic element (type ``t_PADIC``)
 
-    - a :class:`~sage.rings.infinity.Infinity` if ``z`` is an infinity
+    - a :class:`~sage.rings.infinity.PlusInfinity` if ``z`` is an infinity
       (type ``t_INF``)
 
     EXAMPLES::

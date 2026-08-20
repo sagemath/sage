@@ -843,7 +843,8 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def encode(self, p):
         r"""
-        Transform the polynomial ``p`` into a codeword of :meth:`code`.
+        Transform the polynomial ``p`` into a codeword of
+        :meth:`~sage.coding.encoder.Encoder.code`.
 
         INPUT:
 
@@ -899,11 +900,11 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         Use this method with caution: it does not check if ``c``
         belongs to the code, and if this is not the case, the output is
-        unspecified. Instead, use :meth:`unencode`.
+        unspecified. Instead, use :meth:`~sage.coding.encoder.Encoder.unencode`.
 
         INPUT:
 
-        - ``c`` -- a codeword of :meth:`code`
+        - ``c`` -- a codeword of :meth:`~sage.coding.encoder.Encoder.code`
 
         OUTPUT:
 

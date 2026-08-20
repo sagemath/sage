@@ -147,7 +147,7 @@ jobs:
           echo "$release_notes" > release_notes
 
       - name: Create release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@v3.0.1
         with:
           preserve_order: true
           files: |
@@ -156,7 +156,6 @@ jobs:
           token: ${{ secrets.RELEASE_CREATION_TOKEN }}
           body_path: release_notes
           prerelease: ${{ contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
-          max_retries: 3
 
   build_wheels:
     # Temporarily disabled due to build errors
@@ -198,7 +197,7 @@ jobs:
 
       - name: Set up QEMU
         if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: all
 
@@ -207,7 +206,7 @@ jobs:
           name: dist
           path: dist
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         # As of 2024-02-03, the macOS M1 runners do not have preinstalled python or pipx.
         # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
         id: python
