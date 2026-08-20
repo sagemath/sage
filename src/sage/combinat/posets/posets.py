@@ -389,7 +389,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         given as input.
 
       * If ``facade = False``, the :meth:`Poset`'s elements will become
-        :class:`~sage.combinat.posets.posets.PosetElement` objects.
+        :class:`~sage.combinat.posets.elements.PosetElement` objects.
 
       * If ``facade = None`` (default) the expected behaviour is the behaviour
         of ``facade = True``, unless the opposite can be deduced from the
@@ -809,7 +809,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
       * If ``facade = False``, the
         :class:`~sage.combinat.posets.posets.FinitePoset`'s elements will become
-        :class:`~sage.combinat.posets.posets.PosetElement` objects.
+        :class:`~sage.combinat.posets.elements.PosetElement` objects.
 
       * If ``facade = None`` (default) the expected behaviour is the behaviour
         of ``facade = True``, unless the opposite can be deduced from the
@@ -1449,7 +1449,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         OUTPUT:
 
-        An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+        An instance of :class:`sage.misc.latex_standalone.TikzPicture`.
 
         .. NOTE::
 
@@ -1926,7 +1926,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         .. NOTE::
 
             This is used and systematically tested in
-            :class:`~sage.combinat.posets.linear_extensions.LinearExtensionsOfPosets`
+            :class:`~sage.combinat.posets.linear_extensions.LinearExtensionsOfPoset`
 
         .. SEEALSO:: :meth:`linear_extension`, :meth:`linear_extensions`
 
@@ -4066,7 +4066,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.is_ranked()
             False
 
-        .. SEEALSO:: :meth:`rank_function`, :meth:`rank`, :meth:`is_graded`
+        .. SEEALSO:: :meth:`rank_function`, :meth:`rank`,
+            :meth:`~sage.combinat.posets.posets.FinitePoset.is_graded`
 
         TESTS::
 
@@ -4487,7 +4488,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`coxeter_transformation`, :meth:`coxeter_matrix`
+            :meth:`~sage.combinat.posets.posets.FinitePoset.coxeter_transformation`,
+            ``coxeter_matrix``
         """
         c0 = self.coxeter_transformation()
         x = polygen(QQ, 'x')   # not possible to use ZZ for the moment
@@ -4836,7 +4838,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             Internally, this uses
             :class:`sage.combinat.subsets_pairwise.PairwiseCompatibleSubsets`
-            and :class:`RecursivelyEnumeratedSet_forest`. At this point, iterating
+            and
+            :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
+            At this point, iterating
             through this set is about twice slower than using
             :meth:`antichains_iterator` (tested on
             ``posets.AntichainPoset(15)``). The algorithm is the same
@@ -8037,7 +8041,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             - :meth:`linear_extension`
             - :meth:`with_linear_extension` and the ``linear_extension`` option of :func:`Poset`
             - :meth:`~sage.combinat.posets.linear_extensions.LinearExtensionOfPoset.evacuation`
-            - :meth:`promotion`
+            - :meth:`~sage.combinat.posets.posets.FinitePoset.promotion`
 
         AUTHOR:
 

@@ -274,8 +274,6 @@ be negative. Use range to construct the list `[10, 7, 4, 1, -2]`.
 
 .. SEEALSO::
 
-    - :func:`xrange`: returns an iterator rather than building a list,
-      (only for Python2, replaced by range in Python 3).
     - :func:`srange`: like range but with Sage integers; see below.
     - :func:`xsrange`: like xrange but with Sage integers.
 

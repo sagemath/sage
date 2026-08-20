@@ -13,7 +13,7 @@ are implemented by such scheme morphisms. This is done by
 .. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
-    :meth:`~sage.structure.parent.Hom` method that is inherited by all
+    :meth:`~sage.structure.parent.Parent.Hom` method that is inherited by all
     schemes.
 
 AUTHORS:

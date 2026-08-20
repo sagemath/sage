@@ -57,7 +57,7 @@ def fan_isomorphism_generator(fan1, fan2):
 
     ALGORITHM:
 
-    The :meth:`sage.geometry.fan.Fan.vertex_graph` of the two fans is
+    The :meth:`sage.geometry.fan.RationalPolyhedralFan.vertex_graph` of the two fans is
     compared. For each graph isomorphism, we attempt to lift it to an
     actual isomorphism of fans.
 

@@ -1003,7 +1003,7 @@ cdef class FiniteField(Field):
         .. SEEALSO::
 
             Except for the ``name`` argument, this is identical to the
-            :meth:`modulus` method.
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.modulus` method.
 
         EXAMPLES::
 
@@ -1476,7 +1476,7 @@ cdef class FiniteField(Field):
 
         Check the test above when `a=b=1`, see :issue:`40926`.
         While in general it doesn't make much sense to talk about the generator
-        of a prime finite field (:meth:`gen` returns 1), generic code may find
+        of a prime finite field (:meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.gen` returns 1), generic code may find
         it convenient to always specify the variable name when it is not known
         in advance whether the exponent is 1.
 
@@ -1901,7 +1901,7 @@ cdef class FiniteField(Field):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.ring.Field.an_embedding`
+            :meth:`~sage.categories.fields.Fields.ParentMethods.an_embedding`
 
         EXAMPLES::
 

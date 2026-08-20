@@ -2,7 +2,7 @@
 r"""
 Base class for polyhedra: Graph-theoretic methods
 
-Define methods relying on :mod:`sage.graphs`.
+Define methods relying on :ref:`sage.graphs <sage.graphs>`.
 """
 
 # ****************************************************************************
@@ -39,7 +39,7 @@ from .base3 import Polyhedron_base3
 
 class Polyhedron_base4(Polyhedron_base3):
     """
-    Methods relying on :mod:`sage.graphs`.
+    Methods relying on :ref:`sage.graphs <sage.graphs>`.
 
     See :class:`sage.geometry.polyhedron.base.Polyhedron_base`.
 
@@ -615,7 +615,7 @@ class Polyhedron_base4(Polyhedron_base3):
         OUTPUT:
 
         A
-        :class:`PermutationGroup<sage.groups.perm_gps.permgroup.PermutationGroup_generic_with_category'>`
+        :class:`PermutationGroup <sage.groups.perm_gps.permgroup.PermutationGroup_generic>`
         that is isomorphic to the combinatorial automorphism group is
         returned.
 

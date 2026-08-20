@@ -63,7 +63,8 @@ class BCHCode(CyclicCode):
 
     - ``b`` -- (default: ``0``) is exactly the same as ``offset``. It is only
       here for retro-compatibility purposes with the old signature of
-      :meth:`codes.BCHCode` and will be removed soon.
+      :class:`codes.BCHCode <sage.coding.bch_code.BCHCode>` and will be
+      removed soon.
 
     EXAMPLES:
 

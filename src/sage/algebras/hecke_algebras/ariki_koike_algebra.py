@@ -34,6 +34,8 @@ REFERENCES:
 - [AK1994]_
 - [BM1993]_
 - [MM1998]_
+
+.. autoclass:: sage.algebras.hecke_algebras.ariki_koike_algebra::_Basis
 """
 
 #*****************************************************************************

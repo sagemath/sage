@@ -296,8 +296,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.layout_tree` | Return an ordered tree layout for this graph
     :meth:`~GenericGraph.layout_forest` | Return an ordered forest layout for this graph
     :meth:`~GenericGraph.layout_graphviz` | Call ``graphviz`` to compute a layout of the vertices of this graph.
-    :meth:`~GenericGraph._circle_embedding` | Set some vertices on a circle in the embedding of this graph.
-    :meth:`~GenericGraph._line_embedding` | Set some vertices on a line in the embedding of this graph.
+    :meth:`GenericGraph._circle_embedding <sage.graphs.generic_graph.GenericGraph._circle_embedding>` | Set some vertices on a circle in the embedding of this graph.
+    :meth:`GenericGraph._line_embedding <sage.graphs.generic_graph.GenericGraph._line_embedding>` | Set some vertices on a line in the embedding of this graph.
     :meth:`~GenericGraph.graphplot` | Return a :class:`~sage.graphs.graph_plot.GraphPlot` object.
     :meth:`~GenericGraph.plot` | Return a :class:`~sage.plot.graphics.Graphics` object representing the (di)graph.
     :meth:`~GenericGraph.show` | Show the (di)graph.
@@ -305,7 +305,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.show3d` | Plot the graph using :class:`~sage.plot.plot3d.tachyon.Tachyon`, and shows the resulting plot.
     :meth:`~GenericGraph.graphviz_string` | Return a representation in the ``dot`` language.
     :meth:`~GenericGraph.graphviz_to_file_named` | Write a representation in the ``dot`` language in a file.
-    :meth:`~GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
+    :meth:`~sage.graphs.generic_graph.GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
 
 **Algorithmically hard stuff:**
 
@@ -475,6 +475,9 @@ class GenericGraph(GenericGraph_pyx):
     Base class for graphs and digraphs.
 
     .. automethod:: __eq__
+    .. automethod:: _circle_embedding
+    .. automethod:: _get_weight_function
+    .. automethod:: _line_embedding
     """
 
     # Nice defaults for plotting arrays of graphs (see sage.misc.functional.show)
@@ -979,7 +982,7 @@ class GenericGraph(GenericGraph_pyx):
              usetikzlibrary=None, macros=None,
              use_sage_preamble=None, **kwds):
         r"""
-        Return a TikzPicture of the graph.
+        Return a :class:`~sage.misc.latex_standalone.TikzPicture` of the graph.
 
         If graphviz and dot2tex are available, it uses these packages for
         placements of vertices and edges.
@@ -1029,7 +1032,7 @@ class GenericGraph(GenericGraph_pyx):
 
         OUTPUT:
 
-        An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+        An instance of :class:`~sage.misc.latex_standalone.TikzPicture`.
 
         .. NOTE::
 
@@ -1631,7 +1634,7 @@ class GenericGraph(GenericGraph_pyx):
         .. NOTE::
 
             This functions uses the ``write_*`` functions defined in NetworkX
-            (see :mod:`networkx.readwrite`).
+            (see ``networkx.readwrite``).
 
         EXAMPLES::
 
@@ -6230,7 +6233,7 @@ class GenericGraph(GenericGraph_pyx):
         combinatorial embedding is used for the layout. Otherwise: if a
         combinatorial embedding is set to the instance field variable of the
         graph (e.g. using
-        :meth:`~sage/graphs/generic_graph.GenericGraph.set_embedding`), then
+        :meth:`~sage.graphs.generic_graph.GenericGraph.set_embedding`), then
         that one is used, and if no combinatorial embedding is set, then one is
         computed.
 
@@ -6241,7 +6244,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``set_embedding`` -- boolean (default: ``False``); whether to set the
           instance field variable that contains a combinatorial embedding to the
           combinatorial embedding used for the planar layout (see
-          :meth:`~sage/graphs/generic_graph.GenericGraph.get_embedding`)
+          :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
 
         - ``on_embedding`` -- dictionary (default: ``None``); provide a
           combinatorial embedding
@@ -7367,15 +7370,20 @@ class GenericGraph(GenericGraph_pyx):
         st.delete_vertices(v for v in g if not st.degree(v))
         return st
 
-    def edge_disjoint_spanning_trees(self, k, algorithm=None, root=None, solver=None, verbose=0,
-                                     *, integrality_tolerance=1e-3):
+    def edge_disjoint_spanning_trees(self, k=None, algorithm=None, root=None, solver=None, verbose=0,
+                                     *, integrality_tolerance=1e-3, labels=False):
         r"""
         Return the desired number of edge-disjoint spanning trees/arborescences.
 
         INPUT:
 
-        - ``k`` -- integer; the required number of edge-disjoint spanning
-          trees/arborescences
+        - ``k`` -- integer or ``None`` (default: ``None``); the required
+          number of edge-disjoint spanning trees/arborescences. If ``None``:
+          for directed graphs, return as many arborescences as the edge
+          connectivity of the digraph (such a packing always exists by
+          Edmonds' theorem); for undirected graphs with
+          ``'Roskind-Tarjan'``, return a maximum packing of edge-disjoint
+          spanning trees.
 
         - ``algorithm`` -- string (default: ``None``); specify the
           algorithm to use among:
@@ -7389,7 +7397,8 @@ class GenericGraph(GenericGraph_pyx):
 
           * ``'Gabow'`` -- use the combinatorial algorithm of Gabow
             [Gabow1995]_ for packing edge-disjoint spanning arborescences.
-            Only available for directed simple graphs.
+            Only available for directed graphs; digraphs with loops and
+            multiple edges are supported.
 
           * ``None`` -- use ``'Roskind-Tarjan'`` for undirected graphs and
             ``'MILP'`` for directed graphs.
@@ -7412,6 +7421,12 @@ class GenericGraph(GenericGraph_pyx):
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
+
+        - ``labels`` -- boolean (default: ``False``); only for directed
+          graphs with ``algorithm='Gabow'``. Whether the edges of the
+          returned arborescences carry the labels of the corresponding
+          input edges, so that parallel edges of a digraph with multiple
+          edges remain distinguishable in the output.
 
         ALGORITHM:
 
@@ -7560,12 +7575,56 @@ class GenericGraph(GenericGraph_pyx):
             sage: all_edges = sum((t.edges(labels=False, sort=False) for t in trees), [])
             sage: len(all_edges) == len(set(all_edges))
             True
+
+        With ``k=None``, a directed graph yields as many arborescences as its
+        edge connectivity, and an undirected graph a maximum packing of
+        spanning trees. By Nash-Williams, a graph with edge connectivity
+        `\lambda` has at least `\lfloor \lambda / 2 \rfloor` edge-disjoint
+        spanning trees and at most `m / (n - 1)`; for instance `K_4` has
+        `\lambda = 3` and packs 2 trees::
+
+            sage: len(digraphs.Complete(4).edge_disjoint_spanning_trees(algorithm='Gabow'))
+            3
+            sage: len(digraphs.Complete(4).edge_disjoint_spanning_trees())              # needs sage.numerical.mip
+            3
+            sage: len(graphs.CompleteGraph(4).edge_disjoint_spanning_trees())
+            2
+            sage: graphs.PathGraph(3).edge_disjoint_spanning_trees()
+            [Graph on 3 vertices]
+            sage: DiGraph().edge_disjoint_spanning_trees(algorithm='Gabow')
+            []
+
+        The ``'Gabow'`` algorithm supports digraphs with multiple edges; with
+        ``labels=True``, parallel copies remain distinguishable in the
+        output::
+
+            sage: D = DiGraph([(0, 1, 'a'), (0, 1, 'b'), (1, 0, 'c'), (1, 0, 'd')],
+            ....:             multiedges=True)
+            sage: trees = D.edge_disjoint_spanning_trees(2, algorithm='Gabow', labels=True)
+            sage: sorted(e[2] for T in trees for e in T.edge_iterator())
+            ['a', 'b']
+            sage: D.edge_disjoint_spanning_trees(2, algorithm='MILP')
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with multiedges. ...
+            sage: graphs.CompleteGraph(4).edge_disjoint_spanning_trees(labels=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: labels is only supported for directed graphs with algorithm "Gabow"
         """
-        self._scream_if_not_simple()
+        if self.is_directed() and algorithm == "Gabow":
+            # the Gabow backend supports loops and multiple edges
+            self._scream_if_not_simple(allow_loops=True, allow_multiple_edges=True)
+        else:
+            self._scream_if_not_simple()
         from sage.categories.sets_cat import EmptySetError
         from sage.graphs.digraph import DiGraph
         from sage.graphs.graph import Graph
         from sage.numerical.mip import MIPSolverException, MixedIntegerLinearProgram
+
+        if labels and (not self.is_directed() or algorithm != "Gabow"):
+            raise ValueError('labels is only supported for directed graphs '
+                             'with algorithm "Gabow"')
 
         if self.is_directed():
             if algorithm is not None and algorithm not in ("MILP", "Gabow"):
@@ -7573,20 +7632,50 @@ class GenericGraph(GenericGraph_pyx):
                                  'for directed graphs')
         elif algorithm is None or algorithm == "Roskind-Tarjan":
             from sage.graphs.spanning_tree import edge_disjoint_spanning_trees
+            if k is None:
+                # Return a maximum packing. Feasibility is monotone in k, so
+                # we binary search with the Roskind-Tarjan algorithm between a
+                # lower and an upper bound. By Nash-Williams a graph with edge
+                # connectivity ``lambda`` has at least ``lambda // 2`` disjoint
+                # spanning trees, and at most ``m // (n - 1)``.
+                n = self.order()
+                if n <= 1:
+                    return []
+                lo = int(self.edge_connectivity()) // 2
+                hi = self.size() // (n - 1)
+                while lo < hi:
+                    mid = (lo + hi + 1) // 2
+                    try:
+                        edge_disjoint_spanning_trees(self, mid)
+                        lo = mid
+                    except EmptySetError:
+                        hi = mid - 1
+                k = lo
+                if not k:
+                    return []
             return edge_disjoint_spanning_trees(self, k)
         elif algorithm != "MILP":
             raise ValueError('algorithm must be None, "Roskind-Tarjan" or "MILP" '
                              'for undirected graphs')
+
+        if self.is_directed() and algorithm == "Gabow":
+            from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+            # the backend resolves k=None to the edge connectivity
+            return GabowEdgeConnectivity(self).edge_disjoint_spanning_trees(
+                k, root=root, labels=labels)
+
+        if k is None:
+            if not self.is_directed():
+                raise ValueError('k=None is not supported with algorithm '
+                                 '"MILP" for undirected graphs')
+            # By Edmonds' theorem, a packing of this size always exists
+            k = int(self.edge_connectivity())
 
         G = self
         n = G.order()
 
         if not n or not k:
             return []
-
-        if self.is_directed() and algorithm == "Gabow":
-            from sage.graphs.edge_connectivity import GabowEdgeConnectivity
-            return GabowEdgeConnectivity(self).edge_disjoint_spanning_trees(k, root=root)
 
         if root is None:
             root = next(G.vertex_iterator())
@@ -21232,7 +21321,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``layout`` -- string (default: ``None``); specifies a layout algorithm
           among ``'acyclic'``, ``'acyclic_dummy'``, ``'circular'``,
-          ``'ranked'``, ``'graphviz'``, ``'planar'``, ``'spring'``,
+          ``'ranked'``, ``'graphviz'``, ``'planar'``, ``'tutte'``, ``'spring'``,
           ``'forest'`` or ``'tree'``
 
         - ``pos`` -- dictionary (default: ``None``); a dictionary of positions
@@ -21300,15 +21389,15 @@ class GenericGraph(GenericGraph_pyx):
             ....:     print("option {} : {}".format(key, value))
             option by_component : Whether to do the spring layout by connected component -- boolean.
             option dim : The dimension of the layout -- 2 or 3.
-            option external_face : A list of the vertices of the external face of the graph, used for Tutte embedding layout.
-            option external_face_pos : A dictionary specifying the positions of the external face of the graph, used for Tutte embedding layout. If none specified, theexternal face is a regular polygon.
+            option external_face : A list of the vertices of the external face of the graph if used for Tutte embedding layout; or an edge on the external face if used for the 'planar' layout.
+            option external_face_pos : A dictionary specifying the positions of the external face of the graph, used for Tutte embedding layout. If none specified, the external face is a regular polygon.
             option forest_roots : An iterable specifying which vertices to use as roots for the ``layout='forest'`` option. If no root is specified for a tree, then one is chosen close to the center of the tree. Ignored unless ``layout='forest'``.
             option heights : A dictionary mapping heights to the list of vertices at this height.
             option iterations : The number of times to execute the spring layout algorithm.
-            option layout : A layout algorithm -- one of : "acyclic", "circular" (plots the graph with vertices evenly distributed on a circle), "ranked", "graphviz", "planar", "spring" (traditional spring layout, using the graph's current positions as initial positions), or "tree" (the tree will be plotted in levels, depending on minimum distance for the root).
+            option layout : A layout algorithm -- one of: ...
             option prog : Which graphviz layout program to use -- one of "circo", "dot", "fdp", "neato", or "twopi".
             option save_pos : Whether or not to save the computed position for the graph.
-            option spring : Use spring layout to finalize the current layout.
+            option spring : Use spring layout to finalize the current 'ranked' layout.
             option tree_orientation : The direction of tree branches -- 'up', 'down', 'left' or 'right'.
             option tree_root : A vertex designation for drawing trees. A vertex of the tree to be used as the root for the ``layout='tree'`` option. If no root is specified, then one is chosen close to the center of the tree. Ignored unless ``layout='tree'``.
 
@@ -22322,109 +22411,11 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``pos`` -- an optional positioning dictionary
-
-        - ``layout`` -- string (default: ``None``); specifies a kind of layout
-          to use, takes precedence over pos
-
-          - ``'circular'`` -- plots the graph with vertices evenly distributed
-            on a circle
-
-          - ``'spring'`` -- uses the traditional spring layout, using the
-            graph's current positions as initial positions
-
-          - ``'tree'`` -- the (di)graph must be a tree. One can specify the root
-            of the tree using the keyword tree_root, otherwise a root will be
-            selected at random. Then the tree will be plotted in levels,
-            depending on minimum distance for the root.
-
-          - ``'tutte'`` -- uses the Tutte embedding algorithm. The graph must be
-            a 3-connected, planar graph.
-
-        - ``vertex_labels`` -- boolean (default: ``True``); whether to print
-          vertex labels
-
-        - ``edge_labels`` -- boolean (default: ``False``); whether to print edge
-          labels. If ``True``, the result of ``str(l)`` is printed on the edge
-          for each label `l`. Labels equal to ``None`` are not printed (to set
-          edge labels, see :meth:`set_edge_label`).
-
-        - ``edge_labels_background`` -- the color of the edge labels
-          background. The default is "white". To achieve a transparent
-          background use "transparent".
-
-        - ``vertex_size`` -- size of vertices displayed
-
-        - ``vertex_shape`` -- the shape to draw the vertices, for example
-          ``'o'`` for circle or ``'s'`` for square. Whole list is available at
-          https://matplotlib.org/api/markers_api.html.
-          (Not available for multiedge digraphs.)
-
-        - ``graph_border`` -- boolean (default: ``False``); whether to include a
-          box around the graph
-
-        - ``vertex_colors`` -- dictionary (default: ``None``); optional
-          dictionary to specify vertex colors: each key is a color recognizable
-          by matplotlib, and each corresponding entry is a list of vertices. If
-          a vertex is not listed, it looks invisible on the resulting plot (it
-          doesn't get drawn).
-
-        - ``edge_colors`` -- dictionary (default: ``None``); a dictionary
-          specifying edge colors: each key is a color recognized by matplotlib,
-          and each entry is a list of edges.
-
-        - ``partition`` -- a partition of the vertex set (default: ``None``); if
-          specified, plot will show each cell in a different color.
-          ``vertex_colors`` takes precedence.
-
-        - ``talk`` -- boolean (default: ``False``); if ``True``, prints large
-          vertices with white backgrounds so that labels are legible on slides
-
-        - ``iterations`` -- integer; how many iterations of the spring layout
-          algorithm to go through, if applicable
-
-        - ``color_by_label`` -- boolean or dictionary or function (default:
-          ``False``); whether to color each edge with a different color
-          according to its label; the colors are chosen along a rainbow, unless
-          they are specified by a function or dictionary mapping labels to
-          colors; this option is incompatible with ``edge_color`` and
-          ``edge_colors``.
-
-        - ``heights`` -- dictionary (default: ``None``); if specified, this is a
-          dictionary from a set of floating point heights to a set of vertices
-
-        - ``edge_style`` -- keyword arguments passed into the edge-drawing
-          routine.  This currently only works for directed graphs, since we pass
-          off the undirected graph to networkx
-
-        - ``tree_root`` -- a vertex (default: ``None``); if specified, this
-          vertex is used as the root for the ``layout="tree"`` option.
-          Otherwise, then one is chosen at random. Ignored unless
-          ``layout='tree'``.
-
-        - ``tree_orientation`` -- string (default: ``'down'``); one of "up" or
-          "down".  If "up" (resp., "down"), then the root of the tree will
-          appear on the bottom (resp., top) and the tree will grow upwards
-          (resp. downwards). Ignored unless ``layout='tree'``.
-
-        - ``external_face`` -- list of vertices (default: ``None``); the external face to be made a
-          in the Tutte layout. Ignored unless ``layout='tutte''``.
-
-        - ``external_face_pos`` -- dictionary (default: ``None``). If specified,
-          used as the positions for the external face in the Tutte layout.
-          Ignored unless ``layout='tutte'``.
-
-        - ``save_pos`` -- boolean (default: ``False``); save position computed
-          during plotting
+        See the documentation of the :mod:`sage.graphs.graph_plot` module
+        for supported parameters. In addition, this method supports all
+        parameters of :meth:`sage.plot.graphics.Graphics.show`.
 
         .. NOTE::
-
-            - This method supports any parameter accepted by
-              :meth:`sage.plot.graphics.Graphics.show`.
-
-            - See the documentation of the :mod:`sage.graphs.graph_plot` module
-              for information and examples of how to define parameters that will
-              be applied to **all** graph plots.
 
             - Default parameters for this method *and a specific graph* can also
               be set through the :class:`~sage.misc.decorators.options`
@@ -26322,7 +26313,8 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
-          see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+          see the :func:`Polyhedron constructor
+          <sage.geometry.polyhedron.constructor.Polyhedron>`
 
         EXAMPLES:
 
@@ -26408,7 +26400,8 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
-          see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+          see the :func:`Polyhedron constructor
+          <sage.geometry.polyhedron.constructor.Polyhedron>`
 
         EXAMPLES:
 

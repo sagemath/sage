@@ -1,5 +1,5 @@
 r"""
-Abstract base classes for classes in :mod:`~sage.geometry`
+Abstract base classes for classes in ``sage.geometry``
 """
 
 

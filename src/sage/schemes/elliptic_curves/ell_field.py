@@ -1,8 +1,10 @@
 r"""
 Elliptic curves over a general field
 
-This module defines the class :class:`EllipticCurve_field`, based on
-:class:`EllipticCurve_generic`, for elliptic curves over general fields.
+This module defines the class
+:class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`, based on
+:class:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic`, for
+elliptic curves over general fields.
 """
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -864,9 +866,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``n`` -- positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- boolean (default: ``False``); also return an embedding of the
-          :meth:`base_field` into the resulting field
+          :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.base_field` into the resulting field
         - ``kwds`` -- additional keyword arguments passed to
-          :func:`~sage.rings.polynomial.polynomial_element.Polynomial.splitting_field`
+          :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.splitting_field`
 
         OUTPUT:
 
@@ -1034,7 +1036,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             has been extended, you may use
             :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
             or
-            :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+            :meth:`sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_basis`.
 
         AUTHORS:
 
@@ -1304,7 +1306,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         factors of `n`.
 
         If ``algorithm`` is ``"structure"``, this method calls
-        :meth:`torsion_subgroup` and
+        :meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
+        and
         :meth:`sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
         if algorithm is None:
@@ -1422,7 +1425,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         Return a (minimal) set of generators for the `n`-torsion
         subgroup of this elliptic curve.
 
-        This is a thin convenience wrapper around :meth:`torsion_subgroup`;
+        This is a thin convenience wrapper around
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup`;
         all extra arguments ``args`` and keyword arguments ``kwds`` are
         passed on to that method.
 
@@ -1478,7 +1482,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           to be passed on to one of the following methods:
           - :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_subgroup()`
           - :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup()`
-          - :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_field.torsion_subgroup()`
+          - :meth:`sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup()`
 
         EXAMPLES::
 
@@ -1697,7 +1701,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``velu_sqrt_bound`` -- integer (default: ``None``); establish the highest
           (prime) degree for which the ``'traditional'`` algorithm should be selected
           instead of ``'velusqrt'``. If ``None``, the default value from
-          :class:`~sage.schemes.elliptic_curves.hom_velusqrt._VeluBoundObj` is used.
+          ``_VeluBoundObj`` is used.
           This value is initially set to 1000, but can be modified by the user.
           If an integer is supplied and the isogeny computation goes through the
           ``'factored'`` algorithm, the same integer is supplied to each factor.
@@ -3159,12 +3163,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         INPUT:
 
-        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :const:`~sage.rings.infinity.Infinity`;
+        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
           alternatively, a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `[2]P`, or :const:`~sage.rings.infinity.Infinity`; alternatively,
+        `x`-coordinate of `[2]P`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
         a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         .. NOTE::
@@ -3287,12 +3291,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         INPUT:
 
         - ``xP``, ``xQ``, ``xPQ`` -- `x`-coordinates of points `P`, `Q`, and `P-Q` on this curve,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, each of these values should
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, each of these values should
           be a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `P + Q`, or :const:`~sage.rings.infinity.Infinity`; alternatively,
+        `x`-coordinate of `P + Q`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
         a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         .. NOTE::
@@ -3466,12 +3470,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``n`` -- integer
 
-        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :const:`~sage.rings.infinity.Infinity`;
+        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
           alternatively, a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `[n]P`, or :const:`~sage.rings.infinity.Infinity`; alternatively,
+        `x`-coordinate of `[n]P`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
         a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         .. NOTE::

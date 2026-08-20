@@ -1992,7 +1992,7 @@ cdef class GapElement_FiniteField(GapElement):
 
         A Sage finite field element. The isomorphism is chosen such
         that the Gap ``PrimitiveRoot()`` maps to the Sage
-        :meth:`~sage.rings.finite_rings.finite_field_prime_modn.multiplicative_generator`.
+        :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.multiplicative_generator`.
 
         EXAMPLES::
 

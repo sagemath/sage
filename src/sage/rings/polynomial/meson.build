@@ -196,11 +196,11 @@ foreach name, pyx : extension_data_cpp
   elif name == 'plural'
     deps += [singular]
   elif name == 'polynomial_zz_pex'
-    deps += [cypari2]
+    deps += [cypari2, ntl]
   elif name == 'polynomial_integer_dense_ntl' or name == 'polynomial_modn_dense_ntl'
-    deps += [cypari2]
+    deps += [cypari2, ntl]
   elif name == 'polynomial_gf2x'
-    deps += [cypari2]
+    deps += [cypari2, ntl]
   elif name == 'evaluation_ntl'
     deps += [ntl, mpfr, mpfi]    # Runtime dependencies
   endif

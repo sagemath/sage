@@ -10,7 +10,7 @@ the combinatorial class of permutations.
    This file defined :class:`Permutation` which depends upon
    :class:`CombinatorialElement` despite it being deprecated (see
    :issue:`13742`). This is dangerous. In particular, the
-   :meth:`Permutation._left_to_right_multiply_on_right` method (which can
+   ``Permutation._left_to_right_multiply_on_right`` method (which can
    be called through multiplication) disables the input checks (see
    :meth:`Permutation`). This should not happen. Do not trust the results.
 
@@ -217,7 +217,7 @@ AUTHORS:
 - Travis Scrimshaw (2014-02-05): Made :class:`StandardPermutations_n` a
   finite Weyl group to make it more uniform with :class:`SymmetricGroup`.
   Added ability to compute the conjugacy classes.
-- Trevor K. Karn (2022-08-05): Add :meth:`Permutation.n_reduced_words`
+- Trevor K. Karn (2022-08-05): Add reduced-word counting
 - Amrutha P, Shriya M, Divya Aggarwal (2022-08-16): Added Multimajor Index.
 
 Classes and methods
@@ -312,7 +312,7 @@ class Permutation(CombinatorialElement):
       - list of tuples of integers, expressing the permutation in cycle
         notation.
 
-      - a :class:`PermutationGroupElement`
+      - a :class:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement`
 
       - a pair of two standard tableaux of the same shape. This yields
         the permutation obtained from the pair using the inverse of the
@@ -358,7 +358,8 @@ class Permutation(CombinatorialElement):
         :meth:`sage.combinat.permutation.Permutations.options`.
         It is best for code not to rely on this setting being set to a
         particular standard, but rather use the methods
-        :meth:`left_action_product` and :meth:`right_action_product` for
+        :meth:`~sage.combinat.permutation.Permutation.left_action_product`
+        and :meth:`~sage.combinat.permutation.Permutation.right_action_product` for
         multiplying permutations (these methods don't depend on the setting).
         See :issue:`14885` for more details.
 
@@ -436,7 +437,7 @@ class Permutation(CombinatorialElement):
         10
 
     We construct a :class:`Permutation` from a
-    :class:`PermutationGroupElement`::
+    :class:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement`::
 
         sage: g = PermutationGroupElement([2,1,3])                                      # needs sage.groups
         sage: Permutation(g)                                                            # needs sage.groups
@@ -3028,7 +3029,8 @@ class Permutation(CombinatorialElement):
         r"""
         Return a reduced word of the permutation ``self``.
 
-        See :meth:`reduced_words` for the definition of reduced words and
+        See :meth:`~sage.combinat.permutation.Permutation.reduced_words`
+        for the definition of reduced words and
         a way to compute them all.
 
         .. WARNING::
@@ -3096,14 +3098,17 @@ class Permutation(CombinatorialElement):
         Note that the product of permutations is defined here in such
         a way that `(pq)(i) = p(q(i))` for all permutations `p` and `q`
         and each `i \in \{ 1, 2, \ldots, n \}` (this is the same
-        convention as in :meth:`left_action_product`, but not the
+        convention as in
+        :meth:`~sage.combinat.permutation.Permutation.left_action_product`,
+        but not the
         default semantics of the `*` operator on permutations in Sage).
         Thus, for instance, `s_2 s_1` is the permutation obtained by
         first transposing `1` with `2` and then transposing `2` with `3`.
 
         .. SEEALSO::
 
-            :meth:`reduced_word`, :meth:`reduced_word_lexmin`
+            :meth:`~sage.combinat.permutation.Permutation.reduced_word`,
+            :meth:`~sage.combinat.permutation.Permutation.reduced_word_lexmin`
 
         EXAMPLES::
 
@@ -3128,7 +3133,8 @@ class Permutation(CombinatorialElement):
         Return a lexicographically minimal reduced word of the permutation
         ``self``.
 
-        See :meth:`reduced_words` for the definition of reduced words and
+        See :meth:`~sage.combinat.permutation.Permutation.reduced_words`
+        for the definition of reduced words and
         a way to compute them all.
 
         EXAMPLES::
@@ -5152,7 +5158,7 @@ class Permutation(CombinatorialElement):
         :meth:`permutohedron_lequal`) on `S_n`.
 
         This is related to the
-        :meth:`~sage.combinat.binary_tree.LabelledBinaryTree.sylvester_class`
+        :meth:`~sage.combinat.binary_tree.BinaryTree.sylvester_class`
         method in that the equivalence class of a permutation `\pi` under
         sylvester congruence is the sylvester class of the right-to-left
         binary search tree of `\pi`. However, the present method
@@ -7361,7 +7367,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
     .. TODO::
 
-        Have a :meth:`reduced_word` which works in both multiplication
+        Have a :meth:`~sage.combinat.permutation.Permutation.reduced_word`
+        which works in both multiplication
         conventions.
     """
 
@@ -7848,7 +7855,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         .. SEEALSO::
 
             - :meth:`reflection`
-            - :meth:`reflections`
+            - :meth:`~sage.categories.complex_reflection_or_generalized_coxeter_groups.ComplexReflectionOrGeneralizedCoxeterGroups.ParentMethods.reflections`
 
         EXAMPLES::
 
@@ -7866,8 +7873,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
         .. SEEALSO::
 
-            - :meth:`reflections_index_set`
-            - :meth:`reflections`
+            - :meth:`~sage.combinat.permutation.StandardPermutations_n.reflection_index_set`
+            - :meth:`~sage.categories.complex_reflection_or_generalized_coxeter_groups.ComplexReflectionOrGeneralizedCoxeterGroups.ParentMethods.reflections`
 
         EXAMPLES::
 
@@ -7899,7 +7906,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
             .. WARNING::
 
-                The methods :meth:`descents` and :meth:`idescents` behave
+                The methods :meth:`~sage.combinat.permutation.Permutation.descents` and
+                :meth:`sage.combinat.permutation.Permutation.idescents` behave
                 differently than their Weyl group counterparts. In
                 particular, the indexing is 0-based. This could lead to
                 errors. Instead, construct the descent set as in the example.
@@ -7908,7 +7916,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
                 This ignores the multiplication convention in order
                 to be consistent with other Coxeter operations in
-                permutations (e.g., computing :meth:`reduced_word`).
+                permutations (e.g., computing
+                :meth:`~sage.combinat.permutation.Permutation.reduced_word`).
 
             EXAMPLES::
 
@@ -7937,7 +7946,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
             .. WARNING::
 
-                The methods :meth:`descents` and :meth:`idescents` behave
+                The methods :meth:`~sage.combinat.permutation.Permutation.descents` and
+                :meth:`sage.combinat.permutation.Permutation.idescents` behave
                 differently than their Weyl group counterparts. In
                 particular, the indexing is 0-based. This could lead to
                 errors. Instead, construct the descent set as in the example.
@@ -7946,7 +7956,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
                 This ignores the multiplication convention in order
                 to be consistent with other Coxeter operations in
-                permutations (e.g., computing :meth:`reduced_word`).
+                permutations (e.g., computing
+                :meth:`~sage.combinat.permutation.Permutation.reduced_word`).
 
             EXAMPLES::
 
@@ -8038,7 +8049,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
                 This ignores the multiplication convention in order
                 to be consistent with other Coxeter operations in
-                permutations (e.g., computing :meth:`reduced_word`).
+                permutations (e.g., computing
+                :meth:`~sage.combinat.permutation.Permutation.reduced_word`).
 
             EXAMPLES::
 
@@ -8064,7 +8076,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
                 This ignores the multiplication convention in order
                 to be consistent with other Coxeter operations in
-                permutations (e.g., computing :meth:`reduced_word`).
+                permutations (e.g., computing
+                :meth:`~sage.combinat.permutation.Permutation.reduced_word`).
 
             EXAMPLES::
 
@@ -8088,7 +8101,8 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
 
 def from_permutation_group_element(pge, parent=None):
     """
-    Return a :class:`Permutation` given a :class:`PermutationGroupElement`
+    Return a :class:`Permutation` given a
+    :class:`~sage.groups.perm_gps.permgroup_element.PermutationGroupElement`
     ``pge``.
 
     EXAMPLES::
@@ -8386,7 +8400,7 @@ def bistochastic_as_sum_of_permutations(M, check=True):
 
     .. SEEALSO::
 
-        - :meth:`~sage.matrix.matrix2.as_sum_of_permutations`
+        - :meth:`~sage.matrix.matrix2.Matrix.as_sum_of_permutations`
           to use this method through the ``Matrix`` class.
 
     EXAMPLES:

@@ -155,7 +155,8 @@ is accessed.
 
 To make your code more readable, you can construct one or several
 :class:`MIPVariable` objects that can be arbitrarily named and
-indexed. This can be done by calling :meth:`new_variable` several times,
+indexed. This can be done by calling
+:meth:`~sage.numerical.mip.MixedIntegerLinearProgram.new_variable` several times,
 or by the following special syntax::
 
     sage: mip.<a,b> = MixedIntegerLinearProgram(solver='GLPK')
@@ -188,7 +189,8 @@ respectively.
 The default MIP variable
 ------------------------
 
-As a special shortcut, it is not necessary to call :meth:`new_variable`.
+As a special shortcut, it is not necessary to call
+:meth:`~sage.numerical.mip.MixedIntegerLinearProgram.new_variable`.
 A :class:`MixedIntegerLinearProgram` has a default :class:`MIPVariable`,
 whose components are obtained by using the syntax ``mip[key]``, where
 `key` is an arbitrary key::

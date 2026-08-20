@@ -2582,8 +2582,10 @@ cdef class CachedMethod():
         sage: a.f(3) is res
         True
 
-    Note, however, that accessing the attribute directly will call :meth:`__get__`,
-    and returns a :class:`CachedMethodCaller` or :class:`CachedMethodCallerNoArgs`.
+    Note, however, that accessing the attribute directly will call
+    :meth:`object.__get__`,
+    and returns a :class:`~sage.misc.cachefunc.CachedMethodCaller` or
+    :class:`~sage.misc.cachefunc.CachedMethodCallerNoArgs`.
 
     ::
 
@@ -3117,7 +3119,8 @@ def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False)
         8
 
     Using cached methods for the hash and other special methods was
-    implemented in :issue:`12601`, by means of :class:`CachedSpecialMethod`. We
+    implemented in :issue:`12601`, by means of
+    :class:`~sage.misc.cachefunc.CachedSpecialMethod`. We
     show that it is used behind the scenes::
 
         sage: cached_method(c.__hash__)
