@@ -104,7 +104,7 @@ class LimitValuationFactory(UniqueFactory):
         sage: w(x)
         +Infinity
     """
-    def create_key(self, base_valuation, G):
+    def create_key(self, base_valuation, G, check=True):
         r"""
         Create a key from the parameters of this valuation.
 
@@ -125,8 +125,9 @@ class LimitValuationFactory(UniqueFactory):
         But mostly from other factories which have made sure that the
         parameters are normalized already.
         """
-        if not base_valuation.restriction(G.parent().base_ring()).is_discrete_valuation():
-            raise ValueError("base_valuation must be discrete on the coefficient ring.")
+        if check:
+            if not base_valuation.restriction(G.parent().base_ring()).is_discrete_valuation():
+                raise ValueError("base_valuation must be discrete on the coefficient ring.")
         return base_valuation, G
 
     def create_object(self, version, key):
