@@ -12,9 +12,26 @@ datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
   datadir = prefix / datadir
 endif
+
+# Sage-the-distribution installs data below SAGE_LOCAL while Python lives in a
+# nested virtual environment.  Check both locations before using the fallback.
+database_datadirs = [datadir]
+if get_option('SAGE_LOCAL') != ''
+  database_datadirs += [fs.expanduser(get_option('SAGE_LOCAL')) / 'share']
+endif
+cremona_mini_found = false
+ellcurves_found = false
+foreach database_datadir : database_datadirs
+  cremona_mini_found = cremona_mini_found or fs.exists(
+    database_datadir / 'cremona' / 'cremona_mini.db',
+  )
+  ellcurves_found = ellcurves_found or fs.exists(
+    database_datadir / 'ellcurves' / 'rank0',
+  )
+endforeach
 if (
-  not fs.exists(datadir / 'cremona' / 'cremona_mini.db')
-  or not fs.exists(datadir / 'ellcurves' / 'rank0')
+  not cremona_mini_found
+  or not ellcurves_found
 )
   elliptic_curves_project = subproject('elliptic_curves')
   elliptic_curves_generator = elliptic_curves_project.get_variable(
