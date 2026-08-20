@@ -20,6 +20,29 @@ from sage.env import sage_data_paths
 from sage.features import PythonModule, StaticFile
 
 
+def _meson_elliptic_curves_data_paths(name: str) -> set[str]:
+    """Return meson-python wheel and editable-build data paths."""
+    import sys
+    from pathlib import Path
+
+    from sage.env import SAGE_DATA_PATH
+
+    # Preserve SAGE_DATA_PATH's replacement semantics.
+    if SAGE_DATA_PATH:
+        return set()
+
+    # meson-python maps ``{datadir}/share`` to ``sys.prefix/share``.
+    paths = {str(Path(sys.prefix) / "share" / name)}
+
+    from sage.config import get_editable_root
+
+    editable_root = get_editable_root()
+    if editable_root is not None:
+        # Data-scheme files stay in the build tree for editable installs.
+        paths.add(str(editable_root[1] / "src" / "sage"))
+    return paths
+
+
 class DatabaseCremona(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of :ref:`John Cremona's
@@ -51,9 +74,12 @@ class DatabaseCremona(StaticFile):
         """
         from sage.env import CREMONA_LARGE_DATA_DIR, CREMONA_MINI_DATA_DIR
 
-        CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
+        CREMONA_DATA_DIRS = {CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR}
         CREMONA_DATA_DIRS.discard(None)
-        search_path = CREMONA_DATA_DIRS or sage_data_paths("cremona")
+        search_path = CREMONA_DATA_DIRS or (
+            sage_data_paths("cremona")
+            | _meson_elliptic_curves_data_paths("cremona")
+        )
 
         spkg = "database_cremona_ellcurve"
         spkg_type = "optional"
@@ -95,7 +121,10 @@ class DatabaseEllcurves(StaticFile):
         """
         from sage.env import ELLCURVE_DATA_DIR
 
-        search_path = ELLCURVE_DATA_DIR or sage_data_paths("ellcurves")
+        search_path = ELLCURVE_DATA_DIR or (
+            sage_data_paths("ellcurves")
+            | _meson_elliptic_curves_data_paths("ellcurves")
+        )
 
         StaticFile.__init__(
             self,

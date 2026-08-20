@@ -12,9 +12,54 @@ datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
   datadir = prefix / datadir
 endif
-if not fs.exists(datadir / 'cremona')
-  message(
-    'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify the correct path via the environment variable SAGE_SHARE during runtime.',
+if (
+  not fs.exists(datadir / 'cremona' / 'cremona_mini.db')
+  or not fs.exists(datadir / 'ellcurves' / 'rank0')
+)
+  elliptic_curves_project = subproject('elliptic_curves')
+  elliptic_curves_generator = elliptic_curves_project.get_variable(
+    'elliptic_curves_generator',
+  )
+  elliptic_curves_allcurves = elliptic_curves_project.get_variable(
+    'elliptic_curves_allcurves',
+  )
+  # Keep the install targets in the main project: meson-python installs with
+  # --skip-subprojects (see pyproject.toml).
+  # meson-python maps 'datadir' to the Python data-scheme root; keep 'share'
+  # in the suffix, as for the Jupyter kernel below (meson-python issue #517).
+  elliptic_curves_install_dir = get_option('datadir') / 'share'
+  custom_target(
+    'cremona_mini_database',
+    input: elliptic_curves_allcurves,
+    output: 'cremona_mini.db',
+    command: [
+      py,
+      elliptic_curves_generator,
+      'cremona',
+      '@INPUT@',
+      '@OUTPUT@',
+    ],
+    install: true,
+    install_dir: elliptic_curves_install_dir / 'cremona',
+  )
+  custom_target(
+    'elliptic_curves_rank_databases',
+    input: [elliptic_curves_allcurves] + elliptic_curves_project.get_variable(
+      'elliptic_curves_rank_sources',
+    ),
+    output: elliptic_curves_project.get_variable(
+      'elliptic_curves_rank_outputs',
+    ),
+    command: [
+      py,
+      elliptic_curves_generator,
+      'ranks',
+      '@INPUT@',
+      '--outputs',
+      '@OUTPUT@',
+    ],
+    install: true,
+    install_dir: elliptic_curves_install_dir / 'ellcurves',
   )
 endif
 # Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
