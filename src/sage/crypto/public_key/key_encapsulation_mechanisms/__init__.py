@@ -13,7 +13,7 @@ from .kem_base import KEMBase
 from .ml_kem import MLKEM
 
 __all__ = [
-    'KEMBase',
     'MLKEM',
+    'KEMBase',
 ]
 
