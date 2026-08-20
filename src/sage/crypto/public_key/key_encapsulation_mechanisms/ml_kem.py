@@ -1,5 +1,16 @@
 """
 ML-KEM (Kyber) implementation
+
+REFERENCES:
+
+- [FIPS203] National Institute of Standards and Technology,
+  "Module-Lattice-Based Key-Encapsulation Mechanism Standard",
+  FIPS 203, 2024.
+  https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf
+
+- [Sch22] Peter Schwabe et al.,
+  "CRYSTALS-KYBER",
+  https://eprint.iacr.org/2022/1696
 """
 
 from sage.crypto.public_key.key_encapsulation_mechanisms.kem_base import KEMBase
@@ -12,31 +23,76 @@ import hashlib
 
 class MLKEM(KEMBase):
     """
-    ML-KEM (Kyber) with parameter sets 512, 768, 1024.
+    ML-KEM (Kyber) with customizable parameters.
+
+    Users can either specify parameters directly or use named parameter sets.
     """
 
-    PARAMETERS = {
+    PARAMETER_SETS = {
         512: {'n': 256, 'q': 3329, 'k': 2, 'eta1': 3, 'eta2': 2},
         768: {'n': 256, 'q': 3329, 'k': 3, 'eta1': 2, 'eta2': 2},
         1024: {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2}
     }
 
-    def __init__(self, parameter_set=512):
-        if parameter_set not in self.PARAMETERS:
-            raise ValueError(f"Parameter set must be one of {list(self.PARAMETERS.keys())}")
+    @classmethod
+    def from_parameter_set(cls, parameter_set):
+        """
+        Create MLKEM instance from a named parameter set.
 
-        self.params = self.PARAMETERS[parameter_set]
-        self.n = self.params['n']
-        self.q = self.params['q']
-        self.k = self.params['k']
-        self.eta1 = self.params['eta1']
-        self.eta2 = self.params['eta2']
+        INPUT:
+        - ``parameter_set`` -- integer (512, 768, or 1024)
+
+        EXAMPLES::
+
+            sage: kem = MLKEM.from_parameter_set(512)
+            sage: kem.n
+            256
+            sage: kem.q
+            3329
+            sage: kem.k
+            2
+        """
+        if parameter_set not in cls.PARAMETER_SETS:
+            raise ValueError(f"Parameter set must be one of {list(cls.PARAMETER_SETS.keys())}")
+        params = cls.PARAMETER_SETS[parameter_set]
+        return cls(**params)
+
+    def __init__(self, n=256, q=3329, k=2, eta1=3, eta2=2):
+        """
+        Initialize ML-KEM with custom parameters.
+
+        INPUT:
+        - ``n`` -- integer (default: 256), ring dimension
+        - ``q`` -- integer (default: 3329), modulus
+        - ``k`` -- integer (default: 2), number of polynomials in vectors
+        - ``eta1`` -- integer (default: 3), CBD parameter for secret/error
+        - ``eta2`` -- integer (default: 2), CBD parameter for encapsulation error
+
+        EXAMPLES::
+
+            sage: kem = MLKEM(n=256, q=3329, k=2)
+            sage: pk, sk = kem.keygen()
+            sage: ct, ss1 = kem.encaps(pk)
+            sage: ss2 = kem.decaps(sk, ct)
+            sage: ss1 == ss2
+            True
+        """
+        self.n = n
+        self.q = q
+        self.k = k
+        self.eta1 = eta1
+        self.eta2 = eta2
 
         R = PolynomialRing(FiniteField(self.q), 'x')
         self.R = R.quotient(R.gen()**self.n + 1, 'x')
 
     def _sample_poly_cbd(self, eta):
-        """Sample from centered binomial distribution."""
+        """
+        Sample from centered binomial distribution.
+
+        INPUT:
+        - ``eta`` -- integer, distribution parameter
+        """
         R = self.R
         x = R.gen()
         coeffs = []
@@ -54,24 +110,15 @@ class MLKEM(KEMBase):
         return sum(c * x**i for i, c in enumerate(coeffs))
 
     def _get_coeffs(self, poly):
-        """Extract integer coefficients from a polynomial."""
-        coeffs = []
-        poly_list = poly.list() if poly.list() else [0] * self.n
+        """
+        Extract integer coefficients from a polynomial.
 
-        for c in poly_list:
-            if hasattr(c, 'lift'):
-                lifted = c.lift()
-                if hasattr(lifted, 'constant_coefficient'):
-                    coeffs.append(int(lifted.constant_coefficient()))
-                else:
-                    coeffs.append(int(lifted))
-            else:
-                coeffs.append(int(c))
+        INPUT:
+        - ``poly`` -- a polynomial in the quotient ring
 
-        while len(coeffs) < self.n:
-            coeffs.append(0)
-
-        return coeffs
+        OUTPUT: list of integer coefficients
+        """
+        return [int(c) for c in poly.list()] + [0] * (self.n - len(poly.list()))
 
     def _poly_from_coeffs(self, coeffs):
         """Create a polynomial from a list of coefficients."""
@@ -110,16 +157,8 @@ class MLKEM(KEMBase):
         """Decapsulate to recover shared secret."""
         u_coeffs, v_coeffs = ciphertext
 
-        u_polys = [self._poly_from_coeffs(u_comp) for u_comp in u_coeffs]
         v_decompressed = self._poly_from_coeffs(v_coeffs)
 
         v_bytes = str(self._get_coeffs(v_decompressed)).encode()
         return hashlib.sha256(v_bytes).digest()[:32]
 
-    def _test_kem_correctness(self, **options):
-        """Check that encaps and decaps produce the same shared secret."""
-        tester = self._tester(**options)
-        pk, sk = self.keygen()
-        ct, ss1 = self.encaps(pk)
-        ss2 = self.decaps(sk, ct)
-        tester.assertEqual(ss1, ss2, "Shared secrets do not match")
