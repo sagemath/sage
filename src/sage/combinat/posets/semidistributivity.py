@@ -194,12 +194,12 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
     - ``G`` -- DiGraph
 
     - ``labels`` -- string; either "left", "right", or "pair".
-        Since each side of the pair determines the other, the elements of the lattice
-        can be labeled by the first component, the second, or both.
+      Since each side of the pair determines the other, the elements of the lattice
+      can be labeled by the first component, the second, or both.
 
-        #. ``left`` -- label each maximal orthogonal pair by its first component.
-        #. ``right`` -- label each maximal orthogonal pair by its second component.
-        #. ``pair`` -- label each maximal orthogonal pair by itself.
+      #. ``left`` -- label each maximal orthogonal pair by its first component.
+      #. ``right`` -- label each maximal orthogonal pair by its second component.
+      #. ``pair`` -- label each maximal orthogonal pair by itself.
 
     OUTPUT: The lattice of maximal orthogonal pairs of ``G``. The elements of the
     lattice are labeled according to the above rules. Note that the type of each
@@ -215,14 +215,14 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
     We make use of two tricks to efficiently calculate both sides of each pair:
 
     - if `(L, R)` is a maximal orthogonal pair, and we want to add some vertex `x`
-        to `L`, the right orthogonal of `L \cup \{x\}` can be obtained by removing
-        the out-neighbors of `x` from `R`. Additionally, the resulting set is sure
-        to be the right component of some pair.
+      to `L`, the right orthogonal of `L \cup \{x\}` can be obtained by removing
+      the out-neighbors of `x` from `R`. Additionally, the resulting set is sure
+      to be the right component of some pair.
 
     - if `R` is the right component of some pair, the left component `L` is the
-        union of all sets whose right orthogonal is `R`. Combining this with the
-        previous insight means we can merge all elements that give the same `R` to
-        obtain the left orthogonal of the new pair.
+      union of all sets whose right orthogonal is `R`. Combining this with the
+      previous insight means we can merge all elements that give the same `R` to
+      obtain the left orthogonal of the new pair.
 
     EXAMPLES::
 
@@ -437,17 +437,17 @@ def is_two_acyclic_factorization_system(G, certificate=False):
     two-acyclic factorization system if:
 
     #. for all `x, z`, `x \rightarrow z` if and only if there exists some `y` such
-        that `x \twoheadrightarrow y` and `y \hookrightarrow z`. If this holds we say
-        that `(\rightarrow, \twoheadrightarrow, \hookrightarrow)` is a factorization
-        system.
+       that `x \twoheadrightarrow y` and `y \hookrightarrow z`. If this holds we say
+       that `(\rightarrow, \twoheadrightarrow, \hookrightarrow)` is a factorization
+       system.
 
     #. for all `x, y`, we do not have `x \twoheadrightarrow y \twoheadrightarrow x`
-        or `x \hookrightarrow y \hookrightarrow x` without `x = y`. If this holds we
-        say that the factorization system obeys the order condition.
+       or `x \hookrightarrow y \hookrightarrow x` without `x = y`. If this holds we
+       say that the factorization system obeys the order condition.
 
     #. for all `x, y`, we do not have `x \twoheadrightarrow y \hookrightarrow x`
-        without `x = y`. If this holds we say that the factorization system obeys the
-        brick condition.
+       without `x = y`. If this holds we say that the factorization system obeys the
+       brick condition.
 
     Two-acyclic factorization systems play a key role in the Fundamental Theorem of
     Finite Semidistributive Lattices: as shown in [RST2024]_, checking whether a
