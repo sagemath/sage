@@ -553,6 +553,36 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: L(libgap(a + b)) == a + b                                              # needs sage.libs.gap
             True
 
+        Generator names reused below the immediate base field remain distinct
+        in a deeper relative tower::
+
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 3)
+            sage: T.<z> = L[]
+            sage: M.<a> = L.extension(z^2 - 5)
+            sage: top = M.gen()
+            sage: bottom = M(K.gen())
+            sage: all(M(libgap(v)) == v for v in (top, bottom, top + bottom))             # needs sage.libs.gap
+            True
+
+        Names requiring Python identifier normalization also remain distinct::
+
+            sage: N = L.extension(z^2 - 5, '𝔞')
+            sage: all(N(libgap(v)) == v for v in N.gens())                               # needs sage.libs.gap
+            True
+
+        Python keywords, preparser helper names, and non-identifiers are made
+        safe::
+
+            sage: for name in ('True', 'Integer', 'a½'):                                 # needs sage.libs.gap
+            ....:     N = NumberField(x^2 - 7, name)
+            ....:     assert N(libgap(N.gen() + 1)) == N.gen() + 1
+
+            sage: N = NumberField(x^2 - 7, 'RealNumber')
+            sage: N(libgap.eval('1.5')) == 3/2                                            # needs sage.libs.gap
+            True
+
         Check that :issue:`15276` is fixed::
 
             sage: for n in range(2,20):                                                 # needs sage.libs.gap
