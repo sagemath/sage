@@ -161,4 +161,3 @@ class MLKEM(KEMBase):
 
         v_bytes = str(self._get_coeffs(v_decompressed)).encode()
         return hashlib.sha256(v_bytes).digest()[:32]
-

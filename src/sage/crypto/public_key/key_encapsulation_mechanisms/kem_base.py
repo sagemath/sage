@@ -32,4 +32,3 @@ class KEMBase(SageObject):
         ct, ss1 = self.encaps(pk)
         ss2 = self.decaps(sk, ct)
         tester.assertEqual(ss1, ss2, "Shared secrets do not match")
-
