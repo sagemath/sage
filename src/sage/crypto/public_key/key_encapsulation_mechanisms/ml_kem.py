@@ -26,6 +26,16 @@ class MLKEM(KEMBase):
     ML-KEM (Kyber) with customizable parameters.
 
     Users can either specify parameters directly or use named parameter sets.
+
+    EXAMPLES::
+
+        sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
+        sage: kem = MLKEM(n=256, q=3329, k=2)
+        sage: pk, sk = kem.keygen()
+        sage: ct, ss1 = kem.encaps(pk)
+        sage: ss2 = kem.decaps(sk, ct)
+        sage: ss1 == ss2
+        True
     """
 
     PARAMETER_SETS = {
@@ -44,6 +54,7 @@ class MLKEM(KEMBase):
 
         EXAMPLES::
 
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
             sage: kem = MLKEM.from_parameter_set(512)
             sage: kem.n
             256
@@ -70,6 +81,7 @@ class MLKEM(KEMBase):
 
         EXAMPLES::
 
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
             sage: kem = MLKEM(n=256, q=3329, k=2)
             sage: pk, sk = kem.keygen()
             sage: ct, ss1 = kem.encaps(pk)
