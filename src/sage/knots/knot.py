@@ -115,7 +115,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         """
         return Knots().element_class(data, check=check)
 
-    def __init__(self, data, check=True):
+    def __init__(self, data, check=True, pd_warn=True):
         """
         Initialize ``self``.
 
@@ -138,7 +138,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             Knot represented by 2 crossings
         """
         Element.__init__(self, Knots())
-        Link.__init__(self, data)
+        Link.__init__(self, data, pd_warn=pd_warn)
         if check:
             if self.number_of_components() != 1:
                 raise ValueError("the input has more than 1 connected "
@@ -439,7 +439,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: K2 = trefoil.connected_sum(rev_trefoil); K2
             Knot represented by 6 crossings
             sage: K2.braid()
-            s0^3*s1^-1*s0^-3*s1
+            s0^-1*s1^3*s0^-2
 
         .. PLOT::
             :width: 300 px
@@ -457,8 +457,8 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: K.dowker_notation()
             [(4, 1), (2, 5), (6, 3), (10, 7), (8, 11), (12, 9)]
             sage: K2.dowker_notation()
-            [(4, 1), (2, 5), (6, 3), (7, 10), (11, 8), (9, 12)]
-            sage: K.homfly_polynomial() == K2.homfly_polynomial()  # needs libbraiding libhomfly
+            [(4, 1), (2, 5), (6, 3), (12, 9), (10, 7), (8, 11)]
+            sage: K.homfly_polynomial() == K2.homfly_polynomial()                       # needs libbraiding libhomfly
             False
 
         TESTS::
@@ -570,7 +570,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: K2 = d[1].simplify()            # optional - snappy
             sage: d2 = K2.deconnect_sum(); d2     # optional - snappy
             [Knot represented by 3 crossings, Knot represented by 3 crossings]
-            sage: K.get_knotinfo()                # needs libhomfly
+            sage: K.get_knotinfo()                                                      # needs libhomfly
             KnotInfo['K3_1']^2*KnotInfo['K3_1m']
         """
         from sage.interfaces.snappy import snappy
