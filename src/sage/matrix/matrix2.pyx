@@ -14102,6 +14102,18 @@ cdef class Matrix(Matrix1):
         # Take A = PLDL^{*}P^{T} and simply invert.
         return P*L_inv.conjugate_transpose()*D.inverse()*L_inv*P.transpose()
 
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a backend-specific compact LU decomposition, if available.
+
+        Subclasses can override this method to return ``(perm, M)`` in the
+        same format as ``self.LU(pivot='nonzero', format='compact')``.  The
+        public :meth:`LU` method handles validation, caching, immutability,
+        and conversion to ``(P, L, U)``.  Returning ``None`` selects the
+        generic implementation.
+        """
+        return None
+
     def LU(self, pivot=None, format='plu'):
         r"""
         Finds a decomposition into a lower-triangular matrix and
@@ -14529,42 +14541,47 @@ cdef class Matrix(Matrix1):
         key = 'LU_' + pivot
         compact = self.fetch(key)
         if compact is None:
-            if F == R:
-                M = self.__copy__()
-            else:
-                M = self.change_ring(F)
-            m, n = M._nrows, M._ncols
-            d = min(m, n)
-            perm = list(range(m))
-            zero = F(0)
-            for k in range(d):
-                max_location = -1
-                if partial:
-                    # abs() necessary to convert zero to the
-                    # correct type for comparisons (Issue #12208)
-                    max_entry = abs(zero)
-                    for i in range(k, m):
-                        entry = abs(M.get_unsafe(i, k))
-                        if entry > max_entry:
-                            max_location = i
-                            max_entry = entry
+            if not partial and F == R:
+                compact = self._lu_nonzero_compact()
+            if compact is None:
+                if F == R:
+                    M = self.__copy__()
                 else:
-                    for i in range(k, m):
-                        if M.get_unsafe(i, k) != zero:
-                            max_location = i
-                            break
-                if max_location != -1:
-                    perm[k], perm[max_location] = perm[max_location], perm[k]
-                    M.swap_rows(k, max_location)
-                    inv = M.get_unsafe(k, k).inverse()
-                    for j in range(k+1, m):
-                        scale = -M.get_unsafe(j, k) * inv
-                        M.set_unsafe(j, k, -scale)
-                        for p in range(k+1, n):
-                            M.set_unsafe(j, p, M.get_unsafe(j, p) + scale*M.get_unsafe(k, p))
-            perm = tuple(perm)
+                    M = self.change_ring(F)
+                m, n = M._nrows, M._ncols
+                d = min(m, n)
+                perm = list(range(m))
+                zero = F(0)
+                for k in range(d):
+                    max_location = -1
+                    if partial:
+                        # abs() necessary to convert zero to the
+                        # correct type for comparisons (Issue #12208)
+                        max_entry = abs(zero)
+                        for i in range(k, m):
+                            entry = abs(M.get_unsafe(i, k))
+                            if entry > max_entry:
+                                max_location = i
+                                max_entry = entry
+                    else:
+                        for i in range(k, m):
+                            if M.get_unsafe(i, k) != zero:
+                                max_location = i
+                                break
+                    if max_location != -1:
+                        perm[k], perm[max_location] = perm[max_location], perm[k]
+                        M.swap_rows(k, max_location)
+                        inv = M.get_unsafe(k, k).inverse()
+                        for j in range(k+1, m):
+                            scale = -M.get_unsafe(j, k) * inv
+                            M.set_unsafe(j, k, -scale)
+                            for p in range(k+1, n):
+                                M.set_unsafe(j, p, M.get_unsafe(j, p) + scale*M.get_unsafe(k, p))
+                compact = (tuple(perm), M)
+            else:
+                perm, M = compact
+                compact = (tuple(perm), M)
             M.set_immutable()
-            compact = (perm, M)
             self.cache(key, compact)
 
         if format == 'compact':

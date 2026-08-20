@@ -94,8 +94,11 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.linbox.fflas cimport FFLAS_TRANSPOSE, FflasNoTrans, FflasTrans, \
-    FfpackTileRecursive, FflasLeft, FflasRight, vector, list as std_list, \
-    RankProfileFromLU, PLUQtoEchelonPermutation, MathPerm2LAPACKPerm
+    FFLAS_UPLO, FflasUpper, FflasLower, FFLAS_DIAG, FflasNonUnit, FflasUnit, \
+    FfpackSlabRecursive, FfpackTileRecursive, FflasLeft, FflasRight, vector, \
+    list as std_list, RankProfileFromLU, PLUQtoEchelonPermutation, \
+    MathPerm2LAPACKPerm, LAPACKPerm2MathPerm, LUdivine, getTriangular, \
+    getEchelonForm
 
 from libcpp cimport bool
 from sage.parallel.parallelism import Parallelism
@@ -404,7 +407,7 @@ cdef inline linbox_minpoly(celement modulus, Py_ssize_t nrows, celement* entries
     """
     Compute the minimal polynomial.
     """
-    cdef Py_ssize_t i
+    cdef size_t i
     cdef ModField *F = new ModField(<long>modulus)
     cdef vector[ModField.Element] *minP = new vector[ModField.Element]()
 
@@ -423,7 +426,7 @@ cdef inline linbox_charpoly(celement modulus, Py_ssize_t nrows, celement* entrie
     """
     Compute the characteristic  polynomial.
     """
-    cdef Py_ssize_t i
+    cdef size_t i
     cdef ModField *F = new ModField(<long>modulus)
     cdef ModDensePolyRing * R = new ModDensePolyRing(F[0])
     cdef ModDensePoly  P
@@ -949,6 +952,82 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
         return A
+
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a compact PLE decomposition using FFLAS-FFPACK.
+
+        TESTS::
+
+            sage: for p in (7, 1048583):
+            ....:     A = matrix(GF(p), [[0, 1, 2], [1, 2, 3], [1, 2, 3]],
+            ....:                implementation='linbox')
+            ....:     P, L, U = A.LU()
+            ....:     assert A == P * L * U
+            ....:     assert all(L[i, i] == 1 for i in range(3))
+        """
+        if self.p <= 2 or not is_prime(self.p):
+            return None
+
+        cdef size_t i, j, rank
+        cdef size_t nrows = self._nrows
+        cdef size_t ncols = self._ncols
+        cdef vector[size_t] P
+        cdef vector[size_t] Q
+        cdef vector[size_t] math_perm
+        cdef vector[celement] lower
+        cdef ModField *F
+        cdef Matrix_modn_dense_template M = self.__copy__()
+
+        if nrows == 0 or ncols == 0:
+            return tuple(range(nrows)), M
+
+        P.resize(nrows)
+        Q.resize(ncols)
+        math_perm.resize(nrows)
+        for i in range(nrows):
+            P[i] = i
+            math_perm[i] = i
+        for j in range(ncols):
+            Q[j] = j
+
+        F = new ModField(<long>self.p)
+        try:
+            sig_on()
+            try:
+                rank = LUdivine(F[0], FflasUnit, FflasTrans,
+                                 nrows, ncols, <ModField.Element *>M._entries,
+                                 ncols, &P[0], &Q[0])
+            finally:
+                sig_off()
+
+            if rank:
+                lower.resize(nrows * rank)
+                sig_on()
+                try:
+                    getTriangular(F[0], FflasLower, FflasUnit,
+                                  nrows, ncols, rank,
+                                  <ModField.Element *>M._entries, ncols,
+                                  <ModField.Element *>&lower[0], rank, True)
+                    getEchelonForm(F[0], FflasUpper, FflasNonUnit,
+                                   nrows, ncols, rank, &Q[0],
+                                   <ModField.Element *>M._entries, ncols,
+                                   FfpackSlabRecursive)
+                finally:
+                    sig_off()
+        finally:
+            del F
+
+        for i in range(nrows):
+            for j in range(min(i, rank)):
+                M._entries[i * ncols + j] = lower[i * rank + j]
+
+        for i in range(rank, nrows):
+            P[i] = i
+        LAPACKPerm2MathPerm(&math_perm[0], &P[0], nrows)
+
+        self.cache('rank', Integer(rank))
+        return tuple(math_perm[i] for i in range(nrows)), M
 
     cpdef _add_(self, right):
         r"""
@@ -2068,7 +2147,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                     start_row = start_row + 1
                     break
         self.cache('pivots', tuple(pivots))
-        self.cache('pivot_rows', tuple(range(r)))
+        self.cache('pivot_rows', tuple(range(start_row)))
         self.cache('in_echelon_form', True)
 
     def pivots(self) -> tuple:

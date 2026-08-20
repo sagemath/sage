@@ -97,7 +97,7 @@ from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
-from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free
+from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free, rci_t
 from sage.libs.m4rie cimport *
 from sage.libs.m4rie cimport mzed_t
 
@@ -139,8 +139,9 @@ cdef m4ri_word poly_to_word(f) except? -1:
     propagated::
 
         sage: from sage.doctest.util import ensure_interruptible_after
+        sage: A = MatrixSpace(GF(2^8), 2^10).random_element()
         sage: with ensure_interruptible_after(0.5):
-        ....:     MatrixSpace(GF(2^8), 2^9).random_element().LU()
+        ....:     A.echelonize(algorithm='builtin')
     """
     return f.to_integer()
 
@@ -800,6 +801,79 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         return A
 
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a compact PLE decomposition using M4RIE.
+
+        TESTS::
+
+            sage: K.<a> = GF(2^4)
+            sage: A = matrix(K, [[0, a, 1, a + 1], [0, a^2, a, 1],
+            ....:                [0, 0, 0, a], [1, a + 1, 0, 1]])
+            sage: P, L, U = A.LU()
+            sage: A == P * L * U
+            True
+            sage: L.is_triangular('lower') and U.is_triangular('upper')
+            True
+
+        The native factorization remains interruptible::
+
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: A = MatrixSpace(GF(2^15), 2^10).random_element()
+            sage: with ensure_interruptible_after(0.5):
+            ....:     A.LU()
+        """
+        cdef rci_t i, j, pivot
+        cdef int rank
+        cdef rci_t nrows = self._nrows
+        cdef rci_t ncols = self._ncols
+        cdef m4ri_word diagonal, inverse, value
+        cdef const gf2e *ff
+        cdef Matrix_gf2e_dense B = self.__copy__()
+        cdef Matrix_gf2e_dense M = self.__copy__()
+        cdef mzp_t *P = NULL
+        cdef mzp_t *Q = NULL
+
+        if nrows == 0 or ncols == 0:
+            return tuple(range(nrows)), M
+
+        mzed_set_ui(M._entries, 0)
+        P = mzp_init(nrows)
+        Q = mzp_init(ncols)
+        try:
+            sig_on()
+            try:
+                rank = mzed_ple(B._entries, P, Q)
+            finally:
+                sig_off()
+
+            perm = list(range(nrows))
+            for i in range(nrows):
+                j = P.values[i]
+                perm[i], perm[j] = perm[j], perm[i]
+
+            ff = B._entries.finite_field
+            for j in range(rank):
+                diagonal = mzed_read_elem(B._entries, j, j)
+                inverse = ff.inv(ff, diagonal)
+                for i in range(j + 1, nrows):
+                    value = ff.mul(ff, mzed_read_elem(B._entries, i, j), inverse)
+                    if value:
+                        mzed_write_elem(M._entries, i, j, value)
+
+                pivot = Q.values[j]
+                mzed_write_elem(M._entries, j, pivot, diagonal)
+                for i in range(pivot + 1, ncols):
+                    value = ff.mul(ff, diagonal, mzed_read_elem(B._entries, j, i))
+                    if value:
+                        mzed_write_elem(M._entries, j, i, value)
+        finally:
+            mzp_free(P)
+            mzp_free(Q)
+
+        self.cache('rank', rank)
+        return tuple(perm), M
+
     def __bool__(self):
         """
         Return if ``self`` is a zero matrix or not.
@@ -1029,6 +1103,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             return self
 
         cdef int full
+        cdef size_t r = 0
 
         full = int(reduced)
 
@@ -1060,7 +1135,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sig_off()
 
         elif algorithm == 'builtin':
-            self._echelon_in_place(algorithm='classical')
+            r = len(self._echelon_in_place(algorithm='classical'))
 
         else:
             raise ValueError("No algorithm '%s'." % algorithm)

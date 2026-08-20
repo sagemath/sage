@@ -1196,6 +1196,66 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         return A
 
+    def _lu_nonzero_compact(self):
+        r"""
+        Return a compact PLE decomposition using M4RI.
+
+        TESTS::
+
+            sage: A = matrix(GF(2), [[0, 1, 0, 1], [0, 1, 1, 1],
+            ....:                    [0, 0, 0, 1], [0, 1, 1, 0]])
+            sage: P, L, U = A.LU()
+            sage: A == P * L * U
+            True
+            sage: L.is_triangular('lower') and U.is_triangular('upper')
+            True
+        """
+        cdef Py_ssize_t i, j
+        cdef long rank
+        cdef rci_t pivot
+        cdef Py_ssize_t nrows = self._nrows
+        cdef Py_ssize_t ncols = self._ncols
+        cdef Matrix_mod2_dense B = self.__copy__()
+        cdef Matrix_mod2_dense M = self.__copy__()
+        cdef mzp_t *P = NULL
+        cdef mzp_t *Q = NULL
+
+        if nrows == 0 or ncols == 0:
+            return tuple(range(nrows)), M
+
+        mzd_set_ui(M._entries, 0)
+        P = mzp_init(nrows)
+        Q = mzp_init(ncols)
+        try:
+            sig_on()
+            try:
+                rank = mzd_ple(B._entries, P, Q, 0)
+            finally:
+                sig_off()
+
+            perm = list(range(nrows))
+            for i in range(nrows):
+                j = P.values[i]
+                perm[i], perm[j] = perm[j], perm[i]
+
+            for j in range(rank):
+                for i in range(j + 1, nrows):
+                    if mzd_read_bit(B._entries, i, j):
+                        mzd_write_bit(M._entries, i, j, 1)
+
+            for i in range(rank):
+                pivot = Q.values[i]
+                mzd_write_bit(M._entries, i, pivot, 1)
+                for j in range(pivot + 1, ncols):
+                    if mzd_read_bit(B._entries, i, j):
+                        mzd_write_bit(M._entries, i, j, 1)
+        finally:
+            mzp_free(P)
+            mzp_free(Q)
+
+        self.cache('rank', rank)
+        return tuple(perm), M
+
     def _list(self):
         """
         Return list of the elements of ``self`` in row major

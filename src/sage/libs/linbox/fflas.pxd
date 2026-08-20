@@ -32,6 +32,14 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
         FflasLeft
         FflasRight
 
+    ctypedef enum FFLAS_UPLO:
+        FflasUpper
+        FflasLower
+
+    ctypedef enum FFLAS_DIAG:
+        FflasNonUnit
+        FflasUnit
+
     # double
     Modular_double.Element* fgemv (Modular_double F, FFLAS_TRANSPOSE transA,
              size_t nrows, size_t ncols,
@@ -82,6 +90,7 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
 
 cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     ctypedef enum FFPACK_LU_TAG:
+        FfpackSlabRecursive
         FfpackTileRecursive
 
     void RankProfileFromLU (size_t* P, size_t N, size_t R,
@@ -90,6 +99,8 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     void PLUQtoEchelonPermutation (size_t N, size_t R, size_t * P, size_t * outPerm)
 
     void MathPerm2LAPACKPerm (size_t * LapackP, size_t * MathP, size_t N)
+
+    void LAPACKPerm2MathPerm (size_t * MathP, const size_t * LapackP, size_t N)
 
     # double
     bint IsSingular (Modular_double F,
@@ -112,6 +123,21 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     int pRank (Modular_double,
               size_t nrows, size_t ncols,
               Modular_double.Element *A, size_t lda, size_t numthreads)
+
+    size_t LUdivine (Modular_double F, FFLAS_DIAG Diag, FFLAS_TRANSPOSE trans,
+                     size_t nrows, size_t ncols, Modular_double.Element* A,
+                     size_t lda, size_t* P, size_t* Q)
+
+    void getTriangular (Modular_double F, FFLAS_UPLO Uplo, FFLAS_DIAG Diag,
+                        size_t nrows, size_t ncols, size_t rank,
+                        const Modular_double.Element* A, size_t lda,
+                        Modular_double.Element* T, size_t ldt,
+                        bool only_nonzero)
+
+    void getEchelonForm (Modular_double F, FFLAS_UPLO Uplo, FFLAS_DIAG Diag,
+                         size_t nrows, size_t ncols, size_t rank,
+                         const size_t* Q, Modular_double.Element* A, size_t lda,
+                         FFPACK_LU_TAG LuTag)
 
     size_t ReducedRowEchelonForm (Modular_double F, size_t a, size_t b,
                                   Modular_double.Element* matrix,
@@ -169,6 +195,21 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     int pRank (Modular_float,
               size_t nrows, size_t ncols,
               Modular_float.Element *A, size_t lda, size_t numthreads)
+
+    size_t LUdivine (Modular_float F, FFLAS_DIAG Diag, FFLAS_TRANSPOSE trans,
+                     size_t nrows, size_t ncols, Modular_float.Element* A,
+                     size_t lda, size_t* P, size_t* Q)
+
+    void getTriangular (Modular_float F, FFLAS_UPLO Uplo, FFLAS_DIAG Diag,
+                        size_t nrows, size_t ncols, size_t rank,
+                        const Modular_float.Element* A, size_t lda,
+                        Modular_float.Element* T, size_t ldt,
+                        bool only_nonzero)
+
+    void getEchelonForm (Modular_float F, FFLAS_UPLO Uplo, FFLAS_DIAG Diag,
+                         size_t nrows, size_t ncols, size_t rank,
+                         const size_t* Q, Modular_float.Element* A, size_t lda,
+                         FFPACK_LU_TAG LuTag)
 
     size_t ReducedRowEchelonForm (Modular_float F, size_t a, size_t b,
                                   Modular_float.Element* matrix,
