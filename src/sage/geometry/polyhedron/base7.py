@@ -668,7 +668,16 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: F2 = Polyhedron([[sqrt2,0],[0,sqrt3]])
             sage: F2.volume(measure="induced")
             2.236067977499790?
-       """
+
+        Check that :issue:`42704` is fixed::
+
+            sage: P_rdf = Polyhedron(vertices=[[0.0, 0.0], [2.0, 0.0], [0.0, 2.0], [2.0, 2.0]])
+            sage: P_rdf.volume()
+            4.0
+            sage: ico = polytopes.icosahedron(exact=False)
+            sage: ico.volume()
+            2.181694990...
+        """
         from sage.features import FeatureNotPresentError
         if measure == 'induced_rational' and engine not in ['auto', 'latte', 'normaliz']:
             raise RuntimeError("the induced rational measure can only be computed with the engine set to `auto`, `latte`, or `normaliz`")
