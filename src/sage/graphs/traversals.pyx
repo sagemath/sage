@@ -1044,9 +1044,9 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
 
     if triangulation and labels:
         return alpha, label, F
-    elif triangulation:
+    if triangulation:
         return alpha, F
-    elif labels:
+    if labels:
         return alpha, label
     return alpha
 

@@ -4,7 +4,6 @@ Utilities
 
 import errno
 import os
-import platform
 import traceback
 from typing import Optional
 
@@ -189,13 +188,24 @@ def build_many(target, args, processes=None):
         ...
         WorkerDiedException: worker for 4 died with non-zero exit code -9
     """
-    from multiprocessing import Process, Queue, cpu_count, set_start_method
+    import multiprocessing
+    from multiprocessing import cpu_count
 
-    # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork'
-    # in multiprocessing, and Sage docbuilding doesn't work with
-    # 'spawn'. See trac #27754.
-    if platform.system() == "Darwin":
-        set_start_method("fork", force=True)
+    # The docbuild needs the workers to inherit the state of this process, and
+    # ``run_worker`` below is a local function that only 'fork' can hand to a
+    # worker at all: neither 'spawn' nor 'forkserver' can pickle it.  macOS has
+    # defaulted to 'spawn' since Python 3.8 (trac #27754) and Linux to
+    # 'forkserver' since Python 3.14, so ask for a fork context by name rather
+    # than relying on the default.  Note that a context leaves the start method
+    # of the process as it is, unlike set_start_method(force=True).
+    try:
+        context = multiprocessing.get_context('fork')
+    except ValueError:
+        # No fork on this platform; carry on with the default and let the
+        # failure, if any, name the start method that could not cope.
+        context = multiprocessing.get_context()
+    Process = context.Process
+    Queue = context.Queue
     from queue import Empty
 
     if processes is None:

@@ -2763,7 +2763,7 @@ class QuaternionOrder(Parent):
           discriminant.
 
         - ``reduce`` -- boolean or (default) ``None``; whether to reduce
-          the ideal using :meth:`reduce_equiv` prior to returning it or not.
+          the ideal using :meth:`~sage.algebras.quatalg.quaternion_algebra.QuaternionFractionalIdeal_rational.reduce_equiv` prior to returning it or not.
           Note that the norm of the ideal is only preserved when this is
           ``False``; thus, the default is ``False`` when ``norm`` is explicitly
           given and ``True`` otherwise.
@@ -3997,11 +3997,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: # optional - magma
             sage: a, b = M.quaternion_algebra().invariants()
-            sage: magma.eval(f'A<i,j,k> := QuaternionAlgebra<Rationals() | {a}, {b}>'
+            sage: magma.eval(f'A<i,j,k> := QuaternionAlgebra<Rationals() | {a}, {b}>')
             ''
-            sage: magma.eval(f'O := QuaternionOrder({list(C[0].right_order().basis())})'')
+            sage: magma.eval(f'O := QuaternionOrder({list(C[0].right_order().basis())})')
             ''
-            sage: [ magma(f'rideal<O | {list(I.basis())}>' for I in C]
+            sage: [ magma(f'rideal<O | {list(I.basis())}>').Norm() for I in C]
             [16, 32, 32]
 
             sage: A.<i,j,k> = QuaternionAlgebra(-1,-1)

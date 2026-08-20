@@ -111,6 +111,18 @@ to the default FLINT implementation, but not vice versa::
     sage: (R.0 + S.0).parent() is S                                                     # needs sage.libs.flint sage.libs.ntl
     True
 
+We verify Alpoge's counterexample to the Jacobian conjecture::
+
+    sage: P.<x,y,z> = QQ[]
+    sage: l = [(1+x*y)^3*z + y^2*(1+x*y)*(4+3*x*y), y+3*x*(1+x*y)^2*z + 3*x*y^2*(4+3*x*y), 2*x-3*x^2*y-x^3*z]
+    sage: M = Matrix([[l[i].derivative(j) for j in [x,y,z]] for i in range(3)])
+    sage: M.det()
+    -2
+    sage: [f(0,0,-1/4) for f in l]
+    [-1/4, 0, 0]
+    sage: [f(1,-3/2,13/2) for f in l]
+    [-1/4, 0, 0]
+
 TESTS::
 
     sage: K.<x> = FractionField(QQ['x'])
@@ -1586,7 +1598,7 @@ class PolynomialRing_generic(Ring):
     def karatsuba_threshold(self):
         """
         Return the Karatsuba threshold used for this ring by the method
-        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
+        ``_mul_karatsuba`` to fall back to the schoolbook algorithm.
 
         EXAMPLES::
 
@@ -1602,7 +1614,7 @@ class PolynomialRing_generic(Ring):
     def set_karatsuba_threshold(self, Karatsuba_threshold):
         """
         Changes the default threshold for this ring in the method
-        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
+        ``_mul_karatsuba`` to fall back to the schoolbook algorithm.
 
         .. warning::
 
@@ -1975,9 +1987,10 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
 
             More documentation and additional options are available using the
             iterator
-            :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
+            :class:`~sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
             directly. In addition, polynomials have a method
-            :meth:`is_weil_polynomial` to test whether or not the given
+            :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.is_weil_polynomial`
+            to test whether or not the given
             polynomial is a Weil polynomial.
 
         EXAMPLES::

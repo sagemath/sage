@@ -15,7 +15,7 @@ The following constructions are available
     :delim: |
 
     :meth:`~sage.geometry.polyhedron.library.Polytopes.Birkhoff_polytope`
-    :meth:`~sage.geometry.polyhedron.library.Polytopes.associahedron`
+    :func:`~sage.combinat.root_system.associahedron.Associahedron`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.bitruncated_six_hundred_cell`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.buckyball`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.cantellated_one_hundred_twenty_cell`
@@ -42,7 +42,7 @@ The following constructions are available
     :meth:`~sage.geometry.polyhedron.library.Polytopes.omnitruncated_six_hundred_cell`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.one_hundred_twenty_cell`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.parallelotope`
-    :meth:`~sage.geometry.polyhedron.library.Polytopes.pellytope`
+    :func:`~sage.combinat.posets.sashes.pellytope`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.pentakis_dodecahedron`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.permutahedron`
     :meth:`~sage.geometry.polyhedron.library.Polytopes.generalized_permutahedron`
@@ -204,7 +204,7 @@ def gale_transform_to_polytope(vectors, base_ring=None, backend=None):
     Return the polytope associated to the list of vectors forming a Gale transform.
 
     This function is the inverse of
-    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.gale_transform`
+    :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.gale_transform`
     up to projective transformation.
 
     INPUT:
@@ -2772,8 +2772,8 @@ class Polytopes:
 
         .. SEEALSO::
 
-            * :meth:`~sage.combinat.root_system.reflection_group_real.permutahedron`
-            * :meth:`~sage.categories.finite_coxeter_groups.permutahedron`
+            * ``ReflectionGroup(...).permutahedron()``
+            * :meth:`~sage.categories.finite_coxeter_groups.FiniteCoxeterGroups.ParentMethods.permutahedron`
 
         TESTS::
 

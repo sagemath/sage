@@ -486,7 +486,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         To integrate a polynomial over a polytope, use the optional
         ``latte_int`` package
-        :meth:`sage.geometry.polyhedron.base.Polyhedron_base.integrate`.
+        :meth:`~sage.geometry.polyhedron.base7.Polyhedron_base7.integrate`.
 
     EXAMPLES::
 

@@ -693,7 +693,7 @@ def integral(x, *args, **kwds):
     integrate it using Maxima, maple, etc, as specified by algorithm.
 
     For symbolic expression calls
-    :func:`sage.calculus.calculus.integral` - see this function for
+    :func:`sage.calculus.functional.integral` - see this function for
     available options.
 
     EXAMPLES::
@@ -1048,7 +1048,7 @@ def log(*args, **kwds):
 
     You can use
     :class:`RDF<sage.rings.real_double.RealDoubleField_class>`,
-    :class:`~sage.rings.real_mpfr.RealField` or ``n`` to get a
+    :func:`RealField <sage.rings.real_mpfr.RealField>` or ``n`` to get a
     numerical real approximation::
 
         sage: log(1024, 2)

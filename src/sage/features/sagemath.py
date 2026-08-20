@@ -26,7 +26,7 @@ is tested separately (in a virtual environment): In this situation,
 :class:`SymmetricGroup` is not defined anywhere (and thus not present
 in the top-level namespace).
 Hence, we conditionalize this doctest on the presence of the feature
-:class:`sage.groups <sage__groups>`.
+:class:`sage.groups <sage.features.sagemath.sage__groups>`.
 """
 
 # *****************************************************************************
@@ -81,7 +81,8 @@ class sagemath_doc_html(StaticFile):
 
 class sage__combinat(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.combinat`.
+    A :class:`~sage.features.Feature` describing the presence of
+    :ref:`sage.combinat <sage.combinat>`.
 
     EXAMPLES:
 
@@ -95,12 +96,14 @@ class sage__combinat(JoinFeature):
         [[0, 1], [0, 2], [0, 3], [2, 4], [2, 5], [3, 4], [3, 5]]
 
     Use ``# needs sage.combinat`` for doctests that use any other Python modules
-    from :mod:`sage.combinat`, for example :mod:`sage.combinat.tableau_tuple`::
+    from :ref:`sage.combinat <sage.combinat>`, for example
+    :mod:`sage.combinat.tableau_tuple`::
 
         sage: TableauTuple([[[7,8,9]],[],[[1,2,3],[4,5],[6]]]).shape()                  # needs sage.combinat
         ([3], [], [3, 2, 1])
 
-    Doctests that use Python modules from :mod:`sage.combinat` that involve trees,
+    Doctests that use Python modules from :ref:`sage.combinat <sage.combinat>`
+    that involve trees,
     graphs, hypergraphs, posets, quivers, combinatorial designs,
     finite state machines etc. should be marked ``# needs sage.combinat sage.graphs``::
 
@@ -154,7 +157,7 @@ class sage__combinat(JoinFeature):
 
 class sage__geometry__polyhedron(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.geometry.polyhedron`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.geometry.polyhedron``.
 
     EXAMPLES:
 
@@ -198,24 +201,27 @@ class sage__geometry__polyhedron(JoinFeature):
 
 class sage__graphs(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.graphs`.
+    A :class:`~sage.features.Feature` describing the presence of
+    :ref:`sage.graphs <sage.graphs>`.
 
     EXAMPLES:
 
-    Doctests that use anything from :mod:`sage.graphs` (:class:`Graph`, :class:`DiGraph`, ...)
+    Doctests that use anything from :ref:`sage.graphs <sage.graphs>`
+    (:class:`Graph`, :class:`DiGraph`, ...)
     should be marked ``# needs sage.graphs``. The same applies to any doctest that
-    uses a :class:`~sage.combinat.posets.posets.Poset`, cluster algebra quiver, finite
+    uses a :func:`~sage.combinat.posets.posets.Poset`, cluster algebra quiver, finite
     state machines, abelian sandpiles, or Dynkin diagrams::
 
         sage: g = graphs.PetersenGraph()                                                # needs sage.graphs
         sage: r, s = g.is_weakly_chordal(certificate=True); r                           # needs sage.graphs
         False
 
-    Also any use of tree classes defined in :mod:`sage.combinat` (:class:`BinaryTree`,
-    :class:`RootedTree`, ...) in doctests should be marked the same.
+    Also any use of tree classes defined in :ref:`sage.combinat <sage.combinat>`
+    (:class:`BinaryTree`, :class:`RootedTree`, ...) in doctests should be marked
+    the same.
 
     By way of generalization, any use of :class:`SimplicialComplex` or other abstract complexes from
-    :mod:`sage.topology`, hypergraphs, and combinatorial designs, should be marked
+    ``sage.topology``, hypergraphs, and combinatorial designs, should be marked
     ``# needs sage.graphs`` as well::
 
         sage: X = SimplicialComplex([[0,1,2], [1,2,3]])                                 # needs sage.graphs
@@ -311,11 +317,9 @@ class sage__groups(JoinFeature):
                              spkg='sagemath_groups', type='standard')
 
 
-
-
 class sage__libs__flint(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.flint`
+    A :class:`sage.features.Feature` describing the presence of ``sage.libs.flint``
     and other modules depending on FLINT.
 
     In addition to the modularization purposes that this tag serves, it also provides attribution
@@ -343,7 +347,7 @@ class sage__libs__flint(JoinFeature):
 
 class sage__libs__gap(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.gap`
+    A :class:`sage.features.Feature` describing the presence of ``sage.libs.gap``
     (the library interface to :ref:`GAP <spkg_gap>`) and :mod:`sage.interfaces.gap` (the pexpect
     interface to GAP). By design, we do not distinguish between these two, in order
     to facilitate the conversion of code from the pexpect interface to the library
@@ -351,7 +355,7 @@ class sage__libs__gap(JoinFeature):
 
     .. SEEALSO::
 
-        :class:`Features for GAP packages <~sage.features.gap.GapPackage>`
+        :class:`Features for GAP packages <sage.features.gap.GapPackage>`
 
     TESTS::
 
@@ -386,7 +390,7 @@ class sage__libs__gap(JoinFeature):
 
 class sage__libs__linbox(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.linbox`
+    A :class:`sage.features.Feature` describing the presence of ``sage.libs.linbox``
     and other modules depending on Givaro, FFLAS-FFPACK, LinBox.
 
     In addition to the modularization purposes that this tag serves, it also provides attribution
@@ -443,7 +447,7 @@ class sage__libs__m4ri(JoinFeature):
 
 class sage__libs__ntl(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.ntl`
+    A :class:`sage.features.Feature` describing the presence of ``sage.libs.ntl``
     and other modules depending on NTL.
 
     In addition to the modularization purposes that this tag serves,
@@ -470,7 +474,7 @@ class sage__libs__ntl(JoinFeature):
 
 class sage__libs__giac(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.giac`.
+    A :class:`sage.features.Feature` describing the presence of ``sage.libs.giac``.
 
     In addition to the modularization purposes that this tag serves,
     it also provides attribution to the upstream project.
@@ -534,7 +538,7 @@ class sage__libs__pari(JoinFeature):
 
 class sage__libs__singular(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.singular`
+    A :class:`sage.features.Feature` describing the presence of ``sage.libs.singular``
     (the library interface to Singular) and :mod:`sage.interfaces.singular` (the pexpect
     interface to Singular). By design, we do not distinguish between these two, in order
     to facilitate the conversion of code from the pexpect interface to the library
@@ -542,7 +546,7 @@ class sage__libs__singular(JoinFeature):
 
     .. SEEALSO::
 
-        :class:`Feature singular <~sage.features.singular.Singular>`
+        :class:`Feature singular <sage.features.singular.Singular>`
 
     TESTS::
 
@@ -565,7 +569,7 @@ class sage__libs__singular(JoinFeature):
 
 class sage__modular(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.modular`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.modular``.
 
     TESTS::
 
@@ -588,12 +592,12 @@ class sage__modular(JoinFeature):
 
 class sage__modules(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.modules`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.modules``.
 
     EXAMPLES:
 
     All uses of implementations of vector spaces / free modules in SageMath, whether
-    :class:`sage.modules.free_module.FreeModule`,
+    :func:`~sage.modules.free_module.FreeModule`,
     :class:`sage.combinat.free_module.CombinatorialFreeModule`,
     :class:`sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule`, or
     additive abelian groups, should be marked ``# needs sage.modules``.
@@ -602,8 +606,8 @@ class sage__modules(JoinFeature):
     point lattices, root systems, matrix/affine/Weyl/Coxeter groups, matroids,
     and ring derivations.
 
-    Likewise, all uses of :mod:`sage.coding`, :mod:`sage.crypto`, and :mod:`sage.homology`
-    in doctests should be marked ``# needs sage.modules``.
+    Likewise, all uses of :ref:`sage.coding <sage.coding>`, ``sage.crypto``, and
+    ``sage.homology`` in doctests should be marked ``# needs sage.modules``.
 
     TESTS::
 
@@ -665,7 +669,7 @@ class sage__numerical__mip(PythonModule):
 
 class sage__plot(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.plot`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.plot``.
 
     TESTS::
 
@@ -710,7 +714,7 @@ class sage__rings__complex_double(PythonModule):
 
 class sage__rings__finite_rings(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.finite_rings`;
+    A :class:`~sage.features.Feature` describing the presence of ``sage.rings.finite_rings``;
     specifically, the element implementations using the :ref:`PARI <spkg_pari>` library.
 
     TESTS::
@@ -736,7 +740,7 @@ class sage__rings__finite_rings(JoinFeature):
 
 class sage__rings__function_field(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.function_field`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.rings.function_field``.
 
     EXAMPLES:
 
@@ -780,7 +784,7 @@ class sage__rings__function_field(JoinFeature):
 
 class sage__rings__number_field(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.number_field`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.rings.number_field``.
 
     Number fields are implemented in Sage using a complicated mixture of various libraries,
     including :ref:`FLINT <spkg_flint>`, :ref:`GAP <spkg_gap>`,
@@ -900,7 +904,7 @@ class sage__rings__real_mpfr(JoinFeature):
 
 class sage__schemes(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.schemes`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.schemes``.
 
     TESTS::
 
@@ -923,7 +927,7 @@ class sage__schemes(JoinFeature):
 
 class sage__symbolic(JoinFeature):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.symbolic`.
+    A :class:`~sage.features.Feature` describing the presence of ``sage.symbolic``.
 
     EXAMPLES:
 
@@ -982,7 +986,7 @@ def all_features():
     r"""
     Return features corresponding to parts of the Sage library.
 
-    These features are named after Python packages/modules (e.g., :mod:`sage.symbolic`),
+    These features are named after Python packages/modules (e.g., ``sage.symbolic``),
     not distribution packages (**sagemath-symbolics**).
 
     This design is motivated by a separation of concerns: The author of a module that depends

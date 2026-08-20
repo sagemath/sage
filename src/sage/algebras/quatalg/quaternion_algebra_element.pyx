@@ -159,8 +159,7 @@ cdef to_quaternion(R, x):
     """
     if isinstance(x, (list, tuple)):
         return R(x[0]), R(x[1]), R(x[2]), R(x[3])
-    else:
-        return R(x), R(0), R(0), R(0)
+    return R(x), R(0), R(0), R(0)
 
 cdef inline print_coeff(y, i, bint atomic):
     r"""
@@ -188,8 +187,7 @@ cdef inline print_coeff(y, i, bint atomic):
     y = str(y)
     if not atomic and ('+' in y or '-' in y):
         return '(%s)*%s' % (y, i)
-    else:
-        return '%s*%s' % (y, i)
+    return '%s*%s' % (y, i)
 
 
 cdef class QuaternionAlgebraElement_abstract(AlgebraElement):

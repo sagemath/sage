@@ -676,7 +676,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         .. SEEALSO::
 
-            :func:`~sage.geometry.polyhedron.library.gale_transform_to_polyhedron`.
+            :func:`~sage.geometry.polyhedron.library.gale_transform_to_polytope`.
 
         TESTS::
 
