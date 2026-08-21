@@ -20,8 +20,31 @@ from sage.env import sage_data_paths
 from sage.features import PythonModule, StaticFile
 
 
-def _meson_elliptic_curves_data_paths(name: str) -> set[str]:
-    """Return meson-python wheel and editable-build data paths."""
+def _meson_data_paths(name: str, *, editable_data_dir: str | None = None) -> set[str]:
+    r"""Return meson-python wheel and editable-install data paths.
+
+    TESTS::
+
+        sage: from pathlib import Path
+        sage: from unittest.mock import patch
+        sage: from sage.features.databases import _meson_data_paths
+        sage: with patch("sage.env.SAGE_DATA_PATH", None), \
+        ....:      patch("sage.config.get_editable_root",
+        ....:            return_value=(Path("/source"), Path("/build"))):
+        ....:     generated_dir = str(Path("/build") / "src" / "sage")
+        ....:     source_dir = str(Path("/source") / "polytopes_db")
+        ....:     generated = _meson_data_paths("ellcurves")
+        ....:     disabled = _meson_data_paths("reflexive_polytopes", editable_data_dir="")
+        ....:     source = _meson_data_paths(
+        ....:         "reflexive_polytopes", editable_data_dir=source_dir
+        ....:     )
+        sage: generated_dir in generated
+        True
+        sage: generated_dir in disabled
+        False
+        sage: source_dir in source
+        True
+    """
     import sys
     from pathlib import Path
 
@@ -38,8 +61,12 @@ def _meson_elliptic_curves_data_paths(name: str) -> set[str]:
 
     editable_root = get_editable_root()
     if editable_root is not None:
-        # Data-scheme files stay in the build tree for editable installs.
-        paths.add(str(editable_root[1] / "src" / "sage"))
+        if editable_data_dir is None:
+            # Generated data-scheme files stay in the build tree for editable
+            # installs.
+            paths.add(str(editable_root[1] / "src" / "sage"))
+        elif editable_data_dir:
+            paths.add(editable_data_dir)
     return paths
 
 
@@ -77,8 +104,7 @@ class DatabaseCremona(StaticFile):
         CREMONA_DATA_DIRS = {CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR}
         CREMONA_DATA_DIRS.discard(None)
         search_path = CREMONA_DATA_DIRS or (
-            sage_data_paths("cremona")
-            | _meson_elliptic_curves_data_paths("cremona")
+            sage_data_paths("cremona") | _meson_data_paths("cremona")
         )
 
         spkg = "database_cremona_ellcurve"
@@ -122,8 +148,7 @@ class DatabaseEllcurves(StaticFile):
         from sage.env import ELLCURVE_DATA_DIR
 
         search_path = ELLCURVE_DATA_DIR or (
-            sage_data_paths("ellcurves")
-            | _meson_elliptic_curves_data_paths("ellcurves")
+            sage_data_paths("ellcurves") | _meson_data_paths("ellcurves")
         )
 
         StaticFile.__init__(
@@ -312,7 +337,17 @@ class DatabaseReflexivePolytopes(StaticFile):
         """
         from sage.env import POLYTOPE_DATA_DIR
 
-        search_path = POLYTOPE_DATA_DIR or sage_data_paths("reflexive_polytopes")
+        meson_paths = set()
+        if name == "polytopes_db":
+            from sage.config import _MESON_POLYTOPES_DB_DATA_DIR
+
+            meson_paths = _meson_data_paths(
+                "reflexive_polytopes",
+                editable_data_dir=_MESON_POLYTOPES_DB_DATA_DIR,
+            )
+        search_path = POLYTOPE_DATA_DIR or (
+            sage_data_paths("reflexive_polytopes") | meson_paths
+        )
 
         dirname = "Full3d"
         if name == "polytopes_db_4d":

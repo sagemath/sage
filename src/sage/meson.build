@@ -21,6 +21,7 @@ if get_option('SAGE_LOCAL') != ''
 endif
 cremona_mini_found = false
 ellcurves_found = false
+polytopes_db_found = false
 foreach database_datadir : database_datadirs
   cremona_mini_found = cremona_mini_found or fs.exists(
     database_datadir / 'cremona' / 'cremona_mini.db',
@@ -28,7 +29,15 @@ foreach database_datadir : database_datadirs
   ellcurves_found = ellcurves_found or fs.exists(
     database_datadir / 'ellcurves' / 'rank0',
   )
+  polytopes_db_found = polytopes_db_found or fs.exists(
+    database_datadir / 'reflexive_polytopes' / 'Full3d',
+  )
 endforeach
+# Keep fallback install targets in the main project: meson-python installs with
+# --skip-subprojects (see pyproject.toml).  It maps 'datadir' to the Python
+# data-scheme root; keep 'share' in the suffix, as for the Jupyter kernel below
+# (meson-python issue #517).
+meson_data_install_dir = get_option('datadir') / 'share'
 if (
   not cremona_mini_found
   or not ellcurves_found
@@ -40,11 +49,6 @@ if (
   elliptic_curves_allcurves = elliptic_curves_project.get_variable(
     'elliptic_curves_allcurves',
   )
-  # Keep the install targets in the main project: meson-python installs with
-  # --skip-subprojects (see pyproject.toml).
-  # meson-python maps 'datadir' to the Python data-scheme root; keep 'share'
-  # in the suffix, as for the Jupyter kernel below (meson-python issue #517).
-  elliptic_curves_install_dir = get_option('datadir') / 'share'
   custom_target(
     'cremona_mini_database',
     input: elliptic_curves_allcurves,
@@ -57,7 +61,7 @@ if (
       '@OUTPUT@',
     ],
     install: true,
-    install_dir: elliptic_curves_install_dir / 'cremona',
+    install_dir: meson_data_install_dir / 'cremona',
   )
   custom_target(
     'elliptic_curves_rank_databases',
@@ -76,9 +80,23 @@ if (
       '@OUTPUT@',
     ],
     install: true,
-    install_dir: elliptic_curves_install_dir / 'ellcurves',
+    install_dir: meson_data_install_dir / 'ellcurves',
   )
 endif
+meson_polytopes_db_data_dir = ''
+if not polytopes_db_found
+  polytopes_db_project = subproject('polytopes_db')
+  meson_polytopes_db_data_dir = polytopes_db_project.get_variable(
+    'polytopes_db_data_dir',
+  )
+  polytopes_db_install_dir = meson_data_install_dir / 'reflexive_polytopes'
+  install_data(
+    polytopes_db_project.get_variable('polytopes_db_files'),
+    install_dir: polytopes_db_install_dir,
+    preserve_path: true,
+  )
+endif
+conf_data.set('MESON_POLYTOPES_DB_DATA_DIR', meson_polytopes_db_data_dir)
 # Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
 conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
 # It can be found, so we don't have to set anything here:

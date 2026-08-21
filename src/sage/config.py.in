@@ -32,6 +32,9 @@ SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
 
 SAGE_ECMBIN = "@SAGE_ECMBIN@"
 
+# Source directory for data provided by the polytopes_db Meson fallback.
+_MESON_POLYTOPES_DB_DATA_DIR = r"@MESON_POLYTOPES_DB_DATA_DIR@"
+
 # for sage_setup.setenv
 SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
 SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@".replace("$SAGE_LOCAL", SAGE_LOCAL)
