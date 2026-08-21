@@ -32,7 +32,8 @@ SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
 
 SAGE_ECMBIN = "@SAGE_ECMBIN@"
 
-# Source directory for data provided by the polytopes_db Meson fallback.
+# Source directories for data provided by Meson fallbacks.
+_MESON_GRAPHS_DATA_DIR = r"@MESON_GRAPHS_DATA_DIR@"
 _MESON_POLYTOPES_DB_DATA_DIR = r"@MESON_POLYTOPES_DB_DATA_DIR@"
 
 # for sage_setup.setenv

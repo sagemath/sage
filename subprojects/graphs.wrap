@@ -1,0 +1,6 @@
+[wrap-file]
+directory = graphs-20210214
+source_url = https://github.com/sagemath/sage/releases/download/10.9/graphs-20210214.tar.bz2
+source_filename = graphs-20210214.tar.bz2
+source_hash = 07237c0d9853611505c389fd7bb92500c8743f5631babb4d0f45dfd8332f3741
+patch_directory = graphs

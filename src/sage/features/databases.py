@@ -182,9 +182,13 @@ class DatabaseGraphs(StaticFile):
             sage: isinstance(DatabaseGraphs(), DatabaseGraphs)
             True
         """
+        from sage.config import _MESON_GRAPHS_DATA_DIR
         from sage.env import GRAPHS_DATA_DIR
 
-        search_path = GRAPHS_DATA_DIR or sage_data_paths("graphs")
+        search_path = GRAPHS_DATA_DIR or (
+            sage_data_paths("graphs")
+            | _meson_data_paths("graphs", editable_data_dir=_MESON_GRAPHS_DATA_DIR)
+        )
 
         StaticFile.__init__(
             self,

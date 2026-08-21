@@ -21,6 +21,7 @@ if get_option('SAGE_LOCAL') != ''
 endif
 cremona_mini_found = false
 ellcurves_found = false
+graphs_found = false
 polytopes_db_found = false
 foreach database_datadir : database_datadirs
   cremona_mini_found = cremona_mini_found or fs.exists(
@@ -28,6 +29,9 @@ foreach database_datadir : database_datadirs
   )
   ellcurves_found = ellcurves_found or fs.exists(
     database_datadir / 'ellcurves' / 'rank0',
+  )
+  graphs_found = graphs_found or fs.exists(
+    database_datadir / 'graphs' / 'graphs.db',
   )
   polytopes_db_found = polytopes_db_found or fs.exists(
     database_datadir / 'reflexive_polytopes' / 'Full3d',
@@ -83,16 +87,25 @@ if (
     install_dir: meson_data_install_dir / 'ellcurves',
   )
 endif
+meson_graphs_data_dir = ''
+if not graphs_found
+  graphs_project = subproject('graphs')
+  meson_graphs_data_dir = graphs_project.get_variable('graphs_data_dir')
+  install_data(
+    graphs_project.get_variable('graphs_files'),
+    install_dir: meson_data_install_dir / 'graphs',
+  )
+endif
+conf_data.set('MESON_GRAPHS_DATA_DIR', meson_graphs_data_dir)
 meson_polytopes_db_data_dir = ''
 if not polytopes_db_found
   polytopes_db_project = subproject('polytopes_db')
   meson_polytopes_db_data_dir = polytopes_db_project.get_variable(
     'polytopes_db_data_dir',
   )
-  polytopes_db_install_dir = meson_data_install_dir / 'reflexive_polytopes'
   install_data(
     polytopes_db_project.get_variable('polytopes_db_files'),
-    install_dir: polytopes_db_install_dir,
+    install_dir: meson_data_install_dir / 'reflexive_polytopes',
     preserve_path: true,
   )
 endif
