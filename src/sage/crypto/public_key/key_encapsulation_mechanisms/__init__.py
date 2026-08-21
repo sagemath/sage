@@ -1,12 +1,12 @@
 """
 Key Encapsulation Mechanisms
 
-REFERENCES:
+.. WARNING::
+    This module is experimental. The API may change in future versions.
 
-- [FIPS203] National Institute of Standards and Technology,
-  "Module-Lattice-Based Key-Encapsulation Mechanism Standard",
-  FIPS 203, 2024.
-  https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf
+.. WARNING::
+    These implementations are for educational and prototyping purposes only.
+    Do not use any cryptographic features of Sage in production.
 """
 
 from .kem_base import KEMBase

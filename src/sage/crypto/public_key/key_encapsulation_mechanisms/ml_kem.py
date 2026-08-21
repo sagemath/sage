@@ -1,25 +1,31 @@
 """
 ML-KEM (Kyber) implementation
 
+.. WARNING::
+    This is a toy implementation for educational and prototyping purposes only!
+    Do not use this implementation, or any cryptographic features of Sage,
+    in any setting where security is needed!
+
 REFERENCES:
 
-- [FIPS203] National Institute of Standards and Technology,
+- [FIPS203]_ National Institute of Standards and Technology,
   "Module-Lattice-Based Key-Encapsulation Mechanism Standard",
   FIPS 203, 2024.
-  https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf
 
-- [Sch22] Peter Schwabe et al.,
+- [Sch22]_ Peter Schwabe et al.,
   "CRYSTALS-KYBER",
   https://eprint.iacr.org/2022/1696
 """
 
+import hashlib
+from random import randint
+
 from sage.crypto.public_key.key_encapsulation_mechanisms.kem_base import KEMBase
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
-from random import randint
-import hashlib
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
 
 class MLKEM(KEMBase):
     """
@@ -41,7 +47,7 @@ class MLKEM(KEMBase):
     PARAMETER_SETS = {
         512: {'n': 256, 'q': 3329, 'k': 2, 'eta1': 3, 'eta2': 2},
         768: {'n': 256, 'q': 3329, 'k': 3, 'eta1': 2, 'eta2': 2},
-        1024: {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2}
+        1024: {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2},
     }
 
     @classmethod
@@ -64,7 +70,9 @@ class MLKEM(KEMBase):
             2
         """
         if parameter_set not in cls.PARAMETER_SETS:
-            raise ValueError(f"Parameter set must be one of {list(cls.PARAMETER_SETS.keys())}")
+            raise ValueError(
+                f"Parameter set must be one of {list(cls.PARAMETER_SETS.keys())}"
+            )
         params = cls.PARAMETER_SETS[parameter_set]
         return cls(**params)
 
@@ -95,8 +103,8 @@ class MLKEM(KEMBase):
         self.eta1 = eta1
         self.eta2 = eta2
 
-        R = PolynomialRing(FiniteField(self.q), 'x')
-        self.R = R.quotient(R.gen()**self.n + 1, 'x')
+        self.R = PolynomialRing(FiniteField(self.q), 'x')
+        self.R = self.R.quotient(self.R.gen() ** self.n + 1, 'x')
 
     def _sample_poly_cbd(self, eta):
         """
@@ -105,8 +113,7 @@ class MLKEM(KEMBase):
         INPUT:
         - ``eta`` -- integer, distribution parameter
         """
-        R = self.R
-        x = R.gen()
+        x = self.R.gen()
         coeffs = []
         for _ in range(self.n):
             a = sum(randint(0, 1) for _ in range(eta))
@@ -116,8 +123,7 @@ class MLKEM(KEMBase):
 
     def _sample_poly_uniform(self):
         """Sample uniformly random polynomial."""
-        R = self.R
-        x = R.gen()
+        x = self.R.gen()
         coeffs = [randint(0, self.q - 1) for _ in range(self.n)]
         return sum(c * x**i for i, c in enumerate(coeffs))
 
@@ -134,20 +140,50 @@ class MLKEM(KEMBase):
 
     def _poly_from_coeffs(self, coeffs):
         """Create a polynomial from a list of coefficients."""
-        R = self.R
-        x = R.gen()
+        x = self.R.gen()
         return sum(c * x**i for i, c in enumerate(coeffs))
 
     def keygen(self):
-        """Generate public and secret key pair."""
-        A = matrix([[self._sample_poly_uniform() for _ in range(self.k)] for _ in range(self.k)])
+        """
+        Generate public and secret key pair.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
+            sage: kem = MLKEM(n=8, q=17, k=2)
+            sage: pk, sk = kem.keygen()
+            sage: len(pk), len(sk)
+            (2, 2)
+        """
+        A = matrix(
+            [
+                [self._sample_poly_uniform() for _ in range(self.k)]
+                for _ in range(self.k)
+            ]
+        )
         s = vector([self._sample_poly_cbd(self.eta1) for _ in range(self.k)])
         e = vector([self._sample_poly_cbd(self.eta1) for _ in range(self.k)])
         t = A * s + e
         return (A, t), s
 
     def encaps(self, public_key):
-        """Encapsulate a shared secret."""
+        """
+        Encapsulate a shared secret.
+
+        INPUT:
+        - ``public_key`` -- tuple (A, t)
+
+        OUTPUT: tuple (ciphertext, shared_secret)
+
+        EXAMPLES::
+
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
+            sage: kem = MLKEM(n=8, q=17, k=2)
+            sage: pk, sk = kem.keygen()
+            sage: ct, ss = kem.encaps(pk)
+            sage: len(ct)
+            2
+        """
         A, t = public_key
 
         r = vector([self._sample_poly_cbd(self.eta1) for _ in range(self.k)])
@@ -166,7 +202,25 @@ class MLKEM(KEMBase):
         return (u_coeffs, v_coeffs), shared_secret
 
     def decaps(self, secret_key, ciphertext):
-        """Decapsulate to recover shared secret."""
+        """
+        Decapsulate to recover shared secret.
+
+        INPUT:
+        - ``secret_key`` -- vector s
+        - ``ciphertext`` -- tuple (u_coeffs, v_coeffs)
+
+        OUTPUT: shared_secret (32-byte bytes object)
+
+        EXAMPLES::
+
+            sage: from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
+            sage: kem = MLKEM(n=8, q=17, k=2)
+            sage: pk, sk = kem.keygen()
+            sage: ct, ss1 = kem.encaps(pk)
+            sage: ss2 = kem.decaps(sk, ct)
+            sage: ss1 == ss2
+            True
+        """
         u_coeffs, v_coeffs = ciphertext
 
         v_decompressed = self._poly_from_coeffs(v_coeffs)
