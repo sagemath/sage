@@ -1,6 +1,6 @@
 [wrap-file]
 directory = polytopes_db-20170220
-source_url = https://mirrors.xmission.com/sage/spkg/upstream/polytopes_db/polytopes_db-20170220.tar.bz2
+source_url = https://github.com/sagemath/sage/releases/download/10.9/polytopes_db-20170220.tar.bz2
 source_filename = polytopes_db-20170220.tar.bz2
 source_hash = cb788bdfca6e00864ec0bfa67932a68ae68bfeb9c527a91be90ad218026a0ce0
 patch_directory = polytopes_db
