@@ -64,6 +64,55 @@ The same phenomenon can be observed for valuations on number fields::
         [ Gauss valuation induced by Valuation at the infinite place,
             v(y) = 1/2, v(y^2 - 1/x) = +Infinity ]
 
+Canonical representatives
+-------------------------
+
+A limit valuation has many finite descriptions: one may multiply its defining
+polynomial by a unit, add factors that have finite value, or replace a Mac Lane
+approximant by a later valuation on the same branch.  The checked
+:class:`LimitValuationFactory` removes these choices before using its arguments
+as a factory key.
+
+More precisely, write the monic squarefree defining polynomial as
+`G=\prod_i P_i`, with the `P_i` irreducible.  A factor which is an
+equivalence-unit for the input approximation stays an equivalence-unit along
+the selected branch and therefore has finite limit value.  Such factors cannot
+generate the support of the limit valuation and are discarded.  There must be
+exactly one remaining factor `P`; otherwise the input does not determine a
+unique limit valuation.  This factor must be integral for the coefficient
+valuation so that the Mac Lane algorithm applies.  The stability and
+finite-refinement properties used here are recalled below with references to
+[Mac1936II]_.
+
+The extensions associated with `P` are represented by
+:meth:`Mac Lane approximants
+<sage.rings.valuation.valuation.DiscreteValuation.mac_lane_approximants>`.
+Requiring these approximants to be incomparable separates the distinct
+extensions.  The unique approximant comparable with the input valuation is
+then selected by
+:meth:`~sage.rings.valuation.valuation.DiscreteValuation.mac_lane_approximant`.
+Thus the canonical factory key is the pair consisting of this approximant and
+`P`.  This is the same normalization used for valuations on number fields and
+function fields.  Inputs for which the factor or the branch is not unique are
+rejected rather than assigned an arbitrary key.
+
+Unchecked internal constructions may retain a squarefree product in place of
+`P`, with the invariant that exactly one of its irreducible factors has
+infinite limit value.  To evaluate a polynomial `f`, put `s=\gcd(G,f)` and
+`t=G/s`.  Squarefreeness makes `s` and `t` coprime, so exactly one contains the
+support factor.  The other becomes an equivalence-unit after finitely many Mac
+Lane steps by Theorem 5.1 of [Mac1936II]_.  Refinement therefore terminates and
+shrinks `G` towards its support.
+
+Finally, two limit valuations extending the same coefficient valuation but
+having different supports or different Mac Lane branches are incomparable.
+For legacy product representations, evaluating each defining polynomial under
+the other valuation first exposes the support factors.  If the supports agree,
+the incomparable Mac Lane approximants distinguish the branches: comparable
+initial approximants describe the same branch, while incomparable ones
+describe distinct extensions.  This gives the comparison criterion used in
+this module.
+
 REFERENCES:
 
 Limits of inductive valuations are discussed in [Mac1936I]_ and [Mac1936II]_. An
@@ -89,18 +138,22 @@ class LimitValuationFactory(UniqueFactory):
 
     INPUT:
 
-    - ``base_valuation`` -- a discrete (pseudo-)valuation on a polynomial ring
-      which is a discrete valuation on the coefficient ring which can be
-      uniquely augmented (possibly only in the limit) to a pseudo-valuation
-      that sends ``G`` to infinity.
+    - ``base_valuation`` -- a discrete (pseudo-)valuation on an exact
+      polynomial ring which is a discrete valuation on the coefficient ring
+      and which can be uniquely augmented (possibly only in the limit) to a
+      pseudo-valuation that sends ``G`` to infinity
 
-    - ``G`` -- a squarefree polynomial in the domain of ``base_valuation``
+    - ``G`` -- a nonzero nonconstant squarefree polynomial in the domain of
+      ``base_valuation`` whose leading coefficient is a unit; after making it
+      monic, the factor selected by ``base_valuation`` must be integral for the
+      valuation on the coefficient ring
 
     - ``check`` -- boolean (default: ``True``); whether to validate and
       canonicalize the arguments; internal callers may set this to ``False``
-      when ``G`` is monic and squarefree and ``base_valuation`` singles out a
-      unique branch towards ``G``; unchecked calls use their arguments as the
-      factory key and therefore do not canonicalize equivalent descriptions
+      when ``G`` is monic, squarefree, and integral and ``base_valuation``
+      singles out a unique branch towards ``G``; unchecked calls use their
+      arguments as the factory key and therefore do not canonicalize
+      equivalent descriptions
 
     EXAMPLES::
 
@@ -113,6 +166,22 @@ class LimitValuationFactory(UniqueFactory):
     def create_key(self, base_valuation, G, check=True):
         r"""
         Create a key from the parameters of this valuation.
+
+        ALGORITHM:
+
+        First, normalize ``G`` to a monic polynomial and factor it exactly.
+        Factors that are equivalence-units for ``base_valuation`` have finite
+        value on every continuation of the selected branch, so they cannot be
+        the support of the limit valuation.  Require exactly one remaining
+        irreducible factor.
+
+        Next, compute mutually incomparable Mac Lane approximants for that
+        factor.  They distinguish the extensions of the coefficient
+        valuation.  The unique approximant comparable with
+        ``base_valuation`` is its canonical representative, so it and the
+        irreducible factor form a factory key independent of the original
+        presentation.  See the module-level discussion of canonical
+        representatives for the mathematical justification.
 
         EXAMPLES:
 
@@ -162,6 +231,13 @@ class LimitValuationFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: G must be nonconstant
+
+        It must also be integral for the coefficient valuation::
+
+            sage: valuations.LimitValuation(v, x^2 + x/2 + 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: G must be integral
 
         The parameters must single out one limit valuation::
 
@@ -641,6 +717,11 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             sage: u._improve_approximation()                                            # needs sage.rings.number_field
             sage: u._approximation                                                      # needs sage.rings.number_field
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2, v(t^2 + 1) = +Infinity ]
+
+        The bound on the principal part below is only an optimization.  If it
+        is too short to exhibit a nontrivial equivalence decomposition, the
+        full Mac Lane step is repeated without the bound; this computes the
+        same next branch rather than choosing a different one.
         """
         from sage.rings.infinity import infinity
         if self._approximation(self._G) is infinity:
@@ -720,10 +801,16 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             `w(g)=v(g)`.
             Normally, the factory normalizes `G` to an irreducible polynomial.
             The unchecked internal construction also accepts a squarefree
-            `G`; in that case gcds with `f` are used to discard factors with
-            finite valuation. Any polynomial coprime to the remaining `G`
-            becomes an equivalence-unit after finitely many Mac Lane steps
-            (Theorem 5.1 in [Mac1936II]_).
+            `G`; its invariant is that exactly one irreducible factor of the
+            current `G` has infinite limit value.  Put `s=\gcd(G,f)` and
+            `t=G/s`.  Since `G` is squarefree, `s` and `t` are coprime, and
+            exactly one of them can contain that support factor.  The other
+            one has finite value and becomes an equivalence-unit after
+            finitely many Mac Lane steps (Theorem 5.1 in [Mac1936II]_).  The
+            loop below therefore terminates and replaces `G` by the side that
+            contains its support.  If that side divides `f`, the limit value
+            of `f` is infinite; otherwise the remaining finite factor is
+            removed and the argument is repeated.
         """
         if f == 0:
             return
@@ -834,6 +921,24 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         r"""
         Return whether this valuation is greater or equal than ``other``
         everywhere.
+
+        ALGORITHM:
+
+        Distinct extensions of the same coefficient valuation are
+        incomparable.  Their supports first distinguish extensions attached
+        to coprime irreducible factors.  For unchecked or legacy objects,
+        ``_G`` may still be a squarefree product; evaluating each object on
+        the other's ``_G`` invokes
+        :meth:`_improve_approximation_for_call` and refines both products to
+        their support factors.  Different supports give incomparable limit
+        valuations.
+
+        Once the supports agree, mutually incomparable canonical Mac Lane
+        approximants distinguish the branches above that support.  Hence the
+        two limit valuations agree precisely when their initial approximants
+        are comparable.  Thus this method can return ``True`` only when the
+        valuations agree, although the operation being implemented is the
+        pointwise order.
 
         EXAMPLES::
 
