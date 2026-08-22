@@ -9,19 +9,15 @@
 
 import argparse
 import os
-from argparse import Namespace
 from pathlib import Path
 from typing import Any, cast
 
-from mesonbuild import mlog
+from mesonbuild import mformat, mlog
 from mesonbuild.ast import (
     AstPrinter,
     AstVisitor,
 )
 from mesonbuild.ast.interpreter import MethodNode
-from mesonbuild.mformat import (
-    run as meson_format,
-)
 from mesonbuild.mparser import (
     AssignmentNode,
     BaseNode,
@@ -405,14 +401,15 @@ rewriter.apply_changes()
 rewriter.print_info()
 
 # Run meson format
-meson_format(
-    Namespace(
-        sources=[options.sourcedir],
-        inplace=True,
-        recursive=True,
-        output=None,
-        configuration=options.sourcedir / "meson.format",
-        editor_config=None,
-        source_file_path=None,
-    )
+meson_format_parser = argparse.ArgumentParser()
+mformat.add_arguments(meson_format_parser)
+meson_format_options = meson_format_parser.parse_args(
+    [
+        "--inplace",
+        "--recursive",
+        "--configuration",
+        str(options.sourcedir / "meson.format"),
+        str(options.sourcedir),
+    ]
 )
+mformat.run(meson_format_options)
