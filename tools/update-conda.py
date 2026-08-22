@@ -291,6 +291,18 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     if platform == "win-64":
         # Flint needs pthread.h
         all_requirements.add("winpthreads-devel")
+        # The MinGW sysroot build 11 packages have a broken stack-protector ABI.
+        # Remove these pins once they have been marked broken upstream:
+        # https://github.com/conda-forge/m2w64-sysroot-feedstock/issues/23
+        all_requirements.update(
+            {
+                "m2w64-sysroot_win-64=12.0.0.r4.gg4f2fc60ca=hd8ed1ab_10",
+                "mingw-w64-ucrt-x86_64-crt-git=12.0.0.r4.gg4f2fc60ca=hd8ed1ab_10",
+                "mingw-w64-ucrt-x86_64-headers-git=12.0.0.r4.gg4f2fc60ca=hd8ed1ab_10",
+                "mingw-w64-ucrt-x86_64-winpthreads-git=12.0.0.r4.gg4f2fc60ca=hd8ed1ab_10",
+                "libwinpthread=12.0.0.r4.gg4f2fc60ca=h57928b3_10",
+            }
+        )
         # Workaround for https://github.com/conda-forge/libpng-feedstock/issues/47
         all_requirements.add("zlib")
     if platform != "win-64":

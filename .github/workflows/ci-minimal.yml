@@ -104,9 +104,8 @@ jobs:
       - name: Build
         shell: bash -l {0}
         run: |
+          # Let Meson discover the compiler through the ccache wrappers.
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          export CC="ccache $CC"
-          export CXX="ccache $CXX"
 
           meson setup --python.install-env=prefix --prefix="${HOME}/.local" --wrap-mode=nodownload -Dbuild-docs=false -Dbliss=disabled -Dcoxeter3=disabled -Dlibbraiding=disabled -Dlibhomfly=disabled -Dmcqd=disabled -Dmeataxe=disabled -Drankwidth=disabled -Dsirocco=disabled -Dtdlib=disabled builddir
           meson install -C builddir
