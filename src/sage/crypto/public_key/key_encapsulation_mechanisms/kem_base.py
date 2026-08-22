@@ -5,12 +5,12 @@ KEM base class
     This module is experimental. The API may change in future versions.
 """
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from sage.structure.sage_object import SageObject
 
 
-class KEMBase(SageObject, ABC):
+class KEMBase(SageObject):
     """
     Abstract base class for Key Encapsulation Mechanisms.
 
