@@ -27,9 +27,10 @@ gambit catalog with :meth:`~ExtensiveFormGame.load_from_gambit_catalog` (two of
 them are worked through at the end of this page), and compute Nash equilibria
 with :meth:`~ExtensiveFormGame.obtain_nash`.
 
-Game trees can be drawn with :meth:`~ExtensiveFormGame.plot`, either with
-Sage's own graph plotting or -- for publication-quality TikZ pictures like the
-two below -- with the optional `gtdraw
+Game trees can be drawn with :meth:`~ExtensiveFormGame.plot`, by default with
+Sage's own graph plotting, which needs nothing beyond Sage, or -- for
+publication-quality TikZ pictures like the two below -- with ``backend='gtdraw'``
+and the optional `gtdraw
 <https://www.gambit-project.org/gtdraw/>`_ package.  The latter gives a
 :class:`GameTreeTikzPicture`; displaying one compiles it with LaTeX and opens
 the picture, so seeing it needs a LaTeX installation on top of the package
@@ -60,7 +61,8 @@ chooses and that Bob then chooses, having seen what she picked::
     sage: battle
     An extensive form game with 2 players
 
-Drawing the game with ``battle.plot()`` shows the tree the moves have built:
+Drawing the game with ``battle.plot(backend='gtdraw')`` shows the tree the
+moves have built:
 Amy's move at the root, one of Bob's below each of her actions, and the payoffs
 to Amy and Bob at the four ends, hers written above his.
 
@@ -190,8 +192,8 @@ neither does, tossing the coin is all either can do::
 
 The games so far have been small enough to build by hand.  Gambit also ships a
 catalog of games taken from the literature, which
-:meth:`~ExtensiveFormGame.load_from_gambit_catalog` lists and loads into a Sage
-game.  The two below are the kind of game the extensive form exists for: what
+:meth:`~ExtensiveFormGame.gambit_catalog_games` lists and
+:meth:`~ExtensiveFormGame.load_from_gambit_catalog` loads into a Sage game.  The two below are the kind of game the extensive form exists for: what
 makes each of them worth studying -- what a player knows, and which parts of
 the tree are ever reached -- is precisely what disappears when the game is
 flattened into a payoff matrix.
@@ -207,9 +209,8 @@ else's move: here a player has forgotten their own, which is imperfect
 *recall*::
 
     sage: # optional - pygambit
-    sage: driver = ExtensiveFormGame()
-    sage: driver.load_from_gambit_catalog('journals/geb/gilboa1997/fig1',
-    ....:                                 info=False)
+    sage: driver = ExtensiveFormGame.load_from_gambit_catalog(
+    ....:     'journals/geb/gilboa1997/fig1')
     sage: driver
     An extensive form game with 1 player
     sage: driver.is_perfect_recall
@@ -251,9 +252,8 @@ led to them, and because that one information set straddles both branches, no
 node below the root starts a subgame of its own::
 
     sage: # optional - pygambit
-    sage: horse = ExtensiveFormGame()
-    sage: horse.load_from_gambit_catalog('journals/ijgt/selten1975/fig1',
-    ....:                                info=False)
+    sage: horse = ExtensiveFormGame.load_from_gambit_catalog(
+    ....:     'journals/ijgt/selten1975/fig1')
     sage: horse
     An extensive form game with 3 players
     sage: [n.is_subgame_root for n in [horse.root, horse.root.children['R'],
@@ -895,7 +895,7 @@ class ExtensiveFormGame(SageObject):
             True
         """
         pygambit().require()
-        self._check_actions(actions)
+        actions = self._check_actions(actions)
         self._gambit_().append_move(node, player, actions)
 
     def append_chance_move(self, node, actions, probs=None):
@@ -926,7 +926,7 @@ class ExtensiveFormGame(SageObject):
         """
         pygambit().require()
         game = self._gambit_()
-        self._check_actions(actions)
+        actions = self._check_actions(actions)
         game.append_move(node, game.players.chance, actions)
         if probs is not None:
             game.set_chance_probs(node.infoset, probs)
@@ -1122,13 +1122,13 @@ class ExtensiveFormGame(SageObject):
         pygambit().require()
         return self._gambit_().to_efg()
 
-    def plot(self, backend='gtdraw', **kwargs):
+    def plot(self, backend='sage', **kwargs):
         r"""
         Plot the game tree.
 
         Two drawing backends are available, selected with ``backend``.
 
-        The default ``'gtdraw'`` backend hands the underlying gambit game to
+        The ``'gtdraw'`` backend hands the underlying gambit game to
         `gtdraw <https://www.gambit-project.org/gtdraw/>`_, the game tree
         drawing tool of the gambit project, which produces publication-quality
         TikZ pictures.  The result is a :class:`GameTreeTikzPicture`, a
@@ -1144,7 +1144,7 @@ class ExtensiveFormGame(SageObject):
         :meth:`~sage.misc.latex_standalone.Standalone.content` need no LaTeX,
         only the optional gtdraw package.
 
-        The ``'sage'`` backend draws the tree with Sage's own graph
+        The default ``'sage'`` backend draws the tree with Sage's own graph
         plotting and needs nothing beyond Sage.  Labels are written beside the
         nodes: the moving player above a decision node, ``'Chance'`` above a
         chance node, the payoffs below a terminal node, and the action labels
@@ -1165,13 +1165,13 @@ class ExtensiveFormGame(SageObject):
 
         INPUT:
 
-        - ``backend`` -- string (default: ``'gtdraw'``); which backend to draw
+        - ``backend`` -- string (default: ``'sage'``); which backend to draw
           with, one of
+
+          * ``'sage'`` -- draw the tree with Sage's graph plotting
 
           * ``'gtdraw'`` -- draw the tree with gtdraw (this requires the
             optional gtdraw package)
-
-          * ``'sage'`` -- draw the tree with Sage's graph plotting
 
         - ``**kwargs`` -- passed on to the selected backend: to
           :meth:`~sage.graphs.generic_graph.GenericGraph.plot` for ``'sage'``
@@ -1208,15 +1208,22 @@ class ExtensiveFormGame(SageObject):
             ....:     g.set_outcome(g.root.children['R'].children[a],
             ....:                   'R,{}'.format(a), payoff)
 
-        The default backend needs the optional gtdraw package and gives a
-        :class:`GameTreeTikzPicture`, shown further below.  The ``'sage'``
-        backend needs nothing beyond Sage and gives a
+        The default ``'sage'`` backend needs nothing beyond Sage and gives a
         :class:`~sage.plot.graphics.Graphics` object, which can be shown, saved
-        or combined with other graphics::
+        or combined with other graphics.  The ``'gtdraw'`` backend, shown
+        further below, needs the optional gtdraw package and gives a
+        :class:`GameTreeTikzPicture` instead::
 
             sage: # optional - pygambit
             sage: from sage.plot.graphics import Graphics
             sage: isinstance(g.plot(backend='sage'), Graphics)
+            True
+
+        Being the default, it is what plotting without a ``backend`` gives, so
+        that drawing a tree never requires an optional package::
+
+            sage: # optional - pygambit
+            sage: isinstance(g.plot(), Graphics)
             True
 
         Keyword arguments reach Sage's graph plotting::
@@ -1276,7 +1283,7 @@ class ExtensiveFormGame(SageObject):
             sage: sorted(s for s in drawn if s.startswith('Alice'))
             ['Alice 1', 'Alice 2']
 
-        The default gtdraw backend draws the same tree as TikZ.  Its
+        The gtdraw backend draws the same tree as TikZ.  Its
         :meth:`~sage.misc.latex_standalone.Standalone.content` is the source,
         which mentions the players and the tree itself::
 
@@ -1327,18 +1334,19 @@ class ExtensiveFormGame(SageObject):
             True
 
         Games from the gambit catalog can be drawn the same way.  Catalog slugs
-        are full paths, which :meth:`load_from_gambit_catalog` lists::
+        are full paths, which :meth:`gambit_catalog_games` lists::
 
             sage: # optional - pygambit
-            sage: g = ExtensiveFormGame()
-            sage: 'books/myerson1991/fig2_1' in list(g.load_from_gambit_catalog()['Game'])
+            sage: 'books/myerson1991/fig2_1' in list(
+            ....:     ExtensiveFormGame.gambit_catalog_games()['Game'])
             True
 
         Myerson's simple poker game is a two-player tree with three information
         sets, and it draws with either backend::
 
             sage: # optional - pygambit
-            sage: g.load_from_gambit_catalog('books/myerson1991/fig2_1', info=False)
+            sage: g = ExtensiveFormGame.load_from_gambit_catalog(
+            ....:     'books/myerson1991/fig2_1')
             sage: g
             An extensive form game with 2 players
             sage: len(g.infosets)
@@ -1356,8 +1364,8 @@ class ExtensiveFormGame(SageObject):
         sideways::
 
             sage: # optional - pygambit
-            sage: h = ExtensiveFormGame()
-            sage: h.load_from_gambit_catalog('journals/other/reiley2008/fig1', info=False)
+            sage: h = ExtensiveFormGame.load_from_gambit_catalog(
+            ....:     'journals/other/reiley2008/fig1')
             sage: sorted(p.label for p in h.players)
             ['Professor', 'Student']
 
@@ -1753,18 +1761,21 @@ class ExtensiveFormGame(SageObject):
         with atomic_write(path) as f:   # text mode by default (binary=False)
             f.write(g.to_efg())
 
-    def load_efg(self, path):
+    @classmethod
+    def load_efg(cls, path):
         r"""
-        Populate this game from a gambit extensive-form ``.efg`` file.
+        Read a game from a gambit extensive-form ``.efg`` file.
 
         The file at ``path`` is read with gambit's ``read_efg`` reader and the
-        resulting gambit game is wrapped in place (see :meth:`_gambit_game`),
-        replacing any game already wrapped.  This is the inverse of
-        :meth:`save_efg`.
+        resulting gambit game is wrapped in a new
+        :class:`ExtensiveFormGame` (see :meth:`_gambit_game`).  This is the
+        inverse of :meth:`save_efg`.
 
         INPUT:
 
         - ``path`` -- string; the path of an ``.efg`` file to read
+
+        OUTPUT: a new :class:`ExtensiveFormGame` wrapping the game in the file
 
         EXAMPLES:
 
@@ -1778,23 +1789,35 @@ class ExtensiveFormGame(SageObject):
             sage: g.set_outcome(g.root.children['R'], 'R', [3, 1])
             sage: path = tmp_filename(ext='.efg')
             sage: g.save_efg(path)
-            sage: h = ExtensiveFormGame()
-            sage: h.load_efg(path); h
+            sage: h = ExtensiveFormGame.load_efg(path); h
             An extensive form game with 2 players
+
+        A file that gambit cannot parse is reported as such::
+
+            sage: # optional - pygambit
+            sage: path = tmp_filename(ext='.efg')
+            sage: with open(path, 'w') as f:
+            ....:     _ = f.write('not an efg file')
+            sage: ExtensiveFormGame.load_efg(path)
+            Traceback (most recent call last):
+            ...
+            ValueError: Parse error in game file: ...
         """
         pygambit().require()
-        self._gambit_game(read_efg(path))
+        return cls(read_efg(path))
 
-    def obtain_nash(self, algorithm=None):
+    def obtain_nash(self, algorithm=None, use_strategic=False, rational=True):
         r"""
         Compute the Nash equilibria of the game.
 
         This delegates to a solver of gambit's ``pygambit.nash`` module (see
         the `pygambit Nash documentation
         <https://gambitproject.readthedocs.io/en/stable/pygambit.api.html#module-pygambit.nash>`_).
-        Every supported algorithm operates directly on the extensive form and
-        returns *behavior-strategy* equilibria, i.e. a list of gambit
-        ``MixedBehaviorProfile`` objects.
+        By default every supported algorithm operates directly on the extensive
+        form and returns *behavior-strategy* equilibria; with ``use_strategic``
+        it works on the reduced strategic form instead and returns *mixed
+        strategy* equilibria.  See the OUTPUT section below, as the two are
+        different kinds of object and are not indexed in the same way.
 
         INPUT:
 
@@ -1806,18 +1829,60 @@ class ExtensiveFormGame(SageObject):
           * ``'lp'`` -- linear programming (two-player *constant-sum* games
             only)
 
-          * ``'enumpure'`` -- enumeration of pure-strategy (agent) equilibria
+          * ``'enumpure'`` -- enumeration of the pure-strategy equilibria
 
           * ``'enumpoly'`` -- enumeration via systems of polynomial equations
             (any number of players), the default otherwise
 
           * ``'logit'`` -- the logit quantal response tracing procedure
 
+          * ``'liap'`` -- minimisation of the Lyapunov function, starting from
+            the centroid
+
           When ``None`` the default is ``'lcp'`` for games with at most two
           players and ``'enumpoly'`` for more.
 
-        OUTPUT: a list of gambit ``MixedBehaviorProfile`` objects, one per
-        computed equilibrium.
+        - ``use_strategic`` -- boolean (default: ``False``); when ``False`` the
+          equilibria are computed on the extensive form, when ``True`` on the
+          reduced strategic form.  This changes what the method returns, see
+          OUTPUT.
+
+          For ``'lcp'``, ``'lp'``, ``'enumpoly'`` and ``'logit'`` this is passed
+          straight to the gambit solver.  For ``'enumpure'`` and ``'liap'``
+          gambit provides two separate solvers instead of an argument, and this
+          selects between them: the *agent* solver, which works on the extensive
+          form, when ``False``, and the ordinary one when ``True``.
+
+        - ``rational`` -- boolean (default: ``True``); whether ``'lcp'`` and
+          ``'lp'`` compute exactly, giving rational probabilities, or in
+          floating point.  The other algorithms ignore it: ``'enumpure'`` is
+          always exact, and ``'enumpoly'``, ``'logit'`` and ``'liap'`` are
+          numerical algorithms with no exact mode.
+
+        OUTPUT:
+
+        A list with one gambit profile per computed equilibrium.  Which kind of
+        profile depends on ``use_strategic``.
+
+        With ``use_strategic=False`` (the default) each equilibrium is a
+        ``MixedBehaviorProfile``: a dict-like object mapping each action at each
+        information set to the probability with which that action is played,
+        *conditional on that information set being reached*.  Index it by an
+        action, an information set or a player, as in ``eq[action]``.
+
+        With ``use_strategic=True`` each equilibrium is a
+        ``MixedStrategyProfile``: a dict-like object mapping each *pure
+        strategy* -- a complete contingent plan, choosing one action at every
+        information set of that player -- to the probability with which the
+        plan is played.  Index it by a strategy or a player, as in
+        ``eq[strategy]``.
+
+        The two are not interchangeable: indexing a mixed strategy profile by an
+        action, or a mixed behavior profile by a strategy, raises a
+        :class:`TypeError`.  The probabilities are rational for ``'enumpure'``,
+        and for ``'lcp'`` and ``'lp'`` unless ``rational`` is set to ``False``;
+        the remaining solvers are numerical and return floating point
+        approximations.
 
         This requires the optional gambit package.
 
@@ -1843,23 +1908,105 @@ class ExtensiveFormGame(SageObject):
             sage: [[float(eq[a]) for a in g._gambit_().actions] for eq in eqs]
             [[0.0, 1.0]]
 
-        TESTS::
+        With ``use_strategic`` the same equilibrium comes back as a mixed
+        strategy profile, which is indexed by each player's strategies rather
+        than by the actions of the tree.  Bob never moves here, so he has the
+        single trivial strategy::
+
+            sage: # optional - pygambit
+            sage: eqs = g.obtain_nash(use_strategic=True)
+            sage: [[[float(eq[s]) for s in p.strategies]
+            ....:   for p in g._gambit_().players] for eq in eqs]
+            [[[0.0, 1.0], [1.0]]]
+
+        ``'lcp'`` and ``'lp'`` compute exactly by default, so the
+        probabilities come back as rationals; ``rational=False`` asks for the
+        floating point answer instead.  Exact payoffs survive the trip in the
+        first place -- a payoff of ``1/3`` reaches gambit as ``1/3``, not as a
+        decimal approximation of it::
+
+            sage: # optional - pygambit
+            sage: e = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: e.append_move(e.root, 'Alice', ['L', 'R'])
+            sage: e.set_outcome(e.root.children['L'], 'L', [1/3, 5])
+            sage: e.set_outcome(e.root.children['R'], 'R', [3, 1])
+            sage: e._gambit_().outcomes['L'][e._gambit_().players['Alice']]
+            Rational(1, 3)
+            sage: type(e.obtain_nash(algorithm='lcp')[0]).__name__
+            'MixedBehaviorProfileRational'
+            sage: type(e.obtain_nash(algorithm='lcp', rational=False)[0]).__name__
+            'MixedBehaviorProfileDouble'
+
+        For ``'enumpure'`` and ``'liap'`` the flag picks a different gambit
+        solver rather than being passed on, but it is used in the same way::
+
+            sage: # optional - pygambit
+            sage: eqs = g.obtain_nash(algorithm='liap')
+            sage: [[float(eq[a]) for a in g._gambit_().actions] for eq in eqs]  # abs tol 1e-6
+            [[0.0, 1.0]]
+            sage: eqs = g.obtain_nash(algorithm='enumpure', use_strategic=True)
+            sage: [[[float(eq[s]) for s in p.strategies]
+            ....:   for p in g._gambit_().players] for eq in eqs]
+            [[[0.0, 1.0], [1.0]]]
+
+        The two representations need not yield the same number of equilibria.
+        Below Bob moves only after Alice has played ``'L'``, which she never
+        does.  Solving the strategic form leaves his choice at that unreached
+        information set unconstrained, so both of his strategies occur in an
+        equilibrium; solving the extensive form requires him to act optimally
+        there as well, which pins it down::
+
+            sage: # optional - pygambit
+            sage: h = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: h.append_move(h.root, 'Alice', ['L', 'R'])
+            sage: h.append_move(h.root.children['L'], 'Bob', ['a', 'b'])
+            sage: h.set_outcome(h.root.children['L'].children['a'], 'la', [2, 5])
+            sage: h.set_outcome(h.root.children['L'].children['b'], 'lb', [1, 1])
+            sage: h.set_outcome(h.root.children['R'], 'R', [3, 1])
+            sage: len(h.obtain_nash(algorithm='enumpoly'))
+            1
+            sage: len(h.obtain_nash(algorithm='enumpoly', use_strategic=True))
+            2
+
+        TESTS:
+
+        Indexing a profile by the wrong kind of object is an error::
+
+            sage: # optional - pygambit
+            sage: eq = g.obtain_nash(use_strategic=True)[0]
+            sage: eq[list(g._gambit_().actions)[0]]
+            Traceback (most recent call last):
+            ...
+            TypeError: profile index must be Player, Strategy, or str, not Action
+
+        ::
 
             sage: # optional - pygambit
             sage: g.obtain_nash(algorithm='bogus')
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'bogus'; must be one of
-            'enumpoly', 'enumpure', 'lcp', 'logit', 'lp'
+            'enumpoly', 'enumpure', 'lcp', 'liap', 'logit', 'lp'
         """
         pygambit().require()
         game = self._gambit_()
+        # Most solvers take ``use_strategic`` as an argument.  ``enumpure`` and
+        # ``liap`` instead come in two flavours, and the agent one -- which
+        # works on the extensive form -- is the one to use when
+        # ``use_strategic`` is ``False``.  ``liap`` is started from a profile
+        # rather than from the game, so it needs the centroid of the right kind.
         solvers = {
-            'lcp': gambit_nash.lcp_solve,
-            'lp': gambit_nash.lp_solve,
-            'enumpure': gambit_nash.enumpure_agent_solve,
-            'enumpoly': gambit_nash.enumpoly_solve,
-            'logit': gambit_nash.logit_solve,
+            'lcp': lambda: gambit_nash.lcp_solve(game, rational=rational,
+                                                 use_strategic=use_strategic),
+            'lp': lambda: gambit_nash.lp_solve(game, rational=rational,
+                                               use_strategic=use_strategic),
+            'enumpoly': lambda: gambit_nash.enumpoly_solve(game, use_strategic=use_strategic),
+            'logit': lambda: gambit_nash.logit_solve(game, use_strategic=use_strategic),
+            'enumpure': lambda: (gambit_nash.enumpure_solve(game) if use_strategic
+                                 else gambit_nash.enumpure_agent_solve(game)),
+            'liap': lambda: (gambit_nash.liap_solve(game.mixed_strategy_profile())
+                             if use_strategic
+                             else gambit_nash.liap_agent_solve(game.mixed_behavior_profile())),
         }
         if algorithm is None:
             algorithm = 'lcp' if len(game.players) <= 2 else 'enumpoly'
@@ -1869,40 +2016,85 @@ class ExtensiveFormGame(SageObject):
             names = ", ".join(repr(name) for name in sorted(solvers))
             raise ValueError("unknown algorithm {0!r}; must be one of "
                              "{1}".format(algorithm, names))
-        return list(solver(game).equilibria)
+        return list(solver().equilibria)
 
-    def load_from_gambit_catalog(self, game=None, info=True):
+    @classmethod
+    def gambit_catalog_games(cls, **kwargs):
         r"""
-        List extensive form games in the gambit catalog and/or load one.
+        List the extensive form games in the gambit catalog.
 
         The `gambit catalog
         <https://gambitproject.readthedocs.io/en/stable/catalog.html>`_ ships a
-        small collection of example games.  Depending on the arguments this
-        method lists the available games, wraps one of them in ``self`` (in
-        place, replacing any game already wrapped), or both.
+        small collection of example games from the literature.  Only the
+        extensive form (tree) games are listed here, as those are the ones
+        :meth:`load_from_gambit_catalog` can wrap; the rest of the catalog is
+        listed by
+        :meth:`~sage.game_theory.normal_form_game.NormalFormGame.gambit_catalog_games`.
 
         INPUT:
 
-        - ``game`` -- (default: ``None``) the slug of a catalog game to load.
-          Slugs are full paths, such as ``'journals/geb/bagwell1995'`` or
-          ``'books/myerson1991/fig2_1'``; the ``Game`` column of the table
-          returned by this method lists them all.  When ``None`` no game is
-          loaded.  The catalog game must be an extensive form (tree) game.
+        - ``**kwargs`` -- passed on to ``pygambit.catalog.games``, whose
+          keywords filter the listing, for instance ``n_players``,
+          ``is_const_sum`` or ``include_descriptions``.  ``is_tree`` is set for
+          you and passing it has no effect.
 
-        - ``info`` -- boolean (default: ``True``); when ``True`` return the
-          table of available games (a :class:`pandas.DataFrame` with ``Game``
-          slugs and ``Title`` columns).
-
-        OUTPUT: the catalog table when ``info`` is ``True``, otherwise ``None``.
+        OUTPUT: a :class:`pandas.DataFrame` with a ``Game`` column holding the
+        slugs and a ``Title`` column holding the titles.  Slugs are full paths,
+        such as ``'journals/geb/bagwell1995'`` or ``'books/myerson1991/fig2_1'``.
 
         EXAMPLES::
 
             sage: # optional - pygambit
             sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
-            sage: g = ExtensiveFormGame()
-            sage: 'journals/geb/bagwell1995' in list(g.load_from_gambit_catalog()['Game'])
+            sage: games = ExtensiveFormGame.gambit_catalog_games()
+            sage: 'journals/geb/bagwell1995' in list(games['Game'])
             True
-            sage: g.load_from_gambit_catalog('journals/geb/bagwell1995', info=False)
+            sage: list(games.columns)
+            ['Game', 'Title']
+
+        The keywords of gambit's own catalog listing filter the table::
+
+            sage: # optional - pygambit
+            sage: three = ExtensiveFormGame.gambit_catalog_games(n_players=3)
+            sage: len(three) < len(games)
+            True
+            sage: all(ExtensiveFormGame.load_from_gambit_catalog(slug).players.__len__() == 3
+            ....:     for slug in three['Game'])
+            True
+
+        Every game listed here can be loaded; the strategic form games in the
+        catalog, which cannot, are left out::
+
+            sage: # optional - pygambit
+            sage: from sage.game_theory.normal_form_game import NormalFormGame
+            sage: set(games['Game']) < set(NormalFormGame.gambit_catalog_games()['Game'])
+            True
+        """
+        pygambit().require()
+        kwargs['is_tree'] = True
+        return catalog.games(**kwargs)
+
+    @classmethod
+    def load_from_gambit_catalog(cls, slug):
+        r"""
+        Load a game from the gambit catalog.
+
+        The available games are listed by :meth:`gambit_catalog_games`.
+
+        INPUT:
+
+        - ``slug`` -- string; the slug of a catalog game, a full path such as
+          ``'journals/geb/bagwell1995'``.  The game must be an extensive form
+          (tree) game.
+
+        OUTPUT: a new :class:`ExtensiveFormGame` wrapping the catalog game
+
+        EXAMPLES::
+
+            sage: # optional - pygambit
+            sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
+            sage: g = ExtensiveFormGame.load_from_gambit_catalog(
+            ....:     'journals/geb/bagwell1995')
             sage: g
             An extensive form game with 2 players
 
@@ -1915,25 +2107,20 @@ class ExtensiveFormGame(SageObject):
             sage: g.is_perfect_recall
             True
 
-        A slug that is not in the catalog is rejected (as is a catalog game
-        that is not an extensive form game, via :meth:`_gambit_game`)::
+        A slug that is not in the catalog is rejected::
 
             sage: # optional - pygambit
-            sage: g.load_from_gambit_catalog('not_a_real_game', info=False)
+            sage: ExtensiveFormGame.load_from_gambit_catalog('not_a_real_game')
             Traceback (most recent call last):
             ...
             ValueError: 'not_a_real_game' is not a game in the gambit catalog; ...
         """
         pygambit().require()
-        if game is not None:
-            try:
-                loaded = catalog.load(game)
-            except FileNotFoundError:
-                raise ValueError(
-                    f"{game!r} is not a game in the gambit catalog; call "
-                    "load_from_gambit_catalog() with no argument to see the "
-                    "available games"
-                )
-            self._gambit_game(loaded)
-        if info:
-            return catalog.games()
+        try:
+            loaded = catalog.load(slug)
+        except FileNotFoundError:
+            raise ValueError(
+                f"{slug!r} is not a game in the gambit catalog; call "
+                "gambit_catalog_games() to see the available games"
+            )
+        return cls(loaded)
