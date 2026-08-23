@@ -51,7 +51,7 @@ cdef class PythonPartitionStack:
         EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
-            sage: P = PythonPartitionStack(7) # implicit doctest
+            sage: P = PythonPartitionStack(7) # indirect doctest
         """
         self.c_ps = PS_new(n, 1)
 
@@ -63,7 +63,7 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
-            sage: del(P) # implicit doctest
+            sage: del(P) # indirect doctest
         """
         PS_dealloc(self.c_ps)
 
@@ -75,7 +75,7 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
-            sage: P # implicit doctest
+            sage: P # indirect doctest
             PythonPartitionStack of degree 7 and depth 0.
         """
         return "PythonPartitionStack of degree %d and depth %d." % (self.c_ps.degree, self.c_ps.depth)
@@ -352,7 +352,7 @@ class PythonObjectWrapper:
             sage: def cs(a, b, c, d, e):
             ....:  return 0
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
-            sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # implicit doctest
+            sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # indirect doctest
             sage: P.obj
             sage: P.degree
             7

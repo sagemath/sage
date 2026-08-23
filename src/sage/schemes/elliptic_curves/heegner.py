@@ -6567,7 +6567,7 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
     IR = RealIntervalField(20)    # TODO: why 20 bits here?
 
     if eps == 1 and L1_vanishes:
-        return IR(0)  # rank even hence >= 2, so Heegner point is torsion.
+        return IR.zero()  # rank even hence >= 2, so Heegner point is torsion.
 
     RR = RealField()
     from math import sqrt
@@ -6578,10 +6578,11 @@ def heegner_point_height(self, D, prec=2, check_rank=True):
     k_E = prec*sqrt(E.conductor()) + 20
     k_F = prec*sqrt(F.conductor()) + 20
 
-    MIN_ERR = RR('1e-6')  # we assume that regulator and
-                         # discriminant, etc., computed to this accuracy (which is easily the case).
-                         # this should be made more intelligent / rigorous relative
-                         # to the rest of the system.
+    MIN_ERR = RR('1e-6')
+    # We assume that regulator and discriminant, etc., are computed to
+    # this accuracy (which is easily the case).
+    # This should be made more intelligent / rigorous relative to the
+    # rest of the system.
 
     if eps == 1:   # E has even rank
         LF1, err_F = F.lseries().deriv_at1(k_F)
