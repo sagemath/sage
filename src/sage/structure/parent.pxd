@@ -22,7 +22,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     cdef inline bint get_flag(self, int flag) noexcept:
         return self.flags & flag
 
-    cpdef register_coercion(self, mor)
+    cpdef register_coercion(self, mor, weak=*)
     cpdef register_action(self, action)
     cpdef register_conversion(self, mor)
     cpdef register_embedding(self, embedding)

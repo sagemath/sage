@@ -133,6 +133,26 @@ class InternalRealInterval(UniqueRepresentation, Parent):
     - ``check`` -- boolean; whether to check the other arguments for validity
     """
 
+    @staticmethod
+    def __classcall__(cls, lower, lower_closed, upper, upper_closed, check=True):
+        """
+        Normalize infinite endpoints before looking up the unique
+        representation cache.
+
+        TESTS::
+
+            sage: _ = RealSet(x < oo)                                                   # needs sage.symbolic
+            sage: RealSet(-oo, +oo).an_element()                                        # needs sage.symbolic
+            0
+            sage: RealSet(-oo, +oo).is_closed()                                         # needs sage.symbolic
+            True
+        """
+        if lower == minus_infinity:
+            lower = minus_infinity
+        if upper == infinity:
+            upper = infinity
+        return super().__classcall__(cls, lower, lower_closed, upper, upper_closed, check)
+
     def __init__(self, lower, lower_closed, upper, upper_closed, check=True):
         """
         Initialize ``self``.
