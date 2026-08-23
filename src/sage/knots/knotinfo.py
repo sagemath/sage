@@ -555,9 +555,9 @@ class KnotInfoBase(Enum):
         if not isinstance(item, KnotInfoColumns):
             raise KeyError('item must be an instance of %s' % (KnotInfoColumns))
         if item.column_type() == item.types.OnlyLinks and self.is_knot():
-            raise KeyError('item not available for knots' % (KnotInfoColumns))
+            raise KeyError('item not available for knots')
         if item.column_type() == item.types.OnlyKnots and not self.is_knot():
-            raise KeyError('item not available for links' % (KnotInfoColumns))
+            raise KeyError('item not available for links')
 
         l = db.read(item)
         ind = db.read_row_dict()[self.name][0]

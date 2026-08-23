@@ -1617,7 +1617,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             n = sum([A[j].rank() for j in range(i)])
             C = B.matrix_from_columns(range(n, n + self.rank()))
             H = A.Hom(self)
-            pi = H(C, "Projection" % self)
+            pi = H(C, "Projection")
             self.__projection = pi
             return self.__projection
 

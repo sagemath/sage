@@ -1774,7 +1774,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     (q^-2)*T[2,1] + (q^-2-q^-1)*T[1] + (q^-2-q^-1)*T[2] + (q^-2-2*q^-1+1)
                 """
                 if len(self) != 1:
-                    raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)" % self)
+                    raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)")
                 H = self.parent()
                 w = self.support_of_term()
 

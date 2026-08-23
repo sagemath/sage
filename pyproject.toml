@@ -83,6 +83,7 @@ urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
 R = ['rpy2 >=3.3']
+database_knotinfo = ['database-knotinfo']
 extra = [
   'igraph',
   'lrcalc ~=2.1; sys_platform != "win32"',
@@ -91,6 +92,8 @@ extra = [
   'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
   'sage_numerical_backends_coin',
 ]
+regina = ['regina']
+snappy = ['snappy']
 test = ["pytest-xdist"]
 #giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
 
