@@ -40,6 +40,7 @@ py.install_sources(
   'quaternion_algebra_element.py',
   'rational_cherednik_algebra.py',
   'schur_algebra.py',
+  'sergeev_superalgebra.py',
   'shuffle_algebra.py',
   'splitting_algebra.py',
   'tensor_algebra.py',

@@ -6503,6 +6503,10 @@ REFERENCES:
              spaces* in Scientific contributions in honor of Mirian
              Andrés Gómez, pp 507-519, Univ. La Rioja Serv. Publ., Logroño (2010).
 
+.. [Sergeev1985] \A. N. Sergeev. *The tensor algebra of the identity representation
+                 as a module over the Lie superalgebras* `\mathfrak{gl}(n,m)`
+                 *and* `Q(n)`. Math. USSR Sbornik **51** (1985), pp. 419-427.
+
 .. [Sey1981] \P. D. Seymour, Nowhere-zero 6-flows, J. Comb. Theory Ser B,
              30 (1981), 130-135. :doi:`10.1016/0095-8956(81)90058-7`
 
