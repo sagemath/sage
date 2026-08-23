@@ -129,7 +129,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None):
     r"""
     Test whether the graph is a Cartesian product.
@@ -248,6 +247,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     if g.order() <= 3 or Integer(g.order()).is_prime():
         return (False, None) if relabeling else False
 
+    from sage.sets.disjoint_set import DisjointSet
     from sage.graphs.graph import Graph
 
     # As we need the vertices of g to be linearly ordered, we copy the graph and
@@ -263,9 +263,9 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef int x, y, u, v
     cdef set un, intersect
 
-    # The equivalence graph on the edges of g
-    h = Graph()
-    h.add_vertices(r(x, y) for x, y in g_int.edge_iterator(labels=False))
+    # The equivalence classes of the edges of g
+    # Initialize with all edges of the graph
+    ds = DisjointSet(r(x, y) for x, y in g_int.edge_iterator(labels=False))
 
     # For all pairs of vertices u,v of G, according to their number of common
     # neighbors... See the module's documentation !
@@ -291,27 +291,20 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
                 else:
                     break
 
-            # If uv is an edge
-            if g_int.has_edge(u, v):
-                h.add_path([r(u, x) for x in intersect] + [r(v, x) for x in intersect])
-
-            # Only one common neighbor
-            elif len(intersect) == 1:
-                x = intersect.pop()
-                h.add_edge(r(u, x), r(v, x))
-
-            # Exactly 2 neighbors
-            elif len(intersect) == 2:
+            # Special case: uv is not an edge and exactly 2 common neighbors
+            if len(intersect) == 2 and not g_int.has_edge(u, v):
                 x, y = intersect
-                h.add_edge(r(u, x), r(v, y))
-                h.add_edge(r(v, x), r(u, y))
-            # More
+                ds.union(r(u, x), r(v, y))
+                ds.union(r(v, x), r(u, y))
+            # All other cases: union with all common neighbors
             else:
-                h.add_path([r(u, x) for x in intersect] + [r(v, x) for x in intersect])
+                for x in intersect:
+                    ds.union(r(u, x), r(v, x))
 
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
 
+    # Original distance loop with Python dict
     cdef list edges = list(g_int.edges(labels=False, sort=False))
     cdef dict d = g_int.distance_all_pairs()
     cdef int uu, vv
@@ -321,15 +314,15 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         for j in range(i + 1, g_int.size()):
             uu, vv = edges[j]
             if du[uu] + dv[vv] != du[vv] + dv[uu]:
-                h.add_edge(r(u, v), r(uu, vv))
+                ds.union(r(u, v), r(uu, vv))
+
+    # Only one connected component ? Check before building edges
+    if ds.number_of_subsets() == 1:
+        return (False, None) if relabeling else False
 
     # Gathering the connected components, relabeling the vertices on-the-fly
     edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
-             for cc in h.connected_components(sort=False)]
-
-    # Only one connected component ?
-    if len(edges) == 1:
-        return (False, None) if relabeling else False
+             for cc in ds]
 
     if immutable is None:
         immutable = g.is_immutable()
@@ -338,7 +331,11 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef list factors = []
     for cc in edges:
         tmp = Graph(cc, format='list_of_edges', immutable=immutable)
-        factors.append(tmp.subgraph(vertices=tmp.connected_components(sort=False)[0]))
+        comps = tmp.connected_components(sort=False)
+        if len(comps) == 1:
+            factors.append(tmp)
+        else:
+            factors.append(tmp.subgraph(vertices=comps[0]))
 
     # Computing the product of these graphs
     answer = factors[0]
@@ -355,8 +352,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         return isiso, dictt
     if certificate:
         return factors
-    return True
 
+    return True
 
 def rooted_product(G, H, root=None, immutable=None):
     r"""

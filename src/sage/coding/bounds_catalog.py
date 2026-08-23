@@ -27,7 +27,8 @@ _lazy_import("sage.coding.code_bounds", ["codesize_upper_bound",
             "singleton_bound_asymp",
             "plotkin_bound_asymp",
             "elias_bound_asymp",
-            "mrrw1_bound_asymp"])
+            "mrrw1_bound_asymp",
+            "mrrw2_bound_asymp"])
 
 _lazy_import("sage.coding.delsarte_bounds",
             ["krawtchouk",
