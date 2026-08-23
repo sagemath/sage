@@ -6820,7 +6820,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             return False
         return self[0].is_unit()
 
-    def __call__(self, *args):
+    def __call__(self, *args, include=None, exclude=None):
         r"""
         Return the composition of ``self`` with ``g``.
 
@@ -6849,10 +6849,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         INPUT:
 
         - ``g`` -- other (lazy) symmetric functions
+        - ``include`` -- list of coefficient-ring variables to be treated
+          as degree one elements. If specified, variables not in this list
+          are treated as scalars
+        - ``exclude`` -- list of coefficient-ring variables to be treated
+          as scalars, overriding the default degree one variables
 
-        .. TODO::
-
-            Allow specification of degree one elements.
+        Specify at most one of ``include`` and ``exclude``.
 
         EXAMPLES::
 
@@ -6873,6 +6876,25 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: g = s[1] + s[2,2]
             sage: L(f)(L(q*g)) - L(f(q*g))
             0
+
+        The optional ``include`` and ``exclude`` arguments control which
+        coefficient-ring variables are treated as degree one under plethysm::
+
+            sage: R.<q> = QQ[]
+            sage: p = SymmetricFunctions(R).p()
+            sage: L = LazySymmetricFunctions(p)
+            sage: f = L(p[2])
+            sage: g = L(lambda n: q*p[1] if n == 1 else 0, valuation=1)
+            sage: f(g)[2]
+            q^2*p[2]
+            sage: f(g, include=[])[2]
+            q*p[2]
+            sage: f(g, exclude=[q])[2]
+            q*p[2]
+            sage: f(g, include=[], exclude=[q])
+            Traceback (most recent call last):
+            ...
+            ValueError: include and exclude cannot be specified together
 
         The Frobenius character of the permutation action on set
         partitions is a plethysm::
@@ -6958,6 +6980,9 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         if len(args) != fP._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
 
+        if include is not None and exclude is not None:
+            raise ValueError("include and exclude cannot be specified together")
+
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
@@ -6985,13 +7010,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
                 if not isinstance(g, LazySymmetricFunction):
                     f = self.symmetric_function()
-                    return f(g)
+                    return f(g, include=include, exclude=exclude)
 
                 if (isinstance(g._coeff_stream, Stream_exact)
                     and not g._coeff_stream._constant):
                     f = self.symmetric_function()
                     gs = g.symmetric_function()
-                    return P(f(gs))
+                    return P(f(gs, include=include, exclude=exclude))
 
             if isinstance(g, LazySymmetricFunction):
                 R = P._laurent_poly_ring
@@ -7011,9 +7036,16 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             if P._arity == 1:
                 ps = R.realization_of().p()
             else:
-                ps = tensor([R._sets[0].realization_of().p()]*P._arity)
-            coeff_stream = Stream_plethysm(self._coeff_stream, g._coeff_stream,
-                                           P.is_sparse(), ps, R)
+                ps = tensor([R._sets[0].realization_of().p()] * P._arity)
+            coeff_stream = Stream_plethysm(
+                self._coeff_stream,
+                g._coeff_stream,
+                P.is_sparse(),
+                ps,
+                R,
+                include=include,
+                exclude=exclude,
+            )
             return P.element_class(P, coeff_stream)
 
         raise NotImplementedError("only implemented for arity 1")
