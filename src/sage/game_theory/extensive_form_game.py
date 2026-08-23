@@ -961,20 +961,27 @@ class ExtensiveFormGame(SageObject):
         pygambit().require()
         self._gambit_().append_infoset(node, like.infoset)
 
-    def set_outcome(self, node, label, payoffs):
+    def set_outcome(self, node, outcome, payoffs=None):
         r"""
-        Set the payoffs awarded at the terminal node ``node``.
+        Set the outcome awarded at the terminal node ``node``.
+
+        Given ``payoffs``, a new outcome awarding them is created; given none,
+        ``outcome`` is an outcome the game already has, so that the same
+        outcome can be awarded at several nodes.
 
         INPUT:
 
         - ``node`` -- a terminal node (see :meth:`root`)
 
-        - ``label`` -- string; a label for the outcome.  Following gambit it
-          must be nonempty and distinct from the labels of the game's other
-          outcomes.  It is ignored when ``payoffs`` is ``None``.
+        - ``outcome`` -- when ``payoffs`` is given, a string labelling the new
+          outcome; following gambit it must be nonempty and distinct from the
+          labels of the game's other outcomes.  Otherwise an outcome the game
+          already has, either as a gambit outcome (see :meth:`outcomes`) or by
+          its label, or ``None`` to award no outcome at ``node``.
 
-        - ``payoffs`` -- a list of payoffs, one per player (in the order of
-          :meth:`players`), or ``None`` to clear the outcome
+        - ``payoffs`` -- (default: ``None``) a list of payoffs, one per player
+          (in the order of :meth:`players`), awarded by the new outcome
+          labelled ``outcome``
 
         EXAMPLES::
 
@@ -985,6 +992,28 @@ class ExtensiveFormGame(SageObject):
             sage: g.set_outcome(g.root.children['L'], 'L', [2, 5])
             sage: float(g.root.children['L'].outcome['Alice'])
             2.0
+
+        The same outcome can be awarded at several nodes, naming it either by
+        its label or as an outcome of the game.  Alice below wins the same 1
+        whichever way the coin lands, and the game has a single outcome rather
+        than one per leaf::
+
+            sage: # optional - pygambit
+            sage: coin = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: coin.append_chance_move(coin.root, ['heads', 'tails'])
+            sage: heads, tails = coin.root.children
+            sage: coin.set_outcome(heads, 'Alice wins', [1, -1])
+            sage: coin.set_outcome(tails, 'Alice wins')
+            sage: coin.set_outcome(tails, heads.outcome)
+            sage: len(coin.outcomes)
+            1
+
+        Passing ``None`` awards no outcome at ``node``::
+
+            sage: # optional - pygambit
+            sage: coin.set_outcome(tails, None)
+            sage: bool(tails.outcome)
+            False
 
         TESTS:
 
@@ -1000,12 +1029,20 @@ class ExtensiveFormGame(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: Outcome label must be unique within the game
+
+        Awarding an existing outcome requires one the game actually has::
+
+            sage: # optional - pygambit
+            sage: g.set_outcome(g.root.children['R'], 'nope')
+            Traceback (most recent call last):
+            ...
+            KeyError: "set_outcome(): no outcome with label 'nope'"
         """
         pygambit().require()
         game = self._gambit_()
         if payoffs is not None:
-            payoffs = game.add_outcome(label, list(payoffs))
-        game.set_outcome(node, payoffs)
+            outcome = game.add_outcome(outcome, list(payoffs))
+        game.set_outcome(node, outcome)
 
     def set_chance_probs(self, node, probs):
         r"""
@@ -1806,7 +1843,8 @@ class ExtensiveFormGame(SageObject):
         pygambit().require()
         return cls(read_efg(path))
 
-    def obtain_nash(self, algorithm=None, use_strategic=False, rational=True):
+    def obtain_nash(self, algorithm=None, use_strategic=False, rational=True,
+                    tolerance=1e-4):
         r"""
         Compute the Nash equilibria of the game.
 
@@ -1853,11 +1891,28 @@ class ExtensiveFormGame(SageObject):
           selects between them: the *agent* solver, which works on the extensive
           form, when ``False``, and the ordinary one when ``True``.
 
-        - ``rational`` -- boolean (default: ``True``); whether ``'lcp'`` and
-          ``'lp'`` compute exactly, giving rational probabilities, or in
-          floating point.  The other algorithms ignore it: ``'enumpure'`` is
-          always exact, and ``'enumpoly'``, ``'logit'`` and ``'liap'`` are
-          numerical algorithms with no exact mode.
+        - ``rational`` -- boolean (default: ``True``); whether to answer with
+          rational probabilities rather than floating point ones, which is done
+          in whichever of two ways the algorithm allows.  ``'lcp'`` and
+          ``'lp'`` are asked to compute exactly throughout; ``'enumpoly'``,
+          ``'logit'`` and ``'liap'`` have no exact mode, so they compute in
+          floating point and their answer is then rounded to the exact
+          equilibrium it approximates, as described under ``tolerance``.
+          ``'enumpure'`` is always exact and ignores the flag.
+
+        - ``tolerance`` -- a positive number (default: ``1e-4``); how far a
+          probability computed by one of the numerical algorithms may be moved
+          in order to round it to a rational.  A rounded profile is returned
+          only once gambit has confirmed, in exact arithmetic, that it is an
+          equilibrium; when it is not -- as happens when the equilibrium is
+          genuinely irrational -- the floating point answer is returned
+          instead.  The larger the tolerance the simpler the rationals that are
+          tried, so a value that is too small can round an equilibrium to an
+          unenlightening exact form rather than fail to round it; the default
+          matches the accuracy the gambit solvers themselves aim for.  Has no
+          effect when ``rational`` is ``False``, nor on a game whose own
+          payoffs -- including the probabilities of its chance moves -- are
+          inexact.
 
         OUTPUT:
 
@@ -1879,10 +1934,9 @@ class ExtensiveFormGame(SageObject):
 
         The two are not interchangeable: indexing a mixed strategy profile by an
         action, or a mixed behavior profile by a strategy, raises a
-        :class:`TypeError`.  The probabilities are rational for ``'enumpure'``,
-        and for ``'lcp'`` and ``'lp'`` unless ``rational`` is set to ``False``;
-        the remaining solvers are numerical and return floating point
-        approximations.
+        :class:`TypeError`.  Either kind of profile comes in a rational and a
+        floating point flavour, and which one is returned follows ``rational``
+        and ``tolerance`` above.
 
         This requires the optional gambit package.
 
@@ -1942,12 +1996,57 @@ class ExtensiveFormGame(SageObject):
 
             sage: # optional - pygambit
             sage: eqs = g.obtain_nash(algorithm='liap')
-            sage: [[float(eq[a]) for a in g._gambit_().actions] for eq in eqs]  # abs tol 1e-6
+            sage: [[float(eq[a]) for a in g._gambit_().actions] for eq in eqs]
             [[0.0, 1.0]]
             sage: eqs = g.obtain_nash(algorithm='enumpure', use_strategic=True)
             sage: [[[float(eq[s]) for s in p.strategies]
             ....:   for p in g._gambit_().players] for eq in eqs]
             [[[0.0, 1.0], [1.0]]]
+
+        ``'enumpoly'``, ``'logit'`` and ``'liap'`` have no exact mode, but
+        their answer is nonetheless exact: it is rounded back to the
+        equilibrium it approximates and returned only once gambit has
+        confirmed, in exact arithmetic, that the rounded profile is one.  In
+        the asymmetric matching pennies game below Bob cannot tell which way
+        Alice's coin fell, so his two nodes share an information set, and
+        both players mix::
+
+            sage: # optional - pygambit
+            sage: pennies = ExtensiveFormGame(players=['Alice', 'Bob'])
+            sage: pennies.append_move(pennies.root, 'Alice', ['H', 'T'])
+            sage: pennies.append_move(pennies.root.children['H'], 'Bob', ['h', 't'])
+            sage: pennies.append_infoset(pennies.root.children['T'],
+            ....:                        pennies.root.children['H'])
+            sage: for coin, guess, payoff in [('H', 'h', 2), ('H', 't', -1),
+            ....:                             ('T', 'h', -1), ('T', 't', 1)]:
+            ....:     pennies.set_outcome(pennies.root.children[coin].children[guess],
+            ....:                         coin + guess, [payoff, -payoff])
+            sage: eqs = pennies.obtain_nash(algorithm='liap')
+            sage: type(eqs[0]).__name__
+            'MixedBehaviorProfileRational'
+            sage: [eqs[0][a] for a in pennies._gambit_().actions]
+            [Rational(2, 5), Rational(3, 5), Rational(2, 5), Rational(3, 5)]
+
+        The same holds of the mixed strategy profiles ``use_strategic``
+        returns::
+
+            sage: # optional - pygambit
+            sage: eq = pennies.obtain_nash(algorithm='logit', use_strategic=True)[0]
+            sage: type(eq).__name__
+            'MixedStrategyProfileRational'
+            sage: [[eq[s] for s in p.strategies] for p in pennies._gambit_().players]
+            [[Rational(2, 5), Rational(3, 5)], [Rational(2, 5), Rational(3, 5)]]
+
+        Rounding is never allowed to pass off an approximation as exact, so
+        asking for one so fine that nothing verifies gives the floating point
+        answer back unchanged::
+
+            sage: # optional - pygambit
+            sage: eqs = pennies.obtain_nash(algorithm='liap', tolerance=1e-15)
+            sage: type(eqs[0]).__name__
+            'MixedBehaviorProfileDouble'
+            sage: [float(eqs[0][a]) for a in pennies._gambit_().actions]  # abs tol 1e-6
+            [0.4, 0.6, 0.4, 0.6]
 
         The two representations need not yield the same number of equilibria.
         Below Bob moves only after Alice has played ``'L'``, which she never
@@ -1987,8 +2086,41 @@ class ExtensiveFormGame(SageObject):
             ...
             ValueError: unknown algorithm 'bogus'; must be one of
             'enumpoly', 'enumpure', 'lcp', 'liap', 'logit', 'lp'
+
+        There is nothing to round to within a tolerance of zero::
+
+            sage: g.obtain_nash(tolerance=0)                     # optional - pygambit
+            Traceback (most recent call last):
+            ...
+            ValueError: 'tolerance' must be positive; got 0
+
+        A game whose payoffs are inexact keeps its inexact equilibria; the
+        probabilities of a chance move are payoff data too, so making them
+        inexact is enough::
+
+            sage: # optional - pygambit
+            sage: coin = ExtensiveFormGame(players=['Alice'])
+            sage: coin.append_chance_move(coin.root, ['H', 'T'], probs=['1/3', '2/3'])
+            sage: for side in ['H', 'T']:
+            ....:     coin.append_move(coin.root.children[side], 'Alice', ['L', 'R'])
+            ....:     for move, payoff in [('L', 1), ('R', 2)]:
+            ....:         coin.set_outcome(coin.root.children[side].children[move],
+            ....:                          side + move, [payoff])
+            sage: type(coin.obtain_nash(algorithm='liap')[0]).__name__
+            'MixedBehaviorProfileRational'
+            sage: coin.set_chance_probs(coin.root, [0.25, 0.75])
+            sage: type(coin.obtain_nash(algorithm='liap')[0]).__name__
+            'MixedBehaviorProfileDouble'
         """
+        # The two game classes round a solver's floating point answer back to
+        # an exact equilibrium in the same way.
+        from sage.game_theory.normal_form_game import (
+            _gambit_payoffs_are_exact, _rationalize_gambit_profile)
+
         pygambit().require()
+        if tolerance <= 0:
+            raise ValueError(f"'tolerance' must be positive; got {tolerance!r}")
+
         game = self._gambit_()
         # Most solvers take ``use_strategic`` as an argument.  ``enumpure`` and
         # ``liap`` instead come in two flavours, and the agent one -- which
@@ -2016,7 +2148,15 @@ class ExtensiveFormGame(SageObject):
             names = ", ".join(repr(name) for name in sorted(solvers))
             raise ValueError("unknown algorithm {0!r}; must be one of "
                              "{1}".format(algorithm, names))
-        return list(solver().equilibria)
+        equilibria = list(solver().equilibria)
+        if rational and _gambit_payoffs_are_exact(game):
+            # ``'enumpoly'``, ``'logit'`` and ``'liap'`` answer in floating
+            # point whatever the game is made of, so ask for the exact
+            # equilibrium their answer renders; ``None`` comes back when there
+            # is none, and the approximation is then all there is to return.
+            equilibria = [_rationalize_gambit_profile(eq, tolerance) or eq
+                          for eq in equilibria]
+        return equilibria
 
     @classmethod
     def gambit_catalog_games(cls, **kwargs):

@@ -305,6 +305,19 @@ floating point answer instead::
     sage: matching_pennies.obtain_nash(algorithm='LCP', rational=False)  # abs tol 1e-9 # optional - pygambit
     [[(0.5, 0.5), (0.5, 0.5)]]
 
+The solvers that have no exact mode at all -- ``'gnm'``, ``'ipa'``, ``'liap'``,
+``'logit'`` and ``'enumpoly'`` -- are exact here too, because their floating
+point answer is rounded back to the equilibrium it approximates and only
+accepted once gambit has confirmed, in exact arithmetic, that the rounded
+profile really is one::
+
+    sage: matching_pennies.obtain_nash(algorithm='liap')  # optional - pygambit
+    [[(1/2, 1/2), (1/2, 1/2)]]
+
+An equilibrium can be irrational once a game has three or more players, and
+then there is nothing exact to round to; such an equilibrium is returned in
+floating point, as is any equilibrium of a game whose own payoffs are inexact.
+
 Note that if no algorithm argument is passed then the default will be
 selected according to the following order (if the corresponding package is
 installed):
@@ -463,7 +476,7 @@ algorithm, which interfaces with gambit's implementation of the global
 Newton method::
 
     sage: threegame.obtain_nash(algorithm='gnm')  # optional - pygambit
-    [[(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)]]
+    [[(0, 1), (0, 1), (0, 1)]]
 
 When no algorithm is given for a game with more than 2 players, the
 ``'enumpoly'`` algorithm is selected by default; it interfaces with
@@ -471,10 +484,10 @@ gambit's enumeration of equilibria via systems of polynomial equations
 and, unlike ``'gnm'``, returns all of the equilibria it finds::
 
     sage: threegame.obtain_nash()  # optional - pygambit
-    [[(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)], [(1.0, 0.0), (0.0, 1.0), (0.0, 1.0)]]
+    [[(0, 1), (0, 1), (0, 1)], [(1, 0), (0, 1), (0, 1)]]
 
-Note that ``'gnm'`` is a numerical algorithm and so returns floating
-point approximations of a sample of the equilibria.
+Note that ``'gnm'`` is a numerical algorithm and so returns only a sample of
+the equilibria.
 
 It can be shown that linear scaling of the payoff matrices conserves the
 equilibrium values::
@@ -698,6 +711,7 @@ from .parser import Parser
 from sage.misc.latex import latex
 from sage.combinat.subset import powerset
 from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector
@@ -714,6 +728,8 @@ except ImportError:
 from sage.features.gambit import pygambit
 from sage.misc.lazy_import import lazy_import
 lazy_import('pygambit', ['Game', 'Rational', 'read_nfg', 'catalog'], feature=pygambit())
+lazy_import('pygambit', ['MixedBehaviorProfileDouble', 'MixedStrategyProfileDouble'],
+            feature=pygambit())
 lazy_import('pygambit', 'nash', 'gambit_nash', feature=pygambit())
 
 # The sizes :meth:`NormalFormGame.plot` draws a payoff table with, in the data
@@ -767,6 +783,150 @@ def _label_width(label):
     """
     return _CHAR_WIDTH * sum(0.5 if character in _NARROW_CHARACTERS else 1
                              for character in label)
+
+
+def _gambit_payoffs_are_exact(game):
+    r"""
+    Return whether every payoff of the gambit game ``game`` is exact.
+
+    Gambit stores a payoff either as a rational or as a decimal, and both
+    :meth:`NormalFormGame._gambit_` and
+    :class:`~sage.game_theory.extensive_form_game.ExtensiveFormGame` arrange for
+    an exact Sage payoff to arrive as the former and an inexact one as the
+    latter.  So this asks of the gambit game what "the payoffs of this game are
+    exact" means for a Sage game.  For a tree game the probabilities of the
+    chance moves are payoff data too, and are checked as well.
+
+    This requires the optional gambit package.
+
+    EXAMPLES::
+
+        sage: # optional - pygambit
+        sage: from sage.game_theory.normal_form_game import _gambit_payoffs_are_exact
+        sage: A = matrix([[1, 2], [3, 4]])
+        sage: _gambit_payoffs_are_exact(NormalFormGame([A])._gambit_())
+        True
+        sage: _gambit_payoffs_are_exact(NormalFormGame([A / 3])._gambit_())
+        True
+        sage: _gambit_payoffs_are_exact(NormalFormGame([A.change_ring(RDF)])._gambit_())
+        False
+
+    A chance move with inexact probabilities makes a tree game inexact::
+
+        sage: # optional - pygambit
+        sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
+        sage: g = ExtensiveFormGame(players=['Alice'])
+        sage: g.append_chance_move(g.root, ['H', 'T'], probs=['1/3', '2/3'])
+        sage: for branch in ['H', 'T']:
+        ....:     g.append_move(g.root.children[branch], 'Alice', ['L', 'R'])
+        ....:     for move in ['L', 'R']:
+        ....:         g.set_outcome(g.root.children[branch].children[move],
+        ....:                       branch + move, [1])
+        sage: _gambit_payoffs_are_exact(g._gambit_())
+        True
+        sage: g.set_chance_probs(g.root, [0.25, 0.75])
+        sage: _gambit_payoffs_are_exact(g._gambit_())
+        False
+    """
+    if any(not isinstance(outcome[player], Rational)
+           for outcome in game.outcomes for player in game.players):
+        return False
+    if not game.is_tree:
+        return True
+    return all(isinstance(action.prob, Rational)
+               for infoset in game.players.chance.infosets
+               for action in infoset.actions)
+
+
+def _rationalize_gambit_profile(profile, tolerance):
+    r"""
+    Return an exact version of the gambit mixed profile ``profile``, or ``None``.
+
+    Several of gambit's solvers -- ``'gnm'``, ``'ipa'``, ``'logit'``, ``'liap'``
+    and ``'enumpoly'`` -- have no exact mode and answer in floating point even
+    when the game they are given is exact.  Their answer is nonetheless usually
+    a floating point rendering of an exact equilibrium, so this rounds each
+    probability to the simplest rational within ``tolerance`` of it and then
+    asks gambit whether the result is an equilibrium *exactly*: a rational
+    profile computes its regret over the rationals, so a maximum regret of zero
+    is a proof rather than an estimate.
+
+    ``None`` is returned when the rounded profile fails that test, which is what
+    happens when the equilibrium is genuinely irrational -- possible as soon as
+    a game has three players.
+
+    A profile that is already exact is returned unchanged.
+
+    INPUT:
+
+    - ``profile`` -- a pygambit mixed strategy or mixed behavior profile
+
+    - ``tolerance`` -- a positive number; how far a probability may be moved to
+      reach a rational.  The larger it is the simpler the rationals that are
+      tried, so a rounding that is too fine can verify an equilibrium in an
+      unenlightening form rather than fail.
+
+    OUTPUT: an exact pygambit profile, or ``None``
+
+    This requires the optional gambit package.
+
+    EXAMPLES:
+
+    A game whose only mixed equilibrium is `(3/5, 2/5), (2/5, 3/5)`; ``'liap'``
+    finds it to within a few parts in `10^9`, which is plenty to recover it::
+
+        sage: # optional - pygambit
+        sage: from pygambit.nash import liap_solve
+        sage: from sage.game_theory.normal_form_game import _rationalize_gambit_profile
+        sage: battle = NormalFormGame([matrix([[3, 0], [0, 2]]),
+        ....:                          matrix([[2, 0], [0, 3]])])
+        sage: g = battle._gambit_()
+        sage: eq = liap_solve(g.mixed_strategy_profile(rational=False)).equilibria[0]
+        sage: _rationalize_gambit_profile(eq, 1e-6)
+        [[Rational(3, 5), Rational(2, 5)], [Rational(2, 5), Rational(3, 5)]]
+
+    Round too finely and nothing exact is found::
+
+        sage: _rationalize_gambit_profile(eq, 1e-15) is None    # optional - pygambit
+        True
+
+    An exact profile is passed through as it is::
+
+        sage: # optional - pygambit
+        sage: exact = g.mixed_strategy_profile(rational=True)
+        sage: _rationalize_gambit_profile(exact, 1e-6) is exact
+        True
+    """
+    if not isinstance(profile, (MixedBehaviorProfileDouble,
+                                MixedStrategyProfileDouble)):
+        return profile
+
+    game = profile.game
+    if isinstance(profile, MixedBehaviorProfileDouble):
+        exact = game.mixed_behavior_profile(rational=True)
+        # Indexing by the actions of the players' own information sets leaves
+        # the chance moves, which are not part of a behavior profile, alone.
+        keys = [action for player in game.players
+                for infoset in player.infosets for action in infoset.actions]
+    else:
+        exact = game.mixed_strategy_profile(rational=True)
+        keys = [strategy for player in game.players
+                for strategy in player.strategies]
+
+    for key in keys:
+        # A solver may undershoot zero by a hair; a probability may not.
+        nearby = max(RR(profile[key]).nearby_rational(max_error=tolerance),
+                     QQ.zero())
+        exact[key] = Rational(int(nearby.numerator()), int(nearby.denominator()))
+
+    try:
+        # Rounding the probabilities of a player separately need not leave them
+        # summing to one; gambit's own normalisation is exact.
+        exact = exact.normalize()
+    except ValueError:      # all of some player's probabilities rounded to zero
+        return None
+
+    return exact if exact.max_regret() == 0 else None
 
 
 class NormalFormGame(SageObject, MutableMapping):
@@ -830,7 +990,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: threegame[1, 1, 1][1] = 6
             sage: threegame[1, 1, 1][2] = 4
             sage: threegame.obtain_nash(algorithm='gnm')  # optional - pygambit
-            [[(0.0, 1.0), (1.0, 0.0), (1.0, 0.0)]]
+            [[(0, 1), (1, 0), (1, 0)]]
 
         Rather than populating the utilities by hand, the same game can be
         built directly from a list of payoff arrays, one ``N``-dimensional
@@ -2279,7 +2439,7 @@ class NormalFormGame(SageObject, MutableMapping):
             )
 
     def obtain_nash(self, algorithm=False, maximization=True, solver=None,
-                    phc_path=None, rational=True):
+                    phc_path=None, rational=True, tolerance=1e-4):
         r"""
         A function to return the Nash equilibrium for the game.
         Optional arguments can be used to specify the algorithm used.
@@ -2373,16 +2533,33 @@ class NormalFormGame(SageObject, MutableMapping):
           library. Note that ``None`` means to use the default Sage LP solver,
           normally GLPK.
 
-        - ``rational`` -- boolean (default: ``True``); whether the algorithms
-          that can use exact arithmetic do so, returning rational
-          probabilities rather than floating point ones.  It applies to
-          ``'LCP'``, ``'lp'`` and ``'enummixed'``.  The other algorithms ignore
-          it: ``'enumpure'``, ``'simpdiv'`` and Sage's own ``'enumeration'``
-          and ``'lrs'`` always work exactly, while ``'gnm'``, ``'ipa'``,
-          ``'logit'``, ``'liap'`` and ``'enumpoly'`` are numerical algorithms
-          with no exact mode.  Note that exact arithmetic does not by itself
-          make an answer exact: ``'simpdiv'`` refines a grid, so it returns a
-          rational that approximates an equilibrium.
+        - ``rational`` -- boolean (default: ``True``); whether to answer with
+          rational probabilities rather than floating point ones, which is done
+          in whichever of two ways the algorithm allows.  ``'LCP'``, ``'lp'``
+          and ``'enummixed'`` are asked to compute in exact arithmetic
+          throughout; ``'gnm'``, ``'ipa'``, ``'logit'``, ``'liap'`` and
+          ``'enumpoly'`` have no exact mode, so they compute in floating point
+          and their answer is then rounded to the exact equilibrium it
+          approximates, as described under ``tolerance``.  ``'enumpure'``,
+          ``'simpdiv'`` and Sage's own ``'enumeration'`` and ``'lrs'`` always
+          work exactly and ignore the flag.
+
+          Note that exact arithmetic does not by itself make an answer exact:
+          ``'simpdiv'`` refines a grid, so it returns a rational that
+          approximates an equilibrium.
+
+        - ``tolerance`` -- a positive number (default: ``1e-4``); how far a
+          probability computed by one of the numerical algorithms may be moved
+          in order to round it to a rational.  A rounded profile is returned
+          only once gambit has confirmed, in exact arithmetic, that it is an
+          equilibrium; when it is not -- as happens when the equilibrium is
+          genuinely irrational, which a game of three or more players may have
+          -- the floating point answer is returned instead.  The larger the
+          tolerance the simpler the rationals that are tried, so a value that is
+          too small can round an equilibrium to an unenlightening exact form
+          rather than fail to round it; the default matches the accuracy the
+          gambit solvers themselves aim for.  Has no effect when ``rational``
+          is ``False``, nor on a game whose own payoffs are inexact.
 
         - ``phc_path`` -- (optional) a path (a string or
           :class:`~pathlib.Path`) to the PHCpack ``phc`` executable. When
@@ -2405,10 +2582,11 @@ class NormalFormGame(SageObject, MutableMapping):
         second plays their strategies with probabilities `1/3` and `2/3`.
         The probabilities of each player sum to one.
 
-        The exact algorithms -- ``'enumeration'``, ``'lrs'`` and ``'lp'`` --
-        give the probabilities as elements of :class:`~sage.rings.rational.Rational`;
-        the gambit solvers are numerical and give Python floats, so their
-        equilibria are approximations and need not be found in full.
+        A probability that was found exactly is an element of
+        :class:`~sage.rings.rational.Rational` and one that was not is a Python
+        float; see ``rational`` and ``tolerance`` above for when each occurs.
+        The numerical gambit solvers may in addition find only a sample of the
+        equilibria rather than all of them.
 
         .. SEEALSO:: :meth:`_extract_gambit_equilibria`, which converts gambit's
             own profile objects into this format.
@@ -2625,14 +2803,14 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: coordination = NormalFormGame([I3, I3])
             sage: coordination.obtain_nash(algorithm='enumpure')  # optional - pygambit
             [[(0, 0, 1), (0, 0, 1)], [(0, 1, 0), (0, 1, 0)], [(1, 0, 0), (1, 0, 0)]]
-            sage: coordination.obtain_nash(algorithm='enumpoly')  # abs tol 1e-6 # optional - pygambit
-            [[(0.0, 0.0, 1.0), (0.0, 0.0, 1.0)],
-             [(0.0, 0.5, 0.5), (0.0, 0.5, 0.5)],
-             [(0.0, 1.0, 0.0), (0.0, 1.0, 0.0)],
-             [(0.333333, 0.333333, 0.333333), (0.333333, 0.333333, 0.333333)],
-             [(0.5, 0.0, 0.5), (0.5, 0.0, 0.5)],
-             [(0.5, 0.5, 0.0), (0.5, 0.5, 0.0)],
-             [(1.0, 0.0, 0.0), (1.0, 0.0, 0.0)]]
+            sage: coordination.obtain_nash(algorithm='enumpoly')  # optional - pygambit
+            [[(0, 0, 1), (0, 0, 1)],
+             [(0, 1/2, 1/2), (0, 1/2, 1/2)],
+             [(0, 1, 0), (0, 1, 0)],
+             [(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)],
+             [(1/2, 0, 1/2), (1/2, 0, 1/2)],
+             [(1/2, 1/2, 0), (1/2, 1/2, 0)],
+             [(1, 0, 0), (1, 0, 0)]]
             sage: coordination.obtain_nash(algorithm='simpdiv')  # optional - pygambit
             [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
 
@@ -2644,12 +2822,47 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = np.array([[[0, 2], [4, 2]], [[2, 4], [2, 0]]])
             sage: C = np.array([[[0, 1], [2, -1]], [[-1, 2], [1, 0]]])
             sage: max_cut_game = NormalFormGame([A, B, C])
-            sage: max_cut_game.obtain_nash(algorithm='enumpoly')  # abs tol 1e-6 # optional - pygambit
-            [[(0.0, 1.0), (1.0, 0.0), (0.0, 1.0)],
-             [(0.5, 0.5), (0.5, 0.5), (0.5, 0.5)],
-             [(1.0, 0.0), (0.0, 1.0), (1.0, 0.0)]]
-            sage: max_cut_game.obtain_nash(algorithm='enumpure')  # abs tol 1e-6 # optional - pygambit
-            [[(0.0, 1.0), (1.0, 0.0), (0.0, 1.0)], [(1.0, 0.0), (0.0, 1.0), (1.0, 0.0)]]
+            sage: max_cut_game.obtain_nash(algorithm='enumpoly')  # optional - pygambit
+            [[(0, 1), (1, 0), (0, 1)],
+             [(1/2, 1/2), (1/2, 1/2), (1/2, 1/2)],
+             [(1, 0), (0, 1), (1, 0)]]
+            sage: max_cut_game.obtain_nash(algorithm='enumpure')  # optional - pygambit
+            [[(0, 1), (1, 0), (0, 1)], [(1, 0), (0, 1), (1, 0)]]
+
+        The solvers with no exact mode answer exactly as well, their floating
+        point answer being rounded back to the equilibrium it approximates.
+        Here ``'liap'`` minimises the Lyapunov function of the same game and
+        lands on the mixed equilibrium::
+
+            sage: max_cut_game.obtain_nash(algorithm='liap')  # optional - pygambit
+            [[(1/2, 1/2), (1/2, 1/2), (1/2, 1/2)]]
+
+        Rounding is only accepted once gambit has confirmed, in exact
+        arithmetic, that the rounded profile is an equilibrium, so it never
+        passes off an approximation as exact.  Ask for a rounding so fine that
+        nothing verifies and the floating point answer comes back unchanged::
+
+            sage: # optional - pygambit
+            sage: battle = NormalFormGame([matrix([[3, 0], [0, 2]]),
+            ....:                          matrix([[2, 0], [0, 3]])])
+            sage: battle.obtain_nash(algorithm='liap')
+            [[(3/5, 2/5), (2/5, 3/5)]]
+            sage: battle.obtain_nash(algorithm='liap', tolerance=1e-15)  # abs tol 1e-6
+            [[(0.6, 0.4), (0.4, 0.6)]]
+
+        That is what happens of its own accord when an equilibrium is
+        irrational, which a game of three or more players may well have.  The
+        one below is `((101 - \sqrt{3129})/136, \ldots)`, so no rounding of it
+        can be exact and ``'liap'`` reports what it found::
+
+            sage: A = np.array([[[-5, -3], [2, -1]], [[1, -4], [1, -3]]])
+            sage: B = np.array([[[2, 4], [-5, -3]], [[1, -3], [3, 1]]])
+            sage: C = np.array([[[0, -4], [-2, -2]], [[2, 2], [-1, 3]]])
+            sage: irrational = NormalFormGame([A, B, C])
+            sage: irrational.obtain_nash(algorithm='liap')  # abs tol 1e-5 # optional - pygambit
+            [[(0.331342, 0.668658), (0.668658, 0.331342), (0.265634, 0.734366)]]
+            sage: float((101 - sqrt(3129)) / 136)                                   # needs sage.symbolic
+            0.33134216850155895
 
         Also, not specifying a valid solver would lead to an error::
 
@@ -2703,7 +2916,8 @@ class NormalFormGame(SageObject, MutableMapping):
             if algorithm.lower() == "lcp":
                 pygambit().require()
                 return self._use_gambit_solver('lcp', maximization,
-                                               rational=rational)
+                                               rational=rational,
+                                               tolerance=tolerance)
 
             if algorithm.lower() == 'lp':
                 return self._solve_LP(solver=solver, maximization=maximization,
@@ -2715,7 +2929,8 @@ class NormalFormGame(SageObject, MutableMapping):
             if algorithm == "enummixed":
                 pygambit().require()
                 return self._use_gambit_solver('enummixed', maximization,
-                                               rational=rational)
+                                               rational=rational,
+                                               tolerance=tolerance)
 
         # The remaining gambit solvers all handle an arbitrary number of
         # players, so they are routed here (outside the two player branch
@@ -2726,7 +2941,8 @@ class NormalFormGame(SageObject, MutableMapping):
             pygambit().require()
             return self._use_gambit_solver(algorithm, maximization,
                                            phc_path=phc_path,
-                                           rational=rational)
+                                           rational=rational,
+                                           tolerance=tolerance)
 
         n = len(self.players)
         raise ValueError(
@@ -2882,7 +3098,7 @@ class NormalFormGame(SageObject, MutableMapping):
                 for eq in equilibria]
 
     def _use_gambit_solver(self, algorithm, maximization=True, phc_path=None,
-                           rational=True):
+                           rational=True, tolerance=1e-4):
         r"""
         Solve a :class:`NormalFormGame` using one of Gambit's solvers.
 
@@ -2906,7 +3122,7 @@ class NormalFormGame(SageObject, MutableMapping):
           * ``'lcp'`` -- the Linear Complementarity solver (two player games)
           * ``'lp'`` -- the Linear Programming solver (two player constant
             sum games)
-          * ``'enummixed'`` -- enumeration of extreme points of convex sets of 
+          * ``'enummixed'`` -- enumeration of extreme points of convex sets of
             all Nash equilibria (two player games)
           * ``'gnm'`` -- the global Newton method (any number of players)
           * ``'enumpure'`` -- enumeration of the pure strategy equilibria
@@ -2925,14 +3141,24 @@ class NormalFormGame(SageObject, MutableMapping):
         - ``maximization`` -- boolean (default: ``True``); whether the
           players maximize (``True``) or minimize (``False``) their utility
 
-        - ``rational`` -- boolean (default: ``True``); whether ``'lcp'``,
-          ``'lp'`` and ``'enummixed'`` should use exact arithmetic, returning
-          rational probabilities, or floating point.  The other solvers ignore
-          it: ``'enumpure'`` and ``'simpdiv'`` always work exactly, and
-          ``'gnm'``, ``'ipa'``, ``'logit'``, ``'liap'`` and ``'enumpoly'`` are
-          numerical algorithms with no exact mode.  Exact arithmetic does not
-          by itself make an answer exact -- ``'simpdiv'`` refines a grid, so
-          its rational output approximates an equilibrium.
+        - ``rational`` -- boolean (default: ``True``); whether to answer with
+          rational probabilities rather than floating point ones.  ``'lcp'``,
+          ``'lp'`` and ``'enummixed'`` are asked to use exact arithmetic
+          throughout, while ``'gnm'``, ``'ipa'``, ``'logit'``, ``'liap'`` and
+          ``'enumpoly'`` have no exact mode and instead have their floating
+          point answer rounded by :func:`_rationalize_gambit_profile`, which
+          accepts the result only if it is exactly an equilibrium.
+          ``'enumpure'`` and ``'simpdiv'`` always work exactly and ignore the
+          flag.  Exact arithmetic does not by itself make an answer exact --
+          ``'simpdiv'`` refines a grid, so its rational output approximates an
+          equilibrium.
+
+        - ``tolerance`` -- a positive number (default: ``1e-4``); how far a
+          probability may be moved to round it to a rational, passed to
+          :func:`_rationalize_gambit_profile`.  Has no effect when ``rational``
+          is ``False``, nor on a game whose payoffs are inexact -- such a game
+          keeps its inexact equilibria, as decided by
+          :func:`_gambit_payoffs_are_exact`.
 
         - ``phc_path`` -- (optional) a path (a string or
           :class:`~pathlib.Path`) to the PHCpack ``phc`` executable. Only
@@ -2941,8 +3167,9 @@ class NormalFormGame(SageObject, MutableMapping):
           (using enumeration on the strategic game). Passing it for any other
           algorithm raises a :class:`ValueError`.
 
-        OUTPUT: a sorted list of Nash equilibria, each a list with one tuple
-        of floats per player (see :meth:`_extract_gambit_equilibria`)
+        OUTPUT: a sorted list of Nash equilibria, each a list with one tuple of
+        probabilities per player, rational where they were found exactly and
+        floats where they were not (see :meth:`_extract_gambit_equilibria`)
 
         EXAMPLES:
 
@@ -2960,7 +3187,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = matrix([[3, 3], [1, 4]])
             sage: C = NormalFormGame([A, B])
             sage: C._use_gambit_solver('gnm')  # optional - pygambit
-            [[(0.0, 1.0), (0.0, 1.0)]]
+            [[(0, 1), (0, 1)]]
 
         GNM (like every solver other than ``'lcp'``, ``'lp'``, and ``'enummixed'``) can also
         solve games with more than two players.  Here is a three player game::
@@ -2994,7 +3221,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: threegame[1, 1, 1][1] = 6
             sage: threegame[1, 1, 1][2] = 4
             sage: threegame._use_gambit_solver('gnm')  # optional - pygambit
-            [[(0.0, 1.0), (1.0, 0.0), (1.0, 0.0)]]
+            [[(0, 1), (1, 0), (1, 0)]]
 
         The LP solver on a constant sum game::
 
@@ -3010,42 +3237,38 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = matrix([[2, 0], [5, 4]])
             sage: prisoners_dilemma = NormalFormGame([A, B])
             sage: prisoners_dilemma._use_gambit_solver('gnm', maximization=False)  # optional - pygambit
-            [[(0.0, 1.0), (0.0, 1.0)]]
+            [[(0, 1), (0, 1)]]
 
-        The remaining solvers are used in the same way.  The ``'enumpure'``,
-        ``'enumpoly'`` and ``'simpdiv'`` solvers return exact values here::
+        The remaining solvers are used in the same way::
 
             sage: c._use_gambit_solver('enumpure')  # optional - pygambit
             [[(0, 1), (0, 1)]]
             sage: c._use_gambit_solver('enumpoly')  # optional - pygambit
-            [[(0.0, 1.0), (0.0, 1.0)]]
+            [[(0, 1), (0, 1)]]
             sage: c._use_gambit_solver('simpdiv')  # optional - pygambit
             [[(0, 1), (0, 1)]]
 
         When the PHCpack ``phc`` executable is available, ``'enumpoly'`` can
         solve the underlying systems of polynomial equations with PHCpack
         instead of gambit's built-in solver by passing ``phc_path``.  PHCpack
-        is a numerical homotopy continuation solver, so we round its output;
-        it finds the same equilibria as the built-in solver::
+        is a numerical homotopy continuation solver, and it finds the same
+        equilibria as the built-in solver::
 
             sage: from shutil import which                          # optional - phc pygambit
-            sage: phc_eq = c._use_gambit_solver('enumpoly', phc_path=which('phc'))  # optional - phc pygambit
-            sage: [[[round(p, 6) for p in s] for s in e] for e in phc_eq]  # optional - phc pygambit
-            [[[0.0, 1.0], [0.0, 1.0]]]
+            sage: c._use_gambit_solver('enumpoly', phc_path=which('phc'))  # optional - phc pygambit
+            [[(0, 1), (0, 1)]]
 
         The ``'ipa'``, ``'liap'`` and ``'logit'`` solvers are iterative and
-        return floating point approximations, so we round their output::
+        compute in floating point, but their answers are rounded back to the
+        exact equilibria they approximate (see ``tolerance`` above)::
 
             sage: # optional - pygambit
-            sage: eq = c._use_gambit_solver('ipa')
-            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]
-            [[[0.0, 1.0], [0.0, 1.0]]]
-            sage: eq = c._use_gambit_solver('liap')
-            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]
-            [[[0.0, 1.0], [0.0, 1.0]]]
-            sage: eq = c._use_gambit_solver('logit')
-            sage: [[[round(p, 6) for p in s] for s in e] for e in eq]
-            [[[0.0, 1.0], [0.0, 1.0]]]
+            sage: c._use_gambit_solver('ipa')
+            [[(0, 1), (0, 1)]]
+            sage: c._use_gambit_solver('liap')
+            [[(0, 1), (0, 1)]]
+            sage: c._use_gambit_solver('logit')
+            [[(0, 1), (0, 1)]]
 
         The following examples cross-check the solvers against the equilibria
         recorded in Gambit's own test suite (``gambit/tests/test_nash.py``).
@@ -3061,7 +3284,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: zero_sum._use_gambit_solver('lcp', rational=False)  # abs tol 1e-9 # optional - pygambit
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: zero_sum._use_gambit_solver('enumpoly')  # optional - pygambit
-            [[(0.5, 0.5), (0.5, 0.5)]]
+            [[(1/2, 1/2), (1/2, 1/2)]]
 
         The game is constant sum, so the ``'lp'`` solver applies to its
         single-matrix form and finds the same equilibrium, while
@@ -3083,14 +3306,14 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: coordination = NormalFormGame([I3, I3])
             sage: coordination._use_gambit_solver('enumpure')  # optional - pygambit
             [[(0, 0, 1), (0, 0, 1)], [(0, 1, 0), (0, 1, 0)], [(1, 0, 0), (1, 0, 0)]]
-            sage: coordination._use_gambit_solver('enumpoly')  # abs tol 1e-6 # optional - pygambit
-            [[(0.0, 0.0, 1.0), (0.0, 0.0, 1.0)],
-             [(0.0, 0.5, 0.5), (0.0, 0.5, 0.5)],
-             [(0.0, 1.0, 0.0), (0.0, 1.0, 0.0)],
-             [(0.333333, 0.333333, 0.333333), (0.333333, 0.333333, 0.333333)],
-             [(0.5, 0.0, 0.5), (0.5, 0.0, 0.5)],
-             [(0.5, 0.5, 0.0), (0.5, 0.5, 0.0)],
-             [(1.0, 0.0, 0.0), (1.0, 0.0, 0.0)]]
+            sage: coordination._use_gambit_solver('enumpoly')  # optional - pygambit
+            [[(0, 0, 1), (0, 0, 1)],
+             [(0, 1/2, 1/2), (0, 1/2, 1/2)],
+             [(0, 1, 0), (0, 1, 0)],
+             [(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)],
+             [(1/2, 0, 1/2), (1/2, 0, 1/2)],
+             [(1/2, 1/2, 0), (1/2, 1/2, 0)],
+             [(1, 0, 0), (1, 0, 0)]]
             sage: coordination._use_gambit_solver('simpdiv')  # optional - pygambit
             [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
 
@@ -3102,12 +3325,12 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = np.array([[[0, 2], [4, 2]], [[2, 4], [2, 0]]])
             sage: C = np.array([[[0, 1], [2, -1]], [[-1, 2], [1, 0]]])
             sage: max_cut_game = NormalFormGame([A, B, C])
-            sage: max_cut_game._use_gambit_solver('enumpoly')  # abs tol 1e-6 # optional - pygambit
-            [[(0.0, 1.0), (1.0, 0.0), (0.0, 1.0)],
-             [(0.5, 0.5), (0.5, 0.5), (0.5, 0.5)],
-             [(1.0, 0.0), (0.0, 1.0), (1.0, 0.0)]]
-            sage: max_cut_game._use_gambit_solver('enumpure')  # abs tol 1e-6 # optional - pygambit
-            [[(0.0, 1.0), (1.0, 0.0), (0.0, 1.0)], [(1.0, 0.0), (0.0, 1.0), (1.0, 0.0)]]
+            sage: max_cut_game._use_gambit_solver('enumpoly')  # optional - pygambit
+            [[(0, 1), (1, 0), (0, 1)],
+             [(1/2, 1/2), (1/2, 1/2), (1/2, 1/2)],
+             [(1, 0), (0, 1), (1, 0)]]
+            sage: max_cut_game._use_gambit_solver('enumpure')  # optional - pygambit
+            [[(0, 1), (1, 0), (0, 1)], [(1, 0), (0, 1), (1, 0)]]
 
         Finally, a :math:`6\times 6` game with long Lemke-Howson paths and a
         unique equilibrium; the ``'gnm'``, ``'ipa'`` and ``'lcp'`` solvers all
@@ -3126,12 +3349,10 @@ class NormalFormGame(SageObject, MutableMapping):
             ....:             [270, 90, 20, -30, -81, -180],
             ....:             [-153, -36, -3, 17, 36, 72]])
             sage: long_lh = NormalFormGame([A, B])
-            sage: long_lh._use_gambit_solver('gnm')  # abs tol 1e-6 # optional - pygambit
-            [[(0.033333, 0.166667, 0.3, 0.3, 0.166667, 0.033333),
-              (0.166667, 0.033333, 0.3, 0.3, 0.033333, 0.166667)]]
-            sage: long_lh._use_gambit_solver('ipa')  # abs tol 1e-6 # optional - pygambit
-            [[(0.033333, 0.166667, 0.3, 0.3, 0.166667, 0.033333),
-              (0.166667, 0.033333, 0.3, 0.3, 0.033333, 0.166667)]]
+            sage: long_lh._use_gambit_solver('gnm')  # optional - pygambit
+            [[(1/30, 1/6, 3/10, 3/10, 1/6, 1/30), (1/6, 1/30, 3/10, 3/10, 1/30, 1/6)]]
+            sage: long_lh._use_gambit_solver('ipa')  # optional - pygambit
+            [[(1/30, 1/6, 3/10, 3/10, 1/6, 1/30), (1/6, 1/30, 3/10, 3/10, 1/30, 1/6)]]
             sage: long_lh._use_gambit_solver('lcp')  # optional - pygambit
             [[(1/30, 1/6, 3/10, 3/10, 1/6, 1/30), (1/6, 1/30, 3/10, 3/10, 1/30, 1/6)]]
 
@@ -3148,6 +3369,28 @@ class NormalFormGame(SageObject, MutableMapping):
             Traceback (most recent call last):
             ...
             ValueError: 'phc_path' is only supported by the 'enumpoly' algorithm; got algorithm 'gnm'
+
+        There is nothing to round to within a tolerance of zero::
+
+            sage: c._use_gambit_solver('gnm', tolerance=0)
+            Traceback (most recent call last):
+            ...
+            ValueError: 'tolerance' must be positive; got 0
+
+        A game whose payoffs are inexact keeps its inexact equilibria, whatever
+        ``rational`` is set to; there is nothing exact about them to recover::
+
+            sage: # optional - pygambit
+            sage: battle = NormalFormGame([matrix([[3, 0], [0, 2]]),
+            ....:                          matrix([[2, 0], [0, 3]])])
+            sage: battle._use_gambit_solver('liap')
+            [[(3/5, 2/5), (2/5, 3/5)]]
+            sage: battle._use_gambit_solver('liap', rational=False)  # abs tol 1e-6
+            [[(0.6, 0.4), (0.4, 0.6)]]
+            sage: inexact = NormalFormGame([matrix(RDF, [[3, 0], [0, 2]]),
+            ....:                           matrix(RDF, [[2, 0], [0, 3]])])
+            sage: inexact._use_gambit_solver('liap')  # abs tol 1e-6
+            [[(0.6, 0.4), (0.4, 0.6)]]
         """
 
         if phc_path is not None and algorithm != "enumpoly":
@@ -3155,6 +3398,9 @@ class NormalFormGame(SageObject, MutableMapping):
                 "'phc_path' is only supported by the 'enumpoly' algorithm; "
                 f"got algorithm {algorithm!r}"
             )
+
+        if tolerance <= 0:
+            raise ValueError(f"'tolerance' must be positive; got {tolerance!r}")
 
         pygambit().require()
 
@@ -3213,6 +3459,13 @@ class NormalFormGame(SageObject, MutableMapping):
             )
 
         equilibria = solvers[algorithm]()
+        if rational and _gambit_payoffs_are_exact(g):
+            # The numerical solvers answer in floating point whatever the game
+            # is made of, so ask for the exact equilibrium their answer renders;
+            # ``None`` comes back when there is none, and the approximation is
+            # then all there is to return.
+            equilibria = [_rationalize_gambit_profile(eq, tolerance) or eq
+                          for eq in equilibria]
         nasheq = self._extract_gambit_equilibria(equilibria)
         return sorted(nasheq)
 
