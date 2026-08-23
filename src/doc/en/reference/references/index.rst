@@ -4674,6 +4674,10 @@ REFERENCES:
 .. [Labelle2008] \G. Labelle. *New combinatorial computational methods
                  arising from pseudo-singletons.* DMTCS Proceedings 1, 2008.
 
+.. [Labelle2013] Gilbert Labelle. *The explicit molecular expansion
+             of the combinatorial logarithm*, in FPSAC 2013, Paris,
+             DMTCS Proceedings 2013, 361-372 (2013).
+
 .. [Lad2021] S. Ladkani. *Refined Coxeter polynomials*, Proceedings ICRA 2020,
              EMS Publishing House. :arxiv:`2110.15329`
 
@@ -5530,6 +5534,12 @@ REFERENCES:
              Journal of Combinatorial Theory, Series A,
              Volume 34, Issue 3, May 1983, Pages 340--359.
              :doi:`10.1016/0097-3165(83)90068-7`
+
+.. [MRRW1977] \R. J. McEliece, \E. R. Rodemich, \H. Rumsey, Jr.,
+              \L. R. Welch, *New Upper Bounds on the Rate of a Code via the
+              Delsarte-MacWilliams Inequalities*, IEEE Transactions on
+              Information Theory **23** (1977), no. 2, 157--166.
+              :doi:`10.1109/TIT.1977.1055688`
 
 .. [MR2016] \B. Malmskog, C. Rasmussen, *Picard curves over Q
             with good reduction away from 3*. LMS Journal of Computation and

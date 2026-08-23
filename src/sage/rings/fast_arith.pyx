@@ -1,6 +1,20 @@
 # sage.doctest: needs sage.libs.pari
 """
 Basic arithmetic with C integers
+
+TESTS:
+
+The integer arithmetic helper classes cannot be subclassed::
+
+    sage: from sage.rings.fast_arith import arith_int, arith_llong
+    sage: type("arith_int_subclass", (arith_int,), {})
+    Traceback (most recent call last):
+    ...
+    TypeError: type 'sage.rings.fast_arith.arith_int' is not an acceptable base type
+    sage: type("arith_llong_subclass", (arith_llong,), {})
+    Traceback (most recent call last):
+    ...
+    TypeError: type 'sage.rings.fast_arith.arith_llong' is not an acceptable base type
 """
 
 # ****************************************************************************
@@ -516,7 +530,7 @@ cdef class arith_llong:
         y = v2
         if v1 < 0:
             y = -1*y
-        if x <= bnd and self.gcd_longlong(x, y) == 1:
+        if x <= bnd and self.c_gcd_longlong(x, y) == 1:
             n[0] = y
             d[0] = x
             return 0
@@ -528,6 +542,12 @@ cdef class arith_llong:
     def rational_recon_longlong(self, long long a, long long m):
         """
         Rational reconstruction of a modulo m.
+
+        EXAMPLES::
+
+            sage: from sage.rings.fast_arith import arith_llong
+            sage: arith_llong().rational_recon_longlong(1234567, 2147483629)
+            (-23606, 22613)
         """
         cdef long long n, d
         self.c_rational_recon_longlong(a, m, &n, &d)

@@ -50,7 +50,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         sage: DihedralGroup(5)
         Dihedral group of order 10 as a permutation group
     """
-    def extra_super_categories(self):
+    def extra_super_categories(self) -> list:
         r"""
         EXAMPLES::
 
@@ -315,11 +315,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             dg.relabel(lambda x: x[0])
             return Poset(dg, cover_relations=True)
 
-        def degrees(self):
+        def degrees(self) -> tuple:
             """
             Return the degrees of the Coxeter group.
 
-            The output is an increasing list of integers.
+            The output is an increasing tuple of integers.
 
             EXAMPLES::
 
@@ -365,7 +365,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             return sum((degrees_of_irreducible_component(I)
                         for I in self.irreducible_component_index_sets()), ())
 
-        def codegrees(self):
+        def codegrees(self) -> tuple:
             """
             Return the codegrees of the Coxeter group.
 
@@ -394,15 +394,16 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         @cached_method
         def weak_poset(self, side='right', facade=False):
             """
+            Return the left (resp. right) poset for weak order.
+
             INPUT:
 
             - ``side`` -- "left", "right", or "twosided" (default: ``'right'``)
             - ``facade`` -- boolean (default: ``False``)
 
-            Returns the left (resp. right) poset for weak order.  In
-            this poset, `u` is smaller than `v` if some reduced word
-            of `u` is a right (resp. left) factor of some reduced word
-            of `v`.
+            In this poset, `u` is smaller than `v` if some reduced
+            word of `u` is a right (resp. left) factor of some reduced
+            word of `v`.
 
             .. SEEALSO::
 
@@ -487,7 +488,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
         weak_lattice = weak_poset
 
-        def inversion_sequence(self, word):
+        def inversion_sequence(self, word) -> list:
             r"""
             Return the inversion sequence corresponding to the ``word``
             in indices of simple generators of ``self``.
@@ -511,10 +512,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [t.reduced_word() for t in CoxeterGroup(["A",3]).inversion_sequence([2,1,3,2,1,3])]
                 [[2], [1, 2, 1], [2, 3, 2], [1, 2, 3, 2, 1], [3], [1]]
             """
-            return [self.from_reduced_word(word[:i+1]+list(reversed(word[:i])))
+            return [self.from_reduced_word(word[:i+1] + list(reversed(word[:i])))
                     for i in range(len(word))]
 
-        def reflections_from_w0(self):
+        def reflections_from_w0(self) -> list:
             """
             Return the reflections of ``self`` using the inversion set
             of ``w_0``.
@@ -616,7 +617,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                                         cov_element.append((-tmp, t_conj[1] - 1))
                                 else:
                                     tmp = t[0] * t_conj[0] * t[0]
-                                    invs = self.inversion_sequence(Twords[t[0]]+Twords[t_conj[0]])
+                                    invs = self.inversion_sequence(Twords[t[0]] + Twords[t_conj[0]])
                                     plus_or_minus = invs.count(tmp)
                                     if plus_or_minus % 2:
                                         cov_element.append((tmp, t_conj[1]))
@@ -666,7 +667,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             return self.m_cambrian_lattice(c=c, m=1, on_roots=on_roots)
 
-        def is_real(self):
+        def is_real(self) -> bool:
             """
             Return ``True`` since ``self`` is a real reflection group.
 
@@ -753,7 +754,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 point = [ZZ.one()] * n
             v = sum(point[i-1] * weights[i] for i in weights.keys())
-            vertices = [v*w for w in self]
+            vertices = [v * w for w in self]
             if base_ring is None:
                 if isinstance(v.base_ring(), (sage.rings.abc.UniversalCyclotomicField,
                                               sage.rings.abc.AlgebraicField_common)):
@@ -945,7 +946,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             return (M - 1).image().dimension()
 
         @cached_in_parent_method
-        def bruhat_upper_covers(self):
+        def bruhat_upper_covers(self) -> list:
             r"""
             Return all the elements that cover ``self`` in Bruhat order.
 
@@ -976,7 +977,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             `\{ws_i, u_1s_i, u_2s_i,..., u_js_i\}`, where the `u_k`
             are those covers of `ws_i` that have a descent at `i`.
             """
-
             i = self.first_descent(positive=True, side='right')
             if i is not None:
                 wsi = self.apply_simple_reflection(i, side='right')
@@ -985,7 +985,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                         if u.has_descent(i, side='right')] + [wsi]
             return []
 
-        def coxeter_knuth_neighbor(self, w):
+        def coxeter_knuth_neighbor(self, w) -> set:
             r"""
             Return the Coxeter-Knuth (oriented) neighbors of the reduced word `w` of ``self``.
 
@@ -1084,12 +1084,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.graphs.graph import Graph
             R = [tuple(v) for v in self.reduced_words()]
-            G = Graph()
-            G.add_vertices(R)
-            G.add_edges([v, vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
-            return G
+            return Graph([R, ([v, vp] for v in R for vp in self.coxeter_knuth_neighbor(v))],
+                         format='vertices_and_edges', name='Coxeter-Knuth graph')
 
-        def is_coxeter_element(self):
+        def is_coxeter_element(self) -> bool:
             r"""
             Return whether this is a Coxeter element.
 

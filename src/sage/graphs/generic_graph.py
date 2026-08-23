@@ -7393,15 +7393,18 @@ class GenericGraph(GenericGraph_pyx):
             undirected simple graphs in time `O(m\log{m} + k^2n^2)`.
 
           * ``'MILP'`` -- use a mixed integer linear programming
-            formulation. This is the default method for directed graphs.
+            formulation. Graphs with loops and multiple edges are supported:
+            loops are ignored and each parallel copy counts as a distinct
+            edge.
 
           * ``'Gabow'`` -- use the combinatorial algorithm of Gabow
             [Gabow1995]_ for packing edge-disjoint spanning arborescences.
-            Only available for directed graphs; digraphs with loops and
-            multiple edges are supported.
+            This is the default method for directed graphs. Only available
+            for directed graphs; digraphs with loops and multiple edges are
+            supported.
 
           * ``None`` -- use ``'Roskind-Tarjan'`` for undirected graphs and
-            ``'MILP'`` for directed graphs.
+            ``'Gabow'`` for directed graphs.
 
         - ``root`` -- vertex (default: ``None``); root of the disjoint
           arborescences when the graph is directed.  If set to ``None``, the
@@ -7422,11 +7425,11 @@ class GenericGraph(GenericGraph_pyx):
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
 
-        - ``labels`` -- boolean (default: ``False``); only for directed
-          graphs with ``algorithm='Gabow'``. Whether the edges of the
-          returned arborescences carry the labels of the corresponding
-          input edges, so that parallel edges of a digraph with multiple
-          edges remain distinguishable in the output.
+        - ``labels`` -- boolean (default: ``False``); whether the edges of the
+          returned trees carry the labels of the corresponding input edges, so
+          that parallel edges of a graph with multiple edges remain
+          distinguishable in the output. Only supported by the ``'Gabow'`` and
+          ``'MILP'`` algorithms.
 
         ALGORITHM:
 
@@ -7594,37 +7597,44 @@ class GenericGraph(GenericGraph_pyx):
             sage: DiGraph().edge_disjoint_spanning_trees(algorithm='Gabow')
             []
 
-        The ``'Gabow'`` algorithm supports digraphs with multiple edges; with
-        ``labels=True``, parallel copies remain distinguishable in the
-        output::
+        The ``'Gabow'`` and ``'MILP'`` algorithms support multiple edges, each
+        parallel copy counting as a distinct edge. With ``labels=True``, both
+        keep the copies distinguishable in the output::
 
             sage: D = DiGraph([(0, 1, 'a'), (0, 1, 'b'), (1, 0, 'c'), (1, 0, 'd')],
             ....:             multiedges=True)
-            sage: trees = D.edge_disjoint_spanning_trees(2, algorithm='Gabow', labels=True)
+            sage: trees = D.edge_disjoint_spanning_trees(2, root=0, labels=True)
             sage: sorted(e[2] for T in trees for e in T.edge_iterator())
             ['a', 'b']
-            sage: D.edge_disjoint_spanning_trees(2, algorithm='MILP')
-            Traceback (most recent call last):
-            ...
-            ValueError: This method is not known to work on graphs with multiedges. ...
+            sage: trees = D.edge_disjoint_spanning_trees(2, root=0, algorithm='MILP',
+            ....:                                        labels=True)
+            sage: sorted(e[2] for T in trees for e in T.edge_iterator())
+            ['a', 'b']
+            sage: G = Graph([(0, 1, 'a'), (0, 1, 'b'), (1, 2, 'c'), (1, 2, 'd'),
+            ....:            (0, 2, 'e'), (0, 2, 'f')], multiedges=True)
+            sage: trees = G.edge_disjoint_spanning_trees(2, algorithm='MILP', labels=True)
+            sage: len(set(e[2] for T in trees for e in T.edge_iterator()))
+            4
             sage: graphs.CompleteGraph(4).edge_disjoint_spanning_trees(labels=True)
             Traceback (most recent call last):
             ...
-            ValueError: labels is only supported for directed graphs with algorithm "Gabow"
+            ValueError: labels is only supported with the "Gabow" and "MILP" algorithms
         """
-        if self.is_directed() and algorithm == "Gabow":
-            # the Gabow backend supports loops and multiple edges
-            self._scream_if_not_simple(allow_loops=True, allow_multiple_edges=True)
-        else:
+        if self.is_directed() and algorithm is None:
+            algorithm = "Gabow"
+
+        if algorithm == "Roskind-Tarjan" or algorithm is None:
+            # the Roskind-Tarjan implementation requires a simple graph, while
+            # the Gabow and MILP backends support loops and multiple edges
             self._scream_if_not_simple()
         from sage.categories.sets_cat import EmptySetError
         from sage.graphs.digraph import DiGraph
         from sage.graphs.graph import Graph
         from sage.numerical.mip import MIPSolverException, MixedIntegerLinearProgram
 
-        if labels and (not self.is_directed() or algorithm != "Gabow"):
-            raise ValueError('labels is only supported for directed graphs '
-                             'with algorithm "Gabow"')
+        if labels and algorithm not in ("Gabow", "MILP"):
+            raise ValueError('labels is only supported with the "Gabow" and '
+                             '"MILP" algorithms')
 
         if self.is_directed():
             if algorithm is not None and algorithm not in ("MILP", "Gabow"):
@@ -7681,20 +7691,48 @@ class GenericGraph(GenericGraph_pyx):
             root = next(G.vertex_iterator())
 
         if k == 1:
+            if G.is_directed():
+                # min_spanning_tree ignores the orientation of the edges, so we
+                # ask for an out-branching rooted at ``root`` instead. It spans
+                # the digraph if and only if it has n-1 edges.
+                T = next(G.out_branchings(root, spanning=False))
+                if T.num_edges() != n - 1:
+                    raise EmptySetError("this graph does not contain the "
+                                        "required number of trees/arborescences")
+                return [T]
             E = G.min_spanning_tree(starting_vertex=root)
             if not E:
                 raise EmptySetError("this graph does not contain the required "
                                     "number of trees/arborescences")
-            return [DiGraph(E) if G.is_directed() else Graph(E)]
-
-        D = G if G.is_directed() else DiGraph(G)
+            return [Graph(E)]
 
         # The colors we can use (one color per tree)
         colors = list(range(k))
 
+        # Give each edge of G a distinct identifier, so that parallel edges are
+        # distinguishable. Loops are discarded, as they cannot belong to a
+        # spanning tree. In the undirected case, the edge with identifier i
+        # yields the two arcs (u, v, i) and (v, u, i).
+        id_to_edge = [e for e in G.edge_iterator(labels=labels) if e[0] != e[1]]
+        if G.is_directed():
+            arcs = [(e[0], e[1], i) for i, e in enumerate(id_to_edge)]
+        else:
+            arcs = [a for i, e in enumerate(id_to_edge)
+                    for a in ((e[0], e[1], i), (e[1], e[0], i))]
+
+        # Arcs entering and leaving each vertex, and the parallel arcs of each
+        # ordered pair of vertices
+        arcs_in = {u: [] for u in G}
+        arcs_out = {u: [] for u in G}
+        arcs_between = {}
+        for a in arcs:
+            arcs_out[a[0]].append(a)
+            arcs_in[a[1]].append(a)
+            arcs_between.setdefault((a[0], a[1]), []).append(a)
+
         p = MixedIntegerLinearProgram(solver=solver)
 
-        # edges[e, c] is equal to one if and only if edge e has color c
+        # edge[a, c] is equal to one if and only if arc a has color c
         edge = p.new_variable(binary=True)
 
         # Define partial ordering of the vertices in each tree to avoid cycles
@@ -7702,46 +7740,50 @@ class GenericGraph(GenericGraph_pyx):
 
         # An edge belongs to a single tree
         if G.is_directed():
-            for e in D.edge_iterator(labels=False):
-                p.add_constraint(p.sum(edge[e, c] for c in colors) <= 1)
+            for a in arcs:
+                p.add_constraint(p.sum(edge[a, c] for c in colors) <= 1)
         else:
-            for u, v in G.edge_iterator(labels=False):
-                p.add_constraint(p.sum(edge[(u, v), c] + edge[(v, u), c] for c in colors) <= 1)
+            for i, e in enumerate(id_to_edge):
+                p.add_constraint(p.sum(edge[(e[0], e[1], i), c] + edge[(e[1], e[0], i), c]
+                                       for c in colors) <= 1)
 
-        # Constraints defining a spanning tree in D for each color c
+        # Constraints defining a spanning tree in G for each color c
         for c in colors:
             # A tree has n-1 edges
-            p.add_constraint(p.sum(edge[e, c] for e in D.edge_iterator(labels=False)) == n - 1)
+            p.add_constraint(p.sum(edge[a, c] for a in arcs) == n - 1)
 
             # Each vertex has 1 incoming edge, except the root which has none
-            for u in D:
-                if u == root:
-                    p.add_constraint(p.sum(edge[e, c] for e in D.incoming_edge_iterator(root, labels=False)) == 0)
-                else:
-                    p.add_constraint(p.sum(edge[e, c] for e in D.incoming_edge_iterator(u, labels=False)) == 1)
+            for u in G:
+                p.add_constraint(p.sum(edge[a, c] for a in arcs_in[u])
+                                 == (0 if u == root else 1))
 
             # A vertex has at least one incident edge
-            for u in D:
-                p.add_constraint(p.sum(edge[e, c] for e in D.incoming_edge_iterator(u, labels=False))
-                                 + p.sum(edge[e, c] for e in D.outgoing_edge_iterator(u, labels=False))
-                                 >= 1)
+            for u in G:
+                p.add_constraint(p.sum(edge[a, c] for a in arcs_in[u])
+                                 + p.sum(edge[a, c] for a in arcs_out[u]) >= 1)
 
             # We use the Miller-Tucker-Zemlin subtour elimination constraints
             # combined with the Desrosiers-Langevin strengthening constraints
-            # (only when n is large enough to avoid corner cases).
-            for u, v in D.edge_iterator(labels=False):
-                if n > 3 and D.has_edge(v, u):
+            # (only when n is large enough to avoid corner cases). A tree uses
+            # at most one of the parallel arcs from u to v, so the sum of their
+            # variables plays the role of the variable of a simple graph.
+            for (u, v), parallel in arcs_between.items():
+                uv = p.sum(edge[a, c] for a in parallel)
+                back = arcs_between.get((v, u))
+                if n > 3 and back:
                     # DL
-                    p.add_constraint(pos[u, c] + (n - 1)*edge[(u, v), c] + (n - 3)*edge[(v, u), c]
+                    vu = p.sum(edge[a, c] for a in back)
+                    p.add_constraint(pos[u, c] + (n - 1)*uv + (n - 3)*vu
                                      <= pos[v, c] + n - 2)
                 else:
-                    # MTZ: If edge uv is selected, v is after u in the partial ordering
-                    p.add_constraint(pos[u, c] + 1 - n * (1 - edge[(u, v), c]) <= pos[v, c])
+                    # MTZ: If an edge uv is selected, v is after u in the
+                    # partial ordering
+                    p.add_constraint(pos[u, c] + 1 - n * (1 - uv) <= pos[v, c])
 
             # and extra strengthening constraints on the minimum distance
             # between the root of the spanning tree and any vertex
-            BFS = dict(D.breadth_first_search(root, report_distance=True))
-            for u in D:
+            BFS = dict(G.breadth_first_search(root, report_distance=True))
+            for u in G:
                 p.add_constraint(pos[root, c] + BFS[u] <= pos[u, c])
 
         # We now solve this program and extract the solution
@@ -7772,9 +7814,10 @@ class GenericGraph(GenericGraph_pyx):
         classes = [H.copy() for c in colors]
 
         edges = p.get_values(edge, convert=bool, tolerance=integrality_tolerance)
-        for (e, c), b in edges.items():
+        for (a, c), b in edges.items():
             if b:
-                classes[c].add_edge(e)
+                # the identifier of the arc tells which edge of G it comes from
+                classes[c].add_edge(id_to_edge[a[2]])
 
         return classes
 
@@ -16939,19 +16982,25 @@ class GenericGraph(GenericGraph_pyx):
             sage: PG = G.power(3)
             sage: PG.edges(sort=True, labels=False)
             [(0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (2, 1), (2, 3), (2, 4), (2, 5), (3, 0), (3, 1), (3, 2), (4, 5)]
-        """
-        from sage.graphs.digraph import DiGraph
-        from sage.graphs.graph import Graph
 
-        power_of_graph = DiGraph() if self.is_directed() else Graph()
+        Testing on graph with isolated vertices::
+
+            sage: BipartiteGraph(7).power(1).order()
+            7
+        """
+        if self.is_directed():
+            from sage.graphs.digraph import DiGraph as GT
+        else:
+            from sage.graphs.graph import Graph as GT
+
+        if name := self.name():
+            name = f'power({name})'
+        power_of_graph = GT([self, []], format='vertices_and_edges', name=name)
 
         for u in self:
             for v in self.breadth_first_search(u, distance=k):
                 if u != v:
                     power_of_graph.add_edge(u, v)
-
-        if self.name():
-            power_of_graph.name("power({})".format(self.name()))
 
         return power_of_graph
 
