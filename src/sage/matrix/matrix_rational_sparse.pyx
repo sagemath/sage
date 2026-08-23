@@ -675,7 +675,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
           algorithm; ignored by the `p`-adic algorithm
 
-        OUTPUT: ``self`` is no in reduced row echelon form
+        OUTPUT:
+
+        The reduced row echelon form of ``self``, as an immutable matrix.
+        The matrix ``self`` is not changed.
 
         EXAMPLES::
 
@@ -689,18 +692,56 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       1       0  -5/157]
             [      0       0       1 238/157]
             [      0       0       0       0]
+
+        The result is immutable, so the cached echelon form cannot be
+        corrupted (:issue:`42531`)::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: E = A.echelon_form()
+            sage: E.is_immutable()
+            True
+            sage: E[0, 0] = 0
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+            sage: E is A.echelon_form()
+            True
+
+        This also holds when the matrix is already in echelon form::
+
+            sage: A = identity_matrix(QQ, 2, sparse=True)
+            sage: A.echelonize()
+            sage: E = A.echelon_form()
+            sage: (E is A, E.is_immutable(), A.is_mutable())
+            (False, True, True)
+            sage: E is A.echelon_form()
+            True
+
+        Empty matrices require a copy because the multimodular helper returns
+        its input directly::
+
+            sage: for nrows, ncols in [(0, 0), (0, 2), (2, 0)]:
+            ....:     A = matrix(QQ, nrows, ncols, sparse=True)
+            ....:     E = A.echelon_form()
+            ....:     assert E is not A and E.is_immutable() and A.is_mutable()
         """
         label = 'echelon_form_%s' % algorithm
         x = self.fetch(label)
         if x is not None:
             return x
         if self.fetch('in_echelon_form'):
-            return self
+            if self.is_immutable():
+                self.cache(label, self)
+                return self
+            E = self.__copy__()
+        else:
+            E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
+            self.cache('pivots', pivots)
 
-        E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
-
+        if E is self:
+            E = self.__copy__()
+        E.set_immutable()
         self.cache(label, E)
-        self.cache('pivots', pivots)
         return E
 
     # Multimodular echelonization algorithms
