@@ -1059,7 +1059,7 @@ class Link(SageObject):
 
         TESTS:
 
-        See that :issue:`?????` is fixed.
+        See that :issue:`42716` is fixed.
 
             sage: K = Link([[1, 5, 12, 6], [6, 12, 7, 11], [9, 10, 10, 11], [8, 1, 9, 4], [7, 5, 8, 4]])
             sage: K._directions_of_edges()
