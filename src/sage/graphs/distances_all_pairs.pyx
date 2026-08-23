@@ -2590,7 +2590,7 @@ def distances_distribution(G):
 # Antipodal graph #
 ###################
 
-def antipodal_graph(G):
+def antipodal_graph(G, immutable=None):
     r"""
     Return the antipodal graph of `G`.
 
@@ -2609,6 +2609,14 @@ def antipodal_graph(G):
     vertex has eccentricity equal to the diameter. However, in practice, this is
     much more efficient. See :func:`eccentricity` with ``algorithm='DHV'``.
 
+    INPUT:
+
+    - ``G`` -- a :class:`~sage.graphs.graph.Graph`
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable graph. ``immutable=None`` (default) means that the
+      graph and its antipodal graph will behave the same way.
+
     EXAMPLES:
 
     The antipodal graph of a grid graph has only 2 edges::
@@ -2616,23 +2624,25 @@ def antipodal_graph(G):
         sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.Grid2dGraph(5, 5)
         sage: A = antipodal_graph(G)
+        sage: A
+        Antipodal graph of 2D Grid Graph for [5, 5]: Graph on 25 vertices
         sage: A.order(), A.size()
         (25, 2)
 
-    The antipodal graph of a disjoint union of cliques is its complement::
+    The antipodal graph of a disconnected graph is its complement::
 
-        sage: from sage.graphs.distances_all_pairs import antipodal_graph
-        sage: G = graphs.CompleteGraph(3) * 3
-        sage: A = antipodal_graph(G)
-        sage: A.is_isomorphic(G.complement())
+        sage: G = Graph(5)
+        sage: H = G.antipodal_graph()
+        sage: H
+        Antipodal graph of Graph on 5 vertices: Graph on 5 vertices
+        sage: H.is_isomorphic(G.complement())
         True
 
     The antipodal graph can also be constructed as the
     :meth:`~sage.graphs.graph.Graph.distance_graph` for diameter distance::
 
-        sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.RandomGNP(10, .2)
-        sage: A = antipodal_graph(G)
+        sage: A = G.antipodal_graph()
         sage: B = G.distance_graph(G.diameter())
         sage: A.is_isomorphic(B)
         True
@@ -2663,6 +2673,14 @@ def antipodal_graph(G):
         <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
         sage: antipodal_graph(G).is_isomorphic(antipodal_graph(H))
         True
+        sage: antipodal_graph(G).is_immutable()
+        False
+        sage: antipodal_graph(G, immutable=True).is_immutable()
+        True
+        sage: antipodal_graph(H).is_immutable()
+        True
+        sage: antipodal_graph(H, immutable=False).is_immutable()
+        False
     """
     if not G:
         raise ValueError("the antipodal graph of the empty graph is not defined")
@@ -2673,18 +2691,21 @@ def antipodal_graph(G):
 
     cdef uint32_t n = G.order()
     name = f"Antipodal graph of {G}"
-    if n == 1:
-        return Graph(list(zip(G, G)), loops=True, name=name)
-
     import copy
-    A = Graph(name=name, pos=copy.deepcopy(G.get_pos()))
+    cdef dict pos = copy.deepcopy(G.get_pos())
+    if immutable is None:
+        immutable = G.is_immutable()
+
+    if n == 1:
+        return Graph(list(zip(G, G)), format="list_of_edges", loops=True,
+                     name=name, pos=pos, immutable=immutable)
 
     if not G.is_connected():
-        import itertools
+        from itertools import chain, combinations, product
         CC = G.connected_components(sort=False)
-        for c1, c2 in itertools.combinations(CC, 2):
-            A.add_edges(itertools.product(c1, c2))
-        return A
+        return Graph(chain(*(product(a, b) for a, b in combinations(CC, 2))),
+                     format="list_of_edges", name=name, pos=pos,
+                     immutable=immutable)
 
     cdef list int_to_vertex
     cdef StaticSparseCGraph cg
@@ -2712,22 +2733,26 @@ def antipodal_graph(G):
             diam = ecc[i]
 
     cdef uint32_t ui, vj, j
-    for ui in range(n):
-        if ecc[ui] == diam:
-            _ = simple_BFS(sd, ui, distances, NULL, waiting_list, seen)
-            u = int_to_vertex[ui]
-            j = n - 1
-            while distances[waiting_list[j]] == diam:
-                vj = waiting_list[j]
-                if ui < vj:  # avoid adding twice the same edge
-                    A.add_edge(u, int_to_vertex[vj])
-                j -= 1
+
+    def edges():
+        for ui in range(n):
+            if ecc[ui] == diam:
+                _ = simple_BFS(sd, ui, distances, NULL, waiting_list, seen)
+                u = int_to_vertex[ui]
+                j = n - 1
+                while distances[waiting_list[j]] == diam:
+                    vj = waiting_list[j]
+                    if ui < vj:  # avoid adding twice the same edge
+                        yield (u, int_to_vertex[vj])
+                    j -= 1
+
+    A = Graph([G, edges()], format="vertices_and_edges",
+              name=name, pos=pos, immutable=immutable)
 
     if not isinstance(G, StaticSparseBackend):
         free_short_digraph(sd)
     bitset_free(seen)
 
-    A.add_vertices(G)
     return A
 
 

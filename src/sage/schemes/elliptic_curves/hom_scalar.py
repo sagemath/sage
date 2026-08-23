@@ -251,7 +251,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             sage: E = EllipticCurve([1,2,3,4,5])
             sage: phi = E.scalar_multiplication(5)
             sage: psi = E.scalar_multiplication(-7)
-            sage: phi * psi     # implicit doctest
+            sage: phi * psi     # indirect doctest
             Scalar-multiplication endomorphism [-35] of Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
 
         ::
