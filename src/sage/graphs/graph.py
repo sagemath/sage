@@ -5238,7 +5238,7 @@ class Graph(GenericGraph):
         return [v for v in self if ecc[v] == d]
 
     @doc_index("Distances")
-    def distance_graph(self, dist):
+    def distance_graph(self, dist, immutable=None):
         r"""
         Return the graph on the same vertex set as the original graph but
         vertices are adjacent in the returned graph if and only if they are at
@@ -5249,6 +5249,10 @@ class Graph(GenericGraph):
         - ``dist`` -- nonnegative integer or a list of nonnegative integers;
           specified distance(s) for the connecting vertices. ``Infinity`` may
           be used here to describe vertex pairs in separate components.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its distance graph will behave the same way.
 
         OUTPUT:
 
@@ -5360,6 +5364,19 @@ class Graph(GenericGraph):
             ...
             ValueError: distance graph for a negative distance (d=-3) is not defined
 
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G.distance_graph(2).is_immutable()
+            False
+            sage: G.distance_graph(2, immutable=True).is_immutable()
+            True
+            sage: G = graphs.PathGraph(5, immutable=True)
+            sage: G.distance_graph(2).is_immutable()
+            True
+            sage: G.distance_graph(2, immutable=False).is_immutable()
+            False
+
         AUTHOR:
 
         Rob Beezer, 2009-11-25, :issue:`7533`
@@ -5386,29 +5403,32 @@ class Graph(GenericGraph):
             dstring = "distances " + str(sorted(distances))
         name = "Distance graph for %s in " % dstring + self.name()
         looped = ZZ(0) in s_distances
-        from sage.graphs.graph import Graph
-        D = Graph([self, []], format='vertices_and_edges',
-                  multiedges=False, loops=looped,
-                  pos=copy(self.get_pos()), name=name)
 
         # Create the appropriate edges
-        import itertools
-        if self.is_connected():
-            CC = [self]
-        else:
-            CC = self.connected_components_subgraphs()
-            if Infinity in s_distances:
-                # add edges between connected components
-                for A, B in itertools.combinations(CC, 2):
-                    D.add_edges(itertools.product(A, B))
-        for g in CC:
-            d = g.distance_all_pairs()
-            for u, v in itertools.combinations(g, 2):
-                if d[u][v] in s_distances:
-                    D.add_edge(u, v)
-        if looped:
-            D.add_edges((u, u) for u in self)
-        return D
+        def edges():
+            import itertools
+            if self.is_connected():
+                CC = [self]
+            else:
+                CC = self.connected_components_subgraphs()
+                if Infinity in s_distances:
+                    # add edges between connected components
+                    for A, B in itertools.combinations(CC, 2):
+                        yield from itertools.product(A, B)
+            for g in CC:
+                d = g.distance_all_pairs()
+                for u, v in itertools.combinations(g, 2):
+                    if d[u][v] in s_distances:
+                        yield (u, v)
+            if looped:
+                yield from ((u, u) for u in self)
+
+        if immutable is None:
+            immutable = self.is_immutable()
+        from sage.graphs.graph import Graph
+        return Graph([self, edges()], format='vertices_and_edges',
+                     multiedges=False, loops=looped, name=name,
+                     pos=copy(self.get_pos()), immutable=immutable)
 
     # Constructors
 
@@ -9281,7 +9301,7 @@ class Graph(GenericGraph):
             sage: G.is_antipodal()
             Traceback (most recent call last):
             ...
-            ValueError: diameter is not defined for the empty graph
+            ValueError: the antipodal graph of the empty graph is not defined
             sage: G = Graph(1)
             sage: G.is_antipodal()
             True
@@ -9371,7 +9391,7 @@ class Graph(GenericGraph):
             sage: G.folded_graph()
             Traceback (most recent call last):
             ...
-            ValueError: diameter is not defined for the empty graph
+            ValueError: the antipodal graph of the empty graph is not defined
             sage: G = Graph(1)
             sage: G.folded_graph()
             Folded Graph: Graph on 1 vertex
@@ -9407,65 +9427,17 @@ class Graph(GenericGraph):
 
         # now newVertices is a map {0, ..., numCliques-1} -> antipodal classes
         numCliques = len(newVertices)
-        edges = []
-        for i, j in itertools.combinations(range(numCliques), 2):
-            if any(self.has_edge(u, v) for u, v in
-                   itertools.product(newVertices[i], newVertices[j])):
-                edges.append((i, j))
+        def edges():
+            for i, j in itertools.combinations(range(numCliques), 2):
+                if any(self.has_edge(u, v) for u, v in
+                    itertools.product(newVertices[i], newVertices[j])):
+                    yield (i, j)
 
         if immutable is None:
             immutable = self.is_immutable()
         name = self.name() if self.name() != "" else "Graph"
-        return Graph([range(numCliques), edges], format='vertices_and_edges',
+        return Graph([range(numCliques), edges()], format='vertices_and_edges',
                      name=f"Folded {name}", immutable=immutable)
-
-    @doc_index("Leftovers")
-    def antipodal_graph(self):
-        r"""
-        Return the antipodal graph of ``self``.
-
-        The antipodal graph of a graph `G` has the same vertex set of `G` and
-        two vertices are adjacent if their distance in `G` is equal to the
-        diameter of `G`.
-
-        OUTPUT: a new graph. ``self`` is not touched
-
-        EXAMPLES::
-
-            sage: G = graphs.JohnsonGraph(10, 5)
-            sage: G.antipodal_graph()
-            Antipodal graph of Johnson graph with parameters 10,5: Graph on 252 vertices
-            sage: G = graphs.HammingGraph(8, 2)
-            sage: G.antipodal_graph()
-            Antipodal graph of Hamming Graph with parameters 8,2: Graph on 256 vertices
-
-        The antipodal graph of a disconnected graph is its complement::
-
-            sage: G = Graph(5)
-            sage: H = G.antipodal_graph()
-            sage: H.is_isomorphic(G.complement())
-            True
-
-        TESTS::
-
-            sage: G = Graph([(0, 1), (2, 3)])
-            sage: H = G.antipodal_graph()
-            sage: H.is_isomorphic(Graph([(0, 2), (0, 3), (1, 2), (1, 3)]))
-            True
-            sage: G = Graph()
-            sage: G.antipodal_graph()
-            Traceback (most recent call last):
-            ...
-            ValueError: diameter is not defined for the empty graph
-            sage: G = Graph(1)
-            sage: G.antipodal_graph()
-            Antipodal graph of Graph: Looped graph on 1 vertex
-        """
-        H = self.distance_graph(self.diameter())
-
-        name = self.name() if self.name() != "" else "Graph"
-        H.name(f"Antipodal graph of {name}")
-        return H
 
     @doc_index("Basic methods")
     def bipartite_double(self, extended=False, immutable=None):
@@ -9690,6 +9662,7 @@ class Graph(GenericGraph):
     from sage.graphs.spanning_tree import random_spanning_tree
     from sage.graphs.spanning_tree import spanning_trees
     from sage.graphs.graph_decompositions.graph_products import is_cartesian_product
+    from sage.graphs.distances_all_pairs import antipodal_graph
     from sage.graphs.distances_all_pairs import is_distance_regular
     from sage.graphs.base.static_dense_graph import is_strongly_regular
     from sage.graphs.line_graph import is_line_graph
@@ -9730,6 +9703,7 @@ class Graph(GenericGraph):
 
 
 _additional_categories = {
+    "antipodal_graph"           : "Leftovers",
     "is_long_hole_free"         : "Graph properties",
     "is_long_antihole_free"     : "Graph properties",
     "is_weakly_chordal"         : "Graph properties",

@@ -3336,6 +3336,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
         from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
 
         maps = [E.identity_morphism(), endo, E.frobenius_isogeny(), endo * E.frobenius_isogeny()]
+
         def matrix_of_quat(quat, PQ):
             denom = quat.denominator()
             numer = sum(ZZ(c) * phi for c, phi in zip(quat * denom, maps))
