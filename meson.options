@@ -87,6 +87,13 @@ option(
 )
 
 option(
+  'primesieve',
+  type: 'feature',
+  value: 'auto',
+  description: 'primesieve interface to fast prime generation'
+)
+
+option(
   'rankwidth',
   type: 'feature',
   value: 'auto',

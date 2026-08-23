@@ -47,6 +47,7 @@ libbraiding_enabled = @LIBBRAIDING_ENABLED@
 libhomfly_enabled = @LIBHOMFLY_ENABLED@
 mcqd_enabled = @MCQD_ENABLED@
 meataxe_enabled = @MEATAXE_ENABLED@
+primesieve_enabled = @PRIMESIEVE_ENABLED@
 rankwidth_enabled = @RANKWIDTH_ENABLED@
 sirocco_enabled = @SIROCCO_ENABLED@
 tdlib_enabled = @TDLIB_ENABLED@

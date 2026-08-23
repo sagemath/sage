@@ -562,7 +562,7 @@ cpdef unsigned long pari_maxprime() noexcept:
 
         sage: from sage.libs.pari.convert_sage import pari_maxprime
         sage: a = pari_maxprime()
-        sage: res = prime_range(2, 2*a)
+        sage: res = prime_range(2, 2*a, algorithm='pari_primes')
         sage: b = pari_maxprime()
         sage: b >= 2*a
         True

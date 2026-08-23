@@ -1014,20 +1014,21 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start=2, stop=None, proof=None):
+def primes(start=2, stop=None, proof=None, algorithm=None):
     r"""
     Return an iterator over all primes between ``start`` and ``stop-1``,
-    inclusive. This is much slower than :func:`prime_range`, but
-    potentially uses less memory.  As with :func:`next_prime`, the optional
-    argument ``proof`` controls whether the numbers returned are
-    guaranteed to be prime or not.
+    inclusive. This is a potentially memory-saving alternative to
+    :func:`prime_range`, since it does not build a list of all
+    primes in the range in memory all at once.
 
     This command is like the Python 3 :func:`range` command, except it only
-    iterates over primes. In some cases it is better to use :func:`primes` than
-    :func:`prime_range`, because :func:`primes` does not build a list of all
-    primes in the range in memory all at once. However, it is potentially much
-    slower since it simply calls the :func:`next_prime` function repeatedly, and
-    :func:`next_prime` is slow.
+    iterates over primes.
+
+    If the primesieve library is available, the primes below `2^{64}` are
+    generated with it. Otherwise, and beyond `2^{64}`, this function simply
+    calls the (much slower) :func:`next_prime` function repeatedly; in that
+    case, the optional argument ``proof`` controls whether the numbers
+    returned are guaranteed to be prime or not.
 
     INPUT:
 
@@ -1040,7 +1041,20 @@ def primes(start=2, stop=None, proof=None):
       function yields only proven primes.  If ``False``, the function uses a
       pseudo-primality test, which is much faster for really big numbers but
       does not provide a proof of primality. If ``None``, uses the global
-      default (see :mod:`sage.structure.proof.proof`)
+      default (see :mod:`sage.structure.proof.proof`). This is ignored for
+      primes below `2^{64}` generated with the primesieve library, which
+      are always proven primes.
+
+    - ``algorithm`` -- string (default: ``None``), one of:
+
+      - ``None``: use the primesieve library for the primes below `2^{64}`
+        if it is available, and ``'pari_isprime'`` otherwise
+
+      - ``'primesieve'``: use the primesieve library; primes at least
+        `2^{64}` are still generated with ``'pari_isprime'``
+
+      - ``'pari_isprime'``: generate the primes by calling
+        :func:`next_prime` repeatedly
 
     OUTPUT: an iterator over primes from ``start`` to ``stop-1``, inclusive
 
@@ -1084,6 +1098,33 @@ def primes(start=2, stop=None, proof=None):
         sage: from gmpy2 import mpz
         sage: list(primes(mpz(13)))
         [2, 3, 5, 7, 11]
+
+    The algorithms agree (:issue:`41011`)::
+
+        sage: # needs primesieve
+        sage: list(primes(10, 100, algorithm='primesieve'))
+        [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+        sage: all(list(primes(a, b, algorithm='primesieve'))
+        ....:     == list(primes(a, b, algorithm='pari_isprime'))
+        ....:     for a, b in [(-10, 60), (2, 2), (100, 2)])
+        True
+
+    Iteration transparently continues beyond `2^{64}`, where the
+    primesieve library cannot be used anymore::
+
+        sage: # long time
+        sage: L = list(primes(2**64 - 400, 2**64 + 400))
+        sage: [p - 2**64 for p in L]
+        [-363, -353, -323, -279, -257, -189, -179, -95, -83, -59, 13, 37, 51, 81, 93, 141, 307, 331, 393]
+        sage: L == list(primes(2**64 - 400, 2**64 + 400, algorithm='pari_isprime'))
+        True
+
+    Test for an unknown algorithm::
+
+        sage: list(primes(10, algorithm='banana'))
+        Traceback (most recent call last):
+        ...
+        ValueError: algorithm must be "primesieve" or "pari_isprime"
     """
     from sage.rings.infinity import infinity
 
@@ -1093,7 +1134,31 @@ def primes(start=2, stop=None, proof=None):
         start = ZZ(2)
     elif stop != infinity:
         stop = ZZ(stop)
+
+    if algorithm is None:
+        from sage.features.primesieve import Primesieve
+        algorithm = "primesieve" if Primesieve().is_present() else "pari_isprime"
+
     n = start - 1
+    if algorithm == "primesieve":
+        from sage.features.primesieve import Primesieve
+        Primesieve().require()
+        from sage.libs.primesieve import prime_iterator
+        bound = ZZ(2) ** 64
+        if start < bound:
+            try:
+                for p in prime_iterator(start, None if stop > bound else stop):
+                    yield p
+                    n = p
+            except OverflowError:
+                # All primes below 2^64 have been yielded; fall through
+                # to the generic algorithm for the primes beyond.
+                pass
+            else:
+                return
+    elif algorithm != "pari_isprime":
+        raise ValueError('algorithm must be "primesieve" or "pari_isprime"')
+
     while True:
         n = n.next_prime(proof)
         if n < stop:

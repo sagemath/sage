@@ -54,6 +54,23 @@ from libc.math cimport sqrt
 
 from sage.rings.integer cimport Integer
 
+# All primes are smaller than this bound (= 2^64), which is the limit
+# of the primesieve library. This must be a plain Python int: this
+# module is initialized inside the sage.rings.integer <-> rational
+# import cycle, where constructing an Integer crashes.
+cdef object primesieve_max_stop = 18446744073709551616
+
+# Availability of the primesieve feature, memoized on first use
+# (-1: not yet checked).
+cdef int primesieve_available = -1
+
+cdef inline bint have_primesieve() except -1:
+    global primesieve_available
+    if primesieve_available == -1:
+        from sage.features.primesieve import Primesieve
+        primesieve_available = bool(Primesieve().is_present())
+    return primesieve_available
+
 cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     r"""
     Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
@@ -73,8 +90,14 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
     - ``algorithm`` -- string (default: ``None``), one of:
 
-      - ``None``: Use  algorithm ``'pari_primes'`` if ``stop`` <= 436273009
-        (approximately 4.36E8). Otherwise use algorithm ``'pari_isprime'``.
+      - ``None``: Use algorithm ``'primesieve'`` if the primesieve library
+        is available and ``stop`` <= `2^{64}`. Otherwise, use algorithm
+        ``'pari_primes'`` if ``stop`` <= 436273009 (approximately 4.36E8),
+        and algorithm ``'pari_isprime'`` beyond that.
+
+      - ``'primesieve'``: Use the primesieve library to sieve the primes in
+        the given range. This is the fastest algorithm, but it requires
+        ``stop`` <= `2^{64}`.
 
       - ``'pari_primes'``: Use PARI's :pari:`primes` function to generate all
         primes from 2 to stop. This is fast but may crash if there is
@@ -85,8 +108,8 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         :pari:`isprime` function. This is slower but will work for much larger input.
 
     - ``py_ints`` -- boolean (default: ``False``); return Python ints rather
-      than Sage Integers (faster). Ignored unless algorithm ``'pari_primes'`` is being
-      used.
+      than Sage Integers (faster). Ignored unless algorithm ``'primesieve'``
+      or ``'pari_primes'`` is being used.
 
     EXAMPLES::
 
@@ -115,6 +138,18 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         sage: type(prime_range(8,algorithm='pari_isprime')[0])
         <class 'sage.rings.integer.Integer'>
 
+    The primesieve algorithm supports the whole range below `2^{64}`::
+
+        sage: # needs primesieve
+        sage: prime_range(10**10, 10**10 + 100, algorithm='primesieve')
+        [10000000019, 10000000033, 10000000061, 10000000069, 10000000097]
+        sage: prime_range(10, algorithm='primesieve')
+        [2, 3, 5, 7]
+        sage: type(prime_range(8, algorithm='primesieve')[0])
+        <class 'sage.rings.integer.Integer'>
+        sage: type(prime_range(8, algorithm='primesieve', py_ints=True)[0])
+        <class 'int'>
+
     .. NOTE::
 
         ``start`` and ``stop`` should be integers, but real numbers will also be accepted
@@ -142,7 +177,30 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         sage: prime_range(55, algorithm='banana')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be "pari_primes" or "pari_isprime"
+        ValueError: algorithm must be "primesieve", "pari_primes" or "pari_isprime"
+
+    The different algorithms agree (:issue:`41011`)::
+
+        sage: # needs primesieve
+        sage: for a, b in [(-10, 100), (2, 2), (100, 2), (4652360, 4652400)]:
+        ....:     assert (prime_range(a, b, algorithm='primesieve')
+        ....:             == prime_range(a, b, algorithm='pari_isprime'))
+        sage: prime_range(2500000, algorithm='primesieve') == prime_range(2500000, algorithm='pari_primes')
+        True
+
+    With the default algorithm, ``py_ints`` is honored whenever a sieve
+    is used; in particular, when primesieve is available, it is no longer
+    ignored beyond the ``'pari_primes'`` limit (:issue:`41011`)::
+
+        sage: type(prime_range(436273009, 436273109, py_ints=True)[0])  # needs primesieve
+        <class 'int'>
+
+    The primesieve algorithm is limited to primes smaller than `2^{64}`::
+
+        sage: prime_range(2**64 - 400, 2**64 + 10, algorithm='primesieve')  # needs primesieve
+        Traceback (most recent call last):
+        ...
+        ValueError: algorithm "primesieve" is limited to primes smaller than 2^64
 
     Confirm the fixes for :issue:`28467`::
 
@@ -189,12 +247,26 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
     if algorithm is None:
         # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
-        if max(start, stop or 0) <= small_prime_max:
+        if max(start, stop or 0) <= primesieve_max_stop and have_primesieve():
+            algorithm = "primesieve"
+        elif max(start, stop or 0) <= small_prime_max:
             algorithm = "pari_primes"
         else:
             algorithm = "pari_isprime"
 
-    if algorithm == "pari_primes":
+    if algorithm == "primesieve":
+        if max(start, stop or 0) > primesieve_max_stop:
+            raise ValueError('algorithm "primesieve" is limited to primes '
+                             'smaller than 2^64')
+        try:
+            from sage.libs.primesieve import prime_range as primesieve_prime_range
+        except ImportError:
+            from sage.features.primesieve import Primesieve
+            Primesieve().require()
+            raise
+        res = primesieve_prime_range(start, stop, py_ints)
+
+    elif algorithm == "pari_primes":
         from sage.libs.pari.convert_sage import pari_maxprime, pari_prime_range
         from sage.libs.pari import pari
 
@@ -222,11 +294,12 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
         res = pari_prime_range(start, stop, py_ints)
 
-    elif algorithm == "pari_isprime" or algorithm == "pari_primes":
+    elif algorithm == "pari_isprime":
         from sage.arith.misc import primes
-        res = list(primes(start, stop))
+        res = list(primes(start, stop, algorithm="pari_isprime"))
     else:
-        raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')
+        raise ValueError('algorithm must be "primesieve", "pari_primes" '
+                         'or "pari_isprime"')
     return res
 
 

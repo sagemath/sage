@@ -90,7 +90,9 @@ jobs:
       # for sage.features.foo, but it's possible that some parts of the
       # code are bypassing the feature framework and e.g. attempting
       # to detect an optional package with an import statement. We want
-      # those to fail as well.
+      # those to fail as well. (primesieve cannot be removed here
+      # because primecount/primecountpy depend on it; its support is
+      # only switched off with -Dprimesieve=disabled below.)
       - name: Remove optional packages from Conda environment
         shell: bash -l {0}
         run: conda remove bliss libbraiding libhomfly rw sirocco
@@ -108,7 +110,7 @@ jobs:
           export CC="ccache $CC"
           export CXX="ccache $CXX"
 
-          meson setup --python.install-env=prefix --prefix="${HOME}/.local" --wrap-mode=nodownload -Dbuild-docs=false -Dbliss=disabled -Dcoxeter3=disabled -Dlibbraiding=disabled -Dlibhomfly=disabled -Dmcqd=disabled -Dmeataxe=disabled -Drankwidth=disabled -Dsirocco=disabled -Dtdlib=disabled builddir
+          meson setup --python.install-env=prefix --prefix="${HOME}/.local" --wrap-mode=nodownload -Dbuild-docs=false -Dbliss=disabled -Dcoxeter3=disabled -Dlibbraiding=disabled -Dlibhomfly=disabled -Dmcqd=disabled -Dmeataxe=disabled -Dprimesieve=disabled -Drankwidth=disabled -Dsirocco=disabled -Dtdlib=disabled builddir
           meson install -C builddir
 
       - name: Check that all modules can be imported

@@ -64,6 +64,7 @@ Features
    sage/features/normaliz
    sage/features/pandoc
    sage/features/polymake
+   sage/features/primesieve
    sage/features/rankwidth
    sage/features/rubiks
    sage/features/sirocco
