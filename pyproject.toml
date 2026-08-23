@@ -352,8 +352,9 @@ quote-style = "preserve"
 ignore = [
   "E501", # Line too long - hard to avoid in doctests, and better handled by black.
 
-  # Variable/function names I, O, l - common in math, and not an issue for most monospace fonts
+  # Variable/function/class names I, O, l - common in math, and not an issue for most monospace fonts
   "E741",
+  "E742",
   "E743",
 
   "PLC2401", # Non-ASCII variables - we deliberately use Greek letters (albeit sparingly)
@@ -567,6 +568,7 @@ select = [
   "UP034",
   "UP035",
   "UP036",
+  "UP040",
   "UP041",
   "UP042",
   "UP043",
