@@ -2608,6 +2608,19 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
         ....:  for phi in E.isogenies_prime_degree(37)]
         [(0, 0, 0, 840*i + 1081, 0),
          (0, 0, 0, -840*i + 1081, 0)]
+
+    Over a finite field of characteristic different from `l`, first using a
+    distinct-degree step to discard irrelevant factors can make the
+    factorization much faster. The following example used to hang for several
+    minutes::
+
+        sage: F.<a> = GF(8)
+        sage: E = EllipticCurve(F, [1, 0, 0, 0, a^2 + a])
+        sage: isos = E.isogenies_prime_degree(19)
+        sage: len(isos)
+        2
+        sage: all(phi.degree() == 19 for phi in isos)
+        True
     """
     if not l.is_prime():
         raise ValueError(f"{l} is not prime")
@@ -2618,7 +2631,21 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     psi_l = E.division_polynomial(l)
 
-    factors = [h for h,_ in psi_l.factor() if h.degree().divides(l//2)]
+    K = E.base_ring()
+    if K.is_finite() and l != K.characteristic():
+        # Factoring ``psi_l`` directly can be very slow. Only the factors
+        # whose degree divides ``(l-1)/2`` matter, and they can be obtained
+        # first by a single distinct-degree step:
+        # ``gcd(psi_l, x^(q^((l-1)/2)) - x)`` is the product of all distinct
+        # irreducible factors of ``psi_l`` whose degree divides ``(l-1)/2``.
+        x = psi_l.parent().gen()
+        q = K.cardinality()
+        half = l // 2  # equals (l-1)/2 since l is odd here
+        # Here ``psi_l`` is squarefree because multiplication by ``l`` is separable.
+        big = psi_l.gcd(pow(x, q**half, psi_l) - x)
+        factors = [f for f, _ in big.factor()]
+    else:
+        factors = [h for h, _ in psi_l.factor() if h.degree().divides(l // 2)]
 
     kernels = []  # will store all kernel polynomials found
 
