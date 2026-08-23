@@ -286,6 +286,7 @@ def QuotientRing(R, I, names=None, **kwds) -> Parent:
     The return annotation matches the runtime type for generic, principal,
     noncommutative and unchanged quotient rings::
 
+        sage: from sage.structure.parent import Parent
         sage: isinstance(QuotientRing(ZZ, 2*ZZ), Parent)
         True
         sage: R = QQ['x']
