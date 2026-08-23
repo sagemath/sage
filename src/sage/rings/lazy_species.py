@@ -104,6 +104,55 @@ import itertools
 from collections import defaultdict
 
 
+def _singleton_sort(g, P):
+    r"""
+    Return the sort `i` if ``g`` is the singleton `Y_i` of ``P``,
+    and ``None`` otherwise.
+
+    This is used to detect the inclusion of a univariate (or
+    multivariate) species into the multivariate species ``P``, see
+    :issue:`40438`.
+
+    INPUT:
+
+    - ``g`` -- a candidate argument of a composition
+    - ``P`` -- a :class:`LazyCombinatorialSpecies`
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import _singleton_sort
+        sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)
+        sage: _singleton_sort(X, L), _singleton_sort(Y, L)
+        (0, 1)
+        sage: _singleton_sort(X + Y, L) is None
+        True
+        sage: _singleton_sort(2*X, L) is None
+        True
+        sage: _singleton_sort(X^2, L) is None
+        True
+        sage: _singleton_sort(L.zero(), L) is None
+        True
+    """
+    if not isinstance(g, LazyModuleElement) or g.parent() is not P:
+        return None
+    cs = g._coeff_stream
+    # g must be a single homogeneous term of degree one
+    if (
+        not isinstance(cs, Stream_exact)
+        or cs._constant
+        or cs.order() != 1
+        or cs._degree != 2
+    ):
+        return None
+    md = cs[1].monomial_coefficients()
+    if len(md) != 1:
+        return None
+    ((M, c),) = md.items()
+    if not c.is_one() or sum(M.grade()) != 1:
+        return None
+    return next(i for i, d in enumerate(M.grade()) if d)
+
+
 def weighted_compositions(n, d, weight_multiplicities, _w0=0):
     r"""
     Return all compositions of `n` of weight `d`.
@@ -1439,6 +1488,27 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
             sage: L2.<X,Y> = LazyCombinatorialSpecies(QQ)
             sage: F = L.Sets()(X + 2*Y)
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
+
+        Including a univariate species into a multivariate species
+        only relabels the sorts of the molecular species, see
+        :issue:`40438`::
+
+            sage: L1 = LazyCombinatorialSpecies(QQ, "Z")
+            sage: C = L1.Cycles()
+            sage: C(Y)[10].support()[0].support()[0]._dompart
+            (frozenset(), frozenset({1, 2, 3, 4, 5, 6, 7, 8, 9, 10}))
+            sage: C(Y)[10]
+            C_10(Y)
+
+        The result still knows that it is a composition::
+
+            sage: type(C(Y))
+            <class 'sage.rings.lazy_species.CompositionSpeciesElement'>
+            sage: sorted(C(Y).structures([], [1,2,3]))
+            [((((1, 'Y'),), ((2, 'Y'),), ((3, 'Y'),)),
+              ((Y, ((1,),)), (Y, ((2,),)), (Y, ((3,),)))),
+             ((((1, 'Y'),), ((3, 'Y'),), ((2, 'Y'),)),
+              ((Y, ((1,),)), (Y, ((2,),)), (Y, ((3,),))))]
         """
         fP = left.parent()
         # Find a good parent for the result
@@ -1457,53 +1527,79 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         sorder = left._coeff_stream._approximate_order
         gv = min(g._coeff_stream._approximate_order for g in args)
         R = P._internal_poly_ring.base_ring()
-        L = fP._internal_poly_ring.base_ring()
 
-        def coeff(g, i):
-            c = g._coeff_stream[i]
-            if not isinstance(c, PolynomialSpecies.Element):
-                return R(c)
-            return c
+        # Fast path: composition with singletons (see :issue:`40438`).
+        # If every argument is a single sort `Y_i` of `P`, then
+        # ``left(args)`` is obtained by relabelling the sorts of the
+        # molecular species in the support of ``left``; we only have to
+        # modify their domain partitions.
+        sorts = [_singleton_sort(g, P) for g in args]
+        if all(s is not None for s in sorts):
 
-        # args_flat and weights contain one list for each g
-        weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j+1)))
-                      for g in args]
+            def coefficient(n):
+                return left[n]._relabel_sorts(R, sorts)
 
-        def flat(g):
-            # function needed to work around python's scoping rules
-            return itertools.chain.from_iterable(coeff(g, j) for j in itertools.count())
+        else:
+            L = fP._internal_poly_ring.base_ring()
 
-        args_flat1 = [lazy_list(flat(g)) for g in args]
+            def coeff(g, i):
+                c = g._coeff_stream[i]
+                if not isinstance(c, PolynomialSpecies.Element):
+                    return R(c)
+                return c
 
-        def coefficient(n):
-            if not n:
-                if left[0]:
-                    return R(list(left[0])[0][1])
-                return R.zero()
-            result = R.zero()
-            for i in range(1, n // gv + 1):
-                # skip i=0 because it produces a term only for n=0
+            # args_flat and weights contain one list for each g
+            weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j + 1))) for g in args]
 
-                # compute homogeneous components
-                lF = defaultdict(L)
-                for M, c in left[i]:
-                    lF[M.grade()] += L._from_dict({M: c})
-                for mc, F in lF.items():
-                    for degrees in weighted_vector_compositions(mc, n, weight_exp):
-                        args_flat = [list(a[0:len(degrees[j])])
-                                     for j, a in enumerate(args_flat1)]
-                        multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
-                                          for d, (_, c) in zip(alpha, g_flat) if d]
-                        molecules = [M for alpha, g_flat in zip(degrees, args_flat)
-                                     for d, (M, _) in zip(alpha, g_flat) if d]
-                        non_zero_degrees = [[d for d in alpha if d] for alpha in degrees]
-                        names = ["X%s" % i for i in range(len(molecules))]
-                        FX = F._compose_with_weighted_singletons(names,
-                                                                 multiplicities,
-                                                                 non_zero_degrees)
-                        FG = [(M(*molecules), c) for M, c in FX]
-                        result += R.sum_of_terms(FG)
-            return result
+            def flat(g):
+                # function needed to work around python's scoping rules
+                return itertools.chain.from_iterable(
+                    coeff(g, j) for j in itertools.count()
+                )
+
+            args_flat1 = [lazy_list(flat(g)) for g in args]
+
+            def coefficient(n):
+                if not n:
+                    if left[0]:
+                        return R(list(left[0])[0][1])
+                    return R.zero()
+                result = R.zero()
+                for i in range(1, n // gv + 1):
+                    # skip i=0 because it produces a term only for n=0
+
+                    # compute homogeneous components
+                    lF = defaultdict(L)
+                    for M, c in left[i]:
+                        lF[M.grade()] += L._from_dict({M: c})
+                    for mc, F in lF.items():
+                        for degrees in weighted_vector_compositions(mc, n, weight_exp):
+                            args_flat = [
+                                list(a[0 : len(degrees[j])])
+                                for j, a in enumerate(args_flat1)
+                            ]
+                            multiplicities = [
+                                c
+                                for alpha, g_flat in zip(degrees, args_flat)
+                                for d, (_, c) in zip(alpha, g_flat)
+                                if d
+                            ]
+                            molecules = [
+                                M
+                                for alpha, g_flat in zip(degrees, args_flat)
+                                for d, (M, _) in zip(alpha, g_flat)
+                                if d
+                            ]
+                            non_zero_degrees = [
+                                [d for d in alpha if d] for alpha in degrees
+                            ]
+                            names = ["X%s" % i for i in range(len(molecules))]
+                            FX = F._compose_with_weighted_singletons(
+                                names, multiplicities, non_zero_degrees
+                            )
+                            FG = [(M(*molecules), c) for M, c in FX]
+                            result += R.sum_of_terms(FG)
+                return result
 
         coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
         super().__init__(P, coeff_stream)
