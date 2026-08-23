@@ -1036,27 +1036,26 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             return True
         return self.element % 2 == 0
 
-    def sqrt(FiniteField_givaroElement self, extend=False, all=False):
+    def sqrt(FiniteField_givaroElement self, *, extend=False, all=False,
+             algorithm=None, name=None):
         """
-        Return a square root of this finite field element in its
-        parent, if there is one.  Otherwise, raise a :exc:`ValueError`.
+        Return a square root of this finite field element, extending its
+        parent when necessary and requested.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
-          square root in an extension ring, if necessary. Otherwise,
-          raise a :exc:`ValueError` if the root is not in the base ring.
-
-          .. WARNING::
-
-              this option is not implemented!
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
+          square root in an extension ring when necessary
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return all
-          square roots of ``self``, instead of just one
+          square roots of ``self``
 
-        .. WARNING::
+        - ``algorithm`` -- optional algorithm hint (default: ``None``);
+          accepted for the common finite-field interface; Givaro always uses
+          its backend default
 
-            The ``extend`` option is not implemented (yet).
+        - ``name`` -- string (default: ``None``); name of the generator when
+          a quadratic extension is created
 
         ALGORITHM:
 
@@ -1078,7 +1077,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: k(3).sqrt()
             Traceback (most recent call last):
             ...
-            ValueError: must be a perfect square
+            ValueError: element is not a square
 
         TESTS::
 
@@ -1094,23 +1093,51 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: K.<a> = FiniteField(9)
             sage: a.sqrt(extend = False, all = True)
             []
+
+        Check the common finite-field square-root interface
+        (:issue:`40796`)::
+
+            sage: q = a**2
+            sage: for method in (q.sqrt, q.square_root):
+            ....:     for algorithm in (None, 'tonelli', 'cipolla'):
+            ....:         roots = method(extend=False, all=True,
+            ....:                        algorithm=algorithm, name='w')
+            ....:         assert isinstance(roots, list) and len(roots) == 2
+            ....:         assert all(r.parent() is K and r**2 == q for r in roots)
+            ....:     assert method(algorithm='backend-default')**2 == q
+            sage: for method in (a.sqrt, a.square_root):
+            ....:     root = method(extend=True, name='w')
+            ....:     assert root**2 == a
         """
-        if all:
-            if self.is_square():
-                a = self.sqrt()
-                return [a, -a] if -a != a else [a]
-            return []
         cdef Cache_givaro cache = <Cache_givaro>self._cache
+        cdef FiniteField_givaroElement root
         if self.element == cache.objectptr.one:
-            return make_FiniteField_givaroElement(cache, cache.objectptr.one)
+            root = make_FiniteField_givaroElement(cache, cache.objectptr.one)
         elif self.element % 2 == 0:
-            return make_FiniteField_givaroElement(cache, self.element // 2)
+            root = make_FiniteField_givaroElement(cache, self.element // 2)
         elif cache.objectptr.characteristic() == 2:
-            return make_FiniteField_givaroElement(cache, (cache.objectptr.cardinality() - 1 + self.element) / 2)
-        elif extend:
-            raise NotImplementedError  # TODO: use RingExtension or GF(p^(2*e))
+            root = make_FiniteField_givaroElement(
+                cache,
+                (cache.objectptr.cardinality() - 1 + self.element) // 2,
+            )
         else:
-            raise ValueError("must be a perfect square")
+            if extend:
+                from sage.categories.finite_fields import _sqrt_in_extension
+                return _sqrt_in_extension(
+                    self, all_roots=all, name=name, algorithm=algorithm
+                )
+            if all:
+                return []
+            raise ValueError("element is not a square")
+
+        if all:
+            if (cache.objectptr.characteristic() == 2
+                    or self.element == cache.objectptr.zero):
+                return [root]
+            return [root, -root]
+        return root
+
+    square_root = sqrt
 
     cpdef _add_(self, right):
         """

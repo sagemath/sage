@@ -797,6 +797,22 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             sage: H = HyperellipticCurve(f, h)
             sage: H.lift_x(z4^3 + z4^2 + z4, all=True)
             [(z4^3 + z4^2 + z4 : z4^2 + z4 + 1 : 1), (z4^3 + z4^2 + z4 : z4^3 : 1)]
+
+        Check that finite fields implemented by polynomial quotients accept
+        the common square-root keywords (:issue:`40796`)::
+
+            sage: F = GF(5)
+            sage: R.<t> = F[]
+            sage: K.<a> = R.quotient(t^2 + 2)
+            sage: S.<x> = K[]
+            sage: H = HyperellipticCurve(x^5 + x + 1)
+            sage: H.lift_x(K(0), all=True)
+            [(0 : 1 : 1), (0 : 4 : 1)]
+            sage: H = HyperellipticCurve(x^5 + x + 1, S(1))
+            sage: H.lift_x(K(0), all=True)
+            [(0 : 2 : 1)]
+            sage: HyperellipticCurve(x^6 + 1).roots_at_infinity()
+            [1, 4]
         """
         from sage.structure.element import get_coercion_model
 

@@ -1131,6 +1131,16 @@ def isogenies_7_0(E, minimal_models=True):
           from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 101
             to Elliptic Curve defined by y^2 = x^3 + 55*x + 100 over Finite Field of size 101]
 
+    Finite fields implemented as polynomial quotients support the common
+    square-root keywords used here (:issue:`40796`)::
+
+        sage: R.<x> = GF(5)[]
+        sage: K.<a> = R.quotient(x^2 + 2)
+        sage: E = EllipticCurve(K, [0, 0, 0, 0, 1])
+        sage: isogenies = isogenies_7_0(E)
+        sage: len(isogenies), {phi.degree() for phi in isogenies}
+        (8, {7})
+
     Examples over a number field::
 
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_7_0

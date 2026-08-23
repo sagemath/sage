@@ -38,7 +38,7 @@ TESTS::
 
 
 import sage.rings.rational_field
-from sage.arith.misc import crt
+from sage.arith.misc import CRT_basis, crt
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
@@ -1137,6 +1137,84 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             x^2 + 1
         """
         return self.__polynomial
+
+    @cached_method
+    def _sqrt_primary_decomposition(self):
+        r"""
+        Return primary components used to compute square roots, if useful.
+
+        This private decomposition is available for a univariate polynomial
+        quotient over a finite field when its modulus has at least two
+        distinct irreducible factors.  Each primary factor is kept intact, so
+        the resulting moduli are pairwise coprime and their quotient rings can
+        be recombined by the Chinese remainder theorem.
+
+        A single primary component is not useful here and returns ``None``;
+        this also prevents recursive decomposition of that component.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3)[]
+            sage: A.<a> = R.quotient((x + 1)^2 * (x^2 + 1))
+            sage: data = A._sqrt_primary_decomposition()
+            sage: moduli, components, evaluations, basis = data
+            sage: list(moduli)
+            [x^2 + 2*x + 1, x^2 + 1]
+            sage: [component.cardinality() for component in components]
+            [9, 9]
+            sage: list(evaluations)
+            [None, None]
+            sage: all(b % m == (i == j)
+            ....:     for i, b in enumerate(basis)
+            ....:     for j, m in enumerate(moduli))
+            True
+            sage: R.quotient((x + 1)^3)._sqrt_primary_decomposition() is None
+            True
+
+        Linear components are represented directly by the base field, which
+        avoids constructing degree-one quotient parents::
+
+            sage: B = R.quotient((x - 1) * (x + 1))
+            sage: data = B._sqrt_primary_decomposition()
+            sage: _, components, evaluations, _ = data
+            sage: all(component is R.base_ring() for component in components)
+            True
+            sage: set(evaluations) == {R.base_ring()(1), R.base_ring()(2)}
+            True
+
+        Quotients over non-fields retain the generic enumeration fallback::
+
+            sage: S.<y> = Zmod(4)[]
+            sage: S.quotient((y + 1) * (y^2 + y + 1))._sqrt_primary_decomposition() is None
+            True
+        """
+        from sage.categories.finite_fields import FiniteFields
+        if self.base_ring() not in FiniteFields():
+            return None
+
+        try:
+            factorization = self.modulus().factor()
+        except NotImplementedError:
+            return None
+        moduli = tuple(factor**exponent
+                       for factor, exponent in factorization)
+        if len(moduli) < 2:
+            return None
+
+        polynomial_ring = self.polynomial_ring()
+        name = self.variable_name()
+        base_ring = self.base_ring()
+        components = tuple(
+            base_ring if modulus.degree() == 1 else
+            PolynomialQuotientRing(polynomial_ring, modulus, name)
+            for modulus in moduli
+        )
+        evaluations = tuple(
+            -modulus[0] / modulus[1] if modulus.degree() == 1 else None
+            for modulus in moduli
+        )
+        basis = tuple(CRT_basis(list(moduli)))
+        return moduli, components, evaluations, basis
 
     def ngens(self):
         """
@@ -2370,13 +2448,17 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         The category is set correctly on initialization and member methods are
         inherited correctly::
 
-            sage: R.<x> = GF(103)[]
-            sage: f = R.irreducible_element(3, algorithm="random")
-            sage: S = R.quo(f)
+            sage: R.<x> = GF(5)[]
+            sage: S.<a> = R.quo(x^2 + 2)
+            sage: q = S(4)
+            sage: for method in (q.sqrt, q.square_root):
+            ....:     for algorithm in (None, 'tonelli', 'cipolla',
+            ....:                       'backend-default'):
+            ....:         roots = method(extend=False, all=True,
+            ....:                        algorithm=algorithm, name='w')
+            ....:         assert isinstance(roots, list) and len(roots) == 2
+            ....:         assert all(r.parent() is S and r**2 == q for r in roots)
             sage: S.category().is_subcategory(FiniteFields())
-            True
-            sage: a = S.random_element()^2
-            sage: (a.sqrt())^2 == a
             True
         """
         category = CommutativeAlgebras(ring.base_ring().category()).Quotients() & Fields()
