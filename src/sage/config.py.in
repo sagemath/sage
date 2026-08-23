@@ -4,28 +4,22 @@ import sage
 
 VERSION = "@PACKAGE_VERSION@"
 
-# The following must not be used during build to determine source or installation
-# location of sagelib.  See comments in SAGE_ROOT/src/Makefile.in
-# These variables come first so that other substituted variable values can refer
-# to it.
-SAGE_LOCAL = "@prefix@"
-
 # The path to the standalone maxima executable.
-MAXIMA = "@SAGE_MAXIMA@".replace("${prefix}", SAGE_LOCAL)
+MAXIMA = "@SAGE_MAXIMA@"
 
 # Set this to the empty string if your ECL can load maxima without
 # further prodding.
-MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace("${prefix}", SAGE_LOCAL)
-MAXIMA_PREFIX = "@SAGE_MAXIMA_PREFIX@".replace("${prefix}", SAGE_LOCAL)
+MAXIMA_FAS = "@SAGE_MAXIMA_FAS@"
+MAXIMA_PREFIX = "@SAGE_MAXIMA_PREFIX@"
 
-# Delete this line if your ECL can load Kenzo without further prodding.
-KENZO_FAS = "@SAGE_KENZO_FAS@".replace("${prefix}", SAGE_LOCAL)
+# Set this to the empty string if your ECL can load Kenzo without further prodding.
+KENZO_FAS = @SAGE_KENZO_FAS@
 
 NTL_INCDIR = "@NTL_INCDIR@"
 NTL_LIBDIR = "@NTL_LIBDIR@"
 
 # Path to the ecl-config script
-ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace("${prefix}", SAGE_LOCAL)
+ECL_CONFIG = "@SAGE_ECL_CONFIG@"
 
 # Path to the nauty binaries; of the form "/path/to/" or "/path/to/nauty-" 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
@@ -34,10 +28,10 @@ SAGE_ECMBIN = "@SAGE_ECMBIN@"
 
 # for sage_setup.setenv
 SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
-SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@".replace("$SAGE_LOCAL", SAGE_LOCAL)
+SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@"
 
 # Used in sage.repl.ipython_kernel.install
-THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
+THREEJS_DIR = @SAGE_THREEJS_DIR@
 
 # OpenMP flags, if available.
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"

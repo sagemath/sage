@@ -281,7 +281,7 @@ class SymmetricIdeal(Ideal_generic):
         # Now, SymL contains all necessary permutations of the second factor
         OUT = []
         for X in self.gens():
-            OUT.extend([X * Y for Y in SymL])
+            OUT.extend(X * Y for Y in SymL)
         return SymmetricIdeal(PARENT, OUT, coerce=False).interreduction()
 
     def __pow__(self, n):
@@ -640,7 +640,7 @@ class SymmetricIdeal(Ideal_generic):
             NewGens = []
             Gens = self.gens()
             for P in Permutations(N):
-                NewGens.extend([p**P for p in Gens])
+                NewGens.extend(p**P for p in Gens)
             return (NewGens * R).interreduction(tailreduce=tailreduce, report=report)
         from sage.combinat.permutation import Permutation
         from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy

@@ -160,10 +160,11 @@ class Box(IndexFaceSet):
             size = validate_frame_size(size[0])
         self.size = size
         x, y, z = self.size
-        faces = [[(x, y, z), (-x, y, z), (-x,-y, z), ( x,-y, z)],
-                 [(x, y, z), ( x, y,-z), (-x, y,-z), (-x, y, z)],
-                 [(x, y, z), ( x,-y, z), ( x,-y,-z), ( x, y,-z)] ]
-        faces += [list(reversed([(-x,-y,-z) for x,y,z in face])) for face in faces]
+        faces = [[(x, y, z), (-x, y, z), (-x, -y, z), (x, -y, z)],
+                 [(x, y, z), (x, y, -z), (-x, y, -z), (-x, y, z)],
+                 [(x, y, z), (x, -y, z), (x, -y, -z), (x, y, -z)]]
+        faces += [list(reversed([(-x, -y, -z) for x, y, z in face]))
+                  for face in faces]
         IndexFaceSet.__init__(self, faces, enclosed=True, **kwds)
 
     def bounding_box(self):
@@ -237,15 +238,15 @@ def ColorCube(size, colors, opacity=1, **kwds):
     faces = box.face_list()
     if len(colors) == 3:
         colors = colors * 2
-    all = []
+
     kwds['opacity'] = opacity
 
     from sage.plot.plot3d.texture import Texture
-    for k in range(6):
-        all.append(IndexFaceSet([faces[k]], enclosed=True,
-             texture=Texture(colors[k], opacity=opacity),
-             **kwds))
-    return Graphics3dGroup(all)
+    grp = [IndexFaceSet([faces[k]], enclosed=True,
+                        texture=Texture(colors[k], opacity=opacity),
+                        **kwds)
+           for k in range(6)]
+    return Graphics3dGroup(grp)
 
 
 cdef class Cone(ParametricSurface):
@@ -350,9 +351,9 @@ cdef class Cone(ParametricSurface):
         """
         cdef int k, t_res = min(max(int(2*M_PI*self.radius/ds), 5), 37)
         if self.closed:
-            urange = [1,0,-1]
+            urange = [1, 0, -1]
         else:
-            urange = [1,0]
+            urange = [1, 0]
         vrange = [2*M_PI*k/t_res for k in range(t_res)] + [0.0]
         return urange, vrange
 
@@ -363,7 +364,7 @@ cdef class Cone(ParametricSurface):
             res.x = self.radius*sin(v)
             res.y = self.radius*cos(v)
             res.z = 0
-        else: # u == 1:
+        else:  # u == 1:
             res.x, res.y, res.z = 0, 0, self.height
 
 
@@ -475,7 +476,8 @@ cdef class Cylinder(ParametricSurface):
                  'Ring Center 0 0 2.0 Normal 0 0 1 Inner 0 Outer 1.0 texture...']
         """
         transform = render_params.transform
-        if not (transform is None or transform.is_uniform_on([(1,0,0),(0,1,0)])):
+        if not (transform is None or
+                transform.is_uniform_on([(1, 0, 0), (0, 1, 0)])):
             # Tachyon can't do squashed
             return ParametricSurface.tachyon_repr(self, render_params)
 
@@ -487,13 +489,13 @@ cdef class Cylinder(ParametricSurface):
    Rad %s
    %s     """ % (base[0], base[1], base[2], top[0], top[1], top[2], rad, self.texture.id)
         if self.closed:
-            normal = (0,0,1)
+            normal = (0, 0, 1)
             if transform is not None:
                 normal = transform.transform_vector(normal)
             base_cap = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
                        % (base[0], base[1], base[2], normal[0], normal[1], normal[2], rad, self.texture.id)
-            top_cap  = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
-                       % (top[0], top[1], top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
+            top_cap = """Ring Center %s %s %s Normal %s %s %s Inner 0 Outer %s %s"""  \
+                % (top[0], top[1], top[2], normal[0], normal[1], normal[2], rad, self.texture.id)
             return [base_cap, cyl, top_cap]
         else:
             return cyl
@@ -523,17 +525,16 @@ cdef class Cylinder(ParametricSurface):
         cdef double ratio = sqrt(rad*rad / ((base[0]-top[0])**2 + (base[1]-top[1])**2 + (base[2]-top[2])**2))
 
         if ratio > .02:
-            if not (transform is None or transform.is_uniform_on([(1,0,0),(0,1,0)])) or ratio > .05:
+            if not (transform is None or
+                    transform.is_uniform_on([(1, 0, 0), (0, 1, 0)])) or ratio > .05:
                 # Jmol can't do squashed
                 return ParametricSurface.jmol_repr(self, render_params)
 
         name = render_params.unique_name('line')
-        return ["""
-draw %s width %s {%s %s %s} {%s %s %s}\n%s
-""" % (name, rad,
-       base[0], base[1], base[2],
-       top[0], top[1], top[2],
-       self.texture.jmol_str("$" + name))]
+        return ["""\ndraw %s width %s {%s %s %s} {%s %s %s}\n%s\n""" % (
+            name, rad, base[0], base[1], base[2],
+            top[0], top[1], top[2],
+            self.texture.jmol_str("$" + name))]
 
     def get_endpoints(self, transform=None):
         """
@@ -548,8 +549,9 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
             ((1.0, 2.0, 3.0), (1.0, 2.0, 13.0))
         """
         if transform is None:
-            return (0,0,0), (0,0,self.height)
-        return transform.transform_point((0,0,0)), transform.transform_point((0,0,self.height))
+            return (0, 0, 0), (0, 0, self.height)
+        return (transform.transform_point((0, 0, 0)),
+                transform.transform_point((0, 0, self.height)))
 
     def get_radius(self, transform=None):
         """
@@ -584,9 +586,9 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
         """
         cdef int k, v_res = min(max(int(2*M_PI*self.radius/ds), 5), 37)
         if self.closed:
-            urange = [2,1,-1,-2]
+            urange = [2, 1, -1, -2]
         else:
-            urange = [1,-1]
+            urange = [1, -1]
         vrange = [2*M_PI*k/v_res for k in range(v_res)] + [0.0]
         return urange, vrange
 
@@ -601,7 +603,7 @@ draw %s width %s {%s %s %s} {%s %s %s}\n%s
             res.x = self.radius*sin(v)
             res.y = self.radius*cos(v)
             res.z = self.height
-        else: # u == 2:
+        else:  # u == 2:
             res.x, res.y, res.z = 0, 0, self.height
 
 
@@ -777,7 +779,7 @@ def arrow3d(start, end, width=1, radius=None, head_radius=None, head_len=None, *
         head_len = 3*head_radius
     start = vector(RDF, start, sparse=False)
     end = vector(RDF, end, sparse=False)
-    zaxis = vector(RDF, (0,0,1), sparse=False)
+    zaxis = vector(RDF, (0, 0, 1), sparse=False)
     diff = end - start
     length = sqrt(diff.dot_product(diff))
     if length <= head_len:
@@ -891,11 +893,11 @@ cdef class Sphere(ParametricSurface):
             return ParametricSurface.tachyon_repr(self, render_params)
 
         if transform is None:
-            cen = (0,0,0)
+            cen = (0, 0, 0)
             rad = self.radius
         else:
-            cen = transform.transform_point((0,0,0))
-            radv = transform.transform_vector((self.radius,0,0))
+            cen = transform.transform_point((0, 0, 0))
+            radv = transform.transform_vector((self.radius, 0, 0))
             rad = sqrt(sum([x*x for x in radv]))
         return "Sphere center %s %s %s Rad %s %s" % (cen[0], cen[1], cen[2], rad, self.texture.id)
 
@@ -929,11 +931,11 @@ cdef class Sphere(ParametricSurface):
             return ParametricSurface.jmol_repr(self, render_params)
 
         if transform is None:
-            cen = (0,0,0)
+            cen = (0, 0, 0)
             rad = self.radius
         else:
-            cen = transform.transform_point((0,0,0))
-            radv = transform.transform_vector((self.radius,0,0))
+            cen = transform.transform_point((0, 0, 0))
+            radv = transform.transform_vector((self.radius, 0, 0))
             rad = sqrt(sum([x*x for x in radv]))
         if rad < 0.5:
             res = "resolution %s" % min(int(7/rad), 100)
@@ -1053,7 +1055,7 @@ cdef class Torus(ParametricSurface):
         u_divs = min(max(int(4*M_PI * self.R/ds), 6), 37)
         v_divs = min(max(int(4*M_PI * self.r/ds), 6), 37)
         urange = [0.0] + [-2*M_PI * k/u_divs for k in range(1, u_divs)] + [0.0]
-        vrange = [ 2*M_PI * k/v_divs for k in range(v_divs)] + [0.0]
+        vrange = [2 * M_PI * k / v_divs for k in range(v_divs)] + [0.0]
         return urange, vrange
 
     cdef int eval_c(self, point_c *res, double u, double v) except -1:
@@ -1131,19 +1133,20 @@ class Text(PrimitiveObject):
         """
         return ''
         # Text in Tachyon not implemented yet.
+
         # I have no idea what the code below is supposed to do.
-##         transform = render_params.transform
-##         if not (transform is None or transform.is_uniform()):
-##             return ParametricSurface.tachyon_repr(self, render_params)
-##
-##         if transform is None:
-##             cen = (0,0,0)
-##             rad = self.radius
-##         else:
-##             cen = transform.transform_point((0,0,0))
-##             radv = transform.transform_vector((self.radius,0,0))
-##             rad = sqrt(sum([x*x for x in radv]))
-##         return "Sphere center %s %s %s Rad %s %s" % (cen[0], cen[1], cen[2], rad, self.texture.id)
+#         transform = render_params.transform
+#         if not (transform is None or transform.is_uniform()):
+#             return ParametricSurface.tachyon_repr(self, render_params)
+#
+#         if transform is None:
+#             cen = (0,0,0)
+#             rad = self.radius
+#         else:
+#             cen = transform.transform_point((0,0,0))
+#             radv = transform.transform_vector((self.radius,0,0))
+#             rad = sqrt(sum([x*x for x in radv]))
+#         return "Sphere center %s %s %s Rad %s %s" % (cen[0], cen[1], cen[2], rad, self.texture.id)
 
     def jmol_repr(self, render_params):
         """
@@ -1228,7 +1231,7 @@ class Text(PrimitiveObject):
             sage: Text("Hi").bounding_box()
             ((0, 0, 0), (0, 0, 0))
         """
-        return (0,0,0), (0,0,0)
+        return (0, 0, 0), (0, 0, 0)
 
 
 def _validate_threejs_text_style(style):
@@ -1312,7 +1315,7 @@ def _validate_threejs_text_style(style):
         sage: validate(dict(opacity=0.5))
         {...'opacity': 0.5}
     """
-    default_color = '#000000' # black
+    default_color = '#000000'  # black
     color = style.get('color', default_color)
     from sage.plot.plot3d.texture import Texture
     try:
@@ -1354,7 +1357,7 @@ def _validate_threejs_text_style(style):
 
     default_style = 'normal'
     fontstyle = str(style.get('fontstyle', default_style))
-    if fontstyle not in ['normal', 'italic'] and not fontstyle.startswith('oblique'): # ex: oblique 30deg
+    if fontstyle not in ['normal', 'italic'] and not fontstyle.startswith('oblique'):  # ex: oblique 30deg
         import warnings
         warnings.warn(f"unknown style: {fontstyle}, using: {default_style}")
         fontstyle = default_style

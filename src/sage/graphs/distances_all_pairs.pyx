@@ -2624,23 +2624,25 @@ def antipodal_graph(G, immutable=None):
         sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.Grid2dGraph(5, 5)
         sage: A = antipodal_graph(G)
+        sage: A
+        Antipodal graph of 2D Grid Graph for [5, 5]: Graph on 25 vertices
         sage: A.order(), A.size()
         (25, 2)
 
-    The antipodal graph of a disjoint union of cliques is its complement::
+    The antipodal graph of a disconnected graph is its complement::
 
-        sage: from sage.graphs.distances_all_pairs import antipodal_graph
-        sage: G = graphs.CompleteGraph(3) * 3
-        sage: A = antipodal_graph(G)
-        sage: A.is_isomorphic(G.complement())
+        sage: G = Graph(5)
+        sage: H = G.antipodal_graph()
+        sage: H
+        Antipodal graph of Graph on 5 vertices: Graph on 5 vertices
+        sage: H.is_isomorphic(G.complement())
         True
 
     The antipodal graph can also be constructed as the
     :meth:`~sage.graphs.graph.Graph.distance_graph` for diameter distance::
 
-        sage: from sage.graphs.distances_all_pairs import antipodal_graph
         sage: G = graphs.RandomGNP(10, .2)
-        sage: A = antipodal_graph(G)
+        sage: A = G.antipodal_graph()
         sage: B = G.distance_graph(G.diameter())
         sage: A.is_isomorphic(B)
         True
