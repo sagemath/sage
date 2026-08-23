@@ -132,8 +132,6 @@ TESTS::
     True
     sage: TestSuite(M).run()
 """
-from __future__ import annotations
-
 from sage.categories import commutative_rings
 from sage.misc import latex
 from sage.interfaces.abc import MagmaElement
@@ -177,14 +175,9 @@ except ImportError:
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
-# The return annotation is only there for the typing info: it exists so that
-# static type checkers can infer the return type of ``PowerSeriesRing``.
-# ``PowerSeriesRing_generic`` is the common base of the univariate
-# (``PowerSeriesRing_domain`` / ``PowerSeriesRing_over_field``) and the
-# multivariate (``MPowerSeriesRing_generic``) implementations.
 def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
                     sparse=False, default_prec=None, order='negdeglex',
-                    num_gens=None, implementation=None) -> PowerSeriesRing_generic:
+                    num_gens=None, implementation=None) -> 'PowerSeriesRing_generic':
     r"""
     Create a univariate or multivariate power series ring over a given
     (commutative) base ring.
@@ -368,7 +361,12 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         True
         sage: isinstance(PowerSeriesRing(QQ, 'x'), PowerSeriesRing_generic)
         True
-        sage: isinstance(PowerSeriesRing(ZZ, 2, 'x,y'), PowerSeriesRing_generic)
+        sage: isinstance(PowerSeriesRing(ZZ, 'x,y'), PowerSeriesRing_generic)
+        True
+        sage: isinstance(PowerSeriesRing(GF(5), 'x', sparse=True), PowerSeriesRing_generic)
+        True
+        sage: import typing
+        sage: typing.get_type_hints(PowerSeriesRing)['return'] is PowerSeriesRing_generic
         True
     """
     # multivariate case:

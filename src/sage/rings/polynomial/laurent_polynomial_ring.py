@@ -52,10 +52,6 @@ from sage.structure.element import parent
 _cache = {}
 
 
-# The return annotation is only there for the typing info: it exists so that
-# static type checkers can infer the return type of
-# ``LaurentPolynomialRing``.  ``LaurentPolynomialRing_generic`` is the common
-# base of the univariate and multivariate implementations.
 def LaurentPolynomialRing(base_ring, *args, **kwds) -> LaurentPolynomialRing_generic:
     r"""
     Return the globally unique univariate or multivariate Laurent polynomial
@@ -220,6 +216,9 @@ def LaurentPolynomialRing(base_ring, *args, **kwds) -> LaurentPolynomialRing_gen
         sage: isinstance(LaurentPolynomialRing(ZZ, 'x'), LaurentPolynomialRing_generic)
         True
         sage: isinstance(LaurentPolynomialRing(ZZ, 2, 'x,y'), LaurentPolynomialRing_generic)
+        True
+        sage: import typing
+        sage: typing.get_type_hints(LaurentPolynomialRing)['return'] is LaurentPolynomialRing_generic
         True
     """
     from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic

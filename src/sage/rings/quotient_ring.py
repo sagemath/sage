@@ -108,8 +108,6 @@ easily::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import annotations
-
 import sage.interfaces.abc
 from sage.misc import latex
 import sage.structure.parent_gens
@@ -130,11 +128,7 @@ _CommRings = CommutativeRings()
 MPolynomialIdeal_quotient = None
 
 
-# The return annotation is only there for the typing info: it exists so that
-# static type checkers can infer the return type of ``QuotientRing``.
-# ``QuotientRing_generic`` is the common base of the generic quotient ring and
-# the polynomial quotient ring implementations.
-def QuotientRing(R, I, names=None, **kwds) -> QuotientRing_generic:
+def QuotientRing(R, I, names=None, **kwds) -> Parent:
     r"""
     Create a quotient ring of the ring `R` by the twosided ideal `I`.
 
@@ -289,12 +283,26 @@ def QuotientRing(R, I, names=None, **kwds) -> QuotientRing_generic:
 
     TESTS:
 
-    The return annotation matches the runtime type for the common cases::
+    The return annotation matches the runtime type for generic, principal,
+    noncommutative and unchanged quotient rings::
 
-        sage: from sage.rings.quotient_ring import QuotientRing_generic
-        sage: isinstance(QuotientRing(ZZ, 2*ZZ), QuotientRing_generic)
+        sage: isinstance(QuotientRing(ZZ, 2*ZZ), Parent)
         True
-        sage: isinstance(QuotientRing(QQ['x'], QQ['x'].gen()**2), QuotientRing_generic)
+        sage: R = QQ['x']
+        sage: isinstance(QuotientRing(R, R.ideal(R.gen()**2)), Parent)
+        True
+        sage: F.<x,y> = FreeAlgebra(QQ, 2)
+        sage: I = F * [x*y, y*x] * F
+        sage: isinstance(QuotientRing(F, I), Parent)
+        True
+        sage: R = QQ['x']
+        sage: QuotientRing(R, R.zero_ideal()) is R
+        True
+
+    The annotation resolves to the common parent base::
+
+        sage: import typing
+        sage: typing.get_type_hints(QuotientRing)['return'] is Parent
         True
     """
     # 1. Not all rings inherit from the base class of rings.
