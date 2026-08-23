@@ -1288,6 +1288,67 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Right scalar multiplication by Integer Ring on Full MatrixSpace of 2 by 3 dense matrices over Rational Field
             sage: V.get_action(ZZ, operator.mul, self_on_left=False)
             Left scalar multiplication by Integer Ring on Full MatrixSpace of 2 by 3 dense matrices over Rational Field
+
+        TESTS:
+
+        Elements of a matrix base ring act as scalars, even when their
+        dimensions also allow matrix multiplication (:issue:`16247`)::
+
+            sage: S = MatrixSpace(QQ, 2)
+            sage: q = S([0, 0, 1, 0])
+            sage: M = MatrixSpace(S, 2, 1)
+            sage: x = M({(0, 0): q})
+            sage: q * M.basis()[0, 0] == x
+            True
+            sage: x._test_monomial_coefficients()
+            sage: r = S([0, 1, 0, 0])
+            sage: (q * M({(0, 0): r}))[0, 0] == q * r
+            True
+            sage: from sage.structure.coerce_actions import LeftModuleAction
+            sage: isinstance(M.get_action(S, operator.mul,
+            ....:                         self_on_left=False), LeftModuleAction)
+            True
+            sage: isinstance(S.get_action(M, operator.mul,
+            ....:                         self_on_left=True), LeftModuleAction)
+            True
+
+        This applies on the right and to scalars that canonically coerce into
+        the base ring as well::
+
+            sage: N = MatrixSpace(S, 1, 2)
+            sage: y = N({(0, 0): q})
+            sage: c = y.monomial_coefficients()
+            sage: y == N.linear_combination(
+            ....:     ((N.basis()[k], a) for k, a in c.items()),
+            ....:     factor_on_left=False)
+            True
+            sage: (N({(0, 0): r}) * q)[0, 0] == r * q
+            True
+            sage: from sage.structure.coerce_actions import RightModuleAction
+            sage: isinstance(N.get_action(S, operator.mul,
+            ....:                         self_on_left=True), RightModuleAction)
+            True
+            sage: isinstance(S.get_action(N, operator.mul,
+            ....:                         self_on_left=False), RightModuleAction)
+            True
+            sage: SZ = MatrixSpace(ZZ, 2)
+            sage: z = SZ([0, 0, 1, 0])
+            sage: z * M.basis()[0, 0] == M({(0, 0): S(z)})
+            True
+            sage: N.basis()[0, 0] * z == N({(0, 0): S(z)})
+            True
+
+        Ordinary matrix multiplication between different matrix spaces is
+        unchanged::
+
+            sage: A = MatrixSpace(QQ, 2, 3)
+            sage: B = MatrixSpace(QQ, 3, 1)
+            sage: a = A(range(6))
+            sage: b = B(range(3))
+            sage: (a * b).parent() is MatrixSpace(QQ, 2, 1)
+            True
+            sage: a * b == MatrixSpace(QQ, 2, 1)([5, 14])
+            True
         """
         try:
             try:
@@ -1299,6 +1360,16 @@ class MatrixSpace(UniqueRepresentation, Parent):
                 from . import action as matrix_action
                 if self_on_left:
                     if isinstance(S, MatrixSpace):
+                        # A matrix in the base ring acts as a scalar, even
+                        # when MatrixMatrixAction is dimensionally possible.
+                        # Coercibility is checked explicitly, so this does
+                        # not require sample elements from either parent.
+                        if S.base_ring().has_coerce_map_from(self):
+                            return sage.structure.coerce_actions.LeftModuleAction(
+                                self, S, check=False)
+                        if self.base_ring().has_coerce_map_from(S):
+                            return sage.structure.coerce_actions.RightModuleAction(
+                                S, self, check=False)
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
                     if isinstance(S, sage.modules.free_module.FreeModule_generic):
@@ -1310,6 +1381,15 @@ class MatrixSpace(UniqueRepresentation, Parent):
                     # action of base ring
                     return sage.structure.coerce_actions.RightModuleAction(S, self)
                 if isinstance(S, MatrixSpace):
+                    # Prefer a base-ring scalar action to matrix
+                    # multiplication in this orientation as well.  The
+                    # explicit checks avoid requiring sample elements.
+                    if self.base_ring().has_coerce_map_from(S):
+                        return sage.structure.coerce_actions.LeftModuleAction(
+                            S, self, check=False)
+                    if S.base_ring().has_coerce_map_from(self):
+                        return sage.structure.coerce_actions.RightModuleAction(
+                            self, S, check=False)
                     # matrix multiplications
                     return matrix_action.MatrixMatrixAction(S, self)
                 if isinstance(S, sage.modules.free_module.FreeModule_generic):
@@ -1327,7 +1407,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         .. NOTE::
 
-            This is only called for algebras of square matrices.
+            This is only called for square matrix spaces.
 
         EXAMPLES::
 
@@ -1356,7 +1436,45 @@ class MatrixSpace(UniqueRepresentation, Parent):
               To:   Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
 
             sage: MatrixSpace(QQ, 1, 3).coerce_map_from(QQ)
+
+        TESTS:
+
+        A matrix base ring is embedded diagonally rather than interpreted as
+        a matrix in the outer matrix space (:issue:`16247`)::
+
+            sage: S = MatrixSpace(QQ, 2)
+            sage: p = S([0, 1, 0, 0])
+            sage: all(MatrixSpace(S, n)(p) == MatrixSpace(S, n).from_base_ring(p)
+            ....:     for n in range(4))
+            True
+
+        The same holds for sparse matrix spaces::
+
+            sage: S = MatrixSpace(QQ, 2, sparse=True)
+            sage: p = S([0, 1, 0, 0])
+            sage: T = MatrixSpace(S, 2, sparse=True)
+            sage: T(p) == T.from_base_ring(p)
+            True
+
+        This also works when the entries belong only to a semiring::
+
+            sage: S = MatrixSpace(NN, 2)
+            sage: p = S([0, 1, 0, 0])
+            sage: T = MatrixSpace(S, 2)
+            sage: expected = T({(0, 0): p, (1, 1): p})
+            sage: T(p) == expected
+            True
+            sage: p * T.one() == expected
+            True
         """
+        if isinstance(self.base_ring(), MatrixSpace):
+            # The matrix constructor can interpret a base matrix as outer
+            # entries.  Multiplication by one forces diagonal embedding,
+            # including when the entries belong only to a semiring.
+            from sage.categories.homset import Hom
+            from sage.categories.morphism import SetMorphism
+            return SetMorphism(Hom(self.base_ring(), self),
+                               self.one()._lmul_)
         return self._generic_coerce_map(self.base_ring())
 
     def _coerce_map_from_(self, S):
@@ -1450,8 +1568,40 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ....:         a = A.an_element()
             ....:         b = B.an_element()
             ....:         dummy = (a * b) + (a - b)
+
+        If a matrix space coerces into the base ring, that base-ring path has
+        priority over entrywise matrix coercion (:issue:`16247`)::
+
+            sage: S = MatrixSpace(QQ, 2)
+            sage: SZ = MatrixSpace(ZZ, 2)
+            sage: p = SZ([0, 1, 0, 0])
+            sage: all(MatrixSpace(S, n)(p)
+            ....:     == MatrixSpace(S, n).from_base_ring(S(p)) for n in (2, 3))
+            True
+
+        The same base-ring path is used for other matrix-like parents::
+
+            sage: T = MatrixSpace(S, 2)
+            sage: G = GL(2, ZZ)
+            sage: g = G([0, 1, 1, 0])
+            sage: T(g) == T.from_base_ring(S(g))
+            True
+            sage: g * T.one() == T(g)
+            True
         """
         B = self.base()
+
+        if S is B:
+            if self.nrows() == self.ncols():
+                return self._coerce_map_from_base_ring()
+            return False
+
+        if self.nrows() == self.ncols():
+            # If entrywise and base-ring coercions are both possible, the
+            # latter is the canonical scalar embedding.
+            via_base_ring = self._coerce_map_via([B], S)
+            if via_base_ring is not None:
+                return via_base_ring
 
         if isinstance(S, MatrixSpace):
             # Disallow coercion if dimensions do not match
@@ -2543,6 +2693,13 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: M = MatrixSpace(ZZ, 1000, 1000, sparse=True).an_element()
             sage: 96 <= M.density() * 10^6 <= 99
             True
+
+        Matrix entries can themselves be matrices (:issue:`16247`)::
+
+            sage: S = MatrixSpace(QQ, 2)
+            sage: M = MatrixSpace(S, 2, 1)
+            sage: M.an_element().parent() is M
+            True
         """
         from .args import MatrixArgs
         dim = self.dimension()
@@ -2569,7 +2726,13 @@ class MatrixSpace(UniqueRepresentation, Parent):
             while True:
                 for el in self.base().some_elements():
                     if len(L) == dim:
-                        ma = MatrixArgs(L, space=self)
+                        if isinstance(self.base(), MatrixSpace):
+                            nc = self.ncols()
+                            D = {divmod(k, nc): entry
+                                 for k, entry in enumerate(L)}
+                            ma = MatrixArgs(D, space=self)
+                        else:
+                            ma = MatrixArgs(L, space=self)
                         del L  # for efficiency: this may avoid a copy of L
                         return ma.matrix()
                     L.append(el)
