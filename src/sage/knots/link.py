@@ -1006,8 +1006,7 @@ class Link(SageObject):
             # if no orientation is detactable we order the first edges ascending
             if comp[0] > comp[1]:
                 return False
-            else:
-                return True
+            return True
 
         for comp in comps:
             if not comp_oriented(comp):
@@ -1059,16 +1058,18 @@ class Link(SageObject):
 
         TESTS:
 
-        See that :issue:`42716` is fixed.
+        See that :issue:`42716` is fixed::
 
             sage: K = Link([[1, 5, 12, 6], [6, 12, 7, 11], [9, 10, 10, 11], [8, 1, 9, 4], [7, 5, 8, 4]])
-            sage: K._directions_of_edges()
-            ({4: [8, 1, 9, 4], 5: [7, 5, 8, 4], 6: [1, 5, 12, 6],
-              7: [6, 12, 7, 11], 8: [7, 5, 8, 4], 9: [8, 1, 9, 4],
-              10: [9, 10, 10, 11], 11: [9, 10, 10, 11], 12: [1, 5, 12, 6]},
-             {1: [1, 5, 12, 6], 4: [7, 5, 8, 4], 5: [1, 5, 12, 6],
-              6: [6, 12, 7, 11], 7: [7, 5, 8, 4], 8: [8, 1, 9, 4],
-              9: [9, 10, 10, 11], 10: [9, 10, 10, 11], 11: [6, 12, 7, 11]})
+            sage: tails, heads = K._directions_of_edges()
+            sage: tails
+            {4: [8, 1, 9, 4], 5: [7, 5, 8, 4], 6: [1, 5, 12, 6],
+             7: [6, 12, 7, 11], 8: [7, 5, 8, 4], 9: [8, 1, 9, 4],
+             10: [9, 10, 10, 11], 11: [9, 10, 10, 11], 12: [1, 5, 12, 6]}
+            sage: heads
+            {1: [1, 5, 12, 6], 4: [7, 5, 8, 4], 5: [1, 5, 12, 6],
+             6: [6, 12, 7, 11], 7: [7, 5, 8, 4], 8: [8, 1, 9, 4],
+             9: [9, 10, 10, 11], 10: [9, 10, 10, 11], 11: [6, 12, 7, 11]}
         """
         tails = {}
         heads = {}
@@ -1089,14 +1090,14 @@ class Link(SageObject):
                     next_edge[edge] = comp[0]
 
         def set_pair(edge_in, edge_out, cr):
-            if not edge_in in heads:
+            if edge_in not in heads:
                 heads[edge_in] = cr
             elif heads[edge_in] != cr:
                 if next_edge[edge_out] is None:
                     # corner case of two-edge component
                     tails[edge_in] = cr
                     heads[edge_out] = cr
-            if not edge_out in tails:
+            if edge_out not in tails:
                 tails[edge_out] = cr
 
         pd_code = self.pd_code()
@@ -1108,11 +1109,11 @@ class Link(SageObject):
             tails[c] = cr
             if a in (b, d):
                 # loop case
-                if not a in tails:
+                if a not in tails:
                     tails[a] = cr
             if c in (b, d):
                 # loop case
-                if not c in heads:
+                if c not in heads:
                     heads[c] = cr
 
         # now treat edges according to their occurence in crossing positions
@@ -1163,7 +1164,6 @@ class Link(SageObject):
             y = edge_to_comp[b]
             assert(d in y)
             lx = len(x)
-            ly = len(y)
             if (c - a) % lx != 1:
                 return False
             if abs((c - a) % lx) != 1:
