@@ -6,6 +6,8 @@ from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField
 class FiniteFieldFactory:
     def __call__(self, *args: Any, **kwds: Any) -> FiniteFieldBase: ...
 
+    def __getattr__(self, name: str) -> Any: ...
+
 
 GF: FiniteFieldFactory
 FiniteField: FiniteFieldFactory

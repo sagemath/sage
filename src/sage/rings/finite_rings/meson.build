@@ -17,7 +17,6 @@ py.install_sources(
   'finite_field_constructor.py',
   'finite_field_constructor.pyi',
   'finite_field_givaro.py',
-  'finite_field_types.py',
   'finite_field_ntl_gf2e.py',
   'finite_field_pari_ffelt.py',
   'finite_field_prime_modn.py',
