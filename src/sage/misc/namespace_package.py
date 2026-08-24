@@ -1,10 +1,11 @@
 """
 Utility functions for namespace packages in Sage
 """
+from collections.abc import Mapping
 from importlib import import_module
 
 
-def install_doc(package, doc):
+def install_doc(package: str, doc: str) -> None:
     """
     Install the docstring ``doc`` to the package.
 
@@ -21,7 +22,7 @@ def install_doc(package, doc):
     pkg.getdoc = lambda: doc  # enable help(sage.package)
 
 
-def install_dict(package, dic):
+def install_dict(package: str, dic: Mapping[str, object]) -> None:
     """
     Install ``dic`` to the ``__dict__`` of the package.
 
