@@ -5590,6 +5590,9 @@
 .. [MW2012] Ivan Marin and Emmanuel Wagner, *A Cubic Defining Algebra for the
             Links-Gould PolynomiaL* (:arxiv:`1203.5981v1` [mathGT] 27. Mar 2012)
 
+.. [Mye1991] Roger B. Myerson, *Game Theory: Analysis of Conflict*,
+             Harvard University Press, 1991.
+
 .. [NaiRow2011] Naidu and Rowell, *A finiteness property for braided fusion
                 categories*. Algebr. Represent. Theory 14 (2011), no. 5, 837-855.
                 :arxiv:`0903.4157`.

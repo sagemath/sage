@@ -838,7 +838,7 @@ def _gambit_payoffs_are_exact(game):
                for action in infoset.actions)
 
 
-def _rationalize_gambit_profile(profile, tolerance):
+def _rationalize_gambit_profile(profile, tolerance, agent=False):
     r"""
     Return an exact version of the gambit mixed profile ``profile``, or ``None``.
 
@@ -865,6 +865,15 @@ def _rationalize_gambit_profile(profile, tolerance):
       reach a rational.  The larger it is the simpler the rationals that are
       tried, so a rounding that is too fine can verify an equilibrium in an
       unenlightening form rather than fail.
+
+    - ``agent`` -- boolean (default: ``False``); whether the profile is an
+      *agent* equilibrium of an extensive form game rather than a Nash
+      equilibrium, in which case it is verified with ``agent_max_regret()``.
+      An agent equilibrium need only be immune to deviations at one information
+      set at a time, so testing it for Nash equilibrium -- as the gambit agent
+      solvers' answers would otherwise be tested -- can reject a profile that is
+      exactly what was asked for.  See
+      :meth:`~sage.game_theory.extensive_form_game.ExtensiveFormGame.obtain_nash`.
 
     OUTPUT: an exact pygambit profile, or ``None``
 
@@ -896,6 +905,26 @@ def _rationalize_gambit_profile(profile, tolerance):
         sage: exact = g.mixed_strategy_profile(rational=True)
         sage: _rationalize_gambit_profile(exact, 1e-6) is exact
         True
+
+    With ``agent`` the profile is verified as an agent equilibrium instead.  In
+    Myerson's game below Player 1 can gain 1 by changing what they do at *both*
+    of their information sets, but nothing by changing either one alone, so the
+    profile is an agent equilibrium and not a Nash equilibrium::
+
+        sage: # optional - pygambit
+        sage: from pygambit import catalog
+        sage: myerson = catalog.load('books/myerson1991/fig4_2')
+        sage: profile = myerson.mixed_behavior_profile(rational=False)
+        sage: for label, prob in [('A1', 0), ('B1', 1), ('Y1', 0),
+        ....:                     ('Z1', 1), ('W2', 1), ('X2', 0)]:
+        ....:     profile[myerson.actions[label]] = float(prob)
+        sage: float(profile.max_regret()), float(profile.agent_max_regret())
+        (1.0, 0.0)
+        sage: _rationalize_gambit_profile(profile, 1e-6) is None
+        True
+        sage: _rationalize_gambit_profile(profile, 1e-6, agent=True)
+        [[[Rational(0, 1), Rational(1, 1)], [Rational(0, 1), Rational(1, 1)]],
+         [[Rational(1, 1), Rational(0, 1)]]]
     """
     if not isinstance(profile, (MixedBehaviorProfileDouble,
                                 MixedStrategyProfileDouble)):
@@ -926,7 +955,10 @@ def _rationalize_gambit_profile(profile, tolerance):
     except ValueError:      # all of some player's probabilities rounded to zero
         return None
 
-    return exact if exact.max_regret() == 0 else None
+    # An agent equilibrium is only required to be immune to a deviation at a
+    # single information set, so it is the agent regret that must vanish.
+    regret = exact.agent_max_regret() if agent else exact.max_regret()
+    return exact if regret == 0 else None
 
 
 class NormalFormGame(SageObject, MutableMapping):

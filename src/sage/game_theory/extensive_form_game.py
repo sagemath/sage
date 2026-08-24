@@ -263,19 +263,21 @@ node below the root starts a subgame of its own::
 The game has two equilibria in pure strategies.  Each of them leaves one
 player's information set off the equilibrium path -- it is reached with
 probability 0 -- so what that player would have done is never put to the
-test::
+test.  ``'enumpure'`` enumerates the pure strategies, so it answers with mixed
+strategy profiles; ``as_behavior`` turns one into the behavior profile that
+gives the tree its probabilities::
 
     sage: # optional - pygambit
     sage: eqs = horse.obtain_nash(algorithm='enumpure')
     sage: [[QQ(eq.payoff(p)) for p in horse.players] for eq in eqs]
-    [[1, 1, 1], [3, 2, 2]]
+    [[3, 2, 2], [1, 1, 1]]
     sage: game = horse._gambit_()
     sage: sets = [list(game.players[n].infosets)[0]
     ....:         for n in ['Player 1', 'Player 2', 'Player 3']]
-    sage: [[QQ(eq.infoset_prob(s)) for s in sets] for eq in eqs]
-    [[1, 1, 0], [1, 0, 1]]
+    sage: [[QQ(eq.as_behavior().infoset_prob(s)) for s in sets] for eq in eqs]
+    [[1, 0, 1], [1, 1, 0]]
 
-Take the second one, worth `(3, 2, 2)`.  Player 1 goes down, Player 2 is never
+Take the first one, worth `(3, 2, 2)`.  Player 1 goes down, Player 2 is never
 asked to move, and the plan the equilibrium credits to Player 2 is to end the
 game for 1 -- which is exactly what keeps Player 1 from passing across.  Give
 Player 1's move to ``'R'`` so that Player 2's node is reached, leave the other
@@ -328,6 +330,7 @@ AUTHORS:
 # ****************************************************************************
 
 import os
+import warnings
 from tempfile import TemporaryDirectory
 
 from sage.structure.sage_object import SageObject
@@ -339,6 +342,11 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('pygambit', ['Game', 'read_efg', 'catalog'], feature=pygambit())
 lazy_import('pygambit', 'nash', 'gambit_nash', feature=pygambit())
 lazy_import('gtdraw', 'tikz', 'gtdraw_tikz', feature=gtdraw())
+
+# The solvers of :meth:`ExtensiveFormGame.obtain_nash` that compute agent
+# equilibria: they work on the extensive form and on it only, and their answer
+# is verified as an agent rather than as a Nash equilibrium.
+_AGENT_ALGORITHMS = ('enumpure_agent', 'liap_agent')
 
 # The colors :meth:`ExtensiveFormGame.plot` gives the players of a game, in the
 # order the game lists them: the first player is red, the second blue, and a
@@ -1844,18 +1852,19 @@ class ExtensiveFormGame(SageObject):
         return cls(read_efg(path))
 
     def obtain_nash(self, algorithm=None, use_strategic=False, rational=True,
-                    tolerance=1e-4):
+                    tolerance=1e-4, stop_after='auto'):
         r"""
         Compute the Nash equilibria of the game.
 
         This delegates to a solver of gambit's ``pygambit.nash`` module (see
         the `pygambit Nash documentation
         <https://gambitproject.readthedocs.io/en/stable/pygambit.api.html#module-pygambit.nash>`_).
-        By default every supported algorithm operates directly on the extensive
-        form and returns *behavior-strategy* equilibria; with ``use_strategic``
-        it works on the reduced strategic form instead and returns *mixed
-        strategy* equilibria.  See the OUTPUT section below, as the two are
-        different kinds of object and are not indexed in the same way.
+        Most of the algorithms operate directly on the extensive form and return
+        *behavior-strategy* equilibria; with ``use_strategic`` they work on the
+        reduced strategic form instead and return *mixed strategy* equilibria.
+        See the OUTPUT section below, as the two are different kinds of object,
+        are not indexed in the same way, and which one an algorithm gives is not
+        the caller's choice throughout.
 
         INPUT:
 
@@ -1867,7 +1876,8 @@ class ExtensiveFormGame(SageObject):
           * ``'lp'`` -- linear programming (two-player *constant-sum* games
             only)
 
-          * ``'enumpure'`` -- enumeration of the pure-strategy equilibria
+          * ``'enumpure'`` -- enumeration of the pure-strategy equilibria; works
+            on the strategic form only
 
           * ``'enumpoly'`` -- enumeration via systems of polynomial equations
             (any number of players), the default otherwise
@@ -1875,30 +1885,59 @@ class ExtensiveFormGame(SageObject):
           * ``'logit'`` -- the logit quantal response tracing procedure
 
           * ``'liap'`` -- minimisation of the Lyapunov function, starting from
-            the centroid
+            the centroid; works on the strategic form only
+
+          * ``'enumpure_agent'`` -- enumeration of the pure-strategy *agent*
+            equilibria; works on the extensive form only
+
+          * ``'liap_agent'`` -- minimisation of the *agent* Lyapunov function,
+            starting from the centroid of the extensive form; works on the
+            extensive form only
 
           When ``None`` the default is ``'lcp'`` for games with at most two
           players and ``'enumpoly'`` for more.
+
+          The two ``_agent`` solvers compute a different solution concept.  An
+          *agent equilibrium* treats every information set as a player of its
+          own -- an "agent" of the player who moves there -- and asks only that
+          no agent gain by deviating on its own.  A Nash equilibrium is immune
+          to more than that, namely to a player changing what they do at several
+          of their information sets at once, so every Nash equilibrium is an
+          agent equilibrium but not conversely: a profile can have an agent
+          maximum regret of zero and a positive maximum regret.  Gambit's
+          `tutorial on the two regrets
+          <https://gambitproject.readthedocs.io/en/stable/tutorials/advanced_tutorials/agent_versus_non_agent_regret.html>`_
+          works an example out; one is computed below.  Agent equilibria matter
+          chiefly as a step towards the refinements -- sequential equilibrium
+          and the like -- that ask what a player would do at an information set
+          the equilibrium never reaches.  ``'enumpure_agent'`` also works on a
+          game of imperfect recall, where a player's pure strategies are not
+          something gambit will enumerate, so that ``'enumpure'`` and ``'liap'``
+          raise a :class:`RuntimeError` there.
 
         - ``use_strategic`` -- boolean (default: ``False``); when ``False`` the
           equilibria are computed on the extensive form, when ``True`` on the
           reduced strategic form.  This changes what the method returns, see
           OUTPUT.
 
-          For ``'lcp'``, ``'lp'``, ``'enumpoly'`` and ``'logit'`` this is passed
-          straight to the gambit solver.  For ``'enumpure'`` and ``'liap'``
-          gambit provides two separate solvers instead of an argument, and this
-          selects between them: the *agent* solver, which works on the extensive
-          form, when ``False``, and the ordinary one when ``True``.
+          Only ``'lcp'``, ``'lp'``, ``'enumpoly'`` and ``'logit'`` can do both,
+          and for them this is passed straight to the gambit solver.  Gambit
+          computes pure-strategy and Lyapunov equilibria with one solver per
+          form instead of one solver taking an argument, and the two forms do
+          not answer the same question there: ``'enumpure'`` and ``'liap'``
+          always work on the strategic form and ignore this flag, while
+          ``'enumpure_agent'`` and ``'liap_agent'`` always work on the extensive
+          form and warn that they ignore it when it is ``True``.
 
         - ``rational`` -- boolean (default: ``True``); whether to answer with
           rational probabilities rather than floating point ones, which is done
           in whichever of two ways the algorithm allows.  ``'lcp'`` and
           ``'lp'`` are asked to compute exactly throughout; ``'enumpoly'``,
-          ``'logit'`` and ``'liap'`` have no exact mode, so they compute in
-          floating point and their answer is then rounded to the exact
-          equilibrium it approximates, as described under ``tolerance``.
-          ``'enumpure'`` is always exact and ignores the flag.
+          ``'logit'``, ``'liap'`` and ``'liap_agent'`` have no exact mode, so
+          they compute in floating point and their answer is then rounded to the
+          exact equilibrium it approximates, as described under ``tolerance``.
+          ``'enumpure'`` and ``'enumpure_agent'`` are always exact and ignore
+          the flag.
 
         - ``tolerance`` -- a positive number (default: ``1e-4``); how far a
           probability computed by one of the numerical algorithms may be moved
@@ -1914,23 +1953,46 @@ class ExtensiveFormGame(SageObject):
           payoffs -- including the probabilities of its chance moves -- are
           inexact.
 
+        - ``stop_after`` -- (default: ``'auto'``) how many equilibria to compute
+          before stopping; ``None`` computes all of them, a positive integer at
+          most that many.  Only ``'enumpoly'`` and ``'lcp'`` can stop early, and
+          giving this argument with any other algorithm is an error.
+
+          The default, ``'auto'``, is ``1`` for ``'enumpoly'`` and ``None`` for
+          ``'lcp'``.  ``'enumpoly'`` works through the supports of the game --
+          every choice of which actions are played with positive probability --
+          and solves a system of polynomial equations for each one, so its cost
+          climbs steeply with the size of the game; as it is also what a game of
+          more than two players is solved with by default, it is asked for a
+          single equilibrium unless told otherwise.  Pass ``stop_after=None`` to
+          have it enumerate them all.
+
+          Gambit lets ``'lcp'`` stop early on the strategic form only, so
+          ``use_strategic=True`` has to be passed along with ``stop_after``
+          there.
+
         OUTPUT:
 
-        A list with one gambit profile per computed equilibrium.  Which kind of
-        profile depends on ``use_strategic``.
+        A list with one gambit profile per computed equilibrium, of one of two
+        kinds.
 
-        With ``use_strategic=False`` (the default) each equilibrium is a
-        ``MixedBehaviorProfile``: a dict-like object mapping each action at each
-        information set to the probability with which that action is played,
-        *conditional on that information set being reached*.  Index it by an
-        action, an information set or a player, as in ``eq[action]``.
+        A ``MixedBehaviorProfile`` is a dict-like object mapping each action at
+        each information set to the probability with which that action is
+        played, *conditional on that information set being reached*.  Index it
+        by an action, an information set or a player, as in ``eq[action]``.
+        This is what the extensive form is solved into, and what
+        ``use_strategic=False`` (the default) returns, as do
+        ``'enumpure_agent'`` and ``'liap_agent'`` whatever it is set to.
 
-        With ``use_strategic=True`` each equilibrium is a
-        ``MixedStrategyProfile``: a dict-like object mapping each *pure
+        A ``MixedStrategyProfile`` is a dict-like object mapping each *pure
         strategy* -- a complete contingent plan, choosing one action at every
         information set of that player -- to the probability with which the
         plan is played.  Index it by a strategy or a player, as in
-        ``eq[strategy]``.
+        ``eq[strategy]``.  This is what the strategic form is solved into, and
+        what ``use_strategic=True`` returns, as do ``'enumpure'`` and
+        ``'liap'`` whatever it is set to.  A profile of either kind converts
+        into the other with its ``as_behavior()`` and ``as_strategy()``
+        methods.
 
         The two are not interchangeable: indexing a mixed strategy profile by an
         action, or a mixed behavior profile by a strategy, raises a
@@ -1991,20 +2053,70 @@ class ExtensiveFormGame(SageObject):
             sage: type(e.obtain_nash(algorithm='lcp', rational=False)[0]).__name__
             'MixedBehaviorProfileDouble'
 
-        For ``'enumpure'`` and ``'liap'`` the flag picks a different gambit
-        solver rather than being passed on, but it is used in the same way::
+        ``'enumpure'`` and ``'liap'`` solve the strategic form whatever
+        ``use_strategic`` says, so they answer with mixed strategy profiles::
 
             sage: # optional - pygambit
             sage: eqs = g.obtain_nash(algorithm='liap')
-            sage: [[float(eq[a]) for a in g._gambit_().actions] for eq in eqs]
-            [[0.0, 1.0]]
+            sage: [[[float(eq[s]) for s in p.strategies]
+            ....:   for p in g._gambit_().players] for eq in eqs]
+            [[[0.0, 1.0], [1.0]]]
             sage: eqs = g.obtain_nash(algorithm='enumpure', use_strategic=True)
             sage: [[[float(eq[s]) for s in p.strategies]
             ....:   for p in g._gambit_().players] for eq in eqs]
             [[[0.0, 1.0], [1.0]]]
 
-        ``'enumpoly'``, ``'logit'`` and ``'liap'`` have no exact mode, but
-        their answer is nonetheless exact: it is rounded back to the
+        Their two ``_agent`` counterparts solve the extensive form and answer
+        with behavior profiles, but not to the same question.  Take Figure 4.2
+        of [Mye1991]_, in which Player 1 moves twice without seeing what Player
+        2 did in between.  It has one pure Nash equilibrium and two pure agent
+        equilibria::
+
+            sage: # optional - pygambit
+            sage: myerson = ExtensiveFormGame.load_from_gambit_catalog(
+            ....:     'books/myerson1991/fig4_2')
+            sage: nash = myerson.obtain_nash(algorithm='enumpure')
+            sage: agent = myerson.obtain_nash(algorithm='enumpure_agent')
+            sage: len(nash), len(agent)
+            (1, 2)
+            sage: actions = myerson._gambit_().actions
+            sage: [[float(eq[a]) for a in actions] for eq in agent]
+            [[1.0, 0.0, 0.0, 1.0, 0.0, 1.0], [0.0, 1.0, 0.0, 1.0, 1.0, 0.0]]
+
+        The first of the two is the Nash equilibrium, written as a behavior
+        profile::
+
+            sage: # optional - pygambit
+            sage: [float(nash[0].as_behavior()[a]) for a in actions]
+            [1.0, 0.0, 0.0, 1.0, 0.0, 1.0]
+
+        The other one is not: Player 1 gains by moving differently at both of
+        their information sets, which is a deviation no single agent of theirs
+        can make on its own, so gambit's two regrets disagree on it::
+
+            sage: # optional - pygambit
+            sage: odd = agent[1]
+            sage: QQ(odd.max_regret()), QQ(odd.agent_max_regret())
+            (1, 0)
+
+        The agent solvers have no strategic form to work on, so they warn that
+        ``use_strategic`` is being ignored and go on to compute the same agent
+        equilibria::
+
+            sage: # optional - pygambit
+            sage: import warnings
+            sage: with warnings.catch_warnings(record=True) as caught:
+            ....:     warnings.simplefilter('always')
+            ....:     eqs = myerson.obtain_nash(algorithm='enumpure_agent',
+            ....:                               use_strategic=True)
+            sage: print(caught[0].message)
+            'enumpure_agent' computes agent equilibria of the extensive form;
+            ignoring use_strategic=True
+            sage: len(eqs)
+            2
+
+        ``'enumpoly'``, ``'logit'`` and the two ``'liap'`` solvers have no exact
+        mode, but their answer is nonetheless exact: it is rounded back to the
         equilibrium it approximates and returned only once gambit has
         confirmed, in exact arithmetic, that the rounded profile is one.  In
         the asymmetric matching pennies game below Bob cannot tell which way
@@ -2021,7 +2133,7 @@ class ExtensiveFormGame(SageObject):
             ....:                             ('T', 'h', -1), ('T', 't', 1)]:
             ....:     pennies.set_outcome(pennies.root.children[coin].children[guess],
             ....:                         coin + guess, [payoff, -payoff])
-            sage: eqs = pennies.obtain_nash(algorithm='liap')
+            sage: eqs = pennies.obtain_nash(algorithm='liap_agent')
             sage: type(eqs[0]).__name__
             'MixedBehaviorProfileRational'
             sage: [eqs[0][a] for a in pennies._gambit_().actions]
@@ -2042,7 +2154,7 @@ class ExtensiveFormGame(SageObject):
         answer back unchanged::
 
             sage: # optional - pygambit
-            sage: eqs = pennies.obtain_nash(algorithm='liap', tolerance=1e-15)
+            sage: eqs = pennies.obtain_nash(algorithm='liap_agent', tolerance=1e-15)
             sage: type(eqs[0]).__name__
             'MixedBehaviorProfileDouble'
             sage: [float(eqs[0][a]) for a in pennies._gambit_().actions]  # abs tol 1e-6
@@ -2062,9 +2174,20 @@ class ExtensiveFormGame(SageObject):
             sage: h.set_outcome(h.root.children['L'].children['a'], 'la', [2, 5])
             sage: h.set_outcome(h.root.children['L'].children['b'], 'lb', [1, 1])
             sage: h.set_outcome(h.root.children['R'], 'R', [3, 1])
-            sage: len(h.obtain_nash(algorithm='enumpoly'))
+            sage: len(h.obtain_nash(algorithm='enumpoly', stop_after=None))
             1
+            sage: len(h.obtain_nash(algorithm='enumpoly', use_strategic=True,
+            ....:                   stop_after=None))
+            2
+
+        ``stop_after`` is what asks for all of them: ``'enumpoly'`` stops at the
+        first equilibrium by default, however many the game has::
+
+            sage: # optional - pygambit
             sage: len(h.obtain_nash(algorithm='enumpoly', use_strategic=True))
+            1
+            sage: len(h.obtain_nash(algorithm='enumpoly', use_strategic=True,
+            ....:                   stop_after=2))
             2
 
         TESTS:
@@ -2085,7 +2208,8 @@ class ExtensiveFormGame(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'bogus'; must be one of
-            'enumpoly', 'enumpure', 'lcp', 'liap', 'logit', 'lp'
+            'enumpoly', 'enumpure', 'enumpure_agent', 'lcp', 'liap',
+            'liap_agent', 'logit', 'lp'
 
         There is nothing to round to within a tolerance of zero::
 
@@ -2093,6 +2217,28 @@ class ExtensiveFormGame(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: 'tolerance' must be positive; got 0
+
+        Only the two solvers that can stop early accept ``stop_after``, and it
+        counts equilibria::
+
+            sage: # optional - pygambit
+            sage: len(g.obtain_nash(algorithm='lcp', stop_after=1,
+            ....:                     use_strategic=True))
+            1
+            sage: g.obtain_nash(algorithm='lcp', stop_after=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: 'lcp' can only stop early on the strategic form;
+            pass use_strategic=True along with 'stop_after'
+            sage: g.obtain_nash(algorithm='liap', stop_after=1)
+            Traceback (most recent call last):
+            ...
+            ValueError: 'stop_after' is only supported by the 'enumpoly' and
+            'lcp' algorithms; got algorithm 'liap'
+            sage: g.obtain_nash(algorithm='enumpoly', stop_after=0)
+            Traceback (most recent call last):
+            ...
+            ValueError: 'stop_after' must be a positive integer or None; got 0
 
         A game whose payoffs are inexact keeps its inexact equilibria; the
         probabilities of a chance move are payoff data too, so making them
@@ -2106,10 +2252,10 @@ class ExtensiveFormGame(SageObject):
             ....:     for move, payoff in [('L', 1), ('R', 2)]:
             ....:         coin.set_outcome(coin.root.children[side].children[move],
             ....:                          side + move, [payoff])
-            sage: type(coin.obtain_nash(algorithm='liap')[0]).__name__
+            sage: type(coin.obtain_nash(algorithm='liap_agent')[0]).__name__
             'MixedBehaviorProfileRational'
             sage: coin.set_chance_probs(coin.root, [0.25, 0.75])
-            sage: type(coin.obtain_nash(algorithm='liap')[0]).__name__
+            sage: type(coin.obtain_nash(algorithm='liap_agent')[0]).__name__
             'MixedBehaviorProfileDouble'
         """
         # The two game classes round a solver's floating point answer back to
@@ -2123,22 +2269,26 @@ class ExtensiveFormGame(SageObject):
 
         game = self._gambit_()
         # Most solvers take ``use_strategic`` as an argument.  ``enumpure`` and
-        # ``liap`` instead come in two flavours, and the agent one -- which
-        # works on the extensive form -- is the one to use when
-        # ``use_strategic`` is ``False``.  ``liap`` is started from a profile
-        # rather than from the game, so it needs the centroid of the right kind.
+        # ``liap`` come in two flavours instead: the plain ones only ever work
+        # on the strategic form, and the agent ones only on the extensive form.
+        # ``liap`` is started from a profile rather than from the game, so it
+        # needs the centroid of the right kind.  The lambdas read ``stop_after``
+        # when they are called, which is after it has been resolved below.
         solvers = {
             'lcp': lambda: gambit_nash.lcp_solve(game, rational=rational,
-                                                 use_strategic=use_strategic),
+                                                 use_strategic=use_strategic,
+                                                 stop_after=stop_after),
             'lp': lambda: gambit_nash.lp_solve(game, rational=rational,
                                                use_strategic=use_strategic),
-            'enumpoly': lambda: gambit_nash.enumpoly_solve(game, use_strategic=use_strategic),
-            'logit': lambda: gambit_nash.logit_solve(game, use_strategic=use_strategic),
-            'enumpure': lambda: (gambit_nash.enumpure_solve(game) if use_strategic
-                                 else gambit_nash.enumpure_agent_solve(game)),
-            'liap': lambda: (gambit_nash.liap_solve(game.mixed_strategy_profile())
-                             if use_strategic
-                             else gambit_nash.liap_agent_solve(game.mixed_behavior_profile())),
+            'enumpoly': lambda: gambit_nash.enumpoly_solve(
+                game, use_strategic=use_strategic, stop_after=stop_after),
+            'logit': lambda: gambit_nash.logit_solve(game,
+                                                     use_strategic=use_strategic),
+            'enumpure': lambda: gambit_nash.enumpure_solve(game),
+            'enumpure_agent': lambda: gambit_nash.enumpure_agent_solve(game),
+            'liap': lambda: gambit_nash.liap_solve(game.mixed_strategy_profile()),
+            'liap_agent': lambda: gambit_nash.liap_agent_solve(
+                game.mixed_behavior_profile()),
         }
         if algorithm is None:
             algorithm = 'lcp' if len(game.players) <= 2 else 'enumpoly'
@@ -2148,13 +2298,44 @@ class ExtensiveFormGame(SageObject):
             names = ", ".join(repr(name) for name in sorted(solvers))
             raise ValueError("unknown algorithm {0!r}; must be one of "
                              "{1}".format(algorithm, names))
+
+        agent = algorithm in _AGENT_ALGORITHMS
+        if agent and use_strategic:
+            warnings.warn("{0!r} computes agent equilibria of the extensive "
+                          "form; ignoring use_strategic=True".format(algorithm))
+
+        if stop_after == 'auto':
+            # Enumerating the supports of a game costs more with every one of
+            # them, and ``'enumpoly'`` is what a game of more than two players
+            # is solved with by default, so it is stopped at one equilibrium
+            # unless the caller asks for more.
+            stop_after = 1 if algorithm == 'enumpoly' else None
+        else:
+            if algorithm not in ('enumpoly', 'lcp'):
+                raise ValueError("'stop_after' is only supported by the "
+                                 "'enumpoly' and 'lcp' algorithms; got "
+                                 "algorithm {0!r}".format(algorithm))
+            if algorithm == 'lcp' and not use_strategic:
+                # gambit's own restriction, raised here for a clearer message.
+                raise ValueError("'lcp' can only stop early on the strategic "
+                                 "form; pass use_strategic=True along with "
+                                 "'stop_after'")
+            if stop_after is not None:
+                if stop_after != int(stop_after) or stop_after < 1:
+                    raise ValueError("'stop_after' must be a positive integer "
+                                     "or None; got {0!r}".format(stop_after))
+                # gambit counts equilibria with a C integer.
+                stop_after = int(stop_after)
+
         equilibria = list(solver().equilibria)
         if rational and _gambit_payoffs_are_exact(game):
-            # ``'enumpoly'``, ``'logit'`` and ``'liap'`` answer in floating
-            # point whatever the game is made of, so ask for the exact
-            # equilibrium their answer renders; ``None`` comes back when there
-            # is none, and the approximation is then all there is to return.
-            equilibria = [_rationalize_gambit_profile(eq, tolerance) or eq
+            # ``'enumpoly'``, ``'logit'`` and the two ``'liap'`` solvers answer
+            # in floating point whatever the game is made of, so ask for the
+            # exact equilibrium their answer renders; ``None`` comes back when
+            # there is none, and the approximation is then all there is to
+            # return.
+            equilibria = [_rationalize_gambit_profile(eq, tolerance,
+                                                      agent=agent) or eq
                           for eq in equilibria]
         return equilibria
 
