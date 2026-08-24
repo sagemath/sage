@@ -1543,7 +1543,7 @@ class ParallelogramPolyomino(ClonableList,
         This last bijection is described in [DerZak1980]_ (see page 12 and
         Figure 3.1 of page 13).
 
-        See :meth:`_to_dyck_delest_viennot` for the exact references.
+        See ``_to_dyck_delest_viennot`` for the exact references.
         See also :meth:`to_ordered_tree()`.
 
         EXAMPLES::
@@ -1689,7 +1689,7 @@ class ParallelogramPolyomino(ClonableList,
         Different bijections can be specified.
 
         The bijection 'via dyck and Delest-Viennot' is the composition of
-        :meth:`_to_dyck_delest_viennot` and the classical bijection between
+        ``_to_dyck_delest_viennot`` and the classical bijection between
         dyck paths and ordered trees.
 
         The bijection between Dyck Word and ordered trees is described
@@ -2673,7 +2673,7 @@ class ParallelogramPolyomino(ClonableList,
         Return all the tikz options permitting to draw the parallelogram
         polyomino.
 
-        See :class:`LocalOption` to have more informations about the
+        See :class:`~sage.combinat.parallelogram_polyomino.LocalOptions` to have more informations about the
         modification of those options.
 
         EXAMPLES::

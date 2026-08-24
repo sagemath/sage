@@ -1154,7 +1154,7 @@ class FractionField_1poly_field(FractionField_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.function_field.RationalFunctionField.field`
+            :meth:`sage.rings.function_field.function_field_rational.RationalFunctionField.field`
         """
         from sage.rings.function_field.constructor import FunctionField
         return FunctionField(self.base_ring(), names=self.variable_name())

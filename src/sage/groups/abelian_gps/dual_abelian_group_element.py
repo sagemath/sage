@@ -3,7 +3,8 @@
 Elements (characters) of the dual group of a finite Abelian group
 
 To obtain the dual group of a finite Abelian group, use the
-:meth:`~sage.groups.abelian_gps.abelian_group.dual_group` method::
+:meth:`~sage.groups.abelian_gps.abelian_group.AbelianGroup_class.dual_group`
+method::
 
     sage: F = AbelianGroup([2,3,5,7,8], names='abcde')
     sage: F

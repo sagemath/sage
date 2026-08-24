@@ -1,6 +1,8 @@
 """
 Specific category classes
 
+.. automethod:: sage.categories.category_types::Category_over_base._test_category_over_bases
+
 This is placed in a separate file from categories.py to avoid circular imports
 (as morphisms must be very low in the hierarchy with the new coercion model).
 """

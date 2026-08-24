@@ -276,7 +276,9 @@ def minimize_result(operation):
     OUTPUT: a method with the following additional argument:
 
     - ``minimize`` -- (default: ``None``) a boolean or ``None``.
-      If ``True``, then :meth:`minimized` is called after the operation,
+      If ``True``, then
+      :meth:`~sage.combinat.recognizable_series.RecognizableSeries.minimized`
+      is called after the operation,
       if ``False``, then not. If this argument is ``None``, then
       the default specified by the parent's ``minimize_results`` is used.
 

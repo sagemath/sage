@@ -5097,7 +5097,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         The basis of NCSF dual to the Young Quasisymmetric-Schur basis of QSym.
 
         The
-        :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.YoungQuasisymmetric_Schur`
+        :class:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Young_Quasisymmetric_Schur`
         functions are given in Definition 5.2.1 of [LMvW13]_.  The dual basis
         in the algebra of non-commutative symmetric functions are related by
         an involution reversing the indexing composition of the complete

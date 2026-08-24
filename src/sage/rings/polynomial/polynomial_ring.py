@@ -111,6 +111,18 @@ to the default FLINT implementation, but not vice versa::
     sage: (R.0 + S.0).parent() is S                                                     # needs sage.libs.flint sage.libs.ntl
     True
 
+We verify Alpoge's counterexample to the Jacobian conjecture::
+
+    sage: P.<x,y,z> = QQ[]
+    sage: l = [(1+x*y)^3*z + y^2*(1+x*y)*(4+3*x*y), y+3*x*(1+x*y)^2*z + 3*x*y^2*(4+3*x*y), 2*x-3*x^2*y-x^3*z]
+    sage: M = Matrix([[l[i].derivative(j) for j in [x,y,z]] for i in range(3)])
+    sage: M.det()
+    -2
+    sage: [f(0,0,-1/4) for f in l]
+    [-1/4, 0, 0]
+    sage: [f(1,-3/2,13/2) for f in l]
+    [-1/4, 0, 0]
+
 TESTS::
 
     sage: K.<x> = FractionField(QQ['x'])
@@ -1586,7 +1598,7 @@ class PolynomialRing_generic(Ring):
     def karatsuba_threshold(self):
         """
         Return the Karatsuba threshold used for this ring by the method
-        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
+        ``_mul_karatsuba`` to fall back to the schoolbook algorithm.
 
         EXAMPLES::
 
@@ -1602,7 +1614,7 @@ class PolynomialRing_generic(Ring):
     def set_karatsuba_threshold(self, Karatsuba_threshold):
         """
         Changes the default threshold for this ring in the method
-        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
+        ``_mul_karatsuba`` to fall back to the schoolbook algorithm.
 
         .. warning::
 
@@ -1886,7 +1898,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         roots = p._roots_from_factorization(p.factor(), multiplicities)
         if degree_bound is not None:
             if multiplicities:
-                roots = [(r,m) for (r,m) in roots if r.degree() <= degree_bound]
+                roots = [(r, m) for r, m in roots if r.degree() <= degree_bound]
             else:
                 roots = [r for r in roots if r.degree() <= degree_bound]
         return roots
@@ -1975,9 +1987,10 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
 
             More documentation and additional options are available using the
             iterator
-            :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
+            :class:`~sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
             directly. In addition, polynomials have a method
-            :meth:`is_weil_polynomial` to test whether or not the given
+            :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.is_weil_polynomial`
+            to test whether or not the given
             polynomial is a Weil polynomial.
 
         EXAMPLES::
@@ -2038,7 +2051,7 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         Finally, check that the original polynomials are reconstructed as CM
         polynomials::
 
-            sage: all(f == T^3*r(T + 3/T) for (f, r) in zip(simples, reals))                                            # needs sage.libs.flint
+            sage: all(f == T^3*r(T + 3/T) for f, r in zip(simples, reals))                                            # needs sage.libs.flint
             True
 
         A simple check (not sufficient)::
@@ -2869,30 +2882,31 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             if degree_bound < 0:
                 # The only possible root of (current) p, if any, is y = 0
                 if p(0).is_zero() or p(0).valuation() >= k:
-                    return [ (self.zero(),0) ]
+                    return [(self.zero(), 0)]
                 return []
             if k == 1 or degree_bound == 0:
-                #Either one coefficient left to be computed, or p has only one coefficient
+                # Either one coefficient left to be computed, or p has only one coefficient
                 py = self([c[0] for c in p.list()])  # py = p(x=0, y)
                 if py.is_zero():
-                    return [ (self.zero(), 0) ]
+                    return [(self.zero(), 0)]
                 roots = py.roots(multiplicities=False)
-                return [ (self(r),1) for r in roots ]
+                return [(self(r), 1) for r in roots]
             if k < dc_threshold:
                 # Run Roth-Ruckenstein
                 return self._roth_ruckenstein(p, degree_bound=degree_bound, precision=k)
-            p = p.map_coefficients(lambda c:c.truncate(k))
-            half_roots = alekh_rec(p, k//2, degree_bound, lvl+1)
+            p = p.map_coefficients(lambda c: c.truncate(k))
+            half_roots = alekh_rec(p, k // 2, degree_bound, lvl + 1)
             whole_roots = []
-            for (hi, di) in half_roots:
+            for hi, di in half_roots:
                 QhatT = p(hi + y*x**di)
                 if not QhatT:
-                    whole_roots.append((hi,di))
+                    whole_roots.append((hi, di))
                 else:
                     val = min(c.valuation() for c in QhatT)
                     Qhat = QhatT.map_coefficients(lambda c:c.shift(-val))
                     sec_half = alekh_rec(Qhat, k-val, degree_bound - di, lvl+1)
-                    whole_roots.extend([ (hi + hij.shift(di), di+dij) for (hij, dij) in sec_half ])
+                    whole_roots.extend((hi + hij.shift(di), di+dij)
+                                       for hij, dij in sec_half)
             return whole_roots
 
         x = self.gen()
@@ -3287,7 +3301,8 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
         if sparse:
             return NotImplemented
         modulus = base_ring.order()
-        if modulus <= sys.maxsize:
+
+        if modulus <= (sys.maxsize << 1) + 1:
             defaults = ["FLINT", None]
         elif implementation == "FLINT":
             raise ValueError("FLINT does not support modulus %s" % modulus)
@@ -3392,8 +3407,8 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: type(P.gen())
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
-            sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x'); P       # needs sage.libs.ntl sage.rings.finite_rings
-            Univariate Polynomial Ring in x over Finite Field of size 9223372036854775837 (using NTL)
+            sage: P = PolynomialRing_dense_mod_p(GF(18446744073709551629), 'x'); P       # needs sage.libs.ntl sage.rings.finite_rings
+            Univariate Polynomial Ring in x over Finite Field of size 18446744073709551629 (using NTL)
             sage: type(P.gen())                                                         # needs sage.libs.ntl sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
@@ -3478,7 +3493,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             defaults = ["GF2X", "NTL", None]
         elif implementation == "GF2X":
             raise ValueError("GF2X only supports modulus 2")
-        elif modulus <= sys.maxsize:
+        elif modulus <= (sys.maxsize << 1) + 1:
             defaults = ["FLINT", None]
         elif implementation == "FLINT":
             raise ValueError("FLINT does not support modulus %s" % modulus)

@@ -196,10 +196,11 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             The antipode of this Hopf algebra.
 
-            If :meth:`.antipode_basis` is available, this constructs the
+            If :meth:`.antipode_on_basis` is available, this constructs the
             antipode morphism from ``self`` to ``self`` by extending it by
-            linearity. Otherwise, :meth:`self.antipode_by_coercion` is used, if
-            available.
+            linearity. Otherwise,
+            :meth:`~sage.categories.hopf_algebras.HopfAlgebras.Realizations.ParentMethods.antipode_by_coercion`
+            is used, if available.
 
             EXAMPLES::
 

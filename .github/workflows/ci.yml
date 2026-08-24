@@ -10,6 +10,7 @@ on:
       - 'uv.lock'
       - 'subprojects/**'
       - '.github/workflows/ci.yml'
+      - 'build/pkgs/*/distros/*.txt'
   workflow_dispatch:
     # Allow to run manually
 
@@ -41,6 +42,10 @@ jobs:
             xbps-install -yu
             # node-based actions require libstdc++.so.6
             xbps-install -Sy libstdc++ bash git
+            # setup-uv needs a version field in os-release to build its cache
+            # key, but rolling-release Void ships none (only ID); give it the
+            # same BUILD_ID that Arch uses (see astral-sh/setup-uv#773)
+            echo 'BUILD_ID=rolling' >> /etc/os-release
           fi
           if [ "${{ matrix.container }}" = "archlinux" ]; then
             # The archlinux container is configured to not install docs by default
@@ -53,10 +58,10 @@ jobs:
           fi
 
       - name: Checkout code
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7.1.4
+        uses: astral-sh/setup-uv@v10.0.1
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -108,7 +113,7 @@ jobs:
             echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
 
       - name: Upload log
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v7
         if: failure() || success()
         with:
           name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
@@ -128,13 +133,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6.3.1
+        uses: astral-sh/setup-uv@v10.0.1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12' 
 
@@ -155,7 +160,7 @@ jobs:
           uv run --frozen ./sage -t --all -p4 || true
 
       - name: Upload log
-        uses: actions/upload-artifact@v4.5.0
+        uses: actions/upload-artifact@v7
         if: failure() || success()
         with:
           name: macos-${{ matrix.version }}-log

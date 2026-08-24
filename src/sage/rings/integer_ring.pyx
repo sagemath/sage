@@ -126,7 +126,7 @@ cdef class IntegerRing_class(Ring):
         sage: Z('0o20')
         16
 
-    As an inverse to :meth:`~sage.rings.integer.Integer.digits`,
+    As an inverse to :meth:`sage.rings.integer.Integer.digits`,
     lists of digits are accepted, provided that you give a base.
     The lists are interpreted in little-endian order, so that
     entry ``i`` of the list is the coefficient of ``base^i``::
@@ -240,7 +240,7 @@ cdef class IntegerRing_class(Ring):
         sage: Z([14, 16, 10, 28], base=32)
         928270
 
-    The :meth:`digits<~sage.rings.integer.Integer.digits>` method
+    The :meth:`digits <sage.rings.integer.Integer.digits>` method
     allows you to get the list of digits of an integer in a different
     basis (note that the digits are returned in little-endian order)::
 
@@ -255,14 +255,14 @@ cdef class IntegerRing_class(Ring):
         sage: Z(15).digits(3)
         [0, 2, 1]
 
-    The :meth:`str<~sage.rings.integer.Integer.str>` method returns a
+    The :meth:`str <sage.rings.integer.Integer.str>` method returns a
     string of the digits, using letters ``a`` to ``z`` to represent
     digits 10..36::
 
         sage: Z(928270).str(base=32)
         'sage'
 
-    Note that :meth:`str<~sage.rings.integer.Integer.str>` only works
+    Note that :meth:`str <sage.rings.integer.Integer.str>` only works
     with bases 2 through 36.
 
     TESTS::
@@ -293,10 +293,13 @@ cdef class IntegerRing_class(Ring):
 
             sage: A in InfiniteEnumeratedSets()
             True
+
+            sage: ZZ.variable_names()
+            ()
         """
         cat = (EuclideanDomains(), DedekindDomains(),
                InfiniteEnumeratedSets().Metric(), NoetherianRings())
-        Parent.__init__(self, base=self, names=('x',), normalize=False,
+        Parent.__init__(self, base=self, names=(), normalize=False,
                         category=cat)
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')

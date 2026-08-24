@@ -3757,6 +3757,18 @@ class Graph(GenericGraph):
             sage: e = SymmetricFunctions(ZZ).e()
             sage: e(graphs.CompleteGraph(5).chromatic_symmetric_function())
             120*e[5]
+
+        A graph with a loop has no proper coloring, so its chromatic symmetric
+        function is zero.  This must hold even for large vertex labels: with
+        the natural labeling ``0, 1, ..., n - 1`` a loop on a vertex labelled
+        above 256 has endpoints that are equal but distinct :class:`Integer`
+        objects, so they must be compared by value rather than identity::
+
+            sage: G = Graph(loops=True)
+            sage: G.add_vertices(range(258))
+            sage: G.add_edge(257, 257)
+            sage: G.chromatic_symmetric_function()                                  # needs sage.combinat sage.modules
+            0
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import _Partitions
@@ -3790,7 +3802,7 @@ class Graph(GenericGraph):
             u = find(dsf, e[0])
             v = find(dsf, e[1])
             # Terms cancel if edge creates a cycle.
-            if u is not v:
+            if u != v:
                 ret = summand(stack, dsf, sizes)
                 dsf[v] = u
                 sizes[u] += sizes[v]
@@ -4991,8 +5003,8 @@ class Graph(GenericGraph):
 
           - ``'DHV'`` -- diameter computation is done using the algorithm
             proposed in [Dragan2018]_. Works only for nonnegative edge weights
-            For more information see method
-            :func:`sage.graphs.distances_all_pairs.diameter_DHV` and
+            For more information, see :func:`sage.graphs.distances_all_pairs.diameter`
+            with ``algorithm='DHV'`` and
             :func:`sage.graphs.base.boost_graph.diameter_DHV`.
 
           - ``'standard'``, ``'2sweep'``, ``'multi-sweep'``, ``'iFUB'``:
@@ -5226,7 +5238,7 @@ class Graph(GenericGraph):
         return [v for v in self if ecc[v] == d]
 
     @doc_index("Distances")
-    def distance_graph(self, dist):
+    def distance_graph(self, dist, immutable=None):
         r"""
         Return the graph on the same vertex set as the original graph but
         vertices are adjacent in the returned graph if and only if they are at
@@ -5237,6 +5249,10 @@ class Graph(GenericGraph):
         - ``dist`` -- nonnegative integer or a list of nonnegative integers;
           specified distance(s) for the connecting vertices. ``Infinity`` may
           be used here to describe vertex pairs in separate components.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its distance graph will behave the same way.
 
         OUTPUT:
 
@@ -5348,6 +5364,19 @@ class Graph(GenericGraph):
             ...
             ValueError: distance graph for a negative distance (d=-3) is not defined
 
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G.distance_graph(2).is_immutable()
+            False
+            sage: G.distance_graph(2, immutable=True).is_immutable()
+            True
+            sage: G = graphs.PathGraph(5, immutable=True)
+            sage: G.distance_graph(2).is_immutable()
+            True
+            sage: G.distance_graph(2, immutable=False).is_immutable()
+            False
+
         AUTHOR:
 
         Rob Beezer, 2009-11-25, :issue:`7533`
@@ -5374,29 +5403,32 @@ class Graph(GenericGraph):
             dstring = "distances " + str(sorted(distances))
         name = "Distance graph for %s in " % dstring + self.name()
         looped = ZZ(0) in s_distances
-        from sage.graphs.graph import Graph
-        D = Graph([self, []], format='vertices_and_edges',
-                  multiedges=False, loops=looped,
-                  pos=copy(self.get_pos()), name=name)
 
         # Create the appropriate edges
-        import itertools
-        if self.is_connected():
-            CC = [self]
-        else:
-            CC = self.connected_components_subgraphs()
-            if Infinity in s_distances:
-                # add edges between connected components
-                for A, B in itertools.combinations(CC, 2):
-                    D.add_edges(itertools.product(A, B))
-        for g in CC:
-            d = g.distance_all_pairs()
-            for u, v in itertools.combinations(g, 2):
-                if d[u][v] in s_distances:
-                    D.add_edge(u, v)
-        if looped:
-            D.add_edges((u, u) for u in self)
-        return D
+        def edges():
+            import itertools
+            if self.is_connected():
+                CC = [self]
+            else:
+                CC = self.connected_components_subgraphs()
+                if Infinity in s_distances:
+                    # add edges between connected components
+                    for A, B in itertools.combinations(CC, 2):
+                        yield from itertools.product(A, B)
+            for g in CC:
+                d = g.distance_all_pairs()
+                for u, v in itertools.combinations(g, 2):
+                    if d[u][v] in s_distances:
+                        yield (u, v)
+            if looped:
+                yield from ((u, u) for u in self)
+
+        if immutable is None:
+            immutable = self.is_immutable()
+        from sage.graphs.graph import Graph
+        return Graph([self, edges()], format='vertices_and_edges',
+                     multiedges=False, loops=looped, name=name,
+                     pos=copy(self.get_pos()), immutable=immutable)
 
     # Constructors
 
@@ -5595,7 +5627,7 @@ class Graph(GenericGraph):
         return C
 
     @doc_index("Leftovers")
-    def seidel_switching(self, s, inplace=True):
+    def seidel_switching(self, s, inplace=True, immutable=None):
         r"""
         Return the Seidel switching of ``self`` w.r.t. subset of vertices ``s``.
 
@@ -5613,6 +5645,11 @@ class Graph(GenericGraph):
           modification inplace, or to return a copy of the graph after
           switching
 
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its Seidel switching will behave the same way.
+          This parameter is ignored when ``inplace`` is ``True``.
+
         EXAMPLES::
 
             sage: G = graphs.CycleGraph(5)
@@ -5629,13 +5666,41 @@ class Graph(GenericGraph):
             sage: G.seidel_switching([1,4,5])
             sage: G == H
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.CycleGraph(5)
+            sage: G = G.disjoint_union(graphs.CompleteGraph(1))
+            sage: s = [(0, 1), (1, 0), (0, 0)]
+            sage: H = G.copy(immutable=False)
+            sage: H.seidel_switching(s, inplace=True)
+            sage: H.is_immutable()
+            False
+            sage: H.seidel_switching(s, inplace=True, immutable=True)
+            sage: H.is_immutable()
+            False
+            sage: H = G.copy(immutable=True)
+            sage: H.seidel_switching(s, inplace=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: this graph is immutable and so cannot be changed
+            sage: X = H.seidel_switching(s, inplace=False)
+            sage: X.is_immutable()
+            True
+            sage: X = H.seidel_switching(s, inplace=False, immutable=False)
+            sage: X.is_immutable()
+            False
         """
-        G = self if inplace else copy(self)
+        if inplace:
+            self._scream_if_immutable()
+        elif immutable is None:
+            immutable = self.is_immutable()
+        G = self if inplace else self.copy(immutable=False)
         boundary = self.edge_boundary(s)
         G.add_edges(itertools.product(s, set(self).difference(s)))
         G.delete_edges(boundary)
         if not inplace:
-            return G
+            return G.copy(immutable=True) if immutable else G
 
     @doc_index("Leftovers")
     def twograph(self):
@@ -6271,7 +6336,7 @@ class Graph(GenericGraph):
         return {v: count[v] for v in vertices or self}
 
     @doc_index("Clique-related methods")
-    def cliques_get_max_clique_graph(self):
+    def cliques_get_max_clique_graph(self, immutable=None):
         r"""
         Return the clique graph.
 
@@ -6285,6 +6350,12 @@ class Graph(GenericGraph):
 
             Currently only implemented for undirected graphs. Use to_undirected
             to convert a digraph to an undirected graph.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and its max clique graph behave the same way.
 
         EXAMPLES::
 
@@ -6308,6 +6379,19 @@ class Graph(GenericGraph):
             ....:           multiedges=False)
             sage: S.is_isomorphic(N)
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph([(0, 1)], immutable=False)
+            sage: G.cliques_get_max_clique_graph().is_immutable()
+            False
+            sage: G.cliques_get_max_clique_graph(immutable=True).is_immutable()
+            True
+            sage: G = Graph([(0, 1)], immutable=True)
+            sage: G.cliques_get_max_clique_graph().is_immutable()
+            True
+            sage: G.cliques_get_max_clique_graph(immutable=False).is_immutable()
+            False
         """
         # Associate each maximal clique an integer index and record for each
         # vertex of self the cliques it belongs to.
@@ -6320,10 +6404,12 @@ class Graph(GenericGraph):
 
         # Build a graph with one vertex per maximal clique and an edge between
         # cliques sharing a vertex of self
-        G = Graph(n, multiedges=False)
-        for block in cliques_of_vertex.values():
-            G.add_clique(block)
-        return G
+        edges = itertools.chain(*(itertools.combinations(block, 2)
+                                  for block in cliques_of_vertex.values()))
+        if immutable is None:
+            immutable = self.is_immutable()
+        return Graph([range(n), edges], format="vertices_and_edges",
+                     multiedges=False, immutable=immutable)
 
     @doc_index("Clique-related methods")
     def cliques_get_clique_bipartite(self, **kwds):
@@ -6360,14 +6446,30 @@ class Graph(GenericGraph):
             sage: N = BipartiteGraph(networkx.make_clique_bipartite(CG.networkx_graph()))
             sage: S.is_isomorphic(N)
             True
+
+        Check the behavior of parameter ``immutable``. By default (``None``),
+        ``self`` and its vertex-clique bipartite graph behave the same way::
+
+            sage: G = G = Graph([(0, 1)])
+            sage: G.cliques_get_clique_bipartite().is_immutable()
+            False
+            sage: G.cliques_get_clique_bipartite(immutable=True).is_immutable()
+            True
+            sage: G = G = Graph([(0, 1)], immutable=True)
+            sage: G.cliques_get_clique_bipartite().is_immutable()
+            True
+            sage: G.cliques_get_clique_bipartite(immutable=False).is_immutable()
+            False
         """
         G = Graph([self, []], format='vertices_and_edges')
         for i, clique in enumerate(IndependentSets(self, maximal=True, complement=True)):
             idx = - i - 1
             G.add_vertex(idx)
             G.add_edges((u, idx) for u in clique)
+        if 'immutable' not in kwds:
+            kwds['immutable'] = self.is_immutable()
         from sage.graphs.bipartite_graph import BipartiteGraph
-        return BipartiteGraph(G, check=False)
+        return BipartiteGraph(G, check=False, **kwds)
 
     @doc_index("Algorithmically hard stuff")
     def independent_set(self, algorithm='Cliquer', value_only=False, reduction_rules=True,
@@ -7130,7 +7232,8 @@ class Graph(GenericGraph):
         r"""
         Return the core number for each vertex in an ordered list.
 
-        (for homomorphisms cores, see the :meth:`Graph.has_homomorphism_to`
+        (for homomorphism cores, see
+        :meth:`~sage.graphs.generic_graph.GenericGraph.has_homomorphism_to`
         method)
 
         DEFINITIONS:
@@ -7191,7 +7294,8 @@ class Graph(GenericGraph):
         .. SEEALSO::
 
             * Graph cores is also a notion related to graph homomorphisms. For
-              this second meaning, see :meth:`Graph.has_homomorphism_to`.
+              this second meaning, see
+              :meth:`~sage.graphs.generic_graph.GenericGraph.has_homomorphism_to`.
             * :wikipedia:`Degeneracy_(graph_theory)`
 
         EXAMPLES::
@@ -7969,7 +8073,8 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``algorithm`` -- select the algorithm used by the :meth:`edge_cut`
+        - ``algorithm`` -- select the algorithm used by
+          :meth:`~sage.graphs.generic_graph.GenericGraph.edge_cut`
           method. Refer to its documentation for allowed values and default
           behaviour.
 
@@ -9078,7 +9183,7 @@ class Graph(GenericGraph):
         return output
 
     @doc_index("Leftovers")
-    def arboricity(self, certificate=False):
+    def arboricity(self, certificate=False, immutable=None):
         r"""
         Return the arboricity of the graph and an optional certificate.
 
@@ -9091,6 +9196,10 @@ class Graph(GenericGraph):
 
         - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and the certificates will behave the same way.
 
         OUTPUT:
 
@@ -9105,17 +9214,18 @@ class Graph(GenericGraph):
         ALGORITHM:
 
         Represent the graph as a graphical matroid, then apply matroid
-        :meth:`sage.matroid.partition` algorithm from the matroids module.
+        ``partition`` algorithm from the matroids module.
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: G = graphs.PetersenGraph()
-            sage: a, F = G.arboricity(True)                                             # needs sage.modules
-            sage: a                                                                     # needs sage.modules
+            sage: a, F = G.arboricity(True)
+            sage: a
             2
-            sage: all(f.is_forest() for f in F)                                       # needs sage.modules
+            sage: all(f.is_forest() for f in F)
             True
-            sage: len(set.union(*[set(f.edges(sort=False)) for f in F])) == G.size()    # needs sage.modules
+            sage: len(set.union(*[set(f.edges(sort=False)) for f in F])) == G.size()
             True
 
         TESTS::
@@ -9123,11 +9233,30 @@ class Graph(GenericGraph):
             sage: g = Graph()
             sage: g.arboricity(True)                                                    # needs sage.modules
             (0, [])
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs sage.modules
+            sage: G = graphs.PetersenGraph()
+            sage: F = G.arboricity(certificate=True)[1]
+            sage: any(f.is_immutable() for f in F)
+            False
+            sage: F = G.arboricity(certificate=True, immutable=True)[1]
+            sage: all(f.is_immutable() for f in F)
+            True
+            sage: G = graphs.PetersenGraph(immutable=True)
+            sage: F = G.arboricity(certificate=True)[1]
+            sage: all(f.is_immutable() for f in F)
+            True
+            sage: F = G.arboricity(certificate=True, immutable=False)[1]
+            sage: any(f.is_immutable() for f in F)
+            False
         """
         from sage.matroids.constructor import Matroid
         P = Matroid(self).partition()
         if certificate:
-            return (len(P), [self.subgraph(edges=forest) for forest in P])
+            return (len(P), [self.subgraph(edges=forest, immutable=immutable)
+                             for forest in P])
         return len(P)
 
     @doc_index("Graph properties")
@@ -9172,7 +9301,7 @@ class Graph(GenericGraph):
             sage: G.is_antipodal()
             Traceback (most recent call last):
             ...
-            ValueError: diameter is not defined for the empty graph
+            ValueError: the antipodal graph of the empty graph is not defined
             sage: G = Graph(1)
             sage: G.is_antipodal()
             True
@@ -9205,7 +9334,7 @@ class Graph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`sage.graphs.graph.is_antipodal`
+            :meth:`~sage.graphs.graph.Graph.is_antipodal`
 
         INPUT:
 
@@ -9223,7 +9352,7 @@ class Graph(GenericGraph):
 
             The input is expected to be an antipodal graph.
             You can check that a graph is antipodal using
-            :meth:`sage.graphs.graph.is_antipodal`.
+            :meth:`~sage.graphs.graph.Graph.is_antipodal`.
 
         EXAMPLES::
 
@@ -9262,7 +9391,7 @@ class Graph(GenericGraph):
             sage: G.folded_graph()
             Traceback (most recent call last):
             ...
-            ValueError: diameter is not defined for the empty graph
+            ValueError: the antipodal graph of the empty graph is not defined
             sage: G = Graph(1)
             sage: G.folded_graph()
             Folded Graph: Graph on 1 vertex
@@ -9298,68 +9427,20 @@ class Graph(GenericGraph):
 
         # now newVertices is a map {0, ..., numCliques-1} -> antipodal classes
         numCliques = len(newVertices)
-        edges = []
-        for i, j in itertools.combinations(range(numCliques), 2):
-            if any(self.has_edge(u, v) for u, v in
-                   itertools.product(newVertices[i], newVertices[j])):
-                edges.append((i, j))
+        def edges():
+            for i, j in itertools.combinations(range(numCliques), 2):
+                if any(self.has_edge(u, v) for u, v in
+                    itertools.product(newVertices[i], newVertices[j])):
+                    yield (i, j)
 
         if immutable is None:
             immutable = self.is_immutable()
         name = self.name() if self.name() != "" else "Graph"
-        return Graph([range(numCliques), edges], format='vertices_and_edges',
+        return Graph([range(numCliques), edges()], format='vertices_and_edges',
                      name=f"Folded {name}", immutable=immutable)
 
-    @doc_index("Leftovers")
-    def antipodal_graph(self):
-        r"""
-        Return the antipodal graph of ``self``.
-
-        The antipodal graph of a graph `G` has the same vertex set of `G` and
-        two vertices are adjacent if their distance in `G` is equal to the
-        diameter of `G`.
-
-        OUTPUT: a new graph. ``self`` is not touched
-
-        EXAMPLES::
-
-            sage: G = graphs.JohnsonGraph(10, 5)
-            sage: G.antipodal_graph()
-            Antipodal graph of Johnson graph with parameters 10,5: Graph on 252 vertices
-            sage: G = graphs.HammingGraph(8, 2)
-            sage: G.antipodal_graph()
-            Antipodal graph of Hamming Graph with parameters 8,2: Graph on 256 vertices
-
-        The antipodal graph of a disconnected graph is its complement::
-
-            sage: G = Graph(5)
-            sage: H = G.antipodal_graph()
-            sage: H.is_isomorphic(G.complement())
-            True
-
-        TESTS::
-
-            sage: G = Graph([(0, 1), (2, 3)])
-            sage: H = G.antipodal_graph()
-            sage: H.is_isomorphic(Graph([(0, 2), (0, 3), (1, 2), (1, 3)]))
-            True
-            sage: G = Graph()
-            sage: G.antipodal_graph()
-            Traceback (most recent call last):
-            ...
-            ValueError: diameter is not defined for the empty graph
-            sage: G = Graph(1)
-            sage: G.antipodal_graph()
-            Antipodal graph of Graph: Looped graph on 1 vertex
-        """
-        H = self.distance_graph(self.diameter())
-
-        name = self.name() if self.name() != "" else "Graph"
-        H.name(f"Antipodal graph of {name}")
-        return H
-
     @doc_index("Basic methods")
-    def bipartite_double(self, extended=False):
+    def bipartite_double(self, extended=False, immutable=None):
         r"""
         Return the (extended) bipartite double of this graph.
 
@@ -9375,6 +9456,10 @@ class Graph(GenericGraph):
 
         - ``extended`` -- boolean (default: ``False``); whether to return the
           extended bipartite double, or only the bipartite double (default)
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable bipartite double. ``immutable=None`` (default) means
+          that the graphs and its bipartite double will behave the same way.
 
         OUTPUT: a graph; ``self`` is left untouched
 
@@ -9448,14 +9533,38 @@ class Graph(GenericGraph):
             sage: H = G.bipartite_double(True)
             sage: H.is_isomorphic(Graph([(0, 1)]))
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph([(0, 1)])
+            sage: G.bipartite_double().is_immutable()
+            False
+            sage: G.bipartite_double(immutable=True).is_immutable()
+            True
+            sage: G.bipartite_double(extended=True, immutable=True).is_immutable()
+            True
+            sage: G = Graph([(0, 1)], immutable=True)
+            sage: G.bipartite_double().is_immutable()
+            True
+            sage: G.bipartite_double(extended=True).is_immutable()
+            True
+            sage: G.bipartite_double(immutable=False).is_immutable()
+            False
+            sage: G.bipartite_double(extended=True, immutable=False).is_immutable()
+            False
         """
-        G = self.tensor_product(Graph([(0, 1)]))
+        if immutable is None:
+            immutable = self.is_immutable()
+        G = self.tensor_product(Graph([(0, 1)]),
+                                immutable=immutable and not extended)
 
         if extended:
             G.add_edges(((v, 0), (v, 1)) for v in self)
+            if immutable:
+                G = G.copy(immutable=True)
 
         prefix = "Extended " if extended else ""
-        G.name("%sBipartite Double of %s" % (prefix, self.name()))
+        G._name = f"{prefix}Bipartite Double of {self.name()}"
         return G
 
     @cached_method
@@ -9553,6 +9662,7 @@ class Graph(GenericGraph):
     from sage.graphs.spanning_tree import random_spanning_tree
     from sage.graphs.spanning_tree import spanning_trees
     from sage.graphs.graph_decompositions.graph_products import is_cartesian_product
+    from sage.graphs.distances_all_pairs import antipodal_graph
     from sage.graphs.distances_all_pairs import is_distance_regular
     from sage.graphs.base.static_dense_graph import is_strongly_regular
     from sage.graphs.line_graph import is_line_graph
@@ -9593,6 +9703,7 @@ class Graph(GenericGraph):
 
 
 _additional_categories = {
+    "antipodal_graph"           : "Leftovers",
     "is_long_hole_free"         : "Graph properties",
     "is_long_antihole_free"     : "Graph properties",
     "is_weakly_chordal"         : "Graph properties",

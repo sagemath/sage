@@ -305,20 +305,6 @@ def has_imagemagick() -> bool:
     return ImageMagick().is_present()
 
 
-def has_dvipng() -> bool:
-    """
-    Test if dvipng is available.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.external import has_dvipng
-        sage: has_dvipng() # optional -- dvipng
-        FeatureTestResult('dvipng', True)
-    """
-    from sage.features.dvipng import dvipng
-    return dvipng().is_present()
-
-
 def has_rubiks() -> bool:
     """
     Test if the rubiks package (``cu2``, ``cubex``, ``dikcube``,
@@ -369,9 +355,7 @@ def external_features():
     import sage.features.ffmpeg
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
-    for feature in sage.features.interfaces.all_features():
-        if feature.name not in ('mathics', 'regina'):
-            yield feature
+    yield from sage.features.interfaces.all_features()
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()
     yield Gurobi()

@@ -1034,7 +1034,7 @@ def number_of_irreducible_polynomials(n, q=None, m=1):
     In the univariate case, classical formula
     `\frac1n \sum_{d\mid n} \mu(n/d) q^d`
     using the Möbius function `\mu`;
-    see :func:`moebius`.
+    see :class:`~sage.arith.misc.Moebius`.
 
     In the multivariate case, formula from [Bodin2007]_,
     independently [Alekseyev2006]_.

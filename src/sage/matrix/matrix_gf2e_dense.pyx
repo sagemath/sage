@@ -86,6 +86,7 @@ from cysignals.signals cimport sig_on, sig_off
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.structure.element cimport Matrix
 from sage.structure.element cimport Element
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.element_base cimport Cache_base
 
@@ -238,6 +239,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 a 0]
             [0 0 a]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``mzed_init``). Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch significantly faster
+            # (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
@@ -473,13 +481,66 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Matrix_gf2e_dense ans
 
         ans = self.new_matrix(nrows = self.nrows(), ncols = right.ncols())
-        if self._nrows == 0 or self._ncols == 0 or right._ncols == 0:
-            # We know right._nrows == self._ncols because check_matrix_multiplication_sizes passed
-            return ans
-        sig_on()
-        ans._entries = mzed_mul(ans._entries, self._entries, (<Matrix_gf2e_dense>right)._entries)
-        sig_off()
+        ans._set_to_product(self, <Matrix0>right)
         return ans
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using M4RIE.
+
+        ``mzed_mul`` takes the destination as its first argument, so the
+        product is written straight into the destination's M4RIE storage and
+        M4RIE still picks the multiplication routine, exactly as for ``*``.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(2^8)
+            sage: A = matrix(K, 2, 3, range(6))
+            sage: B = matrix(K, 3, 2, range(6, 12))
+            sage: C = matrix(K, 2, 2, [a] * 4)
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+
+        TESTS:
+
+        A zero inner dimension zeroes the destination, overwriting the entries
+        it held before::
+
+            sage: C.set_to_product(matrix(K, 2, 0), matrix(K, 0, 2))
+            sage: C.is_zero()
+            True
+
+        A destination with no rows or no columns has nothing to write::
+
+            sage: D = matrix(K, 0, 2)
+            sage: D.set_to_product(matrix(K, 0, 3), matrix(K, 3, 2))
+            sage: D
+            []
+        """
+        cdef Matrix_gf2e_dense _left = <Matrix_gf2e_dense>left
+        cdef Matrix_gf2e_dense _right = <Matrix_gf2e_dense>right
+
+        # ``mzed_set_ui`` is not valid for a zero-column matrix.
+        if self._nrows == 0 or self._ncols == 0:
+            return
+
+        if _left._ncols == 0:
+            sig_on()
+            mzed_set_ui(self._entries, 0)
+            sig_off()
+            return
+
+        sig_on()
+        self._entries = mzed_mul(self._entries, _left._entries, _right._entries)
+        sig_off()
 
     cpdef Matrix_gf2e_dense _multiply_newton_john(Matrix_gf2e_dense self, Matrix_gf2e_dense right):
         """
@@ -697,7 +758,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -714,7 +775,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if self._nrows == 0 or self._ncols == 0:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, mzed_cmp(self._entries,
-                                         (<Matrix_gf2e_dense>right)._entries))
+                                         (<Matrix_gf2e_dense>other)._entries))
 
     def __copy__(self):
         """
