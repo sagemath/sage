@@ -643,6 +643,65 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         [0 1]
         [1 0]
     """
+    class Element(FreeQuadraticModule_submodule_with_basis_pid.Element):
+        r"""
+        An element of an integral lattice (i.e. a vector in a
+        :class:`FreeQuadraticModule_integer_symmetric`).
+        """
+
+        def norm(self, p=2):
+            r"""
+            Return the `p`-norm of ``self``.
+
+            For `p = 2`, the norm is computed using the inner product matrix
+            of the parent lattice, so that ``norm()^2 == inner_product(self,
+            self)`` consistently (see :issue:`38543`).
+
+            For all other values of `p`, the standard `\ell^p` norm is used.
+
+            INPUT:
+
+            - ``p`` -- (default: 2) the norm parameter, as in
+              :meth:`~sage.modules.free_module_element.FreeModuleElement.norm`
+
+            EXAMPLES:
+
+            The 2-norm of a lattice vector respects the lattice inner product
+            matrix, so ``norm()^2 == inner_product(v, v)``::
+
+                sage: L = IntegralLattice(matrix([[1000, 0], [0, 1]]))
+                sage: v = L.0
+                sage: v.inner_product(v)
+                1000
+                sage: v.norm()^2
+                1000
+                sage: v.norm()^2 == v.inner_product(v)
+                True
+
+            The standard `\ell^1` norm is still the sum of absolute values::
+
+                sage: L = IntegralLattice(matrix([[2, 0], [0, 3]]))
+                sage: v = L([1, 2])
+                sage: v.norm(1)
+                3
+
+            TESTS:
+
+            Regression test for :issue:`38543`: before the fix, ``norm()^2``
+            used the plain Euclidean norm and disagreed with
+            ``inner_product(v, v)``::
+
+                sage: L = IntegralLattice(matrix([[1000, 0], [0, 1]]))
+                sage: v = L.0
+                sage: v.norm()^2 == v.inner_product(v)
+                True
+                sage: v.norm()^2
+                1000
+            """
+            if p == 2:
+                return self.inner_product(self).sqrt()
+            return super().norm(p)
+
     def __init__(self, ambient, basis, inner_product_matrix,
                  check=True, already_echelonized=False):
         r"""

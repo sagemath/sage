@@ -1021,9 +1021,30 @@ class Bijectionist(SageObject):
             {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 3, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 1, [3, 1, 2]: 2, [3, 2, 1]: 2}
             {[]: 0, [1]: 1, [1, 2]: 1, [2, 1]: 2, [1, 2, 3]: 3, [1, 3, 2]: 2, [2, 1, 3]: 2, [2, 3, 1]: 2, [3, 1, 2]: 1, [3, 2, 1]: 2}
 
-        However, an error occurs if the set of possible values is
-        empty.  In this example, the image of `\tau` under any
-        legal bijection is disjoint to the specified values.
+        A :exc:`ValueError` is raised immediately if the restriction for an
+        element `a` is empty (i.e., none of the specified values appear in
+        `Z`).  This allows catching typos early, before calling
+        :meth:`solutions_iterator`. ::
+
+            sage: A = [1, 2, 3]
+            sage: b = Bijectionist(A, A)
+            sage: b.set_value_restrictions((1, [4]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the value restriction for element 1 is empty:
+            none of the given values [4] lie in Z = {1, 2, 3}
+
+        The same check applies when the elements are iterables
+        (this catches the common mistake of passing a tuple instead of
+        a list of allowed values)::
+
+            sage: A = [(1, 2), (3, 4)]
+            sage: b = Bijectionist(A, A)
+            sage: b.set_value_restrictions(((1, 2), (3, 4)))
+            Traceback (most recent call last):
+            ...
+            ValueError: the value restriction for element (1, 2) is empty:
+            none of the given values [(3, 4)] lie in Z = {(1, 2), (3, 4)}
 
         TESTS::
 
@@ -1031,20 +1052,20 @@ class Bijectionist(SageObject):
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_value_restrictions((Permutation([1, 2]), [4, 5]))
-            sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
-            ValueError: no possible values found for singleton block [[1, 2]]
+            ValueError: the value restriction for element [1, 2] is empty:
+            none of the given values [4, 5] lie in Z = {0, 1, 2, 3, 4}
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_constant_blocks([[permutation for permutation in Permutations(n)] for n in range(4)])
             sage: bij.set_value_restrictions((Permutation([1, 2]), [4, 5]))
-            sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
-            ValueError: no possible values found for block [[1, 2], [2, 1]]
+            ValueError: the value restriction for element [1, 2] is empty:
+            none of the given values [4, 5] lie in Z = {0, 1, 2, 3, 4}
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1063,7 +1084,13 @@ class Bijectionist(SageObject):
         self._restrictions_possible_values = {a: set_Z for a in self._A}
         for a, values in value_restrictions:
             assert a in self._A, f"element {a} was not found in A"
-            self._restrictions_possible_values[a] = self._restrictions_possible_values[a].intersection(values)
+            restricted = self._restrictions_possible_values[a].intersection(values)
+            if not restricted:
+                raise ValueError(
+                    f"the value restriction for element {a!r} is empty:\n"
+                    f"none of the given values {list(values)} lie in Z = {set_Z}"
+                )
+            self._restrictions_possible_values[a] = restricted
 
     def _compute_possible_block_values(self):
         r"""
@@ -1074,16 +1101,22 @@ class Bijectionist(SageObject):
         It raises a :exc:`ValueError`, if the restrictions on a
         block are contradictory.
 
-        TESTS::
+        TESTS:
+
+        The ``_compute_possible_block_values`` method can still raise
+        :exc:`ValueError` if conflicting statistics reduce a block's
+        possible values to the empty set (bypassing the early check in
+        :meth:`set_value_restrictions`).  Here we set the internal
+        ``_restrictions_possible_values`` directly to reproduce that path::
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: bij = Bijectionist(A, B, tau)
-            sage: bij.set_value_restrictions((Permutation([1, 2]), [4, 5]))
+            sage: bij._restrictions_possible_values = {a: set() for a in bij._A}
             sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
-            ValueError: no possible values found for singleton block [[1, 2]]
+            ValueError: no possible values found for singleton block [[]]
         """
         self._possible_block_values = {}  # P -> Power(Z)
         for p, block in self._P.root_to_elements_dict().items():
