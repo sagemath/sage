@@ -62,7 +62,7 @@ AUTHORS:
 - Kiran Kedlaya (2016-05): relative number fields hash based on relative polynomials
 - Peter Bruin (2016-06): made number fields fully satisfy unique representation
 - John Jones (2017-07): improved check for is_galois(), add is_abelian(), building on work in patch by Chris Wuthrich
-- Anna Haensch (2018-03): added :meth:`quadratic_defect`
+- Anna Haensch (2018-03): added :meth:`~sage.rings.number_field.number_field.NumberField_generic.quadratic_defect`
 - Michael Daub, Chris Wuthrich (2020-09-01): added Dirichlet characters for abelian fields
 """
 # ****************************************************************************
@@ -162,7 +162,7 @@ _NumberFields = NumberFields()
 def is_NumberFieldHomsetCodomain(codomain, category=None) -> bool:
     """
     Return whether ``codomain`` is a valid codomain for a
-    :class:`NumberFieldHomset` in ``category``.
+    :class:`~sage.rings.number_field.homset.NumberFieldHomset` in ``category``.
 
     EXAMPLES:
 
@@ -254,7 +254,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
       having to factor the discriminant, but of course can lead to wrong
       results; only applies for absolute fields at present.
     - ``structure`` -- ``None``, a list or an instance of
-      :class:`structure.NumberFieldStructure` (default: ``None``),
+      :class:`~sage.rings.number_field.structure.NumberFieldStructure` (default: ``None``),
       internally used to pass in additional structural information, e.g.,
       about the field from which this field is created as a subfield.
 
@@ -581,7 +581,7 @@ class NumberFieldFactory(UniqueFactory):
       having to factor the discriminant, but of course can lead to wrong
       results; only applies for absolute fields at present.
     - ``structure`` -- ``None`` or an instance of
-      :class:`structure.NumberFieldStructure` (default: ``None``),
+      :class:`~sage.rings.number_field.structure.NumberFieldStructure` (default: ``None``),
       internally used to pass in additional structural information, e.g.,
       about the field from which this field is created as a subfield.
 
@@ -1373,7 +1373,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     def _convert_map_from_(self, other):
         r"""
         Additional conversion maps from ``other`` may be defined by
-        :meth:`structure`.
+        :meth:`~sage.rings.number_field.number_field.NumberField_generic.structure`.
 
         .. SEEALSO::
 
@@ -3132,7 +3132,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         been specified.
 
         Fields created with the :func:`QuadraticField` or
-        :func:`CyclotomicField` constructors come with an implicit
+        :class:`CyclotomicField
+        <sage.rings.number_field.number_field.CyclotomicFieldFactory>`
+        constructors come with an implicit
         embedding. To get one of these fields without the embedding, use
         the generic :class:`NumberField` constructor.
 
@@ -3667,7 +3669,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         underlying prime (or equivalently, by norm).
 
         If there is a tie, the exact ordering should be assumed to be random.
-        See the remark in :meth:`NumberFieldIdeal._richcmp_`.
+        See the remark in ``NumberFieldIdeal._richcmp_``.
 
         EXAMPLES::
 
@@ -4573,7 +4575,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         INPUT:
 
         - ``proof`` -- if ``True`` (default), then compute the class group
-          provably correctly; call :func:`number_field_proof` to change this
+          provably correctly; call ``number_field_proof`` to change this
           default globally
 
         - ``names`` -- names of the generators of this class group
@@ -5747,7 +5749,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     def disc(self, v=None):
         """
-        Shortcut for :meth:`discriminant`.
+        Shortcut for :meth:`~sage.rings.number_field.number_field.NumberField_generic.discriminant`.
 
         EXAMPLES::
 
@@ -5788,7 +5790,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``n`` -- integer
 
         - ``proof`` -- boolean (default: ``True``, unless you called
-          :meth:`proof.number_field` and set it otherwise)
+          ``proof.number_field`` and set it otherwise)
 
         OUTPUT:
 
@@ -6221,9 +6223,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        - ``algorithm`` -- ``'pari'``, ``'gap'``, ``'kash'``, or ``'magma'``
-          (default: ``'pari'``); for degrees between 12 and 15 default is
-          ``'gap'``, and when the degree is >= 16 it is ``'kash'``)
+        - ``algorithm`` -- ``'pari'``, ``'gap'``, or ``'magma'`` (default:
+          ``'pari'``; for degrees greater than 11, ``'gap'`` is attempted
+          instead)
 
         - ``names`` -- string giving a name for the generator of the Galois
           closure of ``self``, when this field is not Galois
@@ -6305,7 +6307,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             Galois group 10T22 (S(5)[x]2) with order 240 of t^5 - t + a
         """
         from .galois_group import GaloisGroup_v2
-        return GaloisGroup_v2(self, algorithm=algorithm, names=names, gc_numbering=gc_numbering, _type=type)
+        return GaloisGroup_v2(self, algorithm=algorithm, names=names, gc_numbering=gc_numbering)
 
     def _normalize_prime_list(self, v):
         """
@@ -6814,7 +6816,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         r"""
         Return the defining polynomial of this number field.
 
-        This is exactly the same as :meth:`polynomial`.
+        This is exactly the same as :meth:`~sage.rings.number_field.number_field.NumberField_generic.polynomial`.
 
         EXAMPLES::
 
@@ -7945,7 +7947,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         - ``assume_maximal`` -- ``True``, ``False``, ``None``, or
           ``'non-maximal-non-unique'`` (default: ``'non-maximal-non-unique'``)
           ignored when ``v`` is ``None``; otherwise, controls whether we assume
-          that the order :meth:`order.is_maximal` outside of ``v``.
+          that the order ``order.is_maximal`` outside of ``v``.
 
           - if ``True``, the order is assumed to be maximal at all primes.
 
@@ -8509,7 +8511,7 @@ class NumberField_absolute(NumberField_generic):
     def absolute_polynomial(self):
         r"""
         Return absolute polynomial that defines this absolute field. This
-        is the same as :meth:`polynomial`.
+        is the same as :meth:`~sage.rings.number_field.number_field.NumberField_generic.polynomial`.
 
         EXAMPLES::
 
@@ -9108,7 +9110,7 @@ class NumberField_absolute(NumberField_generic):
         and in the other direction.
 
         For an absolute extension this is identical to
-        :meth:`vector_space`.
+        :meth:`~sage.rings.number_field.number_field_rel.NumberField_relative.vector_space`.
 
         EXAMPLES::
 
@@ -9766,8 +9768,8 @@ class NumberField_absolute(NumberField_generic):
         - ``names`` -- 2-tuple of names of generator for output field `K` and the
           subfield `\QQ(\alpha)`
         - ``structure`` -- an instance of
-          :class:`structure.NumberFieldStructure` or ``None`` (default:
-          ``None``), if ``None``, then the resulting field's :meth:`structure`
+          :class:`~sage.rings.number_field.structure.NumberFieldStructure` or ``None`` (default:
+          ``None``), if ``None``, then the resulting field's :meth:`~sage.rings.number_field.number_field.NumberField_generic.structure`
           will return isomorphisms from and to this field. Otherwise, the field
           will be equipped with ``structure``.
 
@@ -10013,7 +10015,7 @@ class NumberField_absolute(NumberField_generic):
 
     def absolute_degree(self):
         """
-        A synonym for :meth:`degree`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.degree`.
 
         EXAMPLES::
 
@@ -10026,7 +10028,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_degree(self):
         """
-        A synonym for :meth:`degree`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.degree`.
 
         EXAMPLES::
 
@@ -10039,7 +10041,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_polynomial(self):
         """
-        A synonym for :meth:`polynomial`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.polynomial`.
 
         EXAMPLES::
 
@@ -10052,7 +10054,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_vector_space(self, *args, **kwds):
         """
-        A synonym for :meth:`vector_space`.
+        A synonym for :meth:`~sage.rings.number_field.number_field_rel.NumberField_relative.vector_space`.
 
         EXAMPLES::
 
@@ -10071,7 +10073,7 @@ class NumberField_absolute(NumberField_generic):
 
     def absolute_discriminant(self):
         """
-        A synonym for :meth:`discriminant`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.discriminant`.
 
         EXAMPLES::
 
@@ -10084,7 +10086,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_discriminant(self):
         """
-        A synonym for :meth:`discriminant`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.discriminant`.
 
         EXAMPLES::
 
@@ -10097,7 +10099,7 @@ class NumberField_absolute(NumberField_generic):
 
     def absolute_different(self):
         """
-        A synonym for :meth:`different`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.different`.
 
         EXAMPLES::
 
@@ -10110,7 +10112,7 @@ class NumberField_absolute(NumberField_generic):
 
     def relative_different(self):
         """
-        A synonym for :meth:`different`.
+        A synonym for :meth:`~sage.rings.number_field.number_field.NumberField_generic.different`.
 
         EXAMPLES::
 
@@ -12336,7 +12338,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         INPUT:
 
         - ``proof`` -- boolean (default: ``True``, unless you called
-          :meth:`proof.number_field` and set it otherwise).  If
+          ``proof.number_field`` and set it otherwise).  If
           ``proof`` is ``False`` (*not* the default!), and the
           discriminant of the field is negative, then the following
           warning from the PARI manual applies:

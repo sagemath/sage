@@ -64,8 +64,7 @@ from sage.matrix.constructor import matrix
 import sage.schemes.hyperelliptic_curves.monsky_washnitzer
 
 from sage.arith.functions import lcm as LCM
-from sage.arith.misc import (binomial,
-                             GCD as gcd,
+from sage.arith.misc import (GCD as gcd,
                              prime_divisors,
                              kronecker as kronecker_symbol,
                              valuation)
@@ -620,15 +619,23 @@ class pAdicLseries(SageObject):
             [+Infinity, 3, 2, 2, 1, 1, 1, 1, 0, 0]
             sage: Lp._e_bounds(4,10)
             [+Infinity, 4, 3, 3, 2, 2, 2, 2, 1, 1]
+
+            sage: Lp = E.padic_lseries(3)
+            sage: Lp._e_bounds(0, 4)
+            [+Infinity, 0, 0, 0]
+            sage: Lp._e_bounds(2, 12)
+            [+Infinity, 2, 2, 1, 1, 1, 1, 1, 1, 0, 0, 0]
         """
-        # trac 10280: replace with new corrected code, note that the sequence has to be decreasing.
-        pn = self._p**n
-        enj = infinity
-        res = [enj]
-        for j in range(1,prec):
-            bino = valuation(binomial(pn,j),self._p)
-            enj = min(bino, enj)
-            res.append(enj)
+        # For 1 <= j < p^n, v_p(binomial(p^n, j)) = n - v_p(j).
+        # Its prefix minimum drops by one exactly at powers of p.
+        bound = ZZ(n)
+        next_drop = self._p
+        res = [infinity]
+        for j in range(1, prec):
+            if bound and j == next_drop:
+                bound -= 1
+                next_drop *= self._p
+            res.append(bound)
         return res
 
     def _get_series_from_cache(self, n, prec, D, eta):

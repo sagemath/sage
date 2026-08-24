@@ -673,8 +673,7 @@ cdef class FiniteFamily(AbstractFamily):
         """
         if self._keys is not None:
             return [self._dictionary[key] for key in self._keys]
-        else:
-            return list(self._dictionary.values())
+        return list(self._dictionary.values())
 
     def has_key(self, k) -> bool:
         """

@@ -127,6 +127,9 @@ class PolyhedralComplex(GenericCellComplex):
     r"""
     A polyhedral complex.
 
+    .. automethod:: _n_maximal_cells_sorted
+    .. automethod:: _n_cells_sorted
+
     A **polyhedral complex** `PC` is a collection of polyhedra in a certain
     ambient space `\RR^n` such that the following hold.
 
@@ -732,18 +735,18 @@ class PolyhedralComplex(GenericCellComplex):
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
           - ``sticky_vertices`` -- (default: ``False``) boolean or dict;
             whether to draw line segments between shared vertices of the given polyhedra.
-            A dict gives options for :func:`sage.plot.line`.
+            A dict gives options for :func:`sage.plot.line.line`.
           - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
-            A dict gives options for :func:`sage.plot.line`.
+            A dict gives options for :func:`sage.plot.line.line`.
 
         - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color
           to every maximal cell; otherwise, passed on to
-          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+          :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         - other keyword arguments are passed on to
-          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+          :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         EXAMPLES::
 
@@ -2529,19 +2532,19 @@ def exploded_plot(polyhedra, *,
 
     - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to
       draw line segments between shared vertices of the given polyhedra. A dict
-      gives options for :func:`sage.plot.line`.
+      gives options for :func:`sage.plot.line.line`.
 
     - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center``
       is a vertex of some of the polyhedra, whether to draw line segments
       connecting the ``center`` to the shifted copies of these vertices. A dict
-      gives options for :func:`sage.plot.line`.
+      gives options for :func:`sage.plot.line.line`.
 
     - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different
       color to every maximal cell and every vertex; otherwise, passed on to
-      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
+      :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`
 
     - other keyword arguments are passed on to
-      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
+      :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`
 
     EXAMPLES::
 

@@ -134,6 +134,7 @@ additional functionality (e.g. linear extensions).
 - Invariants
     - :meth:`tutte_polynomial() <sage.matroids.matroid.Matroid.tutte_polynomial>`
     - :meth:`characteristic_polynomial() <sage.matroids.matroid.Matroid.characteristic_polynomial>`
+    - :meth:`beta_invariant() <sage.matroids.matroid.Matroid.beta_invariant>`
     - :meth:`flat_cover() <sage.matroids.matroid.Matroid.flat_cover>`
 
 - Visualization
@@ -2387,7 +2388,7 @@ cdef class Matroid(SageObject):
         - ``k`` -- integer (optional); if provided, return only circuits of
           length `k`
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2461,7 +2462,7 @@ cdef class Matroid(SageObject):
         A *nonspanning circuit* is a circuit whose rank is strictly smaller
         than the rank of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2514,7 +2515,7 @@ cdef class Matroid(SageObject):
         """
         Return the cocircuits of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2564,7 +2565,7 @@ cdef class Matroid(SageObject):
         A *noncospanning cocircuit* is a cocircuit whose corank is strictly
         smaller than the corank of the matroid.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2653,7 +2654,7 @@ cdef class Matroid(SageObject):
         A *nonbasis* is a set with cardinality ``self.full_rank()`` that is
         not a basis.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -2766,7 +2767,7 @@ cdef class Matroid(SageObject):
 
         A *basis* is a maximal independent set.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -2819,7 +2820,7 @@ cdef class Matroid(SageObject):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -3009,7 +3010,7 @@ cdef class Matroid(SageObject):
         - ``k`` -- integer (optional); if specified, return the rank-`k`
           flats of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -3049,7 +3050,7 @@ cdef class Matroid(SageObject):
 
         - ``k`` -- integer
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -3087,7 +3088,7 @@ cdef class Matroid(SageObject):
         A *hyperplane* is a flat of rank ``self.full_rank() - 1``. A *flat* is
         a closed set.
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         .. SEEALSO::
 
@@ -3237,7 +3238,7 @@ cdef class Matroid(SageObject):
 
         - ``ordering`` -- list (optional); a total ordering of the groundset
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 
@@ -3690,8 +3691,7 @@ cdef class Matroid(SageObject):
             return {e: e for e in self.groundset()}
         if self.full_rank() == other.full_rank():
             return SetSystem(self.groundset(), self.nonbases())._isomorphism(SetSystem(other.groundset(), other.nonbases()))
-        else:
-            return None
+        return None
 
     cpdef equals(self, other):
         """
@@ -5120,13 +5120,10 @@ cdef class Matroid(SageObject):
         if len(components) == 1:
             if certificate:
                 return True, None
-            else:
-                return True
-        else:
-            if certificate:
-                return False, components[0]
-            else:
-                return False
+            return True
+        if certificate:
+            return False, components[0]
+        return False
 
     cpdef connectivity(self, S, T=None):
         r"""
@@ -5524,8 +5521,7 @@ cdef class Matroid(SageObject):
         if algorithm is None:
             if certificate:
                 return self._is_3connected_CE(True)
-            else:
-                return self._is_3connected_BC()
+            return self._is_3connected_BC()
         if algorithm == "bridges":
             return self._is_3connected_BC(certificate)
         if algorithm == "intersection":
@@ -5670,8 +5666,7 @@ cdef class Matroid(SageObject):
                 if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                     if certificate:
                         return False, X
-                    else:
-                        return False
+                    return False
                 # if h' is not spanned by I+g, then I is a connector for {e,f}, {g,h'}
                 H.intersection_update(self._closure(I.union([g])))
         g = E.pop()
@@ -5686,8 +5681,7 @@ cdef class Matroid(SageObject):
             if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                 if certificate:
                     return False, X
-                else:
-                    return False
+                return False
             # if h' is not spanned by I + f, then I is a connector for {e, g}, {f, h'}
             H.intersection_update(self._closure(I.union([f])))
         # check all 2-separations with f,g on one side, e on the other
@@ -5701,14 +5695,12 @@ cdef class Matroid(SageObject):
             if len(I) + 2 < self.full_rank():  # note: rank(S) = rank(T) = 2
                 if certificate:
                     return False, X
-                else:
-                    return False
+                return False
             # if h' is not spanned by I + e, then I is a connector for {f, g}, {e, h'}
             H.intersection_update(self._closure(I.union([e])))
         if certificate:
             return True, None
-        else:
-            return True
+        return True
 
     cpdef _is_3connected_shifting(self, certificate=False):
         r"""
@@ -5753,8 +5745,7 @@ cdef class Matroid(SageObject):
         if not self.is_connected():
             if certificate:
                 return False, self.components()[0]
-            else:
-                return False
+            return False
         if self.rank()>self.size()-self.rank():
             return self.dual()._is_3connected_shifting(certificate)
         X = set(self.basis())
@@ -6347,7 +6338,7 @@ cdef class Matroid(SageObject):
           ``False``, any output will represent ``self`` if and only if the
           matroid is binary
 
-        OUTPUT: either a :class:`BinaryMatroid`, or ``None``
+        OUTPUT: either a :class:`~sage.matroids.linear_matroid.BinaryMatroid`, or ``None``
 
         ALGORITHM:
 
@@ -6359,8 +6350,7 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`M.local_binary_matroid()
-            <sage.matroids.matroid.Matroid._local_binary_matroid>`
+            ``M.local_binary_matroid()``
 
         EXAMPLES::
 
@@ -6384,8 +6374,7 @@ cdef class Matroid(SageObject):
                 M = N
         if self.is_isomorphism(M, m):
             return M
-        else:
-            return None
+        return None
 
     cpdef is_binary(self, randomized_tests=1):
         r"""
@@ -6540,8 +6529,7 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`M._local_ternary_matroid()
-            <sage.matroids.matroid.Matroid._local_ternary_matroid>`
+            ``M._local_ternary_matroid()``
 
         EXAMPLES::
 
@@ -6565,8 +6553,7 @@ cdef class Matroid(SageObject):
                 M = N
         if self.is_isomorphism(M, m):
             return M
-        else:
-            return None
+        return None
 
     cpdef is_ternary(self, randomized_tests=1):
         r"""
@@ -8014,6 +8001,41 @@ cdef class Matroid(SageObject):
         if la is not None:
             return chi(la)
         return chi
+
+    cpdef beta_invariant(self):
+        r"""
+        Return the beta invariant of the matroid.
+
+        The *beta invariant* of a matroid `M` is defined by
+
+        .. MATH::
+
+            \beta(M) = (-1)^{r(M)} \sum_{X \subseteq E} (-1)^{|X|} r(X).
+
+        Equivalently, it can be computed from the characteristic polynomial via
+
+        .. MATH::
+
+            \beta(M) = (-1)^{r(M)-1} \left. \frac{d}{d\lambda} \chi_M(\lambda) \right|_{\lambda=1}.
+
+        The beta invariant is nonnegative and vanishes if and only if `M` is
+        disconnected, empty, or a loop.
+
+        OUTPUT: integer
+
+        EXAMPLES::
+
+            sage: M = matroids.Uniform(4, 10)
+            sage: M.beta_invariant()
+            56
+            sage: M.dual().beta_invariant() == M.beta_invariant()
+            True
+            sage: M = Matroid(groundset=[0], circuits=[[0]])
+            sage: M.beta_invariant()
+            0
+        """
+        chi = self.characteristic_polynomial()
+        return ZZ((-1) ** (self.full_rank() - 1) * chi.derivative()(1))
 
     cpdef flat_cover(self, solver=None, verbose=0, integrality_tolerance=1e-3):
         """

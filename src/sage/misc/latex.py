@@ -14,6 +14,9 @@ AUTHORS:
 - William Stein: original implementation
 
 - Joel B. Mohler: latex_variable_name() drastic rewrite and many doc-tests
+
+.. autofunction:: _default_engine
+.. autofunction:: _latex_file_
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -481,7 +484,8 @@ def default_engine():
     system. It is assumed that at least latex is available.
 
     This function is deprecated as part of the public API. There is
-    instead an internal counterpart :func:`_default_engine`, but no
+    instead an internal counterpart
+    :func:`~sage.misc.latex._default_engine`, but no
     stability promises are made with regards to its interface.
 
     EXAMPLES::
@@ -600,7 +604,7 @@ def latex_extra_preamble():
     Return the string containing the user-configured preamble,
     ``sage_latex_macros``, and any user-configured macros.  This is
     used in the :meth:`~Latex.eval` method for the :class:`Latex`
-    class, and in :func:`_latex_file_`; it follows either
+    class, and in :func:`~sage.misc.latex._latex_file_`; it follows either
     ``LATEX_HEADER`` or ``SLIDE_HEADER`` (defined at the top of this
     file) which is a string containing the documentclass and standard
     usepackage commands.

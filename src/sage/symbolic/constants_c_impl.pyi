@@ -6,5 +6,5 @@ class E(Expression):
     def __init__(self) -> None:
         ...
 
-    def __pow__(self, left: Any, right: Any, dummy: Any) -> Any:
+    def __pow__(self, left: Any, right: Any, dummy: Any) -> Any:  # noqa: PLE0302
         ...

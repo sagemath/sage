@@ -1,7 +1,8 @@
 r"""
 Index of bounds on the parameters of codes
 
-The :obj:`codes.bounds` object may be used to access the bounds that Sage can compute.
+The :mod:`codes.bounds <sage.coding.bounds_catalog>` object may be used to
+access the bounds that Sage can compute.
 
 {INDEX_OF_FUNCTIONS}
 
@@ -26,7 +27,8 @@ _lazy_import("sage.coding.code_bounds", ["codesize_upper_bound",
             "singleton_bound_asymp",
             "plotkin_bound_asymp",
             "elias_bound_asymp",
-            "mrrw1_bound_asymp"])
+            "mrrw1_bound_asymp",
+            "mrrw2_bound_asymp"])
 
 _lazy_import("sage.coding.delsarte_bounds",
             ["krawtchouk",

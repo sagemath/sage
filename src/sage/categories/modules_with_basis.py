@@ -918,7 +918,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             If ``already_echelonized`` is ``False``, then the
             generators are put in reduced echelon form using
-            :meth:`echelonize`, and reindexed by `0,1,...`.
+            :meth:`~sage.matrix.matrix2.Matrix.echelonize`, and reindexed by `0,1,...`.
 
             .. WARNING::
 
@@ -935,7 +935,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`ModulesWithBasis.FiniteDimensional.ParentMethods.quotient_module`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.quotient_module`
                  - :class:`sage.modules.with_basis.subquotient.SubmoduleWithBasis`
 
             EXAMPLES:
@@ -1095,7 +1095,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               ``self.submodule(submodule)``
 
             - ``check``, ``already_echelonized`` -- passed down to
-              :meth:`ModulesWithBasis.ParentMethods.submodule`
+              :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
 
             .. WARNING::
 
@@ -1131,7 +1131,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             .. SEEALSO::
 
-                 - :meth:`Modules.WithBasis.ParentMethods.submodule`
+                 - :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.submodule`
                  - :meth:`Rings.ParentMethods.quotient`
                  - :class:`sage.modules.with_basis.subquotient.QuotientModuleWithBasis`
             """
@@ -2414,6 +2414,46 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 3*x*y^2
             """
             return self.parent().term(*self.trailing_item(*args, **kwds))
+
+        def change_ring(self, R):
+            r"""
+            Return this element with its coefficients converted to ``R``.
+
+            INPUT:
+
+            - ``R`` -- the new base ring
+
+            EXAMPLES::
+
+                sage: F = CombinatorialFreeModule(QQ, ['a', 'b'])
+                sage: B = F.basis()
+                sage: x = B['a'] + 2*B['b']
+                sage: y = x.change_ring(ZZ)
+                sage: y
+                B['a'] + 2*B['b']
+                sage: y.parent().base_ring()
+                Integer Ring
+
+            If the base ring is unchanged, return the same element::
+
+                sage: x.change_ring(QQ) is x
+                True
+
+            Coefficients that become zero are removed::
+
+                sage: (7*B['a'] + B['b']).change_ring(GF(7))                            # needs sage.rings.finite_rings
+                B['b']
+
+            The coefficients must be convertible to the new base ring::
+
+                sage: (1/2*B['a']).change_ring(ZZ)
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
+            """
+            if R is self.base_ring():
+                return self
+            return self.map_coefficients(lambda c: c, new_base_ring=R)
 
         def map_coefficients(self, f, new_base_ring=None):
             """

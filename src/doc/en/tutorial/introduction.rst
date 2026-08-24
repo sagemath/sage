@@ -2,6 +2,11 @@
 Introduction
 ************
 
+.. note::
+
+   To try the examples in this tutorial without installing anything, use
+   the Sage Cell Server in your browser: https://sagecell.sagemath.org.
+
 This tutorial should take at most 3-4 hours to fully
 work through. You can read it in HTML or PDF versions, or from the
 Sage notebook click ``Help``, then click ``Tutorial`` to interactively
@@ -60,7 +65,7 @@ Installation
 ============
 
 If you do not have Sage installed on a computer and just
-want to try some commands, use it online at http://sagecell.sagemath.org.
+want to try some commands, use it online at https://sagecell.sagemath.org.
 
 See the Sage Installation Guide in the documentation section of the
 main Sage webpage [SA]_ for instructions on installing Sage on your

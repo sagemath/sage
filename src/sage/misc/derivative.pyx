@@ -51,7 +51,8 @@ For example::
     F.derivative([None, x, z, z, z, y, y, None, None]):
         identical to previous example
 
-For the precise specification see documentation for derivative_parse().
+For the precise specification see the documentation of
+:func:`derivative_parse`.
 
 AUTHORS:
 

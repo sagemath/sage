@@ -47,6 +47,60 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
         Traceback (most recent call last):
         ...
         ZeroDivisionError: The modulus cannot be zero
+
+    Check that :issue:`42533` is fixed: the GMP temporaries must be released
+    even when reconstruction of an entry fails::
+
+        sage: import resource
+        sage: A = matrix(ZZ, 1, 1, [12345])
+
+    The entry is genuinely not reconstructible modulo 13 (it reduces to 8,
+    while the bound on numerator and denominator is 2), so every call below
+    really does take the failing path::
+
+        sage: matrix_integer_dense_rational_reconstruction(A, 13)
+        Traceback (most recent call last):
+        ...
+        ValueError: rational reconstruction does not exist
+
+    ::
+
+        sage: def leak(N):
+        ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        ....:     for _ in range(N):
+        ....:         try:
+        ....:             matrix_integer_dense_rational_reconstruction(A, 13)
+        ....:         except ValueError:
+        ....:             pass
+        ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+    Loop (at most 30 times) until we have 6 consecutive zeros when calling
+    ``leak(10000)``. Before the fix each failing call leaked about 190 bytes::
+
+        sage: zeros = 0
+        sage: for i in range(30):  # long time
+        ....:     n = leak(10000)
+        ....:     print("Leaked {} bytes".format(n))
+        ....:     if n == 0:
+        ....:         zeros += 1
+        ....:         if zeros >= 6:
+        ....:             break
+        ....:     else:
+        ....:         zeros = 0
+        Leaked...
+        Leaked 0 bytes
+        Leaked 0 bytes
+        Leaked 0 bytes
+        Leaked 0 bytes
+        Leaked 0 bytes
+
+    Since ``ru_maxrss`` is a high-water mark, the printed lines alone would
+    also match a run that exhausted the 30 iterations without ever reaching
+    six consecutive zeros, so check that explicitly::
+
+        sage: zeros >= 6  # long time
+        True
     """
     if not N:
         raise ZeroDivisionError("The modulus cannot be zero")
@@ -65,43 +119,45 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     mpz_init(tmp)
     mpz_init(other_bnd)
     mpq_init(qtmp)
+    mpz_init(bnd)
 
-    _bnd = (N//2).isqrt()
-    mpz_init_set(bnd, _bnd.value)
-    mpz_sub(other_bnd, N.value, bnd)
+    try:
+        _bnd = (N//2).isqrt()
+        mpz_set(bnd, _bnd.value)
+        mpz_sub(other_bnd, N.value, bnd)
 
-    for i in range(A._nrows):
-        for j in range(A._ncols):
-            sig_check()
-            A.get_unsafe_mpz(i, j, a)
-            if mpz_cmp_ui(denom, 1) != 0:
-                mpz_mul(a, a, denom)
-            mpz_fdiv_r(a, a, N.value)
-            do_it = 0
-            if mpz_cmp(a, bnd) <= 0:
-                do_it = 1
-            elif mpz_cmp(a, other_bnd) >= 0:
-                mpz_sub(a, a, N.value)
-                do_it = 1
-            if do_it:
-                fmpz_set_mpz(fmpq_mat_entry_num(R._matrix, i, j), a)
+        for i in range(A._nrows):
+            for j in range(A._ncols):
+                sig_check()
+                A.get_unsafe_mpz(i, j, a)
                 if mpz_cmp_ui(denom, 1) != 0:
-                    fmpz_set_mpz(fmpq_mat_entry_den(R._matrix, i, j), denom)
-                    fmpq_canonicalise(fmpq_mat_entry(R._matrix, i, j))
+                    mpz_mul(a, a, denom)
+                mpz_fdiv_r(a, a, N.value)
+                do_it = 0
+                if mpz_cmp(a, bnd) <= 0:
+                    do_it = 1
+                elif mpz_cmp(a, other_bnd) >= 0:
+                    mpz_sub(a, a, N.value)
+                    do_it = 1
+                if do_it:
+                    fmpz_set_mpz(fmpq_mat_entry_num(R._matrix, i, j), a)
+                    if mpz_cmp_ui(denom, 1) != 0:
+                        fmpz_set_mpz(fmpq_mat_entry_den(R._matrix, i, j), denom)
+                        fmpq_canonicalise(fmpq_mat_entry(R._matrix, i, j))
+                    else:
+                        fmpz_one(fmpq_mat_entry_den(R._matrix, i, j))
                 else:
-                    fmpz_one(fmpq_mat_entry_den(R._matrix, i, j))
-            else:
-                # Otherwise have to do it the hard way
-                A.get_unsafe_mpz(i, j, tmp)
-                mpq_rational_reconstruction(qtmp, tmp, N.value)
-                mpz_lcm(denom, denom, mpq_denref(qtmp))
-                fmpq_set_mpq(fmpq_mat_entry(R._matrix, i, j), qtmp)
-
-    mpz_clear(denom)
-    mpz_clear(a)
-    mpz_clear(tmp)
-    mpz_clear(other_bnd)
-    mpz_clear(bnd)
-    mpq_clear(qtmp)
+                    # Otherwise have to do it the hard way
+                    A.get_unsafe_mpz(i, j, tmp)
+                    mpq_rational_reconstruction(qtmp, tmp, N.value)
+                    mpz_lcm(denom, denom, mpq_denref(qtmp))
+                    fmpq_set_mpq(fmpq_mat_entry(R._matrix, i, j), qtmp)
+    finally:
+        mpz_clear(denom)
+        mpz_clear(a)
+        mpz_clear(tmp)
+        mpz_clear(other_bnd)
+        mpq_clear(qtmp)
+        mpz_clear(bnd)
 
     return R

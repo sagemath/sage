@@ -468,7 +468,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
                    [3., 4., 5.]])
 
         Alternatively, numpy automatically calls this function (via
-        the magic :meth:`__array__` method) to convert Sage matrices
+        the magic ``__array__`` method) to convert Sage matrices
         to numpy arrays::
 
             sage: import numpy
@@ -503,8 +503,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
         import numpy as np
         if dtype is None or self._numpy_dtype == np.dtype(dtype):
             return self._matrix_numpy.copy()
-        else:
-            return Matrix_dense.numpy(self, dtype=dtype)
+        return Matrix_dense.numpy(self, dtype=dtype)
 
     def _replace_self_with_numpy(self, numpy_matrix):
         """

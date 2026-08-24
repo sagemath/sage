@@ -388,10 +388,10 @@ class LatticePosets(Category):
 
                 .. SEEALSO::
 
-                    If the image of rowmotion of several elements is
-                    needed,
-                    :class:`~sage.dynamics.finite_dynamical_system_catalog.semidistributive_rowmotion`
-                    is much more efficient.
+                    If the image of rowmotion of several elements is needed,
+                    ``semidistributive_rowmotion()`` from
+                    ``sage.dynamics.finite_dynamical_system_catalog`` is much
+                    more efficient.
 
                 EXAMPLES::
 

@@ -717,7 +717,7 @@ cdef class Matrix(Matrix0):
             'efdg'
 
         Alternatively, numpy automatically calls this function (via
-        the magic :meth:`__array__` method) to convert Sage matrices
+        the magic ``__array__`` method) to convert Sage matrices
         to numpy arrays::
 
             sage: # needs numpy
@@ -1144,8 +1144,7 @@ cdef class Matrix(Matrix0):
         self.cache('dense_columns', C)
         if copy:
             return list(C)
-        else:
-            return C
+        return C
 
     def dense_rows(self, copy=True):
         """
@@ -1200,8 +1199,7 @@ cdef class Matrix(Matrix0):
         self.cache('dense_rows', R)
         if copy:
             return list(R)
-        else:
-            return R
+        return R
 
     def sparse_columns(self, copy=True):
         r"""
@@ -1277,8 +1275,7 @@ cdef class Matrix(Matrix0):
         self.cache('sparse_columns', C)
         if copy:
             return list(C)
-        else:
-            return C
+        return C
 
     def sparse_rows(self, copy=True):
         r"""
@@ -1360,8 +1357,7 @@ cdef class Matrix(Matrix0):
         self.cache('sparse_rows', R)
         if copy:
             return list(R)
-        else:
-            return R
+        return R
 
     def column(self, Py_ssize_t i, from_list=False):
         """
@@ -1522,9 +1518,9 @@ cdef class Matrix(Matrix0):
             :meth:`~sage.matrix.matrix2.Matrix.subdivisions`
             and
             :meth:`~sage.matrix.matrix2.Matrix.subdivide`.
-            You might also find :func:`~sage.matrix.constructor.block_matrix`
+            You might also find :func:`~sage.matrix.special.block_matrix`
             or
-            :func:`~sage.matrix.constructor.block_diagonal_matrix`
+            :func:`~sage.matrix.special.block_diagonal_matrix`
             useful and simpler in some instances.
 
         EXAMPLES:
@@ -1836,8 +1832,8 @@ cdef class Matrix(Matrix0):
             need, you can manage subdivisions yourself with methods like
             :meth:`~sage.matrix.matrix2.Matrix.get_subdivisions` and
             :meth:`~sage.matrix.matrix2.Matrix.subdivide`.  You might
-            also find :func:`~sage.matrix.constructor.block_matrix` or
-            :func:`~sage.matrix.constructor.block_diagonal_matrix`
+            also find :func:`~sage.matrix.special.block_matrix` or
+            :func:`~sage.matrix.special.block_diagonal_matrix`
             useful and simpler in some instances.
 
         EXAMPLES:
@@ -1959,6 +1955,14 @@ cdef class Matrix(Matrix0):
             sage: F.parent()
             Full MatrixSpace of 1 by 4 dense matrices over Univariate Polynomial Ring in y over Integer Ring
 
+        Vector entries are coerced through the common base ring before
+        matching matrix implementations::
+
+            sage: A = matrix(QQ, 2, 2, [1, 2, 3, 4])
+            sage: A.augment(vector(ZZ, [5, 6]))
+            [1 2 5]
+            [3 4 6]
+
         AUTHORS:
 
         - Naqi Jaffery (2006-01-24): examples
@@ -1968,7 +1972,7 @@ cdef class Matrix(Matrix0):
 
         if not isinstance(right, sage.matrix.matrix1.Matrix):
             if hasattr(right, '_vector_'):
-                right = right.column(implementation=self.parent().Element)
+                right = right.column()
             else:
                 raise TypeError("a matrix must be augmented with another matrix, "
                                 "or a vector")
@@ -2563,7 +2567,7 @@ cdef class Matrix(Matrix0):
         .. NOTE::
 
             This method can be optimized by improving
-            :meth:`get_is_zero_unsafe` for derived matrix classes.
+            ``get_is_zero_unsafe`` for derived matrix classes.
         """
         if ring is None:
             from sage.rings.integer_ring import ZZ

@@ -382,7 +382,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
       algorithm as described above. Usually a small number. It has to be at most
       the largest allowed number of errors. A good choice will be approximated
       if this option is not set; see
-      :meth:`sage.coding.LeeBrickellISDAlgorithm.calibrate`
+      :meth:`sage.coding.information_set_decoder.LeeBrickellISDAlgorithm.calibrate`
       for details.
 
     EXAMPLES::
@@ -435,13 +435,13 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         The Lee-Brickell algorithm as described in the class doc.
 
         Note that either parameters must be given at construction time or
-        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.calibrate()`
+        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.calibrate`
         should be called before calling this method.
 
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in the ambient space of
-          :meth:`decoder.Decoder.code`
+          :meth:`sage.coding.decoder.Decoder.code`
 
         OUTPUT: a codeword whose distance to `r` satisfies ``self.decoding_interval()``.
 
@@ -520,9 +520,9 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         We don't explicitly estimate `\rho`.
 
         OUTPUT: does not output anything but sets private fields used by
-        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.parameters()`
+        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.parameters`
         and
-        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.time_estimate()`.
+        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.time_estimate`.
 
         EXAMPLES::
 
@@ -695,7 +695,7 @@ class LinearCodeInformationSetDecoder(Decoder):
     EXAMPLES:
 
     The principal way to access this class is through the
-    :meth:`sage.code.linear_code.AbstractLinearCode.decoder` method::
+    :meth:`sage.coding.abstract_code.AbstractCode.decoder` method::
 
         sage: C = codes.GolayCode(GF(3))
         sage: D = C.decoder('InformationSet', 2); D
@@ -921,9 +921,10 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         INPUT:
 
-        - ``r`` -- a vector in the ambient space of :meth:`decoder.Decoder.code`
+        - ``r`` -- a vector in the ambient space of
+          :meth:`sage.coding.decoder.Decoder.code`
 
-        OUTPUT: a codeword of :meth:`decoder.Decoder.code`
+        OUTPUT: a codeword of :meth:`sage.coding.decoder.Decoder.code`
 
         EXAMPLES::
 

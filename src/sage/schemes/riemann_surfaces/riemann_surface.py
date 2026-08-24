@@ -549,7 +549,7 @@ class RiemannSurface:
     circular domains using Cauchy's form of the remainder in Taylor approximation
     coupled to Fujiwara's bound on polynomial roots (see Bruin-DisneyHogg-Gao,
     in preparation). Note this method of bounding on circular domains is also
-    implemented in :meth:`_compute_delta`. The net result of this bounding is
+    implemented in ``_compute_delta``. The net result of this bounding is
     that one can know (an upper bound on) the number of nodes required to achieve
     a certain error. This means that for any given integral, assuming that the
     same number of nodes is required by both methods in order to achieve the
@@ -2113,7 +2113,7 @@ class RiemannSurface:
 
         - ``bounding_data`` -- tuple containing the data required for bounding
           the integrands. This should be in the form of the output from
-          :meth:`_bounding_data`.
+          ``_bounding_data``.
 
         OUTPUT: a complex number, the value of the line integral
 
@@ -3540,7 +3540,7 @@ class RiemannSurface:
 
         - ``divisor`` -- list. A list with each entry a tuple of the form ``(v, P)``,
           where ``v`` is the valuation of the divisor at point ``P``, ``P`` as per
-          the input to :meth:`_aj_based`.
+          the input to ``_aj_based``.
 
         - ``verbose`` -- logical (default: ``False``); whether to report the progress
           of the computation, in terms of how many elements of the list ``divisor``
@@ -3864,7 +3864,7 @@ class RiemannSurface:
 
         Given ``divisor`` in ``Curve(self.f).function_field().divisor_group()``,
         consisting of places above finite points in the base, return an equivalent
-        divisor list suitable for input into :meth:`abel_jacboi`.
+        divisor list suitable for input into :meth:`abel_jacobi`.
 
         INPUT:
 

@@ -160,7 +160,7 @@ cpdef DisjointSet(arg):
         if arg < 0:
             raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
-    elif isinstance(arg, SetPartition):
+    if isinstance(arg, SetPartition):
         d = DisjointSet_of_hashables(arg.base_set())
         for part in arg:
             it = iter(part)
@@ -171,8 +171,7 @@ cpdef DisjointSet(arg):
             for x in it:
                 d.union(first, x)
         return d
-    else:
-        return DisjointSet_of_hashables(arg)
+    return DisjointSet_of_hashables(arg)
 
 cdef class DisjointSet_class(SageObject):
     r"""
@@ -520,7 +519,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         .. NOTE::
 
             This method performs input checks. To avoid them you may directly
-            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_find`.
+            use ``OP_find``.
         """
         card = self._nodes.degree
         if i < 0 or i >= card:
@@ -562,7 +561,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         .. NOTE::
 
             This method performs input checks. To avoid them you may directly
-            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_join`.
+            use ``OP_join``.
         """
         cdef int card = self._nodes.degree
         if i < 0 or i >= card:
