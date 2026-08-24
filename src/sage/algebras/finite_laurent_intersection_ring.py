@@ -1,37 +1,45 @@
 r"""
-FLIR (Finite Intersection Laurent Rings): a class for working with FLIRs and their elements.
+FiniteLaurentIntersectionRing (Finite Intersection Laurent Rings): a class for working with FLIRs and their elements.
 
-A FLIR is represented by a base chart (a Laurent polynomial ring over a field)
+A FiniteLaurentIntersectionRing is represented by a base chart (a Laurent polynomial ring over a field)
 and a list of additional charts, each defined by explicit substitutions from the base chart.
-The class supports operations on FLIR elements, including factorization into prime divisors.
+The class supports operations on FiniteLaurentIntersectionRing elements, including factorization into prime divisors.
 It also supports computations of divisors and class groups.
 
 This file provides two main classes:
 
-- :class:`FLIR`
+- :class:`FiniteLaurentIntersectionRing`
 
-- :class:`FLIRElement`
+- :class:`FiniteLaurentIntersectionRingElement`
 
-:class:`FLIR` represents a FLIR, which is a finite intersection of Laurent polynomial rings over a field.
+- :class:`FiniteLaurentIntersectionRing` represents a FiniteLaurentIntersectionRing, which is a finite intersection of Laurent polynomial rings over a field.
+
 It provides, besides all the algebraic features,methods for working with the divisor group, class group, and prime divisors.
-A FLIR is represented by a base chart and a list of additional charts, each defined by explicit substitutions from the base chart.
+A FiniteLaurentIntersectionRing is represented by a base chart and a list of additional charts, each defined by explicit substitutions from the base chart.
 
-:class:`FLIRElement` represents an element of a FLIR. It provides methods for factorization into irreducibles and for computing the divisor of an element.
+- :class:`FiniteLaurentIntersectionRingElement` represents an element of a FiniteLaurentIntersectionRing.
+
+It provides methods for factorization into irreducibles and for computing the divisor of an element.
 
 
 Auxiliary classes:
-- :class:`FLIRChart` -- a Laurent polynomial ring with a specified fraction field and birational maps.
 
-- :class:`FLIRPrimeDivisor` -- a height-one prime ideal of a FLIR, represented by a chart and an irreducible polynomial.
+- :class:`FiniteLaurentIntersectionRingChart` -- a Laurent polynomial ring with a specified fraction field
+  and birational maps.
 
-- :class:`FLIRDivisor` -- an element of the divisor group of a FLIR, represented as a formal sum of prime divisors.
+- :class:`FiniteLaurentIntersectionRingPrimeDivisor` -- a height-one prime ideal of a FiniteLaurentIntersectionRing,
+  represented by a chart and an irreducible polynomial.
 
-- :class:`FLIRDivisorGroup` -- the free abelian group on the prime divisors of a FLIR.
+- :class:`FiniteLaurentIntersectionRingDivisor` -- an element of the divisor group of a FiniteLaurentIntersectionRing,
+  represented as a formal sum of prime divisors.
 
-- :class:`ClassGroupData` -- a data structure for storing class group information, including the group itself, the map from divisors to classes, and the list of prime divisors.
+- :class:`FiniteLaurentIntersectionRingDivisorGroup` -- the free abelian group on the prime divisors of a FiniteLaurentIntersectionRing.
 
-- :class:`FLIRFactorization` -- a data structure for storing the factorization of an element of a FLIR into irreducibles.
+- :class:`ClassGroupData` -- a data structure for storing class group information, including the group itself, the map from divisors to classes,
+  and the list of prime divisors.
 
+- :class:`FiniteLaurentIntersectionRingFactorization` -- a data structure for storing the factorization
+  of an element of a FiniteLaurentIntersectionRing into irreducibles.
 
 
 REFERENCES:
@@ -48,26 +56,27 @@ EXAMPLES:
 
 We begin by creating a base chart and a simple birational chart defined by `y_1 = x_1` and `y_2 = x_2/x_1`::
 
+    sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart, FiniteLaurentIntersectionRing, example_A3
     sage: K = QQ
-    sage: C0 = FLIRChart.base(K, ("x1","x2"))
+    sage: C0 = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
     sage: x1, x2 = C0.F.gens()
-    sage: C1 = FLIRChart(K, ("y1","y2"), base_fraction_field=C0.F,
+    sage: C1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"), base_fraction_field=C0.F,
     ....:              this_to_base=[x1, x2/x1])
     sage: C1.compute_base_to_this(C0)
     sage: C1.base_to_this
     [y1, y1*y2]
 
-Then a FLIR can be created from the base chart and the additional chart::
+Then a FiniteLaurentIntersectionRing can be created from the base chart and the additional chart::
 
-    sage: A = FLIR(C0, [C1])
+    sage: A = FiniteLaurentIntersectionRing(C0, [C1])
     sage: A
-    FLIR over Rational Field
+    FiniteLaurentIntersectionRing over Rational Field
       rank n = 2
       #charts = 1
       base vars = ('x1', 'x2')
 
 
-Simple operations on FLIR behave as expected::
+Simple operations on FiniteLaurentIntersectionRing behave as expected::
 
     sage: f = x1 + x2
     sage: g = x1*x2
@@ -76,17 +85,17 @@ Simple operations on FLIR behave as expected::
     sage: A(f * g)
     x1^2*x2 + x1*x2^2
 
-More attention must be paid to division, as the result may not be in the FLIR::
+More attention must be paid to division, as the result may not be in the FiniteLaurentIntersectionRing::
 
     sage: A(f / g)
     (x1 + x2)/(x1*x2)
     sage: A(g / f)
     Traceback (most recent call last):
     ...
-    ValueError: Not in FLIR: not Laurent in chart ('y1', 'y2').
+    ValueError: Not in FiniteLaurentIntersectionRing: not Laurent in chart ('y1', 'y2').
     Substituted: y1*y2/(y2 + 1)
 
-We can compute the divisor class group of a FLIR::
+We can compute the divisor class group of a FiniteLaurentIntersectionRing::
 
     sage: A.class_group()
     Trivial Abelian group
@@ -94,8 +103,9 @@ We can compute the divisor class group of a FLIR::
     sage: A3.class_group()
     Multiplicative Abelian group isomorphic to Z
 
-We can also compute the divisor of an element of the FLIR::
+We can also compute the divisor of an element of the FiniteLaurentIntersectionRing::
 
+    sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
     sage: z1, z2, z3 = A3._base_gens()
     sage: z = A3(z1*z3)
     sage: A3.divisor(z)
@@ -111,7 +121,7 @@ and the image of the divisor in the class group::
 
 
 
-One can also compute the factorization of an element of the FLIR into irreducibles.
+One can also compute the factorization of an element of the FiniteLaurentIntersectionRing into irreducibles.
 
     sage: w = A3(z2 + 1)
     sage: w.factor()
@@ -130,7 +140,7 @@ Moreover, the factorization can be represented in a verbose way::
 
 """
 
-from typing import Any
+from typing import Any, Dict
 from dataclasses import dataclass
 
 from sage.categories.additive_groups import AdditiveGroups
@@ -155,7 +165,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 # -----------------------------------------------------------------------------
 
 
-class FLIRChart:
+class FiniteLaurentIntersectionRingChart:
     r"""
     A birational chart for a fixed base fraction field.
 
@@ -190,17 +200,18 @@ class FLIRChart:
 
     EXAMPLES::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
         sage: K = QQ
-        sage: C0 = FLIRChart.base(K, ("x1","x2"))
+        sage: C0 = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: C0
-        FLIRChart(('x1', 'x2'))over Rational Field with substitutions:
+        FiniteLaurentIntersectionRingChart(('x1', 'x2'))over Rational Field with substitutions:
           x1 -> x1
           x2 -> x2
 
     A simple birational chart given by `y_1 = x_1` and `y_2 = x_2/x_1`::
 
         sage: x1, x2 = C0.F.gens()
-        sage: C1 = FLIRChart(K, ("y1","y2"), base_fraction_field=C0.F,
+        sage: C1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"), base_fraction_field=C0.F,
         ....:              this_to_base=[x1, x2/x1])
         sage: C1.compute_base_to_this(C0)
         sage: C1.base_to_this
@@ -212,9 +223,9 @@ class FLIRChart:
     TESTS::
 
         sage: K = QQ
-        sage: C0 = FLIRChart.base(K, ("x1","x2"))
+        sage: C0 = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = C0.F.gens()
-        sage: C1 = FLIRChart(K, ("y1","y2"), base_fraction_field=C0.F,
+        sage: C1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"), base_fraction_field=C0.F,
         ....:              this_to_base=[x1, x2/x1])
         sage: C1.compute_base_to_this(C0)
         sage: phi = C0.F.hom(C1.base_to_this, codomain=C1.F)      # x -> g(y)
@@ -234,6 +245,7 @@ class FLIRChart:
         base_to_this=None,
         this_to_base=None,
     ):
+
         r"""
         Initialize a chart.
 
@@ -253,8 +265,9 @@ class FLIRChart:
 
         TESTS::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
             sage: K = QQ
-            sage: C = FLIRChart(K, ("y1","y2"))
+            sage: C = FiniteLaurentIntersectionRingChart(K, ("y1","y2"))
             sage: C.n
             2
             sage: C.base_fraction_field is None
@@ -289,7 +302,8 @@ class FLIRChart:
 
         EXAMPLES::
 
-            sage: C = FLIRChart.base(QQ, ("x","y"))
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("x","y"))
             sage: C.base_fraction_field == C.F
             True
             sage: C.base_to_this
@@ -304,7 +318,7 @@ class FLIRChart:
         return chart
 
     def __eq__(self, other):
-        if not isinstance(other, FLIRChart):
+        if not isinstance(other, FiniteLaurentIntersectionRingChart):
             return NotImplemented
         return (
             self.base_ring == other.base_ring
@@ -342,10 +356,11 @@ class FLIRChart:
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
             sage: K = QQ
-            sage: C0 = FLIRChart.base(K, ("x1","x2"))
+            sage: C0 = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
             sage: x1, x2 = C0.F.gens()
-            sage: C1 = FLIRChart(K, ("y1","y2"),
+            sage: C1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"),
             ....:              base_fraction_field=C0.F,
             ....:              this_to_base=[x1, x2/x1])
             sage: C1.compute_base_to_this(C0)
@@ -354,7 +369,7 @@ class FLIRChart:
 
         TESTS::
 
-            sage: C = FLIRChart(QQ, ("y1","y2"))
+            sage: C = FiniteLaurentIntersectionRingChart(QQ, ("y1","y2"))
             sage: C._substitute_from_base(1)
             Traceback (most recent call last):
             ...
@@ -385,7 +400,8 @@ class FLIRChart:
 
         EXAMPLES::
 
-            sage: C = FLIRChart.base(QQ, ("y1","y2"))
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("y1","y2"))
             sage: y1, y2 = C.L.gens()
             sage: h = y1^-2 * y2 + y1^-1
             sage: g, u = C._laurent_poly_to_poly_up_to_unit(h)
@@ -396,7 +412,7 @@ class FLIRChart:
 
         TESTS::
 
-            sage: C = FLIRChart.base(QQ, ("y1","y2"))
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("y1","y2"))
             sage: C._laurent_poly_to_poly_up_to_unit(0)
             Traceback (most recent call last):
             ...
@@ -416,13 +432,13 @@ class FLIRChart:
         gP = self.P(gL)  # exponents now >= 0
         return gP, shift
 
-    def compute_base_to_this(self, base_chart: "FLIRChart"):
+    def compute_base_to_this(self, base_chart: "FiniteLaurentIntersectionRingChart"):
         r"""
         Compute ``base_to_this`` as the inverse of ``this_to_base`` by elimination.
 
         INPUT:
 
-        - ``base_chart`` -- a :class:`FLIRChart`; the base chart. It must satisfy
+        - ``base_chart`` -- a :class:`FiniteLaurentIntersectionRingChart`; the base chart. It must satisfy
           ``base_chart.F == self.base_fraction_field`` and have the same dimension.
 
         OUTPUT:
@@ -443,10 +459,11 @@ class FLIRChart:
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
             sage: K = QQ
-            sage: C0 = FLIRChart.base(K, ("x1","x2"))
+            sage: C0 = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
             sage: x1, x2 = C0.F.gens()
-            sage: C1 = FLIRChart(K, ("y1","y2"), base_fraction_field=C0.F,
+            sage: C1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"), base_fraction_field=C0.F,
             ....:              this_to_base=[x1, x2/x1])
             sage: C1.compute_base_to_this(C0)
             sage: C1.base_to_this
@@ -455,16 +472,16 @@ class FLIRChart:
         TESTS::
 
             sage: K = QQ
-            sage: C0 = FLIRChart.base(K, ("x1","x2"))
+            sage: C0 = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
             sage: x1, x2 = C0.F.gens()
-            sage: Cbad = FLIRChart(K, ("y1","y2"), base_fraction_field=C0.F)
+            sage: Cbad = FiniteLaurentIntersectionRingChart(K, ("y1","y2"), base_fraction_field=C0.F)
             sage: Cbad.compute_base_to_this(C0)
             Traceback (most recent call last):
             ...
             ValueError: Cannot invert: this_to_base is not set.
 
-            sage: C0b = FLIRChart.base(K, ("x1","x2","x3"))
-            sage: C1 = FLIRChart(K, ("y1","y2"), base_fraction_field=C0.F,
+            sage: C0b = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2","x3"))
+            sage: C1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"), base_fraction_field=C0.F,
             ....:              this_to_base=[x1, x2/x1])
             sage: C1.compute_base_to_this(C0b)
             Traceback (most recent call last):
@@ -562,24 +579,25 @@ class FLIRChart:
     def _repr_(self):
 
         if self.this_to_base is not None:
-            lines = [f"FLIRChart({self.var_names})over {self.base_ring} with substitutions:"]
+            lines = [f"FiniteLaurentIntersectionRingChart({self.var_names})over {self.base_ring} with substitutions:"]
             for name, img in zip(self.var_names, self.this_to_base):
                 lines.append(f"  {name} -> {img}")
             return "\n".join(lines)
 
-        return f"FLIRChart({self.var_names}) over {self.base_ring}. No substitution data."
+        else:
+            return f"FiniteLaurentIntersectionRingChart({self.var_names}) over {self.base_ring}. No substitution data."
 
     __repr__ = _repr_
 
 
 @dataclass(frozen=True)
-class FLIRPrimeDivisor:
+class FiniteLaurentIntersectionRingPrimeDivisor:
     r"""
-    A prime divisor (i.e., height-one prime) used in the divisor ideals group of a FLIR.
+    A prime divisor (i.e., height-one prime) used in the divisor ideals group of a FiniteLaurentIntersectionRing.
 
     A prime divisor is represented by:
 
-    - ``chart`` -- a :class:`FLIRChart`; the chart in which the prime is defined
+    - ``chart`` -- a :class:`FiniteLaurentIntersectionRingChart`; the chart in which the prime is defined
 
     - ``irreducible`` -- an irreducible polynomial in ``chart.P`` (typically normalized
       to have leading coefficient 1)
@@ -587,46 +605,47 @@ class FLIRPrimeDivisor:
 
     EXAMPLES::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart, FiniteLaurentIntersectionRingPrimeDivisor
         sage: K = QQ
-        sage: C = FLIRChart.base(K, ("x1","x2"))
+        sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
-        sage: P = FLIRPrimeDivisor(C, x1 + 1)
+        sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
         sage: P
         PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)
 
     TESTS::
 
         sage: K = QQ
-        sage: C = FLIRChart.base(K, ("x1","x2"))
+        sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
-        sage: P1 = FLIRPrimeDivisor(C, x1 + 1)
-        sage: P2 = FLIRPrimeDivisor(C, x1 + 1)
+        sage: P1 = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
+        sage: P2 = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
         sage: P1 == P2
         True
         sage: d = {P1: 3}
         sage: d[P2]
         3
     """
-    chart: FLIRChart
+    chart: FiniteLaurentIntersectionRingChart
     irreducible: Any
 
     def __repr__(self):
         return f"PrimeDivisor(chart={self.chart.var_names}, p={self.irreducible})"
 
 
-class FLIRDivisor(Element):
+class FiniteLaurentIntersectionRingDivisor(Element):
     r"""
     An element of the divisor group ``Div(A)``.
 
     A divisor is a finitely supported formal `\\ZZ`-linear combination of prime divisors.
     It is stored as a dictionary ``{P: e}`` where:
 
-    - ``P`` is a :class:`FLIRPrimeDivisor`
+    - ``P`` is a :class:`FiniteLaurentIntersectionRingPrimeDivisor`
     - ``e`` is an integer in ``ZZ``
 
     INPUT:
 
-    - ``parent`` -- a :class:`FLIRDivisorGroup`
+    - ``parent`` -- a :class:`FiniteLaurentIntersectionRingDivisorGroup`
 
     - ``data`` -- (optional) either a dict ``{prime: exponent}`` or an iterable of
         pairs ``(prime, exponent)``
@@ -635,17 +654,19 @@ class FLIRDivisor(Element):
 
     EXAMPLES::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart, FiniteLaurentIntersectionRingPrimeDivisor
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
         sage: K = QQ
-        sage: C = FLIRChart.base(K, ("x1","x2"))
+        sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
-        sage: P = FLIRPrimeDivisor(C, x1 + 1)
-        sage: Q = FLIRPrimeDivisor(C, x2 + 1)
+        sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
+        sage: Q = FiniteLaurentIntersectionRingPrimeDivisor(C, x2 + 1)
         sage: # Build a tiny fake divisor group just for examples:
         sage: class _DummyA: pass
-        sage: G = FLIRDivisorGroup(_DummyA())
+        sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
         sage: D = G({P: 2, Q: -1}); D
         2*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1) +
-        -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
+         -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
         sage: D.support() == {P, Q}
         True
         sage: D.coeff(P), D.coeff(Q)
@@ -656,21 +677,21 @@ class FLIRDivisor(Element):
         sage: E = G({P: 1})
         sage: D + E
         3*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1) +
-        -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
+         -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
         sage: D - E
         1*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1) +
-        -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
+         -1*PrimeDivisor(chart=('x1', 'x2'), p=x2 + 1)
         sage: -E
         -1*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)
 
     TESTS::
 
         sage: K = QQ
-        sage: C = FLIRChart.base(K, ("x1","x2"))
+        sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
-        sage: P = FLIRPrimeDivisor(C, x1 + 1)
+        sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
         sage: class _DummyA: pass
-        sage: G = FLIRDivisorGroup(_DummyA())
+        sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
         sage: (G({P: 1}) + G({P: -1}))
         0
     """
@@ -711,13 +732,16 @@ class FLIRDivisor(Element):
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingPrimeDivisor
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
             sage: K = QQ
-            sage: C = FLIRChart.base(K, ("x1","x2"))
+            sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
-            sage: P = FLIRPrimeDivisor(C, x1 + 1)
-            sage: Q = FLIRPrimeDivisor(C, x2 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
+            sage: Q = FiniteLaurentIntersectionRingPrimeDivisor(C, x2 + 1)
             sage: class _DummyA: pass
-            sage: G = FLIRDivisorGroup(_DummyA())
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
             sage: G({P: 1}) == G({P: 1})
             True
             sage: G({P: 1, Q: 2}) == G({Q: 2, P: 1})
@@ -737,12 +761,15 @@ class FLIRDivisor(Element):
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingPrimeDivisor
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
             sage: K = QQ
-            sage: C = FLIRChart.base(K, ("x1","x2"))
+            sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
-            sage: P = FLIRPrimeDivisor(C, x1 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
             sage: class _DummyA: pass
-            sage: G = FLIRDivisorGroup(_DummyA())
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
             sage: D = G({P: 3})
             sage: D.support()
             {PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)}
@@ -755,11 +782,14 @@ class FLIRDivisor(Element):
 
         EXAMPLES::
 
-            sage: C = FLIRChart.base(QQ, ("x1","x2"))
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingPrimeDivisor
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
-            sage: P = FLIRPrimeDivisor(C, x1 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
             sage: class _DummyA: pass
-            sage: G = FLIRDivisorGroup(_DummyA())
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
             sage: D = G({P: 3})
             sage: D.coeff(P)
             3
@@ -772,13 +802,16 @@ class FLIRDivisor(Element):
 
         EXAMPLES::
 
-            sage: C = FLIRChart.base(QQ, ("x1","x2"))
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingPrimeDivisor
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
             sage: x1, x2 = C.P.gens()
-            sage: P = FLIRPrimeDivisor(C, x1 + 1)
-            sage: Q = FLIRPrimeDivisor(C, x2 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
+            sage: Q = FiniteLaurentIntersectionRingPrimeDivisor(C, x2 + 1)
             sage: class _DummyA: pass
-            sage: G = FLIRDivisorGroup(_DummyA())
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
             sage: D = G({P: 3, Q: 5})
             sage: D.coeffs()
             [3, 5]
@@ -818,12 +851,15 @@ class FLIRDivisor(Element):
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingPrimeDivisor
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
             sage: K = QQ
-            sage: C = FLIRChart.base(K, ("x1","x2"))
+            sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
-            sage: P = FLIRPrimeDivisor(C, x1 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
             sage: class _DummyA: pass
-            sage: G = FLIRDivisorGroup(_DummyA())
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
             sage: G({P: 2}).is_effective()
             True
             sage: G({P: -1}).is_effective()
@@ -833,15 +869,16 @@ class FLIRDivisor(Element):
 
     def is_principal(self):
         r"""
-        Return whether this divisor is principal in the ambient FLIR.
+        Return whether this divisor is principal in the ambient FiniteLaurentIntersectionRing.
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3, FiniteLaurentIntersectionRingPrimeDivisor
             sage: A = example_A3()
             sage: C = A.charts
             sage: c = C[0]
             sage: x1, x2, x3 = c.P.gens()
-            sage: P = FLIRPrimeDivisor(c, x1 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(c, x1 + 1)
             sage: Q = A.extra_primes()
             sage: q = Q[3]
             sage: D = A.divisor_group()({P: 1, q: 2})
@@ -854,7 +891,7 @@ class FLIRDivisor(Element):
         .. WARNING::
 
             This method requires that the parent divisor group was created by a
-            :class:`FLIR` instance, i.e. ``self.parent().flir()`` must exist.
+            :class:`FiniteLaurentIntersectionRing` instance, i.e. ``self.parent().flir()`` must exist.
         """
         return self.parent().flir().is_principal_divisor(self)
 
@@ -866,11 +903,12 @@ class FLIRDivisor(Element):
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3, FiniteLaurentIntersectionRingPrimeDivisor
             sage: A = example_A3()
             sage: C = A.charts
             sage: c = C[0]
             sage: x1, x2, x3 = c.P.gens()
-            sage: P = FLIRPrimeDivisor(c, x2 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(c, x2 + 1)
             sage: Q = A.extra_primes()[2]
             sage: D = A.divisor_group()({P: 1, Q: 1})
             sage: D.is_principal()
@@ -881,33 +919,36 @@ class FLIRDivisor(Element):
         .. WARNING::
 
             This method requires that the parent divisor group was created by a
-            :class:`FLIR` instance, i.e. ``self.parent().flir()`` must exist.
+            :class:`FiniteLaurentIntersectionRing` instance, i.e. ``self.parent().flir()`` must exist.
         """
         if not self.is_principal():
             raise ValueError("Not a principal divisor.")
         return self.parent().flir().principal_generator(self)
 
 
-class FLIRDivisorGroup(Parent):
+class FiniteLaurentIntersectionRingDivisorGroup(Parent):
     r"""
-    The divisor group ``Div(A)`` of a FLIR.
+    The divisor group ``Div(A)`` of a FiniteLaurentIntersectionRing.
 
     This is the free abelian group on the height-1 prime ideals of `A`,
     implemented as finitely supported formal sums.
 
-    Elements are instances of :class:`FLIRDivisor`, represented internally by a dict
+    Elements are instances of :class:`FiniteLaurentIntersectionRingDivisor`, represented internally by a dict
     ``{prime: exponent}`` with coefficients in ``ZZ``.
 
     INPUT:
 
-    - ``flir`` -- the ambient :class:`FLIR` (or an object providing the same interface)
+    - ``flir`` -- the ambient :class:`FiniteLaurentIntersectionRing` (or an object providing the same interface)
 
     - ``base_ring`` -- (default: ``ZZ``) the coefficient ring for divisor coefficients
 
     EXAMPLES::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingPrimeDivisor
         sage: class _DummyA: pass
-        sage: G = FLIRDivisorGroup(_DummyA()); G
+        sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA()); G
         Divisor group Div(A) of <..._DummyA...> with coefficients in Integer Ring
         sage: G.zero()
         0
@@ -915,9 +956,9 @@ class FLIRDivisorGroup(Parent):
     Creating divisors::
 
         sage: K = QQ
-        sage: C = FLIRChart.base(K, ("x1","x2"))
+        sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = C.P.gens()
-        sage: P = FLIRPrimeDivisor(C, x1 + 1)
+        sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
         sage: D = G.prime(P); D
         1*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)
 
@@ -925,12 +966,12 @@ class FLIRDivisorGroup(Parent):
         2*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)
     """
 
-    Element = FLIRDivisor
+    Element = FiniteLaurentIntersectionRingDivisor
 
     def __init__(self, flir, base_ring=ZZ):
         self._A = flir
         self._base_ring = base_ring
-        Parent.__init__(self, category=AdditiveGroups()) # type: ignore[call-arg]
+        Parent.__init__(self, category=AdditiveGroups())  # type: ignore[call-arg]
 
     def _repr_(self):
         return f"Divisor group Div(A) of {self._A} with coefficients in {self._base_ring}"
@@ -942,11 +983,11 @@ class FLIRDivisorGroup(Parent):
         INPUT:
 
         - ``x`` -- ``None`` (zero divisor), a dict, an iterable of pairs, or an existing
-          :class:`FLIRDivisor` in this parent.
+          :class:`FiniteLaurentIntersectionRingDivisor` in this parent.
         """
         if x is None or x == 0:
             return self.element_class(self, {})
-        if isinstance(x, FLIRDivisor) and x.parent() is self:
+        if isinstance(x, FiniteLaurentIntersectionRingDivisor) and x.parent() is self:
             return x
         # allow dict / list of pairs
         return self.element_class(self, x)
@@ -957,8 +998,9 @@ class FLIRDivisorGroup(Parent):
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
             sage: class _DummyA: pass
-            sage: G = FLIRDivisorGroup(_DummyA())
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
             sage: G.zero()
             0
         """
@@ -970,44 +1012,48 @@ class FLIRDivisorGroup(Parent):
 
         INPUT:
 
-        - ``P`` -- a :class:`FLIRPrimeDivisor`
+        - ``P`` -- a :class:`FiniteLaurentIntersectionRingPrimeDivisor`
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingDivisorGroup
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingPrimeDivisor
             sage: K = QQ
-            sage: C = FLIRChart.base(K, ("x1","x2"))
+            sage: C = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
             sage: x1, x2 = C.P.gens()
-            sage: P = FLIRPrimeDivisor(C, x1 + 1)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(C, x1 + 1)
             sage: class _DummyA: pass
-            sage: G = FLIRDivisorGroup(_DummyA())
+            sage: G = FiniteLaurentIntersectionRingDivisorGroup(_DummyA())
             sage: G.prime(P)
             1*PrimeDivisor(chart=('x1', 'x2'), p=x1 + 1)
         """
         return self({P: 1})
 
     def flir(self):
-        """Return the ambient FLIR object associated to this divisor group."""
+        """Return the ambient FiniteLaurentIntersectionRing object associated to this divisor group."""
         return self._A
 
 
-class FLIRFactorization:
+class FiniteLaurentIntersectionRingFactorization:
     r"""
-    Formal factorizations of an element of a FLIR.
+    Formal factorizations of an element of a FiniteLaurentIntersectionRing.
 
     Conventions:
-      - self._element: a FLIRElement
-      - self._atoms: list of FLIRElement that are atoms
+      - self._element: a FiniteLaurentIntersectionRingElement
+      - self._atoms: list of FiniteLaurentIntersectionRingElement that are atoms
       - self._factorizations: list of factorizations, each factorization is a list of (atom, exponent)
 
     EXAMPLES:
 
     A non-trivial example with two distinct factorizations, illustrating that
-    a FLIR need not have unique factorization::
+    a FiniteLaurentIntersectionRing need not have unique factorization::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingFactorization, example_A2_generalized
         sage: A = example_A2_generalized()
         sage: x1, x2 = A._base_gens()
         sage: f = A((x1 + 1)**2)
-        sage: F = FLIRFactorization.from_element(f, verbose=False)
+        sage: F = FiniteLaurentIntersectionRingFactorization.from_element(f, verbose=False)
         sage: F.atoms()
         [x2, x1 + 1, (x1^2 + 2*x1 + 1)/x2]
         sage: F.num_atoms()
@@ -1021,7 +1067,7 @@ class FLIRFactorization:
 
     The verbose representation displays both factorizations::
 
-        sage: Fv = FLIRFactorization.from_element(f, verbose=True)
+        sage: Fv = FiniteLaurentIntersectionRingFactorization.from_element(f, verbose=True)
         sage: print(Fv)
         Factorizations of x1^2 + 2*x1 + 1:
         Atoms: [x2, x1 + 1, (x1^2 + 2*x1 + 1)/x2]
@@ -1048,7 +1094,7 @@ class FLIRFactorization:
     atom with exponent one::
 
         sage: g = A(x1 + x2)
-        sage: G = FLIRFactorization.from_element(g, verbose=False)
+        sage: G = FiniteLaurentIntersectionRingFactorization.from_element(g, verbose=False)
         sage: G.atoms()
         [x1 + x2]
         sage: G.num_atoms()
@@ -1061,14 +1107,14 @@ class FLIRFactorization:
         False
         sage: G
         [[(x1 + x2, 1)]]
-        sage: Gv = FLIRFactorization.from_element(g, verbose=True)
+        sage: Gv = FiniteLaurentIntersectionRingFactorization.from_element(g, verbose=True)
         sage: print(Gv)
         x1 + x2 is irreducible
 
     A unit has no atoms at all::
 
         sage: u = A.one()
-        sage: U = FLIRFactorization.from_element(u, verbose=False)
+        sage: U = FiniteLaurentIntersectionRingFactorization.from_element(u, verbose=False)
         sage: U.num_atoms()
         0
         sage: U.is_unit()
@@ -1102,7 +1148,7 @@ class FLIRFactorization:
     @classmethod
     def from_element(cls, f, verbose=False):
         """
-        Build FLIRFactorization from a FLIRElement
+        Build FiniteLaurentIntersectionRingFactorization from a FiniteLaurentIntersectionRingElement
         """
         A = f.parent()
         atoms, factorizations, units = A.factorizations(f)
@@ -1112,16 +1158,31 @@ class FLIRFactorization:
         return self._element
 
     def atoms(self):
+        """
+        Return the list of atoms appearing in any factorization.
+        An atom is a non-unit element that cannot be factored as a product of two non-units.
+        In other words, an atom is an irreducible element.
+        """
         return self._atoms
 
     def units(self):
+        """
+        Return the list of units corresponding to each factorization.
+        A unit is an element that has a multiplicative inverse in the ring.
+        """
         return self._units
 
     def has_nontrivial_units(self):
+        """
+        Return True if any factorization has a nontrivial unit (i.e., not equal to 1).
+        """
         one = self._element.parent().fraction_field(1)
         return any(u != one for u in self._units)
 
     def factorizations(self):
+        """
+        Return the list of factorizations, each factorization is a list of (atom, exponent) pairs.
+        """
         return self._factorizations
 
     def factorization(self):
@@ -1133,16 +1194,28 @@ class FLIRFactorization:
         raise ValueError("Not a unique factorization.")
 
     def num_atoms(self):
+        """
+        Return the number of distinct atoms appearing in any factorization.
+        """
         return len(self._atoms)
 
     def num_factorizations(self):
+        """
+        Return the number of distinct factorizations.
+        """
         return len(self._factorizations)
 
     def is_unit(self):
+        """
+        Return True if the element is a unit.
+        """
         return self.num_atoms() == 0
 
     def is_irreducible(self):
-        # irreducible if exactly one atom and exactly one factorization with exponent 1
+        """
+        Return True if the element is irreducible (i.e., it has exactly one atom and exactly one factorization with exponent 1).
+        An element is irreducible if it is not a unit and cannot be factored into a product of two non-units.
+        """
         return (
             self.num_atoms() == 1
             and self.num_factorizations() == 1
@@ -1322,6 +1395,7 @@ class ClassGroupData:
 
     EXAMPLES::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import ClassGroupData
         sage: M = matrix(ZZ, [[2, 0], [0, 3]])
         sage: primes = ['P1', 'P2']
         sage: data = ClassGroupData(M, primes)
@@ -1408,7 +1482,7 @@ class ClassGroupData:
         self.r = M.nrows()
         self.n = M.ncols()
 
-        self.H = FreeModule(ZZ, self.r) #H = Z^r
+        self.H = FreeModule(ZZ, self.r)  # H = Z^r
 
         # R = im(M) as a submodule of H, generated by columns of M
         # Each column is in ZZ^r -> convert to element of H
@@ -1473,6 +1547,7 @@ class ClassGroupData:
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import ClassGroupData
             sage: M = matrix(ZZ, [[4, 0],
             ....:                 [0, 2]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
@@ -1505,6 +1580,7 @@ class ClassGroupData:
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import ClassGroupData
             sage: M = matrix(ZZ, [[2],
             ....:                 [0]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
@@ -1531,6 +1607,7 @@ class ClassGroupData:
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import ClassGroupData
             sage: M = matrix(ZZ, [[2, 0], [0, 2]])
             sage: data = ClassGroupData(M, primes=("P1","P2"))
             sage: data.is_zero([2,0])
@@ -1576,10 +1653,12 @@ class ClassGroupData:
 
         - a vector in `\\ZZ^n` giving a solution `x`, if a unique solution exists;
         - if no solution exists, then either raise a ``ValueError`` (if ``require_solution=True``) or return ``None`` (if ``require_solution=False``);
-        - if infinitely many solutions exist, then either raise a ``ValueError`` (if ``require_unique=True``) or return one solution (if ``require_unique=False``).
+        - if infinitely many solutions exist, then either raise a ``ValueError`` (if ``require_unique=True``)
+          or return one solution (if ``require_unique=False``).
 
         EXAMPLES::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import ClassGroupData
             sage: # A full-rank square system (unique solution)
             sage: M = matrix(ZZ, [[3, 1],
             ....:                 [2, 1]])
@@ -1676,16 +1755,16 @@ class ClassGroupData:
         return sol
 
 # --------------------------------------------------------------------------------
-# FLIRElement
+# FiniteLaurentIntersectionRingElement
 # --------------------------------------------------------------------------------
 
 
-class FLIRElement(CommutativeAlgebraElement):
+class FiniteLaurentIntersectionRingElement(CommutativeAlgebraElement):
     r"""
-    An element of a FLIR given by an expression in the base fraction field.
+    An element of a FiniteLaurentIntersectionRing given by an expression in the base fraction field.
 
     An element is represented by an element ``f`` of the base fraction field
-    ``A.base.F``. By default we verify membership in the FLIR:
+    ``A.base.F``. By default we verify membership in the FiniteLaurentIntersectionRing:
 
     .. MATH::
 
@@ -1694,7 +1773,7 @@ class FLIRElement(CommutativeAlgebraElement):
 
     INPUT:
 
-    - ``parent`` -- a :class:`FLIR`
+    - ``parent`` -- a :class:`FiniteLaurentIntersectionRing`
 
     - ``f_in_base`` -- something coercible to ``parent._base_chart.F``
 
@@ -1702,30 +1781,31 @@ class FLIRElement(CommutativeAlgebraElement):
 
     EXAMPLES:
 
-    A FLIR with a single chart (the base chart)::
+    A FiniteLaurentIntersectionRing with a single chart (the base chart)::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
         sage: K = QQ
-        sage: base = FLIRChart.base(K, ("x1","x2"))
-        sage: A = FLIR(base, (base,), compute_base_to_charts=False)
+        sage: base = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
+        sage: A = FiniteLaurentIntersectionRing(base, (base,), compute_base_to_charts=False)
         sage: x1, x2 = base.F.gens()
         sage: f = A(x1/x2); f
         x1/x2
         sage: (f + 1) * (f - 1)
         (x1^2 - x2^2)/x2^2
 
-    A FLIR with two charts.
+    A FiniteLaurentIntersectionRing with two charts.
 
     Define a second chart by ``y1 = (x2+1)/x1`` and ``y2 = x2``::
 
         sage: K = QQ
-        sage: base = FLIRChart.base(K, ("x1","x2"))
+        sage: base = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = base.F.gens()
-        sage: ch1 = FLIRChart(K, ("y1","y2"),
+        sage: ch1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"),
         ....:              base_fraction_field=base.F,
         ....:              this_to_base=[(x2 + 1)/x1, x2])
-        sage: A = FLIR(base, (base, ch1), compute_base_to_charts=True)
+        sage: A = FiniteLaurentIntersectionRing(base, (base, ch1), compute_base_to_charts=True)
 
-    The element ``(x2+1)/x1`` lies in the FLIR (it becomes ``y1`` in the second chart)::
+    The element ``(x2+1)/x1`` lies in the FiniteLaurentIntersectionRing (it becomes ``y1`` in the second chart)::
 
         sage: f = A((x2+1)/x1); f
         (x2 + 1)/x1
@@ -1739,7 +1819,7 @@ class FLIRElement(CommutativeAlgebraElement):
         sage: A(1/(x1))
         Traceback (most recent call last):
         ...
-        ValueError: Not in FLIR: not Laurent in chart ('y1', 'y2').
+        ValueError: Not in FiniteLaurentIntersectionRing: not Laurent in chart ('y1', 'y2').
         ...
 
 
@@ -1751,12 +1831,12 @@ class FLIRElement(CommutativeAlgebraElement):
     TESTS::
 
         sage: K = QQ
-        sage: base = FLIRChart.base(K, ("x1","x2"))
+        sage: base = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
         sage: x1, x2 = base.F.gens()
-        sage: ch1 = FLIRChart(K, ("y1","y2"),
+        sage: ch1 = FiniteLaurentIntersectionRingChart(K, ("y1","y2"),
         ....:              base_fraction_field=base.F,
         ....:              this_to_base=[(x2 + 1)/x1, x2])
-        sage: A = FLIR(base, (base, ch1), compute_base_to_charts=True)
+        sage: A = FiniteLaurentIntersectionRing(base, (base, ch1), compute_base_to_charts=True)
         sage: f = A((x2+1)/x1)
         sage: g = A((x2+1)/x1)
         sage: f == g
@@ -1765,7 +1845,6 @@ class FLIRElement(CommutativeAlgebraElement):
         True
         sage: (A(1) * f) == f
         True
-
     """
 
     def __init__(self, parent, f, check=True):
@@ -1779,12 +1858,15 @@ class FLIRElement(CommutativeAlgebraElement):
 
     def _richcmp_(self, other, op):
         # mathematical comparison
-        if not isinstance(other, FLIRElement):
+        if not isinstance(other, FiniteLaurentIntersectionRingElement):
             return NotImplemented
         return richcmp((self.parent(), self._f), (other.parent(), other._f), op)
 
     @property
     def f(self):
+        """
+        Return the underlying element in the base fraction field.
+        """
         return self._f
 
     def _add_(self, other):
@@ -1805,8 +1887,8 @@ class FLIRElement(CommutativeAlgebraElement):
     def __truediv__(self, other):
         """Division in the ambient fraction field, with membership check."""
         A = self.parent()
-        if not isinstance(other, FLIRElement) or other.parent() is not A:
-            other = A(other)  # try coercion into the FLIR
+        if not isinstance(other, FiniteLaurentIntersectionRingElement) or other.parent() is not A:
+            other = A(other)  # try coercion into the FiniteLaurentIntersectionRing
 
         if other._f == 0:
             raise ZeroDivisionError("Division by zero.")
@@ -1817,7 +1899,7 @@ class FLIRElement(CommutativeAlgebraElement):
 
         return A(q, check=False)
 
-    def divisor(self) -> FLIRDivisor:
+    def divisor(self):
         """
         Compute div_A(f) as an element of Div(A).
         """
@@ -1829,7 +1911,7 @@ class FLIRElement(CommutativeAlgebraElement):
 
         # P_i-part via valuations
         Pis = A.extra_primes()
-        data: dict[FLIRPrimeDivisor, int] = {}
+        data: Dict[FiniteLaurentIntersectionRingPrimeDivisor, int] = {}
         for Pj in Pis:
             e = A._valuation_of_base_element_at_prime(self.f, Pj)
             if e != 0:
@@ -1848,7 +1930,7 @@ class FLIRElement(CommutativeAlgebraElement):
 
             if q0 in list(A._base_chart.P.gens()):
                 continue
-            Pbase = FLIRPrimeDivisor(A._base_chart, q0)
+            Pbase = FiniteLaurentIntersectionRingPrimeDivisor(A._base_chart, q0)
 
             data[Pbase] = data.get(Pbase, 0) + int(e)
             if data[Pbase] == 0:
@@ -1857,20 +1939,23 @@ class FLIRElement(CommutativeAlgebraElement):
         return DivA(data)
 
     def factor(self, verbose=False):
-        return FLIRFactorization.from_element(self, verbose=verbose)
+        """
+        Factor the element into atoms, returning a FiniteLaurentIntersectionRingFactorization.
+        """
+        return FiniteLaurentIntersectionRingFactorization.from_element(self, verbose=verbose)
 
     def atoms(self):
+        """Return the list of atoms of the element."""
         return self.factor().atoms()
 
-
 # -----------------------------------------------------------------------------
-# FLIR
+# FiniteLaurentIntersectionRing
 # -----------------------------------------------------------------------------
 
 
-class FLIR(Parent, UniqueRepresentation):
+class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     r"""
-    A finite Laurent intersection ring (FLIR).
+    A finite Laurent intersection ring (FiniteLaurentIntersectionRing).
 
     Let `K` be a field and let
 
@@ -1903,9 +1988,9 @@ class FLIR(Parent, UniqueRepresentation):
 
     INPUT:
 
-    - ``base_chart`` -- a :class:`FLIRChart`; the chosen base Laurent chart
+    - ``base_chart`` -- a :class:`FiniteLaurentIntersectionRingChart`; the chosen base Laurent chart
 
-    - ``charts`` -- iterable of :class:`FLIRChart`; the charts defining the intersection.
+    - ``charts`` -- iterable of :class:`FiniteLaurentIntersectionRingChart`; the charts defining the intersection.
       Usually this contains the base chart together with finitely many birational charts.
 
     - ``compute_base_to_charts`` -- boolean (default: ``True``); if ``True``, compute
@@ -1917,14 +2002,15 @@ class FLIR(Parent, UniqueRepresentation):
 
     EXAMPLES:
 
-    The simplest FLIR is just a Laurent polynomial ring itself, viewed as the
+    The simplest FiniteLaurentIntersectionRing is just a Laurent polynomial ring itself, viewed as the
     intersection of one chart::
 
+        sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart, example_A3
         sage: K = QQ
-        sage: C0 = FLIRChart.base(K, ("x1","x2"))
-        sage: A = FLIR(C0, (C0,), compute_base_to_charts=False)
+        sage: C0 = FiniteLaurentIntersectionRingChart.base(K, ("x1","x2"))
+        sage: A = FiniteLaurentIntersectionRing(C0, (C0,), compute_base_to_charts=False)
         sage: A
-        FLIR over Rational Field
+        FiniteLaurentIntersectionRing over Rational Field
           rank n = 2
           #charts = 1
           base vars = ('x1', 'x2')
@@ -1962,15 +2048,15 @@ class FLIR(Parent, UniqueRepresentation):
 
         y_1 = \\frac{x_2+1}{x_1}, \\qquad y_2 = x_2.
 
-    Then the corresponding FLIR consists of rational functions that are Laurent in
+    Then the corresponding FiniteLaurentIntersectionRing consists of rational functions that are Laurent in
     both the `x`-chart and the `y`-chart::
 
-        sage: base = FLIRChart.base(QQ, ("x1","x2"))
+        sage: base = FiniteLaurentIntersectionRingChart.base(QQ, ("x1","x2"))
         sage: x1, x2 = base.F.gens()
-        sage: ch1 = FLIRChart(QQ, ("y1","y2"),
+        sage: ch1 = FiniteLaurentIntersectionRingChart(QQ, ("y1","y2"),
         ....:                 base_fraction_field=base.F,
         ....:                 this_to_base=[(x2 + 1)/x1, x2])
-        sage: A = FLIR(base, (base, ch1), compute_base_to_charts=True)
+        sage: A = FiniteLaurentIntersectionRing(base, (base, ch1), compute_base_to_charts=True)
 
     The chart inverse is computed automatically::
 
@@ -1989,7 +2075,7 @@ class FLIR(Parent, UniqueRepresentation):
         sage: A(1/x1)
         Traceback (most recent call last):
         ...
-        ValueError: Not in FLIR: not Laurent in chart ('y1', 'y2').
+        ValueError: Not in FiniteLaurentIntersectionRing: not Laurent in chart ('y1', 'y2').
         ...
 
     Membership checks can be bypassed when needed for internal constructions::
@@ -2007,7 +2093,7 @@ class FLIR(Parent, UniqueRepresentation):
 
         sage: DivA = A.Div()
         sage: DivA
-        Divisor group Div(A) of FLIR over Rational Field
+        Divisor group Div(A) of FiniteLaurentIntersectionRing over Rational Field
           rank n = 2
           #charts = 2
           base vars = ('x1', 'x2') with coefficients in Integer Ring
@@ -2082,15 +2168,15 @@ class FLIR(Parent, UniqueRepresentation):
 
     Construction is unique-representation compatible::
 
-        sage: C0 = FLIRChart.base(QQ, ("x","y"))
-        sage: A1 = FLIR(C0, (C0,), compute_base_to_charts=False)
-        sage: A2 = FLIR(C0, (C0,), compute_base_to_charts=False)
+        sage: C0 = FiniteLaurentIntersectionRingChart.base(QQ, ("x","y"))
+        sage: A1 = FiniteLaurentIntersectionRing(C0, (C0,), compute_base_to_charts=False)
+        sage: A2 = FiniteLaurentIntersectionRing(C0, (C0,), compute_base_to_charts=False)
         sage: A1 is A2
         True
 
     Coercion of scalars from the base field works::
 
-        sage: A = FLIR(C0, (C0,), compute_base_to_charts=False)
+        sage: A = FiniteLaurentIntersectionRing(C0, (C0,), compute_base_to_charts=False)
         sage: A(1)
         1
         sage: A(QQ(3)/2)
@@ -2105,18 +2191,18 @@ class FLIR(Parent, UniqueRepresentation):
 
     Incomplete charts are rejected::
 
-        sage: Cbad = FLIRChart(QQ, ("u","v"), base_fraction_field=C0.F)
-        sage: FLIR(C0, (C0, Cbad), compute_base_to_charts=True)
+        sage: Cbad = FiniteLaurentIntersectionRingChart(QQ, ("u","v"), base_fraction_field=C0.F)
+        sage: FiniteLaurentIntersectionRing(C0, (C0, Cbad), compute_base_to_charts=True)
         Traceback (most recent call last):
         ...
         ValueError: Chart ('u', 'v') incomplete: need this_to_base at least.
 
     Base-field mismatch in charts is caught when inversion is requested::
 
-        sage: C0a = FLIRChart.base(QQ, ("x1","x2"))
-        sage: C0b = FLIRChart.base(QQ, ("u1","u2"))
+        sage: C0a = FiniteLaurentIntersectionRingChart.base(QQ, ("x1","x2"))
+        sage: C0b = FiniteLaurentIntersectionRingChart.base(QQ, ("u1","u2"))
         sage: x1, x2 = C0a.F.gens()
-        sage: C1 = FLIRChart(QQ, ("y1","y2"),
+        sage: C1 = FiniteLaurentIntersectionRingChart(QQ, ("y1","y2"),
         ....:                base_fraction_field=C0a.F,
         ....:                this_to_base=[x1, x2/x1])
         sage: C1.compute_base_to_this(C0b)
@@ -2124,7 +2210,7 @@ class FLIR(Parent, UniqueRepresentation):
         ...
         ValueError: Base fraction field mismatch.
     """
-    Element = FLIRElement
+    Element = FiniteLaurentIntersectionRingElement
 
     @staticmethod
     def __classcall__(cls, base_chart, charts, compute_base_to_charts=True, category=None):
@@ -2139,7 +2225,7 @@ class FLIR(Parent, UniqueRepresentation):
             category=category,
         )
 
-    def _init_flir_structure(self, base_chart: FLIRChart, charts, compute_base_to_charts=True):
+    def _init_flir_structure(self, base_chart: FiniteLaurentIntersectionRingChart, charts, compute_base_to_charts=True):
         self._base_chart = base_chart
         self.charts = list(charts)
         self.n = self._base_chart.n
@@ -2159,32 +2245,34 @@ class FLIR(Parent, UniqueRepresentation):
                 if ch.base_to_this is None or ch.this_to_base is None:
                     raise ValueError(f"Chart {ch.var_names} incomplete: need this_to_base at least.")
 
-    def __init__(self, base_chart: FLIRChart, charts, compute_base_to_charts=True, category=None):
+    def __init__(self, base_chart: FiniteLaurentIntersectionRingChart, charts, compute_base_to_charts=True, category=None):
         self._init_flir_structure(base_chart, charts, compute_base_to_charts=compute_base_to_charts)
 
         if category is None:
             category = CommutativeAlgebras(base_chart.base_ring.category())
 
         Parent.__init__(self, base=self._base_chart.base_ring, category=category)
-        self.element_class = self.Element # type: ignore[assignment]
+        self.element_class = self.Element  # type: ignore[assignment]
 
     @property
     def fraction_field(self):
         r"""
-        The fraction field of the FLIR is the fraction field of the base Laurent ring.
+        The fraction field of the FiniteLaurentIntersectionRing is the fraction field of the base Laurent ring.
 
         EXAMPLES::
 
-            sage: C = FLIRChart.base(QQ, ("x","y"))
-            sage: A = FLIR(C, (C,), compute_base_to_charts=False)
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("x","y"))
+            sage: A = FiniteLaurentIntersectionRing(C, (C,), compute_base_to_charts=False)
             sage: A.fraction_field is C.F
             True
         """
         return self._base_chart.F
 
-    def _repr_(self) -> str:
+    def _repr_(self):
+        # type: () -> str
         lines = []
-        lines.append(f"FLIR over {self._base_chart.base_ring}")
+        lines.append(f"FiniteLaurentIntersectionRing over {self._base_chart.base_ring}")
         lines.append(f"  rank n = {self.n}")
         lines.append(f"  #charts = {len(self.charts)}")
         lines.append(f"  base vars = {self._base_chart.var_names}")
@@ -2201,13 +2289,14 @@ class FLIR(Parent, UniqueRepresentation):
     def _element_constructor_(self, x, check=True):
         r"""
         We allow coercion from the base ring, and we also allow direct
-        construction from the fraction field of the base chart (which is the fraction field of the FLIR).
+        construction from the fraction field of the base chart (which is the fraction field of the FiniteLaurentIntersectionRing).
         In either case, we check membership by verifying that the element becomes Laurent in every chart.
 
         TESTS::
 
-            sage: C = FLIRChart.base(QQ, ("x","y"))
-            sage: A = FLIR(C, (C,), compute_base_to_charts=False)
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("x","y"))
+            sage: A = FiniteLaurentIntersectionRing(C, (C,), compute_base_to_charts=False)
             sage: x, y = C.F.gens()
             sage: A(x/y)
             x/y
@@ -2215,7 +2304,7 @@ class FLIR(Parent, UniqueRepresentation):
             sage: A(f) is f
             True
         """
-        if isinstance(x, FLIRElement) and x.parent() is self:
+        if isinstance(x, FiniteLaurentIntersectionRingElement) and x.parent() is self:
             return x
         # make sure scalars coerce into the base fraction field
         x = self._base_chart.F(x)
@@ -2227,22 +2316,23 @@ class FLIR(Parent, UniqueRepresentation):
     def _check_membership(self, f):
         r"""
         Check that the given expression in the base fraction field
-        is actually an element of the FLIR by verifying that it
+        is actually an element of the FiniteLaurentIntersectionRing by verifying that it
         becomes Laurent in every chart.
 
         TESTS::
 
-            sage: base = FLIRChart.base(QQ, ("x1","x2"))
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
+            sage: base = FiniteLaurentIntersectionRingChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = base.F.gens()
-            sage: ch1 = FLIRChart(QQ, ("y1","y2"),
+            sage: ch1 = FiniteLaurentIntersectionRingChart(QQ, ("y1","y2"),
             ....:                 base_fraction_field=base.F,
             ....:                 this_to_base=[(x2 + 1)/x1, x2])
-            sage: A = FLIR(base, (base, ch1), compute_base_to_charts=True)
+            sage: A = FiniteLaurentIntersectionRing(base, (base, ch1), compute_base_to_charts=True)
             sage: A._check_membership((x2 + 1)/x1)
             sage: A._check_membership(1/x1)
             Traceback (most recent call last):
             ...
-            ValueError: Not in FLIR: not Laurent in chart ('y1', 'y2').
+            ValueError: Not in FiniteLaurentIntersectionRing: not Laurent in chart ('y1', 'y2').
             ...
         """
         for ch in self.charts:
@@ -2251,7 +2341,7 @@ class FLIR(Parent, UniqueRepresentation):
                 _ = ch.L(expr)
             except Exception as e:
                 raise ValueError(
-                    f"Not in FLIR: not Laurent in chart {ch.var_names}.\nSubstituted: {expr}"
+                    f"Not in FiniteLaurentIntersectionRing: not Laurent in chart {ch.var_names}.\nSubstituted: {expr}"
                 ) from e
 
     def _normalize(self, p):
@@ -2273,7 +2363,7 @@ class FLIR(Parent, UniqueRepresentation):
             out *= xs[i]
         return out
 
-    def _prod_of_chart_gens_as_base_expr(self, chart: FLIRChart):
+    def _prod_of_chart_gens_as_base_expr(self, chart: FiniteLaurentIntersectionRingChart):
         if chart.this_to_base is None:
             raise ValueError("Chart missing this_to_base substitution.")
         out = chart.this_to_base[0]
@@ -2292,15 +2382,14 @@ class FLIR(Parent, UniqueRepresentation):
         return g
 
     # -------------------------------------------------------
-    # extra primes: primes over x1*...*xn, i.e. primes missing in FLIR._base_chart
+    # extra primes: primes over x1*...*xn, i.e. primes missing in FiniteLaurentIntersectionRing._base_chart
     # -------------------------------------------------------
 
-    def _extra_primes_in_chart(self, i: int) -> list[FLIRPrimeDivisor]:
+    def _extra_primes_in_chart(self, i: int):
         """
-        For chart ``i``::
-
-            f_i = image of x1*...*xn in chart i
-            g_{j,i} = image of (prod of chart j variables) in chart i for j<i
+        For chart i:
+          f_i = image of x1*...*xn in chart i
+          g_{j,i} = image of (prod of chart j variables) in chart i for j<i
 
         Return irreducible factors of gcd(f_i, g_{0,i},...,g_{i-1,i}) (after clearing Laurent units).
         """
@@ -2311,7 +2400,7 @@ class FLIR(Parent, UniqueRepresentation):
         fP, _ = chart_i._laurent_poly_to_poly_up_to_unit(f_i)
 
         gcd_list = [fP]
-        for j in range(i):
+        for j in range(0, i):
             chart_j = self.charts[j]
             yjprod_base = self._prod_of_chart_gens_as_base_expr(chart_j)
             gij = chart_i._substitute_from_base(yjprod_base)
@@ -2326,21 +2415,22 @@ class FLIR(Parent, UniqueRepresentation):
         for f, _e in G.factor():
             if f.is_unit():
                 continue
-            primes.append(FLIRPrimeDivisor(chart_i, self._normalize(f)))
+            primes.append(FiniteLaurentIntersectionRingPrimeDivisor(chart_i, self._normalize(f)))
         return primes
 
-    def extra_primes(self, recompute: bool = False) -> list[FLIRPrimeDivisor]:
+    def extra_primes(self, recompute: bool = False):
         r"""
         Return the list P1,...,Pr of prime divisors containing x1*...*xn.
 
         EXAMPLES::
 
-            sage: base = FLIRChart.base(QQ, ("x1","x2"))
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart
+            sage: base = FiniteLaurentIntersectionRingChart.base(QQ, ("x1","x2"))
             sage: x1, x2 = base.F.gens()
-            sage: ch1 = FLIRChart(QQ, ("y1","y2"),
+            sage: ch1 = FiniteLaurentIntersectionRingChart(QQ, ("y1","y2"),
             ....:                 base_fraction_field=base.F,
             ....:                 this_to_base=[(x2 + 1)/x1, x2])
-            sage: A = FLIR(base, (base, ch1), compute_base_to_charts=True)
+            sage: A = FiniteLaurentIntersectionRing(base, (base, ch1), compute_base_to_charts=True)
             sage: A.extra_primes()
             [PrimeDivisor(chart=('y1', 'y2'), p=y2 + 1)]
 
@@ -2368,7 +2458,7 @@ class FLIR(Parent, UniqueRepresentation):
     # valuation machinery
     # ------------------------
 
-    def _valuation_of_base_element_at_prime(self, base_expr, P: FLIRPrimeDivisor) -> int:
+    def _valuation_of_base_element_at_prime(self, base_expr, P: FiniteLaurentIntersectionRingPrimeDivisor):
         """
         v_P(base_expr): multiplicity of P.irreducible in the factorization after substituting into chart.
         """
@@ -2384,7 +2474,7 @@ class FLIR(Parent, UniqueRepresentation):
                 e += int(k)
         return e
 
-    def _coeffs_on_extra_primes(self, base_expr) -> dict[FLIRPrimeDivisor, int]:
+    def _coeffs_on_extra_primes(self, base_expr):
         """
         Return dict Pi -> v_{Pi}(base_expr) for Pi in extra_primes.
         """
@@ -2402,8 +2492,8 @@ class FLIR(Parent, UniqueRepresentation):
     def divisor_group(self):
         """Return the divisor group associated to this object.
 
-        Constructs (on first call) and returns an FLIRDivisorGroup representing the
-        divisor group of this FLIR instance. The constructed group is created with
+        Constructs (on first call) and returns an FiniteLaurentIntersectionRingDivisorGroup representing the
+        divisor group of this FiniteLaurentIntersectionRing instance. The constructed group is created with
         base_ring=ZZ and cached on the instance as `_div_group_cache` so subsequent
         calls return the same object.
 
@@ -2411,15 +2501,15 @@ class FLIR(Parent, UniqueRepresentation):
         """
 
         if getattr(self, "_div_group_cache", None) is None:
-            self._div_group_cache = FLIRDivisorGroup(self, base_ring=ZZ)
+            self._div_group_cache = FiniteLaurentIntersectionRingDivisorGroup(self, base_ring=ZZ)
         return self._div_group_cache
 
     def Div(self):
         """
-        Return the divisor group Div(A) of this FLIR.
+        Return the divisor group Div(A) of this FiniteLaurentIntersectionRing.
 
         This is the free abelian group on all height-1 prime divisors of A.
-        Elements are instances of :class:`FLIRDivisor`. The group instance is
+        Elements are instances of :class:`FiniteLaurentIntersectionRingDivisor`. The group instance is
         created once and cached by :meth:`divisor_group`; use ``A.Div()`` as
         the canonical accessor for the ambient divisor group.
         """
@@ -2431,32 +2521,34 @@ class FLIR(Parent, UniqueRepresentation):
 
         Accepted forms:
          - None or 0 -> the zero divisor
-         - FLIRDivisor (in the same Div(A)) -> returned unchanged
-         - FLIRPrimeDivisor -> the prime with coefficient 1
+         - FiniteLaurentIntersectionRingDivisor (in the same Div(A)) -> returned unchanged
+         - FiniteLaurentIntersectionRingPrimeDivisor -> the prime with coefficient 1
          - dict {prime: exponent} or iterable of (prime, exponent) pairs -> passed to Div(A)
-         - FLIRElement or anything coercible to the base fraction field -> principal divisor of that element
+         - FiniteLaurentIntersectionRingElement or anything coercible to the base fraction field -> principal divisor of that element
 
         Examples::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingPrimeDivisor
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRingChart, example_A3
             sage: A = example_A3()
             sage: C1, C2, C3, C4, C5 = A.charts
             sage: x1, x2, x3 = C1.P.gens()
             sage: y1, y2, y3 = C3.P.gens()
             sage: A.divisor() == A.Div().zero()
             True
-            sage: P = FLIRPrimeDivisor(A._base_chart, x1 + x3)
+            sage: P = FiniteLaurentIntersectionRingPrimeDivisor(A._base_chart, x1 + x3)
             sage: A.divisor(P)
             1*PrimeDivisor(chart=('x1', 'x2', 'x3'), p=x1 + x3)
 
-            sage: Q = FLIRPrimeDivisor(C3, y1*y3 + y2)
+            sage: Q = FiniteLaurentIntersectionRingPrimeDivisor(C3, y1*y3 + y2)
             sage: A.divisor({P: 2, Q: 3})
             2*PrimeDivisor(chart=('x1', 'x2', 'x3'), p=x1 + x3) +
-            3*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_21*x_23 + x_22)
+             3*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_21*x_23 + x_22)
 
             sage: x = A._base_chart.F.gens()[0]
             sage: A.divisor(x)
             1*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1) +
-            1*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1)
+             1*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1)
         """
         DivA = self.Div()
 
@@ -2465,16 +2557,16 @@ class FLIR(Parent, UniqueRepresentation):
             return DivA.zero()
 
         # already a divisor
-        if isinstance(data, FLIRDivisor):
+        if isinstance(data, FiniteLaurentIntersectionRingDivisor):
             if data.parent() is DivA:
                 return data
             raise ValueError("Divisor belongs to a different ambient divisor group.")
 
         # single prime -> 1*P
-        if isinstance(data, FLIRPrimeDivisor):
+        if isinstance(data, FiniteLaurentIntersectionRingPrimeDivisor):
             return DivA({data: 1})
 
-        # dict or iterable-of-pairs -> let FLIRDivisorGroup handle construction/validation
+        # dict or iterable-of-pairs -> let FiniteLaurentIntersectionRingDivisorGroup handle construction/validation
         if isinstance(data, dict):
             return DivA(data)
         if isinstance(data, (list, tuple)):
@@ -2485,8 +2577,8 @@ class FLIR(Parent, UniqueRepresentation):
                 # fall through to attempt element coercion
                 pass
 
-        # FLIRElement -> use its divisor
-        if isinstance(data, FLIRElement):
+        # FiniteLaurentIntersectionRingElement -> use its divisor
+        if isinstance(data, FiniteLaurentIntersectionRingElement):
             return data.divisor()
 
         # finally: try to coerce to a base-field element and form principal divisor (no membership check)
@@ -2510,7 +2602,7 @@ class FLIR(Parent, UniqueRepresentation):
         C = matrix(ZZ, self.n, r)
         for i in range(self.n):
             for j, Pj in enumerate(primes):
-                C[i,j] = ZZ(self._valuation_of_base_element_at_prime(xs[i], Pj))
+                C[i, j] = ZZ(self._valuation_of_base_element_at_prime(xs[i], Pj))
         return C.transpose(), primes
 
     def class_data(self, recompute=False):
@@ -2527,9 +2619,10 @@ class FLIR(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # trivial FLIR (single base chart) has trivial class group
-            sage: C = FLIRChart.base(QQ, ("x1","x2"))
-            sage: A = FLIR(C, (C,), compute_base_to_charts=False)
+            sage: from sage.algebras.finite_laurent_intersection_ring import FiniteLaurentIntersectionRing, FiniteLaurentIntersectionRingChart, example_A3
+            sage: # trivial FiniteLaurentIntersectionRing (single base chart) has trivial class group
+            sage: C = FiniteLaurentIntersectionRingChart.base(QQ, ("x1","x2"))
+            sage: A = FiniteLaurentIntersectionRing(C, (C,), compute_base_to_charts=False)
             sage: A.class_group().order()
             1
             sage: A3 = example_A3()
@@ -2537,7 +2630,6 @@ class FLIR(Parent, UniqueRepresentation):
             Multiplicative Abelian group isomorphic to Z
             sage: A3.class_group().invariants()
             (0,)
-
         """
         return self.class_data().Cl()
 
@@ -2545,13 +2637,13 @@ class FLIR(Parent, UniqueRepresentation):
     # class of a divisor
     # ------------------------
 
-    def _to_H(self, D: FLIRDivisor):
+    def _to_H(self, D: FiniteLaurentIntersectionRingDivisor):
         """
         Project ``D \\in Div(A)`` to ``hv \\in H = \\ZZ^r`` (FreeModule element)
         with respect to the ordering of extra_primes().
         """
 
-        if isinstance(D, FLIRPrimeDivisor):
+        if isinstance(D, FiniteLaurentIntersectionRingPrimeDivisor):
             D = self.divisor({D: 1})
         elif isinstance(D, dict):
             D = self.divisor(D)
@@ -2579,15 +2671,16 @@ class FLIR(Parent, UniqueRepresentation):
         r"""Compute the class of a divisor in the divisor class group.
 
             Accept:
-            - FLIRElement (the divisor of the element is used)
-            - FLIRDivisor
-            - FLIRPrimeDivisor (interpreted as 1*P)
+            - FiniteLaurentIntersectionRingElement (the divisor of the element is used)
+            - FiniteLaurentIntersectionRingDivisor
+            - FiniteLaurentIntersectionRingPrimeDivisor (interpreted as 1*P)
             - dict {prime: exponent}
 
             Return: class [D] in Cl(A) = Z^r / im(M).
 
             EXAMPLES::
 
+                sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
                 sage: A3 = example_A3()
                 sage: z1, z2, z3 = A3._base_gens()
                 sage: z = A3(z1*z3)
@@ -2598,15 +2691,15 @@ class FLIR(Parent, UniqueRepresentation):
                 (0)
 
             The class of the divisor of an element is trivial, since it is principal.
-            ``divisor_class`` accepts a :class:`FLIRElement` directly, giving the
+            ``divisor_class`` accepts a :class:`FiniteLaurentIntersectionRingElement` directly, giving the
             same result as passing its divisor::
 
                 sage: A3.divisor_class(z) == A3.divisor_class(D)
                 True
             """
-        if isinstance(D, FLIRElement):
+        if isinstance(D, FiniteLaurentIntersectionRingElement):
             D = self.divisor(D)
-        elif isinstance(D, FLIRPrimeDivisor):
+        elif isinstance(D, FiniteLaurentIntersectionRingPrimeDivisor):
             D = self.divisor({D: 1})
         elif isinstance(D, dict):
             D = self.divisor(D)
@@ -2614,14 +2707,15 @@ class FLIR(Parent, UniqueRepresentation):
         hv = self._to_H(D)
         return self.class_data().class_in_quotient(hv)
 
-    def is_principal_divisor(self, D: FLIRDivisor) -> bool:
+    def is_principal_divisor(self, D: FiniteLaurentIntersectionRingDivisor):
         """
         Check if the divisor D is principal, i.e. if [D] = 0 in Cl(A).
 
         EXAMPLES:
 
-        The divisor of an element of the FLIR is always principal::
+        The divisor of an element of the FiniteLaurentIntersectionRing is always principal::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
             sage: A3 = example_A3()
             sage: z1, z2, z3 = A3._base_gens()
             sage: z = A3(z1*z3)
@@ -2638,7 +2732,7 @@ class FLIR(Parent, UniqueRepresentation):
         """
         return self.class_data().class_in_quotient(self._to_H(D)) == 0
 
-    def principal_generator(self, D: FLIRDivisor):
+    def principal_generator(self, D: FiniteLaurentIntersectionRingDivisor):
         """
         If D is principal, attempt to produce ``f \\in K(x)`` such that ``div(f) = D``.
 
@@ -2652,6 +2746,7 @@ class FLIR(Parent, UniqueRepresentation):
 
         Recovering a generator for the divisor of a known element::
 
+            sage: from sage.algebras.finite_laurent_intersection_ring import example_A3
             sage: A3 = example_A3()
             sage: z1, z2, z3 = A3._base_gens()
             sage: z = A3(z1*z3)
@@ -2678,7 +2773,7 @@ class FLIR(Parent, UniqueRepresentation):
         for P, e in D:
             if (P.chart is self._base_chart):
                 t *= self._base_chart.F(P.irreducible) ** ZZ(e)
-        Dt = self(t, check=False).divisor() # div(t) in Div(A)
+        Dt = self(t, check=False).divisor()  # div(t) in Div(A)
         R = D - Dt
 
         rhs = [ZZ(R.coeff(Pi)) for Pi in Pis]
@@ -2700,14 +2795,14 @@ class FLIR(Parent, UniqueRepresentation):
     # helpers factorization
     # ----------------------------------------------------------------
 
-    def _divisor_basis(self, D: FLIRDivisor):
+    def _divisor_basis(self, D: FiniteLaurentIntersectionRingDivisor):
         """
-        Return a stable ordered list of prime divisors occuring in the support of D
+        Return a stable ordered list of prime divisors occurring in the support of D
         """
         Ps = sorted(D.support(), key=lambda P: repr(P))
         return Ps
 
-    def _divisor_to_vector(self, D: FLIRDivisor, basis):
+    def _divisor_to_vector(self, D: FiniteLaurentIntersectionRingDivisor, basis):
         """
         Given a divisor D and a list of prime divisors as basis, return the vector of coefficients.
         """
@@ -2835,7 +2930,7 @@ class FLIR(Parent, UniqueRepresentation):
 
         return out
 
-    def _find_atoms(self, a: FLIRElement):
+    def _find_atoms(self, a: FiniteLaurentIntersectionRingElement):
         if a.f == 0:
             raise ValueError("Zero has no factorizations.")
 
@@ -2892,7 +2987,7 @@ class FLIR(Parent, UniqueRepresentation):
                 return False
             for j in range(m):
                 max_cover = 0
-                for k in range(i,n):
+                for k in range(i, n):
                     max_cover += bounds[k] * cols[k][j]
                 if rem[j] > max_cover:
                     return False
@@ -2917,7 +3012,7 @@ class FLIR(Parent, UniqueRepresentation):
         rec(0, target, [])
         return sols
 
-    def factorizations(self, a: FLIRElement):
+    def factorizations(self, a: FiniteLaurentIntersectionRingElement):
         """
         Return  all factorizations of a as follows:
             - list of atoms that divide a
@@ -2970,7 +3065,7 @@ class FLIR(Parent, UniqueRepresentation):
 
 def example_A3(K=None):
     r"""
-    Return a standard rank-`3` FLIR example with five charts.
+    Return a standard rank-`3` FiniteLaurentIntersectionRing example with five charts.
 
     This example is modeled on the Cluster Algebra of type `A_3`.
 
@@ -2978,49 +3073,54 @@ def example_A3(K=None):
     if K is None:
         K = QQ
 
-    base = FLIRChart.base(K, ["x1", "x2", "x3"])
+    base = FiniteLaurentIntersectionRingChart.base(K, ["x1", "x2", "x3"])
     x1, x2, x3 = base.F.gens()
 
-    chart1 = FLIRChart(K, ["x_11", "x_12", "x_13"],
-                       term_order=base.term_order,
-                       base_fraction_field=base.F)
+    chart1 = FiniteLaurentIntersectionRingChart(K, ["x_11", "x_12", "x_13"],
+                                                term_order=base.term_order,
+                                                base_fraction_field=base.F)
     chart1.this_to_base = [x1, (x1 + x3) / x2, x3]
 
-    chart2 = FLIRChart(K, ["x_21", "x_22", "x_23"],
-                       term_order=base.term_order,
-                       base_fraction_field=base.F)
+    chart2 = FiniteLaurentIntersectionRingChart(K, ["x_21", "x_22", "x_23"],
+                                                term_order=base.term_order,
+                                                base_fraction_field=base.F)
     chart2.this_to_base = [(x2 + 1) / x1, x2, x3]
 
-    chart3 = FLIRChart(K, ["x_31", "x_32", "x_33"],
-                       term_order=base.term_order,
-                       base_fraction_field=base.F)
+    chart3 = FiniteLaurentIntersectionRingChart(K, ["x_31", "x_32", "x_33"],
+                                                term_order=base.term_order,
+                                                base_fraction_field=base.F)
     chart3.this_to_base = [x1, x2, (1 + x2) / x3]
 
-    chart4 = FLIRChart(K, ["x_41", "x_42", "x_43"],
-                       term_order=base.term_order,
-                       base_fraction_field=base.F)
+    chart4 = FiniteLaurentIntersectionRingChart(K, ["x_41", "x_42", "x_43"],
+                                                term_order=base.term_order,
+                                                base_fraction_field=base.F)
     chart4.this_to_base = [(x2 + 1) / x1, x2, (x2 + 1) / x3]
 
-    A = FLIR(base, [base, chart1, chart2, chart3, chart4], compute_base_to_charts=True)
+    A = FiniteLaurentIntersectionRing(base, [base, chart1, chart2, chart3, chart4], compute_base_to_charts=True)
     return A
 
 
 def example_A2_generalized(K=None):
+    r"""
+    Return a standard rank-`2` FiniteLaurentIntersectionRing example with three charts.
 
+    The example is modeled on a generalzed Cluster Algebra of type of rank 2.
+    """
     if K is None:
         K = QQ
 
-    base = FLIRChart.base(K, ["x1", "x2"])
+    base = FiniteLaurentIntersectionRingChart.base(K, ["x1", "x2"])
     x1, x2 = base.F.gens()
 
-    chart1 = FLIRChart(K, ["x_11", "x_12"],
-                       term_order=base.term_order,
-                       base_fraction_field=base.F)
+    chart1 = FiniteLaurentIntersectionRingChart(K, ["x_11", "x_12"],
+                                                term_order=base.term_order,
+                                                base_fraction_field=base.F)
     chart1.this_to_base = [(x2 + 1) / x1, x2]
 
-    chart2 = FLIRChart(K, ["x_21", "x_22"],
-                       term_order=base.term_order,
-                       base_fraction_field=base.F)
+    chart2 = FiniteLaurentIntersectionRingChart(K, ["x_21", "x_22"],
+                                                term_order=base.term_order,
+                                                base_fraction_field=base.F)
     chart2.this_to_base = [x1, (x1 + 1) ** 2 / x2]
 
-    return FLIR(base, [base, chart1, chart2], compute_base_to_charts=True)
+    A = FiniteLaurentIntersectionRing(base, [base, chart1, chart2], compute_base_to_charts=True)
+    return A

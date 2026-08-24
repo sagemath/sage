@@ -69,6 +69,6 @@ lazy_import('sage.algebras.cluster_algebra', 'ClusterAlgebra')
 
 lazy_import('sage.algebras.yangian', 'Yangian')
 
-lazy_import('sage.algebras.flir', 'FLIR')
+lazy_import('sage.algebras.finite_laurent_intersection_ring', 'FiniteLaurentIntersectionRing')
 
 lazy_import('sage.algebras.banff_cluster_algebra', 'BanffClusterAlgebra')

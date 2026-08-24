@@ -18,7 +18,7 @@ py.install_sources(
   'exterior_algebra_groebner.pyi',
   'exterior_algebra_groebner.pyx',
   'finite_gca.py',
-  'flir.py',
+  'finite_laurent_intersection_ring.py',
   'free_algebra.py',
   'free_algebra_element.py',
   'free_algebra_quotient.py',
