@@ -3976,8 +3976,8 @@ def binomial(x, m, **kwds):
         2
 
     For symbolic manipulation, you should use the function
-    :func:`~sage.functions.other.binomial` from the module
-    :mod:`sage.functions.other`::
+    :class:`binomial <sage.functions.other.Function_binomial>` from the
+    module :mod:`sage.functions.other`::
 
         sage: from sage.functions.other import binomial
         sage: binomial(k, i)                                                            # needs sage.symbolic

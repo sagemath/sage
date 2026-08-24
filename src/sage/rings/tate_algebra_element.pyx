@@ -234,8 +234,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "*%s^%s" % (parent._names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def _latex_(self):
         r"""
@@ -265,8 +264,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 s += "%s^{%s}" % (parent._latex_names[i], self._exponent[i])
         if s[0] == "*":
             return s[1:]
-        else:
-            return s
+        return s
 
     def coefficient(self):
         r"""
@@ -673,8 +671,7 @@ cdef class TateAlgebraTerm(MonoidElement):
                 return False
         if self._parent.base_ring().is_field():
             return True
-        else:
-            return self.valuation() == 0 or other.valuation() == 0
+        return self.valuation() == 0 or other.valuation() == 0
 
     @coerce_binop
     def gcd(self, other):
@@ -758,9 +755,9 @@ cdef class TateAlgebraTerm(MonoidElement):
 
         - ``other`` -- a Tate term
 
-        EXAMPLES::
+        EXAMPLES:
 
-        In a Tate algebra over a field:
+        In a Tate algebra over a field::
 
             sage: R = Zp(2, print_mode='digits', prec=10)
             sage: A.<x,y> = TateAlgebra(R)
@@ -784,9 +781,9 @@ cdef class TateAlgebraTerm(MonoidElement):
 
         - ``other`` -- a Tate term
 
-        EXAMPLES::
+        EXAMPLES:
 
-        In a Tate algebra over a field:
+        In a Tate algebra over a field::
 
             sage: R = Zp(2, print_mode='digits', prec=10)
             sage: A.<x,y> = TateAlgebra(R)
@@ -2102,8 +2099,8 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         INPUT:
 
         - ``log_radii`` -- integer or a tuple; the log-radii of
-          convergence of the smaller domain (see :class:`TateAlgebra`
-          for more details)
+          convergence of the smaller domain (see
+          :data:`~sage.rings.tate_algebra.TateAlgebra` for more details)
 
         EXAMPLES::
 
@@ -2187,8 +2184,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                                    if not term.coefficient().is_zero()]
         if include_zero:
             return self._terms
-        else:
-            return self._terms_nonzero
+        return self._terms_nonzero
 
     def monomials(self):
         r"""
@@ -2266,8 +2262,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             raise IndexError("lengths do not match")
         if e in self._poly.__repn:
             return self._poly.__repn[e]
-        else:
-            return self.base_ring()(0, self.precision_absolute())
+        return self.base_ring()(0, self.precision_absolute())
 
     def __getitem__(self, exponent):
         r"""
@@ -3392,7 +3387,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
     @coerce_binop
     def Spoly(self, other):
-        """
+        r"""
         Return the S-polynomial of this series and ``other``.
 
         INPUT:
@@ -3407,7 +3402,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
 
         .. MATH::
 
-            S(f,g) = \frac{\text{lcm}(t_f,t_g)}{t_f}} f - \frac{\text{lcm}(t_f,t_g)}{t_g}} g
+            S(f,g) = \frac{\text{lcm}(t_f,t_g)}{t_f} f - \frac{\text{lcm}(t_f,t_g)}{t_g} g
 
         By construction the terms in `\text{lcm}(t_f,t_g)` cancel,
         so that the leading term of `S(f,g)` is strictly smaller

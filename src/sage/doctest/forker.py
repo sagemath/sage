@@ -294,7 +294,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
 
 class SageSpoofInOut(SageObject):
     r"""
-    We replace the standard :class:`doctest._SpoofOut` for three reasons:
+    We replace the standard ``doctest._SpoofOut`` for three reasons:
 
     - we need to divert the output of C programs that don't print
       through sys.stdout,
@@ -526,7 +526,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
           is enabled
 
         - ``optionflags`` -- controls the comparison with the expected
-          output.  See :mod:`testmod` for more information
+          output.  See :func:`doctest.testmod` for more information
 
         - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
@@ -850,7 +850,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         Run the examples in a given doctest.
 
-        This function replaces :class:`doctest.DocTestRunner.run`
+        This function replaces :meth:`doctest.DocTestRunner.run`
         since it needs to handle spoofing. It also leaves the display
         hook in place.
 
@@ -862,7 +862,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
           used to execute examples (passed in to the :func:`compile`)
 
         - ``out`` -- a function for writing the output (defaults to
-          :func:`sys.stdout.write`)
+          ``sys.stdout.write``)
 
         - ``clear_globs`` -- boolean (default: ``True``); whether to clear
           the namespace after running this doctest
@@ -931,7 +931,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         OUTPUT:
 
-        - returns ``(f, t)``, a :class:`doctest.TestResults` instance
+        - returns ``(f, t)``, a :class:`~sage.doctest.forker.TestResults`
+          instance
           giving the number of failures and the total number of tests
           run.
 
@@ -2190,7 +2191,7 @@ class DocTestWorker(multiprocessing.Process):
 
     INPUT:
 
-    - ``source`` -- a :class:`DocTestSource` instance
+    - ``source`` -- a :class:`~sage.doctest.sources.DocTestSource` instance
 
     - ``options`` -- an object representing doctest options
 

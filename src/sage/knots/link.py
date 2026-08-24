@@ -38,8 +38,8 @@ AUTHORS:
 
 - Miguel Angel Marco Buzunariz
 - Amit Jamadagni
-- Sebastian Oehms (October 2020, add :meth:`get_knotinfo` and :meth:`is_isotopic`)
-- Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
+- Sebastian Oehms (October 2020, add :meth:`~sage.knots.link.Link.get_knotinfo` and :meth:`~sage.knots.link.Link.is_isotopic`)
+- Sebastian Oehms (May 2022): add :meth:`~sage.knots.link.Link.links_gould_polynomial`
 - Sebastian Oehms (May 2023): change the convention about the ``pd_code`` from
   clockwise to anti-clockwise (see :issue:`35665`).
 """
@@ -2283,7 +2283,7 @@ class Link(SageObject):
 
         A two or three (for integral homology) variate Laurent polynomial over
         ``ZZ``, more precisely an instance of
-        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
+        :class:`~sage.rings.polynomial.laurent_polynomial_mpair.LaurentPolynomial_mpair`.
 
         EXAMPLES::
 
@@ -5031,14 +5031,16 @@ class Link(SageObject):
     @cached_method
     def find_hyperbolic_shapes(self, verbose=False, bits_prec=None, holonomy=False):
         r"""
-        Return a list of complex intervals (elements in :class:`ComplexIntervalField`) certified to contain
-        the true shapes for the hyperbolic manifold of the exterior of ``self``.
+        Return a list of complex intervals (elements of
+        :class:`~sage.rings.complex_interval.ComplexIntervalFieldElement`)
+        certified to contain the true shapes for the hyperbolic manifold of
+        the exterior of ``self``.
 
         INPUT:
 
           - ``verbose`` -- boolean (default ``False``) to turn on verbosity
           - ``bits_prec`` -- integer (default ``None``) set the precision of
-            :class:`ComplexIntervalField`
+            :func:`~sage.rings.complex_interval_field.ComplexIntervalField`
           - ``holonomy`` -- boolean (default ``False``) to get a holonomy
             representation associated to the verified hyperbolic structure
 
@@ -5051,7 +5053,8 @@ class Link(SageObject):
 
         .. _`verify_hyperbolicity`: https://snappy.computop.org/manifold.html#snappy.Manifold.verify_hyperbolicity
 
-        OUTPUT: a list of elements of :class:`~sage.rings.complex_interval.ComplexIntervalField`
+        OUTPUT: a list of
+        :class:`~sage.rings.complex_interval.ComplexIntervalFieldElement`
 
         EXAMMPLES::
 
@@ -5073,7 +5076,8 @@ class Link(SageObject):
         INPUT:
 
           - ``verbose`` -- boolean (default ``False``) to turn on verbosity
-          - ``bits_prec`` -- integer (default ``None``) set the precision of :class:`ComplexIntervalField`
+          - ``bits_prec`` -- integer (default ``None``) set the precision of
+            :func:`~sage.rings.complex_interval_field.ComplexIntervalField`
 
         .. NOTE::
 

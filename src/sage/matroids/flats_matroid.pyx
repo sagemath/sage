@@ -418,7 +418,7 @@ cdef class FlatsMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the rank-`k`
           flats of the matroid
 
-        OUTPUT: :class:`SetSystem`
+        OUTPUT: :class:`~sage.matroids.set_system.SetSystem`
 
         EXAMPLES::
 

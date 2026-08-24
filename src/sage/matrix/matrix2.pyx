@@ -144,6 +144,14 @@ cdef class Matrix(Matrix1):
         [1]  [1]
         [x], [0]
         )
+
+    .. automethod:: _solve_right_nonsingular_square
+    .. automethod:: _permanent_ryser
+    .. automethod:: _right_kernel_matrix_over_number_field
+    .. automethod:: _right_kernel_matrix_over_field
+    .. automethod:: _right_kernel_matrix_over_domain
+    .. automethod:: _right_kernel_matrix_over_integer_mod_ring
+    .. automethod:: _zigzag_form
     """
     def subs(self, *args, **kwds):
         """
@@ -1574,7 +1582,8 @@ cdef class Matrix(Matrix1):
         ALGORITHM:
 
         The Ryser algorithm is implemented in the method
-        :meth:`_permanent_ryser`. It is a modification of theorem 7.1.1. from
+        :meth:`~sage.matrix.matrix2.Matrix._permanent_ryser`. It is a
+        modification of theorem 7.1.1. from
         Brualdi and Ryser: Combinatorial Matrix Theory. Instead of deleting
         columns from `A`, we choose columns from `A` and calculate the product
         of the row sums of the selected submatrix.
@@ -2266,7 +2275,7 @@ cdef class Matrix(Matrix1):
 
         ALGORITHM:
 
-        If the base ring has a method :meth:`_matrix_determinant`, we call it.
+        If the base ring has a method ``_matrix_determinant``, we call it.
 
         Otherwise, for small matrices (n less than 4), this is computed using the
         naive formula. In the specific case of matrices over the integers modulo a
@@ -3043,10 +3052,9 @@ cdef class Matrix(Matrix1):
         if self._nrows == 0 or self._ncols == 0:
             if sparse is None or self.is_sparse() is sparse:
                 return self.__copy__()
-            elif sparse:
+            if sparse:
                 return self.sparse_matrix()
-            else:
-                return self.dense_matrix()
+            return self.dense_matrix()
 
         if self.is_sparse():
             values = {ij: phi(v) for ij, v in self.dict().items()}
@@ -4978,8 +4986,7 @@ cdef class Matrix(Matrix1):
             # cannot get here unless over integers
             if not format[:3] == 'LLL':
                 return M.LLL()
-            else:
-                return M
+            return M
 
     def left_kernel_matrix(self, *args, **kwds):
         r"""
@@ -6016,8 +6023,7 @@ cdef class Matrix(Matrix1):
             m = F[0][1]
             if dual:
                 return decomp_seq([(V, m==1)]), decomp_seq([(V, m==1)])
-            else:
-                return decomp_seq([(V, m==1)])
+            return decomp_seq([(V, m==1)])
         F.sort()
         for g, m in f.factor():
             t = verbose('decomposition -- Computing g(self) for an irreducible factor g of degree %s' % g.degree(), level=2)
@@ -6778,8 +6784,7 @@ cdef class Matrix(Matrix1):
         if x is not None:
             if algebraic_multiplicity:
                 return x
-            else:
-                return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
+            return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         # Possible improvements:
         # algorithm for dual_eigenvector in sage/modular/hecke/module.py
@@ -6826,8 +6831,7 @@ cdef class Matrix(Matrix1):
         self.cache(key, V)
         if algebraic_multiplicity:
             return V
-        else:
-            return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
+        return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     left_eigenspaces = eigenspaces_left
 
@@ -7026,16 +7030,14 @@ cdef class Matrix(Matrix1):
         if x is not None:
             if algebraic_multiplicity:
                 return x
-            else:
-                return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
+            return Sequence([(e[0], e[1]) for e in x], cr=True, check=False)
 
         V = self.transpose().eigenspaces_left(format=format, var=var, algebraic_multiplicity=True)
 
         self.cache(key, V)
         if algebraic_multiplicity:
             return V
-        else:
-            return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
+        return Sequence([(e[0], e[1]) for e in V], cr=True, check=False)
 
     right_eigenspaces = eigenspaces_right
 
@@ -8174,7 +8176,8 @@ cdef class Matrix(Matrix1):
         If the matrix is over a ring, then an equivalent matrix is
         constructed over the fraction field, and then row reduced.
 
-        All arguments are passed on to :meth:`echelon_form`.
+        All arguments are passed on to
+        :meth:`~sage.matrix.matrix2.Matrix.echelon_form`.
 
         .. NOTE::
 
@@ -8195,7 +8198,8 @@ cdef class Matrix(Matrix1):
 
 
         Note that there is a difference between :meth:`rref` and
-        :meth:`echelon_form` when the matrix is not over a field (in
+        :meth:`~sage.matrix.matrix2.Matrix.echelon_form` when the matrix is
+        not over a field (in
         this case, the integers instead of the rational numbers)::
 
             sage: A.base_ring()
@@ -8214,7 +8218,8 @@ cdef class Matrix(Matrix1):
             [0 0 1]
 
         In this case, since ``B`` is a matrix over a field (the
-        rational numbers), :meth:`rref` and :meth:`echelon_form` are
+        rational numbers), :meth:`rref` and
+        :meth:`~sage.matrix.matrix2.Matrix.echelon_form` are
         exactly the same::
 
             sage: B.echelon_form()
@@ -8224,7 +8229,8 @@ cdef class Matrix(Matrix1):
             sage: B.echelon_form() is B.rref()
             True
 
-        Since :meth:`echelon_form` is not implemented for every ring,
+        Since :meth:`~sage.matrix.matrix2.Matrix.echelon_form` is not
+        implemented for every ring,
         sometimes behavior varies, as here::
 
             sage: R.<x> = ZZ[]
@@ -8346,8 +8352,7 @@ cdef class Matrix(Matrix1):
             self.cache('in_echelon_form', True)
         if transformation:
             return a
-        else:
-            return
+        return
 
     def echelonize(self, algorithm='default', cutoff=0, **kwds):
         r"""
@@ -8664,8 +8669,7 @@ cdef class Matrix(Matrix1):
 
         if transformation and v is not None:
             return (E, v)
-        else:
-            return E
+        return E
 
     def _echelon_copy(self):
         """
@@ -9403,8 +9407,7 @@ cdef class Matrix(Matrix1):
         MS_max = max(MS)
         if check:
             return MS_max, self.is_permutation_of(MS_max, True)[1]
-        else:
-            return MS_max
+        return MS_max
 
     def is_permutation_of(self, N, check=False):
         r"""
@@ -9471,8 +9474,7 @@ cdef class Matrix(Matrix1):
         if N.ncols() != ncols or N.nrows() != nrows:
             if check:
                 return (False, None)
-            else:
-                return False
+            return False
         M_B = self.as_bipartite_graph()
         N_B = N.as_bipartite_graph()
         if check:
@@ -9521,23 +9523,10 @@ cdef class Matrix(Matrix1):
         if cutoff == 0:
             cutoff = self._strassen_default_cutoff(right)
 
-        if cutoff <= 0:
-            raise ValueError("cutoff must be at least 1")
-
-        output = self.new_matrix(self._nrows, right._ncols)
-        # The following used to be a little faster, but meanwhile
-        # the previous line is faster.
-        # if self.is_sparse():
-        #    output = self.matrix_space(self._nrows, right._ncols, sparse = True)(0)
-        # else:
-        #    output = self.matrix_space(self._nrows, right._ncols, sparse = False).zero_matrix().__copy__()
-
-        self_window = self.matrix_window()
-        right_window = right.matrix_window()
-        output_window = output.matrix_window()
-
-        from sage.matrix import strassen
-        strassen.strassen_window_multiply(output_window, self_window, right_window, cutoff)
+        # ``_set_to_product_strassen`` validates the resolved cutoff, so do
+        # not duplicate that check here.
+        cdef Matrix output = self.new_matrix(self._nrows, right._ncols)
+        output._set_to_product_strassen(self, right, cutoff)
         return output
 
     def _echelon_strassen(self, int cutoff=0):
@@ -10006,8 +9995,7 @@ cdef class Matrix(Matrix1):
         """
         if self._subdivisions is None:
             return ([], [])
-        else:
-            return (self._subdivisions[0][1:-1], self._subdivisions[1][1:-1])
+        return (self._subdivisions[0][1:-1], self._subdivisions[1][1:-1])
 
     # for backwards compatibility: see #4983.
     get_subdivisions = subdivisions
@@ -12185,13 +12173,11 @@ cdef class Matrix(Matrix1):
         if n == 0:
             if not transformation:
                 return self
-            else:
-                return self, self
-        elif n == 1:
+            return self, self
+        if n == 1:
             if not transformation:
                 return self
-            else:
-                return self, self.parent().identity_matrix()
+            return self, self.parent().identity_matrix()
 
         inferred_base_ring = base_ring
 
@@ -12318,8 +12304,7 @@ cdef class Matrix(Matrix1):
 
         if transformation:
             return J, transformation_matrix
-        else:
-            return J
+        return J
 
     def jordan_decomposition(self):
         r"""
@@ -16832,8 +16817,7 @@ cdef class Matrix(Matrix1):
         if self == 0 or (self.nrows() <= 1 and self.ncols() <= 1):
             if transformation:
                 return self.__copy__(), left_mat, right_mat
-            else:
-                return self.__copy__()
+            return self.__copy__()
 
         # data type checks on R
         if not R.is_integral_domain() or not R.is_noetherian():
@@ -16862,8 +16846,7 @@ cdef class Matrix(Matrix1):
             dp = dp.change_ring(R) / den
         if transformation:
             return dp, up*u, v*vp
-        else:
-            return dp
+        return dp
 
     def fitting_ideal(self, i):
         r"""
@@ -16964,8 +16947,7 @@ cdef class Matrix(Matrix1):
         if R in _Fields:
             if self.rank() >= rank_minors:
                 return R.ideal([1])
-            else:
-                return R.ideal([0])
+            return R.ideal([0])
         try:
             elemdiv = self.elementary_divisors()
             if rank_minors > len(elemdiv):
@@ -17268,8 +17250,7 @@ cdef class Matrix(Matrix1):
         if self.nrows() == 1:
             if self.is_zero():
                 return self.new_matrix(self.nrows(), self.nrows(), 1), self, []
-            else:
-                return self.new_matrix(self.nrows(), self.nrows(), 1), self, [
+            return self.new_matrix(self.nrows(), self.nrows(), 1), self, [
                     self.nonzero_positions_in_row(0)[0]]
 
         R = self.base_ring()
@@ -17605,7 +17586,8 @@ cdef class Matrix(Matrix1):
         manipulated by several different matrix methods.
 
         For output that may be more useful as input to other routines,
-        see the helper method :meth:`_zigzag_form`.
+        see the helper method
+        :meth:`~sage.matrix.matrix2.Matrix._zigzag_form`.
 
         .. NOTE::
 
@@ -17829,8 +17811,7 @@ cdef class Matrix(Matrix1):
             Z.subdivide(splits, splits)
         if transformation:
             return Z, U
-        else:
-            return Z
+        return Z
 
     def rational_form(self, format='right', subdivide=True):
         r"""
@@ -17869,7 +17850,7 @@ cdef class Matrix(Matrix1):
         Companion matrices may be written in one of four styles, and any
         such style may be selected with the ``format`` keyword.  See the
         companion matrix constructor,
-        :meth:`sage.matrix.constructor.companion_matrix`,
+        :func:`~sage.matrix.special.companion_matrix`,
         for more information about companion matrices.
 
         If the 'invariants' value is used for the ``format`` keyword,
@@ -18125,7 +18106,7 @@ cdef class Matrix(Matrix1):
 
         Companion matrices may be selected as any one of four different types.
         See the documentation for the companion matrix constructor,
-        :meth:`sage.matrix.constructor.companion_matrix`, for more information. ::
+        :func:`~sage.matrix.special.companion_matrix`, for more information. ::
 
             sage: A = matrix(QQ, [[35, -18, -2, -45],
             ....:                 [22, -22, 12, -16],
@@ -19868,7 +19849,7 @@ cdef class Matrix(Matrix1):
         built with the appropriate degrees; note that the sum of these degrees
         has to be `r = 3` and the Krylov matrix has `m+r = 6` rows::
 
-            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [2, 1, 0]
@@ -19914,7 +19895,7 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  1  0  0]
             [70 72 60  0  1  0]
             [69 72 60  0  0  1]
-            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [3, 0, 0]
@@ -19952,7 +19933,7 @@ cdef class Matrix(Matrix1):
 
             sage: row_profile
             ((1, 0, 0), (1, 1, 1), (1, 2, 2), (2, 0, 3), (0, 0, 4), (1, 3, 5))
-            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [0, 3, 0]
@@ -19980,7 +19961,7 @@ cdef class Matrix(Matrix1):
             [47 64 69  0  0  1]
             sage: 0 == K2 * E.krylov_matrix(M, shifts=shifts, degrees=[0, 3, 0])
             False
-            sage: degrees = [max(rp[1] for rp in row_profile2 if rp[0] == j) 
+            sage: degrees = [max(rp[1] for rp in row_profile2 if rp[0] == j)
             ....:                             for j in range(E.nrows())]
             sage: degrees
             [0, 1, 1]
@@ -20171,8 +20152,7 @@ cdef class Matrix(Matrix1):
 
             if output_rows:
                 return kkbasis, row_coords_krylov
-            else:
-                return kkbasis
+            return kkbasis
 
         c, d, _ = zip(*(row for row in row_profile))
 
@@ -20230,8 +20210,7 @@ cdef class Matrix(Matrix1):
 
         if output_rows:
             return kkbasis, row_coords_krylov
-        else:
-            return kkbasis
+        return kkbasis
 
     # a limited number of access-only properties are provided for matrices
     @property
@@ -20804,7 +20783,7 @@ def _matrix_power_symbolic(A, n):
         [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n]
         [1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n]
         [          1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n - 1/2*k^n           1/4*(k + 2)^n - 1/4*(k - 2)^n 1/4*(k + 2)^n + 1/4*(k - 2)^n + 1/2*k^n]
-        
+
     """
     from sage.rings.qqbar import AlgebraicNumber
     from sage.matrix.constructor import matrix
@@ -20876,7 +20855,8 @@ class NotFullRankError(ValueError):
     The fact that a square system is rank-deficient sometimes only becomes
     apparent while attempting to solve it. The methods
     :meth:`.Matrix.solve_left` and :meth:`.Matrix.solve_right` defer to
-    :meth:`.Matrix._solve_right_nonsingular_square` for square systems, and
+    :meth:`~sage.matrix.matrix2.Matrix._solve_right_nonsingular_square`
+    for square systems, and
     that method raises this error if the system turns out to be singular.
     """
     pass

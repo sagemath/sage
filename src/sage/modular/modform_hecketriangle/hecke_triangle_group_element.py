@@ -891,7 +891,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         I.e. an element which is equal to ``self`` up
         to a sign after taking the appropriate power.
 
-        See :meth:`_primitive_block_decomposition_data` for a description
+        See ``_primitive_block_decomposition_data`` for a description
         about the representative in case the default method
         ``block`` is used. Also see :meth:`primitive_part`
         to construct the primitive part of ``self``.
@@ -907,7 +907,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
           is used.
 
           With ``'block'`` the decomposition described in
-          :meth:`_primitive_block_decomposition_data` is used.
+          ``_primitive_block_decomposition_data`` is used.
 
           With ``'cf'`` a reduced representative from the lambda-CF of ``self``
           is used (see :meth:`continued_fraction`). In that case ``P``
@@ -1518,7 +1518,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         to the sign of the sign matrix ``self.sign()``).
 
         The function is a generalization of
-        :meth:`_primitive_block_decomposition_data`
+        ``_primitive_block_decomposition_data``
         (see for more information) to give the decomposition data
         for possibly non-primitive elements.
 
@@ -1673,7 +1673,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         In the elliptic case the tuple entries are either ``S`` or ``U``.
 
         This decomposition data is (also) described by
-        :meth:`_block_decomposition_data`.
+        ``_block_decomposition_data``.
 
         Warning: The case ``n=infinity`` is not verified at all
         and probably wrong!

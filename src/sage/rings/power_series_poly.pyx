@@ -18,6 +18,9 @@ except ImportError:
     PariError = ()
 
 cdef class PowerSeries_poly(PowerSeries):
+    """
+    .. automethod:: _derivative
+    """
 
     def __init__(self, parent, f=0, prec=infinity, int check=1, is_gen=0):
         """
@@ -596,8 +599,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         if n:
             return PowerSeries_poly(self._parent, self.__f << n, self._prec + n)
-        else:
-            return self
+        return self
 
     def __rshift__(PowerSeries_poly self, n):
         """
@@ -617,8 +619,7 @@ cdef class PowerSeries_poly(PowerSeries):
             return PowerSeries_poly(self._parent,
                                     self.__f >> n,
                                     max(0, self._prec - n))
-        else:
-            return self
+        return self
 
     def __invert__(self):
         """
@@ -754,8 +755,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         if prec is infinity:
             return self.__f
-        else:
-            return self.__f.truncate(prec)
+        return self.__f.truncate(prec)
 
     cdef _inplace_truncate(self, long prec):
         """
@@ -840,7 +840,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
         .. SEEALSO::
 
-            ``self.derivative()``
+            :meth:`~sage.rings.power_series_ring_element.PowerSeries.derivative`
 
         EXAMPLES::
 

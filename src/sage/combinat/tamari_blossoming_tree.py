@@ -2460,7 +2460,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
             idx += 1
             lasttree = genA(OrderedTree(dtree[:idx]))
             treelist = [lasttree]
-            treelist.extend([genB(dtree[i]) for i in range(idx, len(dtree))])
+            treelist.extend(genB(dtree[i]) for i in range(idx, len(dtree)))
             return treelist
 
         def genB(dtree: OrderedTree) -> OrderedTree:

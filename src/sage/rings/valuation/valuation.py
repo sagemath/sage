@@ -631,7 +631,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             ValueError: G must be integral
 
         Some examples that Sebastian Pauli used in a talk at Sage Days 87.
-        Here we use ``assume_squarefree=True`` because :meth:`is_squarefree`
+        Here we use ``assume_squarefree=True`` because ``is_squarefree``
         is not properly implemented yet.
 
         ::

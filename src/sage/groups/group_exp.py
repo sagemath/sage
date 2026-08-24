@@ -49,7 +49,7 @@ class GroupExp(Functor):
 
     The :class:`GroupExp` functor (denoted `E` in the examples) can be applied to two kinds of input.
     The first is a commutative additive group. The output is its exponential.
-    This is accomplished by :meth:`_apply_functor`::
+    This is accomplished by ``_apply_functor``::
 
         sage: EZ = E(ZZ); EZ
         Multiplicative form of Integer Ring
@@ -68,7 +68,8 @@ class GroupExp(Functor):
         0
 
     The second kind of input the :class:`GroupExp` functor accepts, is a homomorphism of commutative additive groups.
-    The output is the multiplicative form of the homomorphism. This is achieved by :meth:`_apply_functor_to_morphism`::
+    The output is the multiplicative form of the homomorphism. This is
+    achieved by ``_apply_functor_to_morphism``::
 
         sage: L = RootSystem(['A',2]).ambient_space()
         sage: EL = E(L)

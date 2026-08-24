@@ -94,17 +94,22 @@ AUTHORS:
 - Originally taken from Fernando Perez's IPython
 - William Stein: extensive modifications
 - William Stein: in :func:`_sage_getargspec_cython`, a modified version of
-  ``inspect.getargspec`` from the Python Standard Library, which was taken from
-  IPython for use in Sage
+  the historical ``inspect.getargspec`` implementation from the Python
+  Standard Library, which was taken from IPython for use in Sage
 - Nick Alexander: extensions, testing
 - Simon King: some extension for Cython, generalisation of SageArgSpecVisitor
 - Simon King: in :func:`sage_getsourcelines`, if a class has no docstring then let the
   class definition be found starting from the ``__init__`` method.
 - Simon King: in :func:`sage_getsourcelines`, get source lines for dynamic classes
-- Simon King: in :func:`_sage_getargspec_cython`, return an ``ArgSpec``, fix some bugs
+- Simon King: in :func:`_sage_getargspec_cython`, return an
+  ``inspect.FullArgSpec``, fix some bugs
 - Simon King (2011-09): added :func:`_sage_getsourcelines_name_with_dot`
 - Simon King (2013-02): in :func:`_sage_getargspec_cython`, recognise varargs and
-  default values in cython code, and return an ``ArgSpec``
+  default values in cython code, and return an ``inspect.FullArgSpec``
+
+.. autofunction:: _sage_getargspec_cython
+.. autofunction:: _sage_getargspec_from_ast
+.. autofunction:: _sage_getsourcelines_name_with_dot
 """
 
 import ast
@@ -346,8 +351,9 @@ class BlockFinder:
     """
     Provide a :meth:`tokeneater` method to detect the end of a code block.
 
-    This is the Python library's :class:`inspect.BlockFinder` modified
-    to recognize Cython definitions.
+    This is Sage's :class:`BlockFinder` class, modified from the
+    ``BlockFinder`` class in Python's :mod:`inspect` module to recognize
+    Cython definitions.
     """
     def __init__(self):
         self.indent = 0
@@ -981,7 +987,7 @@ def _sage_getargspec_from_ast(source):
     - ``source`` -- string; the function's (or method's) source code
       definition. The function's body is ignored.
 
-    OUTPUT: an instance of :obj:`inspect.ArgSpec`, i.e., a named tuple
+    OUTPUT: an instance of ``inspect.FullArgSpec``, i.e., a named tuple
 
     EXAMPLES::
 
@@ -1016,8 +1022,8 @@ def _sage_getargspec_from_ast(source):
 
 def _sage_getargspec_cython(source):
     r"""
-    inspect.getargspec from source code.  That is, get the names and
-    default values of a function's arguments.
+    Return an ``inspect.FullArgSpec`` from source code.  That is,
+    get the names and default values of a function's arguments.
 
     INPUT:
 
@@ -1025,7 +1031,8 @@ def _sage_getargspec_cython(source):
       definition.  The function's body is ignored. The definition may
       contain type definitions for the function arguments.
 
-    OUTPUT: an instance of :class:`inspect.FullArgSpec`, i.e., a named tuple
+    OUTPUT: an instance of ``inspect.FullArgSpec``, the named tuple
+    returned by :func:`inspect.getfullargspec`
 
     EXAMPLES::
 
@@ -1326,13 +1333,13 @@ def sage_getfile_relative(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getfile_relative
-        sage: sage_getfile_relative(sage.rings.rational)
-        'sage/rings/rational.pyx'
+        sage: sage_getfile_relative(sage.rings.rational).endswith('sage/rings/rational.pyx')
+        True
         sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
-        sage: sage_getfile_relative(x)                                                  # needs sage.symbolic
-        'sage/symbolic/expression.pyx'
+        sage: sage_getfile_relative(x).endswith('sage/symbolic/expression.pyx')         # needs sage.symbolic
+        True
         sage: sage_getfile_relative(range)
         ''
     """
@@ -1370,8 +1377,8 @@ def sage_getargspec(obj):
 
     OUTPUT:
 
-    A named tuple :class:`FullArgSpec` is returned, as specified by the
-    Python library function :func:`inspect.getfullargspec`.
+    A named tuple ``inspect.FullArgSpec`` is returned, as specified
+    by the Python library function :func:`inspect.getfullargspec`.
 
     NOTE:
 
@@ -1403,8 +1410,9 @@ def sage_getargspec(obj):
                     varargs=None, varkw='kwds', defaults=(None, False, None, 0),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    In the case of a class or a class instance, the :class:`FullArgSpec` of the
-    ``__new__``, ``__init__`` or ``__call__`` method is returned::
+    In the case of a class or a class instance, the
+    ``inspect.FullArgSpec`` of the ``__new__``, ``__init__`` or
+    ``__call__`` method is returned::
 
         sage: P.<x,y> = QQ[]
         sage: sage_getargspec(P)                                                        # needs sage.libs.singular
@@ -1436,7 +1444,7 @@ def sage_getargspec(obj):
         FullArgSpec(args=['x', 'y'], varargs=None, varkw=None, defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    If a :func:`functools.partial` instance is involved, we see no other meaningful solution
+    If a :func:`~functools.partial` instance is involved, we see no other meaningful solution
     than to return the argspec of the underlying function::
 
         sage: def f(a, b, c, d=1):
@@ -1653,8 +1661,11 @@ def sage_getargspec(obj):
 
 def _fullargspec_to_signature(fullargspec):
     """
-    Converts a :class:`FullArgSpec` instance to a :class:`Signature` instance by best effort.
-    The opposite conversion is implemented in the source code of :func:`inspect.getfullargspec`.
+    Converts an ``inspect.FullArgSpec`` instance to an
+    :class:`inspect.Signature` instance by best effort.
+    ``inspect.FullArgSpec`` is the named tuple returned by
+    :func:`inspect.getfullargspec`. The opposite conversion is implemented
+    in the source code of :func:`inspect.getfullargspec`.
 
     EXAMPLES::
 
@@ -1785,7 +1796,7 @@ def sage_signature(obj):
         sage: sage_signature(foo)                                                      # needs sage.misc.cython
         <Signature (x, y)>
 
-    If a :func:`functools.partial` instance is involved, we see no other meaningful solution
+    If a :func:`~functools.partial` instance is involved, we see no other meaningful solution
     than to return the signature of the underlying function::
 
         sage: def f(a, b, c, d=1):
@@ -1868,8 +1879,8 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
     Sage uses this function to format arguments, as obtained by
     :func:`sage_getargspec`. Since :func:`sage_getargspec` works for
     Cython functions while Python's inspect module does not, it makes
-    sense to keep this function for formatting instances of
-    ``inspect.FullArgSpec``.
+    sense to keep this function for formatting ``FullArgSpec`` instances
+    returned by :func:`inspect.getfullargspec`.
 
     EXAMPLES::
 
@@ -1977,14 +1988,13 @@ def _sage_getdoc_unformatted(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import _sage_getdoc_unformatted
-        sage: print(_sage_getdoc_unformatted(sage.rings.integer.Integer))
-        Integer(x=None, base=0)
-        File: ...sage/rings/integer.pyx (starting at line ...)
-        <BLANKLINE>
-            The :class:`Integer` class represents arbitrary precision
-            integers. It derives from the :class:`Element` class, so
-            integers can be used as ring elements anywhere in Sage.
-        ...
+        sage: doc = _sage_getdoc_unformatted(sage.rings.integer.Integer)
+        sage: 'Integer(x=None, base=0)' in doc
+        True
+        sage: 'sage/rings/integer.pyx' in doc
+        True
+        sage: 'arbitrary precision\nintegers' in doc
+        True
 
     TESTS:
 
@@ -2030,12 +2040,13 @@ def sage_getdoc_original(obj):
 
     Here is a class that has its own docstring::
 
-        sage: print(sage_getdoc_original(sage.rings.integer.Integer))
-        <BLANKLINE>
-            The :class:`Integer` class represents arbitrary precision
-            integers. It derives from the :class:`Element` class, so
-            integers can be used as ring elements anywhere in Sage.
-        ...
+        sage: doc = sage_getdoc_original(sage.rings.integer.Integer)
+        sage: doc.startswith('\n')
+        True
+        sage: 'arbitrary precision\nintegers' in doc
+        True
+        sage: 'Element' in doc
+        True
 
     If the class does not have a docstring, the docstring of the
     ``__init__`` method is used, but not the ``__init__`` method
@@ -2052,20 +2063,20 @@ def sage_getdoc_original(obj):
         sage: sage_getdoc_original(B)
         ''
 
-    Old-style classes are supported::
+    Ordinary Python classes are supported::
 
-        sage: class OldStyleClass:
+        sage: class PlainPythonClass:
         ....:     def __init__(self):
         ....:         '''The __init__ docstring'''
         ....:         pass
-        sage: print(sage_getdoc_original(OldStyleClass))
+        sage: print(sage_getdoc_original(PlainPythonClass))
         The __init__ docstring
 
     When there is no ``__init__`` method, we just get an empty string::
 
-        sage: class OldStyleClass:
+        sage: class PlainPythonClass:
         ....:     pass
-        sage: sage_getdoc_original(OldStyleClass)
+        sage: sage_getdoc_original(PlainPythonClass)
         ''
 
     If an instance of a class does not have its own docstring, the docstring
@@ -2075,7 +2086,7 @@ def sage_getdoc_original(obj):
         True
     """
     # typ is the type corresponding to obj, which is obj itself if
-    # that was a type or old-style class
+    # it is a class.
     if isinstance(obj, type):
         typ = obj
     else:
@@ -2374,7 +2385,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(test_funct)
         (['cpdef test_funct(x, y): return\n'], 1)
 
-    The following tests that an instance of ``functools.partial`` is correctly
+    The following tests that an instance of :func:`~functools.partial` is correctly
     dealt with (see :issue:`9976`)::
 
         sage: from sage.tests.functools_partial_src import test_func

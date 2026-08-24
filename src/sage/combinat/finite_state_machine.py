@@ -260,9 +260,6 @@ Helper Functions
     :func:`startswith` | Determine whether list starts with the given prefix
     :func:`FSMLetterSymbol` | Return a string associated to the input letter
     :func:`FSMWordSymbol` | Return a string associated to a word
-    :func:`is_FSMState` | Test whether an object inherits from :class:`FSMState`
-    :func:`is_FSMTransition` | Test whether an object inherits from :class:`FSMTransition`
-    :func:`is_FiniteStateMachine` | Test whether an object inherits from :class:`FiniteStateMachine`
     :func:`duplicate_transition_ignore` |  Default function for handling duplicate transitions
     :func:`duplicate_transition_raise_error` | Raise error when inserting a duplicate transition
     :func:`duplicate_transition_add_input` | Add input when inserting a duplicate transition
