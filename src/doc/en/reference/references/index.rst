@@ -5635,6 +5635,9 @@ REFERENCES:
               and S. A. Vanstone. *Handbook of Applied
               Cryptography*. CRC Press, 1996.
 
+.. [Mye1991] Roger B. Myerson, *Game Theory: Analysis of Conflict*,
+             Harvard University Press, 1991.
+
 .. [MW1990] Brendan D. McKay and Nicholas C. Worland. *Uniform Generation of
             Random Regular Graphs of Moderate Degree*. Journal of Algorithms,
             11(1):52-67, 1990.
