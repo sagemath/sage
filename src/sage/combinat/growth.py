@@ -518,6 +518,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.binary_tree import BinaryTree, BinaryTrees, LabelledBinaryTree
+from sage.combinat.cylindric_shapes import CylindricShape, CylindricShapes
 from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_tableau import CompositionTableau, CompositionTableaux
@@ -5085,6 +5086,195 @@ class RuleDomino(Rule):
         return z
 
 
+class RuleCylindricRS(Rule):
+    r"""
+    The local growth rule for the cylindric Robinson-Schensted correspondence.
+
+    This rule was introduced by Sergi Elizalde in [Elizalde2025]_.
+    The parameter `r` of the differential poset is 0, therefore the
+    filling is always empty.
+
+    EXAMPLES::
+
+        sage: l_o = [[3,3,1], [3,3,2], [4,3,2], [4,3,3], [5,3,3], [4,3,3], [4,3,2], [3,3,2], [3,2,2], [2,2,2]]
+        sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+        sage: l_i = CRS(labels=l_o).in_labels()
+        sage: l_i
+        [[3, 3, 1],
+         [3, 2, 1],
+         [3, 1, 1],
+         [2, 1, 1],
+         [2, 1, 0],
+         [1, 1, 0],
+         [1, 1, 1],
+         [2, 1, 1],
+         [2, 2, 1],
+         [2, 2, 2]]
+
+        sage: from sage.combinat.cylindric_shapes import CylindricShapes
+        sage: S = CylindricShapes(3, 2)
+        sage: CRS(filling={}, labels=l_i).out_labels() == [S(mu) for mu in l_o]
+        True
+
+    Check Figure 15::
+
+        sage: l = [[-1,-1,-2],[0,-1,-2],[0,-1,-1],[1,-1,-1],[1,0,-1],[1,1,-1],[2,1,-1],[2,2,-1],[2,2,0]]
+        sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=3)
+        sage: view(CRS(filling={}, labels=l[::-1] + l[1:]))  # not tested
+    """
+    def __init__(self, d, L):
+        """
+        Initialize the rule.
+
+        EXAMPLES::
+
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: TestSuite(CRS).run()
+        """
+        self._d = d
+        self._L = L
+        self._P = CylindricShapes(d, L)
+        self.zero = self._P.zero()
+        self.r = 0
+
+    def normalize_vertex(self, v):
+        """
+        Convert a list or tuple into a ``CylindricShape``.
+
+        EXAMPLES::
+
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: CRS.normalize_vertex([1, 1, 0])
+            [1, 1, 0]
+        """
+        if isinstance(v, CylindricShape):
+            return v
+        return self._P(v)
+
+    def vertices(self, n):
+        r"""
+        Return the vertices of the dual graded graph on level ``n``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: CRS.vertices(1)
+            [[1, 1, -1], [1, 0, 0]]
+        """
+        d = self._d
+        L = self._L
+        v = []
+        for la_d in range((n - L*(d-1)) // d, (n // d) + 1):
+            for la in Partitions(n - d * la_d, max_length=d - 1, max_part=L):
+                la0 = [e + la_d for e in la] + [la_d]*(d-len(la))
+                v.append(self._P(la0))
+        return v
+
+    def is_P_edge(self, v, w):
+        r"""
+        Return whether ``(v, w)`` is a `P`-edge of ``self``.
+
+        ``(v, w)`` is an edge if ``w`` is obtained from ``v`` by
+        adding a cell.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: S = CylindricShapes(3, 2)
+            sage: CRS.is_P_edge(S([1, 1, -1]), S([1, 1, 0]))
+            True
+        """
+        if self.rank(w) != self.rank(v) + 1:
+            return False
+        return v <= w
+
+    is_Q_edge = is_P_edge
+
+    def forward_rule(self, y, t, x, content=None):
+        """
+        Return the output shape given three shapes and the content.
+
+        INPUT:
+
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
+
+          growth diagram, labelled as::
+
+              t x
+              y
+
+        - ``content`` -- ignored
+
+        See rules (F1) and (F2) in [Elizalde2025]_.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: S = CylindricShapes(3, 2)
+            sage: CRS.forward_rule(S([2, 1, 0]), S([1, 1, 0]), S([1, 1, 1]))
+            [2, 1, 1]
+
+            sage: CRS.forward_rule(S([2, 1, 1]), S([1, 1, 1]), S([2, 1, 1]))
+            [2, 2, 1]
+        """
+        if x != y:
+            return x.union(y)
+
+        i = next(i for i in range(self._P._d) if x._values[i] > t._values[i])
+        return x.add_cell(i + 1)
+
+    def backward_rule(self, y, z, x):
+        r"""
+        Return the output shape given three shapes and the content.
+
+        See rules (B1) and (B2) in [Elizalde2025]_.
+
+        INPUT:
+
+        - ``y``, ``z``, ``x`` -- three cylindric shapes from a cell
+          in a growth diagram, labelled as::
+
+                x
+              y z
+
+        OUTPUT:
+
+        A pair ``(t, 0)``, where `t` is the fourth shape.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: S = CylindricShapes(3, 2)
+            sage: CRS.backward_rule(S([4, 3, 3]), S([5, 3, 3]), S([4, 3, 3]))
+            ([4, 3, 2], 0)
+
+            sage: CRS.backward_rule(S([3, 2, 2]), S([4, 2, 2]), S([3, 2, 2]))
+            ([3, 2, 1], 0)
+        """
+        if x != y:
+            return x.intersection(y), 0
+
+        i = next(i for i in range(self._P._d) if z._values[i] > x._values[i])
+        return x.remove_cell(i - 1), 0
+
+    def rank(self, rho):
+        """
+        Return the rank of the shape (total number of cells).
+
+        EXAMPLES::
+
+            sage: from sage.combinat.cylindric_shapes import CylindricShapes
+            sage: CRS = GrowthDiagram.rules.CylindricRS(d=3, L=2)
+            sage: CRS.rank(CylindricShapes(3, 2)([3,2,1]))
+            6
+        """
+        return sum(rho._values)
+
+
 def _mason_insert(k, T):
     """
     Insert ``k`` into a composition tableau ``T``.
@@ -5607,6 +5797,7 @@ class Rules:
     RSK = RuleRSK
     Burge = RuleBurge
     Domino = RuleDomino
+    CylindricRS = RuleCylindricRS
     LeftCompositions = RuleLeftCompositions
     RightCompositions = RuleRightCompositions
 
