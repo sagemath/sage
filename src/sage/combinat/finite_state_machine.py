@@ -859,18 +859,6 @@ See also methods :meth:`Automaton.process` and
 :class:`FSMProcessIterator` for more information on processing and
 hooks.
 
-REFERENCES:
-
-.. [HKP2015] Clemens Heuberger, Sara Kropf, and Helmut Prodinger,
-   *Output sum of transducers: Limiting distribution and periodic
-   fluctuation*,
-   `Electron. J. Combin. 22 (2015), #P2.19 <http://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i2p19>`_.
-
-.. [HKW2015] Clemens Heuberger, Sara Kropf and Stephan Wagner,
-   *Variances and Covariances in the Central Limit Theorem for the Output
-   of a Transducer*, European J. Combin. 49 (2015), 167-187,
-   :doi:`10.1016/j.ejc.2015.03.004`.
-
 AUTHORS:
 
 - Daniel Krenn (2012-03-27): initial version

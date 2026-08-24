@@ -83,6 +83,10 @@ REFERENCES:
              Combinatorica vol 27, num 3, p253--267, 2007.
              :doi:`10.1007/s00493-007-2086-y`.
 
+.. [AC03] \B. Adamczewski, J. Cassaigne, On the transcendence of real
+          numbers with a regular expansion, J. Number Theory 103 (2003)
+          27--37.
+
 .. [AC1994] \R.J.R. Abel and Y.W. Cheng,
             Some new MOLS of order 2np for p a prime power,
             The Australasian Journal of Combinatorics, vol 10 (1994)
@@ -629,6 +633,13 @@ REFERENCES:
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
             :doi:`10.1007/978-1-4614-1939-6`
+
+.. [BmBGL07] \A. Blondin-Massé, S. Brlek, A. Glen, and S. Labbé. On the
+             critical exponent of generalized Thue-Morse words. *Discrete Math.
+             Theor. Comput.  Sci.* 9 (1):293--304, 2007.
+
+.. [BmBGL09] \A. Blondin-Massé, S. Brlek, A. Garon, and S. Labbé. Christoffel
+             and Fibonacci Tiles, DGCI 2009, Montreal, to appear in LNCS.
 
 .. [BMFPR2011] \M. Bousquet-Mélou, É. Fusy, L.-F. Préville-Ratelle,
                 *The number of intervals in the m-Tamari lattices*.
@@ -1977,6 +1988,11 @@ REFERENCES:
              of the Advanced Encryption Standard*; Springer Verlag
              2006
 
+.. [CMS2012] Alexandre Casamayou, Nathann Cohen, Guillaume Connan, Thierry
+             Dumont, Laurent Fousse, François Maltey, Matthias Meulien, Marc Mezzarobba,
+             Clément Pernet, Nicolas M. Thiéry, Paul Zimmermann *Calcul Mathématique avec
+             Sage* https://www.sagemath.org/sagebook/french.html
+
 .. [CMT2003] \A. M. Cohen, S. H. Murray, D. E. Talyor.
              *Computing in groups of Lie type*.
              Mathematics of Computation. **73** (2003), no 247. pp. 1477--1498.
@@ -2914,6 +2930,9 @@ REFERENCES:
              Springer Verlag. V. Berthé, S. Ferenczi, C. Mauduit
              and A. Siegel, Eds.  (2002).
 
+.. [Fogg] Pytheas Fogg,
+          https://www.lirmm.fr/arith/wiki/PytheasFogg/S-adiques.
+
 .. [Fom1994] Sergey V. Fomin, *Duality of graded graphs*. Journal of
              Algebraic Combinatorics Volume 3, Number 4 (1994),
              pp. 357-404.
@@ -3653,6 +3672,16 @@ REFERENCES:
 .. [HKP2010] \T. J. Haines, R. E. Kottwitz, A. Prasad, Iwahori-Hecke
              Algebras, J. Ramanujan Math. Soc., 25 (2010),
              113--145. :arxiv:`0309168v3` :mathscinet:`MR2642451`
+
+.. [HKP2015] Clemens Heuberger, Sara Kropf, and Helmut Prodinger,
+             *Output sum of transducers: Limiting distribution and periodic
+             fluctuation*,
+             `Electron. J. Combin. 22 (2015), #P2.19 <http://www.combinatorics.org/ojs/index.php/eljc/article/view/v22i2p19>`_.
+
+.. [HKW2015] Clemens Heuberger, Sara Kropf and Stephan Wagner,
+             *Variances and Covariances in the Central Limit Theorem for the Output
+             of a Transducer*, European J. Combin. 49 (2015), 167-187,
+             :doi:`10.1016/j.ejc.2015.03.004`.
 
 .. [HL1999] \L. Heath and N. Loehr (1999).  New algorithms for
             generating Conway polynomials over finite fields.
@@ -4959,6 +4988,10 @@ REFERENCES:
 .. [Lot2005] \M. Lothaire, *Applied combinatorics on
              words*. Cambridge University Press (2005).
 
+.. [Loth02] \M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of
+            Encyclopedia of Mathematics and its Applications, Cambridge
+            University Press, U.K., 2002.
+            
 .. [Lov1979] László Lovász,
              *On the Shannon capacity of a graph*,
              IEEE Trans. Inf. Th. 25(1979), 1-7.
@@ -5863,6 +5896,10 @@ REFERENCES:
              SIAM ALENEX, 2009: 52-61
              :doi:`10.1137/1.9781611972894.5`
 
+.. [OSS13] Masato Okado, Reiho Sakamoto, and Anne Schilling.
+           *Affine crystal structure on rigged configurations of type* `D_n^{(1)}`.
+           J. Algebraic Combinatorics, **37** (2013). 571-599. :arxiv:`1109.3523`.
+
 .. [Oum2009] Sang-il Oum,
              *Computing rank-width exactly*,
              Information Processing Letters, 2009,
@@ -6142,6 +6179,10 @@ REFERENCES:
               *Alley CATs in search of good homes.*
               Congressus numerantium, 1994.
               Pages 97--110
+
+.. [RC-MLT] Ben Salisbury and Travis Scrimshaw. *Connecting marginally
+            large tableaux and rigged configurations via crystals*.
+            Preprint. :arxiv:`1505.07040`.
 
 .. [Rea1968] Ronald C. Read,
              An improved method for computing the chromatic polynomials of sparse graphs,

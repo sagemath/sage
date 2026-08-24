@@ -14,27 +14,6 @@ USE:
 To see a list of all word constructors, type ``words.`` and then press
 the :kbd:`Tab` key. The documentation for each constructor includes
 information about each word, which provides a useful reference.
-
-REFERENCES:
-
-.. [AC03] \B. Adamczewski, J. Cassaigne, On the transcendence of real
-   numbers with a regular expansion, J. Number Theory 103 (2003)
-   27--37.
-
-.. [BmBGL07] \A. Blondin-Massé, S. Brlek, A. Glen, and S. Labbé. On the
-   critical exponent of generalized Thue-Morse words. *Discrete Math.
-   Theor. Comput.  Sci.* 9 (1):293--304, 2007.
-
-.. [BmBGL09] \A. Blondin-Massé, S. Brlek, A. Garon, and S. Labbé. Christoffel
-   and Fibonacci Tiles, DGCI 2009, Montreal, to appear in LNCS.
-
-.. [Loth02] \M. Lothaire, Algebraic Combinatorics On Words, vol. 90 of
-   Encyclopedia of Mathematics and its Applications, Cambridge
-   University Press, U.K., 2002.
-
-.. [Fogg] Pytheas Fogg,
-   https://www.lirmm.fr/arith/wiki/PytheasFogg/S-adiques.
-
 EXAMPLES::
 
     sage: t = words.ThueMorseWord(); t
