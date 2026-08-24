@@ -1399,7 +1399,8 @@ class FanMorphism(FreeModuleMorphism):
         X_{\Sigma'}` is surjective.
 
         .. SEEALSO:: :meth:`is_bundle`, :meth:`is_fibration`,
-            :meth:`preimage_cones`, :meth:`is_complete`.
+            :meth:`preimage_cones`,
+            :meth:`~sage.geometry.fan.RationalPolyhedralFan.is_complete`.
 
         EXAMPLES:
 
@@ -1483,8 +1484,9 @@ class FanMorphism(FreeModuleMorphism):
 
         .. NOTE::
 
-            The lattice of the kernel fan is the :meth:`kernel` sublattice of
-            ``self``.
+            The lattice of the kernel fan is the
+            :meth:`~sage.modules.matrix_morphism.MatrixMorphism_abstract.kernel`
+            sublattice of ``self``.
 
         .. SEEALSO:: :meth:`preimage_fan`.
 
@@ -1862,7 +1864,8 @@ class FanMorphism(FreeModuleMorphism):
 
         OUTPUT:
 
-        - :meth:`~RationalPolyhedralFan.star_generators` of ``domain_cone``
+        - :meth:`~sage.geometry.fan.Cone_of_fan.star_generators` of
+          ``domain_cone``
           viewed as a cone of :meth:`preimage_fan` of :meth:`image_cone` of
           ``domain_cone``.
 

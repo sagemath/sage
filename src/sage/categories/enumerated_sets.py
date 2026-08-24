@@ -1,5 +1,7 @@
 r"""
 Enumerated sets
+
+.. automethod:: sage.categories.enumerated_sets::EnumeratedSets.ParentMethods.__iter__
 """
 # ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>

@@ -1679,7 +1679,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.backend_normaliz.hilbert_series`
+            :meth:`~sage.geometry.polyhedron.backend_normaliz.Polyhedron_QQ_normaliz.hilbert_series`
 
         TESTS:
 
@@ -1760,8 +1760,8 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.backend_normaliz.hilbert_series`,
-            :meth:`~sage.geometry.polyhedron.backend_normaliz.ehrhart_series`
+            :meth:`~sage.geometry.polyhedron.backend_normaliz.Polyhedron_QQ_normaliz.hilbert_series`,
+            :meth:`~sage.geometry.polyhedron.backend_normaliz.Polyhedron_QQ_normaliz.ehrhart_series`
         """
         cone = self._normaliz_cone
         # Normaliz needs to compute the EhrhartSeries first
@@ -1847,7 +1847,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         .. SEEALSO::
 
-            :meth:`~sage.geometry.polyhedron.backend_normaliz.ehrhart_series`
+            :meth:`~sage.geometry.polyhedron.backend_normaliz.Polyhedron_QQ_normaliz.ehrhart_series`
 
         TESTS:
 

@@ -424,8 +424,9 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         ALGORITHM:
 
-        This reduces to p-groups, then calls :func:`_discrete_log_pgroup` which
-        implements a basic version of the recursive algorithm from [Suth2008]_.
+        This reduces to p-groups, then calls
+        ``_discrete_log_pgroup`` which implements a basic version of the
+        recursive algorithm from [Suth2008]_.
 
         AUTHORS:
 

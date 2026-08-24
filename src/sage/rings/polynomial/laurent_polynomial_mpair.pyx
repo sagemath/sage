@@ -467,7 +467,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.number_of_terms()
             101
 
-        The method :meth:`hamming_weight` is an alias::
+        The method :meth:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial.hamming_weight`
+        is an alias::
 
             sage: f.hamming_weight()
             101
@@ -984,8 +985,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise ZeroDivisionError
         if right._poly.is_term():
             return self * ~right
-        else:
-            return RingElement._div_(self, rhs)
+        return RingElement._div_(self, rhs)
 
     def is_monomial(self):
         """
@@ -1254,6 +1254,41 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: R.zero().degree(x) == R.zero().degree(y) == R.zero().degree(z)
             True
 
+        The weights of a weighted term order are taken into account, also
+        for negative exponents (:issue:`37568`)::
+
+            sage: R.<x, y> = LaurentPolynomialRing(ZZ, order=TermOrder('wdegrevlex', [1, 3]))
+            sage: R(x).degree()
+            1
+            sage: R(y).degree()
+            3
+            sage: R(1/x).degree()
+            -1
+            sage: R(1/y).degree()
+            -3
+            sage: (x^2 * y^-1).degree()
+            -1
+
+        Unweighted term orders are unaffected::
+
+            sage: R.<a, b> = LaurentPolynomialRing(ZZ)
+            sage: (a^2 * b^-1).degree()
+            1
+
+        This also applies blockwise to block orders containing weighted
+        blocks::
+
+            sage: T = TermOrder('wdeglex', [1, 3]) + TermOrder('lex', 1)
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ, order=T)
+            sage: R(y).degree()
+            3
+            sage: R(1/y).degree()
+            -3
+            sage: R(1/z).degree()
+            -1
+            sage: (x^2 * y^-1).degree()
+            -1
+
         TESTS::
 
             sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
@@ -1268,7 +1303,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return minus_infinity
 
         if x is None:
-            return self._poly.total_degree() + sum(self._mon)
+            w = [gen.total_degree() for gen in self._parent._R.gens()]
+            return self._poly.total_degree() + sum(wi * mi for wi, mi
+                                                   in zip(w, self._mon))
 
         # Get the index of the generator or error
         cdef tuple g = <tuple > self._parent.gens()
@@ -1488,8 +1525,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             f = self.subs(**kwds)
             if x:  # More than 1 non-keyword argument
                 return f(*x)
-            else:
-                return f
+            return f
 
         cdef int l = len(x)
 
@@ -1643,7 +1679,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         .. SEEALSO::
 
-            :meth:`_derivative`
+            ``_derivative()``
 
         EXAMPLES::
 
@@ -1743,7 +1779,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         If this polynomial is not in at most one variable, then a
         :exc:`ValueError` exception is raised.  The new polynomial is over
-        the same base ring as the given :class:`LaurentPolynomial` and in the
+        the same base ring as the given
+        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`
+        and in the
         variable ``x`` if no ring ``R`` is provided.
 
         EXAMPLES::
@@ -2014,8 +2052,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if not self:
             if new_ring is None:
                 return self._parent.zero()
-            else:
-                return new_ring.zero()
+            return new_ring.zero()
 
         if self._prod is None:
             self._compute_polydict()

@@ -679,18 +679,19 @@ def rat_term_CIF(z, try_strict=True):
         corner_reals = []
         corner_imags = []
         for a, b in product(z.real().endpoints(), z.imag().endpoints()):
-            zz = CDF(a,b)
-            u = (two_pi_i_CDF*zz).exp()
-            f = u/(1-u)**2
+            zz = CDF(a, b)
+            u = (two_pi_i_CDF * zz).exp()
+            f = u / (1 - u)**2
             corner_reals.append(f.real())
             corner_imags.append(f.imag())
 
-        p1 = (((((r+2*x)*r - 6)*r + 2*x) * r) + 1)
-            # =  r^4 + 2*r^3*x - 6*r^2 + 2*r*x + 1
-        p2 = (r*(x*(r+2*x)-4)+x)
-            # = r^2*x + 2*r*x^2 - 4*r + x
+        p1 = (((((r + 2 * x) * r - 6) * r + 2 * x) * r) + 1)
+        # = r^4 + 2*r^3*x - 6*r^2 + 2*r*x + 1
 
-        df_dr = (r**2-1) * p2
+        p2 = (r * (x * (r + 2 * x) - 4) + x)
+        # = r^2*x + 2*r*x^2 - 4*r + x
+
+        df_dr = (r**2 - 1) * p2
         dg_dr = p1 * y
         dg_dx = r * df_dr / y
 

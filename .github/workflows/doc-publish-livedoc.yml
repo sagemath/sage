@@ -51,7 +51,7 @@ jobs:
 
       - name: Download live doc
         id: download-doc
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: livedoc
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -76,7 +76,7 @@ jobs:
 
       - name: Deploy to netlify with doc-TAG alias
         id: deploy-netlify
-        uses: netlify/actions/cli@master
+        uses: netlify/actions/cli@3185065f4ab2f6df6f2ef41ee013626e1c02a426 # master
         with:
           args: deploy --dir=livedoc/doc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
         env:
@@ -87,7 +87,7 @@ jobs:
         if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to netlify with doc-release alias
-        uses: netlify/actions/cli@master
+        uses: netlify/actions/cli@3185065f4ab2f6df6f2ef41ee013626e1c02a426 # master
         with:
           args: deploy --dir=livedoc/doc --message doc-release --alias doc-release
         env:

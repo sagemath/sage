@@ -114,7 +114,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
 
     For more involved examples see the *source code* of
     :meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.face_lattice` and
-    :meth:`sage.geometry.fan.RationalPolyhedralFan._compute_cone_lattice`.
+    ``RationalPolyhedralFan._compute_cone_lattice``.
     """
 
     def default_face_constructor(atoms, coatoms, **kwds):

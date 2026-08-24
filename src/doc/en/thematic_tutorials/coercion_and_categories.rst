@@ -521,10 +521,10 @@ into a new class called ``MyFrac_with_category``. It is a common sub\--class of
     True
 
 The fraction field `P` inherits additional methods. For example, the base
-class :class:`~sage.rings.fields.Field` does not have a method ``sum``. But
+class :class:`~sage.rings.ring.Field` does not have a method ``sum``. But
 `P` inherits such method from the category of commutative additive
 monoids\---see
-:meth:`~sage.categories.commutative_additive_monoids.CommutativeAdditiveMonoids.ParentMethods.sum`::
+:meth:`~sage.categories.additive_monoids.AdditiveMonoids.ParentMethods.sum`::
 
     sage: P.sum.__module__
     'sage.categories.additive_monoids'
@@ -1065,7 +1065,7 @@ If we are lucky, a parent can tell how it has been constructed::
     (FractionField, Integer Ring)
 
 In both cases, the first value returned by
-:meth:`~sage.structure.parent.Parent.construction` is a mathematical
+:meth:`~sage.categories.sets_cat.Sets.ParentMethods.construction` is a mathematical
 construction, called *construction functor*\---see
 :class:`~sage.categories.pushout.ConstructionFunctor`. The second return value
 is a simpler parent to which the construction functor is applied.

@@ -155,7 +155,8 @@ is accessed.
 
 To make your code more readable, you can construct one or several
 :class:`MIPVariable` objects that can be arbitrarily named and
-indexed. This can be done by calling :meth:`new_variable` several times,
+indexed. This can be done by calling
+:meth:`~sage.numerical.mip.MixedIntegerLinearProgram.new_variable` several times,
 or by the following special syntax::
 
     sage: mip.<a,b> = MixedIntegerLinearProgram(solver='GLPK')
@@ -188,7 +189,8 @@ respectively.
 The default MIP variable
 ------------------------
 
-As a special shortcut, it is not necessary to call :meth:`new_variable`.
+As a special shortcut, it is not necessary to call
+:meth:`~sage.numerical.mip.MixedIntegerLinearProgram.new_variable`.
 A :class:`MixedIntegerLinearProgram` has a default :class:`MIPVariable`,
 whose components are obtained by using the syntax ``mip[key]``, where
 `key` is an arbitrary key::
@@ -1800,8 +1802,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         if len(lists) == 1:
             return val[0]
-        else:
-            return val
+        return val
 
     def set_objective(self, obj):
         r"""
@@ -2794,7 +2795,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
         The solver parameters are by essence solver-specific, which means their
         meaning heavily depends on the solver used.
 
-        (If you do not know which solver you are using, then you use GLPK).
+        (If you do not know which solver you are using, then you are using the
+        default; see :func:`default_mip_solver`.)
 
         Aliases:
 
@@ -3140,8 +3142,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         def format(name, prefix, index):
             if name:
                 return name.replace('[', '_').strip(']')
-            else:
-                return prefix + '_' + str(index)
+            return prefix + '_' + str(index)
 
         # Construct 'x'
         var_names = [format(back_end.col_name(i), 'x', i) for i in range(back_end.ncols())]

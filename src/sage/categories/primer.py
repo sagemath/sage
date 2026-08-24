@@ -1090,7 +1090,7 @@ from existing ones while carrying over as much as possible of their
 algebraic structure. This includes:
 
 - Cartesian products:
-  See :const:`~sage.categories.cartesian_product.cartesian_product`.
+  See :class:`~sage.categories.cartesian_product.CartesianProductFunctor`.
 
 - Tensor products:
   See :const:`~sage.categories.tensor.tensor`.
@@ -1562,8 +1562,8 @@ category. This determines the position of `C` in the category graph.
 A category *may* provide methods that can be used by all its objects,
 respectively by all elements of its objects.
 
-Each category *should* come with a good example, in
-:mod:`sage.categories.examples`.
+Each category *should* come with a good example in the
+``sage.categories.examples`` package.
 
 Inserting the new category into the category graph
 --------------------------------------------------

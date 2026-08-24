@@ -6,7 +6,7 @@ This module provides :func:`generating_function_of_integral_points` which
 computes the generating function of the integral points of a polyhedron.
 
 The main function is accessible via
-:meth:`sage.geometry.polyhedron.base.Polyhedron_base.generating_function_of_integral_points`
+:meth:`sage.geometry.polyhedron.base2.Polyhedron_base2.generating_function_of_integral_points`
 as well.
 
 Various
@@ -311,7 +311,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
     .. SEEALSO::
 
         This function is accessible via
-        :meth:`sage.geometry.polyhedron.base.Polyhedron_base.generating_function_of_integral_points`
+        :meth:`sage.geometry.polyhedron.base2.Polyhedron_base2.generating_function_of_integral_points`
         as well. More examples can be found there.
 
     TESTS::

@@ -125,7 +125,7 @@ class Feature(TrivialUniqueRepresentation):
 
     - ``type`` -- string; one of ``'standard'``, ``'optional'`` (default), ``'experimental'``
 
-    Overwrite :meth:`_is_present` to add feature checks.
+    Overwrite ``_is_present`` to add feature checks.
 
     EXAMPLES::
 
@@ -277,7 +277,7 @@ class Feature(TrivialUniqueRepresentation):
 
     def resolution(self):
         r"""
-        Return a suggestion on how to make :meth:`is_present` pass if it did not
+        Return a suggestion on how to make :meth:`~sage.features.Feature.is_present` pass if it did not
         pass.
 
         OUTPUT: string
@@ -611,7 +611,7 @@ class FileFeature(Feature):
         sage.features.FeatureNotPresentError: does-not-exist is not available.
         Executable 'does-not-exist-xxxxyxyyxyy' not found on PATH.
 
-    A :class:`FileFeature` also provides the :meth:`is_present` method to test for
+    A :class:`FileFeature` also provides the :meth:`~sage.features.Feature.is_present` method to test for
     the presence of the file at run time. This is inherited from the base class
     :class:`Feature`::
 
@@ -665,7 +665,7 @@ class Executable(FileFeature):
         Overwrite :meth:`is_functional` if you also want to check whether
         the executable shows proper behaviour.
 
-        Calls to :meth:`is_present` are cached. You might want to cache the
+        Calls to :meth:`~sage.features.Feature.is_present` are cached. You might want to cache the
         :class:`Executable` object to prevent unnecessary calls to the
         executable.
 

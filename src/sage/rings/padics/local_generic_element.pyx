@@ -458,7 +458,8 @@ cdef class LocalGenericElement(CommutativeRingElement):
             O(3^-5)
 
         One cannot use ``add_bigoh`` to lift to a higher precision; this
-        can be accomplished with :meth:`lift_to_precision`::
+        can be accomplished with
+        :meth:`~sage.categories.complete_discrete_valuation.CompleteDiscreteValuationRings.ElementMethods.lift_to_precision`::
 
             sage: o.add_bigoh(5)
             1 + O(3^4)
@@ -942,8 +943,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         from sage.categories.fields import Fields
         if not integral and self.parent() in Fields():
             return (self / other, self.parent().zero())
-        else:
-            return self._quo_rem(other)
+        return self._quo_rem(other)
 
     def _test_trivial_powers(self, **options):
         r"""

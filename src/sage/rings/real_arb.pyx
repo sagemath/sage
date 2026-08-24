@@ -1695,10 +1695,9 @@ cdef class RealBall(RingElement):
                 sl, sr = mpfr_sgn(left.value), mpfr_sgn(left.value)
                 if sr > 0 and sl > 0:
                     return left
-                elif sr < 0 and sl < 0:
+                if sr < 0 and sl < 0:
                     return right
-                else:
-                    return field(0)
+                return field(0)
         raise ValueError("unknown rounding mode")
 
     def __float__(self):
@@ -2540,7 +2539,7 @@ cdef class RealBall(RingElement):
         and ``other`` certainly represent the same real number, unless either
         ``self`` or ``other`` is exact (and neither contains NaN). To test
         whether both operands might represent the same mathematical quantity,
-        use :meth:`overlaps` or :meth:`contains`, depending on the
+        use :meth:`~sage.rings.real_arb.RealBall.overlaps` or ``contains``, depending on the
         circumstance.
 
         EXAMPLES::

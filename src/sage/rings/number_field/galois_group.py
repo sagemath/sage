@@ -70,7 +70,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         True
     """
 
-    def __init__(self, number_field, algorithm='pari', names=None, gc_numbering=None, _type=None):
+    def __init__(self, number_field, algorithm='pari', names=None, gc_numbering=None):
         r"""
         Create a Galois group.
 
@@ -112,8 +112,6 @@ class GaloisGroup_v2(GaloisGroup_perm):
             deprecation(28782, "Use .absolute_field().galois_group() if you want the Galois group of the absolute field")
         if gc_numbering is None:
             gc_numbering = algorithm != 'magma'
-        # For the deprecated group() method of GaloisGroup_v1
-        self._type = _type
         super().__init__(number_field, algorithm, names, gc_numbering)
 
     @cached_method(key=GaloisGroup_perm._get_algorithm)
@@ -131,10 +129,16 @@ class GaloisGroup_v2(GaloisGroup_perm):
             PARI group [6, -1, 2, "S3"] of degree 3
             sage: G._pol_galgp(algorithm='gap') # optional - gap_packages
             Transitive group number 2 of degree 3
+
+        The automatic fallback to GAP is preserved in higher degrees::
+
+            sage: K.<a> = NumberField(x^12 - x - 1)
+            sage: K.galois_group()._pol_galgp()
+            Transitive group number 301 of degree 12
         """
         algorithm = self._get_algorithm(algorithm)
         f = self._field.absolute_polynomial()
-        pari_group = (self._type != "gap")  # while GaloisGroup_v1 is deprecated
+        pari_group = algorithm == 'pari' and f.degree() <= 11
         return f.galois_group(pari_group=pari_group, algorithm=algorithm)
 
     @cached_method(key=_alg_key)
@@ -233,8 +237,26 @@ class GaloisGroup_v2(GaloisGroup_perm):
             '8T44'
             sage: G.pari_label()
             '[2^4]S(4)'
+
+        The label can also be requested when another default algorithm was
+        selected::
+
+            sage: K.<a> = NumberField(x^3 + 2*x + 2)
+            sage: K.galois_group(algorithm='gap').pari_label()
+            'S3'
+
+        PARI does not support this computation above degree 11::
+
+            sage: K.<a> = NumberField(x^12 - x - 1)
+            sage: K.galois_group().pari_label()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: PARI only supports Galois group computations through degree 11
         """
-        return self._pol_galgp().label()
+        if self._field.absolute_degree() > 11:
+            raise NotImplementedError(
+                "PARI only supports Galois group computations through degree 11")
+        return self._pol_galgp(algorithm='pari').label()
 
     @cached_method
     def signature(self):
