@@ -1014,7 +1014,7 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start=2, stop=None, proof=None):
+def primes(start=2, stop=None, step=None, proof=None):
     r"""
     Return an iterator over all primes between ``start`` and ``stop-1``,
     inclusive. This is much slower than :func:`prime_range`, but
@@ -1036,6 +1036,11 @@ def primes(start=2, stop=None, proof=None):
     - ``stop`` -- integer (or infinity); upper (open) bound for the
       primes
 
+    - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
+      the function yields only primes that are congruent to ``start`` modulo
+      ``step``. If a ``step`` is given when ``start`` is not prime, then this
+      function will yield nothing.
+
     - ``proof`` -- boolean or ``None`` (default: ``None``); if ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
       pseudo-primality test, which is much faster for really big numbers but
@@ -1053,6 +1058,8 @@ def primes(start=2, stop=None, proof=None):
         7
         sage: list(primes(13))
         [2, 3, 5, 7, 11]
+        sage: list(primes(11, 100, 10))
+        [11, 31, 61, 71]
         sage: list(primes(10000000000, 10000000100))
         [10000000019, 10000000033, 10000000061, 10000000069, 10000000097]
         sage: max(primes(10^100, 10^100+10^4, proof=False))
@@ -1084,7 +1091,20 @@ def primes(start=2, stop=None, proof=None):
         sage: from gmpy2 import mpz
         sage: list(primes(mpz(13)))
         [2, 3, 5, 7, 11]
+        sage: list(primes(2, 2, 100))
+        []
     """
+
+    if isinstance(step, bool):
+        # For backwards compatibility - `proof` used to be the third parameter.
+        # We make sure that previous code still works by treating `step` as
+        # `proof` if `step` is a boolean and `proof` is None.
+
+        if proof is not None:
+            raise TypeError('step must be an integer or None')
+        proof = step
+        step = None
+
     from sage.rings.infinity import infinity
 
     start = ZZ(start)
@@ -1093,7 +1113,20 @@ def primes(start=2, stop=None, proof=None):
         start = ZZ(2)
     elif stop != infinity:
         stop = ZZ(stop)
+
+    if step is not None:
+        if not isinstance(step, (Integer, int)):
+            raise TypeError('step must be an integer or None')
+        if not start.is_prime():
+            return
+        step = Integer(step)
+        congruence = start % step
+        for p in primes(start, stop, None, proof):
+            if p % step == congruence:
+                yield p
+
     n = start - 1
+
     while True:
         n = n.next_prime(proof)
         if n < stop:

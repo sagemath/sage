@@ -40,7 +40,7 @@ from libc.math cimport sqrt
 
 from sage.rings.integer cimport Integer
 
-cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
+cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=False):
     r"""
     Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 
@@ -56,6 +56,11 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     - ``start`` -- integer; lower bound (default: 1)
 
     - ``stop`` -- integer; upper bound
+
+    - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
+      the function returns only primes that are congruent to ``start`` modulo
+      ``step``. If a ``step`` is given when ``start`` is not prime, then this
+      function will return an empty list.
 
     - ``algorithm`` -- string (default: ``None``), one of:
 
@@ -88,6 +93,8 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         [2]
         sage: prime_range(5,10)
         [5, 7]
+        sage: prime_range(11, 100, 10)
+        [11, 31, 61, 71]
         sage: prime_range(-100,10,"pari_isprime")
         [2, 3, 5, 7]
         sage: prime_range(2,2,algorithm='pari_isprime')
@@ -139,6 +146,11 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         ...
         ValueError: algorithm "pari_primes" is limited to primes larger than 436273008
 
+    Test that prime_range is empty when start is not prime and step is given::
+
+        sage: prime_range(8, 3, 100)
+        []
+
     AUTHORS:
 
     - William Stein (original version)
@@ -146,6 +158,15 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     - Kevin Stueve (added primes iterator option) 2010-10-16
     - Robert Bradshaw (speedup using Pari prime table, py_ints option)
     """
+    if isinstance(step, str)
+        # For backwards compatibility - `algorithm` used to be the third parameter.
+        # We make sure that previous code still works by treating `step` as
+        # `algorithm` if `step` is a string and `algorithm` is None.
+        if algorithm is not None:
+            raise TypeError('step must be an integer or None')
+        algorithm = step
+        step = None
+
     # input to pari.init_primes cannot be greater than 436273290 (hardcoded bound)
     DEF init_primes_max = 436273290
     DEF small_prime_max = 436273009  # a prime < init_primes_max (preferably the largest)
@@ -172,6 +193,15 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
                 raise ValueError(str(integer_error)
                                  + "\nand argument is also not real: "
                                  + str(real_error))
+
+    if step is not None:
+        if not isinstance(step, (Integer, int)):
+            raise TypeError('step must be an integer or None')
+        if not start.is_prime():
+            return []
+        step = Integer(step)
+        congruence = start % step
+        return [p for p in prime_range(start, stop, None, algorithm, py_ints) if p % step == congruence]
 
     if algorithm is None:
         # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
