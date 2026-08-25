@@ -1635,7 +1635,7 @@ class Sigma:
         sage: sigma(mpz(100), mpz(4))
         106811523
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         A description of this class, which computes the sum of the
         `k`-th powers of the divisors of `n`.
@@ -1648,7 +1648,7 @@ class Sigma:
         """
         return "Function that adds up (k-th powers of) the divisors of n"
 
-    def __call__(self, n, k=1):
+    def __call__(self, n, k=1) -> Integer:
         """
         Compute the sum of (the `k`-th powers of) the divisors of `n`.
 
@@ -3070,6 +3070,10 @@ class Euler_Phi:
     relatively prime to `n`. Thus if `n \leq 0` then
     ``euler_phi(n)`` is defined and equals 0.
 
+    .. SEEALSO:
+
+        :meth:`sage.rings.integer.Integer
+
     INPUT:
 
     - ``n`` -- integer
@@ -3078,14 +3082,8 @@ class Euler_Phi:
 
         sage: euler_phi(1)
         1
-        sage: euler_phi(2)
-        1
         sage: euler_phi(3)                                                              # needs sage.libs.pari
         2
-        sage: euler_phi(12)                                                             # needs sage.libs.pari
-        4
-        sage: euler_phi(37)                                                             # needs sage.libs.pari
-        36
 
     Notice that ``euler_phi`` is defined to be 0 on negative numbers and 0::
 
@@ -3128,7 +3126,7 @@ class Euler_Phi:
 
     - Alex Clemesha (2006-01-10): some examples
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string describing this class.
 
@@ -3140,7 +3138,7 @@ class Euler_Phi:
         """
         return "Number of positive integers <=n but relatively prime to n"
 
-    def __call__(self, n):
+    def __call__(self, n) -> Integer:
         """
         Call the ``euler_phi`` function.
 
@@ -3152,12 +3150,7 @@ class Euler_Phi:
             sage: Euler_Phi()(720)                                                      # needs sage.libs.pari
             192
         """
-        if n <= 0:
-            return ZZ.zero()
-        if n <= 2:
-            return ZZ.one()
-        from sage.libs.pari import pari
-        return ZZ(pari(n).eulerphi())
+        return ZZ(n).euler_phi()
 
     def plot(self, xmin=1, xmax=50, pointsize=30, rgbcolor=(0, 0, 1),
              join=True, **kwds):
@@ -4665,7 +4658,7 @@ class Moebius:
         sage: moebius(mpz(-5))                                                          # needs sage.libs.pari
         -1
     """
-    def __call__(self, n):
+    def __call__(self, n) -> Integer:
         """
         EXAMPLES::
 
@@ -4675,23 +4668,20 @@ class Moebius:
         """
         n = py_scalar_to_element(n)
 
-        if not isinstance(n, Integer):
-            # Use a generic algorithm.
-            if n < 0:
-                n = -n
-            F = factor(n)
-            for _, e in F:
-                if e >= 2:
-                    return 0
-            return (-1)**len(F)
+        if isinstance(n, Integer):
+            # Use fast PARI algorithm
+            return n.moebius()
 
-        # Use fast PARI algorithm
-        if n == 0:
-            return ZZ.zero()
-        from sage.libs.pari import pari
-        return ZZ(pari(n).moebius())
+        # Fallback to a generic algorithm.
+        if n < 0:
+            n = -n
+        F = factor(n)
+        for _, e in F:
+            if e >= 2:
+                return 0
+        return (-1)**len(F)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a description of this function.
 
@@ -4874,9 +4864,13 @@ def continuant(v, n=None):
     return b
 
 
-def number_of_divisors(n):
+def number_of_divisors(n) -> Integer:
     r"""
     Return the number of divisors of the integer `n`.
+    This function just converts the input to a :class:`~sage.rings.Integer` and
+    calls :meth:`sage.rings.integer.Integer.number_of_divisors`. If you already
+    have an :class:`~sage.rings.integer.Integer`, it is easier (and slightly
+    faster) to call :meth:`~sage.rings.Integer.number_of_divisors` directly.
 
     INPUT:
 
@@ -4886,12 +4880,7 @@ def number_of_divisors(n):
 
     EXAMPLES::
 
-        sage: number_of_divisors(100)                                                   # needs sage.libs.pari
-        9
-        sage: number_of_divisors(-720)                                                  # needs sage.libs.pari
-        30
-
-    Tests with numpy and gmpy2 numbers::
+    Tests with numpy, gmpy2, and Python numbers::
 
         sage: from numpy import int8                                                    # needs numpy
         sage: number_of_divisors(int8(100))                                             # needs numpy sage.libs.pari
@@ -4899,12 +4888,11 @@ def number_of_divisors(n):
         sage: from gmpy2 import mpz
         sage: number_of_divisors(mpz(100))                                              # needs sage.libs.pari
         9
+        sage: number_of_divisors(100r)
+        9
     """
-    m = ZZ(n)
-    if m.is_zero():
-        raise ValueError("input must be nonzero")
-    from sage.libs.pari import pari
-    return ZZ(pari(m).numdiv())
+
+    return ZZ(n).number_of_divisors()
 
 
 def hilbert_symbol(a, b, p, algorithm='pari'):

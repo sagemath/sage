@@ -7389,6 +7389,80 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (self, one)
         return (-self, -one)
 
+    def number_of_divisors(self) -> Integer:
+        r"""
+        Return the number of positive divisors of this integer.
+
+        EXAMPLES::
+
+            sage: 12.number_of_divisors()                                               # needs sage.libs.pari
+            6
+            sage: 100.number_of_divisors()
+            9
+            sage: (-720).number_of_divisors()
+            30
+            sage: 0.number_of_divisors()
+            Traceback (most recent call last):
+            ...
+            ValueError: number_of_divisors is not defined for 0
+
+        .. SEEALSO::
+
+            :meth:`divisors`
+        """
+        if self == 0:
+            raise ValueError('number_of_divisors is not defined for 0')
+        return Integer(self.__pari__().numdiv())
+
+    def moebius(self) -> Integer:
+        r"""
+        Return the value of the Möbius function of the absolute value of this integer.
+
+        EXAMPLES::
+
+            sage: (-1).moebius()                                                        # needs sage.libs.pari
+            1
+            sage: 7.moebius()                                                           # needs sage.libs.pari
+            -1
+            sage: 0.moebius()   # potentially nonstandard!
+            0
+
+        .. SEEALSO::
+
+            :class:`sage.arith.misc.Moebius`
+        """
+        if self == 0:
+            return Integer(0)
+        return Integer(self.__pari__().moebius())
+
+    def euler_phi(self) -> Integer:
+        r"""
+        Return the value of the Euler phi function on this integer `n`.
+        We define this to be the number of positive integers less than or equal
+        to `n` that are relatively prime to `n`. Thus if `n \leq 0` then
+        ``n.euler_phi()`` is defined and equals 0.
+
+        EXAMPLES::
+
+           sage: euler_phi(2)
+            1
+            sage: euler_phi(12)                                                         # needs sage.libs.pari
+            4
+            sage: euler_phi(37)                                                         # needs sage.libs.pari
+            36
+ 
+
+        .. SEEALSO::
+
+            :class:`sage.arith.misc.Euler_Phi`
+        """
+        if self <= 0:
+            return Integer(0)
+        if self <= 2:
+            return Integer(1)
+        return Integer(self.__pari__().eulerphi())
+
+
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """
     Wrapper around ``mpz_set_str()`` which supports :pep:`3127`
