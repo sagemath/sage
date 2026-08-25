@@ -103,27 +103,27 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         [2, 3, 5, 7]
         sage: prime_range(7)
         [2, 3, 5]
-        sage: prime_range(2000,2020)
+        sage: prime_range(2000, 2020)
         [2003, 2011, 2017]
-        sage: prime_range(2,2)
+        sage: prime_range(2, 2)
         []
-        sage: prime_range(2,3)
+        sage: prime_range(2, 3)
         [2]
-        sage: prime_range(5,10)
+        sage: prime_range(5, 10)
         [5, 7]
         sage: prime_range(11, 100, 10)
         [11, 31, 41, 61, 71]
-        sage: prime_range(-100,10,"pari_isprime")
+        sage: prime_range(-100, 10, "pari_isprime")
         [2, 3, 5, 7]
-        sage: prime_range(2,2,algorithm='pari_isprime')
+        sage: prime_range(2, 2, algorithm='pari_isprime')
         []
-        sage: prime_range(10**16,10**16+100,"pari_isprime")
+        sage: prime_range(10**16, 10**16+100, "pari_isprime")
         [10000000000000061, 10000000000000069, 10000000000000079, 10000000000000099]
-        sage: prime_range(10**30,10**30+100,"pari_isprime")
+        sage: prime_range(10**30, 10**30+100, "pari_isprime")
         [1000000000000000000000000000057, 1000000000000000000000000000099]
         sage: type(prime_range(8)[0])
         <class 'sage.rings.integer.Integer'>
-        sage: type(prime_range(8,algorithm='pari_isprime')[0])
+        sage: type(prime_range(8, algorithm='pari_isprime')[0])
         <class 'sage.rings.integer.Integer'>
 
     .. NOTE::
@@ -137,7 +137,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
 
         sage: prime_range(-1)
         []
-        sage: L = prime_range(25000,2500000)
+        sage: L = prime_range(25000, 2500000)
         sage: len(L)
         180310
         sage: L[-10:]
@@ -175,6 +175,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
     - Craig Citro (rewrote for massive speedup)
     - Kevin Stueve (added primes iterator option) 2010-10-16
     - Robert Bradshaw (speedup using Pari prime table, py_ints option)
+    - Vincent Macri (added step option)
     """
     if isinstance(step, str):
         # For backwards compatibility - `algorithm` used to be the third parameter.
