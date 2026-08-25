@@ -1,5 +1,7 @@
 from typing import final
 
+from sage.rings.integer import Integer
+
 def prime_range(start: Integer | int, stop: Integer | int | None = None, step: Integer | int | None = None, algorithm: str | None = None, py_ints: bool = False) -> list[int]:
     ...
 
