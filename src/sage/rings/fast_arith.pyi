@@ -1,6 +1,6 @@
 from typing import final
 
-def prime_range(start: int, stop: int | None = None, algorithm: str | None = None, py_ints: bool = False) -> list[int]:
+def prime_range(start: Integer | int, stop: Integer | int | None = None, step: Integer | int | None = None, algorithm: str | None = None, py_ints: bool = False) -> list[int]:
     ...
 
 @final

@@ -172,7 +172,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
     - Kevin Stueve (added primes iterator option) 2010-10-16
     - Robert Bradshaw (speedup using Pari prime table, py_ints option)
     """
-    if isinstance(step, str)
+    if isinstance(step, str):
         # For backwards compatibility - `algorithm` used to be the third parameter.
         # We make sure that previous code still works by treating `step` as
         # `algorithm` if `step` is a string and `algorithm` is None.
