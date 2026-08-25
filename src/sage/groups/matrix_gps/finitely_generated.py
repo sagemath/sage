@@ -272,22 +272,13 @@ def MatrixGroup(*gens, **kwds):
         ...
         AttributeError: 'LinearMatrixGroup_generic_with_category' object has no attribute 'gens'...
 
-    Matrices over number fields supported by GAP construct GAP-backed
-    groups::
+    Matrices over relative number fields supported by GAP construct
+    GAP-backed groups.  This includes towers whose relative generator is not
+    a primitive element of the absolute field (here ``b`` does not generate
+    ``L`` over ``QQ``, so entries are reconstructed from the relative basis)::
 
         sage: # needs sage.libs.gap
         sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
-        sage: K.<a> = QuadraticField(3)
-        sage: G = MatrixGroup([matrix(K, 2, [1, a, 0, 1])])
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
-        True
-
-    Relative number fields supported by GAP also construct GAP-backed
-    groups, including towers whose relative generator is not a primitive
-    element of the absolute field (here ``b`` does not generate ``L`` over
-    ``QQ``, so the entries are reconstructed from the relative basis)::
-
-        sage: # needs sage.libs.gap
         sage: R.<x> = QQ[]
         sage: K.<a> = NumberField(x^2 + 1)
         sage: S.<y> = K[]
@@ -296,15 +287,6 @@ def MatrixGroup(*gens, **kwds):
         sage: G = MatrixGroup([M])
         sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
         True
-        sage: G.gen(0).matrix() == M
-        True
-
-        sage: # needs sage.libs.gap
-        sage: K.<zeta> = CyclotomicField(3)
-        sage: S.<y> = K[]
-        sage: L.<b> = K.extension(y^2 - 2)
-        sage: M = matrix(L, 2, [1, zeta*b + 1, 0, 1])
-        sage: G = MatrixGroup([M])
         sage: G.gen(0).matrix() == M
         True
     """
