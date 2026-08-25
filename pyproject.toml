@@ -3,7 +3,7 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
   'cypari2 >=2.2.1; sys_platform != "win32"',
-  'meson >=1.7',
+  'meson >=1.11.2',
   'meson-python',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
@@ -11,7 +11,6 @@ requires = [
   'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
-  'meson >=1.11.2',
   'numpy >=2.2.4',
 ]
 [tool.meson-python.args]
