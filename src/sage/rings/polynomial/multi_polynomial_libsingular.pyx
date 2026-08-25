@@ -292,7 +292,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         - ``base_ring`` -- base ring (must be either GF(q), ZZ, ZZ/nZZ,
                           QQ or absolute number field)
 
-        - ``n`` -- number of variables (must be at least 1)
+        - ``n`` -- number of variables (must be at least 1 and fit in a signed
+          C ``short``)
 
         - ``names`` -- names of ring variables, may be string of list/tuple
 
@@ -379,6 +380,14 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: polynomials in -1 variables are not supported in Singular
+
+        Check that the number of variables fits into Singular's signed short
+        (:issue:`42712`)::
+
+            sage: MPolynomialRing_libsingular(QQ, 2**15, (), "lex")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: polynomials in 32768 variables are not supported in Singular
         """
         self._ngens = n
         self._ring = singular_ring_new(base_ring, n, names, order)

@@ -16,6 +16,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from libc.limits cimport SHRT_MAX
+
 from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 from sage.libs.gmp.types cimport __mpz_struct
@@ -88,7 +90,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     - ``base_ring`` -- a Sage ring
 
-    - ``n`` -- the number of variables (> 0)
+    - ``n`` -- the number of variables (at least 1 and fitting in a signed C
+      ``short``)
 
     - ``names`` -- list of names of length ``n``
 
@@ -333,7 +336,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     _ring  = NULL
 
     n = int(n)
-    if n < 1:
+    # Singular stores the number of variables in a signed short.
+    if n < 1 or n > SHRT_MAX:
         raise NotImplementedError(f"polynomials in {n} variables are not supported in Singular")
 
     nvars = n
