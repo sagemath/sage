@@ -11,6 +11,7 @@ requires = [
   'jinja2',
   'memory_allocator',
   'numpy >=2.2.4',
+  'pkgconf',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
@@ -224,6 +225,7 @@ dev = [
   "meson", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
   "ninja", # Duplicate build-system requirement to fix editable installs with uv
+  "pkgconf", # Duplicate build-system requirement to fix editable installs with uv
   "pygithub",
   "pytest",
   "python-build",

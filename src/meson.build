@@ -83,31 +83,36 @@ except Exception:
     ],
     check: true,
   ).stdout().strip()
-  # Cannot be found via pkg-config
-  # We need to link against libpari directly to avoid runtime issues, so use pari as dependency of cypari2
-  pari = cc.find_library('pari', required: not is_windows, disabler: true)
-  if pari.found() and not meson.is_cross_build()
-    # Verify PARI version
-    pari_version_code = '''
-    #include <pari/pari.h>
-    int main(void) {
-      pari_init(1000000, 2);
-      GEN v = pari_version(), M = gel(v,1), m = gel(v,2), p = gel(v,3);
-      pari_printf("%ld.%ld.%ld", itos(M), itos(m), itos(p));
-      pari_close();
-      return 0;
-    }
-    '''
-    pari_version = cc.run(
-      pari_version_code,
-      args: ['-v'],
-      name: 'pari version',
-      dependencies: [pari],
-      required: true,
-    ).stdout().strip()
-    if pari_version.version_compare('<=2.17.0')
-      message('PARI version > 2.17.0 required, found ' + pari_version)
-      pari = disabler()
+
+  pari = dependency('pari', version: '>=2.17.0', required: false)
+  if not pari.found()
+    # Fallback in case pkg-config info is not available
+    # Cannot be found via pkg-config
+    # We need to link against libpari directly to avoid runtime issues, so use pari as dependency of cypari2
+    pari = cc.find_library('pari', required: not is_windows, disabler: true)
+    if pari.found() and not meson.is_cross_build()
+      # Verify PARI version
+      pari_version_code = '''
+      #include <pari/pari.h>
+      int main(void) {
+        pari_init(1000000, 2);
+        GEN v = pari_version(), M = gel(v,1), m = gel(v,2), p = gel(v,3);
+        pari_printf("%ld.%ld.%ld", itos(M), itos(m), itos(p));
+        pari_close();
+        return 0;
+      }
+      '''
+      pari_version = cc.run(
+        pari_version_code,
+        args: ['-v'],
+        name: 'pari version',
+        dependencies: [pari],
+        required: true,
+      ).stdout().strip()
+      if pari_version.version_compare('<=2.17.0')
+        message('PARI version > 2.17.0 required, found ' + pari_version)
+        pari = disabler()
+      endif
     endif
   endif
   cypari2 = declare_dependency(
