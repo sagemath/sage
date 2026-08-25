@@ -63,11 +63,11 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
 
     .. SEEALSO::
 
-        :func:`~sage.arith.misc.primes` is an alternative that
+        - :func:`~sage.arith.misc.primes` is an alternative that
         uses less memory (but may be slower), because it returns an iterator,
         rather than building a list of the primes.
 
-        :class:`~sage.sets.primes.Primes` can be used to create sets of primes
+        - :class:`~sage.sets.primes.Primes` can be used to create sets of primes
         with more complicated congruence conditions.
 
     INPUT:
