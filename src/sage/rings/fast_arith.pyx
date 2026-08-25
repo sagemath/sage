@@ -277,7 +277,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         if step < 1:
             start, stop = stop, start
             start += 1
-            stop -= 1
+            stop += 1
 
         if stop <= start:
             return []
