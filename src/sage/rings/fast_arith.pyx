@@ -61,9 +61,14 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
     If the second argument is omitted, this returns the primes up to the
     first argument.
 
-    The sage command :func:`~sage.arith.misc.primes` is an alternative that
-    uses less memory (but may be slower), because it returns an iterator,
-    rather than building a list of the primes.
+    .. SEEALSO::
+
+        :func:`~sage.arith.misc.primes` is an alternative that
+        uses less memory (but may be slower), because it returns an iterator,
+        rather than building a list of the primes.
+
+        :class:`~sage.sets.primes.Primes` can be used to create sets of primes
+        with more complicated congruence conditions.
 
     INPUT:
 
@@ -73,8 +78,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
 
     - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
       the function returns only primes that are congruent to ``start`` modulo
-      ``step``. If a ``step`` is given when ``start`` is not prime, then this
-      function will return an empty list.
+      ``step``.
 
     - ``algorithm`` -- string (default: ``None``), one of:
 
@@ -160,10 +164,10 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         ...
         ValueError: algorithm "pari_primes" is limited to primes larger than 436273008
 
-    Test that prime_range is empty when start is not prime and step is given::
+    Test that prime_range step works properly when the start is not prime:
 
-        sage: prime_range(8, 3, 100)
-        []
+        sage: prime_range(4, 15, 3)
+        [7, 13]
 
     AUTHORS:
 
@@ -211,8 +215,6 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
     if step is not None:
         if not isinstance(step, (Integer, int)):
             raise TypeError('step must be an integer or None')
-        if not start.is_prime():
-            return []
         step = Integer(step)
         congruence = start % step
         return [p for p in prime_range(start, stop, None, algorithm, py_ints) if p % step == congruence]

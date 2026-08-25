@@ -1015,7 +1015,7 @@ def eratosthenes(n):
 
 
 def primes(start=2, stop=None, step=None, proof=None):
-    r"""
+    r"""/
     Return an iterator over all primes between ``start`` and ``stop-1``,
     inclusive. This is much slower than :func:`prime_range`, but
     potentially uses less memory.  As with :func:`next_prime`, the optional
@@ -1023,11 +1023,17 @@ def primes(start=2, stop=None, step=None, proof=None):
     guaranteed to be prime or not.
 
     This command is like the Python 3 :func:`range` command, except it only
-    iterates over primes. In some cases it is better to use :func:`primes` than
-    :func:`prime_range`, because :func:`primes` does not build a list of all
-    primes in the range in memory all at once. However, it is potentially much
-    slower since it simply calls the :func:`next_prime` function repeatedly, and
-    :func:`next_prime` is slow.
+    iterates over primes.
+
+    .. SEEALSO::
+
+        :func:`~sage.rings.fast_arith.prime_range` is an alternative that
+        uses more memory (but may be faster), because it returns a list of
+        primes all at ones rather than yielding one prime at at time as an
+        iterator using :func:`next_prime`, which is slow.
+
+        :class:`~sage.sets.primes.Primes` can be used to create sets of primes
+        with more complicated congruence conditions.
 
     INPUT:
 
@@ -1038,8 +1044,7 @@ def primes(start=2, stop=None, step=None, proof=None):
 
     - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
       the function yields only primes that are congruent to ``start`` modulo
-      ``step``. If a ``step`` is given when ``start`` is not prime, then this
-      function will yield nothing.
+      ``step``.
 
     - ``proof`` -- boolean or ``None`` (default: ``None``); if ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
@@ -1091,8 +1096,8 @@ def primes(start=2, stop=None, step=None, proof=None):
         sage: from gmpy2 import mpz
         sage: list(primes(mpz(13)))
         [2, 3, 5, 7, 11]
-        sage: list(primes(2, 2, 100))
-        []
+        sage: list(primes(2, 3, 100))
+        [2]
     """
 
     if isinstance(step, bool):
@@ -1117,8 +1122,6 @@ def primes(start=2, stop=None, step=None, proof=None):
     if step is not None:
         if not isinstance(step, (Integer, int)):
             raise TypeError('step must be an integer or None')
-        if not start.is_prime():
-            return
         step = Integer(step)
         congruence = start % step
         for p in primes(start, stop, None, proof):
