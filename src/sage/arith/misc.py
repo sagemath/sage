@@ -4878,7 +4878,7 @@ def number_of_divisors(n) -> Integer:
 
     OUTPUT: integer; the number of divisors of `n`
 
-    EXAMPLES::
+    EXAMPLES:
 
     Tests with numpy, gmpy2, and Python numbers::
 
