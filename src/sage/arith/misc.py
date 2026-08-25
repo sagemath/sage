@@ -4867,10 +4867,12 @@ def continuant(v, n=None):
 def number_of_divisors(n) -> Integer:
     r"""
     Return the number of divisors of the integer `n`.
-    This function just converts the input to a :class:`~sage.rings.Integer` and
-    calls :meth:`sage.rings.integer.Integer.number_of_divisors`. If you already
-    have an :class:`~sage.rings.integer.Integer`, it is easier (and slightly
-    faster) to call :meth:`~sage.rings.Integer.number_of_divisors` directly.
+
+    This function just converts the input to a :class:`sage.rings.integer.Integer`
+    and calls :meth:`sage.rings.integer.Integer.number_of_divisors`. If you
+    already have an :class:`sage.rings.integer.Integer`, it is easier (and
+    slightly faster) to call :meth:`~sage.rings.Integer.number_of_divisors`
+    directly.
 
     INPUT:
 
