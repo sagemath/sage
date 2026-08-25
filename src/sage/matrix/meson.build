@@ -52,6 +52,7 @@ py.install_sources(
   'matrix_integer_dense.pyx',
   'matrix_integer_dense_hnf.py',
   'matrix_integer_dense_saturation.py',
+  'matrix_integer_dense_skew.py',
   'matrix_integer_sparse.pxd',
   'matrix_integer_sparse.pyx',
   'matrix_laurent_mpolynomial_dense.pxd',
