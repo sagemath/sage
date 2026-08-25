@@ -1014,7 +1014,7 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start=2, stop=None, step=None, proof=None):
+def primes(start=2, stop=None, step=None, *, proof=None):
     r"""
     Return an iterator over all primes between ``start`` and ``stop-1``,
     inclusive. This is much slower than :func:`prime_range`, but
@@ -1044,7 +1044,8 @@ def primes(start=2, stop=None, step=None, proof=None):
 
     - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
       the function yields only primes that are congruent to ``start`` modulo
-      ``step``.
+      ``step``. If ``step`` is negative, then the function will yield a
+      decreasing sequence of primes.
 
     - ``proof`` -- boolean or ``None`` (default: ``None``); if ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
@@ -1072,6 +1073,15 @@ def primes(start=2, stop=None, step=None, proof=None):
         sage: next(p for p in primes(10^20, infinity) if is_prime(2*p+1))
         100000000000000001243
 
+    We can count down:
+
+        sage: # needs sage.libs.pari
+        sage: list(primes(40, 1, -1))
+        [37, 31, 29, 23, 19, 17, 13, 11, 7, 5, 3, 2]
+        sage: list(primes(101, 1, -4))
+        [101, 97, 89, 73, 61, 53, 41, 37, 29, 17, 13, 5]
+        sage: list(primes(50, 1, -5))
+        [5]
 
     TESTS::
 
@@ -1088,7 +1098,7 @@ def primes(start=2, stop=None, step=None, proof=None):
         13
         17
         19
-        sage: next(p for p in primes(10,oo)) # checks alternate infinity notation
+        sage: next(p for p in primes(10, oo)) # checks alternate infinity notation
         11
         sage: from numpy import int8                                                    # needs numpy
         sage: list(primes(int8(13)))                                                    # needs numpy
@@ -1098,6 +1108,29 @@ def primes(start=2, stop=None, step=None, proof=None):
         [2, 3, 5, 7, 11]
         sage: list(primes(2, 3, 100))
         [2]
+        sage: list(primes(10, 20, -1))
+        []
+        sage: list(primes(20, 10, 1))
+        []
+
+    Make sure that step behaves exactly like in range::
+
+        sage: # needs sage.libs.pari
+        sage: a = Integer(randint(1, 50))
+        sage: b = Integer(randint(70, 100))
+        sage: step = Integer(randint(1, 10))
+        sage: v1 = list(primes(a, b, step))
+        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
+        sage: v1 == v2
+        True
+        sage: a = randint(50, 100)
+        sage: b = randint(0, 30)
+        sage: step = randint(-10, -1)
+        sage: step *= -1
+        sage: v1 = list(primes(a, b, step))
+        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
+        sage: v1 == v2
+        True
     """
 
     if isinstance(step, bool):
@@ -1122,21 +1155,49 @@ def primes(start=2, stop=None, step=None, proof=None):
     if step is not None:
         if not isinstance(step, (Integer, int)):
             raise TypeError('step must be an integer or None')
+
         step = Integer(step)
+        if step == 0:
+            raise ValueError('step must not be zero')
+    else:
+        step = 1
+
+    if step > 0:
+        def next_prime(n):
+            return n.next_prime(proof)
+        def continue_condition(n):
+            return n < stop
+        n = start - 1
+    else:
+        def next_prime(n):
+            return n.previous_prime(proof)
+        def continue_condition(n):
+            return n > stop
+        n = start + 1
+
+    if step == 1:
+        while True:
+            n = next_prime(n)
+            if continue_condition(n):
+                yield n
+            else:
+                return
+    else:
         congruence = start % step
-        for p in primes(start, stop, None, proof):
-            if p % step == congruence:
-                yield p
-        return
+        while True:
+            try:
+                n = next_prime(n)
+            except ValueError:
+                # If we are counting down we may try to call previous_prime on
+                # a number that has no previous prime. In this case, we stop.
+                assert step < 0
+                return
 
-    n = start - 1
-
-    while True:
-        n = n.next_prime(proof)
-        if n < stop:
-            yield n
-        else:
-            return
+            if continue_condition(n):
+                if n % step == congruence:
+                    yield n
+            else:
+                return
 
 
 def next_prime_power(n):

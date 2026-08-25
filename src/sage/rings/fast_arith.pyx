@@ -78,7 +78,8 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
 
     - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
       the function returns only primes that are congruent to ``start`` modulo
-      ``step``.
+      ``step``. If ``step`` is negative, then the returned list will be
+      decreasing.
 
     - ``algorithm`` -- string (default: ``None``), one of:
 
@@ -164,10 +165,32 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         ...
         ValueError: algorithm "pari_primes" is limited to primes larger than 436273008
 
-    Test that prime_range step works properly when the start is not prime:
+    Some step steps:
 
         sage: prime_range(4, 15, 3)
         [7, 13]
+        sage: prime_range(10, 20, -1)
+        []
+        sage: prime_range(20, 10, 1)
+        []
+
+    Make sure that step behaves exactly like in range::
+
+        sage: # needs sage.libs.pari
+        sage: a = Integer(randint(1, 50))
+        sage: b = Integer(randint(70, 100))
+        sage: step = Integer(randint(1, 10))
+        sage: v1 = prime_range(a, b, step)
+        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
+        sage: v1 == v2
+        True
+        sage: a = Integer(randint(50, 100))
+        sage: b = Integer(randint(0, 30))
+        sage: step = Integer(randint(-10, -1))
+        sage: v1 = prime_range(a, b, step)
+        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
+        sage: v1 == v2
+        True
 
     AUTHORS:
 
@@ -217,8 +240,8 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         if not isinstance(step, (Integer, int)):
             raise TypeError('step must be an integer or None')
         step = Integer(step)
-        congruence = start % step
-        return [p for p in prime_range(start, stop, None, algorithm, py_ints) if p % step == congruence]
+    else:
+        step = 1
 
     if algorithm is None:
         # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
@@ -244,6 +267,11 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
             stop = stop
             if start < 1:
                 start = 1
+
+        congruence = start % step
+        if step < 1:
+            start, stop = stop, start
+
         if stop <= start:
             return []
 
@@ -253,11 +281,11 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
             pari.init_primes(min(stop + prime_gap_bound, init_primes_max))
             assert pari_maxprime() >= stop
 
-        res = pari_prime_range(start, stop, py_ints)
+        res = [p for p in pari_prime_range(start, stop, py_ints) if p % step == congruence]
 
     elif algorithm == "pari_isprime" or algorithm == "pari_primes":
         from sage.arith.misc import primes
-        res = list(primes(start, stop))
+        res = list(primes(start, stop, step))
     else:
         raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')
     return res
