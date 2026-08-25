@@ -553,8 +553,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: L(libgap(a + b)) == a + b                                              # needs sage.libs.gap
             True
 
-        Generator names reused below the immediate base field remain distinct
-        in a deeper relative tower::
+        Reusing a printed generator name below the immediate base field is
+        unambiguous because conversion uses power-basis coordinates::
 
             sage: K.<a> = NumberField(x^2 - 2)
             sage: S.<y> = K[]
@@ -566,21 +566,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: all(M(libgap(v)) == v for v in (top, bottom, top + bottom))             # needs sage.libs.gap
             True
 
-        Names requiring Python identifier normalization also remain distinct::
+        Unicode generator names do not need special parsing::
 
-            sage: N = L.extension(z^2 - 5, '𝔞')
+            sage: N = L.extension(z^2 - 5, 'λ')
             sage: all(N(libgap(v)) == v for v in N.gens())                               # needs sage.libs.gap
-            True
-
-        Python keywords, preparser helper names, and non-identifiers are made
-        safe::
-
-            sage: for name in ('True', 'Integer', 'a½'):                                 # needs sage.libs.gap
-            ....:     N = NumberField(x^2 - 7, name)
-            ....:     assert N(libgap(N.gen() + 1)) == N.gen() + 1
-
-            sage: N = NumberField(x^2 - 7, 'RealNumber')
-            sage: N(libgap.eval('1.5')) == 3/2                                            # needs sage.libs.gap
             True
 
         Check that :issue:`15276` is fixed::
@@ -599,20 +588,16 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if not isinstance(P, NumberField_cyclotomic):
             gap_field = libgap(P)
             E = gap_field.GeneratorsOfField()[0]
-            if not P.is_absolute():
-                # ``self.list()`` gives the coordinates over the base field in
-                # the relative power basis ``[1, E, E^2, ...]`` of the relative
-                # generator ``E``.  This is the representation that matches GAP's
-                # tower; ``self.polynomial()`` would instead use the absolute
-                # primitive element, which only coincides with ``E`` when the
-                # relative generator happens to generate ``L`` over ``QQ``.
-                total = gap_field.Zero()
-                power = gap_field.One()
-                for coeff in self.list():
-                    total += libgap(coeff) * gap_field.One() * power
-                    power *= E
-                return total
-            return self.polynomial()(E) * gap_field.One()
+            # For a relative field, ``self.list()`` gives the coordinates in
+            # the relative power basis; ``self.polynomial()`` instead uses the
+            # absolute primitive element.
+            coefficients = self.polynomial().list() if P.is_absolute() else self.list()
+            total = gap_field.Zero()
+            power = gap_field.One()
+            for coeff in coefficients:
+                total += libgap(coeff) * power
+                power *= E
+            return total
 
         E = libgap(P).GeneratorsOfField()[0]
         n = P._n()

@@ -76,11 +76,8 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 
-import keyword
-import re
 from collections import Counter
 from itertools import count
-from unicodedata import normalize
 
 from cypari2.gen import Gen as pari_gen
 
@@ -1731,10 +1728,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                 raise TypeError("%s has unsupported PARI type %s" % (x, x.type()))
             x = self.absolute_polynomial().parent()(x)
             return self._element_class(self, x)
-        if isinstance(x, LibGapElement):
-            return self._convert_from_gap_string(str(x))
-        if isinstance(x, GapElement):
-            return self._convert_from_gap_string(x._sage_repr())
+        if isinstance(x, (LibGapElement, GapElement)):
+            return self._convert_from_gap_element(x)
         if isinstance(x, str):
             return self._convert_from_str(x)
         if isinstance(x, (tuple, list,
@@ -1917,64 +1912,58 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             return self(w)
         return w
 
-    def _convert_from_gap_string(self, x):
+    def _convert_from_gap_element(self, x):
         """
-        Coerce a GAP string representation into this number field.
+        Convert a GAP element into this number field.
 
-        GAP marks algebraic-field constants with exclamation marks and uses
-        ``E(n)`` for cyclotomic elements.  The latter must be interpreted in
-        the number field tower, otherwise it is evaluated in the universal
-        cyclotomic field and may not coerce into relative extensions.
+        The conversion uses coordinates in GAP's power basis, recursively
+        converting the coefficients into the base field.
 
         TESTS::
 
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 - 2)
-            sage: K._convert_from_gap_string('!3')
-            3
-            sage: K._convert_from_gap_string('a+2')
+            sage: K._convert_from_gap_element(gap(a)^2)                                  # needs sage.libs.gap
+            2
+            sage: K._convert_from_gap_element(libgap(a + 2))                             # needs sage.libs.gap
             a + 2
+            sage: K._convert_from_gap_element(libgap(3/2))                               # needs sage.libs.gap
+            3/2
 
-        Over a cyclotomic base field, ``E(n)`` is interpreted in the tower
-        rather than in the universal cyclotomic field::
+        Elements from the base of a relative field also convert through the
+        classic GAP interface::
+
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 3)
+            sage: L._convert_from_gap_element(gap(a + 1))                                # needs sage.libs.gap
+            a + 1
+
+        GAP collapses relative extensions of degree one to their base field::
+
+            sage: E.<c> = K.extension(y - a)
+            sage: E._convert_from_gap_element(libgap(c)) == c                            # needs sage.libs.gap
+            True
+
+        This also works recursively over a cyclotomic base field::
 
             sage: K.<zeta> = CyclotomicField(3)
             sage: S.<y> = K[]
             sage: L.<b> = K.extension(y^2 - 2)
-            sage: L._convert_from_gap_string('E(3)*b+1')
+            sage: L._convert_from_gap_element(libgap(zeta*b + 1))                        # needs sage.libs.gap
             zeta*b + 1
         """
-        x = x.replace('!', '')
-        local_vars = dict(zip(self._gap_generator_names(), self.gens()))
-
-        if 'E(' in x:
-            from sage.rings.universal_cyclotomic_field import (
-                E as universal_cyclotomic_E,
-            )
-
-            def gap_E(n):
-                zeta = universal_cyclotomic_E(n)
-                K = self
-                seen = set()
-                while id(K) not in seen:
-                    seen.add(id(K))
-                    try:
-                        return K(zeta)
-                    except (TypeError, ValueError, NotImplementedError):
-                        pass
-                    try:
-                        K = K.base_field()
-                    except (AttributeError, NotImplementedError):
-                        break
-                return zeta
-
-            local_vars['__gap_E'] = gap_E
-            x = re.sub(r'\bE\(', '__gap_E(', x)
-
-        w = sage_eval(x, locals=local_vars)
-        if not (isinstance(w, Element) and w.parent() is self):
-            return self(w)
-        return w
+        if x.IsRat():
+            return self(QQ(x))
+        if not self.is_absolute() and (isinstance(x, GapElement) or self.relative_degree() == 1):
+            return self(self.base_field()(x))
+        if isinstance(x, LibGapElement):
+            from sage.libs.gap.libgap import libgap
+            gap_field = libgap(self)
+        else:
+            gap_field = self._gap_()
+        basis = gap_field.Basis()
+        coefficients = basis.Coefficients(x * gap_field.One())
+        return self([self.base_field()(c) for c in coefficients])
 
     def _Hom_(self, codomain, category=None):
         """
@@ -4533,55 +4522,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Kbnf = self.pari_bnf(proof=proof)
         return Kbnf.rnfisnorminit(L.pari_relative_polynomial())
 
-    @cached_method
-    def _gap_generator_names(self):
-        """
-        Return parser-safe, collision-free GAP generator names for this tower.
-
-        GAP prints algebraic extension elements in terms of the names supplied
-        to ``AlgebraicExtension``.  Sage permits a relative extension to reuse
-        the name of a generator below its immediate base field, so those names
-        must be made unique in GAP to keep conversions unambiguous.  They must
-        also be valid Python identifiers because :func:`sage_eval` parses GAP
-        output when converting elements back to Sage.
-
-        TESTS::
-
-            sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^2 - 2)
-            sage: S.<y> = K[]
-            sage: L.<b> = K.extension(y^2 - 3)
-            sage: T.<z> = L[]
-            sage: M.<a> = L.extension(z^2 - 5)
-            sage: M.variable_names()
-            ('a', 'b', 'a')
-            sage: M._gap_generator_names()
-            ('a_', 'b', 'a')
-
-        Python keywords, preparser helper names, and names changed by
-        identifier normalization are made safe as well::
-
-            sage: NumberField(x^2 - 2, 'True')._gap_generator_names()
-            ('True_',)
-            sage: [NumberField(x^2 - 2, name)._gap_generator_names()[0]
-            ....:  for name in ('Integer', 'RealNumber', 'ComplexNumber')]
-            ['Integer_', 'RealNumber_', 'ComplexNumber_']
-            sage: NumberField(x^2 - 2, 'a²')._gap_generator_names()
-            ('a2',)
-        """
-        name = normalize('NFKC', self.variable_name())
-        if not name.isidentifier():
-            name = '_sage_gen'
-        elif keyword.iskeyword(name) or name in ('ComplexNumber', 'Integer', 'RealNumber'):
-            name += '_'
-        if self.is_absolute():
-            return (name,)
-
-        base_names = self.base_field()._gap_generator_names()
-        while name in base_names:
-            name += '_'
-        return (name,) + base_names
-
     def _gap_init_(self) -> str:
         """
         Implements :meth:`sage.structure.sage_object.SageObject._gap_init_`
@@ -4628,11 +4568,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         x = q.variable_name()
         E = 'E' if x != 'E' else 'F'
         R = G(self.base_ring())
-        name = self._gap_generator_names()[0]
-
         return (
             f'CallFuncList(function() local {x},{E}; {x}:=Indeterminate({R.name()},"{x}"); '
-            f'{E}:=AlgebraicExtension({R.name()},{self.polynomial()!r},"{name}"); '
+            f'{E}:=AlgebraicExtension({R.name()},{self.polynomial()!r},"{self.gen()}"); '
             f'return {E}; end,[])'
         )
 
@@ -4689,9 +4627,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             [ b ]
         """
         from sage.libs.gap.libgap import libgap
-        name = self._gap_generator_names()[0]
         if self.is_absolute():
-            return libgap.AlgebraicExtension(self.base_ring(), self.polynomial(), name)
+            return libgap.AlgebraicExtension(self.base_ring(), self.polynomial(), str(self.gen()))
 
         gap_base = libgap(self.base_field())
         polynomial = self.relative_polynomial()
@@ -4699,10 +4636,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         gap_polynomial = gap_base.Zero()
         power = gap_base.One()
         for coeff in polynomial.list():
-            gap_coeff = libgap(coeff) * gap_base.One()
-            gap_polynomial += gap_coeff * power
+            gap_polynomial += libgap(coeff) * power
             power *= x
-        return libgap.AlgebraicExtension(gap_base, gap_polynomial, name)
+        return libgap.AlgebraicExtension(gap_base, gap_polynomial, str(self.gen()))
 
     def characteristic(self):
         """
