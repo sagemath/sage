@@ -1015,7 +1015,7 @@ def eratosthenes(n):
 
 
 def primes(start=2, stop=None, step=None, proof=None):
-    r"""/
+    r"""
     Return an iterator over all primes between ``start`` and ``stop-1``,
     inclusive. This is much slower than :func:`prime_range`, but
     potentially uses less memory.  As with :func:`next_prime`, the optional
