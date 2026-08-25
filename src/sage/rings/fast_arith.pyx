@@ -108,7 +108,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         sage: prime_range(5,10)
         [5, 7]
         sage: prime_range(11, 100, 10)
-        [11, 31, 61, 71]
+        [11, 31, 41, 61, 71]
         sage: prime_range(-100,10,"pari_isprime")
         [2, 3, 5, 7]
         sage: prime_range(2,2,algorithm='pari_isprime')

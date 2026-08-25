@@ -1059,7 +1059,7 @@ def primes(start=2, stop=None, step=None, proof=None):
         sage: list(primes(13))
         [2, 3, 5, 7, 11]
         sage: list(primes(11, 100, 10))
-        [11, 31, 61, 71]
+        [11, 31, 41, 61, 71]
         sage: list(primes(10000000000, 10000000100))
         [10000000019, 10000000033, 10000000061, 10000000069, 10000000097]
         sage: max(primes(10^100, 10^100+10^4, proof=False))
@@ -1124,6 +1124,7 @@ def primes(start=2, stop=None, step=None, proof=None):
         for p in primes(start, stop, None, proof):
             if p % step == congruence:
                 yield p
+        return
 
     n = start - 1
 
