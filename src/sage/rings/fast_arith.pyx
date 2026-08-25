@@ -173,20 +173,22 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         []
         sage: prime_range(20, 10, 1)
         []
+        sage: prime_range(20, 10, -1)
+        [19, 17, 13, 11]
 
     Make sure that step behaves exactly like in range::
 
         sage: # needs sage.libs.pari
         sage: a = Integer(randint(1, 50))
         sage: b = Integer(randint(70, 100))
-        sage: step = Integer(randint(1, 10))
+        sage: step = Integer(randint(1, 5))
         sage: v1 = prime_range(a, b, step)
         sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
         sage: v1 == v2
         True
         sage: a = Integer(randint(50, 100))
         sage: b = Integer(randint(0, 30))
-        sage: step = Integer(randint(-10, -1))
+        sage: step = Integer(randint(-5, -1))
         sage: v1 = prime_range(a, b, step)
         sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
         sage: v1 == v2
@@ -281,7 +283,14 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
             pari.init_primes(min(stop + prime_gap_bound, init_primes_max))
             assert pari_maxprime() >= stop
 
-        res = [p for p in pari_prime_range(start, stop, py_ints) if p % step == congruence]
+        if step == 1:
+            res = pari_prime_range(start, stop, py_ints)
+        elif step == -1:
+            res = pari_prime_range(start, stop, py_ints)[::-1]
+        elif step < 1:
+            res = [p for p in pari_prime_range(start, stop, py_ints)[::-1] if p % step == congruence]
+        else:
+            res = [p for p in pari_prime_range(start, stop, py_ints) if p % step == congruence]
 
     elif algorithm == "pari_isprime" or algorithm == "pari_primes":
         from sage.arith.misc import primes

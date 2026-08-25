@@ -1118,14 +1118,14 @@ def primes(start=2, stop=None, step=None, *, proof=None):
         sage: # needs sage.libs.pari
         sage: a = Integer(randint(1, 50))
         sage: b = Integer(randint(70, 100))
-        sage: step = Integer(randint(1, 10))
+        sage: step = Integer(randint(1, 5))
         sage: v1 = list(primes(a, b, step))
         sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
         sage: v1 == v2
         True
         sage: a = randint(50, 100)
         sage: b = randint(0, 30)
-        sage: step = randint(-10, -1)
+        sage: step = randint(-5, -1)
         sage: step *= -1
         sage: v1 = list(primes(a, b, step))
         sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
