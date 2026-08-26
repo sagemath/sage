@@ -140,24 +140,24 @@ Moreover, the factorization can be represented in a verbose way::
 
 """
 
-from typing import Any, Dict
 from dataclasses import dataclass
+from typing import Any
 
 from sage.categories.additive_groups import AdditiveGroups
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.matrix.constructor import matrix
+from sage.misc.latex import latex
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
-from sage.misc.latex import latex
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.structure.element import Element, CommutativeAlgebraElement
+from sage.structure.element import CommutativeAlgebraElement, Element
 from sage.structure.parent import Parent
-from sage.structure.richcmp import richcmp, op_EQ, op_NE
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 # -----------------------------------------------------------------------------
@@ -245,7 +245,6 @@ class FiniteLaurentIntersectionRingChart:
         base_to_this=None,
         this_to_base=None,
     ):
-
         r"""
         Initialize a chart.
 
@@ -584,8 +583,7 @@ class FiniteLaurentIntersectionRingChart:
                 lines.append(f"  {name} -> {img}")
             return "\n".join(lines)
 
-        else:
-            return f"FiniteLaurentIntersectionRingChart({self.var_names}) over {self.base_ring}. No substitution data."
+        return f"FiniteLaurentIntersectionRingChart({self.var_names}) over {self.base_ring}. No substitution data."
 
     __repr__ = _repr_
 
@@ -704,8 +702,8 @@ class FiniteLaurentIntersectionRingDivisor(Element):
             return
 
         items = data.items() if isinstance(data, dict) else data
-        for P, e in items:
-            e = ZZ(e)
+        for P, e_raw in items:
+            e = ZZ(e_raw)
             if e == 0:
                 continue
             d[P] = d.get(P, ZZ(0)) + e
@@ -1723,11 +1721,10 @@ class ClassGroupData:
                     if require_solution:
                         raise ValueError("No integer solution to M*x = rhs.")
                     return None
-            else:
-                if b1[i, 0] % d != 0:
-                    if require_solution:
-                        raise ValueError("No integer solution to M*x = rhs.")
-                    return None
+            elif b1[i, 0] % d != 0:
+                if require_solution:
+                    raise ValueError("No integer solution to M*x = rhs.")
+                return None
 
         for i in range(diag_len, self.S.nrows()):
             if b1[i, 0] != 0:
@@ -1911,7 +1908,7 @@ class FiniteLaurentIntersectionRingElement(CommutativeAlgebraElement):
 
         # P_i-part via valuations
         Pis = A.extra_primes()
-        data: Dict[FiniteLaurentIntersectionRingPrimeDivisor, int] = {}
+        data: dict[FiniteLaurentIntersectionRingPrimeDivisor, int] = {}
         for Pj in Pis:
             e = A._valuation_of_base_element_at_prime(self.f, Pj)
             if e != 0:
@@ -2213,7 +2210,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     Element = FiniteLaurentIntersectionRingElement
 
     @staticmethod
-    def __classcall__(cls, base_chart, charts, compute_base_to_charts=True, category=None):
+    def __classcall__(cls, base_chart, charts, compute_base_to_charts=True, category=None):  # noqa: PLW0211
         # normalize inputs so caching works (UniqueRepresentation)
         charts = tuple(charts)
         compute_base_to_charts = bool(compute_base_to_charts)
@@ -2400,7 +2397,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         fP, _ = chart_i._laurent_poly_to_poly_up_to_unit(f_i)
 
         gcd_list = [fP]
-        for j in range(0, i):
+        for j in range(i):
             chart_j = self.charts[j]
             yjprod_base = self._prod_of_chart_gens_as_base_expr(chart_j)
             gij = chart_i._substitute_from_base(yjprod_base)
@@ -2652,8 +2649,8 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         Pis = data.primes
         coords = [ZZ(0)] * len(Pis)
 
-        for P, e in D:
-            e = ZZ(e)
+        for P, e_raw in D:
+            e = ZZ(e_raw)
             if P in Pis:
                 coords[Pis.index(P)] += e
                 continue
@@ -2912,8 +2909,8 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         out = []
         seen = set()
 
-        for m in P.integral_points():
-            m = vector(ZZ, m)
+        for m_raw in P.integral_points():
+            m = vector(ZZ, m_raw)
             c = vector(ZZ, A * m)
 
             # safety check

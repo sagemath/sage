@@ -206,7 +206,6 @@ AUTHORS:
 """
 
 from copy import copy
-from collections.abc import Sequence
 
 from sage.algebras.cluster_algebra import (
     ClusterAlgebra,
@@ -216,12 +215,10 @@ from sage.algebras.finite_laurent_intersection_ring import (
     FiniteLaurentIntersectionRing,
     FiniteLaurentIntersectionRingChart,
     FiniteLaurentIntersectionRingElement,
-    FiniteLaurentIntersectionRingPrimeDivisor,
 )
 from sage.arith.misc import gcd
 from sage.combinat.subset import Subsets
 from sage.graphs.digraph import DiGraph
-from sage.matrix.constructor import Matrix
 from sage.misc.classcall_metaclass import typecall
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
@@ -949,7 +946,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
     Element = BanffClusterElement
 
     @staticmethod
-    def __classcall__(cls, data, *args, **kwargs):
+    def __classcall__(cls, data, *args, **kwargs):  # noqa: PLW0211
 
         kwargs = dict(kwargs)
 
