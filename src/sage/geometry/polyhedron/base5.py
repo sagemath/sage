@@ -1752,6 +1752,170 @@ class Polyhedron_base5(Polyhedron_base4):
                     p = self.change_ring(new_ring)
                     tester.assertIsInstance(scalar*p, Polyhedron_base)
 
+    def preimage(self, linear_transf, new_base_ring=None):
+        r"""
+        Return the preimage of ``self`` under a linear map.
+
+        Given a polyhedron `Q \subseteq \mathbb{R}^m` (``self``) and a linear
+        map `f : \mathbb{R}^n \to \mathbb{R}^m` represented by the matrix
+        ``linear_transf`` of shape `(m \times n)`, return the polyhedron
+
+        .. MATH::
+
+            f^{-1}(Q) = \{ x \in \mathbb{R}^n : f(x) \in Q \}.
+
+        This is computed by substituting `y = T x` into the H-representation
+        of `Q`.
+
+        INPUT:
+
+        - ``linear_transf`` -- a matrix of size `(m \times n)` where `m` is
+          ``self.ambient_dim()`` (the domain of the inverse map), or a scalar
+          acting by dilation (producing an `(m \times m)` identity scaled
+          matrix); ``n`` will be the ambient dimension of the resulting
+          preimage polyhedron
+        - ``new_base_ring`` -- ring (optional); specify the new base ring;
+          may avoid coercion failure
+
+        OUTPUT:
+
+        The preimage polyhedron under the given linear map, possibly coerced
+        to a bigger base ring.
+
+        .. SEEALSO:: :meth:`linear_transformation`, :meth:`inverse_image`
+
+        EXAMPLES::
+
+            sage: # A half-space in R^1; its preimage under A maps to R^2
+            sage: P = Polyhedron(ieqs=[[0, 1]])  # x >= 0 in R^1
+            sage: A = matrix([[2, -1]])           # A : R^2 -> R^1
+            sage: P.preimage(A)
+            A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line
+            sage: P.preimage(A) == Polyhedron(ieqs=[[0, 2, -1]])
+            True
+
+        The preimage of a 2-d square under a linear map from `\mathbb{R}^1`::
+
+            sage: square = polytopes.hypercube(2)
+            sage: T = matrix([[1], [0]])   # T : R^1 -> R^2: x |-> (x, 0)
+            sage: square.preimage(T)
+            A 1-dimensional polyhedron in ZZ^1 defined as the convex hull of 2 vertices
+
+        Scalar dilation: preimage under scaling by 2 is the polytope scaled by 1/2::
+
+            sage: cube = polytopes.hypercube(3)
+            sage: pre = cube.preimage(2)
+            sage: pre == cube / 2
+            True
+
+        The preimage of an empty polyhedron is empty::
+
+            sage: empty = Polyhedron(ambient_dim=1)
+            sage: empty.is_empty()
+            True
+            sage: empty.preimage(matrix([[1, 0]])).is_empty()
+            True
+
+        ``inverse_image`` is an alias for ``preimage``::
+
+            sage: P = Polyhedron(ieqs=[[0, 1]])
+            sage: A = matrix([[2, -1]])
+            sage: P.inverse_image(A) == P.preimage(A)
+            True
+
+        TESTS::
+
+            sage: P = Polyhedron(ieqs=[[0, 1, 0], [0, 0, 1]])  # non-negative orthant in R^2
+            sage: A = matrix([[1, 1], [0, 1]])   # A : R^2 -> R^2
+            sage: Q = P.preimage(A)
+            sage: Q.ambient_dim()
+            2
+            sage: Q.base_ring()
+            Rational Field
+
+            sage: # Wrong number of rows should raise ValueError
+            sage: P = Polyhedron(ieqs=[[0, 1]])   # ambient_dim = 1
+            sage: A_bad = matrix([[1, 0], [0, 1]])  # 2 x 2: rows != ambient_dim
+            sage: P.preimage(A_bad)
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of rows of the linear transformation must equal the ambient dimension of the polyhedron
+
+            sage: # Backend is preserved
+            sage: P = Polyhedron(ieqs=[[0, 1]], backend='ppl')
+            sage: A = matrix([[2, -1]])
+            sage: P.preimage(A).backend()
+            'ppl'
+        """
+        if linear_transf in self.base_ring():
+            linear_transf = linear_transf * self.ambient_vector_space().matrix()
+
+        if linear_transf.nrows() != self.ambient_dim():
+            raise ValueError(
+                "the number of rows of the linear transformation "
+                "must equal the ambient dimension of the polyhedron"
+            )
+
+        new_dim = linear_transf.ncols()
+        par = self.parent()
+
+        if new_base_ring is not None:
+            new_parent = par.change_ring(new_base_ring, ambient_dim=new_dim)
+        else:
+            new_parent = par.base_extend(
+                linear_transf.base_ring(), ambient_dim=new_dim
+            )
+
+        if self.is_empty():
+            return new_parent.element_class(new_parent, [[], [], []], None)
+
+        new_inequalities = (
+            [inequality.b()] + list(inequality.A() * linear_transf)
+            for inequality in self.inequalities()
+        )
+        new_equations = (
+            [equation.b()] + list(equation.A() * linear_transf)
+            for equation in self.equations()
+        )
+
+        return new_parent.element_class(
+            new_parent,
+            None,
+            [new_inequalities, new_equations],
+        )
+
+    def inverse_image(self, linear_transf, new_base_ring=None):
+        r"""
+        Return the inverse image of ``self`` under a linear map.
+
+        This is an alias for :meth:`preimage`. See that method for full
+        documentation.
+
+        INPUT:
+
+        - ``linear_transf`` -- a matrix of size `(m \times n)` where `m` is
+          ``self.ambient_dim()``, or a scalar acting by dilation
+        - ``new_base_ring`` -- ring (optional); specify the new base ring;
+          may avoid coercion failure
+
+        .. SEEALSO:: :meth:`preimage`, :meth:`linear_transformation`
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(ieqs=[[0, 1, 0], [0, 0, 1]])  # non-negative orthant
+            sage: A = matrix([[1, 1], [0, 1]])
+            sage: P.inverse_image(A) == P.preimage(A)
+            True
+
+            sage: cube = polytopes.hypercube(3)
+            sage: cube.inverse_image(2) == cube.preimage(2)
+            True
+        """
+        return self.preimage(
+            linear_transf,
+            new_base_ring=new_base_ring,
+        )
+
     def linear_transformation(self, linear_transf,
                               new_base_ring=None):
         """
@@ -1769,7 +1933,7 @@ class Polyhedron_base5(Polyhedron_base4):
         The polyhedron transformed by that matrix, possibly coerced to a
         bigger base ring.
 
-        .. SEEALSO:: :meth:`dilation`, :meth:`translation`
+        .. SEEALSO:: :meth:`dilation`, :meth:`translation`, :meth:`preimage`
 
         EXAMPLES::
 
