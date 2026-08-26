@@ -1126,7 +1126,6 @@ def primes(start=2, stop=None, step=None, *, proof=None):
         sage: a = randint(50, 100)
         sage: b = randint(0, 30)
         sage: step = randint(-5, -1)
-        sage: step *= -1
         sage: v1 = list(primes(a, b, step))
         sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
         sage: v1 == v2
@@ -1164,13 +1163,13 @@ def primes(start=2, stop=None, step=None, *, proof=None):
 
     if step > 0:
         def next_prime(n):
-            return n.next_prime(proof)
+            return n.next_prime(proof=proof)
         def continue_condition(n):
             return n < stop
         n = start - 1
     else:
         def next_prime(n):
-            return n.previous_prime(proof)
+            return n.previous_prime(proof=proof)
         def continue_condition(n):
             return n > stop
         n = start + 1

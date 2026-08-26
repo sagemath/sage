@@ -263,6 +263,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
             raise ValueError('algorithm "pari_primes" is limited to primes '
                              f'larger than {small_prime_max - 1}')
 
+        congruence = start % step
         if stop is None:
             # In this case, "start" is really stop
             stop = start
@@ -270,10 +271,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         else:
             start = start
             stop = stop
-            if start < 1:
-                start = 1
 
-        congruence = start % step
         if step < 1:
             start, stop = stop + 1, start + 1
 
@@ -286,7 +284,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
             pari.init_primes(min(stop + prime_gap_bound, init_primes_max))
             assert pari_maxprime() >= stop
 
-        res = pari_prime_range(start, stop, py_ints)
+        res = pari_prime_range(max(start, 1), stop, py_ints)
         if step < 0:
             res = res[::-1]
         if step != 1 and step != -1:
