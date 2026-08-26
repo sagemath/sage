@@ -8,13 +8,7 @@ ML-KEM (Kyber) implementation
 
 REFERENCES:
 
-- [FIPS203]_ National Institute of Standards and Technology,
-  "Module-Lattice-Based Key-Encapsulation Mechanism Standard",
-  FIPS 203, 2024.
-
-- [Sch22]_ Peter Schwabe et al.,
-  "CRYSTALS-KYBER",
-  https://eprint.iacr.org/2022/1696
+- [FIPS203]_, [Sch22]_
 """
 
 import hashlib
@@ -45,9 +39,9 @@ class MLKEM(KEMBase):
     """
 
     PARAMETER_SETS = {
-        512: {'n': 256, 'q': 3329, 'k': 2, 'eta1': 3, 'eta2': 2},
-        768: {'n': 256, 'q': 3329, 'k': 3, 'eta1': 2, 'eta2': 2},
-        1024: {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2},
+        512: {'n': 256, 'q': 3329, 'k': 2, 'eta1': 3, 'eta2': 2, 'du': 10, 'dv': 4},
+        768: {'n': 256, 'q': 3329, 'k': 3, 'eta1': 2, 'eta2': 2, 'du': 10, 'dv': 4},
+        1024: {'n': 256, 'q': 3329, 'k': 4, 'eta1': 2, 'eta2': 2, 'du': 11, 'dv': 5},
     }
 
     @classmethod
@@ -76,7 +70,7 @@ class MLKEM(KEMBase):
         params = cls.PARAMETER_SETS[parameter_set]
         return cls(**params)
 
-    def __init__(self, n=256, q=3329, k=2, eta1=3, eta2=2):
+    def __init__(self, n=256, q=3329, k=2, eta1=3, eta2=2, du=10, dv=4):
         """
         Initialize ML-KEM with custom parameters.
 
@@ -86,6 +80,8 @@ class MLKEM(KEMBase):
         - ``k`` -- integer (default: 2), number of polynomials in vectors
         - ``eta1`` -- integer (default: 3), CBD parameter for secret/error
         - ``eta2`` -- integer (default: 2), CBD parameter for encapsulation error
+        - ``du`` -- integer (default: 10), compression parameter for u
+        - ``dv`` -- integer (default: 4), compression parameter for v
 
         EXAMPLES::
 
@@ -102,6 +98,8 @@ class MLKEM(KEMBase):
         self.k = k
         self.eta1 = eta1
         self.eta2 = eta2
+        self.du = du
+        self.dv = dv
 
         self.R = PolynomialRing(FiniteField(self.q), 'x')
         self.R = self.R.quotient(self.R.gen() ** self.n + 1, 'x')
@@ -113,19 +111,16 @@ class MLKEM(KEMBase):
         INPUT:
         - ``eta`` -- integer, distribution parameter
         """
-        x = self.R.gen()
         coeffs = []
         for _ in range(self.n):
             a = sum(randint(0, 1) for _ in range(eta))
             b = sum(randint(0, 1) for _ in range(eta))
             coeffs.append(a - b)
-        return sum(c * x**i for i, c in enumerate(coeffs))
+        return self.R(coeffs)
 
     def _sample_poly_uniform(self):
         """Sample uniformly random polynomial."""
-        x = self.R.gen()
-        coeffs = [randint(0, self.q - 1) for _ in range(self.n)]
-        return sum(c * x**i for i, c in enumerate(coeffs))
+        return self.R.random_element()
 
     def _get_coeffs(self, poly):
         """
@@ -136,16 +131,14 @@ class MLKEM(KEMBase):
 
         OUTPUT: list of integer coefficients
         """
-        return [int(c) for c in poly.list()] + [0] * (self.n - len(poly.list()))
-
-    def _poly_from_coeffs(self, coeffs):
-        """Create a polynomial from a list of coefficients."""
-        x = self.R.gen()
-        return sum(c * x**i for i, c in enumerate(coeffs))
+        lift = poly.lift()
+        return [lift.coefficient(c).lift() for c in range(self.n)]
 
     def keygen(self):
         """
         Generate public and secret key pair.
+
+        See Algorithm 6 in [FIPS203]_ (KeyGen).
 
         EXAMPLES::
 
@@ -169,6 +162,8 @@ class MLKEM(KEMBase):
     def encaps(self, public_key):
         """
         Encapsulate a shared secret.
+
+        See Algorithm 7 in [FIPS203]_ (Encaps).
 
         INPUT:
         - ``public_key`` -- tuple (A, t)
@@ -196,7 +191,7 @@ class MLKEM(KEMBase):
         u_coeffs = [self._get_coeffs(poly) for poly in u_vec]
         v_coeffs = self._get_coeffs(v)
 
-        v_bytes = str(v_coeffs).encode()
+        v_bytes = bytes(v_coeffs)
         shared_secret = hashlib.sha256(v_bytes).digest()[:32]
 
         return (u_coeffs, v_coeffs), shared_secret
@@ -204,6 +199,8 @@ class MLKEM(KEMBase):
     def decaps(self, secret_key, ciphertext):
         """
         Decapsulate to recover shared secret.
+
+        See Algorithm 8 in [FIPS203]_ (Decaps).
 
         INPUT:
         - ``secret_key`` -- vector s
@@ -223,7 +220,5 @@ class MLKEM(KEMBase):
         """
         u_coeffs, v_coeffs = ciphertext
 
-        v_decompressed = self._poly_from_coeffs(v_coeffs)
-
-        v_bytes = str(self._get_coeffs(v_decompressed)).encode()
+        v_bytes = bytes(v_coeffs)
         return hashlib.sha256(v_bytes).digest()[:32]
