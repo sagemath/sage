@@ -182,20 +182,16 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
     Make sure that step behaves exactly like in range::
 
         sage: # needs sage.libs.pari
-        sage: a = Integer(randint(1, 50))
-        sage: b = Integer(randint(70, 100))
-        sage: step = Integer(randint(1, 5))
-        sage: v1 = prime_range(a, b, step)
-        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
-        sage: v1 == v2, a, b, step
-        (True, ...)
-        sage: a = Integer(randint(50, 100))
-        sage: b = Integer(randint(0, 30))
-        sage: step = Integer(randint(-5, -1))
-        sage: v1 = prime_range(a, b, step)
-        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
-        sage: v1 == v2, a, b, step
-        (True, ...)
+        sage: a = randint(1, 50)
+        sage: b = randint(70, 100)
+        sage: step = randint(1, 5)
+        sage: prime_range(a, b, step) == list(filter(is_prime, range(a, b, step)))
+        True
+        sage: a = randint(50, 100)
+        sage: b = randint(0, 30)
+        sage: step = randint(-5, -1)
+        sage: prime_range(a, b, step) == list(filter(is_prime, range(a, b, step)))
+        True
 
     AUTHORS:
 
