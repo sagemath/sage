@@ -1116,19 +1116,15 @@ def primes(start=2, stop=None, step=None, *, proof=None):
     Make sure that step behaves exactly like in range::
 
         sage: # needs sage.libs.pari
-        sage: a = Integer(randint(1, 50))
-        sage: b = Integer(randint(70, 100))
-        sage: step = Integer(randint(1, 5))
-        sage: v1 = list(primes(a, b, step))
-        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
-        sage: v1 == v2
+        sage: a = randint(1, 50)
+        sage: b = randint(70, 100)
+        sage: step = randint(1, 5)
+        sage: list(primes(a, b, step)) == list(filter(is_prime, range(a, b, step)))
         True
         sage: a = randint(50, 100)
         sage: b = randint(0, 30)
         sage: step = randint(-5, -1)
-        sage: v1 = list(primes(a, b, step))
-        sage: v2 = [p for p in srange(a, b, step) if p.is_prime()]
-        sage: v1 == v2
+        sage: list(primes(a, b, step)) == list(filter(is_prime, range(a, b, step)))
         True
     """
 
