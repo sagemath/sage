@@ -205,7 +205,9 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         # For backwards compatibility - `algorithm` used to be the third parameter.
         # We make sure that previous code still works by treating `step` as
         # `algorithm` if `step` is a string and `algorithm` is None.
-        if algorithm is not None:
+        if isinstance(algorithm, bool):
+            py_ints = algorithm
+        elif algorithm is not None:
             raise TypeError('step must be an integer or None')
         algorithm = step
         step = None
