@@ -33,6 +33,7 @@ from sage.algebras.lie_conformal_algebras.all import *
 from sage.algebras.free_algebra import FreeAlgebra
 from sage.algebras.free_algebra_quotient import FreeAlgebraQuotient
 
+
 from sage.algebras.finite_dimensional_algebras.all import FiniteDimensionalAlgebra
 
 lazy_import('sage.algebras.group_algebra', 'GroupAlgebra')
@@ -67,3 +68,7 @@ lazy_import('sage.algebras.q_system', 'QSystem')
 lazy_import('sage.algebras.cluster_algebra', 'ClusterAlgebra')
 
 lazy_import('sage.algebras.yangian', 'Yangian')
+
+lazy_import('sage.algebras.finite_laurent_intersection_ring', 'FiniteLaurentIntersectionRing')
+
+lazy_import('sage.algebras.banff_cluster_algebra', 'BanffClusterAlgebra')
