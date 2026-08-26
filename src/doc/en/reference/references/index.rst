@@ -3061,6 +3061,11 @@ REFERENCES:
              30 (1981), pp. 71--89.
              :doi:`10.1016/0097-3165(81)90041-8`
 
+.. [GSRTT2026] \N. Ganchovski, O. Smith, C. Rackauckas, L. Tomov, and A. Traykov.
+               *Improvements to the Modified Anderson–Björck (modAB) Root-Finding Algorithm*,
+               Algorithms **19** (2026), no. 5, 332.
+               :doi:`10.3390/a19050332`
+
 .. [Gar2015] \V. Garg *Introduction to Lattice Theory with Computer
              Science Applications* (2015), Wiley.
 

@@ -12,9 +12,11 @@ Functions and Methods
 ----------------------
 """
 
+from math import isfinite, isnan, log1p, nextafter
+from operator import index
+
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
-from math import isnan
 
 
 def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=False):
@@ -172,6 +174,477 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     if abs(f(root)) > max(abs(root * rtol * (right - left) / (b - a)), 1e-6):
         raise NotImplementedError("Brent's method failed to find a zero for f on the interval")
     return brentqRes
+
+
+def find_root_modab(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=False):
+    r"""
+    Numerically find a root of ``f`` on the closed interval `[a,b]`
+    (or `[b,a]`) using the modified Anderson-Bjork bracketing method of
+    [GSRTT2026]_.
+
+    The function values at the interval endpoints must have opposite signs,
+    unless one endpoint is already a root, and ``f`` must be continuous on the
+    interval.  Like :func:`find_root`, this routine works in fixed (machine)
+    precision.  A best-effort residual check rejects common jumps and poles,
+    but finite sampling cannot establish continuity in general.
+
+    Unlike :func:`find_root`, this routine only accepts callables; symbolic
+    expressions and symbolic equalities are not dispatched to symbolic root
+    finding.
+
+    INPUT:
+
+    - ``f`` -- a function of one variable
+
+    - ``a``, ``b`` -- endpoints of the interval
+
+    - ``xtol``, ``rtol`` -- the routine converges when the enclosing
+      interval has width at most ``xtol + rtol*abs(x)``, where ``x`` is the
+      current root estimate.  Both tolerances must be nonnegative.
+
+    - ``maxiter`` -- integer; if convergence is not achieved in
+      ``maxiter`` iterations, an error is raised.  Must be nonnegative.
+
+    - ``full_output`` -- boolean (default: ``False``); if ``True``, also
+      return an object that contains information about convergence
+
+    EXAMPLES::
+
+        sage: from sage.numerical.optimize import find_root_modab
+        sage: find_root_modab(lambda x: x*x - 2, 0, 2)  # abs tol 1e-12
+        1.414213562373...
+        sage: find_root_modab(lambda x: x - 3, 5, -1)
+        3.0
+        sage: find_root_modab(lambda x: x + 1, -1, 4)
+        -1.0
+
+    With ``full_output=True`` a SciPy-style result object is returned::
+
+        sage: root, result = find_root_modab(lambda x: x^3 - 2, 0, 2, full_output=True)
+        sage: root  # abs tol 1e-12
+        1.259921049894...
+        sage: result.converged
+        True
+        sage: result.flag
+        'converged'
+        sage: result.method
+        'modAB'
+
+    The method is a bracketing method, so the endpoints must bracket a
+    root::
+
+        sage: find_root_modab(lambda x: x*x + 1, -1, 1)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: f appears to have no zero on the interval
+
+    TESTS::
+
+        sage: find_root_modab(lambda x: x*x - 2, 2, 0)  # abs tol 1e-12
+        1.414213562373...
+        sage: find_root_modab(lambda x: (x - 1)^3, 0, 2)
+        1.0
+        sage: root, result = find_root_modab(lambda x: x^3 - 2, 0, 2, full_output=True)
+        sage: result.function_calls >= 3
+        True
+        sage: result.iterations >= 1
+        True
+        sage: from sage.numerical.all import find_root_modab as lazy_modab
+        sage: lazy_modab(lambda x: x - 1, 0, 2)
+        1.0
+        sage: find_root_modab(lambda x: x*x - 2, 0, 2, maxiter=0)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: failed to converge after 0 iterations
+
+    Check that convergence to a discontinuity is rejected, as in
+    :func:`find_root`::
+
+        sage: find_root_modab(lambda x: 1/(x - 1) + 1, 0.00001, 2)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: ModAB failed to find a zero for f on the interval
+
+    The interpolation and convergence checks remain safe near the limits of
+    IEEE-754 arithmetic::
+
+        sage: find_root_modab(lambda x: x - 1.4e308, 1.2e308, 1.6e308)
+        1.4e+308
+        sage: jump = lambda x: -1e308 if x < 0 else 1e308
+        sage: find_root_modab(jump, -1, 1)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: ModAB failed to find a zero for f on the interval
+
+    A finite residual check cannot distinguish every discontinuity from an
+    ill-conditioned continuous root.  The check also considers whether the
+    residual improves locally, so steep continuous roots are not rejected
+    solely because their residual is larger than the usual floor::
+
+        sage: from math import copysign, nextafter
+        sage: steep = lambda x: copysign(abs(x - 2/3)**0.2, 2/3 - x)
+        sage: abs(find_root_modab(steep, 0, 1) - 2/3) < 1e-12
+        True
+        sage: amplitude = lambda x: 1e-6 + 4*x*(1-x)
+        sage: abs(find_root_modab(lambda x: amplitude(x)*steep(x), 0, 1) - 2/3) < 1e-12
+        True
+
+    Large endpoint values do not hide a jump near the candidate root::
+
+        sage: def scaled_jump(x):
+        ....:     if x < -0.5:
+        ....:         return -1e100
+        ....:     if x < 0:
+        ....:         return -1.0
+        ....:     if x < 0.5:
+        ....:         return 1.0
+        ....:     return 1e100
+        sage: find_root_modab(scaled_jump, -1, 1)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: ModAB failed to find a zero for f on the interval
+
+    A jump superimposed on a trend is also rejected when its local residual
+    has stopped improving::
+
+        sage: sloped_jump = lambda x: 16*(x - 2/3) + (-1 if x < 2/3 else 1)
+        sage: find_root_modab(sloped_jump, 0, 1)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: ModAB failed to find a zero for f on the interval
+
+    In particular, a large ``xtol`` does not bypass the residual check::
+
+        sage: find_root_modab(lambda x: -1 if x < 0 else 1, -1, 1, xtol=2)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: ModAB failed to find a zero for f on the interval
+        sage: affine_jump = lambda x: x - 10 if x < 0 else x + 1
+        sage: find_root_modab(affine_jump, -100, 100, xtol=200)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: ModAB failed to find a zero for f on the interval
+        sage: symmetric_jump = lambda x: x - 0.1 if x < 0 else x + 0.1
+        sage: find_root_modab(symmetric_jump, -1, 1, xtol=2)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: ModAB failed to find a zero for f on the interval
+
+    The same validation still accepts a continuous function whose initial
+    interval already meets the requested tolerance::
+
+        sage: abs(find_root_modab(lambda x: x - 0.1, -1, 1,
+        ....:                     xtol=2, rtol=0) - 0.1) < 2
+        True
+
+    The bisection fallback is also safe when multiplying the interval width
+    by its nominal grace factor would overflow::
+
+        sage: left = 1e308
+        sage: right = 1.2e308
+        sage: middle = 0.5*left + 0.5*right
+        sage: expected = nextafter(left, right)
+        sage: def large_scale_function(x):
+        ....:     if x <= expected:
+        ....:         return (x - expected) / (expected - left)
+        ....:     if x <= middle:
+        ....:         return 5e307 * ((x - expected) / (middle - expected))
+        ....:     return 5e307 + 5e307 * ((x - middle) / (right - middle))
+        sage: find_root_modab(large_scale_function, left, right) == expected
+        True
+
+    The reported number of function calls includes the residual check::
+
+        sage: calls = []
+        sage: def counted(x):
+        ....:     calls.append(x)
+        ....:     return x*x - 2
+        sage: root, result = find_root_modab(counted, 0, 2, full_output=True)
+        sage: result.function_calls == len(calls)
+        True
+
+    The iteration limit must be an integer::
+
+        sage: find_root_modab(lambda x: x - 1, 0, 2, maxiter=3.0)
+        Traceback (most recent call last):
+        ...
+        TypeError: maxiter must be an integer
+    """
+    if not isfinite(xtol) or xtol < 0:
+        raise ValueError("xtol must be finite and nonnegative")
+    if not isfinite(rtol) or rtol < 0:
+        raise ValueError("rtol must be finite and nonnegative")
+    try:
+        maxiter = index(maxiter)
+    except TypeError:
+        raise TypeError("maxiter must be an integer") from None
+    if maxiter < 0:
+        raise ValueError("maxiter must be nonnegative")
+
+    a = float(a)
+    b = float(b)
+    if a > b:
+        a, b = b, a
+    if not isfinite(a) or not isfinite(b):
+        raise ValueError("interval endpoints must be finite")
+    function_calls = 0
+
+    def g(x):
+        nonlocal function_calls
+        function_calls += 1
+        return float(f(x))
+
+    def same_sign(y, z):
+        return (y > 0) == (z > 0)
+
+    def midpoint(left, right):
+        if (left < 0) == (right < 0):
+            return left + 0.5 * (right - left)
+        # For opposite signs, ``right - left`` can overflow.
+        return 0.5 * left + 0.5 * right
+
+    def secant_point(left, right, left_value, right_value):
+        # The usual cross-product formula can overflow or underflow even when
+        # the interpolated point is finite.  Compute the same convex
+        # combination after scaling the ordinates instead.
+        scale = max(abs(left_value), abs(right_value))
+        left_weight = abs(left_value) / scale
+        right_weight = abs(right_value) / scale
+        fraction = left_weight / (left_weight + right_weight)
+        point = (1 - fraction) * left + fraction * right
+        return max(left, min(point, right))
+
+    def scaled_value(value, factor):
+        adjusted = value * factor
+        if adjusted == 0.0:
+            # Anderson--Björck corrections must not erase the sign of an
+            # ordinate through underflow.
+            return nextafter(0.0, value)
+        return adjusted
+
+    def refine_for_residual():
+        nonlocal x1, x2, y1, y2, f1, f2
+        anchors = [(x2 - x1, min(abs(f1), abs(f2)))]
+        for _ in range(64):
+            probe = secant_point(x1, x2, f1, f2)
+            if probe in (x1, x2):
+                probe = midpoint(x1, x2)
+            if probe in (x1, x2):
+                break
+            probe_residual = g(probe)
+            if not isfinite(probe_residual):
+                raise NotImplementedError("ModAB failed to find a zero for f on the interval")
+            if probe_residual == 0.0:
+                return probe
+            if same_sign(probe_residual, f1):
+                x1, y1, f1 = probe, probe_residual, probe_residual
+            else:
+                x2, y2, f2 = probe, probe_residual, probe_residual
+            width = x2 - x1
+            local_residual = min(abs(f1), abs(f2))
+            if isfinite(width) and width > 0 and local_residual > 0:
+                if local_residual < anchors[-1][1]:
+                    anchors.append((width, local_residual))
+        residual_history.extend(anchors)
+        del residual_history[:-8]
+        return x1 if abs(f1) < abs(f2) else x2
+
+    def result(root, iterations, check=False):
+        if check:
+            residual = g(root)
+            if not isfinite(residual):
+                raise NotImplementedError("ModAB failed to find a zero for f on the interval")
+            if abs(residual) <= 1e-6:
+                check = False
+            elif len(residual_history) < 3:
+                root = refine_for_residual()
+                residual = g(root)
+                if not isfinite(residual):
+                    raise NotImplementedError("ModAB failed to find a zero for f on the interval")
+                if abs(residual) <= 1e-6:
+                    check = False
+        if check:
+            for _ in range(4):
+                if residual == 0.0:
+                    break
+                toward = x2 if (residual > 0) == (f1 > 0) else x1
+                probe = nextafter(root, toward)
+                if probe == root:
+                    break
+                probe_residual = g(probe)
+                if not isfinite(probe_residual):
+                    raise NotImplementedError("ModAB failed to find a zero for f on the interval")
+                if abs(probe_residual) < abs(residual):
+                    root, residual = probe, probe_residual
+                else:
+                    break
+            trend_progress = False
+            rates = []
+            recent_history = residual_history[-8:]
+            for (old_width, old_residual), (new_width, new_residual) in zip(
+                    recent_history, recent_history[1:]):
+                if (0 < new_width < old_width
+                        and 0 < new_residual < old_residual):
+                    x_rate = log1p((new_width - old_width) / old_width)
+                    residual_change = ((new_residual - old_residual)
+                                       / old_residual)
+                    if x_rate < 0:
+                        if residual_change == -1.0:
+                            rates.append(float('inf'))
+                        else:
+                            y_rate = log1p(residual_change)
+                            rates.append(y_rate / x_rate)
+                else:
+                    break
+            trend_progress = (len(rates) >= 2
+                              and min(rates) >= 2.0**-10)
+            if not trend_progress:
+                first_width, first_residual = recent_history[0]
+                last_width, last_residual = recent_history[-1]
+                if (0 < last_width < first_width
+                        and 0 < last_residual < first_residual):
+                    x_rate = log1p((last_width - first_width) / first_width)
+                    residual_change = ((last_residual - first_residual)
+                                       / first_residual)
+                    if x_rate < 0:
+                        if residual_change == -1.0:
+                            trend_progress = True
+                        else:
+                            y_rate = log1p(residual_change)
+                            trend_progress = y_rate / x_rate >= 2.0**-10
+            if trend_progress:
+                left_point = nextafter(root, x1)
+                right_point = nextafter(root, x2)
+                left_residual = g(left_point)
+                right_residual = g(right_point)
+                if not (isfinite(left_residual) and isfinite(right_residual)):
+                    raise NotImplementedError("ModAB failed to find a zero for f on the interval")
+                neighbor_scale = max(abs(left_residual), abs(right_residual))
+                straddles_root = not same_sign(left_residual, right_residual)
+                improves_one_side = (neighbor_scale == 0.0
+                                     or min(abs(left_residual), abs(right_residual))
+                                     < (1 - 2.0**-20) * neighbor_scale)
+                root_is_endpoint = root in (x1, x2)
+                endpoint_drop = (root_is_endpoint
+                                 and len(residual_history) >= 3
+                                 and sum(item[1] > 1e3 * neighbor_scale
+                                         for item in residual_history[:-1]) >= 2)
+                trend_progress = (improves_one_side
+                                  or (straddles_root
+                                      and (not root_is_endpoint
+                                           or endpoint_drop)))
+            if residual != 0.0 and not trend_progress:
+                raise NotImplementedError("ModAB failed to find a zero for f on the interval")
+        if full_output:
+            from scipy.optimize import RootResults
+            return root, RootResults(root, iterations, function_calls, 0, 'modAB')
+        return root
+
+    y1 = g(a)
+    if y1 == 0.0:
+        return result(a, 0)
+
+    y2 = g(b)
+    if y2 == 0.0:
+        return result(b, 0)
+
+    if not isfinite(y1) or not isfinite(y2) or same_sign(y1, y2):
+        raise RuntimeError("f appears to have no zero on the interval")
+
+    f1 = y1
+    f2 = y2
+
+    x1 = a
+    x2 = b
+    bisection = True
+    side = 0
+    threshold_scale = max(abs(x1), abs(x2)) or 1.0
+    threshold = x2 / threshold_scale - x1 / threshold_scale
+    threshold_grace = 4
+    residual_history = []
+
+    for iteration in range(1, maxiter + 1):
+        was_bisection = bisection
+        if was_bisection:
+            x3 = midpoint(x1, x2)
+        else:
+            # Clamp before testing x-convergence.  Roundoff in the secant
+            # formula must never turn a valid bracket into an out-of-bracket
+            # result.
+            x3 = secant_point(x1, x2, y1, y2)
+
+        width = x2 - x1
+        tolerance = xtol + rtol * abs(x3)
+        if width <= tolerance:
+            candidate = midpoint(x1, x2) if x3 in (x1, x2) else x3
+            return result(candidate, iteration, check=True)
+
+        if was_bisection:
+            y3 = g(x3)
+            if not isfinite(y3):
+                raise RuntimeError("f appears to have no zero on the interval")
+            scale = max(abs(f1), abs(f2), abs(y3))
+            scaled_f1 = f1 / scale
+            scaled_f2 = f2 / scale
+            scaled_y3 = y3 / scale
+            ym = 0.5 * (scaled_f1 + scaled_f2)
+            r = 1 - abs(ym / (scaled_f2 - scaled_f1))
+            k = r * r
+            if abs(ym - scaled_y3) < k * (abs(scaled_y3) + abs(ym)):
+                bisection = False
+                threshold_scale = max(abs(x1), abs(x2)) or 1.0
+                threshold = x2 / threshold_scale - x1 / threshold_scale
+        elif x3 <= x1:
+            x3, y3 = x1, f1
+            bisection = True
+            side = 0
+            threshold_grace = 4
+        elif x3 >= x2:
+            x3, y3 = x2, f2
+            bisection = True
+            side = 0
+            threshold_grace = 4
+        else:
+            y3 = g(x3)
+            if not isfinite(y3):
+                raise RuntimeError("f appears to have no zero on the interval")
+
+        if not was_bisection and not bisection:
+            threshold_grace -= 1
+            if threshold_grace < 0:
+                threshold *= 0.5
+
+        if y3 == 0.0 and x3 not in (x1, x2):
+            return result(x3, iteration)
+
+        if same_sign(y1, y3):
+            if side == 1:
+                m = 1 - y3 / y1 if abs(y3) < abs(y1) else 0.5
+                y2 = scaled_value(y2, m)
+            elif not bisection:
+                side = 1
+            x1, y1, f1 = x3, y3, y3
+        else:
+            if side == -1:
+                m = 1 - y3 / y2 if abs(y3) < abs(y2) else 0.5
+                y1 = scaled_value(y1, m)
+            elif not bisection:
+                side = -1
+            x2, y2, f2 = x3, y3, y3
+
+        width = x2 - x1
+        local_residual = min(abs(f1), abs(f2))
+        if isfinite(width) and width > 0 and local_residual > 0:
+            residual_history.append((width, local_residual))
+            del residual_history[:-8]
+
+        scaled_width = x2 / threshold_scale - x1 / threshold_scale
+        if scaled_width > threshold:
+            bisection = True
+            side = 0
+            threshold_grace = 4
+
+    raise RuntimeError("failed to converge after %s iterations" % maxiter)
 
 
 def find_local_maximum(f, a, b, tol=1.48e-08, maxfun=500):
