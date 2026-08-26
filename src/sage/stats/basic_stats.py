@@ -17,13 +17,13 @@ response filter, creating a series of averages using a user-defined number of
 subsets of the full data set. The :func:`std` and the :func:`variance` return a
 measurement of how far data points tend to be from the arithmetic mean.
 
-Functions are available in the namespace :mod:`stats`, i.e. you can use them by
+Functions are available in the namespace ``stats``, i.e. you can use them by
 typing ``stats.mean``, ``stats.median``, etc.
 
 REMARK: If all the data you are working with are floating point
-numbers, you may find :class:`stats.TimeSeries` helpful, since it is
-extremely fast and offers many of the same descriptive statistics as
-in the module.
+numbers, you may find :class:`~sage.stats.time_series.TimeSeries`
+helpful, since it is extremely fast and offers many of the same
+descriptive statistics as in the module.
 
 AUTHOR:
 
@@ -424,7 +424,7 @@ def moving_average(v, n):
 
     If `v` is empty, we define the entries of the moving average to be NaN.
 
-    This method is deprecated.  Use :meth:`pandas.Series.rolling` instead.
+    This method is deprecated.  Use ``pandas.Series.rolling`` instead.
 
     INPUT:
 
@@ -451,9 +451,12 @@ def moving_average(v, n):
          1/2*sqrt(2) + 3/10]
 
     We check if the input is a time series, and if so use the
-    optimized :meth:`simple_moving_average` method, but with (slightly
-    different) meaning as defined above (the point is that the
-    :meth:`simple_moving_average` on time series returns `n` values::
+    optimized
+    :meth:`~sage.stats.time_series.TimeSeries.simple_moving_average`
+    method, but with (slightly different) meaning as defined above
+    (the point is that
+    :meth:`~sage.stats.time_series.TimeSeries.simple_moving_average`
+    on time series returns `n` values::
 
         sage: a = stats.TimeSeries([1..10])                                             # needs numpy
         sage: stats.moving_average(a, 3)                                                # needs numpy

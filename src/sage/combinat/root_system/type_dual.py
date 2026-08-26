@@ -499,7 +499,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         .. SEEALSO::
 
-            - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods._plot_projection`
+            - ``RootLatticeRealizations.ParentMethods._plot_projection``
 
         EXAMPLES::
 
@@ -575,7 +575,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def special_node(self):
         """
-        Implement :meth:`CartanType_affine.special_node`.
+        Implement :meth:`~sage.combinat.root_system.cartan_type.CartanType_affine.special_node`.
 
         The special node of the dual of an affine type `T` is the
         special node of `T`.

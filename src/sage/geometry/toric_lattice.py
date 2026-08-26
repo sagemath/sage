@@ -708,7 +708,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             vector space.
 
         See also :meth:`span_of_basis`,
-        :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule`,
+        :meth:`~sage.modules.free_module.Module_free_ambient.submodule`,
         and
         :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule_with_basis`,
 
@@ -752,7 +752,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             vector space.
 
         See also :meth:`span`,
-        :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule`,
+        :meth:`~sage.modules.free_module.Module_free_ambient.submodule`,
         and
         :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule_with_basis`,
 
@@ -1019,7 +1019,8 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
     EXAMPLES:
 
     The intended way to get objects of this class is to use
-    :meth:`submodule_with_basis` method of toric lattices::
+    :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule_with_basis`
+    method of toric lattices::
 
         sage: N = ToricLattice(3)
         sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
@@ -1159,7 +1160,8 @@ class ToricLattice_sublattice(ToricLattice_sublattice_with_basis,
     EXAMPLES:
 
     The intended way to get objects of this class is to use
-    :meth:`submodule` method of toric lattices::
+    :meth:`~sage.modules.free_module.Module_free_ambient.submodule`
+    method of toric lattices::
 
         sage: N = ToricLattice(3)
         sage: sublattice = N.submodule([(1,1,0), (3,2,1)])
@@ -1299,7 +1301,8 @@ class ToricLattice_quotient(FGP_Module_class):
     EXAMPLES:
 
     The intended way to get objects of this class is to use
-    :meth:`quotient` method of toric lattices::
+    :meth:`~sage.geometry.toric_lattice.ToricLattice_generic.quotient`
+    method of toric lattices::
 
         sage: N = ToricLattice(3)
         sage: sublattice = N.submodule([(1,1,0), (3,2,1)])

@@ -1116,7 +1116,8 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     Bases have to be introduced by means of the method :meth:`basis`,
     the first defined basis being considered as the *default basis*, meaning
     it can be skipped in function arguments required a basis (this can
-    be changed by means of the method :meth:`set_default_basis`)::
+    be changed by means of the method
+    :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.set_default_basis`)::
 
         sage: e = M.basis('e') ; e
         Basis (e_0,e_1,e_2) on the Rank-3 free module M over the Integer Ring
@@ -1515,7 +1516,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             T^{\{2,3\}}(M) \otimes T^{\{6,7\}}(M^*) \otimes \mathrm{Sym}^{\{0,1\}}(M) \otimes \mathrm{ASym}^{\{4,5\}}(M^*)
 
         See :class:`~sage.tensor.modules.tensor_free_module.TensorFreeModule`
-        and :class:`~sage.tensor.modules.tensor_free_module.TensorFreeSubmodule_sym`
+        and :class:`~sage.tensor.modules.tensor_free_submodule.TensorFreeSubmodule_sym`
         for more documentation.
 
         TESTS::
@@ -2131,7 +2132,8 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         r"""
         Construct a tensor on the free module ``self`` or a tensor product with other modules.
 
-        If ``args`` consist of other parents, just delegate to :meth:`tensor_product`.
+        If ``args`` consist of other parents, just delegate to
+        :meth:`~sage.tensor.modules.reflexive_module.ReflexiveModule_abstract.tensor_product`.
 
         Otherwise, construct a tensor from the following input.
 
@@ -2763,7 +2765,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         The *default basis* is simply a basis whose name can be skipped in
         methods requiring a basis as an argument. By default, it is the first
         basis introduced on the module. It can be changed by the method
-        :meth:`set_default_basis`.
+        :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.set_default_basis`.
 
         OUTPUT:
 

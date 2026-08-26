@@ -7,7 +7,6 @@ conf_data.set('EDITABLE_BUILD', root_build)
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
-conf_data.set('prefix', prefix)
 datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
   datadir = prefix / datadir
@@ -17,8 +16,19 @@ if not fs.exists(datadir / 'cremona')
     'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify the correct path via the environment variable SAGE_SHARE during runtime.',
   )
 endif
-# Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
-conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
+sage_local = get_option('SAGE_LOCAL')
+if sage_local == ''
+  # Pure Meson builds rely on ECL's search path to find Kenzo.
+  kenzo_fas = ''
+  threejs_dir = prefix / 'share' / 'threejs-sage'
+else
+  # Sage-the-Distro installs non-Python artifacts below SAGE_LOCAL.
+  sage_local = fs.as_posix(sage_local)
+  kenzo_fas = sage_local / 'lib' / 'ecl' / 'kenzo.fas'
+  threejs_dir = sage_local / 'share' / 'threejs-sage'
+endif
+conf_data.set_quoted('SAGE_KENZO_FAS', kenzo_fas)
+conf_data.set_quoted('SAGE_THREEJS_DIR', threejs_dir)
 # It can be found, so we don't have to set anything here:
 conf_data.set('NTL_INCDIR', '')
 conf_data.set('NTL_LIBDIR', '')

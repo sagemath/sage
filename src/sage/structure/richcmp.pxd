@@ -112,7 +112,7 @@ cpdef inline richcmp_not_equal(x, y, int op):
     """
     if op == Py_EQ:
         return False
-    elif op == Py_NE:
+    if op == Py_NE:
         return True
     return richcmp(x, y, op)
 

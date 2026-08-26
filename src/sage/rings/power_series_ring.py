@@ -277,8 +277,8 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         x23, x29, x31, x37, x41, x43, x47, x53, x59, x61, x67, x71, x73, x79,
         x83, x89, x97 over Integer Ring
 
-    - Use :meth:`inject_variables` to make the variables available for
-      interactive use.
+    - Use :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
+      to make the variables available for interactive use.
 
       ::
 

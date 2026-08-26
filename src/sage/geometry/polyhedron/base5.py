@@ -703,7 +703,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         .. SEEALSO::
 
-            :meth:`~sage.schemes.toric.variety.Kaehler_cone`
+            :meth:`~sage.schemes.toric.variety.ToricVariety_field.Kaehler_cone`
 
         REFERENCES:
 
@@ -1449,10 +1449,13 @@ class Polyhedron_base5(Polyhedron_base4):
         INPUT:
 
         - ``actor`` -- one of the following:
-          - a scalar, not necessarily in :meth:`base_ring`,
+
+          - a scalar, not necessarily in
+            :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.base_ring`,
           - a :class:`Polyhedron`,
           - a :class:`sage.modules.free_module_element.vector`,
           - a :class:`sage.matrix.constructor.matrix`,
+
         - ``self_on_right`` -- must be ``False`` for actor a matrix;
           ignored otherwise
 
@@ -1598,7 +1601,8 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``scalar`` -- a scalar, not necessarily in :meth:`base_ring`
+        - ``scalar`` -- a scalar, not necessarily in
+          :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.base_ring`
 
         OUTPUT:
 
@@ -1755,7 +1759,8 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``linear_transf`` -- a matrix, not necessarily in :meth:`base_ring`
+        - ``linear_transf`` -- a matrix, not necessarily in
+          :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.base_ring`
         - ``new_base_ring`` -- ring (optional); specify the new base ring;
           may avoid coercion failure
 

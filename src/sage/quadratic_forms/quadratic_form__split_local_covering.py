@@ -44,7 +44,9 @@ def cholesky_decomposition(self, bit_prec=53):
     .. TODO::
 
         If we only care about working over the real double field (``RDF``), then we
-        can use the method :meth:`cholesky` present for square matrices over that.
+        can use the method
+        :meth:`~sage.matrix.matrix_double_dense.Matrix_double_dense.cholesky`
+        present for square matrices over that.
 
     .. NOTE::
 

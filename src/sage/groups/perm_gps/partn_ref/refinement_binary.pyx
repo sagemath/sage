@@ -882,8 +882,7 @@ cdef int compare_nonlinear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2,
             if n_one_1 != n_one_2:
                 if n_one_1 > n_one_2:
                     return 1
-                else:
-                    return -1
+                return -1
             where_0 = start
             where_1 = end - n_one_1
             if start < where_1 and where_1 < end:

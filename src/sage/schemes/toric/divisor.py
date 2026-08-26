@@ -2,8 +2,8 @@
 r"""
 Toric divisors and divisor classes
 
-Let `X` be a :class:`toric variety
-<sage.schemes.toric.variety.ToricVariety_field>` corresponding to a
+Let `X` be a :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
+corresponding to a
 :class:`rational polyhedral fan <sage.geometry.fan.RationalPolyhedralFan>`
 `\Sigma`. A :class:`toric divisor <ToricDivisor_generic>` `D` is a T-Weil
 divisor over a given coefficient ring (usually `\ZZ` or `\QQ`), i.e. a formal
@@ -199,8 +199,8 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
 
     INPUT:
 
-    - ``toric_variety`` -- a :class:`toric variety
-      <sage.schemes.toric.variety.ToricVariety_field>`
+    - ``toric_variety`` -- a
+      :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     - ``arg`` -- one of the following description of the toric divisor to be
       constructed:
@@ -1460,7 +1460,7 @@ class ToricDivisor_generic(Divisor_generic):
           non-compact chambers. Hence, the convex hull of the vertices
           of the chamber decomposition contains all non-vanishing
           cohomology groups. This is returned by the private method
-          :meth:`_sheaf_cohomology_support`.
+          ``_sheaf_cohomology_support``.
 
           It would be more efficient, but more difficult to implement,
           to keep track of all of the individual chambers. We leave
@@ -1470,7 +1470,7 @@ class ToricDivisor_generic(Divisor_generic):
           cohomology can be rewritten as the cohomology of a
           simplicial complex, see Exercise 9.1.10 of [CLS2011]_,
           [Per2007]_. This is returned by the private method
-          :meth:`_sheaf_complex`.
+          ``_sheaf_complex``.
 
           The simplicial complex is the same for all points in a
           chamber, but we currently do not make use of this and
@@ -1478,7 +1478,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         * Finally, the cohomology (over `\QQ`) of this simplicial
           complex is computed in the private method
-          :meth:`_sheaf_cohomology`. Summing over the supporting
+          ``_sheaf_cohomology``. Summing over the supporting
           points `m\in M` yields the cohomology of the sheaf`.
 
         EXAMPLES:
@@ -1645,8 +1645,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         INPUT:
 
         - ``toric_variety`` -- a
-          :class:`toric variety
-          <sage.schemes.toric.variety.ToricVariety_field>``
+          :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
         - ``base_ring`` -- the coefficient ring of this divisor group,
           usually `\ZZ` (default) or `\QQ`
@@ -1864,8 +1863,8 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
 
     INPUT:
 
-    - ``toric_variety`` -- :class:`toric variety
-      <sage.schemes.toric.variety.ToricVariety_field`
+    - ``toric_variety`` --
+      :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     OUTPUT: rational divisor class group of a toric variety
 

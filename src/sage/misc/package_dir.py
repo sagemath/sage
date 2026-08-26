@@ -50,7 +50,7 @@ def is_package_or_sage_namespace_package_dir(path):
         sage: is_package_or_sage_namespace_package_dir(directory)       # known bug (seen in build.yml)
         True
 
-    :mod:`sage` is designated to become an implicit namespace package::
+    ``sage`` is designated to become an implicit namespace package::
 
         sage: # optional - !meson_editable
         sage: directory = sage.__path__[0]; directory

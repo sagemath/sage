@@ -322,7 +322,8 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         in which the computation of a single isogeny should be performed
         using square root Velu instead of simple Velu. If not provided,
         the system default is used (see
-        :class:`EllipticCurve_field.isogeny` for a more detailed
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.isogeny`
+        for a more detailed
         discussion.
 
         EXAMPLES::
@@ -424,7 +425,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
             sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             sage: E = EllipticCurve([1,0])
-            sage: phi = EllipticCurveHom_composite(E, E(0,0))   # implicit doctest
+            sage: phi = EllipticCurveHom_composite(E, E(0,0))   # indirect doctest
             sage: from sage.schemes.elliptic_curves.hom import EllipticCurveHom
             sage: print(EllipticCurveHom._repr_(phi))
             Elliptic-curve morphism:
@@ -592,13 +593,14 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         degs = [phi.degree() for phi in self._phis]
         if len(degs) == 1:
             return f'Composite morphism of degree {self._degree}:' \
-                    f'\n  From: {self._domain}' \
-                    f'\n  To:   {self._codomain}'
-        grouped = [(d, sum(1 for _ in g)) for d,g in groupby(degs)]
-        degs_str = '*'.join(str(d) + (f'^{e}' if e > 1 else '') for d,e in grouped)
-        return f'Composite morphism of degree {self._degree} = {degs_str}:' \
                 f'\n  From: {self._domain}' \
                 f'\n  To:   {self._codomain}'
+        grouped = [(d, sum(1 for _ in g)) for d, g in groupby(degs)]
+        degs_str = '*'.join(str(d) + (f'^{e}' if e > 1 else '')
+                            for d, e in grouped)
+        return f'Composite morphism of degree {self._degree} = {degs_str}:' \
+            f'\n  From: {self._domain}' \
+            f'\n  To:   {self._codomain}'
 
     def factors(self):
         r"""
@@ -1030,7 +1032,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: set(f.inverse_image(f(P), all=True))
             {(1 : 2 : 1), (1 : 3 : 1)}
 
-        The current implementation guarantees :attr:`_phis` is not empty::
+        The current implementation guarantees ``_phis`` is not empty::
 
             sage: f = EllipticCurveHom_composite.from_factors((), E); f
             Composite morphism of degree 1:
@@ -1090,12 +1092,12 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES::
