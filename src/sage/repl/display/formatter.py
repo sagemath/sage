@@ -14,7 +14,7 @@ to read format::
     [0 1], [0 0 1], [0 0 0 1]
     ]
 
-This facility uses :meth:`_repr_` (and a simple string) to try do a nice read
+This facility uses ``_repr_`` (and a simple string) to try do a nice read
 format (see :meth:`sage.structure.parent.Parent._repr_option` for details).
 
 With this displayhook there exists an other way for displaying object and more

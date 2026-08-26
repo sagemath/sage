@@ -57,8 +57,8 @@ graphs. Here is what they can do
     :widths: 30, 70
     :delim: |
 
-    :meth:`~DiGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
-    :meth:`~DiGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
+    :meth:`~sage.graphs.generic_graph.GenericGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
+    :meth:`~sage.graphs.generic_graph.GenericGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
 
 **Representation theory:**
 
@@ -1565,7 +1565,8 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`n_vertices` for the value at `(x, y) = (1, 1)`
+            :meth:`~sage.graphs.generic_graph.GenericGraph.n_vertices` for the
+            value at `(x, y) = (1, 1)`
 
         EXAMPLES::
 
@@ -3027,7 +3028,8 @@ class DiGraph(GenericGraph):
         - ``weight_function`` -- function (default: ``None``); a function
           that takes as input an edge ``(u, v, label)`` and outputs its
           weight; if ``None``, the edge label is used directly as a numeric
-          weight (see :meth:`~GenericGraph._get_weight_function`)
+          weight (see
+          :meth:`GenericGraph._get_weight_function <sage.graphs.generic_graph.GenericGraph._get_weight_function>`)
 
         - ``check_weight`` -- boolean (default: ``True``); if ``True``, the
           ``weight_function`` is applied to all edges and an exception is
@@ -3512,7 +3514,8 @@ class DiGraph(GenericGraph):
           pair `(S, T)` of an iterable `S` and an iterable `T`
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
-          see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+          see the :func:`Polyhedron constructor
+          <sage.geometry.polyhedron.constructor.Polyhedron>`
 
         .. NOTE::
 

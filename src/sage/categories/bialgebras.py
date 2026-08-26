@@ -53,7 +53,8 @@ class Bialgebras(Category_over_base_ring):
 
         .. SEEALSO:: :meth:`Category.additional_structure`
 
-        .. TODO:: This category should be a :class:`CategoryWithAxiom`.
+        .. TODO:: This category should be a
+           :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`.
 
         EXAMPLES::
 

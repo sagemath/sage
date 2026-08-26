@@ -90,11 +90,8 @@ AUTHORS:
         :widths: 30, 70
         :delim: |
 
-        ``bricks_and_braces()`` | Return the list of (underlying simple graph of) the bricks and braces of the (matching covered) graph.
-        ``number_of_braces()`` | Return the number of braces.
-        ``number_of_bricks()`` | Return the number of bricks.
-        ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
-        ``tight_cut_decomposition()`` | Return a maximal set of laminar nontrivial tight cuts and a corresponding vertex set partition.
+        :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brace` | Check if the matching covered graph is a brace.
+        :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brick` | Check if the matching covered graph is a brick.
 
     **Removability and ear decomposition**
 
@@ -113,7 +110,7 @@ AUTHORS:
         ``removable_double_ears()`` | Return a list of removable double ears.
         ``removable_doubletons()`` | Return a list of removable doubletons.
         ``removable_ears()`` | Return a list of removable ears.
-        ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
+        ``removable_edges()`` | Return a :class:`~sage.graphs.views.EdgesView` of removable edges.
         ``retract()`` | Compute the retract of the (matching covered) graph.
 
     **Generating bricks and braces**
@@ -1981,11 +1978,11 @@ class MatchingCoveredGraph(Graph):
     @doc_index('Miscellaneous methods')
     def get_matching(self):
         r"""
-        Return an :class:`~EdgesView` of ``self._matching``.
+        Return an :class:`~sage.graphs.views.EdgesView` of ``self._matching``.
 
         OUTPUT:
 
-        - This method returns :class:`EdgesView` of the edges of a
+        - This method returns :class:`~sage.graphs.views.EdgesView` of the edges of a
           perfect matching of the (matching covered) graph.
 
         EXAMPLES:
@@ -2405,7 +2402,7 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_connected`
+            - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
         """
         return True
 
@@ -2734,8 +2731,6 @@ class MatchingCoveredGraph(Graph):
         .. SEEALSO::
 
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brick`
-            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
-            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_braces`
         """
         if not self.is_bipartite():
             raise ValueError('the input graph is not bipartite')
@@ -3125,9 +3120,6 @@ class MatchingCoveredGraph(Graph):
 
             - :meth:`~sage.graphs.graph.Graph.is_bicritical`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brace`
-            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
-            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_bricks`
-            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_petersen_bricks`
         """
         if self.is_bipartite():
             raise ValueError('the input graph is bipartite')

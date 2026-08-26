@@ -11,7 +11,8 @@ matroid approach of [Gabow1995]_.
 .. TODO::
 
     - Implement the tree-packing strengthening proposed in [BHKP2008]_
-    - Extend to digraphs with multiple edges
+    - Fix the DFS-based speed-up initialization of [GKLP2021]_ for digraphs
+      with multiple edges, for which it is currently disabled
     - Extend to weighted digraphs
 """
 # ****************************************************************************
@@ -41,11 +42,9 @@ cdef class GabowEdgeConnectivity:
     edge connectivity of a directed graph and `k` edge disjoint spanning trees
     if the digraph is `k` edge connected.
 
-    .. WARNING::
-
-        Multiple edges are currently not supported. The current implementation
-        act as if the digraph is simple and so the return results might not be
-        correct. We therefore raise an error if the digraph has multiple edges.
+    Digraphs with multiple edges are supported: every parallel arc counts
+    separately, both for the edge connectivity and for the arborescence
+    packing. Loops are tolerated and ignored.
 
     INPUT:
 
@@ -104,6 +103,20 @@ cdef class GabowEdgeConnectivity:
         sage: len(all_edges) == len(set(all_edges))  # the trees are edge disjoint
         True
 
+    The round-robin loop must stop as soon as one more tree cannot be built:
+    the round that failed leaves a tree incomplete, while the next rounds
+    assume that all previous trees are spanning. On this digraph the edge
+    connectivity is 1, and continuing used to corrupt the state
+    (:issue:`42570`)::
+
+        sage: D = DiGraph([(0, 2), (0, 2), (0, 2), (1, 3), (1, 3), (1, 3),
+        ....:              (2, 0), (2, 0), (2, 1), (3, 0), (3, 1), (3, 1)],
+        ....:             multiedges=True)
+        sage: GabowEdgeConnectivity(D).edge_connectivity()
+        1
+        sage: len(GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(root=0))
+        1
+
     Corner cases::
 
         sage: [GabowEdgeConnectivity(DiGraph(n)).edge_connectivity() for n in range(4)]
@@ -116,7 +129,8 @@ cdef class GabowEdgeConnectivity:
         sage: GabowEdgeConnectivity(D).edge_connectivity()
         1
 
-    Looped digraphs are supported but not digraphs with multiple edges::
+    Loops are ignored, and parallel arcs each count separately: doubling
+    every arc of a complete digraph doubles its edge connectivity::
 
         sage: D = digraphs.Complete(5, loops=True)
         sage: GabowEdgeConnectivity(D).edge_connectivity()
@@ -124,9 +138,12 @@ cdef class GabowEdgeConnectivity:
         sage: D.allow_multiple_edges(True)
         sage: D.add_edges(D.edges(sort=False))
         sage: GabowEdgeConnectivity(D).edge_connectivity()
-        Traceback (most recent call last):
-        ...
-        ValueError: This method is not known to work on graphs with multiedges. ...
+        8
+        sage: trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=8)
+        sage: len(trees)
+        8
+        sage: all(not T.has_loops() for T in trees)
+        True
     """
     cdef MemoryAllocator mem
     cdef Py_ssize_t n  # number of nodes
@@ -145,6 +162,7 @@ cdef class GabowEdgeConnectivity:
     # The graph is stored as lists of incident edges
     cdef GenericGraph_pyx G  # the original graph
     cdef list int_to_vertex  # mapping from integers to vertex labels
+    cdef list edge_labels  # mapping from edge ids to input edge labels
     cdef vector[vector[int]] g_out
     cdef vector[vector[int]] g_in
     cdef vector[vector[int]] my_g  # either g_out or g_in
@@ -241,7 +259,9 @@ cdef class GabowEdgeConnectivity:
         - ``G`` -- a :class:`~sage.graphs.digraph.DiGraph`
 
         - ``dfs_preprocessing`` -- boolean (default: ``True``); whether to use
-          the DFS-based speed-up initialization proposed in [GKLP2021]_
+          the DFS-based speed-up initialization proposed in [GKLP2021]_. It is
+          automatically turned off for digraphs with multiple edges, on which
+          it miscounts the edge connectivity.
 
         - ``use_rec`` -- boolean (default: ``False``); whether to use a
           recursive or non-recursive DFS for ``dfs_preprocessing``. The
@@ -262,7 +282,12 @@ cdef class GabowEdgeConnectivity:
         from sage.graphs.digraph import DiGraph
         if not isinstance(G, DiGraph):
             raise ValueError("this method is for directed graphs only")
-        G._scream_if_not_simple(allow_loops=True)
+        G._scream_if_not_simple(allow_loops=True, allow_multiple_edges=True)
+        # The DFS-based speed-up initialization of [GKLP2021]_ assumes a simple
+        # digraph and miscounts on parallel arcs; disable it when the digraph
+        # has multiple edges (the base algorithm handles them correctly).
+        if G.has_multiple_edges():
+            self.dfs_preprocessing = False
         if G.size() > INT_MAX - 2:
             raise ValueError("the graph is too large for this code")
 
@@ -371,17 +396,22 @@ cdef class GabowEdgeConnectivity:
             self.g_out[i].clear()
             self.g_in[i].clear()
 
+        # Iterate over edges (not out-neighbours) so that parallel arcs each
+        # get their own edge id. Loops (x == y) are skipped. The label of
+        # edge ``e_id`` is stored in ``edge_labels[e_id]``.
         cdef int x, y
         cdef int e_id = 0
-        for x, u in enumerate(self.int_to_vertex):
-            for v in self.G.neighbor_out_iterator(u):
-                y = vertex_to_int[v]
-                if x != y:
-                    self.g_out[x].push_back(e_id)
-                    self.g_in[y].push_back(e_id)
-                    self.tail[e_id] = x
-                    self.head[e_id] = y
-                    e_id += 1
+        self.edge_labels = []
+        for u, v, label in self.G.edge_iterator(labels=True):
+            x = vertex_to_int[u]
+            y = vertex_to_int[v]
+            if x != y:
+                self.g_out[x].push_back(e_id)
+                self.g_in[y].push_back(e_id)
+                self.tail[e_id] = x
+                self.head[e_id] = y
+                self.edge_labels.append(label)
+                e_id += 1
         # Loops have been removed, so we update the number of edges
         self.m = e_id
 
@@ -413,6 +443,12 @@ cdef class GabowEdgeConnectivity:
                 self.ec += 1
                 # and save the current k-intersection
                 self.save_current_k_intersection()
+            else:
+                # We cannot build one more tree, so the edge connectivity is
+                # reached. We must stop here: the tree of this round is left
+                # incomplete, and the next rounds assume that all previous
+                # trees are spanning.
+                break
             sig_check()
         self.ec_checked = True
         return True
@@ -1227,12 +1263,21 @@ cdef class GabowEdgeConnectivity:
         """
         Return the edge connectivity of the digraph.
 
+        Digraphs with multiple edges are supported: every parallel arc
+        counts separately in the cuts.
+
         EXAMPLES::
 
             sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
             sage: D = digraphs.Complete(5)
             sage: GabowEdgeConnectivity(D).edge_connectivity()
             4
+
+        On a digraph with multiple edges::
+
+            sage: D = DiGraph([(0, 1), (0, 1), (1, 0)], multiedges=True)
+            sage: GabowEdgeConnectivity(D).edge_connectivity()
+            1
         """
         if self.ec_checked:
             return self.ec
@@ -1325,6 +1370,13 @@ cdef class GabowEdgeConnectivity:
         cdef int sz = <int>self.tree_edges.size()
         for j in range(sz):
             self.tree_edges[j].clear()
+
+        # Clear the scratch state of the matroid-intersection augmentation.
+        # The edge connectivity computation stops as soon as construct_trees
+        # fails, which leaves the joining edges of that unfinished round in
+        # the queue. As we just reset every label above, tracing them back
+        # here would follow dangling labels.
+        self.clear_augmentation_aux_state()
 
         self.root_vertex = root_idx
         self.next_f_tree = 0
@@ -2279,7 +2331,7 @@ cdef class GabowEdgeConnectivity:
 
         return self.A_size == self.n
 
-    def edge_disjoint_spanning_trees(self, k=None, root=None):
+    def edge_disjoint_spanning_trees(self, k=None, root=None, labels=False):
         r"""
         Return ``k`` edge-disjoint spanning arborescences rooted at ``root``.
 
@@ -2304,6 +2356,12 @@ cdef class GabowEdgeConnectivity:
           digraph (the same convention used by the MILP backend in
           :meth:`~sage.graphs.generic_graph.GenericGraph.edge_disjoint_spanning_trees`).
 
+        - ``labels`` -- boolean (default: ``False``); whether the edges of
+          the returned arborescences carry the labels of the corresponding
+          input edges. With labels, parallel edges of a digraph with
+          multiple edges remain distinguishable in the output: every
+          returned edge corresponds to a distinct input edge.
+
         OUTPUT:
 
         A list of :class:`~sage.graphs.digraph.DiGraph`, each on the same
@@ -2318,10 +2376,10 @@ cdef class GabowEdgeConnectivity:
         phases. Phase 1 builds a ``k``-intersection whose union is a
         ``k``-in-regular subgraph rooted at ``root`` (every non-root vertex
         has in-degree ``k``). Phase 2 decomposes that union into ``k``
-        spanning out-arborescences one at a time (:meth:`find_tree`): it grows
+        spanning out-arborescences one at a time (``find_tree``): it grows
         the set of vertices reachable from ``root``, and whenever the next edge
         it needs is already used by another tree, an augmenting-path *swap*
-        (:meth:`search_step`) frees a usable edge while keeping the other trees
+        (``search_step``) frees a usable edge while keeping the other trees
         valid.
 
         The extraction scheme follows the practical implementation studied in
@@ -2387,6 +2445,16 @@ cdef class GabowEdgeConnectivity:
             sage: sorted(trees[0].edges(labels=False, sort=False))
             [(0, 1), (1, 2), (2, 3)]
 
+        On a digraph with multiple edges, ``labels=True`` shows which copy
+        of a parallel edge each arborescence uses; every returned edge
+        corresponds to a distinct input edge::
+
+            sage: D = DiGraph([(0, 1, 'a'), (0, 1, 'b'), (1, 0, 'c'), (1, 0, 'd')],
+            ....:             multiedges=True)
+            sage: trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=2, root=0, labels=True)
+            sage: sorted(e[2] for T in trees for e in T.edge_iterator())
+            ['a', 'b']
+
         Trivial case::
 
             sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
@@ -2434,18 +2502,43 @@ cdef class GabowEdgeConnectivity:
             ....:         return False
             ....:     edges = [e for T in trees for e in T.edge_iterator(labels=False)]
             ....:     return len(edges) == len(set(edges))
-            sage: for _ in range(20):
-            ....:     n = randint(3, 7)
-            ....:     D = digraphs.RandomDirectedGNP(n, 0.5)
-            ....:     if not D.is_strongly_connected():
-            ....:         continue
-            ....:     ec = GabowEdgeConnectivity(D).edge_connectivity()
-            ....:     if ec == 0:
-            ....:         continue
-            ....:     for r in D:
-            ....:         trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=ec, root=r)
-            ....:         assert len(trees) == ec
-            ....:         assert is_valid_packing(D, r, trees)
+            sage: D = digraphs.RandomDirectedGNP(randint(3, 10), 0.5)
+            sage: while not D.is_strongly_connected():
+            ....:     D = digraphs.RandomDirectedGNP(randint(3, 10), 0.5)
+            sage: ec = GabowEdgeConnectivity(D).edge_connectivity()
+            sage: for r in D:
+            ....:     trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=ec, root=r)
+            ....:     assert len(trees) == ec
+            ....:     assert is_valid_packing(D, r, trees)
+
+        The same validation on digraphs with multiple edges, where
+        edge-disjointness is counted with multiplicity: every arc ``(u, v)``
+        is used by at most as many arborescences as it has parallel copies::
+
+            sage: from collections import Counter
+            sage: def is_valid_multigraph_packing(D, root, trees):
+            ....:     V = set(D)
+            ....:     if any(T.in_degree(root) != 0 for T in trees):
+            ....:         return False
+            ....:     if any(T.in_degree(v) != 1 for T in trees for v in V if v != root):
+            ....:         return False
+            ....:     if any(set(T.depth_first_search(root)) != V for T in trees):
+            ....:         return False
+            ....:     used = Counter(e for T in trees for e in T.edge_iterator(labels=False))
+            ....:     mult = Counter(D.edge_iterator(labels=False))
+            ....:     return all(used[e] <= mult[e] for e in used)
+            sage: base = digraphs.RandomDirectedGNP(randint(3, 10), 0.6)
+            sage: while not base.is_strongly_connected():
+            ....:     base = digraphs.RandomDirectedGNP(randint(3, 10), 0.6)
+            sage: D = DiGraph(base, multiedges=True)
+            sage: for e in base.edges(labels=False, sort=False):
+            ....:     for _ in range(randint(0, 2)):
+            ....:         D.add_edge(e)
+            sage: ec = GabowEdgeConnectivity(D).edge_connectivity()
+            sage: for r in D:
+            ....:     trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=ec, root=r)
+            ....:     assert len(trees) == ec
+            ....:     assert is_valid_multigraph_packing(D, r, trees)
         """
         from sage.graphs.digraph import DiGraph
         from sage.categories.sets_cat import EmptySetError
@@ -2487,8 +2580,14 @@ cdef class GabowEdgeConnectivity:
         cdef int i
         result = []
         for i in range(k):
-            edges = ((self.int_to_vertex[self.tail[e_id]], self.int_to_vertex[self.head[e_id]])
-                     for e_id in self.arborescence_F[i])
+            if labels:
+                edges = ((self.int_to_vertex[self.tail[e_id]],
+                          self.int_to_vertex[self.head[e_id]],
+                          self.edge_labels[e_id])
+                         for e_id in self.arborescence_F[i])
+            else:
+                edges = ((self.int_to_vertex[self.tail[e_id]], self.int_to_vertex[self.head[e_id]])
+                         for e_id in self.arborescence_F[i])
             result.append(DiGraph([self.int_to_vertex, edges], format='vertices_and_edges'))
 
         return result

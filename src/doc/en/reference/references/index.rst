@@ -130,6 +130,10 @@ REFERENCES:
                 and T. Yalcin, *Block ciphers - focus on the linear layer
                 (feat. PRIDE)*; in CRYPTO, (2014), pp. 57-76.
 
+.. [ADMNT2025] Ilani Axelrod-Freed, Colin Defant, Hanna Mularczyk,
+               Son Nguyen and Katherine Tung, *Chute Move Posets are
+               Lattices*. :arxiv:`2507.13214`
+
 .. [ABBS2013] \J.-C Aval, A. Boussicault, M. Bouvel, M. Silimbani,
               *Combinatorics of non-ambiguous trees*,
               :arxiv:`1305.3716`
@@ -287,6 +291,11 @@ REFERENCES:
 .. [AN2023] Alex Abreu and Antonio Nigro. *Splitting the cohomology of Hessenberg
             varieties and e-positivity of chromatic symmetric functions*.
             Preprint (2023). :arxiv:`2304.10644`.
+
+.. [AndHonk97] Ian Anderson and Iiro Honkala,
+               *A short course in Combinatorial Designs*,
+               Internet Editions, Spring 1997.
+               http://www.utu.fi/~honkala/designs.ps
 
 .. [Ang1997] \B. Anglès. 1997. *On some characteristic polynomials attached to
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
@@ -516,6 +525,10 @@ REFERENCES:
              :arxiv:`1110.4275`,
              :doi:`10.1007/s13366-011-0084-0`.
 
+.. [BB1993] Nantel Bergeron and Sara Billey, *RC-graphs and Schubert
+            polynomials*. Experiment. Math. **2** (1993), no. 4,
+            257-269.
+
 .. [BB1997] Mladen Bestvina and Noel Brady. *Morse theory and
             finiteness properties of groups*. Invent. Math. **129**
             (1997). No. 3,
@@ -621,6 +634,10 @@ REFERENCES:
                 *The number of intervals in the m-Tamari lattices*.
                 Electronic Journal of Combinatorics 18(2), 2011.
                 :doi:`10.37236/2027`
+
+.. [BMM2025] Sara Billey, Connor McCausland and Clare Minnerath, *A
+             Proof of Rubey's Lattice Conjecture*.
+             :arxiv:`2507.18852`.
 
 .. [BPPSST2017] Banik, Pandey, Peyrin, Sasaki, Sim, and Todo,
                 GIFT : A Small Present Towards Reaching the Limit of Lightweight
@@ -1892,6 +1909,10 @@ REFERENCES:
 .. [CL2023] Xavier Caruso and Antoine Leudière.
             *Algorithms for computing norms and characteristic polynomials on general Drinfeld modules*, (2023) :arxiv:`2307.02879`.
 
+.. [ClaytonSmith] Clayton Smith,
+                  *On the existence of* `(v,5,1)`-*BIBD*.
+                  http://www.argilo.net/files/bibd.pdf
+
 .. [Cle1872] Alfred Clebsch, *Theorie der binären algebraischen Formen*,
              Teubner, 1872.
 
@@ -2317,6 +2338,11 @@ REFERENCES:
 .. [Den2012] Tom Denton. Canonical Decompositions of Affine Permutations,
              Affine Codes, and Split `k`-Schur Functions.  Electronic Journal of
              Combinatorics, 2012.
+
+.. [Denniston69] \R. H. F. Denniston,
+                 *Some maximal arcs in finite projective planes*.
+                 Journal of Combinatorial Theory 6, no. 3 (1969): 317-319.
+                 :doi:`10.1016/S0021-9800(69)80095-5`
 
 .. [Deo1987a] \V. Deodhar, A splitting criterion for the Bruhat
               orderings on Coxeter groups. Comm. Algebra,
@@ -4512,6 +4538,11 @@ REFERENCES:
 .. [Kre2002] \V. Kreps. *Social Network Analysis* (2002).
              [Online] Available: http://www.orgnet.com/sna.html
 
+.. [KreherStinson98] Donald L. Kreher and Douglas R. Stinson,
+                     *Combinatorial Designs: Generation, Enumeration, and Search*,
+                     1998.
+                     :doi:`10.1201/9781003068006`
+
 .. [KRG1996] \S. Klavzar, A. Rajapakse, and I. Gutman. *The Szeged and the
              Wiener index of graphs*. Applied Mathematics Letters, 9(5):45--49,
              1996. :doi:`10.1016/0893-9659(96)00071-7`.
@@ -4565,6 +4596,11 @@ REFERENCES:
 .. [KT1986] \N. Kerzman and M. R. Trummer. *Numerical Conformal
             Mapping via the Szego kernel*. Journal of Computational
             and Applied Mathematics, 14(1-2): 111--123, 1986.
+
+.. [KT1997] Daniel Krob and Jean-Yves Thibon.
+            *Noncommutative symmetric functions IV: Quantum linear groups and Hecke
+            algebras at q = 0*, Journal of Algebraic Combinatorics 6 (1997),
+            no. 4, 339--376.
 
 .. [KT2013] \K. Tsukazaki, Explicit Isogenies of Elliptic Curves,
             Ph.D. thesis, University of Warwick, 2013.
@@ -4637,6 +4673,10 @@ REFERENCES:
 
 .. [Labelle2008] \G. Labelle. *New combinatorial computational methods
                  arising from pseudo-singletons.* DMTCS Proceedings 1, 2008.
+
+.. [Labelle2013] Gilbert Labelle. *The explicit molecular expansion
+             of the combinatorial logarithm*, in FPSAC 2013, Paris,
+             DMTCS Proceedings 2013, 361-372 (2013).
 
 .. [Lad2021] S. Ladkani. *Refined Coxeter polynomials*, Proceedings ICRA 2020,
              EMS Publishing House. :arxiv:`2110.15329`
@@ -5495,6 +5535,12 @@ REFERENCES:
              Volume 34, Issue 3, May 1983, Pages 340--359.
              :doi:`10.1016/0097-3165(83)90068-7`
 
+.. [MRRW1977] \R. J. McEliece, \E. R. Rodemich, \H. Rumsey, Jr.,
+              \L. R. Welch, *New Upper Bounds on the Rate of a Code via the
+              Delsarte-MacWilliams Inequalities*, IEEE Transactions on
+              Information Theory **23** (1977), no. 2, 157--166.
+              :doi:`10.1109/TIT.1977.1055688`
+
 .. [MR2016] \B. Malmskog, C. Rasmussen, *Picard curves over Q
             with good reduction away from 3*. LMS Journal of Computation and
             Mathematics 19 (2016), no. 2, 382-408.
@@ -5693,6 +5739,9 @@ REFERENCES:
 
 .. [NormalizMan]  Winfried Bruns, Max Horn, *Normaliz 3.8.5*,
                   2020, https://github.com/Normaliz/Normaliz/blob/master/doc/Normaliz.pdf.
+
+.. [Nov2000] Jean-Christophe Novelli, *On the hypoplactic monoid*,
+             Discrete Mathematics 217 (2000), no. 1--3, 315--336.
 
 .. [NoThWi08] J.-C. Novelli, J.-Y. Thibon, L. K. Williams,
               *Combinatorial Hopf algebras, noncommutative Hall-Littlewood
@@ -6287,6 +6336,11 @@ REFERENCES:
              imaginary quadratic fields. Invent. Math. 103 (1991),
              no. 1, 25--68.
 
+.. [Rub2011] Martin Rubey, *Maximal 0–1-fillings of moon polyominoes
+             with restricted chain lengths and RC-graphs*. Adv. in
+             Appl. Math. **48** (2012), no. 2,
+             290-305. :arxiv:`1009.3919`
+
 .. [RS2010] RUBIN, K., & SILVERBERG, A. (2010). CHOOSING THE CORRECT ELLIPTIC
             CURVE IN THE CM METHOD. Mathematics of Computation, 79(269),
             545-561. :doi:`10.1090/S0025-5718-09-02266-2`
@@ -6773,6 +6827,10 @@ REFERENCES:
 
 .. [Sti2006] Douglas R. Stinson. *Cryptography: Theory and
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
+
+.. [Stinson2004] Douglas R. Stinson,
+                 *Combinatorial designs: construction and analysis*,
+                 Springer, 2004.
 
 .. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
                 J. Automat. Reason. **6** (1990) 233-250.

@@ -184,7 +184,7 @@ cdef class BooleanFunction(SageObject):
         sage: BooleanFunction("111e")
         Boolean function with 4 variables
 
-    from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
+    from a :class:`sage.rings.polynomial.pbori.pbori.BooleanPolynomial`::
 
         sage: R.<x,y,z> = BooleanPolynomialRing(3)                                      # needs brial
         sage: P = x*y                                                                   # needs brial
@@ -253,7 +253,7 @@ cdef class BooleanFunction(SageObject):
             sage: [b for b in B]                                                        # needs sage.symbolic
             [False, True]
 
-        from a :class:`sage.rings.polynomial.pbori.BooleanPolynomial`::
+        from a :class:`sage.rings.polynomial.pbori.pbori.BooleanPolynomial`::
 
             sage: R.<x,y,z> = BooleanPolynomialRing(3)                                  # needs brial
             sage: P = x*y                                                               # needs brial
@@ -490,7 +490,7 @@ cdef class BooleanFunction(SageObject):
 
     def algebraic_normal_form(self):
         """
-        Return the :class:`sage.rings.polynomial.pbori.BooleanPolynomial`
+        Return the :class:`sage.rings.polynomial.pbori.pbori.BooleanPolynomial`
         corresponding to the algebraic normal form.
 
         EXAMPLES::
@@ -1093,8 +1093,7 @@ cdef class BooleanFunction(SageObject):
                 if A is not None:
                     if annihilator:
                         return i, A
-                    else:
-                        return i
+                    return i
         assert False, "you just found a bug!"
 
     def algebraic_degree(self):

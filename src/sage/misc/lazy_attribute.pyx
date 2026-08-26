@@ -5,6 +5,8 @@ AUTHORS:
 
 - Nicolas Thiery (2008): Initial version
 - Nils Bruin (2013-05): Cython version
+
+.. autoclass:: sage.misc.lazy_attribute::_lazy_attribute
 """
 
 # ****************************************************************************

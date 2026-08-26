@@ -85,14 +85,14 @@ cdef class PolyhedronFaceLattice:
 
     INPUT:
 
-    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.baseCombinatorialPolyhedron`
+    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron`
 
     .. SEEALSO::
 
-        :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron._record_all_faces`,
-        :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron._record_all_faces_helper`,
+        ``CombinatorialPolyhedron._record_all_faces``,
+        ``CombinatorialPolyhedron._record_all_faces_helper``,
         :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron.face_lattice`,
-        :meth:`~sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron._compute_face_lattice_incidences`.
+        ``CombinatorialPolyhedron._compute_face_lattice_incidences``.
 
     EXAMPLES::
 

@@ -366,8 +366,10 @@ class FastEllipticPolynomial:
         R, Z = self.base['Z'].objgen()
 
         # Cassels, Lectures on Elliptic Curves, p.132
-        A,B = E.a_invariants()[-2:]
-        Fs = lambda X,Y: (
+        A, B = E.a_invariants()[-2:]
+
+        def Fs(X, Y):
+            return (
                 (X - Y)**2,
                 -2 * (X*Y + A) * (X + Y) - 4*B,
                 (X*Y - A)**2 - 4*B*(X+Y),
@@ -375,14 +377,14 @@ class FastEllipticPolynomial:
 
         I, J, K = IJK
         xI = (R.x() for R in _points_range(I, P, Q))
-        xJ = [R.x() for R in _points_range(J, P   )]
+        xJ = [R.x() for R in _points_range(J, P)]
         xK = (R.x() for R in _points_range(K, P, Q))
 
         self.hItree = ProductTree(Z - xi for xi in xI)
 
-        self.EJparts = [Fs(Z,xj) for xj in xJ]
+        self.EJparts = [Fs(Z, xj) for xj in xJ]
 
-        DJ = prod(F0j for F0j,_,_ in self.EJparts)
+        DJ = prod(F0j for F0j, _, _ in self.EJparts)
         self.DeltaIJ = self._hI_resultant(DJ)
 
         self.hK = R(prod(Z - xk for xk in xK))
@@ -1329,12 +1331,12 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES::

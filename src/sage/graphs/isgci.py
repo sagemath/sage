@@ -33,8 +33,8 @@ information is available in the database::
 And indeed, trees are chordal graphs.
 
 The ISGCI database is not all-knowing, and so comparing two classes can return
-``True``, ``False``, or ``Unknown`` (see the :mod:`documentation of the Unknown
-truth value <sage.misc.unknown>`).
+``True``, ``False``, or the :class:`~sage.misc.unknown.UnknownClass` instance
+``Unknown``.
 
 An *unknown* answer to ``A <= B`` only means that ISGCI cannot deduce from the
 information in its database that ``A`` is a subclass of ``B`` nor that it is
@@ -340,7 +340,7 @@ Information for developers
     * Implement a proper search method for the classes not listed in
       :obj:`graph_classes <GraphClasses>`
 
-      .. SEEALSO:: :func:`sage.graphs.isgci.show_all`.
+      .. SEEALSO:: :meth:`~sage.graphs.isgci.GraphClasses.show_all`.
 
     * Some of the graph classes appearing in :obj:`graph_classes
       <GraphClasses>` already have a recognition

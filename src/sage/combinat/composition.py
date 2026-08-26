@@ -116,7 +116,7 @@ class Composition(CombinatorialElement):
     instance of the Python abstract base class ``Sequence`` allows us to check if objects
     behave "like" sequences based on implemented methods. Note that
     ``collections.abc.Sequence`` is not the same as
-    :class:`sage.structure.sequence.Sequence`::
+    :func:`sage.structure.sequence.Sequence`::
 
         sage: import collections.abc
         sage: C = Composition([3,2,3])
@@ -451,7 +451,9 @@ class Composition(CombinatorialElement):
         that each `I_k` has size `j_k` and for a unique choice of `m-1`
         signs `\bullet` each of which is either the concatenation sign
         `\cdot` or the near-concatenation sign `\odot` (see
-        :meth:`__add__` and :meth:`near_concatenation` for the definitions
+        ``__add__`` and
+        :meth:`~sage.combinat.composition.Composition.near_concatenation`
+        for the definitions
         of these two signs). This `m`-tuple and this choice of signs
         together are said to form the ribbon decomposition of `I` with
         respect to `J`. If `I` and `J` are empty, then the same definition

@@ -1,4 +1,5 @@
 import pytest
+from random import randint
 
 from itertools import chain
 from sage.geometry.cone import Cone, random_cone
@@ -15,7 +16,7 @@ def _gen_ops_test_cones():
     Generate two cones that are suitable for testing (cross)
     positive, Lyapunov-like, and Z-operators.
 
-    This extends :meth:`sage.geomtry.cone.random_cone` by choosing
+    This extends :func:`sage.geometry.cone.random_cone` by choosing
     conservative parameters, and by rejecting any cone that looks too
     complicated for these methods to be computed in a reasonable
     amount of time. We generate two cones simultaneously because,
@@ -28,11 +29,8 @@ def _gen_ops_test_cones():
     J2 = random_cone(max_ambient_dim=5, max_rays=10)
     J3 = random_cone(max_ambient_dim=5, max_rays=10)
 
-    J2_dual = J2.dual()
-    J3_dual = J3.dual()
-
-    worst_dim = J2.dim() * max(J2_dual.dim(), J3_dual.dim())
-    worst_npairs = J2.nrays() * max(J2_dual.nrays(), J2_dual.nrays())
+    worst_dim = J2.dim() * max(J2.dual().dim(), J3.dual().dim())
+    worst_npairs = J2.nrays() * max(J2.dual().nrays(), J2.dual().nrays())
 
     # How many pairs is too many pairs, in a given dimension? Note
     # that the maximum ambient dimension for both cones is 5, so there
@@ -56,13 +54,6 @@ def _gen_ops_test_cones():
             if worst_npairs >= limits[worst_dim]:
                 return _gen_ops_test_cones()
 
-
-    # Monkey patch both dual() methods with the already-computed
-    # (cached) values, so we don't have recompute them later.
-    J2_dual_meth = lambda s: J2_dual
-    J3_dual_meth = lambda s: J3_dual
-    J2.dual = J2_dual_meth.__get__(J2)
-    J3.dual = J3_dual_meth.__get__(J3)
 
     # We _also_ need to check that the dual we're going to take a dual
     # of is not too complicated: the complexity of dual() is bad in
@@ -103,17 +94,14 @@ def K():
     The baseline random cone fixture, meant to be used in tests
     that do not explode computationally.
     """
-    return random_cone(max_ambient_dim=12, max_rays=15)
+    return random_cone()
 
 @pytest.fixture
 def P():
     r"""
     Like :func:`K`, but guaranteed to be proper.
     """
-    return random_cone(max_ambient_dim=12,
-                       max_rays=15,
-                       solid=True,
-                       strictly_convex=True)
+    return random_cone(solid=True, strictly_convex=True)
 
 @pytest.fixture
 def J():
@@ -122,17 +110,14 @@ def J():
     similar nature.
 
     """
-    return random_cone(max_ambient_dim=12, max_rays=15)
+    return random_cone()
 
 @pytest.fixture
 def Q():
     r"""
     Like :func:`J`, but guaranteed to be proper.
     """
-    return random_cone(max_ambient_dim=12,
-                       max_rays=15,
-                       solid=True,
-                       strictly_convex=True)
+    return random_cone(solid=True, strictly_convex=True)
 
 @pytest.fixture
 def K2_and_K3():
@@ -191,6 +176,227 @@ def K2_K3_posops_cone(K2, K3, K2_K3_posops_gens):
 @pytest.fixture
 def K2_ll_basis(K2):
     return K2.lyapunov_like_basis()
+
+def test_dual_lattice_dual_is_original(K):
+    r"""
+    The dual lattice of a dual lattice is the original.
+    """
+    assert K.dual_lattice().dual() is K.lattice()
+
+def test_codimension_bounds(K):
+    r"""
+    Codimension is an integer between zero and the ambient
+    (lattice or vector space) dimension.
+    """
+    c = K.codim()
+    assert c.is_integral() and 0 <= c <= K.lattice_dim()
+
+def test_codim_is_zero_iff_cone_is_solid(K):
+    r"""
+    A cone is solid if and only if it has codimension zero.
+    """
+    assert K.is_solid() == K.codim().is_zero()
+
+def test_codim_is_dual_lineality(K):
+    r"""
+    The codimension of a cone is equal to the lineality of its
+    dual.
+    """
+    assert K.codim() == K.dual().lineality()
+
+def test_cone_is_solid_iff_it_spans_its_lattice(K):
+    r"""
+    The span of a cone is the entire ambient space if and only if
+    that cone is solid.
+    """
+    V1 = K.lattice().vector_space()
+    V2 = K.span().vector_space()
+    assert K.is_solid() == (V1 == V2)
+
+def test_dual_of_dual_is_original(K):
+    r"""
+    The dual cone of a dual cone is the original cone.
+    """
+    assert K.dual().dual() is K
+
+def test_cones_are_equivalent_to_themselves(K):
+    r"""
+    Sanity check: a cone is always equivalent to itself.
+    """
+    assert K.is_equivalent(K)
+
+def test_cones_are_faces_of_themselves(K):
+    r"""
+    Every cone is (trivially) a face of itself.
+    """
+    assert K.is_face_of(K)
+
+def pointed_cones_are_isomorphic_to_themselves(K):
+    r"""
+    Sanity check: a cone is always isomorphic to itself.
+
+    Isomorphism is implemented only for pointed cones, so
+    we use the strict quotient of the arbitrary (random)
+    cone ``K``.
+    """
+    K_p = K.strict_quotient()
+    assert K_p.is_isomorphic(K_p)
+
+def test_lineality_bounds(K):
+    r"""
+    Lineality is an integer between zero and the ambient
+    dimension.
+    """
+    l = K.lineality()
+    assert l.is_integral() and 0 <= l <= K.lattice_dim()
+
+def test_lineality_zero_iff_pointed(K):
+    r"""
+    The lineality of a pointed cone is zero, essentially by
+    definition.
+    """
+    assert K.is_pointed() == K.lineality().is_zero()
+
+def test_lineality_space_is_dual_perp(K):
+    r"""
+    The linear subspace of any closed convex cone can be identified
+    with the orthogonal complement of the span of its dual.
+    """
+    expected = K.dual().span().vector_space().complement()
+    assert K.linear_subspace() == expected
+
+def test_strict_quotient_is_pointed(K):
+    r"""
+    The strict quotient of any cone should be pointed (that's the
+    point of the method).
+    """
+    assert K.strict_quotient().is_strictly_convex()
+
+def test_strict_quotient_of_pointed_is_itself(K):
+    r"""
+    The strict quotient of a cone is itself if and only if that
+    cone is pointed (strictly convex).
+    """
+    assert K.is_strictly_convex() == (K.strict_quotient() is K)
+
+def test_strict_quotient_dim_bound(K):
+    r"""
+    The orthogonal complement of a cone's linear subspace has the
+    same dimension as its dual, so the strict quotient cannot have a
+    larger dimension than the dual.
+    """
+    assert K.strict_quotient().dim() <= K.dual().dim()
+
+def test_strict_quotient_is_idempotent(K):
+    r"""
+    As corollary of the strict quotient being pointed and the
+    strict quotient of a pointed cone being itself, the strict
+    quotient is idempotent.
+    """
+    C = K.strict_quotient()
+    assert C.strict_quotient() == C
+
+def test_solid_restriction_is_solid(K):
+    r"""
+    The solid restriction of a cone is itself if and only if that
+    cone is solid.
+    """
+    assert K.is_solid() == (K.solid_restriction() is K)
+
+def test_solid_restriction_has_same_properties_as_original(K):
+    r"""
+    The solid restriction of a cone has the same dimension,
+    number of rays, etc. as the the original cone. (The restriction
+    changes only its representation and ambient space.)
+    """
+    sr = K.solid_restriction()
+    assert all((sr.dim() == K.dim(),
+                sr.n_rays() == K.n_rays(),
+                sr.lineality() == K.lineality(),
+                len(sr.facets()) == len(K.facets())))
+
+def test_solid_iff_dual_pointed(K):
+    r"""
+    A closed convex cone is solid if and only if its dual is
+    strictly convex.
+    """
+    assert K.is_solid() == K.dual().is_strictly_convex()
+
+def test_random_element_membership(K):
+    r"""
+    Random elements of a cone belong to the cone, its ambient
+    vector space, and its lattice. The same is true for conic
+    combinations of random elements.
+    """
+    L = K.lattice()
+    V = L.vector_space()
+    F = L.base_field()
+
+    # Note that after the change of ring (from ZZ to QQ), we lose
+    # membership in the lattice.
+    e1 = sum((K.random_element()
+              for _ in range(randint(0,10))),
+             start=L.zero())
+    e2 = sum((K.random_element(ring=F)
+              for _ in range(randint(0,10))),
+             start=L.zero())
+
+    assert all(x in K and x in V for x in (e1,e2))
+    assert e1 in L
+
+def test_pointed_cones_contain_no_random_line(K):
+    r"""
+    A pointed cone contains no lines, and thus no negative
+    multiples of any of its elements (besides the origin).
+
+    The input cone ``K`` is arbitrary (random), so we take
+    its strict quotient to obtain a pointed cone.
+    """
+    K_p = K.strict_quotient()
+    x = K_p.random_element()
+    assert x.is_zero() or not K_p.contains(-x)
+
+@pytest.mark.long
+def test_reducibility_preserved_by_isomorphism(K):
+    r"""
+    Reducibility is preserved under linear isomorphisms. We take
+    the strict quotient of ``K`` to ensure that we have a pointed cone
+    for which reducibility is well-defined.
+    """
+    C = K.strict_quotient()
+
+    n = C.ambient_dim()
+    F = C.lattice().base_field()
+    q = F._random_nonzero_element()
+    A = q*matrix.random(F, n, algorithm='unimodular')
+    AC = Cone([ r*A for r in C.rays() ], lattice=C.lattice())
+    assert C.is_reducible() == AC.is_reducible()
+
+@pytest.mark.long
+def test_reducibility_criteria(K,J,P,Q,K2,K3):
+    r"""
+    In [GT2014]_ it is shown that a (nontrivial) proper polyhedral
+    cone is irreducible if and only if its Lyapunov rank is one.
+    A related test combines Theorem 4.7 of [HFP1976]_ with the
+    Z-operator algorithm in [Or2018b]_.
+
+    Loop through several fixtures to increase the chances that one of
+    them is both proper AND nontrivial. If not, just make a new one.
+    """
+    winners = ( C for C in (P,Q,K,J,K2,K3)
+                if not C.is_trivial() and C.is_proper() )
+    try:
+        C = next(winners)
+    except StopIteration:
+        C = random_cone(strictly_convex=True,
+                        solid=True,
+                        max_ambient_dim=5,
+                        min_rays=1,
+                        max_rays=7)
+
+    assert C.is_reducible() == (C.lyapunov_rank() != 1)
+    d = C._cross_positive_operators_dual().dim()
+    assert C.is_reducible() == (d < C.dim()**2 - 1)
 
 @pytest.mark.longlong
 def test_is_cross_positive(K2, K2_cp_gens):
@@ -359,7 +565,7 @@ def test_posops_dual_linspace(K2):
     its dual [Or2018b]_.
     """
     pi_dual = K2._positive_operators_dual(K2)
-    V = pi_dual.lattice().vector_space()
+    V = pi_dual.ambient_vector_space()
     actual = pi_dual.linear_subspace()
     U1 = ( V((s.tensor_product(x)).list())
            for x in K2.lines()
@@ -559,8 +765,7 @@ def test_lyapunov_rank_automorphism_invariance(K):
 @pytest.mark.long
 def test_lyapunov_rank_dual_invariance(K):
     r"""
-    Lyapunov rank should be invariant under
-    :meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.dual`
+    Lyapunov rank is invariant under the duality operator
     [RNPA2011]_.
     """
     assert K.lyapunov_rank() == K.dual().lyapunov_rank()
@@ -636,3 +841,51 @@ def test_discrete_complementarity_set_is_complementary(K):
     """
     dcs = K.discrete_complementarity_set()
     assert sum((s*x).abs() for (x,s) in dcs) == 0
+
+
+def test_random_cone_params_are_respected(K):
+    r"""
+    The dim/ray bounds and pointed/solid constraints should
+    actually be met by the result.
+    """
+    solid = bool(randint(0,1))
+    pointed = bool(randint(0,1))
+    min_ambient_dim = randint(5,10)
+    min_rays = randint(0,8)
+
+    # Start with random maxima, but fudge them a bit so that they
+    # don't contradict the minima.
+    max_rays = randint(min_rays,2*min_rays)
+    max_rays = max(max_rays, min_ambient_dim+3)
+    max_ambient_dim = randint(min_ambient_dim, 2*min_ambient_dim)
+    max_ambient_dim = max(max_ambient_dim, min_ambient_dim+4)
+
+    C = random_cone(min_rays=min_rays,
+                    max_rays=max_rays,
+                    solid=solid,
+                    strictly_convex=pointed,
+                    min_ambient_dim=min_ambient_dim,
+                    max_ambient_dim=max_ambient_dim)
+
+    assert all((
+        min_rays <= C.n_rays() <= max_rays,
+        min_ambient_dim <= C.lattice_dim() <= max_ambient_dim,
+        solid == C.is_solid(),
+        pointed == C.is_strictly_convex()
+    ))
+
+    # Again with a fixed lattice (in which we know a satisfactory cone
+    # exists, because we just found one) rather than dimension bounds.
+    L = C.lattice()
+    C = random_cone(min_rays=min_rays,
+                    max_rays=max_rays,
+                    solid=solid,
+                    strictly_convex=pointed,
+                    lattice=L)
+
+    assert all((
+        min_rays <= C.n_rays() <= max_rays,
+        C.lattice() is L,
+        solid == C.is_solid(),
+        pointed == C.is_strictly_convex()
+    ))

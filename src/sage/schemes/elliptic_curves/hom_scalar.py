@@ -251,7 +251,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             sage: E = EllipticCurve([1,2,3,4,5])
             sage: phi = E.scalar_multiplication(5)
             sage: psi = E.scalar_multiplication(-7)
-            sage: phi * psi     # implicit doctest
+            sage: phi * psi     # indirect doctest
             Scalar-multiplication endomorphism [-35] of Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
 
         ::
@@ -567,12 +567,12 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         INPUT:
 
         - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
-          or :const:`~sage.rings.infinity.Infinity`; alternatively, a tuple `(X,Z)`
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
           representing the `x`-coordinate `X/Z`.
 
         OUTPUT:
 
-        `x`-coordinate of `\varphi(P)`, or :const:`~sage.rings.infinity.Infinity`;
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
         alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
 
         EXAMPLES::

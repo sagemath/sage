@@ -185,8 +185,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         cdef double result = (<Matrix_modn_dense_template>self)._matrix[i][j]
         if _self._fits_int32:
             return (<IntegerMod_int>_self._get_template)._new_c(<int_fast32_t>result)
-        else:
-            return (<IntegerMod_int64>_self._get_template)._new_c(<int_fast64_t>result)
+        return (<IntegerMod_int64>_self._get_template)._new_c(<int_fast64_t>result)
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
         r"""

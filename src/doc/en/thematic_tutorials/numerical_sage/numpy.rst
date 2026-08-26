@@ -100,7 +100,7 @@ You can do basic arithmetic operations
     array([  0. ,   2.5,   5. ,   7.5,  10. ,  12.5,  15. ,  17.5,  20. ,  22.5])
 
 Note that ``l*l`` will multiply the elements of ``l`` componentwise. To get
-a dot product, use :meth:`numpy.dot`.
+a dot product, use :func:`numpy.dot`.
 
 .. link
 
@@ -137,9 +137,9 @@ This is basically equivalent to the following
     sage: m[0,1]
     2
 
-The difference is that with :meth:`numpy.array`, ``m`` is treated as just
+The difference is that with :func:`numpy.array`, ``m`` is treated as just
 an array of data. In particular ``m*m`` will multiply componentwise,
-however with :meth:`numpy.matrix`, ``m*m`` will do matrix multiplication. We can
+however with :class:`numpy.matrix`, ``m*m`` will do matrix multiplication. We can
 also do matrix vector multiplication, and matrix addition
 
 .. link
@@ -155,7 +155,7 @@ also do matrix vector multiplication, and matrix addition
     matrix([[2., 4.],
             [6., 8.]])
 
-If ``n`` was created with :meth:`numpy.array`, then to do matrix vector
+If ``n`` was created with :func:`numpy.array`, then to do matrix vector
 multiplication, you would use ``numpy.dot(n,v)``.
 
 All NumPy arrays have a shape attribute. This is a useful attribute
@@ -227,8 +227,8 @@ Some particularly useful commands are
     array([0. , 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1. , 1.1, 1.2,
            1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9])
 
-You can see that :meth:`numpy.arange` creates an array of floats increasing by 0.1
-from 0 to 2. There is a useful command :meth:`numpy.r_` that is best explained by example
+You can see that :func:`numpy.arange` creates an array of floats increasing by 0.1
+from 0 to 2. There is a useful command :data:`numpy.r_` that is best explained by example
 
 .. link
 
@@ -246,7 +246,7 @@ from 0 to 2. There is a useful command :meth:`numpy.r_` that is best explained b
     array([0., 1., 2., 3., 4., 0., 0., 0., 0., 0.])
 
 
-:meth:`numpy.r_` provides a shorthand for constructing NumPy arrays efficiently.
+:data:`numpy.r_` provides a shorthand for constructing NumPy arrays efficiently.
 Note in the above ``0.0:5.0`` was shorthand for ``0.0, 1.0, 2.0, 3.0, 4.0``.
 Suppose we want to divide the interval from 0 to 5 into 10
 intervals. We can do this as follows
@@ -272,7 +272,7 @@ arrays. We can combine all of these techniques
     array([ 0. ,  0.5,  1. ,  1.5,  2. ,  2.5,  3. ,  3.5,  4. ,  4.5,  5. ,
             0. ,  0. ,  0. ,  0. ,  0. , -5. , -4. , -3. , -2. , -1. ])
 
-Another useful command is :meth:`numpy.meshgrid`, it produces meshed grids. As an
+Another useful command is :func:`numpy.meshgrid`, it produces meshed grids. As an
 example suppose you want to evaluate `f(x,y)=x^2+y^2` on a
 an equally spaced grid with `\Delta x = \Delta y = .25` for
 `0\le x,y\le 1`. You can do that as follows
@@ -306,7 +306,7 @@ an equally spaced grid with `\Delta x = \Delta y = .25` for
            [0.5625, 0.625 , 0.8125, 1.125 , 1.5625],
            [1.    , 1.0625, 1.25  , 1.5625, 2.    ]])
 
-You can see that :meth:`numpy.meshgrid` produces a pair of matrices, here denoted
+You can see that :func:`numpy.meshgrid` produces a pair of matrices, here denoted
 `xx` and `yy`, such that `(xx[i,j],yy[i,j])` has coordinates
 `(x[i],y[j])`.  This is useful because to evaluate `f` over a grid, we
 only need to evaluate it on each pair of entries in `xx`, `yy`. Since

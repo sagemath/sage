@@ -93,6 +93,7 @@ py.install_sources(
   'positive_integer_semigroup_test.py',
   'q_analogues.py',
   'q_bernoulli.pyx',
+  'quasi_ribbon_tableau.py',
   'quickref.py',
   'ranker.py',
   'recognizable_series.py',
