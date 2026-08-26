@@ -18,7 +18,6 @@ Linear extensions of posets
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.graphs.digraph import DiGraph
@@ -466,7 +465,7 @@ class LinearExtensionOfPoset(ClonableArray,
         return n
 
 
-class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
+class LinearExtensionsOfPoset(Parent):
     """
     The set of all linear extensions of a finite poset.
 
@@ -497,24 +496,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         Finite poset containing 4 elements with distinguished linear extension
     """
 
-    @staticmethod
-    def __classcall_private__(cls, poset, facade=False):
-        r"""
-        Straighten arguments before unique representation.
-
-        TESTS::
-
-            sage: from sage.combinat.posets.linear_extensions import LinearExtensionsOfPoset
-            sage: P = Poset(([1,2],[[1,2]]))
-            sage: L = LinearExtensionsOfPoset(P)
-            sage: type(L)
-            <class 'sage.combinat.posets.linear_extensions.LinearExtensionsOfPoset_with_category'>
-            sage: L is LinearExtensionsOfPoset(P,facade=False)
-            True
-        """
-        return super().__classcall__(cls, poset, facade=facade)
-
-    def __init__(self, poset, facade) -> None:
+    def __init__(self, poset, facade=False) -> None:
         """
         TESTS::
 
@@ -522,6 +504,8 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: P = Poset(([1,2,3],[[1,2],[1,3]]))
             sage: L = P.linear_extensions()
             sage: L is LinearExtensionsOfPoset(P)
+            False
+            sage: L == LinearExtensionsOfPoset(P)
             True
             sage: L._poset is P
             True
@@ -543,6 +527,41 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         if facade:
             facade = (list,)
         Parent.__init__(self, category=FiniteEnumeratedSets(), facade=facade)
+
+    def __eq__(self, other):
+        """
+        Return whether ``self`` and ``other`` enumerate the same linear
+        extensions.
+        """
+        if self is other:
+            return True
+        if not isinstance(other, LinearExtensionsOfPoset):
+            return NotImplemented
+        return (self.__class__ is other.__class__
+                and self._poset == other._poset
+                and self._is_facade == other._is_facade)
+
+    def __ne__(self, other):
+        """
+        Return whether ``self`` and ``other`` enumerate different linear
+        extensions.
+        """
+        equality = self.__eq__(other)
+        if equality is NotImplemented:
+            return NotImplemented
+        return not equality
+
+    def __hash__(self):
+        """
+        Return a hash compatible with equality.
+        """
+        return hash((self.__class__, self._poset, self._is_facade))
+
+    def __reduce__(self):
+        """
+        Return pickling data for this enumerated set.
+        """
+        return (self.__class__, (self._poset, self._is_facade))
 
     def _repr_(self) -> str:
         """
