@@ -1180,12 +1180,30 @@ class DiGraph(GenericGraph):
 
         Vertex labels will be retained (:issue:`14708`)::
 
+            sage: D = DiGraph({0: [1, 2], 1: [0]})
             sage: D.set_vertex(0, 'foo')
             sage: G = D.to_undirected()
             sage: D.get_vertices()
             {0: 'foo', 1: None, 2: None}
             sage: G.get_vertices()
             {0: 'foo', 1: None, 2: None}
+
+        Parameters ``data_structure`` and ``sparse`` should not be defined
+        simultaneously::
+
+            sage: G = DiGraph([[1, 2]])
+            sage: G.to_undirected(data_structure='static_sparse', sparse=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'sparse' argument is an alias for 'data_structure'.
+             Please do not define both
+
+        There is no dense immutable backend at the moment::
+
+            sage: G.to_undirected(immutable=True, sparse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: there is no dense immutable backend at the moment
         """
         # Which data structure should be used ?
         if data_structure is not None:
