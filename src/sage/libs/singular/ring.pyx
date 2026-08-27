@@ -545,7 +545,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         else:
             modbase, cexponent = ch.perfect_power()
 
-            if modbase == 2 and 1 < cexponent <= 8*sizeof(unsigned long):  # see :issue:`40855`
+            if modbase == 2 and 1 < cexponent <= <long>(8 * sizeof(unsigned long)):  # see :issue:`40855`
                 _cf = nInitChar(n_Z2m, <void *>cexponent)
 
             elif modbase.is_prime() and cexponent > 1:
