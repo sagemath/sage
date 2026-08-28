@@ -143,27 +143,6 @@ classes which are selftranspose can also be counted::
     (q^12 - q^9, 1/3*q^4 - 1/3*q^2),
     (q^6 - q^3, 1/3*q^6 - 1/3*q^4)]
 
-REFERENCES:
-
-.. [Green55] Green, J. A.  *The characters of the finite general linear groups*.
-   Trans. Amer. Math. Soc.  80  (1955), 402--447.
-   :doi:`10.1090/S0002-9947-1955-0072878-2`
-
-.. [Morrison06] Morrison, Kent E.
-   *Integer sequences and matrices over finite fields*.
-   J. Integer Seq. 9 (2006), no. 2, Article 06.2.1, 28 pp.
-   https://cs.uwaterloo.ca/journals/JIS/VOL9/Morrison/morrison37.html
-
-.. [PSS13] Prasad, A., Singla, P., and Spallone, S., *Similarity of matrices
-   over local rings of length two*. :arxiv:`1212.6157`
-
-.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field
-   interpretation of the Touchard-Riordan formula*. :arxiv:`2205.11076`
-
-.. [R17] Ramaré, O., *Rationality of the zeta function of the subgroups of
-   abelian p-groups*. Publ. Math. Debrecen 90.1-2.
-   :doi:`10.5486/PMD.2017.7466`
-
 AUTHOR:
 
 - Amritanshu Prasad (2013-07-18): initial implementation
