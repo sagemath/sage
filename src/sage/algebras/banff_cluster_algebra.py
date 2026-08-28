@@ -1040,7 +1040,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
             return
 
         if getattr(self, "_flir_initializing", False):
-            return  # or raise a clearer internal error
+            return
 
         self._flir_initializing = True
         try:
@@ -1052,11 +1052,26 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
             flir_charts = self._build_flir_charts(recompute=recompute)
             all_charts = [base_chart] + list(flir_charts or [])
 
+            # Step 1: initialize with the full, untrimmed cover of charts
             self._init_flir_structure(
                 base_chart,
                 all_charts,
                 compute_base_to_charts=True
             )
+            primes = FiniteLaurentIntersectionRing.extra_primes(self, recompute=True)
+
+            # Trim: keep only the base chart, plus every chart that is the "home" of some extra prime.
+            required_ids = {id(base_chart)} | {id(prime.chart) for prime in primes}
+            trimmed_charts = [chart for chart in all_charts if id(chart) in required_ids]
+
+            # Step 2: reinitialize with the trimmed cover of charts
+            self._init_flir_structure(
+                base_chart,
+                trimmed_charts,
+                compute_base_to_charts=True
+            )
+            self._extra_primes_cache = primes
+
             self._flir_initialized = True
         finally:
             self._flir_initializing = False

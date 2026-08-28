@@ -377,8 +377,9 @@ class FiniteLaurentIntersectionRingChart:
 
         if self.base_fraction_field is None or self.base_to_this is None:
             raise ValueError("No base substitution data stored for this chart.")
-        phi = self.base_fraction_field.hom(self.base_to_this, codomain=self.F)
-        return phi(f_in_base)
+        if getattr(self, "_phi_from_base", None) is None:
+            self._phi_from_base = self.base_fraction_field.hom(self.base_to_this, codomain=self.F)
+        return self._phi_from_base(f_in_base)
 
     def _laurent_poly_to_poly_up_to_unit(self, h):
         r"""
@@ -2382,7 +2383,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     # extra primes: primes over x1*...*xn, i.e. primes missing in FiniteLaurentIntersectionRing._base_chart
     # -------------------------------------------------------
 
-    def _extra_primes_in_chart(self, i: int):
+    def _extra_primes_in_chart(self, i):
         """
         For chart i:
           f_i = image of x1*...*xn in chart i
@@ -2396,23 +2397,29 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         f_i = chart_i._substitute_from_base(xprod_base)
         fP, _ = chart_i._laurent_poly_to_poly_up_to_unit(f_i)
 
+        if fP == 0 or fP.is_unit():
+            return []
+
         gcd_list = [fP]
         for j in range(i):
             chart_j = self.charts[j]
-            yjprod_base = self._prod_of_chart_gens_as_base_expr(chart_j)
-            gij = chart_i._substitute_from_base(yjprod_base)
-            gP, _ = chart_i._laurent_poly_to_poly_up_to_unit(gij)
+            g_ji = self._prod_of_chart_gens_as_base_expr(chart_j)
+            g_ji_in_i = chart_i._substitute_from_base(g_ji)
+            gP, _ = chart_i._laurent_poly_to_poly_up_to_unit(g_ji_in_i)
             gcd_list.append(gP)
+            current_gcd = self._gcd_polys(chart_i.P, gcd_list)
+            if current_gcd == 1 or current_gcd.is_unit():
+                return []
 
         G = self._gcd_polys(chart_i.P, gcd_list)
-        if G == 0 or G == 1:
+        if G == 1 or G == 0:
             return []
 
         primes = []
-        for f, _e in G.factor():
-            if f.is_unit():
+        for q, e in G.factor():
+            if q.is_unit():
                 continue
-            primes.append(FiniteLaurentIntersectionRingPrimeDivisor(chart_i, self._normalize(f)))
+            primes.append(FiniteLaurentIntersectionRingPrimeDivisor(chart_i, self._normalize(q)))
         return primes
 
     def extra_primes(self, recompute: bool = False):
@@ -2445,7 +2452,6 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         for i in range(len(self.charts)):
             primes.extend(self._extra_primes_in_chart(i))
 
-        # deduplicate
         primes = list(dict.fromkeys(primes))
 
         self._extra_primes_cache = primes
