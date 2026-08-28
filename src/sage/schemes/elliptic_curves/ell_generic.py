@@ -3299,6 +3299,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.plot(components='unbounded')                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
+        A curve consisting of several plotted segments has only one legend
+        entry::
+
+            sage: E = EllipticCurve([0, 0, 0, -1, 0])
+            sage: P = E.plot(legend_label='E')                                          # needs sage.plot
+            sage: len(P.matplotlib().axes[0].legend().texts)                            # needs sage.plot
+            1
+
         If there is only one component then specifying
         components='bounded' raises a ValueError::
 
@@ -3429,19 +3437,30 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         adaptive_tolerance = args.pop('adaptive_tolerance',0.01)
         adaptive_recursion = args.pop('adaptive_recursion',5)
         randomize = args.pop('randomize',True)
+        legend_label = args.pop('legend_label', None)
+
+        def add_line(points):
+            "Add a line segment, labeling only the first one."
+            nonlocal g, legend_label
+            if legend_label is None:
+                g += line(points, **args)
+            else:
+                g += line(points, legend_label=legend_label, **args)
+                legend_label = None
+
         for j in range(len(I)):
             a, b, shape = I[j]
             v = generate_plot_points(f1, (a, b), plot_points, adaptive_tolerance, adaptive_recursion, randomize)
             w = generate_plot_points(f2, (a, b), plot_points, adaptive_tolerance, adaptive_recursion, randomize)
             if shape == 'o':
-                g += line(v + list(reversed(w)) + [v[0]], **args)
+                add_line(v + list(reversed(w)) + [v[0]])
             elif shape == '<':
-                g += line(list(reversed(v)) + w, **args)
+                add_line(list(reversed(v)) + w)
             elif shape == '>':
-                g += line(v + list(reversed(w)), **args)
+                add_line(v + list(reversed(w)))
             else:
-                g += line(v, **args)
-                g += line(w, **args)
+                add_line(v)
+                add_line(w)
         return g
 
     @cached_method
