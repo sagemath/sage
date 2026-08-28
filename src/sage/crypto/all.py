@@ -1,6 +1,7 @@
 import sage.crypto.sbox
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.crypto.mq.sbox', 'SBox', sage.crypto.sbox.SBox)
+from .playfair import PlayfairCryptosystem
 
 from sage.misc.lazy_import import lazy_import
 
