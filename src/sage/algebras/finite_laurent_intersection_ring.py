@@ -2383,45 +2383,6 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     # extra primes: primes over x1*...*xn, i.e. primes missing in FiniteLaurentIntersectionRing._base_chart
     # -------------------------------------------------------
 
-    def _extra_primes_in_chart(self, i):
-        """
-        For chart i:
-          f_i = image of x1*...*xn in chart i
-          g_{j,i} = image of (prod of chart j variables) in chart i for j<i
-
-        Return irreducible factors of gcd(f_i, g_{0,i},...,g_{i-1,i}) (after clearing Laurent units).
-        """
-        chart_i = self.charts[i]
-
-        xprod_base = self._xprod_in_base()
-        f_i = chart_i._substitute_from_base(xprod_base)
-        fP, _ = chart_i._laurent_poly_to_poly_up_to_unit(f_i)
-
-        if fP == 0 or fP.is_unit():
-            return []
-
-        gcd_list = [fP]
-        for j in range(i):
-            chart_j = self.charts[j]
-            g_ji = self._prod_of_chart_gens_as_base_expr(chart_j)
-            g_ji_in_i = chart_i._substitute_from_base(g_ji)
-            gP, _ = chart_i._laurent_poly_to_poly_up_to_unit(g_ji_in_i)
-            gcd_list.append(gP)
-            current_gcd = self._gcd_polys(chart_i.P, gcd_list)
-            if current_gcd == 1 or current_gcd.is_unit():
-                return []
-
-        G = self._gcd_polys(chart_i.P, gcd_list)
-        if G == 1 or G == 0:
-            return []
-
-        primes = []
-        for q, e in G.factor():
-            if q.is_unit():
-                continue
-            primes.append(FiniteLaurentIntersectionRingPrimeDivisor(chart_i, self._normalize(q)))
-        return primes
-
     def extra_primes(self, recompute: bool = False):
         r"""
         Return the list P1,...,Pr of prime divisors containing x1*...*xn.
@@ -2448,14 +2409,49 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         if (not recompute) and self._extra_primes_cache is not None:
             return self._extra_primes_cache
 
-        primes = []
-        for i in range(len(self.charts)):
-            primes.extend(self._extra_primes_in_chart(i))
+        xprod_base = self._xprod_in_base()
 
-        primes = list(dict.fromkeys(primes))
+        factor_list = []
+        only_primes_over = []
 
-        self._extra_primes_cache = primes
-        return primes
+        charts_to_process = [c for c in self.charts if c is not self._base_chart]
+
+        for chart_i in charts_to_process:
+            f_prime = chart_i._substitute_from_base(xprod_base)
+            fP, _ = chart_i._laurent_poly_to_poly_up_to_unit(f_prime)
+
+            if fP == 0:
+                factors = []
+            else:
+                factors = [f for f, _e in fP.factor() if not chart_i.L(f).is_unit()]
+
+            for q in factors:
+                only_over = chart_i.P(0)
+                m = len(only_primes_over)
+                k = 0
+                while k < m and q.divides(only_over):
+                    l_primes = []
+                    for l in only_primes_over[k]:
+                        l_in_i = chart_i._substitute_from_base(l)
+                        l_prime, _ = chart_i._laurent_poly_to_poly_up_to_unit(l_in_i)
+                        if not chart_i.L(l_prime).is_unit():
+                            l_primes.append(l_prime)
+                    prod_l = chart_i.P(1)
+                    for lp in l_primes:
+                        prod_l *= lp
+                    only_over = only_over.gcd(prod_l)
+                    k += 1
+
+                if q.divides(only_over):
+                    p_norm = self._normalize(q)
+                    new_prime = FiniteLaurentIntersectionRingPrimeDivisor(chart_i, p_norm)
+                    if new_prime not in factor_list:
+                        factor_list.append(new_prime)
+
+            only_primes_over.append(list(chart_i.this_to_base))
+
+        self._extra_primes_cache = factor_list
+        return factor_list
 
     # ------------------------
     # valuation machinery
