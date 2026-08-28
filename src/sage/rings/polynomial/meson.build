@@ -30,6 +30,12 @@ py.install_sources(
   'multi_polynomial.pxd',
   'multi_polynomial.pyx',
   'multi_polynomial_element.py',
+  'multi_polynomial_integer_flint.pxd',
+  'multi_polynomial_integer_flint.pyx',
+  'multi_polynomial_rational_flint.pxd',
+  'multi_polynomial_rational_flint.pyx',
+  'multi_polynomial_zmod_flint.pxd',
+  'multi_polynomial_zmod_flint.pyx',
   'multi_polynomial_ideal.py',
   'multi_polynomial_ideal_libsingular.pxd',
   'multi_polynomial_ideal_libsingular.pyx',
@@ -111,6 +117,9 @@ extension_data = {
   'laurent_polynomial': files('laurent_polynomial.pyx'),
   'laurent_polynomial_mpair': files('laurent_polynomial_mpair.pyx'),
   'multi_polynomial': files('multi_polynomial.pyx'),
+  'multi_polynomial_integer_flint': files('multi_polynomial_integer_flint.pyx'),
+  'multi_polynomial_rational_flint': files('multi_polynomial_rational_flint.pyx'),
+  'multi_polynomial_zmod_flint': files('multi_polynomial_zmod_flint.pyx'),
   'multi_polynomial_ring_base': files('multi_polynomial_ring_base.pyx'),
   'ore_polynomial_element': files('ore_polynomial_element.pyx'),
   'polydict': files('polydict.pyx'),
@@ -143,6 +152,12 @@ foreach name, pyx : extension_data
     deps += [flint, mpfi]
   elif name == 'hilbert'
     deps += [flint, mpfi]
+  elif name == 'multi_polynomial_integer_flint'
+    deps += [flint]
+  elif name == 'multi_polynomial_rational_flint'
+    deps += [flint]
+  elif name == 'multi_polynomial_zmod_flint'
+    deps += [flint]
   endif
 
   py.extension_module(
