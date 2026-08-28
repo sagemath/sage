@@ -207,7 +207,7 @@ def m_to_s_stat(R, I, K):
         if I.is_finer(J) and K.is_finer(J):
             pvec = [0] + Composition(I).refinement_splitting_lengths(J).partial_sums()
             pp = prod( R( len(I) - pvec[i] ) for i in range( len(pvec)-1 ) )
-            stat += R((-1)**(len(I)-len(K)) / pp * coeff_lp(K, J))
+            stat += R((-1)**(len(I)-len(K))) * coeff_lp(K, J) / pp
     return stat
 
 
