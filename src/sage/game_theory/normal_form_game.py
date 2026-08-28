@@ -9,9 +9,9 @@ compute equilibria of these games:
    algorithm built in Sage.
 
  * An interface with 'gambit', which implements all of its available
-   solvers (``'LCP'``, ``'enummixed'``, ``'lp'``, ``'gnm'``,
+   solvers (``'lcp'``, ``'enummixed'``, ``'lp'``, ``'gnm'``,
    ``'enumpure'``, ``'enumpoly'``, ``'liap'``, ``'simpdiv'``, ``'ipa'``
-   and ``'logit'``). The ``'LCP'``, ``'enummixed'`` and ``'lp'`` solvers
+   and ``'logit'``). The ``'lcp'``, ``'enummixed'`` and ``'lp'`` solvers
    are restricted to 2 player games, while the others are able to solve
    games with an arbitrary number of players. See the gambit
    documentation
@@ -288,7 +288,7 @@ Below we show how the these algorithms are called::
 
     sage: matching_pennies.obtain_nash(algorithm='lrs')  # optional - lrslib
     [[(1/2, 1/2), (1/2, 1/2)]]
-    sage: matching_pennies.obtain_nash(algorithm='LCP')  # optional - pygambit
+    sage: matching_pennies.obtain_nash(algorithm='lcp')  # optional - pygambit
     [[(1/2, 1/2), (1/2, 1/2)]]
     sage: matching_pennies.obtain_nash(algorithm='lp', solver='PPL')
     [[(1/2, 1/2), (1/2, 1/2)]]
@@ -302,7 +302,7 @@ arithmetic do so by default, so they agree with Sage's own algorithms on the
 nose rather than to within a tolerance.  Pass ``rational=False`` to get the
 floating point answer instead::
 
-    sage: matching_pennies.obtain_nash(algorithm='LCP', rational=False)  # abs tol 1e-9 # optional - pygambit
+    sage: matching_pennies.obtain_nash(algorithm='lcp', rational=False)  # abs tol 1e-9 # optional - pygambit
     [[(0.5, 0.5), (0.5, 0.5)]]
 
 The solvers that have no exact mode at all -- ``'gnm'``, ``'ipa'``, ``'liap'``,
@@ -501,7 +501,7 @@ equilibrium values::
     [[(1/5, 4/5), (3/5, 2/5)]]
     sage: A = 2 * A
     sage: g = NormalFormGame([A, B])
-    sage: g.obtain_nash(algorithm='LCP')  # optional - pygambit
+    sage: g.obtain_nash(algorithm='lcp')  # optional - pygambit
     [[(1/5, 4/5), (3/5, 2/5)]]
 
 It is also possible to generate a Normal form game from a gambit Game::
@@ -554,7 +554,7 @@ In the following we create the game (with a max value of 10) and solve it::
     sage: g = NormalFormGame([A, B])
     sage: g.obtain_nash(algorithm='lrs')  # optional - lrslib
     [[(0, 0, 0, 0, 0, 0, 0, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0, 1)]]
-    sage: g.obtain_nash(algorithm='LCP')  # optional - pygambit
+    sage: g.obtain_nash(algorithm='lcp')  # optional - pygambit
     [[(0, 0, 0, 0, 0, 0, 0, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0, 1)]]
 
 The output is a pair of vectors (as before) showing the Nash equilibrium.
@@ -641,7 +641,7 @@ is evidenced by the various algorithms returning different solutions::
     sage: degenerate_game = NormalFormGame([A,B])
     sage: degenerate_game.obtain_nash(algorithm='lrs')  # random, optional - lrslib
     [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (1/2, 3)], [(1, 0, 0), (1, 3)]]
-    sage: degenerate_game.obtain_nash(algorithm='LCP')  # optional - pygambit
+    sage: degenerate_game.obtain_nash(algorithm='lcp')  # optional - pygambit
     [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (2/3, 1/3)], [(1, 0, 0), (1, 0)]]
     sage: degenerate_game.obtain_nash(algorithm='enumeration')
     [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (1, 0)]]
@@ -2490,7 +2490,7 @@ class NormalFormGame(SageObject, MutableMapping):
             computes all mixed strategy Nash equilibria based on the gambit implementation,
             see the gambit web site (https://gambitproject.readthedocs.io/en/stable/api/pygambit.nash.enummixed_solve.html).
 
-          * ``'LCP'`` -- this algorithm is only suited for 2 player games.
+          * ``'lcp'`` -- this algorithm is only suited for 2 player games.
             See the gambit web site (https://gambitproject.readthedocs.io/en/stable/api/pygambit.nash.lcp_solve.html).
 
           * ``'gnm'``, ``'enumpure'``, ``'enumpoly'``, ``'liap'``,
@@ -2550,6 +2550,9 @@ class NormalFormGame(SageObject, MutableMapping):
 
                 \sum_{j\in S(\rho_1)}{\rho_2}_j = 1
 
+          The name of the algorithm is matched without regard to case, so
+          ``'LCP'`` and ``'lcp'`` name the same solver.
+
         - ``maximization`` -- boolean (default: ``True``); whether a player is
           trying to maximize their utility or minimize it:
 
@@ -2567,7 +2570,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         - ``rational`` -- boolean (default: ``True``); whether to answer with
           rational probabilities rather than floating point ones, which is done
-          in whichever of two ways the algorithm allows.  ``'LCP'``, ``'lp'``
+          in whichever of two ways the algorithm allows.  ``'lcp'``, ``'lp'``
           and ``'enummixed'`` are asked to compute in exact arithmetic
           throughout; ``'gnm'``, ``'ipa'``, ``'logit'``, ``'liap'`` and
           ``'enumpoly'`` have no exact mode, so they compute in floating point
@@ -2673,7 +2676,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 0, 3/4, 1/4), (1/28, 27/28, 0)]]
             sage: g.obtain_nash(algorithm='lrs')  # optional - lrslib
             [[(0, 0, 3/4, 1/4), (1/28, 27/28, 0)]]
-            sage: g.obtain_nash(algorithm='LCP')  # optional - pygambit
+            sage: g.obtain_nash(algorithm='lcp')  # optional - pygambit
             [[(0, 0, 3/4, 1/4), (1/28, 27/28, 0)]]
 
         The ``'enummixed'`` algorithm (2 player games only) enumerates all the
@@ -2702,7 +2705,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(1, 0, 0, 0, 0), (0, 1, 0, 0, 0)]]
             sage: fivegame.obtain_nash(algorithm='lrs')  # optional - lrslib
             [[(1, 0, 0, 0, 0), (0, 1, 0, 0, 0)]]
-            sage: fivegame.obtain_nash(algorithm='LCP')  # optional - pygambit
+            sage: fivegame.obtain_nash(algorithm='lcp')  # optional - pygambit
             [[(1, 0, 0, 0, 0), (0, 1, 0, 0, 0)]]
 
         Here are some examples of finding Nash equilibria for constant-sum games::
@@ -2776,7 +2779,7 @@ class NormalFormGame(SageObject, MutableMapping):
         Of the algorithms implemented, only ``'lrs'`` and ``'enumeration'``
         are guaranteed to find all Nash equilibria in a game. The solver for
         constant sum games only ever finds one Nash equilibrium. Although it
-        is possible for the ``'LCP'`` solver to find all Nash equilibria
+        is possible for the ``'lcp'`` solver to find all Nash equilibria
         in some instances, there are instances where it will not be able to
         find all Nash equilibria.::
 
@@ -2788,7 +2791,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lp', solver='glpk')
             [[(1.0, 0.0), (1.0, 0.0)]]
-            sage: gg.obtain_nash(algorithm='LCP')  # optional - pygambit
+            sage: gg.obtain_nash(algorithm='lcp')  # optional - pygambit
             [[(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='enumeration', maximization=False)
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
@@ -2796,12 +2799,12 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 1), (0, 1)], [(0, 1), (1, 0)], [(1, 0), (0, 1)], [(1, 0), (1, 0)]]
             sage: gg.obtain_nash(algorithm='lp', solver='glpk', maximization=False)
             [[(1.0, 0.0), (1.0, 0.0)]]
-            sage: gg.obtain_nash(algorithm='LCP', maximization=False)  # optional - pygambit
+            sage: gg.obtain_nash(algorithm='lcp', maximization=False)  # optional - pygambit
             [[(1, 0), (1, 0)]]
 
         Note that outputs for all algorithms are as lists of lists of
         tuples and the equilibria have been sorted so that all algorithms give
-        a comparable output (although ``'LCP'`` returns floats)::
+        a comparable output (although ``'lcp'`` returns floats)::
 
             sage: enumeration_eqs = g.obtain_nash(algorithm='enumeration')
             sage: [[type(s) for s in eq] for eq in enumeration_eqs]
@@ -2809,20 +2812,20 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: lrs_eqs = g.obtain_nash(algorithm='lrs')  # optional - lrslib
             sage: [[type(s) for s in eq] for eq in lrs_eqs]  # optional - lrslib
             [[<... 'tuple'>, <... 'tuple'>], [<... 'tuple'>, <... 'tuple'>], [<... 'tuple'>, <... 'tuple'>]]
-            sage: LCP_eqs = g.obtain_nash(algorithm='LCP')  # optional - pygambit
-            sage: [[type(s) for s in eq] for eq in LCP_eqs]  # optional - pygambit
+            sage: lcp_eqs = g.obtain_nash(algorithm='lcp')  # optional - pygambit
+            sage: [[type(s) for s in eq] for eq in lcp_eqs]  # optional - pygambit
             [[<... 'tuple'>, <... 'tuple'>], [<... 'tuple'>, <... 'tuple'>], [<... 'tuple'>, <... 'tuple'>]]
             sage: enumeration_eqs == sorted(enumeration_eqs)
             True
             sage: lrs_eqs == sorted(lrs_eqs)  # optional - lrslib
             True
-            sage: LCP_eqs == sorted(LCP_eqs)  # optional - pygambit
+            sage: lcp_eqs == sorted(lcp_eqs)  # optional - pygambit
             True
             sage: lrs_eqs == enumeration_eqs  # optional - lrslib
             True
-            sage: enumeration_eqs == LCP_eqs  # optional - pygambit
+            sage: enumeration_eqs == lcp_eqs  # optional - pygambit
             True
-            sage: [[[round(float(p), 6) for p in str] for str in eq] for eq in enumeration_eqs] == [[[round(float(p), 6) for p in str] for str in eq] for eq in LCP_eqs]  # optional - pygambit
+            sage: [[[round(float(p), 6) for p in str] for str in eq] for eq in enumeration_eqs] == [[[round(float(p), 6) for p in str] for str in eq] for eq in lcp_eqs]  # optional - pygambit
             True
 
         The :math:`3\times 3` coordination game (both payoff matrices the
@@ -2904,6 +2907,16 @@ class NormalFormGame(SageObject, MutableMapping):
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'invalid' for a 2-player game; ...
+
+        The name of the algorithm is not case-sensitive, and an unknown one is
+        quoted back the way it was spelled::
+
+            sage: g.obtain_nash(algorithm='Enumeration')
+            [[(1/2, 1/2), (1/2, 1/2)]]
+            sage: g.obtain_nash(algorithm='Invalid')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm 'Invalid' for a 2-player game; ...
             sage: g.obtain_nash(algorithm='lp', solver='invalid')
             Traceback (most recent call last):
             ...
@@ -2921,6 +2934,9 @@ class NormalFormGame(SageObject, MutableMapping):
         self._require_complete()
 
         from sage.features.lrs import LrsNash
+        # The algorithm is matched without regard to case, but the error
+        # messages below quote the name back the way the caller spelled it.
+        requested = algorithm
         if not algorithm:
             if len(self.players) > 2:
                 # Only the gambit solvers handle games with more than two
@@ -2933,11 +2949,14 @@ class NormalFormGame(SageObject, MutableMapping):
                 algorithm = "lrs"
             else:
                 algorithm = "enumeration"
+            requested = algorithm
+        else:
+            algorithm = algorithm.lower()
 
         if phc_path is not None and algorithm != "enumpoly":
             raise ValueError(
                 "'phc_path' is only supported by the 'enumpoly' algorithm; "
-                f"got algorithm {algorithm!r}"
+                f"got algorithm {requested!r}"
             )
 
         if len(self.players) < 3:
@@ -2945,13 +2964,13 @@ class NormalFormGame(SageObject, MutableMapping):
                 LrsNash().require()
                 return self._solve_lrs(maximization)
 
-            if algorithm.lower() == "lcp":
+            if algorithm == "lcp":
                 pygambit().require()
                 return self._use_gambit_solver('lcp', maximization,
                                                rational=rational,
                                                tolerance=tolerance)
 
-            if algorithm.lower() == 'lp':
+            if algorithm == 'lp':
                 return self._solve_LP(solver=solver, maximization=maximization,
                                       rational=rational)
 
@@ -2978,8 +2997,8 @@ class NormalFormGame(SageObject, MutableMapping):
 
         n = len(self.players)
         raise ValueError(
-            f"unknown algorithm {algorithm!r} for a {n}-player game; "
-            "for 2-player games use 'enumeration', 'lrs', 'LCP', 'lp', or "
+            f"unknown algorithm {requested!r} for a {n}-player game; "
+            "for 2-player games use 'enumeration', 'lrs', 'lcp', 'lp', or "
             "'enummixed', and for any number of players use one of the gambit "
             "solvers: 'gnm', 'enumpure', 'enumpoly', 'liap', 'simpdiv', 'ipa', 'logit'"
         )
@@ -3205,7 +3224,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         EXAMPLES:
 
-        The LCP solver on a two player game::
+        The ``'lcp'`` solver on a two player game::
 
             sage: a = matrix([[1, 0], [1, 4]])
             sage: b = matrix([[2, 3], [2, 4]])
@@ -3555,7 +3574,7 @@ class NormalFormGame(SageObject, MutableMapping):
             raise ValueError(
                 "the 'lp' algorithm only works for two-player constant-sum "
                 "games, but this game is not constant-sum; use "
-                "algorithm='enumeration', 'lrs', or 'LCP' instead"
+                "algorithm='enumeration', 'lrs', or 'lcp' instead"
             )
         if solver == 'gambit':
             return self._use_gambit_solver('lp', maximization,
@@ -4071,7 +4090,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0, 0, 1, 0), (0, 1, 0, 0)],
              [(17/29, 0, 0, 12/29), (0, 0, 42/73, 31/73)],
              [(122/145, 0, 23/145, 0), (0, 1, 0, 0)]]
-            sage: d_game.obtain_nash(algorithm='LCP')  # optional - pygambit
+            sage: d_game.obtain_nash(algorithm='lcp')  # optional - pygambit
             [[(17/29, 0, 0, 12/29), (0, 0, 42/73, 31/73)]]
             sage: d_game.obtain_nash(algorithm='enumeration')
             [[(0, 0, 1, 0), (0, 1, 0, 0)], [(17/29, 0, 0, 12/29), (0, 0, 42/73, 31/73)]]

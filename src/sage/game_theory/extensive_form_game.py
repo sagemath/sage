@@ -1895,7 +1895,8 @@ class ExtensiveFormGame(SageObject):
             extensive form only
 
           When ``None`` the default is ``'lcp'`` for games with at most two
-          players and ``'enumpoly'`` for more.
+          players and ``'enumpoly'`` for more.  The name is matched without
+          regard to case, so ``'LCP'`` and ``'lcp'`` name the same solver.
 
           The two ``_agent`` solvers compute a different solution concept.  An
           *agent equilibrium* treats every information set as a player of its
@@ -2201,6 +2202,22 @@ class ExtensiveFormGame(SageObject):
             ...
             TypeError: profile index must be Player, Strategy, or str, not Action
 
+        The name of the algorithm is not case-sensitive::
+
+            sage: # optional - pygambit
+            sage: g.obtain_nash(algorithm='LCP') == g.obtain_nash(algorithm='lcp')
+            True
+
+        An unknown name is quoted back the way it was spelled::
+
+            sage: # optional - pygambit
+            sage: g.obtain_nash(algorithm='Bogus')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm 'Bogus'; must be one of
+            'enumpoly', 'enumpure', 'enumpure_agent', 'lcp', 'liap',
+            'liap_agent', 'logit', 'lp'
+
         ::
 
             sage: # optional - pygambit
@@ -2290,19 +2307,25 @@ class ExtensiveFormGame(SageObject):
             'liap_agent': lambda: gambit_nash.liap_agent_solve(
                 game.mixed_behavior_profile()),
         }
+        # The algorithm is matched without regard to case, but the error
+        # messages below quote the name back the way the caller spelled it.
+        requested = algorithm
         if algorithm is None:
-            algorithm = 'lcp' if len(game.players) <= 2 else 'enumpoly'
+            requested = algorithm = ('lcp' if len(game.players) <= 2
+                                     else 'enumpoly')
+        else:
+            algorithm = algorithm.lower()
         try:
             solver = solvers[algorithm]
         except KeyError:
             names = ", ".join(repr(name) for name in sorted(solvers))
             raise ValueError("unknown algorithm {0!r}; must be one of "
-                             "{1}".format(algorithm, names))
+                             "{1}".format(requested, names))
 
         agent = algorithm in _AGENT_ALGORITHMS
         if agent and use_strategic:
             warnings.warn("{0!r} computes agent equilibria of the extensive "
-                          "form; ignoring use_strategic=True".format(algorithm))
+                          "form; ignoring use_strategic=True".format(requested))
 
         if stop_after == 'auto':
             # Enumerating the supports of a game costs more with every one of
@@ -2314,7 +2337,7 @@ class ExtensiveFormGame(SageObject):
             if algorithm not in ('enumpoly', 'lcp'):
                 raise ValueError("'stop_after' is only supported by the "
                                  "'enumpoly' and 'lcp' algorithms; got "
-                                 "algorithm {0!r}".format(algorithm))
+                                 "algorithm {0!r}".format(requested))
             if algorithm == 'lcp' and not use_strategic:
                 # gambit's own restriction, raised here for a clearer message.
                 raise ValueError("'lcp' can only stop early on the strategic "
