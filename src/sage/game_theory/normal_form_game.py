@@ -26,8 +26,9 @@ compute equilibria of these games:
 The architecture for the class is based on the gambit architecture to
 ensure an easy transition between gambit and Sage.  Most of the
 algorithms for the computation of equilibria only solve 2 player games;
-the ``'gnm'`` algorithm (which requires gambit) is able to solve games
-with an arbitrary number of players.
+the ``'gnm'``, ``'enumpure'``, ``'enumpoly'``, ``'liap'``, ``'simpdiv'``,
+``'ipa'`` and ``'logit'`` algorithms (which all require gambit) are able to
+solve games with an arbitrary number of players.
 
 A very simple and well known example of normal form game is referred
 to as the 'Battle of the Sexes' in which two players Amy and Bob
@@ -359,7 +360,7 @@ Note that if no algorithm argument is passed then the default will be
 selected according to the following order (if the corresponding package is
 installed):
 
-1. ``'enumpoly'`` (if the game has more than 2 players; requires 'gambit')
+1. ``'simpdiv'`` (if the game has more than 2 players; requires 'gambit')
 2. ``'lp'`` (if the game is constant-sum; uses PPL, or the solver chosen by
    Sage when ``rational=False``)
 3. ``'lrs'`` (requires 'lrslib')
@@ -509,23 +510,38 @@ utility function::
      (1, 1, 0): [0, 2, 4],
      (1, 1, 1): [0, 3, 6]}
 
-Games with more than 2 players can be solved using the ``'gnm'``
-algorithm, which interfaces with gambit's implementation of the global
+Games with more than 2 players can be solved with any of the gambit solvers
+``'gnm'``, ``'enumpure'``, ``'enumpoly'``, ``'liap'``, ``'simpdiv'``,
+``'ipa'`` and ``'logit'``; only ``'lcp'``, ``'lp'`` and ``'enummixed'``, and
+Sage's own ``'lrs'`` and ``'enumeration'``, are restricted to 2 players.  Here
+is ``'gnm'``, which interfaces with gambit's implementation of the global
 Newton method::
 
     sage: threegame.obtain_nash(algorithm='gnm')  # optional - pygambit
     [[(0, 1), (0, 1), (0, 1)]]
 
 When no algorithm is given for a game with more than 2 players, the
-``'enumpoly'`` algorithm is selected by default; it interfaces with
-gambit's enumeration of equilibria via systems of polynomial equations
-and, unlike ``'gnm'``, returns all of the equilibria it finds::
+``'simpdiv'`` algorithm is selected by default; it interfaces with gambit's
+simplicial subdivision, which refines a grid over the profiles until it finds
+one that is an equilibrium.  It is what gambit itself recommends for finding
+an equilibrium of a game with more than two players, being the least likely of
+the solvers to fail on a game given to it, and it computes in exact arithmetic
+throughout.  Like the other solvers that follow a single path, it returns one
+equilibrium rather than all of them::
 
     sage: threegame.obtain_nash()  # optional - pygambit
+    [[(1/2, 1/2), (0, 1), (0, 1)]]
+
+Ask for ``'enumpoly'`` to have all of the equilibria of such a game, which it
+finds by enumerating the supports and solving a system of polynomial equations
+for each one.  That is a much more expensive way to go about it, and on a
+larger game it can take a very long time::
+
+    sage: threegame.obtain_nash(algorithm='enumpoly')  # optional - pygambit
     [[(0, 1), (0, 1), (0, 1)], [(1, 0), (0, 1), (0, 1)]]
 
-Note that ``'gnm'`` is a numerical algorithm and so returns only a sample of
-the equilibria.
+Note that ``'gnm'``, like the other numerical algorithms, returns only a
+sample of the equilibria.
 
 It can be shown that linear scaling of the payoff matrices conserves the
 equilibrium values::
@@ -2583,7 +2599,13 @@ class NormalFormGame(SageObject, MutableMapping):
             algorithms and so in general return floating point approximations
             of a sample of the equilibria. See the gambit web site
             (https://gambitproject.readthedocs.io/en/stable/pygambit.api.html). When no ``algorithm`` is given
-            for a game with more than 2 players, ``'enumpoly'`` is used.
+            for a game with more than 2 players, ``'simpdiv'`` is used: it is
+            what gambit itself recommends for finding an equilibrium of such a
+            game, being the least likely of the solvers to fail on the game it
+            is given, and it computes in exact arithmetic throughout.  Like the
+            other solvers that follow a single path it returns one equilibrium;
+            ask for ``'enumpoly'`` to have all of them, at a cost that climbs
+            steeply with the size of the game.
 
           * ``'lp'`` -- this algorithm is only suited for 2 player
             constant sum games. Uses MILP solver or the gambit solver, determined by the
@@ -2687,8 +2709,8 @@ class NormalFormGame(SageObject, MutableMapping):
           :class:`~pathlib.Path`) to the PHCpack ``phc`` executable. When
           given, the ``'enumpoly'`` algorithm solves the underlying systems of
           polynomial equations with PHCpack instead of gambit's built-in
-          solver. This is only supported by the ``'enumpoly'`` algorithm (the
-          default for games with more than 2 players); passing it for any other
+          solver. This is only supported by the ``'enumpoly'`` algorithm;
+          passing it for any other
           algorithm raises a :class:`ValueError`. PHCpack is available from
           https://homepages.math.uic.edu/~jan/download.html.
 
@@ -3044,9 +3066,13 @@ class NormalFormGame(SageObject, MutableMapping):
         if not algorithm:
             if len(self.players) > 2:
                 # Only the gambit solvers handle games with more than two
-                # players; enumpoly enumerates the equilibria by solving the
-                # corresponding systems of polynomial equations.
-                algorithm = "enumpoly"
+                # players.  Simplicial subdivision is the one gambit itself
+                # recommends there: it refines a grid over the profiles until
+                # it lands on an equilibrium, which is far less likely to fail
+                # on the game it is given than enumerating the supports, and it
+                # computes exactly.  It returns a single equilibrium, so
+                # ``'enumpoly'`` remains the way to ask for all of them.
+                algorithm = "simpdiv"
             elif self.is_constant_sum():
                 algorithm = "lp"
             elif LrsNash().is_present():
