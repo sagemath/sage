@@ -27,6 +27,31 @@ gambit catalog with :meth:`~ExtensiveFormGame.load_from_gambit_catalog` (two of
 them are worked through at the end of this page), and compute Nash equilibria
 with :meth:`~ExtensiveFormGame.obtain_nash`.
 
+.. WARNING::
+
+    A payoff, and the probability of a chance move, is handed to gambit
+    exactly as it is written, and gambit stores it exactly.  Nothing is
+    rounded on the way, but nothing is guessed either, and a float is a poor
+    way of writing down a rational: ``1/3`` reaches gambit as `1/3`, while
+    ``RDF(1)/3`` reaches it as `0.3333333333333333`, a number close to but
+    not equal to `1/3`, and that is the game gambit then solves exactly::
+
+        sage: # optional - pygambit
+        sage: from sage.game_theory.extensive_form_game import ExtensiveFormGame
+        sage: def stored(prob):     # the probability as gambit ends up holding it
+        ....:     coin = ExtensiveFormGame(players=['Alice'])
+        ....:     coin.append_chance_move(coin.root, ['H', 'T'],
+        ....:                             probs=[prob, 1 - prob])
+        ....:     return list(coin._gambit_().root.infoset.actions)[0].prob
+        sage: stored(1/3)
+        Rational(1, 3)
+        sage: stored(RDF(1)/3)
+        Decimal('0.3333333333333333')
+
+    So if you care what game gambit solves, give payoffs and probabilities
+    as integers or rationals -- ``2``, ``1/3``, or the string ``'1/3'`` --
+    rather than as the floats and decimals ``0.5``, ``RDF`` and ``RR`` give.
+
 Game trees can be drawn with :meth:`~ExtensiveFormGame.plot`, by default with
 Sage's own graph plotting, which needs nothing beyond Sage, or -- for
 publication-quality TikZ pictures like the two below -- with ``backend='gtdraw'``
@@ -86,9 +111,9 @@ on him to follow, an equilibrium worth 3 to her::
 
     sage: # optional - pygambit
     sage: amy = battle._gambit_().players['Amy']
-    sage: sorted(float(eq.payoff(amy))
+    sage: sorted(QQ(eq.payoff(amy))
     ....:        for eq in battle.obtain_nash(algorithm='enumpure'))
-    [2.0, 3.0, 3.0]
+    [2, 3, 3]
 
 Imperfect information -- a player who cannot tell certain nodes of the tree
 apart -- is expressed by collecting those nodes into a single information set.
@@ -151,9 +176,9 @@ forcing the one she prefers::
     sage: battle.is_perfect_recall
     True
     sage: amy = battle._gambit_().players['Amy']
-    sage: sorted(float(eq.payoff(amy))
+    sage: sorted(QQ(eq.payoff(amy))
     ....:        for eq in battle.obtain_nash(algorithm='enumpure'))
-    [2.0, 3.0]
+    [2, 3]
 
 Any simultaneous two-player game is built in just this way: one move for the
 first player, then one move and one :meth:`~ExtensiveFormGame.append_infoset`
@@ -186,9 +211,9 @@ neither does, tossing the coin is all either can do::
     sage: pennies.obtain_nash(algorithm='enumpure')
     []
     sage: actions = pennies._gambit_().actions
-    sage: [[float(eq[a]) for a in actions]
+    sage: [[QQ(eq[a]) for a in actions]
     ....:  for eq in pennies.obtain_nash(algorithm='lp')]
-    [[0.5, 0.5, 0.5, 0.5]]
+    [[1/2, 1/2, 1/2, 1/2]]
 
 The games so far have been small enough to build by hand.  Gambit also ships a
 catalog of games taken from the literature, which
@@ -486,6 +511,16 @@ class ExtensiveFormGame(SageObject):
     A game can be built from scratch with the tree-building methods (see below)
     or by wrapping an existing ``pygambit`` game passed to the constructor; use
     :meth:`_gambit_` to recover the underlying gambit game.
+
+    .. WARNING::
+
+        A payoff, and the probability of a chance move, is handed to gambit
+        exactly as it is written, so a float is not the rational it may look
+        like: ``1/3`` reaches gambit as `1/3`, while ``RDF(1)/3`` reaches it
+        as `0.3333333333333333`, and it is the latter game that then gets
+        solved.  Give payoffs and probabilities as integers or rationals if
+        it matters which game that is; see
+        :mod:`sage.game_theory.extensive_form_game` for the details.
 
     Following gambit, tree nodes carry no labels: a node is the ``pygambit``
     ``Node`` reached by navigating action labels down from the root
@@ -921,7 +956,10 @@ class ExtensiveFormGame(SageObject):
           which must be distinct and nonempty
 
         - ``probs`` -- (default: ``None``) list of branch probabilities; each
-          may be a string such as ``'1/2'`` or a Sage rational
+          may be a string such as ``'1/2'`` or a Sage rational.  A float is
+          stored as the exact decimal it is rather than as the rational it may
+          be meant for; see the warning in
+          :mod:`sage.game_theory.extensive_form_game`.
 
         EXAMPLES::
 
@@ -989,7 +1027,9 @@ class ExtensiveFormGame(SageObject):
 
         - ``payoffs`` -- (default: ``None``) a list of payoffs, one per player
           (in the order of :meth:`players`), awarded by the new outcome
-          labelled ``outcome``
+          labelled ``outcome``.  A float is stored as the exact decimal it is
+          rather than as the rational it may be meant for; see the warning in
+          :mod:`sage.game_theory.extensive_form_game`.
 
         EXAMPLES::
 
@@ -1062,7 +1102,9 @@ class ExtensiveFormGame(SageObject):
           :meth:`append_chance_move`)
 
         - ``probs`` -- list of branch probabilities; each may be a string such
-          as ``'1/3'`` or a Sage rational
+          as ``'1/3'`` or a Sage rational.  A float is stored as the exact
+          decimal it is rather than as the rational it may be meant for; see
+          the warning in :mod:`sage.game_theory.extensive_form_game`.
 
         EXAMPLES::
 
@@ -1259,7 +1301,7 @@ class ExtensiveFormGame(SageObject):
         further below, needs the optional gtdraw package and gives a
         :class:`GameTreeTikzPicture` instead::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: from sage.plot.graphics import Graphics
             sage: isinstance(g.plot(backend='sage'), Graphics)
             True
@@ -1267,13 +1309,13 @@ class ExtensiveFormGame(SageObject):
         Being the default, it is what plotting without a ``backend`` gives, so
         that drawing a tree never requires an optional package::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: isinstance(g.plot(), Graphics)
             True
 
         Keyword arguments reach Sage's graph plotting::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: isinstance(g.plot(backend='sage', figsize=8, vertex_size=400),
             ....:            Graphics)
             True
@@ -1281,7 +1323,7 @@ class ExtensiveFormGame(SageObject):
         The nodes are colored by whose move it is: Alice's node is red, Bob's
         two are blue, and the four terminal nodes are white::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: from sage.plot.scatter_plot import ScatterPlot
             sage: nodes = [p for p in g.plot(backend='sage')
             ....:          if isinstance(p, ScatterPlot)][0]
@@ -1293,7 +1335,7 @@ class ExtensiveFormGame(SageObject):
         Bob has a single information set here, so his nodes are labeled with
         his name alone::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: drawn = [p.string for p in g.plot(backend='sage')
             ....:          if hasattr(p, 'string')]
             sage: sorted(set(s for s in drawn if 'Bob' in s))
@@ -1303,7 +1345,7 @@ class ExtensiveFormGame(SageObject):
         as its action, so a fair coin flip that Alice then bets on reads
         ``'H (1/2)'`` and ``'T (1/2)'``::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: coin = ExtensiveFormGame(players=['Alice'])
             sage: coin.append_chance_move(coin.root, ['H', 'T'],
             ....:                         probs=['1/2', '1/2'])
@@ -1320,7 +1362,7 @@ class ExtensiveFormGame(SageObject):
         The chance node is gray, and Alice, who moves at two nodes she can tell
         apart, has her two information sets numbered::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: nodes = [p for p in coin.plot(backend='sage')
             ....:          if isinstance(p, ScatterPlot)][0]
             sage: sorted(set(nodes.options()['facecolor']))
@@ -1396,7 +1438,7 @@ class ExtensiveFormGame(SageObject):
             An extensive form game with 2 players
             sage: len(g.infosets)
             3
-            sage: isinstance(g.plot(backend='sage'), Graphics)
+            sage: isinstance(g.plot(backend='sage'), Graphics)     # needs sage.graphs sage.plot
             True
 
         ::
@@ -1511,14 +1553,14 @@ class ExtensiveFormGame(SageObject):
         sideways, and shading the information sets makes the deal structure
         stand out::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: isinstance(kuhn.plot(backend='sage'), Graphics)
             True
 
         Its figure is much wider than that of the small game above, which is
         what keeps the fifty-odd nodes of this one apart::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: kuhn.plot(backend='sage').get_axes_range()['xmax'] > 20
             True
             sage: (kuhn.plot(backend='sage')._extra_kwds['figsize'][0]
@@ -1531,7 +1573,7 @@ class ExtensiveFormGame(SageObject):
         leaving him the same card after the same move of Alice's -- which he
         cannot tell apart -- carry the same number::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: drawn = [p.string for p in kuhn.plot(backend='sage')
             ....:          if hasattr(p, 'string')]
             sage: sorted(set(s for s in drawn if s.startswith('Bob')))
@@ -1563,7 +1605,7 @@ class ExtensiveFormGame(SageObject):
         A game with no moves at all is a single terminal node, and draws as
         one::
 
-            sage: # optional - pygambit
+            sage: # optional - pygambit, needs sage.graphs sage.plot
             sage: isinstance(ExtensiveFormGame().plot(backend='sage'), Graphics)
             True
 
@@ -1937,8 +1979,11 @@ class ExtensiveFormGame(SageObject):
           ``'logit'``, ``'liap'`` and ``'liap_agent'`` have no exact mode, so
           they compute in floating point and their answer is then rounded to the
           exact equilibrium it approximates, as described under ``tolerance``.
-          ``'enumpure'`` and ``'enumpure_agent'`` are always exact and ignore
-          the flag.
+
+          An algorithm that cannot answer in the kind of number that was asked
+          for says so with a warning and answers in the other one.  That is
+          what ``'enumpure'`` and ``'enumpure_agent'``, which enumerate pure
+          profiles and so always work exactly, do with ``rational=False``.
 
         - ``tolerance`` -- a positive number (default: ``1e-4``); how far a
           probability computed by one of the numerical algorithms may be moved
@@ -1946,13 +1991,11 @@ class ExtensiveFormGame(SageObject):
           only once gambit has confirmed, in exact arithmetic, that it is an
           equilibrium; when it is not -- as happens when the equilibrium is
           genuinely irrational -- the floating point answer is returned
-          instead.  The larger the tolerance the simpler the rationals that are
-          tried, so a value that is too small can round an equilibrium to an
-          unenlightening exact form rather than fail to round it; the default
-          matches the accuracy the gambit solvers themselves aim for.  Has no
-          effect when ``rational`` is ``False``, nor on a game whose own
-          payoffs -- including the probabilities of its chance moves -- are
-          inexact.
+          instead, with a warning.  The larger the tolerance the simpler the
+          rationals that are tried, so a value that is too small can round an
+          equilibrium to an unenlightening exact form rather than fail to round
+          it; the default matches the accuracy the gambit solvers themselves
+          aim for.  Has no effect when ``rational`` is ``False``.
 
         - ``stop_after`` -- (default: ``'auto'``) how many equilibria to compute
           before stopping; ``None`` computes all of them, a positive integer at
@@ -1998,8 +2041,9 @@ class ExtensiveFormGame(SageObject):
         The two are not interchangeable: indexing a mixed strategy profile by an
         action, or a mixed behavior profile by a strategy, raises a
         :class:`TypeError`.  Either kind of profile comes in a rational and a
-        floating point flavour, and which one is returned follows ``rational``
-        and ``tolerance`` above.
+        floating point flavour; which one is returned follows ``rational``, and
+        the cases in which it cannot be followed -- each of them warned about
+        -- are described under ``rational`` and ``tolerance`` above.
 
         This requires the optional gambit package.
 
@@ -2038,9 +2082,10 @@ class ExtensiveFormGame(SageObject):
 
         ``'lcp'`` and ``'lp'`` compute exactly by default, so the
         probabilities come back as rationals; ``rational=False`` asks for the
-        floating point answer instead.  Exact payoffs survive the trip in the
-        first place -- a payoff of ``1/3`` reaches gambit as ``1/3``, not as a
-        decimal approximation of it::
+        floating point answer instead.  A rational payoff survives the trip in
+        the first place -- ``1/3`` reaches gambit as ``1/3``, not as a decimal
+        approximation of it, which is what writing it as a float would have
+        given::
 
             sage: # optional - pygambit
             sage: e = ExtensiveFormGame(players=['Alice', 'Bob'])
@@ -2152,10 +2197,17 @@ class ExtensiveFormGame(SageObject):
 
         Rounding is never allowed to pass off an approximation as exact, so
         asking for one so fine that nothing verifies gives the floating point
-        answer back unchanged::
+        answer back unchanged, with a warning that it is not what was asked
+        for::
 
             sage: # optional - pygambit
-            sage: eqs = pennies.obtain_nash(algorithm='liap_agent', tolerance=1e-15)
+            sage: import warnings
+            sage: with warnings.catch_warnings(record=True) as caught:
+            ....:     warnings.simplefilter('always')
+            ....:     eqs = pennies.obtain_nash(algorithm='liap_agent',
+            ....:                               tolerance=1e-15)
+            sage: print(caught[0].message)
+            an equilibrium could not be confirmed exact...
             sage: type(eqs[0]).__name__
             'MixedBehaviorProfileDouble'
             sage: [float(eqs[0][a]) for a in pennies._gambit_().actions]  # abs tol 1e-6
@@ -2257,9 +2309,9 @@ class ExtensiveFormGame(SageObject):
             ...
             ValueError: 'stop_after' must be a positive integer or None; got 0
 
-        A game whose payoffs are inexact keeps its inexact equilibria; the
-        probabilities of a chance move are payoff data too, so making them
-        inexact is enough::
+        Chance probabilities written as floats reach gambit as decimals,
+        which it stores and computes with exactly, so the equilibria of such a
+        game are recovered exactly as well::
 
             sage: # optional - pygambit
             sage: coin = ExtensiveFormGame(players=['Alice'])
@@ -2273,12 +2325,27 @@ class ExtensiveFormGame(SageObject):
             'MixedBehaviorProfileRational'
             sage: coin.set_chance_probs(coin.root, [0.25, 0.75])
             sage: type(coin.obtain_nash(algorithm='liap_agent')[0]).__name__
-            'MixedBehaviorProfileDouble'
+            'MixedBehaviorProfileRational'
+
+        A solver that always works exactly cannot answer ``rational=False``,
+        and says so::
+
+            sage: # optional - pygambit
+            sage: import warnings
+            sage: with warnings.catch_warnings(record=True) as caught:
+            ....:     warnings.simplefilter('always')
+            ....:     eqs = coin.obtain_nash(algorithm='enumpure_agent',
+            ....:                            rational=False)
+            sage: print(caught[0].message)
+            the 'enumpure_agent' algorithm always computes exactly...
+            sage: type(eqs[0]).__name__
+            'MixedBehaviorProfileRational'
         """
         # The two game classes round a solver's floating point answer back to
-        # an exact equilibrium in the same way.
+        # an exact equilibrium in the same way, and agree on which solvers
+        # cannot be asked for a floating point one.
         from sage.game_theory.normal_form_game import (
-            _gambit_payoffs_are_exact, _rationalize_gambit_profile)
+            _ALWAYS_EXACT_GAMBIT_SOLVERS, _rationalize_equilibria)
 
         pygambit().require()
         if tolerance <= 0:
@@ -2327,6 +2394,11 @@ class ExtensiveFormGame(SageObject):
             warnings.warn("{0!r} computes agent equilibria of the extensive "
                           "form; ignoring use_strategic=True".format(requested))
 
+        if not rational and algorithm in _ALWAYS_EXACT_GAMBIT_SOLVERS:
+            warnings.warn("the {0!r} algorithm always computes exactly, so the "
+                          "equilibria are rational even though rational=False"
+                          .format(algorithm))
+
         if stop_after == 'auto':
             # Enumerating the supports of a game costs more with every one of
             # them, and ``'enumpoly'`` is what a game of more than two players
@@ -2351,15 +2423,13 @@ class ExtensiveFormGame(SageObject):
                 stop_after = int(stop_after)
 
         equilibria = list(solver().equilibria)
-        if rational and _gambit_payoffs_are_exact(game):
+        if rational:
             # ``'enumpoly'``, ``'logit'`` and the two ``'liap'`` solvers answer
-            # in floating point whatever the game is made of, so ask for the
-            # exact equilibrium their answer renders; ``None`` comes back when
-            # there is none, and the approximation is then all there is to
-            # return.
-            equilibria = [_rationalize_gambit_profile(eq, tolerance,
-                                                      agent=agent) or eq
-                          for eq in equilibria]
+            # in floating point, so ask for the exact equilibrium their answer
+            # renders; one that cannot be confirmed is kept as it is and warned
+            # about.
+            equilibria = _rationalize_equilibria(equilibria, tolerance,
+                                                 agent=agent)
         return equilibria
 
     @classmethod
