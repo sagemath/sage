@@ -457,6 +457,24 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v = vector(w, immutable=True)
         sage: v.is_immutable()
         True
+
+    Constructing an immutable vector from a vector does not change the input::
+
+        sage: v = vector([1, 2])
+        sage: w = vector(v, immutable=True)
+        sage: w is v
+        False
+        sage: w.is_immutable()
+        True
+        sage: v.is_immutable()
+        False
+
+    This also holds for sparse vectors and when a base ring is specified::
+
+        sage: v = vector(ZZ, [1, 2], sparse=True)
+        sage: w = vector(v, ZZ, immutable=True)
+        sage: w.is_immutable(), v.is_immutable(), w is v
+        (True, False, False)
         sage: w = np.array([i, 2, 3], complex)
         sage: v = vector(w, immutable=True)
         sage: v.is_immutable()
@@ -502,6 +520,8 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     else:
         v = arg0_vector_(arg1)
         if immutable:
+            from copy import copy
+            v = copy(v)
             v.set_immutable()
         return v
 
@@ -512,6 +532,8 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     else:
         v = arg1_vector_(arg0)
         if immutable:
+            from copy import copy
+            v = copy(v)
             v.set_immutable()
         return v
 
