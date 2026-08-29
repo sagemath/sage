@@ -112,7 +112,8 @@ on him to follow, an equilibrium worth 3 to her::
     sage: # optional - pygambit
     sage: amy = battle._gambit_().players['Amy']
     sage: sorted(QQ(eq.payoff(amy))
-    ....:        for eq in battle.obtain_nash(algorithm='enumpure'))
+    ....:        for eq in battle.obtain_nash(algorithm='enumpure',
+    ....:                                       use_strategic=True))
     [2, 3, 3]
 
 Imperfect information -- a player who cannot tell certain nodes of the tree
@@ -177,7 +178,8 @@ forcing the one she prefers::
     True
     sage: amy = battle._gambit_().players['Amy']
     sage: sorted(QQ(eq.payoff(amy))
-    ....:        for eq in battle.obtain_nash(algorithm='enumpure'))
+    ....:        for eq in battle.obtain_nash(algorithm='enumpure',
+    ....:                                       use_strategic=True))
     [2, 3]
 
 Any simultaneous two-player game is built in just this way: one move for the
@@ -208,7 +210,7 @@ neither does, tossing the coin is all either can do::
     ....:                         ('heads', 'tails'): [-1, 1],
     ....:                         ('tails', 'heads'): [-1, 1],
     ....:                         ('tails', 'tails'): [1, -1]})
-    sage: pennies.obtain_nash(algorithm='enumpure')
+    sage: pennies.obtain_nash(algorithm='enumpure', use_strategic=True)
     []
     sage: actions = pennies._gambit_().actions
     sage: [[QQ(eq[a]) for a in actions]
@@ -293,7 +295,7 @@ strategy profiles; ``as_behavior`` turns one into the behavior profile that
 gives the tree its probabilities::
 
     sage: # optional - pygambit
-    sage: eqs = horse.obtain_nash(algorithm='enumpure')
+    sage: eqs = horse.obtain_nash(algorithm='enumpure', use_strategic=True)
     sage: [[QQ(eq.payoff(p)) for p in horse.players] for eq in eqs]
     [[3, 2, 2], [1, 1, 1]]
     sage: game = horse._gambit_()
@@ -372,6 +374,13 @@ lazy_import('gtdraw', 'tikz', 'gtdraw_tikz', feature=gtdraw())
 # equilibria: they work on the extensive form and on it only, and their answer
 # is verified as an agent rather than as a Nash equilibrium.
 _AGENT_ALGORITHMS = ('enumpure_agent', 'liap_agent')
+
+# The solvers of :meth:`ExtensiveFormGame.obtain_nash` that work on the reduced
+# strategic form and on it only, so that they answer with mixed strategy
+# profiles whatever ``use_strategic`` is set to.  This is the same set that
+# gambit's own graphical interface switches to the strategic form for.
+_STRATEGIC_ONLY_ALGORITHMS = ('enummixed', 'enumpure', 'gnm', 'ipa', 'liap',
+                              'simpdiv')
 
 # The colors :meth:`ExtensiveFormGame.plot` gives the players of a game, in the
 # order the game lists them: the first player is red, the second blue, and a
@@ -1922,12 +1931,25 @@ class ExtensiveFormGame(SageObject):
             on the strategic form only
 
           * ``'enumpoly'`` -- enumeration via systems of polynomial equations
-            (any number of players), the default otherwise
+            (any number of players); the way to ask for *all* of the equilibria
 
           * ``'logit'`` -- the logit quantal response tracing procedure
 
           * ``'liap'`` -- minimisation of the Lyapunov function, starting from
             the centroid; works on the strategic form only
+
+          * ``'simpdiv'`` -- simplicial subdivision, starting from the centroid
+            (any number of players), the default otherwise; works on the
+            strategic form only
+
+          * ``'enummixed'`` -- enumeration of the extreme equilibria
+            (two-player games only); works on the strategic form only
+
+          * ``'gnm'`` -- the global Newton method (any number of players);
+            works on the strategic form only
+
+          * ``'ipa'`` -- iterated polymatrix approximation (any number of
+            players); works on the strategic form only
 
           * ``'enumpure_agent'`` -- enumeration of the pure-strategy *agent*
             equilibria; works on the extensive form only
@@ -1937,7 +1959,17 @@ class ExtensiveFormGame(SageObject):
             extensive form only
 
           When ``None`` the default is ``'lcp'`` for games with at most two
-          players and ``'enumpoly'`` for more.  The name is matched without
+          players and ``'simpdiv'`` for more.  These are the two solvers gambit
+          itself recommends for finding an equilibrium of a game of that size,
+          and ``'simpdiv'`` is the least likely of them to fail on the game it
+          is given -- enumerating the supports of a tree of more than two
+          players, as ``'enumpoly'`` does, can take a very long time on a game
+          no larger than a handful of moves each.  Being one of the solvers
+          that work on the reduced strategic form, ``'simpdiv'`` answers with
+          *mixed strategy* profiles, so a game of more than two players is
+          solved on the strategic form by default; name ``'enumpoly'`` or
+          ``'logit'`` to have behavior-strategy equilibria of the tree itself.
+          The name is matched without
           regard to case, so ``'LCP'`` and ``'lcp'`` name the same solver.
 
           The two ``_agent`` solvers compute a different solution concept.  An
@@ -1964,26 +1996,32 @@ class ExtensiveFormGame(SageObject):
           OUTPUT.
 
           Only ``'lcp'``, ``'lp'``, ``'enumpoly'`` and ``'logit'`` can do both,
-          and for them this is passed straight to the gambit solver.  Gambit
-          computes pure-strategy and Lyapunov equilibria with one solver per
-          form instead of one solver taking an argument, and the two forms do
-          not answer the same question there: ``'enumpure'`` and ``'liap'``
-          always work on the strategic form and ignore this flag, while
+          and for them this is passed straight to the gambit solver.  The rest
+          are tied to one form or the other.  ``'enummixed'``, ``'enumpure'``,
+          ``'gnm'``, ``'ipa'``, ``'liap'`` and ``'simpdiv'`` always work on the
+          reduced strategic form -- the same set gambit's own graphical
+          interface switches to the strategic form for -- and warn that they
+          ignore this flag when it is ``False`` and they were named explicitly;
+          the default is chosen here rather than asked for, so it never warns.
           ``'enumpure_agent'`` and ``'liap_agent'`` always work on the extensive
           form and warn that they ignore it when it is ``True``.
 
         - ``rational`` -- boolean (default: ``True``); whether to answer with
           rational probabilities rather than floating point ones, which is done
-          in whichever of two ways the algorithm allows.  ``'lcp'`` and
-          ``'lp'`` are asked to compute exactly throughout; ``'enumpoly'``,
-          ``'logit'``, ``'liap'`` and ``'liap_agent'`` have no exact mode, so
+          in whichever of two ways the algorithm allows.  ``'lcp'``, ``'lp'``
+          and ``'enummixed'`` are asked to compute exactly throughout;
+          ``'enumpoly'``, ``'logit'``, ``'gnm'``, ``'ipa'``, ``'liap'`` and
+          ``'liap_agent'`` have no exact mode, so
           they compute in floating point and their answer is then rounded to the
           exact equilibrium it approximates, as described under ``tolerance``.
 
           An algorithm that cannot answer in the kind of number that was asked
           for says so with a warning and answers in the other one.  That is
           what ``'enumpure'`` and ``'enumpure_agent'``, which enumerate pure
-          profiles and so always work exactly, do with ``rational=False``.
+          profiles, and ``'simpdiv'``, which refines a grid of rationals, do
+          with ``rational=False``; they always work exactly.  Note that exact
+          arithmetic does not by itself make an answer exact: ``'simpdiv'``
+          returns a rational that approximates an equilibrium.
 
         - ``tolerance`` -- a positive number (default: ``1e-4``); how far a
           probability computed by one of the numerical algorithms may be moved
@@ -2006,8 +2044,7 @@ class ExtensiveFormGame(SageObject):
           ``'lcp'``.  ``'enumpoly'`` works through the supports of the game --
           every choice of which actions are played with positive probability --
           and solves a system of polynomial equations for each one, so its cost
-          climbs steeply with the size of the game; as it is also what a game of
-          more than two players is solved with by default, it is asked for a
+          climbs steeply with the size of the game, and it is asked for a
           single equilibrium unless told otherwise.  Pass ``stop_after=None`` to
           have it enumerate them all.
 
@@ -2025,16 +2062,21 @@ class ExtensiveFormGame(SageObject):
         played, *conditional on that information set being reached*.  Index it
         by an action, an information set or a player, as in ``eq[action]``.
         This is what the extensive form is solved into, and what
-        ``use_strategic=False`` (the default) returns, as do
-        ``'enumpure_agent'`` and ``'liap_agent'`` whatever it is set to.
+        ``use_strategic=False`` returns from a solver that can work on the
+        tree, as do ``'enumpure_agent'`` and ``'liap_agent'`` whatever it is
+        set to.
 
         A ``MixedStrategyProfile`` is a dict-like object mapping each *pure
         strategy* -- a complete contingent plan, choosing one action at every
         information set of that player -- to the probability with which the
         plan is played.  Index it by a strategy or a player, as in
         ``eq[strategy]``.  This is what the strategic form is solved into, and
-        what ``use_strategic=True`` returns, as do ``'enumpure'`` and
-        ``'liap'`` whatever it is set to.  A profile of either kind converts
+        what ``use_strategic=True`` returns, as do the six solvers that work on
+        the strategic form only -- ``'enummixed'``, ``'enumpure'``, ``'gnm'``,
+        ``'ipa'``, ``'liap'`` and ``'simpdiv'`` -- whatever it is set to.  One
+        of those, ``'simpdiv'``, is the default for a game of more than two
+        players, so such a game answers with mixed strategy profiles unless
+        another algorithm is named.  A profile of either kind converts
         into the other with its ``as_behavior()`` and ``as_strategy()``
         methods.
 
@@ -2099,11 +2141,13 @@ class ExtensiveFormGame(SageObject):
             sage: type(e.obtain_nash(algorithm='lcp', rational=False)[0]).__name__
             'MixedBehaviorProfileDouble'
 
-        ``'enumpure'`` and ``'liap'`` solve the strategic form whatever
-        ``use_strategic`` says, so they answer with mixed strategy profiles::
+        Six of the solvers -- ``'enummixed'``, ``'enumpure'``, ``'gnm'``,
+        ``'ipa'``, ``'liap'`` and ``'simpdiv'`` -- solve the strategic form
+        whatever ``use_strategic`` says, so they answer with mixed strategy
+        profiles::
 
             sage: # optional - pygambit
-            sage: eqs = g.obtain_nash(algorithm='liap')
+            sage: eqs = g.obtain_nash(algorithm='liap', use_strategic=True)
             sage: [[[float(eq[s]) for s in p.strategies]
             ....:   for p in g._gambit_().players] for eq in eqs]
             [[[0.0, 1.0], [1.0]]]
@@ -2111,6 +2155,67 @@ class ExtensiveFormGame(SageObject):
             sage: [[[float(eq[s]) for s in p.strategies]
             ....:   for p in g._gambit_().players] for eq in eqs]
             [[[0.0, 1.0], [1.0]]]
+            sage: [g.obtain_nash(algorithm=a, use_strategic=True)[0]
+            ....:  == eqs[0] for a in ['enummixed', 'gnm', 'ipa', 'simpdiv']]
+            [True, True, True, True]
+
+        Naming one of them while leaving ``use_strategic`` at ``False`` asks
+        for something it cannot do, so it says which form it worked on::
+
+            sage: # optional - pygambit
+            sage: import warnings
+            sage: with warnings.catch_warnings(record=True) as caught:
+            ....:     warnings.simplefilter('always')
+            ....:     eqs = g.obtain_nash(algorithm='gnm')
+            sage: print(caught[0].message)
+            'gnm' computes equilibria of the reduced strategic form;
+            ignoring use_strategic=False
+
+        A game of more than two players is solved with ``'simpdiv'`` unless
+        another algorithm is named, so its equilibria come back as mixed
+        strategy profiles.  Here Alice, Bob and Carol each move once without
+        seeing what the others did, and each is paid 1 for their second action
+        and nothing for their first, whatever the other two do::
+
+            sage: # optional - pygambit
+            sage: t = ExtensiveFormGame(players=['Alice', 'Bob', 'Carol'])
+            sage: t.append_move(t.root, 'Alice', ['L', 'R'])
+            sage: t.append_move(t.root.children['L'], 'Bob', ['l', 'r'])
+            sage: t.append_infoset(t.root.children['R'],
+            ....:                  t.root.children['L'])
+            sage: waiting = [t.root.children[a].children[b]
+            ....:            for a in ['L', 'R'] for b in ['l', 'r']]
+            sage: t.append_move(waiting[0], 'Carol', ['x', 'y'])
+            sage: for node in waiting[1:]:
+            ....:     t.append_infoset(node, waiting[0])
+            sage: for a in ['L', 'R']:
+            ....:     for b in ['l', 'r']:
+            ....:         for c in ['x', 'y']:
+            ....:             leaf = t.root.children[a].children[b].children[c]
+            ....:             t.set_outcome(leaf, a + b + c,
+            ....:                           [int(a == 'R'), int(b == 'r'),
+            ....:                            int(c == 'y')])
+
+        Each of them has a dominant action, so the game has the one
+        equilibrium in which all three take it::
+
+            sage: # optional - pygambit
+            sage: eqs = t.obtain_nash()
+            sage: type(eqs[0]).__name__
+            'MixedStrategyProfileRational'
+            sage: [[[QQ(eq[st]) for st in p.strategies]
+            ....:   for p in t._gambit_().players] for eq in eqs]
+            [[[0, 1], [0, 1], [0, 1]]]
+
+        The default is chosen here rather than asked for, so it does not warn
+        about the form it worked on::
+
+            sage: # optional - pygambit
+            sage: with warnings.catch_warnings(record=True) as caught:
+            ....:     warnings.simplefilter('always')
+            ....:     _ = t.obtain_nash()
+            sage: caught
+            []
 
         Their two ``_agent`` counterparts solve the extensive form and answer
         with behavior profiles, but not to the same question.  Take Figure 4.2
@@ -2121,7 +2226,8 @@ class ExtensiveFormGame(SageObject):
             sage: # optional - pygambit
             sage: myerson = ExtensiveFormGame.load_from_gambit_catalog(
             ....:     'books/myerson1991/fig4_2')
-            sage: nash = myerson.obtain_nash(algorithm='enumpure')
+            sage: nash = myerson.obtain_nash(algorithm='enumpure',
+            ....:                              use_strategic=True)
             sage: agent = myerson.obtain_nash(algorithm='enumpure_agent')
             sage: len(nash), len(agent)
             (1, 2)
@@ -2267,8 +2373,8 @@ class ExtensiveFormGame(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'Bogus'; must be one of
-            'enumpoly', 'enumpure', 'enumpure_agent', 'lcp', 'liap',
-            'liap_agent', 'logit', 'lp'
+            'enummixed', 'enumpoly', 'enumpure', 'enumpure_agent', 'gnm',
+            'ipa', 'lcp', 'liap', 'liap_agent', 'logit', 'lp', 'simpdiv'
 
         ::
 
@@ -2277,8 +2383,8 @@ class ExtensiveFormGame(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'bogus'; must be one of
-            'enumpoly', 'enumpure', 'enumpure_agent', 'lcp', 'liap',
-            'liap_agent', 'logit', 'lp'
+            'enummixed', 'enumpoly', 'enumpure', 'enumpure_agent', 'gnm',
+            'ipa', 'lcp', 'liap', 'liap_agent', 'logit', 'lp', 'simpdiv'
 
         There is nothing to round to within a tolerance of zero::
 
@@ -2299,7 +2405,8 @@ class ExtensiveFormGame(SageObject):
             ...
             ValueError: 'lcp' can only stop early on the strategic form;
             pass use_strategic=True along with 'stop_after'
-            sage: g.obtain_nash(algorithm='liap', stop_after=1)
+            sage: g.obtain_nash(algorithm='liap', use_strategic=True,
+            ....:                 stop_after=1)
             Traceback (most recent call last):
             ...
             ValueError: 'stop_after' is only supported by the 'enumpoly' and
@@ -2355,9 +2462,10 @@ class ExtensiveFormGame(SageObject):
         # Most solvers take ``use_strategic`` as an argument.  ``enumpure`` and
         # ``liap`` come in two flavours instead: the plain ones only ever work
         # on the strategic form, and the agent ones only on the extensive form.
-        # ``liap`` is started from a profile rather than from the game, so it
-        # needs the centroid of the right kind.  The lambdas read ``stop_after``
-        # when they are called, which is after it has been resolved below.
+        # ``liap`` and ``simpdiv`` are started from a profile rather than from
+        # the game, so they need the centroid of the right kind.  The lambdas
+        # read ``stop_after`` when they are called, which is after it has been
+        # resolved below.
         solvers = {
             'lcp': lambda: gambit_nash.lcp_solve(game, rational=rational,
                                                  use_strategic=use_strategic,
@@ -2373,13 +2481,25 @@ class ExtensiveFormGame(SageObject):
             'liap': lambda: gambit_nash.liap_solve(game.mixed_strategy_profile()),
             'liap_agent': lambda: gambit_nash.liap_agent_solve(
                 game.mixed_behavior_profile()),
+            'enummixed': lambda: gambit_nash.enummixed_solve(game,
+                                                             rational=rational),
+            'gnm': lambda: gambit_nash.gnm_solve(game),
+            'ipa': lambda: gambit_nash.ipa_solve(game),
+            'simpdiv': lambda: gambit_nash.simpdiv_solve(
+                game.mixed_strategy_profile(rational=True)),
         }
         # The algorithm is matched without regard to case, but the error
         # messages below quote the name back the way the caller spelled it.
         requested = algorithm
-        if algorithm is None:
+        named = algorithm is not None
+        if not named:
+            # Simplicial subdivision is what gambit itself recommends for a
+            # game of more than two players: it refines a grid over the
+            # profiles until it lands on an equilibrium, which is far less
+            # likely to fail on the game it is given than enumerating the
+            # supports, and it computes exactly.
             requested = algorithm = ('lcp' if len(game.players) <= 2
-                                     else 'enumpoly')
+                                     else 'simpdiv')
         else:
             algorithm = algorithm.lower()
         try:
@@ -2394,6 +2514,14 @@ class ExtensiveFormGame(SageObject):
             warnings.warn("{0!r} computes agent equilibria of the extensive "
                           "form; ignoring use_strategic=True".format(requested))
 
+        if (named and not use_strategic
+                and algorithm in _STRATEGIC_ONLY_ALGORITHMS):
+            # Only a solver the caller named is worth a warning: the default is
+            # chosen here and the caller has asked for nothing in particular.
+            warnings.warn("{0!r} computes equilibria of the reduced strategic "
+                          "form; ignoring use_strategic=False"
+                          .format(requested))
+
         if not rational and algorithm in _ALWAYS_EXACT_GAMBIT_SOLVERS:
             warnings.warn("the {0!r} algorithm always computes exactly, so the "
                           "equilibria are rational even though rational=False"
@@ -2401,9 +2529,8 @@ class ExtensiveFormGame(SageObject):
 
         if stop_after == 'auto':
             # Enumerating the supports of a game costs more with every one of
-            # them, and ``'enumpoly'`` is what a game of more than two players
-            # is solved with by default, so it is stopped at one equilibrium
-            # unless the caller asks for more.
+            # them, so ``'enumpoly'`` is stopped at one equilibrium unless the
+            # caller asks for more.
             stop_after = 1 if algorithm == 'enumpoly' else None
         else:
             if algorithm not in ('enumpoly', 'lcp'):
