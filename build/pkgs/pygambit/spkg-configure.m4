@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pygambit], [SAGE_PYTHON_PACKAGE_CHECK([pygambit])])

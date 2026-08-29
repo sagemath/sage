@@ -5645,6 +5645,9 @@ REFERENCES:
               and S. A. Vanstone. *Handbook of Applied
               Cryptography*. CRC Press, 1996.
 
+.. [Mye1991] Roger B. Myerson, *Game Theory: Analysis of Conflict*,
+             Harvard University Press, 1991.
+
 .. [MW1990] Brendan D. McKay and Nicholas C. Worland. *Uniform Generation of
             Random Regular Graphs of Moderate Degree*. Journal of Algorithms,
             11(1):52-67, 1990.
@@ -6036,6 +6039,11 @@ REFERENCES:
             homology, cohomology, and (co)homological operations via
             chain contraction*, Adv. Comput. Math. 41 (2015), pp
             253--275.
+
+.. [PR1997] Michele Piccione and Ariel Rubinstein, *On the interpretation
+            of decision problems with imperfect recall*,
+            Games Econom. Behav. 20 (1997), no. 1, pp. 3--24,
+            :doi:`10.1006/game.1997.0536`.
 
 .. [PRC2012] \G. Piret, T. Roche, and C. Carlet,
              *PICARO - a block cipher allowing efficient higher-order side-channel
@@ -6481,6 +6489,11 @@ REFERENCES:
 .. [SE1962] \N. E. Steenrod and D. B. A. Epstein, Cohomology
             operations, Ann. of Math. Stud. 50 (Princeton University
             Press, 1962).
+
+.. [Selten1975] Reinhard Selten, *Reexamination of the perfectness concept
+                for equilibrium points in extensive games*,
+                Internat. J. Game Theory 4 (1975), no. 1, pp. 25--55,
+                :doi:`10.1007/BF01766400`.
 
 .. [Ser1972] Jean-Pierre Serre,
              Propriétés galoisiennes des points d'ordre fini
