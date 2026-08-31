@@ -56,7 +56,8 @@ from sage.rings.integer cimport Integer
 
 cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=False):
     r"""
-    Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
+    Return a list of all primes between ``start`` and ``stop - 1``, inclusive
+    (or between ``stop`` and ``start + 1`` if ``step`` is negative).
 
     If the second argument is omitted, this returns the primes up to the
     first argument.

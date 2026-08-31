@@ -1014,16 +1014,16 @@ def eratosthenes(n):
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
 
-def primes(start=2, stop=None, step=None, *, proof=None):
+def primes(start=2, stop=None, step=None, *, proof=None) -> Iterator[Integer]:
     r"""
-    Return an iterator over all primes between ``start`` and ``stop-1``,
-    inclusive. This is much slower than :func:`prime_range`, but
-    potentially uses less memory.  As with :func:`next_prime`, the optional
-    argument ``proof`` controls whether the numbers returned are
-    guaranteed to be prime or not.
+    Return an iterator over all primes between ``start`` and ``stop - 1``,
+    inclusive (or between ``stop`` and ``start + 1`` if ``step`` is negative).
+    This is much slower than :func:`prime_range`, but potentially uses less
+    memory. As with :func:`next_prime`, the optional argument ``proof`` controls
+    whether the numbers returned are guaranteed to be prime or not.
 
     This command is like the Python 3 :func:`range` command, except it only
-    iterates over primes.
+    iterates over primes and returns them as Sage integers.
 
     .. SEEALSO::
 
