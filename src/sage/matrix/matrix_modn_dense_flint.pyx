@@ -47,6 +47,7 @@ from sage.rings.finite_rings.integer_mod cimport (
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 from sage.libs.flint.nmod_mat cimport *
@@ -128,9 +129,9 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
             sage: A = matrix(Zmod(36), 3, 3, range(9))
             sage: del A
         """
-        sig_on()
+        # Destructors cannot propagate exceptions, so this must not be
+        # wrapped in sig_on()/sig_off().
         nmod_mat_clear(self._matrix)
-        sig_off()
 
     cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         nmod_mat_set_entry(self._matrix, i, j, value)
@@ -255,10 +256,50 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
         check_matrix_multiplication_sizes(left, _right)
         cdef Matrix_modn_dense_flint right = _right
         cdef Matrix_modn_dense_flint M = left._new(left._nrows, right._ncols)
-        sig_on()
-        nmod_mat_mul(M._matrix, left._matrix, right._matrix)
-        sig_off()
+        M._set_to_product(left, right)
         return M
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using FLINT.
+
+        ``nmod_mat_mul`` takes the destination as its first argument and
+        chooses the multiplication algorithm itself, so the product is written
+        straight into the destination's FLINT storage.  This is the shared core
+        of :meth:`_matrix_times_matrix_` and of :meth:`set_to_product`.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: A = matrix(Zmod(36), 2, 3, range(6))
+            sage: B = matrix(Zmod(36), 3, 2, range(6))
+            sage: C = matrix(Zmod(36), 2, 2, implementation='flint')
+            sage: C.set_to_product(A, B)
+            sage: C
+            [10 13]
+            [28  4]
+            sage: C == A * B
+            True
+
+        TESTS:
+
+        A zero inner dimension zeroes the destination::
+
+            sage: C.set_to_product(matrix(Zmod(36), 2, 0), matrix(Zmod(36), 0, 2))
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_modn_dense_flint _left = <Matrix_modn_dense_flint>left
+        cdef Matrix_modn_dense_flint _right = <Matrix_modn_dense_flint>right
+        sig_on()
+        nmod_mat_mul(self._matrix, _left._matrix, _right._matrix)
+        sig_off()
 
     cpdef _lmul_(self, Element right):
         r"""
@@ -903,7 +944,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
             [9223372036854775800]
         """
         cdef Py_ssize_t i, j, m = self._nrows, n = self._ncols
-        cdef mp_limb_t x, preN, preshift, N = modulus
+        cdef mp_limb_t x, preN, preshift = 0, N = modulus
         preN = n_preinvert_limb(N)
         if not mul:
             preshift = n_preinvert_limb(shift)
@@ -1245,7 +1286,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
         Return the columns containing a leading 1 in the echelon form of this matrix.
 
         When the base ring is not a field, there may be other rows with leading entries
-        a zero divisor.  These columns are available using the :meth:`_pivots` method.
+        a zero divisor.  These columns are available using the ``_pivots()`` method.
 
         EXAMPLES::
 
@@ -1272,7 +1313,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
 
         - :meth:`pivots`
 
-        - :meth:`_pivots`
+        - ``_pivots()``
 
         EXAMPlES::
 

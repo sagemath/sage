@@ -32,6 +32,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
     :meth:`~Posets.BubblePoset` | Return the Bubble lattice for `(m,n)`.
     :meth:`~Posets.ChainPoset` | Return a chain on `n` elements.
+    :meth:`~Posets.ChuteMoveLattice` | Return the chute move lattice on polyominoes.
     :meth:`~Posets.Crown` | Return the crown poset on `2n` elements.
     :meth:`~Posets.DexterSemilattice` | Return the Dexter semilattice.
     :meth:`~Posets.DiamondPoset` | Return the lattice of rank two on `n` elements.
@@ -106,7 +107,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
-from sage.combinat.posets import bubble_shuffle, hochschild_lattice, sashes
+from sage.combinat.posets import bubble_shuffle, hochschild_lattice, sashes, chute_move
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -296,9 +297,26 @@ class Posets(metaclass=ClasscallMetaclass):
 
     ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
 
-    HochschildLattice = staticmethod(hochschild_lattice.hochschild_lattice)
+    @staticmethod
+    def HochschildLattice(n):
+        r"""
+        Return the Hochschild lattice `H_n`.
 
-    Sashes = staticmethod(sashes.lattice_of_sashes)
+        See :func:`~sage.combinat.posets.hochschild_lattice.hochschild_lattice`
+        for details.
+        """
+        return hochschild_lattice.hochschild_lattice(n)
+
+    @staticmethod
+    def Sashes(n):
+        r"""
+        Return the lattice of sashes of length ``n``.
+
+        See :func:`~sage.combinat.posets.sashes.lattice_of_sashes` for details.
+        """
+        return sashes.lattice_of_sashes(n)
+
+    ChuteMoveLattice = staticmethod(chute_move.ChuteMoveLattice)
 
     @staticmethod
     def ChainPoset(n, facade=None):
@@ -1329,7 +1347,14 @@ class Posets(metaclass=ClasscallMetaclass):
 
     # shard intersection order
     import sage.combinat.shard_order
-    ShardPoset = staticmethod(sage.combinat.shard_order.shard_poset)
+    @staticmethod
+    def ShardPoset(n):
+        r"""
+        Return the shard intersection order on permutations of size `n`.
+
+        See :func:`~sage.combinat.shard_order.shard_poset` for details.
+        """
+        return sage.combinat.shard_order.shard_poset(n)
 
     # Tamari lattices
     import sage.combinat.nu_tamari_lattice

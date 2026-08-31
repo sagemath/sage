@@ -231,10 +231,9 @@ def centralizer(braid):
     if len(lnf) == 1:  # (lib)braiding crashes when the input is a power of Delta.
         if lnf[0][0] % 2 == 0:
             return [[[0], [i + 1]] for i in range(nstrands)]
-        elif nstrands % 2:
+        if nstrands % 2:
             return [[[0], [i + 1, nstrands - i - 1]] for i in range(nstrands//2)]
-        else:
-            return [[[0], [i + 1, nstrands - i - 1]] for i in range(nstrands//2 - 1)] + [[[0], [nstrands//2]]]
+        return [[[0], [i + 1, nstrands - i - 1]] for i in range(nstrands//2 - 1)] + [[[0], [nstrands//2]]]
     l = braid.Tietze()
     sig_on()
     cdef list[list[list[int]]] rop = CentralizerGenerators(nstrands, l)

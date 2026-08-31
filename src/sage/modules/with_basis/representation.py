@@ -211,7 +211,7 @@ class Representation_abstract:
         INPUT:
 
         - ``chi`` -- list/tuple of character values or an instance
-          of :class:`~sage.groups.class_function.ClassFunction_gap`
+          of :class:`~sage.groups.class_function.ClassFunction`
         - ``G`` -- a finitely-generated semigroup (default: the semigroup
           this is a representation of)
 
@@ -2740,8 +2740,7 @@ class SchurFunctorRepresentation(Subrepresentation):
     *Schur functor* for a partition `\lambda` of size `k` is the functor
     `\mathbb{S}_{\lambda}` that sends `V` to the `G`-subrepresentation of
     `V^{\otimes k}` spanned by `(v_1 \otimes \cdots \otimes v_k) c_{\lambda}`,
-    where `c_{\lambda}` is the :meth:`Young symmetrizer
-    <sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra.young_symmetrizer>`
+    where `c_{\lambda}` is the :meth:`Young symmetrizer <sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.young_symmetrizer>`
     corresponding to `\lambda`. When `G = GL_n(F)`, the Schur functor image
     `\mathbb{S}_{\lambda} F^n` is the (irreducible when `F` has characteristic
     `0`) highest representation of shape `\lambda`.

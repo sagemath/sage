@@ -1811,7 +1811,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         OUTPUT:
 
         A tuple of points that span a simplex of dimension
-        :meth:`dim`. If ``large==True``, the simplex is constructed by
+        :meth:`~sage.geometry.triangulation.base.PointConfiguration_base.dim`.
+        If ``large==True``, the simplex is constructed by
         successively picking the farthest point. This will ensure that
         the simplex is not unnecessarily small, but will in general
         not return a maximal simplex.
@@ -1904,7 +1905,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
           will be placed in some arbitrary order that attempts to
           produce a small number of simplices.
 
-        OUTPUT: a :class:`~sage.geometry.triangulation.triangulation.Triangulation`
+        OUTPUT: a :class:`~sage.geometry.triangulation.element.Triangulation`
 
         EXAMPLES::
 
@@ -2047,7 +2048,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         - ``homogenize`` -- boolean (default: ``True``); whether to add a row
           of 1's before taking the transform.
 
-        OUTPUT: a matrix over :meth:`base_ring`
+        OUTPUT: a matrix over
+        :meth:`~sage.geometry.triangulation.base.PointConfiguration_base.base_ring`
 
         EXAMPLES::
 
@@ -2211,7 +2213,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         .. SEEALSO::
 
-            :meth:`~sage.schemes.toric.variety.Kaehler_cone`
+            :meth:`~sage.schemes.toric.variety.ToricVariety_field.Kaehler_cone`
 
         REFERENCES:
 

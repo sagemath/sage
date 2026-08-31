@@ -508,7 +508,7 @@ class ClassGroup(AbelianGroupWithValues_class):
         r"""
         Return generating ideals for the (`S`-)class group.
 
-        This is an alias for :meth:`gens_values`.
+        This is an alias for :meth:`~sage.groups.abelian_gps.values.AbelianGroupWithValues_class.gens_values`.
 
         OUTPUT: a tuple of ideals, one for each abstract Abelian group generator
 

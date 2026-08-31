@@ -35,13 +35,12 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         You should not create objects of this class directly. The
         preferred method to construct such subschemes is to use
-        :meth:`~ToricVariety_field.subscheme` method of :class:`toric
+        :meth:`~sage.schemes.toric.variety.ToricVariety_field.subscheme` method of :class:`toric
         varieties <sage.schemes.toric.variety.ToricVariety_field>`.
 
     INPUT:
 
-    - ``toric_variety`` -- ambient :class:`toric variety
-      <ToricVariety_field>`
+    - ``toric_variety`` -- ambient :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     - ``polynomials`` -- single polynomial, list, or ideal of defining
       polynomials in the coordinate ring of ``toric_variety``
@@ -419,8 +418,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         An affine toric algebraic scheme (polynomial equations in an
         affine toric variety) with fixed
-        :meth:`~AlgebraicScheme.embedding_morphism` and
-        :meth:`~AlgebraicScheme.embedding_center`.
+        :meth:`~sage.schemes.toric.variety.ToricVariety_field.embedding_morphism` and
+        :meth:`~sage.schemes.generic.algebraic_scheme.AlgebraicScheme.embedding_center`.
 
         EXAMPLES::
 
@@ -727,13 +726,12 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
 
         You should not create objects of this class directly. The preferred
         method to construct such subschemes is to use
-        :meth:`~ToricVariety_field.subscheme` method of
-        :class:`toric varieties <ToricVariety_field>`.
+        :meth:`~sage.schemes.toric.variety.ToricVariety_field.subscheme` method of
+        :class:`toric varieties <sage.schemes.toric.variety.ToricVariety_field>`.
 
     INPUT:
 
-    - ``toric_variety`` -- ambient :class:`affine toric variety
-      <ToricVariety_field>`
+    - ``toric_variety`` -- ambient :class:`affine toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     - ``polynomials`` -- single polynomial, list, or ideal of defining
       polynomials in the coordinate ring of ``toric_variety``

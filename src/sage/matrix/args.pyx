@@ -1610,8 +1610,7 @@ cdef class MatrixArgs:
             # this only works if the number of columns is not 1.
             if len(self.entries) == self.nrows:
                 return MA_ENTRIES_SEQ_SEQ
-            else:
-                return MA_ENTRIES_SEQ_FLAT
+            return MA_ENTRIES_SEQ_FLAT
         if isinstance(x, (int, float, complex, str)):
             # Note that a string is not considered to be a sequence.
             return MA_ENTRIES_SEQ_FLAT

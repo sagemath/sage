@@ -984,8 +984,7 @@ cdef class ModularSymbolNumerical:
 
         if sign == 1:
             return ans.real()/ self._om1
-        else:
-            return ans.imag()/ self._om2
+        return ans.imag()/ self._om2
 
     # == initialisation ========
 

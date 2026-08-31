@@ -271,7 +271,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         Vector space of dimension 4 over Finite Field of size 7
 
     The fastest method to construct a zero vector is to call the
-    :meth:`~sage.modules.free_module.FreeModule_generic.zero_vector`
+    :meth:`~sage.modules.free_module.Module_free_ambient.zero_vector`
     method directly on a free module or vector space, since
     vector(...)  must do a small amount of type checking.  Almost as
     fast as the ``zero_vector()`` method is the
@@ -415,7 +415,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         (2.0, 3.0)
 
     A generator, or other iterable, may also be supplied as input.  Anything
-    that can be converted to a :class:`~sage.structure.sequence.Sequence` is
+    that can be converted to a :func:`~sage.structure.sequence.Sequence` is
     a possible input.  ::
 
         sage: type(i^2 for i in range(3))
@@ -630,7 +630,7 @@ def prepare(v, R, degree=None):
     the entries in the list. If ``R`` is given, the entries
     are coerced in.  Otherwise a common ring is found. For
     more details, see the
-    :class:`~sage.structure.sequence.Sequence` object.  When ``v``
+    :func:`~sage.structure.sequence.Sequence` object.  When ``v``
     has no elements and ``R`` is ``None``, the ring returned is
     the integers.
 
@@ -1621,8 +1621,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_sparse():
             return self.parent()(self.dict())
-        else:
-            return self.parent()(self.list())
+        return self.parent()(self.list())
 
     def subs(self, in_dict=None, **kwds):
         """
@@ -1667,7 +1666,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         Return the ring from which the coefficients of this vector come.
 
-        This is different from :meth:`base_ring`, which returns the ring
+        This is different from :meth:`~sage.structure.element.Element.base_ring`,
+        which returns the ring
         of scalars.
 
         EXAMPLES::
@@ -2568,8 +2568,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         from sage.plot.all import line, points
         if connect:
             return line(v, **kwds)
-        else:
-            return points(v, **kwds)
+        return points(v, **kwds)
 
     cpdef _dot_product_coerce_(left, Vector right):
         """
@@ -3475,7 +3474,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: M.parent()
             Full MatrixSpace of 3 by 4 dense matrices over Rational Field
 
-        The more general :meth:`sage.matrix.matrix2.tensor_product` is an
+        The more general :meth:`~sage.matrix.matrix2.Matrix.tensor_product` is an
         operation on a pair of matrices.  If we construct a pair of vectors
         as a column vector and a row vector, then an outer product and a
         tensor product are identical.  Thus ``tensor_product`` is a synonym
@@ -3905,8 +3904,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_dense():
             return self
-        else:
-            return self.parent().ambient_module().dense_module()(self.list())
+        return self.parent().ambient_module().dense_module()(self.list())
 
     def sparse_vector(self):
         """
@@ -3924,8 +3922,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if self.is_sparse():
             return self
-        else:
-            return self.parent().ambient_module().sparse_module()(self.list())
+        return self.parent().ambient_module().sparse_module()(self.list())
 
     def apply_map(self, phi, R=None, sparse=None):
         """
@@ -4037,10 +4034,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             if sparse == self.is_sparse():
                 from copy import copy
                 return copy(self)
-            elif sparse:
+            if sparse:
                 return self.sparse_vector()
-            else:
-                return self.dense_vector()
+            return self.dense_vector()
 
         v = None
 
@@ -4066,8 +4062,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         if R is None:
             return vector(v, sparse=sparse)
-        else:
-            return vector(R, v, sparse=sparse)
+        return vector(R, v, sparse=sparse)
 
     def _derivative(self, var=None):
         """
@@ -4764,8 +4759,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         if copy:
             return list(self._entries)
-        else:
-            return self._entries
+        return self._entries
 
     def __call__(self, *args, **kwargs):
         """
@@ -5433,8 +5427,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         """
         if copy:
             return dict(self._entries)
-        else:
-            return self._entries
+        return self._entries
 
     def list(self, copy=True):
         """

@@ -1874,7 +1874,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         .. SEEALSO::
 
             :func:`sage.rings.power_series_ring.PowerSeriesRing`,
-            :func:`sage.rings.laurent_series_ring.LaurentSeriesRing`.
+            :class:`~sage.rings.laurent_series_ring.LaurentSeriesRing`.
 
         TESTS::
 
@@ -1906,7 +1906,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: an asymptotic expansion
 
@@ -2093,7 +2093,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: an asymptotic expansion
 
@@ -3356,7 +3356,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
     - ``locals`` -- dictionary which may contain the following keys and values:
 
       - ``'log'`` -- value: a function. If not given, then the usual
-        :class:`log <sage.functions.log.Function_log>` is taken.
+        :class:`log <sage.functions.log.Function_log1>` is taken.
         (See also :meth:`AsymptoticExpansion.log`.)
 
     EXAMPLES:

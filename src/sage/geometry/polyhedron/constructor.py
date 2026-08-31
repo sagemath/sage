@@ -322,8 +322,9 @@ def Polyhedron(vertices=None, rays=None, lines=None,
       taken to be the single vertex.
 
       Instead of vertices, the first argument can also be an object
-      that can be converted to a :func:`Polyhedron` via an :meth:`as_polyhedron`
-      or :meth:`polyhedron` method. In this case, the following 5 arguments
+      that can be converted to a :func:`Polyhedron` via an
+      :meth:`~sage.geometry.polyhedron.face.PolyhedronFace.as_polyhedron`
+      or ``polyhedron`` method. In this case, the following 5 arguments
       cannot be provided.
 
     - ``rays`` -- list of rays; each ray can be specified as any

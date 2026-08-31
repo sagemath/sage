@@ -331,8 +331,7 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
     PM_max = PM.with_permuted_rows_and_columns(*permutations[0])
     if check:
         return (PM_max, permutations)
-    else:
-        return PM_max
+    return PM_max
 
 
 def _palp_canonical_order(vertices, PM_max, permutations):

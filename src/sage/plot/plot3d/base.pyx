@@ -122,7 +122,7 @@ cdef class Graphics3d(SageObject):
         """
         Rich Output Magic Method.
 
-        See :mod:`sage.repl.rich_output` for details.
+        See ``sage.repl.rich_output`` for details.
 
         EXAMPLES::
 
@@ -2798,10 +2798,9 @@ class TransformGroup(Graphics3dGroup):
         G = Graphics3dGroup.flatten(self)
         if isinstance(G, TransformGroup):
             return TransformGroup(G.all, T=self.get_transformation() * G.get_transformation())
-        elif isinstance(G, Graphics3dGroup):
+        if isinstance(G, Graphics3dGroup):
             return TransformGroup(G.all, T=self.get_transformation())
-        else:
-            return TransformGroup([G], T=self.get_transformation())
+        return TransformGroup([G], T=self.get_transformation())
 
     def transform(self, **kwds):
         """

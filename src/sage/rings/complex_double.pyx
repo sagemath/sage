@@ -351,28 +351,26 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         from sage.rings import complex_mpfr
         if isinstance(x, ComplexDoubleElement):
             return x
-        elif isinstance(x, tuple):
+        if isinstance(x, tuple):
             return ComplexDoubleElement(x[0], x[1])
-        elif isinstance(x, (float, int)):
+        if isinstance(x, (float, int)):
             return ComplexDoubleElement(x, 0)
-        elif isinstance(x, complex):
+        if isinstance(x, complex):
             return ComplexDoubleElement(x.real, x.imag)
-        elif isinstance(x, complex_mpfr.ComplexNumber):
+        if isinstance(x, complex_mpfr.ComplexNumber):
             return ComplexDoubleElement(x.real(), x.imag())
-        elif isinstance(x, pari_gen):
+        if isinstance(x, pari_gen):
             return pari_to_cdf(x)
-        elif type(x) is gmpy2.mpc:
+        if type(x) is gmpy2.mpc:
             return ComplexDoubleElement((<gmpy2.mpc>x).real, (<gmpy2.mpc>x).imag)
-        elif isinstance(x, str):
+        if isinstance(x, str):
             t = cdf_parser.parse_expression(x)
             if isinstance(t, float):
                 return ComplexDoubleElement(t, 0)
-            else:
-                return t
-        elif hasattr(x, '_complex_double_'):
+            return t
+        if hasattr(x, '_complex_double_'):
             return x._complex_double_(self)
-        else:
-            return ComplexDoubleElement(x, 0)
+        return ComplexDoubleElement(x, 0)
 
     cpdef _coerce_map_from_(self, S):
         """
@@ -423,21 +421,19 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         if isinstance(S, sage.rings.abc.RealField):
             if S.prec() >= 53:
                 return FloatToCDF(S)
-            else:
-                return None
-        elif is_numpy_type(S):
+            return None
+        if is_numpy_type(S):
             import numpy
             if issubclass(S, numpy.integer) or issubclass(S, numpy.floating):
                 return FloatToCDF(S)
-            elif issubclass(S, numpy.complexfloating):
+            if issubclass(S, numpy.complexfloating):
                 return ComplexToCDF(S)
-            else:
-                return None
-        elif RR.has_coerce_map_from(S):
+            return None
+        if RR.has_coerce_map_from(S):
             return FloatToCDF(RR) * RR._internal_coerce_map_from(S)
-        elif isinstance(S, sage.rings.abc.ComplexField) and S.prec() >= 53:
+        if isinstance(S, sage.rings.abc.ComplexField) and S.prec() >= 53:
             return CCtoCDF(S, self)
-        elif CC.has_coerce_map_from(S):
+        if CC.has_coerce_map_from(S):
             return CCtoCDF(CC, self) * CC._internal_coerce_map_from(S)
 
     def _magma_init_(self, magma):

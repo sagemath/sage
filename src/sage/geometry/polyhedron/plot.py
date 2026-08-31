@@ -42,7 +42,7 @@ def cyclic_sort_vertices_2d(Vlist):
         this.
 
     See
-    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_adjacency_matrix`
+    :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.vertex_adjacency_matrix`
     for a discussion of "adjacent".
 
     EXAMPLES::
@@ -1059,7 +1059,7 @@ class Projection(SageObject):
         INPUT:
 
         See
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+        :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         OUTPUT: a 2-d graphics object
 
@@ -1088,7 +1088,7 @@ class Projection(SageObject):
         INPUT:
 
         See
-        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+        :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         OUTPUT: a 2-d graphics object
 
@@ -1251,10 +1251,12 @@ class Projection(SageObject):
         - ``output_type`` -- string (default: ``'TikzPicture'``); valid values
           are ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a :class:`LatexExpr` object (which inherits from Python
-          :class:`str`) or a :class:`TikzPicture` object from module
+          :class:`str`) or a
+          :class:`~sage.misc.latex_standalone.TikzPicture` object from module
           :mod:`sage.misc.latex_standalone`
 
-        OUTPUT: :class:`LatexExpr` object or :class:`TikzPicture` object
+        OUTPUT: :class:`LatexExpr` object or
+        :class:`~sage.misc.latex_standalone.TikzPicture` object
 
         .. NOTE::
 

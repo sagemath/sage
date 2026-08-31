@@ -7,7 +7,7 @@ the posets introduced in this module are mutable, i.e., elements can
 be added and removed from a poset at any time.
 
 To get in touch with Sage's "usual" posets, start with the page
-:mod:`Posets <sage.combinat.posets.__init__>` in the reference manual.
+:mod:`Posets <sage.combinat.posets.posets>` in the reference manual.
 
 
 .. _mutable_poset_examples:

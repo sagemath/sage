@@ -36,7 +36,7 @@ EXAMPLES::
 Fibrations of the lattice polytopes are defined as lattice
 sub-polytopes and give rise to fibrations of toric varieties for
 suitable fan refinements. We can compute them using
-:meth:`~LatticePolytope_PPL.fibration_generator` ::
+:meth:`~sage.geometry.polyhedron.ppl_lattice_polytope.LatticePolytope_PPL_class.fibration_generator` ::
 
     sage: F = next(P.fibration_generator(2))
     sage: F.vertices()
@@ -529,8 +529,9 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return whether the lattice polytope is full dimensional.
 
-        OUTPUT: boolean; whether the :meth:`affine_dimension` equals the
-        ambient space dimension
+        OUTPUT: boolean; whether the
+        :meth:`~ppl.polyhedron.Polyhedron.affine_dimension` equals the ambient
+        space dimension
 
         EXAMPLES::
 
