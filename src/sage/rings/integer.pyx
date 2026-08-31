@@ -7444,11 +7444,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES::
 
-           sage: euler_phi(2)
+           sage: 2.euler_phi()                                                          # needs sage.libs.pari
             1
-            sage: euler_phi(12)                                                         # needs sage.libs.pari
+            sage: 12.euler_phi()                                                        # needs sage.libs.pari
             4
-            sage: euler_phi(37)                                                         # needs sage.libs.pari
+            sage: 37.euler_phi()                                                        # needs sage.libs.pari
             36
  
 

@@ -3072,7 +3072,7 @@ class Euler_Phi:
 
     .. SEEALSO:
 
-        :meth:`sage.rings.integer.Integer
+        :meth:`sage.rings.integer.Integer.euler_phi`
 
     INPUT:
 
@@ -4678,8 +4678,8 @@ class Moebius:
         F = factor(n)
         for _, e in F:
             if e >= 2:
-                return 0
-        return (-1)**len(F)
+                return ZZ.zero()
+        return ZZ((-1)**len(F))
 
     def __repr__(self) -> str:
         """
@@ -4871,7 +4871,7 @@ def number_of_divisors(n) -> Integer:
     This function just converts the input to a :class:`sage.rings.integer.Integer`
     and calls :meth:`sage.rings.integer.Integer.number_of_divisors`. If you
     already have an :class:`sage.rings.integer.Integer`, it is easier (and
-    slightly faster) to call :meth:`~sage.rings.Integer.number_of_divisors`
+    slightly faster) to call :meth:`sage.rings.Integer.number_of_divisors`
     directly.
 
     INPUT:
