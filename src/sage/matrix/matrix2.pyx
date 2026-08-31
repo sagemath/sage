@@ -4321,6 +4321,8 @@ cdef class Matrix(Matrix1):
           - ``'padic'`` -- `p`-adic algorithm from the IML library for matrices
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
+          - ``'full_pivoting'`` -- uses an echelon-like matrix from
+            Gaussian elimination with full pivoting
 
         - ``basis`` -- (default: ``'default'``) a keyword that describes
           the format of the basis returned.  Allowable values are:
@@ -4780,6 +4782,18 @@ cdef class Matrix(Matrix1):
             sage: (A * A.right_kernel_matrix(basis='computed').transpose()).norm() < 1e-15
             True
 
+        Over p-adic fields, full pivoting is used by default and this
+        can prevent significant precision loss::
+
+            sage: K = pAdicField(3, 7, print_mode='val-unit')
+            sage: M = matrix(K, 3, 5, [219, 234, 81, 90, 127, 39, 190, 119, 31, 181, 155, 67, 83, 211, 184])
+            sage: KE = M.right_kernel_matrix(algorithm='generic',basis='computed'); KE
+            [3^-4 * 2 + O(3^-3) 3^-5 * 2 + O(3^-4) 3^-5 * 2 + O(3^-4)         1 + O(3^7)                  0]
+            [3^-6 * 2 + O(3^-5) 3^-7 * 2 + O(3^-6) 3^-7 * 2 + O(3^-6)                  0         1 + O(3^7)]
+            sage: KF = M.right_kernel_matrix(algorithm='full_pivoting',basis='computed'); KF
+            [  3 * 196 + O(3^7)      1870 + O(3^7)         1 + O(3^7)                  0   3^7 * 2 + O(3^8)]
+            [  3 * 521 + O(3^7)      1364 + O(3^7)                  0         1 + O(3^7) 3^2 * 707 + O(3^8)]
+
         Trivial Cases:
 
         We test two trivial cases.  Any possible values for the
@@ -4863,7 +4877,7 @@ cdef class Matrix(Matrix1):
         algorithm = kwds.pop('algorithm', None)
         if algorithm is None:
             algorithm = 'default'
-        elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq', 'linbox', 'linbox-noefd']:
+        elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq', 'linbox', 'linbox-noefd', 'full_pivoting']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm )
         elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
@@ -4883,6 +4897,8 @@ cdef class Matrix(Matrix1):
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
         elif algorithm == 'pluq' and not isinstance(self, sage.matrix.matrix_mod2_dense.Matrix_mod2_dense):
             raise ValueError("'pluq' matrix kernel algorithm only available over integers mod 2, not over %s" % R)
+        elif algorithm == 'full_pivoting' and R not in _Fields:
+            raise ValueError("'full_pivoting' matrix kernel algorithm only available over a field, not over %s" % R)
 
         # Determine the basis format of independent spanning set to return
         basis = kwds.pop('basis', None)
@@ -4929,6 +4945,8 @@ cdef class Matrix(Matrix1):
         if algorithm == 'generic':
             format, M = self._right_kernel_matrix_over_field()
 
+        # Try to use implementation-specific `_right_kernel_matrix` methods
+        # (the method doesn't exist on many matrix types)
         if M is None:
             try:
                 format, M = self._right_kernel_matrix(algorithm=algorithm, proof=proof)
@@ -4939,7 +4957,10 @@ cdef class Matrix(Matrix1):
             format, M = self._right_kernel_matrix_over_number_field()
 
         if M is None and R in _Fields:
-            format, M = self._right_kernel_matrix_over_field()
+            from sage.categories.discrete_valuation import DiscreteValuationFields
+            if algorithm == 'default' and R in DiscreteValuationFields():
+                algorithm = 'full_pivoting'
+            format, M = self._right_kernel_matrix_over_field(algorithm=algorithm)
 
         if M is None and R.is_integral_domain():
             format, M = self._right_kernel_matrix_over_domain()
@@ -8385,6 +8406,9 @@ cdef class Matrix(Matrix1):
           - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
             scaled partial pivoting (if base ring has valuation)
 
+          - ``'full_pivoting'``: Gauss elimination, using full pivoting.
+            (if base ring has absolute value)
+
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
 
@@ -8401,6 +8425,9 @@ cdef class Matrix(Matrix1):
         returned unless the keyword option ``transformation=True`` is
         specified, in which case the transformation matrix is
         returned.
+
+        If ``algorithm='full_pivoting'`` is specified, the matrix ``self`` is
+        put into a row-equivalent column permutation of an echelon matrix instead.
 
         EXAMPLES::
 
@@ -8538,6 +8565,9 @@ cdef class Matrix(Matrix1):
                     self._echelon_in_place(algorithm)
                 elif algorithm == 'strassen':
                     self._echelon_strassen(cutoff)
+                elif algorithm == 'full_pivoting':
+                    transformation = kwds.get('transformation', False)
+                    return self._echelon_in_place_fp(transformation)
                 else:
                     raise ValueError("Unknown algorithm '%s'" % algorithm)
             else:
@@ -8575,11 +8605,14 @@ cdef class Matrix(Matrix1):
           - ``'partial_pivoting'``: Gauss elimination, using partial pivoting
             (if base ring has absolute value)
 
-          - ``'scaled_partial_pivoting'`` -- Gauss elimination, using scaled
+          - ``'scaled_partial_pivoting'``: Gauss elimination, using scaled
             partial pivoting (if base ring has absolute value)
 
           - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
             scaled partial pivoting (if base ring has valuation)
+
+          - ``'full_pivoting'``: Gauss elimination, using full pivoting
+            (if base ring has absolute value)
 
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
@@ -8602,6 +8635,9 @@ cdef class Matrix(Matrix1):
         specified, the output consists of a pair `(E,T)` of matrices
         where `E` is the echelon form of ``self`` and `T` is the
         transformation matrix.
+
+        If ``algorithm='full_pivoting'`` is specified, returns ``E`` as
+        a row-equivalent column permutation of an echelon matrix instead.
 
         EXAMPLES::
 
@@ -8646,15 +8682,66 @@ cdef class Matrix(Matrix1):
             [  5   8 510 316]
             sage: E == T * A
             True
+
+        The following is an example of how full pivoting can preserve much
+        more precision over p-adic fields::
+
+            sage: K = pAdicField(5,print_mode='val-unit')
+            sage: M = matrix(3, 5,
+            ....:    [K(5^9,10), K(5^9,10), K(1,10), K(17,10), K(0,10),
+            ....:    K(5^9,10), K(4*5^9,10), K(0,10), K(13,10), K(4,10),
+            ....:    K(2*5^9,10), K(4*5^9,10), K(0,10), K(0,10), K(7,10)])
+            sage: EF, A = M.echelon_form('full_pivoting',transformation = True); EF
+            [5^9 * 3 + O(5^10) 5^9 * 2 + O(5^10)       1 + O(5^10)           O(5^10)           O(5^10)]
+            [5^9 * 4 + O(5^10) 5^9 * 2 + O(5^10)           O(5^10)       1 + O(5^10)           O(5^10)]
+            [5^9 * 1 + O(5^10) 5^9 * 2 + O(5^10)           O(5^10)           O(5^10)       1 + O(5^10)]
+            sage: min(a.precision_absolute() for a in EF.list())
+            10
+            sage: ED = M.echelon_form('default'); ED
+            [          1 + O(5)               O(5)            O(5^-8) 5^-9 * 2 + O(5^-8) 5^-9 * 3 + O(5^-8)]
+            [           O(5^10)           1 + O(5)            O(5^-8) 5^-9 * 4 + O(5^-8) 5^-9 * 4 + O(5^-8)]
+            [           O(5^10)            O(5^10)           1 + O(5)           1 + O(5)           3 + O(5)]
+            sage: min(a.precision_absolute() for a in ED.list())
+            -8
+
+        We check that full pivoting does return a row-equivalent matrix and
+        that the column permutation to put the resulting matrix in true echelon
+        form is cached on the returned matrix::
+
+            sage: A*M == EF
+            True
+            sage: s = EF._cache['echelon_full_pivoting_columnperm']
+            sage: EF.with_permuted_columns(s)
+            [      1 + O(5^10)           O(5^10)           O(5^10) 5^9 * 2 + O(5^10) 5^9 * 3 + O(5^10)]
+            [          O(5^10)       1 + O(5^10)           O(5^10) 5^9 * 2 + O(5^10) 5^9 * 4 + O(5^10)]
+            [          O(5^10)           O(5^10)       1 + O(5^10) 5^9 * 2 + O(5^10) 5^9 * 1 + O(5^10)]
+            sage: min(a.precision_absolute() for a in EF.list())
+            10
+            sage: ED = M.echelon_form('default'); ED
+            [          1 + O(5)               O(5)            O(5^-8) 5^-9 * 2 + O(5^-8) 5^-9 * 3 + O(5^-8)]
+            [           O(5^10)           1 + O(5)            O(5^-8) 5^-9 * 4 + O(5^-8) 5^-9 * 4 + O(5^-8)]
+            [           O(5^10)            O(5^10)           1 + O(5)           1 + O(5)           3 + O(5)]
+            sage: min(a.precision_absolute() for a in ED.list())
+            -8
+
         """
         cdef bint transformation = ('transformation' in kwds and kwds['transformation'])
-        x = self.fetch('echelon_form')
-        if x is not None:
-            if not transformation:
-                return x
-            y = self.fetch('echelon_transformation')
-            if y:
-                return (x, y)
+        if algorithm != 'full_pivoting':
+            E = self.fetch('echelon_form')
+            if E is not None:
+                if not transformation:
+                    return E
+                T = self.fetch('echelon_transformation')
+                if T is not None:
+                    return E, T
+        else:
+            E = self.fetch('echelon_full_pivoting')
+            if E is not None:
+                if not transformation:
+                    return E
+                T = self.fetch('echelon_full_pivoting_transformation')
+                if T is not None:
+                    return E, T
 
         E = self._echelon_copy()
         if algorithm == 'default':
@@ -8662,14 +8749,25 @@ cdef class Matrix(Matrix1):
         else:
             v = E.echelonize(algorithm=algorithm, cutoff=cutoff, **kwds)
         E.set_immutable()  # so we can cache the echelon form.
-        self.cache('echelon_form', E)
-        if v is not None:
-            self.cache('echelon_transformation', v)
-        self.cache('pivots', E.pivots())
 
-        if transformation and v is not None:
-            return (E, v)
-        return E
+        if algorithm != 'full_pivoting':
+            self.cache('echelon_form', E)
+            if v is not None:
+                self.cache('echelon_transformation', v)
+            self.cache('pivots', E.pivots())
+
+            if transformation and v is not None:
+                return E, v
+            return E
+        else:
+            self.cache('echelon_full_pivoting', E)
+            if v is not None:
+                self.cache('echelon_full_pivoting_transformation', v)
+            self.cache('pivots', E.pivots())
+
+            if transformation:
+                return E, v
+            return E
 
     def _echelon_copy(self):
         """
@@ -9132,6 +9230,152 @@ cdef class Matrix(Matrix1):
             extended.subdivide(rank, self.ncols())
             extended.set_immutable()
         return extended
+
+    cpdef _echelon_in_place_fp(self, bint transformation):
+        r"""
+        Transforms ``self`` into a row-equivalent matrix with
+        pivot columns through full pivoting Gaussian elimination.
+
+        INPUT:
+
+        - ``transformation`` -- boolean (default: ``False``); whether to
+        additionally return the row transformation matrix.
+
+        OUTPUT:
+
+        Returns nothing, unless ``transformation=True``, in which case
+        returns row transformation matrix ``T``.
+
+        .. NOTE::
+
+            This caches the tuple ``p`` of the columns with pivots in order,
+            and permutation element ``s`` corresponding to the swaps done
+            during full pivoting, so that ``self.with_permuted_columns(s)``
+            is in echelon form.
+
+        EXAMPLES:
+
+        The following relations should hold for ``p``, ``s``, and ``T``. ::
+
+            sage: F = Qp(5, 5, print_mode='val-unit');
+            sage: m = matrix.random(F, 10); mc = copy(m)
+            sage: T = mc._echelon_in_place_fp(True)
+            sage: p = mc.pivots()
+            sage: s = mc._cache['echelon_full_pivoting_columnperm']
+
+            sage: rank = mc.rank()
+            sage: I = identity_matrix(F, mc.nrows())
+            sage: all(mc[:,v] == I[:,i] for i,v in enumerate(p))
+            True
+
+            sage: echelon = mc.with_permuted_columns(s)
+            sage: echelon[:,:rank] == identity_matrix(F, 10)
+            True
+
+            sage: mc == T*m
+            True
+
+        An example of precision gain in a `3\times5` matrix of rank `2`. ::
+
+            sage: m = matrix(F, [
+            ....:     [  F(1609/5, 4),     F(5*3016, 6),  F(5*101, 5),     F(5*598, 6),      F(2268, 5)],
+            ....:     [  F(5*1908, 6),   F(2547/5^2, 3),  F(816/5, 4),   F(24/5^6, -2),     F(5*556, 5)],
+            ....:     [   F(5*382, 5),      F(126/5, 3),    F(528, 4),  F(317/5^5, -1),   F(5^2*347, 6)]
+            ....: ])
+            sage: ef = m.echelon_form(algorithm='full_pivoting', basis='computed'); ef
+            [            O(5^11)   5^4 * 28 + O(5^8)   5^5 * 34 + O(5^9)          1 + O(5^4) 5^7 * 249 + O(5^11)]
+            [         1 + O(5^5) 5^2 * 1624 + O(5^7)  5^2 * 439 + O(5^6)              O(5^5)    5 * 452 + O(5^6)]
+            [             O(5^5)              O(5^3)              O(5^4)             O(5^-1)              O(5^6)]
+            sage: ed = m.echelon_form(algorithm='default', basis='computed'); ed # Default is scaled partial pivoting
+            [         1 + O(5^5)              O(5^7)  5^2 * 579 + O(5^6) 5^-2 * 567 + O(5^2)   5 * 2327 + O(5^6)]
+            [             O(5^6)          1 + O(5^5)   5 * 1028 + O(5^6)  5^-4 * 67 + O(5^0)  5^3 * 433 + O(5^7)]
+            [             O(5^5)              O(5^3)              O(5^4)             O(5^-1)              O(5^6)]
+
+            sage: min(x.precision_absolute() for x in ef.list() if x != 0 and x != 1) # Ignoring pivot cols and zero rows
+            6
+            sage: min(x.precision_absolute() for x in ed.list() if x != 0 and x != 1)
+            0
+
+        """
+        s = self.fetch('echelon_full_pivoting_columnperm')
+        if s is not None:
+            T = self.fetch('echelon_full_pivoting_transformation')
+            if T is not None:
+                return T
+
+        self.check_mutability()
+        cdef Py_ssize_t nr, nc, piv, pivi, pivj
+        cdef bint isDVF
+        from sage.matrix.constructor import identity_matrix
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.categories.discrete_valuation import DiscreteValuationFields
+
+        R = self._base_ring
+        nr = self._nrows
+        nc = self._ncols
+        if transformation:
+            T = identity_matrix(R, nr)
+            temp = []
+        S = SymmetricGroup(nc)
+        s = S.identity()
+        isDVF = R in DiscreteValuationFields
+        if isDVF:
+            seen = None
+
+        for piv in range(min(nr, nc)):
+            if not isDVF:
+                pivi = pivj = piv
+                current = 0
+                for j in range(piv, nc):
+                    for i in range(piv, nr):
+                        a = self.get_unsafe(i, j).abs()
+                        if a > current:
+                            pivi = i
+                            pivj = j
+                            current = a
+                if current == 0:
+                    break
+            else:
+                pivi, pivj, seen = _find_pivot_dvf_fp(self, piv, seen)
+                if pivi == -1:
+                    break
+
+            self.swap_rows(piv, pivi)
+            if transformation:
+                T.swap_rows(piv, pivi)
+                temp.append(pivi)
+                T.swap_columns(piv, pivi)
+            if piv != pivj:
+                self.swap_columns(piv, pivj)
+                s = S((piv+1, pivj+1)) * s
+
+            scalar = ~self.get_unsafe(piv, piv)
+            self.rescale_row(piv, scalar, piv)
+            if transformation:
+                T.rescale_row(piv, scalar)
+            for i in range(nr):
+                if i != piv:
+                    scalar = -self.get_unsafe(i, piv)
+                    self.add_multiple_of_row(i, piv, scalar, piv)
+                    if transformation:
+                        T.add_multiple_of_row(i, piv, scalar, end_col=piv)
+        else:
+            piv += 1
+        self.permute_columns(~s)
+        if transformation:
+            for i in range(len(temp)-1,-1,-1):
+                T.swap_columns(i, temp[i])
+
+        pivots = s.tuple()[:piv]
+        pivots = tuple([n-1 for n in pivots])
+        self.cache('pivots', pivots)
+        self.cache('echelon_full_pivoting_columnperm', s)
+        if transformation:
+            self.cache('echelon_full_pivoting_transformation', T)
+        self.cache('echelon_full_pivoting', self)
+
+        if transformation:
+            return T
 
     #####################################################################################
     # Functions for symmetries of a matrix under row and column permutations
@@ -20899,3 +21143,30 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
                      A.get_unsafe(k+i+1, k)/ pivot)
 
     return 0
+
+cdef inline _find_pivot_dvf_fp(Matrix A, Py_ssize_t start, seen):
+    r"""
+    Finds location of pivot in full pivoting step over a DVF,
+    ignoring elements indistinguishable from 0. Returns a tuple
+    ``(pivi, pivj, seen)`` where ``(pivi, pivj)`` is the pivot's
+    position and ``seen`` is the lowest seen valuation.
+
+    If no pivot is found, returns ``(-1, 0, 0)``.
+    """
+    nr = A._nrows
+    nc = A._ncols
+    current = None
+    for j in range(start, nc):
+        for i in range(start, nr):
+            v = A.get_unsafe(i, j).valuation()
+            if A.get_unsafe(i, j) and (current is None or v < current):
+                pivi = i
+                pivj = j
+                current = v
+                if current == seen:
+                    break
+        else: continue
+        break
+    if current is None:
+        return -1, 0, 0
+    return pivi, pivj, current
