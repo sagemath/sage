@@ -2451,6 +2451,44 @@ cdef class Polynomial(CommutativePolynomial):
         # But if any degree is allowed then there should certainly be a factor if self has degree > 0
         raise AssertionError(f"no irreducible factor was computed for {self}. Bug.")
 
+    def perfect_power(self):
+        r"""
+        Return ``(P, n)``, where this polynomial is `P^n` and `n` is maximal.
+
+        EXAMPLES::
+
+            sage: A.<x> = QQ[]
+            sage: f = x^2 - 2*x + 1
+            sage: f.perfect_power()
+            (-x + 1, 2)
+            sage: (f^2).perfect_power()
+            (-x + 1, 4)
+
+        ::
+
+            sage: P = (x + 1)^100
+            sage: Q = (x + 2)^50
+            sage: P.perfect_power()
+            (x + 1, 100)
+            sage: Q.perfect_power()
+            (x + 2, 50)
+            sage: (P*Q).perfect_power()
+            (x^3 + 4*x^2 + 5*x + 2, 50)
+        """
+        f = self.monic()
+        n = Integer(1)
+        for e, m in self.degree().factor():
+            exponent = e**m
+            for _ in range(m):
+                try:
+                    _ = self.nth_root(exponent)
+                except ValueError:
+                    exponent //= e
+                    continue
+                n *= exponent
+                break
+        return self.nth_root(n), n
+
     def any_root(self, ring=None, degree=None, assume_squarefree=False, assume_equal_deg=False):
         """
         Return a root of this polynomial in the given ring.
