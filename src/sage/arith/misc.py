@@ -1028,12 +1028,12 @@ def primes(start=2, stop=None, step=None, *, proof=None) -> Iterator[Integer]:
     .. SEEALSO::
 
         - :func:`~sage.rings.fast_arith.prime_range` is an alternative that
-        uses more memory (but may be faster), because it returns a list of
-        primes all at once rather than yielding one prime at at time as an
-        iterator using :func:`next_prime`, which is slow.
+          uses more memory (but may be faster), because it returns a list of
+          primes all at once rather than yielding one prime at at time as an
+          iterator using :func:`next_prime`, which is slow.
 
         - :class:`~sage.sets.primes.Primes` can be used to create sets of primes
-        with more complicated congruence conditions.
+          with more complicated congruence conditions.
 
     INPUT:
 
