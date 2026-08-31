@@ -879,11 +879,24 @@ cdef class RingHomomorphism(RingMap):
             sage: f.pushforward(R.ideal([x, 3*x + x*y + y^2]))                          # needs sage.libs.singular
             Ideal (xx, xx*yy + 3*xx) of Quotient of Multivariate Polynomial Ring
              in x, y over Rational Field by the ideal (x^2, y^2)
+
+        Check that :issue:`38422` is fixed, i.e. that the pushforward of an
+        ideal that does not have full rank in the codomain (such as a
+        fractional ideal of a quadratic field embedded into a quaternion
+        algebra) no longer spuriously raises an error::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: O = B.maximal_order()
+            sage: K = QuadraticField(-35)
+            sage: I = K.class_group()[1].ideal()
+            sage: f0 = K.hom([5*i + j + 3*k])
+            sage: O * f0(I)
+            Fractional ideal (3, 3*i, 2 + 2*i + j, 3/2 + 1/2*i + 1/2*j + 1/2*k)
         """
         if not isinstance(I, ideal.Ideal_generic):
             raise TypeError("I must be an ideal")
         R = self.codomain()
-        return R.ideal([self(y) for y in I.gens()])
+        return R.ideal([self(y) for y in I.gens()], check=False)
 
     def inverse_image(self, I):
         """
