@@ -1245,6 +1245,15 @@ cdef class SparseGraphBackend(CGraphBackend):
         TypeError: an integer is required
     """
 
+    cdef inline CGraph cg(self):
+        """
+        Return the underlying C graph.
+
+        Keeping this implementation in the extension module avoids emitting
+        an unused local copy in every extension that cimports this backend.
+        """
+        return <CGraph> self._cg
+
     def __init__(self, int n, directed=True):
         """
         Initialize a sparse graph with n vertices.

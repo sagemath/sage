@@ -406,6 +406,13 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: sorted(N.groundset())
             [0, 1, 2, 3]
 
+        Unhashable edge labels use the same fallback rules::
+
+            sage: G = Graph()
+            sage: G.add_edge(0, 1, ['unhashable'])
+            sage: Matroid(G).groundset()
+            frozenset({(0, 1)})
+
         The GraphicMatroid object forces its graph to be connected. If a
         disconnected graph is used as input, it will connect the components::
 
@@ -912,7 +919,11 @@ def Matroid(groundset=None, data=None, **kwds):
         if groundset is None:
             # 1. Attempt to use edge labels.
             sl = G.edge_labels()
-            if len(sl) == len(set(sl)):
+            try:
+                unique_labels = len(sl) == len(set(sl))
+            except TypeError:
+                unique_labels = False
+            if unique_labels:
                 groundset = sl
                 # 2. If simple, use vertex tuples
             elif not G.has_multiple_edges():

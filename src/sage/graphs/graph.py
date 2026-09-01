@@ -9681,6 +9681,8 @@ class Graph(GenericGraph):
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.connectivity import minimal_separators
+    from sage.graphs.morphisms import (is_2isomorphic,
+                                       verify_2isomorphism_certificate)
     from sage.graphs.comparability import is_comparability
     from sage.graphs.comparability import is_permutation
     geodetic_closure = LazyImport('sage.graphs.convexity_properties', 'geodetic_closure', at_startup=True)
@@ -9741,6 +9743,8 @@ _additional_categories = {
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",
+    "is_2isomorphic"            : "Graph properties",
+    "verify_2isomorphism_certificate": "Graph properties",
     "is_triconnected"           : "Connectivity, orientations, trees",
     "minimal_separators"        : "Connectivity, orientations, trees",
     "is_dominating"             : "Domination",

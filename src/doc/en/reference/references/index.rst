@@ -6298,6 +6298,10 @@ REFERENCES:
 .. [RS1995] Victor Reiner, Mark Shimozono, *Plactification*,
             J. Algebraic Combin. **4** (1995), pp. 331-351.
 
+.. [RS2008] Raghavendra Rao B. V. and Jayalal M. N. Sarma,
+            *On the Complexity of Matroid Isomorphism Problem*.
+            :arxiv:`0811.3859`.
+
 .. [RS2012] G. Rudolph and M. Schmidt, *Differential Geometry and Mathematical Physics.
             Part I. Manifolds, Lie Groups and Hamiltonian Systems*, Springer, 2012.
 

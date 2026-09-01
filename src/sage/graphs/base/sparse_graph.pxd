@@ -85,5 +85,4 @@ cdef class SparseGraphBackend(CGraphBackend):
     cdef int edge_labels_max
     cdef list edge_labels_available_ids
     cdef SparseGraph _cg
-    cdef inline CGraph cg(self):
-        return <CGraph> self._cg
+    cdef CGraph cg(self)

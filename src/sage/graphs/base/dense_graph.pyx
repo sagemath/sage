@@ -627,6 +627,16 @@ cdef class DenseGraphBackend(CGraphBackend):
         self.vertex_labels = {}
         self.vertex_ints = {}
 
+    cdef inline CGraph cg(self):
+        """
+        Return the underlying C graph.
+
+        This implementation lives in the ``pyx`` file rather than as an
+        inline method in ``dense_graph.pxd`` so that modules which merely
+        cimport ``GenericGraph_pyx`` do not emit an unused local copy.
+        """
+        return <CGraph> self._cg
+
     cdef bint _delete_edge_before_adding(self) noexcept:
         """
         Return whether we should delete edges before adding any.

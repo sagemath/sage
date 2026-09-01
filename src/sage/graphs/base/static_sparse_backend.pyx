@@ -578,6 +578,15 @@ cdef class StaticSparseCGraph(CGraph):
 
 cdef class StaticSparseBackend(CGraphBackend):
 
+    cdef inline CGraph cg(self):
+        """
+        Return the underlying C graph.
+
+        Keeping this implementation in the extension module avoids emitting
+        an unused local copy in every extension that cimports this backend.
+        """
+        return <CGraph> self._cg
+
     def __init__(self, G=None, loops=False, multiedges=False, sort=True,
                  vertex_list=None, edges=None, directed=None,
                  edge_labelled=False):
