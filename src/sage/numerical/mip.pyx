@@ -893,7 +893,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return tuple(self.new_variable() for i in range(n))
 
-    cpdef int number_of_constraints(self) noexcept:
+    cpdef int number_of_constraints(self) except? -1:
         r"""
         Return the number of constraints assigned so far.
 
@@ -907,7 +907,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.nrows()
 
-    cpdef int number_of_variables(self) noexcept:
+    cpdef int number_of_variables(self) except? -1:
         r"""
         Return the number of variables used so far.
 

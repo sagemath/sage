@@ -619,7 +619,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return self.answer['x'][variable]
 
-    cpdef int ncols(self) noexcept:
+    cpdef int ncols(self) except? -1:
         """
         Return the number of columns/variables.
 
@@ -637,7 +637,7 @@ cdef class CVXOPTBackend(GenericBackend):
 
         return len(self.objective_function)
 
-    cpdef int nrows(self) noexcept:
+    cpdef int nrows(self) except? -1:
         """
         Return the number of rows/constraints.
 
@@ -655,7 +655,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return len(self.row_upper_bound)
 
-    cpdef bint is_maximization(self) noexcept:
+    cpdef bint is_maximization(self) except? -1:
         """
         Test whether the problem is a maximization
 
@@ -789,7 +789,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return (self.col_lower_bound[index], self.col_upper_bound[index])
 
-    cpdef bint is_variable_binary(self, int index) noexcept:
+    cpdef bint is_variable_binary(self, int index) except? -1:
         """
         Test whether the given variable is of binary type.
         CVXOPT does not allow integer variables, so this is a bit moot.
@@ -815,7 +815,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return False
 
-    cpdef bint is_variable_integer(self, int index) noexcept:
+    cpdef bint is_variable_integer(self, int index) except? -1:
         """
         Test whether the given variable is of integer type.
         CVXOPT does not allow integer variables, so this is a bit moot.
@@ -842,7 +842,7 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return False
 
-    cpdef bint is_variable_continuous(self, int index) noexcept:
+    cpdef bint is_variable_continuous(self, int index) except? -1:
         """
         Test whether the given variable is of continuous/real type.
         CVXOPT does not allow integer variables, so this is a bit moot.

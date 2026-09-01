@@ -1,6 +1,7 @@
 # distutils: libraries = glpk z gmp
 
 cdef extern from "glpk.h":
+    const char *glp_config(const char *option)
     int glp_init_env()
     int glp_free_env()
     int glp_term_out(int flag)
