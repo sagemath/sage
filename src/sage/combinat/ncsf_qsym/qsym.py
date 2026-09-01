@@ -1407,6 +1407,13 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     sage: M[1,2].dendriform_less(M[1,2,1])
                     M[1, 1, 2, 1, 2] + 2*M[1, 1, 2, 2, 1] + M[1, 1, 2, 3]
                      + M[1, 1, 4, 1] + M[1, 2, 1, 2, 1] + M[1, 3, 2, 1]
+
+                TESTS::
+                    
+                    sage: (-M[1,2]).dendriform_less(M[1,2,1]) == -(M[1,2].dendriform_less(M[1,2,1]))
+                    True
+                    sage: M[1,2].dendriform_less(-M[1,2,1]) == -(M[1,2].dendriform_less(M[1,2,1]))
+                    True
                 """
                 # Convert to the monomial basis, there do restricted
                 # shuffle product, then convert back to self.parent().
@@ -1422,8 +1429,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     I_tail = Composition(I[1:])
                     for J, J_coeff in b:
                         shufpro = I_tail.shuffle_product(J, overlap=True)
-                        res += J_coeff * M.sum_of_monomials(Composition([i_head] + list(K))
-                                                            for K in shufpro)
+                        res += J_coeff * I_coeff * M.sum_of_monomials(Composition([i_head] + list(K))
+                                                                      for K in shufpro)
                 return P(res)
 
             def dendriform_leq(self, other):
@@ -1487,6 +1494,13 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     sage: F[2, 1].dendriform_leq(F[1, 2])
                     F[2, 1, 1, 2] + F[2, 1, 2, 1] + F[2, 1, 3] + F[2, 2, 1, 1]
                      + 2*F[2, 2, 2] + F[2, 3, 1] + F[3, 1, 2] + F[3, 2, 1] + F[3, 3]
+
+                TESTS::
+                    
+                    sage: (-M[1,2]).dendriform_leq(M[1,2,1]) == -(M[1,2].dendriform_leq(M[1,2,1]))
+                    True
+                    sage: M[1,2].dendriform_leq(-M[1,2,1]) == -(M[1,2].dendriform_leq(M[1,2,1]))
+                    True
                 """
                 # This might be somewhat slow...
                 P = self.parent()
