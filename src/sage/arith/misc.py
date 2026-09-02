@@ -4868,9 +4868,9 @@ def number_of_divisors(n) -> Integer:
     r"""
     Return the number of divisors of the integer `n`.
 
-    This function just converts the input to a :class:`sage.rings.integer.Integer`
+    This function just converts the input to an :class:`~sage.rings.integer.Integer`
     and calls the :meth:`~sage.rings.integer.Integer.number_of_divisors` method
-    on it. If you already have an :class:`sage.rings.integer.Integer`, it is
+    on it. If you already have an :class:`~sage.rings.integer.Integer`, it is
     easier (and slightly faster) to call the
     :meth:`~sage.rings.integer.Integer.number_of_divisors` method directly.
 
