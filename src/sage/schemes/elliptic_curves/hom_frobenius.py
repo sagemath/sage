@@ -248,7 +248,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
             sage: E = EllipticCurve(j=z2)
             sage: pi = EllipticCurveHom_frobenius(E)
             sage: P = E(7, 9*z2+4)
-            sage: pi(P)     # implicit doctest
+            sage: pi(P)     # indirect doctest
             (7 : 2*z2 + 7 : 1)
         """
         return self._codomain(*(c**self._degree for c in P))
@@ -416,7 +416,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
         return self._poly_ring(1)
 
     @cached_method
-    def dual(self):
+    def dual(self, algorithm=None):
         """
         Compute the dual of this Frobenius isogeny.
 

@@ -2,7 +2,7 @@
 General matrix Constructor and display options
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #       Copyright (C) 2016 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
@@ -11,7 +11,7 @@ General matrix Constructor and display options
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 from sage.matrix.args cimport MatrixArgs
 from sage.structure.global_options import GlobalOptions
@@ -606,7 +606,6 @@ def matrix(*args, **kwds):
 
     Check :issue:`24459`::
 
-        sage: # needs sage.libs.linbox
         sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
         Traceback (most recent call last):
         ...
@@ -668,7 +667,7 @@ def matrix(*args, **kwds):
       and :issue:`20016`
 
     - Jeroen Demeyer (2018-02-20): completely rewritten using
-      :class:`MatrixArgs`, see :issue:`24742`
+      :class:`~sage.matrix.args.MatrixArgs`, see :issue:`24742`
     """
     immutable = kwds.pop('immutable', False)
     return MatrixArgs(*args, **kwds).element(immutable=immutable)

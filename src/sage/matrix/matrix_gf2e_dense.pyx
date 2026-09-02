@@ -86,6 +86,7 @@ from cysignals.signals cimport sig_on, sig_off
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.structure.element cimport Matrix
 from sage.structure.element cimport Element
+from sage.matrix.matrix0 cimport Matrix as Matrix0
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.element_base cimport Cache_base
 
@@ -94,6 +95,7 @@ from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
 from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free
 from sage.libs.m4rie cimport *
@@ -188,9 +190,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
                 _m4rie_finite_field_cache[poly] = FF
 
         # cache elements
-        self._zero = self._base_ring(0)
-        self._zero_word = poly_to_word(self._zero)
-        self._one = self._base_ring(1)
+        self._zero = self._base_ring.zero()
+        self._one = self._base_ring.one()
 
     def __dealloc__(self):
         """
@@ -238,6 +239,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 a 0]
             [0 0 a]
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to zero
+            # (``mzed_init``). Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch significantly faster
+            # (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
@@ -350,7 +358,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [0 1]
             [1 0]
         """
-        return mzed_read_elem(self._entries, i, j) == self._zero_word
+        return mzed_read_elem(self._entries, i, j) == 0
 
     cpdef _add_(self, right):
         r"""
@@ -426,8 +434,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
             This function is very slow. Use ``*`` operator instead.
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -469,18 +476,71 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A*B == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
         ans = self.new_matrix(nrows = self.nrows(), ncols = right.ncols())
-        if self._nrows == 0 or self._ncols == 0 or right._ncols == 0:
-            return ans
-        sig_on()
-        ans._entries = mzed_mul(ans._entries, self._entries, (<Matrix_gf2e_dense>right)._entries)
-        sig_off()
+        ans._set_to_product(self, <Matrix0>right)
         return ans
+
+    cdef void _set_to_product(self, Matrix0 left, Matrix0 right) except *:
+        r"""
+        Set ``self`` to ``left * right`` using M4RIE.
+
+        ``mzed_mul`` takes the destination as its first argument, so the
+        product is written straight into the destination's M4RIE storage and
+        M4RIE still picks the multiplication routine, exactly as for ``*``.
+
+        INPUT:
+
+        - ``left`` -- a matrix of the same type and base ring as ``self``
+        - ``right`` -- a matrix of the same type and base ring as ``self``
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(2^8)
+            sage: A = matrix(K, 2, 3, range(6))
+            sage: B = matrix(K, 3, 2, range(6, 12))
+            sage: C = matrix(K, 2, 2, [a] * 4)
+            sage: C.set_to_product(A, B)
+            sage: C == A * B
+            True
+
+        TESTS:
+
+        A zero inner dimension zeroes the destination, overwriting the entries
+        it held before::
+
+            sage: C.set_to_product(matrix(K, 2, 0), matrix(K, 0, 2))
+            sage: C.is_zero()
+            True
+
+        A destination with no rows or no columns has nothing to write::
+
+            sage: D = matrix(K, 0, 2)
+            sage: D.set_to_product(matrix(K, 0, 3), matrix(K, 3, 2))
+            sage: D
+            []
+        """
+        cdef Matrix_gf2e_dense _left = <Matrix_gf2e_dense>left
+        cdef Matrix_gf2e_dense _right = <Matrix_gf2e_dense>right
+
+        # ``mzed_set_ui`` is not valid for a zero-column matrix.
+        if self._nrows == 0 or self._ncols == 0:
+            return
+
+        if _left._ncols == 0:
+            sig_on()
+            mzed_set_ui(self._entries, 0)
+            sig_off()
+            return
+
+        sig_on()
+        self._entries = mzed_mul(self._entries, _left._entries, _right._entries)
+        sig_off()
 
     cpdef Matrix_gf2e_dense _multiply_newton_john(Matrix_gf2e_dense self, Matrix_gf2e_dense right):
         """
@@ -489,8 +549,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         We can write classical cubic multiplication (``C=A*B``) as::
 
         for i in range(A.ncols()):
-           for j in range(A.nrows()):
-             C[j] += A[j,i] * B[j]
+            for j in range(A.nrows()):
+                C[j] += A[j,i] * B[j]
 
         Hence, in the inner-most loop we compute multiples of ``B[j]``
         by the values ``A[j,i]``. If the matrix ``A`` is big and the
@@ -530,8 +590,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_newton_john(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -578,8 +637,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_karatsuba(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -629,8 +687,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A._multiply_strassen(B) == A._multiply_classical(B)
             True
         """
-        if self._ncols != right._nrows:
-            raise ArithmeticError("left ncols must match right nrows")
+        check_matrix_multiplication_sizes(self, right)
 
         cdef Matrix_gf2e_dense ans
 
@@ -656,14 +713,36 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-             sage: K.<a> = GF(4)
-             sage: A = random_matrix(K,10,10)
-             sage: B = a*A  # indirect doctest
-             sage: all(B.list()[i] == a*A.list()[i] for i in range(100))
-             True
+            sage: K.<a> = GF(4)
+            sage: A = random_matrix(K,10,10)
+            sage: B = a*A  # indirect doctest
+            sage: all(B.list()[i] == a*A.list()[i] for i in range(100))
+            True
+
+        TESTS:
+
+        Check for :issue:`40653`::
+
+            sage: K.<i> = GF(4)
+            sage: M = Matrix(K, 0, 3)
+            sage: (2 * M).nrows()
+            0
+            sage: (2 * M).ncols()
+            3
+
+            sage: N = Matrix(K, [[1, i], [0, 1], [i+1, 0]])
+            sage: K.zero() * N
+            [0 0]
+            [0 0]
+            [0 0]
         """
         cdef m4ri_word a = poly_to_word(right)
-        cdef Matrix_gf2e_dense C = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, 0, 0, 0)
+        cdef Matrix_gf2e_dense C = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent)
+
+        # Handle zero scalar or zero-size matrices explicitly
+        if self._nrows == 0 or self._ncols == 0 or a == 0:
+            return C
+
         mzed_mul_scalar(C._entries, a, self._entries)
         return C
 
@@ -679,7 +758,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -696,7 +775,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if self._nrows == 0 or self._ncols == 0:
             return rich_to_bool(op, 0)
         return rich_to_bool(op, mzed_cmp(self._entries,
-                                         (<Matrix_gf2e_dense>right)._entries))
+                                         (<Matrix_gf2e_dense>other)._entries))
 
     def __copy__(self):
         """
@@ -1368,28 +1447,30 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-             sage: K.<a> = GF(2^10)
-             sage: A = random_matrix(K,200,200)
-             sage: A[0:2,0:2] == A.submatrix(0,0,2,2)
-             True
-             sage: A[0:100,0:100] == A.submatrix(0,0,100,100)
-             True
-             sage: A == A.submatrix(0,0,200,200)
-             True
+            sage: K.<a> = GF(2^10)
+            sage: A = random_matrix(K,200,200)
+            sage: A[0:2,0:2] == A.submatrix(0,0,2,2)
+            True
+            sage: A[0:100,0:100] == A.submatrix(0,0,100,100)
+            True
+            sage: A == A.submatrix(0,0,200,200)
+            True
 
-             sage: A[1:3,1:3] == A.submatrix(1,1,2,2)
-             True
-             sage: A[1:100,1:100] == A.submatrix(1,1,99,99)
-             True
-             sage: A[1:200,1:200] == A.submatrix(1,1,199,199)
-             True
+            sage: A[1:3,1:3] == A.submatrix(1,1,2,2)
+            True
+            sage: A[1:100,1:100] == A.submatrix(1,1,99,99)
+            True
+            sage: A[1:200,1:200] == A.submatrix(1,1,199,199)
+            True
 
-        TESTS for handling of default arguments (:issue:`18761`)::
+        TESTS:
 
-             sage: A.submatrix(17,15) == A.submatrix(17,15,183,185)
-             True
-             sage: A.submatrix(row=100,col=37,nrows=1,ncols=3) == A.submatrix(100,37,1,3)
-             True
+        Check for handling of default arguments (:issue:`18761`)::
+
+            sage: A.submatrix(17,15) == A.submatrix(17,15,183,185)
+            True
+            sage: A.submatrix(row=100,col=37,nrows=1,ncols=3) == A.submatrix(100,37,1,3)
+            True
         """
         if nrows < 0:
             nrows = self._nrows - row
@@ -1652,7 +1733,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             ...
             ValueError: self must be a square matrix
         """
-        cdef size_t m = self._nrows 
+        cdef size_t m = self._nrows
 
         if m != self._ncols:
             raise ValueError("self must be a square matrix")

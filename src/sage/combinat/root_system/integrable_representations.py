@@ -519,8 +519,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
                                for ij, j in enumerate(self._index_set_classical)) )
         if check:
             return all(x in ZZ for x in ret)
-        else:
-            return tuple(ZZ(x) for x in ret)
+        return tuple(ZZ(x) for x in ret)
 
     def from_weight(self, mu):
         r"""
@@ -840,7 +839,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         #   - _freudenthal_accum
         if n in self._mdict:
             return self._mdict[n]
-        elif n in self._ddict:
+        if n in self._ddict:
             self._mdict[n] = self.m(self._ddict[n])
         m = self.to_dominant(n)
         if m in self._mdict:
@@ -1041,23 +1040,27 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         EXAMPLES::
 
+            sage: R = RootSystem(['A',1,1])
+            sage: chi = IntegrableRepresentation(
+            ....:     R.weight_lattice(extended=true).fundamental_weight(0)
+            ....: )
+            sage: chi.modular_characteristic()
+            -1/24
+
             sage: Lambda = RootSystem(['A',1,1]).weight_lattice(extended=true).fundamental_weights()
             sage: V = IntegrableRepresentation(3*Lambda[0]+2*Lambda[1])
             sage: [V.modular_characteristic(x) for x in V.dominant_maximal_weights()]
             [11/56, -1/280, 111/280]
         """
-        if isinstance(mu, tuple):
-            n = mu
-        else:
-            n = self.from_weight(mu)
         k = self.level()
         hd = self.dual_coxeter_number()
         rho = self._P.rho()
         m_Lambda = self._inner_pp(self._Lam_rho, self._Lam_rho) / (2*(k+hd)) \
                    - self._inner_pp(rho, rho) / (2*hd)
-        if n is None:
+        if mu is None:
             return m_Lambda
-        mu = self.to_weight(n)
+        if isinstance(mu, tuple):
+            mu = self.to_weight(mu)
         return m_Lambda - self._inner_pp(mu,mu) / (2*k)
 
     def branch(self, i=None, weyl_character_ring=None, sequence=None, depth=5):

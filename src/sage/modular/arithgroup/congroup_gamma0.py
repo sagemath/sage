@@ -19,31 +19,9 @@ from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
 from sage.modular.cusps import Cusp
 from sage.modular.modsym.p1list import P1List, lift_to_sl2z
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
-
-
-def is_Gamma0(x):
-    """
-    Return ``True`` if x is a congruence subgroup of type Gamma0.
-
-    EXAMPLES::
-
-        sage: from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
-        sage: is_Gamma0(SL2Z)
-        doctest:warning...
-        DeprecationWarning: The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.
-        See https://github.com/sagemath/sage/issues/38035 for details.
-        True
-        sage: is_Gamma0(Gamma0(13))
-        True
-        sage: is_Gamma0(Gamma1(6))
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38035, "The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.")
-    return isinstance(x, Gamma0_class)
-
 
 _gamma0_cache = {}
 
@@ -60,8 +38,19 @@ def Gamma0_constructor(N):
         True
         sage: G is Gamma0(51)
         True
+
+    The construction also works when `N` is a polynomial over a finite field
+    (see :mod:`sage.modular.drinfeld_modform.congroup_gamma0`)::
+
+        sage: A.<T> = GF(5)[]
+        sage: G = Gamma0(T^4 + 2*T + 3)
+        sage: G
+        Congruence Subgroup Gamma0(T^4 + 2*T + 3)
     """
     from sage.modular.arithgroup.all import SL2Z
+    if isinstance(N, Polynomial):
+        from sage.modular.drinfeld_modform.congroup_gamma0 import Gamma0_drinfeld
+        return Gamma0_drinfeld(N)
     if N == 1:
         return SL2Z
     try:
@@ -112,8 +101,7 @@ class Gamma0_class(GammaH_class):
          Modular Symbols space of dimension 18 for Gamma_0(100)
           of weight 2 with sign 1 over Rational Field
     """
-
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_0(N)`.
 
@@ -144,9 +132,10 @@ class Gamma0_class(GammaH_class):
         # be done if needed by the _generators_for_H and _list_of_elements_in_H
         # methods.
         #
-        # GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
+        # GammaH_class.__init__(self, level,
+        #     [int(x) for x in IntegerModRing(level).unit_gens()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -226,8 +215,8 @@ class Gamma0_class(GammaH_class):
 
     def divisor_subgroups(self):
         r"""
-        Return the subgroups of SL2Z of the form Gamma0(M) that contain this subgroup,
-        i.e. those for M a divisor of N.
+        Return the subgroups of SL2Z of the form Gamma0(M) that contain
+        this subgroup, i.e. those for M a divisor of N.
 
         EXAMPLES::
 
@@ -290,11 +279,10 @@ class Gamma0_class(GammaH_class):
         if isinstance(right, Gamma1_class):
             if right.level() >= 3:
                 return False
-            elif right.level() == 2:
+            if right.level() == 2:
                 return self.level() == 2
             # case level 1 dealt with above
-        else:
-            return GammaH_class.is_subgroup(self, right)
+        return GammaH_class.is_subgroup(self, right)
 
     def coset_reps(self):
         r"""
@@ -324,8 +312,8 @@ class Gamma0_class(GammaH_class):
         """
         from .all import SL2Z
         N = self.level()
-        if N == 1: # P1List isn't very happy working modulo 1
-            yield SL2Z([1,0,0,1])
+        if N == 1:  # P1List is not very happy working modulo 1
+            yield SL2Z([1, 0, 0, 1])
         else:
             for z in P1List(N):
                 yield SL2Z(lift_to_sl2z(z[0], z[1], N))
@@ -370,23 +358,22 @@ class Gamma0_class(GammaH_class):
         if self.level() == 1:
             # we return a fixed set of generators for SL2Z, for historical
             # reasons, which aren't the ones the Farey symbol code gives
-            return [ self([0,-1,1,0]), self([1,1,0,1]) ]
+            return [self([0, -1, 1, 0]), self([1, 1, 0, 1])]
 
-        elif algorithm == "farey":
+        if algorithm == "farey":
             return self.farey_symbol().generators()
 
-        elif algorithm == "todd-coxeter":
+        if algorithm == "todd-coxeter":
             from sage.modular.modsym.p1list import P1List
 
             from .congroup import generators_helper
             level = self.level()
-            if level == 1: # P1List isn't very happy working mod 1
-                return [ self([0,-1,1,0]), self([1,1,0,1]) ]
+            if level == 1:  # P1List is not very happy working mod 1
+                return [self([0, -1, 1, 0]), self([1, 1, 0, 1])]
             gen_list = generators_helper(P1List(level), level)
             return [self(g, check=False) for g in gen_list]
 
-        else:
-            raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
+        raise ValueError(f"Unknown algorithm '{algorithm}' (should be either 'farey' or 'todd-coxeter')")
 
     def gamma_h_subgroups(self):
         r"""
@@ -446,12 +433,14 @@ class Gamma0_class(GammaH_class):
 
     def _find_cusps(self):
         r"""
-        Return an ordered list of inequivalent cusps for self, i.e. a
-        set of representatives for the orbits of ``self`` on
-        `\mathbb{P}^1(\QQ)`.  These are returned in a reduced
-        form; see ``self.reduce_cusp`` for the definition of reduced.
+        Return an ordered list of inequivalent cusps for ``self``.
+
+        This i a set of representatives for the orbits of ``self`` on
+        `\mathbb{P}^1(\QQ)`.  These are returned in a reduced form;
+        see ``self.reduce_cusp`` for the definition of reduced.
 
         ALGORITHM:
+
             Uses explicit formulae specific to `\Gamma_0(N)`: a reduced cusp on
             `\Gamma_0(N)` is always of the form `a/d` where `d | N`, and `a_1/d
             \sim a_2/d` if and only if `a_1 \cong a_2 \bmod {\rm gcd}(d,
@@ -460,7 +449,8 @@ class Gamma0_class(GammaH_class):
         EXAMPLES::
 
             sage: Gamma0(90)._find_cusps()
-            [0, 1/45, 1/30, 1/18, 1/15, 1/10, 1/9, 2/15, 1/6, 1/5, 1/3, 11/30, 1/2, 2/3, 5/6, Infinity]
+            [0, 1/45, 1/30, 1/18, 1/15, 1/10, 1/9, 2/15, 1/6, 1/5,
+             1/3, 11/30, 1/2, 2/3, 5/6, Infinity]
             sage: Gamma0(1).cusps()
             [Infinity]
             sage: Gamma0(180).cusps() == Gamma0(180).cusps(algorithm='modsym')
@@ -470,20 +460,20 @@ class Gamma0_class(GammaH_class):
         s = []
 
         for d in divisors(N):
-            w = gcd(d, N//d)
+            w = gcd(d, N // d)
             if w == 1:
                 if d == 1:
-                    s.append(Cusp(1,0))
+                    s.append(Cusp(1, 0))
                 elif d == N:
-                    s.append(Cusp(0,1))
+                    s.append(Cusp(0, 1))
                 else:
-                    s.append(Cusp(1,d))
+                    s.append(Cusp(1, d))
             else:
                 for a in range(1, w):
                     if gcd(a, w) == 1:
-                        while gcd(a, d//w) != 1:
+                        while gcd(a, d // w) != 1:
                             a += w
-                        s.append(Cusp(a,d))
+                        s.append(Cusp(a, d))
         return sorted(s)
 
     def ncusps(self):
@@ -494,8 +484,8 @@ class Gamma0_class(GammaH_class):
 
             sage: [Gamma0(n).ncusps() for n in [1..19]]
             [1, 2, 2, 3, 2, 4, 2, 4, 4, 4, 2, 6, 2, 4, 4, 6, 2, 8, 2]
-            sage: [Gamma0(n).ncusps() for n in prime_range(2,100)]
-            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+            sage: all(Gamma0(n).ncusps() == 2 for n in prime_range(2,100))
+            True
         """
         n = self.level()
         return sum(euler_phi(gcd(d, n // d)) for d in n.divisors())
@@ -525,14 +515,17 @@ class Gamma0_class(GammaH_class):
         n = self.level()
         if n % 4 == 0:
             return ZZ(0)
-        return prod([ 1 + kronecker_symbol(-4, p) for p, _ in n.factor()])
+        return prod([1 + kronecker_symbol(-4, p) for p, _ in n.factor()])
 
     def nu3(self):
         r"""
         Return the number of elliptic points of order 3 for this congruence
-        subgroup `\Gamma_0(N)`. The number of these is given by a standard formula:
-        0 if `N` is divisible by 9 or any prime congruent to -1 mod 3, and
-        otherwise `2^d` where d is the number of primes other than 3 dividing `N`.
+        subgroup `\Gamma_0(N)`.
+
+        The number of these is given by a standard formula:
+        0 if `N` is divisible by 9 or any prime congruent to -1 mod 3,
+        and otherwise `2^d` where d is the number of primes other than
+        3 dividing `N`.
 
         EXAMPLES::
 
@@ -550,9 +543,9 @@ class Gamma0_class(GammaH_class):
             8
         """
         n = self.level()
-        if (n % 9 == 0):
-            return ZZ(0)
-        return prod([ 1 + kronecker_symbol(-3, p) for p, _ in n.factor()])
+        if not n % 9:
+            return ZZ.zero()
+        return prod([1 + kronecker_symbol(-3, p) for p, _ in n.factor()])
 
     def index(self):
         r"""
@@ -567,11 +560,12 @@ class Gamma0_class(GammaH_class):
         EXAMPLES::
 
             sage: [Gamma0(n).index() for n in [1..19]]
-            [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12, 24, 14, 24, 24, 24, 18, 36, 20]
+            [1, 3, 4, 6, 6, 12, 8, 12, 12, 18,
+             12, 24, 14, 24, 24, 24, 18, 36, 20]
             sage: Gamma0(32041).index()
             32220
         """
-        return prod([p**e + p**(e-1) for (p,e) in self.level().factor()])
+        return prod([p**e + p**(e - 1) for p, e in self.level().factor()])
 
     def dimension_new_cusp_forms(self, k=2, p=0):
         r"""
@@ -625,67 +619,59 @@ class Gamma0_class(GammaH_class):
         def s0(q, a):
             # function s_0^#
             if a == 1:
-                return 1 - 1/q
-            elif a == 2:
-                return 1 - 1/q - 1/q**2
-            else:
-                return (1 - 1/q) * (1 - 1/q**2)
+                return 1 - 1 / q
+            if a == 2:
+                return 1 - 1 / q - 1 / q**2
+            return (1 - 1 / q) * (1 - 1 / q**2)
 
         def vinf(q, a):
             # function v_oo^#
             if a % 2:
                 return 0
-            elif a == 2:
+            if a == 2:
                 return q - 2
-            else:
-                return q**(a/2 - 2) * (q - 1)**2
+            return q**(a / 2 - 2) * (q - 1)**2
 
         def v2(q, a):
             # function v_2^#
             if q % 4 == 1:
                 if a == 2:
                     return -1
-                else:
-                    return 0
-            elif q % 4 == 3:
+                return 0
+            if q % 4 == 3:
                 if a == 1:
                     return -2
-                elif a == 2:
+                if a == 2:
                     return 1
-                else:
-                    return 0
-            elif a in (1, 2):
-                return -1
-            elif a == 3:
-                return 1
-            else:
                 return 0
+            if a in (1, 2):
+                return -1
+            if a == 3:
+                return 1
+            return 0
 
         def v3(q, a):
             # function v_3^#
             if q % 3 == 1:
                 if a == 2:
                     return -1
-                else:
-                    return 0
-            elif q % 3 == 2:
+                return 0
+            if q % 3 == 2:
                 if a == 1:
                     return -2
-                elif a == 2:
+                if a == 2:
                     return 1
-                else:
-                    return 0
-            elif a in (1, 2):
-                return -1
-            elif a == 3:
-                return 1
-            else:
                 return 0
+            if a in (1, 2):
+                return -1
+            if a == 3:
+                return 1
+            return 0
 
         res = (k - 1) / 12 * N * prod(s0(q, a) for q, a in factors)
         res -= prod(vinf(q, a) for q, a in factors) / ZZ(2)
-        res += ((1 - k)/4 + k//4) * prod(v2(q, a) for q, a in factors)
-        res += ((1 - k)/3 + k//3) * prod(v3(q, a) for q, a in factors)
+        res += ((1 - k) / 4 + k // 4) * prod(v2(q, a) for q, a in factors)
+        res += ((1 - k) / 3 + k // 3) * prod(v3(q, a) for q, a in factors)
         if k == 2:
             res += moebius(N)
         return res

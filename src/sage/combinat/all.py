@@ -40,10 +40,12 @@ Utilities
 from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package
 install_doc(__package__, __doc__)
+del install_doc
 
 # install modules quickref and tutorial to the containing package
 from sage.combinat import quickref, tutorial
 install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
+del install_dict
 del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
@@ -143,6 +145,7 @@ from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTa
 from sage.combinat.ribbon_shaped_tableau import RibbonShapedTableau, RibbonShapedTableaux, StandardRibbonShapedTableaux
 from sage.combinat.ribbon_tableau import RibbonTableaux, RibbonTableau, MultiSkewTableaux, MultiSkewTableau, SemistandardMultiSkewTableaux
 from sage.combinat.composition_tableau import CompositionTableau, CompositionTableaux
+from sage.combinat.quasi_ribbon_tableau import QuasiRibbonTableau, QuasiRibbonTableaux
 
 lazy_import('sage.combinat.tableau_tuple',
             ['TableauTuple', 'StandardTableauTuple', 'RowStandardTableauTuple',
@@ -289,3 +292,8 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 
 # Bijectionist
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
+
+# TamariBlossomingTree
+lazy_import('sage.combinat.tamari_blossoming_tree',
+            ['TamariBlossomingTree', 'TamariBlossomingTrees'])
+del lazy_import

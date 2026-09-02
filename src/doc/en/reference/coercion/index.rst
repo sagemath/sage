@@ -63,9 +63,8 @@ either parents or have a parent. Typically whenever one sees the word
     (1 + O(5^20))*t^3 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 4*5^9 + 4*5^10 + 4*5^11 + 4*5^12 + 4*5^13 + 4*5^14 + 4*5^15 + 4*5^16 + 4*5^17 + 4*5^18 + 4*5^19 + 4*5^20 + O(5^21)
     sage: parent(f)
     Univariate Polynomial Ring in t over 5-adic Field with capped relative precision 20
-    sage: f = EllipticCurve('37a').lseries().taylor_series(10); f  # abs tol 1e-14
-    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418421e-6)*z^5 + O(z^6)  # 32-bit
-    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418427e-6)*z^5 + O(z^6)  # 64-bit
+    sage: f = EllipticCurve('37a').lseries().taylor_series(10); f  # abs tol 1e-13
+    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418427e-6)*z^5 + O(z^6)
     sage: parent(f)
     Power Series Ring in z over Complex Field with 53 bits of precision
 
@@ -162,9 +161,10 @@ these coercion morphisms should all commute.  In particular, if there
 are coercion maps `A \to B` and `B \to A`, then their composites
 must be the identity maps.
 
-Coercions can be discovered via the :meth:`Parent.has_coerce_map_from`
+Coercions can be discovered via the
+:meth:`~sage.structure.parent.Parent.has_coerce_map_from`
 method, and if needed explicitly invoked with the
-:meth:`Parent.coerce` method::
+:meth:`~sage.structure.parent.Parent.coerce` method::
 
     sage: QQ.has_coerce_map_from(ZZ)
     True
@@ -325,7 +325,8 @@ Methods to implement
   ``None``. This is the default behavior.  If there is a coercion,
   return ``True`` (in which case a morphism using
   ``R._element_constructor_`` will be created) or an actual
-  :class:`Morphism` object with S as the domain and R as the codomain.
+  :class:`~sage.categories.morphism.Morphism` object with S as the domain
+  and R as the codomain.
 
 * Actions for Parents: ``_get_action_`` or ``_rmul_``, ``_lmul_``, ``_act_on_``, ``_acted_upon_``
 
@@ -361,7 +362,7 @@ Methods to implement
 
 * Element conversion/construction for Parents: use ``_element_constructor_`` **not** ``__call__``
 
-  The :meth:`Parent.__call__` method dispatches to
+  The :meth:`~sage.structure.parent.Parent.__call__` method dispatches to
   ``_element_constructor_``. When someone writes ``R(x, ...)``, this is
   the method that eventually gets called in most cases.  See the
   documentation on the ``__call__`` method below.
@@ -614,10 +615,13 @@ Discovering new parents
 -----------------------
 
 New parents are discovered using an algorithm in
-sage/category/pushout.py.  The fundamental idea is that most Parents
+:mod:`~sage.categories.pushout`. The fundamental idea is that most Parents
 in Sage are constructed from simpler objects via various functors.
-These are accessed via the :meth:`construction` method, which returns a
-(simpler) Parent along with a functor with which one can create self.
+These are accessed via the
+:meth:`~sage.categories.sets_cat.Sets.ParentMethods.construction`
+method, which returns a (simpler)
+:class:`~sage.structure.parent.Parent` along with a
+:class:`~sage.categories.pushout.ConstructionFunctor` with which one can create self.
 
 ::
 

@@ -258,7 +258,7 @@ class OutputUnicodeArt(OutputBase):
             sage: from sage.repl.rich_output.output_catalog import OutputUnicodeArt
             sage: OutputUnicodeArt.example()
             OutputUnicodeArt container
-            sage: print(OutputUnicodeArt.example().unicode_art.get_unicode())
+            sage: print(OutputUnicodeArt.example().unicode_art.get_str())
             ⎛-11   0   1⎞
             ⎜  3  -1   0⎟
             ⎝ -1  -1   0⎠
@@ -282,7 +282,7 @@ class OutputUnicodeArt(OutputBase):
             ⎜  3  -1   0⎟
             ⎝ -1  -1   0⎠
         """
-        print(self.unicode_art.get_unicode())
+        print(self.unicode_art.get_str())
 
 
 class OutputLatex(OutputBase):
@@ -309,7 +309,7 @@ class OutputLatex(OutputBase):
         EXAMPLES::
 
             sage: from sage.repl.rich_output.output_catalog import OutputLatex
-            sage: OutputLatex(latex(sqrt(x)))                                           # needs sage.symbolic
+            sage: OutputLatex(latex(sqrt(x)))
             OutputLatex container
         """
         self.latex = OutputBuffer(latex)

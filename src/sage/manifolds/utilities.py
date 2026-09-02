@@ -31,6 +31,7 @@ from operator import pow as _pow
 from sage.functions.other import abs_symbolic
 from sage.functions.trig import cos, sin
 from sage.misc.functional import sqrt
+from sage.misc.latex import latex, latex_variable_name
 from sage.rings.rational import Rational
 from sage.symbolic.constants import pi
 from sage.symbolic.expression import Expression
@@ -685,10 +686,10 @@ def simplify_chain_generic_sympy(expr):
     The chain is formed by the following functions, called
     successively:
 
-    #. :meth:`~sympy.simplify.combsimp`
-    #. :meth:`~sympy.simplify.trigsimp`
-    #. :meth:`~sympy.core.expand`
-    #. :meth:`~sympy.simplify.simplify`
+    #. :meth:`~sympy.core.expr.Expr.combsimp`
+    #. :meth:`~sympy.core.expr.Expr.trigsimp`
+    #. :meth:`~sympy.core.expr.Expr.expand`
+    #. :meth:`~sympy.core.basic.Basic.simplify`
 
     EXAMPLES:
 
@@ -746,12 +747,12 @@ def simplify_chain_real_sympy(expr):
     The chain is formed by the following functions, called
     successively:
 
-    #. :meth:`~sympy.simplify.combsimp`
-    #. :meth:`~sympy.simplify.trigsimp`
+    #. :meth:`~sympy.core.expr.Expr.combsimp`
+    #. :meth:`~sympy.core.expr.Expr.trigsimp`
     #. :func:`simplify_sqrt_real`
     #. :func:`simplify_abs_trig`
-    #. :meth:`~sympy.core.expand`
-    #. :meth:`~sympy.simplify.simplify`
+    #. :meth:`~sympy.core.expr.Expr.expand`
+    #. :meth:`~sympy.core.basic.Basic.simplify`
 
     EXAMPLES:
 
@@ -1042,8 +1043,6 @@ class ExpressionNice(Expression):
             \frac{\partial\,f}{\partial \left( x + y \right)}
              - \frac{\partial\,f}{\partial \left( x - y \right)}
         """
-        from sage.misc.latex import latex
-
         d = self._parent._latex_element_(self)
 
         # find all occurrences of diff
@@ -1145,7 +1144,6 @@ def _list_derivatives(ex, list_d, exponent=0):
 
     import operator
 
-    from sage.misc.latex import latex, latex_variable_name
     from sage.symbolic.operators import FDerivativeOperator
 
     if op:
@@ -1205,8 +1203,6 @@ def _list_functions(ex, list_f):
     """
     op = ex.operator()
     operands = ex.operands()
-
-    from sage.misc.latex import latex, latex_variable_name
 
     if op:
         # FIXME: This hack is needed because the NewSymbolicFunction is

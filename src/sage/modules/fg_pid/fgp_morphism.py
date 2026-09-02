@@ -151,9 +151,9 @@ class FGP_Morphism(Morphism):
         """
         return tuple([self(x) for x in self.domain().gens()])
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Comparison of ``self`` and ``right``.
+        Comparison of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -180,10 +180,10 @@ class FGP_Morphism(Morphism):
             True
         """
         a = (self.domain(), self.codomain())
-        b = (right.domain(), right.codomain())
+        b = (other.domain(), other.codomain())
         if a != b:
             return (op == op_NE)
-        return richcmp(self.im_gens(), right.im_gens(), op)
+        return richcmp(self.im_gens(), other.im_gens(), op)
 
     def __add__(self, right):
         """
@@ -284,17 +284,16 @@ class FGP_Morphism(Morphism):
             # perhaps can be optimized with a matrix multiply; but note
             # the subtlety of optimized representations.
             return self.codomain().submodule([self(y) for y in x.smith_form_gens()])
+        C = self.codomain()
+        D = self.domain()
+        O, X = D.optimized()
+        x = D(x)
+        if O is D:
+            x = x.lift()
         else:
-            C = self.codomain()
-            D = self.domain()
-            O, X = D.optimized()
-            x = D(x)
-            if O is D:
-                x = x.lift()
-            else:
-                # Now we have to transform x so that it is in the optimized representation.
-                x = D.V().coordinate_vector(x.lift()) * X
-            return C(self._phi(x))
+            # Now we have to transform x so that it is in the optimized representation.
+            x = D.V().coordinate_vector(x.lift()) * X
+        return C(self._phi(x))
 
     def kernel(self):
         """

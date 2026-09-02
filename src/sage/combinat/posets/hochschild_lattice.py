@@ -115,7 +115,8 @@ def hochschild_fan(n):
 
     .. SEEALSO::
 
-        :func:`hochschild_simplicial_complex`, :func:`hochschild_lattice`
+        :func:`hochschild_simplicial_complex`,
+        :func:`sage.combinat.posets.hochschild_lattice.hochschild_lattice`
 
     EXAMPLES::
 
@@ -153,7 +154,8 @@ def hochschild_simplicial_complex(n) -> SimplicialComplex:
     This is a pure spherical simplicial complex, whose flip graph
     is isomorphic to the Hasse diagram of `H_n`.
 
-    .. SEEALSO:: :func:`hochschild_fan`, :func:`hochschild_lattice`
+    .. SEEALSO:: :func:`hochschild_fan`,
+        :func:`sage.combinat.posets.hochschild_lattice.hochschild_lattice`
 
     EXAMPLES::
 

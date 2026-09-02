@@ -7,6 +7,8 @@ py.install_sources(
   'expect.py',
   'four_ti_2.py',
   'fricas.py',
+  'fricas.spad',
+  'fricas_translator.py',
   'frobby.py',
   'gap.py',
   'gap3.py',
@@ -43,8 +45,8 @@ py.install_sources(
   'process.pxd',
   'process.pyx',
   'psage.py',
+  'python_internal.py',
   'qepcad.py',
-  'qsieve.py',
   'quit.py',
   'r.py',
   'read_data.py',
@@ -55,11 +57,11 @@ py.install_sources(
   'sagespawn.pyx',
   'scilab.py',
   'singular.py',
+  'snappy.py',
   'sympy.py',
   'sympy_wrapper.py',
   'tab_completion.py',
   'tachyon.py',
-  'tests.py',
   'tides.py',
   subdir: 'sage/interfaces',
 )
@@ -84,4 +86,3 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, gmp],
   )
 endforeach
-

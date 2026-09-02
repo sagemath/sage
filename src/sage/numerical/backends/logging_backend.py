@@ -161,8 +161,7 @@ class LoggingBackend(GenericBackend):
             # cache it
             setattr(self, attr, _mm)
             return _mm
-        else:
-            return _a
+        return _a
 
     def base_ring(self):
         """
@@ -174,7 +173,7 @@ class LoggingBackend(GenericBackend):
         :class:`MixedIntegerLinearProgram`, depends on the base ring.
         This way input will be rational and so suitable for both exact
         and inexact methods; whereas output will be float and will thus
-        trigger :func:`assertAlmostEqual` tests.
+        trigger ``assertAlmostEqual`` tests.
 
         EXAMPLES::
 
@@ -192,8 +191,7 @@ class LoggingBackend(GenericBackend):
         """
         if self._base_ring is not None:
             return self._base_ring
-        else:
-            return self._backend.base_ring()
+        return self._backend.base_ring()
 
 
 # Override all methods that we inherited from GenericBackend

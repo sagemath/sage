@@ -241,7 +241,7 @@ class AffineLieAlgebra(FinitelyGeneratedLieAlgebra):
 
     lower_central_series = derived_series
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``False`` as ``self`` is semisimple.
 
@@ -965,7 +965,7 @@ class TwistedAffineLieAlgebra(AffineLieAlgebra):
         else:
 
             def basis_map(r):
-                return self._basic._from_dict({s: one for s in self._root_mapping[r]}, remove_zeros=False)
+                return self._basic._from_dict(dict.fromkeys(self._root_mapping[r], one), remove_zeros=False)
 
         if self._cartan_type.dual().type() == 'G':
             zeta3 = self._basic.base_ring().gen()

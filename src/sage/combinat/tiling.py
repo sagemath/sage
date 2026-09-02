@@ -272,10 +272,6 @@ rectangles. Obviously, there is one solution::
      [25], [26], [27], [28], [29], [30], [31]]
     sage: T.number_of_solutions()                       # long time (fast)
     1
-
-REFERENCES:
-
-.. [Knuth1] Knuth, Donald (2000). "Dancing links". :arxiv:`cs/0011047`.
 """
 # ****************************************************************************
 #       Copyright (C) 2011-2015 Sébastien Labbé <slabqc@gmail.com>
@@ -357,8 +353,7 @@ def ncube_isometry_group(n, orientation_preserving=True):
     L = [w.matrix() for w in WeylGroup(['B', n])]
     if orientation_preserving:
         return [m for m in L if m.det() == 1]
-    else:
-        return L
+    return L
 
 
 @cached_function
@@ -573,8 +568,7 @@ class Polyomino(SageObject):
         """
         if color is None:
             return self._color
-        else:
-            self._color = color
+        self._color = color
 
     def frozenset(self):
         r"""
@@ -967,10 +961,9 @@ class Polyomino(SageObject):
                         for coset in L}
             P_cosets_representents = [min(s, key=lambda a: a.sorted_list()) for s in P_cosets]
             return sorted(P_cosets_representents, key=lambda a: a.sorted_list())
-        else:
-            L = ncube_isometry_group(self._dimension, orientation_preserving)
-            P_images = {(m * self).canonical() for m in L}
-            return sorted(P_images, key=lambda a: a.sorted_list())
+        L = ncube_isometry_group(self._dimension, orientation_preserving)
+        P_images = {(m * self).canonical() for m in L}
+        return sorted(P_images, key=lambda a: a.sorted_list())
 
     def translated_copies(self, box):
         r"""
@@ -1650,9 +1643,8 @@ class TilingSolver(SageObject):
         """
         if self._reusable:
             return len(self.rows()) != 0
-        else:
-            return (sum(len(p) for p in self.pieces()) == len(self._box)
-                    and len(self.rows()) != 0)
+        return (sum(len(p) for p in self.pieces()) == len(self._box)
+                and len(self.rows()) != 0)
 
     def pieces(self):
         r"""
@@ -2408,23 +2400,21 @@ class TilingSolver(SageObject):
             sage: a = T.animate('incremental', stop=13); a      # not tested            # needs sage.plot
             Animation with 13 frames
         """
+        from sage.plot.graphics import Graphics
+        from sage.plot.animate import Animation
         dimension = self._box._dimension
         if dimension == 2:
-            from sage.plot.graphics import Graphics
-            from sage.plot.animate import Animation
             it = self.solve(partial=partial)
             it = itertools.islice(it, stop)
-            L = [sum([piece.show2d(size)
-                      for piece in solution], Graphics()) for solution in it]
-            (xmin,ymin), (xmax,ymax) = self._box.bounding_box()
-            xmax = xmax+0.5
-            ymax = ymax+0.5
-            a = Animation(L, xmin=xmin-0.5, ymin=ymin-0.5,
-                          xmax=xmax, ymax=ymax, aspect_ratio=1, axes=axes)
-            return a
-        elif dimension == 3:
+            L = [sum([piece.show2d(size) for piece in solution], Graphics())
+                 for solution in it]
+            (xmin, ymin), (xmax, ymax) = self._box.bounding_box()
+            xmax = xmax + 0.5
+            ymax = ymax + 0.5
+            return Animation(L, xmin=xmin - 0.5, ymin=ymin - 0.5,
+                             xmax=xmax, ymax=ymax, aspect_ratio=1, axes=axes)
+        if dimension == 3:
             raise NotImplementedError("3d Animation must be implemented "
                                       "in Jmol first")
-        else:
-            raise NotImplementedError("Dimension must be 2 or 3 in order "
-                                      "to make an animation")
+        raise NotImplementedError("Dimension must be 2 or 3 in order "
+                                  "to make an animation")

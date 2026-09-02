@@ -1281,22 +1281,46 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C2 = codes.random_linear_code(GF(3), 10, 5)
             sage: C1.is_permutation_equivalent(C2)
             False
+            sage: C1 = LinearCode(matrix(GF(3), [[1, 0, 1], [0, 1, 2]]))
+            sage: C2 = LinearCode(matrix(GF(3), [[0, 1, 1], [1, 0, 2]]))
+            sage: C1.is_permutation_equivalent(C2)
+            True
+            sage: C1.is_permutation_equivalent(C2, algorithm='verbose')
+            (True, (1,2))
+
+        Column scalings do not define a permutation equivalence (see
+        :issue:`40503`)::
+
+            sage: C1 = LinearCode(matrix(GF(3), [1, 1]))
+            sage: C2 = LinearCode(matrix(GF(3), [1, 2]))
+            sage: C1.is_permutation_equivalent(C2)
+            False
+            sage: C1.is_permutation_equivalent(C2, algorithm='verbose')
+            False
         """
-        from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
         F = self.base_ring()
         F_o = other.base_ring()
         q = F.order()
-        G = self.generator_matrix()
         n = self.length()
         n_o = other.length()
         if F != F_o or n != n_o:
             return False
-        k = len(G.rows())
+        k = self.dimension()
+        if k != other.dimension():
+            return False
         MS = MatrixSpace(F, q**k, n)
         CW1 = MS(self.list())
         CW2 = MS(other.list())
-        B1 = NonlinearBinaryCodeStruct(CW1)
-        B2 = NonlinearBinaryCodeStruct(CW2)
+        if q == 2:
+            from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
+            CodeStruct = NonlinearBinaryCodeStruct
+        else:
+            # NonlinearBinaryCodeStruct stores only supports; over larger fields
+            # that would incorrectly ignore nonzero field entries.
+            from sage.groups.perm_gps.partn_ref.refinement_matrices import MatrixStruct
+            CodeStruct = MatrixStruct
+        B1 = CodeStruct(CW1)
+        B2 = CodeStruct(CW2)
         ans = B1.is_isomorphic(B2)
         if ans is not False:
             if algorithm == "verbose":
@@ -1534,7 +1558,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         Note that if the base ring of `C` is `GF(2)` then this is the full
         automorphism group. Otherwise, you could use
-        :meth:`~sage.coding.linear_code.LinearCode.automorphism_group_gens`
+        :meth:`~sage.coding.linear_code.AbstractLinearCode.automorphism_group_gens`
         to compute generators of the full automorphism group.
 
         INPUT:
@@ -1548,7 +1572,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           Finally, if ``'codecan'`` then the partition refinement algorithm
           of Thomas Feulner is used, which also computes a canonical
           representative of ``self`` (call
-          :meth:`~sage.coding.linear_code.LinearCode.canonical_representative`
+          :meth:`~sage.coding.linear_code.AbstractLinearCode.canonical_representative`
           to access it).
 
         OUTPUT: permutation automorphism group
@@ -1859,10 +1883,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             z = 0*libgap.Z(q)*([0]*self.length())     # GAP zero vector
             w = libgap(Gmat).DistancesDistributionMatFFEVecFFE(libgap.GF(q), z)
             return w.sage()
-        elif algorithm == "binary":
+        if algorithm == "binary":
             from sage.coding.binary_code import weight_dist
             return weight_dist(self.generator_matrix())
-        elif algorithm == "leon":
+        if algorithm == "leon":
             if F.order() not in [2, 3, 5, 7]:
                 raise NotImplementedError("The algorithm 'leon' is only implemented for q = 2,3,5,7.")
             # The GAP command DirectoriesPackageLibrary tells the location of the latest
@@ -1881,8 +1905,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                         wt, num = L.split()
                         wts[eval(wt)] = eval(num)
             return wts
-        else:
-            raise NotImplementedError("The only algorithms implemented currently are 'gap', 'leon' and 'binary'.")
+        raise NotImplementedError("The only algorithms implemented currently are 'gap', 'leon' and 'binary'.")
 
     spectrum = weight_distribution
 
@@ -1955,10 +1978,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             R = PolynomialRing(ZZ, 2, names)
             x, y = R.gens()
             return sum(spec[i]*x**i*y**(n-i) for i in range(n+1))
-        else:
-            R = PolynomialRing(ZZ, names)
-            x, = R.gens()
-            return sum(spec[i]*x**i for i in range(n+1))
+        R = PolynomialRing(ZZ, names)
+        x, = R.gens()
+        return sum(spec[i]*x**i for i in range(n+1))
 
     def zeta_polynomial(self, name='T'):
         r"""
@@ -2053,7 +2075,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         T = RT.gen()
         return P/((1-T)*(1-q*T))
 
-    def cosetGraph(self):
+    def cosetGraph(self, immutable=False):
         r"""
         Return the coset graph of this linear code.
 
@@ -2061,6 +2083,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         are the cosets of `C`, considered as a subgroup of the additive
         group of the ambient vector space, and two cosets are adjacent
         if they have representatives that differ in exactly one coordinate.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or a mutable graph
 
         EXAMPLES::
 
@@ -2094,6 +2121,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [0]
             sage: G.edges(sort=False)
             []
+            sage: C.cosetGraph(immutable=False).is_immutable()
+            False
+            sage: C.cosetGraph(immutable=True).is_immutable()
+            True
         """
         from sage.matrix.constructor import matrix
         from sage.graphs.graph import Graph
@@ -2107,12 +2138,11 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         # Handle special cases
         if len(self.basis()) == self.length():
-            G = Graph(1)
-            G.name(f"coset graph of {self.__repr__()}")
-            return G
+            return Graph(1, name=f"coset graph of {self.__repr__()}",
+                         immutable=immutable)
         if len(self.basis()) == 0:
-            from sage.graphs.graph_generators import GraphGenerators
-            return GraphGenerators.HammingGraph(self.length(), F.order())
+            from sage.graphs.generators.families import HammingGraph
+            return HammingGraph(self.length(), F.order(), immutable=immutable)
 
         # we need to find a basis for the complement
         M = matrix(F, self.basis())
@@ -2154,17 +2184,17 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         lPei = [l*u for l in F for u in Pei if not l.is_zero()]
 
-        edges = []
-        for v in vertices:
-            v.set_immutable()
-            for u in lPei:
-                w = v + u
-                w.set_immutable()
-                edges.append((v, w))
+        def edges():
+            for v in vertices:
+                v.set_immutable()
+                for u in lPei:
+                    w = v + u
+                    w.set_immutable()
+                    yield (v, w)
 
-        G = Graph(edges, format='list_of_edges')
-        G.name(f"coset graph of {self.__repr__()}")
-        return G
+        return Graph(edges(), format="list_of_edges",
+                     name=f"coset graph of {self.__repr__()}",
+                     immutable=immutable)
 
 
 # ########################### linear codes python class ########################
@@ -2374,8 +2404,7 @@ class LinearCode(AbstractLinearCode):
         R = self.base_ring()
         if R in Fields():
             return "[%s, %s] linear code over GF(%s)" % (self.length(), self.dimension(), R.cardinality())
-        else:
-            return "[%s, %s] linear code over %s" % (self.length(), self.dimension(), R)
+        return "[%s, %s] linear code over %s" % (self.length(), self.dimension(), R)
 
     def _latex_(self) -> str:
         r"""

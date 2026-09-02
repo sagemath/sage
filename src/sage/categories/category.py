@@ -90,6 +90,12 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
         sage: v = V.gen(1)                                                              # needs sage.modules
         sage: v.category()                                                              # needs sage.modules
         Category of elements of Vector space of dimension 3 over Rational Field
+
+.. automethod:: sage.categories.category::Category._test_category_graph
+
+.. automethod:: sage.categories.category::Category.__and__
+
+.. automethod:: sage.categories.category::Category.__or__
 """
 
 # ****************************************************************************
@@ -1031,7 +1037,7 @@ class Category(UniqueRepresentation, SageObject):
         Python will find a proper Method Resolution Order for those
         classes. For background, see :mod:`sage.misc.c3_controlled`.
 
-        .. SEEALSO:: :meth:`_cmp_key`.
+        .. SEEALSO:: :class:`~sage.misc.c3_controlled.CmpKey`.
 
         .. NOTE::
 
@@ -1401,7 +1407,7 @@ class Category(UniqueRepresentation, SageObject):
             classes. This method checks this.
 
         Note that if
-        :meth:`~sage.structure.category_object.CategoryObject._refine_category_`
+        ``_refine_category_``
         is called at unexpected times, the invariant might be false. Most
         commonly, this happens with rings like ``Zmod(n)`` or ``SR``, where
         a check like ``Zmod(n) in Fields()`` is needed (which checks the primality
@@ -1409,7 +1415,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO::
 
-            :meth:`CategoryWithParameters._make_named_class_key`
+            ``CategoryWithParameters._make_named_class_key``
 
         EXAMPLES::
 
@@ -1536,7 +1542,7 @@ class Category(UniqueRepresentation, SageObject):
               resolution orders. For background, see
               :mod:`sage.misc.c3_controlled`.
 
-        .. SEEALSO:: :meth:`CategoryWithParameters._make_named_class`
+        .. SEEALSO:: ``CategoryWithParameters._make_named_class``
 
         EXAMPLES::
 
@@ -1894,10 +1900,9 @@ class Category(UniqueRepresentation, SageObject):
         assert isinstance(category, Category)
         if join:
             return Category.join([self, category])
-        else:
-            if not category.is_subcategory(self):
-                raise ValueError("Subcategory of `{}` required; got `{}`".format(self, category))
-            return category
+        if not category.is_subcategory(self):
+            raise ValueError("Subcategory of `{}` required; got `{}`".format(self, category))
+        return category
 
     def _is_subclass(self, c):
         """
@@ -1966,14 +1971,13 @@ class Category(UniqueRepresentation, SageObject):
         """
         if self is other:  # useful? fast pathway
             return self
-        elif self.is_subcategory(other):
+        if self.is_subcategory(other):
             return other
-        elif other.is_subcategory(self):
+        if other.is_subcategory(self):
             # Useful fast pathway; try:
             # %time L = EllipticCurve('960d1').prove_BSD()
             return self
-        else:
-            return Category.join(self._meet_(sup) for sup in other._super_categories)
+        return Category.join(self._meet_(sup) for sup in other._super_categories)
 
     @staticmethod
     def meet(categories):
@@ -2216,8 +2220,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         if axiom not in self.axioms():
             return self
-        else:
-            raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
+        raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
 
     def _without_axioms(self, named=False) -> Self:
         r"""
@@ -2255,7 +2258,7 @@ class Category(UniqueRepresentation, SageObject):
         Return the categories after sorting them decreasingly according
         to their comparison key.
 
-        .. SEEALSO:: :meth:`_cmp_key`
+        .. SEEALSO:: :class:`~sage.misc.c3_controlled.CmpKey`
 
         INPUT:
 
@@ -2489,19 +2492,16 @@ class Category(UniqueRepresentation, SageObject):
         if not categories:
             if as_list:
                 return []
-            else:
-                # Since Objects() is the top category, it is the neutral element of join
-                from .objects import Objects
-                return Objects()
-        elif len(categories) == 1:
+            # Since Objects() is the top category, it is the neutral element of join
+            from .objects import Objects
+            return Objects()
+        if len(categories) == 1:
             category = categories[0]
             if as_list:
                 if isinstance(category, JoinCategory):
                     return category.super_categories()
-                else:
-                    return categories
-            else:
-                return category
+                return categories
+            return category
 
         # Get the cache key, and look into the cache
         # Ensure associativity and commutativity by flattening
@@ -2603,26 +2603,6 @@ class Category(UniqueRepresentation, SageObject):
             except AttributeError:
                 pass
         return cls(*args, **keywords)
-
-
-def is_Category(x):
-    """
-    Return ``True`` if `x` is a category.
-
-    EXAMPLES::
-
-        sage: sage.categories.category.is_Category(CommutativeAdditiveSemigroups())
-        doctest:warning...
-        DeprecationWarning: the function is_Category is deprecated;
-        use 'isinstance(..., Category)' instead
-        See https://github.com/sagemath/sage/issues/37922 for details.
-        True
-        sage: sage.categories.category.is_Category(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(37922, "the function is_Category is deprecated; use 'isinstance(..., Category)' instead")
-    return isinstance(x, Category)
 
 
 @cached_function
@@ -3284,7 +3264,7 @@ class JoinCategory(CategoryWithParameters):
         """
         Return a comparison key for ``self``.
 
-        See :meth:`Category._cmp_key` for the specifications.
+        See :class:`~sage.misc.c3_controlled.CmpKey` for the specifications.
 
         EXAMPLES:
 

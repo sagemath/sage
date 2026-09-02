@@ -1,7 +1,8 @@
 r"""
 Subsets
 
-The set of subsets of a finite set. The set can be given as a list or a :class:`Set`
+The set of subsets of a finite set. The set can be given as a list or a
+:func:`sage.sets.set.Set`
 or else as an integer `n` which encodes the set `\{1,2,...,n\}`.
 See :class:`Subsets` for more information and examples.
 
@@ -160,13 +161,10 @@ def Subsets(s, k=None, submultiset=False):
     if k is None:
         if submultiset:
             return SubMultiset_s(s)
-        else:
-            return Subsets_s(s)
-    else:
-        if submultiset:
-            return SubMultiset_sk(s, k)
-        else:
-            return Subsets_sk(s, k)
+        return Subsets_s(s)
+    if submultiset:
+        return SubMultiset_sk(s, k)
+    return Subsets_sk(s, k)
 
 
 class Subsets_s(Parent):
@@ -503,8 +501,7 @@ class Subsets_s(Parent):
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
-            return Parent.__call__(self, el)
+        return Parent.__call__(self, el)
 
     def _element_constructor_(self, X):
         """
@@ -1145,8 +1142,7 @@ class SubMultiset_s(Parent):
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)
-        else:
-            return Parent.__call__(self, el)
+        return Parent.__call__(self, el)
 
     def _element_constructor_(self, X):
         """

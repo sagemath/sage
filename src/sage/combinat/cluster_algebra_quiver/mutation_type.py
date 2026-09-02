@@ -364,7 +364,7 @@ def _connected_mutation_type(dg):
             # can also output 'DEBUG: error i' if desired.
             # this command is used many times in this code, something times without the argument i.
             return _false_return(2)
-        elif label == (2, -2):
+        if label == (2, -2):
             dg.set_edge_label(edge[0], edge[1], 1)
             dg.add_edge(edge[0], edge[1], 1)
             double_edges.append(edge)
@@ -402,15 +402,12 @@ def _connected_mutation_type(dg):
                 if label1[1] == label2[0] and label2[1] == v1 and v2 == label1[0] and dict_in_out[v1][2] == dict_in_out[v2][2] == 2:
                     _reset_dg(dg, vertices, dict_in_out, [v1, v2])
                     return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'], [[label1[1]]])
-                elif label1[0] == label2[1] and label1[1] == v1 and v2 == label2[0] and dict_in_out[v1][2] == dict_in_out[v2][2] == 2:
+                if label1[0] == label2[1] and label1[1] == v1 and v2 == label2[0] and dict_in_out[v1][2] == dict_in_out[v2][2] == 2:
                     _reset_dg(dg, vertices, dict_in_out, [v1, v2])
                     return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'], [[label1[0]]])
-                else:
-                    return _false_return()
-            else:
                 return _false_return()
-        else:
             return _false_return()
+        return _false_return()
 
     # the program now performs further tests in the case that there are no edges of type (1, -4) nor (4, -1)
 
@@ -476,19 +473,18 @@ def _connected_mutation_type(dg):
             v1, v2 = label121[1], label122[1]
             _reset_dg(dg, vertices, dict_in_out, [v1, v2])
             return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-        elif bool5 and bool6 and bool56 and nb2 and nb3:
+        if bool5 and bool6 and bool56 and nb2 and nb3:
             v1, v2 = label121[1], label212[1]
             _reset_dg(dg, vertices, dict_in_out, [v1, v2])
             return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-        elif bool7 and bool8 and bool78 and nb1 and nb4:
+        if bool7 and bool8 and bool78 and nb1 and nb4:
             v1, v2 = label122[1], label211[1]
             _reset_dg(dg, vertices, dict_in_out, [v1, v2])
             return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-        else:
-            return _false_return()
+        return _false_return()
 
     # first test for affine type C: if there are three exceptional labels, we must be in both cases below of the same construction
-    elif len(exc_labels) == 3:
+    if len(exc_labels) == 3:
         exc_labels12 = [labl for labl in exc_labels if labl[2] == (1, -2)]
         exc_labels21 = [labl for labl in exc_labels if labl[2] == (2, -1)]
         # check that we have two labels of one kind and one label of the other
@@ -505,51 +501,44 @@ def _connected_mutation_type(dg):
                     _reset_dg(dg, vertices, dict_in_out, [label2[1]])
                     if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
                         return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
                         return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-                elif label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1):
-                    v1, v2 = label2[1], label3[0]
-                    _reset_dg(dg, vertices, dict_in_out, [label3[1]])
-                    if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
-                        return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
-                        return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-                else:
-                    return _false_return()
-            elif dict_in_out[label1[1]][2] == 1:
+                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
                 if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1):
                     v1, v2 = label2[1], label3[0]
                     _reset_dg(dg, vertices, dict_in_out, [label3[1]])
                     if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
                         return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                        return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'], [[v1, v2]])
+                    return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
+                return _false_return()
+            if dict_in_out[label1[1]][2] == 1:
+                if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1):
+                    v1, v2 = label2[1], label3[0]
+                    _reset_dg(dg, vertices, dict_in_out, [label3[1]])
+                    if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
+                        return _false_return()
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
                         return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-                elif label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1], label2[0], 1):
+                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+                if label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1], label2[0], 1):
                     v1, v2 = label3[1], label2[0]
                     _reset_dg(dg, vertices, dict_in_out, [label2[1]])
                     if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
                         return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
                         return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-                else:
-                    return _false_return()
-            elif label1[1] == label2[1] == label3[0] and dict_in_out[label1[1]][2] == 3 and dg.has_edge(label3[1], label1[0], 1) and dg.has_edge(label3[1], label2[0], 1) and dict_in_out[label2[0]][2] == dict_in_out[label1[0]][2] == 2:
+                    return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
+                return _false_return()
+            if label1[1] == label2[1] == label3[0] and dict_in_out[label1[1]][2] == 3 and dg.has_edge(label3[1], label1[0], 1) and dg.has_edge(label3[1], label2[0], 1) and dict_in_out[label2[0]][2] == dict_in_out[label1[0]][2] == 2:
                 _reset_dg(dg, vertices, dict_in_out, [label1[1]])
                 return _check_special_BC_cases(dg, n, ['BD'], [1], ['D'])
-            elif label1[0] == label2[0] == label3[1] and dict_in_out[label1[0]][2] == 3 and dg.has_edge(label1[1], label3[0], 1) and dg.has_edge(label2[1], label3[0], 1) and dict_in_out[label2[1]][2] == dict_in_out[label1[1]][2] == 2:
+            if label1[0] == label2[0] == label3[1] and dict_in_out[label1[0]][2] == 3 and dg.has_edge(label1[1], label3[0], 1) and dg.has_edge(label2[1], label3[0], 1) and dict_in_out[label2[1]][2] == dict_in_out[label1[1]][2] == 2:
                 _reset_dg(dg, vertices, dict_in_out, [label1[0]])
                 return _check_special_BC_cases(dg, n, ['CD'], [1], ['D'])
-            else:
-                return _false_return()
-        elif len(exc_labels21) == 2:
+            return _false_return()
+        if len(exc_labels21) == 2:
             label1, label2 = exc_labels21
             label3 = exc_labels12[0]
             if dict_in_out[label2[0]][2] == 1 or dict_in_out[label2[1]][2] == 1:
@@ -560,50 +549,43 @@ def _connected_mutation_type(dg):
                     _reset_dg(dg, vertices, dict_in_out, [label2[1]])
                     if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
                         return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
                         return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-                elif label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1):
-                    v1, v2 = label2[1], label3[0]
-                    _reset_dg(dg, vertices, dict_in_out, [label3[1]])
-                    if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
-                        return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
-                        return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-                else:
-                    return _false_return()
-            elif dict_in_out[label1[0]][2] == 1:
+                    return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
                 if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1):
                     v1, v2 = label2[1], label3[0]
                     _reset_dg(dg, vertices, dict_in_out, [label3[1]])
                     if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
                         return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                        return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'], [[v1, v2]])
+                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+                return _false_return()
+            if dict_in_out[label1[0]][2] == 1:
+                if label3[1] == label2[0] and dict_in_out[label3[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1):
+                    v1, v2 = label2[1], label3[0]
+                    _reset_dg(dg, vertices, dict_in_out, [label3[1]])
+                    if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
+                        return _false_return()
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
                         return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-                elif label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1], label2[0], 1):
+                    return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
+                if label2[1] == label3[0] and dict_in_out[label2[1]][2] == 2 and dg.has_edge(label3[1], label2[0], 1):
                     v1, v2 = label3[1], label2[0]
                     _reset_dg(dg, vertices, dict_in_out, [label2[1]])
                     if len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1))) > 0:
                         return _false_return()
-                    elif len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
+                    if len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2))) > 0:
                         return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'], [[v1, v2]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-                else:
-                    return _false_return()
-            elif label1[0] == label2[0] == label3[1] and dict_in_out[label1[0]][2] == 3 and dg.has_edge(label1[1], label3[0], 1) and dict_in_out[label1[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1) and dict_in_out[label2[1]][2] == 2:
+                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+                return _false_return()
+            if label1[0] == label2[0] == label3[1] and dict_in_out[label1[0]][2] == 3 and dg.has_edge(label1[1], label3[0], 1) and dict_in_out[label1[1]][2] == 2 and dg.has_edge(label2[1], label3[0], 1) and dict_in_out[label2[1]][2] == 2:
                 _reset_dg(dg, vertices, dict_in_out, [label3[1]])
                 return _check_special_BC_cases(dg, n, ['BD'], [1], ['D'])
-            elif label1[1] == label2[1] == label3[0] and dict_in_out[label3[0]][2] == 3 and dg.has_edge(label3[1], label1[0], 1) and dict_in_out[label1[0]][2] == 2 and dg.has_edge(label3[1], label2[0], 1) and dict_in_out[label2[0]][2] == 2:
+            if label1[1] == label2[1] == label3[0] and dict_in_out[label3[0]][2] == 3 and dg.has_edge(label3[1], label1[0], 1) and dict_in_out[label1[0]][2] == 2 and dg.has_edge(label3[1], label2[0], 1) and dict_in_out[label2[0]][2] == 2:
                 _reset_dg(dg, vertices, dict_in_out, [label3[0]])
                 return _check_special_BC_cases(dg, n, ['CD'], [1], ['D'])
-            else:
-                return _false_return()
+            return _false_return()
 
     # first test for finite types B and C: if there are two exceptional labels, they must belong to an oriented triangle and the vertex between must be a leaf
     # first test for affine type C: if there are two exceptional labels, they must belong to leaves
@@ -621,7 +603,7 @@ def _connected_mutation_type(dg):
             if label1[2] == (1, -2) and label2[2] == (2, -1):
                 if label1[1] == label2[1] and dict_in_out[label1[1]][2] == 2 and dict_in_out[label1[0]][2] == 1 and dict_in_out[label2[0]][2] == 1:
                     return QuiverMutationType(['BC', 2, 1])
-                elif label1[0] == label2[0] and dict_in_out[label1[0]][2] == 2 and dict_in_out[label1[1]][2] == 1 and dict_in_out[label2[1]][2] == 1:
+                if label1[0] == label2[0] and dict_in_out[label1[0]][2] == 2 and dict_in_out[label1[1]][2] == 1 and dict_in_out[label2[1]][2] == 1:
                     return QuiverMutationType(['BC', 2, 1])
             # the cases in affine type B/C are checked where the exceptional labels connect to leaves
             v11, v12, label1 = label1
@@ -642,26 +624,21 @@ def _connected_mutation_type(dg):
                 if in_out1 == in_out2 == 'in':
                     if label1 == (1, -2):
                         return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-                elif in_out1 == in_out2 == 'out':
+                    return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
+                if in_out1 == in_out2 == 'out':
                     if label1 == (1, -2):
                         return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-                else:
-                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-            elif in_out1 == in_out2:
+                    return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
                 return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-            elif label1 == (1, -2):
+            if in_out1 == in_out2:
+                return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+            if label1 == (1, -2):
                 if in_out1 == 'in':
                     return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-                else:
-                    return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-            elif in_out1 == 'in':
                 return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-            else:
-                return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
+            if in_out1 == 'in':
+                return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
+            return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
 
         v1, v, label1 = label1
         v, v2, label2 = label2
@@ -671,18 +648,17 @@ def _connected_mutation_type(dg):
                     _reset_dg(dg, vertices, dict_in_out, [v1, v2])
                     if label1 == (1, -2) and label2 == (2, -1):
                         return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'], [[v]])
-                    elif label1 == (2, -1) and label2 == (1, -2):
+                    if label1 == (2, -1) and label2 == (1, -2):
                         return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'], [[v]])
-                    else:
-                        return _false_return()
-                elif dict_in_out[v][0] == dict_in_out[v][1] == 1:
+                    return _false_return()
+                if dict_in_out[v][0] == dict_in_out[v][1] == 1:
                     dg.remove_multiple_edges()
                     dg = DiGraph(dg)
                     _reset_dg(dg, vertices, dict_in_out, [v])
                     if dict_in_out[v1][0] == dict_in_out[v1][1] == dict_in_out[v2][0] == dict_in_out[v2][1] == 1 and next(dg.neighbor_out_iterator(v1)) == next(dg.neighbor_in_iterator(v2)):
                         if label1 == (2, -1) and label2 == (1, -2):
                             return _check_special_BC_cases(dg, n, ['CD'], [1], ['A'])
-                        elif label1 == (1, -2) and label2 == (2, -1):
+                        if label1 == (1, -2) and label2 == (2, -1):
                             return _check_special_BC_cases(dg, n, ['BD'], [1], ['A'])
                     else:
                         return _false_return()
@@ -713,10 +689,9 @@ def _connected_mutation_type(dg):
                     if nr_same_neighbors + nr_other_neighbors > 1:
                         # _reset_dg(dg, vertices, dict_in_out, [v])
                         return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'], [[v]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'])
+                    return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'])
                 return mt_tmp
-            elif label1 == (1, -2) and label2 == (2, -1):
+            if label1 == (1, -2) and label2 == (2, -1):
                 if n == 4 and (nr_same_neighbors == 2 or nr_other_neighbors == 1):
                     return QuiverMutationType(['BD', n - 1, 1])
                 # checks for affine A
@@ -732,10 +707,8 @@ def _connected_mutation_type(dg):
                         # _reset_dg(dg, vertices, dict_in_out, [v])
                         return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'], [[v]])
                     return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'])
-                else:
-                    return mt_tmp
-            else:
-                return _false_return()
+                return mt_tmp
+            return _false_return()
         elif dict_in_out[v1][2] == 1 and dict_in_out[v2][2] == 1:
             if label1 == (1, -2) and label2 == (1, -2):
                 return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
@@ -771,20 +744,18 @@ def _connected_mutation_type(dg):
             if dict_in_out[v_in][0] == 1 and dict_in_out[v_in][1] == 0:
                 # _reset_dg(dg, vertices, dict_in_out, [v_in])
                 return _check_special_BC_cases(dg, n, ['B', 'BD'], [None, 1], ['A', 'D'], [[v_in], [v_in]])
-            elif dict_in_out[v_out][0] == 0 and dict_in_out[v_out][1] == 1:
+            if dict_in_out[v_out][0] == 0 and dict_in_out[v_out][1] == 1:
                 # _reset_dg(dg, vertices, dict_in_out, [v_out])
                 return _check_special_BC_cases(dg, n, ['C', 'CD'], [None, 1], ['A', 'D'], [[v_out], [v_out]])
-            else:
-                return _false_return()
-        elif label == (2, -1):
+            return _false_return()
+        if label == (2, -1):
             if dict_in_out[v_out][0] == 0 and dict_in_out[v_out][1] == 1:
                 # _reset_dg(dg, vertices, dict_in_out, [v_out])
                 return _check_special_BC_cases(dg, n, ['B', 'BD'], [None, 1], ['A', 'D'], [[v_out], [v_out]])
-            elif dict_in_out[v_in][0] == 1 and dict_in_out[v_in][1] == 0:
+            if dict_in_out[v_in][0] == 1 and dict_in_out[v_in][1] == 0:
                 # _reset_dg(dg, vertices, dict_in_out, [v_in])
                 return _check_special_BC_cases(dg, n, ['C', 'CD'], [None, 1], ['A', 'D'], [[v_in], [v_in]])
-            else:
-                return _false_return()
+            return _false_return()
 
     # if no edges of type (1, -2) nor (2, -1), then tests for type A, affine A, or D.
     return _connected_mutation_type_AAtildeD(dg)
@@ -857,8 +828,7 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
                             type_tmp[1].extend(dead_neighbors[:2])
                         if ret_conn_vert:
                             return [QuiverMutationType(['D', n]), type_tmp[1]]
-                        else:
-                            return QuiverMutationType(['D', n])
+                        return QuiverMutationType(['D', n])
                     # note that if v is not a 'connecting vertex' then we make no conclusion either way.
                 else:
                     return _false_return(3)
@@ -900,34 +870,32 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
                     # if not len(components) == 2:
                     if len(components) != 2:
                         return _false_return(4)
-                    else:
-                        dg_tmp1 = dg_tmp.subgraph(components[0])
-                        type_tmp1 = _connected_mutation_type_AAtildeD(dg_tmp1, ret_conn_vert=True)
-                        dg_tmp2 = dg_tmp.subgraph(components[1])
-                        type_tmp2 = _connected_mutation_type_AAtildeD(dg_tmp2, ret_conn_vert=True)
+                    dg_tmp1 = dg_tmp.subgraph(components[0])
+                    type_tmp1 = _connected_mutation_type_AAtildeD(dg_tmp1, ret_conn_vert=True)
+                    dg_tmp2 = dg_tmp.subgraph(components[1])
+                    type_tmp2 = _connected_mutation_type_AAtildeD(dg_tmp2, ret_conn_vert=True)
 
-                        if type_tmp1 == 'unknown' or type_tmp2 == 'unknown':
-                            return _false_return()
+                    if type_tmp1 == 'unknown' or type_tmp2 == 'unknown':
+                        return _false_return()
 
-                        # Assuming that the two components are recognized, initialize this in a format it can be returned as output
-                        type_tmp = []
-                        type_tmp.append([type_tmp1[0], type_tmp2[0]])
-                        type_tmp[0].sort(key=str)
-                        type_tmp.append(type_tmp1[1] + type_tmp2[1])
-                        type_tmp[1].sort(key=str)
+                    # Assuming that the two components are recognized, initialize this in a format it can be returned as output
+                    type_tmp = []
+                    type_tmp.append([type_tmp1[0], type_tmp2[0]])
+                    type_tmp[0].sort(key=str)
+                    type_tmp.append(type_tmp1[1] + type_tmp2[1])
+                    type_tmp[1].sort(key=str)
 
-                        # Need to make sure the two vertices in c2 are both 'connecting vertices'.
-                        if not set(c2).issubset(type_tmp[1]):
-                            return _false_return(5)
+                    # Need to make sure the two vertices in c2 are both 'connecting vertices'.
+                    if not set(c2).issubset(type_tmp[1]):
+                        return _false_return(5)
 
-                        if type_tmp[0][0].letter() == 'A' and type_tmp[0][0].is_finite() and type_tmp[0][1].letter() == 'A' and type_tmp[0][1].is_finite():
-                            if ret_conn_vert:
-                                type_tmp[1].extend(c1)
-                                # type_tmp[1].remove(c2[0])
-                                # type_tmp[1].remove(c2[1])
-                                return [QuiverMutationType(['D', n]), type_tmp[1]]
-                            else:
-                                return QuiverMutationType(['D', n])
+                    if type_tmp[0][0].letter() == 'A' and type_tmp[0][0].is_finite() and type_tmp[0][1].letter() == 'A' and type_tmp[0][1].is_finite():
+                        if ret_conn_vert:
+                            type_tmp[1].extend(c1)
+                            # type_tmp[1].remove(c2[0])
+                            # type_tmp[1].remove(c2[1])
+                            return [QuiverMutationType(['D', n]), type_tmp[1]]
+                        return QuiverMutationType(['D', n])
 
                 # Exception 2 case (triangulated square):
                 if sg.is_isomorphic(exception_graph2):
@@ -941,34 +909,32 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
                     components = dg_tmp.connected_components(sort=False)
                     if len(components) != 2:
                         return _false_return(7)
-                    else:
-                        dg_tmp1 = dg_tmp.subgraph(components[0])
-                        type_tmp1 = _connected_mutation_type_AAtildeD(dg_tmp1, ret_conn_vert=True)
+                    dg_tmp1 = dg_tmp.subgraph(components[0])
+                    type_tmp1 = _connected_mutation_type_AAtildeD(dg_tmp1, ret_conn_vert=True)
 
-                        if type_tmp1 == 'unknown':
-                            return _false_return()
-                        dg_tmp2 = dg_tmp.subgraph(components[1])
-                        type_tmp2 = _connected_mutation_type_AAtildeD(dg_tmp2, ret_conn_vert=True)
+                    if type_tmp1 == 'unknown':
+                        return _false_return()
+                    dg_tmp2 = dg_tmp.subgraph(components[1])
+                    type_tmp2 = _connected_mutation_type_AAtildeD(dg_tmp2, ret_conn_vert=True)
 
-                        # Assuming that the two components are recognized, initialize this in
-                        # a format it can be returned as output (just as above)
-                        type_tmp = []
-                        type_tmp.append([type_tmp1[0], type_tmp2[0]])
-                        type_tmp[0].sort(key=str)
-                        type_tmp.append(type_tmp1[1] + type_tmp2[1])
-                        type_tmp[1].sort(key=str)
-                        if type_tmp2 == 'unknown':
-                            return _false_return()
-                        if not set(c2).issubset(type_tmp[1]) and len(set(type_tmp[1]).intersection(c2)) == 1:
-                            return _false_return(5.5)
-                        if type_tmp[0][0].letter() == 'A' and type_tmp[0][0].is_finite() and type_tmp[0][1].letter() == 'A' and type_tmp[0][1].is_finite():
-                            if ret_conn_vert:
-                                type_tmp[1].remove(c2[0])
-                                type_tmp[1].remove(c2[1])
-                                # type_tmp[1].extend(c1)
-                                return [QuiverMutationType(['D', n]), type_tmp[1]]
-                            else:
-                                return QuiverMutationType(['D', n])
+                    # Assuming that the two components are recognized, initialize this in
+                    # a format it can be returned as output (just as above)
+                    type_tmp = []
+                    type_tmp.append([type_tmp1[0], type_tmp2[0]])
+                    type_tmp[0].sort(key=str)
+                    type_tmp.append(type_tmp1[1] + type_tmp2[1])
+                    type_tmp[1].sort(key=str)
+                    if type_tmp2 == 'unknown':
+                        return _false_return()
+                    if not set(c2).issubset(type_tmp[1]) and len(set(type_tmp[1]).intersection(c2)) == 1:
+                        return _false_return(5.5)
+                    if type_tmp[0][0].letter() == 'A' and type_tmp[0][0].is_finite() and type_tmp[0][1].letter() == 'A' and type_tmp[0][1].is_finite():
+                        if ret_conn_vert:
+                            type_tmp[1].remove(c2[0])
+                            type_tmp[1].remove(c2[1])
+                            # type_tmp[1].extend(c1)
+                            return [QuiverMutationType(['D', n]), type_tmp[1]]
+                        return QuiverMutationType(['D', n])
 
     # The following tests are done regardless of the number of vertices in dg.
     # If there are 1, 2, or 3 vertices in dg, we would have skipped above tests and gone directly here.
@@ -1015,7 +981,7 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
     for edge, count in edge_count.items():
         if count > 2:
             return _false_return(17)
-        elif count == 2:
+        if count == 2:
             multiple_trian_edges.append(edge)
     multiple_trian_edges = list(set(multiple_trian_edges))
 
@@ -1057,16 +1023,14 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
         if long_cycle:
             # if a long_cycle had previously been found, then the specified oriented triangle is a second long_cycle, a contradiction.
             return _false_return(202)
-        else:
-            long_cycle = [unique_triangle, QuiverMutationType(['D', n])]
+        long_cycle = [unique_triangle, QuiverMutationType(['D', n])]
 
     # there can be at most 1 unoriented triangle and this triangle is the exceptional circle of type A_tilde
     if unoriented_trians:
         if len(unoriented_trians) == 1:
             if long_cycle:
                 return _false_return(21)
-            else:
-                long_cycle = [unoriented_trians[0], ['A', n - 1, 1]]
+            long_cycle = [unoriented_trians[0], ['A', n - 1, 1]]
         else:
             return _false_return(22)
 
@@ -1076,22 +1040,21 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
             # if a vertex has valency 4 than the 4 neighboring edges must be contained in 2 oriented triangles
             if w[0] != 2:
                 return _false_return(23)
-            else:
-                in_neighbors = dg.neighbors_in(v)
-                out_neighbors = dg.neighbors_out(v)
-                if len(out_neighbors) == 1:
-                    out_neighbors.extend(out_neighbors)
-                if len(in_neighbors) == 1:
-                    in_neighbors.extend(in_neighbors)
+            in_neighbors = dg.neighbors_in(v)
+            out_neighbors = dg.neighbors_out(v)
+            if len(out_neighbors) == 1:
+                out_neighbors.extend(out_neighbors)
+            if len(in_neighbors) == 1:
+                in_neighbors.extend(in_neighbors)
 
-                if (in_neighbors[0], v) not in oriented_trian_edges:
-                    return _false_return(24)
-                elif (in_neighbors[1], v) not in oriented_trian_edges:
-                    return _false_return(25)
-                elif (v, out_neighbors[0]) not in oriented_trian_edges:
-                    return _false_return(26)
-                elif (v, out_neighbors[1]) not in oriented_trian_edges:
-                    return _false_return(27)
+            if (in_neighbors[0], v) not in oriented_trian_edges:
+                return _false_return(24)
+            if (in_neighbors[1], v) not in oriented_trian_edges:
+                return _false_return(25)
+            if (v, out_neighbors[0]) not in oriented_trian_edges:
+                return _false_return(26)
+            if (v, out_neighbors[1]) not in oriented_trian_edges:
+                return _false_return(27)
 
         # if a vertex has valency 3 than 2 of its neighboring edges must be contained in an oriented triangle and the remaining must not
         elif w[2] == 3:
@@ -1100,7 +1063,7 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
                 out_neighbors = dg.neighbors_out(v)
                 if (in_neighbors[0], v) not in oriented_trian_edges:
                     return _false_return(28)
-                elif len(out_neighbors) == 1:
+                if len(out_neighbors) == 1:
                     if (v, out_neighbors[0]) not in oriented_trian_edges:
                         return _false_return(29)
                 else:
@@ -1118,7 +1081,7 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
                 out_neighbors = dg.neighbors_out(v)
                 if (v, out_neighbors[0]) not in oriented_trian_edges:
                     return _false_return(34)
-                elif len(in_neighbors) == 1:
+                if len(in_neighbors) == 1:
                     if (in_neighbors[0], v) not in oriented_trian_edges:
                         return _false_return(35)
                 else:
@@ -1145,7 +1108,7 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
         if long_cycle:
             return _false_return(41)
         # otherwise, we obtain cases depending on whether or not the found long_cycle is oriented.
-        elif is_oriented:
+        if is_oriented:
             long_cycle = [cycle, QuiverMutationType(['D', n])]
         else:
             long_cycle = [cycle, ['A', n - 1, 1]]
@@ -1223,10 +1186,9 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
         return QuiverMutationType(['A', [r, n - r], 1])
 
     # post-parsing 2: if we are in another type, it is returned
-    else:
-        if ret_conn_vert:
-            return [long_cycle[1], connecting_vertices]
-        return long_cycle[1]
+    if ret_conn_vert:
+        return [long_cycle[1], connecting_vertices]
+    return long_cycle[1]
 
 
 @cached_function
@@ -1500,8 +1462,7 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
                     print(_edge_list_to_matrix(dg_new.edges(sort=True),
                                                list(range(dg.order())), []))
                     return dg, dg_new
-                else:
-                    dg = dg_new
+                dg = dg_new
 
 
 def _random_multi_tests(n, k, nr_mut=5):

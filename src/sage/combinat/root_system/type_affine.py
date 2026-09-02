@@ -216,8 +216,7 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         if i == "delta" or i == "deltacheck":
             return self.classical().zero()
-        else:
-            return self.classical().monomial(i)
+        return self.classical().monomial(i)
 
     def is_extended(self):
         r"""
@@ -355,15 +354,14 @@ class AmbientSpace(CombinatorialFreeModule):
 
             - :meth:`~sage.combinat.root_system.weight_space.WeightSpace.simple_root`
             - :class:`~sage.combinat.root_system.weight_space.WeightSpace`
-            - :meth:`CartanType.col_annihilator`
-            - :meth:`null_root`
+            - :meth:`sage.combinat.root_system.cartan_type.CartanType_affine.col_annihilator`
+            - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.null_root`
         """
         cartan_type = self.cartan_type()
         special_node = cartan_type.special_node()
         if i == special_node:
             return self(self._classical_alpha_0()) + self.monomial("delta")
-        else:
-            return self(self.classical().simple_root(i))
+        return self(self.classical().simple_root(i))
 
     @cached_method
     def simple_coroot(self, i):
@@ -412,7 +410,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations._plot_projection`
+            ``RootLatticeRealizations.ParentMethods._plot_projection``
 
         EXAMPLES::
 

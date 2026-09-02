@@ -168,8 +168,8 @@ Sage 可以对许多函数进行微分和积分。
     sage: s = var("s")
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
-    sage: f.laplace(t,s)
-    -1/(s^2 + 1) + 2/(s - 1)^3
+    sage: f.laplace(t,s).simplify_rational()
+    -(s^3 - 5*s^2 + 3*s - 3)/(s^5 - 3*s^4 + 4*s^3 - 4*s^2 + 3*s - 1)
 
 这里是一个更复杂的示例。左侧连接到墙上的耦合弹簧的平衡位移
 

@@ -27,10 +27,12 @@ The infinite set of all posets can be used to find minimal examples::
     :widths: 30, 70
     :delim: |
 
+    :meth:`~Posets.AltNuTamariLattice` | Return the alt `\nu`-Tamari lattice.
     :meth:`~Posets.AntichainPoset` | Return an antichain on `n` elements.
     :meth:`~Posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
     :meth:`~Posets.BubblePoset` | Return the Bubble lattice for `(m,n)`.
     :meth:`~Posets.ChainPoset` | Return a chain on `n` elements.
+    :meth:`~Posets.ChuteMoveLattice` | Return the chute move lattice on polyominoes.
     :meth:`~Posets.Crown` | Return the crown poset on `2n` elements.
     :meth:`~Posets.DexterSemilattice` | Return the Dexter semilattice.
     :meth:`~Posets.DiamondPoset` | Return the lattice of rank two on `n` elements.
@@ -42,6 +44,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions of the integer `n` ordered by dominance.
     :meth:`~Posets.MobilePoset` | Return the mobile poset formed by the `ribbon` with `hangers` below and an `anchor` above.
     :meth:`~Posets.NoncrossingPartitions` | Return the poset of noncrossing partitions of a finite Coxeter group ``W``.
+    :meth:`~Posets.NuTamariLattice` | Return the `\nu`-Tamari lattice.
     :meth:`~Posets.PentagonPoset` | Return the Pentagon poset.
     :meth:`~Posets.PermutationPattern` | Return the Permutation pattern poset.
     :meth:`~Posets.PermutationPatternInterval` | Return an interval in the Permutation pattern poset.
@@ -52,6 +55,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.RandomPoset` | Return a random poset on `n` elements.
     :meth:`~Posets.RibbonPoset` | Return a ribbon on `n` elements with descents at `descents`.
     :meth:`~Posets.RestrictedIntegerPartitions` | Return the poset of integer partitions of `n`, ordered by restricted refinement.
+    :meth:`~Posets.Sashes` | Return the lattice of sashes of `n`.
     :meth:`~Posets.SetPartitions` | Return the poset of set partitions of the set `\{1,\dots,n\}`.
     :meth:`~Posets.ShardPoset` | Return the shard intersection order.
     :meth:`~Posets.ShufflePoset` | Return the Shuffle lattice for `(m,n)`.
@@ -97,12 +101,13 @@ Constructions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
-from sage.combinat.posets import bubble_shuffle, hochschild_lattice
+from sage.combinat.posets import bubble_shuffle, hochschild_lattice, sashes, chute_move
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -168,6 +173,10 @@ class Posets(metaclass=ClasscallMetaclass):
         Finite lattice containing 8 elements
         sage: posets.ChainPoset(3)
         Finite lattice containing 3 elements
+        sage: posets.NuTamariLattice([1, 0, 1, 0])
+        Finite lattice containing 2 elements
+        sage: posets.AltNuTamariLattice('01001', [0, 0])
+        Finite lattice containing 7 elements
         sage: posets.RandomPoset(17,.15)
         Finite poset containing 17 elements
 
@@ -288,7 +297,26 @@ class Posets(metaclass=ClasscallMetaclass):
 
     ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
 
-    HochschildLattice = staticmethod(hochschild_lattice.hochschild_lattice)
+    @staticmethod
+    def HochschildLattice(n):
+        r"""
+        Return the Hochschild lattice `H_n`.
+
+        See :func:`~sage.combinat.posets.hochschild_lattice.hochschild_lattice`
+        for details.
+        """
+        return hochschild_lattice.hochschild_lattice(n)
+
+    @staticmethod
+    def Sashes(n):
+        r"""
+        Return the lattice of sashes of length ``n``.
+
+        See :func:`~sage.combinat.posets.sashes.lattice_of_sashes` for details.
+        """
+        return sashes.lattice_of_sashes(n)
+
+    ChuteMoveLattice = staticmethod(chute_move.ChuteMoveLattice)
 
     @staticmethod
     def ChainPoset(n, facade=None):
@@ -440,7 +468,7 @@ class Posets(metaclass=ClasscallMetaclass):
         c[0] = list(range(1, n - 1))
         c[n - 1] = []
         D = DiGraph({v: c[v] for v in range(n)}, format='dict_of_lists')
-        cat = FiniteLatticePosets()
+        cat = FiniteLatticePosets().ChainGraded()
         if n <= 4:
             cat = cat.Stone()
         return FiniteLatticePoset(hasse_diagram=D, category=cat,
@@ -546,9 +574,9 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite poset containing 0 elements
         """
         n = len(H)
-        if not all(max(i+1, H[i-1]) <= H[i] for i in range(1, n)) or 0 < n < H[-1]:
+        if not all(max(i + 1, H[i - 1]) <= H[i] for i in range(1, n)) or 0 < n < H[-1]:
             raise ValueError(f"{H} is not a Hessenberg function")
-        return Poset((tuple(range(1, n+1)), lambda i, j: H[i-1] < j))
+        return Poset((tuple(range(1, n + 1)), lambda i, j: H[i - 1] < j))
 
     @staticmethod
     def IntegerCompositions(n):
@@ -570,8 +598,9 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         from sage.combinat.composition import Compositions
         C = Compositions(n)
+        cat = FiniteLatticePosets().ChainGraded()
         return Poset((C, [[c, d] for c in C for d in C if d.is_finer(c)]),
-                     cover_relations=False)
+                     cover_relations=False, category=cat)
 
     @staticmethod
     def IntegerPartitions(n):
@@ -609,8 +638,9 @@ class Posets(metaclass=ClasscallMetaclass):
                         lc.append(tup)
             return lc
         from sage.combinat.partition import Partitions
-        H = DiGraph(dict([[tuple(p), lower_covers(p)] for p in Partitions(n)]))
-        return Poset(H.reverse())
+        H = DiGraph({tuple(p): lower_covers(p) for p in Partitions(n)})
+        cat = FiniteLatticePosets().ChainGraded()
+        return Poset(H.reverse(), cover_relations=True, category=cat)
 
     @staticmethod
     def RestrictedIntegerPartitions(n):
@@ -648,8 +678,8 @@ class Posets(metaclass=ClasscallMetaclass):
                             lc.append(tup)
             return lc
         from sage.combinat.partition import Partitions
-        H = DiGraph(dict([[tuple(p), lower_covers(p)] for p in Partitions(n)]))
-        return Poset(H.reverse())
+        H = DiGraph({tuple(p): lower_covers(p) for p in Partitions(n)})
+        return Poset(H.reverse(), cover_relations=True)
 
     @staticmethod
     def IntegerPartitionsDominanceOrder(n):
@@ -807,7 +837,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: set_random_seed(0)  # Results are reproducible
             sage: P = posets.RandomPoset(5, 0.3)
             sage: P.cover_relations()
-            [[5, 4], [4, 2], [1, 2]]
+            [[3, 2], [2, 5], [1, 5]]
 
         .. SEEALSO:: :meth:`RandomLattice`
 
@@ -885,7 +915,17 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: L = posets.RandomLattice(8, 0.995); L
             Finite lattice containing 8 elements
             sage: L.cover_relations()
-            [[7, 6], [7, 3], [7, 1], ..., [5, 4], [2, 4], [1, 4], [0, 4]]
+            [[3, 5],
+             [3, 7],
+             [3, 0],
+             [5, 6],
+             [5, 4],
+             [5, 1],
+             [6, 2],
+             [7, 4],
+             [4, 2],
+             [1, 2],
+             [0, 2]]
             sage: L = posets.RandomLattice(10, 0, properties=['dismantlable'])
             sage: L.is_dismantlable()
             True
@@ -912,7 +952,6 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.RandomLattice(0, 0.5)
             Finite lattice containing 0 elements
         """
-        from copy import copy
         n = check_int(n)
         try:
             p = float(p)
@@ -1007,8 +1046,9 @@ class Posets(metaclass=ClasscallMetaclass):
                     L.pop(j)
                     yield S(L)
 
+        cat = FiniteLatticePosets().ChainGraded()
         return LatticePoset({x: list(covers(x)) for x in S},
-                            cover_relations=True)
+                            cover_relations=True, category=cat)
 
     @staticmethod
     def SSTPoset(s, f=None):
@@ -1119,8 +1159,10 @@ class Posets(metaclass=ClasscallMetaclass):
         if n < 10:
             element_labels = {s: "".join(str(x) for x in s)
                               for s in Permutations(n)}
+
+        cat = FiniteLatticePosets().ChainGraded()
         return Poset({s: s.bruhat_succ() for s in Permutations(n)},
-                     element_labels)
+                     element_labels, category=cat)
 
     @staticmethod
     def SymmetricGroupBruhatIntervalPoset(start, end):
@@ -1165,7 +1207,8 @@ class Posets(metaclass=ClasscallMetaclass):
                            if succ_perm.bruhat_lequal(end)]
             unseen.extend(succ_perm for succ_perm in nodes[perm]
                           if succ_perm not in nodes)
-        return Poset(nodes)
+        cat = FiniteLatticePosets().ChainGraded()
+        return Poset(nodes, category=cat)
 
     @staticmethod
     def SymmetricGroupWeakOrderPoset(n, labels='permutations', side='right'):
@@ -1182,14 +1225,14 @@ class Posets(metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: posets.SymmetricGroupWeakOrderPoset(4)
-            Finite poset containing 24 elements
+            Finite lattice containing 24 elements
         """
         if n < 10 and labels == "permutations":
-            element_labels = dict([[s, "".join(map(str, s))]
-                                   for s in Permutations(n)])
+            element_labels = {s: "".join(map(str, s))
+                              for s in Permutations(n)}
         if n < 10 and labels == "reduced_words":
-            element_labels = dict([[s, "".join(map(str, s.reduced_word_lexmin()))]
-                                   for s in Permutations(n)])
+            element_labels = {s: "".join(map(str, s.reduced_word_lexmin()))
+                              for s in Permutations(n)}
         if side == "left":
 
             def weak_covers(s):
@@ -1200,6 +1243,7 @@ class Posets(metaclass=ClasscallMetaclass):
                 return [v for v in s.bruhat_succ() if
                         s.length() + (s.inverse().right_action_product(v)).length() == v.length()]
         else:
+
             def weak_covers(s):
                 r"""
                 Nested function for computing the covers of elements in the
@@ -1207,8 +1251,11 @@ class Posets(metaclass=ClasscallMetaclass):
                 """
                 return [v for v in s.bruhat_succ() if
                         s.length() + (s.inverse().left_action_product(v)).length() == v.length()]
-        return Poset(dict([[s, weak_covers(s)] for s in Permutations(n)]),
-                     element_labels)
+        return LatticePoset(
+            {s: weak_covers(s) for s in Permutations(n)},
+            element_labels, check=False,
+            category=FiniteLatticePosets().ChainGraded().Semidistributive()
+        )
 
     @staticmethod
     def TetrahedralPoset(n, *colors, **labels):
@@ -1277,8 +1324,7 @@ class Posets(metaclass=ClasscallMetaclass):
         elem_labels = {}
         if 'labels' in labels:
             if labels['labels'] == 'integers':
-                for labelcount, ijk in enumerate(elem):
-                    elem_labels[ijk] = labelcount
+                elem_labels.update({ijk: labelcount for labelcount, ijk in enumerate(elem)})
         for c in colors:
             for i, j, k in elem:
                 if i + j + k < n - 1:
@@ -1301,10 +1347,20 @@ class Posets(metaclass=ClasscallMetaclass):
 
     # shard intersection order
     import sage.combinat.shard_order
-    ShardPoset = staticmethod(sage.combinat.shard_order.shard_poset)
+    @staticmethod
+    def ShardPoset(n):
+        r"""
+        Return the shard intersection order on permutations of size `n`.
+
+        See :func:`~sage.combinat.shard_order.shard_poset` for details.
+        """
+        return sage.combinat.shard_order.shard_poset(n)
 
     # Tamari lattices
+    import sage.combinat.nu_tamari_lattice
     import sage.combinat.tamari_lattices
+    AltNuTamariLattice = staticmethod(sage.combinat.nu_tamari_lattice.AltNuTamariLattice)
+    NuTamariLattice = staticmethod(sage.combinat.nu_tamari_lattice.NuTamariLattice)
     TamariLattice = staticmethod(sage.combinat.tamari_lattices.TamariLattice)
     DexterSemilattice = staticmethod(sage.combinat.tamari_lattices.DexterSemilattice)
 
@@ -1995,7 +2051,7 @@ def _random_dismantlable_lattice(n):
         sage: D = sage.combinat.posets.poset_examples._random_dismantlable_lattice(10); D
         Digraph on 10 vertices
         sage: D.neighbors_in(8)
-        [0]
+        [1]
 
     ALGORITHM::
 
@@ -2094,7 +2150,6 @@ def _random_distributive_lattice(n):
     Repeat.
     """
     from sage.combinat.posets.hasse_diagram import HasseDiagram
-    from copy import copy
     from sage.combinat.subset import Subsets
     from sage.graphs.digraph_generators import digraphs
 
@@ -2125,7 +2180,7 @@ def _random_distributive_lattice(n):
     return D
 
 
-def _random_stone_lattice(n):
+def _random_stone_lattice(n) -> DiGraph:
     """
     Return a random Stone lattice on `n` elements.
 
@@ -2152,10 +2207,10 @@ def _random_stone_lattice(n):
     from sage.arith.misc import factor
     from sage.combinat.partition import Partitions
     from sage.misc.misc_c import prod
-    from copy import copy
+    from sage.misc.prandom import shuffle
 
     factors = sum([[f[0]] * f[1] for f in factor(n)], [])
-    sage.misc.prandom.shuffle(factors)
+    shuffle(factors)
 
     part_lengths = list(Partitions(len(factors)).random_element())
     parts = []

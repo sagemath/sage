@@ -26,10 +26,9 @@ from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
 from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport prCopyR
-from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
-from sage.libs.singular.decl cimport n_coeffType
+from sage.libs.singular.decl cimport n_unknown, n_R, n_algExt, n_transExt, n_long_C, n_Z, n_Zn, n_Znm, n_Z2m
+from sage.libs.singular.decl cimport n_coeffType, LongComplexInfo
 from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, TransExtInfo
-
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
@@ -196,36 +195,36 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
-        sage: R = PolynomialRing(GF(1000000007), ("a", "b"), implementation="singular"); print(sing_print(R))
+        sage: R = PolynomialRing(GF(100000007), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a field, global ordering
-        // coefficients: ZZ/1000000007...
+        // coefficients: ZZ/100000007...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
 
     When ``Zmod`` is used, use a different Singular type
-    (note that the print is wrong, the field in fact doesn't have zero-divisors)::
+    (note that the print is wrong in older versions of singular, the field in fact doesn't have zero-divisors)::
 
         sage: R = PolynomialRing(Zmod(2), ("a", "b"), implementation="singular"); print(sing_print(R))
-        polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(2)...
+        polynomial ring, over a ..., global ordering
+        // coefficients: ZZ/...(2)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
         sage: R = PolynomialRing(Zmod(3), ("a", "b"), implementation="singular"); print(sing_print(R))
-        polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(3)...
+        polynomial ring, over a ..., global ordering
+        // coefficients: ZZ/...(3)...
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
         //        block   2 : ordering C
 
-    Large prime (note that the print is wrong, the field in fact doesn't have zero-divisors)::
+    Large prime (note that the print is wrong in older versions of singular, the field in fact doesn't have zero-divisors)::
 
         sage: R = PolynomialRing(GF(2^128+51), ("a", "b"), implementation="singular"); print(sing_print(R))
-        polynomial ring, over a ring (with zero-divisors), global ordering
+        polynomial ring, over a ..., global ordering
         // coefficients: ZZ/bigint(340282366920938463463374607431768211507)...
         // number of vars : 2
         //        block   1 : ordering dp
@@ -302,7 +301,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: PolynomialRing(GF((2^31+11)^2), ("a", "b"), implementation="singular")
         Traceback (most recent call last):
         ...
-        TypeError: characteristic must be <= 2147483647.
+        TypeError: characteristic must be < 2^29.
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -327,6 +326,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     cdef AlgExtInfo extParam
     cdef TransExtInfo trextParam
     cdef n_coeffType _type = n_unknown
+    cdef LongComplexInfo info
 
     #cdef cfInitCharProc myfunctionptr;
 
@@ -510,6 +510,17 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cf = nInitChar( n_Z, NULL) # integer coefficient ring
         _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
+    elif isinstance(base_ring, sage.rings.abc.RealDoubleField):
+        _cf = nInitChar(n_R, NULL)
+        _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
+    elif isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
+        info.float_len = 15
+        info.float_len2 = 0
+        info.par_name = "I"
+        _cf = nInitChar(n_long_C, <void *>&info)
+        _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
     elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
 
         ch = base_ring.characteristic()
@@ -518,7 +529,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         isprime = ch.is_prime()
 
-        if isprime and ch <= 2147483647 and isinstance(base_ring, FiniteField_generic):
+        if isprime and ch < 2**29 and isinstance(base_ring, FiniteField_generic):
             # don't use this branch for e.g. Zmod(5)
             characteristic = base_ring.characteristic()
 
@@ -548,8 +559,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     elif isinstance(base_ring, FiniteField_generic):
         assert not base_ring.is_prime_field()  # would have been handled above
-        if base_ring.characteristic() > 2147483647:
-            raise TypeError("characteristic must be <= 2147483647.")
+        if base_ring.characteristic() >= 2**29:
+            raise TypeError("characteristic must be < 2^29.")
 
         # TODO: This is lazy, it should only call Singular stuff not PolynomialRing()
         k = PolynomialRing(base_ring.prime_subfield(),
@@ -611,7 +622,7 @@ cdef class ring_wrapper_Py():
     This is useful to store ring pointers in Python containers.
 
     You must not construct instances of this class yourself, use
-    :func:`wrap_ring` instead.
+    ``wrap_ring`` instead.
 
     EXAMPLES::
 

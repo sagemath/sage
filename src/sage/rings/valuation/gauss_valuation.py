@@ -316,7 +316,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(2,5)[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 16
@@ -364,7 +363,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: f = x^2 + 2*x + 16
@@ -436,7 +434,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: v.equivalence_unit(2)
@@ -470,7 +467,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -487,7 +483,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -559,7 +554,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -575,7 +569,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -733,7 +726,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -765,7 +757,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -793,7 +784,6 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -807,5 +797,4 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         if not coefficients:
             from sage.rings.infinity import infinity
             return infinity
-        else:
-            return self._base_valuation.upper_bound(coefficients[-1])
+        return self._base_valuation.upper_bound(coefficients[-1])

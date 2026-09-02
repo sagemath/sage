@@ -197,7 +197,7 @@ Now all subsets are the parent of the elements that they create::
     True
 
 3 - Finally, a common use case is to construct simple python object which are
-not Sage :class:`sage.structure.Element`. As an example, we show how to build
+not Sage :class:`~sage.structure.element.Element`. As an example, we show how to build
 a parent ``TupleS`` which construct pairs as tuple. The corresponding policy
 is called :class:`BareFunctionPolicy`. It takes two parameters:
 
@@ -522,7 +522,8 @@ class SetFactoryPolicy(UniqueRepresentation, SageObject):
 
         Should return the attributes that are prerequisite for element
         construction. This is coordinated with
-        :meth:`ParentWithSetFactory._element_constructor_`. Currently two standard
+        ``ParentWithSetFactory._element_constructor_``.
+        Currently two standard
         attributes are provided in
         :meth:`facade_element_constructor_attributes` and
         :meth:`self_element_constructor_attributes`. You should return the
@@ -677,9 +678,8 @@ class TopMostParentPolicy(SetFactoryPolicy):
         factory = self._factory
         if constraints == self._top_constraints:
             return self.self_element_constructor_attributes(self._Element)
-        else:
-            return self.facade_element_constructor_attributes(
-                factory(*self._top_constraints, policy=self))
+        return self.facade_element_constructor_attributes(
+            factory(*self._top_constraints, policy=self))
 
     def _repr_(self):
         r"""
@@ -1053,7 +1053,7 @@ class ParentWithSetFactory(Parent):
         ``self`` or a possible super-set of ``self`` for which
         ``self`` is a facade. It should return nothing if ``x``
         verifies the constraints and raise a
-        :exc:`~exceptions.ValueError` explaining which constraints
+        :exc:`ValueError` explaining which constraints
         ``x`` fails otherwise.
 
         The method should accept an extra parameter check specifying
@@ -1145,8 +1145,7 @@ class ParentWithSetFactory(Parent):
             if check:
                 self.check_element(args[0], check)
             return args[0]
-        else:
-            return Parent.__call__(self, *args, **keywords)
+        return Parent.__call__(self, *args, **keywords)
 
     # QUESTION: Should we call:
     #     self._parent_for._element_constructor_

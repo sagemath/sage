@@ -22,10 +22,11 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
-from sage.structure.element import coercion_model, Element, Expression
+from sage.structure.element import Element, Expression, coercion_model
+
 # avoid name conflicts with `parent` as a function parameter
 from sage.structure.element import parent as s_parent
-from sage.symbolic.function import GinacFunction, BuiltinFunction
+from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.symbolic.symbols import register_symbol, symbol_table
 
 lazy_import('sage.misc.latex', 'latex')
@@ -173,7 +174,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     These do not work but fail gracefully::
 
-        sage: ceil(Infinity)                                                            # needs sage.rings.real_interval_field
+        sage: ceil(Infinity)
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN
@@ -462,7 +463,7 @@ class Function_ceil(BuiltinFunction):
         except AttributeError:
             if isinstance(x, int):
                 return Integer(x)
-            elif isinstance(x, (float, complex)):
+            if isinstance(x, (float, complex)):
                 return Integer(math.ceil(x))
         return None
 
@@ -630,7 +631,7 @@ class Function_floor(BuiltinFunction):
         except AttributeError:
             if isinstance(x, int):
                 return Integer(x)
-            elif isinstance(x, (float, complex)):
+            if isinstance(x, (float, complex)):
                 return Integer(math.floor(x))
         return None
 
@@ -765,9 +766,9 @@ class Function_frac(BuiltinFunction):
         except AttributeError:
             if isinstance(x, int):
                 return Integer(0)
-            elif isinstance(x, (float, complex)):
+            if isinstance(x, (float, complex)):
                 return x - Integer(math.floor(x))
-            elif isinstance(x, Expression):
+            if isinstance(x, Expression):
                 ret = floor(x)
                 if not hasattr(ret, "operator") or not ret.operator() == floor:
                     return x - ret
@@ -887,20 +888,13 @@ class Function_real_nth_root(BuiltinFunction):
             else:
                 raise ValueError("exponent cannot be complex")
         exp = ZZ(exp)
-
         negative = base < 0
-
         if negative:
             if exp.mod(2) == 0:
                 raise ValueError('no real nth root of negative real number with even n')
             base = -base
-
         r = base**(1/exp)
-
-        if negative:
-            return -r
-        else:
-            return r
+        return r if not negative else -r
 
     def _eval_(self, base, exp):
         """
@@ -911,7 +905,7 @@ class Function_real_nth_root(BuiltinFunction):
             sage: real_nth_root(x, 3)                                                   # needs sage.symbolic
             real_nth_root(x, 3)
 
-            sage: real_nth_root(RIF(2), 3)                                              # needs sage.rings.real_interval_field
+            sage: real_nth_root(RIF(2), 3)
             1.259921049894873?
             sage: real_nth_root(RBF(2), 3)                                              # needs sage.libs.flint
             [1.259921049894873 +/- 3.92e-16]
@@ -1046,14 +1040,13 @@ class Function_arg(BuiltinFunction):
             sage: arg(sqrt(2)+i)
             arg(sqrt(2) + I)
         """
-        if isinstance(x,Expression):
+        if isinstance(x, Expression):
             if x.is_trivial_zero():
                 return x
-        else:
-            if not x:
-                return x
-            else:
-                return arctan2(imag_part(x),real_part(x))
+            return None
+        if not x:
+            return x
+        return arctan2(imag_part(x), real_part(x))
 
     def _evalf_(self, x, parent=None, algorithm=None):
         """
@@ -1206,8 +1199,7 @@ class Function_real_part(GinacFunction):
         """
         if isinstance(x, complex):
             return x.real
-        else:
-            return GinacFunction.__call__(self, x, **kwargs)
+        return GinacFunction.__call__(self, x, **kwargs)
 
 
 real = real_part = Function_real_part()
@@ -1270,8 +1262,7 @@ class Function_imag_part(GinacFunction):
         """
         if isinstance(x, complex):
             return x.imag
-        else:
-            return GinacFunction.__call__(self, x, **kwargs)
+        return GinacFunction.__call__(self, x, **kwargs)
 
 
 imag = imag_part = imaginary = Function_imag_part()
@@ -1413,7 +1404,7 @@ class Function_factorial(GinacFunction):
             120
 
         We can also give input other than nonnegative integers.  For
-        other nonnegative numbers, the :func:`sage.functions.gamma.gamma`
+        other nonnegative numbers, ``sage.functions.gamma.gamma``
         function is used::
 
             sage: factorial(1/2)                                                        # needs sage.symbolic
@@ -2233,7 +2224,8 @@ class Function_elementof(BuiltinFunction):
 
     This function is called to express a set membership statement,
     usually as part of a solution set returned by :func:`solve`.
-    See :class:`sage.sets.set.Set` and :class:`sage.sets.real_set.RealSet`
+    See :class:`~sage.sets.set.Set_object` and
+    :class:`sage.sets.real_set.RealSet`
     for possible set arguments.
 
     EXAMPLES::

@@ -245,8 +245,7 @@ class Polygon(GraphicPrimitive_xydata):
         if len(zdata) == len(self.xdata):
             return IndexFaceSet([list(zip(self.xdata, self.ydata, zdata))],
                                 **options)
-        else:
-            raise ValueError('Incorrect number of heights given')
+        raise ValueError('Incorrect number of heights given')
 
     def _render_on_subplot(self, subplot):
         """
@@ -254,7 +253,7 @@ class Polygon(GraphicPrimitive_xydata):
 
             sage: P = polygon([(0,0), (1,2), (0,1), (-1,2)])
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         options = self.options()
         p = patches.Polygon([(self.xdata[i], self.ydata[i])
                              for i in range(len(self.xdata))])

@@ -740,7 +740,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`add_arc_unsafe` is implemented::
+        It works, once there are vertices and ``add_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -795,7 +795,7 @@ cdef class CGraph:
             sage: G.has_arc(0, 1)
             False
 
-        It works once :class:`has_arc_unsafe` is implemented::
+        It works once ``has_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -840,7 +840,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`del_arc_unsafe` is implemented::
+        It works, once there are vertices and ``del_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1211,7 +1211,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
+        It works, once there are vertices and ``out_neighbors_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -1276,7 +1276,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
+        It works, once there are vertices and ``out_neighbors_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -1567,7 +1567,6 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         We check that the bug described in :issue:`8406` is gone::
 
-            sage: # needs sage.rings.finite_rings
             sage: G = Graph()
             sage: R.<a> = GF(3**3)
             sage: S.<x> = R[]
@@ -1617,10 +1616,10 @@ cdef class CGraphBackend(GenericGraphBackend):
         if ``u`` is not a vertex of the graph.
         """
         cdef int u_int = self.get_vertex(u)
-        if u_int != -1 and bitset_in(self.cg().active_vertices, u_int):
+        if (u_int != -1 and u_int < self.cg().active_vertices.size
+                and bitset_in(self.cg().active_vertices, u_int)):
             return u_int
-        else:
-            return -1
+        return -1
 
     cdef vertex_label(self, int u_int):
         """
@@ -1631,10 +1630,10 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         if u_int in vertex_labels:
             return vertex_labels[u_int]
-        elif bitset_in(self.cg().active_vertices, u_int):
+        if (u_int != -1 and u_int < self.cg().active_vertices.size
+                and bitset_in(self.cg().active_vertices, u_int)):
             return u_int
-        else:
-            return None
+        return None
 
     cdef inline int check_labelled_vertex(self, u, bint reverse) except ? -1:
         """
@@ -1646,7 +1645,8 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         cdef int u_int = self.get_vertex(u)
         if u_int != -1:
-            if not bitset_in(G.active_vertices, u_int):
+            if (u_int < 0 or u_int >= G.active_vertices.size
+                    or not bitset_in(G.active_vertices, u_int)):
                 bitset_add(G.active_vertices, u_int)
                 G.num_verts += 1
             return u_int
@@ -1704,6 +1704,14 @@ cdef class CGraphBackend(GenericGraphBackend):
             - :meth:`has_vertex` -- returns whether or not this graph has a
               specific vertex
 
+        TESTS::
+
+            sage: G = Graph(320)
+            sage: G.add_vertex()
+            320
+            sage: G.add_vertex()
+            321
+
         EXAMPLES::
 
             sage: D = sage.graphs.base.dense_graph.DenseGraphBackend(9)
@@ -1726,8 +1734,9 @@ cdef class CGraphBackend(GenericGraphBackend):
         if name is None:
             name = 0
             while (name in self.vertex_ints or
-                   (name not in self.vertex_labels and
-                    bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name))):
+                    (name not in self.vertex_labels and
+                     name < self.cg().active_vertices.size and
+                     bitset_in(self.cg().active_vertices, <mp_bitcnt_t> name))):
                 name += 1
             retval = name
 
@@ -2199,7 +2208,8 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         cdef int u_int
         cdef int v_int = self.get_vertex(v)
-        if v_int == -1 or not bitset_in(self.cg().active_vertices, v_int):
+        if (v_int == -1 or v_int >= self.cg().active_vertices.size
+                or not bitset_in(self.cg().active_vertices, v_int)):
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(v))
 
         cdef set seen = set()
@@ -2248,7 +2258,8 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         cdef int u_int
         cdef int v_int = self.get_vertex(v)
-        if v_int == -1 or not bitset_in(self.cg().active_vertices, v_int):
+        if (v_int == -1 or v_int >= self.cg().active_vertices.size
+                or not bitset_in(self.cg().active_vertices, v_int)):
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(v))
 
         for u_int in self.cg().in_neighbors(v_int):
@@ -2288,7 +2299,8 @@ cdef class CGraphBackend(GenericGraphBackend):
         """
         cdef int u_int
         cdef int v_int = self.get_vertex(v)
-        if v_int == -1 or not bitset_in(self.cg().active_vertices, v_int):
+        if (v_int == -1 or v_int >= self.cg().active_vertices.size
+                or not bitset_in(self.cg().active_vertices, v_int)):
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(v))
 
         for u_int in self.cg().out_neighbors(v_int):
@@ -2871,7 +2883,8 @@ cdef class CGraphBackend(GenericGraphBackend):
                                 yield (v, u)
                     v = v_copy
 
-                if unlikely(not bitset_in(self.cg().active_vertices, v_int)):
+                if (v_int < 0 or v_int >= self.cg().active_vertices.size
+                        or unlikely(not bitset_in(self.cg().active_vertices, v_int))):
                     raise IndexError("the vertices were modified while iterating the edges")
 
                 u_int = cg._next_neighbor_unsafe(v_int, u_int, out, &l_int)
@@ -2927,8 +2940,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         """
         if not ignore_labels:
             return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 1)
-        else:
-            return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 2)
+        return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 2)
 
     def subgraph_given_vertices(self, CGraphBackend other, object vertices):
         """
@@ -3362,8 +3374,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # The function being mostly symmetric in x and y, their roles are
         # reversed at the end of each loop. For this reason is defined, for
@@ -3524,8 +3535,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # The function being mostly symmetric in x and y, their roles are
         # reversed at the end of each loop. For this reason is defined, for
@@ -3712,7 +3722,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         elif not isinstance(exclude_vertices, set):
             exclude_vertices = set(exclude_vertices)
         if source in exclude_vertices:
-            raise ValueError(f"source must not be in exclude_vertices.")
+            raise ValueError("source must not be in exclude_vertices.")
         cdef PairingHeap[int, double] pq = PairingHeap[int, double]()
         cdef dict dist = {}
         cdef dict pred = {}
@@ -3759,7 +3769,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                         pq.push(u_int, new_dist)
 
         # no path found
-        raise ValueError(f"no path found from source to targets.")
+        raise ValueError("no path found from source to targets.")
 
     def bidirectional_dijkstra_special(self, x, y, weight_function=None,
                                        exclude_vertices=None, exclude_edges=None,
@@ -3845,8 +3855,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # As for shortest_path, the roles of x and y are symmetric, hence we
         # define dictionaries like pred_current and pred_other, which
@@ -4066,8 +4075,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # As for shortest_path, the roles of x and y are symmetric, hence we
         # define dictionaries like pred_current and pred_other, which
@@ -5024,7 +5032,7 @@ cdef class Search_iterator:
                 u_id = self.graph.get_vertex(u)
                 if u_id != -1:
                     if u_id == v_id:
-                        raise ValueError(f"the start vertex is in the set of forbidden vertices")
+                        raise ValueError("the start vertex is in the set of forbidden vertices")
                     bitset_add(self.seen, u_id)
 
         if direction == 0:
@@ -5126,7 +5134,7 @@ cdef class Search_iterator:
 
         if self.report_distance:
             return value, smallInteger(self.current_distance)
-        elif self.edges:
+        if self.edges:
             return value_prev, value
         return value
 

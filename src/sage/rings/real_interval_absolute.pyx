@@ -190,10 +190,9 @@ cdef class RealIntervalAbsoluteField_class(Field):
         """
         if isinstance(R, RealIntervalAbsoluteField_class):
             return self._absprec < (<RealIntervalAbsoluteField_class>R)._absprec
-        elif isinstance(R, sage.rings.abc.RealIntervalField):
+        if isinstance(R, sage.rings.abc.RealIntervalField):
             return True
-        else:
-            return RR_min_prec.has_coerce_map_from(R)
+        return RR_min_prec.has_coerce_map_from(R)
 
     def _repr_(self):
         """
@@ -472,9 +471,10 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
             12
             sage: hash(R(1/4)) == hash(1/4)
             True
-            sage: hash(R(pi))
-            891658780           # 32-bit
-            532995478001132060  # 64-bit
+            sage: hash32 = 891658780
+            sage: hash64 = 532995478001132060
+            sage: hash(R(pi)) in [hash32, hash64]
+            True
         """
         return hash(self.midpoint())
 
@@ -636,10 +636,9 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
         """
         if self.is_positive():
             return self
-        elif self.is_negative():
+        if self.is_negative():
             return -self
-        else:
-            return self._new_c(zero, max(-self._mantissa, self._mantissa + self._diameter))
+        return self._new_c(zero, max(-self._mantissa, self._mantissa + self._diameter))
 
     cpdef _add_(self, _other):
         """
@@ -926,8 +925,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
     cdef shift(self, long n):
         if n >= 0:
             return self._new_c(self._mantissa << n, self._diameter << n)
-        else:
-            return self._new_c(shift_floor(self._mantissa, -n), shift_ceil(self._diameter, -n))
+        return self._new_c(shift_floor(self._mantissa, -n), shift_ceil(self._diameter, -n))
 
     def __pow__(self, exponent, dummy):
         """

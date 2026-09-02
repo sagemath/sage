@@ -698,8 +698,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         # check whether it is integral
         if other in ZZ or other.denominator() == 1:
             return self.sublattice(B.rows())
-        else:
-            return self.span(B.rows())
+        return self.span(B.rows())
 
     def _repr_(self):
         r"""
@@ -1390,15 +1389,14 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         if discard_basis:
             gram_matrix = self.gram_matrix().tensor_product(other.gram_matrix())
             return IntegralLattice(gram_matrix)
-        else:
-            inner_product_matrix = self.inner_product_matrix().tensor_product(other.inner_product_matrix())
-            basis_matrix = self.basis_matrix().tensor_product(other.basis_matrix())
-            n = self.degree()
-            m = other.degree()
-            ambient = FreeQuadraticModule(self.base_ring(), m * n, inner_product_matrix)
-            return FreeQuadraticModule_integer_symmetric(ambient=ambient,
-                                                         basis=basis_matrix,
-                                                         inner_product_matrix=ambient.inner_product_matrix())
+        inner_product_matrix = self.inner_product_matrix().tensor_product(other.inner_product_matrix())
+        basis_matrix = self.basis_matrix().tensor_product(other.basis_matrix())
+        n = self.degree()
+        m = other.degree()
+        ambient = FreeQuadraticModule(self.base_ring(), m * n, inner_product_matrix)
+        return FreeQuadraticModule_integer_symmetric(ambient=ambient,
+                                                     basis=basis_matrix,
+                                                     inner_product_matrix=ambient.inner_product_matrix())
 
     @cached_method
     def quadratic_form(self):
@@ -1516,7 +1514,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         - ``n`` -- integer
         - further keyword arguments are passed on to
-          :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
+          :meth:`~sage.quadratic_forms.quadratic_form.QuadraticForm.short_vector_list_up_to_length`
 
         OUTPUT: list `L` where ``L[k]`` is the list of vectors of lengths `k`
 
@@ -1530,7 +1528,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
         TESTS:
 
-        Check that keyword arguments are passed to :meth:`sage.quadratic_forms.short_vector_list_up_to_length`
+        Check that keyword arguments are passed to :meth:`~sage.quadratic_forms.quadratic_form.QuadraticForm.short_vector_list_up_to_length`
         (:issue:`39848`)::
 
             sage: A2 = IntegralLattice('A2')                                            # needs sage.graphs
@@ -1557,12 +1555,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
             sage: L = IntegralLattice('A4')
             sage: t = vector([1.2, -3/11, 5.5, -9.1])
-            sage: short = L.enumerate_short_vectors()   # implicit doctest
+            sage: short = L.enumerate_short_vectors()   # indirect doctest
             sage: vecs = [next(short) for _ in range(10)]
             sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
             [(0, 0, 0, 1), (0, 0, 1, 0), (0, 0, 1, 1), (0, 1, 0, 0), (0, 1, 1, 0),
              (0, 1, 1, 1), (1, 0, 0, 0), (1, 1, 0, 0), (1, 1, 1, 0), (1, 1, 1, 1)]
-            sage: close = L.enumerate_close_vectors(t)  # implicit doctest
+            sage: close = L.enumerate_close_vectors(t)  # indirect doctest
             sage: vecs = [next(close) for _ in range(10)]
             sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
             [(1, 0, 6, -8), (1, 0, 5, -9), (2, 0, 5, -9), (1, -1, 5, -9), (2, 1, 6, -9),
@@ -1709,11 +1707,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             raise ValueError("the scaling factor must be nonzero")
         if discard_basis:
             return IntegralLattice(s * self.gram_matrix())
-        else:
-            n = self.degree()
-            inner_product_matrix = s * self.inner_product_matrix()
-            ambient = FreeQuadraticModule(self.base_ring(), n, inner_product_matrix)
-            return FreeQuadraticModule_integer_symmetric(ambient=ambient, basis=self.basis(), inner_product_matrix=inner_product_matrix)
+        n = self.degree()
+        inner_product_matrix = s * self.inner_product_matrix()
+        ambient = FreeQuadraticModule(self.base_ring(), n, inner_product_matrix)
+        return FreeQuadraticModule_integer_symmetric(ambient=ambient, basis=self.basis(), inner_product_matrix=inner_product_matrix)
 
 
 def local_modification(M, G, p, check=True):

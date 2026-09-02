@@ -52,7 +52,14 @@ from sage.doctest.parsing import (
 from sage.doctest.reporting import DocTestReporter
 from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
 from sage.doctest.util import Timer, count_noun, dict_difference
-from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
+from sage.env import (
+    DOT_SAGE,
+    SAGE_EXTCODE,
+    SAGE_LIB,
+    SAGE_LOCAL,
+    SAGE_ROOT_GIT,
+    SAGE_SRC,
+)
 from sage.misc import randstate
 from sage.structure.sage_object import SageObject
 
@@ -68,7 +75,7 @@ class DocTestDefaults(SageObject):
     The interface of this object should be compatible with the ``options`` input
     to :class:`DocTestController`, that is, the same interface as the
     argument object parsed by the :class:`argparse.ArgumentParser` in
-    :func:`sage.doctest.__main__._make_parser`.
+    ``sage.doctest.__main__._make_parser``.
 
     INPUT:
 
@@ -417,7 +424,7 @@ class DocTestController(SageObject):
         - ``options`` -- either options generated from the command line by sage-runtests
           or a :class:`DocTestDefaults` object (possibly with some entries modified).
           The attributes available in this object are defined by the :class:`argparse.ArgumentParser`
-          in :func:`sage.doctest.__main__._make_parser`.
+          in ``sage.doctest.__main__._make_parser``.
         - ``args`` -- list of filenames to doctest
 
         EXAMPLES::
@@ -952,7 +959,7 @@ class DocTestController(SageObject):
     def expand_files_into_sources(self):
         r"""
         Expand ``self.files``, which may include directories, into a
-        list of :class:`sage.doctest.FileDocTestSource`
+        list of :class:`sage.doctest.sources.FileDocTestSource`
 
         This function also handles the optional command line option.
 
@@ -1102,7 +1109,8 @@ class DocTestController(SageObject):
 
         INPUT:
 
-        - ``source`` -- a :class:`DocTestSource` instance
+        - ``source`` -- a
+          :class:`~sage.doctest.sources.DocTestSource` instance
 
         OUTPUT: a dictionary
 
@@ -1257,8 +1265,7 @@ class DocTestController(SageObject):
         tags = self.options.optional
         if tags is True:
             return "all"
-        else:
-            return ",".join(sorted(tags - auto_optional_tags))
+        return ",".join(sorted(tags - auto_optional_tags))
 
     def _assemble_cmd(self):
         """
@@ -1522,78 +1529,76 @@ class DocTestController(SageObject):
                 self.log("You may only specify one of gdb, valgrind/memcheck, massif, cachegrind, omega")
                 return 2
             return self.run_val_gdb()
-        else:
-            self.create_run_id()
-            from sage.env import SAGE_LOCAL, SAGE_ROOT_GIT, SAGE_VENV
-            # SAGE_ROOT_GIT can be None on distributions which typically
-            # only have the SAGE_LOCAL install tree but not SAGE_ROOT
-            if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
-                import subprocess
-                try:
-                    branch = subprocess.check_output(["git",
-                                                      "--git-dir=" + SAGE_ROOT_GIT,
-                                                      "rev-parse",
-                                                      "--abbrev-ref",
-                                                      "HEAD"])
-                    branch = branch.decode('utf-8')
-                    self.log("Git branch: " + branch, end="")
-                except subprocess.CalledProcessError:
-                    pass
-                try:
-                    ref = subprocess.check_output(["git",
-                                                   "--git-dir=" + SAGE_ROOT_GIT,
-                                                   "describe",
-                                                   "--always",
-                                                   "--dirty"])
-                    ref = ref.decode('utf-8')
-                    self.log("Git ref: " + ref, end="")
-                except subprocess.CalledProcessError:
-                    pass
+        self.create_run_id()
+        # SAGE_ROOT_GIT can be None on distributions which typically
+        # only have the SAGE_LOCAL install tree but not SAGE_ROOT
+        if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
+            import subprocess
+            try:
+                branch = subprocess.check_output(["git",
+                                                  "--git-dir=" + SAGE_ROOT_GIT,
+                                                  "rev-parse",
+                                                  "--abbrev-ref",
+                                                  "HEAD"])
+                branch = branch.decode('utf-8')
+                self.log("Git branch: " + branch, end="")
+            except subprocess.CalledProcessError:
+                pass
+            try:
+                ref = subprocess.check_output(["git",
+                                               "--git-dir=" + SAGE_ROOT_GIT,
+                                               "describe",
+                                               "--always",
+                                               "--dirty"])
+                ref = ref.decode('utf-8')
+                self.log("Git ref: " + ref, end="")
+            except subprocess.CalledProcessError:
+                pass
 
-            self.log(f"Running with {SAGE_LOCAL=} and {SAGE_VENV=}")
+        self.log(f"Running with {SAGE_LOCAL=}")
 
-            self.log("Using --optional=" + self._optional_tags_string())
-            available_software._allow_external = self.options.optional is True or 'external' in self.options.optional
+        self.log("Using --optional=" + self._optional_tags_string())
+        available_software._allow_external = self.options.optional is True or 'external' in self.options.optional
 
-            for h in self.options.hide:
-                try:
-                    i = available_software._indices[h]
-                except KeyError:
-                    pass
-                else:
-                    f = available_software._features[i]
-                    f.hide()
-                    self.options.hidden_features.add(f)
-                    for g in f.joined_features():
-                        if g.name in self.options.optional:
-                            self.options.optional.discard(g.name)
+        for h in self.options.hide:
+            try:
+                i = available_software._indices[h]
+            except KeyError:
+                pass
+            else:
+                f = available_software._features[i]
+                f.hide()
+                self.options.hidden_features.add(f)
+                for g in f.joined_features():
+                    if g.name in self.options.optional:
+                        self.options.optional.discard(g.name)
 
-            for o in self.options.disabled_optional:
-                try:
-                    i = available_software._indices[o]
-                except KeyError:
-                    pass
-                else:
-                    available_software._seen[i] = -1
+        for o in self.options.disabled_optional:
+            try:
+                i = available_software._indices[o]
+            except KeyError:
+                pass
+            else:
+                available_software._seen[i] = -1
 
-            self.log("Features to be detected: " + ','.join(available_software.detectable()))
-            if self.options.probe:
-                self.log("Features to be probed: " + ('all' if self.options.probe is True
-                                                      else ','.join(self.options.probe)))
-            self.add_files()
-            self.expand_files_into_sources()
-            self.filter_sources()
-            self.sort_sources()
-            self.run_doctests()
+        self.log("Features to be detected: " + ','.join(available_software.detectable()))
+        if self.options.probe:
+            self.log("Features to be probed: " + ('all' if self.options.probe is True
+                                                  else ','.join(self.options.probe)))
+        self.add_files()
+        self.expand_files_into_sources()
+        self.filter_sources()
+        self.sort_sources()
+        self.run_doctests()
 
-            self.log("Features detected for doctesting: "
-                     + ','.join(available_software.seen()))
-            if self.options.hidden_features:
-                for f in self.options.hidden_features:
-                    f.unhide()
-                self.log("Features that have been hidden: " + ','.join(available_software.hidden()))
-            self.cleanup()
-            return self.reporter.error_status
+        self.log("Features detected for doctesting: "
+                 + ','.join(available_software.seen()))
+        if self.options.hidden_features:
+            for f in self.options.hidden_features:
+                f.unhide()
+            self.log("Features that have been hidden: " + ','.join(available_software.hidden()))
+        self.cleanup()
+        return self.reporter.error_status
 
 
 def run_doctests(module, options=None):
@@ -1628,7 +1633,7 @@ def run_doctests(module, options=None):
         if isinstance(x, (list, tuple)):
             F = [stringify(a) for a in x]
             return sage.misc.flatten.flatten(F)
-        elif isinstance(x, types.ModuleType):
+        if isinstance(x, types.ModuleType):
             F = x.__file__.replace(SAGE_LIB, SAGE_SRC)
             base, pyfile = os.path.split(F)
             file, ext = os.path.splitext(pyfile)
@@ -1638,9 +1643,8 @@ def run_doctests(module, options=None):
                 ext = ".pyx"
             if file == "__init__":
                 return [base]
-            else:
-                return [os.path.join(base, file) + ext]
-        elif isinstance(x, str):
+            return [os.path.join(base, file) + ext]
+        if isinstance(x, str):
             return [os.path.abspath(x)]
     F = stringify(module)
     if options is None:

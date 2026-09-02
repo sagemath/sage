@@ -65,7 +65,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
     - ``ep`` -- ``None`` if `f` is not homogeneous, otherwise
       the multiplier of `f` (which is the second component of its degree)
 
-    - ``analytic_type`` -- the :class:`AnalyticType` of `f`
+    - ``analytic_type`` -- the :class:`~sage.modular.modform_hecketriangle.analytic_type.AnalyticType` of `f`
 
     For the zero function the degree `(0, 1)` is chosen.
 
@@ -277,19 +277,15 @@ def FormsSpace(analytic_type, group=3, base_ring=ZZ, k=QQ(0), ep=None):
                     if analytic_type <= AT([]):
                         from .space import ZeroForm
                         return ZeroForm(group=group, base_ring=base_ring, k=k, ep=ep)
-                    else:
-                        from .space import CuspForms
-                        return CuspForms(group=group, base_ring=base_ring, k=k, ep=ep)
-                else:
-                    from .space import ModularForms
-                    return ModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
-            else:
-                from .space import WeakModularForms
-                return WeakModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
-        else:
-            from .space import MeromorphicModularForms
-            return MeromorphicModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
-    elif analytic_type <= AT(["mero", "quasi"]):
+                    from .space import CuspForms
+                    return CuspForms(group=group, base_ring=base_ring, k=k, ep=ep)
+                from .space import ModularForms
+                return ModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
+            from .space import WeakModularForms
+            return WeakModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
+        from .space import MeromorphicModularForms
+        return MeromorphicModularForms(group=group, base_ring=base_ring, k=k, ep=ep)
+    if analytic_type <= AT(["mero", "quasi"]):
         if analytic_type <= AT(["weak", "quasi"]):
             if analytic_type <= AT(["holo", "quasi"]):
                 if analytic_type <= AT(["cusp", "quasi"]):
@@ -332,7 +328,7 @@ def FormsRing(analytic_type, group=3, base_ring=ZZ, red_hom=False):
       (default: ``False``)
 
     For the variables ``group``, ``base_ring``, ``red_hom``
-    the same arguments as for the class :class:`FormsRing_abstract` can be used.
+    the same arguments as for the class :class:`~sage.modular.modform_hecketriangle.abstract_ring.FormsRing_abstract` can be used.
     The variables will then be put in canonical form.
 
     OUTPUT: the FormsRing with the given properties

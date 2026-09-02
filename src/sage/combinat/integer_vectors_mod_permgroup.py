@@ -263,18 +263,16 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
             if G.domain():
                 # Nonempty domain, infinite set.
                 return IntegerVectorsModPermutationGroup_All(G, sgs=sgs)
-            else:
-                # Empty domain, singleton set.
-                return IntegerVectorsModPermutationGroup_with_constraints(
-                    G, 0, max_part=-1, sgs=sgs)
-        else:
-            # Some constraints, either sum or max_part or both.
-            if sum is not None:
-                assert sum == NN(sum)
-            if max_part is not None:
-                assert max_part == NN(max_part)
+            # Empty domain, singleton set.
             return IntegerVectorsModPermutationGroup_with_constraints(
-                G, sum, max_part, sgs=sgs)
+                G, 0, max_part=-1, sgs=sgs)
+        # Some constraints, either sum or max_part or both.
+        if sum is not None:
+            assert sum == NN(sum)
+        if max_part is not None:
+            assert max_part == NN(max_part)
+        return IntegerVectorsModPermutationGroup_with_constraints(
+            G, sum, max_part, sgs=sgs)
 
 
 class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnumeratedSet_forest):
@@ -519,8 +517,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
         try:
             if v.parent() is self:
                 return v
-            else:
-                raise ValueError('%s should be a Python list of integer' % (v))
+            raise ValueError('%s should be a Python list of integer' % (v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -688,16 +685,14 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
                         " enumerated up to the action of %s"
                         % (self.n, self._sum, self._max_part,
                            self.permutation_group()))
-            else:
-                return ("Integer vectors of length %s"
-                        " and of sum %s"
-                        " enumerated up to the action of %s"
-                        % (self.n, self._sum, self.permutation_group()))
-        else:
             return ("Integer vectors of length %s"
-                    " whose entries are in {0, ..., %s}"
+                    " and of sum %s"
                     " enumerated up to the action of %s"
-                    % (self.n, self._max_part, self.permutation_group()))
+                    % (self.n, self._sum, self.permutation_group()))
+        return ("Integer vectors of length %s"
+                " whose entries are in {0, ..., %s}"
+                " enumerated up to the action of %s"
+                % (self.n, self._max_part, self.permutation_group()))
 
     def roots(self):
         r"""
@@ -783,8 +778,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         try:
             if v.parent() is self:
                 return v
-            else:
-                raise ValueError('%s should be a Python list of integer' % (v))
+            raise ValueError('%s should be a Python list of integer' % (v))
         except Exception:
             return self.element_class(self, list(v), check=check)
 
@@ -837,25 +831,22 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             if self._sum is not None and self._sum > 0:
                 # No empty vector can have positive sum.
                 return iter(())
-            else:
-                # Sum is allowed to be zero.  It does not matter what
-                # the maxpart is, the empty vector is a solution.
-                return iter([self([])])
+            # Sum is allowed to be zero.  It does not matter what
+            # the maxpart is, the empty vector is a solution.
+            return iter([self([])])
 
         # General case, nonempty domain.
         if self._max_part < 0:
             return self.elements_of_depth_iterator(self._sum)
-        else:
-            SF = RecursivelyEnumeratedSet_forest(
-                (self([0]*(self.n), check=False),),
-                lambda x: [self(y, check=False)
-                           for y in canonical_children(
-                                   self._sgs, x, self._max_part)],
-                algorithm='breadth')
-            if self._sum is None:
-                return iter(SF)
-            else:
-                return SF.elements_of_depth_iterator(self._sum)
+        SF = RecursivelyEnumeratedSet_forest(
+            (self([0]*(self.n), check=False),),
+            lambda x: [self(y, check=False)
+                       for y in canonical_children(
+                               self._sgs, x, self._max_part)],
+            algorithm='breadth')
+        if self._sum is None:
+            return iter(SF)
+        return SF.elements_of_depth_iterator(self._sum)
 
     def cardinality(self):
         r"""
@@ -958,8 +949,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             # condition is vacuously true (with no parts).
             if d == 0 or d is None:
                 return Integer(1)
-            else:
-                return Integer(0)
+            return Integer(0)
         if d == 0 or m == 0:
             # All-zero vectors.  There is only one of them.
             return Integer(1)
@@ -1056,10 +1046,8 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         if self._sum is not None:
             if self._max_part <= -1:
                 return IntegerVectors(n=self._sum)
-            else:
-                return IntegerVectors(n=self._sum, max_part=self._max_part)
-        else:
-            return IntegerVectors(max_part=self._max_part)
+            return IntegerVectors(n=self._sum, max_part=self._max_part)
+        return IntegerVectors(max_part=self._max_part)
 
     def lift(self, elt):
         r"""
@@ -1159,13 +1147,12 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         """
         if self._max_part < 0:
             return self([self._sum]+(self.n-1)*[0], check=False)
-        else:
-            try:
-                v = iter(self)
-                return next(v)
-            except StopIteration:
-                from sage.categories.sets_cat import EmptySetError
-                raise EmptySetError
+        try:
+            v = iter(self)
+            return next(v)
+        except StopIteration:
+            from sage.categories.sets_cat import EmptySetError
+            raise EmptySetError
 
     def orbit(self, v):
         r"""

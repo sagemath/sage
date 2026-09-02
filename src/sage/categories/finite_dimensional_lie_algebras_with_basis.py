@@ -273,7 +273,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Implement this if you implement :meth:`module`; see the
             documentation of
-            :meth:`sage.categories.lie_algebras.LieAlgebras.module`
+            :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
             for how this is to be done.
 
             EXAMPLES::
@@ -346,7 +346,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             The rows and the columns of this matrix are indexed by the
             elements of the basis of ``self`` (in the order provided by
-            :meth:`basis`).
+            :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis`).
 
             EXAMPLES::
 
@@ -1145,8 +1145,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: L.<X,Y,Z,W,U> = LieAlgebra(QQ, 2, step=3)
                 sage: E = L.quotient(U); E
                 Lie algebra quotient L/I of dimension 4 over Rational Field where
-                 L: Free Nilpotent Lie algebra on 5 generators (X, Y, Z, W, U)
-                    over Rational Field
+                 L: Free Nilpotent Lie algebra of rank 2 and step 3 over Rational Field
                  I: Ideal (U)
                 sage: E.basis().list()
                 [X, Y, Z, W]
@@ -1283,8 +1282,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             if self.is_semisimple():
                 return self
-            else:
-                return self.product_space(self)
+            return self.product_space(self)
 
         @cached_method
         def derived_series(self):
@@ -2558,7 +2556,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ``self``).
 
             Implement this if you implement ``g.module()``.
-            See :meth:`sage.categories.lie_algebras.LieAlgebras.module`
+            See :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
             for how this is to be done.
 
             EXAMPLES::
@@ -2600,12 +2598,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 if order is None:
                     order = {b: i for i, b in enumerate(self.parent()._basis_ordering)}
                 return M({order[k]: c for k, c in mc.items()})
-            else:
-                M = self.parent().module()
-                B = M.basis()
-                if order is None:
-                    order = self.parent()._basis_ordering
-                return M.sum(mc[k] * B[i] for i, k in enumerate(order) if k in mc)
+            M = self.parent().module()
+            B = M.basis()
+            if order is None:
+                order = self.parent()._basis_ordering
+            return M.sum(mc[k] * B[i] for i, k in enumerate(order) if k in mc)
 
         _vector_ = to_vector
 

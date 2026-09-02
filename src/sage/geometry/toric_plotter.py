@@ -3,7 +3,8 @@ Toric plotter
 
 This module provides a helper class :class:`ToricPlotter` for producing plots
 of objects related to toric geometry. Default plotting objects can be adjusted
-using :func:`options` and reset using :func:`reset_options`.
+using :func:`~sage.geometry.toric_plotter.options` and reset using
+:func:`~sage.geometry.toric_plotter.reset_options`.
 
 AUTHORS:
 
@@ -115,7 +116,8 @@ class ToricPlotter(SageObject):
     INPUT:
 
     - ``all_options`` -- a :class:`dictionary <dict>`, containing any of the
-      options related to toric objects (see :func:`options`) and any other
+      options related to toric objects (see
+      :func:`~sage.geometry.toric_plotter.options`) and any other
       options that will be passed to lower level plotting functions
 
     - ``dimension`` -- integer (1, 2, or 3); dimension of toric objects to
@@ -752,7 +754,6 @@ def color_list(color, n):
 
     EXAMPLES::
 
-        sage: # needs sage.plot
         sage: from sage.geometry.toric_plotter import color_list
         sage: color_list("grey", 1)
         [RGB color (0.5019607843137255, 0.5019607843137255, 0.5019607843137255)]
@@ -834,8 +835,7 @@ def label_list(label, n, math_mode, index_set=None):
     if math_mode:
         label = label.strip("$")
         return ["$%s_{%d}$" % (label, i) for i in index_set]
-    else:
-        return ["%s_%d" % (label, i) for i in index_set]
+    return ["%s_%d" % (label, i) for i in index_set]
 
 
 def options(option=None, **kwds):
@@ -846,7 +846,7 @@ def options(option=None, **kwds):
 
         This function provides access to global default options. Any of these
         options can be overridden by passing them directly to plotting
-        functions. See also :func:`reset_options`.
+        functions. See also :func:`~sage.geometry.toric_plotter.reset_options`.
 
     INPUT:
 
@@ -904,8 +904,8 @@ def options(option=None, **kwds):
         in particular you should plot the lattice on your own
         (:meth:`~ToricPlotter.plot_lattice` will use box mode which is likely
         to be unsuitable). While this method may not be suitable for general
-        fans, it is quite natural for fans of :class:`CPR-Fano toric varieties.
-        <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field`
+        fans, it is quite natural for fans of :class:`CPR-Fano toric varieties
+        <sage.schemes.toric.fano_variety.CPRFanoToricVariety_field>`.
 
     Round
         The cut-off regions is a sphere centered at the origin.
@@ -997,10 +997,9 @@ def options(option=None, **kwds):
 
         sage: toric_plotter.options(wall_color='grey')
     """
-    global _options
     if option is None and not kwds:
         return copy(_options)
-    elif option is not None and not kwds:
+    if option is not None and not kwds:
         try:
             return _options[option]
         except KeyError:
@@ -1092,12 +1091,11 @@ def sector(ray1, ray2, **extra_options):
         if phi2 - phi1 > pi:
             phi1, phi2 = phi2, phi1 + 2 * pi
         return disk((0,0), r, (phi1, phi2), **extra_options)
-    else:
-        # Plot a polygon, 30 vertices per radian.
-        vertices_per_radian = 30
-        n = ceil(arccos(ray1 * ray2 / r**2) * vertices_per_radian)
-        dr = (ray2 - ray1) / n
-        points = (ray1 + i * dr for i in range(n + 1))
-        points = [r / pt.norm() * pt for pt in points]
-        points.append(vector(RDF, 3))
-        return polygon(points, **extra_options)
+    # Plot a polygon, 30 vertices per radian.
+    vertices_per_radian = 30
+    n = ceil(arccos(ray1 * ray2 / r**2) * vertices_per_radian)
+    dr = (ray2 - ray1) / n
+    points = (ray1 + i * dr for i in range(n + 1))
+    points = [r / pt.norm() * pt for pt in points]
+    points.append(vector(RDF, 3))
+    return polygon(points, **extra_options)

@@ -104,7 +104,8 @@ def coefficient_matrix(polys):
     .. NOTE::
 
         This function may be merged with
-        :meth:`sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic.coefficient_matrix()` in the future.
+        :meth:`~sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic.coefficients_monomials`
+        in the future.
     """
     from sage.matrix.constructor import matrix
     R = polys[0].base_ring()
@@ -209,7 +210,6 @@ def linear_representation(p, polys):
 
     EXAMPLES::
 
-        sage: # needs sage.modules sage.rings.finite_rings
         sage: from sage.rings.polynomial.toy_variety import linear_representation
         sage: R.<x,y> = PolynomialRing(GF(32003))
         sage: B = [x^2 + 1, y^2 + 1, x*y + 1]
@@ -245,7 +245,6 @@ def triangular_factorization(B, n=-1):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import triangular_factorization
@@ -319,7 +318,6 @@ def elim_pol(B, n=-1):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import elim_pol

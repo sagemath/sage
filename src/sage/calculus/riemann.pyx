@@ -187,7 +187,7 @@ cdef class Riemann_Map:
 
     ALGORITHM:
 
-    This class computes the Riemann Map via the Szego kernel using an
+    This class computes the Riemann Map via the Szegő kernel using an
     adaptation of the method described by [KT1986]_.
     """
     cdef int N, B, ncorners
@@ -197,7 +197,7 @@ cdef class Riemann_Map:
     cdef np.ndarray tk, tk2
     cdef np.ndarray cps, dps, szego, p_vector, pre_q_vector
     cdef np.ndarray p_vector_inverse, sinalpha, cosalpha, theta_array
-    cdef x_range, y_range
+    cdef tuple x_range, y_range
     cdef exterior
 
     def __init__(self, fs, fprimes, COMPLEX_T a, int N=500, int ncorners=4,
@@ -376,7 +376,7 @@ cdef class Riemann_Map:
 
     def get_szego(self, int boundary=-1, absolute_value=False):
         """
-        Return a discretized version of the Szego kernel for each boundary
+        Return a discretized version of the Szegő kernel for each boundary
         function.
 
         INPUT:
@@ -389,13 +389,13 @@ cdef class Riemann_Map:
           the boundary specified.
 
         - ``absolute_value`` -- boolean (default: ``False``); if ``True``, will
-          return the absolute value of the (complex valued) Szego kernel
+          return the absolute value of the (complex valued) Szegő kernel
           instead of the kernel itself. Useful for plotting.
 
         OUTPUT:
 
         A list of points of the form
-        ``[t value, value of the Szego kernel at that t]``.
+        ``[t value, value of the Szegő kernel at that t]``.
 
         EXAMPLES:
 
@@ -701,8 +701,7 @@ cdef class Riemann_Map:
                      (ctheta * self.cosalpha[k] - stheta * self.sinalpha[k])))
         if self.exterior:
             return 1/mapped
-        else:
-            return mapped
+        return mapped
 
     def plot_boundaries(self, plotjoined=True, rgbcolor=None, thickness=1):
         """
@@ -1441,7 +1440,7 @@ cpdef analytic_boundary(FLOAT_T t, int n, FLOAT_T epsilon):
 
 cpdef cauchy_kernel(t, args):
     """
-    Intermediate function for the integration in :meth:`~Riemann_Map.analytic_interior`.
+    Intermediate function for the integration in :func:`analytic_interior`.
 
     INPUT:
 
@@ -1461,7 +1460,7 @@ cpdef cauchy_kernel(t, args):
 
     TESTS:
 
-    This is primarily tested implicitly by :meth:`~Riemann_Map.analytic_interior`.
+    This is primarily tested implicitly by :func:`analytic_interior`.
     Here is a simple test::
 
         sage: from sage.calculus.riemann import cauchy_kernel
@@ -1477,12 +1476,11 @@ cpdef cauchy_kernel(t, args):
         (I*exp(I*t)-I*epsilon*exp(-I*t))
     if part == 'c':
         return result
-    elif part == 'r':
+    if part == 'r':
         return result.real
-    elif part == 'i':
+    if part == 'i':
         return result.imag
-    else:
-        return None
+    return None
 
 
 cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):

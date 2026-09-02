@@ -1,7 +1,7 @@
 r"""
 Base class for polyhedra: Methods regarding the combinatorics of a polyhedron
 
-Excluding methods relying on :mod:`sage.graphs`.
+Excluding methods relying on :ref:`sage.graphs <sage.graphs>`.
 """
 
 # ****************************************************************************
@@ -44,6 +44,8 @@ class Polyhedron_base3(Polyhedron_base2):
     Methods related to the combinatorics of a polyhedron.
 
     See :class:`sage.geometry.polyhedron.base.Polyhedron_base`.
+
+    .. automethod:: _test_combinatorial_face_as_combinatorial_polyhedron
 
     TESTS::
 
@@ -136,7 +138,6 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 0 1 0 0 1]
             [1 0 0 0 1 1]
 
-            sage: # needs sage.rings.number_field
             sage: P = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
             sage: P.slack_matrix()
             [1/2*sqrt5 - 1/2               0               0               1 1/2*sqrt5 - 1/2               0]
@@ -289,7 +290,6 @@ class Polyhedron_base3(Polyhedron_base2):
         Test that this method works for inexact base ring
         (``cdd`` sets the cache already)::
 
-            sage: # needs sage.groups
             sage: P = polytopes.dodecahedron(exact=False)
             sage: M = P.incidence_matrix.cache
             sage: P.incidence_matrix.clear_cache()
@@ -628,7 +628,7 @@ class Polyhedron_base3(Polyhedron_base2):
         .. SEEALSO::
 
             :meth:`face_generator`,
-            :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.facet`.
+            :meth:`~sage.geometry.polyhedron.base3.Polyhedron_base3.facets`.
 
         EXAMPLES:
 
@@ -808,7 +808,7 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: Polyhedron(ieqs=[[1,-1,0,0],[1,1,0,0]]).f_vector()
             (1, 0, 0, 2, 1)
 
-        However, the method :meth:`Polyhedron_base.vertices` returns
+        However, the method :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.vertices` returns
         two points that belong to the ``Vrepresentation``::
 
             sage: P = Polyhedron(ieqs=[[1,-1,0],[1,1,0]])
@@ -884,7 +884,7 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 1 1 1 0]
 
         The rows and columns of the vertex adjacency matrix correspond
-        to the :meth:`Vrepresentation` objects: vertices, rays, and
+        to the :meth:`~sage.geometry.polyhedron.base0.Polyhedron_base0.Vrepresentation` objects: vertices, rays, and
         lines. The `(i,j)` matrix entry equals `1` if the `i`-th and
         `j`-th V-representation object are adjacent.
 

@@ -5,6 +5,8 @@ AUTHORS:
 
 - Nicolas Thiery (2008): Initial version
 - Nils Bruin (2013-05): Cython version
+
+.. autoclass:: sage.misc.lazy_attribute::_lazy_attribute
 """
 
 # ****************************************************************************
@@ -84,9 +86,9 @@ cdef class _lazy_attribute():
             sage: g = lazy_attribute(sage.misc.banner.banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
-            'def banner():\n'
+            'def banner() -> None:\n'
             sage: lines
-            94
+            102
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)

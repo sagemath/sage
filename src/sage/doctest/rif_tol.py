@@ -68,7 +68,8 @@ def add_tolerance(wantval, want: MarkedOutput):
     INPUT:
 
     - ``wantval`` -- a real interval element
-    - ``want`` -- a :class:`MarkedOutput` describing the tolerance
+    - ``want`` -- a
+      :class:`~sage.doctest.marked_output.MarkedOutput` describing the tolerance
 
     OUTPUT: an interval element containing ``wantval``
 
@@ -101,11 +102,9 @@ def add_tolerance(wantval, want: MarkedOutput):
     if want.tol:
         if wantval == 0:
             return RIFtol(want.tol) * RIFtol(-1, 1)
-        else:
-            return wantval * (1 + RIFtol(want.tol) * RIFtol(-1, 1))
-    elif want.abs_tol:
+        return wantval * (1 + RIFtol(want.tol) * RIFtol(-1, 1))
+    if want.abs_tol:
         return wantval + RIFtol(want.abs_tol) * RIFtol(-1, 1)
-    elif want.rel_tol:
+    if want.rel_tol:
         return wantval * (1 + RIFtol(want.rel_tol) * RIFtol(-1, 1))
-    else:
-        return wantval
+    return wantval

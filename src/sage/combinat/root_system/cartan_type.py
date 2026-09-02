@@ -204,12 +204,12 @@ and we get the desired Cartan matrix::
     [0 0 2]
 
 Oops, the Cartan matrix did not change! This is because it is cached
-for efficiency (see :class:`cached_method`). In general, a Dynkin
+for efficiency (see :func:`sage.misc.cachefunc.cached_method`). In general, a Dynkin
 diagram should not be modified after having been used.
 
 .. WARNING:: this is not checked currently
 
-.. TODO:: add a method :meth:`set_mutable` as, say, for matrices
+.. TODO:: add a method ``set_mutable`` as, say, for matrices
 
 Here, we can work around this by clearing the cache::
 
@@ -598,17 +598,16 @@ class CartanTypeFactory(SageObject):
             if "x" in t:
                 from . import type_reducible
                 return type_reducible.CartanType([CartanType(u) for u in t.split("x")])
-            elif t[-1] == "*":
+            if t[-1] == "*":
                 return CartanType(t[:-1]).dual()
-            elif t[-1] == "~":
+            if t[-1] == "~":
                 return CartanType(t[:-1]).affine()
-            elif t in ["Aoo", "A∞"]:
+            if t in ["Aoo", "A∞"]:
                 return CartanType(['A', Infinity])
-            elif t == "A+oo":
+            if t == "A+oo":
                 from . import type_A_infinity
                 return type_A_infinity.CartanType(NN)
-            else:
-                return CartanType([t[0], eval(t[1:])])
+            return CartanType([t[0], eval(t[1:])])
 
         t = list(t)
         if isinstance(t[0], str) and t[1] in [Infinity, ZZ, NN]:
@@ -617,8 +616,7 @@ class CartanTypeFactory(SageObject):
                 from . import type_A_infinity
                 if t[1] == NN:
                     return type_A_infinity.CartanType(NN)
-                else:
-                    return type_A_infinity.CartanType(ZZ)
+                return type_A_infinity.CartanType(ZZ)
 
         if isinstance(t[0], str) and t[1] in ZZ and t[1] >= 0:
             letter, n = t[0], t[1]
@@ -710,8 +708,8 @@ class CartanTypeFactory(SageObject):
                     if letter == "A" and t[2] == 2:
                         if n % 2 == 0: # Kac' A_2n^(2)
                             return CartanType(["BC", ZZ(n//2), 2])
-                        else:        # Kac' A_2n-1^(2)
-                            return CartanType(["B", ZZ((n+1)//2), 1]).dual()
+                        # Kac' A_2n-1^(2)
+                        return CartanType(["B", ZZ((n+1)//2), 1]).dual()
                     if letter == "D" and t[2] == 2:
                         return CartanType(["C", n-1, 1]).dual()
                     if letter == "D" and t[2] == 3 and n == 4:
@@ -981,9 +979,9 @@ class CartanType_abstract:
 
     Subclasses should implement:
 
-    - :meth:`dynkin_diagram()`
+    - ``dynkin_diagram()``
 
-    - :meth:`cartan_matrix()`
+    - ``cartan_matrix()``
 
     - :meth:`is_finite()`
 
@@ -1321,7 +1319,8 @@ class CartanType_abstract:
 
         From a programming point of view its implementation is more
         similar to the irreducible types, and so the method
-        :meth:`is_atomic()` is supplied.
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_atomic`
+        is supplied.
 
         EXAMPLES::
 
@@ -1339,7 +1338,8 @@ class CartanType_abstract:
 
     def is_compound(self) -> bool:
         """
-        A short hand for not :meth:`is_atomic`.
+        A short hand for not
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_atomic`.
 
         TESTS::
 
@@ -1665,7 +1665,8 @@ class CartanType_crystallographic(CartanType_abstract):
 
     def is_crystallographic(self) -> bool:
         """
-        Implement :meth:`CartanType_abstract.is_crystallographic`
+        Implement
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_crystallographic`
         by returning ``True``.
 
         EXAMPLES::
@@ -2040,7 +2041,8 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
         We check that :meth:`classical`,
         :meth:`sage.combinat.root_system.cartan_type.CartanType_crystallographic.dynkin_diagram`,
-        and :meth:`special_node` are consistent::
+        and :meth:`~sage.combinat.root_system.cartan_type.CartanType_affine.special_node`
+        are consistent::
 
             sage: for ct in CartanType.samples(affine=True):                            # needs sage.graphs
             ....:     g1 = ct.classical().dynkin_diagram()
@@ -2473,10 +2475,9 @@ class CartanType_standard(UniqueRepresentation, SageObject):
         """
         if i == 0:
             return self.letter
-        elif i == 1:
+        if i == 1:
             return self.n
-        else:
-            raise IndexError("index out of range")
+        raise IndexError("index out of range")
 
 
 class CartanType_standard_finite(CartanType_standard, CartanType_finite):
@@ -2655,7 +2656,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
         for `w_0` the longest element of the Weyl group, and any
         simple root `\alpha_i`, one has `\alpha_{i^*} = -w_0(\alpha_i)`.
 
-        The automorphism is returned as a :class:`Family`.
+        The automorphism is returned as a :func:`sage.sets.family.Family`.
 
         EXAMPLES::
 
@@ -2735,8 +2736,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
                 return '%s%s^%s' % (letter, n, aff)
         if compact:
             return '%s%s~' % (letter, n)
-        else:
-            return "['%s', %s, %s]" % (letter, n, aff)
+        return "['%s', %s, %s]" % (letter, n, aff)
 
     def __reduce__(self):
         """
@@ -2768,12 +2768,11 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
         """
         if i == 0:
             return self.letter
-        elif i == 1:
+        if i == 1:
             return self.n
-        elif i == 2:
+        if i == 2:
             return self.affine
-        else:
-            raise IndexError("index out of range")
+        raise IndexError("index out of range")
 
     def rank(self):
         """
@@ -2828,7 +2827,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
 
     def special_node(self):
         r"""
-        Implement :meth:`CartanType_abstract.special_node`.
+        Implement :meth:`~sage.combinat.root_system.cartan_type.CartanType_affine.special_node`.
 
         With the standard labelling conventions, `0` is always a
         special node.
@@ -3060,9 +3059,8 @@ class SuperCartanType_standard(UniqueRepresentation, SageObject):
         """
         if i == 0:
             return self.letter
-        elif i == 1:
+        if i == 1:
             return [self.m, self.n]
-        else:
-            raise IndexError("index out of range")
+        raise IndexError("index out of range")
 
     options = CartanType.options

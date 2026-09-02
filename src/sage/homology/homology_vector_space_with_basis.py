@@ -243,9 +243,8 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         """
         if d is None:
             return Family(self._indices, self.monomial)
-        else:
-            indices = [(d, i) for i in self._graded_indices.get(d, [])]
-            return Family(indices, self.monomial)
+        indices = [(d, i) for i in self._graded_indices.get(d, [])]
+        return Family(indices, self.monomial)
 
     def degree_on_basis(self, i):
         r"""
@@ -516,8 +515,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
                 return self.base_ring().zero()
             if self.parent()._cohomology:
                 return self.to_cycle().eval(other.to_cycle())
-            else:
-                return other.to_cycle().eval(self.to_cycle())
+            return other.to_cycle().eval(self.to_cycle())
 
 
 class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
@@ -1101,7 +1099,7 @@ class CohomologyRing_mod2(CohomologyRing):
                 # Convert cubical complex to simplicial complex, and
                 # convert self to basis element in the new complex's
                 # cohomology ring.
-                scomplex = SimplicialComplex(scomplex, is_mutable=False)
+                scomplex = SimplicialComplex(scomplex, immutable=True)
                 P = scomplex.cohomology_ring(self.base_ring())
                 self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):
@@ -1218,10 +1216,10 @@ class CohomologyRing_mod2(CohomologyRing):
               otherwise ``a * self``
 
             Algorithm: for left multiplication by ``a``, since we have
-            :meth:`Sq` to compute multiplication by a single generator
+            :meth:`~sage.homology.homology_vector_space_with_basis.CohomologyRing_mod2.Element.Sq` to compute multiplication by a single generator
             `Sq^i`, first convert ``a`` to the Serre-Cartan basis ---
             that is, sums of products of the elements `Sq^i` --- and
-            then apply :meth:`Sq` repeatedly. Right multiplication by
+            then apply :meth:`~sage.homology.homology_vector_space_with_basis.CohomologyRing_mod2.Element.Sq` repeatedly. Right multiplication by
             ``a`` is the same as left multiplication by the antipode
             applied to ``a``.
 
@@ -1409,7 +1407,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
 
     and `i_k` ranges from `S(k)` to `i_{k+1}-1`. There are two special
     cases: if `k=0`, then `i_0 = S(0)`. Also, the initial case of
-    `S(k)` is `S(n)`, which is set in the method :meth:`Sq` before
+    `S(k)` is `S(n)`, which is set in the method :meth:`~sage.homology.homology_vector_space_with_basis.CohomologyRing_mod2.Element.Sq` before
     calling this function. For this function, given `k`, `i_{k+1}`,
     and `S(k+1)`, return a list consisting of the allowable possible
     indices `[i_k, i_{k-1}, ..., i_1, i_0]` given by the above

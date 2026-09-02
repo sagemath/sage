@@ -176,6 +176,18 @@ def IntegerLattice(basis, lll_reduce=True):
         [      0       0       0       0       0 1048576       0       0]
         [      0       0       0       0       0       0 1048576       0]
         [      0       0       0       0       0       0       0 1048576]
+
+    We construct a large lattice, this lattice will not be constructible
+    if echelon form was also being computed::
+
+        sage: n = 500
+        sage: q = 65537
+        sage: M = matrix.random(ZZ, n, x=0, y=q+1).augment(q*matrix.identity(n))
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: L = IntegerLattice(M, lll_reduce=False); L
+        Free module of degree 1000 and rank 500 over Integer Ring
+        User basis matrix:
+        500 x 1000 dense matrix over Integer Ring
     """
 
     if isinstance(basis, OrderElement_absolute):
@@ -493,8 +505,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         if self.rank() == self.degree():
             return abs(self.reduced_basis.determinant())
-        else:
-            return self.gram_matrix().determinant().sqrt()
+        return self.gram_matrix().determinant().sqrt()
 
     @cached_method
     def discriminant(self):
@@ -533,7 +544,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     @cached_method
     def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
-        Return a shortest vector.
+        Return a shortest vector by solving the Shortest Vector Problem (SVP) exactly.
 
         INPUT:
 
@@ -554,22 +565,22 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=30, q=2^40, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector().norm().n()                                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector().norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
         """
         if algorithm == "pari":
             if self._basis_is_LLL_reduced:
@@ -579,7 +590,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
                 B = self.reduced_basis.LLL()
                 qf = B*B.transpose()
 
-            count, length, vectors = qf.__pari__().qfminim()
+            count, length, vectors = qf.__pari__().qfminim(m=1)
             v = vectors.sage().columns()[0]
             w = v*B
         elif algorithm == "fplll":
@@ -981,5 +992,4 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         if exact_form:
             return (D * gamma(1 + (r/2)))**(1/r) / pi.sqrt()
-        else:
-            return D**(1/r) * (r/(2*pi*e)).sqrt()
+        return D**(1/r) * (r/(2*pi*e)).sqrt()

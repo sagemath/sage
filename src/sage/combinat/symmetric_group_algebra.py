@@ -187,7 +187,9 @@ def SymmetricGroupAlgebra(R, W, category=None):
         this global variable is set to ``'r2l'``.)
         In view of this, it is recommended that code not rely on the
         usual multiplication function, but rather use the methods
-        :meth:`left_action_product` and :meth:`right_action_product`
+        :meth:`~sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.left_action_product`
+        and
+        :meth:`~sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.right_action_product`
         for multiplying permutations (these methods don't depend on the
         setting). See :issue:`14885` for more information.
 
@@ -1432,7 +1434,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         `k`-noninversions of `\sigma` (that is, the number of all
         `k`-element subsets of `\{ 1, 2, \ldots, n \}` on which
         `\sigma` restricts to a strictly increasing map). See
-        :meth:`sage.combinat.permutation.number_of_noninversions` for
+        :meth:`sage.combinat.permutation.Permutation.number_of_noninversions` for
         the `\mathrm{noninv}` map.
 
         This element is more or less the operator `\nu_{k, 1^{n-k}}`
@@ -1887,7 +1889,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         multiplying permutations. This means that for all permutations
         `p` and `q` in `S_n`, the product `pq` is defined in such a way
         that `(pq)(i) = p(q(i))` for each `i \in \{ 1, 2, \ldots, n \}`
-        (this is the same convention as in :meth:`left_action_product`,
+        (this is the same convention as in
+        :meth:`~sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.left_action_product`,
         but not the default semantics of the `*` operator on
         permutations in Sage). Thus, for instance, `s_2 s_1` is the
         permutation obtained by first transposing `1` with `2` and
@@ -2430,8 +2433,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         if mult == 'l2r':
             return z
-        else:
-            return z.map_support(lambda x: x.inverse())
+        return z.map_support(lambda x: x.inverse())
 
     def murphy_basis(self):
         r"""
@@ -2622,9 +2624,13 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         R = self.base_ring()
         one = R.one()
         # check if the KL polynomials can be computed using ``coxeter3``
-        try:
+        from sage.features.coxeter3 import Coxeter3
+        if Coxeter3().is_present():
             from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
-        except ImportError:
+            self._cellular_KL = Coxeter3Group(['A', self.n + 1])
+            self._KLG = self._cellular_KL
+            polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
+        else:
             # Fallback to using the KL polynomial
             from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -2632,10 +2638,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             self._KLG = SymmetricGroup(self.n)
             self._cellular_KL = KazhdanLusztigPolynomial(self._KLG, q)
             polyfunc = self._cellular_KL.P
-        else:
-            self._cellular_KL = Coxeter3Group(['A', self.n + 1])
-            self._KLG = self._cellular_KL
-            polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
 
         if w.parent() is not self._KLG:
             w = self._KLG.from_reduced_word(w.reduced_word())
@@ -3617,11 +3619,10 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
 
         if perm[i - 1] < perm[i]:
             return self.monomial(self._indices(perm_i))
-        else:
-            # Ti^2 = (q - q^(-1))*Ti - q1*q2
-            q = self.q()
-            z_elt = {perm_i: q, perm: q - 1}
-            return self._from_dict(z_elt)
+        # Ti^2 = (q - q^(-1))*Ti - q1*q2
+        q = self.q()
+        z_elt = {perm_i: q, perm: q - 1}
+        return self._from_dict(z_elt)
 
     def t_action(self, a, i):
         r"""

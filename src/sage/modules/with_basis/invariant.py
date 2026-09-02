@@ -64,7 +64,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
         sage: R = Representation(G, M, action)
         sage: I = R.invariant_module()
 
-    Then we can lift the basis from the invariant to the original module::
+    Then we can lift the basis from the invariant submodule to the ambient G-module R::
 
         sage: [I.lift(b) for b in I.basis()]
         [M[1] + M[2] + M[3]]
@@ -807,11 +807,11 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             ...
             ValueError: chi must be a list/tuple or a class function of the group G
         """
-        from sage.groups.class_function import ClassFunction, ClassFunction_libgap
+        from sage.groups.class_function import ClassFunction
 
         if isinstance(chi, (list, tuple)):
             chi = ClassFunction(G, libgap(chi))
-        elif not isinstance(chi, ClassFunction_libgap):
+        elif not isinstance(chi, ClassFunction):
             raise ValueError("chi must be a list/tuple or a class function of the group G")
 
         try:

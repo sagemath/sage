@@ -803,7 +803,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         """
         Return the number of generators of ``self``.
 
-        Alias for :meth:`ngens`.
+        Alias for :meth:`~sage.groups.libgap_wrapper.ParentLibGAP.ngens`.
 
         OUTPUT: integer
 
@@ -902,8 +902,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             if names.issubset(self._gen_names):
                 return self([i.sign()*(self._gen_names.index(P._gen_names[abs(i)-1])+1)
                              for i in x.Tietze()])
-            else:
-                raise ValueError('generators of %s not in the group' % x)
+            raise ValueError('generators of %s not in the group' % x)
         return self.element_class(self, x, **kwds)
 
     def abelian_invariants(self):
@@ -954,7 +953,8 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             sage: F.quotient([a*b^2*a, b^3])
             Finitely presented group < a, b | a*b^2*a, b^3 >
 
-        Division is shorthand for :meth:`quotient` ::
+        Division is shorthand for
+        :meth:`~sage.groups.free_group.FreeGroup_class.quotient` ::
 
             sage: F /  [a*b^2*a, b^3]
             Finitely presented group < a, b | a*b^2*a, b^3 >

@@ -104,7 +104,7 @@ reused whenever possible (unique representation), and can be pickled.
 
 Cython classes cannot inherit from a dynamic class (there might be
 some partial support for this in the future). On the other hand, such
-an inheritance can be partially emulated using :meth:`__getattr__`. See
+an inheritance can be partially emulated using ``__getattr__``. See
 ``sage.categories.examples.semigroups_cython`` for an example.
 """
 
@@ -325,14 +325,14 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     #    assert(cls is None or issubtype(type(cls), type) or type(cls) is classobj)
     if cache is True:
         return dynamic_class_internal(name, bases, cls, reduction, doccls, prepend_cls_bases)
-    elif cache is False:
+    if cache is False:
         # bypass the cached method
         return dynamic_class_internal.f(name, bases, cls, reduction, doccls, prepend_cls_bases)
-    else:  # cache = "ignore_reduction"
-        result = dynamic_class_internal(name, bases, cls, False, doccls, prepend_cls_bases)
-        if result._reduction is False:
-            result._reduction = reduction
-        return result
+    # cache = "ignore_reduction"
+    result = dynamic_class_internal(name, bases, cls, False, doccls, prepend_cls_bases)
+    if result._reduction is False:
+        result._reduction = reduction
+    return result
 
 
 @weak_cached_function

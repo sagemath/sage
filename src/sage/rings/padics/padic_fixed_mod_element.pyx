@@ -300,7 +300,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         .. SEEALSO::
 
-            :meth:`_mod_`
+            ``_mod_``
         """
         cdef Integer selfvalue, modulus
         cdef long aprec
@@ -542,7 +542,6 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm='newton')   # indirect doctest

@@ -46,7 +46,8 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     r"""
     A base class for Orthogonal matrix groups with a gap backend.
 
-    Main difference to :class:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_gap`
+    Main difference to
+    :class:`~sage.groups.matrix_gps.orthogonal_gap.OrthogonalMatrixGroup_gap`
     is that we can specify generators and a bilinear form. Following GAP, the group action is
     from the right.
 
@@ -153,10 +154,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         from sage.repl.display.util import format_list
         if n > 5:
             return 'Group of isometries with %s generators ' % n
-        elif n == 1:
+        if n == 1:
             return 'Group of isometries with %s generator %s' % (n, format_list(self.gens()))
-        else:
-            return 'Group of isometries with %s generators %s' % (n, format_list(self.gens()))
+        return 'Group of isometries with %s generators %s' % (n, format_list(self.gens()))
 
     def __reduce__(self):
         r"""

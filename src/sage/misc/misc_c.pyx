@@ -81,7 +81,8 @@ def prod(x, z=None, Py_ssize_t recursion_cutoff=5):
 
     .. SEEALSO::
 
-        For the symbolic product function, see :func:`sage.calculus.calculus.symbolic_product`.
+        :func:`sage.misc.functional.symbolic_prod` for symbolic products and
+        :func:`sage.misc.functional.symbolic_sum` for symbolic sums.
 
     EXAMPLES::
 
@@ -305,8 +306,7 @@ class NonAssociative:
         """
         if self.right is None:
             return str(self.left)
-        else:
-            return "(%s*%s)" % (self.left, self.right)
+        return "(%s*%s)" % (self.left, self.right)
 
     def __mul__(self, other):
         """

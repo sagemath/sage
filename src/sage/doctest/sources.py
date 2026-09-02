@@ -58,8 +58,6 @@ double_colon = re.compile(r"^(\s*).*::\s*$")
 code_block = re.compile(r"^(\s*)[.][.]\s*code-block\s*::.*$")
 
 whitespace = re.compile(r"\s*")
-bitness_marker = re.compile('#.*(32|64)-bit')
-bitness_value = '64' if sys.maxsize > (1 << 32) else '32'  # cf. sage.features.bitness
 
 # For neutralizing doctests
 find_prompt = re.compile(r"^(\s*)(>>>|sage:)(.*)")
@@ -141,6 +139,8 @@ class DocTestSource:
 
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
       instance or equivalent
+
+    .. automethod:: _process_doc
     """
     def __init__(self, options):
         """
@@ -336,13 +336,6 @@ class DocTestSource:
                     self._process_doc(doctests, doc, namespace, start)
                     unparsed_doc = False
                 else:
-                    bitness = bitness_marker.search(line)
-                    if bitness:
-                        if bitness.groups()[0] != bitness_value:
-                            self.line_shift += 1
-                            continue
-                        else:
-                            line = line[:bitness.start()] + "\n"
                     if self.line_shift and (m := sagestart.match(line)):
                         # We insert empty doctest lines to make up for the removed lines
                         indent_and_prompt = m.group(1)
@@ -385,8 +378,7 @@ class DocTestSource:
                 i = random.randint(0, len(doctests) - 1)
                 randomized.append(doctests.pop(i))
             return randomized, extras
-        else:
-            return doctests, extras
+        return doctests, extras
 
 
 class StringDocTestSource(DocTestSource):
@@ -662,12 +654,10 @@ class FileDocTestSource(DocTestSource):
         """
         if self.options.abspath:
             return os.path.abspath(self.path)
-        else:
-            relpath = os.path.relpath(self.path)
-            if relpath.startswith(".." + os.path.sep):
-                return self.path
-            else:
-                return relpath
+        relpath = os.path.relpath(self.path)
+        if relpath.startswith(".." + os.path.sep):
+            return self.path
+        return relpath
 
     @lazy_attribute
     def basename(self):
@@ -692,7 +682,7 @@ class FileDocTestSource(DocTestSource):
 
         Such files aren't loaded before running tests.
 
-        This uses :func:`~sage.misc.package_dir.is_package_or_sage_namespace_package_dir`
+        This uses ``sage.misc.package_dir.is_package_or_sage_namespace_package_dir``
         but can be overridden via :class:`~sage.doctest.control.DocTestDefaults`.
 
         EXAMPLES::
@@ -730,10 +720,11 @@ class FileDocTestSource(DocTestSource):
 
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
-            sage: filename = sage.repl.user_globals.__file__
+            sage: import sage.tests.numpy
+            sage: filename = sage.tests.numpy.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: FDS.file_optional_tags
-            {'sage.modules': None}
+            {'numpy': None}
         """
         from .parsing import parse_file_optional_tags
         return parse_file_optional_tags(self)
@@ -772,19 +763,6 @@ class FileDocTestSource(DocTestSource):
             'doctests[Integer(20)].examples[Integer(8)].source\n'
 
         TESTS:
-
-        We check that we correctly process results that depend on 32
-        vs 64 bit architecture::
-
-            sage: import sys
-            sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: sys.maxsize == 2^63 - 1
-            False # 32-bit
-            True  # 64-bit
-            sage: ex = doctests[20].examples[11]
-            sage: ((bitness == '64' and ex.want == 'True  \n')
-            ....:  or (bitness == '32' and ex.want == 'False \n'))
-            True
 
         We check that lines starting with a # aren't doctested::
 
@@ -851,6 +829,7 @@ class FileDocTestSource(DocTestSource):
             skipping = False
             in_block = False
             last_line = ''
+        starting_indent = None
         for lineno, line in self:
             if not line.strip():
                 continue
@@ -916,7 +895,8 @@ class SourceLanguage:
         """
         Return a list of doctest defined in this docstring.
 
-        This function is called by :meth:`DocTestSource._process_doc`.
+        This function is called by
+        :meth:`~sage.doctest.sources.DocTestSource._process_doc`.
         The default implementation, defined here, is to use the
         :class:`sage.doctest.parsing.SageDocTestParser` attached to
         this source to get doctests from the docstring.

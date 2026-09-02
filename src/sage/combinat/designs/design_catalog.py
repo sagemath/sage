@@ -58,7 +58,7 @@ This module gathers the following designs:
     :meth:`~sage.combinat.designs.bibd.steiner_triple_system`
     :meth:`~sage.combinat.designs.steiner_quadruple_systems.steiner_quadruple_system`
     :meth:`~sage.combinat.designs.block_design.projective_plane`
-    :meth:`~sage.combinat.designs.biplane`
+    :func:`~sage.combinat.designs.bibd.biplane`
     :meth:`~sage.combinat.designs.gen_quadrangles_with_spread`
 
 And the :meth:`designs.best_known_covering_design_from_LJCR
@@ -118,4 +118,6 @@ lazy_import('sage.combinat.designs.orthogonal_arrays',
             'OAMainFunctions', as_='orthogonal_arrays')
 
 lazy_import('sage.combinat.designs.gen_quadrangles_with_spread',
-            ('generalised_quadrangle_with_spread', 'generalised_quadrangle_hermitian_with_ovoid'))
+            ('generalised_quadrangle_with_spread',
+             'generalised_quadrangle_symplectic_with_spread',
+             'generalised_quadrangle_hermitian_with_ovoid'))

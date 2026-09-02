@@ -4,7 +4,7 @@ Cartan matrices
 AUTHORS:
 
 - Travis Scrimshaw (2012-04-22): Nicolas M. Thiery moved matrix creation to
-  :class:`CartanType` to prepare :func:`cartan_matrix()` for deprecation.
+  :class:`CartanType` to prepare ``cartan_matrix()`` for deprecation.
 - Christian Stump, Travis Scrimshaw (2013-04-13): Created :class:`CartanMatrix`.
 - Ben Salisbury (2018-08-07): Added Borcherds-Cartan matrices.
 """
@@ -62,7 +62,8 @@ class CartanMatrix(Base, CartanType_abstract,
     - `a_{ij} = 0` if and only if `a_{ji} = 0` for all `i \neq j`.
 
     Additionally some reference assume that a Cartan matrix is
-    *symmetrizable* (see :meth:`is_symmetrizable`). However following Kac, we
+    *symmetrizable* (see :meth:`sage.matrix.matrix0.Matrix.is_symmetrizable`).
+    However following Kac, we
     do not make that assumption here.
 
     An even, integral Borcherds--Cartan matrix is an integral matrix
@@ -227,7 +228,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
     .. NOTE::
 
-        Since this is a matrix, :meth:`row()` and :meth:`column()` will return
+        Since this is a matrix, :meth:`~sage.matrix.matrix1.Matrix.row` and
+        :meth:`~sage.matrix.matrix1.Matrix.column` will return
         the standard row and column respectively. To get the row with the
         indices as in Dynkin diagrams/Cartan types, use
         :meth:`row_with_indices()` and :meth:`column_with_indices()`
@@ -376,9 +378,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
         if nrows == self.nrows() and ncols == self.ncols() and sparse:
             return self.parent()
-        else:
-            from sage.matrix.matrix_space import MatrixSpace
-            return MatrixSpace(ZZ, nrows, ncols, sparse is None or bool(sparse))
+        from sage.matrix.matrix_space import MatrixSpace
+        return MatrixSpace(ZZ, nrows, ncols, sparse is None or bool(sparse))
 
     def _CM_init(self, cartan_type, index_set, cartan_type_check):
         """
@@ -737,7 +738,8 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_crystallographic(self):
         """
-        Implement :meth:`CartanType_abstract.is_crystallographic`.
+        Implement
+        :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.is_crystallographic`.
 
         A Cartan matrix is crystallographic if it is symmetrizable.
 
@@ -876,7 +878,7 @@ class CartanMatrix(Base, CartanType_abstract,
             subg = D.subgraph(vertices=l)
             if compact and not subg.is_finite():
                 return False
-            elif not subg.is_finite() and not subg.is_affine():
+            if not subg.is_finite() and not subg.is_affine():
                 return False
         return True
 
@@ -943,7 +945,9 @@ class CartanMatrix(Base, CartanType_abstract,
         r"""
         Return the Coxeter matrix for ``self``.
 
-        .. SEEALSO:: :meth:`CartanType_abstract.coxeter_matrix`
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract.coxeter_matrix`
 
         EXAMPLES::
 
@@ -1086,9 +1090,9 @@ def is_borcherds_cartan_matrix(M):
         for j in range(i+1, n):
             if M[i,j] > 0 or M[j,i] > 0:
                 return False
-            elif M[i,j] == 0 and M[j,i] != 0:
+            if M[i,j] == 0 and M[j,i] != 0:
                 return False
-            elif M[j,i] == 0 and M[i,j] != 0:
+            if M[j,i] == 0 and M[i,j] != 0:
                 return False
     return True
 
