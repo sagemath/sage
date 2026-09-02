@@ -738,7 +738,7 @@ class FinitePosets(CategoryWithAxiom):
 
             Another poset::
 
-                sage: # needs sage.modules
+                sage: # needs symmetrica
                 sage: P = posets.SSTPoset([2,1])
                 sage: lext = sorted(P)
                 sage: l = P.birational_free_labelling(linear_extension=lext,

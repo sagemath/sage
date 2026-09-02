@@ -141,6 +141,7 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     will be a finite set containing only canonical vectors whose entries
     sum to ``sum``.::
 
+        sage: # needs symmetrica
         sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3)]]), sum=6)
         sage: I.cardinality()
         10
@@ -157,6 +158,7 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
     we convert the returned set of vectors into a list in increasing lexicographic order,
     to get a reproducible test::
 
+        sage: # needs symmetrica
         sage: sorted(I.orbit([6,0,0]))
         [[0, 0, 6], [0, 6, 0], [6, 0, 0]]
         sage: sorted(I.orbit([5,1,0]))
@@ -634,12 +636,14 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
     Here is the enumeration of unlabeled graphs over 5 vertices::
 
+        sage: # needs symmetrica
         sage: G = IntegerVectorsModPermutationGroup(TransitiveGroup(10,12), max_part=1)
         sage: G.cardinality()
         34
 
     TESTS::
 
+        sage: # needs symmetrica
         sage: I = IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3,4)]]),4)
         sage: TestSuite(I).run()
     """
@@ -868,6 +872,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         With two interchangeable elements, the smaller one
         ranges from zero to ``sum//2``::
 
+            sage: # needs symmetrica
             sage: G = PermutationGroup([(1,2)])
             sage: IntegerVectorsModPermutationGroup(G, 1000).cardinality()
             501
@@ -875,6 +880,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         Binary vectors up to full symmetry are first some ones and
         then some zeros::
 
+            sage: # needs symmetrica
             sage: G = SymmetricGroup(10)
             sage: I = IntegerVectorsModPermutationGroup(G, max_part=1)
             sage: I.cardinality()
@@ -883,6 +889,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         Binary vectors of constant weight, up to PGL(2,17), which
         is 3-transitive, but not 4-transitive::
 
+            sage: # needs symmetrica
             sage: G=PGL(2,17)
             sage: I = IntegerVectorsModPermutationGroup(G, sum=3, max_part=1)
             sage: I.cardinality()
@@ -903,6 +910,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         The case when both ``sum`` and ``max_part`` are specified::
 
+            sage: # needs symmetrica
             sage: G = PermutationGroup([(1,2,3)])
             sage: I = IntegerVectorsModPermutationGroup(G, sum=10, max_part=5)
             sage: I.cardinality()
@@ -910,6 +918,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
 
         All permutation groups of degree 4::
 
+            sage: # needs symmetrica
             sage: for G in SymmetricGroup(4).subgroups():
             ....:     sgs = tuple(tuple(t) for t in G.strong_generating_system())
             ....:     I1 = IntegerVectorsModPermutationGroup(G, sum=10, sgs=sgs)

@@ -470,23 +470,27 @@ As an application, we show how to combine what we have learned to
 implement a new basis and a quotient of the algebra of symmetric
 functions::
 
+    sage: # needs symmetrica
     sage: SF = SymmetricFunctions(QQ);  # A graded Hopf algebra
     sage: h  = SF.homogeneous()         # A particular basis, indexed by partitions (with some additional magic)
 
 So, `h` is a graded algebra whose basis is indexed by partitions. In more
 detail, ``h([i])`` is the sum of all monomials of degree `i`::
 
+    sage: # needs symmetrica
     sage: h([2]).expand(4)
     x0^2 + x0*x1 + x1^2 + x0*x2 + x1*x2 + x2^2 + x0*x3 + x1*x3 + x2*x3 + x3^2
 
 and ``h(mu) = prod( h(p) for p in mu )``::
 
+    sage: # needs symmetrica
     sage: h([3,2,2,1]) == h([3]) * h([2]) * h([2]) * h([1])
     True
 
 Here we define a new basis `(X_\lambda)_\lambda` by triangularity
 with respect to `h`; namely, we set `X_\lambda = \sum_{\mu\geq \lambda, |\mu|=|\nu|} h_\mu`::
 
+    sage: # needs symmetrica
     sage: class MySFBasis(CombinatorialFreeModule):
     ....:     r"""
     ....:     Note: We would typically use SymmetricFunctionAlgebra_generic
@@ -546,6 +550,7 @@ that the first part of `\lambda` is greater than `k`. See
 :meth:`Sets.SubcategoryMethods.Subquotients` for more details about
 implementing quotients::
 
+    sage: # needs symmetrica
     sage: class MySFQuotient(CombinatorialFreeModule):
     ....:     r"""
     ....:     The quotient of the ring of symmetric functions by the ideal generated
@@ -590,20 +595,16 @@ implementing quotients::
     mm[[3, 2, 1]] + 2*mm[[3, 3]]
     sage: m(f)
     m[3, 2, 1] + 2*m[3, 3]
-
     sage: (m(f))^2
     8*m[3, 3, 2, 2, 1, 1] + 12*m[3, 3, 2, 2, 2] + 24*m[3, 3, 3, 2, 1] + 48*m[3, 3, 3, 3]
     + 4*m[4, 3, 2, 2, 1] + 4*m[4, 3, 3, 1, 1] + 14*m[4, 3, 3, 2] + 4*m[4, 4, 2, 2]
     + 4*m[4, 4, 3, 1] + 6*m[4, 4, 4] + 4*m[5, 3, 2, 1, 1] + 4*m[5, 3, 2, 2]
     + 12*m[5, 3, 3, 1] + 2*m[5, 4, 2, 1] + 6*m[5, 4, 3] + 4*m[5, 5, 1, 1] + 2*m[5, 5, 2]
     + 4*m[6, 2, 2, 1, 1] + 6*m[6, 2, 2, 2] + 6*m[6, 3, 2, 1] + 10*m[6, 3, 3] + 2*m[6, 4, 1, 1] + 5*m[6, 4, 2] + 4*m[6, 5, 1] + 4*m[6, 6]
-
     sage: f^2
     8*mm[[3, 3, 2, 2, 1, 1]] + 12*mm[[3, 3, 2, 2, 2]] + 24*mm[[3, 3, 3, 2, 1]] + 48*mm[[3, 3, 3, 3]]
-
     sage: (m(f))^2 - m(f^2)
     4*m[4, 3, 2, 2, 1] + 4*m[4, 3, 3, 1, 1] + 14*m[4, 3, 3, 2] + 4*m[4, 4, 2, 2] + 4*m[4, 4, 3, 1] + 6*m[4, 4, 4] + 4*m[5, 3, 2, 1, 1] + 4*m[5, 3, 2, 2] + 12*m[5, 3, 3, 1] + 2*m[5, 4, 2, 1] + 6*m[5, 4, 3] + 4*m[5, 5, 1, 1] + 2*m[5, 5, 2] + 4*m[6, 2, 2, 1, 1] + 6*m[6, 2, 2, 2] + 6*m[6, 3, 2, 1] + 10*m[6, 3, 3] + 2*m[6, 4, 1, 1] + 5*m[6, 4, 2] + 4*m[6, 5, 1] + 4*m[6, 6]
-
     sage: MM( (m(f))^2 - m(f^2) )
     0
 

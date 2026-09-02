@@ -131,15 +131,17 @@ class FinitePermutationGroups(CategoryWithAxiom):
             the identity, 6 cycles of length 2, 3 products of two cycles
             of length 2, 8 cycles of length 3, and 6 cycles of length 4::
 
+                sage: # needs symmetrica
                 sage: S4 = SymmetricGroup(4)
-                sage: P = S4.cycle_index()                                              # needs sage.combinat
-                sage: 24 * P                                                            # needs sage.combinat
+                sage: P = S4.cycle_index()
+                sage: 24 * P
                 p[1, 1, 1, 1] + 6*p[2, 1, 1] + 3*p[2, 2] + 8*p[3, 1] + 6*p[4]
 
             If `l = (l_1,\dots,l_k)` is a partition, ``|G| P[l]`` is the number
             of elements of `G` with cycles of length `(p_1,\dots,p_k)`::
 
-                sage: 24 * P[ Partition([3,1]) ]                                        # needs sage.combinat
+                sage: # needs symmetrica
+                sage: 24 * P[ Partition([3,1]) ]
                 8
 
             The cycle index plays an important role in the enumeration of
@@ -148,15 +150,17 @@ class FinitePermutationGroups(CategoryWithAxiom):
             encoded as a symmetric function, expressed in the powersum
             basis::
 
-                sage: P.parent()                                                        # needs sage.combinat
+                sage: # needs symmetrica
+                sage: P.parent()
                 Symmetric Functions over Rational Field in the powersum basis
 
             This symmetric function can have some nice properties; for
             example, for the symmetric group `S_n`, we get the complete
             symmetric function `h_n`::
 
+                sage: # needs symmetrica
                 sage: S = SymmetricFunctions(QQ); h = S.h()
-                sage: h( P )                                                            # needs sage.combinat
+                sage: h( P )
                 h[4]
 
             .. TODO::
@@ -167,10 +171,10 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             Here are the cycle indices of some permutation groups::
 
-                sage: 6 * CyclicPermutationGroup(6).cycle_index()                       # needs sage.combinat
+                sage: # needs symmetrica
+                sage: 6 * CyclicPermutationGroup(6).cycle_index()
                 p[1, 1, 1, 1, 1, 1] + p[2, 2, 2] + 2*p[3, 3] + 2*p[6]
-
-                sage: 60 * AlternatingGroup(5).cycle_index()                            # needs sage.combinat
+                sage: 60 * AlternatingGroup(5).cycle_index()
                 p[1, 1, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 24*p[5]
 
                 sage: for G in TransitiveGroups(5):               # long time
@@ -184,8 +188,9 @@ class FinitePermutationGroups(CategoryWithAxiom):
             Permutation groups with arbitrary domains are supported
             (see :issue:`22765`)::
 
+                sage: # needs symmetrica
                 sage: G = PermutationGroup([['b','c','a']], domain=['a','b','c'])
-                sage: G.cycle_index()                                                   # needs sage.combinat
+                sage: G.cycle_index()
                 1/3*p[1, 1, 1] + 2/3*p[3]
 
             One may specify another parent for the result::
@@ -215,13 +220,14 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             TESTS::
 
+                sage: # needs symmetrica
                 sage: P = PermutationGroup([]); P
                 Permutation Group with generators [()]
-                sage: P.cycle_index()                                                   # needs sage.combinat
+                sage: P.cycle_index()
                 p[1]
                 sage: P = PermutationGroup([[(1)]]); P
                 Permutation Group with generators [()]
-                sage: P.cycle_index()                                                   # needs sage.combinat
+                sage: P.cycle_index()
                 p[1]
             """
             from sage.categories.modules import Modules
@@ -262,7 +268,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: # needs sage.combinat
+                sage: # needs symmetrica
                 sage: C8 = CyclicPermutationGroup(8)
                 sage: C8.profile_series()
                 z^8 + z^7 + 4*z^6 + 7*z^5 + 10*z^4 + 7*z^3 + 4*z^2 + z + 1
@@ -315,10 +321,11 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: C6 = CyclicPermutationGroup(6)
-                sage: C6.profile(2)                                                     # needs sage.combinat
+                sage: C6.profile(2)
                 3
-                sage: C6.profile(3)                                                     # needs sage.combinat
+                sage: C6.profile(3)
                 4
                 sage: D8 = DihedralGroup(8)
                 sage: D8.profile(4, using_polya=False)

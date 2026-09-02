@@ -257,9 +257,10 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: P = species.CycleSpecies()
-            sage: cis = P.cycle_index_series()                                          # needs sage.modules
-            sage: cis[0:7]                                                              # needs sage.modules
+            sage: cis = P.cycle_index_series()
+            sage: cis[0:7]
             [0,
              p[1],
              1/2*p[1, 1] + 1/2*p[2],

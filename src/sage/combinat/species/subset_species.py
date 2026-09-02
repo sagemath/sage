@@ -226,8 +226,9 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: S = species.SubsetSpecies()
-            sage: S.cycle_index_series()[0:5]                                           # needs sage.modules
+            sage: S.cycle_index_series()[0:5]
             [p[],
              2*p[1],
              2*p[1, 1] + p[2],

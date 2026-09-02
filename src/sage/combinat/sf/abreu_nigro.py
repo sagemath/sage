@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.combinat sage.modules
+# sage.doctest: needs symmetrica
 """
 Abreu-Nigro symmetric functions
 """

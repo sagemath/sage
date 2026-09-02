@@ -70,9 +70,9 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.modules
+                sage: # needs lrcalc_python symmetrica
                 sage: s = SymmetricFunctions(QQ).schur()
-                sage: s([5]).is_primitive()                                             # needs lrcalc_python
+                sage: s([5]).is_primitive()
                 False
                 sage: p = SymmetricFunctions(QQ).powersum()
                 sage: p([5]).is_primitive()
@@ -87,10 +87,11 @@ class Bialgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.modules
-                sage: s([5]).is_grouplike()                                             # needs lrcalc_python sage.modules
+                sage: # needs lrcalc_python symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: s([5]).is_grouplike()
                 False
-                sage: s([]).is_grouplike()                                              # needs lrcalc_python sage.modules
+                sage: s([]).is_grouplike()
                 True
             """
             return self.coproduct() == self.tensor(self)

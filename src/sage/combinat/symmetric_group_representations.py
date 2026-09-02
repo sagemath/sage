@@ -1286,6 +1286,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: SGA = SymmetricGroupAlgebra(QQ, 7)
         sage: GP421 = SGA.garsia_procesi_module([4, 2, 1])
         sage: GP421.dimension()
@@ -1300,6 +1301,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
     multiplying by the smallest power of `q` so the coefficients are again
     polynomials::
 
+        sage: # needs symmetrica
         sage: GP421.graded_frobenius_image()
         q^4*s[4, 2, 1] + q^3*s[4, 3] + q^3*s[5, 1, 1] + (q^3+q^2)*s[5, 2]
          + (q^2+q)*s[6, 1] + s[7]
@@ -1317,6 +1319,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
     We show that the maximal degree component corresponds to the Yamanouchi
     words of content `\lambda`::
 
+        sage: # needs symmetrica
         sage: B = GP421.graded_decomposition(4).basis()
         sage: top_deg = [Word([i+1 for i in b.lift().lift().exponents()[0]]) for b in B]
         sage: yamanouchi = [P.to_packed_word() for P in OrderedSetPartitions(range(7), [4, 2, 1])
@@ -1331,6 +1334,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
             sage: GP1 = GarsiaProcesiModule(SGA, [2, 2, 1])
@@ -1353,10 +1357,14 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: GP = SGA.garsia_procesi_module([2, 2])
             sage: TestSuite(GP).run()
 
+        ::
+
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
             sage: GP = SGA.garsia_procesi_module([3, 1, 1])
             sage: TestSuite(GP).run()
@@ -1397,6 +1405,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: SGA.garsia_procesi_module([2, 2])
             Garsia-Procesi module of shape [2, 2] over Rational Field
@@ -1409,6 +1418,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: GP = SGA.garsia_procesi_module([2, 2])
             sage: latex(GP)
@@ -1428,6 +1438,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         TESTS::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: GP = SGA.garsia_procesi_module([2, 2])
             sage: GP._coerce_map_from_base_ring() is None
@@ -1442,6 +1453,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: GP = SGA.garsia_procesi_module([2, 2])
             sage: GP.get_order()
@@ -1456,6 +1468,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: GP = SGA.garsia_procesi_module([2, 2])
             sage: GP.basis()
@@ -1472,6 +1485,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 4)
             sage: GP = SGA.garsia_procesi_module([2, 2])
             sage: GP.one_basis()
@@ -1493,6 +1507,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: Sym = SymmetricFunctions(QQ)
             sage: s = Sym.s()
@@ -1526,6 +1541,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         We verify that the result is the modified Hall-Littlewood polynomial
         for `n = 5`::
 
+            sage: # needs symmetrica
             sage: R.<q> = QQ[]
             sage: Sym = SymmetricFunctions(R)
             sage: s = Sym.s()
@@ -1557,6 +1573,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: GP = SGA.garsia_procesi_module([2, 2, 1])
             sage: gchi = GP.graded_character(); gchi
@@ -1584,6 +1601,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
             sage: GP32 = SGA.garsia_procesi_module([3, 2])
             sage: GP32._graded_decomposition
@@ -1612,6 +1630,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
             sage: GP32 = SGA.garsia_procesi_module([3, 2])
             sage: decomp = GP32.graded_decomposition(); decomp
@@ -1638,6 +1657,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
             sage: GP = SGA.garsia_procesi_module([1, 1, 1])
             sage: elt = SGA.an_element(); elt
@@ -1674,6 +1694,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
             sage: GP311 = SGA.garsia_procesi_module([3, 1, 1])
             sage: GP311.graded_brauer_character()
@@ -1689,6 +1710,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
                 sage: GP22 = SGA.garsia_procesi_module([2, 2])
                 sage: x = SGA.an_element(); x
@@ -1723,6 +1745,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
                 sage: GP22 = SGA.garsia_procesi_module([2, 2])
                 sage: v = GP22.an_element(); v
@@ -1744,6 +1767,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
                 sage: GP31 = SGA.garsia_procesi_module([3, 1])
                 sage: v = GP31.an_element(); v
@@ -1761,6 +1785,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
                 sage: GP22 = SGA.garsia_procesi_module([2, 2])
                 sage: for b in GP22.basis():
@@ -1784,6 +1809,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: SGA = SymmetricGroupAlgebra(GF(2), 4)
                 sage: GP31 = SGA.garsia_procesi_module([3, 1])
                 sage: for b in GP31.basis():
@@ -1801,6 +1827,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
             TESTS::
 
+                sage: # needs symmetrica
                 sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
                 sage: GP4 = SGA.garsia_procesi_module([4])
                 sage: GP4.zero().homogeneous_degree()

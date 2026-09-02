@@ -1,7 +1,5 @@
 # from symmetrica import *
 
-from sage.libs.symmetrica.symmetrica import start
-
 # kostka
 from sage.libs.symmetrica.symmetrica import kostka_number_symmetrica as kostka_number
 from sage.libs.symmetrica.symmetrica import kostka_tab_symmetrica as kostka_tab
@@ -96,5 +94,3 @@ from sage.libs.symmetrica.symmetrica import mult_schubert_variable_symmetrica as
 from sage.libs.symmetrica.symmetrica import divdiff_perm_schubert_symmetrica as divdiff_perm_schubert
 from sage.libs.symmetrica.symmetrica import scalarproduct_schubert_symmetrica as scalarproduct_schubert
 from sage.libs.symmetrica.symmetrica import divdiff_schubert_symmetrica as divdiff_schubert
-
-start()

@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Poirier-Reutenauer Hopf algebra of standard tableaux
 
@@ -477,6 +476,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
     of symmetric functions, which maps a tableau `t` to the Schur
     function indexed by the shape of `t`::
 
+        sage: # needs symmetrica
         sage: TG = algebras.FSym(QQ).G()
         sage: t = StandardTableau([[1,3],[2,4],[5]])
         sage: TG[t]
@@ -740,6 +740,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
+                    sage: # needs symmetrica
                     sage: FSym = algebras.FSym(QQ)
                     sage: G = FSym.G()
                     sage: t = StandardTableau([[1,3],[2,4],[5]])
@@ -914,6 +915,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
             that sends each Schur function `s_\lambda` to the sum of
             all standard tableaux of shape `\lambda`::
 
+                sage: # needs symmetrica
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: s = Sym.schur()
                 sage: TF = algebras.FSym(QQ).dual().F()
@@ -927,11 +929,11 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
 
             This mapping is a Hopf algebra morphism::
 
+                sage: # needs symmetrica
                 sage: all(TF(s[p1] * s[p2]) == TF(s[p1]) * TF(s[p2])
                 ....:     for p1 in Partitions(2)
                 ....:     for p2 in Partitions(3))
                 True
-
                 sage: s2 = s.tensor_square()
                 sage: phi = s2.module_morphism(
                 ....:               lambda x: tensor([TF(s[x[0]]), TF(s[x[1]])]),
@@ -1035,6 +1037,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
+                    sage: # needs symmetrica
                     sage: F = algebras.FSym(QQ).dual().F()
                     sage: F[[1,3,5],[2,4]].to_quasisymmetric_function()
                     F[1, 2, 2]

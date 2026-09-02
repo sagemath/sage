@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.combinat sage.modules
+# sage.doctest: needs symmetrica
 r"""
 Jack symmetric functions
 

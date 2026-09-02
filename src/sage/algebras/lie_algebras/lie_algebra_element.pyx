@@ -255,6 +255,9 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         sage: latex(elt)
         x_{0} + x_{1}
 
+    ::
+
+        sage: # needs symmetrica
         sage: s = SymmetricFunctions(QQ).s()
         sage: L = LieAlgebra(associative=s)
         sage: P = Partition([4,2,2,1])

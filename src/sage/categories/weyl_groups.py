@@ -524,6 +524,7 @@ class WeylGroups(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: W = WeylGroup(['A', 3, 1])
                 sage: W.from_reduced_word([3,1,2,0,3,1,0]).stanley_symmetric_function()
                 8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1]
@@ -533,19 +534,31 @@ class WeylGroups(Category_singleton):
                 8*m[1, 1, 1, 1, 1, 1, 1] + 4*m[2, 1, 1, 1, 1, 1]
                 + 2*m[2, 2, 1, 1, 1] + m[2, 2, 2, 1]
 
+            ::
+
+                sage: # needs symmetrica
                 sage: W = WeylGroup(['C',3,1])
                 sage: W.from_reduced_word([0,2,1,0]).stanley_symmetric_function()
                 32*m[1, 1, 1, 1] + 16*m[2, 1, 1] + 8*m[2, 2] + 4*m[3, 1]
 
+            ::
+
+                sage: # needs symmetrica
                 sage: W = WeylGroup(['B',3,1])
                 sage: W.from_reduced_word([3,2,1]).stanley_symmetric_function()
                 2*m[1, 1, 1] + m[2, 1] + 1/2*m[3]
 
+            ::
+
+                sage: # needs symmetrica
                 sage: W = WeylGroup(['B',4])
                 sage: w = W.from_reduced_word([3,2,3,1])
                 sage: w.stanley_symmetric_function()  # long time (6s on sage.math, 2011)
                 48*m[1, 1, 1, 1] + 24*m[2, 1, 1] + 12*m[2, 2] + 8*m[3, 1] + 2*m[4]
 
+            ::
+
+                sage: # needs symmetrica
                 sage: A = AffinePermutationGroup(['A',4,1])
                 sage: a = A([-2,0,1,4,12])
                 sage: a.stanley_symmetric_function()
@@ -557,6 +570,7 @@ class WeylGroups(Category_singleton):
 
             One more example (:issue:`14095`)::
 
+                sage: # needs symmetrica
                 sage: G = SymmetricGroup(4)
                 sage: w = G.from_reduced_word([3,2,3,1])
                 sage: w.stanley_symmetric_function()

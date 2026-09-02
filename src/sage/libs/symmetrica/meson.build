@@ -1,12 +1,9 @@
-symmetrica = dependency('symmetrica', required: false, disabler: true)
-if not symmetrica.found()
-  # fallback for older versions without pkg-config
-  symmetrica = cc.find_library(
-    'symmetrica',
-    required: false,
-    disabler: true,
-  )
-endif
+symmetrica = dependency(
+  'symmetrica',
+  required: get_option('symmetrica'),
+  disabler: true,
+)
+conf_data.set10('SYMMETRICA_ENABLED', symmetrica.found())
 
 py.install_sources(
   '__init__.py',

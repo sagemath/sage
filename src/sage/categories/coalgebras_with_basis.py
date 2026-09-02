@@ -170,11 +170,12 @@ class CoalgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: p = SymmetricFunctions(QQ).p()                                    # needs sage.combinat sage.modules
-                sage: p[5,2,2].coproduct_iterated()                                     # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: p = SymmetricFunctions(QQ).p()
+                sage: p[5,2,2].coproduct_iterated()
                 p[] # p[5, 2, 2] + 2*p[2] # p[5, 2] + p[2, 2] # p[5]
                  + p[5] # p[2, 2] + 2*p[5, 2] # p[2] + p[5, 2, 2] # p[]
-                sage: p([]).coproduct_iterated(3)                                       # needs sage.combinat sage.modules
+                sage: p([]).coproduct_iterated(3)
                 p[] # p[] # p[] # p[]
 
             ::

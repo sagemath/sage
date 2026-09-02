@@ -553,12 +553,12 @@ def GL_irreducible_character(n, mu, KK):
     function associated to `\mu`, plus garbage terms (Schur
     functions associated to partitions with more than `n` parts)::
 
+        sage: # needs symmetrica
         sage: from sage.algebras.schur_algebra import GL_irreducible_character
         sage: sbasis = SymmetricFunctions(QQ).s()
         sage: z = GL_irreducible_character(2, [2], QQ)
         sage: sbasis(z)
         s[2]
-
         sage: z = GL_irreducible_character(4, [3, 2], QQ)
         sage: sbasis(z)
         -5*s[1, 1, 1, 1, 1] + s[3, 2]
@@ -571,6 +571,7 @@ def GL_irreducible_character(n, mu, KK):
     after 5.5d) the product of `h[a_0], h[a_1]( pbasis[p]), h[a_2]
     ( pbasis[p^2]), \dots,` which is consistent with the following ::
 
+        sage: # needs symmetrica
         sage: from sage.algebras.schur_algebra import GL_irreducible_character
         sage: GL_irreducible_character(2, [7], GF(3))
         m[4, 3] + m[6, 1] + m[7]

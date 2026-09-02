@@ -40,8 +40,9 @@ class GradedAlgebras(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
-                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: m = SymmetricFunctions(QQ).m()
+                sage: m.graded_algebra() is m
                 True
             """
             return self

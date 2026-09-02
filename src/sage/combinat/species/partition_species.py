@@ -272,9 +272,10 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: P = species.PartitionSpecies()
-            sage: g = P.cycle_index_series()                                            # needs sage.modules
-            sage: g[0:5]                                                                # needs sage.modules
+            sage: g = P.cycle_index_series()
+            sage: g[0:5]
             [p[],
              p[1],
              p[1, 1] + p[2],

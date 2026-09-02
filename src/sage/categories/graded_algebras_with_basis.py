@@ -48,8 +48,9 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
-                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: m = SymmetricFunctions(QQ).m()
+                sage: m.graded_algebra() is m
                 True
 
             TESTS:
@@ -62,7 +63,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             (which form the interface of the
             associated graded algebra) work correctly here::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: to_gr = m.to_graded_conversion()
                 sage: from_gr = m.from_graded_conversion()
                 sage: m[2] == to_gr(m[2]) == from_gr(m[2])

@@ -27,12 +27,13 @@ leaves and of `q` to internal nodes::
     sage: L = species.LinearOrderSpecies(min=1)
     sage: T = species.CombinatorialSpecies(min=1)
     sage: T.define(leaf + internal_node*L(T))
-    sage: T.isotype_generating_series()[0:6]                                            # needs sage.modules
+    sage: T.isotype_generating_series()[0:6]  # needs symmetrica
     [0, 1, q, q^2 + q, q^3 + 3*q^2 + q, q^4 + 6*q^3 + 6*q^2 + q]
 
 Consider the following::
 
-    sage: T.isotype_generating_series().coefficient(4)                                  # needs sage.modules
+    sage: # needs symmetrica
+    sage: T.isotype_generating_series().coefficient(4)
     q^3 + 3*q^2 + q
 
 This means that, among the trees on `4` nodes, one has a
@@ -341,7 +342,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
+            sage: G.isotype_generating_series()[0:5]  # needs symmetrica
             [1, 1, 2, 4, 11]
         """
         from .functorial_composition_species import FunctorialCompositionSpecies
@@ -647,9 +648,10 @@ class GenericCombinatorialSpecies(SageObject):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: P = species.PermutationSpecies()
-            sage: g = P.cycle_index_series()                                            # needs sage.modules
-            sage: g[0:4]                                                                # needs sage.modules
+            sage: g = P.cycle_index_series()
+            sage: g[0:4]
             [p[], p[1], p[1, 1] + p[2], p[1, 1, 1] + p[2, 1] + p[3]]
         """
         return self._get_series(CycleIndexSeriesRing, "cis", base_ring)

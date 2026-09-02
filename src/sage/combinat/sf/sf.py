@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.combinat sage.modules
+# sage.doctest: needs symmetrica
 """
 Symmetric functions, with their multiple realizations
 """
@@ -1526,11 +1526,12 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         iso = self.register_isomorphism
 
         from sage.combinat.sf.classical import conversion_functions
+        cfs = conversion_functions()
 
-        for (basis1_name, basis2_name) in conversion_functions:
+        for (basis1_name, basis2_name) in cfs:
             basis1 = getattr(self, basis1_name)()
             basis2 = getattr(self, basis2_name)()
-            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name, basis2_name], domain=basis1, codomain=basis2)
+            on_basis = SymmetricaConversionOnBasis(t=cfs[basis1_name, basis2_name], domain=basis1, codomain=basis2)
             from sage.rings.rational_field import RationalField
             if basis2_name != "powersum" or self._base.has_coerce_map_from(RationalField()):
                 iso(basis1._module_morphism(on_basis, codomain=basis2))

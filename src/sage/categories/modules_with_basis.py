@@ -872,8 +872,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             We convert the input elements to ``self``::
 
-                sage: s = SymmetricFunctions(QQ).s()                                    # needs sage.combinat sage.modules
-                sage: s.echelon_form([1, s[1] + 5])                                     # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: s.echelon_form([1, s[1] + 5])
                 [s[], s[1]]
             """
             # Make sure elements consists of elements of ``self``
@@ -1213,8 +1214,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: E.cardinality()
                 81
 
-                sage: s = SymmetricFunctions(GF(2)).s()                                 # needs sage.combinat sage.modules
-                sage: s.cardinality()                                                   # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(GF(2)).s()
+                sage: s.cardinality()
                 +Infinity
 
                 sage: M = CombinatorialFreeModule(QQ, [])
@@ -1395,7 +1397,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: a = s([3]) + s([2,1]) + s([1,1,1])
                 sage: b = 2*a
@@ -1451,9 +1453,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = lambda part: 2 * s(part.conjugate())
-                sage: s._apply_module_endomorphism(s([2,1]) + s([1,1,1]), f)            # needs sage.combinat sage.modules
+                sage: s._apply_module_endomorphism(s([2,1]) + s([1,1,1]), f)
                 2*s[2, 1] + 2*s[3]
             """
             mc = x.monomial_coefficients(copy=False)
@@ -1790,7 +1793,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: h = SymmetricFunctions(QQ).h()
                 sage: (h[2]+3*h[3]).items()
                 dict_items([([2], 1), ([3], 3)])
@@ -1814,7 +1817,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: s = SymmetricFunctions(QQ).schur()
                 sage: s([2,1]).is_zero()
                 False
@@ -1842,9 +1845,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])                       # needs sage.combinat sage.modules
-                sage: len(z)                                                            # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])
+                sage: len(z)
                 4
             """
             return len(self.support())
@@ -1865,9 +1869,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])                       # needs sage.combinat sage.modules
-                sage: z.length()                                                        # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])
+                sage: z.length()
                 4
             """
             return len(self)
@@ -1891,9 +1896,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])                       # needs sage.combinat sage.modules
-                sage: sorted(z.support())                                               # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])
+                sage: sorted(z.support())
                 [[1], [1, 1, 1], [2, 1], [4]]
             """
             try:
@@ -1984,9 +1990,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])                       # needs sage.combinat sage.modules
-                sage: z.coefficients()                                                  # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: z = s([4]) + s([2,1]) + s([1,1,1]) + s([1])
+                sage: z.coefficients()
                 [1, 1, 1, 1]
             """
             zero = self.parent().base_ring().zero()
@@ -2044,9 +2051,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_support(key=key)
                 1
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.leading_support()                                               # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.leading_support()
                 [3]
             """
             return max(self.support(), *args, **kwds)
@@ -2079,9 +2087,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_item(key=key)
                 (1, 3)
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.leading_item()                                                  # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.leading_item()
                 ([3], -5)
 
             The term ordering of polynomial rings is taken into account::
@@ -2121,9 +2130,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_monomial(key=key)
                 B[1]
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.leading_monomial()                                              # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.leading_monomial()
                 s[3]
 
             The term ordering of polynomial rings is taken into account::
@@ -2162,9 +2172,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_coefficient(key=key)
                 3
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.leading_coefficient()                                           # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.leading_coefficient()
                 -5
 
             The term ordering of polynomial rings is taken into account::
@@ -2203,9 +2214,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.leading_term(key=key)
                 3*B[1]
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.leading_term()                                                  # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.leading_term()
                 -5*s[3]
 
             The term ordering of polynomial rings is taken into account::
@@ -2242,9 +2254,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_support(key=key)                                       # needs sage.modules
                 3
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.trailing_support()                                              # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.trailing_support()
                 [1]
             """
             return min(self.support(), *args, **kwds)
@@ -2272,9 +2285,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_item(key=key)
                 (3, 1)
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.trailing_item()                                                 # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.trailing_item()
                 ([1], 2)
 
             The term ordering of polynomial rings is taken into account::
@@ -2314,9 +2328,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_monomial(key=key)
                 B[3]
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.trailing_monomial()                                             # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.trailing_monomial()
                 s[1]
 
             The term ordering of polynomial rings is taken into account::
@@ -2355,9 +2370,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_coefficient(key=key)
                 1
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.trailing_coefficient()                                          # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.trailing_coefficient()
                 2
 
             The term ordering of polynomial rings is taken into account::
@@ -2396,9 +2412,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.trailing_term(key=key)
                 B[3]
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
-                sage: f.trailing_term()                                                 # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]
+                sage: f.trailing_term()
                 2*s[1]
 
             The term ordering of polynomial rings is taken into account::
@@ -2494,9 +2511,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: a = s([2,1]) + 2*s([3,2])                                         # needs sage.combinat sage.modules
-                sage: a.map_coefficients(lambda x: x * 2)                               # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: a = s([2,1]) + 2*s([3,2])
+                sage: a.map_coefficients(lambda x: x * 2)
                 2*s[2, 1] + 4*s[3, 2]
 
             We can map into a different base ring::
@@ -2559,9 +2577,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.map_support(lambda i: 1)                                        # needs sage.modules
                 7*B[1]
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
-                sage: a = s([2,1]) + 2*s([3,2])                                         # needs sage.combinat sage.modules
-                sage: a.map_support(lambda x: x.conjugate())                            # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
+                sage: a = s([2,1]) + 2*s([3,2])
+                sage: a.map_support(lambda x: x.conjugate())
                 s[2, 1] + 2*s[2, 2, 1]
 
             TESTS::
@@ -2638,10 +2657,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: x.map_item(lambda i, c: (1, 2*c))                                 # needs sage.modules
                 14*B[1]
 
-                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: s = SymmetricFunctions(QQ).schur()
                 sage: f = lambda m, c: (m.conjugate(), 2 * c)
-                sage: a = s([2,1]) + s([1,1,1])                                         # needs sage.combinat sage.modules
-                sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
+                sage: a = s([2,1]) + s([1,1,1])
+                sage: a.map_item(f)
                 2*s[2, 1] + 2*s[3]
             """
             return self.parent().sum_of_terms(f(m, c) for m, c in self.items())
@@ -2954,7 +2974,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                  Symmetric functions on the Schur basis satisfies its
                  defining formula::
 
-                    sage: # needs lrcalc_python sage.combinat sage.modules
+                    sage: # needs lrcalc_python symmetrica
                     sage: Sym = SymmetricFunctions(QQ)
                     sage: s = Sym.schur()
                     sage: def f(a, b): return a * b.antipode()

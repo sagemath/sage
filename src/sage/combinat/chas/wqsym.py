@@ -2244,6 +2244,7 @@ class WQSymBases(Category_realization_of_parent):
 
             Testing the `\pi(\overline{f}) = (\pi(f))^{\ast}` relation::
 
+                sage: # needs symmetrica
                 sage: all( M[I].algebraic_complement().to_quasisymmetric_function()
                 ....:      == M[I].to_quasisymmetric_function().star_involution()
                 ....:      for I in OrderedSetPartitions(4) )
@@ -2409,6 +2410,7 @@ class WQSymBases(Category_realization_of_parent):
 
             Testing the `\pi(f^r) = \pi(f)` relation above::
 
+                sage: # needs symmetrica
                 sage: all( M[I].coalgebraic_complement().to_quasisymmetric_function()
                 ....:      == M[I].to_quasisymmetric_function()
                 ....:      for I in OrderedSetPartitions(4) )
@@ -2526,6 +2528,7 @@ class WQSymBases(Category_realization_of_parent):
 
             Testing the `\pi(f^{\ast}) = (\pi(f))^{\ast}` relation::
 
+                sage: # needs symmetrica
                 sage: all( M[I].star_involution().to_quasisymmetric_function()
                 ....:      == M[I].to_quasisymmetric_function().star_involution()
                 ....:      for I in OrderedSetPartitions(4) )
@@ -2569,6 +2572,7 @@ class WQSymBases(Category_realization_of_parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: M = algebras.WQSym(QQ).M()
                 sage: M[[1,3],[2]].to_quasisymmetric_function()
                 M[2, 1]
@@ -2578,10 +2582,16 @@ class WQSymBases(Category_realization_of_parent):
                 sage: X.to_quasisymmetric_function() * Y.to_quasisymmetric_function() == (X*Y).to_quasisymmetric_function()
                 True
 
+            ::
+
+                sage: # needs symmetrica
                 sage: C = algebras.WQSym(QQ).C()
                 sage: C[[2,3],[1,4]].to_quasisymmetric_function() == M(C[[2,3],[1,4]]).to_quasisymmetric_function()
                 True
 
+            ::
+
+                sage: # needs symmetrica
                 sage: C2 = algebras.WQSym(GF(2)).C()
                 sage: C2[[1,2],[3,4]].to_quasisymmetric_function()
                 M[2, 2]

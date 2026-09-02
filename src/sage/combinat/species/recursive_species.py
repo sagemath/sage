@@ -264,8 +264,9 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: F = CombinatorialSpecies()
-            sage: F.cycle_index_series()                                                # needs sage.modules
+            sage: F.cycle_index_series()
             Uninitialized Lazy Series
         """
         if base_ring not in self._cycle_index_series:

@@ -144,6 +144,7 @@ class HallAlgebra(CombinatorialFreeModule):
     The isomorphism between the Hall algebra and the symmetric
     functions described above is implemented as a coercion::
 
+        sage: # needs symmetrica
         sage: R = PolynomialRing(ZZ, 'q').fraction_field()
         sage: q = R.gen()
         sage: H = HallAlgebra(R, q)
@@ -173,6 +174,7 @@ class HallAlgebra(CombinatorialFreeModule):
     If `q` is set to `1`, the coercion to the symmetric functions
     sends `I_{\lambda}` to `m_{\lambda}`::
 
+        sage: # needs symmetrica
         sage: H = HallAlgebra(QQ, 1)
         sage: H[2,1] * H[2,1]
         H[4, 2] + 2*H[3, 3] + 2*H[4, 1, 1] + 2*H[3, 2, 1] + 6*H[2, 2, 2] + 4*H[2, 2, 1, 1]
@@ -195,6 +197,7 @@ class HallAlgebra(CombinatorialFreeModule):
     have to work over the fraction field of `\ZZ[q]`. This didn't work before
     :issue:`15345`::
 
+        sage: # needs symmetrica
         sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: H = HallAlgebra(R, q)
         sage: I = H.monomial_basis()
@@ -216,6 +219,7 @@ class HallAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R.<q> = ZZ[]
             sage: H = HallAlgebra(R, q)
             sage: TestSuite(H).run()
@@ -326,6 +330,7 @@ class HallAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R = PolynomialRing(ZZ, 'q').fraction_field()
             sage: q = R.gen()
             sage: H = HallAlgebra(R, q)
@@ -337,6 +342,9 @@ class HallAlgebra(CombinatorialFreeModule):
             H[] # H[2, 1] + ((q^2-1)/q^2)*H[1] # H[1, 1] + 1/q*H[1] # H[2]
              + ((q^2-1)/q^2)*H[1, 1] # H[1] + 1/q*H[2] # H[1] + H[2, 1] # H[]
 
+        ::
+
+            sage: # needs symmetrica
             sage: R.<q> = LaurentPolynomialRing(ZZ)
             sage: H = HallAlgebra(R, q)
             sage: H.coproduct_on_basis(Partition([2]))
@@ -361,6 +369,7 @@ class HallAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R = PolynomialRing(ZZ, 'q').fraction_field()
             sage: q = R.gen()
             sage: H = HallAlgebra(R, q)
@@ -369,6 +378,9 @@ class HallAlgebra(CombinatorialFreeModule):
             sage: H.antipode_on_basis(Partition([2]))
             -1/q*H[2] + ((q^2-1)/q)*H[1, 1]
 
+        ::
+
+            sage: # needs symmetrica
             sage: R.<q> = LaurentPolynomialRing(ZZ)
             sage: H = HallAlgebra(R, q)
             sage: H.antipode_on_basis(Partition([1,1]))
@@ -390,6 +402,7 @@ class HallAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R = PolynomialRing(ZZ, 'q').fraction_field()
             sage: q = R.gen()
             sage: H = HallAlgebra(R, q)
@@ -507,6 +520,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
 
     We use the fraction field of `\ZZ[q]` for our initial example::
 
+        sage: # needs symmetrica
         sage: R = PolynomialRing(ZZ, 'q').fraction_field()
         sage: q = R.gen()
         sage: H = HallAlgebra(R, q)
@@ -514,6 +528,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
 
     We check that the basis conversions are mutually inverse::
 
+        sage: # needs symmetrica
         sage: all(H(I(H[p])) == H[p] for i in range(7) for p in Partitions(i))
         True
         sage: all(I(H(I[p])) == I[p] for i in range(7) for p in Partitions(i))
@@ -522,6 +537,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
     Since Laurent polynomials are sufficient, we run the same check with
     the Laurent polynomial ring `\ZZ[q, q^{-1}]`::
 
+        sage: # needs symmetrica
         sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: H = HallAlgebra(R, q)
         sage: I = H.monomial_basis()
@@ -535,6 +551,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
     an inversion of the `q` parameter), and this basis corresponds
     to the elementary basis (up to a renormalization)::
 
+        sage: # needs symmetrica
         sage: Sym = SymmetricFunctions(R)
         sage: e = Sym.e()
         sage: e(I[2,1])
@@ -567,6 +584,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R.<q> = ZZ[]
             sage: I = HallAlgebra(R, q).monomial_basis()
             sage: TestSuite(I).run()
@@ -668,6 +686,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R = PolynomialRing(ZZ, 'q').fraction_field()
             sage: q = R.gen()
             sage: I = HallAlgebra(R, q).monomial_basis()
@@ -679,6 +698,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
             I[] # I[2, 1] + 1/q*I[1] # I[1, 1] + I[1] # I[2]
              + 1/q*I[1, 1] # I[1] + I[2] # I[1] + I[2, 1] # I[]
 
+            sage: # needs symmetrica
             sage: R.<q> = LaurentPolynomialRing(ZZ)
             sage: I = HallAlgebra(R, q).monomial_basis()
             sage: I.coproduct_on_basis(Partition([2,1]))
@@ -695,6 +715,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R = PolynomialRing(ZZ, 'q').fraction_field()
             sage: q = R.gen()
             sage: I = HallAlgebra(R, q).monomial_basis()
@@ -705,6 +726,9 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
             sage: I.antipode_on_basis(Partition([2,1]))
             -1/q*I[1, 1, 1] + I[2, 1]
 
+        ::
+
+            sage: # needs symmetrica
             sage: R.<q> = LaurentPolynomialRing(ZZ)
             sage: I = HallAlgebra(R, q).monomial_basis()
             sage: I.antipode_on_basis(Partition([2,1]))
@@ -723,6 +747,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: R = PolynomialRing(ZZ, 'q').fraction_field()
             sage: q = R.gen()
             sage: I = HallAlgebra(R, q).monomial_basis()

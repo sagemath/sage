@@ -20,6 +20,7 @@ def kostka_number_symmetrica(shape, content):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: symmetrica.kostka_number([2,1],[1,1,1])
         2
         sage: symmetrica.kostka_number([1,1,1],[1,1,1])
@@ -65,6 +66,7 @@ def kostka_tab_symmetrica(shape, content):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: symmetrica.kostka_tab([3],[1,1,1])
         [[[1, 2, 3]]]
         sage: symmetrica.kostka_tab([2,1],[1,1,1])
@@ -115,25 +117,22 @@ def kostka_tafel_symmetrica(n):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: symmetrica.kostka_tafel(1)
         [1]
-
         sage: symmetrica.kostka_tafel(2)
         [1 0]
         [1 1]
-
         sage: symmetrica.kostka_tafel(3)
         [1 0 0]
         [1 1 0]
         [1 2 1]
-
         sage: symmetrica.kostka_tafel(4)
         [1 0 0 0 0]
         [1 1 0 0 0]
         [1 1 1 0 0]
         [1 2 1 1 0]
         [1 3 2 3 1]
-
         sage: symmetrica.kostka_tafel(5)
         [1 0 0 0 0 0 0]
         [1 1 0 0 0 0 0]

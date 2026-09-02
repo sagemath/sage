@@ -978,6 +978,7 @@ def Ht(mu, q=None, t=None, pi=None):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: from sage.combinat.sf.ns_macdonald import Ht
         sage: HHt = SymmetricFunctions(QQ['q','t'].fraction_field()).macdonald().Ht()
         sage: Ht([0,0,1])

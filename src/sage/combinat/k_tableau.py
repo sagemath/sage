@@ -3793,6 +3793,10 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
             2
             sage: StrongTableau([[None,None,-1,-3],[-2,3,-3,4],[2,3],[-3,-4]], 3).spin()
             2
+
+        ::
+
+            sage: # needs symmetrica
             sage: ks3 = SymmetricFunctions(QQ['t'].fraction_field()).kschur(3)
             sage: t = ks3.realization_of().t
             sage: m = ks3.ambient().realization_of().m()

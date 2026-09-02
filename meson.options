@@ -101,6 +101,13 @@ option(
 )
 
 option(
+  'symmetrica',
+  type: 'feature',
+  value: 'auto',
+  description: 'Symmetrica interface to combinatorics (symmetric functions) and more'
+)
+
+option(
   'tdlib',
   type: 'feature',
   value: 'auto',

@@ -270,6 +270,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
     letting the variables commute.  This projection map preserves the product
     and coproduct structure.  We check that Theorem 2.1 of [RS06]_ holds::
 
+        sage: # needs symmetrica
         sage: Sym = SymmetricFunctions(QQ)
         sage: Sm = Sym.m()
         sage: Se = Sym.e()
@@ -340,6 +341,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SymmetricFunctionsNonCommutingVariables(QQ).dual()
             Dual symmetric functions in non-commuting variables over the Rational Field
         """
@@ -457,6 +459,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
                 sage: mon = SymmetricFunctions(QQ).m()
                 sage: elt = m.from_symmetric_function(mon[2,1,1]); elt
@@ -483,6 +486,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             Check that `\chi \circ \widetilde{\chi}` is the identity on `Sym`::
 
+                sage: # needs symmetrica
                 sage: all(m.from_symmetric_function(pow(la)).to_symmetric_function() == pow(la)
                 ....:     for la in Partitions(4))
                 True
@@ -498,6 +502,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
                 sage: m.dual_basis()
                 Dual symmetric functions in non-commuting variables over the Rational Field in the w basis
@@ -520,6 +525,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: m = NCSym.m()
                 sage: w = m.dual_basis()
@@ -747,6 +753,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             Check that `\chi \circ \widetilde{\chi}` is the identity on `Sym`::
 
+                sage: # needs symmetrica
                 sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
                 sage: mon = SymmetricFunctions(QQ).monomial()
                 sage: all(m.from_symmetric_function(mon[la]).to_symmetric_function() == mon[la]
@@ -833,6 +840,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
+                    sage: # needs symmetrica
                     sage: m = SymmetricFunctionsNonCommutingVariables(QQ).monomial()
                     sage: m[[1,3],[2]].to_symmetric_function()
                     m[2, 1]
@@ -1016,6 +1024,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
+                    sage: # needs symmetrica
                     sage: e = SymmetricFunctionsNonCommutingVariables(QQ).e()
                     sage: e[[1,3],[2]].to_symmetric_function()
                     2*e[2, 1]
@@ -1191,6 +1200,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
+                    sage: # needs symmetrica
                     sage: h = SymmetricFunctionsNonCommutingVariables(QQ).h()
                     sage: h[[1,3],[2]].to_symmetric_function()
                     2*h[2, 1]
@@ -1228,7 +1238,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: x = p.an_element()**2; x
             4*p{} + 8*p{{1}} + 4*p{{1}, {2}} + 6*p{{1}, {2, 3}}
              + 12*p{{1, 2}} + 6*p{{1, 2}, {3}} + 9*p{{1, 2}, {3, 4}}
-            sage: x.to_symmetric_function()
+            sage: x.to_symmetric_function()  # needs symmetrica
             4*p[] + 8*p[1] + 4*p[1, 1] + 12*p[2] + 12*p[2, 1] + 9*p[2, 2]
         """
 
@@ -1573,6 +1583,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
+                    sage: # needs symmetrica
                     sage: p = SymmetricFunctionsNonCommutingVariables(QQ).p()
                     sage: p[[1,3],[2]].to_symmetric_function()
                     p[2, 1]
@@ -1616,6 +1627,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
             sage: cp = NCSym.cp()
             sage: cp[[1,3],[2,4]]*cp[[1,2,3]]

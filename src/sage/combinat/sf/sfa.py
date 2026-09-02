@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.combinat sage.modules
+# sage.doctest: needs symmetrica
 r"""
 Symmetric functions
 
@@ -5652,6 +5652,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         resPR = PolynomialRing(parent.base_ring(), n, alphabet)
         if self == parent.zero():
             return resPR.zero()
+        from sage.features.symmetrica import Symmetrica
+        Symmetrica().require()
         import sage.libs.symmetrica.all as symmetrica
         e = getattr(symmetrica, 'compute_{}_with_alphabet'.format(classical.translate[parent.basis_name()].lower()))
 

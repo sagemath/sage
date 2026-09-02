@@ -96,6 +96,7 @@ class TensorAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: C = CombinatorialFreeModule(QQ, ['a','b','c'])
             sage: TA = TensorAlgebra(C)
             sage: TestSuite(TA).run()
@@ -430,6 +431,7 @@ class TensorAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: C = CombinatorialFreeModule(QQ, ['a','b','c'])
             sage: TA = TensorAlgebra(C)
             sage: TA.one_basis()
@@ -452,6 +454,7 @@ class TensorAlgebra(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: C = CombinatorialFreeModule(QQ, ['a','b','c'])
             sage: TA = TensorAlgebra(C)
             sage: TA.algebra_generators()

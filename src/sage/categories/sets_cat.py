@@ -2925,16 +2925,17 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 it is convenient to define shorthands for the various
                 realizations, but cumbersome to do it by hand::
 
-                    sage: S = SymmetricFunctions(ZZ); S                                 # needs sage.combinat sage.modules
+                    sage: # needs symmetrica
+                    sage: S = SymmetricFunctions(ZZ); S
                     Symmetric Functions over Integer Ring
-                    sage: s = S.s(); s                                                  # needs sage.combinat sage.modules
+                    sage: s = S.s(); s
                     Symmetric Functions over Integer Ring in the Schur basis
-                    sage: e = S.e(); e                                                  # needs sage.combinat sage.modules
+                    sage: e = S.e(); e
                     Symmetric Functions over Integer Ring in the elementary basis
 
                 This method automates the process::
 
-                    sage: # needs sage.combinat sage.modules
+                    sage: # needs symmetrica
                     sage: S.inject_shorthands()
                     Defining e as shorthand for
                      Symmetric Functions over Integer Ring in the elementary basis
@@ -2962,7 +2963,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 request for all shorthands to be defined, including
                 less common ones::
 
-                    sage: S.inject_shorthands("all")                                    # needs lrcalc_python sage.combinat sage.modules
+                    sage: # needs lrcalc_python symmetrica
+                    sage: S.inject_shorthands("all")
                     Defining e as shorthand for
                      Symmetric Functions over Integer Ring in the elementary basis
                     Defining f as shorthand for
@@ -2992,7 +2994,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 The messages can be silenced by setting ``verbose=False``::
 
-                    sage: # needs sage.combinat sage.modules
+                    sage: # needs symmetrica
                     sage: Q = QuasiSymmetricFunctions(ZZ)
                     sage: Q.inject_shorthands(verbose=False)
                     sage: F[1,2,1] + 5*M[1,3] + F[2]^2
@@ -3007,7 +3009,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 One can also just import a subset of the shorthands::
 
-                    sage: # needs sage.combinat sage.modules
+                    sage: # needs symmetrica
                     sage: SQ = SymmetricFunctions(QQ)
                     sage: SQ.inject_shorthands(['p', 's'], verbose=False)
                     sage: p
@@ -3017,12 +3019,14 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 Note that ``e`` is left unchanged::
 
-                    sage: e                                                             # needs sage.combinat sage.modules
+                    sage: # needs symmetrica
+                    sage: e
                     Symmetric Functions over Integer Ring in the elementary basis
 
                 TESTS::
 
-                    sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()  # needs sage.combinat sage.modules
+                    sage: # needs symmetrica
+                    sage: e == S.e(), h == S.h(), m == S.m(), p == SQ.p(), s == SQ.s()
                     (True, True, True, True, True)
                 """
                 from sage.misc.misc import inject_variable

@@ -49,6 +49,7 @@ mcqd_enabled = @MCQD_ENABLED@
 meataxe_enabled = @MEATAXE_ENABLED@
 rankwidth_enabled = @RANKWIDTH_ENABLED@
 sirocco_enabled = @SIROCCO_ENABLED@
+symmetrica_enabled = @SYMMETRICA_ENABLED@
 tdlib_enabled = @TDLIB_ENABLED@
 
 def is_editable_install() -> bool:

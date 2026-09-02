@@ -3,8 +3,6 @@ import sage.libs.ntl.all as ntl
 
 from sage.libs.pari.all import pari, pari_gen, PariError
 
-import sage.libs.symmetrica.all as symmetrica
-
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.libs.gap.libgap', 'libgap')
 
@@ -17,3 +15,7 @@ lazy_import('sage.libs.eclib.mwrank', 'initprimes', 'mwrank_initprimes')
 lazy_import('sage.libs.flint.qsieve_sage', 'qsieve')
 
 lazy_import('sage.libs.giac.giac', 'libgiac')
+lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
+
+# keep lazy_import out of global scope
+del lazy_import

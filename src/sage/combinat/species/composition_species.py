@@ -119,7 +119,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
             sage: c = L.generating_series()[:3]
-            sage: L._check()  #False due to isomorphism types not being implemented     # needs sage.libs.flint
+            sage: L._check()  # False due to isomorphism types not being implemented     # needs symmetrica
             False
             sage: L == loads(dumps(L))
             True
@@ -182,9 +182,10 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.isotypes(['a','b','c']).list()                                      # needs sage.modules
+            sage: L.isotypes(['a','b','c']).list()
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -206,9 +207,10 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.isotype_generating_series()[:10]                                    # needs sage.modules
+            sage: L.isotype_generating_series()[:10]
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
         cis = self.cycle_index_series(base_ring)
@@ -218,9 +220,10 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.cycle_index_series()[:5]                                            # needs sage.modules
+            sage: L.cycle_index_series()[:5]
             [p[],
              p[1],
              p[1, 1] + p[2],
@@ -237,7 +240,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies()
             sage: C = species.CycleSpecies(weight=t)
             sage: S = E(C)
-            sage: S.isotype_generating_series()[:5]  #indirect                          # needs sage.modules
+            sage: S.isotype_generating_series()[:5]  # indirect  # needs symmetrica
             [1, t, t^2 + t, t^3 + t^2 + t, t^4 + t^3 + 2*t^2 + t]
 
         We do the same thing with set partitions weighted by the number of
@@ -249,7 +252,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies()
             sage: E_t = species.SetSpecies(min=1,weight=t)
             sage: Par = E(E_t)
-            sage: Par.isotype_generating_series()[:5]                                   # needs sage.modules
+            sage: Par.isotype_generating_series()[:5]  # needs symmetrica
             [1, t, t^2 + t, t^3 + t^2 + t, t^4 + t^3 + 2*t^2 + t]
         """
         f_cis = self._F.cycle_index_series(base_ring)

@@ -38,7 +38,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
+            sage: G.isotype_generating_series()[0:5]  # needs symmetrica
             [1, 1, 2, 4, 11]
 
             sage: G = species.SimpleGraphSpecies()
@@ -47,7 +47,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
             <class 'sage.combinat.species.functorial_composition_species.FunctorialCompositionSpecies'>
             sage: G == loads(dumps(G))
             True
-            sage: G._check()  # False due to isomorphism types not being implemented    # needs sage.modules
+            sage: G._check()  # False due to isomorphism types not being implemented    # needs symmetrica
             False
         """
         self._F = F
@@ -83,8 +83,9 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotypes([1,2,3]).list()                                            # needs sage.modules
+            sage: G.isotypes([1,2,3]).list()
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -105,8 +106,9 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
+            sage: G.isotype_generating_series()[0:5]
             [1, 1, 2, 4, 11]
         """
         return self.cycle_index_series(base_ring).isotype_generating_series()
@@ -115,8 +117,9 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: G = species.SimpleGraphSpecies()
-            sage: G.cycle_index_series()[0:5]                                           # needs sage.modules
+            sage: G.cycle_index_series()[0:5]
             [p[],
              p[1],
              p[1, 1] + p[2],

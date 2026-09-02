@@ -231,6 +231,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
 
         TESTS::
 
+            sage: # needs symmetrica
             sage: LR = LittlewoodRichardsonTableaux([3,2,1], [[2,1],[2,1]])
             sage: SST = SemistandardTableaux([3,2,1], [2,1,2,1])
             sage: [t for t in SST if t in LR]

@@ -168,11 +168,12 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename('Sym')                       # needs sage.combinat sage.modules
-            sage: MultiplicativeBasesOnPrimitiveElements(Sym)._get_name()               # needs sage.combinat sage.modules
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename('Sym')
+            sage: MultiplicativeBasesOnPrimitiveElements(Sym)._get_name()
             'multiplicative bases on primitive elements'
         """
         import re
@@ -186,13 +187,14 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename('Sym')                       # needs sage.combinat sage.modules
-            sage: C = MultiplicativeBasesOnPrimitiveElements(Sym); C                    # needs sage.combinat sage.modules
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename('Sym')
+            sage: C = MultiplicativeBasesOnPrimitiveElements(Sym); C
             Category of multiplicative bases on primitive elements of Sym
-            sage: C._repr_object_names()                                                # needs sage.combinat sage.modules
+            sage: C._repr_object_names()
             'multiplicative bases on primitive elements of Sym'
         """
         return "{} of {}".format(self._get_name(), self.base())

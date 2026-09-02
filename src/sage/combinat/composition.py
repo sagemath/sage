@@ -1420,10 +1420,11 @@ class Composition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: SM = Composition([1,2,2]).specht_module(QQ); SM                       # needs sage.combinat sage.modules
+            sage: # needs symmetrica
+            sage: SM = Composition([1,2,2]).specht_module(QQ); SM
             Specht module of [(0, 0), (1, 0), (1, 1), (2, 0), (2, 1)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.combinat sage.modules
-            sage: s(SM.frobenius_image())                                               # needs sage.combinat sage.modules
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(SM.frobenius_image())
             s[2, 2, 1]
         """
         from sage.combinat.specht_module import SpechtModule

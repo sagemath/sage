@@ -1889,7 +1889,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         We compare with the type `A` Macdonald polynomials
         coming from symmetric functions::
 
-            sage: # needs sage.combinat
+            sage: # needs symmetrica
             sage: P = SymmetricFunctions(K).macdonald().P()
             sage: g = P[2,1].expand(3); g
             x0^2*x1 + x0*x1^2 + x0^2*x2

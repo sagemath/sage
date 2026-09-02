@@ -112,7 +112,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             [0, 1, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
+            sage: X.cycle_index_series()[0:4]  # needs symmetrica
             [0, p[1], 0, 0]
 
             sage: F = species.CharacteristicSpecies(3)
@@ -204,9 +204,10 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: F = species.CharacteristicSpecies(2)
-            sage: g = F.cycle_index_series()                                            # needs sage.modules
-            sage: g[0:5]                                                                # needs sage.modules
+            sage: g = F.cycle_index_series()
+            sage: g[0:5]
             [0, 0, 1/2*p[1, 1] + 1/2*p[2], 0, 0]
         """
         cis = SetSpecies(weight=self._weight).cycle_index_series(base_ring)
@@ -253,7 +254,7 @@ class EmptySetSpecies(CharacteristicSpecies):
             [1, 0, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [1, 0, 0, 0]
-            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
+            sage: X.cycle_index_series()[0:4]  # needs symmetrica
             [p[], 0, 0, 0]
 
         TESTS::
@@ -297,7 +298,7 @@ class SingletonSpecies(CharacteristicSpecies):
             [0, 1, 0, 0]
             sage: X.isotype_generating_series()[0:4]
             [0, 1, 0, 0]
-            sage: X.cycle_index_series()[0:4]                                           # needs sage.modules
+            sage: X.cycle_index_series()[0:4]  # needs symmetrica
             [0, p[1], 0, 0]
 
         TESTS::

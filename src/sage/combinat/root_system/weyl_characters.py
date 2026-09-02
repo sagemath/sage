@@ -243,6 +243,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         This is consistent with the analogous calculation with symmetric
         Schur functions::
 
+            sage: # needs symmetrica
             sage: s = SymmetricFunctions(QQ).s()
             sage: s[2,1].expand(3)
             x0^2*x1 + x0*x1^2 + x0^2*x2 + 2*x0*x1*x2 + x1^2*x2 + x0*x2^2 + x1*x2^2

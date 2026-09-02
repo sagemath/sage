@@ -25,9 +25,6 @@ from sage.categories.homset import Hom
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.morphism import SetMorphism
 from sage.combinat.sf import sfa
-from sage.libs.symmetrica.symmetrica import (
-    hall_littlewood_symmetrica as hall_littlewood,
-)
 from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
@@ -60,6 +57,7 @@ class HallLittlewood(UniqueRepresentation):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: SymmetricFunctions(QQ).hall_littlewood(1)
         Hall-Littlewood polynomials with t=1 over Rational Field
         sage: SymmetricFunctions(QQ['t'].fraction_field()).hall_littlewood()
@@ -74,6 +72,7 @@ class HallLittlewood(UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SymmetricFunctions(QQ).hall_littlewood(1)
             Hall-Littlewood polynomials with t=1 over Rational Field
         """
@@ -86,6 +85,7 @@ class HallLittlewood(UniqueRepresentation):
 
         TESTS::
 
+            sage: # needs symmetrica
             sage: R.<q, t> = QQ[]
             sage: B1 = SymmetricFunctions(R).hall_littlewood()
             sage: B2 = SymmetricFunctions(R).hall_littlewood(t)
@@ -103,6 +103,7 @@ class HallLittlewood(UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: HL = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood()
             sage: TestSuite(HL).run()
         """
@@ -124,6 +125,7 @@ class HallLittlewood(UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: HL = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood()
             sage: HL.symmetric_function_ring()
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field
@@ -141,6 +143,7 @@ class HallLittlewood(UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: HL = SymmetricFunctions(QQ['t'].fraction_field()).hall_littlewood(t=1)
             sage: HL.base_ring()
             Fraction Field of Univariate Polynomial Ring in t over Rational Field
@@ -161,6 +164,7 @@ class HallLittlewood(UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P(); HLP
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood P basis
@@ -173,6 +177,7 @@ class HallLittlewood(UniqueRepresentation):
         The Hall-Littlewood polynomials in the `P` basis at `t = 0` are the
         Schur functions::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(QQ)
             sage: HLP = Sym.hall_littlewood(t=0).P()
             sage: s = Sym.schur()
@@ -182,6 +187,7 @@ class HallLittlewood(UniqueRepresentation):
         The Hall-Littlewood polynomials in the `P` basis at `t = 1` are the
         monomial symmetric functions::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(QQ)
             sage: HLP = Sym.hall_littlewood(t=1).P()
             sage: m = Sym.monomial()
@@ -200,6 +206,7 @@ class HallLittlewood(UniqueRepresentation):
 
         ::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP  = Sym.hall_littlewood().P()
             sage: HLQ  = Sym.hall_littlewood().Q()
@@ -227,11 +234,13 @@ class HallLittlewood(UniqueRepresentation):
         The method :meth:`sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.hl_creation_operator`
         is a creation operator for the `Q` basis::
 
+            sage: # needs symmetrica
             sage: HLQp[1].hl_creation_operator([3]).hl_creation_operator([3])
             HLQp[3, 3, 1]
 
         Transitions between bases with the parameter `t` specialized::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['y','z']))
             sage: y, z = Sym.base_ring().gens()
             sage: HLy = Sym.hall_littlewood(t=y)
@@ -245,7 +254,6 @@ class HallLittlewood(UniqueRepresentation):
             y*s[2, 2] + (y*z+1)*s[3, 1] + (y*z^2+y)*s[4]
             sage: s( Qpy[3,1] + y*Qpy[2,2] )
             y*s[2, 2] + (y^2+1)*s[3, 1] + (y^3+y)*s[4]
-
             sage: Qy = HLy.Q()
             sage: Qz = HLz.Q()
             sage: Py = HLy.P()
@@ -265,6 +273,7 @@ class HallLittlewood(UniqueRepresentation):
             sage: Qz.symmetric_function_ring() == Qy.symmetric_function_ring()
             True
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['q']))
             sage: q = Sym.base_ring().gen()
             sage: HL = Sym.hall_littlewood(t=q)
@@ -280,6 +289,7 @@ class HallLittlewood(UniqueRepresentation):
         The `P` and `Q`-Schur at `t=-1` indexed by strict partitions are a basis for
         the space algebraically generated by the odd power sum symmetric functions::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['q']))
             sage: SP = Sym.hall_littlewood(t=-1).P()
             sage: SQ = Sym.hall_littlewood(t=-1).Q()
@@ -297,6 +307,7 @@ class HallLittlewood(UniqueRepresentation):
 
         TESTS::
 
+            sage: # needs symmetrica
             sage: HLP(s[[]])
             HLP[]
             sage: HLQ(s[[]])
@@ -323,6 +334,7 @@ class HallLittlewood(UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLQ = Sym.hall_littlewood().Q(); HLQ
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood Q basis
@@ -348,6 +360,7 @@ class HallLittlewood(UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLQp = Sym.hall_littlewood().Qp(); HLQp
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood Qp basis
@@ -368,6 +381,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         TESTS::
 
+            sage: # needs symmetrica
             sage: SymmetricFunctions(QQ['t'].fraction_field()).hall_littlewood().P()
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Hall-Littlewood P basis
             sage: SymmetricFunctions(QQ).hall_littlewood(t=2).P()
@@ -401,6 +415,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: P = SymmetricFunctions(QQ).hall_littlewood(t=2).P()
             sage: P.construction()
             (SymmetricFunctionsFunctor[Hall-Littlewood P with t=2], Rational Field)
@@ -425,6 +440,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: P = SymmetricFunctions(QQ).hall_littlewood(t=2).P()
             sage: s = SymmetricFunctions(QQ).schur()
             sage: P._s_to_self(s[2,1])
@@ -432,6 +448,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         This is for internal use only. Please use instead::
 
+            sage: # needs symmetrica
             sage: P(s[2,1])
             6*HLP[1, 1, 1] + HLP[2, 1]
         """
@@ -451,6 +468,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(QQ)
             sage: P = Sym.hall_littlewood(t=2).P()
             sage: s = Sym.schur()
@@ -459,6 +477,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         This is for internal use only. Please use instead::
 
+            sage: # needs symmetrica
             sage: s(P[2,1])
             -6*s[1, 1, 1] + s[2, 1]
         """
@@ -485,6 +504,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P()
             sage: s   = Sym.schur()
@@ -531,15 +551,22 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P()
             sage: HLP([2])^2 # indirect doctest
             (t+1)*HLP[2, 2] + (-t+1)*HLP[3, 1] + HLP[4]
 
+        ::
+
+            sage: # needs symmetrica
             sage: HLQ = Sym.hall_littlewood().Q()
             sage: HLQ([2])^2 # indirect doctest
             HLQ[2, 2] + (-t+1)*HLQ[3, 1] + (-t+1)*HLQ[4]
 
+        ::
+
+            sage: # needs symmetrica
             sage: HLQp = Sym.hall_littlewood().Qp()
             sage: HLQp([2])^2 # indirect doctest
             HLQp[2, 2] + (-t+1)*HLQp[3, 1] + (-t+1)*HLQp[4]
@@ -558,6 +585,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: HLP = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood(1).P()
             sage: HLP.hall_littlewood_family()
             Hall-Littlewood polynomials with t=1 over Fraction Field of Univariate Polynomial Ring in t over Rational Field
@@ -583,6 +611,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
                 sage: HLP = Sym.hall_littlewood().P()
                 sage: HLQ = Sym.hall_littlewood().Q()
@@ -620,6 +649,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
                 sage: HLP = Sym.hall_littlewood().P()
                 sage: HLQ = Sym.hall_littlewood().Q()
@@ -661,6 +691,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
                 sage: HLP = Sym.hall_littlewood().P()
                 sage: HLQ = Sym.hall_littlewood().Q()
@@ -713,6 +744,7 @@ class HallLittlewood_p(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: P = Sym.hall_littlewood().P()
             sage: TestSuite(P).run(skip=['_test_associativity', '_test_distributivity', '_test_prod']) # products are too expensive
@@ -741,6 +773,7 @@ class HallLittlewood_p(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P()
             sage: HLP._q_to_p_normalization(Partition([2,1]))
@@ -772,6 +805,7 @@ class HallLittlewood_p(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P()
             sage: f21 = HLP._s_to_self_base(Partition([2,1]))
@@ -799,6 +833,7 @@ class HallLittlewood_p(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P()
             sage: HLP._s_cache(2)
@@ -836,11 +871,15 @@ class HallLittlewood_q(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: Q = Sym.hall_littlewood().Q()
             sage: TestSuite(Q).run(skip=['_test_associativity', '_test_distributivity', '_test_prod']) # products are too expensive, long time (3s on sage.math, 2012)
             sage: TestSuite(Q).run(elements = [Q.t*Q[1,1]+Q[2], Q[1]+(1+Q.t)*Q[1,1]])  # long time (depends on previous)
 
+        ::
+
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P()
             sage: HLQ = Sym.hall_littlewood().Q()
@@ -889,6 +928,7 @@ class HallLittlewood_q(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLQ = Sym.hall_littlewood().Q()
             sage: HLQ._p_to_q_normalization(Partition([2,1]))
@@ -923,11 +963,15 @@ class HallLittlewood_qp(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: Qp = Sym.hall_littlewood().Q()
             sage: TestSuite(Qp).run(skip=['_test_passociativity', '_test_distributivity', '_test_prod']) # products are too expensive, long time (3s on sage.math, 2012)
             sage: TestSuite(Qp).run(elements = [Qp.t*Qp[1,1]+Qp[2], Qp[1]+(1+Qp.t)*Qp[1,1]])  # long time (depends on previous)
 
+        ::
+
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLP = Sym.hall_littlewood().P()
             sage: HLQ = Sym.hall_littlewood().Q()
@@ -974,6 +1018,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLQp = Sym.hall_littlewood().Qp()
             sage: f21 = HLQp._to_s(Partition([2,1]))
@@ -985,7 +1030,11 @@ class HallLittlewood_qp(HallLittlewood_generic):
         if not part:
             return lambda part2: QQt.one()
 
-        res = hall_littlewood(part) # call to symmetrica (returns in variable x)
+        from sage.features.symmetrica import Symmetrica
+        Symmetrica().require()
+        from sage.libs.symmetrica.symmetrica import hall_littlewood_symmetrica
+
+        res = hall_littlewood_symmetrica(part) # call to symmetrica (returns in variable x)
         f = lambda part2: res.coefficient(part2).subs(x=t)
         return f
 
@@ -1004,6 +1053,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
             sage: HLQp = Sym.hall_littlewood().Qp()
             sage: HLQp._s_cache(2)

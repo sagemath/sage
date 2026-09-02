@@ -36,3 +36,5 @@ include "part.pxi"
 include "schur.pxi"
 
 include "plet.pxi"
+
+start()

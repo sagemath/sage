@@ -2558,6 +2558,7 @@ class RuleStar(Rule):
     Check that :func:`RSK` is the inverse of :func:`RSK_inverse` for various
     outputs/inputs::
 
+        sage: # needs symmetrica
         sage: from sage.combinat.partition import Partitions_n
         sage: shapes = [shape for n in range(7) for shape in Partitions_n(n)]
         sage: row_reading = lambda T: [x for row in reversed(T) for x in row]

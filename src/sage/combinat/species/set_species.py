@@ -172,9 +172,10 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: S = species.SetSpecies()
-            sage: g = S.cycle_index_series()                                            # needs sage.modules
-            sage: g[0:5]                                                                # needs sage.modules
+            sage: g = S.cycle_index_series()
+            sage: g[0:5]
             [p[],
              p[1],
              1/2*p[1, 1] + 1/2*p[2],

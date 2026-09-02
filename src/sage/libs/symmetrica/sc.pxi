@@ -13,6 +13,7 @@ def chartafel_symmetrica(n):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: symmetrica.chartafel(3)
         [ 1  1  1]
         [-1  0  2]
@@ -54,6 +55,7 @@ def charvalue_symmetrica(irred, cls, table=None):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: n = 3
         sage: m = matrix([[symmetrica.charvalue(irred, cls) for cls in Partitions(n)] for irred in Partitions(n)]); m
         [ 1  1  1]
@@ -105,6 +107,7 @@ def kranztafel_symmetrica(a, b):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: (a,b,c) = symmetrica.kranztafel(2,2)
         sage: a
         [ 1 -1  1 -1  1]

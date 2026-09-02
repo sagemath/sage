@@ -1681,6 +1681,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: SM = SGA.specht_module(Partition([3,1,1]))
             sage: SM
@@ -1688,6 +1689,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SM.frobenius_image()
             s[3, 1, 1]
 
+        ::
+
+            sage: # needs symmetrica
             sage: SM = SGA.specht_module([(1,1),(1,3),(2,2),(3,1),(3,2)])
             sage: SM
             Specht module of [(1, 1), (1, 3), (2, 2), (3, 1), (3, 2)] over Rational Field
@@ -1707,6 +1711,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: TM = SGA.tabloid_module(Partition([3,1,1]))
             sage: TM
@@ -1812,6 +1817,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: SGA = SymmetricGroupAlgebra(GF(2), 6)
             sage: SGA.garsia_procesi_module(Partition([2,2,1,1]))
             Garsia-Procesi module of shape [2, 2, 1, 1] over Finite Field of size 2

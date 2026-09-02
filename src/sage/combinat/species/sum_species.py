@@ -172,9 +172,10 @@ class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: P = species.PermutationSpecies()
             sage: F = P + P
-            sage: F.cycle_index_series()[:5]                                            # needs sage.modules
+            sage: F.cycle_index_series()[:5]
             [2*p[],
              2*p[1],
              2*p[1, 1] + 2*p[2],

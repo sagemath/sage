@@ -157,9 +157,10 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: L = species.LinearOrderSpecies()
-            sage: g = L.cycle_index_series()                                            # needs sage.modules
-            sage: g[0:5]                                                                # needs sage.modules
+            sage: g = L.cycle_index_series()
+            sage: g[0:5]
             [p[], p[1], p[1, 1], p[1, 1, 1], p[1, 1, 1, 1]]
         """
         from sage.combinat.sf.sf import SymmetricFunctions

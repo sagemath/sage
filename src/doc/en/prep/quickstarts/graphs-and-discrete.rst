@@ -216,6 +216,7 @@ And some somewhat more advanced -- in this case, symmetric polynomials.
 
 ::
 
+    sage: # needs symmetrica
     sage: s = SymmetricFunctions(QQ).schur()
     sage: a = s([2,1])
     sage: a.expand(3)

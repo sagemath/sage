@@ -228,6 +228,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     We can also do this for more complicated objects such as matrices or
     symmetric functions::
 
+        sage: # needs symmetrica
         sage: q_binomial(4,2,matrix([[2,1],[-1,3]]))
         [ -6  84]
         [-84  78]

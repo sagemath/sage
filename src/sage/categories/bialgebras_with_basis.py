@@ -173,7 +173,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: h = SymmetricFunctions(QQ).h()
                 sage: h[5].convolution_power_of_id(2)
                 2*h[3, 2] + 2*h[4, 1] + 2*h[5]
@@ -257,7 +257,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             We compute convolution products of the identity and antipode maps
             on Schur functions::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: Id = lambda x: x
                 sage: Antipode = lambda x: x.antipode()
                 sage: s = SymmetricFunctions(QQ).schur()
@@ -269,9 +269,10 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             The method accepts multiple arguments, or a single argument
             consisting of a list of maps::
 
-                sage: s[3,2].convolution_product(Id, Id)                                # needs lrcalc_python sage.combinat sage.modules
+                sage: # needs lrcalc_python symmetrica
+                sage: s[3,2].convolution_product(Id, Id)
                 2*s[2, 1, 1, 1] + 6*s[2, 2, 1] + 6*s[3, 1, 1] + 12*s[3, 2] + 6*s[4, 1] + 2*s[5]
-                sage: s[3,2].convolution_product([Id, Id])                              # needs lrcalc_python sage.combinat sage.modules
+                sage: s[3,2].convolution_product([Id, Id])
                 2*s[2, 1, 1, 1] + 6*s[2, 2, 1] + 6*s[3, 1, 1] + 12*s[3, 2] + 6*s[4, 1] + 2*s[5]
 
             We test the defining property of the antipode morphism; namely,
@@ -279,22 +280,24 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             convolution algebra whose identity element is the composition of
             the counit and unit::
 
-                sage: (s[3,2].convolution_product()                                     # needs lrcalc_python sage.combinat sage.modules
+                sage: # needs lrcalc_python symmetrica
+                sage: (s[3,2].convolution_product()
                 ....:   == s[3,2].convolution_product(Antipode, Id)
                 ....:   == s[3,2].convolution_product(Id, Antipode))
                 True
 
             ::
 
-                sage: Psi = NonCommutativeSymmetricFunctions(QQ).Psi()                  # needs sage.combinat sage.modules
-                sage: Psi[2,1].convolution_product(Id, Id, Id)                          # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: Psi = NonCommutativeSymmetricFunctions(QQ).Psi()
+                sage: Psi[2,1].convolution_product(Id, Id, Id)
                 3*Psi[1, 2] + 6*Psi[2, 1]
-                sage: (Psi[5,1] - Psi[1,5]).convolution_product(Id, Id, Id)             # needs sage.combinat sage.modules
+                sage: (Psi[5,1] - Psi[1,5]).convolution_product(Id, Id, Id)
                 -3*Psi[1, 5] + 3*Psi[5, 1]
 
             ::
 
-                sage: # needs sage.combinat sage.groups sage.modules
+                sage: # needs symmetrica
                 sage: G = SymmetricGroup(3)
                 sage: QG = GroupAlgebra(G, QQ)
                 sage: x = QG.sum_of_terms([(p, p.length())
@@ -314,7 +317,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: h = SymmetricFunctions(QQ).h()
                 sage: h[5].convolution_product([Id, Id])
                 2*h[3, 2] + 2*h[4, 1] + 2*h[5]
@@ -370,7 +373,8 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: (s[3,2].counit().parent()                                         # needs sage.combinat sage.modules
+                sage: # needs symmetrica
+                sage: (s[3,2].counit().parent()
                 ....:   == s[3,2].convolution_product().parent())
                 False
             """

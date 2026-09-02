@@ -554,7 +554,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             `f` will lead into a graded algebra already, namely into
             the algebra of symmetric functions::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: h = SymmetricFunctions(QQ).h()
                 sage: def map_on_basis(lam):  # redefining map_on_basis
                 ....:     def mus(k):
@@ -577,7 +577,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             is already graded, so its associated graded algebra is
             implemented as itself::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: grh = h.graded_algebra(); grh is h
                 True
                 sage: grf = A.induced_graded_map(h, f); grf
@@ -606,7 +606,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             have one as the domain instead. Our new ``f`` will go from ``h``
             to ``A``::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: def map_on_basis(lam):  # redefining map_on_basis
                 ....:     def mus(k):
                 ....:         return lam.remove_horizontal_border_strip(k)
@@ -653,7 +653,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             The construct `\operatorname{gr} f` also makes sense when `f`
             is a filtration-preserving map between graded modules. ::
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: def map_on_basis(lam):  # redefining map_on_basis
                 ....:     def mus(k):
                 ....:         return lam.remove_horizontal_border_strip(k)

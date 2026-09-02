@@ -103,7 +103,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
                 sage: SymmetricFunctionsNonCommutingVariables(QQ).m()
                 Symmetric functions in non-commuting variables over the Rational Field in the monomial basis
-                sage: SymmetricFunctionsNonCommutingVariables(QQ).m().dual_basis()
+                sage: SymmetricFunctionsNonCommutingVariables(QQ).m().dual_basis()  # needs symmetrica
                 Dual symmetric functions in non-commuting variables over the Rational Field in the w basis
                 sage: SymmetricFunctionsNonCommutingVariables(QQ).chi()
                 Symmetric functions in non-commuting variables over the Rational Field in the
@@ -130,6 +130,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: w = SymmetricFunctionsNonCommutingVariables(QQ).dual().w()
                 sage: w[[1], [2,3]]
                 w{{1}, {2, 3}}
@@ -158,6 +159,10 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
                 sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()
                 sage: m.one_basis()
                 {}
+
+            ::
+
+                sage: # needs symmetrica
                 sage: w = SymmetricFunctionsNonCommutingVariables(QQ).dual().w()
                 sage: w.one_basis()
                 {}
@@ -182,6 +187,8 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
                 0
                 sage: m.counit_on_basis(SetPartition([]))
                 1
+
+                sage: # needs symmetrica
                 sage: w = SymmetricFunctionsNonCommutingVariables(QQ).dual().w()
                 sage: w.counit_on_basis(SetPartition([[1,3], [2]]))
                 0
@@ -211,6 +218,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: h = NCSym.h()
                 sage: w = NCSym.m().dual_basis()
@@ -248,6 +256,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
             The matrix between the `\mathbf{m}` basis and the
             `\mathbf{w}` basis::
 
+                sage: # needs symmetrica
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: m = NCSym.m()
                 sage: w = NCSym.dual().w()
@@ -261,6 +270,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
             Similarly for some of the other basis of `NCSym` and the `\mathbf{w}`
             basis::
 
+                sage: # needs symmetrica
                 sage: e = NCSym.e()
                 sage: e.duality_pairing_matrix(w, 3)
                 [0 0 0 0 1]
@@ -292,6 +302,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
             A base case test::
 
+                sage: # needs symmetrica
                 sage: m.duality_pairing_matrix(w, 0)
                 [1]
             """
@@ -309,6 +320,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: m = NCSym.m()
                 sage: w = m.dual_basis()
@@ -392,6 +404,7 @@ class NCSymBases(Category_realization_of_parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: e = NCSym.e()
@@ -574,6 +587,7 @@ class NCSymBases(Category_realization_of_parent):
 
             EXAMPLES::
 
+                sage: # needs symmetrica
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: e = NCSym.e()
                 sage: h = NCSym.h()
@@ -820,6 +834,7 @@ class NCSymDualBases(Category_realization_of_parent):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: from sage.combinat.ncsym.bases import NCSymDualBases
         sage: DNCSym = SymmetricFunctionsNonCommutingVariables(QQ).dual()
         sage: NCSymDualBases(DNCSym)
@@ -848,6 +863,7 @@ class NCSymDualBases(Category_realization_of_parent):
 
         TESTS::
 
+            sage: # needs symmetrica
             sage: from sage.combinat.ncsym.bases import NCSymDualBases
             sage: DNCSym = SymmetricFunctionsNonCommutingVariables(QQ).dual()
             sage: NCSymDualBases(DNCSym)

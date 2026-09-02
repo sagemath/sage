@@ -530,6 +530,7 @@ def test_integer(object x):
 
     EXAMPLES::
 
+        sage: # needs symmetrica
         sage: from sage.libs.symmetrica.symmetrica import test_integer
         sage: test_integer(1)
         1

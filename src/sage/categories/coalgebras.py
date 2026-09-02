@@ -316,7 +316,7 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: # needs sage.modules
+                    sage: # needs symmetrica
                     sage: Sym = SymmetricFunctions(QQ)
                     sage: s = Sym.schur()
                     sage: f = s[2,1]
@@ -351,7 +351,7 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: # needs sage.modules
+                    sage: # needs symmetrica
                     sage: Sym = SymmetricFunctions(QQ)
                     sage: m = Sym.monomial()
                     sage: f = m[2,1]
@@ -388,7 +388,7 @@ class Coalgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: # needs lrcalc_python sage.modules
+                    sage: # needs lrcalc_python symmetrica
                     sage: sp = SymmetricFunctions(QQ).sp()
                     sage: sp.an_element()
                     2*sp[] + 2*sp[1] + 3*sp[2]

@@ -153,26 +153,29 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
 
         EXAMPLES::
 
+            sage: # needs symmetrica
             sage: A = NilCoxeterAlgebra(WeylGroup(['A',3,1]))
             sage: A.k_schur_noncommutative_variables([2,2])
             u[0,3,1,0] + u[3,1,2,0] + u[1,2,0,1] + u[3,2,0,3] + u[2,0,3,1] + u[2,3,1,2]
 
         TESTS::
 
+            sage: # needs symmetrica
             sage: A = NilCoxeterAlgebra(WeylGroup(['A',3,1]))
             sage: A.k_schur_noncommutative_variables([])
             1
-
             sage: A.k_schur_noncommutative_variables([1,2])
             Traceback (most recent call last):
             ...
             AssertionError: [1, 2] is not a partition.
-
             sage: A.k_schur_noncommutative_variables([4,2])
             Traceback (most recent call last):
             ...
             AssertionError: [4, 2] is not a 3-bounded partition.
 
+        ::
+
+            sage: # needs symmetrica
             sage: C = NilCoxeterAlgebra(WeylGroup(['C',3,1]))
             sage: C.k_schur_noncommutative_variables([2,2])
             Traceback (most recent call last):

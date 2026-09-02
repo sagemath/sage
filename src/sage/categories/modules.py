@@ -230,7 +230,7 @@ class Modules(Category_module):
                 sage: C3.base_ring()
                 Rational Field
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs symmetrica
                 sage: C4 = QuasiSymmetricFunctions(QQ).F().category()
                 sage: C4.base_ring.__module__
                 'sage.categories.modules'
