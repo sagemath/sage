@@ -1,5 +1,8 @@
 """
-Known Answer Tests for ML-KEM
+Consistency Tests for ML-KEM
+
+These tests verify that encapsulation and decapsulation produce
+matching shared secrets. They are not official NIST KATs.
 """
 
 from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
@@ -7,14 +10,14 @@ from sage.crypto.public_key.key_encapsulation_mechanisms import MLKEM
 
 def test_ml_kem_512():
     """
-    Test ML-KEM-512 with known answer test.
+    Test ML-KEM-512 consistency.
     """
     kem = MLKEM.from_parameter_set(512)
     pk, sk = kem.keygen()
     ct, ss1 = kem.encaps(pk)
     ss2 = kem.decaps(sk, ct)
-    assert ss1 == ss2, "ML-KEM-512 KAT failed"
-    print("ML-KEM-512 KAT passed")
+    assert ss1 == ss2, "ML-KEM-512 consistency test failed"
+    print("ML-KEM-512 consistency test passed")
 
 
 def test_ml_kem_768():
@@ -22,8 +25,8 @@ def test_ml_kem_768():
     pk, sk = kem.keygen()
     ct, ss1 = kem.encaps(pk)
     ss2 = kem.decaps(sk, ct)
-    assert ss1 == ss2, "ML-KEM-768 KAT failed"
-    print("ML-KEM-768 KAT passed")
+    assert ss1 == ss2, "ML-KEM-768 consistency test failed"
+    print("ML-KEM-768 consistency test passed")
 
 
 def test_ml_kem_1024():
@@ -31,12 +34,12 @@ def test_ml_kem_1024():
     pk, sk = kem.keygen()
     ct, ss1 = kem.encaps(pk)
     ss2 = kem.decaps(sk, ct)
-    assert ss1 == ss2, "ML-KEM-1024 KAT failed"
-    print("ML-KEM-1024 KAT passed")
+    assert ss1 == ss2, "ML-KEM-1024 consistency test failed"
+    print("ML-KEM-1024 consistency test passed")
 
 
 if __name__ == "__main__":
     test_ml_kem_512()
     test_ml_kem_768()
     test_ml_kem_1024()
-    print("All KATs passed!")
+    print("All consistency tests passed!")
