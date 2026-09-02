@@ -191,7 +191,8 @@ class MLKEM(KEMBase):
         u_coeffs = [self._get_coeffs(poly) for poly in u_vec]
         v_coeffs = self._get_coeffs(v)
 
-        v_bytes = bytes(v_coeffs)
+        # Use str encoding since coefficients may exceed 255
+        v_bytes = str(v_coeffs).encode()
         shared_secret = hashlib.sha256(v_bytes).digest()[:32]
 
         return (u_coeffs, v_coeffs), shared_secret
@@ -220,5 +221,7 @@ class MLKEM(KEMBase):
         """
         u_coeffs, v_coeffs = ciphertext
 
-        v_bytes = bytes(v_coeffs)
+        # Use str encoding since coefficients may exceed 255
+        v_bytes = str(v_coeffs).encode()
         return hashlib.sha256(v_bytes).digest()[:32]
+    
