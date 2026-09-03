@@ -223,7 +223,7 @@ dev = [
   "cibuildwheel",
   "conda-lock",
   "grayskull",
-  "meson >=1.7", # Duplicate build-system requirement to fix editable installs with uv
+  "meson >=1.11.2", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
   "ninja", # Duplicate build-system requirement to fix editable installs with uv
   "pygithub",
