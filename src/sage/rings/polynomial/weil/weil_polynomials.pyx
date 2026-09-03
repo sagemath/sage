@@ -7,58 +7,59 @@ r"""
 Iterator for Weil polynomials.
 
 For `q` a prime power, a `q`-Weil polynomial is a monic polynomial with integer
-coefficients whose complex roots all have absolute value `sqrt(q)`. The class
-WeilPolynomials provides an iterable over a space of polynomials of this type;
-it is possible to relax the monic condition by specifying one (or more) leading
-coefficients. One may also impose certain congruence conditions; this can be
+coefficients whose complex roots all have absolute value `\sqrt{q}`. The class
+``WeilPolynomials`` provides an iterable over a space of polynomials of this type.
+It is possible to relax the monic condition by specifying one (or more) leading
+coefficients. One may also impose certain congruence conditions. This can be
 used to limit the Newton polygons of the resulting polynomials, or to lift
 a polynomial specified by a congruence to a Weil polynomial.
 
-For large jobs, one can set parallel=True to use OpenMP (if support was
+For large jobs, one can set ``parallel=True`` to use ``OpenMP`` (if support was
 enabled at compile time). Due to increased overhead, this is not recommended
 for smaller problem sizes. To enable support, ensure that your compiler supports
-OpenMP and remove the appropriate # characters in the distutils commands below.
+``OpenMP`` and remove the appropriate ``#`` characters in the ``distutils`` commands below.
 (You may also need to move those lines to the start of the file.)
 
 AUTHOR:
-  -- Kiran S. Kedlaya (2007-05-28): initial version
-  -- (2015-08-29): switch from NTL to FLINT
-  -- (2017-10-03): consolidate Sage layer into .pyx file
-                   define WeilPolynomials iterator
-                   reverse convention for polynomials
-                   pass multiprecision integers to/from C
-  -- (2019-02-02): update for Python3
-                   improve parallel mode
-  -- (2019-12-19): final packaging for Sage (with help from David Roe)
-  -- (2026-02-10): extensive low-level optimization and reorganization
-                   move some input sanitization out of C layer
-                   improved algorithm for computing ranges
-                     (using truncated Hausdorff moment condition)
-                   more efficient application of Rolle condition (binary search)
-                   choose number of processes based on available cores
-                   import fmpz's directly as longs when possible
-                   compute Hankel determinants via Dodgson condensation when possible
-                   compute subresultants via Ducos method
-                   more balanced work-splitting
-                   more direct conversion of output to Sage polynomials
-                   improved chunking in parallel mode
-  -- (2026-08-26): better answer conversion from FLINT to Sage
-                   compute some Hankel determinants recursively
-                   option to filter by linear constraints on Frobenius traces
+
+-- Kiran S. Kedlaya (2007-05-28): initial version
+-- (2015-08-29): switch from NTL to FLINT
+-- (2017-10-03): consolidate Sage layer into .pyx file
+                 define WeilPolynomials iterator
+                 reverse convention for polynomials
+                 pass multiprecision integers to/from C
+-- (2019-02-02): update for Python3
+                 improve parallel mode
+-- (2019-12-19): final packaging for Sage (with help from David Roe)
+-- (2026-02-10): extensive low-level optimization and reorganization
+                 move some input sanitization out of C layer
+                 improved algorithm for computing ranges
+                 (using truncated Hausdorff moment condition)
+                 more efficient application of Rolle condition (binary search)
+                 choose number of processes based on available cores
+                 import fmpz's directly as longs when possible
+                 compute Hankel determinants via Dodgson condensation when possible
+                 compute subresultants via Ducos method
+                 more balanced work-splitting
+                 more direct conversion of output to Sage polynomials
+                 improved chunking in parallel mode
+-- (2026-08-26): better answer conversion from FLINT to Sage
+                 compute some Hankel determinants recursively
+                 option to filter by linear constraints on Frobenius traces
 
 A standalone version of this code can be found at
-   https://github.com/kedlaya/root-unitary
+https://github.com/kedlaya/root-unitary
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019-2026 Kiran S. Kedlaya <kskedl@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cython.parallel cimport prange
 from cysignals.signals cimport sig_check
