@@ -105,7 +105,7 @@ Sage example in ./sol/combinat.tex, line 312::
 
   sage: C = Compositions(5,length=3)
   sage: C.cardinality
-  <bound method ..._cardinality_from_iterator ...>
+  <bound method ...cardinality...>
 
 Sage example in ./sol/combinat.tex, line 322::
 
