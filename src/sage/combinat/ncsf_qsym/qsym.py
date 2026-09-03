@@ -1409,7 +1409,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                      + M[1, 1, 4, 1] + M[1, 2, 1, 2, 1] + M[1, 3, 2, 1]
 
                 TESTS::
-                    
+
                     sage: (-M[1,2]).dendriform_less(M[1,2,1]) == -(M[1,2].dendriform_less(M[1,2,1]))
                     True
                     sage: M[1,2].dendriform_less(-M[1,2,1]) == -(M[1,2].dendriform_less(M[1,2,1]))
