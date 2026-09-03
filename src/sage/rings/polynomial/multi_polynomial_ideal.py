@@ -1438,6 +1438,43 @@ class MPolynomialIdeal_singular_repr(
             [c^2*d^6 - c^2*d^2 - d^4 + 1, c^3*d^2 + c^2*d^3 - c - d,
              b*d^4 - b + d^5 - d, b*c - b*d + c^2*d^4 + c*d - 2*d^2,
              b^2 + 2*b*d + d^2, a + b + c + d]
+            sage: set_verbose(0)
+            sage: R = PolynomialRing(GF(41), ['x', 'y'], order="degrevlex")
+            sage: x,y = R.gens()
+            sage: I = ideal([x^2 + 13*x*y - 4*y^2 + 4*x - 11, -7*x*y + 9*y^2 + 11*x + 11*y - 7])
+            sage: I.groebner_basis("singular:groebner", prot="sage")  # indirect doctest
+            std is used
+            Leading term degree:  2.
+            Leading term degree:  3.
+            Leading term degree:  4.
+            1 product criterion and 0 chain criterion used
+            Highest degree reached during computation:  4.
+            [y^3 - 10*y^2 - 11*x - 14*y - 20,
+            x^2 + y^2 + x - 3*y + 17,
+            x*y - 13*y^2 + 16*x + 16*y + 1]
+
+            sage: set_verbose(2)
+            sage: R = PolynomialRing(GF(41), ['x', 'y'], order="degrevlex")
+            sage: x,y = R.gens()
+            sage: I = ideal([x^2 + 13*x*y - 4*y^2 + 4*x - 11, -7*x*y + 9*y^2 + 11*x + 11*y - 7])
+            sage: I.groebner_basis("singular:groebner", prot="sage")  # indirect doctest
+            ...
+            std is used
+            Leading term degree:  2.
+            New element found.
+            New element found.
+            Leading term degree:  3.
+            New element found.
+            Leading term degree:  4.
+            Performing complete reduction of 2 elements.
+            Reduction to zero.
+            Reduction to zero.
+            1 product criterion and 0 chain criterion used
+            Highest degree reached during computation:  4.
+            [y^3 - 10*y^2 - 11*x - 14*y - 20,
+            x^2 + y^2 + x - 3*y + 17,
+            x*y - 13*y^2 + 16*x + 16*y + 1]
+            sage: set_verbose(0)
         """
         if singular is None:
             singular = singular_default
@@ -1450,9 +1487,6 @@ class MPolynomialIdeal_singular_repr(
         from sage.libs.singular.option import _options_py_to_singular
         S = self._singular_()   # for degBound, we need to ensure
                                 # that a ring is defined
-
-        if get_verbose() >= 2:
-            kwds['prot'] = True
 
         for o, v in kwds.items():
             o = _options_py_to_singular.get(o,o)
