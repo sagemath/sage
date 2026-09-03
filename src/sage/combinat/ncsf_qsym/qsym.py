@@ -1496,7 +1496,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                      + 2*F[2, 2, 2] + F[2, 3, 1] + F[3, 1, 2] + F[3, 2, 1] + F[3, 3]
 
                 TESTS::
-                    
+
                     sage: (-M[1,2]).dendriform_leq(M[1,2,1]) == -(M[1,2].dendriform_leq(M[1,2,1]))
                     True
                     sage: M[1,2].dendriform_leq(-M[1,2,1]) == -(M[1,2].dendriform_leq(M[1,2,1]))
