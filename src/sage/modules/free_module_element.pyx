@@ -457,6 +457,10 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: v = vector(w, immutable=True)
         sage: v.is_immutable()
         True
+        sage: w = np.array([i, 2, 3], complex)
+        sage: v = vector(w, immutable=True)
+        sage: v.is_immutable()
+        True
 
     Constructing an immutable vector from a vector does not change the input::
 
@@ -475,10 +479,18 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: w = vector(v, ZZ, immutable=True)
         sage: w.is_immutable(), v.is_immutable(), w is v
         (True, False, False)
-        sage: w = np.array([i, 2, 3], complex)
-        sage: v = vector(w, immutable=True)
-        sage: v.is_immutable()
-        True
+
+    This holds for empty vectors over the double fields too::
+
+        sage: # needs numpy
+        sage: v = vector(RDF, [])
+        sage: w = vector(v, immutable=True)
+        sage: w.is_immutable(), v.is_immutable(), w is v
+        (True, False, False)
+        sage: v = vector(CDF, [])
+        sage: w = vector(v, immutable=True)
+        sage: w.is_immutable(), v.is_immutable(), w is v
+        (True, False, False)
 
     TESTS:
 
