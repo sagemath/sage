@@ -12,14 +12,12 @@ import os
 import sys
 
 # Determine the directory containing this file
-# Works for both normal script execution and Sage's exec()
 try:
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 except NameError:
     SCRIPT_DIR = os.getcwd()
 
 # Add the Sage source directory to the path if needed
-# Uses relative path from the script location
 sage_src = os.path.abspath(os.path.join(SCRIPT_DIR, '../../../../..'))
 if sage_src not in sys.path:
     sys.path.insert(0, sage_src)
@@ -45,9 +43,9 @@ def parse_kat_file(filename):
         print(f"File not found: {filename}")
         return tests
 
-    with open(filename, 'r') as f:
-        for line in f:
-            line = line.strip()
+    with open(filename) as f:
+        for raw_line in f:
+            line = raw_line.strip()
             if not line or line.startswith('#'):
                 continue
 
