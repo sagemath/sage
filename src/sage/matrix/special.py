@@ -405,10 +405,10 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
     One can prescribe a specific matrix implementation::
 
-        sage: K.<a> = FiniteField(2^8)                                                  # needs sage.rings.finite_rings
-        sage: type(random_matrix(K, 2, 5))                                              # needs sage.libs.m4ri sage.rings.finite_rings
+        sage: K.<a> = FiniteField(2^8)
+        sage: type(random_matrix(K, 2, 5))  # needs m4rie
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: type(random_matrix(K, 2, 5, implementation='generic'))                    # needs sage.rings.finite_rings
+        sage: type(random_matrix(K, 2, 5, implementation='generic'))
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
     Random rational matrices.  Now ``num_bound`` and ``den_bound`` control the
