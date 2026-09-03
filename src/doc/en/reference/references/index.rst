@@ -87,6 +87,10 @@ REFERENCES:
             Some new MOLS of order 2np for p a prime power,
             The Australasian Journal of Combinatorics, vol 10 (1994)
 
+.. [AC2019] \Daniele Agostini, Lynn Chua,
+            Computing theta functions with Julia,
+            Journal of Software for Algebra and Geometry 11 (2021): 41-51
+
 .. [ACFLSS04] \F. N. Abu-Khzam, R. L. Collins, M. R. Fellows, M. A.  Langston,
               \W. H. Suters, and C. T. Symons: Kernelization Algorithm for the
               Vertex Cover Problem: Theory and Experiments. *SIAM
@@ -2366,6 +2370,9 @@ REFERENCES:
 
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
+
+.. [DHBvHS2004] \Bernard Deconinck, Matthias Heil, Alexander Bobenko, Mark van Hoeij, Marcus Schmies,
+                Computing Riemann Theta functions, Math. Comp. 73-247 (2004): 1417-1442.
 
 .. [DJP2014] Luca De Feo, David Jao and Jérôme Plût: Towards quantum-resistant
              cryptosystems from supersingular elliptic curve isogenies. Journal
