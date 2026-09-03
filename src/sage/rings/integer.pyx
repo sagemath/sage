@@ -7397,9 +7397,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: 12.number_of_divisors()                                               # needs sage.libs.pari
             6
-            sage: 100.number_of_divisors()
+            sage: 100.number_of_divisors()                                              # needs sage.libs.pari
             9
-            sage: (-720).number_of_divisors()
+            sage: (-720).number_of_divisors()                                           # needs sage.libs.pari
             30
             sage: 0.number_of_divisors()
             Traceback (most recent call last):

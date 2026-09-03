@@ -3070,7 +3070,7 @@ class Euler_Phi:
     relatively prime to `n`. Thus if `n \leq 0` then
     ``euler_phi(n)`` is defined and equals 0.
 
-    .. SEEALSO:
+    .. SEEALSO::
 
         :meth:`sage.rings.integer.Integer.euler_phi`
 
@@ -4890,7 +4890,7 @@ def number_of_divisors(n) -> Integer:
         sage: from gmpy2 import mpz
         sage: number_of_divisors(mpz(100))                                              # needs sage.libs.pari
         9
-        sage: number_of_divisors(100r)
+        sage: number_of_divisors(100r)                                                  # needs sage.libs.pari
         9
     """
 
