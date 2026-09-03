@@ -3303,9 +3303,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         entry::
 
             sage: E = EllipticCurve([0, 0, 0, -1, 0])
+            sage: from sage.plot.line import line2d                                     # needs sage.plot
+            sage: default = line2d.options['legend_label']                              # needs sage.plot
+            sage: line2d.options['legend_label'] = 'global'                             # needs sage.plot
             sage: P = E.plot(legend_label='E')                                          # needs sage.plot
-            sage: len(P.matplotlib().axes[0].legend().texts)                            # needs sage.plot
-            1
+            sage: [t.get_text() for t in P.matplotlib().axes[0].legend().texts]         # needs sage.plot
+            ['E']
+            sage: E.plot(legend_label=None).legend()                                    # needs sage.plot
+            False
+            sage: line2d.options['legend_label'] = default                              # needs sage.plot
 
         If there is only one component then specifying
         components='bounded' raises a ValueError::
@@ -3429,7 +3435,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 I.append((xmin, xmax, '='))
 
         from sage.plot.graphics import Graphics
-        from sage.plot.line import line
+        from sage.plot.line import line, line2d
         from sage.plot.plot import generate_plot_points
 
         g = Graphics()
@@ -3437,16 +3443,16 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         adaptive_tolerance = args.pop('adaptive_tolerance',0.01)
         adaptive_recursion = args.pop('adaptive_recursion',5)
         randomize = args.pop('randomize',True)
-        legend_label = args.pop('legend_label', None)
+        sentinel = object()
+        legend_label = args.pop('legend_label', sentinel)
+        if legend_label is sentinel:
+            legend_label = line2d.options['legend_label']
 
         def add_line(points):
             "Add a line segment, labeling only the first one."
             nonlocal g, legend_label
-            if legend_label is None:
-                g += line(points, **args)
-            else:
-                g += line(points, legend_label=legend_label, **args)
-                legend_label = None
+            g += line(points, legend_label=legend_label, **args)
+            legend_label = None
 
         for j in range(len(I)):
             a, b, shape = I[j]
