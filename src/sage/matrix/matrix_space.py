@@ -57,6 +57,8 @@ from sage.categories.enumerated_sets import EnumeratedSets
 
 from sage.misc.lazy_import import lazy_import
 from sage.features.meataxe import Meataxe
+lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
+            feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
 _Semirings = Semirings()
@@ -394,8 +396,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
 
         if implementation == 'meataxe':
             if R.is_field() and R.order() < 256:
-                from . import matrix_gfpn_dense
-                return matrix_gfpn_dense.Matrix_gfpn_dense
+                return Matrix_gfpn_dense
             raise ValueError("'meataxe' matrix can only deal with finite fields of order < 256")
 
         if implementation == 'numpy':
