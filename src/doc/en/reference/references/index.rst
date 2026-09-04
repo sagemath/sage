@@ -981,6 +981,9 @@ REFERENCES:
              *The primitive Eulerian polynomial*.
              Preprint, (2023) :arxiv:`2306.15556`.
 
+.. [BHS25] Daniel Bump, Andrew Hardt, and Travis Scrimshaw. *On the boson-fermion
+           correspondence for factorial Schur functions*. Preprint, (2025) :arxiv:`2502.02841`.
+
 .. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
