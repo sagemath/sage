@@ -950,9 +950,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MatrixSpace(ZZ,2) in Sets().Infinite()
             True
         """
-        # Checks of input data are supposed to be done in __classcall__
-        assert isinstance(implementation, type)
-
         self.Element = implementation
         self.__nrows = nrows
         self.__ncols = ncols
