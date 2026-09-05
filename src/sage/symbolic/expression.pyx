@@ -4828,6 +4828,32 @@ cdef class Expression(Expression_abc):
             sage: series_with_variable_coefficients.diff(x).coefficients(x)[:4]
             [[1, 0], [2, 1], [3, 2], [4, 3]]
 
+        A coefficient with a pole can contribute below the order of the
+        remainder, even when its stored power reaches that order::
+
+            sage: f = y + x*y^2/2 + x^2
+            sage: f.series(x, 2).subs(y=-1/x).diff(x)
+            (1/2/x^2) + Order(x)
+            sage: f = y + (x-1)*y^2/2 + (x-1)^2
+            sage: f.series(x==1, 2).subs(y=-1/(x-1)).diff(x)
+            (1/2/(x - 1)^2) + Order(x - 1)
+
+        Differentiating logarithmic coefficients also retains these terms::
+
+            sage: s = (log(x)/(1-x)).series(x, 4).diff(x).series(x, 3)
+            sage: (s.truncate() - (1/x + log(x) + 1
+            ....:      + (2*log(x) + 1)*x + (3*log(x) + 1)*x^2)).expand()
+            0
+
+        Coefficients need not themselves have Laurent series expansions::
+
+            sage: s = (y*x + x^2).series(x, 2).subs(y=sin(1/x))
+            sage: (s.diff(x).series(x, 1).truncate() - (x*sin(1/x)).diff(x)).expand()
+            0
+            sage: s = (y*x + x^2).series(x, 2).subs(y=sqrt(x))
+            sage: (s.diff(x).series(x, 1).truncate() - (x*sqrt(x)).diff(x)).simplify_full()
+            0
+
         Try different algorithms::
 
             sage: ((1 - x)^-x).series(x, 8, algorithm="maxima")
