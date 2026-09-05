@@ -509,6 +509,25 @@ ex pseries::derivative(const symbol & s) const
 			}
 		}
 
+		// A coefficient derivative at the new Order exponent need not be
+		// negligible: its coefficient may have a pole.  Move that term down
+		// one power before add_series truncates, combining equal powers.
+		if (!is_terminating() && !coefficient_derivatives.empty()
+		    && coefficient_derivatives.back().coeff.is_equal(seq.back().coeff - 1)
+		    && !coefficient_derivatives.back().rest.is_polynomial(var)) {
+			expair tail = coefficient_derivatives.back();
+			coefficient_derivatives.pop_back();
+			tail.rest *= var - point;
+			tail.coeff -= 1;
+			if (!coefficient_derivatives.empty()
+			    && coefficient_derivatives.back().coeff.is_equal(tail.coeff)) {
+				tail.rest += coefficient_derivatives.back().rest;
+				coefficient_derivatives.pop_back();
+			}
+			if (!tail.rest.is_zero())
+				coefficient_derivatives.push_back(tail);
+		}
+
 		if (coefficient_derivatives.empty())
 			return pseries(expansion, std::move(power_derivatives));
 		if (power_derivatives.empty())

@@ -713,7 +713,7 @@ GINAC_IMPLEMENT_REGISTERED_CLASS_OPT(numeric, basic,
         print_func<print_python_repr>(&numeric::do_print_python_repr))
 
 
-numeric::numeric() : basic(&numeric::tinfo_static), t(LONG), v(0) {
+numeric::numeric() : basic(&numeric::tinfo_static), t(LONG), v(0), hash(0) {
         setflag(status_flags::evaluated | status_flags::expanded);
 }
 
