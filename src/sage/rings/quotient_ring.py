@@ -128,7 +128,7 @@ _CommRings = CommutativeRings()
 MPolynomialIdeal_quotient = None
 
 
-def QuotientRing(R, I, names=None, **kwds):
+def QuotientRing(R, I, names=None, **kwds) -> Parent:
     r"""
     Create a quotient ring of the ring `R` by the twosided ideal `I`.
 
@@ -279,6 +279,31 @@ def QuotientRing(R, I, names=None, **kwds):
         True
         sage: I = R.ideal(0)
         sage: R is R.quotient(I)
+        True
+
+    TESTS:
+
+    The return annotation matches the runtime type for generic, principal,
+    noncommutative and unchanged quotient rings::
+
+        sage: from sage.structure.parent import Parent
+        sage: isinstance(QuotientRing(ZZ, 2*ZZ), Parent)
+        True
+        sage: R = QQ['x']
+        sage: isinstance(QuotientRing(R, R.ideal(R.gen()**2)), Parent)
+        True
+        sage: F.<x,y> = FreeAlgebra(QQ, 2)
+        sage: I = F * [x*y, y*x] * F
+        sage: isinstance(QuotientRing(F, I), Parent)
+        True
+        sage: R = QQ['x']
+        sage: QuotientRing(R, R.zero_ideal()) is R
+        True
+
+    The annotation resolves to the common parent base::
+
+        sage: import typing
+        sage: typing.get_type_hints(QuotientRing)['return'] is Parent
         True
     """
     # 1. Not all rings inherit from the base class of rings.
