@@ -57,6 +57,7 @@ py.install_sources(
   'ideal_monoid.py',
   'imaginary_unit.py',
   'infinity.py',
+  'infinity_test.py',
   'integer.pxd',
   'integer.pyi',
   'integer.pyx',

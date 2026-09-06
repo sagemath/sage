@@ -575,9 +575,11 @@ AUTHOR:
 - Carl Witty (2007-01-27): initial version
 - Carl Witty (2007-10-29): massive rewrite to support complex as well as real numbers
 """
+from __future__ import annotations
 
 import itertools
 import operator
+from typing import TYPE_CHECKING, Literal
 
 import sage.rings.abc
 import sage.rings.number_field.number_field_base
@@ -627,6 +629,9 @@ from sage.structure.richcmp import (
 from sage.structure.sage_object import SageObject
 
 lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 
 class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
@@ -1159,7 +1164,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         """
         return "\\mathbf{A}"
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -1653,7 +1658,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         """
         return 'AlgebraicNumber'
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -3821,7 +3826,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
                     return latex(radical)
         return repr(self).replace('*I', r' \sqrt{-1}')
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
@@ -3869,7 +3874,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             {call: {getattr: {atomic:QQbar}.polynomial_root}({call: {getattr: {atomic:AA}.common_polynomial}({binop:- {binop:** {gen:x {constr_parent: {subscr: {atomic:QQbar}[{atomic:'x'}]} with gens: ('x',)}} {atomic:2}} {atomic:7}})}, {call: {atomic:CIF}({call: {atomic:RIF}({call: {atomic:RR}({atomic:2.6457513110645903})}, {call: {atomic:RR}({atomic:2.6457513110645907})})}, {call: {atomic:RIF}({call: {atomic:RR}({atomic:0})})})})}
         """
         (v, complicated) = \
-            self._descr.handle_sage_input(sib, coerce, self.parent() is QQbar)
+            self._descr.handle_sage_input(sib, coerced, self.parent() is QQbar)
         if complicated or True:
             sib.id_cache(self, v, 'v')
         return v
@@ -6484,13 +6489,11 @@ class AlgebraicNumberPowQQAction(Action):
                         isgn = x.imag().sign()
                         if isgn == 0:
                             argument_is_pi = True
-                        else:
-                            if isgn > 0:
-                                if argument < 0:
-                                    argument += 2 * argument.parent().pi()
-                            else:
-                                if argument > 0:
-                                    argument -= 2 * argument.parent().pi()
+                        elif isgn > 0:
+                            if argument < 0:
+                                argument += 2 * argument.parent().pi()
+                        elif argument > 0:
+                            argument -= 2 * argument.parent().pi()
                     if argument_is_pi:
                         argument = argument.parent().pi()
                     target_arg = argument * e
@@ -6825,7 +6828,7 @@ class AlgebraicPolynomialTracker(SageObject):
         """
         return (AlgebraicPolynomialTracker, (self._poly, ))
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 

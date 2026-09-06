@@ -37,7 +37,7 @@ heavily modified:
 from __future__ import annotations
 
 import weakref
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 import sage.rings.abc
 from sage.misc.cachefunc import cached_method
@@ -48,6 +48,9 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
 from sage.rings.ring import Field
 from sage.structure.parent import Parent
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 cache: dict[int, weakref.ReferenceType[ComplexIntervalField_class]] = {}
 
@@ -299,7 +302,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return "ComplexField(%s : Bits := true)" % self.prec()
 
-    def _sage_input_(self, sib, coerce):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         r"""
         Produce an expression which will reproduce this value when evaluated.
 
