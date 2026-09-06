@@ -552,14 +552,15 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             sage: Frob._repr_()
             'Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^3'
         """
-        name = self.domain().variable_name()
         if self._power == 0:
-            s = "Identity endomorphism of"
-        elif self._power == 1:
+            return f"Identity endomorphism of {self.domain()}"
+
+        name = self.domain().variable_name()
+        if self._power == 1:
             s = "Frobenius endomorphism %s |--> %s^%s on" % (name, name, self.domain().characteristic())
         else:
             s = "Frobenius endomorphism %s |--> %s^(%s^%s) on" % (name, name, self.domain().characteristic(), self._power)
-        s += " %s" % self.domain()
+        s += f" {self.domain()}"
         return s
 
     def _repr_short(self):
