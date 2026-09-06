@@ -18,7 +18,7 @@ from libc.stdlib cimport abort
 from libc.signal cimport SIGINT, SIGBUS, SIGFPE, SIGSEGV
 from libc.signal cimport raise_ as signal_raise
 from posix.signal cimport sigaction, sigaction_t
-cimport cysignals.signals
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gmp.types cimport mpz_t
 from sage.cpython.string cimport str_to_bytes, char_to_str
@@ -43,8 +43,8 @@ cdef bint bint_base_string_p(cl_object obj) noexcept:
     return not(si_base_string_p(obj) == ECL_NIL)
 
 cdef extern from "eclsig.h":
-    int ecl_sig_on() except 0
-    void ecl_sig_off()
+    void set_ecl_signal_handler()
+    void unset_ecl_signal_handler()
     cdef sigaction_t ecl_sigint_handler
     cdef sigaction_t ecl_sigbus_handler
     cdef sigaction_t ecl_sigfpe_handler
@@ -128,10 +128,11 @@ def test_sigint_before_ecl_sig_on():
     # Raise a SIGINT *now*.  Since we are outside of sig_on() at this
     # point, this SIGINT will not be seen yet.
     signal_raise(SIGINT)
-    # An ordinary KeyboardInterrupt should be raised by ecl_sig_on()
-    # since ecl_sig_on() calls sig_on() before anything else.  This
+    # An ordinary KeyboardInterrupt should be raised by sig_on()
+    # since sig_on() is called before anything else.  This
     # will catch the pending SIGINT.
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     # We should never get here.
     abort()
 
@@ -311,9 +312,11 @@ cdef cl_object ecl_safe_eval(cl_object form) except NULL:
     """
     cdef cl_object ret, error = NULL
 
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     ret = safe_cl_eval(&error, form)
-    ecl_sig_off()
+    unset_ecl_signal_handler()
+    sig_off()
 
     if error != NULL:
         message = ecl_string_to_python(error)
@@ -327,9 +330,11 @@ cdef cl_object ecl_safe_eval(cl_object form) except NULL:
 cdef cl_object ecl_safe_funcall(cl_object func, cl_object arg) except NULL:
     cdef cl_object ret, error = NULL
 
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     ret = safe_cl_funcall(&error, func, arg)
-    ecl_sig_off()
+    unset_ecl_signal_handler()
+    sig_off()
 
     if error != NULL:
         message = ecl_string_to_python(error)
@@ -343,9 +348,11 @@ cdef cl_object ecl_safe_funcall(cl_object func, cl_object arg) except NULL:
 cdef cl_object ecl_safe_apply(cl_object func, cl_object args) except NULL:
     cdef cl_object ret, error = NULL
 
-    ecl_sig_on()
+    sig_on()
+    set_ecl_signal_handler()
     ret = safe_cl_apply(&error, func, args)
-    ecl_sig_off()
+    unset_ecl_signal_handler()
+    sig_off()
 
     if error != NULL:
         message = ecl_string_to_python(error)
