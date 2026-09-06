@@ -8480,7 +8480,7 @@ def bistochastic_as_sum_of_permutations(M, check=True):
     P = Permutations()
 
     while G.size() > 0:
-        matching = G.matching(use_edge_labels=True)
+        matching = G.matching(by_weight=True)
         if len(matching) != n:
             if M.base_ring().is_exact():
                 raise ValueError("this cannot possibly happen")
