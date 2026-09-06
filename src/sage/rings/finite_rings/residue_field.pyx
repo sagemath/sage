@@ -567,7 +567,12 @@ class ResidueField_generic(Field):
             sage: F(CyclotomicField(49))
             Residue field in zbar of Fractional ideal (17)
         """
-        return AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None], residue=self.p), self.p.ring()
+        # The default name should agree with the choice of last resort
+        # in self.polynomial()
+        variable_name = "x"
+        if self.variable_names():
+            variable_name = self.variable_name()
+        return AlgebraicExtensionFunctor([self.polynomial()], [variable_name], [None], residue=self.p), self.p.ring()
 
     def ideal(self):
         r"""
