@@ -15199,15 +15199,17 @@ cdef class Matrix(Matrix1):
 
             # Continuing the "else" branch of Higham's Step (1), and
             # onto B&K's Step (3) where we find the largest
-            # off-diagonal entry (in magnitude) in column "r". Since
-            # the matrix is Hermitian, we need only look at the
-            # above-diagonal entries to find the off-diagonal of
-            # maximal magnitude.
+            # off-diagonal entry (in magnitude) in column "r" of the
+            # active submatrix. Since the matrix is Hermitian, we search
+            # row "r", whose corresponding entries have the same
+            # magnitudes.
             #
             # Note: omega_r is defined as a C double, but the abs()
             # below would make a complex number approximate anyway.
             omega_r = 0
-            for j in range(k, r):
+            for j in range(k, n):
+                if j == r:
+                    continue
                 a_rj_abs = A.get_unsafe(r, j).abs()
                 if a_rj_abs > omega_r:
                     omega_r = a_rj_abs
@@ -15375,20 +15377,32 @@ cdef class Matrix(Matrix1):
             ....:                  [0, 2, 0]])
             sage: P,L,D = A.block_ldlt()
             sage: P
-            [0 0 1]
             [1 0 0]
             [0 1 0]
+            [0 0 1]
             sage: L
-            [  1   0   0]
-            [  2   1   0]
-            [  1 1/2   1]
+            [1 0 0]
+            [0 1 0]
+            [2 0 1]
             sage: D
-            [ 1| 0| 0]
-            [--+--+--]
-            [ 0|-4| 0]
-            [--+--+--]
-            [ 0| 0| 0]
+            [0 1|0]
+            [1 1|0]
+            [---+-]
+            [0 0|0]
             sage: P.transpose()*A*P == L*D*L.transpose()
+            True
+
+        The complete pivot row must be searched.  Ignoring entries after
+        its diagonal can select an unstable one-by-one pivot and overflow
+        the following Schur-complement update::
+
+            sage: # needs scipy
+            sage: H = RDF(1e200)
+            sage: A = matrix(RDF, [[0, 1, 0], [1, 1, H], [0, H, 1]])
+            sage: P, L, D = A.block_ldlt()
+            sage: any(x.is_infinity() or x.is_NaN() for x in L.list() + D.list())
+            False
+            sage: P.T * A * P == L * D * L.T
             True
 
         This two-by-two matrix has no classical factorization, but it
