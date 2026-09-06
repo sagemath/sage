@@ -22,7 +22,7 @@ import socket
 import subprocess
 import sys
 import sysconfig
-from typing import Optional
+from typing import overload
 
 from platformdirs import site_data_dir, user_data_dir
 
@@ -51,8 +51,11 @@ def join(*args) -> str | None:
         return None
     return os.path.join(*args)
 
-
-def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[str]:
+@overload
+def var(key: str, *fallbacks: str, force: bool = False) -> str: pass
+@overload
+def var(key: str, *fallbacks: None, force: bool = False) -> str | None: pass
+def var(key: str, *fallbacks: str | None, force: bool = False) -> str | None:
     """
     Set ``SAGE_ENV[key]`` and return the value.
 
