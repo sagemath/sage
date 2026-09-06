@@ -505,12 +505,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             # know that the result will also live in default_category.
             # Hence, we use the join of the default and the given category.
             category = category.join([category, default_category])
-        # Give the generator a 'name' to make quotients work.  The
-        # name 'x' is used because it's also used for the ring of
-        # integers: see the __init__ method for IntegerRing_class in
-        # sage/rings/integer_ring.pyx.
+
         quotient_ring.QuotientRing_generic.__init__(self, ZZ, ZZ.ideal(order),
-                                                    names=('x',),
+                                                    names=(),
                                                     category=category)
         # We want that the ring is its own base ring.
         self._base = self
