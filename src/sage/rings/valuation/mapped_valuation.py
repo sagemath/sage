@@ -569,7 +569,6 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         sage: w = v.extensions(L); w
         [[ (x - 1)-adic valuation, v(y + 1) = 1 ]-adic valuation,
          [ (x - 1)-adic valuation, v(y - 1) = 1 ]-adic valuation]
-
     """
     def __init__(self, parent, approximant, G, approximants):
         r"""
@@ -593,7 +592,9 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         self._approximants = approximants
 
         from .limit_valuation import LimitValuation
-        limit = LimitValuation(approximant, G)
+        # The outer factory canonicalized the approximant, and G defines a
+        # field extension, so no work remains for the inner factory.
+        limit = LimitValuation(approximant, G, check=False)
         FiniteExtensionFromInfiniteValuation.__init__(self, parent, limit)
 
     def _repr_(self):
