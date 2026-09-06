@@ -1919,12 +1919,31 @@ class Stream_uninitialized(Stream):
             return self._cache[n - self._approximate_order]
 
         if self._uncomputed:
-            for f in self._series:
-                f._uncomputed = False
-            while self._good_cache[0] < n - self._approximate_order + 1:
-                self._compute()
-            for f in self._series:
-                f._uncomputed = True
+            series = list(self._series)
+            # Solve compatible dependency cycles as one system.
+            for s in self._input_streams:
+                if (isinstance(s, Stream_uninitialized)
+                        and s._eqs is not None
+                        and s._pool is self._pool
+                        and s._U is self._U
+                        and any(t is self for t in s._input_streams)
+                        and not any(s is t for t in series)):
+                    series.append(s)
+            equations = []
+            for s in series:
+                for eq in s._eqs:
+                    if not any(eq is e for e in equations):
+                        equations.append(eq)
+            states = [s._uncomputed for s in series]
+            max_lookahead = max(s._max_lookahead for s in series)
+            for s in series:
+                s._uncomputed = False
+            try:
+                while self._good_cache[0] < n - self._approximate_order + 1:
+                    self._compute(equations, max_lookahead)
+            finally:
+                for s, state in zip(series, states):
+                    s._uncomputed = state
 
         if n < self._approximate_order:
             return ZZ.zero()
@@ -2033,13 +2052,16 @@ class Stream_uninitialized(Stream):
                     ao += 1
             s._approximate_order = ao
 
+        for s in self._input_streams:
+            if isinstance(s, Stream_uninitialized) and s is not self:
+                s.__dict__.pop('_good_cache', None)
         self._pool.del_variable(var)
 
-    def _collect_equations(self, offset):
+    def _collect_equations(self, offset, equations=None):
         """
         Return the equations obtained by setting the elements
         ``eq._approximate_order + offset`` equal to zero, for each
-        ``eq`` in ``self._eqs``.
+        given equation, or each equation in ``self._eqs`` by default.
 
         EXAMPLES::
 
@@ -2052,9 +2074,12 @@ class Stream_uninitialized(Stream):
             sage: C._collect_equations(0)
             ([], [[(0, -FESDUMMY_0^2 + FESDUMMY_0)]])
         """
+        if equations is None:
+            equations = self._eqs
+
         lin_coeffs = []
         all_coeffs = []  # only for the error message
-        for i, eq in enumerate(self._eqs):
+        for i, eq in enumerate(equations):
             while True:
                 deg = eq._approximate_order + offset
                 elt = eq[deg]
@@ -2081,7 +2106,7 @@ class Stream_uninitialized(Stream):
                 coeff_num = self._PF(coeff).numerator()
                 V = coeff_num.variables()
                 if not V:
-                    if len(self._eqs) == 1:
+                    if len(equations) == 1:
                         if self._base_ring == self._coefficient_ring:
                             raise ValueError(f"no solution as the coefficient in degree {idx} of the equation is {elt} != 0")
                         raise ValueError(f"no solution as the coefficient of {idx} of the equation is {elt} != 0")
@@ -2148,14 +2173,14 @@ class Stream_uninitialized(Stream):
                 good = True
         return good
 
-    def _compute(self):
+    def _compute(self, equations=None, max_lookahead=None):
         r"""
         Determine the next equations by comparing coefficients, and solve
         those which are linear.
 
-        For each of the equations in the given list of equations
-        ``self._eqs``, we determine the first coefficient which is
-        non-zero.  Among these, we only keep the coefficients which
+        For each of the given equations, or the equations in ``self._eqs``
+        by default, we determine the first coefficient which is non-zero.
+        Among these, we only keep the coefficients which
         are linear, i.e., whose total degree is one, and those which
         are a single variable raised to a positive power, implying
         that the variable itself must be zero.  We then solve the
@@ -2174,17 +2199,22 @@ class Stream_uninitialized(Stream):
             sage: C[3]  # indirect doctest
             2
         """
+        if equations is None:
+            equations = self._eqs
+        if max_lookahead is None:
+            max_lookahead = self._max_lookahead
+
         # determine the next linear equations
         lin_coeffs = []
         all_coeffs = []  # only for the error message
-        for offset in range(self._max_lookahead):
-            new_lin_coeffs, new_all_coeffs = self._collect_equations(offset)
+        for offset in range(max_lookahead):
+            new_lin_coeffs, new_all_coeffs = self._collect_equations(offset, equations)
             lin_coeffs.extend(new_lin_coeffs)
             all_coeffs.extend(new_all_coeffs)
             if lin_coeffs and self._solve_linear_equations_and_subs(lin_coeffs):
                 return
 
-        if len(self._eqs) == 1:
+        if len(equations) == 1:
             eq_str = "\n    ".join(self._eq_str(idx, eq)
                                    for idx, eq in all_coeffs[0])
             if lin_coeffs:
