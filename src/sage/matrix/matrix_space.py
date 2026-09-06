@@ -724,6 +724,14 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Traceback (most recent call last):
         ...
         ValueError: duplicate values for nrows
+
+    Check the optional SharedMeatAxe backend::
+
+        sage: M1 = MatrixSpace(GF(2), 5)
+        sage: M3 = MatrixSpace(GF(2), 5, implementation='meataxe') # optional - meataxe
+        sage: m3 = M3.random_element()                             # optional - meataxe
+        sage: M1(m3 * m3) == M1(m3) * M1(m3)                       # optional - meataxe
+        True
     """
 
     @staticmethod
@@ -942,9 +950,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MatrixSpace(ZZ,2) in Sets().Infinite()
             True
         """
-        # Checks of input data are supposed to be done in __classcall__
-        assert isinstance(implementation, type)
-
         self.Element = implementation
         self.__nrows = nrows
         self.__ncols = ncols
