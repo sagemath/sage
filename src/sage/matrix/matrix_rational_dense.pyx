@@ -1032,6 +1032,83 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.cache('clear_denom', X)
         return X
 
+    def _clear_denom_rowwise(self):
+        r"""
+        Clear denominators independently in each row, divide out its content,
+        and return the resulting integer matrix together with its height.
+
+        Scaling rows independently preserves the row space over `\QQ` and can
+        produce much smaller entries than using one global denominator.
+
+        TESTS::
+
+            sage: A = matrix(QQ, [[-1/2, 1/3], [1/5, 1/7]])
+            sage: B, height = A._clear_denom_rowwise()
+            sage: B
+            [-3  2]
+            [ 7  5]
+            sage: height
+            7
+            sage: A._clear_denom()[0].height()
+            105
+            sage: B.change_ring(QQ).echelon_form() == A.echelon_form()
+            True
+            sage: matrix(QQ, [[2/101, 2/103]])._clear_denom_rowwise()
+            ([103 101], 103)
+        """
+        cdef Py_ssize_t i, j
+        cdef Matrix_integer_dense B
+        cdef fmpz *entry
+        cdef fmpz_t absolute, content, denom, height
+        cdef Integer H = Integer.__new__(Integer)
+
+        from sage.matrix.matrix_space import MatrixSpace
+        MZ = MatrixSpace(ZZ, self._nrows, self._ncols, sparse=False)
+        B = Matrix_integer_dense.__new__(Matrix_integer_dense, MZ,
+                                        None, None, None)
+
+        fmpz_init(absolute)
+        fmpz_init(content)
+        fmpz_init(denom)
+        fmpz_init(height)
+        try:
+            sig_on()
+            try:
+                fmpz_zero(height)
+                for i in range(self._nrows):
+                    fmpz_one(denom)
+                    fmpz_zero(content)
+                    for j in range(self._ncols):
+                        fmpz_lcm(denom, denom,
+                                 fmpq_mat_entry_den(self._matrix, i, j))
+                    for j in range(self._ncols):
+                        entry = fmpz_mat_entry(B._matrix, i, j)
+                        fmpz_divexact(
+                            entry, denom,
+                            fmpq_mat_entry_den(self._matrix, i, j))
+                        fmpz_mul(
+                            entry, entry,
+                            fmpq_mat_entry_num(self._matrix, i, j))
+                        fmpz_gcd(content, content, entry)
+                    if not fmpz_is_zero(content):
+                        for j in range(self._ncols):
+                            entry = fmpz_mat_entry(B._matrix, i, j)
+                            fmpz_divexact(entry, entry, content)
+                    for j in range(self._ncols):
+                        entry = fmpz_mat_entry(B._matrix, i, j)
+                        fmpz_abs(absolute, entry)
+                        if fmpz_cmp(absolute, height) > 0:
+                            fmpz_set(height, absolute)
+            finally:
+                sig_off()
+            fmpz_get_mpz(H.value, height)
+        finally:
+            fmpz_clear(height)
+            fmpz_clear(denom)
+            fmpz_clear(content)
+            fmpz_clear(absolute)
+        return B, H
+
     def charpoly(self, var='x', algorithm=None):
         r"""
         Return the characteristic polynomial of this matrix.
@@ -1632,13 +1709,16 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'classical'``: just clear each column using Gauss elimination.
 
-        - ``height_guess``, ``**kwds`` -- all passed to the
-          ``'multimodular'`` algorithm; ignored by other algorithms
+        - ``height_guess`` -- passed to the ``'multimodular'`` algorithm;
+          ignored by other algorithms
 
         - ``proof`` -- boolean or ``None`` (default: None, see
           proof.linear_algebra or sage.structure.proof). Passed to the
           ``'multimodular'`` algorithm. Note that the Sage global default is
           ``proof=True``.
+
+        - ``**kwds`` -- ignored; accepted for compatibility with the generic
+          :meth:`~sage.matrix.matrix2.Matrix.echelonize`
 
         EXAMPLES::
 
@@ -1724,7 +1804,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         if algorithm in ('flint', 'flint:classical', 'flint:multimodular', 'flint:fflu'):
             pivots = self._echelonize_flint(algorithm)
         elif algorithm == 'multimodular':
-            pivots = self._echelonize_multimodular(height_guess, proof, **kwds)
+            pivots = self._echelonize_multimodular(height_guess, proof)
         elif algorithm == 'classical':
             pivots = self._echelon_in_place_classical()
         elif algorithm == 'padic':
@@ -1797,19 +1877,116 @@ cdef class Matrix_rational_dense(Matrix_dense):
             ....:     ech_multi = m.echelon_form('multimodular'); m._clear_cache()
             ....:     ech_class = m.echelon_form('classical')
             ....:     assert ech_flint == ech_padic == ech_multi == ech_class
+
+        Check that multimodular options are forwarded to :meth:`echelonize`::
+
+            sage: import sage.matrix.misc as matrix_misc
+            sage: original = matrix_misc.matrix_rational_echelon_form_multimodular
+            sage: received = []
+            sage: def wrapper(A, height_guess=None, proof=None):
+            ....:     received.append((height_guess, proof))
+            ....:     return original(A, height_guess=height_guess, proof=proof)
+            sage: matrix_misc.matrix_rational_echelon_form_multimodular = wrapper
+            sage: try:
+            ....:     A = matrix(QQ, [[1, 2]])
+            ....:     flint_result = A.echelon_form(algorithm='flint')
+            ....:     result = A.echelon_form(
+            ....:         algorithm='multimodular', height_guess=37, proof=False)
+            ....: finally:
+            ....:     matrix_misc.matrix_rational_echelon_form_multimodular = original
+            sage: flint_result == result == matrix(QQ, [[1, 2]])
+            True
+            sage: received
+            [(37, False)]
+
+        Keyword arguments that the multimodular algorithm does not understand
+        are ignored, as they are by the other algorithms::
+
+            sage: matrix(QQ, [[1, 2], [3, 4]]).echelon_form(
+            ....:     algorithm='multimodular', cutoff=0)
+            [1 0]
+            [0 1]
+
+        In-place echelonization must still produce an immutable result from
+        this method, while preserving cache-corruption detection::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]])
+            sage: A.echelonize(algorithm='flint')
+            sage: E = A.echelon_form(algorithm='flint')
+            sage: (A.is_mutable(), E.is_mutable(), E is A, E == A)
+            (True, False, False, True)
+            sage: E is A.echelon_form(algorithm='flint')
+            True
+
+        An immutable matrix that is already in echelon form is its own echelon
+        form, and is not copied::
+
+            sage: E.echelon_form(algorithm='flint') is E
+            True
+            sage: E.echelon_form(algorithm='multimodular') is E
+            True
+
+        This holds even if a copy was cached while the matrix was still
+        mutable::
+
+            sage: A.set_immutable()
+            sage: A.echelon_form(algorithm='flint') is A
+            True
+
+        ::
+
+            sage: B = matrix(QQ, [[1, 2], [3, 4]])
+            sage: B.echelonize(algorithm='flint')
+            sage: _ = B.echelon_form(algorithm='flint')
+            sage: del B._cache['echelon_form']
+            sage: B.echelon_form(algorithm='flint')
+            Traceback (most recent call last):
+            ...
+            RuntimeError: in_echelon_form set but not echelon_form
+            sage: C = matrix(QQ, [[1, 2], [3, 4]])
+            sage: C.echelonize(algorithm='flint')
+            sage: _ = C.echelon_form(algorithm='flint')
+            sage: del C._cache['pivots']
+            sage: C.echelon_form(algorithm='flint')
+            Traceback (most recent call last):
+            ...
+            RuntimeError: in_echelon_form set but not pivots
         """
-        x = self.fetch('echelon_form')
+        cdef Matrix_rational_dense E
+        label = 'echelon_form_%s' % algorithm
+        in_echelon_form = self.fetch('in_echelon_form')
+        if in_echelon_form:
+            if self.fetch('echelon_form') is None:
+                raise RuntimeError('in_echelon_form set but not echelon_form')
+            pivots = self.fetch('pivots')
+            if pivots is None:
+                raise RuntimeError('in_echelon_form set but not pivots')
+        if in_echelon_form and self.is_immutable():
+            # ``self`` is its own echelon form and cannot drift away from it.
+            # This takes precedence over an equal copy cached under ``label``
+            # back when ``self`` was still mutable.
+            self.cache(label, self)
+            self.cache('rank', len(pivots))
+            return self
+
+        x = self.fetch(label)
         if x is not None:
             return x
-        if self.fetch('in_echelon_form'):
-            raise RuntimeError('in_echelon_form set but not echelon_form')
 
         E = self.__copy__()
-        E.echelonize(algorithm)
+        if in_echelon_form:
+            E.cache('in_echelon_form', True)
+            E.cache('echelon_form', E)
+            E.cache('pivots', pivots)
+            E.cache('rank', len(pivots))
+        else:
+            E.echelonize(algorithm=algorithm, height_guess=height_guess,
+                         proof=proof, **kwds)
+            pivots = E.pivots()
         E.set_immutable()
-        self.cache('echelon_form', E)
-        self.cache('pivots', E.pivots())
-        self.cache('rank', len(E.pivots()))
+        self.cache(label, E)
+        self.cache('pivots', pivots)
+        self.cache('rank', len(pivots))
         return E
 
     def _echelonize_flint(self, algorithm: str):
@@ -2062,8 +2239,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
            - ``None`` -- (default) use default algorithm for computing Echelon
              forms
 
-           - 'multimodular': much better if the answers
-             factors have small height
+           - ``'multimodular'`` -- can be effective when the answer factors
+             have small height
 
         - ``height_guess`` -- positive integer; only used by
           the multimodular algorithm
@@ -2078,13 +2255,11 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
            IMPORTANT: If you expect that the subspaces in the answer
            are spanned by vectors with small height coordinates, use
-           algorithm='multimodular' and height_guess=1; this is
-           potentially much faster than the default. If you know for a
-           fact the answer will be very small, use
-           algorithm='multimodular', height_guess=bound on height,
-           proof=False.
-
-        You can get very very fast decomposition with proof=False.
+           ``algorithm='multimodular'`` and a tight ``height_guess``.  This can
+           make the multimodular algorithm faster than the default.  Setting
+           ``proof=False`` with an explicit ``height_guess`` attempts
+           reconstruction earlier, but is not guaranteed to improve
+           performance.
 
         EXAMPLES::
 
@@ -2129,8 +2304,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
         - ``echelon_algorithm`` -- an optional algorithm to be passed to the
           method ``echelon_form``
 
-        - ``'multimodular'`` -- use this if the answers have
-          small height
+        - ``'multimodular'`` -- can be effective when the answers have small
+          height
 
         - ``**kwds`` -- passed on to echelon function
 
@@ -2138,10 +2313,11 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
            IMPORTANT: If you expect that the subspaces in the answer are
            spanned by vectors with small height coordinates, use
-           algorithm='multimodular' and height_guess=1; this is potentially
-           much faster than the default. If you know for a fact the answer
-           will be very small, use algorithm='multimodular',
-           height_guess=bound on height, proof=False
+           ``algorithm='multimodular'`` and a tight ``height_guess``.  This can
+           make the multimodular algorithm faster than the default.  Setting
+           ``proof=False`` with an explicit ``height_guess`` attempts
+           reconstruction earlier, but is not guaranteed to improve
+           performance.
 
         OUTPUT:
 
@@ -2259,10 +2435,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
 #          IMPORTANT NOTE:
 #          If you expect that the subspaces in the answer are spanned by vectors
-#          with small height coordinates, use algorithm='multimodular' and
-#          height_guess=1; this is potentially much faster than the default.
-#          If you know for a fact the answer will be very small, use
-#             algorithm='multimodular', height_guess=bound on height, proof=False
+#          with small height coordinates, use algorithm='multimodular' and a
+#          tight height_guess. This can make the multimodular algorithm faster.
 
 #          OUTPUT:
 #              Sequence -- list of tuples (V,g), where V is a subspace
