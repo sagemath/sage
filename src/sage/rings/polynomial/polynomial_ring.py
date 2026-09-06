@@ -397,6 +397,39 @@ class PolynomialRing_generic(Ring):
 
             sage: QQ['λ']('λ^2')
             λ^2
+
+        Elements of polynomial quotient rings are converted explicitly by
+        lifting them to their polynomial representatives (:issue:`42029`)::
+
+            sage: R.<x> = GF(7)[]
+            sage: S.<u> = R.quotient(x^3)
+            sage: T.<v> = R.quotient(x^2)
+            sage: R(u)
+            x
+            sage: R(v)
+            x
+            sage: R(u + 2)
+            x + 2
+
+        This is an explicit conversion, not a ring homomorphism or coercion::
+
+            sage: R(u^3)
+            0
+            sage: R(u)^3
+            x^3
+            sage: u in R
+            True
+            sage: R.has_coerce_map_from(S)
+            False
+
+        This does not affect conversions from quotient representations of
+        other rings (:issue:`42029`)::
+
+            sage: P.<t> = QQ[]
+            sage: K.<a> = NumberField(t^2 + 1)                                          # needs sage.rings.number_field
+            sage: Q = K.polynomial_quotient_ring()                                      # needs sage.rings.number_field
+            sage: K['x'](Q.gen())                                                       # needs sage.rings.number_field
+            a
         """
         C = self.element_class
         if isinstance(x, (list, tuple)):
@@ -422,6 +455,12 @@ class PolynomialRing_generic(Ring):
             if P == self.base_ring():
                 return C(self, [x], check=True, is_gen=False,
                          construct=construct)
+            from sage.rings.polynomial.polynomial_quotient_ring_element import (
+                PolynomialQuotientRingElement,
+            )
+            if (isinstance(x, PolynomialQuotientRingElement)
+                    and P.polynomial_ring() is self):
+                return x.lift()
         if isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
