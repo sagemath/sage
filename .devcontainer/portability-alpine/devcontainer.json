@@ -1,0 +1,23 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "alpine",
+    //"image": "ghcr.io/linuxcontainers/alpine",
+    "dockerFile": "Dockerfile",
+    "onCreateCommand": ".devcontainer/onCreate-meson.sh || true",
+    "features": {
+        "ghcr.io/devcontainers/features/git": {},
+        // Python feature is not compatible with Alpine, so we install it manually in the Dockerfile 
+        // "ghcr.io/devcontainers/features/python:1": {},
+        "ghcr.io/devcontainers/features/common-utils:2": {},
+        "../uv": {
+            "version": "latest"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    }
+}
