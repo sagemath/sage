@@ -11,6 +11,18 @@ import sys
 # Add exit and quit to EXCLUDE to resolve Issue #22529 and Issue #16704
 EXCLUDE = set(['sage_mode', '__DIR__', 'DIR', 'DATA', 'base64', 'exit', 'quit'])
 
+# Module bookkeeping belongs to the caller's execution namespace.  A full
+# restore should not replace it with values from sage.all or sage.all_cmdline.
+_MODULE_METADATA = set([
+    '__cached__',
+    '__doc__',
+    '__file__',
+    '__loader__',
+    '__name__',
+    '__package__',
+    '__spec__',
+])
+
 
 def reset(vars=None, attached=False):
     """
@@ -143,6 +155,10 @@ def restore(vars=None):
             import sage.all
             D = sage.all.__dict__
     _restore(G, D, vars)
+    # The restored LazyImport objects still point at the namespace they came
+    # from.  Relink them before user code gets a chance to resolve them.
+    from sage.misc.lazy_import import clean_namespace
+    clean_namespace(G)
     import sage.calculus.calculus
     _restore(sage.calculus.calculus.syms_cur, sage.calculus.calculus.syms_default, vars)
 
@@ -150,6 +166,8 @@ def restore(vars=None):
 def _restore(G, D, vars):
     if vars is None:
         for k, v in D.items():
+            if k in _MODULE_METADATA:
+                continue
             G[k] = v
     else:
         if isinstance(vars, str):
