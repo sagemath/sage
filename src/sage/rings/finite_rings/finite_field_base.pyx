@@ -1104,7 +1104,10 @@ cdef class FiniteField(Field):
             return self.__polynomial_ring
         else:
             if variable_name is None:
-                self.__polynomial_ring = PolynomialRing(GF(self.characteristic()), self.variable_name())
+                variable_name = "x"  # variable name of last resort
+                if self.variable_names():
+                    variable_name = self.variable_name()
+                self.__polynomial_ring = PolynomialRing(GF(self.characteristic()), variable_name)
                 return self.__polynomial_ring
             else:
                 return PolynomialRing(GF(self.characteristic()), variable_name)
