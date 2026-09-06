@@ -527,7 +527,7 @@ The components on the basis are returned by the square bracket operator for
 # ******************************************************************************
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
@@ -539,9 +539,16 @@ from sage.rings.integer import Integer
 from sage.sets.family import Family, TrivialFamily
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.comp import Components
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
-from sage.tensor.modules.free_module_tensor import FreeModuleTensor
+from sage.tensor.modules.free_module_tensor import (
+    FreeModuleTensor,
+    IndexConfigurationNormalized,
+    TensorTypeNormalized,
+    _is_normalized_tensor_type,
+    _parse_tensor_type,
+)
 from sage.tensor.modules.reflexive_module import (
     ReflexiveModule_abstract,
     ReflexiveModule_base,
@@ -1540,7 +1547,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             elif key == (0, 1):
                 T = self.dual()
             elif sym or antisym:
-                from sage.tensor.modules.tensor_free_submodule import TensorFreeSubmodule_sym
+                from sage.tensor.modules.tensor_free_submodule import (
+                    TensorFreeSubmodule_sym,
+                )
                 T = TensorFreeSubmodule_sym(self, (k, l), sym=sym, antisym=antisym)
             else:
                 from sage.tensor.modules.tensor_free_module import TensorFreeModule
@@ -1758,7 +1767,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             elif p == 1:
                 L = FiniteRankDualFreeModule(self)
             else:
-                from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
+                from sage.tensor.modules.ext_pow_free_module import (
+                    ExtPowerDualFreeModule,
+                )
                 L = ExtPowerDualFreeModule(self, p)
             self._dual_exterior_powers[p] = L
             return L
@@ -1816,8 +1827,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         :class:`~sage.tensor.modules.free_module_linear_group.FreeModuleLinearGroup`
         for more documentation.
         """
-        from sage.tensor.modules.free_module_linear_group import \
-                                                          FreeModuleLinearGroup
+        from sage.tensor.modules.free_module_linear_group import FreeModuleLinearGroup
         if self._general_linear_group is None:
             self._general_linear_group = FreeModuleLinearGroup(self)
         return self._general_linear_group
@@ -2063,8 +2073,14 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         TestSuite(b).run(verbose=tester._verbose, prefix=tester._prefix + "  ",
                          raise_on_failure=is_sub_testsuite)
 
-    def _tensor(self, tensor_type, name=None, latex_name=None, sym=None,
-               antisym=None):
+    def _tensor(
+        self,
+        tensor_type,
+        name=None,
+        latex_name=None,
+        sym=None,
+        antisym=None,
+    ):
         r"""
         Construct a tensor on the free module ``self``.
 
@@ -2107,6 +2123,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: t = M._tensor((1,0), name='t') ; t
             Element t of the Rank-3 free module M over the Integer Ring
         """
+        tensor_type, config = _parse_tensor_type(tensor_type)
         from .comp import CompWithSym
         sym, antisym = CompWithSym._canonicalize_sym_antisym(
             tensor_type[0] + tensor_type[1], sym, antisym)
@@ -2124,9 +2141,14 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                 return self.alternating_contravariant_tensor(tensor_type[0],
                                            name=name, latex_name=latex_name)
         # Generic case:
-        return self.tensor_module(*tensor_type).element_class(self,
-                                 tensor_type, name=name, latex_name=latex_name,
-                                 sym=sym, antisym=antisym)
+        return self.tensor_module(*tensor_type).element_class(
+            self,
+            config,
+            name=name,
+            latex_name=latex_name,
+            sym=sym,
+            antisym=antisym,
+        )
 
     def tensor(self, *args, **kwds):
         r"""
@@ -2209,7 +2231,13 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             return self.tensor_product(*args, **kwds)
         return self._tensor(*args, **kwds)
 
-    def tensor_from_comp(self, tensor_type, comp, name=None, latex_name=None):
+    def tensor_from_comp(
+        self,
+        tensor_type: Union[TensorTypeNormalized, IndexConfigurationNormalized],
+        comp: Components,
+        name: Optional[str] = None,
+        latex_name: Optional[str] = None,
+    ):
         r"""
         Construct a tensor on ``self`` from a set of components.
 
@@ -2273,7 +2301,13 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: t.display(e)
             4 e^0∧e^1 + 5 e^1∧e^2
         """
-        from .comp import CompWithSym, CompFullyAntiSym
+        from .comp import CompFullyAntiSym, CompWithSym
+
+        if _is_normalized_tensor_type(tensor_type):
+            config = tensor_type
+            tensor_type = (config.count("UP"), config.count("DOWN"))
+        else:
+            config = tensor_type
 
         # 0/ Compatibility checks:
         if comp._ring is not self._ring:
@@ -2301,8 +2335,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                                          name=name,
                                          latex_name=latex_name)
         else:
-            resu = self.tensor_module(*tensor_type).element_class(self,
-                                 tensor_type, name=name, latex_name=latex_name)
+            resu = self.tensor_module(*tensor_type).element_class(
+                self, config, name=name, latex_name=latex_name
+            )
             # Tensor symmetries deduced from those of comp:
             if isinstance(comp, CompWithSym):
                 resu._sym = comp._sym

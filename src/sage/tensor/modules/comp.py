@@ -242,13 +242,21 @@ In case of symmetries, only non-redundant components are stored::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 from collections.abc import Iterator
 from operator import itemgetter
+from typing import TYPE_CHECKING, Optional, Union
 
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
+
+if TYPE_CHECKING:
+    from sage.tensor.modules.free_module_tensor import (
+        IndexConfiguration,
+    )
 
 
 class Components(SageObject):
@@ -732,19 +740,18 @@ class Components(SageObject):
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
+        # Determining from the input the list of indices and the format
+        elif isinstance(args, (int, Integer, slice)):
+            indices = args
+        elif isinstance(args[0], slice):
+            indices = args[0]
+            if len(args) == 2:
+                format_type = args[1]
+        elif len(args) == self._nid:
+            indices = args
         else:
-            # Determining from the input the list of indices and the format
-            if isinstance(args, (int, Integer, slice)):
-                indices = args
-            elif isinstance(args[0], slice):
-                indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
-            elif len(args) == self._nid:
-                indices = args
-            else:
-                format_type = args[-1]
-                indices = args[:-1]
+            format_type = args[-1]
+            indices = args[:-1]
         if isinstance(indices, slice):
             return self._get_list(indices, no_format, format_type)
         ind = self._check_indices(indices)
@@ -908,19 +915,18 @@ class Components(SageObject):
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
+        # Determining from the input the list of indices and the format
+        elif isinstance(args, (int, Integer, slice)):
+            indices = args
+        elif isinstance(args[0], slice):
+            indices = args[0]
+            if len(args) == 2:
+                format_type = args[1]
+        elif len(args) == self._nid:
+            indices = args
         else:
-            # Determining from the input the list of indices and the format
-            if isinstance(args, (int, Integer, slice)):
-                indices = args
-            elif isinstance(args[0], slice):
-                indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
-            elif len(args) == self._nid:
-                indices = args
-            else:
-                format_type = args[-1]
-                indices = args[:-1]
+            format_type = args[-1]
+            indices = args[:-1]
         if isinstance(indices, slice):
             self._set_list(indices, format_type, value)
         else:
@@ -937,11 +943,10 @@ class Components(SageObject):
                 # otherwise nothing is done (zero components are not stored):
                 if ind in self._comp:
                     del self._comp[ind]
+            elif format_type is None:
+                self._comp[ind] = self._ring(value)
             else:
-                if format_type is None:
-                    self._comp[ind] = self._ring(value)
-                else:
-                    self._comp[ind] = self._ring({format_type: value})
+                self._comp[ind] = self._ring({format_type: value})
                     # NB: the writing
                     #   self._comp[ind] = self._ring(value, format_type)
                     # is not allowed when ring is an algebra and value some
@@ -1060,9 +1065,17 @@ class Components(SageObject):
             if not zero_value:
                 yield ind, val
 
-    def display(self, symbol, latex_symbol=None, index_positions=None,
-                index_labels=None, index_latex_labels=None,
-                format_spec=None, only_nonzero=True, only_nonredundant=False):
+    def display(
+        self,
+        symbol,
+        latex_symbol=None,
+        index_positions: Optional[IndexConfiguration] = None,
+        index_labels=None,
+        index_latex_labels=None,
+        format_spec=None,
+        only_nonzero=True,
+        only_nonredundant=False,
+    ):
         r"""
         Display all the components, one per line.
 
@@ -1217,10 +1230,14 @@ class Components(SageObject):
         if latex_symbol is None:
             latex_symbol = symbol
         if index_positions is None:
-            index_positions = self._nid * 'd'
+            index_positions = tuple("DOWN" for _ in range(self._nid))
         elif len(index_positions) != self._nid:
             raise ValueError("the argument 'index_positions' must contain " +
                              "{} characters".format(self._nid))
+        elif isinstance(index_positions, str):
+            index_positions = tuple(
+                "DOWN" if c == "d" else "UP" for c in index_positions.lower()
+            )
         if index_labels is None:
             index_labels = [str(i) for i in range(si, nsi)]
         elif len(index_labels) != self._dim:
@@ -1258,32 +1275,42 @@ class Components(SageObject):
             else:
                 zero_value = val == 0
             if not zero_value or not only_nonzero:
-                indices = ''  # text indices
-                d_indices = ''  # LaTeX down indices
-                u_indices = ''  # LaTeX up indices
-                previous = None  # position of previous index
+                indices = ""  # text indices
+                d_indices = ""  # LaTeX down indices
+                u_indices = ""  # LaTeX up indices
+                previous: Optional[
+                    IndexCharacterNormalized
+                ] = None  # position of previous index
                 for k in range(self._nid):
                     i = ind[k] - si
-                    if index_positions[k] == 'd':
-                        if previous == 'd':
+                    if index_positions[k] == "DOWN":
+                        if previous == "DOWN":
                             indices += sep + index_labels[i]
                         else:
-                            indices += '_' + index_labels[i]
-                        d_indices += r'\,' + index_latex_labels[i]
-                        u_indices += r'\phantom{{\, {}}}'.format(index_latex_labels[i])
-                        previous = 'd'
+                            indices += "_" + index_labels[i]
+                        d_indices += r"\," + index_latex_labels[i]
+                        u_indices += r"\phantom{{\, {}}}".format(index_latex_labels[i])
+                        previous = "DOWN"
                     else:
-                        if previous == 'u':
+                        if previous == "UP":
                             indices += sep + index_labels[i]
                         else:
-                            indices += '^' + index_labels[i]
-                        d_indices += r'\phantom{{\, {}}}'.format(index_latex_labels[i])
-                        u_indices += r'\,' + index_latex_labels[i]
-                        previous = 'u'
-                rtxt += symbol + indices + ' = {} \n'.format(val)
-                rlatex += (latex_symbol + r'_{' + d_indices + r'}^{'
-                           + u_indices + r'} & = & ' + latex(val) + r'\\')
-        if rtxt == '':
+                            indices += "^" + index_labels[i]
+                        d_indices += r"\phantom{{\, {}}}".format(index_latex_labels[i])
+                        u_indices += r"\," + index_latex_labels[i]
+                        previous = "UP"
+                rtxt += symbol + indices + " = {} \n".format(val)
+                rlatex += (
+                    latex_symbol
+                    + r"_{"
+                    + d_indices
+                    + r"}^{"
+                    + u_indices
+                    + r"} & = & "
+                    + latex(val)
+                    + r"\\"
+                )
+        if rtxt == "":
             # no component has been displayed
             rlatex = ''
         else:
@@ -1912,15 +1939,22 @@ class Components(SageObject):
             result._comp[ind] = val / other
         return result
 
-    def trace(self, pos1, pos2):
+    def trace(
+        self,
+        positions: Union[int, list[tuple[int, int]]] = 0,
+        position2: Optional[int] = None,
+    ) -> Components:
         r"""
         Index contraction.
 
         INPUT:
 
-        - ``pos1`` -- position of the first index for the contraction (with the
-          convention position=0 for the first slot)
-        - ``pos2`` -- position of the second index for the contraction
+        - ``positions`` -- (default: 0) either the position of the first index for the
+          contraction, or a list of positions; with the convention that the first
+          slot has position ``0``.
+
+        - ``position2`` -- (default: None) position of the second index for the
+          contraction.
 
         OUTPUT:
 
@@ -1971,31 +2005,50 @@ class Components(SageObject):
         if self._nid < 2:
             raise ValueError("contraction can be performed only on " +
                              "components with at least 2 indices")
-        if pos1 < 0 or pos1 > self._nid - 1:
-            raise IndexError("pos1 out of range")
-        if pos2 < 0 or pos2 > self._nid - 1:
-            raise IndexError("pos2 out of range")
-        if pos1 == pos2:
-            raise IndexError("the two positions must differ for the " +
-                             "contraction to be meaningful")
-        si = self._sindex
-        nsi = si + self._dim
-        if self._nid == 2:
-            res = 0
-            for i in range(si, nsi):
-                res += self[[i, i]]
-            return res
-        # More than 2 indices
-        result = Components(self._ring, self._frame, self._nid - 2,
-                            self._sindex, self._output_formatter)
-        if pos1 > pos2:
-            pos1, pos2 = (pos2, pos1)
-        for ind, val in self._comp.items():
-            if ind[pos1] == ind[pos2]:
-                # there is a contribution to the contraction
-                ind_res = ind[:pos1] + ind[pos1+1:pos2] + ind[pos2+1:]
-                result[[ind_res]] += val
-        return result
+        if not isinstance(positions, list):
+            if position2 is None:
+                raise TypeError(
+                    "the first argument must be a list if no second position is provided"
+                )
+            else:
+                positions = [(positions, position2)]
+
+        for pos1, pos2 in positions:
+            if pos1 < 0 or pos1 > self._nid - 1:
+                raise IndexError("pos1 out of range")
+            if pos2 < 0 or pos2 > self._nid - 1:
+                raise IndexError("pos2 out of range")
+            if pos1 == pos2:
+                raise IndexError(
+                    "the two positions must differ for the "
+                    + "contraction to be meaningful"
+                )
+        if self._nid == 2 * len(positions):
+            # result is scalar
+            result = 0
+            for ind, val in self._comp.items():
+                if all(ind[pos1] == ind[pos2] for pos1, pos2 in positions):
+                    # there is a contribution to the contraction
+                    result += val
+            return result
+        else:
+            # More than 2 indices
+            result = Components(
+                self._ring,
+                self._frame,
+                self._nid - 2 * len(positions),
+                self._sindex,
+                self._output_formatter,
+            )
+            for ind, val in self._comp.items():
+                for pos1, pos2 in positions:
+                    if pos1 > pos2:
+                        pos1, pos2 = (pos2, pos1)
+                    if ind[pos1] == ind[pos2]:
+                        # there is a contribution to the contraction
+                        ind_res = ind[:pos1] + ind[pos1 + 1 : pos2] + ind[pos2 + 1 :]
+                        result[[ind_res]] += val
+            return result
 
     def contract(self, *args):
         r"""
@@ -3221,19 +3274,18 @@ class CompWithSym(Components):
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
+        # Determining from the input the list of indices and the format
+        elif isinstance(args, (int, Integer, slice)):
+            indices = args
+        elif isinstance(args[0], slice):
+            indices = args[0]
+            if len(args) == 2:
+                format_type = args[1]
+        elif len(args) == self._nid:
+            indices = args
         else:
-            # Determining from the input the list of indices and the format
-            if isinstance(args, (int, Integer, slice)):
-                indices = args
-            elif isinstance(args[0], slice):
-                indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
-            elif len(args) == self._nid:
-                indices = args
-            else:
-                format_type = args[-1]
-                indices = args[:-1]
+            format_type = args[-1]
+            indices = args[:-1]
         if isinstance(indices, slice):
             return self._get_list(indices, no_format, format_type)
         sign, ind = self._ordered_indices(indices)
@@ -3302,19 +3354,18 @@ class CompWithSym(Components):
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
+        # Determining from the input the list of indices and the format
+        elif isinstance(args, (int, Integer, slice)):
+            indices = args
+        elif isinstance(args[0], slice):
+            indices = args[0]
+            if len(args) == 2:
+                format_type = args[1]
+        elif len(args) == self._nid:
+            indices = args
         else:
-            # Determining from the input the list of indices and the format
-            if isinstance(args, (int, Integer, slice)):
-                indices = args
-            elif isinstance(args[0], slice):
-                indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
-            elif len(args) == self._nid:
-                indices = args
-            else:
-                format_type = args[-1]
-                indices = args[:-1]
+            format_type = args[-1]
+            indices = args[:-1]
         if isinstance(indices, slice):
             self._set_list(indices, format_type, value)
         else:
@@ -3336,17 +3387,15 @@ class CompWithSym(Components):
             elif zero_value:
                 if ind in self._comp:
                     del self._comp[ind]  # zero values are not stored
-            else:
-                if format_type is None:
-                    if sign == 1:
-                        self._comp[ind] = self._ring(value)
-                    else:   # sign = -1
-                        self._comp[ind] = -self._ring(value)
-                else:
-                    if sign == 1:
-                        self._comp[ind] = self._ring({format_type: value})
-                    else:   # sign = -1
-                        self._comp[ind] = -self._ring({format_type: value})
+            elif format_type is None:
+                if sign == 1:
+                    self._comp[ind] = self._ring(value)
+                else:   # sign = -1
+                    self._comp[ind] = -self._ring(value)
+            elif sign == 1:
+                self._comp[ind] = self._ring({format_type: value})
+            else:   # sign = -1
+                self._comp[ind] = -self._ring({format_type: value})
 
     def swap_adjacent_indices(self, pos1, pos2, pos3):
         r"""
@@ -3679,7 +3728,11 @@ class CompWithSym(Components):
                     result._comp[ind_s + ind_o] = val_s * val_o
         return result
 
-    def trace(self, pos1, pos2):
+    def trace(
+        self,
+        positions: Union[int, list[tuple[int, int]]] = 0,
+        position2: Optional[int] = None,
+    ) -> Components:
         r"""
         Index contraction, taking care of the symmetries.
 
@@ -3792,6 +3845,14 @@ class CompWithSym(Components):
         if self._nid < 2:
             raise TypeError("contraction can be performed only on " +
                             "components with at least 2 indices")
+        if not isinstance(positions, list):
+            if position2 is None:
+                raise TypeError(
+                    "the first argument must be a list if no second position is provided"
+                )
+            else:
+                positions = [(positions, position2)]
+        pos1, pos2 = positions[0]
         if pos1 < 0 or pos1 > self._nid - 1:
             raise IndexError("pos1 out of range")
         if pos2 < 0 or pos2 > self._nid - 1:
@@ -4802,19 +4863,18 @@ class CompFullySym(CompWithSym):
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
+        # Determining from the input the list of indices and the format
+        elif isinstance(args, (int, Integer, slice)):
+            indices = args
+        elif isinstance(args[0], slice):
+            indices = args[0]
+            if len(args) == 2:
+                format_type = args[1]
+        elif len(args) == self._nid:
+            indices = args
         else:
-            # Determining from the input the list of indices and the format
-            if isinstance(args, (int, Integer, slice)):
-                indices = args
-            elif isinstance(args[0], slice):
-                indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
-            elif len(args) == self._nid:
-                indices = args
-            else:
-                format_type = args[-1]
-                indices = args[:-1]
+            format_type = args[-1]
+            indices = args[:-1]
 
         if isinstance(indices, slice):
             return self._get_list(indices, no_format, format_type)
@@ -4874,19 +4934,18 @@ class CompFullySym(CompWithSym):
                 indices = args[0]           # [[(i,j,...)]] or [[[i,j,...]]] and [[i,j,...]]
             else:
                 indices = tuple(args)
+        # Determining from the input the list of indices and the format
+        elif isinstance(args, (int, Integer, slice)):
+            indices = args
+        elif isinstance(args[0], slice):
+            indices = args[0]
+            if len(args) == 2:
+                format_type = args[1]
+        elif len(args) == self._nid:
+            indices = args
         else:
-            # Determining from the input the list of indices and the format
-            if isinstance(args, (int, Integer, slice)):
-                indices = args
-            elif isinstance(args[0], slice):
-                indices = args[0]
-                if len(args) == 2:
-                    format_type = args[1]
-            elif len(args) == self._nid:
-                indices = args
-            else:
-                format_type = args[-1]
-                indices = args[:-1]
+            format_type = args[-1]
+            indices = args[:-1]
         if isinstance(indices, slice):
             self._set_list(indices, format_type, value)
         else:
@@ -4903,11 +4962,10 @@ class CompFullySym(CompWithSym):
                 # otherwise nothing is done (zero components are not stored):
                 if ind in self._comp:
                     del self._comp[ind]  # zero values are not stored
+            elif format_type is None:
+                self._comp[ind] = self._ring(value)
             else:
-                if format_type is None:
-                    self._comp[ind] = self._ring(value)
-                else:
-                    self._comp[ind] = self._ring({format_type: value})
+                self._comp[ind] = self._ring({format_type: value})
 
     def __add__(self, other):
         r"""
