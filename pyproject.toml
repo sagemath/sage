@@ -246,6 +246,7 @@ dev = [
   'numpy >=2.2.4', # Duplicate build-system requirement to fix editable installs with uv
 ]
 docs = [
+  "docutils",
   "furo",
   "jupyter-sphinx",
   "python-dateutil",
