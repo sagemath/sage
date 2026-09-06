@@ -80,21 +80,26 @@ class RootSumFunction(BuiltinFunction):
         """Initialize the RootSum function."""
         BuiltinFunction.__init__(self, "root_sum", nargs=1)
 
-    def __call__(self, polynomial, summand, **kwargs):
+    def __call__(self, polynomial, summand=None, **kwargs):
         """
         Create a RootSum expression.
+
+        When called with one argument (during numerical evaluation),
+        it returns the expression itself.
         """
-        # Check if polynomial has variables
+        # If called with only polynomial (e.g., during numerical eval)
+        if summand is None:
+            expr = super().__call__(polynomial, **kwargs)
+            return expr
+
+        # Original logic for creating RootSum
         try:
             if not polynomial.variables():
-                # Constant polynomial - sum is empty = 0
                 return SR(0)
         except Exception:
             pass
 
-        # Create the expression using parent
         expr = super().__call__(polynomial, **kwargs)
-        # Store the summand and polynomial in a dictionary keyed by expression ID
         if not hasattr(self, '_data'):
             self._data = {}
         self._data[id(expr)] = {
