@@ -3083,13 +3083,27 @@ cdef class Matrix_rational_dense(Matrix_dense):
     # ###############################################
 
     def __pari__(self):
-        """
+        r"""
         Return pari version of this matrix.
 
         EXAMPLES::
 
             sage: matrix(QQ,2,[1/5,-2/3,3/4,4/9]).__pari__()
             [1/5, -2/3; 3/4, 4/9]
+
+        A PARI ``t_MAT`` is a vector of columns, so a matrix with no columns
+        has nowhere to record its number of rows.  The row count is therefore
+        lost for such a matrix, while the number of columns is preserved when
+        there are no rows::
+
+            sage: matrix(QQ, 2, 0).__pari__()
+            [;]
+            sage: matrix(QQ, 2, 0).__pari__().sage().dimensions()
+            (0, 0)
+            sage: matrix(QQ, 0, 3).__pari__()
+            matrix(0,3)
+            sage: matrix(QQ, 0, 3).__pari__().sage().dimensions()
+            (0, 3)
         """
         return rational_matrix(self._matrix, False)
 
