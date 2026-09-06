@@ -3,10 +3,12 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
   'cypari2 >=2.2.1; sys_platform != "win32"',
+  'meson >=1.11.2',
   'meson-python',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
-  'cython >=3.1.0',
+  # Cython 3.3 has a bug in C++ std::list-to-Python conversion; see https://github.com/cython/cython/issues/7939
+  'cython >=3.1.0, <3.3',
   'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
@@ -46,7 +48,8 @@ dependencies = [
   'six >=1.15.0',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
-  'cython >=3.1.0',
+  # Cython 3.3 has a bug in C++ std::list-to-Python conversion; see https://github.com/cython/cython/issues/7939
+  'cython >=3.1.0, <3.3',
   'fpylll >=0.5.9; sys_platform != "win32"',
   'gmpy2 >=2.1.5',
   'ipykernel >=5.2.1',
@@ -144,6 +147,7 @@ host-requires = [
   "pkg:generic/highs",
   "pkg:generic/iml",
   "pkg:generic/lcalc",
+  "pkg:generic/libatomic_ops",
   "pkg:generic/libbraiding",
   "pkg:generic/libgd",
   "pkg:generic/libhomfly",
@@ -221,7 +225,7 @@ dev = [
   "cibuildwheel",
   "conda-lock",
   "grayskull",
-  "meson", # Duplicate build-system requirement to fix editable installs with uv
+  "meson >=1.11.2", # Duplicate build-system requirement to fix editable installs with uv
   "meson-python", # Duplicate build-system requirement to fix editable installs with uv
   "ninja", # Duplicate build-system requirement to fix editable installs with uv
   "pygithub",
@@ -233,7 +237,8 @@ dev = [
   "uv",
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
   'cysignals >=1.12.1', # Duplicate build-system requirement to fix editable installs with uv
-  'cython >=3.1.0', # Duplicate build-system requirement to fix editable installs with uv
+  # Cython 3.3 has a bug in C++ std::list-to-Python conversion; see https://github.com/cython/cython/issues/7939
+  'cython >=3.1.0, <3.3', # Duplicate build-system requirement to fix editable installs with uv
   'gmpy2 >=2.1.5', # Duplicate build-system requirement to fix editable installs with uv
   'jinja2', # Duplicate build-system requirement to fix editable installs with uv
   'memory_allocator', # Duplicate build-system requirement to fix editable installs with uv

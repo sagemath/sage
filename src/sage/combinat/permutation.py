@@ -9519,7 +9519,9 @@ class CyclicPermutationsOfPartition(Permutations):
                 sage: elt.check()                                                       # needs sage.combinat
             """
             if [sorted(_) for _ in self] != [sorted(_) for _ in self.parent().partition]:
-                raise ValueError("Invalid cyclic permutation of the partition" % self.parent().partition)
+                raise ValueError(
+                    f"Invalid cyclic permutation of the partition {self.parent().partition}"
+                )
 
     def _repr_(self):
         """
