@@ -4,10 +4,11 @@ import sys
 
 from sage.cli.eval_cmd import EvalCmd
 from sage.cli.interactive_shell_cmd import InteractiveShellCmd
+from sage.cli.jupyter_kernel_cmd import JupyterKernelCmd
 from sage.cli.notebook_cmd import JupyterNotebookCmd
 from sage.cli.options import CliOptions
-from sage.cli.version_cmd import VersionCmd
 from sage.cli.run_file_cmd import RunFileCmd
+from sage.cli.version_cmd import VersionCmd
 
 
 def main() -> int:
@@ -39,6 +40,7 @@ def main() -> int:
 
     VersionCmd.extend_parser(parser)
     JupyterNotebookCmd.extend_parser(parser)
+    JupyterKernelCmd.extend_parser(parser)
     EvalCmd.extend_parser(parser)
     RunFileCmd.extend_parser(parser)
 
@@ -50,6 +52,8 @@ def main() -> int:
 
     logging.basicConfig(level=logging.DEBUG if options.verbose else logging.INFO)
 
+    if args.jupyter_kernel is not None:
+        return JupyterKernelCmd(options).run()
     if args.file:
         return RunFileCmd(options).run()
     if args.command:

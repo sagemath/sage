@@ -1,6 +1,6 @@
 {
   "argv": [
-    "python",
+    "python3",
     "-m",
     "sage.repl.ipython_kernel",
     "-f",
