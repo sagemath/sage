@@ -36,6 +36,15 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
     ``EnumeratedSets`` and has unique representation.
     The list of the elements is expanded in memory.
 
+    .. NOTE::
+
+        The comparison operators (``<=``, ``>=``, ``<``, ``>``) use
+        **set semantics** for element membership, meaning duplicates
+        are ignored. For example, ``{1, 1, 2}`` is treated as
+        ``{1, 2}`` for subset/superset checks. However, equality
+        (``==``) remains enumeration-sensitive, so
+        ``FiniteEnumeratedSet([1, 2]) != FiniteEnumeratedSet([2, 1])``.
+
     EXAMPLES::
 
         sage: S = FiniteEnumeratedSet([1, 2, 3])
@@ -410,6 +419,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
         This implements the ``<=`` operator for :class:`FiniteEnumeratedSet`.
 
+        Comparisons use set semantics (duplicates ignored).
+
         EXAMPLES::
 
             sage: A = FiniteEnumeratedSet([2, 3])
@@ -432,13 +443,26 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: B <= A
             True
 
+            sage: A = FiniteEnumeratedSet([1, 1, 2])
+            sage: B = FiniteEnumeratedSet([2, 1])
+            sage: A <= B  # Duplicates ignored
+            True
+            sage: B <= A
+            True
+
+            sage: from sage.modules.free_module import FreeModule
+            sage: QQ = RationalField()
+            sage: (QQ^[2, 3]).basis().keys() <= (QQ^[1, 2, 3]).basis().keys()
+            True
+            sage: (QQ^[1, 2, 3]).basis().keys() <= (QQ^[2, 3]).basis().keys()
+            False
+
         TESTS::
 
             sage: A = FiniteEnumeratedSet([1, 2])
-            sage: B = FiniteEnumeratedSet([1, 2])
-            sage: A <= B
+            sage: A.__lt__(5) is NotImplemented
             True
-            sage: B <= A
+            sage: A.__gt__(5) is NotImplemented
             True
 
             sage: A <= 5  # Unsupported type
@@ -454,12 +478,12 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         if not isinstance(other, FiniteEnumeratedSet):
             return NotImplemented
 
-        # Fast path: use hash-based set for O(n) performance
+        # Fast path: use hash-based set for expected O(m+n) performance
         try:
             other_set = set(other._elements)
             return all(x in other_set for x in self._elements)
         except TypeError:
-            # Fallback: linear scan for unhashable elements
+            # Fallback: linear scan remains worst-case quadratic
             return all(x in other._elements for x in self._elements)
 
     def __ge__(self, other):
@@ -467,6 +491,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         Return whether ``self`` is a superset of ``other``.
 
         This implements the ``>=`` operator for :class:`FiniteEnumeratedSet`.
+
+        Comparisons use set semantics (duplicates ignored).
 
         EXAMPLES::
 
@@ -487,6 +513,13 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             True
             sage: B >= A
             True
+
+            sage: A = FiniteEnumeratedSet([1, 1, 2])
+            sage: B = FiniteEnumeratedSet([2, 1])
+            sage: A >= B  # Duplicates ignored
+            True
+            sage: B >= A
+            True
         """
         # Quick optimization: same object
         if self is other:
@@ -496,12 +529,12 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         if not isinstance(other, FiniteEnumeratedSet):
             return NotImplemented
 
-        # Fast path: use hash-based set for O(n) performance
+        # Fast path: use hash-based set for expected O(m+n) performance
         try:
             self_set = set(self._elements)
             return all(x in self_set for x in other._elements)
         except TypeError:
-            # Fallback: linear scan for unhashable elements
+            # Fallback: linear scan remains worst-case quadratic
             return all(x in self._elements for x in other._elements)
 
     def __lt__(self, other):
@@ -512,6 +545,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
         A proper subset means all elements of self are in other, and
         there is at least one element in other not in self.
+        Comparisons use set semantics (duplicates ignored).
 
         EXAMPLES::
 
@@ -535,6 +569,18 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: B < A
             False
 
+            sage: A = FiniteEnumeratedSet([1, 1, 2])
+            sage: B = FiniteEnumeratedSet([2, 1])
+            sage: A < B  # Duplicates ignored -> same set
+            False
+            sage: B < A
+            False
+
+            sage: A = FiniteEnumeratedSet([1, 1, 2])
+            sage: B = FiniteEnumeratedSet([1, 2, 3])
+            sage: A < B  # Proper subset
+            True
+
         TESTS::
 
             sage: A < 5  # Unsupported type
@@ -557,6 +603,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
 
         A proper superset means all elements of other are in self, and
         there is at least one element in self not in other.
+        Comparisons use set semantics (duplicates ignored).
 
         EXAMPLES::
 
@@ -579,6 +626,18 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             False
             sage: B > A
             False
+
+            sage: A = FiniteEnumeratedSet([1, 1, 2])
+            sage: B = FiniteEnumeratedSet([2, 1])
+            sage: A > B  # Duplicates ignored -> same set
+            False
+            sage: B > A
+            False
+
+            sage: A = FiniteEnumeratedSet([1, 2, 3])
+            sage: B = FiniteEnumeratedSet([1, 1, 2])
+            sage: A > B  # Proper superset
+            True
 
         TESTS::
 
