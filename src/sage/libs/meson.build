@@ -173,8 +173,19 @@ gc = dependency(
   required: not is_windows,
   disabler: true,
 )
-homfly = dependency('libhomfly', required: false, disabler: true)
-if not homfly.found()
+
+
+# This can go back to a simple
+#
+# dependency('libhomfly', required: get_option('libhomfly'), disabler: true)
+#
+# when the fallback is removed.
+homfly = dependency(
+  'libhomfly',
+  required: get_option('libhomfly').disabled() ? get_option('libhomfly') : false,
+  disabler: true,
+)
+if not homfly.found() and not get_option('libhomfly').disabled()
   # fallback for older versions without pkg-config
   homfly = cc.find_library(
     'homfly',
