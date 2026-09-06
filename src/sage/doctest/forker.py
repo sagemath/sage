@@ -53,9 +53,9 @@ import hashlib
 import linecache
 import multiprocessing
 import os
-import platform
 import re
 import signal
+import subprocess
 import sys
 import tempfile
 import time
@@ -67,6 +67,7 @@ from dis import findlinestarts
 from queue import Empty
 
 import IPython.lib.pretty
+from cysignals.signals import set_debug_level
 
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
@@ -80,8 +81,12 @@ from sage.doctest.parsing import (
 )
 from sage.doctest.sources import DictAsObject
 from sage.doctest.util import RecordingDict, Timer, count_noun
+from sage.interfaces.quit import invalidate_all
 from sage.misc import randstate
+from sage.repl.rich_output import get_display_manager
+from sage.repl.rich_output.backend_doctest import BackendDoctest
 from sage.repl.user_globals import set_globals
+from sage.structure.debug_options import debug
 from sage.structure.sage_object import SageObject
 
 if typing.TYPE_CHECKING:
@@ -125,7 +130,7 @@ def _sorted_dict_pprinter_factory(start, end):
 
 def init_sage(controller: DocTestController | None = None) -> None:
     """
-    Import the Sage library.
+    Initialize Sage for doctesting.
 
     This function is called once at the beginning of a doctest run
     (rather than once for each file).  It imports the Sage library,
@@ -202,30 +207,20 @@ def init_sage(controller: DocTestController | None = None) -> None:
     # So here we fore sorted dict printing.
     IPython.lib.pretty.for_type(dict, _sorted_dict_pprinter_factory('{', '}'))
 
-    if controller is None:
-        import sage.repl.ipython_kernel.all_jupyter
-    else:
+    if controller is not None:
         controller.load_environment()
 
-    try:
-        from sage.interfaces.quit import invalidate_all
-        invalidate_all()
-    except ModuleNotFoundError:
-        pass
+    invalidate_all()
 
     # Disable cysignals debug messages in doctests: this is needed to
     # make doctests pass when cysignals was built with debugging enabled
-    from cysignals.signals import set_debug_level
     set_debug_level(0)
 
     # Use the rich output backend for doctest
-    from sage.repl.rich_output import get_display_manager
     dm = get_display_manager()
-    from sage.repl.rich_output.backend_doctest import BackendDoctest
     dm.switch_backend(BackendDoctest())
 
     # Switch on extra debugging
-    from sage.structure.debug_options import debug
     debug.refine_category_hash_check = True
 
     # We import readline before forking, otherwise Pdb doesn't work
@@ -2496,16 +2491,25 @@ class DocTestWorker(multiprocessing.Process):
             False
         """
         try:
-            import subprocess
-            self.process_tree_before_kill = subprocess.run(["ps", "-ef", "--cols", "1000", "--forest"],
-                                                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                                                           text=True, errors="ignore", check=False).stdout
+            self.process_tree_before_kill = subprocess.run(
+                ["ps", "-ef", "--cols", "1000", "--forest"],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                text=True,
+                errors="ignore",
+            ).stdout
         except FileNotFoundError:  # ps not available? Unlikely
             pass
         except subprocess.CalledProcessError:
-            self.process_tree_before_kill = subprocess.run(["ps", "-efwww"],
-                                                           stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                                                           text=True, errors="ignore", check=False).stdout
+            self.process_tree_before_kill = subprocess.run(
+                ["ps", "-efwww"],
+                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                text=True,
+                errors="ignore",
+            ).stdout
 
         if self.rmessages is not None:
             os.close(self.rmessages)

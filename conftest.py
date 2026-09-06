@@ -11,6 +11,8 @@ import doctest
 import inspect
 import sys
 import warnings
+from os import unlink
+from tempfile import NamedTemporaryFile
 from typing import TYPE_CHECKING, Any, Optional
 
 import pytest
@@ -30,6 +32,9 @@ from sage.doctest.forker import (
     showwarning_with_traceback,
 )
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
+from sage.features import FeatureNotPresentError
+from sage.repl.rich_output import get_display_manager
+from sage.repl.user_globals import set_globals
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -56,8 +61,6 @@ class SageDoctestModule(DoctestModule):
     """
 
     def collect(self) -> Iterable[DoctestItem]:
-        import doctest
-
         class MockAwareDocTestFinder(doctest.DocTestFinder):
             """A hackish doctest finder that overrides stdlib internals to fix a stdlib bug.
             https://github.com/pytest-dev/pytest/issues/3456
@@ -120,8 +123,6 @@ class SageDoctestModule(DoctestModule):
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
-        from sage.features import FeatureNotPresentError
-
         runner = _get_runner(
             verbose=False,
             optionflags=optionflags,
@@ -247,9 +248,7 @@ def pytest_collect_file(
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
-def pytest_ignore_collect(
-    collection_path: Path, config: pytest.Config
-) -> bool | None:
+def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
     """
     This hook is called when collecting test files, and can be used to
     prevent considering this path for collection by returning ``True``.
@@ -333,9 +332,6 @@ def doctest_run(
     out: Any = None,
     clear_globs: bool = True,
 ) -> doctest.TestResults:
-    from sage.repl.rich_output import get_display_manager
-    from sage.repl.user_globals import set_globals
-
     traceback.format_exception_only = format_exception_only
 
     # Display warnings in doctests
@@ -351,14 +347,18 @@ doctest.DocTestRunner.run = doctest_run
 
 
 @pytest.fixture(autouse=True, scope="session")
-def add_imports(doctest_namespace: dict[str, Any]):
+def add_imports(doctest_namespace: dict[str, Any], pytestconfig: pytest.Config):
     """
     Add global imports for doctests.
 
     See `pytest documentation <https://docs.pytest.org/en/stable/doctest.html#doctest-namespace-fixture>`.
     """
+    if not pytestconfig.getoption("doctest") or pytestconfig.getoption("collectonly"):
+        # Do not add imports if doctests are not enabled or we only collect tests
+        return
+
     # Inject sage.all into each doctest
-    import sage.repl.ipython_kernel.all_jupyter
+    import sage.repl.ipython_kernel.all_jupyter  # noqa: PLC0415
 
     dict_all = sage.repl.ipython_kernel.all_jupyter.__dict__
 
@@ -383,8 +383,6 @@ def tmpfile():
     * https://github.com/pytest-dev/pytest/issues/13669
 
     """
-    from os import unlink
-    from tempfile import NamedTemporaryFile
-    t = NamedTemporaryFile(delete=False)
-    yield t
-    unlink(t.name)
+    file = NamedTemporaryFile(delete=False)
+    yield file
+    unlink(file.name)
