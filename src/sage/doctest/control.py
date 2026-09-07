@@ -142,6 +142,7 @@ class DocTestDefaults(SageObject):
         self.initial = False
         self.exitfirst = False
         self.force_lib = False
+        self.runtime_docstrings = False
         self.if_installed = False
         self.abspath = not runtest_default
         self.verbose = False
@@ -1028,7 +1029,11 @@ class DocTestController(SageObject):
                 raise ValueError(f"--all-except includes {paths_to_remove - set(paths)}, "
                                  f"which are not found in {paths}")
             paths = [path for path in paths if path not in paths_to_remove]  # keep duplicates
-        self.sources = [FileDocTestSource(path, self.options) for path in paths]
+        from sage.doctest.sources import RuntimePythonFileSource
+        self.sources = [RuntimePythonFileSource(path, self.options)
+                        if self.options.runtime_docstrings and path.endswith('.py')
+                        else FileDocTestSource(path, self.options)
+                        for path in paths]
 
     def filter_sources(self):
         """
@@ -1282,7 +1287,7 @@ class DocTestController(SageObject):
         opt = dict_difference(self.options.__dict__, DocTestDefaults(runtest_default=True).__dict__)
         # Options with no argument
         for o in ("all", "installed", "long", "initial", "exitfirst",
-                  "force_lib", "if_installed", "abspath", "verbose",
+                  "force_lib", "runtime_docstrings", "if_installed", "abspath", "verbose",
                   "debug", "only_errors", "failed", "new",
                   "show_skipped"):
             if o in opt:
