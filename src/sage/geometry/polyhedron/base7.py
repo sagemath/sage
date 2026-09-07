@@ -675,8 +675,8 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P_rdf.volume()
             4.0
             sage: ico = polytopes.icosahedron(exact=False)
-            sage: ico.volume()
-            2.181694990...
+            sage: ico.volume()  # abs tol 1e-9
+            2.1816949907715726
         """
         from sage.features import FeatureNotPresentError
         if measure == 'induced_rational' and engine not in ['auto', 'latte', 'normaliz']:
