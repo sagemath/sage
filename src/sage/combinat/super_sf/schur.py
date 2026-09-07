@@ -17,7 +17,7 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
     r"""
     Schur supersymmetric functions.
 
-    The Schur supersymmetric function defined on variables `\mathbf{x}` and
+    The *Schur supersymmetric function* defined on variables `\mathbf{x}` and
     `\mathbf{y}`, `s_\lambda(\mathbf{x} \mid \mathbf{y})`, is given as
 
     .. MATH::
@@ -40,9 +40,9 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
     EXAMPLES::
 
         sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-        sage: s = SuperSymmetricFunctions(QQ)
-        sage: p = s.s()
-        sage: p
+        sage: Sym = SuperSymmetricFunctions(QQ)
+        sage: s = Sym.s()
+        sage: s
         Supersymmetric functions over Rational Field in the Schur basis
     """
     def __init__(self, SuperSym):
@@ -52,8 +52,8 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
         EXAMPLES::
 
             sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
-            sage: s = SuperSymmetricFunctions(QQ)
-            sage: p = s.s()
+            sage: Sym = SuperSymmetricFunctions(QQ)
+            sage: s = Sym.s()
             sage: TestSuite(s).run()
         """
         super().__init__(SuperSym=SuperSym, graded=False, prefix='s', basis_name='Schur')
@@ -83,8 +83,6 @@ class SupersymFunctionAlgebra_schur(super_sfa.SuperSymAlgebra_generic):
     def coproduct_on_basis(self, mu):
         r"""
         Return the coproduct of ``self(mu)``.
-
-        Here ``self`` is the basis of Schur supersymmetric functions.
 
         INPUT:
 
