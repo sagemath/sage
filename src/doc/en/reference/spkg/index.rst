@@ -26,6 +26,106 @@ optional packages.
 .. include:: index_optional.rst
 
 
+Installing Optional Packages
+----------------------------
+
+To install an optional package, you can use Sage's package management system.
+
+Basic Installation
+~~~~~~~~~~~~~~~~~~
+
+To install an optional package, use the following command from the Sage command line:
+
+.. code-block:: sage
+
+    sage -i <package_name>
+
+For example, to install the optional package `bliss`:
+
+.. code-block:: sage
+
+    sage -i bliss
+
+Using the Package List
+~~~~~~~~~~~~~~~~~~~~~~
+
+To see a list of all available optional packages:
+
+.. code-block:: shell
+
+    sage --optional
+
+To list experimental packages instead:
+
+.. code-block:: shell
+
+    sage --experimental
+
+For more detailed information on listing packages, including how to list
+pip-installed packages, see the documentation for the
+:mod:`sage.misc.package` module.
+
+Alternatively, inside Sage you can use:
+
+.. code-block:: sage
+
+    from sage.misc.package import list_packages
+    list_packages('optional')   # Lists optional packages
+    list_packages('experimental')   # Lists experimental packages
+
+Installation from Source
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When installing from source, you can enable specific optional packages
+during the build process.
+
+To see all available configure options:
+
+.. code-block:: shell
+
+    ./configure --help
+
+Pip-Installable Optional Packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some optional SageMath packages can be installed using pip:
+
+.. code-block:: shell
+
+    ./sage -pip install <package_name>
+
+For example, to install the `graph-genus` package (which provides faster
+graph genus algorithms):
+
+.. code-block:: shell
+
+    ./sage -pip install graph-genus
+
+This method is particularly useful for Python packages that are not
+distributed as standard Sage packages.
+
+Verifying Installation
+~~~~~~~~~~~~~~~~~~~~~~
+
+To verify that an optional package was installed correctly, you can check
+the list of installed packages:
+
+.. code-block:: sage
+
+    from sage.misc.package import list_packages
+    list_packages('optional')  # Shows installed optional packages
+
+For instructions on installing optional packages using your system's
+package manager (Homebrew, apt, dnf, etc.), see the individual
+package pages linked below. Each package page includes the correct
+package names for your distribution.
+
+Note
+~~~~
+
+Some optional packages may have additional system dependencies. See 
+:ref:`All External Packages <spkg>` for more information.
+
 Features
 --------
 
@@ -95,3 +195,4 @@ All External Packages
    :maxdepth: 1
 
    index_alph
+   
