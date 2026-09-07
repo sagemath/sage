@@ -4590,7 +4590,7 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: graphs.CycleGraph(5).is_bipartite()
             False
-            sage: graphs.RandomBipartite(10, 10, 0.7).is_bipartite()                    # needs numpy
+            sage: graphs.RandomBipartite(10, 10, 0.7).is_bipartite()
             True
 
         A random graph is very rarely bipartite::
@@ -17166,8 +17166,8 @@ class GenericGraph(GenericGraph_pyx):
         Bipartite graphs have no odd cycle and consequently have
         infinite odd girth::
 
-            sage: G = graphs.RandomBipartite(6, 6, .5)                                  # needs numpy
-            sage: G.odd_girth()                                                         # needs numpy
+            sage: G = graphs.RandomBipartite(6, 6, .5)
+            sage: G.odd_girth()
             +Infinity
             sage: G = graphs.Grid2dGraph(3, 4)
             sage: G.odd_girth()

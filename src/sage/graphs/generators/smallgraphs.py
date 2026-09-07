@@ -3612,7 +3612,7 @@ def HigmanSimsGraph(relabel=True, immutable=False):
     return HS
 
 
-def HoffmanSingletonGraph(immutable=False):
+def HoffmanSingletonGraph(immutable=False, seed=None):
     r"""
     Return the Hoffman-Singleton graph.
 
@@ -3636,6 +3636,9 @@ def HoffmanSingletonGraph(immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES::
 
@@ -3676,6 +3679,10 @@ def HoffmanSingletonGraph(immutable=False):
     H.name('Hoffman-Singleton graph')
     from sage.combinat.permutation import Permutations
     from sage.misc.prandom import randint
+    if seed is not None:
+        from sage.misc.randstate import set_random_seed
+        set_random_seed(seed)
+
     P = Permutations([1, 2, 3, 4])
     qpp = [0] + list(P[randint(0, 23)])
     ppp = [0] + list(P[randint(0, 23)])
@@ -3702,7 +3709,7 @@ def HoffmanSingletonGraph(immutable=False):
             s = int(v[0])
         l += 1
     if immutable:
-        H, mymap = H.relabel(inplace=False, immutable=True, return_map=True)
+        H, mymap = H.relabel(range(50), inplace=False, immutable=True, return_map=True)
     else:
         mymap = H.relabel(range(50), return_map=True)
     H._circle_embedding([mymap[d] for d in D], angle=pi/2)
@@ -4863,7 +4870,7 @@ def ShrikhandeGraph(immutable=False):
                  name="Shrikhande graph", immutable=immutable)
 
 
-def SylvesterGraph(immutable=False):
+def SylvesterGraph(immutable=False, seed=None):
     """
     Return the Sylvester Graph.
 
@@ -4883,6 +4890,9 @@ def SylvesterGraph(immutable=False):
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
 
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
+
     EXAMPLES::
 
         sage: g = graphs.SylvesterGraph(); g
@@ -4894,14 +4904,14 @@ def SylvesterGraph(immutable=False):
         sage: g.is_regular(k=5)
         True
     """
-    g = HoffmanSingletonGraph()
+    g = HoffmanSingletonGraph(seed=seed)
     e = next(g.edge_iterator(labels=False))
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
     g.name("Sylvester Graph")
     if immutable:
-        g = g.relabel(inplace=False, immutable=True)
+        g = g.relabel(range(g.order()), inplace=False, immutable=True)
     else:
-        g.relabel()
+        g.relabel(range(g.order()))
     ordering = [0, 1, 2, 4, 5, 9, 16, 35, 15, 18, 20, 30, 22, 6, 33, 32, 14,
                 10, 28, 29, 7, 24, 23, 26, 19, 12, 13, 21, 11, 31, 3, 27, 25,
                 17, 8, 34]
@@ -4947,9 +4957,9 @@ def SimsGewirtzGraph(immutable=False):
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
     g.name("Sims-Gewirtz Graph")
     if immutable:
-        g = g.relabel(inplace=False, immutable=True)
+        g = g.relabel(range(g.order()), inplace=False, immutable=True)
     else:
-        g.relabel()
+        g.relabel(range(g.order()))
     ordering = [0, 2, 3, 4, 6, 7, 8, 17, 1, 41, 49, 5, 22, 26, 11, 27, 15, 47,
                 53, 52, 38, 43, 44, 18, 20, 32, 19, 42, 54, 36, 51, 30, 33, 35,
                 37, 28, 34, 12, 29, 23, 55, 25, 40, 24, 9, 14, 48, 39, 45, 16,
