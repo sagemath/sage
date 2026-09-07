@@ -101,7 +101,7 @@ jobs:
           path: livedoc.zip
 
       - name: Upload docs to release
-        uses: softprops/action-gh-release@v3.0.1
+        uses: softprops/action-gh-release@v3.0.3
         with:
           files: livedoc.zip
           token: ${{ secrets.RELEASE_CREATION_TOKEN }}
