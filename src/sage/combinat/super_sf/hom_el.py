@@ -206,8 +206,8 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             basis_name = self.parent().basis_name
             res = self.base_ring().one()
             monomial_coeff = self.monomial_coefficients()
-            x_gens = [alphabet_x+str(i).format(i) for i in range(1, n+1)]
-            y_gens = [alphabet_y+str(i).format(i) for i in range(1, n+1)]
+            x_gens = [alphabet_x + str(i) for i in range(n)]
+            y_gens = [alphabet_y + str(i) for i in range(n)]
             variables = x_gens + y_gens
             R = PolynomialRing(self.base_ring(), variables)
             R_gens = R.gens_dict()
