@@ -76,6 +76,7 @@ AUTHORS:
 
 - William E. Mahaney (2026): computing duals of prime degree separable isogenies via pushforward.
 
+- Lorenz Panny (2026): :func:`normalized_model`
 """
 
 # ****************************************************************************
@@ -3773,6 +3774,152 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         return compute_isogeny_stark(E1, E2, ell)
 
     raise NotImplementedError(f'unknown algorithm {algorithm}')
+
+
+def normalized_model(E, j_tilde, l, *, all=False):
+    r"""
+    Given an elliptic curve `E` and an `\ell`-isogenous `j`-invariant `\tilde j`,
+    compute an elliptic curve `\tilde E` with `j(\tilde E)=\tilde j`
+    such that there exists a *normalized* `\ell`-isogeny from `E` to `\tilde E`.
+
+    .. NOTE::
+
+        This method currently requires that `j, \tilde j \notin \{0, 1728\}`.
+
+    INPUT:
+
+    - ``E`` -- elliptic curve over a field of characteristic `p \geq 0`
+    - ``j`` -- element of the base field of ``E``; must satisfy `\Phi_\ell(j(E), \tilde j) = 0`
+    - ``l`` -- positive integer; must satisfy `\ell + 2 < p` in case `p > 0`.
+    - ``all`` -- boolean (default: ``False``); if set to ``True``, return
+      a list of all possible curves `\tilde E` instead of a single `\tilde E`
+
+    OUTPUT:
+
+    - elliptic curve `\tilde E` such that `j(\tilde E) = \tilde j` and such that
+      there exists a normalized `\ell`-isogeny `E \to \tilde E`.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model
+        sage: E1 = EllipticCurve(GF(13^2), [1, 4])
+        sage: j2 = GF(13^2)(5)
+        sage: l = 5
+        sage: normalized_model(E1, j2, l)
+        Elliptic Curve defined by y^2 = x^3 + 12*x + 7 over Finite Field in z2 of size 13^2
+        sage: E2s = normalized_model(E1, j2, l, all=True); E2s
+        [Elliptic Curve defined by y^2 = x^3 + 12*x + 7 over Finite Field in z2 of size 13^2,
+         Elliptic Curve defined by y^2 = x^3 + (4*z2+6)*x + (7*z2+8) over Finite Field in z2 of size 13^2,
+         Elliptic Curve defined by y^2 = x^3 + (7*z2+12)*x + (2*z2+8) over Finite Field in z2 of size 13^2,
+         Elliptic Curve defined by y^2 = x^3 + (6*z2+6)*x + (11*z2+10) over Finite Field in z2 of size 13^2,
+         Elliptic Curve defined by y^2 = x^3 + (9*z2+10)*x + (6*z2+2) over Finite Field in z2 of size 13^2]
+        sage: for E2 in E2s:
+        ....:     E1.isogeny(None, E2, l)
+        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field in z2 of size 13^2 to Elliptic Curve defined by y^2 = x^3 + 12*x + 7 over Finite Field in z2 of size 13^2
+        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field in z2 of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (4*z2+6)*x + (7*z2+8) over Finite Field in z2 of size 13^2
+        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field in z2 of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (7*z2+12)*x + (2*z2+8) over Finite Field in z2 of size 13^2
+        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field in z2 of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (6*z2+6)*x + (11*z2+10) over Finite Field in z2 of size 13^2
+        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x + 4 over Finite Field in z2 of size 13^2 to Elliptic Curve defined by y^2 = x^3 + (9*z2+10)*x + (6*z2+2) over Finite Field in z2 of size 13^2
+
+    In case of a simple root of the modular polynomial, the constructed curve
+    is unique::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model
+        sage: F.<w> = GF((137, 2), modulus=[3, 131, 1])
+        sage: E1 = EllipticCurve(F, [19, 65])
+        sage: j2 = 19*w + 99
+        sage: l = 7
+        sage: normalized_model(E1, j2, l)
+        Elliptic Curve defined by y^2 = x^3 + (99*w+55)*x + (125*w+136) over Finite Field in w of size 137^2
+        sage: normalized_model(E1, j2, l, all=True)
+        [Elliptic Curve defined by y^2 = x^3 + (99*w+55)*x + (125*w+136) over Finite Field in w of size 137^2]
+
+    In case of a multiple root, there are multiple possible isogenies, and thus
+    multiple possibilities for the constructed curve::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model
+        sage: F.<w> = GF((137, 2), modulus=[3, 131, 1])
+        sage: E1 = EllipticCurve(F, [19, 65])
+        sage: j2 = 22
+        sage: l = 5
+        sage: normalized_model(E1, j2, l)
+        Elliptic Curve defined by y^2 = x^3 + (32*w+118)*x + (15*w+136) over Finite Field in w of size 137^2
+        sage: normalized_model(E1, j2, l, all=True)
+        [Elliptic Curve defined by y^2 = x^3 + (32*w+118)*x + (15*w+136) over Finite Field in w of size 137^2,
+         Elliptic Curve defined by y^2 = x^3 + (105*w+36)*x + (122*w+89) over Finite Field in w of size 137^2]
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model
+        sage: E1_ = EllipticCurve('26b1')
+        sage: phi = E1_.isogeny(E1_(1, 0)); phi
+        Isogeny of degree 7 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 3*x + 3 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 213*x - 1257 over Rational Field
+        sage: j2 = phi.codomain().j_invariant(); j2
+        -1064019559329/125497034
+        sage: E1 = E1_.short_weierstrass_model(); E1
+        Elliptic Curve defined by y^2 = x^3 - ...*x + ... over Rational Field
+        sage: E2 = normalized_model(E1, j2, 7); E2
+        Elliptic Curve defined by y^2 = x^3 - 275643*x - 61114986 over Rational Field
+        sage: E1.isogeny(None, E2, 7)
+        Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 - 3483*x + 121014 over Rational Field to Elliptic Curve defined by y^2 = x^3 - 275643*x - 61114986 over Rational Field
+
+    ALGORITHM: [MM2024]_, Algorithm 1
+    """
+    j = E.j_invariant()
+    if any(E.a_invariants()[:-2]):
+        raise ValueError('E must be in short Weierstrass form')
+    A, B = E.a4(), E.a6()
+    K = E.base_field()
+    j_tilde = K(j_tilde)
+
+    if j in (0, 1728):
+        raise NotImplementedError('the case j ∈ {0, 1728} is currently not supported')
+    if j_tilde in (0, 1728):
+        raise NotImplementedError('the case j_tilde ∈ {0, 1728} is currently not supported')
+
+    from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
+    Phi = classical_modular_polynomial(l).change_ring(K)
+    X, Y = Phi.parent().gens()
+
+    cache = {(0, 0): Phi}
+    def deriv(a, b):
+        try:
+            return cache[a, b]
+        except KeyError:
+            pass
+        if a:
+            return deriv(a-1, b).derivative(X)
+        if b:
+            return deriv(a, b-1).derivative(Y)
+        assert False, 'unreachable'
+
+    for m in range(1, Phi.degree() + 1):
+        if any(deriv(u, m-u)(j, j_tilde) for u in range(m + 1)):
+            break
+    else:
+        assert False, 'bug in normalized_model()'
+
+    j_prime = 18 * B / A * j
+
+    from sage.functions.other import binomial
+    F = []
+    for u in range(m + 1):
+        F.append(binomial(m, u) * K(l)**(m-u) * j_prime**u * deriv(u, m-u)(j, j_tilde))
+    F.reverse()  # typo in paper: indexing of c_u is backwards
+    F = PolynomialRing(K, 't')(F)
+
+    Es = []
+    for r in F.roots(multiplicities=False):
+        A_tilde = K(l)**4 / 48 * r**2 / (j_tilde * (1728 - j_tilde))
+        B_tilde = K(l)**6 / 864 * r**3 / (j_tilde**2 * (1728 - j_tilde))
+        Es.append(EllipticCurve([A_tilde, B_tilde]))
+        assert Es[-1].j_invariant() == j_tilde
+
+    if all:
+        return Es
+    if not Es:
+        raise ValueError(f'no normalized rational {l}-isogeny from {E} to {j} exists')
+    return Es[0]
 
 
 def compute_intermediate_curves(E1, E2):

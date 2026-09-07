@@ -5353,6 +5353,10 @@
 .. [MM2022] Matthew Mastroeni and Jason McCullough. *Chow rings of matroids are
             Koszul*. Mathematische Annalen, 387(3-4):1819-1851, November 2022.
 
+.. [MM2024] William E. Mahaney and Travis Morrison: *Computing isogenies at
+            singular points of the modular polynomial*. 2024.
+            https://arxiv.org/pdf/2402.02038
+
 .. [MMIB2012] \Y. Matsumoto, S. Moriyama, H. Imai, D. Bremner:
               Matroid Enumeration for Incidence Geometry,
               Discrete and Computational Geometry,
