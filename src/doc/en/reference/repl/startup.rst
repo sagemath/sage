@@ -8,21 +8,24 @@ The sagerc shell script
 
 The *bash shell script* :file:`$DOT_SAGE/sagerc` (with the default
 value of :envvar:`DOT_SAGE`, this is :file:`~/.sage/sagerc`) is read
-by :sage_root:`src/bin/sage-env` after Sage has set its
-environment variables.
+by the Python command-line launcher before importing the Sage library.
+The Bash launcher :sage_root:`src/bin/sage` reads it through
+:sage_root:`src/bin/sage-env` after setting its environment variables.
 It can be used to override some of the environment variables determined
 by Sage, or it can contain other shell commands like creating
 directories.
-This script is sourced not only when running Sage itself, but also when
-running any of the subcommands (like ``sage --python``, ``sage -b`` or
-``sage -i <package>``).
+The Python launcher reads it for interactive sessions, ``sage -c``,
+running files, and starting a notebook. The Bash launcher also reads it
+for subcommands such as ``sage --python`` and ``sage --sh``.
 In particular, setting ``PS1`` here overrides the default prompt for
 the Sage shells ``sage --buildsh`` and ``sage --sh``.
 
 .. note::
 
-  This script is run with the Sage directories in its :envvar:`PATH`,
-  so executing ``git`` for example will run the Git inside Sage.
+  With the Bash launcher, this script is run with the Sage directories in
+  its :envvar:`PATH`, so executing ``git`` for example will run the Git
+  inside Sage. The Python launcher uses the environment in which it was
+  invoked, such as an activated Conda environment.
 
 The default location of this file can be changed using the
 environment variable :envvar:`SAGE_RC_FILE`.

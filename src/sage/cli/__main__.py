@@ -6,4 +6,5 @@ sys.path.append(os.getcwd())
 
 from sage.cli import main
 
-sys.exit(main())
+if __name__ == '__main__':
+    sys.exit(main())

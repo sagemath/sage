@@ -15,10 +15,9 @@ Installation Guide for more about those.)
 
 .. envvar:: SAGE_RC_FILE
 
-  This is a shell script which is sourced after
-  Sage has determined its environment variables.  This script is
-  executed before starting Sage or any of its subcommands (like
-  ``sage -i <package>``).  The default value is
+  This is a Bash shell script sourced before the command-line launcher
+  imports the Sage library. The Bash launcher also reads it before
+  subcommands such as ``sage --python``. The default value is
   :file:`$DOT_SAGE/sagerc`.
 
 .. envvar:: SAGE_STARTUP_FILE
