@@ -98,7 +98,7 @@ class Polyhedron_base(Polyhedron_base7):
 
     ::
 
-        sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2))                       # needs sage.combinat sage.graphs
+        sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2))
         sage: TestSuite(p).run()
 
     ::
@@ -238,14 +238,14 @@ class Polyhedron_base(Polyhedron_base7):
 
         TESTS::
 
-            sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p                # needs sage.combinat sage.graphs
+            sage: p = polytopes.flow_polytope(digraphs.DeBruijn(3,2)); p
             A 19-dimensional polyhedron in QQ^27
              defined as the convex hull of 1 vertex and 148 rays
             sage: p.to_linear_program().polyhedron() == p
             True
 
-            sage: p = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
-            sage: p.to_linear_program(solver='PPL')                                     # needs sage.groups sage.rings.number_field
+            sage: p = polytopes.icosahedron()
+            sage: p.to_linear_program(solver='PPL')
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.
@@ -292,11 +292,11 @@ class Polyhedron_base(Polyhedron_base7):
 
             sage: oc = polytopes.octahedron()
             sage: sc_oc = oc.boundary_complex()
-            sage: fl_oc = oc.face_lattice()                                             # needs sage.combinat
-            sage: fl_sc = sc_oc.face_poset()                                            # needs sage.combinat
-            sage: [len(x) for x in fl_oc.level_sets()]                                  # needs sage.combinat
+            sage: fl_oc = oc.face_lattice()
+            sage: fl_sc = sc_oc.face_poset()
+            sage: [len(x) for x in fl_oc.level_sets()]
             [1, 6, 12, 8, 1]
-            sage: [len(x) for x in fl_sc.level_sets()]                                  # needs sage.combinat
+            sage: [len(x) for x in fl_sc.level_sets()]
             [6, 12, 8]
             sage: sc_oc.euler_characteristic()
             2
@@ -647,10 +647,10 @@ class Polyhedron_base(Polyhedron_base7):
             ...
             ValueError: the normal fan is only defined for full-dimensional polytopes
 
-            sage: R = Polyhedron(vertices=[[0, 0],                                      # needs sage.rings.number_field sage.symbolic
+            sage: R = Polyhedron(vertices=[[0, 0],
             ....:                          [AA(sqrt(2)), 0],
             ....:                          [0, AA(sqrt(2))]])
-            sage: R.normal_fan()                                                        # needs sage.rings.number_field sage.symbolic
+            sage: R.normal_fan()
             Traceback (most recent call last):
             ...
             NotImplementedError: normal fan handles only polytopes over the rationals
@@ -730,8 +730,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         The polytope has to have rational coordinates::
 
-            sage: S = polytopes.dodecahedron()                                          # needs sage.groups sage.rings.number_field
-            sage: S.face_fan()                                                          # needs sage.groups sage.rings.number_field
+            sage: S = polytopes.dodecahedron()
+            sage: S.face_fan()
             Traceback (most recent call last):
             ...
             NotImplementedError: face fan handles only polytopes over the rationals
@@ -818,8 +818,8 @@ class Polyhedron_base(Polyhedron_base7):
             sage: P.barycentric_subdivision()
             A 2-dimensional polyhedron in QQ^3 defined as the convex hull
             of 6 vertices
-            sage: P = polytopes.regular_polygon(4, base_ring=QQ)                        # needs sage.rings.number_field
-            sage: P.barycentric_subdivision()                                           # needs sage.rings.number_field
+            sage: P = polytopes.regular_polygon(4, base_ring=QQ)
+            sage: P.barycentric_subdivision()
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 8
             vertices
 
@@ -931,7 +931,7 @@ class Polyhedron_base(Polyhedron_base7):
         `\pm 1` 2-dimensional square. The permutations are written in terms
         of the vertices of the square::
 
-            sage: # optional - pynormaliz, needs sage.groups
+            sage: # optional - pynormaliz
             sage: square = Polyhedron(vertices=[[1,1], [-1,1],
             ....:                               [-1,-1], [1,-1]],
             ....:                     backend='normaliz')
@@ -1026,7 +1026,7 @@ class Polyhedron_base(Polyhedron_base7):
             (None, None)
             sage: Polyhedron([(1/3,2/3), (3/3, 4/3)]).bounding_box(integral_hull=True)
             ((1, 1), (1, 1))
-            sage: polytopes.buckyball(exact=False).bounding_box()                       # needs sage.groups
+            sage: polytopes.buckyball(exact=False).bounding_box()
             ((-0.8090169944, -0.8090169944, -0.8090169944),
              (0.8090169944, 0.8090169944, 0.8090169944))
 
@@ -1133,7 +1133,7 @@ class Polyhedron_base(Polyhedron_base7):
 
         Floating-point polyhedron::
 
-            sage: # optional - jupymake, needs sage.groups
+            sage: # optional - jupymake
             sage: P = polytopes.dodecahedron(exact=False); P
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
             sage: print("There may be a recompilation warning"); PP = polymake(P); PP
