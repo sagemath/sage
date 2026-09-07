@@ -1211,7 +1211,8 @@ class Graph(GenericGraph):
             if data.get_pos() is not None:
                 pos = data.get_pos()
             self.name(data.name())
-            self.set_vertices(data.get_vertices())
+            if hasattr(data, '_assoc'):
+                self.set_vertices(data.get_vertices())
             data._backend.subgraph_given_vertices(self._backend, data)
 
         elif format == 'NX':
@@ -2300,13 +2301,13 @@ class Graph(GenericGraph):
         It is clear, though, that a random Bipartite Graph which is not a forest
         has an even hole::
 
-            sage: g = graphs.RandomBipartite(10, 10, .5)                                # needs numpy
-            sage: g.is_even_hole_free() and not g.is_forest()                           # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(10, 10, .5)
+            sage: g.is_even_hole_free() and not g.is_forest()                           # needs sage.modules
             False
 
         We can check the certificate returned is indeed an even cycle::
 
-            sage: if not g.is_forest():                                                 # needs numpy sage.modules
+            sage: if not g.is_forest():                                                 # needs sage.modules
             ....:    cycle = g.is_even_hole_free(certificate=True)
             ....:    if cycle.order() % 2 == 1:
             ....:        print("Error !")
@@ -2332,7 +2333,7 @@ class Graph(GenericGraph):
 
             sage: t = lambda x: (Graph(x).is_forest() or
             ....:       isinstance(Graph(x).is_even_hole_free(certificate=True), Graph))
-            sage: all(t(graphs.RandomBipartite(10, 10, .5)) for i in range(100))        # needs numpy sage.modules
+            sage: all(t(graphs.RandomBipartite(10, 10, .5)) for i in range(100))        # needs sage.modules
             True
         """
         girth = self.girth()
@@ -2655,14 +2656,14 @@ class Graph(GenericGraph):
 
         A Bipartite Graph is always perfect ::
 
-            sage: g = graphs.RandomBipartite(8,4,.5)                                    # needs numpy
-            sage: g.is_perfect()                                                        # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(8,4,.5)
+            sage: g.is_perfect()                                                        # needs sage.modules
             True
 
         So is the line graph of a bipartite graph::
 
-            sage: g = graphs.RandomBipartite(4,3,0.7)                                   # needs numpy
-            sage: g.line_graph().is_perfect()   # long time                             # needs numpy sage.modules
+            sage: g = graphs.RandomBipartite(4,3,0.7)
+            sage: g.line_graph().is_perfect()   # long time                             # needs sage.modules
             True
 
         As well as the Cartesian product of two complete graphs::
@@ -3530,7 +3531,7 @@ class Graph(GenericGraph):
 
         A bipartite graph has (by definition) chromatic number 2::
 
-            sage: graphs.RandomBipartite(50,50,0.7).chromatic_number()                  # needs numpy
+            sage: graphs.RandomBipartite(50,50,0.7).chromatic_number()
             2
 
         A complete multipartite graph with `k` parts has chromatic number `k`::

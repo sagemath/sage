@@ -3914,17 +3914,15 @@ def RingedTree(k, vertex_labels=True, immutable=False):
     g._pos[0] = (0, 0.2)
 
     # Relabel vertices as binary words
-    if not vertex_labels:
-        return g
+    if vertex_labels:
+        vertices = ['']
+        for i in range(k - 1):
+            for j in range(2**(i) - 1, 2**(i + 1) - 1):
+                v = vertices[j]
+                vertices.append(v + '0')
+                vertices.append(v + '1')
 
-    vertices = ['']
-    for i in range(k - 1):
-        for j in range(2**(i) - 1, 2**(i + 1) - 1):
-            v = vertices[j]
-            vertices.append(v + '0')
-            vertices.append(v + '1')
-
-    g.relabel(vertices)
+        g.relabel(vertices)
 
     return g.copy(immutable=True) if immutable else g
 

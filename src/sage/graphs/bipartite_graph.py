@@ -1562,10 +1562,10 @@ class BipartiteGraph(Graph):
 
         EXAMPLES::
 
-            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))                  # needs numpy
-            sage: g.is_bipartite()                                                      # needs numpy
+            sage: g = BipartiteGraph(graphs.RandomBipartite(3, 3, .5))
+            sage: g.is_bipartite()
             True
-            sage: g.is_bipartite(certificate=True)  # random                            # needs numpy
+            sage: g.is_bipartite(certificate=True)  # random
             (True, {(0, 0): 0, (0, 1): 0, (0, 2): 0, (1, 0): 1, (1, 1): 1, (1, 2): 1})
 
         TESTS::
@@ -2646,7 +2646,6 @@ class BipartiteGraph(Graph):
 
         The two algorithms should return the same result::
 
-           sage: # needs networkx numpy
            sage: g = BipartiteGraph(graphs.RandomBipartite(10, 10, .5))
            sage: vc1 = g.vertex_cover(algorithm='Konig')
            sage: vc2 = g.vertex_cover(algorithm='Cliquer')
