@@ -1047,12 +1047,29 @@ class Stream_function(Stream_inexact):
             ....:     return g.input_streams()
             sage: fun()
             [<sage.data_structures.stream.Stream_exact object at 0x...>]
+
+        Streams captured inside a list or tuple in the closure are
+        detected as well (used by species composition)::
+
+            sage: def fun():
+            ....:     f = Stream_exact([1,3,5], constant=7)
+            ....:     streams = [f]
+            ....:     g = Stream_function(lambda n: streams[0][n]^2, False, 0)
+            ....:     return g.input_streams()
+            sage: fun()
+            [<sage.data_structures.stream.Stream_exact object at 0x...>]
         """
         closure = self.get_coefficient.__closure__
         if closure is None:
             return []
-        return [cell.cell_contents for cell in closure
-                if isinstance(cell.cell_contents, Stream)]
+        result = []
+        for cell in closure:
+            content = cell.cell_contents
+            if isinstance(content, Stream):
+                result.append(content)
+            elif isinstance(content, (list, tuple)):
+                result.extend(item for item in content if isinstance(item, Stream))
+        return result
 
     def __hash__(self):
         """
@@ -1508,6 +1525,63 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
             FESDUMMY_0
         """
         return self._element_class(self, self._R.gen()[i])
+
+    def _power_sum_plethysm(self, c, k):
+        r"""
+        Return the `k`-th power-sum plethysm (Adams operation) `p_k[c]`.
+
+        The undetermined coefficients are the coefficients of the
+        molecular decomposition of an (implicitly defined) species;
+        they are counts, hence *constants* of the `\lambda`-ring, so
+        `p_k` fixes them.  The generators of the base ring, on the
+        other hand, are treated as *monomials* and are raised to the
+        `k`-th power.
+
+        This matches the convention used by :meth:`_exponential`, where
+        a scalar multiplicity ``c`` plays the role of the constant in
+        `E(cX)`; indeed ``_exponential([c], [d])`` computes `(E^c)_d`.
+
+        INPUT:
+
+        - ``c`` -- an element of ``self`` (or its base ring)
+        - ``k`` -- positive integer
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import CoefficientRing, VariablePool
+            sage: PF = CoefficientRing(QQ["q"])
+            sage: q = PF.base_ring().gen()
+            sage: pool = VariablePool(PF.base())
+            sage: c = PF(pool.new_variable()); c
+            FESDUMMY_0
+            sage: PF._power_sum_plethysm(c, 1) == c
+            True
+
+        The undetermined coefficient is fixed, while the base ring
+        variable ``q`` is treated as a monomial::
+
+            sage: PF._power_sum_plethysm(q*c, 2)
+            q^2*FESDUMMY_0
+            sage: PF._power_sum_plethysm(q*c, 2) == q^2 * c
+            True
+            sage: PF._power_sum_plethysm(PF(q + 1), 3)
+            q^3 + 1
+        """
+        if k == 1:
+            return self(c)
+        c = self(c)
+        base = self.base().base_ring()
+        base_gens = [g for g in base.gens() if g != base.one()]
+        if not base_gens:
+            # nothing to stretch: every coefficient is a constant
+            return c
+
+        def base_adams(b):
+            return b(*[g**k for g in base_gens])
+
+        num = c.numerator().map_coefficients(base_adams)
+        den = c.denominator().map_coefficients(base_adams)
+        return self(num) / self(den)
 
     def _get_action_(self, S, op, self_on_left):
         """
