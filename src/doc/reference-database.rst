@@ -2447,6 +2447,11 @@
              of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
              https://eprint.iacr.org/2011/506.pdf
 
+.. [DFLLW2023] Luca De Feo, Antonin Leroux, Patrick Longa and Benjamin Wesolowski:
+               *New Algorithms for the Deuring Correspondence: Towards Practical
+               and Secure SQISign Signatures*. Eurocrypt 2023.
+               https://eprint.iacr.org/2022/234.pdf
+
 .. [DJS2003] \M. Davis, T. Januszkiewicz, and R. Scott.
              *Fundamental groups of blow-ups*. Selecta Math.,
              Adv. Math. **177** no. 1 (2002) pp. 115-179.
@@ -4390,6 +4395,11 @@
 .. [Koh2004] \E. Kohler. *Recognizing graphs without asteroidal triples*.
              Journal of Discrete Algorithms 2(4):439-452, Dec. 2004,
              :doi:`10.1016/j.jda.2004.04.005`.
+
+.. [KLPT2014] David Kohel, Kristin Lauter, Christophe Petit, and Jean-Pierre Tignol:
+              *On the quaternion `\ell`-isogeny path problem*.
+              LMS Journal of Computation and Mathematics 17, pp. 418-432, 2014.
+              https://ia.cr/2014/505
 
 .. [Koh2007] \A. Kohnert, *Constructing two-weight codes with prescribed
              groups of automorphisms*, Discrete applied mathematics 155,
