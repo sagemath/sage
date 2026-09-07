@@ -417,10 +417,10 @@ class sage__libs__linbox(JoinFeature):
                              spkg='sagemath_linbox', type='standard')
 
 
-class sage__libs__m4ri(JoinFeature):
+class sage__libs__m4ri(PythonModule):
     r"""
-    A :class:`sage.features.Feature` describing the presence of Cython modules
-    depending on the M4RI and/or M4RIe libraries.
+    A :class:`sage.features.Feature` describing the presence of
+    Cython modules depending on the M4RI library.
 
     In addition to the modularization purposes that this tag serves,
     it also provides attribution to the upstream project.
@@ -428,8 +428,9 @@ class sage__libs__m4ri(JoinFeature):
     TESTS::
 
         sage: from sage.features.sagemath import sage__libs__m4ri
-        sage: sage__libs__m4ri().is_present()                                           # needs sage.libs.m4ri
+        sage: sage__libs__m4ri().is_present()  # needs sage.libs.m4ri
         FeatureTestResult('sage.libs.m4ri', True)
+
     """
     def __init__(self):
         r"""
@@ -439,10 +440,10 @@ class sage__libs__m4ri(JoinFeature):
             sage: isinstance(sage__libs__m4ri(), sage__libs__m4ri)
             True
         """
-        JoinFeature.__init__(self, 'sage.libs.m4ri',
-                             [PythonModule('sage.matrix.matrix_gf2e_dense'),
-                              PythonModule('sage.matrix.matrix_mod2_dense')],
-                             spkg='sagemath_m4ri', type='standard')
+        PythonModule.__init__(self,
+                              "sage.matrix.matrix_mod2_dense",
+                              spkg="m4ri",
+                              type="standard")
 
 
 class sage__libs__ntl(JoinFeature):
