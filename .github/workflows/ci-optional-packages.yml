@@ -88,5 +88,8 @@ jobs:
       - name: Run tests
         continue-on-error: true
         run: |
+          # Substitution is slow on macOS (issue 40825), so raise the
+          # "slow doctest" limit on that platform. We'll still get
+          # regular warnings from the other jobs.
           source ./.homebrew-build-env
-          ./sage -t --all -p4
+          ./sage -t --all --warn-long=60 -p4
