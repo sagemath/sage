@@ -157,7 +157,10 @@ jobs:
 
       - name: Test
         run: |
-          uv run --frozen ./sage -t --all -p4 || true
+          # Substitution is slow on macOS (issue 40825), so raise the
+          # "slow doctest" limit on that platform. We'll still get
+          # regular warnings from the other jobs.
+          uv run --frozen ./sage -t --warn-long=60 --all -p4 || true
 
       - name: Upload log
         uses: actions/upload-artifact@v7
