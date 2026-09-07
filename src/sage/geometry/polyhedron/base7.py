@@ -519,7 +519,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
             sage: polytopes.icosahedron().volume()                                      # needs sage.groups sage.rings.number_field
             5/12*sqrt5 + 5/4
-            sage: numerical_approx(_)  # abs tol 1e9                                    # needs sage.groups sage.rings.number_field
+            sage: numerical_approx(_)  # abs tol 1e-9
             2.18169499062491
 
         When considering lower-dimensional polytopes, we can ask for the
