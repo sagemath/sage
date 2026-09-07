@@ -1065,21 +1065,6 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p_rdf.volume()
             2.0
         """
-        if not self.base_ring().is_exact():
-            if self.is_affine():
-                pts = tuple(tuple(QQ(coord) for coord in p.affine()) for p in self.points())
-                pc_exact = PointConfiguration(pts, False, self._connected,
-                                              self._fine, self._regular, self._star)
-            else:
-                pts = tuple(tuple(QQ(coord) for coord in p.projective()) for p in self.points())
-                pc_exact = PointConfiguration(pts, True, self._connected,
-                                              self._fine, self._regular, self._star)
-            if self._use_TOPCOM:
-                pc_exact.set_engine('topcom')
-            else:
-                pc_exact.set_engine('internal')
-            return self(list(pc_exact.triangulate(verbose=verbose)))
-
         if self._use_TOPCOM and self._regular is not False:
             try:
                 return self._TOPCOM_triangulate(verbose)
