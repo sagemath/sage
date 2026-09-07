@@ -162,8 +162,13 @@ jobs:
 
       - name: Test
         run: |
-          source ./.homebrew-build-env # Needed for runtime Cython and MeatAxe tables.
-          uv run --frozen --no-sync ./sage -t --all -p4 || true
+          # Needed for runtime Cython and MeatAxe tables.
+          source ./.homebrew-build-env
+
+          # Substitution is slow on macOS (issue 40825), so raise the
+          # "slow doctest" limit on that platform. We'll still get
+          # regular warnings from the other jobs.
+          uv run --frozen --no-sync ./sage -t --warn-long=60 --all -p4 || true
 
       - name: Upload log
         uses: actions/upload-artifact@v7
