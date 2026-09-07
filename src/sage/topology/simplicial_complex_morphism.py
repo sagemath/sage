@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Morphisms of simplicial complexes
 
@@ -221,7 +220,7 @@ class SimplicialComplexMorphism(Morphism):
             sage: g = Hom(X,X)({0:1, 1:0})
             sage: g(Simplex([0,1]))
             (0, 1)
-            sage: g(Simplex([0,1]), orientation=True)                                   # needs sage.modules
+            sage: g(Simplex([0,1]), orientation=True)
             ((0, 1), -1)
 
         TESTS:
@@ -315,7 +314,6 @@ class SimplicialComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: S = simplicial_complexes.Sphere(1)
             sage: T = simplicial_complexes.Sphere(2)
             sage: H = Hom(S, T)
@@ -362,7 +360,6 @@ class SimplicialComplexMorphism(Morphism):
 
         Some simplicial maps which reverse the orientation of a few simplices::
 
-            sage: # needs sage.modules
             sage: g = {0:1, 1:2, 2:0}
             sage: H(g).associated_chain_complex_morphism()._matrix_dictionary
             {0: [0 0 1]
@@ -628,13 +625,13 @@ class SimplicialComplexMorphism(Morphism):
             sage: C = simplicial_complexes.Sphere(1)            # Circle
             sage: T = Hom(C,C).identity().mapping_torus() ; T   # Torus
             Simplicial complex with 9 vertices and 18 facets
-            sage: T.homology() == simplicial_complexes.Torus().homology()               # needs sage.modules
+            sage: T.homology() == simplicial_complexes.Torus().homology()
             True
 
             sage: f = Hom(C,C)({0:0, 1:2, 2:1})
             sage: K = f.mapping_torus(); K                      # Klein Bottle
             Simplicial complex with 9 vertices and 18 facets
-            sage: K.homology() == simplicial_complexes.KleinBottle().homology()         # needs sage.modules
+            sage: K.homology() == simplicial_complexes.KleinBottle().homology()
             True
 
         TESTS::
@@ -675,7 +672,7 @@ class SimplicialComplexMorphism(Morphism):
             sage: T = S.product(S, immutable=True)
             sage: H = Hom(S,T)
             sage: diag = H.diagonal_morphism()
-            sage: h = diag.induced_homology_morphism(QQ); h                             # needs sage.modules
+            sage: h = diag.induced_homology_morphism(QQ); h
             Graded vector space morphism:
               From: Homology module of
                     Minimal triangulation of the 1-sphere over Rational Field
@@ -691,12 +688,12 @@ class SimplicialComplexMorphism(Morphism):
 
         We can view the matrix form for the homomorphism::
 
-            sage: h.to_matrix(0)  # in degree 0                                         # needs sage.modules
+            sage: h.to_matrix(0)  # in degree 0
             [1]
-            sage: h.to_matrix(1)  # in degree 1                                         # needs sage.modules
+            sage: h.to_matrix(1)  # in degree 1
             [1]
             [1]
-            sage: h.to_matrix()   # the entire homomorphism                             # needs sage.modules
+            sage: h.to_matrix()   # the entire homomorphism
             [1|0]
             [-+-]
             [0|1]
@@ -706,18 +703,18 @@ class SimplicialComplexMorphism(Morphism):
 
         The map on cohomology should be dual to the map on homology::
 
-            sage: coh = diag.induced_homology_morphism(QQ, cohomology=True)             # needs sage.modules
-            sage: coh.to_matrix(1)                                                      # needs sage.modules
+            sage: coh = diag.induced_homology_morphism(QQ, cohomology=True)
+            sage: coh.to_matrix(1)
             [1 1]
-            sage: h.to_matrix() == coh.to_matrix().transpose()                          # needs sage.modules
+            sage: h.to_matrix() == coh.to_matrix().transpose()
             True
 
         We can evaluate the map on (co)homology classes::
 
-            sage: x,y = list(T.cohomology_ring(QQ).basis(1))                            # needs sage.modules
-            sage: coh(x)                                                                # needs sage.modules
+            sage: x,y = list(T.cohomology_ring(QQ).basis(1))
+            sage: coh(x)
             h^{1,0}
-            sage: coh(2*x + 3*y)                                                        # needs sage.modules
+            sage: coh(2*x + 3*y)
             5*h^{1,0}
 
         Note that the complexes must be immutable for this to
@@ -731,13 +728,13 @@ class SimplicialComplexMorphism(Morphism):
             sage: S2 = S.suspension()
             sage: S2.is_immutable()
             False
-            sage: h = Hom(S, S2)({0: 0, 1: 1, 2: 2}).induced_homology_morphism()        # needs sage.modules
+            sage: h = Hom(S, S2)({0: 0, 1: 1, 2: 2}).induced_homology_morphism()
             Traceback (most recent call last):
             ...
             ValueError: the domain and codomain complexes must be immutable
             sage: S2.set_immutable(); S2.is_immutable()
             True
-            sage: h = Hom(S, S2)({0: 0, 1: 1, 2: 2}).induced_homology_morphism()        # needs sage.modules
+            sage: h = Hom(S, S2)({0: 0, 1: 1, 2: 2}).induced_homology_morphism()
         """
         from sage.homology.homology_morphism import InducedHomologyMorphism
         return InducedHomologyMorphism(self, base_ring, cohomology)
