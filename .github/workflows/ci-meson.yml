@@ -172,11 +172,16 @@ jobs:
             # Ignore errors on Windows, for now
             pytest -n 4 --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
+            # Substitution is slow on macOS (issue 40825), so raise the
+            # "slow doctest" limit on that platform. We'll still get
+            # regular warnings from the other jobs.
             pytest -n 4 -rfEs -s src
             ./sage -t ${{
               matrix.tests == 'all' &&
               '--all-except="$SEPARATELY_TESTED_FLAKY_FILES"' ||
-              '--new --long' }} -p4 --format github
+              '--new --long' }} ${{
+              startsWith(matrix.os, 'macos') && '--warn-long=60'
+              }} -p4 --format github
           fi
 
       - name: Test flaky files
