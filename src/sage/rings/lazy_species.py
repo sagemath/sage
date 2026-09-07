@@ -1599,6 +1599,13 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
             sage: F = E(E.restrict(1))
             sage: F.cycle_index_series()[5]
             h[2, 2, 1] - h[3, 1, 1] + 3*h[3, 2] + 2*h[4, 1] + 2*h[5]
+
+            sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)
+            sage: F = (X + Y)(X, Y)
+            sage: F.cycle_index_series()[1]
+            p[] # p[1] + p[1] # p[]
+            sage: F.isotype_generating_series()
+            (X+Y) + O(X,Y)^7
         """
         return self._left.cycle_index_series()(*[G.cycle_index_series() for G in self._args])
 
