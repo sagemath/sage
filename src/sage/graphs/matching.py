@@ -49,6 +49,7 @@ Methods
 # ****************************************************************************
 import itertools
 
+from sage.misc.decorators import rename_keyword
 from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
 
@@ -134,11 +135,11 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
 
     if algorithm == "Edmonds":
         return len(G) == 2*G.matching(value_only=True,
-                                      use_edge_labels=False,
+                                      by_weight=False,
                                       algorithm='Edmonds')
     if algorithm == "LP_matching":
         return len(G) == 2*G.matching(value_only=True,
-                                      use_edge_labels=False,
+                                      by_weight=False,
                                       algorithm='LP',
                                       solver=solver,
                                       verbose=verbose,
@@ -1073,8 +1074,10 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     return (True, None) if coNP_certificate else True
 
 
+@rename_keyword(deprecation=42750, use_edge_labels='by_weight')
 def matching(G, value_only=False, algorithm='Edmonds',
-             use_edge_labels=False, solver=None, verbose=0,
+             by_weight=False, weight_function=None, check_weight=True,
+             solver=None, verbose=0,
              *, integrality_tolerance=1e-3):
     r"""
     Return a maximum weighted matching of the graph represented by the list
@@ -1106,12 +1109,19 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem
 
-    - ``use_edge_labels`` -- boolean (default: ``False``)
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, computes a
+      weighted matching where each edge has the weight given by
+      ``weight_function``, or its label if ``weight_function`` is ``None``. If
+      ``False``, each edge has weight `1`.
 
-      - when set to ``True``, computes a weighted matching where each edge
-        is weighted by its label (if an edge has no label, `1` is assumed)
+    - ``weight_function`` -- function (default: ``None``); a function that takes
+      as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
+      ``by_weight`` is automatically set to ``True``. If ``None`` and
+      ``by_weight`` is ``True``, we use the edge label ``l``, if ``l`` is not
+      ``None``, else `1` as a weight.
 
-      - when set to ``False``, each edge has weight `1`
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that the
+      ``weight_function`` outputs a number for each edge
 
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
       Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -1165,7 +1175,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
     TESTS:
 
-    When ``use_edge_labels`` is set to ``False``, with Edmonds' algorithm
+    When ``by_weight`` is set to ``False``, with Edmonds' algorithm
     and LP formulation::
 
         sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
@@ -1174,13 +1184,30 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: sorted(g.matching(algorithm='LP'))                                    # needs sage.numerical.mip
         [(0, 1, 0), (2, 3, -5)]
 
-    When ``use_edge_labels`` is set to ``True``, with Edmonds' algorithm and
+    When ``by_weight`` is set to ``True``, with Edmonds' algorithm and
     LP formulation::
 
         sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-        sage: g.matching(use_edge_labels=True)                                      # needs sage.networkx
+        sage: g.matching(by_weight=True)                                      # needs sage.networkx
         [(1, 2, 999)]
-        sage: g.matching(algorithm='LP', use_edge_labels=True)                      # needs sage.numerical.mip
+        sage: g.matching(algorithm='LP', by_weight=True)                      # needs sage.numerical.mip
+        [(1, 2, 999)]
+
+    A ``weight_function`` can read the weight from anywhere in the edge, and
+    setting it implies ``by_weight=True``::
+
+        sage: g = Graph([(0, 1, {'cost': 1}), (1, 2, {'cost': 9}),
+        ....:            (2, 3, {'cost': 2})])
+        sage: g.matching(weight_function=lambda e: e[2]['cost'])                    # needs sage.networkx
+        [(1, 2, {'cost': 9})]
+
+    The ``use_edge_labels`` keyword is deprecated in favour of ``by_weight``::
+
+        sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
+        sage: g.matching(use_edge_labels=True)                                      # needs sage.networkx
+        doctest:warning...
+        DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+        See https://github.com/sagemath/sage/issues/42750 for details.
         [(1, 2, 999)]
 
     With loops and multiedges::
@@ -1188,7 +1215,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: edge_list = [(0,0,5), (0,1,1), (0,2,2), (0,3,3), (1,2,6)
         ....: , (1,2,3), (1,3,3), (2,3,3)]
         sage: g = Graph(edge_list, loops=True, multiedges=True)
-        sage: m = g.matching(use_edge_labels=True)                                  # needs sage.networkx
+        sage: m = g.matching(by_weight=True)                                  # needs sage.networkx
         sage: type(m)                                                               # needs sage.networkx
         <class 'sage.graphs.views.EdgesView'>
         sage: sorted(m)                                                             # needs sage.networkx
@@ -1217,28 +1244,29 @@ def matching(G, value_only=False, algorithm='Edmonds',
         ...
         ValueError: algorithm must be set to either "Edmonds" or "LP"
     """
-    from sage.rings.real_mpfr import RR
-
-    def weight(x):
-        if x in RR:
-            return x
-        return 1
+    by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
+                                                        weight_function=weight_function,
+                                                        check_weight=check_weight)
 
     W = {}
     L = {}
-    for u, v, l in G.edge_iterator():
+    for e in G.edge_iterator():
+        u, v, l = e
         if u == v:
             continue
         fuv = frozenset((u, v))
-        if fuv not in L or (use_edge_labels and W[fuv] < weight(l)):
+        if by_weight:
+            w = weight_function(e)
+            if fuv not in L or W[fuv] < w:
+                L[fuv] = l
+                W[fuv] = w
+        elif fuv not in L:
             L[fuv] = l
-            if use_edge_labels:
-                W[fuv] = weight(l)
 
     if algorithm == "Edmonds":
         import networkx
         g = networkx.Graph()
-        if use_edge_labels:
+        if by_weight:
             for (u, v), w in W.items():
                 g.add_edge(u, v, weight=w)
         else:
@@ -1246,7 +1274,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 g.add_edge(u, v)
         d = networkx.max_weight_matching(g)
         if value_only:
-            if use_edge_labels:
+            if by_weight:
                 return sum(W[frozenset(e)] for e in d)
             return Integer(len(d))
 
@@ -1261,7 +1289,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         # weighted ...
         p = MixedIntegerLinearProgram(maximization=True, solver=solver)
         b = p.new_variable(binary=True)
-        if use_edge_labels:
+        if by_weight:
             p.set_objective(p.sum(w * b[fe] for fe, w in W.items()))
         else:
             p.set_objective(p.sum(b[fe] for fe in L))
@@ -1274,7 +1302,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         p.solve(log=verbose)
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         if value_only:
-            if use_edge_labels:
+            if by_weight:
                 return sum(w for fe, w in W.items() if b[fe])
             return Integer(sum(1 for fe in L if b[fe]))
 
