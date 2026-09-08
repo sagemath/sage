@@ -33,9 +33,11 @@ if [ -z "$CONFIG_SHELL" ]; then
     export CONFIG_SHELL=`command -v bash`
 fi
 
-# We disable openmp because of build failures, see
+# We used to disable openmp because of build failures, see
 # https://github.com/sagemath/sage/issues/17635#comment:67
+export OMPFLAGS="$OPENMP_CFLAGS $OPENMP_CLIB"
 sdh_configure --with-default="$SAGE_LOCAL" --with-blas-libs="$LINBOX_BLAS" \
+              --enable-openmp --disable-dependency-tracking --disable-silent-rules \
               "$LINBOX_BLAS_CFLAGS" --disable-static \
               --enable-precompilation $FFLAS_FFPACK_CONFIGURE
 sdh_make

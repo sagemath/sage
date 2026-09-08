@@ -35,7 +35,9 @@ THREEJS_DIR = @SAGE_THREEJS_DIR@
 
 # OpenMP flags, if available.
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
+OPENMP_CLIB = "@OPENMP_CLIB@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
+OPENMP_CXXLIB = "@OPENMP_CXXLIB@"
 
 # build-time feature flags
 defer_feature_checks = @DEFER_FEATURE_CHECKS@

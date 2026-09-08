@@ -33,11 +33,7 @@ AUTHORS:
 A standalone version of this code can be found at
 https://github.com/kedlaya/root-unitary.
 """
-# Remove second # from the next two lines to enable OpenMP support.
-##distutils: libraries = gomp
-##distutils: extra_compile_args = -fopenmp
-
-# ***************************************************************************
+#*****************************************************************************
 #       Copyright (C) 2019 Kiran S. Kedlaya <kskedl@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify

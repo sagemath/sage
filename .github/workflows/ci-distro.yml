@@ -98,6 +98,7 @@ jobs:
           eval $(build/bin/sage-print-system-package-command homebrew update)
           eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew _bootstrap _prereq $(build/bin/sage-package list :standard:)))
           brew install libomp Macaulay2/homebrew-tap/gfan Macaulay2/homebrew-tap/linbox
+          brew link libomp
 
       - name: Build
         run: |
