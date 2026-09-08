@@ -1057,13 +1057,14 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         Point configurations over inexact base rings (:issue:`42704`)::
 
-            sage: p_rdf = PointConfiguration([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
+            sage: p_rdf = PointConfiguration([[RDF(0), RDF(0)], [RDF(2), RDF(0)],
+            ....:                             [RDF(0), RDF(2)], [RDF(2), RDF(2)]])
             sage: p_rdf.base_ring()
             Real Double Field
             sage: p_rdf.triangulate()
             (<0,1,3>, <0,2,3>)
             sage: p_rdf.volume()
-            2.0
+            8.0
         """
         if self._use_TOPCOM and self._regular is not False:
             try:
