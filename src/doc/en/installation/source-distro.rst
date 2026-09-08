@@ -62,9 +62,9 @@ However, there are minimal prerequisites for building Sage that
 already must be installed on your system:
 
 - `Fundamental system packages required for installing from source
-  <../reference/spkg/_prereq.html>`_
+  <https://doc.sagemath.org/html/en/reference/spkg/_prereq.html>`_
 
-- `C/C++ compilers <../reference/spkg/gcc.html>`_
+- `C/C++ compilers <https://doc.sagemath.org/html/en/reference/spkg/gcc.html>`_
 
 If you have sufficient privileges (for example, on Linux you can
 use ``sudo`` to become the ``root`` user), then you can install these packages
