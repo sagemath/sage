@@ -466,7 +466,7 @@ class OEIS:
             sage: entry = '%I A262002\n%N A262002 L.g.f.: log( Sum_{n>=0} x^n/n! * Product_{k=1..n} (k^2 + 1) ).\n%K A262002 nonn'
             sage: s = oeis.find_by_entry(entry)
             sage: s
-            <ESC-]>8;;https://oeis.org/A262002<ESC-\>A262002<ESC-]>8;;<ESC-\>: L.g.f.: log( Sum_{n>=0} x^n/n! * Product_{k=1..n} (k^2 + 1) ).
+            ...A262002...: L.g.f.: log( Sum_{n>=0} x^n/n! * Product_{k=1..n} (k^2 + 1) ).
         """
         ident = entry[3:10]
         sequence = OEISSequence(ident=ident)
@@ -655,9 +655,8 @@ class OEIS:
 
         TESTS::
 
-            sage: s = oeis._imaginary_sequence()
-            sage: s
-            <ESC-]>8;;https://oeis.org/A999999<ESC-\>A999999<ESC-]>8;;<ESC-\>: The characteristic sequence of 42 plus one, starting from 38.
+            sage: s = oeis._imaginary_sequence(); s
+            ...A999999...: The characteristic sequence of 42 plus one, starting from 38.
             sage: s[4]
             2
             sage: s(42)
@@ -1149,7 +1148,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
             sage: u = oeis._imaginary_sequence(ident='A999994', keywords='dead')
             sage: u
-            <ESC-]>8;;https://oeis.org/A999994<ESC-\>A999994<ESC-]>8;;<ESC-\>: The characteristic sequence of 42 plus one, starting from 38.
+            ...A999994...: The characteristic sequence of 42 plus one, starting from 38.
 
             sage: u.is_dead()
             True
@@ -1344,9 +1343,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         TESTS::
 
-            sage: s = oeis._imaginary_sequence()
-            sage: s
-            <ESC-]>8;;https://oeis.org/A999999<ESC-\>A999999<ESC-]>8;;<ESC-\>: The characteristic sequence of 42 plus one, starting from 38.
+            sage: s = oeis._imaginary_sequence(); s
+            ...A999999...: The characteristic sequence of 42 plus one, starting from 38.
         """
         sid = self.id()
         ansi_link = f"\033]8;;https://oeis.org/{sid}\033\\{sid}\033]8;;\033\\"
