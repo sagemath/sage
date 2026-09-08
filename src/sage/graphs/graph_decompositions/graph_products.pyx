@@ -119,6 +119,10 @@ Methods
 -------
 """
 
+from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph
+from libc.stdint cimport uint32_t
+from cysignals.memory cimport check_calloc, sig_free
+from sage.graphs.distances_all_pairs cimport all_pairs_shortest_path_BFS
 from sage.groups.perm_gps.partn_ref.data_structures cimport (
     OrbitPartition, OP_new, OP_join, OP_find, OP_dealloc
 )
@@ -259,6 +263,13 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef dict vertex_to_int = {vert: i for i, vert in enumerate(int_to_vertex)}
     g_int = g.relabel(perm=vertex_to_int, inplace=False)
 
+    # Convert to C-level short_digraph
+    cdef short_digraph sd
+    init_short_digraph(sd, g_int)
+    cdef uint32_t* sd_edges = sd.edges
+    cdef uint32_t m = sd.m
+    cdef uint32_t n = sd.n
+
     # Reorder the vertices of an edge
     def r(x, y):
         return (x, y) if x < y else (y, x)
@@ -312,13 +323,19 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
 
-    # Original distance loop with Python dict
+    # C-level distance array using all_pairs_shortest_path_BFS
+    cdef unsigned short* distances = <unsigned short*>check_calloc(n * n, sizeof(unsigned short))
+    if distances == NULL:
+        raise MemoryError("Failed to allocate distance array")
+    all_pairs_shortest_path_BFS(g_int, NULL, distances, NULL)
+
     cdef list edges = list(g_int.edges(labels=False, sort=False))
-    cdef dict d = g_int.distance_all_pairs()
     cdef int uu, vv
+    cdef unsigned short* du
+    cdef unsigned short* dv
     for i, (u, v) in enumerate(edges):
-        du = d[u]
-        dv = d[v]
+        du = distances + u * n
+        dv = distances + v * n
         for j in range(i + 1, g_int.size()):
             uu, vv = edges[j]
             if du[uu] + dv[vv] != du[vv] + dv[uu]:
@@ -326,6 +343,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     # Only one connected component ? Check before building edges
     if op.num_cells == 1:
+        sig_free(distances)
         OP_dealloc(op)
         return (False, None) if relabeling else False
 
@@ -364,6 +382,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         raise ValueError("something weird happened during the algorithm... "
                          "Please report the bug and give us the graph instance"
                          " that made it fail !")
+    sig_free(distances)
     OP_dealloc(op)
     if relabeling:
         return isiso, dictt
