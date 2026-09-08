@@ -457,7 +457,7 @@ from sage.graphs.generic_graph_pyx import (
 )
 from sage.graphs.views import EdgesView
 from sage.misc.cachefunc import cached_method
-from sage.misc.decorators import options
+from sage.misc.decorators import options, rename_keyword
 from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.prandom import random
 from sage.rings.integer import Integer
@@ -7990,12 +7990,12 @@ class GenericGraph(GenericGraph_pyx):
 
         if algorithm in ["FF", "igraph", None]:
             if value_only:
-                return self.flow(s, t, value_only=value_only, use_edge_labels=use_edge_labels, algorithm=algorithm)
+                return self.flow(s, t, value_only=value_only, by_weight=use_edge_labels, algorithm=algorithm)
 
             from sage.graphs.digraph import DiGraph
             g = DiGraph(self)
 
-            flow_value, flow_graph = self.flow(s, t, value_only=value_only, use_edge_labels=use_edge_labels, algorithm=algorithm)
+            flow_value, flow_graph = self.flow(s, t, value_only=value_only, by_weight=use_edge_labels, algorithm=algorithm)
 
             for u, v, l in flow_graph.edge_iterator():
                 g.add_edge(v, u)
@@ -10431,7 +10431,9 @@ class GenericGraph(GenericGraph_pyx):
                 return Integer(sum(1 for v in self if b_sol[v]))
             return [v for v in self if b_sol[v]]
 
-    def flow(self, x, y, value_only=True, integer=False, use_edge_labels=True,
+    @rename_keyword(deprecation=99999, use_edge_labels='by_weight')
+    def flow(self, x, y, value_only=True, integer=False, by_weight=True,
+             weight_function=None, check_weight=True,
              vertex_bound=False, algorithm=None, solver=None, verbose=0,
              *, integrality_tolerance=1e-3):
         r"""
@@ -10466,10 +10468,19 @@ class GenericGraph(GenericGraph_pyx):
           optimal solution under the constraint that the flow going through an
           edge has to be an integer, or without this constraint
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a maximum flow where each edge has a capacity defined by its
-          label (if an edge has no label, capacity `1` is assumed), or to use
-          default edge capacity of `1`
+        - ``by_weight`` -- boolean (default: ``True``); if ``True``, computes a
+          maximum flow where the capacity of an edge is given by
+          ``weight_function``, or by its label if ``weight_function`` is
+          ``None``. If ``False``, every edge has capacity `1`.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its capacity. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else `1` as a capacity.
+
+        - ``check_weight`` -- boolean (default: ``True``); whether to check that
+          the ``weight_function`` outputs a number for each edge
 
         - ``vertex_bound`` -- boolean (default: ``False``); when set to
           ``True``, sets the maximum flow leaving a vertex different from `x` to
@@ -10561,7 +10572,24 @@ class GenericGraph(GenericGraph_pyx):
             sage: flow_graph.size()
             4
 
+        A ``weight_function`` can read the capacity from anywhere in the edge,
+        and setting it implies ``by_weight=True``::
+
+            sage: D = DiGraph([(0, 1, {'cap': 3}), (1, 2, {'cap': 2})])
+            sage: D.flow(0, 2, weight_function=lambda e: e[2]['cap'])                   # needs sage.numerical.mip
+            2
+
         TESTS:
+
+        The ``use_edge_labels`` keyword is deprecated in favour of
+        ``by_weight``::
+
+            sage: D = DiGraph([(0, 1, 3), (1, 2, 2)])
+            sage: D.flow(0, 2, use_edge_labels=True)                                    # needs sage.numerical.mip
+            doctest:warning...
+            DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+            See https://github.com/sagemath/sage/issues/99999 for details.
+            2
 
         An exception if raised when forcing "FF" or "igraph" with ``vertex_bound
         = True``::
@@ -10601,19 +10629,17 @@ class GenericGraph(GenericGraph_pyx):
         if vertex_bound and algorithm in ["FF", "igraph"]:
             raise ValueError("this method does not support both "
                              "vertex_bound=True and algorithm='" + algorithm + "'")
-        if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-            if integer:
-                from math import floor
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
-                def capacity(z):
-                    return floor(z) if z in RR else 1
-            else:
-                def capacity(z):
-                    return z if z in RR else 1
+        if by_weight and integer:
+            from math import floor
+
+            def capacity(e):
+                return floor(weight_function(e))
         else:
-            def capacity(z):
-                return 1
+            capacity = weight_function
 
         if algorithm is None:
             if vertex_bound:
@@ -10624,14 +10650,16 @@ class GenericGraph(GenericGraph_pyx):
                 algorithm = "FF"
 
         if (algorithm == "FF"):
-            return self._ford_fulkerson(x, y, value_only=value_only, integer=integer, use_edge_labels=use_edge_labels)
+            return self._ford_fulkerson(x, y, value_only=value_only, integer=integer,
+                                        by_weight=by_weight,
+                                        weight_function=weight_function)
         if (algorithm == 'igraph'):
             vertices = list(self)
             x_int = vertices.index(x)
             y_int = vertices.index(y)
-            if use_edge_labels:
+            if by_weight:
                 g_igraph = self.igraph_graph(vertex_list=vertices,
-                                             edge_attrs={'capacity': [float(capacity(e[2]))
+                                             edge_attrs={'capacity': [float(capacity(e))
                                                                       for e in self.edge_iterator()]})
                 maxflow = g_igraph.maxflow(x_int, y_int, 'capacity')
             else:
@@ -10708,8 +10736,8 @@ class GenericGraph(GenericGraph_pyx):
                 p.add_constraint(flow_sum(v), min=0, max=0)
 
         # Capacity constraints
-        for u, v, w in g.edge_iterator():
-            p.add_constraint(capacity_sum(u, v), max=capacity(w))
+        for e in g.edge_iterator():
+            p.add_constraint(capacity_sum(e[0], e[1]), max=capacity(e))
 
         # No vertex except the sources can send more than 1
         if vertex_bound:
@@ -10723,7 +10751,7 @@ class GenericGraph(GenericGraph_pyx):
         # Otherwise, the base ring of the MILP solver is used
         flow = p.get_values(flow, convert=True, tolerance=integrality_tolerance)
 
-        if not integer and use_edge_labels is False:
+        if not integer and not by_weight:
             obj = p.get_values(obj[0], convert=ZZ, tolerance=integrality_tolerance)
         else:
             obj = p.get_values(obj[0], convert=True, tolerance=integrality_tolerance)
@@ -10966,7 +10994,8 @@ class GenericGraph(GenericGraph_pyx):
 
         return solution
 
-    def _ford_fulkerson(self, s, t, use_edge_labels=False, integer=False, value_only=True):
+    def _ford_fulkerson(self, s, t, by_weight=False, weight_function=None,
+                        integer=False, value_only=True):
         r"""
         Python implementation of the Ford-Fulkerson algorithm.
 
@@ -10988,10 +11017,15 @@ class GenericGraph(GenericGraph_pyx):
           optimal solution under the constraint that the flow going through an
           edge has to be an integer, or without this constraint
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a maximum flow where each edge has a capacity defined by its
-          label (if an edge has no label, capacity `1` is assumed), or to use
-          default edge capacity of `1`
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, the
+          capacity of an edge is given by ``weight_function``, or by its label
+          if ``weight_function`` is ``None``. If ``False``, every edge has
+          capacity `1`.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its capacity. When
+          called from :meth:`flow` this is already resolved, and it is used as
+          given.
 
         EXAMPLES:
 
@@ -11037,12 +11071,15 @@ class GenericGraph(GenericGraph_pyx):
         from sage.graphs.digraph import DiGraph
 
         # Whether we should consider the edges labeled
-        if use_edge_labels:
-            def l_capacity(x):
-                return 1 if (x is None or x == {}) else (floor(x) if integer else x)
+        if weight_function is None:
+            by_weight, weight_function = self._get_weight_function(
+                by_weight=by_weight, weight_function=weight_function)
+
+        if by_weight and integer:
+            def l_capacity(e):
+                return floor(weight_function(e))
         else:
-            def l_capacity(x):
-                return 1
+            l_capacity = weight_function
 
         directed = self.is_directed()
 
@@ -11061,18 +11098,22 @@ class GenericGraph(GenericGraph_pyx):
 
         # Initializing the variables
         if directed:
-            for u, v, l in self.edge_iterator():
-                if l_capacity(l) > 0:
-                    capacity[u, v] = l_capacity(l) + capacity.get((u, v), 0)
+            for e in self.edge_iterator():
+                u, v = e[0], e[1]
+                c = l_capacity(e)
+                if c > 0:
+                    capacity[u, v] = c + capacity.get((u, v), 0)
                     capacity[v, u] = capacity.get((v, u), 0)
                     residual.add_edge(u, v)
                     flow[u, v] = 0
                     flow[v, u] = 0
         else:
-            for u, v, l in self.edge_iterator():
-                if l_capacity(l) > 0:
-                    capacity[u, v] = l_capacity(l) + capacity.get((u, v), 0)
-                    capacity[v, u] = l_capacity(l) + capacity.get((v, u), 0)
+            for e in self.edge_iterator():
+                u, v = e[0], e[1]
+                c = l_capacity(e)
+                if c > 0:
+                    capacity[u, v] = c + capacity.get((u, v), 0)
+                    capacity[v, u] = c + capacity.get((v, u), 0)
                     residual.add_edge(u, v)
                     residual.add_edge(v, u)
                     flow[u, v] = 0
@@ -11136,7 +11177,9 @@ class GenericGraph(GenericGraph_pyx):
 
         return flow_intensity, g
 
-    def multicommodity_flow(self, terminals, integer=True, use_edge_labels=False,
+    @rename_keyword(deprecation=99999, use_edge_labels='by_weight')
+    def multicommodity_flow(self, terminals, integer=True, by_weight=False,
+                            weight_function=None, check_weight=True,
                             vertex_bound=False, solver=None, verbose=0,
                             *, integrality_tolerance=1e-3):
         r"""
@@ -11161,10 +11204,19 @@ class GenericGraph(GenericGraph_pyx):
         - ``integer`` -- boolean (default: ``True``); whether to require an integer
           multicommodity flow
 
-        - ``use_edge_labels`` -- boolean (default: ``False``); whether to
-          compute a multicommodity flow where each edge has a capacity defined
-          by its label (if an edge has no label, capacity `1` is assumed), or to
-          use default edge capacity of `1`
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, the
+          capacity of an edge is given by ``weight_function``, or by its label
+          if ``weight_function`` is ``None``. If ``False``, every edge has
+          capacity `1`.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its capacity. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else `1` as a capacity.
+
+        - ``check_weight`` -- boolean (default: ``True``); whether to check that
+          the ``weight_function`` outputs a number for each edge
 
         - ``vertex_bound`` -- boolean (default: ``False``); whether to require
           that a vertex can stand at most `1` commodity of flow through it of
@@ -11237,14 +11289,9 @@ class GenericGraph(GenericGraph_pyx):
         flow = p.new_variable(nonnegative=True, integer=integer)
 
         # Whether to use edge labels
-        if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
-            def capacity(x):
-                return x if x in RR else 1
-        else:
-            def capacity(x):
-                return 1
+        by_weight, capacity = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function,
+            check_weight=check_weight)
 
         if g.is_directed():
             # This function return the balance of flow at X
@@ -11284,8 +11331,10 @@ class GenericGraph(GenericGraph_pyx):
                     p.add_constraint(flow_sum(i, v), min=0, max=0)
 
         # Capacity constraints
-        for u, v, w in g.edge_iterator():
-            p.add_constraint(p.sum(capacity_sum(i, u, v) for i in range(len(terminals))), max=capacity(w))
+        for e in g.edge_iterator():
+            p.add_constraint(p.sum(capacity_sum(i, e[0], e[1])
+                                   for i in range(len(terminals))),
+                             max=capacity(e))
 
         if vertex_bound:
 
@@ -11521,7 +11570,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.edge_disjoint_paths(0, 1)
             [[0, 2, 1], [0, 3, 1], [0, 4, 1]]
         """
-        [obj, flow_graph] = self.flow(s, t, value_only=False, integer=True, use_edge_labels=False,
+        [obj, flow_graph] = self.flow(s, t, value_only=False, integer=True, by_weight=False,
                                       algorithm=algorithm, solver=solver, verbose=verbose,
                                       integrality_tolerance=integrality_tolerance)
 
@@ -11586,7 +11635,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.vertex_disjoint_paths(1, 0)                                         # needs sage.numerical.mip
             []
         """
-        obj, flow_graph = self.flow(s, t, value_only=False, integer=True, use_edge_labels=False,
+        obj, flow_graph = self.flow(s, t, value_only=False, integer=True, by_weight=False,
                                     vertex_bound=True, solver=solver, verbose=verbose,
                                     integrality_tolerance=integrality_tolerance)
 
