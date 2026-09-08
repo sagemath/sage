@@ -329,15 +329,15 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         raise MemoryError("Failed to allocate distance array")
     all_pairs_shortest_path_BFS(g_int, NULL, distances, NULL)
 
-    cdef list edges = list(g_int.edges(labels=False, sort=False))
+    # edge_list already contains all edges; reusing it
     cdef int uu, vv
     cdef unsigned short* du
     cdef unsigned short* dv
-    for i, (u, v) in enumerate(edges):
+    for i, (u, v) in enumerate(edge_list):
         du = distances + u * n
         dv = distances + v * n
-        for j in range(i + 1, g_int.size()):
-            uu, vv = edges[j]
+        for j in range(i + 1, n_edges):
+            uu, vv = edge_list[j]
             if du[uu] + dv[vv] != du[vv] + dv[uu]:
                 OP_join(op, edge_to_idx[r(u, v)], edge_to_idx[r(uu, vv)])
 
