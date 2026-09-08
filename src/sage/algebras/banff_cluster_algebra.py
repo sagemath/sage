@@ -75,12 +75,12 @@ We can compute generators and a presentation::
     sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
     sage: A = BanffClusterAlgebra(B)
     sage: A.generators()
-    [x0^-1*x1 + x0^-1, x0*x1^-1 + x1^-1*x2, x1*x2^-1 + x2^-1]
+    [x0*x1^-1 + x1^-1*x2, x0^-1*x1 + x0^-1, x1*x2^-1 + x2^-1]
     sage: Q, R, I = A.presentation()
     sage: R.base_ring() is QQ
     True
     sage: Q
-    Quotient of Multivariate Polynomial Ring in X0, X1, X2, T0, T1, T2 over Rational Field by the ideal (X1*T1 - X0 - X2, X0*T0 - X1 - 1, X2*T2 - X1 - 1)
+    Quotient of Multivariate Polynomial Ring in X0, X1, X2, T0, T1, T2 over Rational Field by the ideal (X0*T1 - X1 - 1, X1*T0 - X0 - X2, X2*T2 - X1 - 1)
 
 
 Divisor-theoretic functionality is inherited from the FiniteLaurentIntersectionRing structure::
@@ -1364,7 +1364,7 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
             sage: B = Matrix([[0, 1], [-1, 0]])
             sage: A = BanffClusterAlgebra(B)
             sage: A.generators()
-            [x0^-1*x1 + x0^-1, x0*x1^-1 + x1^-1]
+            [x0*x1^-1 + x1^-1, x0^-1*x1 + x0^-1]
 
         The output is deterministic::
 
@@ -1384,17 +1384,26 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
 
         gens = [L(g) for g in gens if not L(g).is_monomial() and not L(g).is_constant()]
 
-        # Deduplicate deterministically: dedupe by a canonical, content-derived
-        # key, then sort by that same key so the result is reproducible
-        # regardless of the order _banff_algorithm_with_generators happened to produce them in.
         seen = {}
         for g in gens:
             key = tuple(sorted(g.dict().items()))
-            seen[key] = g  # last write wins; fine since duplicates are equal
+            seen[key] = g
+        unique_gens = list(seen.values())
 
-        gens = [seen[key] for key in sorted(seen)]
+        def _complexity_key(g):
+            # Ascending cost for presentation()'s incremental elimination-ideal
+            # construction: denominator size, degree, term count; str(g) only
+            # to break ties deterministically.
+            exps = list(g.exponents())
+            n = len(exps[0]) if exps else 0
+            denom_degree = sum(
+                max((max(-e[i], 0) for e in exps), default=0) for i in range(n)
+            )
+            total_degree = max((sum(abs(x) for x in e) for e in exps), default=0)
+            num_terms = len(exps)
+            return (denom_degree, total_degree, num_terms, str(g))
 
-        return gens
+        return sorted(unique_gens, key=_complexity_key)
 
     def presentation(self):
         r"""
@@ -1413,17 +1422,8 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
             sage: R.base_ring() is QQ
             True
             sage: Q
-            Quotient of Multivariate Polynomial Ring in
-            ...
-            X1^2*T0*T3 + X1^2*T5*T6 + T0*T3*T5*T6 + T5^2*T6^2 - X1*T3*T4 - X1*T4*T5, T4^4*T5 + X1*T0*T4^2 + T4^2*T5^2 +
-            T0*T1*T5*T6 - T4^3 + X1*T0*T5 - T4*T5, X2*T2*T4*T5*T6 - T2*T3*T4*T5 + T1^2*T3*T6 + T2*T4^2 - X2*T5*T6 - T1*T6^2 + T3*T5 - T4,
-            T2^2*T4^2*T5*T6 - T1^3*T3*T6 + T2^2*T5^2*T6 - T1*T2*T4^2 - T2*T4*T5*T6 + T1^2*T6^2 - T1*T2*T5 - T1*T3*T5 + T1*T4 + T5*T6,
-            X2*T2^2*T5^2*T6^2 + T1^3*T3^2*T6 - T2^2*T3*T5^2*T6 + 2*T2^2*T4*T5*T6 + T2*T3*T4*T5*T6 - 2*T1^2*T3*T6^2 + T1*T2*T3*T5 +
-            T1*T3^2*T5 + X2*T5*T6^2 + T1*T6^3 - T1*T2*T4 - 2*T2*T5*T6 - 2*T3*T5*T6 + T1, T2^3*T4*T5^2*T6^2 - T1^4*T3^2*T6 + T1*T2^2*T3*T5^2*T6
-            - 2*T1*T2^2*T4*T5*T6 + 2*T1^3*T3*T6^2 - 2*T2^2*T5^2*T6^2 - T1^2*T2*T3*T5 - T1^2*T3^2*T5 - T1^2*T6^3 + T1^2*T2*T4 + 3*T1*T2*T5*T6 +
-            2*T1*T3*T5*T6 - T5*T6^2 - T1^2, T2^4*T5^3*T6^3 - T1^5*T3^3*T6 + T1^2*T2^2*T3^2*T5^2*T6 + 3*T1^4*T3^2*T6^2 - 3*T1*T2^3*T5^2*T6^2
-            - 3*T1*T2^2*T3*T5^2*T6^2 - T1^3*T2*T3^2*T5 - T1^3*T3^3*T5 - 3*T1^3*T3*T6^3 + 2*T2^2*T5^2*T6^3 + 3*T1^2*T2^2*T5*T6 +
-            4*T1^2*T2*T3*T5*T6 + 3*T1^2*T3^2*T5*T6 + T1^2*T6^4 - 3*T1*T2*T5*T6^2 - 3*T1*T3*T5*T6^2 - T1^3*T2 - T1^3*T3 + T5*T6^3 + T1^2*T6)
+            Quotient of Multivariate Polynomial Ring in X0, X1, X2, X3, T0, T1, T2,
+            T3, T4, T5, T6 over Rational Field by the ideal (...)
         """
 
         generators = self.generators()
