@@ -10431,7 +10431,7 @@ class GenericGraph(GenericGraph_pyx):
                 return Integer(sum(1 for v in self if b_sol[v]))
             return [v for v in self if b_sol[v]]
 
-    @rename_keyword(deprecation=99999, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42772, use_edge_labels='by_weight')
     def flow(self, x, y, value_only=True, integer=False, by_weight=True,
              weight_function=None, check_weight=True,
              vertex_bound=False, algorithm=None, solver=None, verbose=0,
@@ -10588,7 +10588,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.flow(0, 2, use_edge_labels=True)                                    # needs sage.numerical.mip
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/99999 for details.
+            See https://github.com/sagemath/sage/issues/42772 for details.
             2
 
         An exception if raised when forcing "FF" or "igraph" with ``vertex_bound
@@ -11177,7 +11177,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return flow_intensity, g
 
-    @rename_keyword(deprecation=99999, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42772, use_edge_labels='by_weight')
     def multicommodity_flow(self, terminals, integer=True, by_weight=False,
                             weight_function=None, check_weight=True,
                             vertex_bound=False, solver=None, verbose=0,
