@@ -15,16 +15,19 @@ Installation Guide for more about those.)
 
 .. envvar:: SAGE_RC_FILE
 
-  This is a Bash shell script sourced before the command-line launcher
-  imports the Sage library. The Bash launcher also reads it before
-  subcommands such as ``sage --python``. The default value is
-  :file:`$DOT_SAGE/sagerc`.
+  This selects the Bash startup script read by the legacy Bash launcher
+  after it sets its environment variables. The default value is
+  :file:`$DOT_SAGE/sagerc`. The Python command-line launcher ignores this
+  variable and does not read :file:`sagerc`. Set environment variables
+  before launching Sage instead; see :doc:`startup`.
 
 .. envvar:: SAGE_STARTUP_FILE
 
-  This is a file including commands to be
-  executed every time Sage starts.  The default value is
-  :file:`$DOT_SAGE/init.sage`.
+  This is a file containing Sage commands executed when an interactive
+  Sage session starts, including a Sage Jupyter kernel, after the Sage
+  library has been imported. The default value is
+  :file:`$DOT_SAGE/init.sage`. The Python command-line launcher does not
+  read this file for ``sage -c`` or script execution.
 
 .. envvar:: SAGE_SERVER
 
