@@ -20,6 +20,7 @@ py.install_sources(
   'poset_examples.py',
   'posets.py',
   'sashes.py',
+  'semidistributivity.py',
   subdir: 'sage/combinat/posets',
 )
 
