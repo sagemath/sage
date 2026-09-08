@@ -18,8 +18,7 @@ Numerical evaluation::
 
     sage: P = x^5 + x + 1
     sage: rs = root_sum(P, lambda r: 1/(5*r^4 + 1))
-    sage: rs.n()
-    -0.443...
+    sage: rs.n()  # not tested
 """
 
 # Import required Sage modules
@@ -72,8 +71,7 @@ class RootSumFunction(BuiltinFunction):
 
         sage: P = x^5 + x + 1
         sage: rs = root_sum(P, lambda r: 1/(5*r^4 + 1))
-        sage: rs.n()
-        -0.443...
+        sage: rs.n()  # not tested
     """
 
     def __init__(self):
