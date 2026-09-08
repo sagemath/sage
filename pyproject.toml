@@ -7,7 +7,8 @@ requires = [
   'meson-python',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
-  'cython >=3.1.0',
+  # Cython 3.3 has a bug in C++ std::list-to-Python conversion; see https://github.com/cython/cython/issues/7939
+  'cython >=3.1.0, <3.3',
   'gmpy2 >=2.1.5',
   'jinja2',
   'memory_allocator',
@@ -47,7 +48,8 @@ dependencies = [
   'six >=1.15.0',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.12.1',
-  'cython >=3.1.0',
+  # Cython 3.3 has a bug in C++ std::list-to-Python conversion; see https://github.com/cython/cython/issues/7939
+  'cython >=3.1.0, <3.3',
   'fpylll >=0.5.9; sys_platform != "win32"',
   'gmpy2 >=2.1.5',
   'ipykernel >=5.2.1',
@@ -235,7 +237,8 @@ dev = [
   "uv",
   'cypari2 >=2.2.1; sys_platform != "win32"', # Duplicate build-system requirement to fix editable installs with uv
   'cysignals >=1.12.1', # Duplicate build-system requirement to fix editable installs with uv
-  'cython >=3.1.0', # Duplicate build-system requirement to fix editable installs with uv
+  # Cython 3.3 has a bug in C++ std::list-to-Python conversion; see https://github.com/cython/cython/issues/7939
+  'cython >=3.1.0, <3.3', # Duplicate build-system requirement to fix editable installs with uv
   'gmpy2 >=2.1.5', # Duplicate build-system requirement to fix editable installs with uv
   'jinja2', # Duplicate build-system requirement to fix editable installs with uv
   'memory_allocator', # Duplicate build-system requirement to fix editable installs with uv
@@ -243,6 +246,7 @@ dev = [
   'numpy >=2.2.4', # Duplicate build-system requirement to fix editable installs with uv
 ]
 docs = [
+  "docutils",
   "furo",
   "jupyter-sphinx",
   "python-dateutil",

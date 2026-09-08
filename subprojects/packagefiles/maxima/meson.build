@@ -1,5 +1,5 @@
 project('maxima', 'c',
-  meson_version : '>=1.7',
+  meson_version : '>=1.11.2',
 )
 
 mod = import('unstable-external_project')
