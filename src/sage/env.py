@@ -155,7 +155,8 @@ SAGE_LIB = var("SAGE_LIB", os.path.dirname(os.path.dirname(__file__)))
 SAGE_EXTCODE = var("SAGE_EXTCODE", join(SAGE_LIB, "sage", "ext_data"))
 
 # prefix hierarchy where non-Python packages are installed
-SAGE_LOCAL = var("SAGE_LOCAL")
+# Sage-the-Distro sets SAGE_LOCAL; pure Python installs use the active prefix.
+SAGE_LOCAL = var("SAGE_LOCAL", os.path.abspath(sys.prefix))
 SAGE_SHARE = var("SAGE_SHARE", join(SAGE_LOCAL, "share"))
 SAGE_DOC = var("SAGE_DOC", join(SAGE_SHARE, "doc", "sage"))
 SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))
@@ -174,11 +175,7 @@ SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
 SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
 
 # ~/.sage
-if sys.platform == 'win32':
-    home_dir = os.environ.get("USERPROFILE")
-else:  # Unix-like systems (Linux, macOS, etc.)
-    home_dir = os.environ.get("HOME")
-DOT_SAGE = var("DOT_SAGE", join(home_dir, ".sage"))
+DOT_SAGE = var("DOT_SAGE", os.path.expanduser("~/.sage"))
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 
 # for sage_setup.setenv

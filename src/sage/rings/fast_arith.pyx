@@ -1,6 +1,20 @@
 # sage.doctest: needs sage.libs.pari
 """
 Basic arithmetic with C integers
+
+TESTS:
+
+The integer arithmetic helper classes cannot be subclassed::
+
+    sage: from sage.rings.fast_arith import arith_int, arith_llong
+    sage: type("arith_int_subclass", (arith_int,), {})
+    Traceback (most recent call last):
+    ...
+    TypeError: type 'sage.rings.fast_arith.arith_int' is not an acceptable base type
+    sage: type("arith_llong_subclass", (arith_llong,), {})
+    Traceback (most recent call last):
+    ...
+    TypeError: type 'sage.rings.fast_arith.arith_llong' is not an acceptable base type
 """
 
 # ****************************************************************************
@@ -40,22 +54,33 @@ from libc.math cimport sqrt
 
 from sage.rings.integer cimport Integer
 
-cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
+cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=False):
     r"""
-    Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
+    Return a list of all primes between ``start`` and ``stop - 1``, inclusive
+    (or between ``stop`` and ``start + 1`` if ``step`` is negative).
 
     If the second argument is omitted, this returns the primes up to the
     first argument.
 
-    The sage command :func:`~sage.arith.misc.primes` is an alternative that
-    uses less memory (but may be slower), because it returns an iterator,
-    rather than building a list of the primes.
+    .. SEEALSO::
+
+        - :func:`~sage.arith.misc.primes` is an alternative that
+          uses less memory (but may be slower), because it returns an iterator,
+          rather than building a list of the primes.
+
+        - :class:`~sage.sets.primes.Primes` can be used to create sets of primes
+          with more complicated congruence conditions.
 
     INPUT:
 
     - ``start`` -- integer; lower bound (default: 1)
 
     - ``stop`` -- integer; upper bound
+
+    - ``step`` -- integer or ``None`` (default: ``None``); if not ``None``,
+      the function returns only primes that are congruent to ``start`` modulo
+      ``step``. If ``step`` is negative, then the returned list will be
+      decreasing.
 
     - ``algorithm`` -- string (default: ``None``), one of:
 
@@ -80,25 +105,27 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         [2, 3, 5, 7]
         sage: prime_range(7)
         [2, 3, 5]
-        sage: prime_range(2000,2020)
+        sage: prime_range(2000, 2020)
         [2003, 2011, 2017]
-        sage: prime_range(2,2)
+        sage: prime_range(2, 2)
         []
-        sage: prime_range(2,3)
+        sage: prime_range(2, 3)
         [2]
-        sage: prime_range(5,10)
+        sage: prime_range(5, 10)
         [5, 7]
-        sage: prime_range(-100,10,"pari_isprime")
+        sage: prime_range(11, 100, 10)
+        [11, 31, 41, 61, 71]
+        sage: prime_range(-100, 10, "pari_isprime")
         [2, 3, 5, 7]
-        sage: prime_range(2,2,algorithm='pari_isprime')
+        sage: prime_range(2, 2, algorithm='pari_isprime')
         []
-        sage: prime_range(10**16,10**16+100,"pari_isprime")
+        sage: prime_range(10**16, 10**16+100, "pari_isprime")
         [10000000000000061, 10000000000000069, 10000000000000079, 10000000000000099]
-        sage: prime_range(10**30,10**30+100,"pari_isprime")
+        sage: prime_range(10**30, 10**30+100, "pari_isprime")
         [1000000000000000000000000000057, 1000000000000000000000000000099]
         sage: type(prime_range(8)[0])
         <class 'sage.rings.integer.Integer'>
-        sage: type(prime_range(8,algorithm='pari_isprime')[0])
+        sage: type(prime_range(8, algorithm='pari_isprime')[0])
         <class 'sage.rings.integer.Integer'>
 
     .. NOTE::
@@ -112,7 +139,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
         sage: prime_range(-1)
         []
-        sage: L = prime_range(25000,2500000)
+        sage: L = prime_range(25000, 2500000)
         sage: len(L)
         180310
         sage: L[-10:]
@@ -139,13 +166,53 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         ...
         ValueError: algorithm "pari_primes" is limited to primes larger than 436273008
 
+    Some step tests:
+
+        sage: prime_range(4, 15, 3)
+        [7, 13]
+        sage: prime_range(10, 20, -1)
+        []
+        sage: prime_range(20, 10, 1)
+        []
+        sage: prime_range(20, 10, -1)
+        [19, 17, 13, 11]
+        sage: prime_range(96, 19, -1)
+        [89, 83, 79, 73, 71, 67, 61, 59, 53, 47, 43, 41, 37, 31, 29, 23]
+
+
+    Make sure that step behaves exactly like in range::
+
+        sage: # needs sage.libs.pari
+        sage: a = randint(1, 50)
+        sage: b = randint(70, 100)
+        sage: step = randint(1, 5)
+        sage: prime_range(a, b, step) == list(filter(is_prime, range(a, b, step)))
+        True
+        sage: a = randint(50, 100)
+        sage: b = randint(0, 30)
+        sage: step = randint(-5, -1)
+        sage: prime_range(a, b, step) == list(filter(is_prime, range(a, b, step)))
+        True
+
     AUTHORS:
 
     - William Stein (original version)
     - Craig Citro (rewrote for massive speedup)
     - Kevin Stueve (added primes iterator option) 2010-10-16
     - Robert Bradshaw (speedup using Pari prime table, py_ints option)
+    - Vincent Macri (added step option)
     """
+    if isinstance(step, str):
+        # For backwards compatibility - `algorithm` used to be the third parameter.
+        # We make sure that previous code still works by treating `step` as
+        # `algorithm` if `step` is a string and `algorithm` is None.
+        if isinstance(algorithm, bool):
+            py_ints = algorithm
+        elif algorithm is not None:
+            raise TypeError('step must be an integer or None')
+        algorithm = step
+        step = None
+
     # input to pari.init_primes cannot be greater than 436273290 (hardcoded bound)
     DEF init_primes_max = 436273290
     DEF small_prime_max = 436273009  # a prime < init_primes_max (preferably the largest)
@@ -173,6 +240,13 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
                                  + "\nand argument is also not real: "
                                  + str(real_error))
 
+    if step is not None:
+        if not isinstance(step, (Integer, int)):
+            raise TypeError('step must be an integer or None')
+        step = Integer(step)
+    else:
+        step = 1
+
     if algorithm is None:
         # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
         if max(start, stop or 0) <= small_prime_max:
@@ -188,6 +262,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
             raise ValueError('algorithm "pari_primes" is limited to primes '
                              f'larger than {small_prime_max - 1}')
 
+        congruence = start % step
         if stop is None:
             # In this case, "start" is really stop
             stop = start
@@ -195,8 +270,10 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         else:
             start = start
             stop = stop
-            if start < 1:
-                start = 1
+
+        if step < 1:
+            start, stop = stop + 1, start + 1
+
         if stop <= start:
             return []
 
@@ -206,11 +283,15 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
             pari.init_primes(min(stop + prime_gap_bound, init_primes_max))
             assert pari_maxprime() >= stop
 
-        res = pari_prime_range(start, stop, py_ints)
+        res = pari_prime_range(max(start, 1), stop, py_ints)
+        if step < 0:
+            res = res[::-1]
+        if step != 1 and step != -1:
+            res = [p for p in res if p % step == congruence]
 
     elif algorithm == "pari_isprime" or algorithm == "pari_primes":
         from sage.arith.misc import primes
-        res = list(primes(start, stop))
+        res = list(primes(start, stop, step))
     else:
         raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')
     return res
@@ -516,7 +597,7 @@ cdef class arith_llong:
         y = v2
         if v1 < 0:
             y = -1*y
-        if x <= bnd and self.gcd_longlong(x, y) == 1:
+        if x <= bnd and self.c_gcd_longlong(x, y) == 1:
             n[0] = y
             d[0] = x
             return 0
@@ -528,6 +609,12 @@ cdef class arith_llong:
     def rational_recon_longlong(self, long long a, long long m):
         """
         Rational reconstruction of a modulo m.
+
+        EXAMPLES::
+
+            sage: from sage.rings.fast_arith import arith_llong
+            sage: arith_llong().rational_recon_longlong(1234567, 2147483629)
+            (-23606, 22613)
         """
         cdef long long n, d
         self.c_rational_recon_longlong(a, m, &n, &d)

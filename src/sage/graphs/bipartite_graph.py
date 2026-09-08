@@ -44,6 +44,7 @@ from collections.abc import Iterable
 from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
+from sage.misc.decorators import rename_keyword
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 
@@ -2374,8 +2375,10 @@ class BipartiteGraph(Graph):
             return matrix(len(self.right), len(self.left), D, sparse=sparse, **kwds)
         return matrix(base_ring, len(self.right), len(self.left), D, sparse=sparse, **kwds)
 
+    @rename_keyword(deprecation=42750, use_edge_labels='by_weight')
     def matching(self, value_only=False, algorithm=None,
-                 use_edge_labels=False, solver=None, verbose=0,
+                 by_weight=False, weight_function=None, check_weight=True,
+                 solver=None, verbose=0,
                  *, integrality_tolerance=1e-3):
         r"""
         Return a maximum matching of the graph represented by the list of its
@@ -2391,7 +2394,7 @@ class BipartiteGraph(Graph):
           only the cardinal (or the weight) of the matching is returned
 
         - ``algorithm`` -- string (default: ``'Hopcroft-Karp'`` if
-          ``use_edge_labels==False``, otherwise ``'Edmonds'``); algorithm to use
+          ``by_weight==False``, otherwise ``'Edmonds'``); algorithm to use
           among:
 
           - ``'Hopcroft-Karp'`` selects the default bipartite graph algorithm as
@@ -2404,13 +2407,20 @@ class BipartiteGraph(Graph):
 
           - ``'LP'`` uses a Linear Program formulation of the matching problem
 
-        - ``use_edge_labels`` -- boolean (default: ``False``)
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, computes a
+          weighted matching where each edge has the weight given by
+          ``weight_function``, or its label if ``weight_function`` is ``None``.
+          If ``False``, each edge has weight `1`. Only available when
+          ``algorithm`` is ``'Edmonds'`` or ``'LP'``.
 
-          - when set to ``True``, computes a weighted matching where each edge
-            is weighted by its label (if an edge has no label, `1` is assumed);
-            only if ``algorithm`` is ``'Edmonds'``, ``'LP'``
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l``, if ``l``
+          is not ``None``, else `1` as a weight.
 
-          - when set to ``False``, each edge has weight `1`
+        - ``check_weight`` -- boolean (default: ``True``); whether to check that
+          the ``weight_function`` outputs a number for each edge
 
         - ``solver`` -- string (default: ``None``); specifies a Mixed
           Integer Linear Programming (MILP) solver to be used. If set
@@ -2463,31 +2473,31 @@ class BipartiteGraph(Graph):
 
             sage: G = graphs.CycleGraph(4)
             sage: B = BipartiteGraph([(u,v,2) for u,v in G.edges(sort=True, labels=0)])
-            sage: sorted(B.matching(use_edge_labels=True))                              # needs networkx
+            sage: sorted(B.matching(by_weight=True))                              # needs networkx
             [(0, 3, 2), (1, 2, 2)]
-            sage: B.matching(use_edge_labels=True, value_only=True)                     # needs networkx
+            sage: B.matching(by_weight=True, value_only=True)                     # needs networkx
             4
-            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')            # needs networkx
+            sage: B.matching(by_weight=True, value_only=True, algorithm='Edmonds')            # needs networkx
             4
-            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')     # needs sage.numerical.mip
+            sage: B.matching(by_weight=True, value_only=True, algorithm='LP')     # needs sage.numerical.mip
             4
-            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Eppstein')
+            sage: B.matching(by_weight=True, value_only=True, algorithm='Eppstein')
             Traceback (most recent call last):
             ...
-            ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
-            sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Hopcroft-Karp')
+            ValueError: by_weight cannot be used with "Hopcroft-Karp" or "Eppstein"
+            sage: B.matching(by_weight=True, value_only=True, algorithm='Hopcroft-Karp')
             Traceback (most recent call last):
             ...
-            ValueError: use_edge_labels cannot be used with "Hopcroft-Karp" or "Eppstein"
-            sage: B.matching(use_edge_labels=False, value_only=True,                    # needs networkx
+            ValueError: by_weight cannot be used with "Hopcroft-Karp" or "Eppstein"
+            sage: B.matching(by_weight=False, value_only=True,                    # needs networkx
             ....:            algorithm='Hopcroft-Karp')
             2
-            sage: B.matching(use_edge_labels=False, value_only=True,                    # needs networkx
+            sage: B.matching(by_weight=False, value_only=True,                    # needs networkx
             ....:            algorithm='Eppstein')
             2
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='Edmonds')           # needs networkx
+            sage: B.matching(by_weight=False, value_only=True, algorithm='Edmonds')           # needs networkx
             2
-            sage: B.matching(use_edge_labels=False, value_only=True, algorithm='LP')    # needs sage.numerical.mip
+            sage: B.matching(by_weight=False, value_only=True, algorithm='LP')    # needs sage.numerical.mip
             2
 
         With multiedges enabled::
@@ -2496,7 +2506,7 @@ class BipartiteGraph(Graph):
             sage: for e in G.edges(sort=True):
             ....:     G.set_edge_label(e[0], e[1], int(e[0]) + int(e[1]))
             sage: G.allow_multiple_edges(True)
-            sage: G.matching(use_edge_labels=True, value_only=True)                     # needs networkx
+            sage: G.matching(by_weight=True, value_only=True)                     # needs networkx
             444
 
         Empty bipartite graph and bipartite graphs without edges::
@@ -2515,12 +2525,15 @@ class BipartiteGraph(Graph):
             sage: all(B.matching(algorithm=algo, value_only=True) == 0 for algo in algorithms)      # needs networkx
             True
         """
+        if weight_function is not None:
+            by_weight = True
+
         if algorithm is None:
-            algorithm = "Edmonds" if use_edge_labels else "Hopcroft-Karp"
+            algorithm = "Edmonds" if by_weight else "Hopcroft-Karp"
 
         if algorithm == "Hopcroft-Karp" or algorithm == "Eppstein":
-            if use_edge_labels:
-                raise ValueError('use_edge_labels cannot be used with '
+            if by_weight:
+                raise ValueError('by_weight cannot be used with '
                                  '"Hopcroft-Karp" or "Eppstein"')
             d = []
             if self.size():
@@ -2548,7 +2561,9 @@ class BipartiteGraph(Graph):
         if algorithm == "Edmonds" or algorithm == "LP":
             return Graph.matching(self, value_only=value_only,
                                   algorithm=algorithm,
-                                  use_edge_labels=use_edge_labels,
+                                  by_weight=by_weight,
+                                  weight_function=weight_function,
+                                  check_weight=check_weight,
                                   solver=solver, verbose=verbose,
                                   integrality_tolerance=integrality_tolerance)
         raise ValueError('algorithm must be "Hopcroft-Karp", '
