@@ -1,0 +1,59 @@
+From a5532833b14fd0feefe29428063efc9f3e1bcf73 Mon Sep 17 00:00:00 2001
+From: firef1y <fireflysentinel@gmail.com>
+Date: Tue, 4 Aug 2026 17:00:39 -0500
+Subject: [PATCH] cohomology.pyx: fix Python 3 regressions in the Dickson code
+
+find_dickson: use Integer(p) so that the exponents are passed to Singular as
+integers rather than floats, and int(DicksonLift.ncols()) so that range()
+accepts it.
+
+dickson_in_subgroup: use // for the odd-p generator count. Under Python 3 the
+division makes t a float, so the Dickson polynomial acquires float exponents
+and multiplying a generator list by one of them raises TypeError.
+
+Without the first two, H.a_invariants() fails for SmallGroup(243,51) and
+SmallGroup(243,55). Without the third, CohomologyRing(81,7) cannot be built
+at all; it is reached whenever an odd-p ring is computed rather than read
+from the database.
+---
+ pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx b/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx
+index 3a7dc77..8ba91a1 100644
+--- a/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx
++++ b/pGroupCohomology-3.3.3/pGroupCohomology/cohomology.pyx
+@@ -7892,7 +7892,7 @@ Minimal list of algebraic relations:
+         if self.Resl.coef()==2:
+             t = len(self.subgps[ID].Gen) - z
+         else:
+-            t = len(self.subgps[ID].Gen)/2 - z
++            t = len(self.subgps[ID].Gen)//2 - z
+         if t<0:
+             raise RuntimeError("The p-rank of the center must not exceed the rank of a maximal elementary abelian subgroup")
+         if t==0:
+@@ -8118,7 +8118,7 @@ Minimal list of algebraic relations:
+             if self.CenterRk == 0: # we have a non-primepower group
+                 singular.eval('%s = cosetIntersect(%s, %s, %s, %s, %s)'%(DicksonLift.name(), DicksonLift.name(), NilRad.name(), NewDicksonLift.name(), NewNilRad.name(), ','.join([str(j) for j in Integer (self._Order*self._prime**(self._HSyl.DicksonExp or 3)/self._POrder).divisors()])))
+             else:
+-                singular.eval('%s = cosetIntersect(%s, %s, %s, %s, %s)'%(DicksonLift.name(), DicksonLift.name(), NilRad.name(), NewDicksonLift.name(), NewNilRad.name(), ','.join([str(p**i) for i in range(self._property_dict.get('DicksonExp',3))])))
++                singular.eval('%s = cosetIntersect(%s, %s, %s, %s, %s)'%(DicksonLift.name(), DicksonLift.name(), NilRad.name(), NewDicksonLift.name(), NewNilRad.name(), ','.join([str(Integer(p)**i) for i in range(self._property_dict.get('DicksonExp',3))])))
+             if str(DicksonLift.typeof())=='int':
+                 coho_logger.info("> simultaneous lift failed at %s subgroup", self, Integer(Sg).ordinal_str())
+                 return
+@@ -8129,10 +8129,10 @@ Minimal list of algebraic relations:
+         ## But first, we need to save the original values, since factorisation
+         ## may be interrupted.
+         cdef list L=[]
+-        for i in range(1,DicksonLift.ncols()+1):
++        for i in range(1,int(DicksonLift.ncols())+1):
+             L.append(singular.eval('%s[1,%d]'%(DicksonLift.name(),i)))
+         if self.useFactorization:
+-            for i in range(1,DicksonLift.ncols()+1):
++            for i in range(1,int(DicksonLift.ncols())+1):
+                 try:
+                     L[i-1] = self.small_factor(DicksonLift[1,i])
+                 except:
+-- 
+2.50.1 (Apple Git-155)
+
