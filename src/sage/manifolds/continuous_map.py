@@ -1782,7 +1782,7 @@ class ContinuousMap(Morphism):
 
             sage: rot.display(c_spher, c_spher)
             R: U → U
-               (r, ph) ↦ (r, arctan2(1/2*sqrt(3)*cos(ph) + 1/2*sin(ph), -1/2*sqrt(3)*sin(ph) + 1/2*cos(ph)))
+               (r, ph) ↦ (r, arctan2(...sqrt(3)*cos(ph) + ...sin(ph), -...sqrt(3)*sin(ph) + ...cos(ph)))
 
         Therefore, we use the method :meth:`add_expr` to set the
         spherical-coordinate expression by hand::
