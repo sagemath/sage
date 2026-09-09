@@ -10634,7 +10634,7 @@ class GenericGraph(GenericGraph_pyx):
             check_weight=check_weight)
 
         if by_weight and integer:
-            from math import floor
+            from sage.arith.misc import integer_floor as floor
 
             def capacity(e):
                 return floor(weight_function(e))
@@ -11071,9 +11071,8 @@ class GenericGraph(GenericGraph_pyx):
         from sage.graphs.digraph import DiGraph
 
         # Whether we should consider the edges labeled
-        if weight_function is None:
-            by_weight, weight_function = self._get_weight_function(
-                by_weight=by_weight, weight_function=weight_function)
+        by_weight, weight_function = self._get_weight_function(
+            by_weight=by_weight, weight_function=weight_function)
 
         if by_weight and integer:
             def l_capacity(e):
@@ -11570,9 +11569,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.edge_disjoint_paths(0, 1)
             [[0, 2, 1], [0, 3, 1], [0, 4, 1]]
         """
-        [obj, flow_graph] = self.flow(s, t, value_only=False, integer=True, by_weight=False,
-                                      algorithm=algorithm, solver=solver, verbose=verbose,
-                                      integrality_tolerance=integrality_tolerance)
+        obj, flow_graph = self.flow(s, t, value_only=False, integer=True, by_weight=False,
+                                    algorithm=algorithm, solver=solver, verbose=verbose,
+                                    integrality_tolerance=integrality_tolerance)
 
         paths = []
 
