@@ -32,4 +32,3 @@ foreach name, pyx : extension_data_cpp
     dependencies: [py_dep, cysignals, ec, ecl, flint, gmp, ntl],
   )
 endforeach
-

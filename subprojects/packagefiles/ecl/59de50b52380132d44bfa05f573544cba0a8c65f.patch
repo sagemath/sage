@@ -1,0 +1,62 @@
+diff --git a/src/util/side-modules.lsp b/src/util/side-modules.lsp
+new file mode 100644
+index 0000000000000000000000000000000000000000..90446f450506459af8598d5eaf0c848b934e27a6
+--- /dev/null
++++ b/src/util/side-modules.lsp
+@@ -0,0 +1,56 @@
++;;; A factory for setting extra locations to search for modules.
++;;;
++;;; BSD-2-Clause, (c) 2026, Daniel Kochmański and Dima Pasechnik
++;;;
++;;; This allows configuring locations for 3rd-party modules, so that
++;;;
++;;;   (require :<module>)
++;;;
++;;; works for modules (e.g. .fas files) installed into one of directories
++;;; specified, either at build-, or in run-time, by the environment variable
++;;; ECL_SIDE_MODULES_PATH. The contents of
++;;; the variable *build-time-side-module-pathnames* set at build time is tried
++;;; after eventual user-specified directories at runtime.
++;;;
++;;; To enable this feature build ECL with this file included, for example:
++;;;
++;;;   ./configure --with-extra-files=`pwd`/src/util/side-modules.lsp
++;;;   ECL_SIDE_MODULES_PATH="/tmp/ecl-side1:/tmp/ecl-side2" make
++;;;   make install
++;;;
++;;; This file is meant for packagers, not as a contrib. In the future it may be
++;;; promoted as the latter and properly documented.
++
++(in-package "SYSTEM")
++
++(eval-when (:compile-toplevel :load-toplevel :execute)
++  (defun parse-namestring-as-directory (namestring)
++    (parse-namestring (concatenate 'string namestring "/")))
++
++  (defun parse-side-modules-pathnames (path)
++    (when path
++      (loop for start = 0 then (1+ end)
++            for end = (position #\: path :start start)
++            collect (parse-namestring-as-directory (subseq path start end))
++            until (null end)))))
++
++(defvar *build-time-side-module-pathnames*
++  '#.(parse-side-modules-pathnames (ext:getenv "ECL_SIDE_MODULES_PATH")))
++
++(defun try-side-modules-pathnames (module)
++  (flet ((try-load (base module-name)
++           (let ((path (make-pathname :name module-name :defaults base)))
++             (when (load path :if-does-not-exist nil)
++               (return-from try-side-modules-pathnames t)))))
++    ;; First try the runtime path, so that user may explicitly overwrite
++    ;; build-time value.
++    (let ((runtime-side-module-path (ext:getenv "ECL_SIDE_MODULES_PATH")))
++      (dolist (side (parse-side-modules-pathnames runtime-side-module-path) nil)
++        (try-load side (string module))
++        (try-load side (string-downcase module))))
++    ;; Then try locations configured at build time.
++    (dolist (side *build-time-side-module-pathnames* nil)
++      (try-load side (string module))
++      (try-load side (string-downcase module)))))
++
++(pushnew #'try-side-modules-pathnames *module-provider-functions*)

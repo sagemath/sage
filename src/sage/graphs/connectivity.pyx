@@ -1720,11 +1720,14 @@ def minimal_separators(G, forbidden_vertices=None):
                         to_explore.append(frozenset(nh))
 
 
+@rename_keyword(deprecation=42740, use_edge_labels='by_weight')
 @rename_keyword(deprecation=42652, implementation='algorithm')
 def edge_connectivity(G,
                       value_only=True,
                       algorithm=None,
-                      use_edge_labels=False,
+                      by_weight=False,
+                      weight_function=None,
+                      check_weight=True,
                       vertices=False,
                       solver=None,
                       verbose=0,
@@ -1775,13 +1778,19 @@ def edge_connectivity(G,
         than the integer linear program and is the default for digraphs when
         only the value is requested.
 
-    - ``use_edge_labels`` -- boolean (default: ``False``)
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, computes a
+      weighted minimum cut where each edge has the weight given by
+      ``weight_function``, or its label if ``weight_function`` is ``None``. If
+      ``False``, each edge has weight `1`. Implies ``algorithm='sage'``.
 
-      - When set to ``True``, computes a weighted minimum cut where each edge
-        has a weight defined by its label. (If an edge has no label, `1` is
-        assumed.). Implies ``boost`` = ``False``.
+    - ``weight_function`` -- function (default: ``None``); a function that takes
+      as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
+      ``by_weight`` is automatically set to ``True``. If ``None`` and
+      ``by_weight`` is ``True``, we use the edge label ``l``, if ``l`` is not
+      ``None``, else `1` as a weight.
 
-      - When set to ``False``, each edge has weight `1`.
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that the
+      ``weight_function`` outputs a number for each edge
 
     - ``vertices`` -- boolean (default: ``False``)
 
@@ -1844,9 +1853,17 @@ def edge_connectivity(G,
         ....:      tree.set_edge_label(u, v, random())
         sage: minimum = min(tree.edge_labels())
         sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False,              # needs sage.numerical.mip
-        ....:                                      use_edge_labels=True)
+        ....:                                      by_weight=True)
         sage: l == minimum                                                              # needs sage.numerical.mip
         True
+
+    A ``weight_function`` can be used to read the weight from anywhere in the
+    edge, and setting it implies ``by_weight=True``::
+
+        sage: G = Graph([(0, 1, {'cost': 3}), (1, 2, {'cost': 1}),
+        ....:            (2, 0, {'cost': 2})])
+        sage: edge_connectivity(G, weight_function=lambda e: e[2]['cost'])              # needs sage.numerical.mip
+        3.0
 
     When ``value_only=True`` and ``algorithm="sage"``, this function is
     optimized for small connectivity values and does not need to build a linear
@@ -1922,6 +1939,15 @@ def edge_connectivity(G,
         See https://github.com/sagemath/sage/issues/42652 for details.
         3
 
+    The ``use_edge_labels`` keyword is deprecated in favour of ``by_weight``::
+
+        sage: G = Graph([(0, 1, 3), (1, 2, 1), (2, 0, 2)])
+        sage: edge_connectivity(G, use_edge_labels=True)                                # needs sage.numerical.mip
+        doctest:warning...
+        DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+        See https://github.com/sagemath/sage/issues/42740 for details.
+        3.0
+
     TESTS:
 
     Checking that the two implementations agree::
@@ -1956,12 +1982,19 @@ def edge_connectivity(G,
     if vertices:
         value_only = False
 
+    # This must be done before choosing the algorithm: passing a weight
+    # function implies by_weight=True, and not every algorithm can be used
+    # with weights.
+    by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
+                                                        weight_function=weight_function,
+                                                        check_weight=check_weight)
+
     if algorithm is None:
-        if g.is_directed() and value_only and not use_edge_labels:
+        if g.is_directed() and value_only and not by_weight:
             # the Gabow algorithm only computes the value, but it is much
             # faster than solving an integer linear program
             algorithm = "gabow"
-        elif use_edge_labels or g.is_directed():
+        elif by_weight or g.is_directed():
             algorithm = "sage"
         else:
             algorithm = "boost"
@@ -1969,8 +2002,8 @@ def edge_connectivity(G,
     algorithm = algorithm.lower()
     if algorithm not in ["boost", "sage", "gabow"]:
         raise ValueError("'algorithm' must be set to 'boost', 'sage', 'gabow' or None.")
-    elif algorithm == "boost" and use_edge_labels:
-        raise ValueError("the Boost implementation is currently not able to handle edge labels")
+    elif algorithm == "boost" and by_weight:
+        raise ValueError("the Boost implementation is currently not able to handle edge weights")
     elif algorithm == "boost" and g.is_directed():
         raise ValueError("the Boost implementation of the edge connectivity is for "
                          "undirected graphs only and returns wrong values on digraphs, "
@@ -1978,8 +2011,8 @@ def edge_connectivity(G,
     elif algorithm == "gabow":
         if not g.is_directed():
             raise ValueError("the Gabow algorithm is for directed graphs only")
-        if use_edge_labels:
-            raise ValueError("the Gabow algorithm is currently not able to handle edge labels")
+        if by_weight:
+            raise ValueError("the Gabow algorithm is currently not able to handle edge weights")
         if not value_only:
             raise ValueError("the Gabow algorithm only computes the value of the "
                              "edge connectivity, it cannot return a cut")
@@ -2021,18 +2054,9 @@ def edge_connectivity(G,
 
         return val
 
-    if use_edge_labels:
-        from sage.rings.real_mpfr import RR
-
-        def weight(x):
-            return x if x in RR else 1
-    else:
-        def weight(x):
-            return 1
-
     # Better methods for small connectivity tests, when one is not interested in
     # cuts...
-    if value_only and not use_edge_labels:
+    if value_only and not by_weight:
 
         if G.is_directed():
             if not is_strongly_connected(G):
@@ -2066,7 +2090,8 @@ def edge_connectivity(G,
         for u, v in g.edge_iterator(labels=None):
             p.add_constraint(in_set[0, u] + in_set[1, v] - in_cut[u, v], max=1)
 
-        p.set_objective(p.sum(weight(l) * in_cut[u, v] for u, v, l in g.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * in_cut[e[0], e[1]]
+                              for e in g.edge_iterator()))
 
     else:
 
@@ -2076,13 +2101,14 @@ def edge_connectivity(G,
             p.add_constraint(in_set[0, u] + in_set[1, v] - in_cut[frozenset((u, v))], max=1)
             p.add_constraint(in_set[1, u] + in_set[0, v] - in_cut[frozenset((u, v))], max=1)
 
-        p.set_objective(p.sum(weight(l) * in_cut[frozenset((u, v))] for u, v, l in g.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * in_cut[frozenset((e[0], e[1]))]
+                              for e in g.edge_iterator()))
 
     obj = p.solve(log=verbose)
 
     in_cut = p.get_values(in_cut, convert=bool, tolerance=integrality_tolerance)
 
-    if use_edge_labels is False:
+    if not by_weight:
         if g.is_directed():
             obj = sum(1 for u, v in g.edge_iterator(labels=False) if in_cut[u, v])
         else:
