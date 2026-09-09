@@ -106,10 +106,10 @@ class Function_exp_integral_e(BuiltinFunction):
         0.00354575823814662 - 0.00973200528288687*I
 
     Maxima returns the following improper integral as a multiple of
-    ``exp_integral_e(1,1)``::
+    ``exp_integral_e(1,1)`` (or, equivalently, of ``Ei(-1)``)::
 
-        sage: uu = integral(e^(-x)*log(x+1), x, 0, oo); uu                              # needs sage.symbolic
-        e*exp_integral_e(1, 1)
+        sage: uu = integral(e^(-x)*log(x+1), x, 0, oo); uu                              # needs sage.symbolic, random - depends on maxima version
+        -Ei(-1)*e
         sage: uu.n(digits=30)                                                           # needs sage.symbolic
         0.596347362323194074341078499369
 

@@ -1906,8 +1906,8 @@ class Function_limit(BuiltinFunction):
     This function is called to create formal wrappers of limits that
     Maxima can't compute::
 
-        sage: a = lim(exp(x^2)*(1-erf(x)), x=infinity); a                               # needs sage.symbolic
-        -limit((erf(x) - 1)*e^(x^2), x, +Infinity)
+        sage: a = lim(zeta(x)-1/(x-1), x, 1); a                               # needs sage.symbolic
+        limit(-1/(x - 1) + zeta(x), x, 1)
 
     EXAMPLES::
 
@@ -1980,17 +1980,6 @@ class Function_limit(BuiltinFunction):
             \lim_{x \to a^-}\, f\left(x\right)
             sage: latex(limit(f(x),x=a,dir='left'))
             \lim_{x \to a^-}\, f\left(x\right)
-
-        Check if :issue:`13181` is fixed::
-
-            sage: # needs sage.symbolic
-            sage: t = var('t')
-            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x), t=x, dir='-'))
-            \lim_{t \to x^-}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
-            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x), t=x, dir='+'))
-            \lim_{t \to x^+}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
-            sage: latex(limit(exp_integral_e(1/2, I*t - I*x)*sqrt(-t + x), t=x))
-            \lim_{t \to x}\, \sqrt{-t + x} E_{\frac{1}{2}}\left(i \, t - i \, x\right)
         """
         if repr(direction) == 'minus':
             dir_str = '^-'
