@@ -177,8 +177,8 @@ Packaging
    downstream
 
 
-Indices and tables
-==================
+Index and Search
+================
 
 * :ref:`genindex`
 * :ref:`search`

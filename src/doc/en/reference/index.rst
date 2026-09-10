@@ -177,8 +177,8 @@ General Information
 * :doc:`Bibliographic References <references/index>`
 * :doc:`History and License <history_and_license/index>`
 
-Indices and Tables
-==================
+Index and Search
+================
 
 * :ref:`genindex`
 * :ref:`modindex`
