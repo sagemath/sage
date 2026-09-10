@@ -18,6 +18,8 @@ Numerical evaluation::
 
     sage: P = x^5 + x + 1
     sage: rs = root_sum(P, lambda r: 1/(5*r^4 + 1))
+    sage: root_sum.evaluate(rs)
+    -2.77555756156289e-17
     sage: rs.n()  # not tested
 """
 
@@ -71,6 +73,8 @@ class RootSumFunction(BuiltinFunction):
 
         sage: P = x^5 + x + 1
         sage: rs = root_sum(P, lambda r: 1/(5*r^4 + 1))
+        sage: root_sum.evaluate(rs)
+        -2.77555756156289e-17
         sage: rs.n()  # not tested
     """
 
@@ -194,6 +198,63 @@ class RootSumFunction(BuiltinFunction):
             pass
 
         return None
+
+    def evaluate(self, expr, prec=53):
+        """
+        Numerically evaluate the RootSum.
+
+        This computes the sum over roots numerically.
+        For integration with .n() in the future.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.rootsum import root_sum
+            sage: var('x')
+            x
+            sage: P = x^5 + x + 1
+            sage: rs = root_sum(P, lambda r: 1/(5*r^4 + 1))
+            sage: root_sum.evaluate(rs)
+            -2.77555756156289e-17
+        """
+        from sage.symbolic.ring import SR
+        from sage.rings.complex_mpfr import ComplexField
+
+        try:
+            data = self._get_data(expr)
+            if data is None:
+                return None
+
+            poly = data.get('polynomial')
+            summand = data.get('summand')
+
+            if poly is None or summand is None:
+                return None
+
+            if hasattr(poly, 'polynomial'):
+                p = poly
+            else:
+                vars = poly.variables()
+                if not vars:
+                    return SR(0)
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                R = PolynomialRing(SR, vars[0])
+                p = R(poly)
+
+            CF = ComplexField(prec)
+            roots = p.roots(ring=CF, multiplicities=False)
+
+            result = CF(0)
+            for r in roots:
+                try:
+                    term = summand(r)
+                    result += CF(term)
+                except Exception:
+                    return None
+
+            return result
+
+        except Exception:
+            return None
 
     def _derivative_(self, *args, **kwargs):
         """
