@@ -126,8 +126,7 @@ from sage.groups.perm_gps.partn_ref.data_structures cimport (
 )
 from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend, StaticSparseCGraph
 from sage.graphs.base.static_sparse_graph cimport short_digraph, simple_BFS
-from cysignals.memory cimport sig_malloc, sig_free
-from sage.data_structures.bitset_base cimport bitset_t, bitset_init, bitset_free, bitset_set_first_n
+from sage.data_structures.bitset_base cimport bitset_t, bitset_init, bitset_free, bitset_clear
 from memory_allocator cimport MemoryAllocator
 
 # ****************************************************************************
@@ -248,13 +247,16 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         raise NotImplementedError("recognition of Cartesian product is not implemented for directed graphs")
     if relabeling:
         certificate = True
+
     from sage.rings.integer import Integer
+
     if not g.is_connected():
         raise NotImplementedError("recognition of Cartesian product is not implemented for disconnected graphs")
 
     # Of course the number of vertices of g cannot be prime !
     if g.order() <= 3 or Integer(g.order()).is_prime():
         return (False, None) if relabeling else False
+
     from sage.graphs.graph import Graph
 
     # Work with an immutable graph so its backend holds a short_digraph
@@ -275,7 +277,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     bitset_init(seen, n)
     cdef int s
     for s in range(n):
-        bitset_set_first_n(seen, 0)
+        bitset_clear(seen)
         simple_BFS(sd, s, distances + s * n, NULL, waiting_list, seen)
     bitset_free(seen)
 
@@ -296,7 +298,6 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     cdef OrbitPartition *op = OP_new(n_edges)
     if op == NULL:
-        sig_free(distances)
         raise MemoryError("Failed to allocate OrbitPartition")
 
     # Main equivalence-class computation
@@ -328,11 +329,15 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     # Distance loop using the C distance array
     cdef int i, j, uu, vv
+    cdef uint32_t* dist_u
+    cdef uint32_t* dist_v
     for i in range(n_edges):
         u, v = edge_list[i]
+        dist_u = distances + u * n
+        dist_v = distances + v * n
         for j in range(i + 1, n_edges):
             uu, vv = edge_list[j]
-            if distances[u * n + uu] + distances[v * n + vv] != distances[u * n + vv] + distances[v * n + uu]:
+            if dist_u[uu] + dist_v[vv] != dist_u[vv] + dist_v[uu]:
                 OP_join(op, edge_to_idx[r(u, v)], edge_to_idx[r(uu, vv)])
 
     if op.num_cells == 1:
