@@ -128,6 +128,7 @@ from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend, StaticS
 from sage.graphs.base.static_sparse_graph cimport short_digraph, simple_BFS
 from cysignals.memory cimport sig_malloc, sig_free
 from sage.data_structures.bitset_base cimport bitset_t, bitset_init, bitset_free, bitset_set_first_n
+from memory_allocator cimport MemoryAllocator
 
 # ****************************************************************************
 #       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
@@ -250,6 +251,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     from sage.rings.integer import Integer
     if not g.is_connected():
         raise NotImplementedError("recognition of Cartesian product is not implemented for disconnected graphs")
+
+    # Of course the number of vertices of g cannot be prime !
     if g.order() <= 3 or Integer(g.order()).is_prime():
         return (False, None) if relabeling else False
     from sage.graphs.graph import Graph
@@ -258,25 +261,21 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef object g_imm = g if g.is_immutable() else g.copy(immutable=True)
     cdef StaticSparseBackend bck = <StaticSparseBackend> g_imm._backend
     cdef StaticSparseCGraph cg   = <StaticSparseCGraph> bck._cg
-    cdef short_digraph* sd_ptr   = &cg.g
+    cdef short_digraph sd        = cg.g
     cdef list int_to_vertex      = bck._vertex_to_labels
     cdef dict vertex_to_int      = bck._vertex_to_int
-    cdef int n = sd_ptr[0].n
+    cdef int n = sd.n
 
     # All-pairs distances via simple_BFS on the backend's sd (no duplicate sd)
-    cdef uint32_t* distances    = <uint32_t*> sig_malloc(n * n * sizeof(uint32_t))
-    cdef uint32_t* waiting_list = <uint32_t*> sig_malloc(n * sizeof(uint32_t))
-    if distances == NULL or waiting_list == NULL:
-        if distances    != NULL: sig_free(distances)
-        if waiting_list != NULL: sig_free(waiting_list)
-        raise MemoryError("Failed to allocate distance arrays")
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef uint32_t* distances    = <uint32_t*> mem.allocarray(n * n, sizeof(uint32_t))
+    cdef uint32_t* waiting_list = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
     cdef bitset_t seen
     bitset_init(seen, n)
     cdef int s
     for s in range(n):
         bitset_set_first_n(seen, 0)
-        simple_BFS(sd_ptr[0], s, distances + s * n, NULL, waiting_list, seen)
-    sig_free(waiting_list)
+        simple_BFS(sd, s, distances + s * n, NULL, waiting_list, seen)
     bitset_free(seen)
 
     # Edge list + edge-to-index mapping using integer vertex indices
@@ -285,15 +284,14 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     cdef list edge_list = []
     cdef dict edge_to_idx = {}
-    cdef int iu, iv, idx = 0
+    cdef int iu, iv, idx
     cdef object u_label, v_label
-    for u_label, v_label in g_imm.edge_iterator(labels=False):
+    for idx, (u_label, v_label) in enumerate(g_imm.edge_iterator(labels=False)):
         iu = vertex_to_int[u_label]
         iv = vertex_to_int[v_label]
         edge_list.append((iu, iv))
         edge_to_idx[r(iu, iv)] = idx
-        idx += 1
-    cdef int n_edges = idx
+    cdef int n_edges = len(edge_list)
 
     cdef OrbitPartition *op = OP_new(n_edges)
     if op == NULL:
@@ -304,8 +302,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef int u, v, x, y
     cdef set un, intersect
     cdef object x_label, y_label
-    for u_label in g_imm:
-        u = vertex_to_int[u_label]
+    for u, u_label in enumerate(int_to_vertex):
         un = set(g_imm.neighbor_iterator(u_label))
         for v_label in g_imm.breadth_first_search(u_label):
             if u_label == v_label:
@@ -339,7 +336,6 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     if op.num_cells == 1:
         OP_dealloc(op)
-        sig_free(distances)
         return (False, None) if relabeling else False
 
     # Gathering connected components, relabeling on-the-fly
@@ -375,13 +371,14 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
                          "Please report the bug and give us the graph instance "
                          "that made it fail !")
     OP_dealloc(op)
-    sig_free(distances)
 
     if relabeling:
         return isiso, dictt
     if certificate:
         return factors
+
     return True
+
 
 def rooted_product(G, H, root=None, immutable=None):
     r"""
