@@ -121,7 +121,6 @@ Methods
 
 
 from libc.stdint cimport uint32_t
-from libc.string cimport memcpy
 from sage.groups.perm_gps.partn_ref.data_structures cimport (
     OrbitPartition, OP_new, OP_join, OP_find, OP_dealloc
 )
@@ -263,7 +262,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef StaticSparseBackend bck = <StaticSparseBackend> g_imm._backend
     cdef StaticSparseCGraph cg   = <StaticSparseCGraph> bck._cg
     cdef short_digraph sd
-    memcpy(&sd, &cg.g, sizeof(short_digraph))
+    sd = <short_digraph> cg.g
     cdef list int_to_vertex      = bck._vertex_to_labels
     cdef dict vertex_to_int      = bck._vertex_to_int
     cdef int n = sd.n
