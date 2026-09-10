@@ -119,6 +119,10 @@ Methods
 -------
 """
 
+from sage.groups.perm_gps.partn_ref.data_structures cimport (
+    OrbitPartition, OP_new, OP_join, OP_find, OP_dealloc
+)
+
 # ****************************************************************************
 #       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
 #
@@ -247,7 +251,6 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     if g.order() <= 3 or Integer(g.order()).is_prime():
         return (False, None) if relabeling else False
 
-    from sage.sets.disjoint_set import DisjointSet
     from sage.graphs.graph import Graph
 
     # As we need the vertices of g to be linearly ordered, we copy the graph and
@@ -264,8 +267,13 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef set un, intersect
 
     # The equivalence classes of the edges of g
-    # Initialize with all edges of the graph
-    ds = DisjointSet(r(x, y) for x, y in g_int.edge_iterator(labels=False))
+    # Initialize OrbitPartition with all edges
+    cdef list edge_list = list(g_int.edge_iterator(labels=False))
+    cdef int n_edges = len(edge_list)
+    cdef dict edge_to_idx = {r(u, v): i for i, (u, v) in enumerate(edge_list)}
+    cdef OrbitPartition *op = OP_new(n_edges)
+    if op == NULL:
+        raise MemoryError("Failed to allocate OrbitPartition")
 
     # For all pairs of vertices u,v of G, according to their number of common
     # neighbors... See the module's documentation !
@@ -294,12 +302,12 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
             # Special case: uv is not an edge and exactly 2 common neighbors
             if len(intersect) == 2 and not g_int.has_edge(u, v):
                 x, y = intersect
-                ds.union(r(u, x), r(v, y))
-                ds.union(r(v, x), r(u, y))
+                OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, y)])
+                OP_join(op, edge_to_idx[r(v, x)], edge_to_idx[r(u, y)])
             # All other cases: union with all common neighbors
             else:
                 for x in intersect:
-                    ds.union(r(u, x), r(v, x))
+                    OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, x)])
 
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
@@ -314,15 +322,23 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         for j in range(i + 1, g_int.size()):
             uu, vv = edges[j]
             if du[uu] + dv[vv] != du[vv] + dv[uu]:
-                ds.union(r(u, v), r(uu, vv))
+                OP_join(op, edge_to_idx[r(u, v)], edge_to_idx[r(uu, vv)])
 
     # Only one connected component ? Check before building edges
-    if ds.number_of_subsets() == 1:
+    if op.num_cells == 1:
+        OP_dealloc(op)
         return (False, None) if relabeling else False
 
     # Gathering the connected components, relabeling the vertices on-the-fly
+    cdef dict comp_map = {}
+    for i in range(n_edges):
+        root = OP_find(op, i)
+        if root not in comp_map:
+            comp_map[root] = []
+        comp_map[root].append(edge_list[i])
+    components = list(comp_map.values())
     edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
-             for cc in ds]
+             for cc in components]
 
     if immutable is None:
         immutable = g.is_immutable()
@@ -348,12 +364,14 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         raise ValueError("something weird happened during the algorithm... "
                          "Please report the bug and give us the graph instance"
                          " that made it fail !")
+    OP_dealloc(op)
     if relabeling:
         return isiso, dictt
     if certificate:
         return factors
 
     return True
+
 
 def rooted_product(G, H, root=None, immutable=None):
     r"""
