@@ -2267,8 +2267,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         """
         return self._base_chart.F
 
-    def _repr_(self):
-        # type: () -> str
+    def _repr_(self) -> str:
         lines = []
         lines.append(f"FiniteLaurentIntersectionRing over {self._base_chart.base_ring}")
         lines.append(f"  rank n = {self.n}")
@@ -2425,13 +2424,20 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
             else:
                 factors = [f for f, _e in fP.factor() if not chart_i.L(f).is_unit()]
 
-            for q in factors:
-                only_over = chart_i.P(0)
+            if factors:
+                # Lazily-extended, shared cache of the cumulative coverage
+                # (indexed the same way as the original ``only_over``
+                # sequence). Different factors q of the same chart_i often
+                # need overlapping prefixes of this sequence; computing each
+                # new step once and reusing it avoids redoing identical
+                # substitutions for every factor, without ever computing a
+                # step that no factor actually needs.
                 m = len(only_primes_over)
-                k = 0
-                while k < m and q.divides(only_over):
+                cumulative = [chart_i.P(0)]
+
+                def _extend_cumulative(cumulative=cumulative):
                     l_primes = []
-                    for l in only_primes_over[k]:
+                    for l in only_primes_over[len(cumulative) - 1]:
                         l_in_i = chart_i._substitute_from_base(l)
                         l_prime, _ = chart_i._laurent_poly_to_poly_up_to_unit(l_in_i)
                         if not chart_i.L(l_prime).is_unit():
@@ -2439,14 +2445,25 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
                     prod_l = chart_i.P(1)
                     for lp in l_primes:
                         prod_l *= lp
-                    only_over = only_over.gcd(prod_l)
-                    k += 1
+                    cumulative.append(cumulative[-1].gcd(prod_l))
 
-                if q.divides(only_over):
-                    p_norm = self._normalize(q)
-                    new_prime = FiniteLaurentIntersectionRingPrimeDivisor(chart_i, p_norm)
-                    if new_prime not in factor_list:
-                        factor_list.append(new_prime)
+                for q in factors:
+                    k = 0
+                    while k < m:
+                        if k >= len(cumulative):
+                            _extend_cumulative()
+                        if not q.divides(cumulative[k]):
+                            break
+                        k += 1
+                    if k >= len(cumulative):
+                        _extend_cumulative()
+                    only_over = cumulative[k]
+
+                    if q.divides(only_over):
+                        p_norm = self._normalize(q)
+                        new_prime = FiniteLaurentIntersectionRingPrimeDivisor(chart_i, p_norm)
+                        if new_prime not in factor_list:
+                            factor_list.append(new_prime)
 
             only_primes_over.append(list(chart_i.this_to_base))
 
