@@ -10,4 +10,4 @@ cdef class Matrix_mod2_dense(Matrix_dense):
     cpdef Matrix_mod2_dense _multiply_strassen(Matrix_mod2_dense self, Matrix_mod2_dense right, int cutoff)
 
     # For conversion to other systems
-    cpdef _export_as_string(self)
+    cpdef _export_as_string(self, bint comma=?)

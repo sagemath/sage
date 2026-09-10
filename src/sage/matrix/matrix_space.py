@@ -60,6 +60,7 @@ from sage.features.meataxe import Meataxe
 lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
             feature=Meataxe())
 lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
+lazy_import('sage.structure.sage_object', 'SageObject')
 
 _Semirings = Semirings()
 _Fields = Fields()
@@ -277,7 +278,6 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                 # 25 for multiplication for n = 25 bits (this is weird)
                 # Could not find cutoff where LinBox multiplication is better for n >= 26 bits
                 # Could not find cutoff where LinBox is better for inverses
-
 
                 try:
                     from . import matrix_modn_dense_double, matrix_modn_dense_float, matrix_modn_dense_flint, matrix_mod2_dense
@@ -1063,7 +1063,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
         """
         return MatrixSpace(self._base, self.__ncols, self.__nrows,
-                self.__is_sparse, self.Element)
+                           self.__is_sparse, self.Element)
 
     def _element_constructor_(self, entries, **kwds):
         """
@@ -1481,6 +1481,9 @@ class MatrixSpace(UniqueRepresentation, Parent):
         except AttributeError:
             pass
         else:
+            if isinstance(meth_matrix_space, SageObject):
+                return False
+            # check above to avoid the case of Expect interfaces
             MS = meth_matrix_space()
             if isinstance(S, MatrixGroup_base):
                 return self.has_coerce_map_from(MS)
@@ -2432,8 +2435,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         try:
             return self.__row_space
         except AttributeError:
-            self.__row_space = sage.modules.free_module.FreeModule(self.base_ring(),
-                                                self.ncols(), sparse=self.is_sparse())
+            self.__row_space = sage.modules.free_module.FreeModule(
+                self.base_ring(), self.ncols(), sparse=self.is_sparse())
             return self.__row_space
 
     def column_space(self):
@@ -2450,8 +2453,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         try:
             return self.__column_space
         except AttributeError:
-            self.__column_space = sage.modules.free_module.FreeModule(self.base_ring(), self.nrows(),
-                                                                   sparse=self.is_sparse())
+            self.__column_space = sage.modules.free_module.FreeModule(
+                self.base_ring(), self.nrows(), sparse=self.is_sparse())
             return self.__column_space
 
     def random_element(self, density=None, *args, **kwds):
@@ -2507,10 +2510,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Z = self.element_class(self, None, False, False)
         if density is None:
             Z.randomize(density=float(1), nonzero=kwds.pop('nonzero', False),
-                *args, **kwds)
+                        *args, **kwds)
         else:
             Z.randomize(density=density, nonzero=kwds.pop('nonzero', True),
-                *args, **kwds)
+                        *args, **kwds)
         return Z
 
     def _an_element_(self):
@@ -2868,14 +2871,19 @@ def _MatrixSpace_ZZ_2x2():
     return MatrixSpace(ZZ, 2)
 
 
-register_unpickle_override('sage.matrix.matrix_modn_dense',
+register_unpickle_override(
+    'sage.matrix.matrix_modn_dense',
     'Matrix_modn_dense', Matrix_modn_dense_double)
-register_unpickle_override('sage.matrix.matrix_integer_2x2',
+register_unpickle_override(
+    'sage.matrix.matrix_integer_2x2',
     'Matrix_integer_2x2', Matrix_integer_dense)
-register_unpickle_override('sage.matrix.matrix_integer_2x2',
+register_unpickle_override(
+    'sage.matrix.matrix_integer_2x2',
     'MatrixSpace_ZZ_2x2_class', MatrixSpace)
-register_unpickle_override('sage.matrix.matrix_integer_2x2',
+register_unpickle_override(
+    'sage.matrix.matrix_integer_2x2',
     'MatrixSpace_ZZ_2x2', _MatrixSpace_ZZ_2x2)
 lazy_import('sage.matrix.matrix_gf2e_dense', 'unpickle_matrix_gf2e_dense_v0')
-register_unpickle_override('sage.matrix.matrix_mod2e_dense',
+register_unpickle_override(
+    'sage.matrix.matrix_mod2e_dense',
     'unpickle_matrix_mod2e_dense_v0', unpickle_matrix_gf2e_dense_v0)
