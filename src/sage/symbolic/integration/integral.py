@@ -110,7 +110,8 @@ class IndefiniteIntegral(BuiltinFunction):
         Check that :issue:`28842` is fixed::
 
             sage: integrate(1/(x^4 + x^3 + 1), x)
-            integrate(1/(x^4 + x^3 + 1), x)
+            root_sum(229*t^4 + 6*t^2 + t + 1)
+
 
         Check that :issue:`32002` is fixed. This needs giac since only
         giac can integrate it in any case::

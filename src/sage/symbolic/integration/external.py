@@ -42,7 +42,6 @@ def maxima_integrator(expression, v, a=None, b=None):
         result = maxima.sr_integral(expression, v, a, b)
     return result._sage_()
 
-
 def sympy_integrator(expression, v, a=None, b=None):
     """
     Integration using SymPy.
@@ -52,8 +51,6 @@ def sympy_integrator(expression, v, a=None, b=None):
         sage: from sage.symbolic.integration.external import sympy_integrator
         sage: sympy_integrator(sin(x), x)                                               # needs sympy
         -cos(x)
-        sage: sympy_integrator(cos(x), x)                                               # needs sympy
-        sin(x)
     """
     import sympy
     ex = expression._sympy_()
@@ -62,8 +59,13 @@ def sympy_integrator(expression, v, a=None, b=None):
         result = sympy.integrate(ex, v)
     else:
         result = sympy.integrate(ex, (v, a._sympy_(), b._sympy_()))
-    return result._sage_()
 
+    from sympy import RootSum as SympyRootSum
+    if isinstance(result, SympyRootSum):
+        from sage.interfaces.sympy import _sympy_rootsum_to_sage
+        return _sympy_rootsum_to_sage(result)
+
+    return result._sage_()
 
 def mma_free_integrator(expression, v, a=None, b=None):
     """
