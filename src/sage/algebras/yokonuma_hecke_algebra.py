@@ -600,7 +600,10 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
             if not self:
                 raise ZeroDivisionError
             if len(self) != 1:
-                raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)" % self)
+                raise NotImplementedError(
+                    "inverse only implemented for basis elements "
+                    f"(monomials in the generators): {self}"
+                )
             H = self.parent()
             t, w = self.support_of_term()
             c = ~self.coefficients()[0]
@@ -1010,7 +1013,10 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
             if not self:
                 raise ZeroDivisionError
             if len(self) != 1:
-                raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)" % self)
+                raise NotImplementedError(
+                    "inverse only implemented for basis elements "
+                    f"(monomials in the generators): {self}"
+                )
             H = self.parent()
             t, w = self.support_of_term()
             c = ~self.coefficients()[0]

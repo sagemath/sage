@@ -5946,7 +5946,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return A
 
     def __pari__(self):
-        """
+        r"""
         Return PARI C-library version of this matrix.
 
         EXAMPLES::
@@ -5958,6 +5958,22 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [1, 2; 3, 4]
             sage: type(pari(a))
             <class 'cypari2.gen.Gen'>
+
+        A PARI ``t_MAT`` is a vector of columns, so a matrix with no columns
+        has nowhere to record its number of rows.  The row count is therefore
+        lost for such a matrix::
+
+            sage: matrix(ZZ, 2, 0).__pari__()
+            [;]
+            sage: matrix(ZZ, 2, 0).__pari__().sage().dimensions()
+            (0, 0)
+
+        The number of columns is preserved when there are no rows::
+
+            sage: matrix(ZZ, 0, 3).__pari__()
+            matrix(0,3)
+            sage: matrix(ZZ, 0, 3).__pari__().sage().dimensions()
+            (0, 3)
         """
         return integer_matrix(self._matrix, 0)
 

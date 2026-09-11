@@ -26,24 +26,26 @@ need to run::
 
 Vendor and versions of the C and C++ compilers should match.
 
-Users of older Linux distributions (in particular, ``ubuntu-xenial``
-or older, ``debian-buster`` or older, ``linuxmint-18`` or older)
-should upgrade their systems before attempting to install Sage from
-source.  Users of ``ubuntu-bionic``, ``linuxmint-19.x``, and
-``opensuse-15.x`` can install a versioned ``gcc`` system package
-and then use::
+Users of older Linux distributions should upgrade their systems before
+attempting to install Sage from source.  In particular, users on
+``ubuntu`` should use ``ubuntu-jammy`` (22.04) or a newer release.
 
-    $ ./configure CC=gcc-8 CXX=g++-8 FC=gfortran-8
+The minimum supported GCC version is 10.3.  The following example uses
+matching version ``15`` C, C++, and Fortran compilers.  On
+``ubuntu-jammy``, these packages are available from
+``ppa:ubuntu-toolchain-r/test``:
 
-or similar. Users on ``ubuntu`` can also install a modern compiler
-toolchain `using the ubuntu-toolchain-r ppa
-<https://askubuntu.com/questions/1140183/install-gcc-9-on-ubuntu-18-04/1149383#1149383>`_.
-On ``ubuntu-trusty``, also the package ``binutils-2.26`` is required;
-after installing it, make it available using ``export
-PATH="/usr/lib/binutils-2.26/bin:$PATH"``.  Instead of upgrading their
-distribution, users of ``centos-7`` can install a modern compiler
-toolchain `using Redhat's devtoolset
-<https://stackoverflow.com/a/67212990/557937>`_.
+.. code-block:: bash
+
+    $ sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+    $ sudo apt-get update
+    $ sudo apt-get install gcc-15 g++-15 gfortran-15
+
+If these packages are already available from the standard repositories
+of your release, omit the ``add-apt-repository`` command.  After
+installation, select the compilers explicitly when configuring Sage::
+
+    $ ./configure CC=gcc-15 CXX=g++-15 FC=gfortran-15
 
 This package uses the non-standard default
 ``configure --with-system-gcc=force``, giving an error at ``configure``
