@@ -1868,7 +1868,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
             [int_to_vertex[u] for u in range(N) if X[u]])
 
 
-def BFS_with_condition(G, v, condition):
+def BFS_with_condition(G, v, condition, backward=False):
     """
     Perform a breadth-first-search under condition.
 
@@ -1886,6 +1886,9 @@ def BFS_with_condition(G, v, condition):
 
     - ``condition`` -- a condition on vertices for them to be accepted
 
+    - ``backward`` -- optional boolean (default ``False``) whether to
+      move backwards along the edges
+
     EXAMPLES::
 
         sage: from sage.graphs.traversals import BFS_with_condition
@@ -1895,7 +1898,8 @@ def BFS_with_condition(G, v, condition):
 
     .. NOTE:: This code was kindly provided by Nathann Cohen.
     """
-    good_neighbors = [u for u in G.neighbor_out_iterator(v)
+    neigh = G.neighbor_in_iterator if backward else G.neighbor_out_iterator
+    good_neighbors = [u for u in neigh(v)
                       if condition(u)]
     seen = set([v] + good_neighbors)
     next_layer = [(v, u) for u in good_neighbors]
@@ -1903,7 +1907,7 @@ def BFS_with_condition(G, v, condition):
         yield from next_layer
         next_next_layer = []
         for _, w in next_layer:
-            for u in G.neighbor_out_iterator(w):
+            for u in neigh(w):
                 if u in seen:
                     yield (w, u)
                     continue

@@ -554,6 +554,13 @@ class LatticePosets(Category):
                     sage: PQ = posets.NoncrossingPartitions(SymmetricGroup(4))
                     sage: P.core_label_order().is_isomorphic(PQ)
                     True
+
+                TESTS::
+
+                    sage: P = Poset({0:[1,2]}).order_ideals_lattice(); P
+                    Finite lattice containing 5 elements
+                    sage: P.core_label_order().bottom()
+                    {}
                 """
                 from sage.combinat.posets.all import Poset
                 from sage.graphs.traversals import BFS_with_condition
@@ -563,20 +570,21 @@ class LatticePosets(Category):
 
                 dico_face = {}
                 for x in dg:
-                    xbar = self.join([x] + dg.neighbors_out(x))
-                    dico_face[x] = set(self.interval(x, xbar))
+                    x_down = self.meet([x] + dg.neighbors_in(x))
+                    dico_face[x] = set(self.interval(x_down, x))
 
                 shard_sets: dict[Any, set] = {x: set() for x in dg}
                 for x in dg:
                     def inface(y):
                         return y in dico_face[x]
 
-                    for v, w in BFS_with_condition(dg, x, inface):
+                    for w, v in BFS_with_condition(dg, x, inface,
+                                                   backward=True):
                         shard_sets[x].add(color[(v, w)])
 
                 data = {elt: frozenset(s) for elt, s in shard_sets.items()}
                 return Poset([list(self),
-                              lambda U, V: U != V and data[V].issubset(data[U])])
+                              lambda U, V: U != V and data[U].issubset(data[V])])
 
     class Stone(CategoryWithAxiom):
         """
