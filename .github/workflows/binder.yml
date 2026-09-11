@@ -1,0 +1,46 @@
+name: Create Binder branch
+
+# How to use this workflow
+#
+# (1) Go to your forked Sage repo
+# (2) In the Actions tab, find "Create Binder branch" workflow
+# (3) Run the workflow with your PR branch named say "contribution"
+# (4) Wait for the workflow run to finish
+# (5) In the Code tab, select the new "contribution-binder" branch
+# (6) Find the Binder badge in README.md
+# (7) Copy the Binder badge from README.md (in edit mode)
+# (8) Paste the Binder badge into the description of your PR in the sagemath/sage repo
+# (9) Click the Binder badge to start creating the Binder environment
+# (10) Leave it open and come back after an hour.
+# (11) The Binder badge is now ready for reviewers of your PR
+
+on: workflow_dispatch
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create binder branch
+        run: |
+          set -ex
+          REPO_NAME=${{ github.repository }}
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BINDER_REPO_NAME=${REPO_NAME}
+          BINDER_BRANCH_NAME=${BRANCH_NAME}-binder
+          cp .github/workflows/binder-dockerfile Dockerfile
+          sed -i 's/REPO_NAME/'$(echo "${REPO_NAME}" | sed 's/\//\\\//g')'/' Dockerfile
+          sed -i 's/BRANCH_NAME/'$(echo "${BRANCH_NAME}" | sed 's/\//\\\//g')'/' Dockerfile
+          sed -i 's/sagemath\/sage-binder-env\/master/'$(echo "${BINDER_REPO_NAME}/${BINDER_BRANCH_NAME}" | sed 's/\//\\\//g')'/' README.md
+          if [ ! -d .git ]; then git init; fi
+          if [ ! -d notebooks ]; then mkdir notebooks && touch notebooks/my_favorite_notebooks.md; fi
+          git config --global user.email alice@wonderland
+          git config --global user.name Alice
+          git config --global --add safe.directory $(pwd)
+          git checkout -b $BINDER_BRANCH_NAME
+          git add -A
+          git commit -a -m "Binder environment for '${BRANCH_NAME}' branch"
+          git push -f origin $BINDER_BRANCH_NAME
