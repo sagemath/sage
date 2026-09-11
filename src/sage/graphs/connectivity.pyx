@@ -75,6 +75,7 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.decorators import rename_keyword
 from sage.sets.disjoint_set cimport DisjointSet
 
 
@@ -1719,10 +1720,14 @@ def minimal_separators(G, forbidden_vertices=None):
                         to_explore.append(frozenset(nh))
 
 
+@rename_keyword(deprecation=42740, use_edge_labels='by_weight')
+@rename_keyword(deprecation=42652, implementation='algorithm')
 def edge_connectivity(G,
                       value_only=True,
-                      implementation=None,
-                      use_edge_labels=False,
+                      algorithm=None,
+                      by_weight=False,
+                      weight_function=None,
+                      check_weight=True,
                       vertices=False,
                       solver=None,
                       verbose=0,
@@ -1752,25 +1757,40 @@ def edge_connectivity(G,
       - When set to ``False``, both the value and a minimum vertex cut are
         returned.
 
-    - ``implementation`` -- string (default: ``None``); selects an
-      implementation:
+    - ``algorithm`` -- string (default: ``None``); selects an algorithm:
 
-      - ``None`` -- default; selects the best implementation available
+      - ``None`` -- default; selects the best algorithm available
 
       - ``'boost'`` -- use the Boost graph library (which is much more
         efficient). It is not available when ``edge_labels=True``, and it is
-        unreliable for directed graphs (see :issue:`18753`).
+        rejected for directed graphs: the Boost implementation is for
+        undirected graphs only and returns wrong values on digraphs (see
+        :issue:`18753`).
 
       - ``'Sage'`` -- use Sage's implementation based on integer linear
         programming
 
-    - ``use_edge_labels`` -- boolean (default: ``False``)
+      - ``'gabow'`` -- use the algorithm of Gabow [Gabow1995]_ implemented in
+        :class:`~sage.graphs.edge_connectivity.GabowEdgeConnectivity`. It is
+        for directed graphs only, does not handle edge labels, and only
+        computes the value of the edge connectivity, so it cannot be used
+        with ``value_only=False`` or ``vertices=True``. It is much faster
+        than the integer linear program and is the default for digraphs when
+        only the value is requested.
 
-      - When set to ``True``, computes a weighted minimum cut where each edge
-        has a weight defined by its label. (If an edge has no label, `1` is
-        assumed.). Implies ``boost`` = ``False``.
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, computes a
+      weighted minimum cut where each edge has the weight given by
+      ``weight_function``, or its label if ``weight_function`` is ``None``. If
+      ``False``, each edge has weight `1`. Implies ``algorithm='sage'``.
 
-      - When set to ``False``, each edge has weight `1`.
+    - ``weight_function`` -- function (default: ``None``); a function that takes
+      as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
+      ``by_weight`` is automatically set to ``True``. If ``None`` and
+      ``by_weight`` is ``True``, we use the edge label ``l``, if ``l`` is not
+      ``None``, else `1` as a weight.
+
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that the
+      ``weight_function`` outputs a number for each edge
 
     - ``vertices`` -- boolean (default: ``False``)
 
@@ -1833,53 +1853,100 @@ def edge_connectivity(G,
         ....:      tree.set_edge_label(u, v, random())
         sage: minimum = min(tree.edge_labels())
         sage: [_, [(_, _, l)]] = edge_connectivity(tree, value_only=False,              # needs sage.numerical.mip
-        ....:                                      use_edge_labels=True)
+        ....:                                      by_weight=True)
         sage: l == minimum                                                              # needs sage.numerical.mip
         True
 
-    When ``value_only=True`` and ``implementation="sage"``, this function is
+    A ``weight_function`` can be used to read the weight from anywhere in the
+    edge, and setting it implies ``by_weight=True``::
+
+        sage: G = Graph([(0, 1, {'cost': 3}), (1, 2, {'cost': 1}),
+        ....:            (2, 0, {'cost': 2})])
+        sage: edge_connectivity(G, weight_function=lambda e: e[2]['cost'])              # needs sage.numerical.mip
+        3.0
+
+    When ``value_only=True`` and ``algorithm="sage"``, this function is
     optimized for small connectivity values and does not need to build a linear
     program.
 
     It is the case for graphs which are not connected ::
 
         sage: g = 2 * graphs.PetersenGraph()
-        sage: edge_connectivity(g, implementation='sage')
+        sage: edge_connectivity(g, algorithm='sage')
         0.0
 
     For directed graphs, the strong connectivity is tested through the dedicated
     function::
 
         sage: g = digraphs.ButterflyGraph(3)
-        sage: edge_connectivity(g, implementation='sage')
+        sage: edge_connectivity(g, algorithm='sage')
         0.0
 
     We check that the result with Boost is the same as the result without Boost::
 
         sage: g = graphs.RandomGNP(15, .3)
-        sage: (edge_connectivity(g, implementation='boost')                             # needs sage.numerical.mip
-        ....:    == edge_connectivity(g, implementation='sage'))
+        sage: (edge_connectivity(g, algorithm='boost')                                   # needs sage.numerical.mip
+        ....:    == edge_connectivity(g, algorithm='sage'))
         True
 
-    Boost interface also works with directed graphs::
-
-        sage: edge_connectivity(digraphs.Circuit(10), implementation='boost',
-        ....:                   vertices=True)
-        [1, [(0, 1)], [{0}, {1, 2, 3, 4, 5, 6, 7, 8, 9}]]
-
-    However, the Boost algorithm is not reliable if the input is directed
-    (see :issue:`18753`)::
+    The Boost implementation is for undirected graphs only. It considers a
+    digraph as undirected and therefore returns wrong values, so it is
+    rejected (see :issue:`18753`)::
 
         sage: g = digraphs.Path(3)
         sage: edge_connectivity(g)
-        0.0
-        sage: edge_connectivity(g, implementation='boost')
-        1
-        sage: g.add_edge(1, 0)
-        sage: edge_connectivity(g)
-        0.0
-        sage: edge_connectivity(g, implementation='boost')
         0
+        sage: edge_connectivity(g, algorithm='boost')
+        Traceback (most recent call last):
+        ...
+        ValueError: the Boost implementation of the edge connectivity is for
+        undirected graphs only and returns wrong values on digraphs, see
+        https://github.com/sagemath/sage/issues/18753
+
+    The algorithm of Gabow is the default for digraphs when only the value is
+    requested. It cannot return a cut, nor handle edge labels or undirected
+    graphs::
+
+        sage: D = digraphs.Complete(5)
+        sage: edge_connectivity(D)
+        4
+        sage: edge_connectivity(D, algorithm='gabow')
+        4
+        sage: edge_connectivity(D, algorithm='gabow', value_only=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: the Gabow algorithm only computes the value of the edge
+        connectivity, it cannot return a cut
+        sage: edge_connectivity(graphs.PetersenGraph(), algorithm='gabow')
+        Traceback (most recent call last):
+        ...
+        ValueError: the Gabow algorithm is for directed graphs only
+
+    It also supports digraphs with multiple edges::
+
+        sage: D = DiGraph([(0, 1), (0, 1), (1, 0)], multiedges=True)
+        sage: edge_connectivity(D)
+        1
+        sage: D.add_edge(1, 0)
+        sage: edge_connectivity(D)
+        2
+
+    The ``implementation`` keyword is deprecated in favour of ``algorithm``::
+
+        sage: edge_connectivity(graphs.PetersenGraph(), implementation='sage')
+        doctest:warning...
+        DeprecationWarning: use the option 'algorithm' instead of 'implementation'
+        See https://github.com/sagemath/sage/issues/42652 for details.
+        3
+
+    The ``use_edge_labels`` keyword is deprecated in favour of ``by_weight``::
+
+        sage: G = Graph([(0, 1, 3), (1, 2, 1), (2, 0, 2)])
+        sage: edge_connectivity(G, use_edge_labels=True)                                # needs sage.numerical.mip
+        doctest:warning...
+        DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+        See https://github.com/sagemath/sage/issues/42740 for details.
+        3.0
 
     TESTS:
 
@@ -1887,8 +1954,8 @@ def edge_connectivity(G,
 
         sage: for i in range(10):                                                       # needs sage.numerical.mip
         ....:     g = graphs.RandomGNP(30, 0.3)
-        ....:     e1 = edge_connectivity(g, implementation='boost')
-        ....:     e2 = edge_connectivity(g, implementation='sage')
+        ....:     e1 = edge_connectivity(g, algorithm='boost')
+        ....:     e2 = edge_connectivity(g, algorithm='sage')
         ....:     assert (e1 == e2)
 
     Disconnected graphs and ``vertices=True``::
@@ -1910,23 +1977,45 @@ def edge_connectivity(G,
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    G._scream_if_not_simple(allow_loops=True)
     g = G
 
     if vertices:
         value_only = False
 
-    if implementation is None:
-        if use_edge_labels or g.is_directed():
-            implementation = "sage"
-        else:
-            implementation = "boost"
+    # This must be done before choosing the algorithm: passing a weight
+    # function implies by_weight=True, and not every algorithm can be used
+    # with weights.
+    by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
+                                                        weight_function=weight_function,
+                                                        check_weight=check_weight)
 
-    implementation = implementation.lower()
-    if implementation not in ["boost", "sage"]:
-        raise ValueError("'implementation' must be set to 'boost', 'sage' or None.")
-    elif implementation == "boost" and use_edge_labels:
-        raise ValueError("the Boost implementation is currently not able to handle edge labels")
+    if algorithm is None:
+        if g.is_directed() and value_only and not by_weight:
+            # the Gabow algorithm only computes the value, but it is much
+            # faster than solving an integer linear program
+            algorithm = "gabow"
+        elif by_weight or g.is_directed():
+            algorithm = "sage"
+        else:
+            algorithm = "boost"
+
+    algorithm = algorithm.lower()
+    if algorithm not in ["boost", "sage", "gabow"]:
+        raise ValueError("'algorithm' must be set to 'boost', 'sage', 'gabow' or None.")
+    elif algorithm == "boost" and by_weight:
+        raise ValueError("the Boost implementation is currently not able to handle edge weights")
+    elif algorithm == "boost" and g.is_directed():
+        raise ValueError("the Boost implementation of the edge connectivity is for "
+                         "undirected graphs only and returns wrong values on digraphs, "
+                         "see https://github.com/sagemath/sage/issues/18753")
+    elif algorithm == "gabow":
+        if not g.is_directed():
+            raise ValueError("the Gabow algorithm is for directed graphs only")
+        if by_weight:
+            raise ValueError("the Gabow algorithm is currently not able to handle edge weights")
+        if not value_only:
+            raise ValueError("the Gabow algorithm only computes the value of the "
+                             "edge connectivity, it cannot return a cut")
 
     # Otherwise, an error is created
     if not g.n_edges() or not g.n_vertices():
@@ -1936,7 +2025,11 @@ def edge_connectivity(G,
             return [0, [], [{}, {}]]
         return [0, []]
 
-    if implementation == "boost":
+    if algorithm == "gabow":
+        from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+        return GabowEdgeConnectivity(g).edge_connectivity()
+
+    if algorithm == "boost":
         from sage.graphs.base.boost_graph import edge_connectivity
 
         obj, edges = edge_connectivity(g)
@@ -1961,18 +2054,9 @@ def edge_connectivity(G,
 
         return val
 
-    if use_edge_labels:
-        from sage.rings.real_mpfr import RR
-
-        def weight(x):
-            return x if x in RR else 1
-    else:
-        def weight(x):
-            return 1
-
     # Better methods for small connectivity tests, when one is not interested in
     # cuts...
-    if value_only and not use_edge_labels:
+    if value_only and not by_weight:
 
         if G.is_directed():
             if not is_strongly_connected(G):
@@ -2006,7 +2090,8 @@ def edge_connectivity(G,
         for u, v in g.edge_iterator(labels=None):
             p.add_constraint(in_set[0, u] + in_set[1, v] - in_cut[u, v], max=1)
 
-        p.set_objective(p.sum(weight(l) * in_cut[u, v] for u, v, l in g.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * in_cut[e[0], e[1]]
+                              for e in g.edge_iterator()))
 
     else:
 
@@ -2016,13 +2101,14 @@ def edge_connectivity(G,
             p.add_constraint(in_set[0, u] + in_set[1, v] - in_cut[frozenset((u, v))], max=1)
             p.add_constraint(in_set[1, u] + in_set[0, v] - in_cut[frozenset((u, v))], max=1)
 
-        p.set_objective(p.sum(weight(l) * in_cut[frozenset((u, v))] for u, v, l in g.edge_iterator()))
+        p.set_objective(p.sum(weight_function(e) * in_cut[frozenset((e[0], e[1]))]
+                              for e in g.edge_iterator()))
 
     obj = p.solve(log=verbose)
 
     in_cut = p.get_values(in_cut, convert=bool, tolerance=integrality_tolerance)
 
-    if use_edge_labels is False:
+    if not by_weight:
         if g.is_directed():
             obj = sum(1 for u, v in g.edge_iterator(labels=False) if in_cut[u, v])
         else:

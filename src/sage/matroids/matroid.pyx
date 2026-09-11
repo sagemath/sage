@@ -134,6 +134,7 @@ additional functionality (e.g. linear extensions).
 - Invariants
     - :meth:`tutte_polynomial() <sage.matroids.matroid.Matroid.tutte_polynomial>`
     - :meth:`characteristic_polynomial() <sage.matroids.matroid.Matroid.characteristic_polynomial>`
+    - :meth:`beta_invariant() <sage.matroids.matroid.Matroid.beta_invariant>`
     - :meth:`flat_cover() <sage.matroids.matroid.Matroid.flat_cover>`
 
 - Visualization
@@ -8000,6 +8001,41 @@ cdef class Matroid(SageObject):
         if la is not None:
             return chi(la)
         return chi
+
+    cpdef beta_invariant(self):
+        r"""
+        Return the beta invariant of the matroid.
+
+        The *beta invariant* of a matroid `M` is defined by
+
+        .. MATH::
+
+            \beta(M) = (-1)^{r(M)} \sum_{X \subseteq E} (-1)^{|X|} r(X).
+
+        Equivalently, it can be computed from the characteristic polynomial via
+
+        .. MATH::
+
+            \beta(M) = (-1)^{r(M)-1} \left. \frac{d}{d\lambda} \chi_M(\lambda) \right|_{\lambda=1}.
+
+        The beta invariant is nonnegative and vanishes if and only if `M` is
+        disconnected, empty, or a loop.
+
+        OUTPUT: integer
+
+        EXAMPLES::
+
+            sage: M = matroids.Uniform(4, 10)
+            sage: M.beta_invariant()
+            56
+            sage: M.dual().beta_invariant() == M.beta_invariant()
+            True
+            sage: M = Matroid(groundset=[0], circuits=[[0]])
+            sage: M.beta_invariant()
+            0
+        """
+        chi = self.characteristic_polynomial()
+        return ZZ((-1) ** (self.full_rank() - 1) * chi.derivative()(1))
 
     cpdef flat_cover(self, solver=None, verbose=0, integrality_tolerance=1e-3):
         """

@@ -69,9 +69,8 @@ jobs:
       - name: Build Sage
         shell: bash -l {0}
         run: |
+          # Let Meson discover the compiler through the ccache wrappers.
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          export CC="ccache $CC"
-          export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
       - name: Build live doc

@@ -154,7 +154,7 @@ cdef to_quaternion(R, x):
     EXAMPLES::
 
         sage: Q.<i,j,kkkk> = QuaternionAlgebra(QQ,-7, 13)
-        sage: kkkk._repr_()   # implicit doctest
+        sage: kkkk._repr_()   # indirect doctest
         'kkkk'
     """
     if isinstance(x, (list, tuple)):
@@ -175,7 +175,7 @@ cdef inline print_coeff(y, i, bint atomic):
     EXAMPLES::
 
         sage: Q.<i,j,k> = QuaternionAlgebra(QQ,-7, 13)
-        sage: i._repr_()   # implicit doctest
+        sage: i._repr_()   # indirect doctest
         'i'
     """
     if not y:
@@ -907,7 +907,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
         EXAMPLES::
 
-            sage: QuaternionAlgebra(QQ,-5,-2)([1/2,-1/3,2/3,4/5])  # implicit doctest
+            sage: QuaternionAlgebra(QQ,-5,-2)([1/2,-1/3,2/3,4/5])  # indirect doctest
             1/2 - 1/3*i + 2/3*j + 4/5*k
         """
         mpz_init(self.x)
@@ -1035,7 +1035,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             sage: type(A(2/3))
             <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_rational_field'>
 
-            sage: A([-1/2,-10/3,-2/3,-4/5])     # implicit doctest
+            sage: A([-1/2,-10/3,-2/3,-4/5])     # indirect doctest
             -1/2 - 10/3*i - 2/3*j - 4/5*k
             sage: A(vector([1,2/3,3/4,4/5]))
             1 + 2/3*i + 3/4*j + 4/5*k
@@ -1459,7 +1459,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         TESTS::
 
             sage: K.<i,j,k> = QuaternionAlgebra(QQ, -10, -7)
-            sage: (1/4 + 1/2 * i + 1/7 * j + 1/28 * k)*14*i     # implicit doctest
+            sage: (1/4 + 1/2 * i + 1/7 * j + 1/28 * k)*14*i     # indirect doctest
             -70 + 7/2*i + 5*j - 2*k
         """
 
@@ -1674,7 +1674,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         EXAMPLES::
 
             sage: K.<a> = QQ[2^(1/5)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a*17/3)
-            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest
+            sage: Q([a,-2/3,a^2-1/2,a*2])           # indirect doctest
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
         """
         fmpz_poly_init(self.x)
@@ -1704,7 +1704,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
         EXAMPLES::
 
             sage: K.<a> = QQ[2^(1/3)]; Q.<i,j,k> = QuaternionAlgebra(K,-a,a+1)
-            sage: Q([a,-2/3,a^2-1/2,a*2])           # implicit doctest
+            sage: Q([a,-2/3,a^2-1/2,a*2])           # indirect doctest
             a + (-2/3)*i + (a^2 - 1/2)*j + 2*a*k
         """
         self._parent = parent
@@ -2081,7 +2081,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             sage: F = QQ[3^(1/3)]
             sage: a = F.gen()
             sage: K.<i,j,k> = QuaternionAlgebra(F, -10 + a, -7 - a)
-            sage: ((1/4 + 1/2 * i + a^3/7 * j + a/28 * k)*14*i)^3   # implicit doctest
+            sage: ((1/4 + 1/2 * i + a^3/7 * j + a/28 * k)*14*i)^3   # indirect doctest
             34503/2*a^2 + 132195/2*a + 791399/4 + (203/8*a^2 - 10591*a + 169225/4)*i
              + (-84695/4*a^2 + 483413/8*a + 18591/4)*j + (-87/2*a^2 + 18156*a - 72525)*k
         """

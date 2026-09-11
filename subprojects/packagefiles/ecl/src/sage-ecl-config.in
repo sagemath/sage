@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -eu
+
+# The staged ecl-config also reports ECL's nominal installation prefix.
+# Put the build-tree library first so runtime Cython compilations use the
+# same ECL provider as the Sage extension and Maxima.
+case " $* " in
+  *" --libs "*|*" --ldflags "*|*" -l "*)
+    printf '%s ' '-Wl,-rpath,@ECL_BUILDDIR@' '-L@ECL_BUILDDIR@'
+    ;;
+esac
+
+exec '@ECL_CONFIG@' "$@"

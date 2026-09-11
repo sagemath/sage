@@ -101,7 +101,7 @@ from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 
 from sage.schemes.elliptic_curves.weierstrass_morphism \
-        import WeierstrassIsomorphism, _isomorphisms, baseWI, negation_morphism
+    import WeierstrassIsomorphism, _isomorphisms, baseWI, negation_morphism
 
 #
 # Private function for parsing input to determine the type of
@@ -1704,18 +1704,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             sage: E = EllipticCurve(j=GF(7)(1728))
             sage: phi = EllipticCurveIsogeny(E, E((0,0)))
-            sage: phi.rational_maps()  # implicit doctest
+            sage: phi.rational_maps()  # indirect doctest
             ((x^2 + 1)/x, (x^2*y - y)/x^2)
 
             sage: R.<x> = GF(7)[]
             sage: phi = EllipticCurveIsogeny(E, x)
-            sage: phi.rational_maps()  # implicit doctest
+            sage: phi.rational_maps()  # indirect doctest
             ((x^2 + 1)/x, (x^2*y - y)/x^2)
 
             sage: E = EllipticCurve([1,2,3,4,5])
             sage: Eshort = E.short_weierstrass_model()
             sage: phi = E.isogeny(E(0), Eshort)
-            sage: phiX, phiY = phi.rational_maps()  # implicit doctest
+            sage: phiX, phiY = phi.rational_maps()  # indirect doctest
             sage: phiX(1,2), phiY(1,2)
             (63, 864)
         """
@@ -1755,7 +1755,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             sage: E = EllipticCurve(j=GF(7)(1728))
             sage: phi = EllipticCurveIsogeny(E, E((0,0)))
-            sage: phi.kernel_polynomial()  # implicit doctest
+            sage: phi.kernel_polynomial()  # indirect doctest
             x
         """
         if self.__kernel_polynomial is None:
@@ -1955,7 +1955,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])
             sage: P = E((4,2))
-            sage: phi = EllipticCurveIsogeny(E, [P,P]); phi  # implicit doctest
+            sage: phi = EllipticCurveIsogeny(E, [P,P]); phi  # indirect doctest
             Isogeny of degree 4
              from Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 7
@@ -1989,7 +1989,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])
             sage: P = E((4,2))
-            sage: phi = EllipticCurveIsogeny(E, P); phi  # implicit doctest
+            sage: phi = EllipticCurveIsogeny(E, P); phi  # indirect doctest
             Isogeny of degree 4
              from Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 7
@@ -2030,7 +2030,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])
             sage: P = E((4,2))
-            sage: phi = EllipticCurveIsogeny(E, [P,P]); phi  # implicit doctest
+            sage: phi = EllipticCurveIsogeny(E, [P,P]); phi  # indirect doctest
             Isogeny of degree 4
              from Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 7
@@ -2243,7 +2243,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: E = EllipticCurve(GF(7), [0,0,0,-1,0])
             sage: P = E((4,2))
             sage: phi = EllipticCurveIsogeny(E, P)
-            sage: phi.kernel_polynomial()  # implicit doctest
+            sage: phi.kernel_polynomial()  # indirect doctest
             x^2 + 2*x + 4
         """
         poly_ring, x = self.__poly_ring.objgen()
@@ -3224,11 +3224,11 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         d = self._degree
 
         if algorithm == 'pushforward':
-        #TODO:
-            #Extra Features:
-                #Implement inseparable case.
-                #Implement composite degree cyclic case.
-                #Implement non-cyclic case.
+            # TODO:
+            # Extra Features:
+            # Implement inseparable case.
+            # Implement composite degree cyclic case.
+            # Implement non-cyclic case.
             if F(d) == 0:
                 raise NotImplementedError("``pushforward`` method not implemented for inseparable isogenies")
             if not d.is_prime():
@@ -3484,17 +3484,17 @@ def compute_isogeny_bmss(E1, E2, l):
     _, Q = Rx(U).rational_reconstruction(x ** (2 * l), l, l)
     Q = Q.add_bigoh((l + 1) // 2)
     if not Q.is_square():
-        if True:  #XXX stopgap for #42043; to be fixed properly eventually
+        if True:  # XXX stopgap for #42043; to be fixed properly eventually
             return compute_isogeny_stark(E1, E2, l)
         raise ValueError(f"the two curves are not linked by a cyclic normalized isogeny of degree {l}")
     Q = Q.sqrt()
-    ker = Rx(Q).reverse(degree=l//2)
+    ker = Rx(Q).reverse(degree=l // 2)
 
     ker = ker.monic().radical()
 
-    if True:  #XXX stopgap for #42043; to be fixed properly eventually
+    if True:  # XXX stopgap for #42043; to be fixed properly eventually
         if (E1.division_polynomial(l, x=Rx.quotient(ker).gen())
-            or not E1.isogeny_codomain(ker).is_isomorphic(E2)):
+                or not E1.isogeny_codomain(ker).is_isomorphic(E2)):
             return compute_isogeny_stark(E1, E2, l)
 
     return ker

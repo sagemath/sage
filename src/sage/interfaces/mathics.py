@@ -33,7 +33,6 @@ wrapping the Mathics expression/variable, so that you can use the
 Mathics variable from within Sage. You can then call Mathics
 functions on the new object; for example::
 
-    sage: from sage.interfaces.mathics import mathics
     sage: mobj = mathics(x^2-1); mobj       # optional - mathics
     -1 + x ^ 2
     sage: mobj.Factor()                     # optional - mathics
@@ -335,7 +334,7 @@ OTHER Examples::
     sage: slist2[0].parent()                    # optional - mathics
     Mathics
     sage: slist3 = mlist.sage(); slist3         # optional - mathics
-    [[1, 2], 3.00000000000000, 4.00000000000000 + 1.00000000000000*I]
+    ((1, 2), 3.00000000000000, 4.00000000000000 + 1.00000000000000*I)
 
 ::
 
@@ -410,7 +409,7 @@ def _mathics_sympysage_symbol(self):
         sage: from sage.interfaces.mathics import _mathics_sympysage_symbol
         sage: mt = mathics('t')
         sage: st = mt.to_sympy(); st
-        _Mathics_User_Global`t
+        _uGlobal_t
         sage: _mathics_sympysage_symbol(st)
         t
         sage: bool(_ == st._sage_())
@@ -419,14 +418,17 @@ def _mathics_sympysage_symbol(self):
         <class 'sage.symbolic.expression.Expression'>
     """
     from sage.symbolic.ring import SR
+    name = self.name
+    prefix = '_uGlobal_'
+    if name.startswith(prefix):
+        name = name.split(prefix)[1]
     try:
-        name = self.name
-        if name.startswith('_Mathics_User_'):
-            name = name.split('`')[1]
-            if name == mathics._true_symbol():
-                return True
-            if name == mathics._false_symbol():
-                return False
+        if name == mathics._true_symbol():
+            return True
+        if name == mathics._false_symbol():
+            return False
+        if name == 'None':
+            return None
         return SR.var(name)
     except ValueError:
         # sympy sometimes returns dummy variables
@@ -511,6 +513,8 @@ class Mathics(Interface):
             <class 'mathics.session.MathicsSession'>
         """
         if not self._session:
+            from sage.features.internal_interfaces import Mathics
+            Mathics.require()
             from mathics.session import MathicsSession
             from mathics.core.load_builtin import import_and_load_builtins
             import_and_load_builtins()
@@ -773,25 +777,44 @@ optional Sage package Mathics installed.
         EXAMPLES::
 
             sage: mathics.help('Sin')                   # optional - mathics
-            'sine function\n'
+            '\n  Sin[z]\n    returns the sine of z.\n\n\nAttributes[Sin] = {Listable, NumericFunction, Protected}\n'
 
             sage: print(_)                              # optional - mathics
-            sine function
+            <BLANKLINE>
+              Sin[z]
+                returns the sine of z.
+            <BLANKLINE>
+            <BLANKLINE>
+            Attributes[Sin] = {Listable, NumericFunction, Protected}
             <BLANKLINE>
 
             sage: print(mathics.help('Sin', long=True)) # optional - mathics
-            sine function
+            <BLANKLINE>
+              Sin[z]
+                returns the sine of z.
+            <BLANKLINE>
             <BLANKLINE>
             Attributes[Sin] = {Listable, NumericFunction, Protected}
             <BLANKLINE>
 
             sage: print(mathics.Factorial.__doc__)  # optional - mathics
-            factorial
+            <BLANKLINE>
+              Factorial[n]
+              n!
+                computes the factorial of n.
+            <BLANKLINE>
+            <BLANKLINE>
+            Attributes[Factorial] = {Listable, NumericFunction, Protected, ReadProtected}
             <BLANKLINE>
 
             sage: u = mathics('Pi')                 # optional - mathics
             sage: print(u.Cos.__doc__)              # optional - mathics
-            cosine function
+            <BLANKLINE>
+              Cos[z]
+                returns the cosine of z.
+            <BLANKLINE>
+            <BLANKLINE>
+            Attributes[Cos] = {Listable, NumericFunction, Protected}
             <BLANKLINE>
         """
         if long:
@@ -954,7 +977,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
             sage: Q = mathics('Sin[x Cos[y]]/Sqrt[1-x^2]')   # optional - mathics
             sage: latex(Q)                                   # optional - mathics
-            \frac{\text{Sin}\left[x \text{Cos}\left[y\right]\right]}{\sqrt{1-x^2}}
+            \frac{\text{Sin}(x \text{Cos}(y))}{\sqrt{1-x^2}}
         """
         z = str(self.parent()('TeXForm[%s]' % self.name()))
         i = z.find('=')
@@ -1004,7 +1027,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             sage: # optional - mathics
             sage: m = mathics('{{1., 4}, Pi, 3.2e100, I}')
             sage: s = m.sage(); s
-            [[1.00000000000000, 4], pi, 3.20000000000000*e100, 1.00000000000000*I]
+            [(1.00000000000000, 4), pi, 3.20000000000000*e100, 1.00000000000000*I]
             sage: s[1].n()
             3.14159265358979
             sage: s[3]^2
@@ -1306,5 +1329,5 @@ def mathics_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%mathics magics instead.')
-    from mathics import main
+    from mathics import __main__ as main
     main.main()

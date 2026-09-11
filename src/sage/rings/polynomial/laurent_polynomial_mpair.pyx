@@ -1254,6 +1254,41 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: R.zero().degree(x) == R.zero().degree(y) == R.zero().degree(z)
             True
 
+        The weights of a weighted term order are taken into account, also
+        for negative exponents (:issue:`37568`)::
+
+            sage: R.<x, y> = LaurentPolynomialRing(ZZ, order=TermOrder('wdegrevlex', [1, 3]))
+            sage: R(x).degree()
+            1
+            sage: R(y).degree()
+            3
+            sage: R(1/x).degree()
+            -1
+            sage: R(1/y).degree()
+            -3
+            sage: (x^2 * y^-1).degree()
+            -1
+
+        Unweighted term orders are unaffected::
+
+            sage: R.<a, b> = LaurentPolynomialRing(ZZ)
+            sage: (a^2 * b^-1).degree()
+            1
+
+        This also applies blockwise to block orders containing weighted
+        blocks::
+
+            sage: T = TermOrder('wdeglex', [1, 3]) + TermOrder('lex', 1)
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ, order=T)
+            sage: R(y).degree()
+            3
+            sage: R(1/y).degree()
+            -3
+            sage: R(1/z).degree()
+            -1
+            sage: (x^2 * y^-1).degree()
+            -1
+
         TESTS::
 
             sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
@@ -1268,7 +1303,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return minus_infinity
 
         if x is None:
-            return self._poly.total_degree() + sum(self._mon)
+            w = [gen.total_degree() for gen in self._parent._R.gens()]
+            return self._poly.total_degree() + sum(wi * mi for wi, mi
+                                                   in zip(w, self._mon))
 
         # Get the index of the generator or error
         cdef tuple g = <tuple > self._parent.gens()

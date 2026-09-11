@@ -2762,56 +2762,59 @@ def near_polygon_graph(family, params, immutable=False):
 # dictionary intersection_array (as tuple)  -> construction
 # of sporadic distance-regular graphs
 _sporadic_graph_database = {
-    (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3): FosterGraph,
-    (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7): IvanovIvanovFaradjevGraph,
-    (3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3): BiggsSmithGraph,
+    (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3): lambda: FosterGraph,
+    (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7):
+    lambda: IvanovIvanovFaradjevGraph,
+    (3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3):lambda: BiggsSmithGraph,
     (22, 21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21, 22): lambda:
-    codes.GolayCode(GF(2), False).punctured([0]).cosetGraph().bipartite_double(),
+    codes.GolayCode(GF(2), False).punctured([0]).cosetGraph().bipartite_double,
     (23, 22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22, 23): lambda:
-    codes.GolayCode(GF(2), False).cosetGraph().bipartite_double(),
+    codes.GolayCode(GF(2), False).cosetGraph().bipartite_double,
     (21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21):
-    shortened_00_11_binary_Golay_code_graph,
+    lambda: shortened_00_11_binary_Golay_code_graph,
     (21, 20, 16, 9, 2, 1, 1, 2, 3, 16, 20, 21):
-    shortened_000_111_extended_binary_Golay_code_graph,
+    lambda: shortened_000_111_extended_binary_Golay_code_graph,
     (22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22): lambda:
-    codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph(),
-    (3, 2, 1, 1, 1, 1, 1, 1, 2, 3): DodecahedralGraph,
+    codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph,
+    (3, 2, 1, 1, 1, 1, 1, 1, 2, 3): lambda: DodecahedralGraph,
     (22, 20, 18, 2, 1, 1, 2, 9, 20, 22): lambda:
-    codes.GolayCode(GF(3)).shortened([0]).cosetGraph(),
+    codes.GolayCode(GF(3)).shortened([0]).cosetGraph,
     (7, 6, 6, 1, 1, 1, 1, 6, 6, 7): lambda:
-    HoffmanSingletonGraph().bipartite_double(),
+    HoffmanSingletonGraph().bipartite_double,
     (10, 9, 8, 2, 1, 1, 2, 8, 9, 10): lambda:
-    SimsGewirtzGraph().bipartite_double(),
+    SimsGewirtzGraph().bipartite_double,
     (16, 15, 12, 4, 1, 1, 4, 12, 15, 16): lambda:
-    strongly_regular_graph(77, 16, 0, check=False).bipartite_double(),
+    strongly_regular_graph(77, 16, 0, check=False).bipartite_double,
     (22, 21, 16, 6, 1, 1, 6, 16, 21, 22): lambda:
-    HigmanSimsGraph().bipartite_double(),
-    (3, 2, 2, 1, 1, 1, 1, 2): CoxeterGraph,
-    (6, 5, 5, 4, 1, 1, 2, 6): vanLintSchrijverGraph,
-    (7, 6, 4, 4, 1, 1, 1, 6): DoublyTruncatedWittGraph,
-    (9, 8, 6, 3, 1, 1, 3, 8): distance_3_doubly_truncated_Golay_code_graph,
-    (10, 8, 8, 2, 1, 1, 4, 5): J2Graph,
-    (11, 10, 6, 1, 1, 1, 5, 11): LivingstoneGraph,
-    (5, 4, 1, 1, 1, 1, 4, 5): WellsGraph,
-    (6, 4, 2, 1, 1, 1, 4, 6): FosterGraph3S6,
-    (10, 6, 4, 1, 1, 2, 6, 10):  ConwaySmith_for_3S7,
+    HigmanSimsGraph().bipartite_double,
+    (3, 2, 2, 1, 1, 1, 1, 2): lambda: CoxeterGraph,
+    (6, 5, 5, 4, 1, 1, 2, 6): lambda: vanLintSchrijverGraph,
+    (7, 6, 4, 4, 1, 1, 1, 6): lambda: DoublyTruncatedWittGraph,
+    (9, 8, 6, 3, 1, 1, 3, 8):
+    lambda: distance_3_doubly_truncated_Golay_code_graph,
+    (10, 8, 8, 2, 1, 1, 4, 5): lambda: J2Graph,
+    (11, 10, 6, 1, 1, 1, 5, 11): lambda: LivingstoneGraph,
+    (5, 4, 1, 1, 1, 1, 4, 5): lambda: WellsGraph,
+    (6, 4, 2, 1, 1, 1, 4, 6): lambda: FosterGraph3S6,
+    (10, 6, 4, 1, 1, 2, 6, 10):  lambda: ConwaySmith_for_3S7,
     (20, 18, 4, 1, 1, 2, 18, 20): lambda:
-    codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph(),
-    (45, 32, 12, 1, 1, 6, 32, 45): locally_GQ42_distance_transitive_graph,
-    (117, 80, 24, 1, 1, 12, 80, 117): graph_3O73,
+    codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph,
+    (45, 32, 12, 1, 1, 6, 32, 45):
+    lambda: locally_GQ42_distance_transitive_graph,
+    (117, 80, 24, 1, 1, 12, 80, 117): lambda: graph_3O73,
     (22, 21, 20, 1, 2, 6): lambda:
-    codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph(),
+    codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph,
     (23, 22, 21, 1, 2, 3): lambda:
-    codes.GolayCode(GF(2), extended=False).cosetGraph(),
-    (24, 23, 22, 21, 1, 2, 3, 24): lambda: codes.GolayCode(GF(2)).cosetGraph(),
-    (12, 11, 10, 7, 1, 2, 5, 12): LeonardGraph,
-    (15, 14, 10, 3, 1, 5, 12, 15): cocliques_HoffmannSingleton,
-    (27, 10, 1, 1, 10, 27): GossetGraph,
-    (30, 28, 24, 1, 3, 15): LargeWittGraph,
-    (15, 14, 12, 1, 1, 9): TruncatedWittGraph,
-    (24, 22, 20, 1, 2, 12): lambda: codes.GolayCode(GF(3)).cosetGraph(),
+    codes.GolayCode(GF(2), extended=False).cosetGraph,
+    (24, 23, 22, 21, 1, 2, 3, 24): lambda: codes.GolayCode(GF(2)).cosetGraph,
+    (12, 11, 10, 7, 1, 2, 5, 12): lambda: LeonardGraph,
+    (15, 14, 10, 3, 1, 5, 12, 15): lambda: cocliques_HoffmannSingleton,
+    (27, 10, 1, 1, 10, 27): lambda: GossetGraph,
+    (30, 28, 24, 1, 3, 15): lambda: LargeWittGraph,
+    (15, 14, 12, 1, 1, 9): lambda: TruncatedWittGraph,
+    (24, 22, 20, 1, 2, 12): lambda: codes.GolayCode(GF(3)).cosetGraph,
     (21, 20, 16, 1, 2, 12): lambda:
-    codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
+    codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph
 }
 
 _infinite_families_database = [
@@ -2822,7 +2825,8 @@ _infinite_families_database = [
 ]
 
 
-def distance_regular_graph(list arr, existence=False, check=True):
+def distance_regular_graph(list arr, existence=False, check=True,
+                           immutable=False):
     r"""
     Return a distance-regular graph with the intersection array given.
 
@@ -2840,6 +2844,9 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
     - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
       of this function has the given intersection array
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2873,6 +2880,28 @@ def distance_regular_graph(list arr, existence=False, check=True):
         Generalised octagon of order (1, 5): Graph on 312 vertices
         sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
         Graph on 325 vertices
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: arr = [3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
+        sage: G = graphs.distance_regular_graph(arr, immutable=False); G
+        Foster Graph: Graph on 90 vertices
+        sage: G.is_immutable()
+        False
+        sage: graphs.distance_regular_graph(arr, immutable=True).is_immutable()
+        True
+        sage: arr = [21, 20, 16, 1, 2, 12]
+        sage: G = graphs.distance_regular_graph(arr, immutable=False); G
+        coset graph of Puncturing of [23, 12, 7] Golay code over GF(2)
+         on position(s) [0, 1]: Graph on 512 vertices
+        sage: G.is_immutable()
+        False
+        sage: graphs.distance_regular_graph(arr, immutable=True).is_immutable()
+        True
+        sage: G = graphs.distance_regular_graph([5, 1], immutable=True); G
+        Complete graph: Graph on 6 vertices
+        sage: G.is_immutable()
+        True
     """
     from sage.misc.unknown import Unknown
     from sage.categories.sets_cat import EmptySetError
@@ -2928,7 +2957,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
         if existence:
             return True
         from sage.graphs.generators.basic import CompleteGraph
-        return result(CompleteGraph(arr[0] + 1))
+        return result(CompleteGraph(arr[0] + 1, immutable=immutable))
 
     if d == 2:
         k = arr[0]
@@ -2938,13 +2967,13 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
         if existence:
             return strongly_regular_graph(v, k, l, mu, existence=True)
-        return result(strongly_regular_graph(v, k, l, mu))
+        return result(strongly_regular_graph(v, k, l, mu, immutable=immutable))
 
     t = tuple(arr)
     if t in _sporadic_graph_database:
         if existence:
             return True
-        return result(_sporadic_graph_database[t]())
+        return result(_sporadic_graph_database[t]()(immutable=immutable))
 
     for (f, g) in _infinite_families_database:
         t = f(arr)
@@ -2952,8 +2981,9 @@ def distance_regular_graph(list arr, existence=False, check=True):
             if existence:
                 return True
 
-            G = g(*t) if is_iterable(t) else g(t)
-            return result(G)
+            if is_iterable(t):
+                return result(g(*t, immutable=immutable))
+            return result(g(t, immutable=immutable))
 
     # now try drg feasibility
     if drgModule:

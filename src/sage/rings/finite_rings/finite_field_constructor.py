@@ -173,9 +173,11 @@ AUTHORS:
 # ****************************************************************************
 
 from collections import defaultdict
+from collections.abc import Callable
 from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 
 try:
     # We don't late import this because this means trouble with the Givaro library
@@ -502,7 +504,38 @@ class FiniteFieldFactory(UniqueFactory):
         Finite Field in z2 of size 5^2
         sage: GF(5, 2) is GF((5, 2))
         True
+
+    TESTS:
+
+    The return type exposed to static type checkers matches the runtime
+    type for every backend::
+
+        sage: from sage.rings.finite_rings.finite_field_base import FiniteField
+        sage: all(isinstance(GF(2**8, 'a', implementation=impl), FiniteField)
+        ....:     for impl in ('givaro', 'ntl', 'pari_ffelt'))
+        True
+        sage: isinstance(GF(29), FiniteField)
+        True
+
+    The ``__call__`` annotation resolves to that same class::
+
+        sage: import collections.abc
+        sage: import typing
+        sage: from sage.rings.finite_rings.finite_field_constructor import FiniteFieldFactory
+        sage: ann = FiniteFieldFactory.__annotations__['__call__']
+        sage: typing.get_origin(ann) == collections.abc.Callable
+        True
+        sage: typing.get_type_hints(FiniteFieldFactory)['__call__'] == collections.abc.Callable[..., FiniteField]
+        True
     """
+    # This class-level annotation is only there for the typing info: it
+    # lets static type checkers infer the return type of ``GF`` without a
+    # forwarding ``__call__`` override, which would add a Python frame
+    # and a ``super()`` lookup to every factory call.  No value is
+    # assigned, so instances keep dispatching directly to the inherited
+    # ``UniqueFactory.__call__`` at full speed.
+    __call__: Callable[..., FiniteField_base]
+
     def __init__(self, *args, **kwds):
         """
         Initialization.
@@ -580,22 +613,22 @@ class FiniteFieldFactory(UniqueFactory):
 
         TESTS::
 
-            sage: GF((6, 1), 'a')       # implicit doctest
+            sage: GF((6, 1), 'a')       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF((9, 1), 'a')       # implicit doctest
+            sage: GF((9, 1), 'a')       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF((5, 0), 'a')       # implicit doctest
+            sage: GF((5, 0), 'a')       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF((3, 2, 1), 'a')    # implicit doctest
+            sage: GF((3, 2, 1), 'a')    # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: wrong input for finite field constructor

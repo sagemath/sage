@@ -27,14 +27,14 @@ from sage.schemes.hyperelliptic_curves.jacobian_homset_generic import (
 from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
     MumfordDivisorClassFieldSplit,
 )
-from sage.schemes.weighted_projective.weighted_projective_point import (
-    SchemeMorphism_point_weighted_projective_ring,
-)
 from sage.structure.element import parent
 
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
     Element = MumfordDivisorClassFieldSplit
+
+    # Split models accept an explicit weight at infinity as a third argument.
+    _max_constructor_args = 3
 
     def __init__(self, Y, X, **kwds):
         r"""
@@ -66,8 +66,8 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: J.zero()
             (1, 0 : 2)
         """
-        g = self.curve().genus()
-        R = self.curve().polynomial_ring()
+        g = self.extended_curve().genus()
+        R = self.extended_curve().polynomial_ring()
         n = (g + 1) // 2
         return self._morphism_element(self, R.one(), R.zero(), n)
 
@@ -94,11 +94,11 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             (1, 0, 1)
         """
 
-        R, x = self.curve().polynomial_ring().objgen()
+        R, x = self.extended_curve().polynomial_ring().objgen()
         [X, Y, Z] = P._coords
         if Z == 0:
             alpha = Y / X
-            if alpha == self.curve().roots_at_infinity()[0]:
+            if alpha == self.extended_curve().roots_at_infinity()[0]:
                 n = 1
             else:
                 n = 0
@@ -107,39 +107,19 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         v = R(Y)
         return u, v, 0
 
-    def _element_constructor_(self, *args, check=True):
+    def _cantor_compose_points(self, P1, P2):
         r"""
-        Return a rational point in the abstract Homset `J(K)`, given:
+        Return the Mumford coordinates ``(u, v, n)`` of the class `[P1 - P2]`.
 
-        1. No arguments or the integer `0`; return `0 \in J`;
+        Here ``n`` is the multiplicity of the point `\infty_+` in the balanced
+        representation. This is the split-model hook for
+        :meth:`~sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset._element_constructor_`.
 
-        2. A point `P` on `J = Jac(C)`, return `P`;
-        3. Polynomials u,v such that `v^2 + h*v - f = 0 mod u`,
-           returning J(u,v,n) with n = ((g - deg(u))/2).ceil().
-
-        4. Polynomials u,v and an integer n such that `v^2 + h*v - f = 0 mod u`
-           and 0 <= n <= g/2,
-           returning J(u,v,n).
-
-        Return a rational point in the abstract Homset `J(K)`, given:
-
-        1. No arguments or the integer `0`; return `0 \in J`;
-
-        2. A point `P` on `J = Jac(C)`, return `P`;
-
-        3. A point `P` on the curve `H` such that `J = Jac(H)`;
-           return `[P - P_0]`, where `P_0` is the distinguished point of `H`.
-           By default, `P_0 = \infty`;
-
-        4. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
-           return `[P - Q]`;
-
-        5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
-           reutrn `[(u(x), y - v(x)) : \lceil (g - \deg(u)) / 2 \rceil]`;
-
-        6. Polynomials `(u, v)` and an integer `n` such that
-           `v^2 + hv - f \equiv 0 \pmod u` and `0 \leq n \leq g / 2`;
-           return `[u, v : n]`.
+        We use `P_2 + \iota(P_2) \sim \infty_+ + \infty_-` to write
+        `[P_1 - P_2] = [P_1] + [\iota(P_2)] - \infty_+ - \infty_-`. Composing the
+        affine parts of `[P_1]` and `[\iota(P_2)]` removes ``s_deg`` pairs of
+        mutually inverse points, each contributing `\infty_+ + \infty_-`, so the
+        multiplicity of `\infty_+` is increased by ``s_deg``.
 
         EXAMPLES::
 
@@ -155,13 +135,13 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             (x + 12, 4 : 1)
             sage: D2 = JH(Q); D2
             (x + 11, 5 : 1)
-            sage: D = JH(P,Q); D
+            sage: D = JH(P, Q); D
             (x^2 + 10*x + 2, 4*x : 1)
             sage: D == D1 - D2
             True
-            sage: JH(x^2+10*x+2, 4*x, 1) == D
+            sage: JH(x^2 + 10*x + 2, 4*x, 1) == D
             True
-            sage: JH(x^2+10*x+2, 4*x, 0) == D
+            sage: JH(x^2 + 10*x + 2, 4*x, 0) == D
             False
 
         The points at infinity may also be embedded into the Jacobian::
@@ -172,80 +152,107 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: JH(P1)
             (1, 0 : 1)
 
-        TESTS::
+        For any point ``P``, the class ``[P - P]`` must be the identity
+        of the Jacobian (see :issue:`42349`)::
+
+            sage: R.<x> = GF(101)[]
+            sage: H = HyperellipticCurve(x^8 + x + 1)
+            sage: J = Jacobian(H)
+            sage: P = H.lift_x(3)
+            sage: J(P, P)
+            (1, 0 : 2)
+            sage: J(P, P) == J.zero()
+            True
+            sage: J(P, P).is_zero()
+            True
+
+        This also holds on genus 1 split models, where the affine part of
+        ``[P - Q]`` may exceed the genus before reduction::
+
+            sage: R.<x> = GF(101)[]
+            sage: H = HyperellipticCurve(x^4 + x + 1)
+            sage: J = Jacobian(H)
+            sage: J(H.lift_x(2), H.lift_x(3)) == J(H.lift_x(2)) - J(H.lift_x(3))
+            True
+            sage: J(H.lift_x(2), H.lift_x(2)).is_zero()
+            True
+
+        Construction also works over an extension `L` of the base field, using
+        the curve base-extended to `L`::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^8 + x + 1)
+            sage: L.<z2> = GF(13^2)
+            sage: JL = Jacobian(H)(L)
+            sage: HL = JL.extended_curve()
+            sage: P = HL.lift_x(z2 + 2); Q = HL.lift_x(2*z2 + 1)
+            sage: JL(P)
+            (x + 12*z2 + 11, 5*z2 + 11 : 1)
+            sage: JL(P, Q)
+            (x^2 + (10*z2 + 10)*x + 7*z2 + 11, (8*z2 + 4)*x + 3*z2 + 6 : 1)
+            sage: JL(P, Q) == JL(P) - JL(Q)
+            True
+            sage: JL(P, P).is_zero()
+            True
+        """
+        H = self.extended_curve()
+        g = H.genus()
+        u1, v1, n1 = self.point_to_mumford_coordinates(P1)
+        P2_inv = H.hyperelliptic_involution(P2)
+        u2, v2, n2 = self.point_to_mumford_coordinates(P2_inv)
+        u, v, s_deg = self._cantor_composition_generic(u1, v1, u2, v2)
+        n = (g + 1) // 2 - 1 + n1 + n2 + s_deg
+        # Reduce to the canonical balanced representative. This is a no-op when
+        # the divisor is already reduced (genus >= 2), and handles the genus 1
+        # case where ``deg(u)`` can exceed ``g``.
+        while u.degree() > g + 1:
+            u, v, n = self.cantor_reduction(u, v, n)
+        while n < 0 or n > g - u.degree():
+            u, v, n = self.cantor_compose_at_infinity(u, v, n, plus=(n >= 0))
+        return u, v, n
+
+    def _mumford_from_coordinates(self, args):
+        r"""
+        Return the Mumford coordinates ``(u, v, n)`` parsed from ``args``.
+
+        This is the split-model hook for
+        :meth:`~sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset._element_constructor_`.
+        On input two polynomials ``(u, v)``, the weight defaults to
+        `\lceil (g - \deg u) / 2 \rceil`; an explicit weight may be supplied as
+        a third argument.
+
+        EXAMPLES::
 
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurve(x^8 + x + 1)
             sage: J = Jacobian(H)
             sage: JH = J.point_homset()
+            sage: D = JH(x^2 + 10*x + 2, 4*x); D
+            (x^2 + 10*x + 2, 4*x : 1)
+            sage: JH(x^2 + 10*x + 2, 4*x, 1) == D
+            True
+            sage: JH(x^2 + 10*x + 2, 4*x, 0) == D
+            False
+
+        The various spellings of the zero element agree::
+
             sage: J() == J(0) == J(1, 0) == J.zero() == JH(0) == 0
             True
-
-        TODO: Merge this code with that of `HyperellipticJacobianHomset`
         """
-        g = self.curve().genus()
-        R = self.curve().polynomial_ring()
-
-        if len(args) > 3:
-            raise ValueError("at most three arguments are allowed as input")
-
-        if len(args) == 0 or (len(args) == 1 and args[0] == ()):
-            return self._morphism_element(
-                self, R.one(), R.zero(), n=(g + 1) // 2, check=check
+        R = self.extended_curve().polynomial_ring()
+        P1, P2 = args[0], args[1]
+        if not (R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2))):
+            raise ValueError(
+                "the input must consist of one or two points, or Mumford coordinates"
             )
-
-        if len(args) == 1 and isinstance(args[0], (list, tuple)):
-            args = args[0]
-
-        if len(args) == 1:
-            P1 = args[0]
-            if P1 == 0:
-                u = R.one()
-                v = R.zero()
-                n = (g + 1) // 2
-            elif isinstance(P1, self._morphism_element):
-                if parent(P1) is self:
-                    return P1
-                args = tuple(P1)
-            elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
-                # TODO: Test this path when args is a tuple
-                args = args + (
-                    self.curve().distinguished_point(),
-                )  # this case will now be handled below.
-            else:
-                raise ValueError(
-                    "the input must consist of one or two points, or Mumford coordinates"
-                )
-
-        if len(args) == 2 or len(args) == 3:
-            P1 = args[0]
-            P2 = args[1]
-            if isinstance(
-                P1, SchemeMorphism_point_weighted_projective_ring
-            ) and isinstance(P2, SchemeMorphism_point_weighted_projective_ring):
-                if len(args) == 3:
-                    raise ValueError("the input must consist of at most two points")
-                u1, v1, n1 = self.point_to_mumford_coordinates(P1)
-                P2_inv = self.curve().hyperelliptic_involution(P2)
-                u2, v2, n2 = self.point_to_mumford_coordinates(P2_inv)
-                u, v, _ = self._cantor_composition_generic(u1, v1, u2, v2)
-                n = (g + 1) // 2 - 1 + n1 + n2  # this solution is a bit hacky
-            # This checks whether P1 and P2 can be interpreted as polynomials
-            elif R.coerce_map_from(parent(P1)) and R.coerce_map_from(parent(P2)):
-                u = R(P1)
-                v = R(P2)
-                if len(args) == 3 and isinstance(args[2], (int, Integer)):
-                    n = args[2]
-                else:
-                    n = (
-                        g - u.degree() + 1
-                    ) // 2  # TODO: do we really want to allow this input?
-            else:
-                raise ValueError(
-                    "the input must consist of one or two points, or Mumford coordinates"
-                )
-
-        return self._morphism_element(self, u, v, n=n, check=check)
+        u = R(P1)
+        v = R(P2)
+        if len(args) == 3 and isinstance(args[2], (int, Integer)):
+            n = args[2]
+        else:
+            g = self.extended_curve().genus()
+            n = (g - u.degree() + 1) // 2
+        return u, v, n
 
     def cantor_composition(self, u1, v1, n1, u2, v2, n2):
         r"""
@@ -271,7 +278,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             (x^5 + 3*x^4 + 5*x^3 + 4*x, 3*x^3 + 3*x^2 + 3*x + 3, -1)
         """
         # Collect data from HyperellipticCurve
-        H = self.curve()
+        H = self.extended_curve()
         g = H.genus()
 
         # Cantor composition
@@ -303,7 +310,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             (x^3 + 4*x^2 + 2*x + 5, 2*x^2 + 3*x + 5, 0)
         """
         # Collect data from HyperellipticCurve
-        H = self.curve()
+        H = self.extended_curve()
         g = H.genus()
 
         # Perform regular cantor reduction
@@ -349,7 +356,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             (x^3 + 6*x^2 + x + 4, 5*x + 5, 2)
         """
         # Collect data from HyperellipticCurve
-        H = self.curve()
+        H = self.extended_curve()
         f, h = H.hyperelliptic_polynomials()
         g = H.genus()
 

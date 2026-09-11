@@ -230,8 +230,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         #  Ensure the input point is Weierstrass
         if not P[1].is_zero():
             raise ValueError(
-                    f"P = {P} is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
-                )
+                f"P = {P} is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
+            )
 
         if P[2].is_zero():
             raise ValueError(f"P = {P} is the point at infinity. Use local_coordinates_at_infinity instead!")
@@ -594,7 +594,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         except ValueError:
             raise ValueError(
                 "The base change of the elliptic curve to the residue field is not well-defined."
-                )
+            )
 
         if P == self(0, 1, 0):
             return HF(0, 1, 0)
@@ -608,7 +608,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             return HF(P[0].expansion(0), P[1].expansion(0), 1)
         return HF(0, 1, 0)
 
-    def is_same_disc(self, P, Q):
+    def is_same_disc(self, P, Q) -> bool:
         """
         Check if `P,Q` are in the same residue disc.
 
