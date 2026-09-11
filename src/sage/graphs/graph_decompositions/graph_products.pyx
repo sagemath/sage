@@ -259,6 +259,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     from sage.graphs.graph import Graph
 
+    # As we need the vertices of g to be linearly ordered, we copy the graph and
+    # relabel it
     # Work with an immutable graph so its backend holds a short_digraph
     cdef object g_imm = g if g.is_immutable() else g.copy(immutable=True)
     cdef StaticSparseBackend bck = <StaticSparseBackend> g_imm._backend
@@ -281,10 +283,12 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         simple_BFS(sd, s, distances + s * n, NULL, waiting_list, seen)
     bitset_free(seen)
 
-    # Edge list + edge-to-index mapping using integer vertex indices
+    # Reorder the vertices of an edge
     def r(x, y):
         return (x, y) if x < y else (y, x)
 
+    # The equivalence classes of the edges of g
+    # Initialize OrbitPartition with all edges
     cdef list edge_list = []
     cdef dict edge_to_idx = {}
     cdef int iu, iv, idx
@@ -296,6 +300,8 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         edge_to_idx[r(iu, iv)] = idx
     cdef int n_edges = len(edge_list)
 
+    # For all pairs of vertices u,v of G, according to their number of common
+    # neighbors... See the module's documentation !
     cdef OrbitPartition *op = OP_new(n_edges)
     if op == NULL:
         raise MemoryError("Failed to allocate OrbitPartition")
@@ -307,25 +313,37 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     for u, u_label in enumerate(int_to_vertex):
         un = set(g_imm.neighbor_iterator(u_label))
         for v_label in g_imm.breadth_first_search(u_label):
+            # u and v are different
             if u_label == v_label:
                 continue
+            # List of common neighbors
             v = vertex_to_int[v_label]
             intersect = un & set(g_imm.neighbor_iterator(v_label))
+            # If u and v have no neighbors and uv is not an edge then their
+            # distance is at least 3. As we enumerate the vertices in a
+            # breadth-first search, it means that we already checked all the
+            # vertices at distance less than two from u, and we are done with
+            # this loop !
             if not intersect:
                 if g_imm.has_edge(u_label, v_label):
                     continue
                 else:
                     break
+            # Special case: uv is not an edge and exactly 2 common neighbors
             if len(intersect) == 2 and not g_imm.has_edge(u_label, v_label):
                 x_label, y_label = intersect
                 x = vertex_to_int[x_label]
                 y = vertex_to_int[y_label]
                 OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, y)])
                 OP_join(op, edge_to_idx[r(v, x)], edge_to_idx[r(u, y)])
+            # All other cases: union with all common neighbors
             else:
                 for x_label in intersect:
                     x = vertex_to_int[x_label]
                     OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, x)])
+
+    # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
+    # equivalent
 
     # Distance loop using the C distance array
     cdef int i, j, uu, vv
@@ -340,11 +358,12 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
             if dist_u[uu] + dist_v[vv] != dist_u[vv] + dist_v[uu]:
                 OP_join(op, edge_to_idx[r(u, v)], edge_to_idx[r(uu, vv)])
 
+    # Only one connected component ? Check before building edges
     if op.num_cells == 1:
         OP_dealloc(op)
         return (False, None) if relabeling else False
 
-    # Gathering connected components, relabeling on-the-fly
+    # Gathering the connected components, relabeling the vertices on-the-fly
     cdef dict comp_map = {}
     for i in range(n_edges):
         root = OP_find(op, i)
@@ -357,6 +376,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     if immutable is None:
         immutable = g.is_immutable()
 
+    # Building the list of factors
     cdef list factors = []
     cdef object tmp
     for cc in edges:
@@ -367,10 +387,12 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         else:
             factors.append(tmp.subgraph(vertices=comps[0]))
 
+    # Computing the product of these graphs
     answer = factors[0]
     for i in range(1, len(factors)):
         answer = answer.cartesian_product(factors[i])
 
+    # Checking that the resulting graph is indeed isomorphic to what we have.
     isiso, dictt = g.is_isomorphic(answer, certificate=True)
     if not isiso:
         raise ValueError("something weird happened during the algorithm... "
