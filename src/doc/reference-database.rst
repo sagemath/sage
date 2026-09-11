@@ -5539,7 +5539,11 @@
             247 (1997), 313-320, Cambridge Univ. Press.
 
 .. [Mue2010] Jan Steffen Mueller, *Explicit Kummer surface formulas for arbitrary characteristic*.
-             LMS Journal of Computation and Mathematics, Volume 13, 47--64, 2010.
+             LMS Journal of Computation and Mathematics, Volume 13, 47--64, 2010
+
+.. [Muhle2017] Henri Mühle, *The Core Label Order of a Congruence-Uniform
+               Lattice*, Algebra Universalis 80:10 (2019),
+               :doi:`10.1007/s00012-019-0585-5`, :arxiv:`1708.02104`
 
 .. [Mul2004] Siguna Muller, *On the Computation of Square Roots in
              Finite Fields*, in Designs, Codes and Cryptography,
