@@ -2910,11 +2910,22 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return Integer(result)
         return Integer(singular_polynomial_deg(p, NULL, r))
 
-    def degrees(self):
-        """
-        Return a tuple with the maximal degree of each variable in
-        this polynomial.  The list of degrees is ordered by the order
-        of the generators.
+    def degrees(self, as_ETuples=False):
+        r"""
+        Return the maximal degree of each variable in this polynomial.
+
+        The degree of each variable is the maximum degree of that variable
+        appearing in any monomial of ``self``. The list of degrees is ordered
+        by the order of the generators.
+
+        INPUT:
+
+        - ``as_ETuples`` -- boolean (default: ``False``); if ``True``, return
+          the result as an :class:`~sage.rings.polynomial.polydict.ETuple`,
+          otherwise return a plain :class:`tuple`
+
+        OUTPUT: an :class:`~sage.rings.polynomial.polydict.ETuple` or a
+        :class:`tuple` with the degree of each variable
 
         EXAMPLES::
 
@@ -2923,8 +2934,18 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             3*y0*y1^2*y2
             sage: q.degrees()
             (1, 2, 1)
+            sage: type(q.degrees())
+            <class 'tuple'>
+            sage: q.degrees(as_ETuples=True)
+            (1, 2, 1)
+            sage: type(q.degrees(as_ETuples=True))
+            <class 'sage.rings.polynomial.polydict.ETuple'>
             sage: (q + y0^5).degrees()
             (5, 2, 1)
+            sage: R(0).degrees(as_ETuples=True)
+            (0, 0, 0)
+            sage: type(R(0).degrees(as_ETuples=True))
+            <class 'sage.rings.polynomial.polydict.ETuple'>
 
         TESTS:
 
@@ -2945,7 +2966,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             for i from 0 <= i < r.N:
                 d[i] = max(d[i],p_GetExp(p, i+1, r))
             p = pNext(p)
-        return tuple(map(Integer, d))
+        d = list(map(Integer, d))
+        if as_ETuples:
+            return ETuple(d)
+        return tuple(d)
 
     def coefficient(self, degrees):
         """
