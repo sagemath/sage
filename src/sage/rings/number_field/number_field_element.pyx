@@ -3383,7 +3383,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             +Infinity
             sage: K(0).additive_order()
             1
-            sage: K.ring_of_integers().characteristic()  # implicit doctest
+            sage: K.ring_of_integers().characteristic()  # indirect doctest
             0
         """
         return ZZ.one() if not self else infinity

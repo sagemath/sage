@@ -425,7 +425,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
             sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             sage: E = EllipticCurve([1,0])
-            sage: phi = EllipticCurveHom_composite(E, E(0,0))   # implicit doctest
+            sage: phi = EllipticCurveHom_composite(E, E(0,0))   # indirect doctest
             sage: from sage.schemes.elliptic_curves.hom import EllipticCurveHom
             sage: print(EllipticCurveHom._repr_(phi))
             Elliptic-curve morphism:
@@ -593,13 +593,14 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         degs = [phi.degree() for phi in self._phis]
         if len(degs) == 1:
             return f'Composite morphism of degree {self._degree}:' \
-                    f'\n  From: {self._domain}' \
-                    f'\n  To:   {self._codomain}'
-        grouped = [(d, sum(1 for _ in g)) for d,g in groupby(degs)]
-        degs_str = '*'.join(str(d) + (f'^{e}' if e > 1 else '') for d,e in grouped)
-        return f'Composite morphism of degree {self._degree} = {degs_str}:' \
                 f'\n  From: {self._domain}' \
                 f'\n  To:   {self._codomain}'
+        grouped = [(d, sum(1 for _ in g)) for d, g in groupby(degs)]
+        degs_str = '*'.join(str(d) + (f'^{e}' if e > 1 else '')
+                            for d, e in grouped)
+        return f'Composite morphism of degree {self._degree} = {degs_str}:' \
+            f'\n  From: {self._domain}' \
+            f'\n  To:   {self._codomain}'
 
     def factors(self):
         r"""

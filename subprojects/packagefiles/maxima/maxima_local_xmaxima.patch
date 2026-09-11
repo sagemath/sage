@@ -1,0 +1,28 @@
+diff --git a/maxima-local.in b/maxima-local.in
+--- a/maxima-local.in
++++ b/maxima-local.in
+@@ -20,10 +20,8 @@ export MAXIMA_LOCAL
+ # quick fix for plotting with plot_format=openmath (bug 3052)
+-if [ ! -d "@abs_top_srcdir@/bin" ]; then
+-    mkdir -p "@abs_top_srcdir@/bin"
+-    ln -sf "@abs_top_srcdir@/xmaxima-local" "@abs_top_srcdir@/bin/xmaxima"
+-    ln -sf "@abs_top_srcdir@/doc" "@abs_top_srcdir@/bin/doc"
+-    ln -sf "@abs_top_srcdir@/src" "@abs_top_srcdir@/bin/src"
+-    ln -sf "@abs_top_srcdir@/interfaces" "@abs_top_srcdir@/bin/interfaces"
+-fi
++mkdir -p "@abs_top_srcdir@/bin"
++ln -sf "@abs_top_builddir@/xmaxima-local" "@abs_top_srcdir@/bin/xmaxima"
++ln -sf "@abs_top_srcdir@/doc" "@abs_top_srcdir@/bin/doc"
++ln -sf "@abs_top_srcdir@/src" "@abs_top_srcdir@/bin/src"
++ln -sf "@abs_top_srcdir@/interfaces" "@abs_top_srcdir@/bin/interfaces"
+-
++
+ POSIX_SHELL=@POSIX_SHELL@
+diff --git a/xmaxima-local.in b/xmaxima-local.in
+--- a/xmaxima-local.in
++++ b/xmaxima-local.in
+@@ -7,3 +7,3 @@
+ export MAXIMA_XMAXIMADIR
+-XMAXIMA_MAXIMA="@abs_top_srcdir@/maxima-local"
++XMAXIMA_MAXIMA="@abs_top_builddir@/maxima-local"
+ export XMAXIMA_MAXIMA

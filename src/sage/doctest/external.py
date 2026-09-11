@@ -355,9 +355,7 @@ def external_features():
     import sage.features.ffmpeg
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
-    for feature in sage.features.interfaces.all_features():
-        if feature.is_external():
-            yield feature
+    yield from sage.features.interfaces.all_features()
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()
     yield Gurobi()

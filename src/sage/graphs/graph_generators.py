@@ -1255,7 +1255,7 @@ class GraphGenerators:
 
     def nauty_genktreeg(self, options='', debug=False, immutable=False):
         r"""
-        Return a generator which creates all `k`-trees using nauty..
+        Return a generator which creates all `k`-trees using nauty.
 
         A `k`-tree is an undirected graph formed by starting with a complete
         graph on `k + 1` vertices and then repeatedly add vertices in such a

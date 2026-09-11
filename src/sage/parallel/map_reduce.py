@@ -1592,6 +1592,33 @@ class RESetMapReduceWorker(mp.Process):
     def _thief(self):
         r"""
         Return the thief thread of this worker process.
+
+        TESTS:
+
+        When the last active steal request fails, signal termination before
+        waking the requester (:issue:`41115`)::
+
+            sage: from collections import deque
+            sage: from types import SimpleNamespace
+            sage: from sage.parallel.map_reduce import AbortError, RESetMapReduceWorker
+            sage: events = []
+            sage: def task_start():
+            ....:     events.append('start')
+            sage: def task_done():
+            ....:     events.append('done')
+            ....:     raise AbortError
+            sage: request = SimpleNamespace(get=lambda: 0)
+            sage: pipe = SimpleNamespace(send=lambda value: events.append('send'))
+            sage: target = SimpleNamespace(name='target', _write_task=pipe)
+            sage: aborted = SimpleNamespace(value=False)
+            sage: mapred = SimpleNamespace(_workers=[target],
+            ....:     _signal_task_start=task_start, _signal_task_done=task_done,
+            ....:     _aborted=aborted)
+            sage: worker = SimpleNamespace(_request=request, _mapred=mapred,
+            ....:     _todo=deque(), _stats=[0] * 4)
+            sage: RESetMapReduceWorker._thief(worker)
+            sage: events
+            ['start', 'done']
         """
         logger.debug("Thief started")
         reqs = 0
@@ -1606,9 +1633,12 @@ class RESetMapReduceWorker(mp.Process):
                 try:
                     work = self._todo.popleft()
                 except IndexError:
+                    # Signal completion before waking the requester.  Otherwise
+                    # it can immediately issue another request and prevent the
+                    # active-task counter from reaching zero.
+                    self._mapred._signal_task_done()
                     target._write_task.send(None)
                     logger.debug(f"Failed Steal {target.name}")
-                    self._mapred._signal_task_done()
                 else:
                     target._write_task.send(work)
                     logger.debug(f"Successful Steal {target.name}")

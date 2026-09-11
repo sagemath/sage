@@ -666,16 +666,17 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     # we could do this much faster, but this is a cheap step
     # compared to LLL
     g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta)]
-    g.extend([x**i * f**m for i in range(t)])  # h
+    fm = f**m
+    g.extend(x**i * fm for i in range(t))  # h
 
     B = Matrix(ZZ, len(g), delta*m + t)
     for i in range(B.nrows()):
-        for j in range( g[i].degree()+1 ):
+        for j in range(g[i].degree() + 1):
             B[i, j] = g[i][j]*X**j
 
     B = B.LLL(**kwds)
 
-    f = sum([ZZ(B[0, i]//X**i)*x**i for i in range(B.ncols())])
+    f = sum([ZZ(B[0, i]//X**i) * x**i for i in range(B.ncols())])
     R = f.roots()
 
     ZmodN = self.base_ring()
