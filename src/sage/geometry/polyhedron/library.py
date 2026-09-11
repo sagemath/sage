@@ -729,11 +729,11 @@ class Polytopes:
 
         Its non exact version::
 
-            sage: ico = polytopes.icosahedron(exact=False)                              # needs sage.groups
-            sage: ico.base_ring()                                                       # needs sage.groups
+            sage: ico = polytopes.icosahedron(exact=False)
+            sage: ico.base_ring()
             Real Double Field
-            sage: ico.volume()                  # known bug                             # needs sage.groups
-            2.181694990...
+            sage: ico.volume()  # abs tol 1e-9
+            2.1816949907715726
 
         A version using `AA <sage.rings.qqbar.AlgebraicRealField>`::
 
