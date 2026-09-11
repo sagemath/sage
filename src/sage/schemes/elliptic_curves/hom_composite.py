@@ -857,6 +857,12 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             return self
         return prod(phi.dual(algorithm=algorithm) for phi in self._phis)
 
+    def _set_dual(self, dual):
+        """
+        Set the cached dual of this composite isogeny.
+        """
+        self.dual.set_cache(dual)
+
     def formal(self, prec=20):
         """
         Return the formal isogeny corresponding to this composite

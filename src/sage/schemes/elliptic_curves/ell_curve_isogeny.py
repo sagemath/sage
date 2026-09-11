@@ -3213,10 +3213,76 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi1_dual = phi1.dual(algorithm='pushforward')
             sage: phi2_dual = phi2.dual(algorithm='pushforward')
             sage: assert phi1_dual != phi2_dual
-        """
-        if self.__base_field.characteristic() in (2, 3):
-            raise NotImplementedError("computation of dual isogenies not yet implemented in characteristics 2 and 3")
 
+        Duals in characteristics 2 and 3::
+
+            sage: F.<a> = GF(2^2)
+            sage: E = EllipticCurve(F, [0, 0, a, 0, 0])
+            sage: phi = E.isogeny(E(0, a))
+            sage: phihat = phi.dual()
+            sage: phihat * phi == phi.degree()
+            True
+            sage: phi * phihat == phi.degree()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(2), [1, 0, 1, 1, 1])
+            sage: phi = E.isogeny(E.gens()[0])
+            sage: phi.dual() * phi == phi.degree()
+            True
+
+        ::
+
+            sage: F.<a> = GF(3^2)
+            sage: E = EllipticCurve(F, [0, 0, 0, a + 1, 0])
+            sage: phi = E.isogeny(E(a + 2, 0))
+            sage: phihat = phi.dual()
+            sage: phihat * phi == phi.degree()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(3), [1, 2, 0, 1, 0])
+            sage: phi = E.isogeny(E(2, 0))
+            sage: phi.degree()
+            4
+            sage: phi.dual() * phi == phi.degree()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(3), [0, 1, 0, 0, 1])
+            sage: phi = E.isogeny(2 * E.gens()[0])
+            sage: phi.dual() * phi == phi.degree()
+            True
+
+        The usual construction is attempted before falling back in
+        characteristics `2` and `3`::
+
+            sage: import sage.schemes.elliptic_curves.ell_curve_isogeny as isogeny_module
+            sage: calls = []
+            sage: old_compute = isogeny_module.compute_sequence_of_maps
+            sage: old_fallback = EllipticCurveIsogeny._dual_prime_to_characteristic
+            sage: def unavailable(*args, **kwds):
+            ....:     calls.append('standard')
+            ....:     raise NotImplementedError
+            sage: def fallback(self):
+            ....:     calls.append('fallback')
+            ....:     return old_fallback(self)
+            sage: isogeny_module.compute_sequence_of_maps = unavailable
+            sage: EllipticCurveIsogeny._dual_prime_to_characteristic = fallback
+            sage: try:
+            ....:     E = EllipticCurve(GF(3), [1, 2, 0, 1, 0])
+            ....:     phi = E.isogeny(E(2, 0))
+            ....:     phi.dual() * phi == phi.degree()
+            ....: finally:
+            ....:     isogeny_module.compute_sequence_of_maps = old_compute
+            ....:     EllipticCurveIsogeny._dual_prime_to_characteristic = old_fallback
+            True
+            sage: calls
+            ['standard', 'fallback']
+        """
         if self.__dual is not None:
             return self.__dual
 
@@ -3299,22 +3365,120 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             self.__dual = corr * phi_hat
             return self.__dual
 
-        u = self.scaling_factor()
-        E1 = self._codomain
-        E2 = self._domain.change_weierstrass_model(u/F(d), 0, 0, 0)
+        try:
+            u = self.scaling_factor()
+            E1 = self._codomain
+            E2 = self._domain.change_weierstrass_model(u/F(d), 0, 0, 0)
 
-        phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-        assert phi_hat.scaling_factor().is_one()
+            phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
+            assert phi_hat.scaling_factor().is_one()
 
-        for post_iso in E2.isomorphisms(self._domain):
-            if d == u * post_iso.scaling_factor():
-                break
-        else:
-            raise RuntimeError("bug in dual()")
+            for post_iso in E2.isomorphisms(self._domain):
+                if d == u * post_iso.scaling_factor():
+                    break
+            else:
+                raise RuntimeError("bug in dual()")
 
-        phi_hat._set_post_isomorphism(post_iso)
-        phi_hat.__perform_inheritance_housekeeping()
+            phi_hat._set_post_isomorphism(post_iso)
+            phi_hat.__perform_inheritance_housekeeping()
+            return phi_hat
+        except NotImplementedError:
+            if F.characteristic() not in (2, 3):
+                raise
+
+        self.__dual = self._dual_prime_to_characteristic()
+        return self.__dual
+
+    def _dual_prime_to_characteristic(self):
+        r"""
+        Return the dual of this isogeny when its degree is prime to the
+        characteristic.
+
+        ALGORITHM:
+
+        If `\varphi: E \to E'` has degree `d` prime to the characteristic,
+        then `E[d]` is reduced and `\ker(\hat\varphi) = \varphi(E[d])`.
+        The quotient of the `d`-division polynomial by the kernel
+        polynomial of `\varphi` gives the `x`-coordinates of the points of
+        `E[d] \setminus \ker(\varphi)`.  Pushing these coordinates through
+        `\varphi` gives the kernel polynomial of the dual, up to the final
+        post-isomorphism correction.
+
+        EXAMPLES:
+
+        The computed isogeny has the defining property of the dual in
+        characteristic `2`::
+
+            sage: F.<a> = GF(2^2)
+            sage: E = EllipticCurve(F, [0, 0, a, 0, 0])
+            sage: phi = E.isogeny(E(0, a))
+            sage: phihat = phi._dual_prime_to_characteristic()
+            sage: phihat * phi == phi.degree()
+            True
+            sage: phi * phihat == phi.degree()
+            True
+
+        It also works for even degree prime-to-characteristic isogenies
+        in characteristic `3`::
+
+            sage: E = EllipticCurve(GF(3), [1, 2, 0, 1, 0])
+            sage: phi = E.isogeny(E(2, 0))
+            sage: phi.degree()
+            4
+            sage: phihat = phi._dual_prime_to_characteristic()
+            sage: phihat * phi == phi.degree()
+            True
+            sage: phi * phihat == phi.degree()
+            True
+
+        The post-isomorphism correction is computed from the constructed
+        composite to the scalar multiplication map, as required by
+        :func:`~sage.schemes.elliptic_curves.hom.find_post_isomorphism`::
+
+            sage: import sage.schemes.elliptic_curves.hom as hom_module
+            sage: F.<a> = GF(2^2)
+            sage: E = EllipticCurve(F, [0, 0, a, 0, 0])
+            sage: phi = E.isogeny(E(0, a))
+            sage: mult = E.scalar_multiplication(phi.degree())
+            sage: old_find = hom_module.find_post_isomorphism
+            sage: calls = []
+            sage: def checked_find(actual, target):
+            ....:     calls.append(actual == mult)
+            ....:     return old_find(actual, target)
+            sage: hom_module.find_post_isomorphism = checked_find
+            sage: try:
+            ....:     phi._dual_prime_to_characteristic() * phi == mult
+            ....: finally:
+            ....:     hom_module.find_post_isomorphism = old_find
+            True
+            sage: calls
+            [False]
+        """
+        d = self._degree
+        division_polynomial = self.__poly_ring(
+            self._domain.division_polynomial(d)).monic()
+        kernel_polynomial = self.kernel_polynomial().monic()
+        quotient, remainder = division_polynomial.quo_rem(kernel_polynomial)
+        if remainder:
+            raise RuntimeError("kernel polynomial does not divide the division polynomial")
+
+        dual_kernel = self.push_subgroup(quotient)
+        phi_hat = self._codomain.isogeny(dual_kernel, codomain=self._domain)
+
+        from sage.schemes.elliptic_curves.hom import find_post_isomorphism
+        mult = self._domain.scalar_multiplication(d)
+        corr = find_post_isomorphism(phi_hat * self, mult)
+        phi_hat = corr * phi_hat
+        assert phi_hat * self == mult
+        if hasattr(phi_hat, '_set_dual'):
+            phi_hat._set_dual(self)
         return phi_hat
+
+    def _set_dual(self, dual):
+        """
+        Set the cached dual of this isogeny.
+        """
+        self.__dual = dual
 
     @staticmethod
     def _composition_impl(left, right):

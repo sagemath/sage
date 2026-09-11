@@ -153,6 +153,7 @@ from sage.structure.sequence import Sequence
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.richcmp import op_EQ
 
 from sage.rings.finite_rings.finite_field_base import FiniteField
 
@@ -309,6 +310,32 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
     # EllipticCurveHom methods
 
+    @staticmethod
+    def _comparison_impl(left, right, op):
+        r"""
+        Compare two Frobenius isogenies without constructing rational maps.
+
+        TESTS:
+
+        Comparing high-degree Frobenius maps should not build their
+        bivariate rational maps, whose exponents can exceed Singular's
+        internal limit::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: p = 2^31 - 1
+            sage: E = EllipticCurve(GF(p), [1, 0])
+            sage: pi = EllipticCurveHom_frobenius(E, 2)
+            sage: pi == EllipticCurveHom_frobenius(E, 2)
+            True
+        """
+        if op != op_EQ:
+            return NotImplemented
+        if not isinstance(left, EllipticCurveHom_frobenius):
+            return NotImplemented
+        if not isinstance(right, EllipticCurveHom_frobenius):
+            return NotImplemented
+        return left.domain() == right.domain() and left._n == right._n
+
     def rational_maps(self):
         """
         Return the explicit rational maps defining this Frobenius
@@ -462,10 +489,16 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
             True
             sage: f * f.dual() == EllipticCurveHom_scalar(f.codomain(), p**n)
             True
-            sage: f.dual().dual() == f  # known bug -- broken in characteristic 2,3
+            sage: f.dual().dual() == f
             True
-            sage: p in (2,3) or f.dual().dual() == f
-            True
+
+        The dual of a Frobenius dual is known in characteristics
+        `2` and `3`::
+
+            sage: for E in (EllipticCurve(GF(2), [1, 0, 1, 1, 1]),
+            ....:           EllipticCurve(GF(3), [0, 1, 0, 0, 1])):
+            ....:     f = EllipticCurveHom_frobenius(E)
+            ....:     assert f.dual().dual() == f
 
         ALGORITHM:
 
@@ -499,7 +532,10 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
         scalar_mul = EllipticCurveHom_scalar(self._domain, self._degree)
         iso = find_post_isomorphism(Phi * self, scalar_mul)
-        return iso * Phi
+        Phi = iso * Phi
+        if hasattr(Phi, '_set_dual'):
+            Phi._set_dual(self)
+        return Phi
 
     def inseparable_degree(self):
         """
