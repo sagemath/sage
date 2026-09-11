@@ -119,9 +119,15 @@ Methods
 -------
 """
 
+
+from libc.stdint cimport uint32_t
 from sage.groups.perm_gps.partn_ref.data_structures cimport (
     OrbitPartition, OP_new, OP_join, OP_find, OP_dealloc
 )
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend, StaticSparseCGraph
+from sage.graphs.base.static_sparse_graph cimport short_digraph, simple_BFS
+from sage.data_structures.bitset_base cimport bitset_t, bitset_init, bitset_free, bitset_clear
+from memory_allocator cimport MemoryAllocator
 
 # ****************************************************************************
 #       Copyright (C) 2012 Nathann Cohen <nathann.cohen@gmail.com>
@@ -255,73 +261,101 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     # As we need the vertices of g to be linearly ordered, we copy the graph and
     # relabel it
-    cdef list int_to_vertex = list(g)
-    cdef dict vertex_to_int = {vert: i for i, vert in enumerate(int_to_vertex)}
-    g_int = g.relabel(perm=vertex_to_int, inplace=False)
+    # Work with an immutable graph so its backend holds a short_digraph
+    cdef object g_imm = g if g.is_immutable() else g.copy(immutable=True)
+    cdef StaticSparseBackend bck = <StaticSparseBackend> g_imm._backend
+    cdef StaticSparseCGraph cg   = <StaticSparseCGraph> bck._cg
+    cdef short_digraph sd
+    sd = <short_digraph> cg.g
+    cdef list int_to_vertex      = bck._vertex_to_labels
+    cdef dict vertex_to_int      = bck._vertex_to_int
+    cdef int n = sd.n
+
+    # All-pairs distances via simple_BFS on the backend's sd (no duplicate sd)
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef uint32_t* distances    = <uint32_t*> mem.allocarray(n * n, sizeof(uint32_t))
+    cdef uint32_t* waiting_list = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
+    cdef bitset_t seen
+    bitset_init(seen, n)
+    cdef int s
+    for s in range(n):
+        bitset_clear(seen)
+        simple_BFS(sd, s, distances + s * n, NULL, waiting_list, seen)
+    bitset_free(seen)
 
     # Reorder the vertices of an edge
     def r(x, y):
         return (x, y) if x < y else (y, x)
 
-    cdef int x, y, u, v
-    cdef set un, intersect
-
     # The equivalence classes of the edges of g
     # Initialize OrbitPartition with all edges
-    cdef list edge_list = list(g_int.edge_iterator(labels=False))
+    cdef list edge_list = []
+    cdef dict edge_to_idx = {}
+    cdef int iu, iv, idx
+    cdef object u_label, v_label
+    for idx, (u_label, v_label) in enumerate(g_imm.edge_iterator(labels=False)):
+        iu = vertex_to_int[u_label]
+        iv = vertex_to_int[v_label]
+        edge_list.append((iu, iv))
+        edge_to_idx[r(iu, iv)] = idx
     cdef int n_edges = len(edge_list)
-    cdef dict edge_to_idx = {r(u, v): i for i, (u, v) in enumerate(edge_list)}
+
+    # For all pairs of vertices u,v of G, according to their number of common
+    # neighbors... See the module's documentation !
     cdef OrbitPartition *op = OP_new(n_edges)
     if op == NULL:
         raise MemoryError("Failed to allocate OrbitPartition")
 
-    # For all pairs of vertices u,v of G, according to their number of common
-    # neighbors... See the module's documentation !
-    for u in g_int:
-        un = set(g_int.neighbor_iterator(u))
-        for v in g_int.breadth_first_search(u):
-
+    # Main equivalence-class computation
+    cdef int u, v, x, y
+    cdef set un, intersect
+    cdef object x_label, y_label
+    for u, u_label in enumerate(int_to_vertex):
+        un = set(g_imm.neighbor_iterator(u_label))
+        for v_label in g_imm.breadth_first_search(u_label):
             # u and v are different
-            if u == v:
+            if u_label == v_label:
                 continue
-
             # List of common neighbors
-            intersect = un & set(g_int.neighbor_iterator(v))
-
+            v = vertex_to_int[v_label]
+            intersect = un & set(g_imm.neighbor_iterator(v_label))
             # If u and v have no neighbors and uv is not an edge then their
             # distance is at least 3. As we enumerate the vertices in a
             # breadth-first search, it means that we already checked all the
             # vertices at distance less than two from u, and we are done with
             # this loop !
             if not intersect:
-                if g_int.has_edge(u, v):
+                if g_imm.has_edge(u_label, v_label):
                     continue
                 else:
                     break
-
             # Special case: uv is not an edge and exactly 2 common neighbors
-            if len(intersect) == 2 and not g_int.has_edge(u, v):
-                x, y = intersect
+            if len(intersect) == 2 and not g_imm.has_edge(u_label, v_label):
+                x_label, y_label = intersect
+                x = vertex_to_int[x_label]
+                y = vertex_to_int[y_label]
                 OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, y)])
                 OP_join(op, edge_to_idx[r(v, x)], edge_to_idx[r(u, y)])
             # All other cases: union with all common neighbors
             else:
-                for x in intersect:
+                for x_label in intersect:
+                    x = vertex_to_int[x_label]
                     OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, x)])
 
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
 
-    # Original distance loop with Python dict
-    cdef list edges = list(g_int.edges(labels=False, sort=False))
-    cdef dict d = g_int.distance_all_pairs()
-    cdef int uu, vv
-    for i, (u, v) in enumerate(edges):
-        du = d[u]
-        dv = d[v]
-        for j in range(i + 1, g_int.size()):
-            uu, vv = edges[j]
-            if du[uu] + dv[vv] != du[vv] + dv[uu]:
+    # Distance loop using the C distance array
+    cdef int i, j, uu, vv
+    cdef uint32_t* dist_u
+    cdef uint32_t* dist_v
+    for i in range(n_edges):
+        u, v = edge_list[i]
+        dist_u = distances + u * n
+        dist_v = distances + v * n
+        for j in range(i + 1, n_edges):
+            uu, vv = edge_list[j]
+            if dist_u[uu] + dist_v[vv] != dist_u[vv] + dist_v[uu]:
                 OP_join(op, edge_to_idx[r(u, v)], edge_to_idx[r(uu, vv)])
 
     # Only one connected component ? Check before building edges
@@ -337,14 +371,14 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
             comp_map[root] = []
         comp_map[root].append(edge_list[i])
     components = list(comp_map.values())
-    edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc]
-             for cc in components]
+    edges = [[(int_to_vertex[u], int_to_vertex[v]) for u, v in cc] for cc in components]
 
     if immutable is None:
         immutable = g.is_immutable()
 
     # Building the list of factors
     cdef list factors = []
+    cdef object tmp
     for cc in edges:
         tmp = Graph(cc, format='list_of_edges', immutable=immutable)
         comps = tmp.connected_components(sort=False)
@@ -362,9 +396,10 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     isiso, dictt = g.is_isomorphic(answer, certificate=True)
     if not isiso:
         raise ValueError("something weird happened during the algorithm... "
-                         "Please report the bug and give us the graph instance"
-                         " that made it fail !")
+                         "Please report the bug and give us the graph instance "
+                         "that made it fail !")
     OP_dealloc(op)
+
     if relabeling:
         return isiso, dictt
     if certificate:
