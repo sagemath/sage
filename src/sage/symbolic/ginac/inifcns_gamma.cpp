@@ -266,13 +266,12 @@ static ex beta_eval(const ex & x, const ex & y)
 			if (nx.is_negative()) {
 				if (nx<=-ny)
 					return pow(*_num_1_p, ny)*beta(1-x-y, y);
-                                throw (pole_error("beta_eval(): simple pole",1));
+				throw pole_error("beta_eval(): simple pole", 1);
 			}
 			if (ny.is_negative()) {
 				if (ny<=-nx)
 					return pow(*_num_1_p, nx)*beta(1-y-x, x);
-				
-					throw (pole_error("beta_eval(): simple pole",1));
+				throw pole_error("beta_eval(): simple pole", 1);
 			}
 			return gamma(x)*gamma(y)/gamma(x+y);
 		}
@@ -316,8 +315,9 @@ static ex beta_series(const ex & arg1,
 	// gamma series directly.
 	const ex arg1_pt = arg1.subs(rel, subs_options::no_pattern);
 	const ex arg2_pt = arg2.subs(rel, subs_options::no_pattern);
-	GINAC_ASSERT(is_a<symbol>(rel.lhs()));
-	const symbol &s = ex_to<symbol>(rel.lhs());
+	const ex lhs = rel.lhs();
+	GINAC_ASSERT(is_a<symbol>(lhs));
+	const symbol &s = ex_to<symbol>(lhs);
 	ex arg1_ser, arg2_ser, arg1arg2_ser;
 	if ((!arg1_pt.is_integer() || arg1_pt.info(info_flags::positive)) &&
 	    (!arg2_pt.is_integer() || arg2_pt.info(info_flags::positive)))

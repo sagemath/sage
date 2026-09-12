@@ -1056,8 +1056,8 @@ ex expairseq::to_polynomial(exmap & repl) const
 	ex oc = overall_coeff.to_polynomial(repl);
 	if (oc.info(info_flags::numeric))
 		return thisexpairseq(s, overall_coeff);
-	
-		s.emplace_back(oc, _ex1);
+
+	s.emplace_back(oc, _ex1);
 	return thisexpairseq(s, default_overall_coeff());
 }
 

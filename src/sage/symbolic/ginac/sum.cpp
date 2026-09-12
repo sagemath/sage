@@ -562,7 +562,7 @@ ex gosper_sum_definite(ex f, ex s, ex a, ex b, int* success)
                         return res;
                 return t;
         }
-        catch (gosper_domain_error) {
+        catch (const gosper_domain_error&) {
                 *success = 0;
                 return _ex0;
         }
@@ -579,7 +579,7 @@ ex gosper_sum_indefinite(ex f, ex s, int* success)
                         return res;
                 return t;
         }
-        catch (gosper_domain_error) {
+        catch (const gosper_domain_error&) {
                 *success = 0;
                 return _ex0;
         }

@@ -17,7 +17,8 @@ namespace GiNaC {
 class infoflagbase {
 public:
 	infoflagbase();
-        infoflagbase(const infoflagbase& other) : bits(other.bits) {}
+        infoflagbase(const infoflagbase&) = default;
+        infoflagbase& operator=(const infoflagbase&) = default;
 
 	std::string to_string() const       { return bits.to_string(); }
 	bool get(unsigned flag) const;
@@ -46,4 +47,3 @@ private:
 } // namespace GiNaC
 
 #endif	/* INFOFLAGBASE_H */
-
