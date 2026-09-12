@@ -93,6 +93,7 @@ from sage.structure.element import RingElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method
+from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 
 ########################################################
@@ -1779,6 +1780,25 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     ideal = fractional_ideal  # legacy alias
 
+    def lattice(self, gens):
+        r"""
+        Return the integer lattice spanned by ``gens`` in this algebra.
+
+        Unlike :meth:`fractional_ideal`, this accepts lattices of any rank.
+        Currently the base ring of this algebra must be `\QQ`.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: L = B.lattice([1, i]); L
+            Quaternion lattice of rank 2 with basis (1, i)
+            sage: L.rank()
+            2
+            sage: B.lattice([]).rank()
+            0
+        """
+        return QuaternionLattice(self, gens)
+
     @cached_method
     def modp_splitting_data(self, p):
         r"""
@@ -2882,7 +2902,7 @@ class QuaternionOrder(Parent):
             if not norm.gcd(self.discriminant()).is_one():
                 raise ValueError('requested norm must be coprime to the discriminant')
 
-        from sage.misc.prandom import randrange, choice
+        from sage.misc.prandom import choice, randrange
         from sage.rings.finite_rings.integer_mod_ring import Zmod
 
         B = self.quaternion_algebra()
@@ -3298,6 +3318,255 @@ class QuaternionOrder(Parent):
 
         # Otherwise, there might be other unknown alpha's giving isomorphism. If so we can't find them.
         raise NotImplementedError("isomorphism_to was not able to recognize the given orders as isomorphic")
+
+
+class QuaternionLattice(SageObject):
+    r"""
+    An integer lattice in a rational quaternion algebra.
+
+    INPUT:
+
+    - ``Q`` -- a quaternion algebra over `\QQ`
+    - ``gens`` -- elements of ``Q`` spanning the lattice over `\ZZ`
+
+    A lattice need not have full rank. Products with orders, fractional
+    ideals, other lattices, or scalars are computed using their integer
+    spans. A product with an order or a fractional ideal is returned as a
+    quaternion fractional ideal if it has rank 4. All other products remain
+    lattices.
+
+    EXAMPLES::
+
+        sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+        sage: L = B.lattice([1, i, 2*i])
+        sage: L.basis()
+        (1, i)
+        sage: O = B.maximal_order()
+        sage: O * L == O.left_ideal(L.basis())
+        True
+        sage: L * O == O.right_ideal(L.basis())
+        True
+
+    TESTS::
+
+        sage: loads(dumps(L)) == L
+        True
+        sage: QuaternionAlgebra(GF(7), -1, -1).lattice([1])
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: lattices only implemented for quaternion algebras over QQ
+    """
+    def __init__(self, Q, gens):
+        r"""
+        Initialize this lattice.
+
+        TESTS::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: B.lattice([0, i, -i]).basis()
+            (i,)
+            sage: from sage.algebras.quatalg.quaternion_algebra import QuaternionLattice
+            sage: QuaternionLattice(QQ, [])
+            Traceback (most recent call last):
+            ...
+            TypeError: Q must be a quaternion algebra
+        """
+        if not isinstance(Q, QuaternionAlgebra_abstract):
+            raise TypeError("Q must be a quaternion algebra")
+        if Q.base_ring() is not QQ:
+            raise NotImplementedError("lattices only implemented for quaternion algebras over QQ")
+        self._quaternion_algebra = Q
+        self._basis = tuple(basis_for_quaternion_lattice([Q.coerce(g) for g in gens], reverse=False))
+
+    def _repr_(self):
+        r"""
+        Return a string representation of this lattice.
+
+        EXAMPLES::
+
+            sage: QuaternionAlgebra(-1, -1).lattice([])
+            Quaternion lattice of rank 0 with basis ()
+        """
+        return f"Quaternion lattice of rank {self.rank()} with basis {self.basis()}"
+
+    def quaternion_algebra(self):
+        r"""
+        Return the ambient quaternion algebra.
+
+        EXAMPLES::
+
+            sage: B = QuaternionAlgebra(-1, -1)
+            sage: B.lattice([1]).quaternion_algebra() is B
+            True
+        """
+        return self._quaternion_algebra
+
+    def basis(self):
+        r"""
+        Return an integer basis of this lattice as a tuple of quaternions.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: B.lattice([i, 2, 3]).basis()
+            (1, i)
+        """
+        return self._basis
+
+    gens = basis
+
+    def rank(self):
+        r"""
+        Return the rank over `\ZZ`.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: B.lattice([i, j, i+j]).rank()
+            2
+        """
+        return len(self._basis)
+
+    @cached_method
+    def free_module(self):
+        r"""
+        Return the corresponding integer submodule of `\QQ^4`.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: B.lattice([i/2, j]).free_module().basis_matrix()
+            [  0 1/2   0   0]
+            [  0   0   1   0]
+        """
+        return (QQ**4).span([g.coefficient_tuple() for g in self.basis()], ZZ)
+
+    def __contains__(self, x):
+        r"""
+        Test whether ``x`` belongs to this lattice.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: L = B.lattice([1, i])
+            sage: [x in L for x in [0, 2-i, i/2, j]]
+            [True, True, False, False]
+            sage: QuaternionAlgebra(-1, -7).gen(1) in B.lattice([j])
+            False
+        """
+        try:
+            x = self.quaternion_algebra().coerce(x)
+        except (TypeError, ValueError):
+            return False
+        return vector(QQ, x.coefficient_tuple()) in self.free_module()
+
+    def __eq__(self, other):
+        r"""
+        Test equality of lattices in the same quaternion algebra.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: B.lattice([1, i]) == B.lattice([1+i, i])
+            True
+            sage: B.lattice([1]) == QuaternionAlgebra(-1, -7).lattice([1])
+            False
+            sage: B.lattice([1]) == 1
+            False
+        """
+        if not isinstance(other, QuaternionLattice):
+            return NotImplemented
+        return (self.quaternion_algebra() == other.quaternion_algebra()
+                and self.basis() == other.basis())
+
+    def __mul__(self, other):
+        r"""
+        Return the integer span of products with ``other`` on the right.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(1, 1)
+            sage: O = B.quaternion_order([1, i, j, k])
+            sage: L = B.lattice([1+i])
+            sage: (L * O).rank()
+            2
+            sage: j+k in L * O
+            True
+            sage: j+k in O * L
+            False
+            sage: ((1-i) * L).rank()
+            0
+            sage: (L * B.lattice([1-i])).rank()
+            0
+        """
+        return self._multiply(other)
+
+    def __rmul__(self, other):
+        r"""
+        Return the integer span of products with ``other`` on the left.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: i * B.lattice([j]) == B.lattice([k])
+            True
+            sage: (0 * B.lattice([1])).rank()
+            0
+            sage: L = B.lattice(B.basis())
+            sage: L * 1 == 1 * L == L
+            True
+            sage: L * B.lattice([1]) == L
+            True
+        """
+        return self._multiply(other, left=True)
+
+    def _multiply(self, other, left=False):
+        r"""
+        Compute a product, retaining lattices whose rank is less than 4.
+
+        TESTS::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -1)
+            sage: B.lattice([1]) * QuaternionAlgebra(-1, -7).maximal_order()
+            Traceback (most recent call last):
+            ...
+            ValueError: lattices must be in the same quaternion algebra
+            sage: B.ideal([1, i])
+            Traceback (most recent call last):
+            ...
+            ValueError: fractional ideal must have rank 4
+
+        Elements of other quaternion algebras cannot be reinterpreted as
+        scalars in this algebra::
+
+            sage: v = QuaternionAlgebra(-1, -7).gen(1)
+            sage: L = B.lattice([1])
+            sage: L.__mul__(v) is NotImplemented
+            True
+            sage: L.__rmul__(v) is NotImplemented
+            True
+            sage: B.lattice([v])
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion ...
+        """
+        Q = self.quaternion_algebra()
+        if isinstance(other, (QuaternionLattice, QuaternionOrder, QuaternionFractionalIdeal_rational)):
+            if other.quaternion_algebra() != Q:
+                raise ValueError("lattices must be in the same quaternion algebra")
+            other_basis = other.basis()
+        else:
+            try:
+                other_basis = [Q.coerce(other)]
+            except (TypeError, ValueError):
+                return NotImplemented
+        left_basis, right_basis = self.basis(), other_basis
+        if left:
+            left_basis, right_basis = right_basis, left_basis
+        product = Q.lattice([a*b for a in left_basis for b in right_basis])
+        if product.rank() == 4 and isinstance(other, (QuaternionOrder, QuaternionFractionalIdeal_rational)):
+            return Q.fractional_ideal(product.basis())
+        return product
 
 
 class QuaternionFractionalIdeal(Ideal_fractional):
@@ -4063,6 +4332,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         if isinstance(right, QuaternionOrder):
             right = right.unit_ideal()
+        if isinstance(right, QuaternionLattice):
+            return right.__rmul__(self)
         if not isinstance(right, QuaternionFractionalIdeal_rational):
             return self.scale(right, left=False)
         gens = [a*b for a in self.basis() for b in right.basis()]
