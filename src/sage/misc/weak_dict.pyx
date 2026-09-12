@@ -337,7 +337,6 @@ cdef class WeakValueDictionary(dict):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: L = [(p, GF(p)) for p in prime_range(10)]
             sage: import sage.misc.weak_dict
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -364,7 +363,7 @@ cdef class WeakValueDictionary(dict):
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
             sage: D[1] = QQ
             sage: D[2] = ZZ
-            sage: D[None] = CC                                                          # needs sage.rings.real_mpfr
+            sage: D[None] = CC
             sage: E = copy(D)    # indirect doctest
             sage: set(E.items()) == set(D.items())
             True
@@ -427,7 +426,6 @@ cdef class WeakValueDictionary(dict):
 
             sage: import sage.misc.weak_dict
 
-            sage: # needs sage.libs.pari
             sage: L = [(p, GF(p)) for p in prime_range(10)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(L)
             sage: len(D)
@@ -435,7 +433,6 @@ cdef class WeakValueDictionary(dict):
 
         The value for an existing key is returned and not overridden::
 
-            sage: # needs sage.libs.pari
             sage: D.setdefault(5, ZZ)
             Finite Field of size 5
             sage: D[5]
@@ -443,7 +440,6 @@ cdef class WeakValueDictionary(dict):
 
         For a non-existing key, the default value is stored and returned::
 
-            sage: # needs sage.libs.pari
             sage: 4 in D
             False
             sage: D.setdefault(4, ZZ)
@@ -461,7 +457,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.setdefault(matrix([]), ZZ)                                          # needs sage.modules
+            sage: D.setdefault(matrix([]), ZZ)
             Traceback (most recent call last):
             ...
             TypeError: ...mutable matrices are unhashable...
@@ -535,7 +531,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D[matrix([])] = ZZ                                                    # needs sage.modules
+            sage: D[matrix([])] = ZZ
             Traceback (most recent call last):
             ...
             TypeError: mutable matrices are unhashable
@@ -561,7 +557,6 @@ cdef class WeakValueDictionary(dict):
 
             sage: import sage.misc.weak_dict
 
-            sage: # needs sage.libs.pari
             sage: L = [GF(p) for p in prime_range(10^3)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
             sage: 20 in D
@@ -581,7 +576,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.pop(matrix([]))                                                     # needs sage.modules
+            sage: D.pop(matrix([]))
             Traceback (most recent call last):
             ...
             TypeError: ...mutable matrices are unhashable...
@@ -637,7 +632,6 @@ cdef class WeakValueDictionary(dict):
 
             sage: import sage.misc.weak_dict
 
-            sage: # needs sage.libs.pari
             sage: L = [GF(p) for p in prime_range(10^3)]
             sage: D = sage.misc.weak_dict.WeakValueDictionary(enumerate(L))
             sage: 100 in D
@@ -656,9 +650,8 @@ cdef class WeakValueDictionary(dict):
         Check that :issue:`15956` has been fixed, i.e., a :exc:`TypeError` is
         raised for unhashable objects::
 
-            sage: # needs sage.libs.pari
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D.get(matrix([]))                                                     # needs sage.modules
+            sage: D.get(matrix([]))
             Traceback (most recent call last):
             ...
             TypeError: ...mutable matrices are unhashable...
@@ -696,7 +689,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: D[matrix([])]                                                         # needs sage.modules
+            sage: D[matrix([])]
             Traceback (most recent call last):
             ...
             TypeError: ...mutable matrices are unhashable...
@@ -739,7 +732,7 @@ cdef class WeakValueDictionary(dict):
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
-            sage: matrix([]) in D                                                       # needs sage.modules
+            sage: matrix([]) in D
             Traceback (most recent call last):
             ...
             TypeError: ...mutable matrices are unhashable...
@@ -1155,13 +1148,13 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
 
         EXAMPLES::
 
-            sage: L = [(p, GF(p)) for p in prime_range(10)]                             # needs sage.libs.pari
+            sage: L = [(p, GF(p)) for p in prime_range(10)]
             sage: from sage.misc.weak_dict import CachedWeakValueDictionary
             sage: D = CachedWeakValueDictionary()
             sage: len(D)
             0
-            sage: D = CachedWeakValueDictionary(L)                                      # needs sage.libs.pari
-            sage: len(D) == len(L)                                                      # needs sage.libs.pari
+            sage: D = CachedWeakValueDictionary(L)
+            sage: len(D) == len(L)
             True
 
         A :class:`CachedWeakValueDictionary` with a cache size of zero

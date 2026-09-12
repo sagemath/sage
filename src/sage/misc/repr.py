@@ -18,11 +18,11 @@ def coeff_repr(c, is_latex=False):
         sage: from sage.misc.repr import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '1/2'
-        sage: coeff_repr(-x^2)                                                          # needs sage.symbolic
+        sage: coeff_repr(-x^2)
         '(-x^2)'
         sage: coeff_repr(QQ(1/2), is_latex=True)
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2, is_latex=True)                                           # needs sage.symbolic
+        sage: coeff_repr(-x^2, is_latex=True)
         '\\left(-x^{2}\\right)'
     """
     if not is_latex:
@@ -124,13 +124,12 @@ def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
 
     Verify that :issue:`31672` is fixed::
 
-        sage: # needs sage.symbolic
         sage: alpha = var("alpha")
         sage: repr_lincomb([(x, alpha)], is_latex=True)
         '\\alpha x'
         sage: A.<psi> = PolynomialRing(QQ)
-        sage: B.<t> = FreeAlgebra(A)                                                    # needs sage.combinat sage.modules
-        sage: (psi * t)._latex_()                                                       # needs sage.combinat sage.modules
+        sage: B.<t> = FreeAlgebra(A)
+        sage: (psi * t)._latex_()
         '\\psi t'
     """
     # Setting scalar_mult: symbol used for scalar multiplication
