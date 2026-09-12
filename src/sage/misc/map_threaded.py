@@ -2,7 +2,8 @@
 Threaded map function
 """
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 
 def map_threaded(function: Callable[[Any], Any], sequence: Any) -> Any:
