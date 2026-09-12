@@ -263,6 +263,57 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
         sage: B = StaticSparseBackend(G, sort=False)
         sage: list(B.iterator_edges('a', True))
         [('a', 'b', 'ab'), ('a', 'd', 'ad'), ('a', 'e', 'ae'), ('a', 'c', 'ac')]
+
+    Non-reflexive vertex labels must preserve the graph when making it
+    immutable::
+
+        sage: nan = float('nan')
+        sage: G = graphs.CycleGraph(4)
+        sage: G.relabel({0: nan})
+        sage: H = G.copy(immutable=True)
+        sage: all(H.has_edge(u, v) == G.has_edge(u, v) for u in G for v in G)
+        True
+        sage: H.is_cartesian_product()
+        True
+
+    Rebuild from an immutable graph with a different vertex order. Its edge
+    iterator places the queried vertex at the other end of each edge::
+
+        sage: from sage.graphs.base.static_sparse_backend import StaticSparseCGraph
+        sage: vertices = list(reversed(list(H)))
+        sage: B = StaticSparseCGraph(H, vertex_list=vertices)
+        sage: all(B.has_arc(i, j) == H.has_edge(u, v)
+        ....:     for i, u in enumerate(vertices) for j, v in enumerate(vertices))
+        True
+
+    Directed edges retain their orientation and labels, including edges
+    between distinct NaN vertices::
+
+        sage: G = DiGraph([(0, 1, 'a'), (2, 1, 'b'), (1, 3, 'c')])
+        sage: G.relabel({1: nan, 3: float('nan')})
+        sage: H = G.copy(immutable=True)
+        sage: (H.order(), H.in_degree(nan), H.out_degree(nan))
+        (4, 2, 1)
+        sage: all(H.has_edge(u, v) == G.has_edge(u, v) for u in G for v in G)
+        True
+        sage: all(H.has_edge(u, v, label) for u, v, label in G.edge_iterator())
+        True
+
+    Loops and parallel edges also retain their degrees and labels::
+
+        sage: G = Graph([(0, 1, 'a'), (0, 1, 'b'),
+        ....:            (1, 1, 'loop'), (1, 2, 'c')],
+        ....:           loops=True, multiedges=True)
+        sage: G.relabel({1: nan})
+        sage: H = G.copy(immutable=True)
+        sage: (H.degree(nan), H.number_of_loops())
+        (5, 1)
+        sage: sorted(H.edge_label(0, nan))
+        ['a', 'b']
+        sage: H.edge_label(nan, nan)
+        ['loop']
+        sage: H.edge_label(nan, 2)
+        ['c']
     """
     from sage.graphs.graph import Graph
     from sage.graphs.digraph import DiGraph
@@ -320,9 +371,11 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
             edge_iterator = G.edge_iterator(v, labels=edge_labelled,
                                             sort_vertices=False)
         for e in edge_iterator:
-            u = e[0] if v == e[1] else e[1]
-            j = v_to_id[u]
-            # Handle the edge u -> v of G (= the edge j -> i of g)
+            # Compare vertex IDs: labels such as NaN need not equal themselves.
+            j = v_to_id[e[0]]
+            if j == i:
+                j = v_to_id[e[1]]
+            # Store the arc j -> i in g.
             g.neighbors[j][0] = i
             # Note: cannot use the dereference Cython operator here, do not
             # known why but the following line does not compile
