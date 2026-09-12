@@ -296,17 +296,17 @@ def compose(f, g):
         sage: def f(x): return x + 1
         sage: h1 = compose(f, g)
         sage: h2 = compose(g, f)
-        sage: _ = var('x')                                                              # needs sage.symbolic
-        sage: h1(x)                                                                     # needs sage.symbolic
+        sage: _ = var('x')
+        sage: h1(x)
         3*x + 1
-        sage: h2(x)                                                                     # needs sage.symbolic
+        sage: h2(x)
         3*x + 3
 
     ::
 
-        sage: _ = function('f g')                                                       # needs sage.symbolic
-        sage: _ = var('x')                                                              # needs sage.symbolic
-        sage: compose(f, g)(x)                                                          # needs sage.symbolic
+        sage: _ = function('f g')
+        sage: _ = var('x')
+        sage: compose(f, g)(x)
         f(g(x))
     """
     return lambda x: f(g(x))
@@ -329,22 +329,22 @@ def nest(f, n, x):
     EXAMPLES::
 
         sage: def f(x): return x^2 + 1
-        sage: x = var('x')                                                              # needs sage.symbolic
-        sage: nest(f, 3, x)                                                             # needs sage.symbolic
+        sage: x = var('x')
+        sage: nest(f, 3, x)
         ((x^2 + 1)^2 + 1)^2 + 1
 
     ::
 
-        sage: _ = function('f')                                                         # needs sage.symbolic
-        sage: _ = var('x')                                                              # needs sage.symbolic
-        sage: nest(f, 10, x)                                                            # needs sage.symbolic
+        sage: _ = function('f')
+        sage: _ = var('x')
+        sage: nest(f, 10, x)
         f(f(f(f(f(f(f(f(f(f(x))))))))))
 
     ::
 
-        sage: _ = function('f')                                                         # needs sage.symbolic
-        sage: _ = var('x')                                                              # needs sage.symbolic
-        sage: nest(f, 0, x)                                                             # needs sage.symbolic
+        sage: _ = function('f')
+        sage: _ = var('x')
+        sage: nest(f, 0, x)
         x
     """
     from sage.rings.integer import Integer
@@ -402,10 +402,10 @@ def is_iterator(it) -> bool:
         sage: list(x)
         [4, 3, 2, 1]
 
-        sage: P = Partitions(3)                                                         # needs sage.combinat
-        sage: is_iterator(P)                                                            # needs sage.combinat
+        sage: P = Partitions(3)
+        sage: is_iterator(P)
         False
-        sage: is_iterator(iter(P))                                                      # needs sage.combinat
+        sage: is_iterator(iter(P))
         True
     """
     # see issue #7398 for a discussion

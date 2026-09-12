@@ -108,7 +108,6 @@ def deprecation_cython(issue_number, message, stacklevel=3):
     with the same callsite reference as `deprecation` in a python function, whereas
     `deprecation` in a cython function does not::
 
-        sage: # needs sage.misc.cython
         sage: cython(
         ....: '''
         ....: from sage.misc.superseded import deprecation_cython, deprecation
@@ -353,7 +352,6 @@ class DeprecatedFunctionAlias:
         r"""
         TESTS::
 
-            sage: # needs sage.combinat
             sage: from sage.misc.superseded import deprecated_function_alias
             sage: g = deprecated_function_alias(13109, number_of_partitions)
             sage: g.__doc__
@@ -388,8 +386,8 @@ class DeprecatedFunctionAlias:
         TESTS::
 
             sage: from sage.misc.superseded import deprecated_function_alias
-            sage: g = deprecated_function_alias(13109, number_of_partitions)            # needs sage.combinat
-            sage: g.__name__                                                            # needs sage.combinat
+            sage: g = deprecated_function_alias(13109, number_of_partitions)
+            sage: g.__name__
             'g'
 
             sage: class cls():
@@ -400,14 +398,14 @@ class DeprecatedFunctionAlias:
             sage: cls().old_meth.__name__
             'old_meth'
 
-            sage: cython('\n'.join([                                                    # needs sage.misc.cython
+            sage: cython('\n'.join([
             ....:     r"from sage.misc.superseded import deprecated_function_alias",
             ....:     r"cdef class cython_cls():",
             ....:     r"    def new_cython_meth(self):",
             ....:     r"        return 1",
             ....:     r"    old_cython_meth = deprecated_function_alias(13109, new_cython_meth)"
             ....: ]))
-            sage: cython_cls().old_cython_meth.__name__                                 # needs sage.misc.cython
+            sage: cython_cls().old_cython_meth.__name__
             'old_cython_meth'
         """
         # first look through variables in stack frames
@@ -531,8 +529,8 @@ def deprecated_function_alias(issue_number, func, *, replacement=None, replaceme
     EXAMPLES::
 
         sage: from sage.misc.superseded import deprecated_function_alias
-        sage: g = deprecated_function_alias(13109, number_of_partitions)                # needs sage.combinat sage.libs.flint
-        sage: g(5)                                                                      # needs sage.combinat sage.libs.flint
+        sage: g = deprecated_function_alias(13109, number_of_partitions)
+        sage: g(5)
         doctest:...: DeprecationWarning: g is deprecated.
         Please use sage.combinat.partition.number_of_partitions instead.
         See https://github.com/sagemath/sage/issues/13109 for details.
