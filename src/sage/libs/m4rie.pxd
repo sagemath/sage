@@ -16,8 +16,8 @@ cdef extern from "m4rie/m4rie.h":
         m4ri_word *pow_gen
         m4ri_word *red
 
-        m4ri_word (*inv)(gf2e *ff, m4ri_word a)
-        m4ri_word (*mul)(gf2e *ff, m4ri_word a, m4ri_word b)
+        m4ri_word (*inv)(const gf2e *ff, m4ri_word a)
+        m4ri_word (*mul)(const gf2e *ff, m4ri_word a, m4ri_word b)
 
     gf2e *gf2e_init(m4ri_word minpoly)
     void gf2e_free(gf2e *ff)
@@ -25,7 +25,7 @@ cdef extern from "m4rie/m4rie.h":
 # cdef extern from "m4rie/mzed.h":
     ctypedef struct mzed_t:
         mzd_t *x
-        gf2e *finite_field
+        const gf2e *finite_field
         int nrows
         int ncols
         int w
@@ -34,7 +34,7 @@ cdef extern from "m4rie/m4rie.h":
     ctypedef size_t const_size_t "const size_t"
     ctypedef mzed_t const_mzed_t "const mzed_t"
 
-    mzed_t *mzed_init(gf2e *, size_t m, size_t n)
+    mzed_t *mzed_init(const gf2e *, size_t m, size_t n)
 
     void mzed_free(mzed_t *)
 
