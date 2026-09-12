@@ -322,9 +322,7 @@ all-sageruntime: toolchain-deps
 # Building the documentation
 ###############################################################################
 
-# You can choose to have the built HTML version of the documentation link to
-# the PDF version. To do so, you need to build both the HTML and PDF versions.
-# To have the HTML version link to the PDF version, do
+# To build the HTML and PDF versions of the documentation, do
 #
 # $ make doc-html
 # $ make doc-pdf
