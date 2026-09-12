@@ -817,6 +817,34 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         """
         return False
 
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: L = LaurentSeriesRing(R, 'z')
+            sage: L.variable_names_recursive()
+            ('x', 'z')
+            sage: L.variable_names_recursive(1)
+            ('z',)
+        """
+        my_vars = self.variable_names()
+        if depth <= 0:
+            return ()
+        if depth == 1:
+            return my_vars
+        try:
+            base_vars = self.base_ring().variable_names_recursive(depth - len(my_vars))
+        except AttributeError:
+            return my_vars
+        return base_vars + my_vars
+
     @cached_method
     def gen(self, n=0):
         """
