@@ -384,6 +384,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         Check that the number of variables fits into Singular's signed short
         (:issue:`42712`)::
 
+            sage: # long time
             sage: R = PolynomialRing(QQ, "x", 2**15)
             sage: type(R)
             <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
