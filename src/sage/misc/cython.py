@@ -27,12 +27,47 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from sage.config import get_include_dirs
 from sage.env import SAGE_LOCAL, cython_aliases
 from sage.misc.cachefunc import cached_function
 from sage.misc.sage_ostools import redirection, restore_cwd
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
+
+
+def get_include_dirs() -> list[Path]:
+    """
+    Return a list of directories to be used as include directories
+    when compiling Cython extensions that depend on Sage.
+
+    Headers should be included with the prefix "sage/", e.g.,
+    ``#include <sage/cpython/cython_metaclass.h>``.
+
+    EXAMPLES::
+
+        sage: from sage.misc.cython import get_include_dirs
+        sage: get_include_dirs()  # random
+        [
+            WindowsPath('<python>/site-packages'),
+            WindowsPath('<path_to_sage>/src'),
+            WindowsPath('<path_to_sage>/build/cp312/src'),
+            WindowsPath('<python>/site-packages/numpy/core/include')
+        ]
+    """
+    from sage import __path__ as sage_path
+    dirs: list[Path] = [p
+                        for d in sage_path
+                        if (p := Path(d).parent)
+                        if p.is_dir()]
+
+    from sage.features.meson_editable import MesonEditable
+    from sage.config import MESON_BUILD_ROOT, MESON_SOURCE_ROOT
+    if  MesonEditable().is_present():
+        dirs.extend([p
+                     for d in (MESON_BUILD_ROOT, MESON_SOURCE_ROOT)
+                     if d  # Path() turns "" into "."
+                     if (p := Path(d).resolve() / "src")
+                     if p.is_dir() ])
+    return dirs
 
 
 @cached_function
