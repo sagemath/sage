@@ -81,7 +81,7 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_on, sig_off, sig_check
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.structure.element cimport Matrix
@@ -97,7 +97,8 @@ from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_utils cimport check_matrix_multiplication_sizes
 
-from sage.libs.m4ri cimport m4ri_word, mzd_copy, mzp_t, mzp_init, mzp_free, rci_t
+from sage.libs.m4ri cimport (m4ri_word, m4ri_radix, mzd_copy, mzd_clear_bits,
+                           mzp_t, mzp_init, mzp_free, rci_t)
 from sage.libs.m4rie cimport *
 from sage.libs.m4rie cimport mzed_t
 
@@ -816,6 +817,25 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: L.is_triangular('lower') and U.is_triangular('upper')
             True
 
+        Check diagonal normalization and skipped pivots across machine words
+        for several packed field widths, including rank-deficient tall and
+        wide matrices::
+
+            sage: for e in (2, 4, 8, 16):
+            ....:     K = GF(2^e, 'a')
+            ....:     a = K.gen()
+            ....:     A = matrix(K, 4, 67, {(0, 1): a, (0, 65): a + 1,
+            ....:                          (1, 65): a^2, (2, 1): a^2,
+            ....:                          (2, 65): a^2 + a}, sparse=False)
+            ....:     for B in (A, A.transpose(), matrix(K, 2, 1, [a, a]),
+            ....:               zero_matrix(K, 3, 4)):
+            ....:         P, L, U = B.LU()
+            ....:         assert B == P * L * U
+            ....:         assert L.is_triangular('lower')
+            ....:         assert all(U[i, j] == 0 for i in range(U.nrows())
+            ....:                    for j in range(min(i, U.ncols())))
+            ....:     assert A.rank() == 2
+
         The native factorization remains interruptible::
 
             sage: from sage.doctest.util import ensure_interruptible_after
@@ -825,19 +845,18 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         cdef rci_t i, j, pivot
         cdef int rank
+        cdef Py_ssize_t bit, start, stop
         cdef rci_t nrows = self._nrows
         cdef rci_t ncols = self._ncols
         cdef m4ri_word diagonal, inverse, value
         cdef const gf2e *ff
         cdef Matrix_gf2e_dense B = self.__copy__()
-        cdef Matrix_gf2e_dense M = self.__copy__()
         cdef mzp_t *P = NULL
         cdef mzp_t *Q = NULL
 
         if nrows == 0 or ncols == 0:
-            return tuple(range(nrows)), M
+            return tuple(range(nrows)), B
 
-        mzed_set_ui(M._entries, 0)
         P = mzp_init(nrows)
         Q = mzp_init(ncols)
         try:
@@ -849,30 +868,44 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
             perm = list(range(nrows))
             for i in range(nrows):
+                sig_check()
                 j = P.values[i]
                 perm[i], perm[j] = perm[j], perm[i]
 
+            # M4RIE stores the diagonal in L and normalizes the pivots of E.
+            # Move that diagonal into U and normalize L in place.
             ff = B._entries.finite_field
             for j in range(rank):
+                sig_check()
                 diagonal = mzed_read_elem(B._entries, j, j)
-                inverse = ff.inv(ff, diagonal)
-                for i in range(j + 1, nrows):
-                    value = ff.mul(ff, mzed_read_elem(B._entries, i, j), inverse)
-                    if value:
-                        mzed_write_elem(M._entries, i, j, value)
-
                 pivot = Q.values[j]
-                mzed_write_elem(M._entries, j, pivot, diagonal)
-                for i in range(pivot + 1, ncols):
-                    value = ff.mul(ff, diagonal, mzed_read_elem(B._entries, j, i))
-                    if value:
-                        mzed_write_elem(M._entries, j, i, value)
+                if diagonal != 1:
+                    inverse = ff.inv(ff, diagonal)
+                    for i in range(j + 1, nrows):
+                        value = mzed_read_elem(B._entries, i, j)
+                        if value:
+                            mzed_write_elem(B._entries, i, j, ff.mul(ff, value, inverse))
+                    if pivot + 1 < ncols:
+                        mzed_rescale_row(B._entries, j, pivot + 1, diagonal)
+
+                start = <Py_ssize_t>j * B._entries.w
+                stop = <Py_ssize_t>pivot * B._entries.w
+                for bit in range(start, stop, m4ri_radix):
+                    mzd_clear_bits(B._entries.x, j, bit, min(m4ri_radix, stop - bit))
+                mzed_write_elem(B._entries, j, pivot, diagonal)
+
+            start = <Py_ssize_t>rank * B._entries.w
+            stop = B._entries.x.ncols
+            for i in range(rank, nrows):
+                sig_check()
+                for bit in range(start, stop, m4ri_radix):
+                    mzd_clear_bits(B._entries.x, i, bit, min(m4ri_radix, stop - bit))
         finally:
             mzp_free(P)
             mzp_free(Q)
 
         self.cache('rank', rank)
-        return tuple(perm), M
+        return tuple(perm), B
 
     def __bool__(self):
         """

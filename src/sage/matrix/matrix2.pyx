@@ -14497,6 +14497,24 @@ cdef class Matrix(Matrix1):
             sage: P, L, U = M.LU()
             sage: P.base_ring()
             Finite Field of size 11
+
+        Splitting the compact factors preserves the cache and works for
+        sparse matrices and rectangular, rank-deficient matrices::
+
+            sage: for R in (QQ, GF(2), GF(9, 'a'), GF(101)):
+            ....:     for sparse in (False, True):
+            ....:         A = matrix(R, [[0, 1, 0, 1], [0, 0, 0, 1],
+            ....:                        [0, 1, 0, 1]], sparse=sparse)
+            ....:         compact = A.LU(format='compact')
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
+            ....:         assert all(B.is_mutable() for B in (P, L, U))
+            ....:         assert compact[1].is_immutable()
+            ....:         L[2, 0] += 1
+            ....:         U[0, 1] += 1
+            ....:         assert A.LU(format='compact') is compact
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
         """
         if pivot not in [None, 'partial', 'nonzero']:
             msg = "pivot strategy must be None, 'partial' or 'nonzero', not {0}"
@@ -14534,7 +14552,7 @@ cdef class Matrix(Matrix1):
         partial = (pivot == 'partial')
 
         cdef Py_ssize_t m, n, d, i, j, k, p, max_location
-        cdef Matrix M
+        cdef Matrix M, L
 
         # can now access cache, else compute
         #   the compact version of LU decomposition
@@ -14599,9 +14617,10 @@ cdef class Matrix(Matrix1):
             P = P.change_ring(F)
             L = M.matrix_space(m, m).identity_matrix().__copy__()
             for i in range(1, m):
+                sig_check()
                 for k in range(min(i, d)):
-                    L[i, k] = M[i, k]
-                    M[i, k] = zero
+                    L.set_unsafe(i, k, M.get_unsafe(i, k))
+                    M.set_unsafe(i, k, zero)
             return P, L, M
 
     def _indefinite_factorization(self, algorithm, check=True):

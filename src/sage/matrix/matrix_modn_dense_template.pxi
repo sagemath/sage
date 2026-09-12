@@ -94,11 +94,9 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.linbox.fflas cimport FFLAS_TRANSPOSE, FflasNoTrans, FflasTrans, \
-    FFLAS_UPLO, FflasUpper, FflasLower, FFLAS_DIAG, FflasNonUnit, FflasUnit, \
-    FfpackSlabRecursive, FfpackTileRecursive, FflasLeft, FflasRight, vector, \
+    FflasUnit, FfpackTileRecursive, FflasLeft, FflasRight, vector, \
     list as std_list, RankProfileFromLU, PLUQtoEchelonPermutation, \
-    MathPerm2LAPACKPerm, LAPACKPerm2MathPerm, LUdivine, getTriangular, \
-    getEchelonForm
+    MathPerm2LAPACKPerm, LAPACKPerm2MathPerm, LUdivine
 
 from libcpp cimport bool
 from sage.parallel.parallelism import Parallelism
@@ -965,6 +963,34 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ....:     P, L, U = A.LU()
             ....:     assert A == P * L * U
             ....:     assert all(L[i, i] == 1 for i in range(3))
+
+        Preserve the lower factor when the echelon form skips columns,
+        including rectangular matrices of deficient rank::
+
+            sage: examples = (
+            ....:     [[0, 0, 1, 2], [0, 0, 2, 4], [0, 0, 3, 6]],
+            ....:     [[0, 1, 2], [0, 2, 4], [0, 0, 1], [0, 0, 2]],
+            ....:     [[0, 1, 0, 2, 3], [0, 2, 0, 4, 6], [0, 0, 0, 1, 2]])
+            sage: for p in (7, 1048583):
+            ....:     for entries, rank in zip(examples, (1, 2, 2)):
+            ....:         A = matrix(GF(p), entries, implementation='linbox')
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
+            ....:         assert A.rank() == rank
+            ....:         assert all(L[i, i] == 1 for i in range(A.nrows()))
+            ....:         assert all(U[i, j] == 0
+            ....:                    for i in range(A.nrows())
+            ....:                    for j in range(min(i, A.ncols())))
+
+        Empty and zero matrices also have a compact decomposition::
+
+            sage: for p in (7, 1048583):
+            ....:     for m, n in ((0, 0), (0, 3), (3, 0), (3, 4)):
+            ....:         A = matrix(GF(p), m, n, implementation='linbox')
+            ....:         perm, M = A.LU(format='compact')
+            ....:         assert perm == tuple(range(m)) and M == A
+            ....:         P, L, U = A.LU()
+            ....:         assert A == P * L * U
         """
         if self.p <= 2 or not is_prime(self.p):
             return None
@@ -975,7 +1001,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef vector[size_t] P
         cdef vector[size_t] Q
         cdef vector[size_t] math_perm
-        cdef vector[celement] lower
         cdef ModField *F
         cdef Matrix_modn_dense_template M = self.__copy__()
 
@@ -987,7 +1012,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         math_perm.resize(nrows)
         for i in range(nrows):
             P[i] = i
-            math_perm[i] = i
         for j in range(ncols):
             Q[j] = j
 
@@ -1000,29 +1024,26 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                                  ncols, &P[0], &Q[0])
             finally:
                 sig_off()
-
-            if rank:
-                lower.resize(nrows * rank)
-                sig_on()
-                try:
-                    getTriangular(F[0], FflasLower, FflasUnit,
-                                  nrows, ncols, rank,
-                                  <ModField.Element *>M._entries, ncols,
-                                  <ModField.Element *>&lower[0], rank, True)
-                    getEchelonForm(F[0], FflasUpper, FflasNonUnit,
-                                   nrows, ncols, rank, &Q[0],
-                                   <ModField.Element *>M._entries, ncols,
-                                   FfpackSlabRecursive)
-                finally:
-                    sig_off()
         finally:
             del F
 
-        for i in range(nrows):
-            for j in range(min(i, rank)):
-                M._entries[i * ncols + j] = lower[i * rank + j]
+        # LUdivine already stores L below the diagonal.  Keep those entries
+        # and clear only the gaps before the pivots and the trailing zero
+        # block of the echelon form.  A rank-zero matrix is already zero.
+        if rank:
+            for i in range(rank):
+                sig_check()
+                if Q[i] > i:
+                    memset(M._entries + i * ncols + i, 0,
+                           (Q[i] - i) * sizeof(celement))
+            if rank < ncols:
+                for i in range(rank, nrows):
+                    sig_check()
+                    memset(M._entries + i * ncols + rank, 0,
+                           (ncols - rank) * sizeof(celement))
 
         for i in range(rank, nrows):
+            sig_check()
             P[i] = i
         LAPACKPerm2MathPerm(&math_perm[0], &P[0], nrows)
 
