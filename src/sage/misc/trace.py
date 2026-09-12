@@ -54,7 +54,7 @@ def trace(code, preparse=True):
 
         sage: # needs pexpect
         sage: import pexpect
-        sage: s = pexpect.spawn('sage')
+        sage: s = pexpect.spawn('python3 -m sage.cli')
         sage: _ = s.sendline("from sage.misc.trace import trace; trace('print(factor(10))'); print(3+97)")
         sage: _ = s.expect('ipdb>', timeout=90)
         sage: _ = s.sendline("s"); _ = s.sendline("c")
