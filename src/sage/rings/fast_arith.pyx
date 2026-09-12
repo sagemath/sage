@@ -50,9 +50,66 @@ The integer arithmetic helper classes cannot be subclassed::
 
 # The int definitions
 
+from libc.limits cimport ULONG_MAX
 from libc.math cimport sqrt
 
+from cysignals.signals cimport sig_on, sig_off
+from sage.ext.stdsage cimport PY_NEW
+from sage.libs.gmp.mpz cimport mpz_set_ui
+from sage.libs.flint.ulong_extras cimport (
+    n_primes_t, n_primes_init, n_primes_clear, n_primes_next,
+    n_primes_sieve_range, n_primes_jump_after
+)
+
 from sage.rings.integer cimport Integer
+
+
+cdef list _flint_prime_range(unsigned long start, unsigned long stop, bint py_ints=False):
+    r"""
+    Return a list of primes in ``[start, stop)`` using FLINT's segmented sieve.
+    """
+    cdef n_primes_t it
+    cdef list res = []
+    cdef unsigned long seg_start = start
+    cdef unsigned long seg_stop
+    # FLINT requires (odd_b - odd_a) < 65536.
+    # Setting chunk_size to 65534 guarantees (seg_stop - seg_start) <= 65534
+    # so odd_b - odd_a <= 65534 < 65536 for all parities of seg_start and seg_stop.
+    cdef unsigned long chunk_size = 65534
+    cdef unsigned long p
+    cdef Integer z
+
+    if stop <= 2 or start >= stop:
+        return []
+    if start < 2:
+        seg_start = 2
+
+    n_primes_init(it)
+    try:
+        while seg_start < stop:
+            if stop - seg_start > chunk_size:
+                seg_stop = seg_start + chunk_size
+            else:
+                seg_stop = stop
+            sig_on()
+            n_primes_sieve_range(it, seg_start, seg_stop)
+            n_primes_jump_after(it, seg_start - 1)
+            sig_off()
+            while True:
+                p = n_primes_next(it)
+                if p >= seg_stop or p == 0:
+                    break
+                if py_ints:
+                    res.append(p)
+                else:
+                    z = <Integer>PY_NEW(Integer)
+                    mpz_set_ui(z.value, p)
+                    res.append(z)
+            seg_start = seg_stop
+    finally:
+        n_primes_clear(it)
+    return res
+
 
 cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=False):
     r"""
@@ -84,20 +141,28 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
 
     - ``algorithm`` -- string (default: ``None``), one of:
 
-      - ``None``: Use  algorithm ``'pari_primes'`` if ``stop`` <= 436273009
-        (approximately 4.36E8). Otherwise use algorithm ``'pari_isprime'``.
+      - ``None``: Use algorithm ``'pari_primes'`` if ``stop`` <= 436273009
+        (approximately 4.36E8). Otherwise, for ranges up to `2^{64}-1`, use
+        FLINT's segmented sieve (algorithm ``'flint'``) when the interval is
+        sufficiently large, or ``'pari_isprime'`` for small intervals at large
+        numerical offsets. If ``stop`` exceeds `2^{64}-1`, use algorithm
+        ``'pari_isprime'``.
 
       - ``'pari_primes'``: Use PARI's :pari:`primes` function to generate all
         primes from 2 to stop. This is fast but may crash if there is
         insufficient memory. Raises an error if ``stop`` > 436273009.
 
+      - ``'flint'``: Use FLINT's segmented sieve (:c:func:`n_primes_sieve_range`).
+        Generates primes up to `2^{64}-1` using a segmented sieve, which is
+        substantially faster than individual primality tests.
+
       - ``'pari_isprime'``: Wrapper for ``list(primes(start, stop))``. Each (odd)
         integer in the specified range is tested for primality by applying PARI's
-        :pari:`isprime` function. This is slower but will work for much larger input.
+        :pari:`isprime` function. This is slower but will work for arbitrarily large input.
 
     - ``py_ints`` -- boolean (default: ``False``); return Python ints rather
-      than Sage Integers (faster). Ignored unless algorithm ``'pari_primes'`` is being
-      used.
+      than Sage Integers (faster). Supported by algorithms ``'pari_primes'``
+      and ``'flint'``.
 
     EXAMPLES::
 
@@ -155,7 +220,7 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         sage: prime_range(55, algorithm='banana')
         Traceback (most recent call last):
         ...
-        ValueError: algorithm must be "pari_primes" or "pari_isprime"
+        ValueError: algorithm must be "pari_primes", "pari_isprime", or "flint"
 
     Confirm the fixes for :issue:`28467`::
 
@@ -165,6 +230,84 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         Traceback (most recent call last):
         ...
         ValueError: algorithm "pari_primes" is limited to primes larger than 436273008
+
+    Tests for FLINT segmented sieve (:issue:`42751`)::
+
+        sage: prime_range(2000, 2020, algorithm='flint')
+        [2003, 2011, 2017]
+        sage: prime_range(10, algorithm='flint')
+        [2, 3, 5, 7]
+        sage: prime_range(2, 2, algorithm='flint')
+        []
+        sage: prime_range(2, 3, algorithm='flint')
+        [2]
+        sage: prime_range(3, 4, algorithm='flint')
+        [3]
+        sage: prime_range(-5, 5, algorithm='flint')
+        [2, 3]
+
+    Segment boundaries around 65536 (FLINT sieve chunk size)::
+
+        sage: prime_range(65520, 65540, algorithm='flint')
+        [65521, 65537, 65539]
+        sage: prime_range(65536, 65538, algorithm='flint')
+        [65537]
+        sage: prime_range(65535, 65537, algorithm='flint')
+        []
+        sage: prime_range(65537, 65538, algorithm='flint')
+        [65537]
+        sage: prime_range(65537, 65539, algorithm='flint')
+        [65537]
+
+    Exact and multi-segment sizes::
+
+        sage: len(prime_range(2, 65536, algorithm='flint'))
+        6542
+        sage: len(prime_range(2, 65536 * 2, algorithm='flint'))
+        12251
+        sage: prime_range(1, 100000, algorithm='flint') == prime_range(1, 100000, algorithm='pari_primes')
+        True
+
+    Large ranges and crossover beyond 436273009::
+
+        sage: prime_range(10^12, 10^12 + 100, algorithm='flint')
+        [1000000000039, 1000000000061, 1000000000063, 1000000000091]
+        sage: prime_range(10^12, 10^12 + 100) == prime_range(10^12, 10^12 + 100, algorithm='pari_isprime')
+        True
+        sage: prime_range(10^12, 10^12 + 10000) == prime_range(10^12, 10^12 + 10000, algorithm='flint')
+        True
+
+    Step and negative step with FLINT::
+
+        sage: prime_range(11, 100, 10, algorithm='flint')
+        [11, 31, 41, 61, 71]
+        sage: prime_range(20, 10, -1, algorithm='flint')
+        [19, 17, 13, 11]
+        sage: prime_range(65540, 65520, -1, algorithm='flint')
+        [65539, 65537, 65521]
+        sage: prime_range(100, 2, -7, algorithm='flint') == [p for p in range(100, 2, -7) if is_prime(p)]
+        True
+        sage: prime_range(2^32 - 1, 2^32 - 100, -1, algorithm='flint')
+        [4294967291, 4294967279, 4294967231, 4294967197]
+        sage: prime_range(2^64 - 1, 2^64 - 100, -1, algorithm='flint')  # long time, needs !32_bit
+        [18446744073709551557, 18446744073709551533, 18446744073709551521]
+
+    Test py_ints option with FLINT::
+
+        sage: P_flint = prime_range(10, algorithm='flint', py_ints=True)
+        sage: P_flint
+        [2, 3, 5, 7]
+        sage: type(P_flint[0])
+        <class 'int'>
+        sage: type(prime_range(10, algorithm='flint', py_ints=False)[0])
+        <class 'sage.rings.integer.Integer'>
+
+    Input exceeding word size raises error with FLINT::
+
+        sage: prime_range(10^30, 10^30 + 10, algorithm='flint')
+        Traceback (most recent call last):
+        ...
+        OverflowError: algorithm "flint" does not support primes larger than ...
 
     Some step tests:
 
@@ -251,6 +394,14 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
         if max(start, stop or 0) <= small_prime_max:
             algorithm = "pari_primes"
+        elif max(start, stop or 0) <= ULONG_MAX:
+            # Segmented sieve in FLINT is substantially faster than PARI isprime,
+            # except for tiny intervals at large offsets where primality-testing
+            # a few integers is faster than sieving base primes up to sqrt(stop).
+            if stop is None or abs(stop - start) >= 10000 or max(start, stop) <= 10**11:
+                algorithm = "flint"
+            else:
+                algorithm = "pari_isprime"
         else:
             algorithm = "pari_isprime"
 
@@ -289,11 +440,39 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         if step != 1 and step != -1:
             res = [p for p in res if p % step == congruence]
 
-    elif algorithm == "pari_isprime" or algorithm == "pari_primes":
+    elif algorithm == "flint":
+        if max(start, stop or 0) > ULONG_MAX:
+            raise OverflowError('algorithm "flint" does not support primes larger than '
+                                f'{ULONG_MAX}')
+
+        congruence = start % step
+        if stop is None:
+            stop = start
+            start = 1
+
+        if step < 1:
+            start, stop = stop + 1, start + 1
+
+        if stop > ULONG_MAX:
+            stop = ULONG_MAX
+
+        if stop <= start or stop <= 2:
+            return []
+
+        c_start = max(int(start), 2)
+        c_stop = int(stop)
+
+        res = _flint_prime_range(c_start, c_stop, py_ints)
+        if step < 0:
+            res.reverse()
+        if step != 1 and step != -1:
+            res = [p for p in res if p % step == congruence]
+
+    elif algorithm == "pari_isprime":
         from sage.arith.misc import primes
         res = list(primes(start, stop, step))
     else:
-        raise ValueError('algorithm must be "pari_primes" or "pari_isprime"')
+        raise ValueError('algorithm must be "pari_primes", "pari_isprime", or "flint"')
     return res
 
 
