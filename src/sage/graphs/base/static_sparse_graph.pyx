@@ -270,6 +270,8 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
         sage: nan = float('nan')
         sage: G = graphs.CycleGraph(4)
         sage: G.relabel({0: nan})
+        sage: G.is_cartesian_product()
+        True
         sage: H = G.copy(immutable=True)
         sage: all(H.has_edge(u, v) == G.has_edge(u, v) for u in G for v in G)
         True
@@ -290,14 +292,23 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
     between distinct NaN vertices::
 
         sage: G = DiGraph([(0, 1, 'a'), (2, 1, 'b'), (1, 3, 'c')])
-        sage: G.relabel({1: nan, 3: float('nan')})
+        sage: nan2 = float('nan')
+        sage: G.relabel({1: nan, 3: nan2})
         sage: H = G.copy(immutable=True)
         sage: (H.order(), H.in_degree(nan), H.out_degree(nan))
         (4, 2, 1)
+        sage: (H.in_degree(nan2), H.out_degree(nan2))
+        (1, 0)
         sage: all(H.has_edge(u, v) == G.has_edge(u, v) for u in G for v in G)
         True
         sage: all(H.has_edge(u, v, label) for u, v, label in G.edge_iterator())
         True
+
+    A newly created NaN is a different label and is not a vertex of ``H``.
+    Degree queries must use one of the original NaN objects::
+
+        sage: float('nan') in H
+        False
 
     Loops and parallel edges also retain their degrees and labels::
 
