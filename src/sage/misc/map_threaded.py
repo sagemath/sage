@@ -2,8 +2,10 @@
 Threaded map function
 """
 
+from typing import Any, Callable
 
-def map_threaded(function, sequence):
+
+def map_threaded(function: Callable[[Any], Any], sequence: Any) -> Any:
     """
     Apply the function to the elements in the sequence by threading
     recursively through all sub-sequences in the sequence.
