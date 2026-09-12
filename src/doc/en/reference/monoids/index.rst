@@ -20,6 +20,7 @@ commutative monoids (trace monoids).
    sage/monoids/string_monoid_element
    sage/monoids/string_ops
    sage/monoids/hecke_monoid
+   sage/monoids/tangles
    sage/monoids/automatic_semigroup
    sage/monoids/trace_monoid
 

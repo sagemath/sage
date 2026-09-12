@@ -14,6 +14,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.ArikiKoike
   <sage.algebras.hecke_algebras.ariki_koike_algebra.ArikiKoikeAlgebra>`
 - :class:`algebras.AskeyWilson <sage.algebras.askey_wilson.AskeyWilsonAlgebra>`
+- :class:`algebras.BirmanMurakamiWenzl <sage.algebras.birman_murakami_wenz.BirmanMurakamiWenzl>`
 - :class:`algebras.Blob <sage.combinat.blob_algebra.BlobAlgebra>`
 - :class:`algebras.Brauer <sage.combinat.diagram_algebras.BrauerAlgebra>`
 - :class:`algebras.Clifford <sage.algebras.clifford_algebra.CliffordAlgebra>`
@@ -111,6 +112,7 @@ lazy_import('sage.algebras.schur_algebra', 'SchurAlgebra', 'Schur')
 lazy_import('sage.algebras.commutative_dga', 'GradedCommutativeAlgebra', 'GradedCommutative')
 lazy_import('sage.algebras.hecke_algebras.ariki_koike_algebra', 'ArikiKoikeAlgebra', 'ArikiKoike')
 lazy_import('sage.algebras.hecke_algebras.cubic_hecke_algebra', 'CubicHeckeAlgebra', 'CubicHecke')
+lazy_import('sage.algebras.birman_murakami_wenzl_algebra', 'BirmanMurakamiWenzlAlgebra', 'BirmanMurakamiWenzl')
 lazy_import('sage.algebras.rational_cherednik_algebra', 'RationalCherednikAlgebra', 'RationalCherednik')
 lazy_import('sage.algebras.yokonuma_hecke_algebra', 'YokonumaHeckeAlgebra', 'YokonumaHecke')
 lazy_import('sage.combinat.posets.incidence_algebras', 'IncidenceAlgebra', 'Incidence')
