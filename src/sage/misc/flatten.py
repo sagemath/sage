@@ -33,13 +33,13 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
     In the following example, the vector is not flattened because
     it is not given in the ``ltypes`` input. ::
 
-       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)))                         # needs sage.modules
+       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)))
        ['Hi', 2, (1, 2, 3), 4, 5, 6]
 
     We give the vector type and then even the vector gets flattened::
 
-       sage: tV = sage.modules.vector_rational_dense.Vector_rational_dense              # needs sage.modules
-       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)),                         # needs sage.modules
+       sage: tV = sage.modules.vector_rational_dense.Vector_rational_dense
+       sage: flatten((['Hi', 2, vector(QQ, [1,2,3])], (4,5,6)),
        ....:         ltypes=(list, tuple, tV))
        ['Hi', 2, 1, 2, 3, 4, 5, 6]
 

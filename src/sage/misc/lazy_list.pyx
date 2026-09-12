@@ -11,11 +11,11 @@ EXAMPLES::
 
     sage: from sage.misc.lazy_list import lazy_list
     sage: P = lazy_list(Primes())
-    sage: P[100]                                                                        # needs sage.libs.pari
+    sage: P[100]
     547
-    sage: P[10:34]                                                                      # needs sage.libs.pari
+    sage: P[10:34]
     lazy list [31, 37, 41, ...]
-    sage: P[12:23].list()                                                               # needs sage.libs.pari
+    sage: P[12:23].list()
     [41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83]
 
     sage: f = lazy_list((i**2 - 3*i for i in range(10)))
@@ -303,7 +303,6 @@ def lazy_list_formatter(L, name='lazy list',
 
     ::
 
-        sage: # needs sage.libs.pari
         sage: from sage.misc.lazy_list import lazy_list
         sage: L = lazy_list(Primes()); L
         lazy list [2, 3, 5, ...]
@@ -355,9 +354,9 @@ cdef class lazy_list_generic():
 
         sage: from sage.misc.lazy_list import lazy_list
         sage: l = lazy_list(Primes())
-        sage: l                                                                         # needs sage.libs.pari
+        sage: l
         lazy list [2, 3, 5, ...]
-        sage: l[200]                                                                    # needs sage.libs.pari
+        sage: l[200]
         1229
     """
 
@@ -414,7 +413,7 @@ cdef class lazy_list_generic():
 
             sage: from sage.misc.lazy_list import lazy_list
             sage: P = lazy_list(Primes())
-            sage: P[2:143:5].list()                                                     # needs sage.libs.pari
+            sage: P[2:143:5].list()
             [5, 19, 41, 61, 83, 107, 137, 163, 191, 223, 241, 271, 307, 337, 367,
              397, 431, 457, 487, 521, 563, 593, 617, 647, 677, 719, 751, 787, 823]
             sage: P = lazy_list(iter([1,2,3]))
@@ -430,11 +429,11 @@ cdef class lazy_list_generic():
         Check that the cache is immutable::
 
             sage: lazy = lazy_list(iter(Primes()))[:5]
-            sage: l = lazy.list(); l                                                    # needs sage.libs.pari
+            sage: l = lazy.list(); l
             [2, 3, 5, 7, 11]
-            sage: l[0] = -1; l                                                          # needs sage.libs.pari
+            sage: l[0] = -1; l
             [-1, 3, 5, 7, 11]
-            sage: lazy.list()                                                           # needs sage.libs.pari
+            sage: lazy.list()
             [2, 3, 5, 7, 11]
         """
         self._fit(self.stop - self.step)
@@ -453,9 +452,9 @@ cdef class lazy_list_generic():
             start        10
             stop         21474838
             step         4
-            sage: P[0]                                                                  # needs sage.libs.pari
+            sage: P[0]
             31
-            sage: P._info()                                                             # needs sage.libs.pari
+            sage: P._info()
             cache length 11
             start        10
             stop         21474838
@@ -856,9 +855,9 @@ cdef class lazy_list_generic():
 
             sage: from sage.misc.lazy_list import lazy_list
             sage: L = lazy_list(Primes())[2:]
-            sage: L._update_cache_up_to(4)                                              # needs sage.libs.pari
+            sage: L._update_cache_up_to(4)
             0
-            sage: L._info()                                                             # needs sage.libs.pari
+            sage: L._info()
             cache length 5
             start        2
             stop         ...
@@ -882,9 +881,9 @@ cdef class lazy_list_generic():
         TESTS::
 
             sage: from sage.misc.lazy_list import lazy_list
-            sage: L = lazy_list(Primes()); L                                            # needs sage.libs.pari
+            sage: L = lazy_list(Primes()); L
             lazy list [2, 3, 5, ...]
-            sage: L._get_cache_()                                                       # needs sage.libs.pari
+            sage: L._get_cache_()
             [2, 3, 5, 7]
         """
         return self.cache
@@ -962,9 +961,9 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
 
             sage: from sage.misc.lazy_list import lazy_list
             sage: L = lazy_list(iter(Primes()))[2:]
-            sage: L._update_cache_up_to(4)                                              # needs sage.libs.pari
+            sage: L._update_cache_up_to(4)
             0
-            sage: L._info()                                                             # needs sage.libs.pari
+            sage: L._info()
             cache length 5
             start        2
             stop         ...
@@ -1010,7 +1009,7 @@ cdef class lazy_list_from_function(lazy_list_generic):
         EXAMPLES::
 
             sage: from sage.misc.lazy_list import lazy_list_from_function
-            sage: lazy_list_from_function(euler_phi)                                    # needs sage.libs.pari
+            sage: lazy_list_from_function(euler_phi)
             lazy list [0, 1, 1, ...]
             sage: lazy_list_from_function(divisors, [None])
             lazy list [None, [1], [1, 2], ...]
@@ -1062,7 +1061,7 @@ cdef class lazy_list_from_function(lazy_list_generic):
         TESTS::
 
             sage: from sage.misc.lazy_list import lazy_list_from_function
-            sage: loads(dumps(lazy_list_from_function(euler_phi)))                      # needs sage.libs.pari
+            sage: loads(dumps(lazy_list_from_function(euler_phi)))
             lazy list [0, 1, 1, ...]
             sage: loads(dumps(lazy_list_from_function(divisors, [None])))
             lazy list [None, [1], [1, 2], ...]
