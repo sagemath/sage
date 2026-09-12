@@ -322,16 +322,13 @@ all-sageruntime: toolchain-deps
 # Building the documentation
 ###############################################################################
 
-# You can choose to have the built HTML version of the documentation link to
-# the PDF version. To do so, you need to build both the HTML and PDF versions.
-# To have the HTML version link to the PDF version, do
+# To build the HTML and PDF versions of the documentation, do
 #
-# $ ./sage --docbuild all html
-# $ ./sage --docbuild all pdf
+# $ make doc-html
+# $ make doc-pdf
 #
-# For more information on the docbuild utility, do
-#
-# $ ./sage --docbuild -H
+# The underlying documentation builds are provided by the Meson targets
+# doc-html and doc-pdf.
 
 doc: doc-html
 
