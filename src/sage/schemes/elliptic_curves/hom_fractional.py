@@ -344,12 +344,23 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
             sage: endo.to_isogeny_chain() == endo
             True
+
+        Conversion works even when the characteristic divides the
+        denominator (:issue:`42576`)::
+
+            sage: p = 5
+            sage: E = EllipticCurve(GF(p), [1, 1])
+            sage: phi = E.scalar_multiplication(p) / p
+            sage: phi.to_isogeny_chain() == E.scalar_multiplication(1)
+            True
         """
         E = self._domain
 
         ker = []
         insep = 0
         for l, e in self._phi.degree().factor():
+            if not self._degree.valuation(l):
+                continue
             pts = E.torsion_gens(l**e, extend=True)
 
             assert len(pts) == 2 or l == E.base_field().characteristic()
@@ -392,12 +403,8 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             ker = [step._eval(T) for T in ker]
             E = chain.codomain()
 
-        for iso in E.isomorphisms(self._codomain):
-            if self.scaling_factor() == iso.scaling_factor() * chain.scaling_factor():
-                break
-        else:
-            assert False, 'bug in converting fractional isogeny to isogeny chain'
-
+        from sage.schemes.elliptic_curves.hom import find_post_isomorphism
+        iso = find_post_isomorphism(chain, self)
         return iso * chain
 
     # EllipticCurveHom methods
@@ -552,9 +559,25 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             sage: pi = E.frobenius_isogeny()
             sage: ((1 + pi) / 2).scaling_factor()
             210
+
+        The scaling factor can also be computed when the characteristic
+        divides the denominator (:issue:`42576`)::
+
+            sage: p = 5
+            sage: E = EllipticCurve(GF(p), [1, 1])
+            sage: phi = E.scalar_multiplication(p) / p
+            sage: phi.degree()
+            1
+            sage: phi == E.scalar_multiplication(1)
+            True
+            sage: phi.scaling_factor()
+            1
+            sage: phi.to_isogeny_chain()
+            Composite morphism of degree 1 = 1^2:
+              From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
+              To:   Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
         """
-        # FIXME this can crash when p | d
-        return self._phi.scaling_factor() / self._d
+        return self.formal()[1]
 
     def inseparable_degree(self):
         r"""
