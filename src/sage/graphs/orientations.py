@@ -45,6 +45,7 @@ Methods
 
 from copy import copy
 from sage.graphs.digraph import DiGraph
+from sage.misc.decorators import rename_keyword
 
 
 def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
@@ -1094,7 +1095,9 @@ def random_orientation(G):
     return _initialize_digraph(G, edges, name=f"Random orientation of {G.name()}")
 
 
-def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose=0,
+@rename_keyword(deprecation=42760, use_edge_labels='by_weight')
+def minimum_outdegree_orientation(G, by_weight=False, weight_function=None,
+                                  check_weight=True, solver=None, verbose=0,
                                   *, integrality_tolerance=1e-3):
     r"""
     Return an orientation of `G` with the smallest possible maximum outdegree.
@@ -1107,13 +1110,19 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
 
     - ``G`` -- an undirected graph
 
-    - ``use_edge_labels`` -- boolean (default: ``False``)
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, uses the
+      weight given by ``weight_function``, or the edge label if
+      ``weight_function`` is ``None``, to compute the orientation. If ``False``,
+      gives a weight of `1` to all the edges.
 
-      - When set to ``True``, uses edge labels as weights to compute the
-        orientation and assumes a weight of `1` when there is no value available
-        for a given edge.
+    - ``weight_function`` -- function (default: ``None``); a function that takes
+      as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
+      ``by_weight`` is automatically set to ``True``. If ``None`` and
+      ``by_weight`` is ``True``, we use the edge label ``l``, if ``l`` is not
+      ``None``, else `1` as a weight.
 
-      - When set to ``False`` (default), gives a weight of 1 to all the edges.
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that the
+      ``weight_function`` outputs a number for each edge
 
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
@@ -1143,17 +1152,39 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
     Show the influence of edge labels on the solution::
 
         sage: g = graphs.PetersenGraph()
-        sage: o = g.minimum_outdegree_orientation(use_edge_labels=False)
+        sage: o = g.minimum_outdegree_orientation(by_weight=False)
         sage: max(o.out_degree())
         2
         sage: _ = [g.set_edge_label(u, v, 1) for u, v in g.edge_iterator(labels=False)]
-        sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
+        sage: o = g.minimum_outdegree_orientation(by_weight=True)
         sage: max(o.out_degree())
         2
         sage: g.set_edge_label(0, 1, 100)
-        sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
+        sage: o = g.minimum_outdegree_orientation(by_weight=True)
         sage: max(o.out_degree())
         3
+
+    A ``weight_function`` can read the weight from anywhere in the edge, and
+    setting it implies ``by_weight=True``::
+
+        sage: g = graphs.PetersenGraph()
+        sage: _ = [g.set_edge_label(u, v, {'w': 1})
+        ....:      for u, v in g.edge_iterator(labels=False)]
+        sage: g.set_edge_label(0, 1, {'w': 100})
+        sage: o = g.minimum_outdegree_orientation(                                      # needs sage.numerical.mip
+        ....:         weight_function=lambda e: e[2]['w'])
+        sage: max(o.out_degree())                                                       # needs sage.numerical.mip
+        3
+
+    The ``use_edge_labels`` keyword is deprecated in favour of ``by_weight``::
+
+        sage: g = graphs.PetersenGraph()
+        sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)                 # needs sage.numerical.mip
+        doctest:warning...
+        DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
+        See https://github.com/sagemath/sage/issues/42760 for details.
+        sage: max(o.out_degree())                                                       # needs sage.numerical.mip
+        2
 
     TESTS::
 
@@ -1169,15 +1200,9 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
         raise ValueError("Cannot compute an orientation of a DiGraph. "
                          "Please convert it to a Graph if you really mean it.")
 
-    if use_edge_labels:
-        from sage.rings.real_mpfr import RR
-
-        def weight(e):
-            label = G.edge_label(e[0], e[1])
-            return label if label in RR else 1
-    else:
-        def weight(e):
-            return 1
+    by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
+                                                        weight_function=weight_function,
+                                                        check_weight=check_weight)
 
     from sage.numerical.mip import MixedIntegerLinearProgram
 
@@ -1198,8 +1223,9 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
         return 1 - variable
 
     for u in G:
-        p.add_constraint(p.sum(weight(e) * outgoing(u, e, orientation[frozenset(e)])
-                               for e in G.edge_iterator(vertices=[u], labels=False))
+        p.add_constraint(p.sum(weight_function(e)
+                               * outgoing(u, e[:2], orientation[frozenset(e[:2])])
+                               for e in G.edge_iterator(vertices=[u]))
                          - degree['max'], max=0)
 
     p.set_objective(degree['max'])

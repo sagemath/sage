@@ -32,10 +32,6 @@ conf_data.set_quoted('SAGE_THREEJS_DIR', threejs_dir)
 # It can be found, so we don't have to set anything here:
 conf_data.set('NTL_INCDIR', '')
 conf_data.set('NTL_LIBDIR', '')
-ecl_config = find_program('ecl-config', required: false)
-if ecl_config.found()
-  conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
-endif
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 # not needed when using conda, as we then don't build any pc files
 conf_data.set('SAGE_PKG_CONFIG_PATH', '')
