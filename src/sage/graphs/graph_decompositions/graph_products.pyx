@@ -126,7 +126,7 @@ from sage.groups.perm_gps.partn_ref.data_structures cimport (
 )
 from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend, StaticSparseCGraph
 from sage.graphs.base.static_sparse_graph cimport short_digraph, simple_BFS
-from sage.data_structures.bitset_base cimport bitset_t, bitset_init, bitset_free, bitset_clear
+from sage.data_structures.bitset_base cimport bitset_t, bitset_init, bitset_free
 from memory_allocator cimport MemoryAllocator
 
 # ****************************************************************************
@@ -241,6 +241,23 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         True
         sage: any(f.is_immutable() for f in G.is_cartesian_product(certificate=True, immutable=False))
         False
+
+    Disconnected graphs are rejected::
+
+        sage: graphs.CycleGraph(3).disjoint_union(graphs.CycleGraph(3)).is_cartesian_product()
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: recognition of Cartesian product is not implemented for disconnected graphs
+
+    Hashable list-like vertex labels are handled correctly (:issue:`39979`)::
+
+        sage: from sage.structure.element import Sequence
+        sage: g = graphs.CycleGraph(4)
+        sage: g.relabel({0: Sequence([17, 18], immutable=True)})
+        sage: g.is_cartesian_product()
+        True
+        sage: g.copy(immutable=True).is_cartesian_product()
+        True
     """
     g._scream_if_not_simple()
     if g.is_directed():
@@ -269,18 +286,17 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     sd = <short_digraph> cg.g
     cdef list int_to_vertex      = bck._vertex_to_labels
     cdef dict vertex_to_int      = bck._vertex_to_int
-    cdef int n = sd.n
+    cdef Py_ssize_t n = sd.n
 
     # All-pairs distances via simple_BFS on the backend's sd (no duplicate sd)
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t* distances    = <uint32_t*> mem.allocarray(n * n, sizeof(uint32_t))
+    cdef uint32_t* distances    = <uint32_t*> mem.allocarray(<size_t>n * <size_t>n, sizeof(uint32_t))
     cdef uint32_t* waiting_list = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
     cdef bitset_t seen
     bitset_init(seen, n)
-    cdef int s
+    cdef Py_ssize_t s
     for s in range(n):
-        bitset_clear(seen)
-        simple_BFS(sd, s, distances + s * n, NULL, waiting_list, seen)
+        simple_BFS(sd, s, distances + <size_t>s * <size_t>n, NULL, waiting_list, seen)
     bitset_free(seen)
 
     # Reorder the vertices of an edge
@@ -298,7 +314,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         iv = vertex_to_int[v_label]
         edge_list.append((iu, iv))
         edge_to_idx[r(iu, iv)] = idx
-    cdef int n_edges = len(edge_list)
+    cdef Py_ssize_t n_edges = len(edge_list)
 
     # For all pairs of vertices u,v of G, according to their number of common
     # neighbors... See the module's documentation !
@@ -312,7 +328,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef object x_label, y_label
     for u, u_label in enumerate(int_to_vertex):
         un = set(g_imm.neighbor_iterator(u_label))
-        for v_label in g_imm.breadth_first_search(u_label):
+        for v_label in bck.breadth_first_search(u_label):
             # u and v are different
             if u_label == v_label:
                 continue
@@ -346,17 +362,19 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     # equivalent
 
     # Distance loop using the C distance array
-    cdef int i, j, uu, vv
+    cdef Py_ssize_t i, j
+    cdef uint32_t uu, vv
     cdef uint32_t* dist_u
     cdef uint32_t* dist_v
     for i in range(n_edges):
         u, v = edge_list[i]
-        dist_u = distances + u * n
-        dist_v = distances + v * n
+        dist_u = distances + <size_t>u * <size_t>n
+        dist_v = distances + <size_t>v * <size_t>n
         for j in range(i + 1, n_edges):
             uu, vv = edge_list[j]
             if dist_u[uu] + dist_v[vv] != dist_u[vv] + dist_v[uu]:
-                OP_join(op, edge_to_idx[r(u, v)], edge_to_idx[r(uu, vv)])
+                # edge_to_idx[r(u, v)] == i and edge_to_idx[r(uu, vv)] == j
+                OP_join(op, i, j)
 
     # Only one connected component ? Check before building edges
     if op.num_cells == 1:
