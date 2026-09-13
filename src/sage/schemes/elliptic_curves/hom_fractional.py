@@ -572,11 +572,28 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             True
             sage: phi.scaling_factor()
             1
-            sage: phi.to_isogeny_chain()
-            Composite morphism of degree 1 = 1^2:
-              From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
-              To:   Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
+
+        When the characteristic does not divide the denominator (including
+        all curves over `\QQ`), a fast direct division is used without
+        converting to an isogeny chain (:issue:`42576`)::
+
+            sage: E = EllipticCurve('54.b2')
+            sage: K = next(T for T in E.torsion_points() if T.order() == 9)
+            sage: phi, psi = E.isogeny(K).factors()
+            sage: chain = psi * phi
+            sage: frac = chain.divide_right(phi)
+            sage: frac.scaling_factor()
+            1
+            sage: frac == psi
+            True
         """
+        F = self._codomain.base_ring()
+        p = F.characteristic()
+        if p == 0 or self._d % p != 0:
+            # Fast path: safe whenever char(F) does not divide d.
+            return self._phi.scaling_factor() / self._d
+        # Slow path: only needed when char(F) | d, where the naive
+        # division can hit 0/0 in the base field (see issue #42576).
         return self.formal()[1]
 
     def inseparable_degree(self):
