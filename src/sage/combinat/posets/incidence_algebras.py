@@ -454,7 +454,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
         if not P.is_finite():
             raise NotImplementedError("only implemented for finite posets")
         for i in self._ambient.basis().keys():
-            S = P.subposet(P.interval(*i))
+            S = P.interval_as_poset(*i)
             added = False
             for k, ECk in EC.items():
                 if S._hasse_diagram.is_isomorphic(k._hasse_diagram):

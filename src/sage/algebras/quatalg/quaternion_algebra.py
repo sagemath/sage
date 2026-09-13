@@ -373,9 +373,9 @@ class QuaternionAlgebraFactory(UniqueFactory):
             # Check that the finite ramification is given by prime ideals
             try:
                 if isinstance(K, RationalField):
-                    primes = set(ZZ.ideal(p) for p in arg1)
+                    primes = {ZZ.ideal(p) for p in arg1}
                 else:
-                    primes = set(K.ideal(p) for p in arg1)
+                    primes = {K.ideal(p) for p in arg1}
                 assert all(p.is_prime() for p in primes)
             except (AssertionError, TypeError, NameError):
                 raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
@@ -1503,10 +1503,14 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # For efficiency (and to not convert QQ into a number field manually),
         # we handle the case F = QQ first
         if isinstance(F, RationalField):
-            ram_fin = sorted([p for p in set([2]).union(
-                    prime_divisors(a.numerator()), prime_divisors(a.denominator()),
-                    prime_divisors(b.numerator()), prime_divisors(b.denominator()))
-                    if hilbert_symbol(a, b, p) == -1])
+            ram_fin = sorted([p
+                              for p in {2}.union(
+                                  prime_divisors(a.numerator()),
+                                  prime_divisors(a.denominator()),
+                                  prime_divisors(b.numerator()),
+                                  prime_divisors(b.denominator())
+                              )
+                              if hilbert_symbol(a, b, p) == -1])
 
             if not inf:
                 return ram_fin

@@ -764,8 +764,12 @@ class InterfaceElement(Element):
         if is_name:
             self._name = value
         else:
+            from sage.features import FeatureNotPresentError
             try:
                 self._name = parent._create(value, name=name)
+            except FeatureNotPresentError:
+                # distinguish from RuntimeError
+                raise
             except (TypeError, RuntimeError, ValueError) as x:
                 raise TypeError(x)
 

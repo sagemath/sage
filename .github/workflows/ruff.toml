@@ -5,9 +5,7 @@ extend = "../../pyproject.toml"  # Start with the project configuration
 # Remove rules that we do not yet follow across the whole codebase.
 # Roughly sorted by how easy these should be to fix.
 extend-ignore = [
-  "E742",    # 2 failures
   "PLC3002", # 3 failures
-  "PLE0302", # 3 failures
   "PLW1508", # 8 failures
   "PLR5501", # 375 failures, should be easy to autofix
   "PLC0206", # 39

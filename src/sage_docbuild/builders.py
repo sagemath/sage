@@ -1847,7 +1847,7 @@ def _extend_over_namespace_packages(directory, parts):
         ....:     sys.path.insert(0, root)
         ....:     answer = _extend_over_namespace_packages(inner, ['mod'])
         ....:     sys.path.remove(root)
-        sage: answer[0] == root, answer[1]
+        sage: answer[0] == os.path.realpath(root), answer[1]
         (True, ['mod', 'inner', 'ns_2718'])
 
     A directory that no entry of ``sys.path`` leads to is left alone::

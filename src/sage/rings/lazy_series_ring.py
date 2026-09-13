@@ -1983,6 +1983,25 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         from sage.misc.latex import latex
         return latex(self.base_ring()) + r"(\!({})\!)".format(self.variable_name())
 
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: L = LazyLaurentSeriesRing(R, 'z')
+            sage: L.variable_names_recursive()
+            ('x', 'z')
+            sage: L.variable_names_recursive(1)
+            ('z',)
+        """
+        return self._laurent_poly_ring.variable_names_recursive(depth)
+
     @cached_method
     def gen(self, n=0):
         r"""
@@ -2913,6 +2932,25 @@ class LazyPowerSeriesRing(LazySeriesRing):
             return [R.one()]
         return [m.change_ring(R)
                 for m in self._internal_poly_ring.base_ring().monomials_of_degree(n)]
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['q']
+            sage: L = LazyPowerSeriesRing(R, 'x, y')
+            sage: L.variable_names_recursive()
+            ('q', 'x', 'y')
+            sage: L.variable_names_recursive(2)
+            ('x', 'y')
+        """
+        return self._laurent_poly_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):
@@ -3881,6 +3919,60 @@ class LazySymmetricFunctions(LazyCompletionGradedAlgebra):
     """
     Element = LazySymmetricFunction
 
+    @cached_method
+    def combinatorial_logarithm(self):
+        r"""
+        Return the plethystic inverse of the complete homogeneous
+        symmetric function series `h_1 + h_2 + \dots`.
+
+        Let `H_+ = \sum_{n \ge 1} h_n`. This method computes the unique
+        symmetric function `G` such that `H_+ \circ G = p_1`, where
+        `\circ` denotes plethystic substitution.
+
+        Because `H_+` is the symmetric function analogue of `\exp(x) - 1`,
+        this series acts as the analogue of the logarithm `\ln(1 + x)`
+        under plethysm.
+
+        We use Equation (2.42) in [Labelle2013]_ for the
+        implementation.
+
+        EXAMPLES::
+
+            sage: p = SymmetricFunctions(QQ).power()
+            sage: L = LazySymmetricFunctions(p)
+            sage: L.combinatorial_logarithm().truncate(5)
+            p[1] + (-1/2*p[1,1]-1/2*p[2]) + (1/3*p[1,1,1]-1/3*p[3])
+            + (-1/4*p[1,1,1,1]+1/4*p[2,2])
+
+        We can verify its defining property `\Omega\circ H_+ = H_+
+        \circ\Omega = p_1`::
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: Lh = LazySymmetricFunctions(h)
+            sage: H_plus = Lh(lambda n: h[n] if n > 0 else 0)
+            sage: Lh.combinatorial_logarithm()(H_plus)
+            h[1] + O^7
+
+        We could also revert `H_+`, but this special case can be
+        computed much faster::
+
+            sage: pi = Partition([13, 3, 2, 1, 1, 1, 1, 1])
+            sage: Lh.combinatorial_logarithm()[sum(pi)].coefficient(pi)
+            42
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.arith.all import divisors
+        from sage.arith.misc import moebius
+
+        p = SymmetricFunctions(self.base_ring()).power()
+
+        def coefficient(n):
+            if n == 0:
+                return p.zero()
+            return sum(moebius(d) * (-1)**(k - 1) * p([d] * k)
+                       for d in divisors(n) if (k := n // d)) // n
+
+        return self(coefficient)
 
 ######################################################################
 

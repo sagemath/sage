@@ -1064,12 +1064,12 @@ class Multizetas(CombinatorialFreeModule):
                 if reverse:
                     if c[-1] == 1:
                         continue
-                    c = tuple(c)
+                    cc = tuple(c)
                 else:
                     if c[0] == 1:
                         continue
-                    c = c[::-1]
-                mon_c = self._monomial(W(c, check=False))
+                    cc = c[::-1]
+                mon_c = self._monomial(W(cc, check=False))
                 v = mon_c.phi_as_vector()
                 if v in U:
                     continue

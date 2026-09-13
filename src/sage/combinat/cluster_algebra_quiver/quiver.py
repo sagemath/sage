@@ -41,6 +41,7 @@ AUTHORS:
 # ****************************************************************************
 from copy import copy
 from itertools import product
+from pathlib import Path
 
 from sage.arith.misc import gcd
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType, QuiverMutationType_Irreducible, QuiverMutationType_Reducible, _edge_list_to_matrix
@@ -355,7 +356,8 @@ class ClusterQuiver(SageObject):
                 raise ValueError('The principal part of the matrix data must be skew-symmetrizable.')
 
             if frozen is not None:
-                print('The input data is a matrix, therefore the additional parameter frozen is ignored. Frozen vertices read off accordingly if the matrix is not square.')
+                print('The input data is a matrix, therefore the additional parameter frozen is ignored. '
+                      'Frozen vertices read off accordingly if the matrix is not square.')
 
             self._M = copy(data).sparse_matrix()
             self._M.set_immutable()
@@ -569,11 +571,11 @@ class ClusterQuiver(SageObject):
         EXAMPLES::
 
             sage: Q = ClusterQuiver(['A',5])
-            sage: Q.plot()                                                              # needs sage.plot sage.symbolic
+            sage: Q.plot()
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True)                                                 # needs sage.plot sage.symbolic
+            sage: Q.plot(circular=True)
             Graphics object consisting of 15 graphics primitives
-            sage: Q.plot(circular=True, mark=1)                                         # needs sage.plot sage.symbolic
+            sage: Q.plot(circular=True, mark=1)
             Graphics object consisting of 15 graphics primitives
         """
         from sage.plot.colors import rainbow
@@ -724,10 +726,37 @@ class ClusterQuiver(SageObject):
         TESTS::
 
             sage: S = ClusterQuiver(['A',4])
-            sage: S.interact()                                                          # needs sage.plot sage.symbolic
+            sage: S.interact()
             ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind='quiver')
+
+    def save(self, filename, **kwds):
+        """
+        Save the quiver according to the filename suffix.
+
+        The suffix can be an image suffix or ``.qmu`` or ``.sobj``.
+
+        If no suffix is given, the default format is ``.sobj``.
+
+        EXAMPLES::
+
+            sage: S = ClusterQuiver(['A',4])
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:
+            ....:     S.save(f.name)
+            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:
+            ....:     S.save(f.name)
+            sage: with tempfile.NamedTemporaryFile(suffix='.sobj') as f:
+            ....:     S.save(f.name)
+        """
+        ext = Path(filename).suffix
+        if ext in ['.eps', '.pdf', '.pgf', '.png', '.ps', '.svg']:
+            self.save_image(filename, **kwds)
+        elif ext in ['.qmu']:
+            self.qmu_save(filename, **kwds)
+        else:
+            SageObject.save(self, filename, **kwds)
 
     def save_image(self, filename, circular=False):
         """
@@ -743,7 +772,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:
             ....:     Q.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular)
@@ -768,7 +797,7 @@ class ClusterQuiver(SageObject):
 
             sage: Q = ClusterQuiver(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:
             ....:     Q.qmu_save(f.name)
 
         Make sure we can save quivers with `m != n` frozen variables, see :issue:`14851`::
@@ -777,7 +806,7 @@ class ClusterQuiver(SageObject):
             sage: T1 = S.principal_extension()
             sage: Q = T1.quiver()
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:                 # needs sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix='.qmu') as f:
             ....:     Q.qmu_save(f.name)
         """
         M = self.b_matrix()
@@ -2195,7 +2224,6 @@ class ClusterQuiver(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.geometry.polyhedron sage.libs.singular
             sage: Fd = ClusterQuiver([[1,2]]).d_vector_fan(); Fd
             Rational polyhedral fan in 2-d lattice N
             sage: Fd.ngenerating_cones()

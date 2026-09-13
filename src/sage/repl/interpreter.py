@@ -202,7 +202,6 @@ def inline_plots(on=None):
 
     EXAMPLES::
 
-        sage: from sage.repl.interpreter import inline_plots
         sage: type(inline_plots()) is bool
         True
         sage: inline_plots(False) # random
@@ -219,6 +218,9 @@ def inline_plots(on=None):
         return supports_kitty_graphics and hasattr(IP, 'mime_renderers') and 'image/png' in IP.mime_renderers
     if not supports_kitty_graphics:
         print('Inline plots are not supported for the current terminal and IPython version')
+        return
+    if not hasattr(IP, 'mime_renderers'):
+        # exit if we are not using the interactive shell
         return
     if on:
         IP.mime_renderers['image/png'] = kitty_png_render

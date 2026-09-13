@@ -225,6 +225,7 @@ cdef class Matroid(SageObject):
     cpdef _external(self, B)
     cpdef tutte_polynomial(self, x=*, y=*)
     cpdef characteristic_polynomial(self, la=*)
+    cpdef beta_invariant(self)
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*)
 
     # misc
