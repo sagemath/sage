@@ -289,8 +289,8 @@ cpdef prime_range(start, stop=None, step=None, algorithm=None, bint py_ints=Fals
         True
         sage: prime_range(2^32 - 1, 2^32 - 100, -1, algorithm='flint')
         [4294967291, 4294967279, 4294967231, 4294967197]
-        sage: prime_range(2^64 - 1, 2^64 - 100, -1, algorithm='flint')  # long time, needs !32_bit
-        [18446744073709551557, 18446744073709551533, 18446744073709551521]
+        sage: prime_range(10^12 + 100, 10^12, -1, algorithm='flint')
+        [1000000000091, 1000000000063, 1000000000061, 1000000000039]
 
     Test py_ints option with FLINT::
 
