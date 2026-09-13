@@ -2325,6 +2325,11 @@
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
 
+.. [DFLLW2023] Luca De Feo, Antonin Leroux, Patrick Longa and Benjamin Wesolowski:
+               *New Algorithms for the Deuring Correspondence: Towards Practical
+               and Secure SQISign Signatures*. Eurocrypt 2023.
+               https://eprint.iacr.org/2022/234.pdf
+
 .. [DFMS1996] Philipppe Di Francesco, Pierre Mathieu, and David Sénéchal.
               *Conformal Field Theory*. Graduate Texts in Contemporary
               Physics, Springer, 1996.
@@ -2446,11 +2451,6 @@
              cryptosystems from supersingular elliptic curve isogenies. Journal
              of Mathematical Cryptology, vol. 8, no. 3, 2014, pp. 209-247.
              https://eprint.iacr.org/2011/506.pdf
-
-.. [DFLLW2023] Luca De Feo, Antonin Leroux, Patrick Longa and Benjamin Wesolowski:
-               *New Algorithms for the Deuring Correspondence: Towards Practical
-               and Secure SQISign Signatures*. Eurocrypt 2023.
-               https://eprint.iacr.org/2022/234.pdf
 
 .. [DJS2003] \M. Davis, T. Januszkiewicz, and R. Scott.
              *Fundamental groups of blow-ups*. Selecta Math.,
