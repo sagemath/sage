@@ -4287,6 +4287,11 @@
               *PRINTcipher: A block cipher for IC-printing*; in
               CHES, (2010), pp. 16-32.
 
+.. [KLPT2014] David Kohel, Kristin Lauter, Christophe Petit, and Jean-Pierre Tignol:
+              *On the quaternion `\ell`-isogeny path problem*.
+              LMS Journal of Computation and Mathematics 17, pp. 418-432, 2014.
+              https://ia.cr/2014/505
+
 .. [KLRS2016] \S.-J. Kang, K.-H. Lee, H. Ryu, and B. Salisbury.
               *A combinatorial description of the affine Gindikin-Karpelevich
               formula of type* `A_n^{(1)}`. Lie Algebras, Lie Superalgebras,
@@ -4395,11 +4400,6 @@
 .. [Koh2004] \E. Kohler. *Recognizing graphs without asteroidal triples*.
              Journal of Discrete Algorithms 2(4):439-452, Dec. 2004,
              :doi:`10.1016/j.jda.2004.04.005`.
-
-.. [KLPT2014] David Kohel, Kristin Lauter, Christophe Petit, and Jean-Pierre Tignol:
-              *On the quaternion `\ell`-isogeny path problem*.
-              LMS Journal of Computation and Mathematics 17, pp. 418-432, 2014.
-              https://ia.cr/2014/505
 
 .. [Koh2007] \A. Kohnert, *Constructing two-weight codes with prescribed
              groups of automorphisms*, Discrete applied mathematics 155,
