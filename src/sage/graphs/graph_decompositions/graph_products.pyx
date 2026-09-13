@@ -251,7 +251,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     Hashable list-like vertex labels are handled correctly (:issue:`39979`)::
 
-        sage: from sage.structure.element import Sequence
+        sage: from sage.structure.sequence import Sequence
         sage: g = graphs.CycleGraph(4)
         sage: g.relabel({0: Sequence([17, 18], immutable=True)})
         sage: g.is_cartesian_product()
