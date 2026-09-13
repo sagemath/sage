@@ -1747,17 +1747,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return sum([x**2 for x in self.list()]).sqrt()
 
-    def norm(self, p=__two__):
+    def norm(self, p=None):
         r"""
-        Return the `p`-norm of ``self``.
+        Return the default norm or the `p`-norm of ``self``.
 
         INPUT:
 
-        - ``p`` -- (default: 2) ``p`` can be a real number greater than 1,
-          infinity (``oo`` or ``Infinity``), or a symbolic expression:
+        - ``p`` -- (default: ``None``) if ``None``, use the norm induced by
+          a nonstandard inner product defined by the parent, or the usual
+          Euclidean norm otherwise; explicitly specified values can be real
+          numbers greater than or equal to 1, infinity (``oo`` or
+          ``Infinity``), or symbolic expressions:
 
           - `p=1`: the taxicab (Manhattan) norm
-          - `p=2`: the usual Euclidean norm (the default)
+          - `p=2`: the usual Euclidean norm
           - `p=\infty`: the maximum entry (in absolute value)
 
         .. NOTE::
@@ -1770,12 +1773,40 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.norm(5)                                                             # needs sage.symbolic
             276^(1/5)
 
-        The default is the usual Euclidean norm.  ::
+        When the parent uses the standard dot product, the default is the
+        usual Euclidean norm.  ::
 
             sage: v.norm()                                                              # needs sage.symbolic
             sqrt(14)
             sage: v.norm(2)                                                             # needs sage.symbolic
             sqrt(14)
+
+        If the parent defines a nonstandard inner product, the default is
+        induced by that inner product.  An explicitly requested 2-norm is
+        still the Euclidean norm of the coordinates (see :issue:`38543`)::
+
+            sage: from sage.modules.free_quadratic_module_integer_symmetric import IntegralLattice
+            sage: L = IntegralLattice(matrix([[1000, 0], [0, 1]]))
+            sage: w = L.0
+            sage: w.norm()                                                              # needs sage.symbolic
+            10*sqrt(10)
+            sage: w.norm(2)
+            1
+            sage: w.norm()^2 - w.inner_product(w)                                      # needs sage.symbolic
+            0
+
+        Inner product matrices in Sage need not be positive definite.  In
+        that case, the default value need not be a norm in the mathematical
+        sense; for example, a nonzero vector may have default norm zero::
+
+            sage: U = IntegralLattice(matrix([[0, 1], [1, 0]]))
+            sage: u = U.0
+            sage: bool(u)
+            True
+            sage: u.norm()
+            0
+            sage: U([1, -1]).norm()                                                    # needs sage.symbolic
+            sqrt(-2)
 
         The infinity norm is the maximum size (in absolute value)
         of the entries.  ::
@@ -1836,6 +1867,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.norm(int(2))                                                        # needs sage.symbolic
             sqrt(5)
         """
+        if p is None:
+            if not self.parent()._inner_product_is_dot_product():
+                return self.inner_product(self)**(__one__/__two__)
+            p = __two__
+
         abs_self = [abs(x) for x in self]
         if p == Infinity:
             return max(abs_self)
@@ -2673,7 +2709,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         The dot product of a vector with itself is the 2-norm, squared. ::
 
             sage: v = vector(QQ, [3, 4, 7])
-            sage: v.dot_product(v) - v.norm()^2                                         # needs sage.symbolic
+            sage: v.dot_product(v) - v.norm(2)^2                                        # needs sage.symbolic
             0
 
         TESTS:
@@ -3622,13 +3658,13 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             True
 
         For vectors with complex entries, the Hermitian inner product
-        has a more natural relationship with the 2-norm (which is the
-        default for the :meth:`norm` method). The norm squared equals
-        the Hermitian inner product of the vector with itself.  ::
+        has a more natural relationship with the 2-norm. The 2-norm
+        squared equals the Hermitian inner product of the vector with
+        itself.  ::
 
             sage: # needs sage.rings.complex_double sage.symbolic
             sage: v = vector(CDF, [-0.66+0.47*I, -0.60+0.91*I, -0.62-0.87*I, 0.53+0.32*I])
-            sage: abs(v.norm()^2 - v.hermitian_inner_product(v)) < 1.0e-10
+            sage: abs(v.norm(2)^2 - v.hermitian_inner_product(v)) < 1.0e-10
             True
 
         TESTS:
