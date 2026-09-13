@@ -3392,7 +3392,7 @@ class QuaternionOrder(Parent):
 
         basis = self.unit_ideal().reduced_basis()
         _, ii, jj, __ = basis
-        assert _ in (self.one(), -self.one())
+        assert _ in (self.one(), -self.one()), 'reduced basis of unit ideal does not start with 1; this is a bug'
 
         # find orthogonal elements ii, jj with norm(ii) minimal
         # these do not necessarily generate the full order!
@@ -3402,11 +3402,11 @@ class QuaternionOrder(Parent):
         jj -= jj.pair(ii) / 2 * ii
         jj *= self.basis_matrix().solve_left(vector(jj)).denominator()
         kk = ii * jj
-        assert ii in self and jj in self and kk in self
+        assert ii in self and jj in self and kk in self, 'orthogonal basis of sublattice not contained in this order; this is a bug'
 
         from sage.quadratic_forms.binary_qf import BinaryQF
         q, p = (-ZZ(g**2) for g in (ii, jj))
-        assert q >= 1 and p >= 1
+        assert q >= 1 and p >= 1, 'one of -i^2 or -j^2 is not positive; this is a bug'
         nf = BinaryQF(1, 0, q)
 
         nn = n
@@ -3421,12 +3421,12 @@ class QuaternionOrder(Parent):
             cbnd = isqrt(nn / p)
             for c in range(cbnd + 1):
                 n0 = nn - p * nf(c,0)
-                assert n0 >= 0
+                assert n0 >= 0, 'incorrect bound on c; this is a bug'
 
                 dbnd = isqrt(n0 / p / q)
                 for d in range(dbnd + 1):
                     n1 = nn - p * nf(c,d)
-                    assert n1 >= 0
+                    assert n1 >= 0, 'incorrect bound on d; this is a bug'
 
                     if n1 <= 1:
                         yield n1, 0, c, d
@@ -3458,8 +3458,8 @@ class QuaternionOrder(Parent):
         else:
             return
 
-        assert elt in self
-        assert elt.reduced_norm() == n
+        assert elt in self, 'constructed element does not lie in this order; this is a bug'
+        assert elt.reduced_norm() == n, 'constructed element has incorrect norm; this is a bug'
         return elt
 
 
