@@ -185,6 +185,19 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
                                   triangular='upper', unitriangular=True)
         Mi.register_as_coercion()
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to Schur functions once.
+
+        TESTS::
+
+            sage: o = SymmetricFunctions(QQ).o()
+            sage: f = o[2] + o[1, 1]
+            sage: f^4 == f._pow_naive(4)
+            True
+        """
+        return self._power_via(x, n, self._s)
+
     @cached_method
     def _o_to_s_on_basis(self, lam):
         r"""

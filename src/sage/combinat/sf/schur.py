@@ -243,56 +243,30 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         Bref = B._ref()
         return f"SymmetricFunctionAlgebraSchur({Bref})"
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by repeated multiplication.
+
+        For Schur functions this avoids the large intermediate squares
+        produced by binary exponentiation.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ['x']).s()
+            sage: len(s([2,1])^8)  # long time
+            1485
+
+        TESTS::
+
+            sage: f = s[2, 1] + s[3]
+            sage: all(f^n == f._pow_naive(n) for n in range(5))
+            True
+            sage: (-s.one())^(10^100) == s.one()
+            True
+        """
+        return self._power_naive(x, n)
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
-        def __pow__(self, n):
-            """
-            Return the naive powering of an instance of ``self``.
-
-            INPUT:
-
-            - ``self`` -- an element of the Schur symmetric function basis
-            - ``n`` -- nonnegative integer
-
-            OUTPUT: the `n`-th power of an instance of ``self`` in the Schur basis
-
-            See ``Monoids.Element.__pow__`` and ``Monoids.Element._pow_naive``.
-
-            EXAMPLES::
-
-                sage: s = SymmetricFunctions(QQ['x']).s()
-                sage: len(s([2,1])^8) # long time (~ 4 s)
-                1485
-                sage: len(s([2,1])^9) # long time (~10 s)
-                2876
-
-            Binary exponentiation does not seem to bring any speedup for
-            Schur functions. This most likely is because of the
-            explosion of the number of terms.
-
-            #    sage: s = SymmetricFunctions(QQ).s(); y = s([1])
-            #    sage: n = 24
-            #    sage: %timeit y**n    # using binary exponentiation
-            #    10 loops, best of 3: 1.22 s per loop
-            #    sage: %timeit prod(y for i in range(n))
-            #    10 loops, best of 3: 1.06 s per loop
-
-            With polynomial coefficients, this is actually much *slower*
-            (although this should be profiled further; there seems to
-            be an unreasonable number of polynomial multiplication involved,
-            besides the fact that 1 * QQ['x'].one() currently involves a
-            polynomial multiplication)
-
-            #    sage: sage: s = SymmetricFunctions(QQ['x']).s()
-            #    sage: y = s([2,1])
-            #    sage: %timeit y**7
-            #    10 loops, best of 3: 18.9 s per loop
-            #    sage: %timeit y*y*y*y*y*y*y
-            #    10 loops, best of 3: 1.73 s per loop
-
-            Todo: do the same for the other non multiplicative bases?
-            """
-            return self._pow_naive(n)
-
         def omega(self):
             r"""
             Return the image of ``self`` under the omega automorphism.

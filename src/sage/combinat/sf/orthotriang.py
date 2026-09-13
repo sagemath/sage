@@ -281,6 +281,23 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         """
         return self(self._sf_base(left) * self._sf_base(right))
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to the base once.
+
+        TESTS::
+
+            sage: from sage.combinat.sf.sfa import zee
+            sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: B = SymmetricFunctionAlgebra_orthotriang(
+            ....:     Sym, Sym.m(), zee, 'b', 'test basis')
+            sage: f = B[2] + B[1, 1]
+            sage: f^4 == f._pow_naive(4)
+            True
+        """
+        return self._power_via(x, n, self._sf_base)
+
 
 from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
 
