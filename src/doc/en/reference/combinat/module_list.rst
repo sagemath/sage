@@ -455,6 +455,7 @@ Comprehensive module list
     sage/combinat/sf/orthotriang
     sage/combinat/sf/sf
     sage/combinat/sf/symplectic
+    sage/combinat/sf/transition_kernels
     sage/combinat/sf/witt
     sage/combinat/sf/new_kschur
 
