@@ -1302,3 +1302,77 @@ def hall_littlewood_qp_to_s(mu):
         True
     """
     return dict(_qp_to_s(_normalize(mu)))
+
+
+##############################################################################
+# Semistandard tableaux
+##############################################################################
+
+cdef int _ssyt_chains(tuple lam, list content, list rests, Py_ssize_t k,
+                      list chain, list out) except -1:
+    # Remove the cells containing the letter k, a horizontal strip. The
+    # remaining shape must dominate the remaining content, so that it can
+    # still be filled.
+    if k == 0:
+        out.append(tuple(chain))
+        return 0
+    cdef tuple rest = rests[k - 1]
+    for nu in _hstrips(lam, content[k - 1], False):
+        if _dominates(<tuple> nu, rest):
+            chain[k - 1] = nu
+            _ssyt_chains(<tuple> nu, content, rests, k - 1, chain, out)
+    return 0
+
+
+def semistandard_tableaux(shape, content):
+    r"""
+    Return the semistandard tableaux of shape ``shape`` and content
+    ``content``, as lists of rows.
+
+    The content may contain zeros. The tableaux are found by removing the
+    horizontal strips formed by the largest entries, and are sorted
+    lexicographically by their rows, which is the order used by Symmetrica.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import kostka_number, semistandard_tableaux
+        sage: semistandard_tableaux((3, 2, 1), (2, 2, 2))
+        [[[1, 1, 2], [2, 3], [3]], [[1, 1, 3], [2, 2], [3]]]
+        sage: semistandard_tableaux((3, 1), (1, 0, 2, 1))
+        [[[1, 3, 3], [4]], [[1, 3, 4], [3]]]
+        sage: semistandard_tableaux((2, 2), (3, 1))
+        []
+        sage: semistandard_tableaux((), ())
+        [[]]
+
+    TESTS::
+
+        sage: all(len(semistandard_tableaux(la, mu)) == kostka_number(la, mu)
+        ....:     for n in range(7) for la in Partitions(n) for mu in Compositions(n))
+        True
+    """
+    cdef tuple lam = tuple(int(p) for p in shape if p)
+    cdef list cont = [int(c) for c in content]
+    cdef Py_ssize_t K = len(cont), i, r, c
+    if sum(lam) != sum(cont):
+        return []
+    cdef list rests = [_normalize(cont[:i]) for i in range(K)]
+    cdef list out = []
+    _ssyt_chains(lam, cont, rests, K, [None] * K, out)
+
+    cdef list res = []
+    cdef list rows
+    cdef tuple prev, cur
+    for chain in out:
+        shapes = chain + (lam,)
+        rows = [[] for _ in lam]
+        for i in range(1, K + 1):
+            prev = shapes[i - 1]
+            cur = shapes[i]
+            letter = Integer(i)
+            for r in range(len(cur)):
+                for c in range(prev[r] if r < len(prev) else 0, cur[r]):
+                    rows[r].append(letter)
+        res.append(rows)
+    res.sort()
+    return res
