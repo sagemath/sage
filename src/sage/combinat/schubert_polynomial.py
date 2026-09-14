@@ -86,7 +86,264 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 lazy_import('sage.combinat.key_polynomial', 'OperatorPolynomial')
-lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
+
+
+# Permutations are handled below as tuples in one-line notation without
+# trailing fixed points, so that the identity is the empty tuple, and
+# polynomials as dictionaries mapping exponent tuples without trailing
+# zeros to coefficients.
+
+
+def _reduce(w):
+    """
+    Return the tuple ``w`` without its trailing fixed points.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.schubert_polynomial import _reduce
+        sage: _reduce((2, 1, 3, 4))
+        (2, 1)
+        sage: _reduce([1, 2])
+        ()
+    """
+    n = len(w)
+    while n and w[n - 1] == n:
+        n -= 1
+    return tuple(w[:n])
+
+
+def _monk(w, r):
+    r"""
+    Return `x_r \mathfrak{S}_w` in the Schubert basis, by Monk's rule.
+
+    The result is `\sum_j \mathfrak{S}_{w t_{rj}} - \sum_i \mathfrak{S}_{w t_{ir}}`
+    over `j > r` and `i < r` such that the transposition increases the length
+    by one.
+
+    INPUT:
+
+    - ``w`` -- tuple; a permutation without trailing fixed points
+    - ``r`` -- positive integer
+
+    EXAMPLES::
+
+        sage: from sage.combinat.schubert_polynomial import _monk
+        sage: _monk((3, 2, 4, 1), 3)
+        {(3, 2, 5, 1, 4): 1, (3, 4, 2, 1): -1, (4, 2, 3, 1): -1}
+    """
+    n = max(len(w), r) + 1
+    v = list(w) + list(range(len(w) + 1, n + 1))
+    wr = v[r - 1]
+    res = {}
+    # a transposition t_{ab} increases the length by one if and only if
+    # w(a) < w(b) and no value in between occurs at a position in between
+    bound = n + 1
+    for j in range(r, n):
+        wj = v[j]
+        if wr < wj < bound:
+            u = v[:]
+            u[r - 1], u[j] = wj, wr
+            res[_reduce(u)] = 1
+            bound = wj
+    bound = 0
+    for i in range(r - 2, -1, -1):
+        wi = v[i]
+        if bound < wi < wr:
+            u = v[:]
+            u[i], u[r - 1] = wr, wi
+            res[_reduce(u)] = -1
+            bound = wi
+    return res
+
+
+def _transition(w):
+    r"""
+    Return the data of the transition formula for ``w``.
+
+    For a permutation `w` other than the identity, let `r` be its last
+    descent, `s > r` be maximal with `w(s) < w(r)` and `v = w t_{rs}`. Then
+    (Lascoux-Schützenberger)
+
+    .. MATH::
+
+        \mathfrak{S}_w = x_r \mathfrak{S}_v + \sum_i \mathfrak{S}_{v t_{ir}},
+
+    the sum being over the `i < r` with `\ell(v t_{ir}) = \ell(w)`.
+
+    OUTPUT: the tuple ``(r, v, others)``, where ``others`` is the list of
+    the permutations `v t_{ir}`
+
+    EXAMPLES::
+
+        sage: from sage.combinat.schubert_polynomial import _transition
+        sage: _transition((1, 3, 2))
+        (2, (), [(2, 1)])
+    """
+    n = len(w)
+    r = max(i for i in range(1, n) if w[i - 1] > w[i])
+    wr = w[r - 1]
+    s = max(j for j in range(r + 1, n + 1) if w[j - 1] < wr)
+    v = list(w)
+    v[r - 1], v[s - 1] = v[s - 1], v[r - 1]
+    vr = v[r - 1]
+    others = []
+    bound = 0
+    for i in range(r - 2, -1, -1):
+        vi = v[i]
+        if bound < vi < vr:
+            u = v[:]
+            u[i], u[r - 1] = vr, vi
+            others.append(_reduce(u))
+            bound = vi
+    return r, _reduce(v), others
+
+
+_expand_cache = {}
+
+
+def _expand(w):
+    r"""
+    Return the Schubert polynomial `\mathfrak{S}_w` as a dictionary of
+    exponent tuples, using the transition formula.
+
+    The result is cached and should not be modified.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.schubert_polynomial import _expand
+        sage: sorted(_expand((1, 3, 2)).items())
+        [((0, 1), 1), ((1,), 1)]
+        sage: _expand((3, 2, 1))
+        {(2, 1): 1}
+    """
+    D = _expand_cache.get(w)
+    if D is not None:
+        return D
+    if not w:
+        D = {(): 1}
+    else:
+        r, v, others = _transition(w)
+        D = {}
+        for e, c in _expand(v).items():
+            e = list(e) + [0] * (r - len(e))
+            e[r - 1] += 1
+            D[tuple(e)] = c
+        for u in others:
+            for e, c in _expand(u).items():
+                c += D.get(e, 0)
+                if c:
+                    D[e] = c
+                else:
+                    del D[e]
+    _expand_cache[w] = D
+    return D
+
+
+_product_cache = {}
+
+
+def _product(u, v):
+    r"""
+    Return `\mathfrak{S}_u \mathfrak{S}_v` in the Schubert basis.
+
+    The transition formula is applied to ``u``, multiplying by the
+    variables with Monk's rule. The result is cached and should not be
+    modified.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.schubert_polynomial import _product
+        sage: _product((2, 1), (2, 1))
+        {(3, 1, 2): 1}
+        sage: sorted(_product((2, 1), (1, 3, 2)).items())
+        [((2, 3, 1), 1), ((3, 1, 2), 1)]
+    """
+    if not u:
+        return {v: 1}
+    key = (u, v)
+    D = _product_cache.get(key)
+    if D is not None:
+        return D
+    r, u1, others = _transition(u)
+    D = {}
+    for w, c in _product(u1, v).items():
+        for w2, d in _monk(w, r).items():
+            d = D.get(w2, 0) + c * d
+            if d:
+                D[w2] = d
+            else:
+                del D[w2]
+    for u2 in others:
+        for w, c in _product(u2, v).items():
+            c += D.get(w, 0)
+            if c:
+                D[w] = c
+            else:
+                del D[w]
+    _product_cache[key] = D
+    return D
+
+
+def _code_to_permutation(code):
+    """
+    Return the permutation with Lehmer code ``code``, without trailing
+    fixed points.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.schubert_polynomial import _code_to_permutation
+        sage: _code_to_permutation((0, 1))
+        (1, 3, 2)
+        sage: _code_to_permutation((2,))
+        (3, 1, 2)
+    """
+    N = max([len(code)] + [i + c + 1 for i, c in enumerate(code)])
+    available = list(range(1, N + 1))
+    return _reduce([available.pop(c) for c in code] + available)
+
+
+def _from_exponents(f):
+    r"""
+    Return the Schubert expansion of the polynomial ``f``, given as a
+    dictionary mapping exponent tuples to coefficients.
+
+    The monomial `x^{c(w)}`, where `c(w)` is the Lehmer code of `w`, is the
+    largest monomial of `\mathfrak{S}_w` in reverse lexicographic order; so
+    the largest monomial of ``f`` determines the next Schubert polynomial to
+    subtract.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.schubert_polynomial import _from_exponents
+        sage: _from_exponents({(1, 0): 1, (0, 1): 1})
+        {(1, 3, 2): 1}
+        sage: sorted(_from_exponents({(0, 1): 2}).items())
+        [((1, 3, 2), 2), ((2, 1), -2)]
+    """
+
+    def strip(e):
+        n = len(e)
+        while n and not e[n - 1]:
+            n -= 1
+        return tuple(e[:n])
+
+    def order(e):
+        return (len(e), e[::-1])
+
+    f = {strip(e): c for e, c in f.items() if c}
+    res = {}
+    while f:
+        e = max(f, key=order)
+        c = f[e]
+        w = _code_to_permutation(e)
+        res[w] = c
+        for e2, d in _expand(w).items():
+            d = f.get(e2, 0) - c * d
+            if d:
+                f[e2] = d
+            else:
+                del f[e2]
+    return res
 
 
 def SchubertPolynomialRing(R):
@@ -151,11 +408,14 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             sage: X([1]).expand() * X([2,1]).expand()
             x0
         """
-        p = symmetrica.t_SCHUBERT_POLYNOM(self)
-        if not isinstance(p, MPolynomial):
-            R = PolynomialRing(self.parent().base_ring(), 1, 'x0')
-            p = R(p)
-        return p
+        n = max((len(pi) for pi in self.support()), default=1)
+        R = PolynomialRing(self.parent().base_ring(), n, [f"x{i}" for i in range(n)])
+        d = {}
+        for pi, c in self:
+            for e, k in _expand(_reduce(pi)).items():
+                e += (0,) * (n - len(e))
+                d[e] = d.get(e, 0) + c * k
+        return R(d)
 
     def divided_difference(self, i, algorithm='sage'):
         r"""
@@ -168,8 +428,8 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
         - ``i`` -- permutation or positive integer
 
         - ``algorithm`` -- (default: ``'sage'``) either ``'sage'``
-          or ``'symmetrica'``; this determines which software is
-          called for the computation
+          or ``'symmetrica'``; both use the same implementation, and
+          this argument is only kept for backward compatibility
 
         OUTPUT:
 
@@ -268,56 +528,50 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             return self
         Perms = Permutations()
         if i in ZZ:
-            if algorithm == "sage":
-                if i <= 0:
-                    raise ValueError(r"cannot apply \delta_{%s} to a (= %s)" % (i, self))
-                # The operator `\delta_i` sends the Schubert
-                # polynomial `X_\pi` (where `\pi` is a finitely supported
-                # permutation of `\{1, 2, 3, \ldots\}`) to:
-                # - the Schubert polynomial X_\sigma`, where `\sigma` is
-                #   obtained from `\pi` by switching the values at `i` and `i+1`,
-                #   if `i` is a descent of `\pi` (that is, `\pi(i) > \pi(i+1)`);
-                # - `0` otherwise.
-                # Notice that distinct `\pi`s lead to distinct `\sigma`s,
-                # so we can use `_from_dict` here.
-                res_dict = {}
-                for pi, coeff in self:
-                    pi = pi[:]
-                    n = len(pi)
-                    if n <= i:
-                        continue
-                    if pi[i - 1] < pi[i]:
-                        continue
-                    pi[i - 1], pi[i] = pi[i], pi[i - 1]
-                    pi = Perms(pi).remove_extra_fixed_points()
-                    res_dict[pi] = coeff
-                return self.parent()._from_dict(res_dict)
-            # if algorithm == "symmetrica":
-            return symmetrica.divdiff_schubert(i, self)
+            if i <= 0:
+                raise ValueError(r"cannot apply \delta_{%s} to a (= %s)" % (i, self))
+            # The operator `\delta_i` sends the Schubert
+            # polynomial `X_\pi` (where `\pi` is a finitely supported
+            # permutation of `\{1, 2, 3, \ldots\}`) to:
+            # - the Schubert polynomial X_\sigma`, where `\sigma` is
+            #   obtained from `\pi` by switching the values at `i` and `i+1`,
+            #   if `i` is a descent of `\pi` (that is, `\pi(i) > \pi(i+1)`);
+            # - `0` otherwise.
+            # Notice that distinct `\pi`s lead to distinct `\sigma`s,
+            # so we can use `_from_dict` here.
+            res_dict = {}
+            for pi, coeff in self:
+                pi = pi[:]
+                n = len(pi)
+                if n <= i:
+                    continue
+                if pi[i - 1] < pi[i]:
+                    continue
+                pi[i - 1], pi[i] = pi[i], pi[i - 1]
+                pi = Perms(pi).remove_extra_fixed_points()
+                res_dict[pi] = coeff
+            return self.parent()._from_dict(res_dict)
         if i in Perms:
-            if algorithm == "sage":
-                i = Permutation(i)
-                redw = i.reduced_word()
-                res_dict = {}
-                for pi, coeff in self:
-                    next_pi = False
-                    pi = pi[:]
-                    n = len(pi)
-                    for j in redw:
-                        if n <= j:
-                            next_pi = True
-                            break
-                        if pi[j - 1] < pi[j]:
-                            next_pi = True
-                            break
-                        pi[j - 1], pi[j] = pi[j], pi[j - 1]
-                    if next_pi:
-                        continue
-                    pi = Perms(pi).remove_extra_fixed_points()
-                    res_dict[pi] = coeff
-                return self.parent()._from_dict(res_dict)
-            # if algorithm == "symmetrica":
-            return symmetrica.divdiff_perm_schubert(i, self)
+            i = Permutation(i)
+            redw = i.reduced_word()
+            res_dict = {}
+            for pi, coeff in self:
+                next_pi = False
+                pi = pi[:]
+                n = len(pi)
+                for j in redw:
+                    if n <= j:
+                        next_pi = True
+                        break
+                    if pi[j - 1] < pi[j]:
+                        next_pi = True
+                        break
+                    pi[j - 1], pi[j] = pi[j], pi[j - 1]
+                if next_pi:
+                    continue
+                pi = Perms(pi).remove_extra_fixed_points()
+                res_dict[pi] = coeff
+            return self.parent()._from_dict(res_dict)
         raise TypeError("i must either be an integer or permutation")
 
     def scalar_product(self, x):
@@ -346,9 +600,16 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
              + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3
              + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
         """
-        if isinstance(x, SchubertPolynomial_class):
-            return symmetrica.scalarproduct_schubert(self, x)
-        raise TypeError("x must be a Schubert polynomial")
+        if not isinstance(x, SchubertPolynomial_class):
+            raise TypeError("x must be a Schubert polynomial")
+        # This is `\partial_{w_0}(self \cdot x)`, where `w_0` is the longest
+        # element of the smallest symmetric group containing all the
+        # permutations involved.
+        n = max((len(pi) for pi in list(self.support()) + list(x.support())), default=1)
+        prod = self * x
+        if not prod:
+            return prod
+        return prod.divided_difference(Permutation(list(range(n, 0, -1))))
 
     def multiply_variable(self, i):
         """
@@ -368,9 +629,16 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             sage: a.multiply_variable(3)
             X[3, 2, 4, 5, 1]
         """
-        if isinstance(i, Integer):
-            return symmetrica.mult_schubert_variable(self, i)
-        raise TypeError("i must be an integer")
+        if not isinstance(i, Integer):
+            raise TypeError("i must be an integer")
+        P = self.parent()
+        if i < 0:
+            return P.zero()
+        res = {}
+        for pi, c in self:
+            for w, d in _monk(_reduce(pi), i + 1).items():
+                res[w] = res.get(w, 0) + c * d
+        return P._from_permutation_dict(res)
 
 
 class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
@@ -466,7 +734,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             ....:     assert X(a(X(P))) == X(P), P
         """
         if isinstance(x, list):
-            # checking the input to avoid symmetrica crashing Sage, see trac 12924
+            # check the input, see :issue:`12924`
             if x not in Permutations():
                 raise ValueError(f"the input {x} is not a valid permutation")
             perm = Permutation(x).remove_extra_fixed_points()
@@ -475,13 +743,17 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             perm = x.remove_extra_fixed_points()
             return self._from_dict({perm: self.base_ring().one()})
         if isinstance(x, MPolynomial):
-            return symmetrica.t_POLYNOM_SCHUBERT(x)
+            return self._from_permutation_dict(
+                _from_exponents(
+                    {tuple(e): c for e, c in x.monomial_coefficients().items()}
+                )
+            )
         if isinstance(x, InfinitePolynomial):
             R = x.polynomial().parent()
-            # massage the term order to be what symmetrica expects
+            # put the variables in increasing order of their indices
             S = PolynomialRing(R.base_ring(),
                                names=list(map(repr, reversed(R.gens()))))
-            return symmetrica.t_POLYNOM_SCHUBERT(S(x.polynomial()))
+            return self(S(x.polynomial()))
         if isinstance(x, OperatorPolynomial):
             return self(x.expand())
         raise TypeError
@@ -509,4 +781,19 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             sage: X.product_on_basis(p1,p2)
             X[4, 2, 1, 3]
         """
-        return symmetrica.mult_schubert_schubert(left, right)
+        return self._from_permutation_dict(_product(_reduce(left), _reduce(right)))
+
+    def _from_permutation_dict(self, d):
+        """
+        Return the element of ``self`` with coefficients ``d``, a dictionary
+        mapping permutations given as tuples to coefficients.
+
+        EXAMPLES::
+
+            sage: X = SchubertPolynomialRing(GF(3))
+            sage: X._from_permutation_dict({(): 4, (2, 1): 3, (1, 3, 2): -1})
+            X[1] + 2*X[1, 3, 2]
+        """
+        return self._from_dict(
+            {Permutation(list(w) or [1]): c for w, c in d.items()}, coerce=True
+        )
