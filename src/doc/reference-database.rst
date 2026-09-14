@@ -2653,6 +2653,10 @@
             Advances in Mathematics 63 (1987), pp. 42-99.
             :doi:`10.1016/0001-8708(87)90063-6`
 
+.. [EG2017] John Enyang and Frederick M. Goodman, *Cellular Bases for Algebras with
+            a Jones Basic Construction*, Algebras and Representation Theory 20(1)
+            :doi:`10.1007/s10468-016-9632-5`
+
 .. [Ega1981] Yoshimi Egawa, *Characterization of H(n, q) by the parameters*,
              Journal of Combinatorial Theory, Series A, Volume 31, Issue 2,
              1981, Pages 108-125. :doi:`10.1016/0097-3165(81)90007-8`.
@@ -5586,6 +5590,10 @@
 
 .. [MW2009] Meshulam and Wallach, *Homological connectivity of random*
             `k`-*dimensional complexes*, preprint, :arxiv:`math.CO/0609773`.
+
+.. [MW2010] Hugh R. Morton and Anthony J. Wassermann, *A basis for the
+            Birman-Wenzl algebra*, Unpublished manuscript (1989, revised 2000),
+            :arxiv:`1012.3116`
 
 .. [MW2012] Ivan Marin and Emmanuel Wagner, *A Cubic Defining Algebra for the
             Links-Gould PolynomiaL* (:arxiv:`1203.5981v1` [mathGT] 27. Mar 2012)
