@@ -19,13 +19,13 @@ Monomial symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.libs.symmetrica.all as symmetrica
 from sage.arith.misc import binomial, factorial, multinomial
 from sage.combinat.partition import _Partitions
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 
 from . import classical
+from .transition_kernels import monomial_product
 
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
@@ -108,32 +108,19 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             sage: a^2
             x^2*m[] + 2*x*m[2, 1] + 4*m[2, 2, 1, 1] + 6*m[2, 2, 2] + 2*m[3, 2, 1] + 2*m[3, 3] + 2*m[4, 1, 1] + m[4, 2]
         """
-        # Use symmetrica to do the multiplication
-        # A = left.parent()
-
-        # Hack due to symmetrica crashing when both of the
-        # partitions are the empty partition
-        # if  R is ZZ or R is QQ:
-        #     return symmetrica.mult_monomial_monomial(left, right)
-
         z_elt = {}
         for left_m, left_c in left._monomial_coefficients.items():
             for right_m, right_c in right._monomial_coefficients.items():
-
-                # Hack due to symmetrica crashing when both of the
-                # partitions are the empty partition
-                if not left_m and not right_m:
-                    z_elt[left_m] = left_c * right_c
-                    continue
-
-                d = symmetrica.mult_monomial_monomial({left_m: Integer(1)},
-                                                      {right_m: Integer(1)}).monomial_coefficients()
-                for m in d:
-                    if m in z_elt:
-                        z_elt[m] += left_c * right_c * d[m]
-                    else:
-                        z_elt[m] = left_c * right_c * d[m]
-        return self._from_dict(z_elt)
+                c = left_c * right_c
+                for nu, d in monomial_product(left_m, right_m).items():
+                    z_elt[nu] = z_elt.get(nu, 0) + c * d
+        P = _Partitions.element_class
+        return self._from_dict(
+            {
+                P(_Partitions, [Integer(p) for p in nu]): c
+                for nu, c in sorted(z_elt.items())
+            }
+        )
 
     def from_polynomial(self, f, check=True):
         r"""

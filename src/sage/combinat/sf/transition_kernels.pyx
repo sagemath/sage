@@ -46,6 +46,14 @@ cdef dict _s_to_m_cache = {}
 cdef dict _m_to_s_cache = {}
 cdef dict _s_to_h_cache = {}
 cdef dict _partitions_cache = {}
+cdef dict _gen_cache = {}
+cdef dict _mult_cache = {}
+cdef dict _p_to_m_cache = {}
+cdef dict _m_to_p_cache = {}
+cdef dict _mm_cache = {}
+cdef dict _jing_cache = {}
+cdef dict _qp_cache = {}
+cdef object _ZZt = None
 
 
 def clear_caches():
@@ -60,7 +68,9 @@ def clear_caches():
         sage: clear_caches()
     """
     for c in (_kostka_cache, _char_cache, _h_to_s_cache, _p_to_s_cache,
-              _s_to_m_cache, _m_to_s_cache, _s_to_h_cache, _partitions_cache):
+              _s_to_m_cache, _m_to_s_cache, _s_to_h_cache, _partitions_cache,
+              _gen_cache, _mult_cache, _p_to_m_cache, _m_to_p_cache,
+              _mm_cache, _jing_cache, _qp_cache):
         c.clear()
 
 
@@ -756,3 +766,539 @@ def s_to_p(lam):
         if c:
             D[mu] = Integer(c) / zmu
     return D
+
+
+##############################################################################
+# Multiplicative bases
+##############################################################################
+
+cdef enum:
+    H_TO_P = 0
+    E_TO_P = 1
+    P_TO_H = 2
+    P_TO_E = 3
+    H_TO_E = 4  # also e_k in terms of h, by symmetry
+
+
+cdef object _mult_factorials(tuple mu):
+    r"""
+    Return `\prod_i m_i(\mu)!`.
+    """
+    cdef Py_ssize_t i = 0, j, k = len(mu)
+    res = 1
+    while i < k:
+        j = i
+        while j < k and mu[j] == mu[i]:
+            j += 1
+        res *= factorial(j - i)
+        i = j
+    return res
+
+
+cdef dict _generator(int kind, int k):
+    r"""
+    Return the expansion of the generator of degree ``k``:
+
+    - `h_k = \sum_\mu p_\mu / z_\mu`
+    - `e_k = \sum_\mu \epsilon_\mu p_\mu / z_\mu`
+    - `p_k = \sum_\mu (-1)^{\ell(\mu)-1} k (\ell(\mu)-1)! / \prod_i m_i! \, h_\mu`
+    - `p_k = \sum_\mu \epsilon_\mu k (\ell(\mu)-1)! / \prod_i m_i! \, e_\mu`
+    - `h_k = \sum_\mu \epsilon_\mu \ell(\mu)! / \prod_i m_i! \, e_\mu`
+
+    where `\epsilon_\mu = (-1)^{k - \ell(\mu)}`.
+    """
+    key = (kind, k)
+    cdef dict D = _gen_cache.get(key)
+    if D is not None:
+        return D
+    D = {}
+    cdef Py_ssize_t l
+    cdef int sign
+    for mu in _partitions(k):
+        l = len(<tuple> mu)
+        sign = -1 if (k - l) & 1 else 1
+        # the power sum generators are scaled by k! to stay integral
+        if kind == H_TO_P:
+            c = factorial(k) // z(mu)
+        elif kind == E_TO_P:
+            c = sign * factorial(k) // z(mu)
+        elif kind == P_TO_H:
+            c = ((-1 if (l - 1) & 1 else 1) * k * factorial(l - 1)
+                 // _mult_factorials(<tuple> mu))
+        elif kind == P_TO_E:
+            c = sign * k * factorial(l - 1) // _mult_factorials(<tuple> mu)
+        else:
+            c = sign * factorial(l) // _mult_factorials(<tuple> mu)
+        D[mu] = c
+    _gen_cache[key] = D
+    return D
+
+
+cdef tuple _union(tuple a, tuple b):
+    return tuple(sorted(a + b, reverse=True))
+
+
+cdef dict _multiplicative(int kind, tuple lam):
+    key = (kind, lam)
+    cdef dict D = _mult_cache.get(key)
+    if D is not None:
+        return D
+    cdef Py_ssize_t k = len(lam)
+    if not k:
+        D = {(): 1}
+    else:
+        D = {}
+        g = _generator(kind, lam[k - 1])
+        for a, c in _multiplicative(kind, lam[:k - 1]).items():
+            for b, d in g.items():
+                _add_term(D, _union(<tuple> a, <tuple> b), c * d)
+    _mult_cache[key] = D
+    return D
+
+
+def h_to_p(mu):
+    r"""
+    Return the power sum expansion of `h_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import h_to_p
+        sage: sorted(h_to_p((2,)).items())
+        [((1, 1), 1/2), ((2,), 1/2)]
+    """
+    return _unscale(_multiplicative(H_TO_P, _normalize(mu)), _normalize(mu))
+
+
+def e_to_p(mu):
+    r"""
+    Return the power sum expansion of `e_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import e_to_p
+        sage: sorted(e_to_p((2,)).items())
+        [((1, 1), 1/2), ((2,), -1/2)]
+    """
+    return _unscale(_multiplicative(E_TO_P, _normalize(mu)), _normalize(mu))
+
+
+cdef dict _unscale(dict D, tuple lam):
+    r"""
+    Divide the coefficients of ``D`` by `\prod_i \lambda_i!`.
+    """
+    den = Integer(1)
+    for p in lam:
+        den *= factorial(p)
+    return {nu: Integer(c) / den for nu, c in D.items()}
+
+
+def p_to_h(mu):
+    r"""
+    Return the complete homogeneous expansion of `p_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import p_to_h
+        sage: sorted(p_to_h((2,)).items())
+        [((1, 1), -1), ((2,), 2)]
+    """
+    return dict(_multiplicative(P_TO_H, _normalize(mu)))
+
+
+def p_to_e(mu):
+    r"""
+    Return the elementary expansion of `p_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import p_to_e
+        sage: sorted(p_to_e((2,)).items())
+        [((1, 1), 1), ((2,), -2)]
+    """
+    return dict(_multiplicative(P_TO_E, _normalize(mu)))
+
+
+def h_to_e(mu):
+    r"""
+    Return the elementary expansion of `h_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import h_to_e
+        sage: sorted(h_to_e((2,)).items())
+        [((1, 1), 1), ((2,), -1)]
+    """
+    return dict(_multiplicative(H_TO_E, _normalize(mu)))
+
+
+def e_to_h(mu):
+    r"""
+    Return the complete homogeneous expansion of `e_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import e_to_h
+        sage: sorted(e_to_h((2, 1)).items())
+        [((1, 1, 1), 1), ((2, 1), -1)]
+    """
+    return dict(_multiplicative(H_TO_E, _normalize(mu)))
+
+
+##############################################################################
+# Power sums and monomials
+##############################################################################
+
+cdef list _p_times_m(int k, tuple nu):
+    """
+    Return the pairs ``(rho, c)`` with `p_k m_\nu = \sum c\, m_\rho`; in the
+    first pair ``k`` is a new part.
+
+    The coefficient of `m_\rho` is the multiplicity in `\rho` of the part
+    that was created or increased.
+    """
+    cdef Py_ssize_t j, n = len(nu)
+    cdef tuple rho = _insert_part(nu, k)
+    cdef list out = [(rho, rho.count(k))]
+    prev = None
+    for j in range(n):
+        a = nu[j]
+        if a == prev:
+            continue
+        prev = a
+        rho = _insert_part(nu[:j] + nu[j + 1:], a + k)
+        out.append((rho, rho.count(a + k)))
+    return out
+
+
+cdef dict _p_to_m(tuple mu):
+    cdef dict D = _p_to_m_cache.get(mu)
+    if D is not None:
+        return D
+    cdef Py_ssize_t k = len(mu)
+    if not k:
+        D = {(): 1}
+    else:
+        D = {}
+        r = mu[k - 1]
+        for nu, c in _p_to_m(mu[:k - 1]).items():
+            for rho, d in _p_times_m(r, <tuple> nu):
+                _add_term(D, rho, c * d)
+    _p_to_m_cache[mu] = D
+    return D
+
+
+cdef dict _m_to_p(tuple lam):
+    # With k = lam[0] and lam = rest + (k,):
+    # mult_k(lam) m_lam = p_k m_rest - (the other terms of p_k m_rest),
+    # and the other terms have fewer parts.
+    cdef dict D = _m_to_p_cache.get(lam)
+    if D is not None:
+        return D
+    cdef Py_ssize_t idx
+    if not lam:
+        D = {(): 1}
+    else:
+        k = lam[0]
+        rest = lam[1:]
+        D = {}
+        for mu, c in _m_to_p(rest).items():
+            _add_term(D, _insert_part(<tuple> mu, k), c)
+        terms = _p_times_m(k, rest)
+        for idx in range(1, len(terms)):
+            rho, c = terms[idx]
+            for mu, d in _m_to_p(<tuple> rho).items():
+                _add_term(D, mu, -c * d)
+        mk = Integer(lam.count(k))
+        if mk != 1:
+            D = {mu: c / mk for mu, c in D.items()}
+    _m_to_p_cache[lam] = D
+    return D
+
+
+def p_to_m(mu):
+    r"""
+    Return the monomial expansion of `p_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import p_to_m
+        sage: sorted(p_to_m((1, 1)).items())
+        [((1, 1), 2), ((2,), 1)]
+    """
+    return dict(_p_to_m(_normalize(mu)))
+
+
+def m_to_p(lam):
+    r"""
+    Return the power sum expansion of `m_\lambda`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import m_to_p
+        sage: sorted(m_to_p((1, 1)).items())
+        [((1, 1), 1/2), ((2,), -1/2)]
+    """
+    return dict(_m_to_p(_normalize(lam)))
+
+
+##############################################################################
+# Monomial products
+##############################################################################
+
+# The coefficient of m_nu in m_lam m_mu counts the pairs (alpha, beta) of
+# rearrangements of lam and mu, padded with zeros to length
+# L = len(lam) + len(mu), with alpha + beta = nu. Fixing alpha to lam gives
+# a count c' with c_nu = c' * |orbit(lam)| / |orbit(nu)|. To compute c', the
+# positions with equal values of lam form blocks, and each block receives a
+# multiset of values of mu.
+
+cdef int _mm_blocks(list blocks, Py_ssize_t bi, list vals, int* counts,
+                    Py_ssize_t nvals, list parts, object weight,
+                    dict acc) except -1:
+    if bi == len(blocks):
+        nu = tuple(sorted([p for p in parts if p], reverse=True))
+        acc[nu] = acc.get(nu, 0) + weight
+        return 0
+    size = (<tuple> blocks[bi])[1]
+    return _mm_values(blocks, bi, 0, size, vals, counts, nvals, parts,
+                      weight * factorial(size), acc)
+
+
+cdef int _mm_values(list blocks, Py_ssize_t bi, Py_ssize_t j, int rem,
+                    list vals, int* counts, Py_ssize_t nvals, list parts,
+                    object weight, dict acc) except -1:
+    # Choose how many of the remaining positions of block bi receive the
+    # value vals[j]; weight accumulates the number of arrangements.
+    cdef int x, top
+    cdef Py_ssize_t q
+    if rem == 0:
+        return _mm_blocks(blocks, bi + 1, vals, counts, nvals, parts,
+                          weight, acc)
+    if j == nvals:
+        return 0
+    w = (<tuple> blocks[bi])[0] + vals[j]
+    top = counts[j] if counts[j] < rem else rem
+    for x in range(top + 1):
+        counts[j] -= x
+        for q in range(x):
+            parts.append(w)
+        _mm_values(blocks, bi, j + 1, rem - x, vals, counts, nvals, parts,
+                   weight // factorial(x), acc)
+        counts[j] += x
+        if x:
+            del parts[len(parts) - x:]
+    return 0
+
+
+cdef list _blocks(tuple lam):
+    """
+    Return the pairs ``(value, multiplicity)`` of ``lam``.
+    """
+    cdef Py_ssize_t i = 0, j, k = len(lam)
+    cdef list out = []
+    while i < k:
+        j = i
+        while j < k and lam[j] == lam[i]:
+            j += 1
+        out.append((lam[i], j - i))
+        i = j
+    return out
+
+
+cdef dict _monomial_product(tuple lam, tuple mu):
+    if not lam:
+        return {mu: 1}
+    if not mu:
+        return {lam: 1}
+    if lam < mu:
+        lam, mu = mu, lam
+    key = (lam, mu)
+    cdef dict D = _mm_cache.get(key)
+    if D is not None:
+        return D
+    cdef Py_ssize_t ll = len(lam), lm = len(mu), L = ll + lm, i
+    cdef list blocks = _blocks(lam) + [(0, lm)]
+    cdef list mblocks = _blocks(mu) + [(0, ll)]
+    cdef Py_ssize_t nvals = len(mblocks)
+    cdef list vals = [b[0] for b in mblocks]
+    cdef dict acc = {}
+    cdef int* counts = <int*> check_allocarray(nvals, sizeof(int))
+    try:
+        for i in range(nvals):
+            counts[i] = mblocks[i][1]
+        _mm_blocks(blocks, 0, vals, counts, nvals, [], 1, acc)
+    finally:
+        sig_free(counts)
+    denominator = _mult_factorials(lam) * factorial(lm)
+    D = {nu: (c * _mult_factorials(<tuple> nu) * factorial(L - len(nu))
+              // denominator)
+         for nu, c in acc.items()}
+    _mm_cache[key] = D
+    return D
+
+
+def monomial_product(lam, mu):
+    r"""
+    Return the monomial expansion of `m_\lambda m_\mu`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import monomial_product
+        sage: sorted(monomial_product((1,), (1,)).items())
+        [((1, 1), 2), ((2,), 1)]
+        sage: sorted(monomial_product((2, 1), (2, 1)).items())
+        [((2, 2, 1, 1), 4), ((2, 2, 2), 6), ((3, 2, 1), 2), ((3, 3), 2),
+         ((4, 1, 1), 2), ((4, 2), 1)]
+        sage: monomial_product((), (2, 1))
+        {(2, 1): 1}
+    """
+    return dict(_monomial_product(_normalize(lam), _normalize(mu)))
+
+
+cdef inline tuple _exact_tuple(int* a, Py_ssize_t k):
+    cdef tuple t = PyTuple_New(k)
+    cdef Py_ssize_t i
+    cdef object x
+    for i in range(k):
+        x = a[i]
+        Py_INCREF(x)
+        PyTuple_SET_ITEM(t, i, x)
+    return t
+
+
+def monomial_exponents(mu, int n):
+    r"""
+    Return the exponent vectors of the monomials of `m_\mu(x_1, \ldots, x_n)`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import monomial_exponents
+        sage: sorted(monomial_exponents((2, 1), 3))
+        [(0, 1, 2), (0, 2, 1), (1, 0, 2), (1, 2, 0), (2, 0, 1), (2, 1, 0)]
+        sage: monomial_exponents((1, 1, 1), 2)
+        []
+        sage: monomial_exponents((), 2)
+        [(0, 0)]
+    """
+    cdef tuple m = _normalize(mu)
+    cdef Py_ssize_t k = len(m), i, j
+    cdef int tmp
+    cdef list out = []
+    if k > n:
+        return out
+    if n == 0:
+        return [()]
+    cdef int* a = <int*> check_calloc(n, sizeof(int))
+    try:
+        # start from the smallest arrangement and step through the others
+        # in lexicographic order
+        for i in range(k):
+            a[n - 1 - i] = m[i]
+        while True:
+            out.append(_exact_tuple(a, n))
+            i = n - 2
+            while i >= 0 and a[i] >= a[i + 1]:
+                i -= 1
+            if i < 0:
+                break
+            j = n - 1
+            while a[j] <= a[i]:
+                j -= 1
+            tmp = a[i]
+            a[i] = a[j]
+            a[j] = tmp
+            i += 1
+            j = n - 1
+            while i < j:
+                tmp = a[i]
+                a[i] = a[j]
+                a[j] = tmp
+                i += 1
+                j -= 1
+    finally:
+        sig_free(a)
+    return out
+
+
+##############################################################################
+# Hall-Littlewood
+##############################################################################
+
+cdef object _polynomial_ring():
+    global _ZZt
+    if _ZZt is None:
+        from sage.rings.integer_ring import ZZ
+        _ZZt = ZZ['t']
+    return _ZZt
+
+
+cdef dict _jing(int m, tuple nu):
+    # B_m(s_nu) = sum_{i,j} (-1)^i t^j h_{m+i+j} e_i^perp h_j^perp s_nu
+    key = (m, nu)
+    cdef dict D = _jing_cache.get(key)
+    if D is not None:
+        return D
+    cdef int d = sum(nu), i, j, sign
+    cdef dict terms = {}
+    cdef dict poly
+    for j in range(d + 1):
+        for kappa in _hstrips(nu, j, False):
+            kc = _conjugate(<tuple> kappa)
+            for i in range(d - j + 1):
+                sign = -1 if i & 1 else 1
+                for rhoc in _hstrips(kc, i, False):
+                    rho = _conjugate(<tuple> rhoc)
+                    for lam in _hstrips(rho, m + i + j, True):
+                        poly = terms.get(lam)
+                        if poly is None:
+                            poly = terms[lam] = {}
+                        poly[j] = poly.get(j, 0) + sign
+    R = _polynomial_ring()
+    D = {}
+    for lam, poly in terms.items():
+        p = R(poly)
+        if p:
+            D[lam] = p
+    _jing_cache[key] = D
+    return D
+
+
+cdef dict _qp_to_s(tuple mu):
+    cdef dict D = _qp_cache.get(mu)
+    if D is not None:
+        return D
+    if not mu:
+        D = {(): _polynomial_ring().one()}
+    else:
+        D = {}
+        for nu, c in _qp_to_s(mu[1:]).items():
+            for lam, p in _jing(mu[0], <tuple> nu).items():
+                _add_term(D, lam, c * p)
+    _qp_cache[mu] = D
+    return D
+
+
+def hall_littlewood_qp_to_s(mu):
+    r"""
+    Return the Schur expansion of the modified Hall-Littlewood function
+    `Q'_\mu`, whose coefficients are the Kostka-Foulkes polynomials
+    `K_{\lambda\mu}(t)`.
+
+    This uses Jing's vertex operators:
+    `Q'_\mu = B_{\mu_1} \cdots B_{\mu_\ell}(1)` where
+    `B_m = \sum_{i,j \geq 0} (-1)^i t^j h_{m+i+j} e_i^\perp h_j^\perp`.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.transition_kernels import hall_littlewood_qp_to_s
+        sage: sorted(hall_littlewood_qp_to_s((2, 1)).items())
+        [((2, 1), 1), ((3,), t)]
+
+    TESTS::
+
+        sage: from sage.combinat.sf.kfpoly import kfpoly
+        sage: all(hall_littlewood_qp_to_s(mu).get(tuple(la), 0) == kfpoly(la, mu)
+        ....:     for n in range(1, 7) for mu in Partitions(n) for la in Partitions(n))
+        True
+    """
+    return dict(_qp_to_s(_normalize(mu)))

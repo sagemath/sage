@@ -134,7 +134,9 @@ def init():
         sage: sage.combinat.sf.classical.conversion_functions[('Schur', 'powersum')]
         Kernel conversion s_to_p
         sage: sage.combinat.sf.classical.conversion_functions[('powersum', 'monomial')]
-        Kernel conversion p_to_s, s_to_m
+        Kernel conversion p_to_m
+        sage: sage.combinat.sf.classical.conversion_functions[('homogeneous', 'monomial')]
+        Kernel conversion h_to_s, s_to_m
 
     The following checks if the bug described in :issue:`15312` is fixed. ::
 
@@ -163,6 +165,18 @@ def init():
         for other, g in from_s.items():
             if other != basis:
                 conversion_functions[basis, other] = KernelConversion(f, g)
+    direct = {
+        ("homogeneous", "powersum"): tk.h_to_p,
+        ("elementary", "powersum"): tk.e_to_p,
+        ("powersum", "homogeneous"): tk.p_to_h,
+        ("powersum", "elementary"): tk.p_to_e,
+        ("homogeneous", "elementary"): tk.h_to_e,
+        ("elementary", "homogeneous"): tk.e_to_h,
+        ("monomial", "powersum"): tk.m_to_p,
+        ("powersum", "monomial"): tk.p_to_m,
+    }
+    for pair, f in direct.items():
+        conversion_functions[pair] = KernelConversion(f)
 
 
 init()
