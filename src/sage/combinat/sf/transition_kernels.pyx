@@ -230,7 +230,7 @@ cdef list _hstrips(tuple lam, int r, bint add):
 ##############################################################################
 
 cdef list _border_strips(tuple lam, int r, bint add):
-    """
+    r"""
     Return the pairs ``(nu, sign)`` where ``nu`` is obtained from ``lam``
     by adding (or removing) a border strip of size ``r`` and ``sign`` is
     `(-1)^{height}`.
@@ -957,7 +957,7 @@ def e_to_h(mu):
 ##############################################################################
 
 cdef list _p_times_m(int k, tuple nu):
-    """
+    r"""
     Return the pairs ``(rho, c)`` with `p_k m_\nu = \sum c\, m_\rho`; in the
     first pair ``k`` is a new part.
 

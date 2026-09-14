@@ -1671,7 +1671,7 @@ class ClassicalConversionOnBasis:
 
         - ``t`` -- a function taking a partition and returning a dictionary
           mapping partitions to coefficients, such as the functions in
-          :data:`sage.combinat.sf.classical.conversion_functions`
+          ``sage.combinat.sf.classical.conversion_functions``
 
         - ``codomain`` -- a basis of the symmetric functions
 
