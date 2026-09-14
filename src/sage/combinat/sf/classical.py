@@ -19,10 +19,10 @@ Classical symmetric functions
 # ****************************************************************************
 from sage.combinat.partition import _Partitions
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
+from sage.structure.element import Element
 
 from . import hall_littlewood, jack, llt, macdonald, orthotriang, sfa
+from . import transition_kernels
 
 translate = {'monomial': 'MONOMIAL',
              'homogeneous': 'HOMSYM',
@@ -33,9 +33,98 @@ translate = {'monomial': 'MONOMIAL',
 conversion_functions = {}
 
 
+class KernelConversion:
+    r"""
+    A change of basis between two classical bases, on a single partition.
+
+    Calling this with a partition returns a dictionary mapping partitions
+    to coefficients (integers, or rationals for conversions into the power
+    sum basis). The conversion is the composite of the given functions from
+    :mod:`sage.combinat.sf.transition_kernels`, applied from left to right.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.sf.classical import KernelConversion
+        sage: from sage.combinat.sf import transition_kernels as tk
+        sage: f = KernelConversion(tk.h_to_s, tk.s_to_m); f
+        Kernel conversion h_to_s, s_to_m
+        sage: sorted(f(Partition([2, 1])).items())
+        [([1, 1, 1], 3), ([2, 1], 2), ([3], 1)]
+        sage: loads(dumps(f))(Partition([2, 1])) == f(Partition([2, 1]))
+        True
+    """
+
+    def __init__(self, *kernels):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: from sage.combinat.sf.classical import KernelConversion
+            sage: from sage.combinat.sf import transition_kernels as tk
+            sage: KernelConversion(tk.p_to_s)(Partition([]))
+            {[]: 1}
+        """
+        self._kernels = kernels
+
+    def __repr__(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.classical import KernelConversion
+            sage: from sage.combinat.sf import transition_kernels as tk
+            sage: KernelConversion(tk.p_to_s)
+            Kernel conversion p_to_s
+        """
+        return "Kernel conversion " + ", ".join(k.__name__ for k in self._kernels)
+
+    def __reduce__(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.classical import KernelConversion
+            sage: from sage.combinat.sf import transition_kernels as tk
+            sage: loads(dumps(KernelConversion(tk.p_to_s)))
+            Kernel conversion p_to_s
+        """
+        return KernelConversion, self._kernels
+
+    def __call__(self, partition):
+        """
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.classical import KernelConversion
+            sage: from sage.combinat.sf import transition_kernels as tk
+            sage: KernelConversion(tk.s_to_p)(Partition([2]))
+            {[1, 1]: 1/2, [2]: 1/2}
+        """
+        kernels = self._kernels
+        D = kernels[0](partition)
+        for kernel in kernels[1:]:
+            E = {}
+            for la, c in D.items():
+                for nu, d in kernel(la).items():
+                    E[nu] = E.get(nu, 0) + c * d
+            D = E
+        # Increasing lexicographic order, as symmetrica returned; the
+        # printed form of some results depends on the insertion order.
+        P = _Partitions.element_class
+        return {
+            P(_Partitions, [Integer(p) for p in la]): (
+                c if isinstance(c, Element) else Integer(c)
+            )
+            for la, c in sorted(D.items())
+            if c
+        }
+
+
 def init():
     """
     Set up the conversion functions between the classical bases.
+
+    Conversions to and from the Schur basis use the kernels in
+    :mod:`sage.combinat.sf.transition_kernels` directly; the other
+    conversions go through the Schur basis.
 
     EXAMPLES::
 
@@ -43,23 +132,37 @@ def init():
         sage: sage.combinat.sf.classical.conversion_functions = {}
         sage: init()
         sage: sage.combinat.sf.classical.conversion_functions[('Schur', 'powersum')]
-        <cyfunction t_SCHUR_POWSYM_symmetrica at ...>
+        Kernel conversion s_to_p
+        sage: sage.combinat.sf.classical.conversion_functions[('powersum', 'monomial')]
+        Kernel conversion p_to_s, s_to_m
 
     The following checks if the bug described in :issue:`15312` is fixed. ::
 
         sage: change = sage.combinat.sf.classical.conversion_functions[('powersum', 'Schur')]
-        sage: hideme = change({Partition([1]*47):ZZ(1)}) # long time
-        sage: change({Partition([2,2]):QQ(1)})
+        sage: hideme = change(Partition([1]*47)) # long time
+        sage: s = SymmetricFunctions(QQ).s()
+        sage: s._from_dict(change(Partition([2,2])), coerce=True)
         s[1, 1, 1, 1] - s[2, 1, 1] + 2*s[2, 2] - s[3, 1] + s[4]
     """
-    import sage.libs.symmetrica.all as symmetrica
-    for other_basis, other_name in translate.items():
-        for basis, name in translate.items():
-            try:
-                conversion_functions[(other_basis, basis)] = getattr(symmetrica,
-                        f't_{other_name}_{name}')
-            except AttributeError:
-                pass
+    tk = transition_kernels
+    to_s = {
+        "monomial": tk.m_to_s,
+        "homogeneous": tk.h_to_s,
+        "powersum": tk.p_to_s,
+        "elementary": tk.e_to_s,
+    }
+    from_s = {
+        "monomial": tk.s_to_m,
+        "homogeneous": tk.s_to_h,
+        "powersum": tk.s_to_p,
+        "elementary": tk.s_to_e,
+    }
+    for basis, f in to_s.items():
+        conversion_functions[basis, "Schur"] = KernelConversion(f)
+        conversion_functions["Schur", basis] = KernelConversion(from_s[basis])
+        for other, g in from_s.items():
+            if other != basis:
+                conversion_functions[basis, other] = KernelConversion(f, g)
 
 
 init()
@@ -188,21 +291,17 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         if isinstance(x, SymmetricFunctionAlgebra_classical.Element):
 
             P = x.parent()
-            m = x.monomial_coefficients()
 
             # determine the conversion function.
             try:
                 t = conversion_functions[(P.basis_name(), self.basis_name())]
-            except AttributeError:
+            except KeyError:
                 raise TypeError("do not know how to convert from %s to %s"
                                 % (P.basis_name(), self.basis_name()))
 
-            if R == QQ and P.base_ring() == QQ:
-                if m:
-                    return self._from_dict(t(m)._monomial_coefficients,
-                                           coerce=True)
-                return self.zero()
-            f = lambda part: self._from_dict(t({part: ZZ.one()})._monomial_coefficients)
+            # The coefficients are not coerced into the base ring, so that
+            # the coefficients of x are kept even if they do not coerce.
+            f = lambda part: self._from_dict(t(part))
             return self._apply_module_endomorphism(x, f)
 
         ###############################

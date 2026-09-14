@@ -25,9 +25,6 @@ from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
 from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.partition import Partitions
-from sage.rings.rational_field import QQ
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -1530,7 +1527,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         for (basis1_name, basis2_name) in conversion_functions:
             basis1 = getattr(self, basis1_name)()
             basis2 = getattr(self, basis2_name)()
-            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name, basis2_name], domain=basis1, codomain=basis2)
+            on_basis = ClassicalConversionOnBasis(
+                conversion_functions[basis1_name, basis2_name], basis2
+            )
             from sage.rings.rational_field import RationalField
             if basis2_name != "powersum" or self._base.has_coerce_map_from(RationalField()):
                 iso(basis1._module_morphism(on_basis, codomain=basis2))
@@ -1663,35 +1662,30 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return KBoundedQuotient(self, k, t)
 
 
-class SymmetricaConversionOnBasis:
-    def __init__(self, t, domain, codomain) -> None:
+class ClassicalConversionOnBasis:
+    def __init__(self, t, codomain) -> None:
         """
         Initialization of ``self``.
 
         INPUT:
 
-        - ``t`` -- a function taking a monomial in
-          CombinatorialFreeModule(QQ, Partitions()), and returning
-          a (partition, coefficient) list
+        - ``t`` -- a function taking a partition and returning a dictionary
+          mapping partitions to coefficients, such as the functions in
+          :data:`sage.combinat.sf.classical.conversion_functions`
 
-        - ``domain``, ``codomain`` -- parents
+        - ``codomain`` -- a basis of the symmetric functions
 
         Construct a function mapping a partition to an element of ``codomain``.
-
-        This is a temporary quick hack to wrap around the existing
-        symmetrica conversions, without changing their specs.
 
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ['x'])
-            sage: p = Sym.p(); s = Sym.s()
-            sage: def t(x): (p, c), = x; return [(p, 2*c), (p.conjugate(), c)]
-            sage: f = sage.combinat.sf.sf.SymmetricaConversionOnBasis(t, p, s)
+            sage: s = Sym.s()
+            sage: def t(la): return {la: 2, la.conjugate(): 1}
+            sage: f = sage.combinat.sf.sf.ClassicalConversionOnBasis(t, s)
             sage: f(Partition([3,1]))
             s[2, 1, 1] + 2*s[3, 1]
         """
-        self._domain = domain
-        self.fake_sym = CombinatorialFreeModule(QQ, Partitions())
         self._codomain = codomain
         self._t = t
 
@@ -1704,7 +1698,4 @@ class SymmetricaConversionOnBasis:
             sage: p[1] + s[1]                           # indirect doctest
             2*p[1]
         """
-        # TODO: use self._codomain.sum_of_monomials, when the later
-        # will have an optional optimization for the case when there
-        # is no repetition in the support
-        return self._codomain._from_dict(dict(self._t(self.fake_sym.monomial(partition))), coerce=True)
+        return self._codomain._from_dict(self._t(partition), coerce=True)
