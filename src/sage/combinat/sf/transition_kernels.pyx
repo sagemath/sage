@@ -6,24 +6,32 @@ elementary, monomial and power sum bases one basis element at a time.
 Partitions are plain tuples of Python integers and the results are
 dictionaries mapping partitions to coefficients.
 
-The two combinatorial kernels are:
+The combinatorial kernels are:
 
 - Kostka numbers `K_{\lambda\mu}`, computed by adding (Pieri rule) or
   removing horizontal strips;
+
+- inverse Kostka numbers, computed by removing (or adding) special border
+  strips, i.e., by expanding the Jacobi-Trudi determinant;
 
 - irreducible character values `\chi^\lambda(\mu)`, computed with the
   Murnaghan-Nakayama rule by adding or removing border strips, which are
   located using beta-numbers.
 
-The inverse Kostka transitions are obtained by unitriangularity in
-dominance order.
+The module also provides direct transitions between the complete
+homogeneous, elementary and power sum bases and between the power sum and
+monomial bases, products of monomial symmetric functions, the exponents of
+monomial symmetric polynomials, the Schur expansion of the modified
+Hall-Littlewood functions and the semistandard tableaux of given shape and
+content.
 
 Intermediate results are memoized; call :func:`clear_caches` to free them.
 The dictionaries returned by the public functions are fresh copies.
 
 .. WARNING::
 
-    This is a prototype; the arguments are not validated.
+    The arguments are not validated; partitions must be given as weakly
+    decreasing sequences of nonnegative integers.
 
 AUTHORS:
 
