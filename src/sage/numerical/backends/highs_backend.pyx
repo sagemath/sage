@@ -465,9 +465,18 @@ cdef class HiGHSBackend(GenericBackend):
         model_status = Highs_getModelStatus(self.highs)
 
         if model_status == kHighsModelStatusOptimal:
-            return 0  # Success
+            # Success
+            return 0
         elif model_status == kHighsModelStatusModelEmpty:
-            return 0  # Empty model is trivially optimal
+            for r in range(self.nrows()):
+                # Even when there are no variables, there may be rows
+                # declaring bounds on the empty sum that make the problem
+                # infeasible even when the model is empty.
+                b = self.row_bounds(r)
+                if ( (b[0] is not None and b[0] > 0) or
+                     (b[1] is not None and b[1] < 0) ):
+                    raise MIPSolverException("HiGHS: Problem is infeasible")
+            return 0
         elif model_status == kHighsModelStatusInfeasible:
             raise MIPSolverException("HiGHS: Problem is infeasible")
         elif model_status == kHighsModelStatusUnbounded:
