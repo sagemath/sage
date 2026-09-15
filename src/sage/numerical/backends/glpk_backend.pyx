@@ -7,6 +7,14 @@ AUTHORS:
 - John Perry (2012-01): glp_simplex preprocessing
 - John Perry and Raniere Gaia Silva (2012-03): solver parameters
 - Christian Kuper (2012-10): Additions for sensitivity analysis
+
+TESTS:
+
+This module is deprecated::
+
+    sage: import sage.numerical.backends.glpk_backend
+    ...DeprecationWarning...
+
 """
 
 # ****************************************************************************
@@ -30,7 +38,9 @@ from sage.cpython.string import FS_ENCODING
 from sage.numerical.mip import MIPSolverException
 from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.lp cimport *
+from sage.misc.superseded import deprecation
 
+deprecation(42802, "The GLPK backends are obsolete and will be removed, use HiGHs instead")
 
 cdef class GLPKBackend(GenericBackend):
     """
