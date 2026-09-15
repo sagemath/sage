@@ -1822,7 +1822,7 @@ cdef class HiGHSBackend(GenericBackend):
             if idx == index:
                 return str(name)
 
-        return f"constraint_{index}"
+        return ""
 
     cpdef solver_parameter(self, name, value=None):
         """
