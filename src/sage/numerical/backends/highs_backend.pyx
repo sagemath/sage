@@ -2738,11 +2738,11 @@ cdef class HiGHSBackend(GenericBackend):
 
             try:
                 status = Highs_writeModel(self.highs, temp_file)
-                if status != kHighsStatusOk:
+                if status not in [kHighsStatusOk, kHighsStatusWarning]:
                     raise MIPSolverException("HiGHS: Failed to write model for copy")
 
                 status = Highs_readModel(p.highs, temp_file)
-                if status != kHighsStatusOk:
+                if status not in [kHighsStatusOk, kHighsStatusWarning]:
                     raise MIPSolverException("HiGHS: Failed to read model for copy")
 
                 # Turn off logging for the copied model
