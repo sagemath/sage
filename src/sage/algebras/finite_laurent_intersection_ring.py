@@ -2415,7 +2415,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
 
         for chart_i in charts_to_process:
             f_prime = chart_i._substitute_from_base(xprod_base)
-            fP, _ = chart_i._laurent_poly_to_poly_up_to_unit(f_prime)
+            fP = f_prime.numerator()
 
             if fP == 0:
                 factors = []
@@ -2437,7 +2437,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
                     l_primes = []
                     for l in only_primes_over[len(cumulative) - 1]:
                         l_in_i = chart_i._substitute_from_base(l)
-                        l_prime, _ = chart_i._laurent_poly_to_poly_up_to_unit(l_in_i)
+                        l_prime = l_in_i.numerator()
                         if not chart_i.L(l_prime).is_unit():
                             l_primes.append(l_prime)
                     prod_l = chart_i.P(1)
