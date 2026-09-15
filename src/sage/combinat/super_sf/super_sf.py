@@ -1,5 +1,5 @@
 r"""
-Supersymmetric functions, with their realizations
+Supersymmetric Functions
 
 AUTHORS:
 
