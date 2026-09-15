@@ -1014,7 +1014,7 @@ class LPASeed(SageObject):
     def randomly_mutate(self, depth, inplace=True):
         r"""
         Randomly mutates this seed at ``depth`` indices.
-        
+
         This is useful for working out
         if a seed produces a finite type LP algebra.
 
