@@ -1882,6 +1882,12 @@ cdef class HiGHSBackend(GenericBackend):
         cdef HighsInt bool_value
         cdef char* str_value
 
+        # Property name aliases, for parity with other backends
+        if name == "timelimit":
+            name = "time_limit"
+        elif name == "mip_gap_tolerance":
+            name = "mip_rel_gap"
+
         name_bytes = str(name).encode('utf-8')
 
         if value is None:
