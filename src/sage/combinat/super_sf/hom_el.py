@@ -180,7 +180,7 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
         return res
 
     class Element(super_sfa.SuperSymAlgebra_multiplicative.Element):
-        def expand(self, n, alphabet_x='x', alphabet_y='y'):
+        def expand(self, n, m, alphabet_x='x', alphabet_y='y'):
             r"""
             Expand the supersymmetric function ``self`` as a supersymmetric
             polynomial in ``n`` variables.
@@ -207,25 +207,63 @@ class SupersymFunctionAlgebra_hom_el(super_sfa.SuperSymAlgebra_multiplicative):
             res = self.base_ring().one()
             monomial_coeff = self.monomial_coefficients()
             x_gens = [alphabet_x + str(i) for i in range(n)]
-            y_gens = [alphabet_y + str(i) for i in range(n)]
-            variables = x_gens + y_gens
-            R = PolynomialRing(self.base_ring(), variables)
+            R = PolynomialRing(self.base_ring(), x_gens)
             R_gens = R.gens_dict()
             x_gens = [R_gens[gen] for gen in x_gens]
-            y_gens = [R_gens[gen] for gen in y_gens]
             req_sum = R.zero()
             fin_res = R.zero()
-            for k in monomial_coeff:
-                for ki in k:
-                    for p in range(1, ki+1):
-                        for seq1 in combinations(range(n), (ki - p)):
-                            for seq2 in combinations_with_replacement(range(n), p):
-                                if basis_name == 'homogeneous':
-                                    res_prod = prod([y_gens[i] for i in range(len(seq1))]) * prod([x_gens[j] for j in range(len(seq2))])
+            if not m:
+                if basis_name == 'homogeneous':
+                    for k in monomial_coeff:
+                        for ki in k:
+                            for p in range(1, ki+1):
+                                for seq2 in combinations_with_replacement(range(n), p):
+                                    if basis_name == 'homogeneous':
+                                        res_prod = prod([x_gens[j] for j in seq2])
+                                        req_sum += res_prod
+                            res *= req_sum
+                        fin_res += monomial_coeff[k] * res
+                    return fin_res
+
+                elif basis_name == 'elementary':
+                    for k in monomial_coeff:
+                        for ki in k:
+                            for p in range(1, ki+1):
+                                for seq1 in combinations(range(n), (ki - p)):
+                                    res_prod = prod([x_gens[j] for j in seq1])
                                     req_sum += res_prod
-                                elif basis_name == 'elementary':
-                                    res_prod = prod([y_gens[i] for i in range(len(seq2))]) * prod([x_gens[j] for j in range(len(seq1))])
-                                    req_sum += res_prod
-                    res *= req_sum
-                fin_res += monomial_coeff[k] * res
-            return fin_res
+                            res *= req_sum
+                        fin_res += monomial_coeff[k] * res
+                    return fin_res
+
+            else:
+                y_gens = [alphabet_y + str(i) for i in range(m)]
+                variables = x_gens + y_gens
+                R = PolynomialRing(self.base_ring(), variables)
+                R_gens = R.gens_dict()
+                x_gens = [R_gens[gen] for gen in x_gens]
+                y_gens = [R_gens[gen] for gen in y_gens]
+                req_sum = R.zero()
+                fin_res = R.zero()
+                if basis_name == 'homogeneous':
+                    for k in monomial_coeff:
+                        for ki in k:
+                            for p in range(1, ki+1):
+                                for seq1 in combinations(range(n), (ki - p)):
+                                    for seq2 in combinations_with_replacement(range(n), p):
+                                            res_prod = prod([y_gens[i] for i in seq1]) * prod([x_gens[j] for j in seq2])
+                                            req_sum += res_prod
+                            res *= req_sum
+                        fin_res += monomial_coeff[k] * res
+
+                elif basis_name == 'elementary':
+                    for k in monomial_coeff:
+                        for ki in k:
+                            for p in range(1, ki+1):
+                                for seq1 in combinations(range(n), (ki - p)):
+                                    for seq2 in combinations_with_replacement(range(n), p):
+                                        res_prod = prod([y_gens[i] for i in seq2]) * prod([x_gens[j] for j in seq1])
+                                        req_sum += res_prod
+                            res *= req_sum
+                        fin_res += monomial_coeff[k] * res
+                return fin_res
