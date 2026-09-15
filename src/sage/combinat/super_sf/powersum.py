@@ -173,10 +173,10 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
         return self.lift.section()
 
     class Element(super_sfa.SuperSymAlgebra_multiplicative.Element):
-        def expand(self, n, alphabet_x='x', alphabet_y='y'):
+        def expand(self, n, m, alphabet_x='x', alphabet_y='y'):
             r"""
             Expand the supersymmetric function ``self`` as a supersymmetric
-            polynomial in ``n`` variables.
+            polynomial in ``n`` `x` variables and ``m`` `y` variables.
 
             INPUT:
 
@@ -189,18 +189,27 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
                 sage: from sage.combinat.super_sf.super_sf import SuperSymmetricFunctions
                 sage: s = SuperSymmetricFunctions(QQ)
                 sage: p = s.p()
-                sage: p[[4]].expand(3)
+                sage: p[[4]].expand(3,0)
                 x1^4 + x2^4 + x3^4 - y1^4 - y2^4 - y3^4
             """
             self_parts = self.monomial_coefficients()
             x_gens = [alphabet_x + str(i) for i in range(1, n + 1)]
-            y_gens = [alphabet_y + str(i) for i in range(1, n + 1)]
-            R = PolynomialRing(self.base_ring(), x_gens + y_gens)
-            R_gens = R.gens()
-            x_gens1 = R_gens[:n]
-            y_gens1 = R_gens[n:]
-            return sum(self_parts[part] *
-                       prod(sum(x**p - y**p
-                                for x, y in zip(x_gens1, y_gens1))
-                            for p in part)
-                       for part in self_parts)
+            if not m:
+                R = PolynomialRing(self.base_ring(), x_gens)
+                x_gens1 = R.gens()
+                return sum(self_parts[part] *
+                            prod(sum(x**p
+                                    for x in x_gens1)
+                                for p in part)
+                            for part in self_parts)
+            else:
+                y_gens = [alphabet_y + str(i) for i in range(1, m + 1)]
+                R = PolynomialRing(self.base_ring(), x_gens + y_gens)
+                R_gens = R.gens()
+                x_gens1 = R_gens[:n]
+                y_gens1 = R_gens[n:]
+                return sum(self_parts[part] *
+                        prod(sum(x**p - y**p
+                                    for x, y in zip(x_gens1, y_gens1))
+                                for p in part)
+                        for part in self_parts)
