@@ -457,6 +457,13 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: (QQ^[1, 2, 3]).basis().keys() <= (QQ^[2, 3]).basis().keys()
             False
 
+            sage: A = FiniteEnumeratedSet([GF(5)(1)])
+            sage: B = FiniteEnumeratedSet([ZZ(6), ZZ(7)])
+            sage: A <= B
+            True
+            sage: B <= A
+            True
+
         TESTS::
 
             sage: A = FiniteEnumeratedSet([1, 2])
@@ -481,7 +488,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         # Fast path: use hash-based set for expected O(m+n) performance
         try:
             other_set = set(other._elements)
-            return all(x in other_set for x in self._elements)
+            return all(x in other_set or x in other._elements
+                       for x in self._elements)
         except TypeError:
             # Fallback: linear scan remains worst-case quadratic
             return all(x in other._elements for x in self._elements)
@@ -520,6 +528,20 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             True
             sage: B >= A
             True
+
+            sage: A = FiniteEnumeratedSet([GF(5)(1)])
+            sage: B = FiniteEnumeratedSet([ZZ(6), ZZ(7)])
+            sage: B >= A
+            True
+            sage: A >= B
+            True
+
+        TESTS::
+
+            sage: A >= 5  # Unsupported type
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for ...
         """
         # Quick optimization: same object
         if self is other:
@@ -532,7 +554,8 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         # Fast path: use hash-based set for expected O(m+n) performance
         try:
             self_set = set(self._elements)
-            return all(x in self_set for x in other._elements)
+            return all(x in self_set or x in self._elements
+                       for x in other._elements)
         except TypeError:
             # Fallback: linear scan remains worst-case quadratic
             return all(x in self._elements for x in other._elements)
@@ -582,6 +605,17 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             True
 
         TESTS::
+
+            sage: class Sentinel:
+            ....:     def __lt__(self, other):
+            ....:         return "lt sentinel"
+            ....:     def __gt__(self, other):
+            ....:         return "gt sentinel"
+            sage: A = FiniteEnumeratedSet([1, 2])
+            sage: A < Sentinel()
+            'lt sentinel'
+            sage: A > Sentinel()
+            'gt sentinel'
 
             sage: A < 5  # Unsupported type
             Traceback (most recent call last):
