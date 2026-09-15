@@ -349,7 +349,7 @@ class LPASeed(SageObject):
                 self.mutate(index)
             return self
 
-        elif i not in range(self._rank):
+        if i not in range(self._rank):
             raise IndexError('did not pass in a valid integer index')
 
         # Mutate cluster variables:
@@ -500,7 +500,7 @@ class LPASeed(SageObject):
             return self._mutation_class_iter_bfs(
                 depth=depth, verbose=verbose, return_paths=return_paths)
 
-        elif algorithm == 'DFS':
+        if algorithm == 'DFS':
             return self._mutation_class_iter_dfs(
                 depth=depth, verbose=verbose, return_paths=return_paths)
 
@@ -684,10 +684,10 @@ class LPASeed(SageObject):
             sage: len(S.mutation_class())
             8
         """
-        return [S for S in self.mutation_class_iter(depth=depth,
-                                                    verbose=verbose,
-                                                    return_paths=return_paths,
-                                                    algorithm=algorithm)]
+        return list(self.mutation_class_iter(depth=depth,
+                                             verbose=verbose,
+                                             return_paths=return_paths,
+                                             algorithm=algorithm))
 
     def cluster_class_iter(self, depth=infinity, verbose=False,
                            algorithm='BFS'):
@@ -959,7 +959,7 @@ class LPASeed(SageObject):
             sage: S.cluster()
             [(x2 + 1)/x1, x2]
         """
-        return list(self._ambient_field(x) for x in self._cluster_vars)
+        return [self._ambient_field(x) for x in self._cluster_vars]
 
     def exchange_polys(self) -> list:
         r"""
@@ -993,7 +993,7 @@ class LPASeed(SageObject):
             sage: S.laurent_polys()
             [(x2 + x3 + 1)/(x2*x3), x3 + 1, x2 + 1]
         """
-        return list(self._ambient_field(f) for f in self._laurent_polys)
+        return [self._ambient_field(f) for f in self._laurent_polys]
 
     def rank(self):
         r"""
@@ -1252,7 +1252,7 @@ class LPASeed(SageObject):
 
             polys[i] = new_poly
 
-        return LPASeed({k: v for k, v in zip(vars, polys)}, coefficients=coefficients)
+        return LPASeed(dict(zip(vars, polys)), coefficients=coefficients)
 
 
 def _remove_repeat_indices(L) -> list:
@@ -1282,7 +1282,4 @@ def _remove_repeat_indices(L) -> list:
             flag = True
             index += 2  # skip over next element
 
-    if flag:
-        return _remove_repeat_indices(G)
-    else:
-        return G
+    return _remove_repeat_indices(G) if flag else G
