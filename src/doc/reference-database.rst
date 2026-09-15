@@ -2832,6 +2832,11 @@
               Series B, vol. 82, issue 2, (2001), pages: 175 -- 222, ISSN:
               0095 -- 8956, :doi:`10.1006/jctb.2000.2025`.
 
+.. [FIPS203] National Institute of Standards and Technology,
+   *Module-Lattice-Based Key-Encapsulation Mechanism Standard*.
+   FIPS 203, 2024.
+   https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf
+
 .. [FIV2012] \H. Fournier, A. Ismail, and A. Vigneron. *Computing the Gromov
              hyperbolicity of a discrete metric space*. 2012.
              :arxiv:`1210.3323`.
@@ -6380,6 +6385,12 @@
 
 .. [Sch2015] George Schaeffer. *Hecke stability and weight 1 modular forms*.
              Math. Z. 281:159-191, 2015. :doi:`10.1007/s00209-015-1477-9`
+
+.. [Sch22] Peter Schwabe, Roberto Avanzi, Joppe Bos, Leo Ducas,
+          Eike Kiltz, Tancrede Lepoint, Vadim Lyubashevsky,
+          John M. Schanck, Gregor Seiler, Damien Stehle,
+          *CRYSTALS-KYBER: A CCA-Secure Module-Lattice-Based KEM*.
+          https://eprint.iacr.org/2022/1696
 
 .. [Scha1996] Richard D. Schaefer. *An Introduction to Nonassociative Algebras*.
               Dover, New York, 1996.
