@@ -27,7 +27,7 @@ from sage.combinat.super_sf.hom_el import SupersymFunctionAlgebra_hom_el
 
 class SuperSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
-    The abstract class of commutative supersymmetric functions.
+    The abstract ring of commutative supersymmetric functions.
 
     A *supersymmetric function* is a symmetric function `f(\mathbf{x}|\mathbf{y})`
     defined over the variable sets `\mathbf{x}=(x_1, \ldots, x_m)` and `\mathbf{y}=(y_1, \ldots, y_n)`
