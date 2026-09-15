@@ -29,8 +29,9 @@ class SuperSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
     The abstract ring of commutative supersymmetric functions.
 
-    A *supersymmetric function* is a symmetric function `f(\mathbf{x}|\mathbf{y})`
-    defined over the variable sets `\mathbf{x}=(x_1, \ldots, x_m)` and `\mathbf{y}=(y_1, \ldots, y_n)`
+    A *supersymmetric function* is a function `f(\mathbf{x}|\mathbf{y})` defined
+    over the variable sets `\mathbf{x}=(x_1, \ldots, x_m)` and `\mathbf{y}=(y_1, \ldots, y_n)`
+    that is symmetric in the `\mathbf{x}` variables and the `\mathbf{y}` variables
     such that substituting `x_m = t` and `y_n = -t` results in `f(\mathbf{x'}|\mathbf{y'})`, where
     `\mathbf{x}=(x_1, \ldots, x_{m-1})` and `\mathbf{y}=(y_1, \ldots, y_{n-1})`.
 
