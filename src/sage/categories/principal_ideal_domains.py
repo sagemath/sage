@@ -41,7 +41,7 @@ class PrincipalIdealDomains(Category_singleton):
         """
         EXAMPLES:
 
-        Test that :issue:`42800` is fixed::
+        PIDs are Dedekind domains (see :issue:`42800`)::
 
             sage: PolynomialRing(Zmod(17), names='x') in DedekindDomains()
             True
