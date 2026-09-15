@@ -84,7 +84,7 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
 
         INPUT:
 
-        - ``part`` -- a list or partition
+        - ``part`` -- list or partition
 
         EXAMPLES::
 
