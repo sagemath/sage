@@ -272,4 +272,3 @@ class MLKEM(KEMBase):
         shared_secret = hashlib.sha256(v_bytes).digest()[:32]
 
         return shared_secret
-

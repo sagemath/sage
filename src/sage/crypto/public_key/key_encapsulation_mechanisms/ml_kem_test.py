@@ -20,4 +20,3 @@ def test_consistency(params):
     ct, ss1 = kem.encaps(pk)
     ss2 = kem.decaps(sk, ct)
     assert ss1 == ss2, f"ML-KEM-{params}: shared secrets do not match"
-
