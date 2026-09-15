@@ -423,8 +423,7 @@ class FiniteLaurentIntersectionRingChart:
         if hL == 0:
             raise ValueError("Divisor of 0 is undefined.")
 
-        mons = hL.monomials()
-        exps = [m.exponents()[0] for m in mons]
+        exps = hL.exponents()
         min_exp = [min(e[i] for e in exps) for i in range(self.n)]
 
         shift = self.L.monomial(tuple([-e for e in min_exp]))
@@ -2407,7 +2406,6 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         """
         if (not recompute) and self._extra_primes_cache is not None:
             return self._extra_primes_cache
-
         xprod_base = self._xprod_in_base()
 
         factor_list = []
