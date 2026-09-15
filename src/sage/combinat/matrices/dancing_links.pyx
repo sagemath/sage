@@ -565,6 +565,45 @@ cdef class dancing_linksWrapper:
         while self.search():
             yield self.get_solution()
 
+    def has_solution(self):
+        r"""
+        Return whether the problem as a solution.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
+            sage: d = dlx_solver(rows)
+            sage: d.has_solution()
+            True
+
+        ::
+
+            sage: rows = [[0,2], [3,4,5], [0,4], [2,3,4,5], [3], [1,2,3,4,5]]
+            sage: d = dlx_solver(rows)
+            sage: d.has_solution()
+            False
+
+        TESTS:
+
+        We check that reinitialization works ok::
+
+            sage: rows = [[0,1,2],[0,2],[1],[3]]
+            sage: d = dlx_solver(rows)
+            sage: d.number_of_solutions(ncpus=1)
+            2
+            sage: d.has_solution()
+            True
+            sage: d.has_solution()
+            True
+            sage: d.has_solution()
+            True
+
+        """
+        if self._x.search_is_started():
+            self.reinitialize()
+        return self.search() == 1
+
     def one_solution(self, ncpus=None, column=None):
         r"""
         Return the first solution found.
