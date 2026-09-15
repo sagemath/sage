@@ -530,9 +530,14 @@ cdef class HiGHSBackend(GenericBackend):
             2.0
         """
         cdef double obj_value
-
         obj_value = Highs_getObjectiveValue(self.highs)
-        # HiGHS already includes the offset, so don't add it again
+
+        # HiGHS will omit the constant term from the objective
+        # function's value if the model is empty!
+        model_status = Highs_getModelStatus(self.highs)
+        if model_status == kHighsModelStatusModelEmpty:
+            return self.obj_constant_term
+
         return obj_value
 
     cpdef get_variable_value(self, int variable):
