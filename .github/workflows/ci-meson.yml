@@ -180,7 +180,7 @@ jobs:
               matrix.tests == 'all' &&
               '--all-except="$SEPARATELY_TESTED_FLAKY_FILES"' ||
               '--new --long' }} ${{
-              startsWith(matrix.os, 'macos') && '--warn-long=60'
+              startsWith(matrix.os, 'macos') && '--warn-long=60' || ''
               }} -p4 --format github
           fi
 
