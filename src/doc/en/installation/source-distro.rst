@@ -68,7 +68,14 @@ already must be installed on your system:
 
    - `C/C++ compilers <../reference/spkg/gcc.html>`_
 
-.. only:: not html
+.. only:: latex
+
+   - `Fundamental system packages required for installing from source
+     <../reference/spkg/spkg.pdf#spkg-prereq>`_
+
+   - `C/C++ compilers <../reference/spkg/spkg.pdf#spkg-gcc>`_
+
+.. only:: not html and not latex
 
    - `Fundamental system packages required for installing from source
      <https://doc.sagemath.org/html/en/reference/spkg/_prereq.html>`_
