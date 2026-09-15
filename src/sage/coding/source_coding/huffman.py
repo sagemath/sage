@@ -447,6 +447,77 @@ class Huffman(SageObject):
                 tree = self._tree
         return "".join(chars)
 
+    def compress_encoded(self, encoded_string):
+        r"""
+        Compress the given binary-encoded string by grouping bits into characters.
+
+        INPUT:
+    
+        - ``encoded_string`` -- a binary string representing encoded data.
+
+        OUTPUT: 
+
+        A compressed string where every 8 bits are converted into a single character.
+
+        EXAMPLES:
+
+         This is how an encoded binary string is compressed and then decompressed::
+
+            sage: from sage.coding.source_coding.huffman import Huffman
+            sage: str = "Sage is my most favorite general purpose computer algebra system"
+            sage: h = Huffman(str)
+            sage: encoded = h.encode(str); encoded
+            '11000011010001010101100001111101001110011101001101101111011110111001111010000101101110100000111010101000101000000010111011011000110100101001011100010011011110101011100100110001100101001001110101110101110110001000101011000111101101101111110011111101110100011'
+            sage: compressed = h.compress_encoded(encoded); compressed
+            'ÃEX}9Óo{\x9e\x85º\x0e¨\xa0.ØÒ\x97\x13z¹1\x94\x9duØ\x8aÇ¶üýÑ\x80'
+            sage: decompressed = h.decompress_encoded(compressed); decompressed
+            '11000011010001010101100001111101001110011101001101101111011110111001111010000101101110100000111010101000101000000010111011011000110100101001011100010011011110101011100100110001100101001001110101110101110110001000101011000111101101101111110011111101110100011'
+            sage: h.decode(decompressed)
+            'Sage is my most favorite general purpose computer algebra system'
+        """  
+        # Compute the number of padding zeros needed to make the length a multiple of 8
+        self.padding_size = (8 - len(encoded_string) % 8) % 8
+        # Append zeros to ensure divisibility by 8
+        encoded_string += "0" * self.padding_size
+        # Convert every 8 bits into a single character
+        compressed_text = "".join(chr(int(encoded_string[i:i+8], 2)) for i in range(0, len(encoded_string), 8))
+        return compressed_text
+
+    def decompress_encoded(self, compressed_text):
+        r"""
+        Decompress the given compressed string back into its binary form.
+
+        INPUT:
+    
+        - ``compressed_text`` -- a string where each character represents 8 bits of compressed binary data.
+
+        OUTPUT: 
+
+        A binary string representing the original encoded data before compression.
+
+        EXAMPLES:
+
+         This is how an encoded binary string is compressed and then decompressed::
+
+            sage: from sage.coding.source_coding.huffman import Huffman
+            sage: str = "Sage is my most favorite general purpose computer algebra system"
+            sage: h = Huffman(str)
+            sage: encoded = h.encode(str); encoded
+            '11000011010001010101100001111101001110011101001101101111011110111001111010000101101110100000111010101000101000000010111011011000110100101001011100010011011110101011100100110001100101001001110101110101110110001000101011000111101101101111110011111101110100011'
+            sage: compressed = h.compress_encoded(encoded); compressed
+            'ÃEX}9Óo{\x9e\x85º\x0e¨\xa0.ØÒ\x97\x13z¹1\x94\x9duØ\x8aÇ¶üýÑ\x80'
+            sage: decompressed = h.decompress_encoded(compressed); decompressed
+            '11000011010001010101100001111101001110011101001101101111011110111001111010000101101110100000111010101000101000000010111011011000110100101001011100010011011110101011100100110001100101001001110101110101110110001000101011000111101101101111110011111101110100011'
+            sage: h.decode(decompressed)
+            'Sage is my most favorite general purpose computer algebra system'            
+        """
+        # Convert each character back into its 8-bit binary representation
+        binary_string = "".join(f"{ord(char):08b}" for char in compressed_text)
+        # Remove padding zeros added during compression
+        if self.padding_size > 0:
+            binary_string = binary_string[:-self.padding_size]
+        return binary_string
+
     def encoding_table(self):
         r"""
         Return the current encoding table.
