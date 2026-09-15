@@ -9,6 +9,7 @@ Principal ideal domains
 # *****************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
+from sage.categories.dedekind_domains import DedekindDomains
 from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 
 
@@ -27,7 +28,7 @@ class PrincipalIdealDomains(Category_singleton):
       sage: PrincipalIdealDomains()
       Category of principal ideal domains
       sage: PrincipalIdealDomains().super_categories()
-      [Category of unique factorization domains]
+      [Category of unique factorization domains, Category of Dedekind domains]
 
     See also :wikipedia:`Principal_ideal_domain`
 
@@ -38,12 +39,14 @@ class PrincipalIdealDomains(Category_singleton):
 
     def super_categories(self):
         """
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: PrincipalIdealDomains().super_categories()
-            [Category of unique factorization domains]
+        Test that :issue:`42800` is fixed::
+
+            sage: PolynomialRing(Zmod(17), names='x') in DedekindDomains()
+            True
         """
-        return [UniqueFactorizationDomains()]
+        return [UniqueFactorizationDomains(), DedekindDomains()]
 
     def additional_structure(self):
         """
