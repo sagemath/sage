@@ -16,8 +16,8 @@ class SupersymFunctionAlgebra_powersum(super_sfa.SuperSymAlgebra_multiplicative)
     r"""
     Powersum supersymmetric functions.
 
-    The powersum supersymmetric function defined on variables `\mathbf{x}` and
-    `\mathbf{y}`, `p_i(\mathbf{x} \mid \mathbf{y})`, is given as
+    The powersum supersymmetric function on variables `\mathbf{x}` and
+    `\mathbf{y}` is defined as
 
     .. MATH::
 
