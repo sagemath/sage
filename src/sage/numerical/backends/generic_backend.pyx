@@ -1266,7 +1266,7 @@ cdef class GenericBackend:
         Test, with an actual working backend, that comparing a problem with itself works::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver='GLPK')
+            sage: p = get_solver(solver='Highs')
             sage: tester = p._tester()
             sage: p._do_test_problem_data(tester, p)
         """
@@ -1609,9 +1609,9 @@ def default_mip_solver(solver=None):
     EXAMPLES::
 
         sage: former_solver = default_mip_solver()
-        sage: default_mip_solver("GLPK")
+        sage: default_mip_solver("Highs")
         sage: default_mip_solver()
-        'Glpk'
+        'Highs'
         sage: default_mip_solver("PPL")
         sage: default_mip_solver()
         'Ppl'
@@ -1807,9 +1807,9 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
 
     Passing a callable as the ``solver``::
 
-        sage: from sage.numerical.backends.glpk_backend import GLPKBackend
-        sage: p = get_solver(solver=GLPKBackend); p
-        <...sage.numerical.backends.glpk_backend.GLPKBackend...>
+        sage: from sage.numerical.backends.highs_backend import HiGHSBackend
+        sage: p = get_solver(solver=HiGHSBackend); p
+        <...sage.numerical.backends.highs_backend.HiGHSBackend...>
 
     Passing a callable that customizes a backend::
 
@@ -1826,11 +1826,11 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
     Test that it works when the default solver is a callable, see :issue:`28914`::
 
         sage: old_default = default_mip_solver()
-        sage: from sage.numerical.backends.glpk_backend import GLPKBackend
-        sage: default_mip_solver(GLPKBackend)
+        sage: from sage.numerical.backends.highs_backend import HiGHSBackend
+        sage: default_mip_solver(HiGHSBackend)
         sage: M = MixedIntegerLinearProgram()   # indirect doctest
         sage: M.get_backend()
-        <...GLPKBackend...>
+        <...HiGHSBackend...>
         sage: default_mip_solver(old_default)
     """
     if solver is None:
