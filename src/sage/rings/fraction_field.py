@@ -87,6 +87,7 @@ from sage.categories.rings import Rings
 from sage.misc import latex
 from sage.misc.cachefunc import cached_method
 from sage.rings import fraction_field_element, ring
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.structure.coerce import py_scalar_to_element
 from sage.structure.coerce_maps import CallableConvertMap, DefaultConvertMap_unique
@@ -526,6 +527,29 @@ class FractionField_generic(ring.Field):
             Multivariate Polynomial Ring in x, y over Rational Field
         """
         return self._R
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of the underlying ring recursively.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']['y']
+            sage: K = R.fraction_field()
+            sage: K.variable_names_recursive()
+            ('x', 'y')
+            sage: K.variable_names_recursive(1)
+            ('y',)
+        """
+        try:
+            variable_names_recursive = self.ring().variable_names_recursive
+        except AttributeError:
+            return ()
+        return variable_names_recursive(depth)
 
     @cached_method
     def is_exact(self):
