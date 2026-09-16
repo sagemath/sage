@@ -26,11 +26,14 @@ class VoronoiDiagram(SageObject):
     Base class for the  Voronoi diagram.
 
     Compute the Voronoi diagram of a list of points.
+    If weights are given, computes their power diagram instead.
+    These weights should be though of as the radii of circles around the points (see [Ed1987]_).
 
     INPUT:
 
     - ``points`` -- list of points; any valid input for the
       :class:`PointConfiguration` will do
+    - ``weights`` -- list (default: ``None``) list of weights (one for each point, in the same order). If ``None``, will set all weights to zero, producing the classic Voronoi diagram.
 
     OUTPUT: an instance of the VoronoiDiagram class
 
@@ -75,17 +78,17 @@ class VoronoiDiagram(SageObject):
      - The dual construction: Delaunay triangulation
      - improve 2d-plotting
      - implement 3d-plotting
-     - more general constructions, like Voroi diagrams with weights (power diagrams)
 
     REFERENCES:
 
      - [Mat2002]_ Ch.5.7, p.118.
+     - [Ed1987]_ Ch.13.6, p.327
 
     AUTHORS:
 
     - Moritz Firsching (2012-09-21)
     """
-    def __init__(self, points):
+    def __init__(self, points, weights = None):
         r"""
         See ``VoronoiDiagram`` for full documentation.
 
@@ -97,6 +100,13 @@ class VoronoiDiagram(SageObject):
         self._P = {}
         self._points = PointConfiguration(points)
         self._n = self._points.n_points()
+        self._weights = {}
+        
+        if weights is None: # Assume all weights are equal to zero. This produces the classic Voronoi diagram.
+            weights = [0]*self._n
+        for poi, wei in zip(self._points, weights):
+            self._weights[poi] = wei
+        
         if not self._n or self._points.base_ring().is_subring(QQ):
             self._base_ring = QQ
         elif isinstance(self._points.base_ring(), (sage.rings.abc.RealDoubleField, sage.rings.abc.AlgebraicRealField)):
@@ -113,7 +123,7 @@ class VoronoiDiagram(SageObject):
         if self._n > 0:
             self._d = self._points.ambient_dim()
             e = [([sum(vector(i)[k] ** 2
-                       for k in range(self._d))] +
+                       for k in range(self._d)) - self._weights[i] ** 2] +
                   [(-2) * vector(i)[l] for l in range(self._d)] + [1])
                  for i in self._points]
             # we attach hyperplane to the paraboloid
@@ -139,6 +149,7 @@ class VoronoiDiagram(SageObject):
                         hlistnormalized.append([i / ineq[0] for i in ineq[1:]])
 
         for i in range(self._n):
+            # TODO: Regions might be empty in a power diagram! Currently, this results in an exception.
             # for base ring RDF and AA, Polyhedron keeps the order of the
             # points in the input, for QQ we resort
             if self.base_ring() == QQ:
@@ -169,6 +180,25 @@ class VoronoiDiagram(SageObject):
             not necessarily regular.
         """
         return self._points
+    
+    def weights(self):
+        r"""
+        Return the input weights as a dictionary of numbers.
+
+        EXAMPLES::
+
+            sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]]); V.weights()
+            {P(0.500000000000000, 3.00000000000000): 0,
+            P(2.00000000000000, 5.00000000000000): 0,
+            P(4.00000000000000, 5.00000000000000): 0,
+            P(4.00000000000000, -1.00000000000000): 0}
+            sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]], weights = [2, 3, 0, 2]); V.weights()
+            {P(0.500000000000000, 3.00000000000000): 2,
+            P(2.00000000000000, 5.00000000000000): 3,
+            P(4.00000000000000, 5.00000000000000): 0,
+            P(4.00000000000000, -1.00000000000000): 2}
+        """
+        return self._weights
 
     def ambient_dim(self):
         r"""
@@ -203,6 +233,7 @@ class VoronoiDiagram(SageObject):
             ....:                                                 rays=[(RDF(4.5), RDF(1), -RDF(25)), (-RDF(2.25), -RDF(1), RDF(2.5))],
             ....:                                                 vertices=[(-RDF(1.1074999999999999), RDF(1.149444444), RDF(9.0138888890000004))])}
             True
+        #TODO: Add an example with empty regions.
         """
         return self._P
 
