@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.groups
 r"""
 PALP normal form of vertices of a lattice polytope
 """
