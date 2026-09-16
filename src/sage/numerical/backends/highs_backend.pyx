@@ -243,7 +243,9 @@ cdef class HiGHSBackend(GenericBackend):
         if name is None:
             name = f"x_{col_idx}"
         name_bytes = str(name).encode('utf-8')
-        Highs_passColName(self.highs, col_idx, name_bytes)
+        status = Highs_passColName(self.highs, col_idx, name_bytes)
+        if status != kHighsStatusOk:
+            raise MIPSolverException("HiGHS: Failed to set column name")
 
         return col_idx
 
@@ -367,7 +369,9 @@ cdef class HiGHSBackend(GenericBackend):
         if name is None:
             name = f"x_{col_idx}"
         name_bytes = str(name).encode('utf-8')
-        Highs_passColName(self.highs, col_idx, name_bytes)
+        status = Highs_passColName(self.highs, col_idx, name_bytes)
+        if status != kHighsStatusOk:
+            raise MIPSolverException("HiGHS: Failed to set column name")
 
         return col_idx
 
