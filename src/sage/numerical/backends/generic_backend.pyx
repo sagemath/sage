@@ -1818,8 +1818,10 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
         ....:     b = get_solver(solver="Highs")
         ....:     b.solver_parameter('timelimit', 60)
         ....:     return b
-        sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,solver=highs_with_timelimit) # long time
-        8
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: G = graphs.CompleteGraph(5)
+        sage: cutwidth(G, algorithm='MILP', solver=highs_with_timelimit)[0]
+        6
 
     TESTS:
 
