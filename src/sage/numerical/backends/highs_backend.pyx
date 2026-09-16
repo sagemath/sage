@@ -56,7 +56,6 @@ cdef class HiGHSBackend(GenericBackend):
 
         # Initialize metadata
         self.prob_name = ""
-        self.row_name_var = {}
         self.numcols = 0
         self.numrows = 0
         self.obj_constant_term = 0.0
@@ -835,7 +834,7 @@ cdef class HiGHSBackend(GenericBackend):
             sage: p.add_linear_constraint([(0, 1), (1, 1)], None, 2.0)
         """
         cdef double lb, ub
-        cdef HighsInt num_nz
+        cdef HighsInt num_nz, row_idx
         cdef HighsInt* indices
         cdef double* values
         cdef HighsInt status
@@ -893,8 +892,11 @@ cdef class HiGHSBackend(GenericBackend):
 
         # Handle name
         if name is not None:
-            self.row_name_var[name] = self.numrows
-
+            name_bytes = str(name).encode('utf-8')
+            row_idx = self.numrows
+            status = Highs_passRowName(self.highs, row_idx, name_bytes)
+            if status != kHighsStatusOk:
+                raise MIPSolverException("HiGHS: Failed to set constraint name")
         self.numrows += 1
 
     cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names=None):
@@ -924,7 +926,7 @@ cdef class HiGHSBackend(GenericBackend):
         """
         cdef int i
         cdef double lb, ub
-        cdef HighsInt status
+        cdef HighsInt status, row_idx
 
         # Convert bounds
         if lower_bound is None:
@@ -949,7 +951,11 @@ cdef class HiGHSBackend(GenericBackend):
             if names is not None and i < len(names):
                 name = names[i]
                 if name is not None:
-                    self.row_name_var[name] = self.numrows
+                    name_bytes = str(name).encode('utf-8')
+                    row_idx = self.numrows
+                    status = Highs_passRowName(self.highs, row_idx, name_bytes)
+                    if status != kHighsStatusOk:
+                        raise MIPSolverException("HiGHS: Failed to set constraint name")
 
             self.numrows += 1
 
@@ -1532,7 +1538,7 @@ cdef class HiGHSBackend(GenericBackend):
         status = Highs_getColName(self.highs, index, cn)
         if status != kHighsStatusOk:
             free(cn)
-            raise MIPSolverException("HiGHS: failed to obtain column name")
+            raise MIPSolverException("HiGHS: Failed to obtain column name")
 
         result = cn.decode('utf-8')
         free(cn)
@@ -1835,12 +1841,29 @@ cdef class HiGHSBackend(GenericBackend):
         if index < 0 or index >= self.numrows:
             raise ValueError(f"invalid row index {index}")
 
-        # Search for name in dictionary
-        for name, idx in self.row_name_var.items():
-            if idx == index:
-                return str(name)
+        cdef char* rn
+        rn = <char*> malloc((kHighsMaximumStringLength + 1) * sizeof(char))
+        if rn == NULL:
+            raise MemoryError("failed to allocate memory for row name")
 
-        return ""
+        cdef HighsInt status
+        status = Highs_getRowName(self.highs, index, rn)
+        if status != kHighsStatusOk:
+            # HiGHS won't let you set the empty string as a row name,
+            # and it also doesn't return the empty string when the
+            # name is unset. This is somewhat at odds with what we
+            # expect in Sage. Reading the code, the only way the
+            # status can be "not OK" is if the index is bad; we
+            # already checked the index, so if we get here, the only
+            # reason is because this row has no name. Return the empty
+            # string by default.
+            free(rn)
+            return ""
+
+        result = rn.decode('utf-8')
+        free(rn)
+        return result
+
 
     cpdef solver_parameter(self, name, value=None):
         """
@@ -2110,20 +2133,6 @@ cdef class HiGHSBackend(GenericBackend):
 
         self.numrows -= 1
 
-        # Update row name mapping
-        names_to_update = {}
-        names_to_remove = []
-        for name, row_idx in self.row_name_var.items():
-            if row_idx < i:
-                names_to_update[name] = row_idx
-            elif row_idx > i:
-                names_to_update[name] = row_idx - 1
-            else:
-                names_to_remove.append(name)
-
-        for name in names_to_remove:
-            del self.row_name_var[name]
-        self.row_name_var.update(names_to_update)
 
     cpdef remove_constraints(self, constraints):
         """
@@ -2770,7 +2779,6 @@ cdef class HiGHSBackend(GenericBackend):
                     os.unlink(temp_file.decode('utf-8'))
 
         p.prob_name = self.prob_name
-        p.row_name_var = copy(self.row_name_var)
         p.numcols = self.numcols
         p.numrows = self.numrows
         p.obj_constant_term = self.obj_constant_term
