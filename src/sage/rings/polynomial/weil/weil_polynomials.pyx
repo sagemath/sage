@@ -9,11 +9,10 @@ coefficients. One may also impose certain congruence conditions; this can be
 used to limit the Newton polygons of the resulting polynomials, or to lift
 a polynomial specified by a congruence to a Weil polynomial.
 
-For large jobs, one can set parallel=True to use OpenMP (if support was
-enabled at compile time). Due to increased overhead, this is not recommended
-for smaller problem sizes. To enable support, ensure that your compiler supports
-OpenMP and remove the appropriate # characters in the distutils commands below.
-(You may also need to move those lines to the start of the file.)
+For large jobs, one can set ``parallel=True`` to use OpenMP. Meson enables
+OpenMP support automatically when a compatible compiler and runtime are found.
+Otherwise, only serial execution is available. Due to increased overhead,
+parallel execution is not recommended for smaller problem sizes.
 
 AUTHORS:
 
@@ -216,7 +215,8 @@ cdef class dfs_manager:
                         if self.dy_data_buf[i].flag == -1:
                             u += 1
                     for i in prange(np, schedule='dynamic'):  # Redistribute work to idle processes
-                        j = (i-k) % np
+                        # Keep the dividend nonnegative with cdivision=True.
+                        j = (i - k + np) % np
                         ps_dynamic_split(self.dy_data_buf[j], self.dy_data_buf[i])
                     sig_off()
             for i in range(np):
@@ -434,10 +434,10 @@ class WeilPolynomials():
         If set, imposes an upper bound on the number of terminal nodes during the search
         (will raise a :exc:`RuntimeError` if exceeded).
 
-    - ``parallel`` -- boolean (default: ``False``); whether to use multiple processes
+    - ``parallel`` -- boolean (default: ``False``); whether to use multiple threads
 
         If set, will raise an error unless this file was compiled with OpenMP support
-        (see instructions at the top of :mod:`sage.rings.polynomial.weil.weil_polynomials`).
+        (see :mod:`sage.rings.polynomial.weil.weil_polynomials`).
 
     - ``squarefree`` -- boolean (default: ``False``)
 
@@ -564,6 +564,20 @@ class WeilPolynomials():
             sage: it = iter(w)
             sage: next(it) # Results reflect the changed parameters
             3*x^10 + x^9 - x^8 + 7*x^7 + 5*x^6 - 2*x^5 + 5*x^4 + 7*x^3 - x^2 + x + 3
+
+        TESTS:
+
+        Parallel iteration agrees with serial iteration when OpenMP is available
+        (:issue:`41626`)::
+
+            sage: for d, q in [(4, 2), (6, 1)]:
+            ....:     serial = sorted(WeilPolynomials(d, q))
+            ....:     try:
+            ....:         parallel = WeilPolynomials(d, q, parallel=True)
+            ....:     except RuntimeError as err:
+            ....:         assert str(err) == "Parallel execution not supported"
+            ....:     else:
+            ....:         assert sorted(parallel) == serial
         """
         if parallel and not has_openmp():
             raise RuntimeError("Parallel execution not supported")
