@@ -2274,15 +2274,14 @@ class Bijectionist(SageObject):
         EXAMPLES::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: next(bij.solutions_iterator())
-            ...DeprecationWarning...
-            {'a': 0, 'b': 1, 'c': 0}
+            {'a': 0, 'b': 0, 'c': 1}
 
             sage: list(bij.solutions_iterator())
-            [{'a': 0, 'b': 1, 'c': 0},
-             {'a': 1, 'b': 0, 'c': 0},
-             {'a': 0, 'b': 0, 'c': 1}]
+            [{'a': 0, 'b': 0, 'c': 1},
+             {'a': 0, 'b': 1, 'c': 0},
+             {'a': 1, 'b': 0, 'c': 0}]
 
             sage: N = 4
             sage: A = B = [permutation for n in range(N) for permutation in Permutations(n)]
@@ -2304,7 +2303,7 @@ class Bijectionist(SageObject):
 
             sage: P = [list(a) for n in range(N) for a in Permutations(n).conjugacy_classes()]
 
-            sage: bij = Bijectionist(A, B, tau, solver='GLPK')
+            sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((len, len))
             sage: bij.set_constant_blocks(P)
             sage: for solution in bij.solutions_iterator():
@@ -2533,7 +2532,7 @@ class _BijectionistMILP:
         EXAMPLES::
 
             sage: A = B = ["a", "b", "c"]
-            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2, solver='GLPK')
+            sage: bij = Bijectionist(A, B, lambda x: A.index(x) % 2)
             sage: bij.set_constant_blocks([["a", "b"]])
             sage: next(bij.solutions_iterator())
             {'a': 0, 'b': 0, 'c': 1}
@@ -2637,17 +2636,17 @@ class _BijectionistMILP:
         TESTS::
 
             sage: A = B = 'abc'
-            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
+            sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2)
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: bmilp = _BijectionistMILP(bij)
             sage: it = bmilp.solutions_iterator(False, [])
             sage: it2 = bmilp.solutions_iterator(False, [bmilp._x[('c', 1)] == 1])
             sage: next(it)
-            {'a': 0, 'b': 1, 'c': 0}
+            {'a': 0, 'b': 0, 'c': 1}
             sage: next(it2)
             {'a': 0, 'b': 0, 'c': 1}
             sage: next(it)
-            {'a': 0, 'b': 0, 'c': 1}
+            {'a': 0, 'b': 1, 'c': 0}
             sage: next(it)
             {'a': 1, 'b': 0, 'c': 0}
         """
