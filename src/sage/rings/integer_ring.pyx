@@ -103,8 +103,7 @@ cdef class IntegerRing_class(Ring):
         sage: Z.is_field()
         False
         sage: Z.category()
-        Join of Category of Dedekind domains
-            and Category of euclidean domains
+        Join of Category of euclidean domains
             and Category of noetherian rings
             and Category of infinite enumerated sets
             and Category of metric spaces
@@ -297,8 +296,9 @@ cdef class IntegerRing_class(Ring):
             sage: ZZ.variable_names()
             ()
         """
-        cat = (EuclideanDomains(), DedekindDomains(),
-               InfiniteEnumeratedSets().Metric(), NoetherianRings())
+        cat = (EuclideanDomains(),
+               InfiniteEnumeratedSets().Metric(),
+               NoetherianRings())
         Parent.__init__(self, base=self, names=(), normalize=False,
                         category=cat)
         self._populate_coercion_lists_(init_no_parent=True,
