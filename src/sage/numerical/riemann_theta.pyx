@@ -1156,11 +1156,12 @@ cdef class RiemannTheta:
         sage: c = [[1,0],[1,0],2]
         sage: v = vector(GF(2),[1,0,1,0])
         sage: RT(char=c)  # abs tol = 1e-24
-        1.2071813646649472697563e-25 - 2.8725542860550068599620e-26*I
+        1.2071813646649472697563e-25 + 1.9090264090908082850844e-32*I
         sage: RT(char=v)  # abs tol = 1e-24
-        1.2071813646649472697563e-25 - 2.8725542860550068599620e-26*I
+        1.2071813646649472697563e-25 + 1.9090264090908082850844e-32*I
         sage: RT(char=c, derivs=[[0],[1]]) # abs tol = 1e-24
-        (-0.59552188399685576910149 - 1.1412196198763623205771e-49*I, -3.5185834728040112058953e-32 + 2.5226254523149252440284e-56*I)
+        (-0.59552188399685576910148 - 3.8217163546690040145772e-57*I,
+         0.00000000000000000000000)
 
     We check that for the genus 2 curve
 
@@ -1327,7 +1328,7 @@ cdef class RiemannTheta:
             sage: from sage.numerical.riemann_theta import RiemannTheta
             sage: RT = RiemannTheta(matrix(CC,2,2,[2*I,0,0,3*I]))
             sage: RT(z=(0,0),char=[[1,0],[0,1],2],derivs=[0,0,0]).abs() # abs tol = 1e-15
-            2.88494706892332e-16
+            3.63935364793918e-20
         """
         if z is None:
             z = self.CCg.zero()
@@ -1455,7 +1456,7 @@ cdef class RiemannTheta:
         # store some quantities for fast access
         # note that xvec is actually (2/N)*(x+delta). This is the scaling
         # with which it gets used later.
-        cdef Vector_mpfr xvec = Vector_mpfr.from_vector((2/N)*(x+delta/N))
+        cdef Vector_mpfr xvec = Vector_mpfr.from_vector((ZZ(2)/N)*(x+delta/N))
         cdef Vector_mpfr cvec = Vector_mpfr.from_vector(c)
         cdef Vector_long Netavec = Vector_long.from_list(N*roundYinv_y-eps)
 
