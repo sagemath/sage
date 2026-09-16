@@ -2325,6 +2325,11 @@
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
 
+.. [DFLLW2023] Luca De Feo, Antonin Leroux, Patrick Longa and Benjamin Wesolowski:
+               *New Algorithms for the Deuring Correspondence: Towards Practical
+               and Secure SQISign Signatures*. Eurocrypt 2023.
+               https://eprint.iacr.org/2022/234.pdf
+
 .. [DFMS1996] Philipppe Di Francesco, Pierre Mathieu, and David Sénéchal.
               *Conformal Field Theory*. Graduate Texts in Contemporary
               Physics, Springer, 1996.
@@ -4281,6 +4286,11 @@
 .. [KLPR2010] \L. R. Knudsen, G. Leander, A. Poschmann, and M. J. B. Robshaw,
               *PRINTcipher: A block cipher for IC-printing*; in
               CHES, (2010), pp. 16-32.
+
+.. [KLPT2014] David Kohel, Kristin Lauter, Christophe Petit, and Jean-Pierre Tignol:
+              *On the quaternion `\ell`-isogeny path problem*.
+              LMS Journal of Computation and Mathematics 17, pp. 418-432, 2014.
+              https://ia.cr/2014/505
 
 .. [KLRS2016] \S.-J. Kang, K.-H. Lee, H. Ryu, and B. Salisbury.
               *A combinatorial description of the affine Gindikin-Karpelevich
