@@ -537,9 +537,7 @@ def two_torsion_part(E, psi):
     return psi.gcd(psi_2)
 
 
-def _factored_isogeny_from_kernel_polynomial(E, kernel_polynomial,
-                                             codomain=None, model=None,
-                                             check=True):
+def _factored_isogeny_from_kernel_polynomial(E, kernel_polynomial, check=True):
     r"""
     Construct an isogeny from a kernel polynomial with both a nontrivial
     2-torsion part and another component, recursively extracting
@@ -591,25 +589,127 @@ def _factored_isogeny_from_kernel_polynomial(E, kernel_polynomial,
 
     psi_2tor = two_torsion_part(E, psi)
     if psi_2tor.degree() == 0:
-        return EllipticCurveIsogeny(E, psi, codomain=codomain, model=model,
-                                    check=check)
+        return EllipticCurveIsogeny(E, psi, check=check)
 
     psi_quotient = psi // psi_2tor
     if psi_quotient.degree() == 0:
-        return EllipticCurveIsogeny(E, psi_2tor, codomain=codomain,
-                                    model=model, check=check)
+        return EllipticCurveIsogeny(E, psi_2tor, check=check)
 
     phi_2tor = EllipticCurveIsogeny(E, psi_2tor, check=check)
     psi_image = phi_2tor.push_subgroup(psi_quotient)
-    phi_quotient = _factored_isogeny_from_kernel_polynomial(
-        phi_2tor.codomain(), psi_image, codomain=codomain, model=model,
-        check=check)
+    phi_quotient = _factored_isogeny_from_kernel_polynomial(phi_2tor.codomain(), psi_image, check=check)
     factored_isogeny = phi_quotient * phi_2tor
 
     if check and factored_isogeny.kernel_polynomial() != psi:
         raise ValueError(f"the polynomial {psi} does not define a finite subgroup of {E}")
 
     return factored_isogeny
+
+
+def _construct_isogeny(E, kernel=None, codomain=None, degree=None, model=None, check=True):
+    r"""
+    Wrapper around ``EllipticCurveIsogeny`` class to support old
+    constructor arguments.
+
+    EXAMPLES:
+
+    The following example shows how to specify an isogeny from domain
+    and codomain::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import _construct_isogeny
+        sage: E = EllipticCurve('11a1')
+        sage: R.<x> = QQ[]
+        sage: f = x^2 - 21*x + 80
+        sage: phi = E.isogeny(f)
+        sage: E2 = phi.codomain()
+        sage: phi_s = _construct_isogeny(E, None, E2, 5); phi_s
+        Isogeny of degree 5
+         from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+           to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580 over Rational Field
+        sage: phi_s == phi
+        True
+        sage: phi_s.rational_maps() == phi.rational_maps()
+        True
+
+    However, only cyclic normalized isogenies can be constructed this way.
+    The non-cyclic multiplication-by-`3` isogeny won't be found::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import _construct_isogeny
+        sage: _construct_isogeny(E, None, codomain=E, degree=9)
+        Traceback (most recent call last):
+        ...
+        ValueError: the two curves are not linked by a cyclic normalized isogeny of degree 9
+
+    Non-normalized isogeny also won't be found::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import _construct_isogeny
+        sage: _construct_isogeny(E2, None, codomain=E, degree=5)
+        Traceback (most recent call last):
+        ...
+        ValueError: the two curves are not linked by a cyclic normalized isogeny of degree 5
+        sage: phihat = phi.dual(); phihat
+        Isogeny of degree 5
+         from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580
+              over Rational Field
+           to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+        sage: phihat.is_normalized()
+        False
+
+    Here an example of a construction of a endomorphisms with cyclic
+    kernel on a CM-curve::
+
+        sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import _construct_isogeny
+        sage: K.<i> = NumberField(x^2 + 1)
+        sage: E = EllipticCurve(K, [1,0])
+        sage: RK.<X> = K[]
+        sage: f = X^2 - 2/5*i + 1/5
+        sage: phi = _construct_isogeny(E, f, codomain=E)
+        sage: phi.codomain() == phi.domain()
+        True
+        sage: phi.rational_maps()
+        (((4/25*i + 3/25)*x^5 + (4/5*i - 2/5)*x^3 - x)/(x^4 + (-4/5*i + 2/5)*x^2 + (-4/25*i - 3/25)),
+         ((11/125*i + 2/125)*x^6*y + (-23/125*i + 64/125)*x^4*y + (141/125*i + 162/125)*x^2*y + (3/25*i - 4/25)*y)/(x^6 + (-6/5*i + 3/5)*x^4 + (-12/25*i - 9/25)*x^2 + (2/125*i - 11/125)))
+    """
+    if not isinstance(E, EllipticCurve_generic):
+        raise ValueError("given E is not an elliptic curve")
+
+    # if the kernel is None, calculate the kernel polynomial
+    if kernel is None:
+        if codomain is None:
+            raise ValueError("at least one of kernel or codomain must be given")
+
+        if degree is None:
+            raise ValueError("degree must be given when specifying isogeny by domain and codomain")
+
+        pre_isom, _, _, _, kernel = compute_sequence_of_maps(E, codomain, degree)
+        kernel = kernel(pre_isom.x_rational_map())
+        kernel = E.base_ring()['x'](kernel)
+
+    try:
+        phi = EllipticCurveIsogeny(E, kernel=kernel, check=check)
+    except NotImplementedError:
+        phi = _factored_isogeny_from_kernel_polynomial(E, kernel, check=check)
+
+    if model is codomain is None:
+        return phi
+
+    oldE2 = phi._codomain
+
+    if model is not None:
+        if codomain is not None:
+            raise ValueError("cannot specify a codomain curve and model name simultaneously")
+
+        from sage.schemes.elliptic_curves.ell_field import compute_model
+        codomain = compute_model(oldE2, model)
+
+    else:  # codomain is not None
+        if not isinstance(codomain, EllipticCurve_generic):
+            raise ValueError("given codomain is not an elliptic curve")
+
+        if not oldE2.is_isomorphic(codomain):
+            raise ValueError("given codomain is not isomorphic to the computed codomain")
+
+    return oldE2.isomorphism_to(codomain) * phi
 
 
 class EllipticCurveIsogeny(EllipticCurveHom):
@@ -881,7 +981,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         sage: f = x^2 - 21*x + 80
         sage: phi = E.isogeny(f)
         sage: E2 = phi.codomain()
-        sage: phi_s = EllipticCurveIsogeny(E, None, E2, 5); phi_s
+        sage: phi_s = E.isogeny(None, E2, 5); phi_s
         Isogeny of degree 5
          from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
            to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580 over Rational Field
@@ -951,9 +1051,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         sage: E = EllipticCurve(j=GF(7)(0))
         sage: phi = E.isogeny([E(0), E((0,1)), E((0,-1))]); phi
-        Composite morphism of degree 3:
-          From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
-          To:   Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
+        Isogeny of degree 3 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
         sage: phi2 = phi * phi; phi2
         Composite morphism of degree 9 = 3^2:
           From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
@@ -1129,6 +1227,14 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         self.__check = check
 
         self.__init_algebraic_structs(E)
+
+        if codomain is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(42363, "the 'codomain' argument to the EllipticCurveIsogeny constructor is deprecated; use E.isogeny(...) instead of EllipticCurveIsogeny(E, ...)")
+
+        if model is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(42363, f"the 'model' argument to the EllipticCurveIsogeny constructor is deprecated; use E.isogeny(..., codomain={model!r}, ...) instead of EllipticCurveIsogeny(E, ..., model={model!r}, ...)")
 
         # if the kernel is None and the codomain isn't, calculate the kernel polynomial
         if kernel is None and codomain is not None:
@@ -1437,7 +1543,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             sage: E = EllipticCurve(GF(23), [0,0,0,1,0])
             sage: f = E.torsion_polynomial(3)/3
-            sage: phi = EllipticCurveIsogeny(E, f, E)
+            sage: phi = E.isogeny(f, codomain=E)
             sage: phi.rational_maps() == E.multiplication_by_m(3)
             False
             sage: negphi = -phi
@@ -1812,6 +1918,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: E = EllipticCurve(j=GF(7)(1728))
             sage: E2 = EllipticCurve(GF(7), [0,0,0,5,0])
             sage: phi = EllipticCurveIsogeny(E, E((0,0)), E2); phi
+            doctest:warning ...
             Isogeny of degree 2
              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + 5*x over Finite Field of size 7
@@ -1823,6 +1930,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                to Elliptic Curve defined by y^2 = x^3 + 6*x over Finite Field of size 7
 
             sage: EllipticCurveIsogeny(E, E(0,0), model='montgomery')
+            doctest:warning ...
             Isogeny of degree 2
              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
                to Elliptic Curve defined by y^2 = x^3 + x^2 + x over Finite Field of size 7
@@ -1831,6 +1939,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: E = EllipticCurve(j=1728)
             sage: f = x^3 - x
             sage: phi = EllipticCurveIsogeny(E, f, model='minimal'); phi
+            doctest:warning ...
             Isogeny of degree 4
              from Elliptic Curve defined by y^2 = x^3 - x over Rational Field
                to Elliptic Curve defined by y^2 = x^3 - x over Rational Field
@@ -3102,7 +3211,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: z2 = GF(71^2).gen()
             sage: E = EllipticCurve(j=57*z2+51)
             sage: E.isogeny(3*E.lift_x(0)).dual()
-            Composite morphism of degree 71 = 71*1^2:
+            Composite morphism of degree 71 = 71*1:
               From: Elliptic Curve defined by y^2 = x^3 + (32*z2+67)*x + (24*z2+37)
                     over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42)
@@ -3123,7 +3232,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: post = WeierstrassIsomorphism(phi.codomain(), (5,6,7,8))
             sage: phi = post * phi * pre
             sage: phi.dual()
-            Composite morphism of degree 213 = 71*3:
+            Composite morphism of degree 213 = 71*3*1:
               From: Elliptic Curve defined
                     by y^2 + 17*x*y + 45*y = x^3 + 30*x^2 + (6*z2+64)*x + (48*z2+65)
                     over Finite Field in z2 of size 71^2
@@ -3303,7 +3412,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         E1 = self._codomain
         E2 = self._domain.change_weierstrass_model(u/F(d), 0, 0, 0)
 
-        phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
+        phi_hat = _construct_isogeny(E1, None, E2, d)
         assert phi_hat.scaling_factor().is_one()
 
         for post_iso in E2.isomorphisms(self._domain):
