@@ -2276,6 +2276,7 @@ class Bijectionist(SageObject):
             sage: A = B = 'abc'
             sage: bij = Bijectionist(A, B, lambda x: B.index(x) % 2, solver='GLPK')
             sage: next(bij.solutions_iterator())
+            ...DeprecationWarning...
             {'a': 0, 'b': 1, 'c': 0}
 
             sage: list(bij.solutions_iterator())
