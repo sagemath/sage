@@ -288,12 +288,6 @@ cdef class MixedIntegerLinearProgram(SageObject):
       for more information and installation instructions for optional
       solvers.
 
-      - ``solver="GLPK"``: the `GNU Linear Programming Kit
-        <http://www.gnu.org/software/glpk/>`_.
-
-      - ``solver="GLPK/exact"``: GLPK's implementation of an exact rational simplex
-        method.
-
       - ``solver="Coin"``: the `COIN-OR CBC (COIN Branch and Cut) solver
         <http://www.coin-or.org>`_.
 
@@ -1666,7 +1660,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         with integer capacities and integer supplies/demands have integer vertex
         solutions.  Hence the integrality of solutions is mathematically
         guaranteed in an optimal solution if we use the simplex algorithm.  A
-        numerical LP solver based on the simplex method such as GLPK will return
+        numerical LP solver based on the simplex method will return
         an integer solution only up to a numerical error.  Hence, for correct
         operation, we should use ``tolerance``::
 
@@ -2803,7 +2797,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.solver_parameter("timelimit", 60)
 
         Sets the solver to stop its computations after 60 seconds, and works
-        with HiGHS, GLPK, CPLEX , SCIP, and Gurobi.
+        with HiGHS, CPLEX , SCIP, and Gurobi.
 
             - ``'timelimit'`` -- defines the maximum time spent on a
               computation (measured in seconds)
@@ -2825,12 +2819,6 @@ cdef class MixedIntegerLinearProgram(SageObject):
             ''
 
         Solver-specific parameters:
-
-            - GLPK : We have implemented very close to comprehensive coverage of
-              the GLPK solver parameters for the simplex and integer
-              optimization methods. For details, see the documentation of
-              :meth:`GLPKBackend.solver_parameter
-              <sage.numerical.backends.glpk_backend.GLPKBackend.solver_parameter>`.
 
             - CPLEX's parameters are identified by a string. Their
               list is available `on ILOG's website
