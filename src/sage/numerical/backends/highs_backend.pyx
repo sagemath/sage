@@ -56,7 +56,6 @@ cdef class HiGHSBackend(GenericBackend):
 
         # Initialize metadata
         self.prob_name = ""
-        self.col_name_var = {}
         self.row_name_var = {}
         self.numcols = 0
         self.numrows = 0
@@ -240,11 +239,11 @@ cdef class HiGHSBackend(GenericBackend):
             if status != kHighsStatusOk:
                 raise MIPSolverException("HiGHS: Failed to set variable integrality")
 
-        # Set name if provided
-        if name is not None:
-            name_bytes = str(name).encode('utf-8')
-            Highs_passColName(self.highs, col_idx, name_bytes)
-            self.col_name_var[col_idx] = str(name)
+        # Set the column name, defaulting to x_N
+        if name is None:
+            name = f"x_{col_idx}"
+        name_bytes = str(name).encode('utf-8')
+        Highs_passColName(self.highs, col_idx, name_bytes)
 
         return col_idx
 
@@ -364,11 +363,11 @@ cdef class HiGHSBackend(GenericBackend):
             if status != kHighsStatusOk:
                 raise MIPSolverException("HiGHS: Failed to set variable integrality")
 
-        # Set name if provided
-        if name is not None:
-            name_bytes = str(name).encode('utf-8')
-            Highs_passColName(self.highs, col_idx, name_bytes)
-            self.col_name_var[col_idx] = str(name)
+        # Set the column name, defaulting to x_N
+        if name is None:
+            name = f"x_{col_idx}"
+        name_bytes = str(name).encode('utf-8')
+        Highs_passColName(self.highs, col_idx, name_bytes)
 
         return col_idx
 
@@ -1518,8 +1517,23 @@ cdef class HiGHSBackend(GenericBackend):
             'x'
         """
         if index < 0 or index >= self.numcols:
-            raise ValueError(f"invalid column index {index}")
-        return self.col_name_var.get(index, f"x_{index}")
+            raise IndexError(f"invalid column index {index}")
+
+        cdef char* cn
+        cn = <char*> malloc((kHighsMaximumStringLength + 1) * sizeof(char))
+        if cn == NULL:
+            raise MemoryError("failed to allocate memory for column name")
+
+        cdef HighsInt status
+        status = Highs_getColName(self.highs, index, cn)
+        if status != kHighsStatusOk:
+            free(cn)
+            raise MIPSolverException("HiGHS: failed to obtain column name")
+
+        result = cn.decode('utf-8')
+        free(cn)
+        return result
+
 
     cpdef col_bounds(self, int index):
         """
@@ -2752,7 +2766,6 @@ cdef class HiGHSBackend(GenericBackend):
                     os.unlink(temp_file.decode('utf-8'))
 
         p.prob_name = self.prob_name
-        p.col_name_var = copy(self.col_name_var)
         p.row_name_var = copy(self.row_name_var)
         p.numcols = self.numcols
         p.numrows = self.numrows
