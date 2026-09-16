@@ -7389,6 +7389,164 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (self, one)
         return (-self, -one)
 
+    def quadratic_residuocity_characterization(self):
+        r"""
+
+        Given this integer ``x``, determine the congruence conditions
+        on primes ``p`` which determine the value of ``kronecker(x,p)``.
+
+        OUTPUT:
+
+        - A tuple, ``quad_res_char_tup``, of three values
+
+            - ``quad_res_char_tup[0]`` is either ``None``, ``Primes()``, or a 
+              list of primes.
+
+            - ``quad_res_char_tup[1]`` is either ``None``, a subset of 
+              ``Primes()``, or a list integers.
+
+            - ``quad_res_char_tup[2]`` is either ``None`` or an integer
+              ``M``.
+
+        To be precise: given this integer `x`, determine `M`, `a_1,
+        a_2, \ldots, a_n`, and `p_1, p_2, \ldots, p_v` such that for any prime `p`
+
+        .. MATH::
+            \left(\frac{x}{p}\right) = \left\lbrace \begin{array}{ll}
+            1  & \text{if } p \equiv     a_{1} , a_{2} , \ldots, a_{n} \pmod{M}, \text{ and } p \neq p_1, p_2, \ldots, p_v\\
+            0  & \text{if } p =          p_1   , p_2   , \ldots, p_v            \\
+            -1 & \text{if } p \not\equiv a_{1} , a_{2} , \ldots, a_{n} \pmod{M}, \text{ and } p \neq p_1, p_2, \ldots, p_v\\
+            \end{array} \right.
+
+        and return the computed values as a tuple of the form::
+
+            quad_res_char_tup = (
+                [p_1, p_2, ... , p_v],
+                [a_1, a_2, ... , a_n],
+                M
+            )
+
+        .. NOTE::
+
+            If `x = 0`, then for any prime, `p`, `\left(\frac{x}{p}\right) = 0`.
+            Thus in this case, ``quad_res_char_tup[0] = Primes()`` and all other
+            values are ``None``.
+
+            Similarly, if `\sqrt{x} \in \ZZ`, then for any prime, `p`, not dividing
+            `x` we have `\left(\frac{x}{p}\right) = 1`. Thus in this case,
+            ``quad_res_char_tup[1] = Primes().exclude(quad_res_char_tup[0])`` where
+            ``quad_res_char_tup[0]`` is the list of prime factors of `x`, and all
+            other values are ``None``.
+
+        EXAMPLES::
+
+            sage: 2.quadratic_residuocity_characterization()
+            ([2], [1, 7], 8)
+
+            sage: (-90).quadratic_residuocity_characterization()
+            ([2, 3, 5], [1, 7, 9, 11, 13, 19, 23, 37], 40)
+
+            sage: 225.quadratic_residuocity_characterization()
+            ([3, 5], Set of all prime numbers with 3, 5 excluded: 2, 7, 11, 13, ..., None)
+
+            sage: 0.quadratic_residuocity_characterization()
+            (Set of all prime numbers: 2, 3, 5, 7, ..., None, None)
+
+
+        ALGORITHM:
+
+            Suppose we are given an integer `x`. If `x = 0` then the Kronecker symbol
+            `\left(\frac{0}{p}\right)` is equal to 0. As such we handle this case.
+            Similarly, if `\sqrt{x} \in \ZZ` then we know that `\sqrt{x} \in
+            \GF{p}`, implying `\left(\frac{x}{p}\right) = 1` for all primes `p`.
+            Hence, we may handle this case as well.
+
+            For the remaining cases we let `D` be the fundamental discriminant of
+            the number field `\QQ(\sqrt{x})` and use the fact that
+
+            .. MATH::
+
+                \left(\frac{x}{p}\right) = \left(\frac{D}{p}\right)
+
+            and the fact that `D` is the minimal period of the character above to
+            calculate which values of `p \in \Zmod{D}` make `D` a quadratic
+            residue modulo `p`.
+
+        .. SEEALSO::
+
+            :func:`sage.arith.misc.kronecker`
+            :func:`sage.arith.misc.quadratic_residues`
+
+        AUTHORS:
+
+        - Taha Hedayat
+
+        TESTS::
+
+            sage: (-1).quadratic_residuocity_characterization()
+            ([], [1, 2], 4)
+
+            sage: 121.quadratic_residuocity_characterization()
+            ([11], Set of all prime numbers with 11 excluded: 2, 3, 5, 7, ..., None)
+
+            sage: (-121).quadratic_residuocity_characterization()
+            ([11], [1, 2], 4)
+
+            sage: x = 123
+            sage: (res_0, res_1, M) = x.quadratic_residuocity_characterization()
+            sage: QR_primes = Primes(modulus=M, classes=res_1).exclude(res_0)
+            sage: NQR_classes = [i for i in [1..M] if i not in res_1 and gcd(i, M)==1]
+            sage: NQR_primes = Primes(modulus=M, classes=NQR_classes).exclude(res_0)
+            sage: i = randint(0, 100)
+            sage: j = randint(0, 100)
+            sage: rand_QR_prime = QR_primes[i]
+            sage: rand_NQR_prime = NQR_primes[j]
+            sage: bol_1 = (kronecker(x, rand_QR_prime) == 1)
+            sage: bol_2 = (kronecker(x, rand_NQR_prime) == -1)
+            sage: bol_1 and bol_2
+            True
+
+        """
+        cdef Integer e, p, z, D, M, k, a
+        from sage.sets.primes import Primes
+
+        if self == 0:
+            return Primes(), None, None
+
+        fac_self = self.factor()
+        cdef list[Integer] res_0 = [p for p, _ in fac_self]
+
+        if all(e.is_even() for _, e in fac_self) and fac_self.unit() == 1:
+            return res_0, Primes().exclude(res_0), None
+
+        z = fac_self.unit()
+        for p, e in fac_self:
+            if e.is_odd():
+                z *= p
+        D = z
+
+        cdef list[Integer] res_1 = [Integer(1)]
+        cdef list[Integer] quad_res_2 = [Integer(1), Integer(7)]
+        cdef int start_value = 2
+        cdef int step_value = 1
+
+        if z % 4 != 1:
+            D *= 4
+            start_value += 1
+            step_value += 1
+            if self%8 in quad_res_2:
+                res_1.append(Integer(2))
+        M = abs(D)
+
+        cdef Py_ssize_t i
+        for i in range(start_value, M, step_value):
+            a = Integer(i)
+            k = Integer(D.kronecker(a))
+            if k == 1:
+                res_1.append(a)
+
+        return res_0, res_1, M
+
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """
     Wrapper around ``mpz_set_str()`` which supports :pep:`3127`

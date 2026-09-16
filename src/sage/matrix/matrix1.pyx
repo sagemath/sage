@@ -85,6 +85,16 @@ cdef class Matrix(Matrix0):
             [3.0 1.0]
             sage: b = pari(a); b                                                        # needs sage.libs.pari
             [1.000000000..., 2.000000000...; 3.000000000..., 1.000000000...]
+
+        A PARI ``t_MAT`` is a vector of columns, so a matrix with no columns
+        has nowhere to record its number of rows.  The row count is therefore
+        lost for such a matrix, while the number of columns is preserved when
+        there are no rows::
+
+            sage: matrix(GF(5), 2, 0).__pari__()                                        # needs sage.libs.pari
+            [;]
+            sage: matrix(GF(5), 0, 3).__pari__()                                        # needs sage.libs.pari
+            matrix(0,3)
         """
         from sage.libs.pari import pari
         return pari.matrix(self._nrows, self._ncols, self._list())
