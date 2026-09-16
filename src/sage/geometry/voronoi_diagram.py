@@ -130,38 +130,39 @@ class VoronoiDiagram(SageObject):
 
             e = [[self._base_ring(i) for i in k] for k in e]
             p = Polyhedron(ieqs=e, base_ring=self._base_ring)
-            # To understand the reordering that takes place when
-            # defining a rational polyhedron, we generate two sorted
-            # lists, that are used a few lines below
-            if self.base_ring() == QQ:
-                enormalized = []
-                for ineq in e:
-                    if ineq[0] == 0:
-                        enormalized.append(ineq)
-                    else:
-                        enormalized.append([i / ineq[0] for i in ineq[1:]])
-                hlist = [list(ineq) for ineq in p.Hrepresentation()]
-                hlistnormalized = []
-                for ineq in hlist:
-                    if ineq[0] == 0:
-                        hlistnormalized.append(ineq)
-                    else:
-                        hlistnormalized.append([i / ineq[0] for i in ineq[1:]])
+            # To be able to detect empty regions, we generate two sorted lists,
+            # that are used a few lines below.
+            # If we work over QQ, we also normalize the coefficients;
+            # this lets us handle Polyhedron not keeping the order of the points. 
+            enormalized = []
+            for ineq in e:
+                if ineq[0] == 0 or self.base_ring() != QQ:
+                    enormalized.append(ineq)
+                else:
+                    enormalized.append([i / ineq[0] for i in ineq[1:]])
+            hlist = [list(ineq) for ineq in p.Hrepresentation()]
+            hlistnormalized = []
+            for ineq in hlist:
+                if ineq[0] == 0 or self.base_ring() != QQ:
+                    hlistnormalized.append(ineq)
+                else:
+                    hlistnormalized.append([i / ineq[0] for i in ineq[1:]])
 
         for i in range(self._n):
-            # TODO: Regions might be empty in a power diagram! Currently, this results in an exception.
-            # for base ring RDF and AA, Polyhedron keeps the order of the
-            # points in the input, for QQ we resort
-            if self.base_ring() == QQ:
-                equ = p.Hrepresentation(hlistnormalized.index(enormalized[i]))
+            # Only the points appearing in hlistnormalized() will have non-empty regions.
+            if enormalized[i] in hlistnormalized:
+                j = hlistnormalized.index(enormalized[i])
+                equ = p.Hrepresentation(j)
+                pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
+                         if u.is_vertex()]
+                prays = [[u[k] for k in range(self._d)] for u in equ.incident()
+                         if u.is_ray()]
+                pline = [[u[k] for k in range(self._d)] for u in equ.incident()
+                         if u.is_line()]
             else:
-                equ = p.Hrepresentation(i)
-            pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
-                     if u.is_vertex()]
-            prays = [[u[k] for k in range(self._d)] for u in equ.incident()
-                     if u.is_ray()]
-            pline = [[u[k] for k in range(self._d)] for u in equ.incident()
-                     if u.is_line()]
+                pvert = []
+                prays = []
+                pline = []
             (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
                                                     lines=pline, rays=prays,
                                                     base_ring=self._base_ring)
@@ -233,7 +234,10 @@ class VoronoiDiagram(SageObject):
             ....:                                                 rays=[(RDF(4.5), RDF(1), -RDF(25)), (-RDF(2.25), -RDF(1), RDF(2.5))],
             ....:                                                 vertices=[(-RDF(1.1074999999999999), RDF(1.149444444), RDF(9.0138888890000004))])}
             True
-        #TODO: Add an example with empty regions.
+            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights = [0, 0, 4]); V.regions()
+            {P(-1, 0): A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line,
+            P(0, 0): The empty polyhedron in QQ^0,
+            P(1, 0): A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line}
         """
         return self._P
 
@@ -327,7 +331,8 @@ class VoronoiDiagram(SageObject):
                     raise AssertionError("'cell_colors' must be a list or a dictionary")
             for i, p in enumerate(self._P):
                 col = cell_colors[i]
-                S += (self.regions()[p]).render_solid(color=col, zorder=1)
+                if not self.regions()[p].is_empty(): # Skip plotting empty regions.
+                    S += (self.regions()[p]).render_solid(color=col, zorder=1)
                 S += point(p, color=col, pointsize=10, zorder=3)
                 S += point(p, color='black', pointsize=20, zorder=2)
             return plot(S, **kwds)
@@ -336,6 +341,7 @@ class VoronoiDiagram(SageObject):
                                   ' implemented')
 
     def _are_points_in_regions(self):
+        #TODO: Change this so that it returns a dict of booleans instead (one for each point).
         """
         Check if all points are contained in their regions.
 
@@ -345,5 +351,7 @@ class VoronoiDiagram(SageObject):
             sage: v = VoronoiDiagram(py_trips)
             sage: v._are_points_in_regions()
             True
+            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights = [0, 0, 4]); V._are_points_in_regions()
+            False
         """
         return all(self.regions()[p].contains(p) for p in self.points())
