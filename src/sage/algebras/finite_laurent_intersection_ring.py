@@ -2381,9 +2381,117 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
     # extra primes: primes over x1*...*xn, i.e. primes missing in FiniteLaurentIntersectionRing._base_chart
     # -------------------------------------------------------
 
+    def _generators_product_in_chart(self, chart, generators_in_base):
+        r"""
+        Return the product of ``generators_in_base``, pushed forward into ``chart``.
+
+        Each generator is pushed forward into ``chart``
+        and cleared of its monomial part. Any generator that becomes
+        a unit in ``chart`` is dropped.
+        The surviving polynomials are multiplied together.
+        """
+        surviving_factors = []
+        for l in generators_in_base:
+            l_in_chart = chart._substitute_from_base(l)
+            l_numerator = l_in_chart.numerator()
+            if not chart.L(l_numerator).is_unit():
+                surviving_factors.append(l_numerator)
+
+        product = chart.P(1)
+        for factor in surviving_factors:
+            product *= factor
+        return product
+
+    def _confirmed_new_primes(self, chart, candidate_factors,
+                               previously_seen_generators, factor_list):
+        r"""
+        Filter the irreducible factors of `x_1 \cdots x_n` found in
+        ``chart`` down to the ones that are new prime divisors
+        of the FiniteLaurentIntersectionRing, and wrap them as
+        :class:`FiniteLaurentIntersectionRingPrimeDivisor` objects.
+
+        Each candidate ``q`` represents a height-one prime `Q` of ``chart`` with
+        `x_1 \cdots x_n \in Q`.
+        It also defines a height-one prime `P` of the
+        FiniteLaurentIntersectionRing containing `x_1 \cdots x_n`.
+        In order to avoid duplicates, we only want to record `P`
+        the first time it becomes visible in a chart. That is,
+        when ``q`` divides the pushed-forward generator product of every earlier chart.
+        If it doesn't, then it was already visible in an earlier chart, and we discard it.
+        The product is computed by :meth:`_generators_product_in_chart`.
+
+        The products are cached lazily in ``reference``.
+        """
+        new_primes = []
+        num_earlier_charts = len(previously_seen_generators)
+        reference = [chart.P(0)]
+
+        def _extend_reference():
+            """Extend the reference list by one more chart's pushed-forward generator product"""
+            generators = previously_seen_generators[len(reference) - 1]
+            product = self._generators_product_in_chart(chart, generators)
+            reference.append(reference[-1].gcd(product))
+
+        for q in candidate_factors:
+            # reference[k] is the gcd of the pushed-forward generator products of
+            # charts 0, 1, ..., k. Each step takes a further gcd.
+            k = 0
+            while k < num_earlier_charts:
+                # Build reference lazily
+                if k >= len(reference):
+                    _extend_reference()
+                if not q.divides(reference[k]):
+                    # q fails to divide reference[k]. Since reference[k+1] divides
+                    # reference[k], q cannot divide reference[k+1] either
+                    # so we can stop testing earlier charts and discard q.
+                    break
+                k += 1
+
+            # If the loop ran to completion, then
+            # k == num_earlier_charts and we haven't yet tested the one term beyond
+            # the earlier charts; make sure it exists.
+            if k >= len(reference):
+                _extend_reference()
+
+            # q is confirmed as a new prime only if it also divides
+            # reference[k]: either the extra term we just extended to,
+            # or the same reference[k] that had just failed.
+            if q.divides(reference[k]):
+                p_norm = self._normalize(q)
+                new_prime = FiniteLaurentIntersectionRingPrimeDivisor(chart, p_norm)
+                if new_prime not in factor_list and new_prime not in new_primes:
+                    new_primes.append(new_prime)
+
+        return new_primes
+
     def extra_primes(self, recompute: bool = False):
         r"""
         Return the list P1,...,Pr of prime divisors containing x1*...*xn.
+
+        We are looking for the height-one primes `P` of the FiniteLaurentIntersectionRing
+        that contain `x_1 \cdots x_n`. Each such
+        `P` extends non-trivially to at least one chart of our system.
+        To find them, we scan through the charts one at a time, looking for
+        irreducible factors of `x_1 \cdots x_n` in that chart.
+        Each such factor corresponds to a prime `Q` of that chart's ring,
+        and `P = Q \cap A` is a prime of the FiniteLaurentIntersectionRing `A`
+        containing `x_1 \cdots x_n`.
+        In order to avoid duplicates, we only record `P` the first time
+        it becomes visible in a chart. Namely, we only record `P` when
+        it divides the pushed-forward generator product of every earlier chart,
+        which means `P` contained some generators of every earlier chart,
+        therefore contained some units of every earlier chart,
+        and the current chart is the first place it becomes visible.
+
+        This is precisely what the loop below checks:
+        ``candidate_factors`` are the primes containing `x_1 \cdots x_n`
+        visible in the current chart, and the inner loop checks whether
+        each candidate divides the pushed-forward generator product of every earlier chart.
+        If it does, it is confirmed as a new prime and added to the list of new primes.
+
+        Since the base chart's own generators are exactly `x_1, \ldots, x_n`,
+        no prime containing their product can ever extend non-trivially
+        to the base chart. That is why this method is called ``extra_primes``.
 
         EXAMPLES::
 
@@ -2409,69 +2517,31 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
         xprod_base = self._xprod_in_base()
 
         factor_list = []
-        only_primes_over = []
+        previously_seen_generators = []
 
         charts_to_process = [c for c in self.charts if c is not self._base_chart]
 
-        for chart_i in charts_to_process:
-            f_prime = chart_i._substitute_from_base(xprod_base)
-            fP = f_prime.numerator()
+        for chart in charts_to_process:
+            xprod_chart = chart._substitute_from_base(xprod_base)
+            numerator = xprod_chart.numerator()
 
-            if fP == 0:
-                factors = []
+            if numerator == 0:
+                candidate_factors = []
             else:
-                factors = [f for f, _e in fP.factor() if not chart_i.L(f).is_unit()]
+                candidate_factors = [f for f, _e in numerator.factor() if not chart.L(f).is_unit()]
 
-            if factors:
-                # Lazily-extended, shared cache of the cumulative coverage
-                # (indexed the same way as the original ``only_over``
-                # sequence). Different factors q of the same chart_i often
-                # need overlapping prefixes of this sequence; computing each
-                # new step once and reusing it avoids redoing identical
-                # substitutions for every factor, without ever computing a
-                # step that no factor actually needs.
-                m = len(only_primes_over)
-                cumulative = [chart_i.P(0)]
+            if candidate_factors:
+            # check which of the candidate factors are new primes, and add them to the factor list
+                factor_list.extend(
+                    self._confirmed_new_primes(chart, candidate_factors,
+                                                previously_seen_generators,
+                                                factor_list)
+                )
 
-                def _extend_cumulative(cumulative=cumulative):
-                    l_primes = []
-                    for l in only_primes_over[len(cumulative) - 1]:
-                        l_in_i = chart_i._substitute_from_base(l)
-                        l_prime = l_in_i.numerator()
-                        if not chart_i.L(l_prime).is_unit():
-                            l_primes.append(l_prime)
-                    prod_l = chart_i.P(1)
-                    for lp in l_primes:
-                        prod_l *= lp
-                    cumulative.append(cumulative[-1].gcd(prod_l))
-
-                for q in factors:
-                    k = 0
-                    while k < m:
-                        if k >= len(cumulative):
-                            _extend_cumulative()
-                        if not q.divides(cumulative[k]):
-                            break
-                        k += 1
-                    if k >= len(cumulative):
-                        _extend_cumulative()
-                    only_over = cumulative[k]
-
-                    if q.divides(only_over):
-                        p_norm = self._normalize(q)
-                        new_prime = FiniteLaurentIntersectionRingPrimeDivisor(chart_i, p_norm)
-                        if new_prime not in factor_list:
-                            factor_list.append(new_prime)
-
-            only_primes_over.append(list(chart_i.this_to_base))
+            previously_seen_generators.append(list(chart.this_to_base))
 
         self._extra_primes_cache = factor_list
         return factor_list
-
-    # ------------------------
-    # valuation machinery
-    # ------------------------
-
     def _valuation_of_base_element_at_prime(self, base_expr, P: FiniteLaurentIntersectionRingPrimeDivisor):
         """
         v_P(base_expr): multiplicity of P.irreducible in the factorization after substituting into chart.
