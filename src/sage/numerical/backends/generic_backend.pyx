@@ -1813,12 +1813,12 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
 
     Passing a callable that customizes a backend::
 
-        sage: def glpk_exact_solver():
+        sage: def highs_with_timelimit():
         ....:     from sage.numerical.backends.generic_backend import get_solver
-        ....:     b = get_solver(solver='GLPK')
-        ....:     b.solver_parameter('simplex_or_intopt', 'exact_simplex_only')
+        ....:     b = get_solver(solver="Highs")
+        ....:     b.solver_parameter('timelimit', 60)
         ....:     return b
-        sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,solver=glpk_exact_solver) # long time
+        sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,solver=highs_with_timelimit) # long time
         8
 
     TESTS:
