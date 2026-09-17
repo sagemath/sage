@@ -16,6 +16,15 @@ lazy_import('sage.crypto.stream', ['LFSRCryptosystem',
                                    'ShrinkingGeneratorCryptosystem',
                                    ])
 
+lazy_import('sage.crypto.ed25519', ['Ed25519',
+                                    'Ed25519BasePoint',
+                                    'ed25519_decode',
+                                    'ed25519_encode',
+                                    'ed25519_public_key',
+                                    'ed25519_sign',
+                                    'ed25519_verify',
+                                    ])
+
 lazy_import('sage.crypto.lfsr', ['lfsr_sequence',
                                  'lfsr_autocorrelation',
                                  'lfsr_connection_polynomial',

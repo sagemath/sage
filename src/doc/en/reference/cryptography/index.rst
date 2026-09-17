@@ -44,6 +44,8 @@ Public Key Cryptography
 .. toctree::
    :maxdepth: 1
 
+   sage/crypto/ed25519
+
    sage/crypto/public_key/key_exchange/key_exchange_base
    sage/crypto/public_key/key_exchange/finite_field_diffie_hellman
    sage/crypto/public_key/key_exchange/sidh

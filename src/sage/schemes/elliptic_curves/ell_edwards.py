@@ -21,9 +21,10 @@ distinct, ``a`` is a square, and ``d`` is a nonsquare.  Under these
 conditions the affine addition formulas are complete.  The points exposed by
 this class are affine pairs ``(x, y)``.
 
-This class models the curve group only.  It does not implement the Ed25519
-protocol, which additionally specifies SHA-512 hashing, scalar pruning,
-little-endian encoding, a cofactor, and a particular base point.
+This class models the curve group only.  The Ed25519 protocol layer, including
+SHA-512 hashing, scalar pruning, little-endian encoding, the cofactor, and the
+particular base point, is available in
+:mod:`sage.crypto.ed25519`.
 
 In the usual Ed25519 signature notation, ``r`` is the nonce scalar,
 ``R=[r]B`` is the resulting group point (normally transmitted in encoded
@@ -254,7 +255,7 @@ class TwistedEdwardsCurve(UniqueRepresentation, Parent):
     twisted Edwards addition law.  For Ed25519 over
     ``GF(2^255 - 19)``, use ``a=-1`` and
     ``d=-121665/121666``.  The protocol-level Ed25519 encoding and signing
-    operations are outside the scope of this class.
+    operations are provided by :mod:`sage.crypto.ed25519`.
 
     EXAMPLES::
 
