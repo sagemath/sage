@@ -70,8 +70,11 @@ class VoronoiDiagram(SageObject):
 
     ALGORITHM:
 
-    We use hyperplanes tangent to the paraboloid one dimension higher to
-    get a convex polyhedron and then project back to one dimension lower.
+    We use hyperplanes tangent to the unit paraboloid one dimension higher to
+    get a convex polyhedron.
+    We then forget the last coordinate of the faces of this polyhedron in order to project them down, giving rise to the Voronoi diagram.
+    See [Mat2002]_ for details.
+    For power diagrams we use slightly different hyperplanes; see [Ed1987]_.
 
     .. TODO::
 
@@ -97,6 +100,91 @@ class VoronoiDiagram(SageObject):
             sage: V = VoronoiDiagram([[1, 3, 3], [2, -2, 1], [-1 ,2, -1]]); V
             The Voronoi diagram of 3 points of dimension 3 in the Rational Field
         """
+        if weights is not None:
+            self._init_power_diagram(points, weights)
+            return
+        self._is_power_diagram = False
+        self._P = {}
+        self._points = PointConfiguration(points)
+        self._n = self._points.n_points()
+
+        # Sets the base ring
+        if not self._n or self._points.base_ring().is_subring(QQ):
+            self._base_ring = QQ
+        elif isinstance(self._points.base_ring(), (sage.rings.abc.RealDoubleField, sage.rings.abc.AlgebraicRealField)):
+            self._base_ring = self._points.base_ring()
+        elif isinstance(self._points.base_ring(), sage.rings.abc.RealField):
+            from sage.rings.real_double import RDF
+            self._base_ring = RDF
+            self._points = PointConfiguration([[RDF(cor) for cor in poi]
+                                               for poi in self._points])
+        else:
+            raise NotImplementedError('Base ring of the Voronoi diagram must '
+                                      'be one of QQ, RDF, AA.')
+
+        if self._n > 0:
+            self._d = self._points.ambient_dim()
+            e = [([sum(vector(poi)[k] ** 2
+                       for k in range(self._d))] +
+                  [(-2) * vector(poi)[l] for l in range(self._d)] + [1])
+                 for poi in self._points]
+            # we attach hyperplane to the paraboloid
+
+            e = [[self._base_ring(i) for i in k] for k in e]
+            p = Polyhedron(ieqs=e, base_ring=self._base_ring)
+            # We normalize the coefficients when working over QQ,
+            # since Polyhedron does not keep the order of the points in that case.
+            # We normalize the first non-zero coefficient to one.
+            if self._base_ring == QQ:
+                enormalized = []
+                for ineq in e:
+                    for i in range(len(ineq)):
+                        if ineq[i] == self._base_ring(0):
+                            continue
+                        else:
+                            enormalized.append([j / ineq[i] for j in ineq])
+                            break
+                hlistnormalized = []
+                for h in p.Hrepresentation():
+                    ineq = list(h)
+                    for i in range(len(ineq)):
+                        if ineq[i] == self._base_ring(0):
+                            continue
+                        else:
+                            hlistnormalized.append([j / ineq[i] for j in ineq])
+                            break
+
+            # Assign each point to its region.
+            for i in range(self._n):
+                if self._base_ring == QQ:
+                    j = hlistnormalized.index(enormalized[i])
+                else:
+                    # For base rings AA and RDF, Polyhedron keeps the order of the points.
+                    j = i
+                equ = p.Hrepresentation(j)
+                # Forget the last coordinate to project back to our ambient space.
+                pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
+                        if u.is_vertex()]
+                pline = [[u[k] for k in range(self._d)] for u in equ.incident()
+                        if u.is_line()]
+                prays = [[u[k] for k in range(self._d)] for u in equ.incident()
+                        if u.is_ray()]
+                (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
+                                                        lines=pline, rays=prays,
+                                                        base_ring=self._base_ring)
+
+    def _init_power_diagram(self, points, weights):
+        r"""
+        Creates a weighted ``VoronoiDiagram`` instance (a power diagram).
+
+        The code that associates a region to each point of a power diagram is slightly less efficient, since regions might be empty and the order of inequalities can change between the list e and the Polyhedron p.
+
+        EXAMPLES::
+
+            sage: V = VoronoiDiagram([[1, 3], [2, -2], [-1 ,2], [2, 2]], weights=[1, 9, 0, 8]); V
+            The power diagram of 4 points of dimension 2 in the Rational Field
+        """
+        self._is_power_diagram = True
         self._P = {}
         self._weights = {}
         self._points = PointConfiguration(points)
@@ -113,7 +201,7 @@ class VoronoiDiagram(SageObject):
             self._points = PointConfiguration([[RDF(cor) for cor in poi]
                                                for poi in self._points])
         else:
-            raise NotImplementedError('Base ring of the Voronoi diagram must '
+            raise NotImplementedError('Base ring of the power diagram must '
                                       'be one of QQ, RDF, AA.')
 
         # Sets the weights
@@ -145,9 +233,9 @@ class VoronoiDiagram(SageObject):
                     else:
                         enormalized.append([j / ineq[i] for j in ineq])
                         break
-            hlist = [list(ineq) for ineq in p.Hrepresentation()]
             hlistnormalized = []
-            for ineq in hlist:
+            for h in p.Hrepresentation():
+                ineq = list(h)
                 for i in range(len(ineq)):
                     if ineq[i] == self._base_ring(0):
                         continue
@@ -186,8 +274,6 @@ class VoronoiDiagram(SageObject):
                                                         base_ring=self._base_ring)
                 available_point_indices.remove(i)
 
-    #TODO: def __init_weighted__() separately, to guarantee not breaking prior behaviour.
-
     def points(self):
         r"""
         Return the input points (as a PointConfiguration).
@@ -206,21 +292,21 @@ class VoronoiDiagram(SageObject):
     def weights(self):
         r"""
         Return the input weights as a dictionary of numbers.
+        If the diagram is unweighted, returns None.
 
         EXAMPLES::
 
-            sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]]); V.weights()
-            {P(0.500000000000000, 3.00000000000000): 0.0,
-             P(2.00000000000000, 5.00000000000000): 0.0,
-             P(4.00000000000000, -1.00000000000000): 0.0,
-             P(4.00000000000000, 5.00000000000000): 0.0}
+            sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]]); V.weights() is None
+            True
             sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]], weights=[2, 3, 0, 2]); V.weights()
             {P(0.500000000000000, 3.00000000000000): 2.0,
              P(2.00000000000000, 5.00000000000000): 3.0,
              P(4.00000000000000, -1.00000000000000): 2.0,
              P(4.00000000000000, 5.00000000000000): 0.0}
         """
-        return self._weights
+        if self._is_power_diagram:
+            return self._weights
+        return None
 
     def ambient_dim(self):
         r"""
@@ -287,14 +373,19 @@ class VoronoiDiagram(SageObject):
             The Voronoi diagram of 3 points of dimension 2 in the Algebraic Real Field
             sage: VoronoiDiagram([])
             The empty Voronoi diagram.
+            sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V        # needs sage.rings.number_field
+            The Voronoi diagram of 3 points of dimension 2 in the Algebraic Real Field
+            sage: VoronoiDiagram([], weights=[])
+            The empty power diagram.
         """
+        type_of_diagram = 'power' if self._is_power_diagram else 'Voronoi'
         if self._n:
-            desc = 'The Voronoi diagram of ' + str(self._n)
+            desc = 'The ' + type_of_diagram + ' diagram of ' + str(self._n)
             desc += ' points of dimension ' + str(self.ambient_dim())
             desc += ' in the ' + str(self.base_ring())
             return desc
 
-        return 'The empty Voronoi diagram.'
+        return 'The empty ' + type_of_diagram + ' diagram.'
 
     def plot(self, cell_colors=None, **kwds):
         """
