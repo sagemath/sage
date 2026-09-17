@@ -100,9 +100,6 @@ class VoronoiDiagram(SageObject):
             sage: V = VoronoiDiagram([[1, 3, 3], [2, -2, 1], [-1 ,2, -1]]); V
             The Voronoi diagram of 3 points of dimension 3 in the Rational Field
         """
-        if weights is not None:
-            self._init_power_diagram(points, weights)
-            return
         self._is_power_diagram = False
         self._P = {}
         self._points = PointConfiguration(points)
@@ -124,107 +121,29 @@ class VoronoiDiagram(SageObject):
 
         if self._n > 0:
             self._d = self._points.ambient_dim()
-            e = [([sum(vector(poi)[k] ** 2
-                       for k in range(self._d))] +
-                  [(-2) * vector(poi)[l] for l in range(self._d)] + [1])
-                 for poi in self._points]
-            # we attach hyperplane to the paraboloid
 
-            e = [[self._base_ring(i) for i in k] for k in e]
-            p = Polyhedron(ieqs=e, base_ring=self._base_ring)
-            # We normalize the coefficients when working over QQ,
-            # since Polyhedron does not keep the order of the points in that case.
-            # We normalize the first non-zero coefficient to one.
-            if self._base_ring == QQ:
-                enormalized = []
-                for ineq in e:
-                    for i in range(len(ineq)):
-                        if ineq[i] == self._base_ring(0):
-                            continue
-                        else:
-                            enormalized.append([j / ineq[i] for j in ineq])
-                            break
-                hlistnormalized = []
-                for h in p.Hrepresentation():
-                    ineq = list(h)
-                    for i in range(len(ineq)):
-                        if ineq[i] == self._base_ring(0):
-                            continue
-                        else:
-                            hlistnormalized.append([j / ineq[i] for j in ineq])
-                            break
+        if weights is not None:
+            # Finish the rest in the power diagram generator.
+            self._init_power_diagram(weights)
+            return
 
-            # Assign each point to its region.
-            for i in range(self._n):
-                if self._base_ring == QQ:
-                    j = hlistnormalized.index(enormalized[i])
-                else:
-                    # For base rings AA and RDF, Polyhedron keeps the order of the points.
-                    j = i
-                equ = p.Hrepresentation(j)
-                # Forget the last coordinate to project back to our ambient space.
-                pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
-                        if u.is_vertex()]
-                pline = [[u[k] for k in range(self._d)] for u in equ.incident()
-                        if u.is_line()]
-                prays = [[u[k] for k in range(self._d)] for u in equ.incident()
-                        if u.is_ray()]
-                (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
-                                                        lines=pline, rays=prays,
-                                                        base_ring=self._base_ring)
+        # inequalities for hyperplanes tangent to the unit paraboloid in d+1 dimensions
+        e = []
+        for poi in self._points:
+            v = vector(poi)
+            eqs = []
+            # the independent term is equal to the norm of the vector squared
+            eqs.append(v.dot_product(v))
+            eqs.extend([self._base_ring(-2) * v[k] for k in range(self._d)])
+            eqs.append(self._base_ring(1))
+            e.append(eqs)
 
-    def _init_power_diagram(self, points, weights):
-        r"""
-        Creates a weighted ``VoronoiDiagram`` instance (a power diagram).
+        p = Polyhedron(ieqs=e, base_ring=self._base_ring)
 
-        The code that associates a region to each point of a power diagram is slightly less efficient, since regions might be empty and the order of inequalities can change between the list e and the Polyhedron p.
-
-        EXAMPLES::
-
-            sage: V = VoronoiDiagram([[1, 3], [2, -2], [-1 ,2], [2, 2]], weights=[1, 9, 0, 8]); V
-            The power diagram of 4 points of dimension 2 in the Rational Field
-        """
-        self._is_power_diagram = True
-        self._P = {}
-        self._weights = {}
-        self._points = PointConfiguration(points)
-        self._n = self._points.n_points()
-
-        # Sets the base ring
-        if not self._n or self._points.base_ring().is_subring(QQ):
-            self._base_ring = QQ
-        elif isinstance(self._points.base_ring(), (sage.rings.abc.RealDoubleField, sage.rings.abc.AlgebraicRealField)):
-            self._base_ring = self._points.base_ring()
-        elif isinstance(self._points.base_ring(), sage.rings.abc.RealField):
-            from sage.rings.real_double import RDF
-            self._base_ring = RDF
-            self._points = PointConfiguration([[RDF(cor) for cor in poi]
-                                               for poi in self._points])
-        else:
-            raise NotImplementedError('Base ring of the power diagram must '
-                                      'be one of QQ, RDF, AA.')
-
-        # Sets the weights
-        if weights is None: # Assume all weights are equal to zero. This produces the classic Voronoi diagram.
-            weights = [self._base_ring(0)]*self._n
-        for poi, wei in zip(self._points, weights):
-            self._weights[poi] = self._base_ring(wei)
-
-        if self._n > 0:
-            self._d = self._points.ambient_dim()
-            e = [([sum(vector(poi)[k] ** 2
-                       for k in range(self._d)) - self._weights[poi] ** 2] +
-                  [(-2) * vector(poi)[l] for l in range(self._d)] + [1])
-                 for poi in self._points]
-            # we attach hyperplane to the paraboloid
-
-            e = [[self._base_ring(i) for i in k] for k in e]
-            p = Polyhedron(ieqs=e, base_ring=self._base_ring)
-            # To be able to detect empty regions, we generate two sorted lists,
-            # that are used a few lines below.
-            # If we work over QQ, we also normalize the coefficients;
-            # this lets us handle Polyhedron not keeping the order of the points.
-            # We normalize the first non-zero coefficient to one.
+        # We normalize the coefficients when working over QQ,
+        # since Polyhedron does not keep the order of the points in that case.
+        # We normalize the first non-zero coefficient to one.
+        if self._base_ring == QQ:
             enormalized = []
             for ineq in e:
                 for i in range(len(ineq)):
@@ -243,36 +162,104 @@ class VoronoiDiagram(SageObject):
                         hlistnormalized.append([j / ineq[i] for j in ineq])
                         break
 
-            # Initialize each region as the empty polyhedron to fix the dictionary iteration order.
-            for i in range(self._n):
-                (self._P)[self._points[i]] = Polyhedron(vertices=[],
-                                                        lines=[], rays=[],
-                                                        base_ring=self._base_ring)
+        # Assign each point to its region.
+        for i in range(self._n):
+            if self._base_ring == QQ:
+                j = hlistnormalized.index(enormalized[i])
+            else:
+                # For base rings AA and RDF, Polyhedron keeps the order of the points.
+                j = i
+            equ = p.Hrepresentation(j)
+            # Forget the last coordinate to project back to our ambient space.
+            pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
+                    if u.is_vertex()]
+            pline = [[u[k] for k in range(self._d)] for u in equ.incident()
+                    if u.is_line()]
+            prays = [[u[k] for k in range(self._d)] for u in equ.incident()
+                    if u.is_ray()]
+            (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
+                                                    lines=pline, rays=prays,
+                                                    base_ring=self._base_ring)
 
-            # We will now iterate through the Hrep and assign each region to the point with closest hyperplane.
-            available_point_indices = list(range(self._n))
-            for j, ineq in enumerate(hlistnormalized):
-                if self._base_ring.is_exact():
-                    # Infinite precision, so we can use our prior lists.
-                    i = enormalized.index(ineq)
+    def _init_power_diagram(self, weights):
+        r"""
+        Creates a weighted ``VoronoiDiagram`` instance (a power diagram).
+
+        The code that associates a region to each point of a power diagram is slightly less efficient, since regions might be empty and the order of inequalities can change between the list e and the Polyhedron p.
+
+        EXAMPLES::
+
+            sage: V = VoronoiDiagram([[1, 3], [2, -2], [-1 ,2], [2, 2]], weights=[1, 9, 0, 8]); V
+            The power diagram of 4 points of dimension 2 in the Rational Field
+        """
+        self._is_power_diagram = True
+        self._weights = {}
+        for poi, wei in zip(self._points, weights):
+            self._weights[poi] = self._base_ring(wei)
+
+        # hyperplane inequalities
+        e = []
+        for poi in self._points:
+            v = vector(poi)
+            eqs = []
+            # we substract the weight squared
+            eqs.append(v.dot_product(v) - self._weights[poi]**2)
+            eqs.extend([self._base_ring(-2) * v[k] for k in range(self._d)])
+            eqs.append(self._base_ring(1))
+            e.append(eqs)
+
+        p = Polyhedron(ieqs=e, base_ring=self._base_ring)
+
+        # To be able to detect empty regions, we generate two sorted lists.
+        # We normalize the first non-zero coefficient to one.
+        enormalized = []
+        for ineq in e:
+            for i in range(len(ineq)):
+                if ineq[i] == self._base_ring(0):
+                    continue
                 else:
-                    # We take the infinity norm distance to account for precision errors.
-                    distances = [max([abs(ineq[k] - enormalized[i][k]) for k in range(len(ineq))])
-                                for i in available_point_indices]
-                    arg_min = min(range(len(distances)), key=lambda k: distances[k])
-                    i = available_point_indices[arg_min]
-                equ = p.Hrepresentation(j)
-                # Forget the last coordinate to project back to our ambient space.
-                pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
-                        if u.is_vertex()]
-                pline = [[u[k] for k in range(self._d)] for u in equ.incident()
-                        if u.is_line()]
-                prays = [[u[k] for k in range(self._d)] for u in equ.incident()
-                        if u.is_ray()]
-                (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
-                                                        lines=pline, rays=prays,
-                                                        base_ring=self._base_ring)
-                available_point_indices.remove(i)
+                    enormalized.append([j / ineq[i] for j in ineq])
+                    break
+        hlistnormalized = []
+        for h in p.Hrepresentation():
+            ineq = list(h)
+            for i in range(len(ineq)):
+                if ineq[i] == self._base_ring(0):
+                    continue
+                else:
+                    hlistnormalized.append([j / ineq[i] for j in ineq])
+                    break
+
+        # Initialize each region as the empty polyhedron to fix the dictionary iteration order.
+        for i in range(self._n):
+            (self._P)[self._points[i]] = Polyhedron(vertices=[],
+                                                    lines=[], rays=[],
+                                                    base_ring=self._base_ring)
+
+        # We will now iterate through the Hrep and assign each region to the point with closest hyperplane.
+        available_point_indices = list(range(self._n))
+        for j, ineq in enumerate(hlistnormalized):
+            if self._base_ring.is_exact():
+                # Infinite precision, so we can use our prior lists.
+                i = enormalized.index(ineq)
+            else:
+                # We take the infinity norm distance to account for precision errors.
+                distances = [max([abs(ineq[k] - enormalized[i][k]) for k in range(len(ineq))])
+                            for i in available_point_indices]
+                arg_min = min(range(len(distances)), key=lambda k: distances[k])
+                i = available_point_indices[arg_min]
+            equ = p.Hrepresentation(j)
+            # Forget the last coordinate to project back to our ambient space.
+            pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
+                    if u.is_vertex()]
+            pline = [[u[k] for k in range(self._d)] for u in equ.incident()
+                    if u.is_line()]
+            prays = [[u[k] for k in range(self._d)] for u in equ.incident()
+                    if u.is_ray()]
+            (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
+                                                    lines=pline, rays=prays,
+                                                    base_ring=self._base_ring)
+            available_point_indices.remove(i)
 
     def points(self):
         r"""
