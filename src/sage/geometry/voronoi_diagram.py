@@ -340,18 +340,18 @@ class VoronoiDiagram(SageObject):
                                   '-dimensional Voronoi diagrams not' +
                                   ' implemented')
 
-    def _are_points_in_regions(self):
-        #TODO: Change this so that it returns a dict of booleans instead (one for each point).
+    def are_points_in_regions(self):
         """
-        Check if all points are contained in their regions.
+        Check if all points are contained in their generated regions.
+        Returns a dictionary of booleans.
 
         EXAMPLES::
 
+            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights = [0, 0, 4]); V.are_points_in_regions()
+            {P(-1, 0): False, P(0, 0): False, P(1, 0): True}
             sage: py_trips = [[a, b] for a in range(1, 50) for b in range(1, 50) if ZZ(a^2 + b^2).is_square()]
             sage: v = VoronoiDiagram(py_trips)
-            sage: v._are_points_in_regions()
+            sage: all(v.are_points_in_regions().values()) # True if every point is in its generated region
             True
-            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights = [0, 0, 4]); V._are_points_in_regions()
-            False
         """
-        return all(self.regions()[p].contains(p) for p in self.points())
+        return {p:self.regions()[p].contains(p) for p in self.points()}
