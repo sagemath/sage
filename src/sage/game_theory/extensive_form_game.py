@@ -20,7 +20,7 @@ labels (a required argument).
 
 Its other main purpose is to provide a Sage entry point to gambit's extensive
 form games: convert back to the underlying gambit game with
-:meth:`~ExtensiveFormGame._gambit_`, save and load games in gambit's ``.efg``
+``_gambit_()``, save and load games in gambit's ``.efg``
 format with :meth:`~ExtensiveFormGame.save_efg` /
 :meth:`~ExtensiveFormGame.load_efg`, load games from the literature out of the
 gambit catalog with :meth:`~ExtensiveFormGame.load_from_gambit_catalog` (two of
@@ -416,7 +416,8 @@ class GameTreeTikzPicture(TikzPicture):
     picture to a PDF in a temporary file and handing it to the platform viewer,
     the way :meth:`~sage.plot.graphics.Graphics.show` does for an ordinary Sage
     plot.  Displaying it therefore needs a LaTeX installation, while merely
-    building it -- and reading its :meth:`content` -- does not.
+    building it -- and reading its
+    :meth:`~sage.misc.latex_standalone.Standalone.content` -- does not.
 
     EXAMPLES::
 
@@ -439,7 +440,8 @@ class GameTreeTikzPicture(TikzPicture):
         Unlike :meth:`sage.misc.latex_standalone.Standalone._repr_`, which
         prints the LaTeX document, this stays on one line: it is the text the
         command line shows next to the launched viewer.  Use ``print(self)``
-        for the document and :meth:`content` for the TikZ source.
+        for the document and :meth:`~sage.misc.latex_standalone.Standalone.content`
+        for the TikZ source.
 
         EXAMPLES::
 
@@ -519,7 +521,7 @@ class ExtensiveFormGame(SageObject):
 
     A game can be built from scratch with the tree-building methods (see below)
     or by wrapping an existing ``pygambit`` game passed to the constructor; use
-    :meth:`_gambit_` to recover the underlying gambit game.
+    ``_gambit_()`` to recover the underlying gambit game.
 
     .. WARNING::
 
@@ -726,7 +728,7 @@ class ExtensiveFormGame(SageObject):
         Populate this game from a gambit extensive form ``Game``, in place.
 
         This stores the gambit tree game, replacing any game already wrapped.
-        It is the inverse of :meth:`_gambit_`.
+        It is the inverse of ``_gambit_()``.
 
         This requires the optional gambit package.
 
@@ -1201,7 +1203,7 @@ class ExtensiveFormGame(SageObject):
 
         This is a thin passthrough to gambit's serializer.  It is handy for
         printing the full structure of the tree, which the concise
-        :meth:`_repr_` does not show; use :meth:`save_efg` to write it to a
+        ``_repr_()`` does not show; use :meth:`save_efg` to write it to a
         file instead.
 
         EXAMPLES::
@@ -1728,8 +1730,8 @@ class ExtensiveFormGame(SageObject):
         for player in list(game.players) + [game.players.chance]:
             player_infosets = list(player.infosets)
             if len(player_infosets) > 1:
-                for number, infoset in enumerate(player_infosets, start=1):
-                    numbers[infoset] = number
+                numbers.update({infoset: number for number, infoset
+                                in enumerate(player_infosets, start=1)})
 
         def visit(node):
             index = counter[0]
@@ -1830,9 +1832,9 @@ class ExtensiveFormGame(SageObject):
         r"""
         Save the game to ``path`` in gambit's extensive-form ``.efg`` format.
 
-        The underlying gambit game (see :meth:`_gambit_`) is serialised with
+        The underlying gambit game (see ``_gambit_()``) is serialised with
         gambit's writer and written atomically with
-        :func:`~sage.misc.temporary_file.atomic_write` so that a partially
+        :class:`~sage.misc.temporary_file.atomic_write` so that a partially
         written file is never left behind.  This is the inverse of
         :meth:`load_efg`.
 
@@ -1864,7 +1866,7 @@ class ExtensiveFormGame(SageObject):
 
         The file at ``path`` is read with gambit's ``read_efg`` reader and the
         resulting gambit game is wrapped in a new
-        :class:`ExtensiveFormGame` (see :meth:`_gambit_game`).  This is the
+        :class:`ExtensiveFormGame` (see ``_gambit_game()``).  This is the
         inverse of :meth:`save_efg`.
 
         INPUT:
@@ -2579,7 +2581,7 @@ class ExtensiveFormGame(SageObject):
           ``is_const_sum`` or ``include_descriptions``.  ``is_tree`` is set for
           you and passing it has no effect.
 
-        OUTPUT: a :class:`pandas.DataFrame` with a ``Game`` column holding the
+        OUTPUT: a ``pandas.DataFrame`` with a ``Game`` column holding the
         slugs and a ``Title`` column holding the titles.  Slugs are full paths,
         such as ``'journals/geb/bagwell1995'`` or ``'books/myerson1991/fig2_1'``.
 

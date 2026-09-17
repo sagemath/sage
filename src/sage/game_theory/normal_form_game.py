@@ -19,7 +19,8 @@ compute equilibria of these games:
 
  * ``'lp'`` - A built-in Sage implementation (with a gambit alternative)
    of a zero-sum game solver using linear programming. See
-   :class:`MixedIntegerLinearProgram` for more on MILP solvers in Sage.
+   :class:`~sage.numerical.mip.MixedIntegerLinearProgram` for more on MILP
+   solvers in Sage.
 
  * ``'lrs'`` - A solver interfacing with the 'lrslib' library.
 
@@ -276,8 +277,8 @@ currently available:
 * Sage also interfaces with all of the Nash equilibrium solvers provided by
   the open source game theory package
   `Gambit <https://www.gambit-project.org/>`_ [Gambit]_, including for games
-  with more than 2 players. See :meth:`obtain_nash` for the algorithm names
-  accepted here, and the `Gambit API overview
+  with more than 2 players. See :meth:`NormalFormGame.obtain_nash` for the
+  algorithm names accepted here, and the `Gambit API overview
   <https://gambitproject.readthedocs.io/en/stable/pygambit.html>`_ for the
   underlying solvers.
 
@@ -2121,9 +2122,9 @@ class NormalFormGame(SageObject, MutableMapping):
         r"""
         Save the game to ``path`` in Gambit's strategic-form ``.nfg`` format.
 
-        The game is converted to a Gambit game (see :meth:`_gambit_`),
+        The game is converted to a Gambit game (see ``_gambit_()``),
         serialised with Gambit's writer and written atomically with
-        :func:`~sage.misc.temporary_file.atomic_write` so that a partially
+        :class:`~sage.misc.temporary_file.atomic_write` so that a partially
         written file is never left behind.
 
         The game is always written in the ``.nfg`` (strategic form) format.
@@ -2146,7 +2147,7 @@ class NormalFormGame(SageObject, MutableMapping):
             NFG 1
 
         A game whose utilities are not fully populated is refused, so the file
-        never records payoffs that were never set (see :meth:`_gambit_`).  The
+        never records payoffs that were never set (see ``_gambit_()``).  The
         error comes before anything is written, leaving the file untouched::
 
             sage: # optional - pygambit
@@ -2172,7 +2173,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         The file at ``path`` is read with gambit's ``read_nfg`` reader and the
         resulting gambit game is converted into a new
-        :class:`NormalFormGame` (see :meth:`_gambit_game`).  This is the
+        :class:`NormalFormGame` (see ``_gambit_game()``).  This is the
         inverse of :meth:`save_nfg`.
 
         INPUT:
@@ -2228,7 +2229,7 @@ class NormalFormGame(SageObject, MutableMapping):
           keywords filter the listing, for instance ``n_players``, ``is_tree``,
           ``is_const_sum`` or ``include_descriptions``
 
-        OUTPUT: a :class:`pandas.DataFrame` with a ``Game`` column holding the
+        OUTPUT: a ``pandas.DataFrame`` with a ``Game`` column holding the
         slugs and a ``Title`` column holding the titles.  Slugs are full paths,
         such as ``'journals/geb/bagwell1995'`` or ``'books/myerson1991/fig2_1'``.
 
@@ -2258,7 +2259,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         The available games are listed by :meth:`gambit_catalog_games`.  A
         catalog game given in extensive form is converted to its reduced
-        strategic form, via :meth:`_gambit_game`.
+        strategic form, via ``_gambit_game()``.
 
         INPUT:
 
@@ -2663,13 +2664,13 @@ class NormalFormGame(SageObject, MutableMapping):
             minimise their utility.
 
         - ``solver`` -- (optional) the backend the ``'lp'`` algorithm builds
-          its :class:`MixedIntegerLinearProgram` with; see that class for the
-          MILP solvers Sage offers.  It may also be ``'gambit'``, to use the
-          LP solver included with the gambit library.  ``'PPL'`` and
-          ``'gambit'`` compute in exact arithmetic and the others, ``'GLPK'``
-          and ``'Coin'`` among them, in floating point.  ``None``, the
-          default, means ``'PPL'`` when ``rational`` is ``True`` and the
-          default Sage LP solver, normally GLPK, when it is ``False``.
+          its :class:`~sage.numerical.mip.MixedIntegerLinearProgram` with; see
+          that class for the MILP solvers Sage offers.  It may also be
+          ``'gambit'``, to use the LP solver included with the gambit library.
+          ``'PPL'`` and ``'gambit'`` compute in exact arithmetic and the
+          others, ``'GLPK'`` and ``'Coin'`` among them, in floating point.
+          ``None``, the default, means ``'PPL'`` when ``rational`` is ``True``
+          and the default Sage LP solver, normally GLPK, when it is ``False``.
 
         - ``rational`` -- boolean (default: ``True``); whether to answer with
           rational probabilities rather than floating point ones, which is done
@@ -2733,7 +2734,7 @@ class NormalFormGame(SageObject, MutableMapping):
         cannot be followed.  The numerical gambit solvers may in addition find
         only a sample of the equilibria rather than all of them.
 
-        .. SEEALSO:: :meth:`_extract_gambit_equilibria`, which converts gambit's
+        .. SEEALSO:: ``_extract_gambit_equilibria()``, which converts gambit's
             own profile objects into this format.
 
         EXAMPLES:
@@ -3229,7 +3230,7 @@ class NormalFormGame(SageObject, MutableMapping):
         strategy `j`.  A probability gambit computed exactly is returned as a
         Sage :class:`~sage.rings.rational.Rational` and one it computed in
         floating point as a Python ``float``, mirroring the conversion
-        :meth:`_gambit_game` makes for payoffs.
+        ``_gambit_game()`` makes for payoffs.
 
         INPUT:
 
@@ -3354,7 +3355,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         OUTPUT: a sorted list of Nash equilibria, each a list with one tuple of
         probabilities per player, rational where they were found exactly and
-        floats where they were not (see :meth:`_extract_gambit_equilibria`)
+        floats where they were not (see ``_extract_gambit_equilibria()``)
 
         EXAMPLES:
 
@@ -3543,7 +3544,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         An unknown algorithm raises an error::
 
-            sage: c._use_gambit_solver('invalid')
+            sage: c._use_gambit_solver('invalid')  # optional - pygambit
             Traceback (most recent call last):
             ...
             ValueError: unknown gambit algorithm 'invalid'; ...
@@ -3685,8 +3686,9 @@ class NormalFormGame(SageObject, MutableMapping):
           * ``'PPL'`` -- this computes exactly as well
 
           * for further possible values, see
-            :class:`MixedIntegerLinearProgram`; the rest of them, ``'GLPK'``
-            and ``'Coin'`` among them, compute in floating point
+            :class:`~sage.numerical.mip.MixedIntegerLinearProgram`; the rest
+            of them, ``'GLPK'`` and ``'Coin'`` among them, compute in floating
+            point
 
           * ``None`` (the default) -- ``'PPL'`` when ``rational`` is ``True``,
             and the default Sage LP backend, normally GLPK, when it is
