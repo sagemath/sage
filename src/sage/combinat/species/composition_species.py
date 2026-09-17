@@ -60,14 +60,16 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
             sage: S = L.structures(['a','b','c']).list()                                # needs sage.libs.flint
             sage: a = S[2]; a                                                           # needs sage.libs.flint
             F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b'))
-            sage: a.transport(p)                                                        # needs sage.groups sage.libs.flint
-            F-structure: {{'a', 'b'}, {'c'}}; G-structures: (('a', 'c'), ('b'))
+            sage: res = a.transport(p); res                                             # needs sage.groups sage.libs.flint
+            F-structure: {{'a', 'b'}, {'c'}}; G-structures: [('a', 'b'), ('c')]
+            sage: res.parent() == a.parent()                                            # needs sage.groups sage.libs.flint
+            True
         """
         f, gs = self._list
         pi = self._partition.transport(perm)
-        f = f.change_labels(pi._list)
-        _ = [g.change_labels(part) for g, part in zip(gs, pi)]  # TODO: BUG HERE ?
-        return self.__class__(self, self._labels, pi, f, gs)
+        f = f.change_labels(list(pi))
+        g = [g.change_labels(part) for g, part in zip(gs, pi)]
+        return self.__class__(self.parent(), self._labels, pi, f, g)
 
     def change_labels(self, labels):
         """
@@ -89,14 +91,16 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
             sage: S = L.structures(['a','b','c']).list()                                # needs sage.libs.flint
             sage: a = S[2]; a                                                           # needs sage.libs.flint
             F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b'))
-            sage: a.change_labels([1,2,3])                                              # needs sage.libs.flint
+            sage: b = a.change_labels([1,2,3]); b                                       # needs sage.libs.flint
             F-structure: {{1, 3}, {2}}; G-structures: [(1, 3), (2)]
+            sage: b.parent() == a.parent()                                              # needs sage.libs.flint
+            True
         """
         f, gs = self._list
         pi = self._partition.change_labels(labels)
         f = f.change_labels(list(pi))
         g = [g.change_labels(part) for g, part in zip(gs, pi)]
-        return self.__class__(self, labels, pi, f, g)
+        return self.__class__(self.parent(), labels, pi, f, g)
 
 
 class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
