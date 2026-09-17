@@ -179,7 +179,7 @@ def ed25519_decode(data):
 
         sage: ed25519_decode(bytes.fromhex('5866666666666666666666666666666666666666666666666666666666666666')) == Ed25519BasePoint()
         True
-        sage: ed25519_decode(b'\\xff' * 32)
+        sage: ed25519_decode(b'\xff' * 32)
         Traceback (most recent call last):
         ...
         ValueError: the encoded y-coordinate is not canonical
@@ -289,7 +289,8 @@ def ed25519_verify(public_key, message, signature):
         True
         sage: ed25519_verify(public_key, b'bad', signature)
         False
-        sage: ed25519_verify(public_key, b'', signature[:-1] + bytes([signature[-1] ^ 1]))
+        sage: import operator
+        sage: ed25519_verify(public_key, b'', signature[:-1] + bytes([operator.xor(signature[-1], 1)]))
         False
     """
     try:
