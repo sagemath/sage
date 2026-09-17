@@ -2639,7 +2639,7 @@
 .. [Ed1974] \A. R. Edmonds, *Angular Momentum in Quantum Mechanics*,
             Princeton University Press (1974)
 
-.. [Ed1987] \A. H. Edelsbrunner, *Algorithms in Combinatorial Geometry*,
+.. [Ed1987] \H. Edelsbrunner, *Algorithms in Combinatorial Geometry*,
             Springer-Verlag Berlin Heidelberg (1987)
 
 .. [EDI2014] EDITH COHEN,DANIEL DELLING,THOMAS PAJOR and RENATO F. WERNECK

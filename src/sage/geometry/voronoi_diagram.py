@@ -13,12 +13,12 @@ Voronoi diagram of a finite list of points in `\RR^d`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.rings.rational_field import QQ
 import sage.rings.abc
+from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.triangulation.point_configuration import PointConfiguration
 from sage.modules.free_module_element import vector
+from sage.rings.rational_field import QQ
+from sage.structure.sage_object import SageObject
 
 
 class VoronoiDiagram(SageObject):
@@ -88,7 +88,7 @@ class VoronoiDiagram(SageObject):
 
     - Moritz Firsching (2012-09-21)
     """
-    def __init__(self, points, weights = None):
+    def __init__(self, points, weights=None):
         r"""
         See ``VoronoiDiagram`` for full documentation.
 
@@ -124,10 +124,10 @@ class VoronoiDiagram(SageObject):
 
         if self._n > 0:
             self._d = self._points.ambient_dim()
-            e = [([sum(vector(i)[k] ** 2
-                       for k in range(self._d)) - self._weights[i] ** 2] +
-                  [(-2) * vector(i)[l] for l in range(self._d)] + [1])
-                 for i in self._points]
+            e = [([sum(vector(poi)[k] ** 2
+                       for k in range(self._d)) - self._weights[poi] ** 2] +
+                  [(-2) * vector(poi)[l] for l in range(self._d)] + [1])
+                 for poi in self._points]
             # we attach hyperplane to the paraboloid
 
             e = [[self._base_ring(i) for i in k] for k in e]
@@ -161,7 +161,7 @@ class VoronoiDiagram(SageObject):
                                                         lines=[], rays=[],
                                                         base_ring=self._base_ring)
 
-            # We will now iterate through the Hrep and assign each region to the point with closer hyperplane.
+            # We will now iterate through the Hrep and assign each region to the point with closest hyperplane.
             available_point_indices = list(range(self._n))
             for j, ineq in enumerate(hlistnormalized):
                 if self._base_ring.is_exact():
@@ -202,7 +202,7 @@ class VoronoiDiagram(SageObject):
             not necessarily regular.
         """
         return self._points
-    
+
     def weights(self):
         r"""
         Return the input weights as a dictionary of numbers.
@@ -214,7 +214,7 @@ class VoronoiDiagram(SageObject):
              P(2.00000000000000, 5.00000000000000): 0.0,
              P(4.00000000000000, -1.00000000000000): 0.0,
              P(4.00000000000000, 5.00000000000000): 0.0}
-            sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]], weights = [2, 3, 0, 2]); V.weights()
+            sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]], weights=[2, 3, 0, 2]); V.weights()
             {P(0.500000000000000, 3.00000000000000): 2.0,
              P(2.00000000000000, 5.00000000000000): 3.0,
              P(4.00000000000000, -1.00000000000000): 2.0,
@@ -255,7 +255,7 @@ class VoronoiDiagram(SageObject):
             ....:                                                 rays=[(RDF(4.5), RDF(1), -RDF(25)), (-RDF(2.25), -RDF(1), RDF(2.5))],
             ....:                                                 vertices=[(-RDF(1.1074999999999999), RDF(1.149444444), RDF(9.0138888890000004))])}
             True
-            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights = [0, 0, 4]); V.regions()
+            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights=[0, 0, 4]); V.regions()
             {P(-1, 0): A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line,
             P(0, 0): The empty polyhedron in QQ^0,
             P(1, 0): A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line}
@@ -335,10 +335,10 @@ class VoronoiDiagram(SageObject):
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
-        from sage.plot.line import line
-        from sage.plot.point import point
         from sage.plot.colors import rainbow
+        from sage.plot.line import line
         from sage.plot.plot import plot
+        from sage.plot.point import point
 
         if self.ambient_dim() == 2:
             S = line([])
@@ -347,9 +347,8 @@ class VoronoiDiagram(SageObject):
                 from random import shuffle
                 cell_colors = rainbow(self._n)
                 shuffle(cell_colors)
-            else:
-                if not isinstance(cell_colors, (list, dict)):
-                    raise AssertionError("'cell_colors' must be a list or a dictionary")
+            elif not isinstance(cell_colors, (list, dict)):
+                raise AssertionError("'cell_colors' must be a list or a dictionary")
             for i, p in enumerate(self._P):
                 col = cell_colors[i]
                 if not self.regions()[p].is_empty(): # Skip plotting empty regions.
@@ -363,16 +362,16 @@ class VoronoiDiagram(SageObject):
 
     def are_points_in_regions(self):
         """
-        Check if all points are contained in their generated regions.
+        Check if the points are contained in their generated regions.
         Returns a dictionary of booleans.
 
         EXAMPLES::
 
-            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights = [0, 0, 4]); V.are_points_in_regions()
+            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights=[0, 0, 4]); V.are_points_in_regions()
             {P(-1, 0): False, P(0, 0): False, P(1, 0): True}
             sage: py_trips = [[a, b] for a in range(1, 50) for b in range(1, 50) if ZZ(a^2 + b^2).is_square()]
-            sage: v = VoronoiDiagram(py_trips)
-            sage: all(v.are_points_in_regions().values()) # True if every point is in its generated region
+            sage: V = VoronoiDiagram(py_trips)
+            sage: all(V.are_points_in_regions().values()) # True if every point is in its generated region
             True
         """
         return {p:self.regions()[p].contains(p) for p in self.points()}
