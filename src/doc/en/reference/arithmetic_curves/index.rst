@@ -5,6 +5,7 @@ Elliptic curves
    :maxdepth: 1
 
    sage/schemes/elliptic_curves/constructor
+   sage/schemes/elliptic_curves/ell_edwards
    sage/schemes/elliptic_curves/jacobian
    sage/schemes/elliptic_curves/ell_point
    sage/schemes/elliptic_curves/ell_generic
