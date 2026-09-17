@@ -3,10 +3,10 @@ ML-KEM Tests
 
 This module tests the ML-KEM implementation using pytest.
 
-Tests include:
-1. Consistency tests: encapsulation and decapsulation produce matching shared secrets
-2. Known-answer tests (KATs) from the NIST submission package, using the
-   deterministic seeds ``d``, ``z``, and message ``m``.
+Tests include consistency tests (encapsulation and decapsulation produce
+matching shared secrets) and known-answer tests (KATs) from the NIST
+submission package, using the deterministic seeds ``d``, ``z``, and
+message ``m``.
 """
 
 import pytest
