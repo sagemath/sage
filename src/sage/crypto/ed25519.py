@@ -320,8 +320,6 @@ def ed25519_verify(public_key, message, signature):
 
 
 __all__ = [
-    "Ed25519",
-    "Ed25519BasePoint",
     "ED25519_A",
     "ED25519_BASE_X",
     "ED25519_BASE_Y",
@@ -330,6 +328,8 @@ __all__ = [
     "ED25519_FIELD_SIZE",
     "ED25519_SQRT_M1",
     "ED25519_SUBGROUP_ORDER",
+    "Ed25519",
+    "Ed25519BasePoint",
     "ed25519_decode",
     "ed25519_encode",
     "ed25519_public_key",
