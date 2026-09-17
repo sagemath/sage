@@ -98,15 +98,11 @@ class VoronoiDiagram(SageObject):
             The Voronoi diagram of 3 points of dimension 3 in the Rational Field
         """
         self._P = {}
+        self._weights = {}
         self._points = PointConfiguration(points)
         self._n = self._points.n_points()
-        self._weights = {}
-        
-        if weights is None: # Assume all weights are equal to zero. This produces the classic Voronoi diagram.
-            weights = [0]*self._n
-        for poi, wei in zip(self._points, weights):
-            self._weights[poi] = wei
-        
+
+        # Sets the base ring
         if not self._n or self._points.base_ring().is_subring(QQ):
             self._base_ring = QQ
         elif isinstance(self._points.base_ring(), (sage.rings.abc.RealDoubleField, sage.rings.abc.AlgebraicRealField)):
@@ -119,6 +115,12 @@ class VoronoiDiagram(SageObject):
         else:
             raise NotImplementedError('Base ring of the Voronoi diagram must '
                                       'be one of QQ, RDF, AA.')
+
+        # Sets the weights
+        if weights is None: # Assume all weights are equal to zero. This produces the classic Voronoi diagram.
+            weights = [self._base_ring(0)]*self._n
+        for poi, wei in zip(self._points, weights):
+            self._weights[poi] = self._base_ring(wei)
 
         if self._n > 0:
             self._d = self._points.ambient_dim()
@@ -134,16 +136,18 @@ class VoronoiDiagram(SageObject):
             # that are used a few lines below.
             # If we work over QQ, we also normalize the coefficients;
             # this lets us handle Polyhedron not keeping the order of the points. 
+            #TODO: This breaks things when the base ring is RDF, since Polyhedron changes the orders (like in QQ).
+            #TODO: But there we can't divide without introducing error. Find another way.
             enormalized = []
             for ineq in e:
-                if ineq[0] == 0 or self.base_ring() != QQ:
+                if ineq[0] == self._base_ring(0):
                     enormalized.append(ineq)
                 else:
                     enormalized.append([i / ineq[0] for i in ineq[1:]])
             hlist = [list(ineq) for ineq in p.Hrepresentation()]
             hlistnormalized = []
             for ineq in hlist:
-                if ineq[0] == 0 or self.base_ring() != QQ:
+                if ineq[0] == self._base_ring(0):
                     hlistnormalized.append(ineq)
                 else:
                     hlistnormalized.append([i / ineq[0] for i in ineq[1:]])
@@ -189,15 +193,15 @@ class VoronoiDiagram(SageObject):
         EXAMPLES::
 
             sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]]); V.weights()
-            {P(0.500000000000000, 3.00000000000000): 0,
-            P(2.00000000000000, 5.00000000000000): 0,
-            P(4.00000000000000, 5.00000000000000): 0,
-            P(4.00000000000000, -1.00000000000000): 0}
+            {P(0.500000000000000, 3.00000000000000): 0.0,
+             P(2.00000000000000, 5.00000000000000): 0.0,
+             P(4.00000000000000, -1.00000000000000): 0.0,
+             P(4.00000000000000, 5.00000000000000): 0.0}
             sage: V = VoronoiDiagram([[.5, 3], [2, 5], [4, 5], [4, -1]], weights = [2, 3, 0, 2]); V.weights()
-            {P(0.500000000000000, 3.00000000000000): 2,
-            P(2.00000000000000, 5.00000000000000): 3,
-            P(4.00000000000000, 5.00000000000000): 0,
-            P(4.00000000000000, -1.00000000000000): 2}
+            {P(0.500000000000000, 3.00000000000000): 2.0,
+             P(2.00000000000000, 5.00000000000000): 3.0,
+             P(4.00000000000000, -1.00000000000000): 2.0,
+             P(4.00000000000000, 5.00000000000000): 0.0}
         """
         return self._weights
 
