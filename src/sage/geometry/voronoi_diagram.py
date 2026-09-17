@@ -155,6 +155,12 @@ class VoronoiDiagram(SageObject):
                         hlistnormalized.append([j / ineq[i] for j in ineq])
                         break
 
+            # Initialize each region as the empty polyhedron to fix the dictionary iteration order.
+            for i in range(self._n):
+                (self._P)[self._points[i]] = Polyhedron(vertices=[],
+                                                        lines=[], rays=[],
+                                                        base_ring=self._base_ring)
+
             # We will now iterate through the Hrep and assign each region to the point with closer hyperplane.
             available_point_indices = list(range(self._n))
             for j, ineq in enumerate(hlistnormalized):
@@ -179,11 +185,6 @@ class VoronoiDiagram(SageObject):
                                                         lines=pline, rays=prays,
                                                         base_ring=self._base_ring)
                 available_point_indices.remove(i)
-            # Now assign the empty polyhedron to the remaining indices.
-            for i in available_point_indices:
-                (self._P)[self._points[i]] = Polyhedron(vertices=[],
-                                                        lines=[], rays=[],
-                                                        base_ring=self._base_ring)
 
     #TODO: def __init_weighted__() separately, to guarantee not breaking prior behaviour.
 
