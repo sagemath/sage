@@ -135,41 +135,57 @@ class VoronoiDiagram(SageObject):
             # To be able to detect empty regions, we generate two sorted lists,
             # that are used a few lines below.
             # If we work over QQ, we also normalize the coefficients;
-            # this lets us handle Polyhedron not keeping the order of the points. 
-            #TODO: This breaks things when the base ring is RDF, since Polyhedron changes the orders (like in QQ).
-            #TODO: But there we can't divide without introducing error. Find another way.
+            # this lets us handle Polyhedron not keeping the order of the points.
+            # We normalize the first non-zero coefficient to one.
             enormalized = []
             for ineq in e:
-                if ineq[0] == self._base_ring(0):
-                    enormalized.append(ineq)
-                else:
-                    enormalized.append([i / ineq[0] for i in ineq[1:]])
+                for i in range(len(ineq)):
+                    if ineq[i] == self._base_ring(0):
+                        continue
+                    else:
+                        enormalized.append([j / ineq[i] for j in ineq])
+                        break
             hlist = [list(ineq) for ineq in p.Hrepresentation()]
             hlistnormalized = []
             for ineq in hlist:
-                if ineq[0] == self._base_ring(0):
-                    hlistnormalized.append(ineq)
-                else:
-                    hlistnormalized.append([i / ineq[0] for i in ineq[1:]])
+                for i in range(len(ineq)):
+                    if ineq[i] == self._base_ring(0):
+                        continue
+                    else:
+                        hlistnormalized.append([j / ineq[i] for j in ineq])
+                        break
 
-        for i in range(self._n):
-            # Only the points appearing in hlistnormalized() will have non-empty regions.
-            if enormalized[i] in hlistnormalized:
-                j = hlistnormalized.index(enormalized[i])
+            # We will now iterate through the Hrep and assign each region to the point with closer hyperplane.
+            available_point_indices = list(range(self._n))
+            for j, ineq in enumerate(hlistnormalized):
+                if self._base_ring.is_exact():
+                    # Infinite precision, so we can use our prior lists.
+                    i = enormalized.index(ineq)
+                else:
+                    # We take the infinity norm distance to account for precision errors.
+                    distances = [max([abs(ineq[k] - enormalized[i][k]) for k in range(len(ineq))])
+                                for i in available_point_indices]
+                    arg_min = min(range(len(distances)), key=lambda k: distances[k])
+                    i = available_point_indices[arg_min]
                 equ = p.Hrepresentation(j)
+                # Forget the last coordinate to project back to our ambient space.
                 pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
-                         if u.is_vertex()]
-                prays = [[u[k] for k in range(self._d)] for u in equ.incident()
-                         if u.is_ray()]
+                        if u.is_vertex()]
                 pline = [[u[k] for k in range(self._d)] for u in equ.incident()
-                         if u.is_line()]
-            else:
-                pvert = []
-                prays = []
-                pline = []
-            (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
-                                                    lines=pline, rays=prays,
-                                                    base_ring=self._base_ring)
+                        if u.is_line()]
+                prays = [[u[k] for k in range(self._d)] for u in equ.incident()
+                        if u.is_ray()]
+                (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
+                                                        lines=pline, rays=prays,
+                                                        base_ring=self._base_ring)
+                available_point_indices.remove(i)
+            # Now assign the empty polyhedron to the remaining indices.
+            for i in available_point_indices:
+                (self._P)[self._points[i]] = Polyhedron(vertices=[],
+                                                        lines=[], rays=[],
+                                                        base_ring=self._base_ring)
+
+    #TODO: def __init_weighted__() separately, to guarantee not breaking prior behaviour.
 
     def points(self):
         r"""
