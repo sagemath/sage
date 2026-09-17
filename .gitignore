@@ -385,3 +385,4 @@ src/sage/calculus/__init__.py
 
 # doctesting noise
 PrOgReSs.gFaN
+.aider*
