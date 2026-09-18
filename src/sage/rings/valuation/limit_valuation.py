@@ -397,10 +397,9 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             if self.domain().base_ring().fraction_field() is ring.base_ring():
                 return [LimitValuation(self._initial_approximation.change_domain(ring),
                         self._G.change_ring(ring.base_ring()))]
-            else:
-                # we need to recompute the mac lane approximants over this base
-                # ring because it could split differently
-                pass
+            # we need to recompute the mac lane approximants over this base
+            # ring because it could split differently
+            pass
         return super().extensions(ring)
 
     def lift(self, F):
@@ -636,10 +635,9 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         if R in Fields():
             # the approximation ends in v(phi)=infty
             return R
-        else:
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
-            assert (isinstance(R, PolynomialRing_generic))
-            return R.base_ring()
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        assert (isinstance(R, PolynomialRing_generic))
+        return R.base_ring()
 
     def _ge_(self, other):
         r"""
@@ -755,10 +753,9 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             ret = self._initial_approximation.phi()
             assert (self(ret) > other(ret))  # I could not come up with an example where this fails
             return ret
-        else:
-            # if the valuations are sane, it should be possible to separate
-            # them with constants
-            return self.domain()(v._weakly_separating_element(u))
+        # if the valuations are sane, it should be possible to separate
+        # them with constants
+        return self.domain()(v._weakly_separating_element(u))
 
     def value_semigroup(self):
         r"""

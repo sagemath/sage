@@ -40,7 +40,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             Return the associated graded algebra to ``self``.
 
             This is ``self``, because ``self`` is already graded.
-            See :meth:`~sage.categories.filtered_algebras_with_basis.FilteredAlgebrasWithBasis.graded_algebra`
+            See :meth:`~sage.categories.filtered_algebras_with_basis.FilteredAlgebrasWithBasis.ParentMethods.graded_algebra`
             for the general behavior of this method, and see
             :class:`~sage.algebras.associated_graded.AssociatedGradedAlgebra`
             for the definition and properties of associated graded
@@ -55,8 +55,11 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             TESTS:
 
             Let us check that the three methods
-            :meth:`to_graded_conversion`, :meth:`from_graded_conversion`
-            and :meth:`projection` (which form the interface of the
+            :meth:`to_graded_conversion <sage.categories.filtered_algebras_with_basis.FilteredAlgebrasWithBasis.ParentMethods.to_graded_conversion>`,
+            :meth:`from_graded_conversion <sage.categories.filtered_algebras_with_basis.FilteredAlgebrasWithBasis.ParentMethods.from_graded_conversion>`
+            and
+            :meth:`projection <sage.categories.filtered_algebras_with_basis.FilteredAlgebrasWithBasis.ParentMethods.projection>`
+            (which form the interface of the
             associated graded algebra) work correctly here::
 
                 sage: # needs sage.combinat sage.modules

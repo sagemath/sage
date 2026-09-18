@@ -991,7 +991,8 @@ class Stream_function(Stream_inexact):
         :meth:`sage.rings.lazy_series_ring.LazySeriesRing.define_implicitly`
         work any streams used in ``function`` must appear in its
         ``__closure__`` as instances of :class:`Stream`, as opposed
-        to, for example, as instances of :class:`LazyPowerSeries`.
+        to, for example, as instances of
+        :class:`~sage.rings.lazy_series.LazyPowerSeries`.
 
     EXAMPLES::
 
@@ -1263,11 +1264,12 @@ class Stream_taylor(Stream_inexact):
 class VariablePool(UniqueRepresentation):
     """
     A class to keep track of used and unused variables in an
-    :class:`InfinitePolynomialRing`.
+    :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRingFactory>`.
 
     INPUT:
 
-    - ``ring`` -- :class:`InfinitePolynomialRing`
+    - ``ring`` --
+      :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRingFactory>`
     """
     def __init__(self, ring):
         """
@@ -1298,7 +1300,7 @@ class VariablePool(UniqueRepresentation):
         TESTS:
 
         Check, that we get a new pool for each
-        :class:`InfinitePolynomialRing`::
+        :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRingFactory>`::
 
             sage: R0.<b> = InfinitePolynomialRing(QQ)
             sage: P0 = VariablePool(R0)
@@ -1383,6 +1385,24 @@ class DominatingAction(Action):
             Univariate Polynomial Ring in a over
              Fraction Field of Infinite polynomial ring in FESDUMMY over
              Univariate Polynomial Ring in b over Univariate Polynomial Ring in t over Integer Ring
+
+        Elements of modules with basis are moved over to the larger coefficient ring so that undetermined
+        coefficients can be operated with symmetric functions::
+
+            sage: p = SymmetricFunctions(ZZ).p()
+            sage: y = g * p[1]; y
+            FESDUMMY_0*p[1]
+            sage: y.parent()
+            Symmetric Functions over CoefficientRing over Integer Ring in the powersum basis
+            sage: y.parent().base_ring()
+            CoefficientRing over Integer Ring
+
+        This includes tensor products that appear in multisort plethysm ::
+
+            sage: p2 = tensor([p, p])
+            sage: y = g * tensor([p[1], p[2]])
+            sage: y.parent().base_ring()
+            CoefficientRing over Integer Ring
         """
         G = g.parent()
         if x in G.base_ring():
@@ -1727,9 +1747,18 @@ class Stream_uninitialized(Stream):
             Currently, the first invocation is via
             :meth:`_good_cache` in :meth:`__getitem__`.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+        A cache-less shifted stream does not hide the cached stream on which it depends::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub, Stream_map_coefficients, Stream_shift
+            sage: C = Stream_uninitialized(0)
+            sage: M = Stream_map_coefficients(C, lambda c: c, True)
+            sage: S = Stream_shift(M, -1)
+            sage: C.define(S)
+            sage: C._input_streams == [C, M]
+            True
+
             sage: terms_of_degree = lambda n, R: [R.one()]
             sage: x = Stream_exact([1], order=1)
             sage: C = Stream_uninitialized(1)
@@ -1743,12 +1772,16 @@ class Stream_uninitialized(Stream):
              <sage.data_structures.stream.Stream_cauchy_mul object at 0x...>]
         """
         known = [self]
+        visited = [self]
         todo = [self]
         while todo:
             x = todo.pop()
             for y in x.input_streams():
-                if hasattr(y, "_cache") and not any(y is z for z in known):
-                    todo.append(y)
+                if any(y is z for z in visited):
+                    continue
+                visited.append(y)
+                todo.append(y)
+                if hasattr(y, "_cache"):
                     known.append(y)
         return known
 
@@ -2746,14 +2779,14 @@ class Stream_sub(Stream_binary):
 
         EXAMPLES::
 
-            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_add
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_sub
             sage: f = Stream_exact([0,3])
             sage: g = Stream_function(lambda n: -3*n, True, 1)
-            sage: h = Stream_add(f, g, True)
+            sage: h = Stream_sub(f, g, True)
             sage: h._approximate_order
             1
             sage: [h[i] for i in range(5)]
-            [0, 0, -6, -9, -12]
+            [0, 6, 6, 9, 12]
         """
         # this is not the true order, because we may have cancellation
         return min(self._left._approximate_order, self._right._approximate_order)
@@ -2778,6 +2811,66 @@ class Stream_sub(Stream_binary):
             [0, 0, -2, -6, -12, -20, -30, -42, -56, -72]
         """
         return self._left[n] - self._right[n]
+
+
+class Stream_hadamard_mul(Stream_binary):
+    """
+    Operator for Hadamard product of two coefficient streams.
+
+    INPUT:
+
+    - ``left`` -- :class:`Stream` of coefficients on the left side of the operator
+    - ``right`` -- :class:`Stream` of coefficients on the right side of the operator
+    - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import (Stream_hadamard_mul, Stream_function)
+        sage: f = Stream_function(lambda n: n, True, 0)
+        sage: g = Stream_function(lambda n: n+1, True, 0)
+        sage: h = Stream_hadamard_mul(f, g, True)
+        sage: [h[i] for i in range(10)]
+        [0, 2, 6, 12, 20, 30, 42, 56, 72, 90]
+    """
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_function, Stream_hadamard_mul
+            sage: f = Stream_exact([0,3])
+            sage: g = Stream_function(lambda n: -3*n, True, 1)
+            sage: h = Stream_hadamard_mul(f, g, True)
+            sage: h._approximate_order
+            1
+            sage: [h[i] for i in range(5)]
+            [0, -9, 0, 0, 0]
+        """
+        # this is not the true order, unless we have an integral domain
+        return max(self._left._approximate_order, self._right._approximate_order)
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_function, Stream_hadamard_mul)
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: g = Stream_function(lambda n: n^2, True, 0)
+            sage: h = Stream_hadamard_mul(f, g, True)
+            sage: h.get_coefficient(5)
+            125
+            sage: [h.get_coefficient(i) for i in range(10)]
+            [0, 1, 8, 27, 64, 125, 216, 343, 512, 729]
+        """
+        return self._left[n] * self._right[n]
 
 
 class Stream_cauchy_mul(Stream_binary):
@@ -3116,7 +3209,6 @@ class Stream_pseudo_diff_mul(Stream_binary):
             [0, 0, a*b^2, 2*a^2*b^3 + 4*a*b^3 - a*b,
              3*a^3*b^4 + 8*a^2*b^4 + 9*a*b^4 - 4*a^2*b^2 - 8*a*b^2]
         """
-        x = self._variable
         R = self._ring
         # We want to compute the coefficient of -n = i + j - k.
         # self._right[-j] is the coefficient of \partial^j.
@@ -4496,6 +4588,20 @@ class Stream_shift(Stream):
         self._shift = shift
         super().__init__(series._true_order)
 
+    def input_streams(self):
+        r"""
+        Return the input stream of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_shift
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: s = Stream_shift(f, -1)
+            sage: s.input_streams()[0] is f
+            True
+        """
+        return [self._series]
+
     @lazy_attribute
     def _approximate_order(self):
         """
@@ -5377,15 +5483,14 @@ class Stream_infinite_operator(Stream):
             if other._is_sparse:
                 return any(self[i] != other[i] for i in other._cache
                            if self._approximate_order <= i < self._cur_order)
-            else:
-                deg = other._approximate_order + len(other._cache)
+            deg = other._approximate_order + len(other._cache)
         elif isinstance(other, Stream_infinite_operator):
             deg = other._cur_order
         else:
             return False
         ao = min(self._approximate_order, other._approximate_order)
         cur_order = min(self._cur_order, deg)
-        if cur_order == -infinity: # no coefficients computed for one of the series
+        if cur_order == -infinity:  # no coefficients computed for one of the series
             return False
         return any(self[i] != other[i] for i in range(ao, cur_order))
 

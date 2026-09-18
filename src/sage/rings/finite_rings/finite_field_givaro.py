@@ -36,7 +36,7 @@ class FiniteField_givaro(FiniteField):
     - ``q`` -- `p^n` (must be prime power)
 
     - ``name`` -- (default: ``'a'``) variable used for
-      :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.poly_repr()`
+      ``poly_repr()``
 
     - ``modulus`` -- a minimal polynomial to use for reduction
 
@@ -44,11 +44,11 @@ class FiniteField_givaro(FiniteField):
       to the user:
 
       - 'log': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.log_repr()`
+        ``log_repr()``
       - 'int': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.int_repr()`
+        ``int_repr()``
       - 'poly': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.poly_repr()`
+        ``poly_repr()``
 
     - ``cache`` -- boolean (default: ``False``); if ``True`` a cache of all
       elements of this field is created. Thus, arithmetic does not create new
@@ -384,7 +384,7 @@ class FiniteField_givaro(FiniteField):
 
             This generator is not guaranteed to be a generator for the
             multiplicative group.  To obtain the latter, use
-            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.multiplicative_generator`
             or use the ``modulus="primitive"`` option when constructing
             the field.
 
@@ -476,7 +476,7 @@ class FiniteField_givaro(FiniteField):
     def from_integer(self, n):
         r"""
         Given an integer `n` return a finite field element in ``self``
-        which equals `n` under the condition that :meth:`gen()` is set to
+        which equals `n` under the condition that :meth:`~sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro.gen` is set to
         :meth:`characteristic()`.
 
         EXAMPLES::

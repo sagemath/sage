@@ -758,13 +758,14 @@ class GRSGuruswamiSudanDecoder(Decoder):
     def decode_to_message(self, r):
         r"""
         Decode ``r`` to the list of polynomials whose encoding by
-        :meth:`self.code()` is within Hamming distance
-        :meth:`self.decoding_radius` of ``r``.
+        :meth:`~sage.coding.decoder.Decoder.code` is within Hamming distance
+        :meth:`~sage.coding.decoder.Decoder.decoding_radius` of ``r``.
 
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in `F^n` where `F` and `n` are
-          the base field respectively length of :meth:`self.code`
+          the base field respectively length of
+          :meth:`~sage.coding.decoder.Decoder.code`
 
         EXAMPLES::
 
@@ -804,12 +805,15 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
     def decode_to_code(self, r):
         r"""
-        Return the list of all codeword within radius :meth:`self.decoding_radius` of the received word `r`.
+        Return the list of all codeword within radius
+        :meth:`~sage.coding.decoder.Decoder.decoding_radius` of the received
+        word `r`.
 
         INPUT:
 
         - ``r`` -- a received word, i.e. a vector in `F^n` where `F` and `n` are
-          the base field respectively length of :meth:`self.code`
+          the base field respectively length of
+          :meth:`~sage.coding.decoder.Decoder.code`
 
         EXAMPLES::
 

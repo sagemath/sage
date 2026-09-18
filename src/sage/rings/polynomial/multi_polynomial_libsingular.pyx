@@ -292,7 +292,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         - ``base_ring`` -- base ring (must be either GF(q), ZZ, ZZ/nZZ,
                           QQ or absolute number field)
 
-        - ``n`` -- number of variables (must be at least 1)
+        - ``n`` -- number of variables (must be at least 1 and fit in a signed
+          C ``short``)
 
         - ``names`` -- names of ring variables, may be string of list/tuple
 
@@ -379,6 +380,18 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: polynomials in -1 variables are not supported in Singular
+
+        Check that the number of variables fits into Singular's signed short
+        (:issue:`42712`)::
+
+            sage: # long time
+            sage: R = PolynomialRing(QQ, "x", 2**15)
+            sage: type(R)
+            <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
+            sage: MPolynomialRing_libsingular(QQ, 2**15, (), "lex")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: polynomials in 32768 variables are not supported in Singular
         """
         self._ngens = n
         self._ring = singular_ring_new(base_ring, n, names, order)
@@ -660,7 +673,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: B.<x,y,z> = BooleanPolynomialRing(3)
             sage: P.<x,y,z> = QQ[]
             sage: P(B.gen(0))
@@ -952,8 +965,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if element.constant():
                 if element:
                     return self._one_element
-                else:
-                    return self._zero_element
+                return self._zero_element
 
             variable_names_s = set(element.parent().variable_names())
             variable_names_t = self.variable_names()
@@ -1667,8 +1679,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         if not p_DivisibleBy(_a, _b, _r):
             return False
-        else:
-            return True
+        return True
 
     def monomial_lcm(self, MPolynomial_libsingular f, MPolynomial_libsingular g):
         """
@@ -1823,16 +1834,15 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         if p == NULL:
             if q == NULL:
-                return False #GCD(0,0) = 0
-            else:
-                return True #GCD(x,0) = 1
-        elif q == NULL:
-            return True # GCD(0,x) = 1
-        elif p_IsConstant(p,r) or p_IsConstant(q,r): # assuming a base field
+                return False  # GCD(0,0) = 0
+            return True  # GCD(x,0) = 1
+        if q == NULL:
+            return True  # GCD(0,x) = 1
+        if p_IsConstant(p, r) or p_IsConstant(q, r):  # assuming a base field
             return False
 
         for i from 1 <= i <= r.N:
-            if p_GetExp(p,i,r) and p_GetExp(q,i,r):
+            if p_GetExp(p, i, r) and p_GetExp(q, i, r):
                 return False
         return True
 
@@ -1890,6 +1900,8 @@ def unpickle_MPolynomialRing_libsingular(base_ring, names, term_order):
 cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     """
     A multivariate polynomial implemented using libSINGULAR.
+
+    .. automethod:: _derivative
     """
     def __init__(self, MPolynomialRing_libsingular parent):
         """
@@ -2054,6 +2066,76 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: S.<y> = PolynomialRing(k, 1)
             sage: f(y).parent()
             Multivariate Polynomial Ring in y over Finite Field in a of size 2^4
+
+        Check that substitution and evaluation do not leak (:issue:`27261`)::
+
+            sage: import gc
+            sage: import resource
+            sage: R = PolynomialRing(ZZ, 'x', 50)
+            sage: d = {str(g): g for g in R.gens()}
+            sage: p = sum(d.values())
+            sage: S.<x, y> = ZZ[]
+            sage: q = (x + y)**100
+            sage: def leak_27261():
+            ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     gc.collect()
+            ....:     for _ in range(50):
+            ....:         _ = p.subs(**d)
+            ....:     for _ in range(20):
+            ....:         _ = q(x + y, y)
+            ....:         _ = q(1, 2)
+            ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+            sage: zeros = 0
+            sage: for i in range(30):  # long time
+            ....:     n = leak_27261()
+            ....:     print("Leaked {} bytes".format(n))
+            ....:     if n == 0:
+            ....:         zeros += 1
+            ....:         if zeros >= 6:
+            ....:             break
+            ....:     else:
+            ....:         zeros = 0
+            Leaked...
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+
+        Check that evaluating and adding polynomials over number fields does
+        not leak (:issue:`32604`)::
+
+            sage: import gc
+            sage: import resource
+            sage: K.<a> = QuadraticField(-1)
+            sage: R.<x> = PolynomialRing(K, 1)
+            sage: def leak(N):
+            ....:     before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     gc.collect()
+            ....:     for _ in range(N):
+            ....:         _ = x(1)
+            ....:         _ = x + 1
+            ....:     after = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            ....:     return (after - before) * 1024   # ru_maxrss is in kilobytes
+
+            sage: zeros = 0
+            sage: for i in range(30):  # long time
+            ....:     n = leak(10000)
+            ....:     print("Leaked {} bytes".format(n))
+            ....:     if n == 0:
+            ....:         zeros += 1
+            ....:         if zeros >= 6:
+            ....:             break
+            ....:     else:
+            ....:         zeros = 0
+            Leaked...
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
+            Leaked 0 bytes
         """
         cdef Element sage_res
 
@@ -2061,8 +2143,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             f = self.subs(**kwds)
             if len(x) > 0:
                 return f(*x)
-            else:
-                return f
+            return f
 
         cdef int l = len(x)
         cdef MPolynomialRing_libsingular parent = self._parent
@@ -2308,12 +2389,12 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: x/P(3)
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
             sage: x/3
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
         TESTS::
 
@@ -3735,7 +3816,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             res_id = fast_map_common_subexp(from_id, _ring, to_id, _ring)
             _p = res_id.m[0]
 
-            from_id.m[0] = NULL
+            p_Delete(&from_id.m[0], _ring)
             res_id.m[0] = NULL
 
             id_Delete(&from_id, _ring)
@@ -3847,8 +3928,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         if p_LmIsConstant(p, r):
             return si2sa(p_GetCoeff(p, r), r, self._parent._base)
-        else:
-            return self._parent._base._zero_element
+        return self._parent._base._zero_element
 
     def univariate_polynomial(self, R=None):
         """
@@ -3974,8 +4054,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             p = pNext(p)
         if sort:
             return sorted(s)
-        else:
-            return list(s)
+        return list(s)
 
     def variables(self):
         """
@@ -4163,8 +4242,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         if self._poly is NULL:
             return True
-        else:
-            return False
+        return False
 
     def __bool__(self):
         """
@@ -4178,8 +4256,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         if self._poly:
             return True
-        else:
-            return False
+        return False
 
     cpdef _floordiv_(self, right):
         """
@@ -4597,7 +4674,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         Ensure interrupt does not make the internal state inconsistent::
 
             sage: R.<x,y,z> = QQ[]
-            sage: n = 11  # chosen so that the computation takes > 1 second but not excessively long.
+            sage: n = 12  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
             sage: alarm(0.5); h = (x^2^n-y^2^n).factor()
             Traceback (most recent call last):
@@ -4609,7 +4686,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             AlarmInterrupt
             sage: h = (x^2^n-y^2^n).factor()
             sage: h
-            (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024)
+            (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024) * (x^2048 + y^2048)
         """
         cdef ring *_ring = self._parent_ring
         cdef intvec *iv
@@ -5071,7 +5148,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: GCD of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+            NotImplementedError: GCD over rings not implemented.
             sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
@@ -5185,7 +5262,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
-            NotImplementedError: LCM of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
+            TypeError: LCM over non-integral domains not available.
             sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
@@ -5622,7 +5699,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         - ``variable`` -- the derivative is taken with respect to variable
 
-        .. NOTE:: See also :meth:`derivative`
+        .. NOTE::
+
+            See also :meth:`~sage.rings.polynomial.multi_polynomial.MPolynomial.derivative`.
 
         EXAMPLES::
 
@@ -5933,7 +6012,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -6011,7 +6090,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 
@@ -6058,7 +6137,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision)
+          default :func:`~sage.rings.real_mpfr.RealField` precision)
 
         OUTPUT: a real number
 

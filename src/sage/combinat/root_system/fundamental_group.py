@@ -266,9 +266,9 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         par = self.parent()
         return self.__class__(par, par.dual_node(self.value()))
 
-    def _richcmp_(self, x, op):
+    def _richcmp_(self, other, op):
         r"""
-        Compare ``self`` with `x`.
+        Compare ``self`` with ``other``.
 
         EXAMPLES::
 
@@ -284,7 +284,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
             sage: x <= y
             True
         """
-        return richcmp(self.value(), x.value(), op)
+        return richcmp(self.value(), other.value(), op)
 
     def act_on_affine_weyl(self, w):
         r"""
@@ -344,6 +344,8 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                                       Parent):
     r"""
     The group of length zero elements in the extended affine Weyl group.
+
+    .. automethod:: __iter__
     """
     Element = FundamentalGroupElement
 
@@ -482,7 +484,8 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         r"""
         Return the special nodes of ``self``.
 
-        See :meth:`sage.combinat.root_system.cartan_type.special_nodes()`.
+        See
+        :meth:`sage.combinat.root_system.cartan_type.CartanType_affine.special_nodes`.
 
         EXAMPLES::
 
@@ -507,7 +510,8 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         .. WARNING::
 
             This returns the entire group, a necessary behavior because it
-            is used in :meth:`__iter__`.
+            is used in
+            :meth:`~sage.combinat.root_system.fundamental_group.FundamentalGroupOfExtendedAffineWeylGroup_Class.__iter__`.
 
         EXAMPLES::
 

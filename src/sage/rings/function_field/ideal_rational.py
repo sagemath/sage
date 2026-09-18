@@ -588,8 +588,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         f = ideal.gen()
         if f == 0:
             return infinity
-        else:
-            return f.denominator().degree() - f.numerator().degree()
+        return f.denominator().degree() - f.numerator().degree()
 
     def _factor(self):
         """
@@ -608,5 +607,4 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
         m = self._gen.denominator().degree() - self._gen.numerator().degree()
         if m == 0:
             return []
-        else:
-            return [(self.ring().ideal(g), m)]
+        return [(self.ring().ideal(g), m)]

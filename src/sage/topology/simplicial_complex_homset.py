@@ -91,7 +91,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         EXAMPLES::
 
             sage: S = simplicial_complexes.Sphere(2)
-            sage: H = Hom(S,S.product(S, is_mutable=False))
+            sage: H = Hom(S,S.product(S, immutable=True))
             sage: d = H.diagonal_morphism(); d
             Simplicial complex morphism:
               From: Minimal triangulation of the 2-sphere
@@ -101,8 +101,8 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
                     2 |--> L2R2
                     3 |--> L3R3
 
-            sage: T = SimplicialComplex([[0], [1]], is_mutable=False)
-            sage: U = T.product(T, rename_vertices=False, is_mutable=False)
+            sage: T = SimplicialComplex([[0], [1]], immutable=True)
+            sage: U = T.product(T, rename_vertices=False, immutable=True)
             sage: G = Hom(T, U)
             sage: e = G.diagonal_morphism(rename_vertices=False); e
             Simplicial complex morphism:
@@ -113,9 +113,9 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
                     1 |--> (1, 1)
         """
         # Preserve whether the codomain is mutable when renaming the vertices.
-        mutable = self._codomain.is_mutable()
+        immutable = self._codomain.is_immutable()
         X = self._domain.product(self._domain, rename_vertices=rename_vertices,
-                                 is_mutable=mutable)
+                                 immutable=immutable)
         if self._codomain != X:
             raise TypeError("diagonal morphism is only defined for Hom(X,XxX)")
         f = {}
@@ -137,7 +137,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
             sage: i.is_identity()
             True
 
-            sage: T = SimplicialComplex([[0,1]], is_mutable=False)
+            sage: T = SimplicialComplex([[0,1]], immutable=True)
             sage: G = Hom(T, T)
             sage: G.identity()
             Simplicial complex endomorphism of

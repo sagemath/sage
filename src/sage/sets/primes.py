@@ -291,7 +291,8 @@ class Primes(Set_generic, UniqueRepresentation):
             (5, [1, 3])
 
         If this subset is finite, the output of this method is always `(1, [])`.
-        The elements of the subset can be retrieved using the method :meth:`list`
+        The elements of the subset can be retrieved using the method
+        :meth:`list <sage.categories.enumerated_sets.EnumeratedSets.ParentMethods.list>`
         or :meth:`included`::
 
             sage: P = Primes(modulus=0, classes=range(50))

@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Maximize available disk space
         uses: jlumbroso/free-disk-space@v1.3.1
@@ -38,7 +38,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Cache conda packages
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/conda_pkgs_dir
           key:
@@ -50,7 +50,7 @@ jobs:
           key: ${{ runner.os }}-meson-${{ env.PYTHON_VERSION }}
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v3
+        uses: conda-incubator/setup-miniconda@v4
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           # Disabled for now due to
@@ -65,9 +65,8 @@ jobs:
       - name: Build Sage
         shell: bash -l {0}
         run: |
+          # Let Meson discover the compiler through the ccache wrappers.
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          export CC="ccache $CC"
-          export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
       - name: Build documentation
@@ -88,7 +87,7 @@ jobs:
           zip -r doc-pdf.zip doc
 
       - name: Upload doc
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: doc-pdf
           path: doc-pdf.zip

@@ -83,3 +83,7 @@ py.extension_module(
   dependencies: [py_dep, cysignals, tdlib],
 )
 
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('RANKWIDTH_ENABLED', rw.found())
+conf_data.set10('TDLIB_ENABLED', tdlib.found())

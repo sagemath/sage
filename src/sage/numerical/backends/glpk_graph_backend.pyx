@@ -376,8 +376,7 @@ cdef class GLPKGraphBackend():
 
         if nonecount:
             return [self.add_vertex() for i in range(nonecount)]
-        else:
-            return None
+        return None
 
     cpdef set_vertex_demand(self, vertex, demand):
         """

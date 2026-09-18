@@ -570,24 +570,19 @@ class UnitGroup(AbelianGroupWithValues_class):
         if n == 1:
             if all:
                 return [K(1)]
-            else:
-                return K(1)
-        elif n == 2:
+            return K(1)
+        if n == 2:
             if all:
                 return [K(-1)]
-            else:
-                return K(-1)
+            return K(-1)
         if n.divides(N):
             z = self.torsion_generator().value() ** (N//n)
             if all:
                 return [z**i for i in n.coprime_integers(n)]
-            else:
-                return z
-        else:
-            if all:
-                return []
-            else:
-                raise ValueError("n (=%s) does not divide order of generator" % n)
+            return z
+        if all:
+            return []
+        raise ValueError("n (=%s) does not divide order of generator" % n)
 
     def number_field(self):
         """

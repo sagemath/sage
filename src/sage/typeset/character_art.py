@@ -143,7 +143,6 @@ class CharacterArt(SageObject):
             '  *  \n * * \n*****'
         """
         # Compute the max length of a draw
-        global MAX_WIDTH
         if MAX_WIDTH is not None:
             hsize = MAX_WIDTH
         else:

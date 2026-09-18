@@ -290,7 +290,7 @@ def riggings(part):
          [[6], [4], [2]]]
     """
     l = len(part)
-    res = [ [[],[]] ]
+    res = [[[], []]]
     sa = 0
     for i in sorted(part):
         sa += i
@@ -381,14 +381,14 @@ def dom(mup, snu):
     l = len(snu)
     lmup = len(mup)
     # Special case for the largest columns
-    if any((k+1)*lmup < snu[k] for k in range(min(mup[-1],l))):
+    if any((k + 1) * lmup < snu[k] for k in range(min(mup[-1], l))):
         return False
 
     pos = mup[-1]
     sa = mup[-1] * lmup
-    for i in range(lmup-1, 0, -1):
-        for k in range(mup[i-1] - mup[i]):
-            if pos >= l: # We've reached the end of snu
+    for i in range(lmup - 1, 0, -1):
+        for k in range(mup[i - 1] - mup[i]):
+            if pos >= l:  # We've reached the end of snu
                 return True
             sa += i
             if sa < snu[pos]:

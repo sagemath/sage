@@ -355,8 +355,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         if (self.prime() == 2):
             return n.divides(2)
-        else:
-            return n.divides(self.prime() - 1)
+        return n.divides(self.prime() - 1)
 
     def zeta(self, n=None):
         r"""
@@ -384,8 +383,7 @@ class pAdicBaseGeneric(pAdicGeneric):
                 return self(-1)
             if n == 1:
                 return self(1)
-            else:
-                raise ValueError("No, %sth root of unity in self" % n)
+            raise ValueError("No, %sth root of unity in self" % n)
         else:
             from sage.rings.finite_rings.finite_field_constructor import GF
             return self.teichmuller(GF(self.prime()).zeta(n).lift())
@@ -403,8 +401,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         if (self.prime() == 2):
             return 2
-        else:
-            return self.prime() - 1
+        return self.prime() - 1
 
     def plot(self, max_points=2500, **args):
         r"""

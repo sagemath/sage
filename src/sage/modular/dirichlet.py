@@ -58,7 +58,7 @@ AUTHORS:
 # ****************************************************************************
 
 import sage.misc.prandom as random
-import sage.modules.free_module_element as free_module_element
+from sage.modules import free_module_element
 import sage.rings.abc
 
 from sage.arith.functions import lcm

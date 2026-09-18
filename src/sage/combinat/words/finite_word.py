@@ -940,7 +940,8 @@ class FiniteWord_class(Word_class):
 
         .. NOTE::
 
-           Some word datatype classes, like :class:`WordDatatype_str`,
+           Some word datatype classes, like
+           :class:`~sage.combinat.words.word_datatypes.WordDatatype_str`,
            override this method.
 
         INPUT:
@@ -6532,7 +6533,7 @@ class FiniteWord_class(Word_class):
             RuntimeError: color map __doc__ not known
         """
         # Recognize the color map
-        import matplotlib.cm as cm
+        from matplotlib import cm
         from matplotlib.colors import LinearSegmentedColormap as C
         key_error = False
         try:

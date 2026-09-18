@@ -35,18 +35,15 @@ cdef inline int point_c_cmp(point_c P, point_c Q) noexcept:
         if P.y == Q.y:
             if P.z == Q.z:
                 return 0
-            elif P.z < Q.z:
+            if P.z < Q.z:
                 return -1
-            else:
-                return 1
-        elif P.y < Q.y:
-            return -1
-        else:
             return 1
-    elif P.x < Q.x:
-        return -1
-    else:
+        if P.y < Q.y:
+            return -1
         return 1
+    if P.x < Q.x:
+        return -1
+    return 1
 
 cdef inline void point_c_update_finite_lower_bound(point_c* res, point_c P) noexcept:
     # We use the condition "not P.x > res.x" so that the condition returns True if res.x is NaN

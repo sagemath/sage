@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from setuptools import setup
 from setuptools.dist import Distribution
 

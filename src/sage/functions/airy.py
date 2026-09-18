@@ -137,8 +137,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
                 return airy_ai_prime(x)
             if alpha == 2:
                 return x*airy_ai_simple(x)
-        else:
-            return None
+        return None
 
     def _evalf_(self, alpha, x, parent=None, algorithm=None):
         """

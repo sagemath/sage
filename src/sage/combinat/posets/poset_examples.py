@@ -27,10 +27,12 @@ The infinite set of all posets can be used to find minimal examples::
     :widths: 30, 70
     :delim: |
 
+    :meth:`~Posets.AltNuTamariLattice` | Return the alt `\nu`-Tamari lattice.
     :meth:`~Posets.AntichainPoset` | Return an antichain on `n` elements.
     :meth:`~Posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
     :meth:`~Posets.BubblePoset` | Return the Bubble lattice for `(m,n)`.
     :meth:`~Posets.ChainPoset` | Return a chain on `n` elements.
+    :meth:`~Posets.ChuteMoveLattice` | Return the chute move lattice on polyominoes.
     :meth:`~Posets.Crown` | Return the crown poset on `2n` elements.
     :meth:`~Posets.DexterSemilattice` | Return the Dexter semilattice.
     :meth:`~Posets.DiamondPoset` | Return the lattice of rank two on `n` elements.
@@ -42,6 +44,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions of the integer `n` ordered by dominance.
     :meth:`~Posets.MobilePoset` | Return the mobile poset formed by the `ribbon` with `hangers` below and an `anchor` above.
     :meth:`~Posets.NoncrossingPartitions` | Return the poset of noncrossing partitions of a finite Coxeter group ``W``.
+    :meth:`~Posets.NuTamariLattice` | Return the `\nu`-Tamari lattice.
     :meth:`~Posets.PentagonPoset` | Return the Pentagon poset.
     :meth:`~Posets.PermutationPattern` | Return the Permutation pattern poset.
     :meth:`~Posets.PermutationPatternInterval` | Return an interval in the Permutation pattern poset.
@@ -98,12 +101,13 @@ Constructions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
-from sage.combinat.posets import bubble_shuffle, hochschild_lattice, sashes
+from sage.combinat.posets import bubble_shuffle, hochschild_lattice, sashes, chute_move
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -169,6 +173,10 @@ class Posets(metaclass=ClasscallMetaclass):
         Finite lattice containing 8 elements
         sage: posets.ChainPoset(3)
         Finite lattice containing 3 elements
+        sage: posets.NuTamariLattice([1, 0, 1, 0])
+        Finite lattice containing 2 elements
+        sage: posets.AltNuTamariLattice('01001', [0, 0])
+        Finite lattice containing 7 elements
         sage: posets.RandomPoset(17,.15)
         Finite poset containing 17 elements
 
@@ -289,9 +297,26 @@ class Posets(metaclass=ClasscallMetaclass):
 
     ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
 
-    HochschildLattice = staticmethod(hochschild_lattice.hochschild_lattice)
+    @staticmethod
+    def HochschildLattice(n):
+        r"""
+        Return the Hochschild lattice `H_n`.
 
-    Sashes = staticmethod(sashes.lattice_of_sashes)
+        See :func:`~sage.combinat.posets.hochschild_lattice.hochschild_lattice`
+        for details.
+        """
+        return hochschild_lattice.hochschild_lattice(n)
+
+    @staticmethod
+    def Sashes(n):
+        r"""
+        Return the lattice of sashes of length ``n``.
+
+        See :func:`~sage.combinat.posets.sashes.lattice_of_sashes` for details.
+        """
+        return sashes.lattice_of_sashes(n)
+
+    ChuteMoveLattice = staticmethod(chute_move.ChuteMoveLattice)
 
     @staticmethod
     def ChainPoset(n, facade=None):
@@ -927,7 +952,6 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.RandomLattice(0, 0.5)
             Finite lattice containing 0 elements
         """
-        from copy import copy
         n = check_int(n)
         try:
             p = float(p)
@@ -1323,10 +1347,20 @@ class Posets(metaclass=ClasscallMetaclass):
 
     # shard intersection order
     import sage.combinat.shard_order
-    ShardPoset = staticmethod(sage.combinat.shard_order.shard_poset)
+    @staticmethod
+    def ShardPoset(n):
+        r"""
+        Return the shard intersection order on permutations of size `n`.
+
+        See :func:`~sage.combinat.shard_order.shard_poset` for details.
+        """
+        return sage.combinat.shard_order.shard_poset(n)
 
     # Tamari lattices
+    import sage.combinat.nu_tamari_lattice
     import sage.combinat.tamari_lattices
+    AltNuTamariLattice = staticmethod(sage.combinat.nu_tamari_lattice.AltNuTamariLattice)
+    NuTamariLattice = staticmethod(sage.combinat.nu_tamari_lattice.NuTamariLattice)
     TamariLattice = staticmethod(sage.combinat.tamari_lattices.TamariLattice)
     DexterSemilattice = staticmethod(sage.combinat.tamari_lattices.DexterSemilattice)
 
@@ -2116,7 +2150,6 @@ def _random_distributive_lattice(n):
     Repeat.
     """
     from sage.combinat.posets.hasse_diagram import HasseDiagram
-    from copy import copy
     from sage.combinat.subset import Subsets
     from sage.graphs.digraph_generators import digraphs
 
@@ -2174,10 +2207,10 @@ def _random_stone_lattice(n) -> DiGraph:
     from sage.arith.misc import factor
     from sage.combinat.partition import Partitions
     from sage.misc.misc_c import prod
-    from copy import copy
+    from sage.misc.prandom import shuffle
 
     factors = sum([[f[0]] * f[1] for f in factor(n)], [])
-    sage.misc.prandom.shuffle(factors)
+    shuffle(factors)
 
     part_lengths = list(Partitions(len(factors)).random_element())
     parts = []

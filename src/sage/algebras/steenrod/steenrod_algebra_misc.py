@@ -29,6 +29,10 @@ The main functions here are
   (:func:`milnor_mono_to_string`, etc.).  These convert tuples
   representing basis elements to strings, for _repr_ and _latex_
   methods.
+
+.. autodata:: sage.algebras.steenrod.steenrod_algebra_misc::_steenrod_milnor_basis_names
+
+.. autodata:: sage.algebras.steenrod.steenrod_algebra_misc::_steenrod_serre_cartan_basis_names
 """
 
 # ****************************************************************************
@@ -63,8 +67,11 @@ def get_basis_name(basis, p, generic=None):
     name for the basis.
 
     For the Milnor and Serre-Cartan bases, use the list of synonyms
-    defined by the variables :data:`_steenrod_milnor_basis_names` and
-    :data:`_steenrod_serre_cartan_basis_names`.  Their canonical names
+    defined by the variables
+    :data:`~sage.algebras.steenrod.steenrod_algebra_misc._steenrod_milnor_basis_names`
+    and
+    :data:`~sage.algebras.steenrod.steenrod_algebra_misc._steenrod_serre_cartan_basis_names`.
+    Their canonical names
     are 'milnor' and 'serre-cartan', respectively.
 
     For the other bases, use pattern-matching rather than a list of
@@ -1140,7 +1147,7 @@ def convert_perm(m):
     permutation of the set `(3,4,7)` sending 3 to 3, 4 to 7, and 7 to
     4. This function converts ``m`` to the list ``[1,3,2]``, which
     represents essentially the same permutation, but of the set
-    `(1,2,3)`. This list can then be passed to :func:`Permutation
+    `(1,2,3)`. This list can then be passed to :class:`Permutation
     <sage.combinat.permutation.Permutation>`, and its signature can be
     computed.
 

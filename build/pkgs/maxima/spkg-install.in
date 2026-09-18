@@ -38,14 +38,15 @@ sdh_make
 sdh_make_install
 
 
-# Install Maxima into ECL's library directory:
-# Ensure that the $ECLLIB directory exists in
-# case we're using ECL from the system.
-ECLLIB="${SAGE_LOCAL}/lib/ecl"
+# Install Maxima into the versioned ECL library directory.  Query the ECL used
+# for this build so this also works when Sage uses a system ECL.
+ECL_VERSION=$(ecl --norc \
+    --eval '(princ (lisp-implementation-version))' \
+    --eval '(quit)')
+ECLLIB="${SAGE_INST_LOCAL}/lib/ecl-${ECL_VERSION}"
 echo
 echo "Now installing the Maxima library as '$ECLLIB/maxima.fas'..."
-mkdir -p "${ECLLIB}"
-cp -f "src/binary-ecl/maxima.fas" "$ECLLIB/maxima.fas" \
+sdh_install -T "src/binary-ecl/maxima.fas" "$ECLLIB/maxima.fas" \
     || sdh_die "Failed to install 'src/binary-ecl/maxima.fas' as '$ECLLIB/maxima.fas'."
 
 

@@ -5,7 +5,8 @@ This module provides :class:`BoundedIntegerSequence`, which implements
 sequences of bounded integers and is for many (but not all) operations faster
 than representing the same sequence as a Python :class:`tuple`.
 
-The underlying data structure is similar to :class:`~sage.misc.bitset.Bitset`,
+The underlying data structure is similar to
+:class:`~sage.data_structures.bitset.Bitset`,
 which means that certain operations are implemented by using fast shift
 operations from MPIR.  The following boilerplate functions can be
 cimported in Cython modules:
@@ -111,7 +112,7 @@ from sage.data_structures.bitset_base cimport *
 
 from cpython.long cimport PyLong_FromSize_t
 from cpython.slice cimport PySlice_GetIndicesEx
-from sage.libs.flint.flint cimport FLINT_BIT_COUNT as BIT_COUNT
+from sage.libs.flint.longlong cimport FLINT_BIT_COUNT as BIT_COUNT
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 cimport cython

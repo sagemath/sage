@@ -703,7 +703,8 @@ class Animation(WithEqualityById, SageObject):
                 '-delay', '%s' % int(delay), '-loop', '%s' % int(iterations),
                 '*.png', savefile]
         from subprocess import run
-        result = run(cmd, cwd=directory, capture_output=True, text=True)
+        result = run(cmd, cwd=directory, capture_output=True, text=True,
+                     check=False)
 
         # If a problem with the command occurs, print the log before
         # raising an error (more verbose than result.check_returncode())

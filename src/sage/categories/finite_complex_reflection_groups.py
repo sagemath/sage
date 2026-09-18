@@ -23,16 +23,17 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
     r"""
     The category of finite complex reflection groups.
 
-    See :class:`ComplexReflectionGroups` for the definition of complex
+    See :class:`~sage.categories.complex_reflection_groups.ComplexReflectionGroups`
+    for the definition of complex
     reflection group. In the finite case, most of the information
     about the group can be recovered from its *degrees* and
     *codegrees*, and to a lesser extent to the explicit realization as
     subgroup of `GL(V)`. Hence the most important optional methods to
     implement are:
 
-    - :meth:`ComplexReflectionGroups.Finite.ParentMethods.degrees`,
-    - :meth:`ComplexReflectionGroups.Finite.ParentMethods.codegrees`,
-    - :meth:`ComplexReflectionGroups.Finite.ElementMethods.to_matrix`.
+    - :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.ParentMethods.degrees`,
+    - :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.ParentMethods.codegrees`,
+    - :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.ElementMethods.to_matrix`.
 
     Finite complex reflection groups are completely classified. In
     particular, if the group is irreducible, then it's uniquely
@@ -94,7 +95,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
             .. SEEALSO::
 
-                :meth:`ComplexReflectionGroups.Finite.ParentMethods.is_well_generated`
+                :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.ParentMethods.is_well_generated`
 
             EXAMPLES::
 
@@ -378,7 +379,9 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             This default implementation uses that the rank is the
             number of :meth:`degrees`.
 
-            .. SEEALSO:: :meth:`ComplexReflectionGroups.rank`
+            .. SEEALSO::
+
+                :meth:`~sage.categories.complex_reflection_groups.ComplexReflectionGroups.ParentMethods.rank`
 
             EXAMPLES::
 
@@ -435,7 +438,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
             A finite complex reflection group is *well generated* if
             the number of its simple reflections coincides with its rank.
 
-            .. SEEALSO:: :meth:`ComplexReflectionGroups.Finite.WellGenerated`
+            .. SEEALSO:: :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.SubcategoryMethods.WellGenerated`
 
             .. NOTE::
 
@@ -1164,7 +1167,9 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 that is the product of the simple generators in some
                 order.
 
-                .. SEEALSO:: :meth:`~sage.categories.coxeter_groups.standard_coxeter_elements`
+                .. SEEALSO::
+
+                    :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ParentMethods.standard_coxeter_elements`
 
                 EXAMPLES::
 
@@ -1187,7 +1192,9 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 The *Milnor fiber complex* of a finite well-generated
                 complex reflection group `W` is the simplicial complex whose
-                face poset is given by :meth:`milnor_fiber_poset`. When `W`
+                face poset is given by
+                :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.ParentMethods.milnor_fiber_poset`.
+                When `W`
                 is an irreducible Shephard group, it is also an equivariant
                 strong deformation retract of the Milnor fiber `f_1^{-1}(1)`,
                 where `f_1: V \to \CC` is the polynomial invariant of smallest
@@ -1262,7 +1269,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                     the order of a regular element in ``self``, and is
                     equal to the highest degree of ``self``.
 
-                    .. SEEALSO:: :meth:`ComplexReflectionGroups.Finite.Irreducible`
+                    .. SEEALSO:: :class:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.Irreducible`
 
                     .. NOTE::
 

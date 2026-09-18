@@ -482,8 +482,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             if self._rational_point is not None:
                 if point:
                     return True, self._rational_point
-                else:
-                    return True
+                return True
 
         B = self.base_ring()
 

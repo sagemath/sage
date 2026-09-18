@@ -1,15 +1,18 @@
 bliss = cc.find_library('bliss', required: get_option('bliss'), disabler: true)
 
 mcqd = disabler()
-if cc.has_header('mcqd.h', required: get_option('mcqd'))
-  # mcqd is a header-only library
-  mcqd = declare_dependency()
+mcqd = dependency('Mcqd', method: 'cmake', required: false, disabler: true)
+if not mcqd.found()
+  if cc.has_header('mcqd.h', required: get_option('mcqd'))
+    # mcqd is a header-only library
+    mcqd = declare_dependency()
+  endif
 endif
 
 cliquer = dependency('libcliquer', required: false, disabler: true)
 if not cliquer.found()
   # fallback for older versions without pkg-config
-  cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
+  cliquer = cc.find_library('cliquer', required: false, disabler: true)
 endif
 
 planarity = dependency('libplanarity', required: false, disabler: true)
@@ -17,9 +20,21 @@ if not planarity.found()
   # fallback for older versions without pkg-config
   planarity = cc.find_library(
     'planarity',
-    required: not is_windows,
+    required: false,
     disabler: true,
   )
+endif
+planarity_compile_args = []
+if planarity.found()
+  if cc.has_header('planarity/graphLib.h', dependencies: planarity)
+    planarity_compile_args += '-DSAGE_PLANARITY_HAVE_GRAPHLIB_H'
+  elif cc.has_header('planarity/graph.h', dependencies: planarity)
+    planarity_compile_args += '-DSAGE_PLANARITY_HAVE_GRAPH_H'
+  else
+    error(
+      'planarity library found, but neither planarity/graphLib.h nor planarity/graph.h is available',
+    )
+  endif
 endif
 
 py.install_sources(
@@ -118,18 +133,27 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, flint, gmp]
+  c_args = []
+  if name == 'cliquer'
+    deps += cliquer
+  elif name == 'planarity'
+    deps += planarity
+    c_args += planarity_compile_args
+  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/graphs',
     install: true,
+    c_args: c_args,
     include_directories: [
       inc_cpython,
       inc_data_structures,
       inc_flint,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, cliquer, flint, gmp, planarity],
+    dependencies: deps,
   )
 endforeach
 
@@ -153,7 +177,7 @@ foreach name, pyx : extension_data_cpp
       inc_flint,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, flint, gmp, planarity],
+    dependencies: [py_dep, cysignals, flint, gmp],
   )
 endforeach
 
@@ -176,6 +200,11 @@ py.extension_module(
   include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
   dependencies: [py_dep, cysignals, mcqd],
 )
+
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('BLISS_ENABLED', bliss.found())
+conf_data.set10('MCQD_ENABLED', mcqd.found())
 
 subdir('base')
 subdir('generators')

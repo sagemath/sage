@@ -10,7 +10,7 @@ AUTHORS:
 - William Stein (2006-03-05): added tab completion, e.g., maple.[tab],
   and help, e.g, maple.sin?.
 
-You must have the optional commercial Maple interpreter installed
+You must have the optional commercial Maple™ interpreter installed
 and available as the command ``maple`` in your PATH in
 order to use this interface. You do not have to install any
 optional Sage packages.
@@ -268,7 +268,7 @@ class Maple(ExtraTabCompletion, Expect):
     Maple (and get the result back as a string).
     """
     def __init__(self, maxread=None, script_subdirectory=None, server=None,
-            server_tmpdir=None, logfile=None, ulimit=None):
+                 server_tmpdir=None, logfile=None, ulimit=None) -> None:
         """
         Create an instance of the Maple interpreter.
 
@@ -336,7 +336,7 @@ class Maple(ExtraTabCompletion, Expect):
             ...
             RuntimeError: Ctrl-c pressed while running Maple
         """
-        print("Interrupting %s..." % self)
+        print(f"Interrupting {self}...")
         self._expect.sendline(chr(3))  # send ctrl-c
         self._expect.expect(self._prompt)
         raise RuntimeError("Ctrl-c pressed while running %s" % self)
@@ -353,7 +353,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         return reduce_load_Maple, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         Return the string used to read filename into Maple.
 
@@ -374,7 +374,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         return f'read "{filename}"'
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -394,7 +394,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         return 'quit'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing Maple on your computer.
 
@@ -482,7 +482,7 @@ connection to a server running Maple; for hints, type
 #             else:
 #                 break
 
-    def completions(self, s):
+    def completions(self, s) -> list:
         """
         Return all commands that complete the command starting with the
         string ``s``.
@@ -515,7 +515,7 @@ connection to a server running Maple; for hints, type
         E.expect(self._prompt)
         return [bytes_to_str(l) for l in v.split()[2:]]
 
-    def _commands(self):
+    def _commands(self) -> list:
         """
         Return list of all commands defined in Maple.
 
@@ -531,8 +531,11 @@ connection to a server running Maple; for hints, type
             v = sum([self.completions(chr(65 + n)) for n in range(26)], []) + \
                 sum([self.completions(chr(97 + n)) for n in range(26)], [])
         except RuntimeError:
+            red_in = '\033[31m'
+            red_out = '\033[0m'
             print("\n" * 3)
-            txt = "WARNING: You do not have a working version of Maple installed!"
+            txt = red_in + "WARNING" + red_out
+            txt += ": You do not have a working version of Maple™ installed!"
             print("═" * len(txt))
             print(txt)
             print("═" * len(txt))
@@ -540,7 +543,7 @@ connection to a server running Maple; for hints, type
         v.sort()
         return v
 
-    def _tab_completion(self, verbose=True, use_disk_cache=True):
+    def _tab_completion(self, verbose=True, use_disk_cache=True) -> list:
         """
         Return a list of all the commands defined in Maple and optionally
         (per default) store them to disk.
@@ -584,7 +587,7 @@ connection to a server running Maple; for hints, type
         line += ';'
         with gc_disabled():
             z = Expect._eval_line(self, line, allow_use_file=allow_use_file,
-                    wait_for_prompt=wait_for_prompt).replace('\\\n', '').strip()
+                                  wait_for_prompt=wait_for_prompt).replace('\\\n', '').strip()
             if z.lower().find("error") != -1:
                 raise RuntimeError("An error occurred running a Maple command:\nINPUT:\n%s\nOUTPUT:\n%s" % (line, z))
         return z
@@ -599,7 +602,7 @@ connection to a server running Maple; for hints, type
         line += ';'  # Adds the maple ";" thing like in self._eval_line
         return Expect._eval_line_using_file(self, line, *args, **kwargs)
 
-    def cputime(self, t=None):
+    def cputime(self, t=None) -> float:
         r"""
         Return the amount of CPU time that the Maple session has used.
 
@@ -622,7 +625,7 @@ connection to a server running Maple; for hints, type
             return float(self('time()'))
         return float(self('time() - %s' % float(t)))
 
-    def set(self, var, value):
+    def set(self, var, value) -> None:
         """
         Set the variable ``var`` to the given ``value``.
 
@@ -683,7 +686,7 @@ connection to a server running Maple; for hints, type
         """
         return MapleFunctionElement
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the symbol used for equality testing in Maple.
 
@@ -697,7 +700,7 @@ connection to a server running Maple; for hints, type
         """
         return '='
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the symbol used for truth in Maple.
 
@@ -713,7 +716,7 @@ connection to a server running Maple; for hints, type
         """
         return 'true'
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the symbol used for assignment in Maple.
 
@@ -724,7 +727,7 @@ connection to a server running Maple; for hints, type
         """
         return ":="
 
-    def _source(self, s):
+    def _source(self, s) -> str:
         """
         Try to return the source code of a Maple function ``s`` as a string.
 
@@ -737,7 +740,7 @@ connection to a server running Maple; for hints, type
             ...
             Exception: no source code could be found
         """
-        cmd = 'echo "interface(verboseproc=2): print(%s);" | maple -q' % s
+        cmd = f'echo "interface(verboseproc=2): print(%s);" | {self.command()} -q' % s
         src = os.popen(cmd).read()
         if src.strip() == s:
             raise RuntimeError("no source code could be found")
@@ -768,7 +771,7 @@ connection to a server running Maple; for hints, type
         except Exception:
             pager()('No source code could be found.')
 
-    def _help(self, string):
+    def _help(self, string) -> str:
         r"""
         Return the Maple help on ``string``.
 
@@ -778,7 +781,7 @@ connection to a server running Maple; for hints, type
             sage: txt.find('igcd - greatest common divisor') >= 0 # optional - maple
             True
         """
-        return bytes_to_str(os.popen(f'echo "?{string}" | maple -q').read())
+        return bytes_to_str(os.popen(f'echo "?{string}" | {self.command()} -q').read())
 
     def help(self, string):
         """
@@ -799,7 +802,7 @@ connection to a server running Maple; for hints, type
         """
         pager()(self._help(string))
 
-    def with_package(self, package):
+    def with_package(self, package) -> None:
         """
         Make a package of Maple procedures available in the interpreter.
 
@@ -830,7 +833,7 @@ connection to a server running Maple; for hints, type
 
     load = with_package
 
-    def clear(self, var):
+    def clear(self, var) -> None:
         """
         Clear the variable named ``var``.
 
@@ -924,7 +927,7 @@ class MapleFunctionElement(FunctionElement):
 @instancedoc
 class MapleElement(ExtraTabCompletion, ExpectElement):
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         Return a floating point version of ``self``.
 
@@ -937,14 +940,15 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         """
         return float(maple.eval('evalf(%s)' % self.name()))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
-        Return a 64-bit integer representing the hash of ``self``. Since
-        Python uses 32-bit hashes, it will automatically convert the result
-        of this to a 32-bit hash.
+        Return a 64-bit integer representing the hash of ``self``.
+
+        Since Python uses 32-bit hashes, it will automatically convert
+        the result of this to a 32-bit hash.
 
         These examples are optional, and require Maple to be installed. You
-        don't need to install any Sage packages for this.
+        do not need to install any Sage packages for this.
 
         EXAMPLES::
 
@@ -962,12 +966,12 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         """
         return int(maple.eval('StringTools:-Hash(convert(%s, string))' % self.name())[1:-1], 16)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare equality between ``self`` and ``other``, using maple.
 
         These examples are optional, and require Maple to be installed. You
-        don't need to install any Sage packages for this.
+        do not need to install any Sage packages for this.
 
         EXAMPLES::
 
@@ -1037,7 +1041,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
     def _mul_(self, right):
         """
         These examples are optional, and require Maple to be installed. You
-        don't need to install any Sage packages for this.
+        do not need to install any Sage packages for this.
 
         EXAMPLES::
 
@@ -1081,7 +1085,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         """
         return self.parent()._tab_completion()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         You can output Maple expressions in latex.
 

@@ -13,7 +13,7 @@ Lyndon words
 
 from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
-from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.necklace import _sfc
 from sage.combinat.words.finite_word import FiniteWord_class
 from sage.combinat.words.words import FiniteWords
@@ -43,7 +43,7 @@ def LyndonWords(e=None, k=None):
 
     or
 
-    - ``e`` -- a composition
+    - ``e`` -- a weak composition
 
     OUTPUT: a combinatorial class of Lyndon words
 
@@ -85,10 +85,10 @@ def LyndonWords(e=None, k=None):
             if k < 0:
                 raise TypeError("k must be a nonnegative integer")
             return LyndonWords_nk(Integer(e), Integer(k))
-    elif e in Compositions():
-        return LyndonWords_evaluation(Composition(e))
+    elif e in IntegerVectors():
+        return LyndonWords_evaluation(IntegerVectors()(e))
 
-    raise TypeError("e must be a positive integer or a composition")
+    raise TypeError("e must be a positive integer or a weak composition")
 
 
 def LyndonWord(data, check=True):
@@ -203,7 +203,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             sage: LW21 == loads(dumps(LW21))
             True
         """
-        self._e = e
+        self._e = list(e)
         self._words = FiniteWords(len(e))
 
         from sage.categories.enumerated_sets import EnumeratedSets

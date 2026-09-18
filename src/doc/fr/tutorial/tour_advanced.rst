@@ -61,12 +61,12 @@ projectif de dimension 3.
     Groebner fan of the ideal:
     Ideal (b^2 - a*c, c^2 - b*d, -b*c + a*d) of Multivariate Polynomial Ring
     in a, b, c, d over Rational Field
-    sage: F.reduced_groebner_bases ()
-    [[-c^2 + b*d, -b*c + a*d, -b^2 + a*c],
+    sage: list(map(sorted, F.reduced_groebner_bases()))
+    [[-b^2 + a*c, -b*c + a*d, -c^2 + b*d],
      [-b*c + a*d, -c^2 + b*d, b^2 - a*c],
      [-c^3 + a*d^2, -c^2 + b*d, b*c - a*d, b^2 - a*c],
-     [-c^2 + b*d, b^2 - a*c, b*c - a*d, c^3 - a*d^2],
-     [-b*c + a*d, -b^2 + a*c, c^2 - b*d],
+     [-c^2 + b*d, b*c - a*d, b^2 - a*c, c^3 - a*d^2],
+     [-b^2 + a*c, -b*c + a*d, c^2 - b*d],
      [-b^3 + a^2*d, -b^2 + a*c, c^2 - b*d, b*c - a*d],
      [-b^2 + a*c, c^2 - b*d, b*c - a*d, b^3 - a^2*d],
      [c^2 - b*d, b*c - a*d, b^2 - a*c]]

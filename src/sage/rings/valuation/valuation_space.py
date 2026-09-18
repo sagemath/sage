@@ -331,7 +331,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             from sage.categories.fields import Fields
             if self.is_discrete_valuation():
                 return False
-            elif self.domain() in Fields():
+            if self.domain() in Fields():
                 return True
             raise NotImplementedError
 
@@ -892,16 +892,15 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             s = ZZ(s / self.value_group().gen())
             if s > 0:
                 return x * self.uniformizer()**s
-            else:  # s < 0
-                if ~self.uniformizer() in self.domain():
-                    return self.domain()(x / self.uniformizer()**(-s))
-                else:
-                    for i in range(-s):
-                        if self(x) < 0:
-                            raise NotImplementedError("cannot compute general shifts over non-fields which contain elements of negative valuation")
-                        x -= self.lift(self.reduce(x))
-                        x //= self.uniformizer()
-                    return x
+            # s < 0
+            if ~self.uniformizer() in self.domain():
+                return self.domain()(x / self.uniformizer()**(-s))
+            for i in range(-s):
+                if self(x) < 0:
+                    raise NotImplementedError("cannot compute general shifts over non-fields which contain elements of negative valuation")
+                x -= self.lift(self.reduce(x))
+                x //= self.uniformizer()
+            return x
 
         def simplify(self, x, error=None, force=False):
             r"""

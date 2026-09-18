@@ -207,7 +207,7 @@ class WeightSpace(CombinatorialFreeModule):
         """
         Return whether this is an extended weight lattice.
 
-        .. SEEALSO:: :meth:`~sage.combinat.root_system.weight_lattice_realization.ParentMethods.is_extended`
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.weight_lattice_realizations.WeightLatticeRealizations.ParentMethods.is_extended`
 
         EXAMPLES::
 
@@ -257,7 +257,7 @@ class WeightSpace(CombinatorialFreeModule):
         also accepts ``'delta'`` as input, and returns the image of
         `\delta` of the extended weight lattice in this realization.
 
-        .. SEEALSO:: :meth:`~sage.combinat.root_system.weight_lattice_realization.ParentMethods.fundamental_weight`
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.weight_lattice_realizations.WeightLatticeRealizations.ParentMethods.fundamental_weight`
 
         EXAMPLES::
 
@@ -355,7 +355,7 @@ class WeightSpace(CombinatorialFreeModule):
         .. SEEALSO::
 
             - :meth:`~sage.combinat.root_system.type_affine.AmbientSpace.simple_root`
-            - :meth:`CartanType.col_annihilator`
+            - :meth:`sage.combinat.root_system.cartan_type.CartanType_affine.col_annihilator`
         """
         if j not in self.index_set():
             raise ValueError("{} is not in the index set".format(j))

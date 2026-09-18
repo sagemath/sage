@@ -740,7 +740,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`add_arc_unsafe` is implemented::
+        It works, once there are vertices and ``add_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -795,7 +795,7 @@ cdef class CGraph:
             sage: G.has_arc(0, 1)
             False
 
-        It works once :class:`has_arc_unsafe` is implemented::
+        It works once ``has_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -840,7 +840,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`del_arc_unsafe` is implemented::
+        It works, once there are vertices and ``del_arc_unsafe`` is implemented::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
             sage: G = SparseGraph(5)
@@ -1211,7 +1211,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
+        It works, once there are vertices and ``out_neighbors_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -1276,7 +1276,7 @@ cdef class CGraph:
             ...
             LookupError: vertex (0) is not a vertex of the graph
 
-        It works, once there are vertices and :meth:`out_neighbors_unsafe` is implemented::
+        It works, once there are vertices and ``out_neighbors_unsafe`` is implemented::
 
             sage: from sage.graphs.base.dense_graph import DenseGraph
             sage: G = DenseGraph(5)
@@ -2940,8 +2940,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         """
         if not ignore_labels:
             return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 1)
-        else:
-            return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 2)
+        return 1 == self._use_edge_iterator_on_subgraph(other, vertices, 2)
 
     def subgraph_given_vertices(self, CGraphBackend other, object vertices):
         """
@@ -3375,8 +3374,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # The function being mostly symmetric in x and y, their roles are
         # reversed at the end of each loop. For this reason is defined, for
@@ -3537,8 +3535,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # The function being mostly symmetric in x and y, their roles are
         # reversed at the end of each loop. For this reason is defined, for
@@ -3858,8 +3855,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # As for shortest_path, the roles of x and y are symmetric, hence we
         # define dictionaries like pred_current and pred_other, which
@@ -4079,8 +4075,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         if x == y:
             if distance_flag:
                 return 0
-            else:
-                return [x]
+            return [x]
 
         # As for shortest_path, the roles of x and y are symmetric, hence we
         # define dictionaries like pred_current and pred_other, which
@@ -5139,7 +5134,7 @@ cdef class Search_iterator:
 
         if self.report_distance:
             return value, smallInteger(self.current_distance)
-        elif self.edges:
+        if self.edges:
             return value_prev, value
         return value
 

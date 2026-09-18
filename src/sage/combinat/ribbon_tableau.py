@@ -17,21 +17,24 @@ Ribbon tableaux
 # ****************************************************************************
 import functools
 
-from sage.structure.parent import Parent
-from sage.structure.element import parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
 from sage.combinat.combinat import CombinatorialElement
-from sage.combinat.skew_partition import SkewPartition, SkewPartitions
-from sage.combinat.skew_tableau import (SkewTableau, SkewTableaux,
-                                        SemistandardSkewTableaux)
-from sage.combinat.tableau import Tableaux
 from sage.combinat.partition import Partition, _Partitions
 from sage.combinat.permutation import to_standard
-from sage.misc.persist import register_unpickle_override
+from sage.combinat.skew_partition import SkewPartition, SkewPartitions
+from sage.combinat.skew_tableau import (
+    SemistandardSkewTableaux,
+    SkewTableau,
+    SkewTableaux,
+)
+from sage.combinat.tableau import Tableaux
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import parent
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 from . import permutation
 
 
@@ -1142,28 +1145,3 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
                 w = lk[pos: pos + s[i]]
                 restmp.append(S.from_shape_and_word(parts[i], w))
             yield self.element_class(self, restmp)
-
-
-class RibbonTableau_class(RibbonTableau):
-    """
-    This exists solely for unpickling ``RibbonTableau_class`` objects.
-    """
-
-    def __setstate__(self, state):
-        r"""
-        Unpickle old ``RibbonTableau_class`` objects.
-
-        TESTS::
-
-            sage: loads(b'x\x9c5\xcc\xbd\x0e\xc2 \x14@\xe1\xb4Z\x7f\xd0\x07\xc1\x85D}\x8f\x0e\x8d\x1d\t\xb9\x90\x1bJ\xa44\x17\xe8h\xa2\x83\xef-\xda\xb8\x9do9\xcf\xda$\xb0(\xcc4j\x17 \x8b\xe8\xb4\x9e\x82\xca\xa0=\xc2\xcc\xba\x1fo\x8b\x94\xf1\x90\x12\xa3\xea\xf4\xa2\xfaA+\xde7j\x804\xd0\xba-\xe5]\xca\xd4H\xdapI[\xde.\xdf\xe8\x82M\xc2\x85\x8c\x16#\x1b\xe1\x8e\xea\x0f\xda\xf5\xd5\xf9\xdd\xd1\x1e%1>\x14]\x8a\x0e\xdf\xb8\x968"\xceZ|\x00x\xef5\x11')
-            [[None, 1], [2, 3]]
-            sage: loads(dumps( RibbonTableau([[None, 1],[2,3]]) ))
-            [[None, 1], [2, 3]]
-        """
-        self.__class__ = RibbonTableau
-        self.__init__(RibbonTableaux(), state['_list'])
-
-
-register_unpickle_override('sage.combinat.ribbon_tableau', 'RibbonTableau_class', RibbonTableau_class)
-register_unpickle_override('sage.combinat.ribbon_tableau', 'RibbonTableaux_shapeweightlength', RibbonTableaux)
-register_unpickle_override('sage.combinat.ribbon_tableau', 'SemistandardMultiSkewTtableaux_shapeweight', SemistandardMultiSkewTableaux)

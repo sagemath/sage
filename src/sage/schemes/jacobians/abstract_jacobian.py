@@ -114,10 +114,12 @@ class Jacobian_generic(Scheme):
         self.__curve = C
         Scheme.__init__(self, C.base_scheme(), category=Jacobians(C.base_ring()).or_subcategory(category))
 
-    def __richcmp__(self, J, op) -> bool:
+    def __richcmp__(self, other, op) -> bool:
         """
-        Compare the Jacobian ``self`` to `J`.  If `J` is a Jacobian, then
-        ``self`` and `J` are equal if and only if their curves are equal.
+        Compare the Jacobian ``self`` to ``other``.
+
+        If ``other`` is a Jacobian, then ``self`` and ``other`` are
+        equal if and only if their curves are equal.
 
         EXAMPLES::
 
@@ -136,9 +138,9 @@ class Jacobian_generic(Scheme):
             sage: J1 != J2
             True
         """
-        if not isinstance(J, Jacobian_generic):
+        if not isinstance(other, Jacobian_generic):
             return NotImplemented
-        return richcmp(self.curve(), J.curve(), op)
+        return richcmp(self.curve(), other.curve(), op)
 
     def _repr_(self):
         """

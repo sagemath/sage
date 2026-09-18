@@ -176,7 +176,7 @@ class FiniteField_pari_ffelt(FiniteField):
 
             This generator is not guaranteed to be a generator for the
             multiplicative group.  To obtain the latter, use
-            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteFields.multiplicative_generator()`
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.multiplicative_generator`
             or use the ``modulus="primitive"`` option when constructing
             the field.
 

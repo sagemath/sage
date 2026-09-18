@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Finite polyhedral complexes
 
@@ -120,11 +119,15 @@ from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
 from sage.combinat.posets.posets import Poset
 from sage.combinat.subset import powerset
+from sage.misc.decorators import rename_keyword
 
 
 class PolyhedralComplex(GenericCellComplex):
     r"""
     A polyhedral complex.
+
+    .. automethod:: _n_maximal_cells_sorted
+    .. automethod:: _n_cells_sorted
 
     A **polyhedral complex** `PC` is a collection of polyhedra in a certain
     ambient space `\RR^n` such that the following hold.
@@ -167,9 +170,8 @@ class PolyhedralComplex(GenericCellComplex):
       if ``True``, then the constructor checks whether the cells
       are face-to-face, and it raises a :exc:`ValueError` if they are not
 
-    - ``is_mutable`` and ``is_immutable`` -- boolean (default: ``True`` and
-      ``False`` respectively); set ``is_mutable=False`` or ``is_immutable=True``
-      to make this polyhedral complex immutable
+    - ``immutable`` -- boolean (default: ``False``); set ``immutable=True`` to
+      make this polyhedral complex immutable
 
     - ``backend`` -- string (optional); the name of the backend used for
       computations on Sage polyhedra; if it is not given, then each cell has
@@ -205,7 +207,7 @@ class PolyhedralComplex(GenericCellComplex):
          (A vertex at (0, 1/4),),
          (A vertex at (1/7, 2/7),),
          (A vertex at (1/3, 1/3),)]
-        sage: pc.plot()                                                                 # needs sage.plot
+        sage: pc.plot()
         Graphics object consisting of 10 graphics primitives
         sage: pc.is_pure()
         True
@@ -267,8 +269,9 @@ class PolyhedralComplex(GenericCellComplex):
         sage: Q.backend()
         'cdd'
     """
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
     def __init__(self, maximal_cells=None, backend=None, maximality_check=True,
-                 face_to_face_check=False, is_mutable=True, is_immutable=False,
+                 face_to_face_check=False, immutable=False,
                  ambient_dim=None) -> None:
         r"""
         Define a PolyhedralComplex.
@@ -338,7 +341,7 @@ class PolyhedralComplex(GenericCellComplex):
                             poset.is_gequal(p, r) and poset.is_gequal(q, r)):
                         raise ValueError("the given cells are not face-to-face")
         self._is_immutable = False
-        if not is_mutable or is_immutable:
+        if immutable:
             self.set_immutable()
 
     def cells(self, subcomplex=None) -> dict:
@@ -731,18 +734,18 @@ class PolyhedralComplex(GenericCellComplex):
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
           - ``sticky_vertices`` -- (default: ``False``) boolean or dict;
             whether to draw line segments between shared vertices of the given polyhedra.
-            A dict gives options for :func:`sage.plot.line`.
+            A dict gives options for :func:`sage.plot.line.line`.
           - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
-            A dict gives options for :func:`sage.plot.line`.
+            A dict gives options for :func:`sage.plot.line.line`.
 
         - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color
           to every maximal cell; otherwise, passed on to
-          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+          :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         - other keyword arguments are passed on to
-          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+          :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         EXAMPLES::
 
@@ -751,17 +754,17 @@ class PolyhedralComplex(GenericCellComplex):
             sage: p3 = Polyhedron(vertices=[(0, 0), (0, 2), (-1, 1)])
             sage: pc1 = PolyhedralComplex([p1, p2, p3, -p1, -p2, -p3])
             sage: bb = dict(xmin=-2, xmax=2, ymin=-3, ymax=3, axes=False)
-            sage: g0 = pc1.plot(color='rainbow', **bb)                                  # needs sage.plot
-            sage: g1 = pc1.plot(explosion_factor=0.5, **bb)                             # needs sage.plot
-            sage: g2 = pc1.plot(explosion_factor=1, color='rainbow', alpha=0.5, **bb)   # needs sage.plot
+            sage: g0 = pc1.plot(color='rainbow', **bb)
+            sage: g1 = pc1.plot(explosion_factor=0.5, **bb)
+            sage: g2 = pc1.plot(explosion_factor=1, color='rainbow', alpha=0.5, **bb)
             sage: graphics_array([g0, g1, g2]).show(axes=False)                        # not tested
 
             sage: pc2 = PolyhedralComplex([polytopes.hypercube(3)])
             sage: pc3 = pc2.subdivide(new_vertices=[(0, 0, 0)])
-            sage: g3 = pc3.plot(explosion_factor=1, color='rainbow',                    # needs sage.plot
+            sage: g3 = pc3.plot(explosion_factor=1, color='rainbow',
             ....:               alpha=0.5, axes=False, online=True)
             sage: pc4 = pc2.subdivide(make_simplicial=True)
-            sage: g4 = pc4.plot(explosion_factor=1, center=(1, -1, 1), fill='blue',     # needs sage.plot
+            sage: g4 = pc4.plot(explosion_factor=1, center=(1, -1, 1), fill='blue',
             ....:              wireframe='white', point={'color':'red', 'size':10},
             ....:              alpha=0.6, online=True)
             sage: pc5 = PolyhedralComplex([
@@ -772,7 +775,7 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[-1,0,0], [0,-1,0], [0,0,1]]),
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,-1]]),
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,1]])])
-            sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,       # needs sage.plot
+            sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,
             ....:               point={'size': 20}, axes=False, online=True)
         """
         if self.dimension() > 3:
@@ -854,10 +857,10 @@ class PolyhedralComplex(GenericCellComplex):
 
             sage: p1 = Polyhedron(vertices=[(1/3, 1/3), (0, 0), (1, 2)])
             sage: p2 = Polyhedron(vertices=[(1, 2), (0, 0), (0, 1/2)])
-            sage: pc1 = PolyhedralComplex([p1, p2], is_mutable=False)
+            sage: pc1 = PolyhedralComplex([p1, p2], immutable=True)
             sage: hash(pc1) == hash(pc1)
             True
-            sage: pc2 = PolyhedralComplex([p2, p1], is_mutable=False)
+            sage: pc2 = PolyhedralComplex([p2, p1], immutable=True)
             sage: hash(pc1) == hash(pc2)
             True
             sage: pc3 = PolyhedralComplex([p1, p2])
@@ -1003,7 +1006,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: poset
             Finite poset containing 11 elements
             sage: d = {i: i.vertices_matrix() for i in poset}
-            sage: poset.plot(element_labels=d)                                          # needs sage.plot
+            sage: poset.plot(element_labels=d)
             Graphics object consisting of 28 graphics primitives
 
         For a nonbounded polyhedral complex::
@@ -1263,7 +1266,7 @@ class PolyhedralComplex(GenericCellComplex):
             facets = [f for f in self.maximal_cell_iterator()
                       if f in faces]
         return PolyhedralComplex(facets, maximality_check=False,
-                                 is_immutable=self._is_immutable,
+                                 immutable=self._is_immutable,
                                  backend=self._backend)
 
     def connected_components(self) -> list:
@@ -1318,7 +1321,7 @@ class PolyhedralComplex(GenericCellComplex):
                 [f for f in self.maximal_cell_iterator() if f in faces]
                 for faces in lists_of_faces]
         return [PolyhedralComplex(facets, maximality_check=False,
-                                  is_immutable=self._is_immutable,
+                                  immutable=self._is_immutable,
                                   backend=self._backend)
                 for facets in lists_of_facets]
 
@@ -1354,7 +1357,7 @@ class PolyhedralComplex(GenericCellComplex):
         facets = [f for f in self.maximal_cell_iterator() if f.dimension() < n]
         facets.extend(self.n_cells(n))
         return PolyhedralComplex(facets, maximality_check=False,
-                                 is_immutable=self._is_immutable,
+                                 immutable=self._is_immutable,
                                  backend=self._backend)
 
     def stratify(self, n):
@@ -1391,7 +1394,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         n_faces = self.n_maximal_cells(n)
         return PolyhedralComplex(n_faces, maximality_check=False,
-                                 is_immutable=self._is_immutable,
+                                 immutable=self._is_immutable,
                                  backend=self._backend)
 
     def boundary_subcomplex(self):
@@ -1450,7 +1453,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self.is_full_dimensional():
             return PolyhedralComplex(self.relative_boundary_cells(),
-                                     is_immutable=self._is_immutable,
+                                     immutable=self._is_immutable,
                                      backend=self._backend)
         ans = copy(self)
         if self._is_immutable:
@@ -1704,8 +1707,8 @@ class PolyhedralComplex(GenericCellComplex):
         maximal_cells = [f.product(g) for f in self.maximal_cell_iterator()
                          for g in right.maximal_cell_iterator()]
         return PolyhedralComplex(maximal_cells, maximality_check=False,
-                                 is_immutable=(self._is_immutable and
-                                               right._is_immutable),
+                                 immutable=(self._is_immutable and
+                                            right._is_immutable),
                                  backend=self._backend)
 
     def disjoint_union(self, right):
@@ -1738,8 +1741,8 @@ class PolyhedralComplex(GenericCellComplex):
         return PolyhedralComplex(maximal_cells_self + maximal_cells_right,
                                  maximality_check=False,
                                  face_to_face_check=False,
-                                 is_immutable=(self._is_immutable and
-                                               right._is_immutable),
+                                 immutable=(self._is_immutable and
+                                            right._is_immutable),
                                  backend=self._backend)
 
     def union(self, right):
@@ -1770,8 +1773,8 @@ class PolyhedralComplex(GenericCellComplex):
                         right.maximal_cell_iterator())
         return PolyhedralComplex(maximal_cells, maximality_check=True,
                                  face_to_face_check=True,
-                                 is_immutable=(self._is_immutable and
-                                               right._is_immutable),
+                                 immutable=(self._is_immutable and
+                                            right._is_immutable),
                                  backend=self._backend)
 
     def join(self, right):
@@ -1797,8 +1800,8 @@ class PolyhedralComplex(GenericCellComplex):
         maximal_cells = [f.join(g) for f in self.maximal_cell_iterator()
                          for g in right.maximal_cell_iterator()]
         return PolyhedralComplex(maximal_cells, maximality_check=False,
-                                 is_immutable=(self._is_immutable and
-                                               right._is_immutable),
+                                 immutable=(self._is_immutable and
+                                            right._is_immutable),
                                  backend=self._backend)
 
     ############################################################
@@ -1927,13 +1930,13 @@ class PolyhedralComplex(GenericCellComplex):
             sage: pc1.is_mutable()
             True
             sage: pc2 = PolyhedralComplex([Polyhedron(vertices=[[0], [1]])],
-            ....:                        is_mutable=False)
+            ....:                         immutable=True)
             sage: pc2.is_mutable()
             False
             sage: pc1 == pc2
             True
             sage: pc3 = PolyhedralComplex([Polyhedron(vertices=[[0], [1]])],
-            ....:                        is_immutable=True)
+            ....:                         immutable=True)
             sage: pc3.is_mutable()
             False
             sage: pc2 == pc3
@@ -1951,11 +1954,11 @@ class PolyhedralComplex(GenericCellComplex):
             sage: pc1.is_immutable()
             False
             sage: pc2 = PolyhedralComplex([Polyhedron(vertices=[[0], [1]])],
-            ....:                        is_mutable=False)
+            ....:                         immutable=True)
             sage: pc2.is_immutable()
             True
             sage: pc3 = PolyhedralComplex([Polyhedron(vertices=[[0], [1]])],
-            ....:                        is_immutable=True)
+            ....:                         immutable=True)
             sage: pc3.is_immutable()
             True
         """
@@ -2161,7 +2164,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: pc.remove_cell(p)
             sage: pc.dimension()
             -1
-            sage: pc = PolyhedralComplex([Polyhedron(vertices=[[0]])], is_mutable=False)
+            sage: pc = PolyhedralComplex([Polyhedron(vertices=[[0]])], immutable=True)
             sage: pc.remove_cell(Polyhedron(vertices=[[0]]))
             Traceback (most recent call last):
             ...
@@ -2528,19 +2531,19 @@ def exploded_plot(polyhedra, *,
 
     - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to
       draw line segments between shared vertices of the given polyhedra. A dict
-      gives options for :func:`sage.plot.line`.
+      gives options for :func:`sage.plot.line.line`.
 
     - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center``
       is a vertex of some of the polyhedra, whether to draw line segments
       connecting the ``center`` to the shifted copies of these vertices. A dict
-      gives options for :func:`sage.plot.line`.
+      gives options for :func:`sage.plot.line.line`.
 
     - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different
       color to every maximal cell and every vertex; otherwise, passed on to
-      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
+      :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`
 
     - other keyword arguments are passed on to
-      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
+      :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`
 
     EXAMPLES::
 
@@ -2548,11 +2551,11 @@ def exploded_plot(polyhedra, *,
         sage: p1 = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
         sage: p2 = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
         sage: p3 = Polyhedron(vertices=[(0, 0), (1, 1), (2, 0)])
-        sage: exploded_plot([p1, p2, p3])                                               # needs sage.plot
+        sage: exploded_plot([p1, p2, p3])
         Graphics object consisting of 20 graphics primitives
-        sage: exploded_plot([p1, p2, p3], center=(1, 1))                                # needs sage.plot
+        sage: exploded_plot([p1, p2, p3], center=(1, 1))
         Graphics object consisting of 19 graphics primitives
-        sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)          # needs sage.plot
+        sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)
         Graphics object consisting of 23 graphics primitives
     """
     from sage.plot.colors import rainbow

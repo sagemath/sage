@@ -14,7 +14,7 @@ by units) and zero columns. Hence, we can suppose that the input for the algorit
 developed here is a set of points in `PG(k-1, q)`.
 
 The implementation is based on the class
-:class:`sage.groups.perm_gps.partn_ref2.refinement_generic.PartitionRefinement_generic`.
+:class:`~sage.groups.perm_gps.partn_ref2.refinement_generic.PartitionRefinement_generic`.
 See the description of this algorithm in
 :mod:`sage.groups.perm_gps.partn_ref2.refinement_generic`.
 In the language given there, we have to implement the group action of
@@ -32,18 +32,19 @@ and methods to compute the applied group elements in `G \rtimes S_n`.
 
 The algorithm also uses Jeffrey Leon's idea of maintaining an
 invariant set of codewords which is computed in the beginning, see
-:meth:`~sage.coding.codecan.codecan.PartitionRefinementLinearCode._init_point_hyperplane_incidence`.
+``PartitionRefinementLinearCode._init_point_hyperplane_incidence``.
 An example for such a set is the set of all codewords of weight `\leq w` for
 some uniquely defined `w`. In our case, we interpret the codewords as a set of
 hyperplanes (via the corresponding information word) and compute invariants of
 the bipartite, colored derived subgraph of the point-hyperplane incidence graph,
-see :meth:`PartitionRefinementLinearCode._point_refine` and
-:meth:`PartitionRefinementLinearCode._hyp_refine`.
+see ``PartitionRefinementLinearCode._point_refine`` and
+``PartitionRefinementLinearCode._hyp_refine``.
 
 Since we are interested in subspaces (linear codes) instead of matrices, our
 group elements returned in
-:meth:`PartitionRefinementLinearCode.get_transporter` and
-:meth:`PartitionRefinementLinearCode.get_autom_gens`
+:meth:`~sage.coding.codecan.codecan.PartitionRefinementLinearCode.get_transporter`
+and
+:meth:`~sage.coding.codecan.codecan.PartitionRefinementLinearCode.get_autom_gens`
 will be elements in the group
 `({\GF{q}^*}^n  \rtimes Aut(\GF{q})) \rtimes S_n =
 ({\GF{q}^*}^n  \rtimes (Aut(\GF{q}) \times S_n)`.
@@ -361,8 +362,10 @@ cdef class InnerGroup:
     cdef SemimonomialTransformation get_transporter(self):
         r"""
         Return the group element we have applied. Should only be called if
-        we passed an element in
-        :meth:`sage.coding.codecan.codecan.InnerGroup.__cinit__`.
+        we passed a :class:`transporter element
+        <sage.groups.semimonomial_transformations.semimonomial_transformation.SemimonomialTransformation>`
+        to
+        :class:`InnerGroup <sage.coding.codecan.codecan.InnerGroup>`.
         """
         return self.transporter
 

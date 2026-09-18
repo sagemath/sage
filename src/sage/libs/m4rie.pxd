@@ -2,7 +2,7 @@
 #       Copyright (C) 2010 Martin Albrecht <martinralbrecht@googlemail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 from sage.libs.m4ri cimport mzd_t, m4ri_word, mzp_t
@@ -22,7 +22,7 @@ cdef extern from "m4rie/m4rie.h":
     gf2e *gf2e_init(m4ri_word minpoly)
     void gf2e_free(gf2e *ff)
 
-#cdef extern from "m4rie/mzed.h":
+# cdef extern from "m4rie/mzed.h":
     ctypedef struct mzed_t:
         mzd_t *x
         gf2e *finite_field
@@ -87,7 +87,7 @@ cdef extern from "m4rie/m4rie.h":
     mzed_t *mzed_mul_scalar(mzed_t *C, m4ri_word a, const_mzed_t *B)
 
     # TODO: not implemented yet in m4rie
-    mzed_t *mzed_transpose(mzed_t *DST, const_mzed_t *A )
+    mzed_t *mzed_transpose(mzed_t *DST, const_mzed_t *A)
 
     void mzed_print(const_mzed_t *M)
 
@@ -99,24 +99,24 @@ cdef extern from "m4rie/m4rie.h":
     # TODO: not implemented yet in m4rie
     double _mzed_density(mzed_t *A, int res, size_t r, size_t c)
 
-#cdef extern from "m4rie/newton_john.h":
+# cdef extern from "m4rie/newton_john.h":
     size_t mzed_echelonize_newton_john(mzed_t *, size_t)
 
     mzed_t *mzed_mul_newton_john(mzed_t *, mzed_t *, mzed_t *)
 
-#cdef extern from "m4rie/echelonform.h":
+# cdef extern from "m4rie/echelonform.h":
     size_t mzed_echelonize(mzed_t *, size_t)
 
     size_t mzed_echelonize_ple(mzed_t *, size_t)
 
     int mzed_ple(mzed_t *A, mzp_t *P, mzp_t *Q)
 
-#cdef extern from "m4rie/strassen.h":
+# cdef extern from "m4rie/strassen.h":
     mzed_t *mzed_mul_strassen(mzed_t *, mzed_t *, mzed_t *, size_t cutoff)
 
     size_t _mzed_strassen_cutoff(mzed_t *C, mzed_t *A, mzed_t *B)
 
-#cdef extern from "m4rie/mzd_slice.h":
+# cdef extern from "m4rie/mzd_slice.h":
 
     int __M4RIE_MAX_KARATSUBA_DEGREE
 

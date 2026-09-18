@@ -249,8 +249,6 @@ def edit(obj, editor=None, bg=None):
 
         sage: edit(edit)           # not tested
     """
-    global edit_template
-
     if editor:
         set_editor(editor)
     elif not edit_template:

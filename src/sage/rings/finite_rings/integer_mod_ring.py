@@ -61,6 +61,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
+# This import is deliberately at runtime visibility (not inside a
+# TYPE_CHECKING block): the class-level ``__call__`` annotation below is
+# resolved by typing.get_type_hints - in the TESTS block of this module
+# and by downstream stub generators - which evaluates the annotation
+# string in the module namespace, so the name must exist there.
+from collections.abc import Callable  # noqa: TC003
 
 import sage.misc.prandom as random
 
@@ -71,9 +79,9 @@ from sage.rings.ring import Field
 from sage.misc.mrange import cartesian_product_iterator
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
-import sage.rings.integer as integer
-import sage.rings.integer_ring as integer_ring
-import sage.rings.quotient_ring as quotient_ring
+from sage.rings import integer
+from sage.rings import integer_ring
+from sage.rings import quotient_ring
 
 try:
     from sage.libs.pari import pari
@@ -137,7 +145,8 @@ class IntegerModFactory(UniqueFactory):
         Testing whether a quotient ring `\ZZ / n\ZZ` is a field can of
         course be very costly. By default, it is not tested whether `n`
         is prime or not, in contrast to
-        :func:`~sage.rings.finite_rings.finite_field_constructor.GF`. If the user
+        :class:`GF <sage.rings.finite_rings.finite_field_constructor.FiniteFieldFactory>`.
+        If the user
         is sure that the modulus is prime and wants to avoid a primality
         test, (s)he can provide ``category=Fields()`` when constructing
         the quotient ring, and then the result will behave like a field.
@@ -202,7 +211,40 @@ class IntegerModFactory(UniqueFactory):
     the ring factory::
 
         sage: IntegerModRing._cache.clear()
+
+    TESTS:
+
+    The return type exposed to static type checkers matches the runtime
+    type::
+
+        sage: from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
+        sage: from sage.rings.integer_ring import IntegerRing_class
+        sage: isinstance(Zmod(29), IntegerModRing_generic)
+        True
+        sage: isinstance(Integers(0), IntegerRing_class)
+        True
+
+    The ``__call__`` annotation resolves to the same union::
+
+        sage: import collections.abc
+        sage: import typing
+        sage: from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
+        sage: ann = typing.get_type_hints(IntegerModFactory)['__call__']
+        sage: typing.get_origin(ann) == collections.abc.Callable
+        True
+        sage: ann == collections.abc.Callable[..., IntegerModRing_generic | IntegerRing_class]
+        True
     """
+    # This class-level annotation is only there for the typing info: it
+    # lets static type checkers infer the return type of ``IntegerModRing``
+    # and its aliases without a forwarding ``__call__`` override, which
+    # would add a Python frame and a ``super()`` lookup to every factory
+    # call.  No value is assigned, so instances keep dispatching directly
+    # to the inherited ``UniqueFactory.__call__`` at full speed.  The
+    # unquoted forward reference is safe because this file has
+    # ``from __future__ import annotations``.
+    __call__: Callable[..., IntegerModRing_generic | integer_ring.IntegerRing_class]
+
     def get_object(self, version, key, extra_args):
         out = super().get_object(version, key, extra_args)
         category = extra_args.get('category', None)
@@ -242,8 +284,7 @@ class IntegerModFactory(UniqueFactory):
             order = -order
         if order == 0:
             return integer_ring.IntegerRing(**kwds)
-        else:
-            return IntegerModRing_generic(order, **kwds)
+        return IntegerModRing_generic(order, **kwds)
 
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -349,7 +390,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
     By :issue:`15229`, there is a unique instance of the
     integral quotient ring of a given order. Using the
-    :func:`IntegerModRing` factory twice, and using
+    :class:`~sage.rings.abc.IntegerModRing` factory twice, and using
     ``is_field=True`` the second time, will update the
     category of the unique instance::
 
@@ -457,7 +498,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             raise ZeroDivisionError("order must be positive")
         self.__order = order
         self._pyx_order = integer_mod.NativeIntStruct(order)
-        global default_category
         if category is None:
             category = default_category
         else:
@@ -501,25 +541,22 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return "ZZ/{}".format(self.order())
 
-    def _axiom_init_(self) -> str:
+    def _fricas_init_(self) -> str:
         """
-        Return a string representation of ``self`` in (Pan)Axiom.
+        Return a string representation of ``self`` in FriCAS.
 
         EXAMPLES::
 
             sage: Z7 = Integers(7)
-            sage: Z7._axiom_init_()
+            sage: Z7._fricas_init_()
             'IntegerMod(7)'
 
-            sage: axiom(Z7)  #optional - axiom
-            IntegerMod 7
-
-            sage: fricas(Z7) #optional - fricas
+            sage: fricas(Z7)  # optional - fricas
             IntegerMod(7)
         """
         return 'IntegerMod({})'.format(self.order())
 
-    _fricas_init_ = _axiom_init_
+    _axiom_init_ = _fricas_init_
 
     def krull_dimension(self):
         """
@@ -770,7 +807,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: Integers(15).fraction_field()
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
             sage: Integers(15)._pseudo_fraction_field()
             Ring of integers modulo 15
             sage: R.<x> = Integers(15)[]
@@ -1226,9 +1263,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         if S is int:
             return integer_mod.Int_to_IntegerMod(self)
-        elif S is integer_ring.ZZ:
+        if S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
-        elif isinstance(S, IntegerModRing_generic):
+        if isinstance(S, IntegerModRing_generic):
             if isinstance(S, Field):
                 return None
             try:
@@ -1923,6 +1960,17 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             ....:     s1 = set(f.roots(multiplicities=False))
             ....:     s2 = set(d for d in R if f(d) == 0)
             ....:     assert s1 == s2, f"{f}: {s1} != {s2}"
+
+        Check that :issue:`42796` is fixed::
+
+            sage: x = polygen(Zmod(4))
+            sage: f = 2*x - 2
+            sage: f.roots(multiplicities=False)
+            [1, 3]
+            sage: x = polygen(Zmod(9))
+            sage: f = 3*x - 3
+            sage: f.roots(multiplicities=False)
+            [1, 4, 7]
         """
 
         # This function only supports roots in an IntegerModRing
@@ -1963,11 +2011,13 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             # whole eqn divided by g
             N_by_g = N.divide_knowing_divisible_by(g)
             a_by_g = al.divide_knowing_divisible_by(g)
+            b_by_g = bl.divide_knowing_divisible_by(g)
             _R = Zmod(N_by_g)
-            assert _R(a_by_g).is_unit()
+            _S = _R[f.parent().variable_name()]
+            f = _S([b_by_g, a_by_g])
 
             # single root
-            _root = self(f.roots(_R, multiplicities=False)[0])
+            _root = self(f.any_root())
             inc = self(N_by_g)
             return [_root + k * inc for k in range(g)]
 

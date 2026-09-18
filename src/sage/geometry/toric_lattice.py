@@ -708,7 +708,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             vector space.
 
         See also :meth:`span_of_basis`,
-        :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule`,
+        :meth:`~sage.modules.free_module.Module_free_ambient.submodule`,
         and
         :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule_with_basis`,
 
@@ -752,7 +752,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             vector space.
 
         See also :meth:`span`,
-        :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule`,
+        :meth:`~sage.modules.free_module.Module_free_ambient.submodule`,
         and
         :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule_with_basis`,
 
@@ -847,17 +847,17 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
             args.extend([self._latex_name, self._latex_dual_name])
         return sib.name('ToricLattice')(*args)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``other`` -- anything
 
         OUTPUT: boolean
 
-        There is equality if ``right`` is a toric lattice of the same
+        There is equality if ``other`` is a toric lattice of the same
         dimension as ``self`` and their associated names are the
         same.
 
@@ -873,20 +873,20 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
             sage: N3 == ToricLattice(3)
             True
         """
-        if self is right:
+        if self is other:
             return rich_to_bool(op, 0)
-        if type(self) is not type(right):
+        if type(self) is not type(other):
             return NotImplemented
 
         lx = self.rank()
-        rx = right.rank()
+        rx = other.rank()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
         # If lattices are the same as ZZ-modules, compare associated names
         return richcmp([self._name, self._dual_name,
                         self._latex_name, self._latex_dual_name],
-                       [right._name, right._dual_name,
-                        right._latex_name, right._latex_dual_name], op)
+                       [other._name, other._dual_name,
+                        other._latex_name, other._latex_dual_name], op)
 
     def _latex_(self):
         r"""
@@ -982,7 +982,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         EXAMPLES::
 
             sage: N = ToricLattice(3)
-            sage: N.plot()                                                              # needs sage.plot
+            sage: N.plot()
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1019,7 +1019,8 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
     EXAMPLES:
 
     The intended way to get objects of this class is to use
-    :meth:`submodule_with_basis` method of toric lattices::
+    :meth:`~sage.modules.free_module.FreeModule_generic_pid.submodule_with_basis`
+    method of toric lattices::
 
         sage: N = ToricLattice(3)
         sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
@@ -1113,12 +1114,12 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
 
             sage: N = ToricLattice(3)
             sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
-            sage: sublattice.plot()                                                     # needs sage.plot
+            sage: sublattice.plot()
             Graphics3d Object
 
         Now we plot both the ambient lattice and its sublattice::
 
-            sage: N.plot() + sublattice.plot(point_color='red')                         # needs sage.plot
+            sage: N.plot() + sublattice.plot(point_color='red')
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1159,7 +1160,8 @@ class ToricLattice_sublattice(ToricLattice_sublattice_with_basis,
     EXAMPLES:
 
     The intended way to get objects of this class is to use
-    :meth:`submodule` method of toric lattices::
+    :meth:`~sage.modules.free_module.Module_free_ambient.submodule`
+    method of toric lattices::
 
         sage: N = ToricLattice(3)
         sage: sublattice = N.submodule([(1,1,0), (3,2,1)])
@@ -1299,7 +1301,8 @@ class ToricLattice_quotient(FGP_Module_class):
     EXAMPLES:
 
     The intended way to get objects of this class is to use
-    :meth:`quotient` method of toric lattices::
+    :meth:`~sage.geometry.toric_lattice.ToricLattice_generic.quotient`
+    method of toric lattices::
 
         sage: N = ToricLattice(3)
         sage: sublattice = N.submodule([(1,1,0), (3,2,1)])

@@ -118,8 +118,8 @@ cdef class PeriodicRegion:
         if not self.full:
             rows, cols = self.data.shape
             new_data = np.ndarray((rows, 2*cols), self.data.dtype)
-            new_data[:,0:cols] = self.data
-            new_data[::-1,-1:cols-1:-1] = self.data
+            new_data[:, 0:cols] = self.data
+            new_data[::-1, -1:cols-1:-1] = self.data
             self.data = new_data
             self.full = True
         return self
@@ -219,10 +219,10 @@ cdef class PeriodicRegion:
         m, n = self.data.shape
         if condition is None:
             new_data = np.ndarray((2*m, 2*n), self.data.dtype)
-            new_data[0::2,0::2] = self.data
-            new_data[1::2,0::2] = self.data
-            new_data[0::2,1::2] = self.data
-            new_data[1::2,1::2] = self.data
+            new_data[0::2, 0::2] = self.data
+            new_data[1::2, 0::2] = self.data
+            new_data[0::2, 1::2] = self.data
+            new_data[1::2, 1::2] = self.data
         else:
             more = self.expand().data
             less = self.contract().data
@@ -234,9 +234,9 @@ cdef class PeriodicRegion:
             for i in range(2*m):
                 for j in range(2*n):
                     if less[i//2, j//2]:
-                        new_data[i,j] = True
+                        new_data[i, j] = True
                     elif fuzz[i//2, j//2]:
-                        new_data[i,j] = condition(dw1*(i+.5) + dw2*(j+.5))
+                        new_data[i, j] = condition(dw1*(i+.5) + dw2*(j+.5))
         return PeriodicRegion(self.w1, self.w2, new_data, self.full).refine(condition, times-1)
 
     def expand(self, bint corners=True):
@@ -348,7 +348,7 @@ cdef class PeriodicRegion:
         """
         CC = self.w1.parent()
         RR = CC.construction()[1]
-        basis_matrix = (RR**(2,2))((tuple(self.w1), tuple(self.w2))).transpose()
+        basis_matrix = (RR**(2, 2))((tuple(self.w1), tuple(self.w2))).transpose()
         i, j = basis_matrix.solve_right((RR**2)(tuple(CC(z))))
         # Get the fractional part.
         i -= int(i)
@@ -435,10 +435,11 @@ cdef class PeriodicRegion:
         new_data = np.zeros(self.data.shape, self.data.dtype)
         for i in range(rows):
             for j in range(cols):
-                if data[i,j]:
+                dij = data[i, j]
+                if dij:
                     for a in range(n):
                         for b in range(n):
-                            new_data[(a*rows+i)//n, (b*cols+j)//n] = data[i,j]
+                            new_data[(a*rows+i)//n, (b*cols+j)//n] = dij
         return PeriodicRegion(self.w1, self.w2, new_data)
 
     def __invert__(self):
@@ -599,7 +600,7 @@ cdef class PeriodicRegion:
         L = []
         for i in range(m):
             for j in range(n):
-                if framed[i,j]:
+                if framed[i, j]:
                     if not framed[i-1, j]:
                         L.append((i, j, 0))
                     if not framed[i+1, j]:
@@ -662,8 +663,8 @@ cdef class PeriodicRegion:
         from sage.plot.line import line
         dw1, dw2 = self.ds()
         L = []
-        F = line([(0,0), tuple(self.w1),
-                  tuple(self.w1+self.w2), tuple(self.w2), (0,0)])
+        F = line([(0, 0), tuple(self.w1),
+                  tuple(self.w1+self.w2), tuple(self.w2), (0, 0)])
         if not self.full:
             F += line([tuple(self.w2/2), tuple(self.w1+self.w2/2)])
         if 'rgbcolor' not in kwds:
@@ -691,17 +692,17 @@ cdef frame_data(data, bint full=True):
     m, n = data.shape
     framed = np.empty((m+2, n+2), data.dtype)
     # center
-    framed[:-2,:-2] = data
+    framed[:-2, :-2] = data
     # top and bottom
     if full:
-        framed[:-2,-1] = data[:,-1]
-        framed[:-2,-2] = data[:, 0]
+        framed[:-2, -1] = data[:, -1]
+        framed[:-2, -2] = data[:, 0]
     else:
-        framed[:-2,-1] = data[::-1, 0]
-        framed[:-2,-2] = data[::-1,-1]
+        framed[:-2, -1] = data[::-1, 0]
+        framed[:-2, -2] = data[::-1, -1]
     # left and right
-    framed[-2,:] = framed[0,:]
-    framed[-1,:] = framed[-3,:]
+    framed[-2, :] = framed[0, :]
+    framed[-1, :] = framed[-3, :]
     return framed
 
 cdef unframe_data(framed, bint full=True):
@@ -710,12 +711,12 @@ cdef unframe_data(framed, bint full=True):
     borders together using the "or" operator.
     """
     framed = framed.copy()
-    framed[0,:] |= framed[-2,:]
-    framed[-3,:] |= framed[-1,:]
+    framed[0, :] |= framed[-2, :]
+    framed[-3, :] |= framed[-1, :]
     if full:
-        framed[:-2,-3] |= framed[:-2,-1]
-        framed[:-2, 0] |= framed[:-2,-2]
+        framed[:-2, -3] |= framed[:-2, -1]
+        framed[:-2, 0] |= framed[:-2, -2]
     else:
-        framed[-3::-1, 0] |= framed[:-2,-1]
-        framed[-3::-1,-3] |= framed[:-2,-2]
-    return framed[:-2,:-2]
+        framed[-3::-1, 0] |= framed[:-2, -1]
+        framed[-3::-1, -3] |= framed[:-2, -2]
+    return framed[:-2, :-2]

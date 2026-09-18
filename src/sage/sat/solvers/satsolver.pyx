@@ -139,9 +139,9 @@ cdef class SatSolver:
 
             sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
-            sage: from sage.sat.solvers.sat_lp import SatLP                             # needs sage.numerical.mip
-            sage: solver = SatLP()                                                      # needs sage.numerical.mip
-            sage: solver.read(file_object)                                              # needs sage.numerical.mip
+            sage: from sage.sat.solvers.sat_lp import SatLP
+            sage: solver = SatLP()
+            sage: solver.read(file_object)
             Traceback (most recent call last):
             ...
             NotImplementedError: the solver "an ILP-based SAT Solver" does not support xor clauses
@@ -338,7 +338,7 @@ def SAT(solver=None, *args, **kwds):
 
     EXAMPLES::
 
-        sage: SAT(solver='LP')                                                          # needs sage.numerical.mip
+        sage: SAT(solver='LP')
         an ILP-based SAT Solver
 
     TESTS::

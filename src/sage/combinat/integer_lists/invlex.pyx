@@ -114,7 +114,8 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
       enumeration.
 
     - ``name`` -- string or ``None`` (default: ``None``); if set,
-      this will be passed down to :meth:`Parent.rename` to specify the
+      this will be passed down to
+      :meth:`~sage.structure.sage_object.SageObject.rename` to specify the
       name of ``self``. It is recommended to use rename method directly
       because this feature may become deprecated.
 
@@ -777,7 +778,8 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         sage: IntegerListsLex(14, min_length=3, max_length=6, floor=[2, 1, 2, 1, 1, 1], ceiling=[3, 1, 2, 3, 2, 2]).cardinality()
         0
 
-    This used to hang (see comment 389 and fix in :meth:`Envelope.__init__`)::
+    This used to hang (see comment 389 and fix in
+    :meth:`Envelope.__init__ <sage.combinat.integer_lists.base.Envelope.__init__>`)::
 
         sage: IntegerListsLex(7, max_part=0, ceiling=lambda i:i, check=False).list()
         []
@@ -1094,7 +1096,8 @@ class IntegerListsLexIter(builtins.object):
     Here are the attributes describing the current state of the
     iterator,  and their invariants:
 
-    - ``backend`` -- the :class:`IntegerListsBackend` object this is
+    - ``backend`` -- the
+      :class:`~sage.combinat.integer_lists.base.IntegerListsBackend` object this is
       iterating on;
 
     - ``_current_list`` -- the list corresponding to the current

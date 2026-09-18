@@ -143,8 +143,8 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
-         over (Dedekind domains and euclidean domains
-         and noetherian rings and infinite enumerated sets and metric spaces)
+         over (euclidean domains and noetherian rings
+         and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
         Join of Category of complete discrete valuation fields and Category of commutative algebras
          over (number fields and quotient fields and metric spaces) and Category of infinite sets
@@ -215,9 +215,8 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             sage: RZZ = LaurentSeriesRing(ZZ, 't')
             sage: RZZ.category()
             Category of infinite commutative no zero divisors algebras
-             over (Dedekind domains and euclidean domains
-             and noetherian rings and infinite enumerated sets
-             and metric spaces)
+             over (euclidean domains and noetherian rings
+             and infinite enumerated sets and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')
@@ -280,8 +279,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         """
         if R.has_coerce_map_from(self.base_ring()):
             return self.change_ring(R)
-        else:
-            raise TypeError("no valid base extension defined")
+        raise TypeError("no valid base extension defined")
 
     def fraction_field(self):
         r"""
@@ -308,12 +306,11 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         from sage.categories.integral_domains import IntegralDomains
         if self in Fields():
             return self
-        elif self in IntegralDomains():
+        if self in IntegralDomains():
             return LaurentSeriesRing(self.base_ring().fraction_field(),
                     self.variable_names(),
                     self.default_prec())
-        else:
-            raise ValueError('must be an integral domain')
+        raise ValueError('must be an integral domain')
 
     def change_ring(self, R):
         """
@@ -534,7 +531,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         P = parent(x)
         if isinstance(x, self.element_class) and n == 0 and P is self:
             return x.add_bigoh(prec)  # ok, since Laurent series are immutable (no need to make a copy)
-        elif P is self.base_ring():
+        if P is self.base_ring():
             # Convert x into a power series; if P is itself a Laurent
             # series ring A((t)), this prevents the implementation of
             # LaurentSeries.__init__() from effectively applying the
@@ -551,13 +548,13 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
                 x = self(self.polynomial_ring()(x.numerator())) / \
                     self(self.polynomial_ring()(x.denominator()))
                 return (x << n).add_bigoh(prec)
-            elif t == "t_SER":   # Laurent series
+            if t == "t_SER":   # Laurent series
                 n += x._valp()
                 bigoh = n + x.length()
                 x = self(self.polynomial_ring()(x.Vec()))
                 return (x << n).add_bigoh(bigoh)
-            else:  # General case, pretend to be a polynomial
-                return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
+            # General case, pretend to be a polynomial
+            return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
         elif (isinstance(x, FractionFieldElement)
               and (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring())
               and isinstance(x.numerator(), (Polynomial, MPolynomial))):
@@ -581,8 +578,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
                     return sum(
                             (R(a)*g**ZZ(e) for a, e in x.coefficients(v, sparse=True)), self.zero()
                             ).add_bigoh(x.degree(x.default_variable()))
-                else:
-                    raise TypeError("can only convert series into ring with same variable name")
+                raise TypeError("can only convert series into ring with same variable name")
         return self.element_class(self, x, n).add_bigoh(prec)
 
     def random_element(self, algorithm='default'):
@@ -612,8 +608,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             return self([self.base_ring().random_element()
                          for k in range(self.default_prec())],
                         shift).O(shift + self.default_prec())
-        else:
-            raise ValueError("algorithm cannot be %s" % algorithm)
+        raise ValueError("algorithm cannot be %s" % algorithm)
 
     def construction(self):
         r"""
@@ -820,6 +815,34 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             False
         """
         return False
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: L = LaurentSeriesRing(R, 'z')
+            sage: L.variable_names_recursive()
+            ('x', 'z')
+            sage: L.variable_names_recursive(1)
+            ('z',)
+        """
+        my_vars = self.variable_names()
+        if depth <= 0:
+            return ()
+        if depth == 1:
+            return my_vars
+        try:
+            base_vars = self.base_ring().variable_names_recursive(depth - len(my_vars))
+        except AttributeError:
+            return my_vars
+        return base_vars + my_vars
 
     @cached_method
     def gen(self, n=0):

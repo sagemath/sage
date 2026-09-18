@@ -236,16 +236,15 @@ cdef class PointCollection(SageObject):
         # Avoid creating a copy of self
         if len(args) == len(self) and args == tuple(range(len(self))):
             return self
-        else:
-            return PointCollection([self[i] for i in args], self._module)
+        return PointCollection([self[i] for i in args], self._module)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op: int) -> bool:
         r"""
-        Compare ``self`` and ``right`` according to the operator ``op``.
+        Compare ``self`` and ``other`` according to the operator ``op``.
 
         INPUT:
 
-        - ``right`` -- another PointCollection
+        - ``other`` -- another PointCollection
 
         OUTPUT: boolean
 
@@ -261,18 +260,18 @@ cdef class PointCollection(SageObject):
             sage: c == d
             False
         """
-        cdef PointCollection left_pc, right_pc
+        cdef PointCollection left_pc, other_pc
         try:
             left_pc = <PointCollection?>self
-            right_pc = <PointCollection?>right
+            other_pc = <PointCollection?>other
         except TypeError:
             return NotImplemented
 
         left_m = left_pc._module
-        right_m = right_pc._module
-        if left_m != right_m:
-            return richcmp_not_equal(left_m, right_m, op)
-        return richcmp(left_pc._points, right_pc._points, op)
+        other_m = other_pc._module
+        if left_m != other_m:
+            return richcmp_not_equal(left_m, other_m, op)
+        return richcmp(left_pc._points, other_pc._points, op)
 
     def __getitem__(self, n):
         r"""
@@ -481,7 +480,7 @@ cdef class PointCollection(SageObject):
         - ``ring`` -- a base ring for the returned matrix (default: base ring of
           :meth:`module` of ``self``)
 
-        OUTPUT: a :class:`matrix <Matrix>`
+        OUTPUT: a :class:`matrix <sage.structure.element.Matrix>`
 
         EXAMPLES::
 
@@ -494,8 +493,7 @@ cdef class PointCollection(SageObject):
         """
         if ring is None:
             return self.matrix()
-        else:
-            return self.matrix().change_ring(ring)
+        return self.matrix().change_ring(ring)
 
     def _repr_(self):
         r"""
@@ -627,7 +625,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a matrix whose columns are points of ``self``.
 
-        OUTPUT: a :class:`matrix <Matrix>`
+        OUTPUT: a :class:`matrix <sage.structure.element.Matrix>`
 
         EXAMPLES::
 
@@ -665,7 +663,7 @@ cdef class PointCollection(SageObject):
 
         OUTPUT:
 
-        - a :class:`module <FreeModule_generic>`. If possible (that is, if the
+        - a :class:`module <sage.modules.free_module.FreeModule_generic>`. If possible (that is, if the
           ambient :meth:`module` `M` of ``self`` has a ``dual()`` method), the
           dual module is returned. Otherwise, `R^n` is returned, where `n` is
           the dimension of `M` and `R` is its base ring.
@@ -724,7 +722,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a matrix whose rows are points of ``self``.
 
-        OUTPUT: a :class:`matrix <Matrix>`
+        OUTPUT: a :class:`matrix <sage.structure.element.Matrix>`
 
         EXAMPLES::
 
@@ -746,7 +744,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return the ambient module of ``self``.
 
-        OUTPUT: a :class:`module <FreeModule_generic>`
+        OUTPUT: a :class:`module <sage.modules.free_module.FreeModule_generic>`
 
         EXAMPLES::
 

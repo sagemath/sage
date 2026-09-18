@@ -289,11 +289,10 @@ class FunctionFieldValuationFactory(UniqueFactory):
             from sage.rings.valuation.gauss_valuation import GaussValuation
             valuation = GaussValuation(domain._ring, TrivialValuation(domain.constant_base_field())).augmentation(generator, 1)
             return self.create_key_and_extra_args(domain, valuation)
-        elif generator == ~domain.gen():
+        if generator == ~domain.gen():
             # generator is 1/x, the infinite place
             return (domain, (domain.valuation(domain.gen()), domain.hom(~domain.gen()), domain.hom(~domain.gen()))), {}
-        else:
-            raise ValueError("a place must be given by an irreducible polynomial or the inverse of the generator; %r does not define a place over %r" % (generator, domain))
+        raise ValueError("a place must be given by an irreducible polynomial or the inverse of the generator; %r does not define a place over %r" % (generator, domain))
 
     def create_key_and_extra_args_from_valuation(self, domain, valuation):
         r"""
@@ -336,13 +335,12 @@ class FunctionFieldValuationFactory(UniqueFactory):
                 approximants = vK.mac_lane_approximants(domain.polynomial(), require_incomparability=True)
                 approximant = vK.mac_lane_approximant(domain.polynomial(), valuation, approximants)
                 return (domain, approximant), {'approximants': approximants}
-            else:
-                # on a rational function field K(x), any valuation on K[x] that
-                # does not have an element with valuation -infty extends to a
-                # pseudo-valuation on K(x)
-                if valuation.is_negative_pseudo_valuation():
-                    raise ValueError("there must not be an element of valuation -Infinity in the domain of valuation %r" % (valuation,))
-                return (domain, valuation), {}
+            # on a rational function field K(x), any valuation on K[x] that
+            # does not have an element with valuation -infty extends to a
+            # pseudo-valuation on K(x)
+            if valuation.is_negative_pseudo_valuation():
+                raise ValueError("there must not be an element of valuation -Infinity in the domain of valuation %r" % (valuation,))
+            return (domain, valuation), {}
 
         if valuation.domain().is_subring(domain.base_field()):
             # valuation is defined on a subring of this function field, try to lift it
@@ -441,17 +439,15 @@ class FunctionFieldValuationFactory(UniqueFactory):
             if valuation.restriction(domain.constant_base_field()).is_trivial() and valuation.is_discrete_valuation():
                 # valuation corresponds to a finite place
                 return parent.__make_element_class__(FiniteRationalFunctionFieldValuation)(parent, valuation)
+            from sage.structure.dynamic_class import dynamic_class
+            clazz = NonClassicalRationalFunctionFieldValuation
+            if valuation.is_discrete_valuation():
+                clazz = dynamic_class("NonClassicalRationalFunctionFieldValuation_discrete", (clazz, DiscreteFunctionFieldValuation_base))
             else:
-                from sage.structure.dynamic_class import dynamic_class
-                clazz = NonClassicalRationalFunctionFieldValuation
-                if valuation.is_discrete_valuation():
-                    clazz = dynamic_class("NonClassicalRationalFunctionFieldValuation_discrete", (clazz, DiscreteFunctionFieldValuation_base))
-                else:
-                    clazz = dynamic_class("NonClassicalRationalFunctionFieldValuation_negative_infinite", (clazz, NegativeInfiniteDiscretePseudoValuation))
-                return parent.__make_element_class__(clazz)(parent, valuation)
-        else:
-            # valuation is a limit valuation that singles out an extension
-            return parent.__make_element_class__(FunctionFieldFromLimitValuation)(parent, valuation, domain.polynomial(), extra_args['approximants'])
+                clazz = dynamic_class("NonClassicalRationalFunctionFieldValuation_negative_infinite", (clazz, NegativeInfiniteDiscretePseudoValuation))
+            return parent.__make_element_class__(clazz)(parent, valuation)
+        # valuation is a limit valuation that singles out an extension
+        return parent.__make_element_class__(FunctionFieldFromLimitValuation)(parent, valuation, domain.polynomial(), extra_args['approximants'])
 
         raise NotImplementedError("valuation on %r from %r on %r" % (domain, valuation, valuation.domain()))
 
@@ -572,13 +568,13 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                             return [L.valuation((w, L.hom([M(y_to_u(y_to_u.domain().gen()))]), M.hom([L(u_to_y(u_to_y.domain().gen()))]))) for w in H_extensions]
                         raise NotImplementedError
                     return [L.valuation(w) for w in self.mac_lane_approximants(L.polynomial(), require_incomparability=True)]
-                elif L.base() is not L and K.is_subring(L):
+                if L.base() is not L and K.is_subring(L):
                     # recursively call this method for the tower of fields
                     from functools import reduce
                     from operator import add
                     A = [base_valuation.extensions(L) for base_valuation in self.extensions(L.base())]
                     return reduce(add, A, [])
-                elif L.constant_base_field() is not K.constant_base_field() and K.constant_base_field().is_subring(L):
+                if L.constant_base_field() is not K.constant_base_field() and K.constant_base_field().is_subring(L):
                     # subclasses should override this method and handle this case, so we never get here
                     raise NotImplementedError("Cannot compute the extensions of %r from %r to %r since the base ring changes." % (self, self.domain(), L))
         raise NotImplementedError("extension of %r from %r to %r not implemented" % (self, K, L))

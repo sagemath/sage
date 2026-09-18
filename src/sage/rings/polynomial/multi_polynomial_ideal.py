@@ -236,9 +236,9 @@ AUTHORS:
 from warnings import warn
 
 import sage.rings.abc
-import sage.rings.polynomial.toy_buchberger as toy_buchberger
-import sage.rings.polynomial.toy_d_basis as toy_d_basis
-import sage.rings.polynomial.toy_variety as toy_variety
+from sage.rings.polynomial import toy_buchberger
+from sage.rings.polynomial import toy_d_basis
+from sage.rings.polynomial import toy_variety
 from sage.misc.cachefunc import cached_method
 from sage.misc.method_decorator import MethodDecorator
 from sage.misc.misc_c import prod
@@ -755,7 +755,6 @@ class MPolynomialIdeal_singular_repr(
     # Seems useful for Tab-Completion
     primary_decomposition_complete = complete_primary_decomposition
 
-    @require_field
     def primary_decomposition(self, algorithm='sy'):
         r"""
         Return a list of primary ideals such that their intersection
@@ -805,12 +804,17 @@ class MPolynomialIdeal_singular_repr(
               of Multivariate Polynomial Ring in x, y, z over Rational Field,
              Ideal (z^6 + 4*z^3 + 4, y - z^2)
               of Multivariate Polynomial Ring in x, y, z over Rational Field]
-
-        ::
-
             sage: from functools import reduce
             sage: reduce(lambda Qi, Qj: Qi.intersection(Qj), pd) == I
             True
+
+        ::
+
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: sorted(I.primary_decomposition(), key=str)
+            [Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring,
+             Ideal (y, x^2) of Multivariate Polynomial Ring in x, y over Integer Ring]
 
         ALGORITHM:
 
@@ -822,9 +826,20 @@ class MPolynomialIdeal_singular_repr(
           Computational Approach To Commutative Algebra. Springer, New
           York 1993.
         """
-        return [I for I, _ in self.complete_primary_decomposition(algorithm)]
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        S = self.ring()
+        if self.base_ring() is ZZ:
+            primdecZ = ff.primdecint__lib.primdecZ
+            M = primdecZ(self)
+            return [S.ideal(J[0]) for J in M]
+        if self.base_ring().is_field():
+            return [P for P, _ in self.complete_primary_decomposition(algorithm)]
+        raise NotImplementedError(
+            "primary decomposition is not implemented "
+            "for base ring %s" % self.base_ring()
+        )
 
-    @require_field
     def associated_primes(self, algorithm='sy'):
         r"""
         Return a list of the associated primes of primary ideals of
@@ -873,6 +888,11 @@ class MPolynomialIdeal_singular_repr(
             sage: pd = I.associated_primes(); sorted(pd, key=str)
             [Ideal (z^2 + 1, y + 1) of Multivariate Polynomial Ring in x, y, z over Rational Field,
              Ideal (z^3 + 2, y - z^2) of Multivariate Polynomial Ring in x, y, z over Rational Field]
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: sorted(I.associated_primes(), key=str)
+            [Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring,
+             Ideal (y, x) of Multivariate Polynomial Ring in x, y over Integer Ring]
 
         ALGORITHM:
 
@@ -884,7 +904,19 @@ class MPolynomialIdeal_singular_repr(
           Computational Approach To Commutative Algebra. Springer, New
           York 1993.
         """
-        return [P for _,P in self.complete_primary_decomposition(algorithm)]
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        S = self.ring()
+        if self.base_ring() is ZZ:
+            primdecZ = ff.primdecint__lib.primdecZ
+            M = primdecZ(self)
+            return [S.ideal(J[1]) for J in M]
+        if self.base_ring().is_field():
+            return [P for _, P in self.complete_primary_decomposition(algorithm)]
+        raise NotImplementedError(
+            "associated primes is not implemented "
+            "for base ring %s" % self.base_ring()
+        )
 
     def is_prime(self, **kwds):
         r"""
@@ -1246,8 +1278,7 @@ class MPolynomialIdeal_singular_repr(
         if vd == -1:
             from sage.rings.infinity import Infinity
             return Infinity
-        else:
-            return vd
+        return vd
 
     @require_field
     def _groebner_basis_ginv(self, algorithm='TQ', criteria='CritPartially', division_interface='Janet'):
@@ -1598,18 +1629,18 @@ class MPolynomialIdeal_singular_repr(
             Ideal (x*y) of Multivariate Polynomial Ring in x, y over Algebraic Field
         """
         R = self.ring()
-
         for other in others:
             if not isinstance(other, MPolynomialIdeal_singular_repr) or other.ring() != R:
                 raise TypeError("Intersection is only available for ideals of the same ring.")
-
+        from sage.rings.integer_ring import ZZ
         from sage.libs.singular.function_factory import ff
-        intersect = ff.intersect
-
+        if self.base_ring() is ZZ:
+            intersect = ff.primdecint__lib.intersectZ
+        else:
+            intersect = ff.intersect
         K = intersect(self, *others)
         return R.ideal(K)
 
-    @require_field
     @libsingular_gb_standard_options
     def minimal_associated_primes(self):
         """
@@ -1625,19 +1656,30 @@ class MPolynomialIdeal_singular_repr(
               of Multivariate Polynomial Ring in x, y, z over Rational Field,
              Ideal (z^3 + 2, -z^2 + y)
               of Multivariate Polynomial Ring in x, y, z over Rational Field]
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: I.minimal_associated_primes()
+            [Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring]
 
         ALGORITHM:
 
         Uses Singular.
         """
+        from sage.rings.integer_ring import ZZ
         from sage.libs.singular.function_factory import ff
-        minAssGTZ = ff.primdec__lib.minAssGTZ
-
-        M = minAssGTZ(self)
+        if self.base_ring() is ZZ:
+            minAss = ff.primdecint__lib.minAssZ
+        elif self.base_ring().is_field():
+            minAss = ff.primdec__lib.minAssGTZ
+        else:
+            raise NotImplementedError(
+                "minimal associated primes is not implemented "
+                "for base ring %s" % self.base_ring()
+            )
+        M = minAss(self)
         R = self.ring()
         return [R.ideal(J) for J in M]
 
-    @require_field
     @libsingular_gb_standard_options
     def radical(self):
         r"""
@@ -1665,6 +1707,13 @@ class MPolynomialIdeal_singular_repr(
             Ideal (z^2 - y, y^2*z + y*z + 2*y + 2)
              of Multivariate Polynomial Ring in x, y, z over Rational Field
 
+        An example over the integers::
+
+            sage: R.<x,y> = PolynomialRing(ZZ, 2)
+            sage: I = ideal(x^2, x*y)
+            sage: I.radical()
+            Ideal (x) of Multivariate Polynomial Ring in x, y over Integer Ring
+
         .. NOTE::
 
             From the Singular manual: A combination of the algorithms
@@ -1679,18 +1728,89 @@ class MPolynomialIdeal_singular_repr(
             sage: I.radical()
             Ideal (z^2 - y, y^2*z + y*z + 2*y + 2)
              of Multivariate Polynomial Ring in x, y, z over Finite Field of size 37
+
+        ALGORITHM:
+
+        Uses Singular.
         """
+        from sage.rings.integer_ring import ZZ
         from sage.libs.singular.function_factory import ff
-        radical = ff.primdec__lib.radical
-        r = radical(self)
-
         S = self.ring()
-
-        #I = self._singular_()
-        #I.parent().lib('primdec.lib')
-        #r = I.radical()
-
+        if self.base_ring() is ZZ:
+            radical = ff.primdecint__lib.radicalZ
+        elif self.base_ring().is_field():
+            radical = ff.primdec__lib.radical
+        else:
+            raise NotImplementedError(
+                "radical is not implemented "
+                "for base ring %s" % self.base_ring()
+            )
+        r = radical(self)
         return S.ideal(r)
+
+    @libsingular_gb_standard_options
+    def height(self):
+        r"""
+        Return the height of this ideal.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ, 3)
+            sage: I = ideal(x^2 + y^2, x*y, z)
+            sage: I.height()
+            3
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: I.height()
+            Traceback (most recent call last):
+            ...
+            TypeError: height is only available for ideals over ZZ.
+        """
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        if self.base_ring() is ZZ:
+            heightZ = ff.primdecint__lib.heightZ
+            return Integer(heightZ(self))
+        raise TypeError("height is only available for ideals over ZZ.")
+
+    @libsingular_gb_standard_options
+    def equidim(self):
+        r"""
+        Return the equidimensional part of this ideal.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(ZZ, 3)
+            sage: I = ideal(x*y, x*z)
+            sage: I.equidim()
+            Ideal (x) of Multivariate Polynomial Ring in x, y, z over Integer Ring
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: I = ideal(x*y, x^2)
+            sage: I.equidim()
+            Ideal (x) of Multivariate Polynomial Ring in x, y over Rational Field
+            sage: R.<x,y,z> = PolynomialRing(GF(37), 3)
+            sage: I = ideal(x*y, x*z)
+            sage: I.equidim()
+            Ideal (x) of Multivariate Polynomial Ring in x, y, z over Finite Field of size 37
+
+        ALGORITHM:
+
+        Uses Singular.
+        """
+        from sage.rings.integer_ring import ZZ
+        from sage.libs.singular.function_factory import ff
+        S = self.ring()
+        if self.base_ring() is ZZ:
+            equidim = ff.primdecint__lib.equidimZ
+        elif self.base_ring().is_field():
+            equidim = ff.primdec__lib.equidimMax
+        else:
+            raise NotImplementedError(
+                "equidimensional part is not implemented "
+                "for base ring %s" % self.base_ring()
+            )
+        K = equidim(self)
+        return S.ideal(K)
 
     @require_field
     @libsingular_gb_standard_options
@@ -1827,7 +1947,7 @@ class MPolynomialIdeal_singular_repr(
         Return a graded free resolution of ``self``.
 
         For input options, see
-        :class:`~sage.homology.graded_resolution.GradedFreeResolution`.
+        :class:`~sage.homology.free_resolution.FreeResolution`.
 
         EXAMPLES::
 
@@ -2153,7 +2273,7 @@ class MPolynomialIdeal_singular_repr(
             gb = singular_function(algorithm)(I)
             return PolynomialSequence(R, sorted(gb,reverse=True), immutable=True)
 
-        elif algorithm == "fglm":
+        if algorithm == "fglm":
             # new ring
             if other_ring is None:
                 nR = R.change_ring(order='lex')
@@ -2169,8 +2289,7 @@ class MPolynomialIdeal_singular_repr(
 
             return PolynomialSequence(nR, sorted([nR(f) for f in nIs],reverse=True), immutable=True)
 
-        else:
-            raise TypeError("cannot convert basis with given algorithm")
+        raise TypeError("cannot convert basis with given algorithm")
 
     @handle_AA_and_QQbar
     def elimination_ideal(self, variables, algorithm=None, *args, **kwds):
@@ -2210,8 +2329,8 @@ class MPolynomialIdeal_singular_repr(
             possible output...
             True
 
-        The list of available Giac options is provided at
-        :func:`sage.libs.giac.groebner_basis`.
+        The available Giac options are forwarded to Giac's Groebner-basis
+        implementation.
 
         ALGORITHM:
 
@@ -2257,13 +2376,12 @@ class MPolynomialIdeal_singular_repr(
                 or algorithm == 'libsingular:eliminate'):
             return self._elimination_ideal_libsingular(variables)
 
-        elif algorithm.lower() == 'giac' or algorithm == 'giac:eliminate':
+        if algorithm.lower() == 'giac' or algorithm == 'giac:eliminate':
             from sage.libs.giac import groebner_basis as groebner_basis_libgiac
             return groebner_basis_libgiac(
                     self, elim_variables=variables, *args, **kwds).ideal()
 
-        else:
-            raise NameError("Algorithm '%s' unknown." % algorithm)
+        raise NameError("Algorithm '%s' unknown." % algorithm)
 
     @libsingular_gb_standard_options
     def _elimination_ideal_libsingular(self, variables):
@@ -2591,11 +2709,10 @@ class MPolynomialIdeal_singular_repr(
         """
         if algorithm == "triangular_decomposition":
             return self._variety_triangular_decomposition(ring)
-        elif algorithm == "msolve":
+        if algorithm == "msolve":
             from . import msolve
             return msolve.variety(self, ring, proof=proof)
-        else:
-            raise ValueError(f"unknown algorithm {algorithm!r}")
+        raise ValueError(f"unknown algorithm {algorithm!r}")
 
     def _variety_triangular_decomposition(self, ring):
         r"""
@@ -3023,7 +3140,7 @@ class MPolynomialIdeal_singular_repr(
             gb = MPolynomialIdeal(self.ring(), [mon.lm() for mon in self.groebner_basis()])
 
             return hilbert_poincare_series(gb, grading)
-        elif algorithm == 'singular':
+        if algorithm == 'singular':
             t = ZZ['t'].gen()
             n = self.ring().ngens()
 
@@ -3033,8 +3150,7 @@ class MPolynomialIdeal_singular_repr(
             # The check that ``grading`` is valid input is done by ``hilbert_numerator()``
             return (self.hilbert_numerator(algorithm='singular', grading=grading)
                     / prod((1 - t**a) for a in grading))
-        else:
-            raise ValueError("'algorithm' must be one of 'sage' or 'singular'")
+        raise ValueError("'algorithm' must be one of 'sage' or 'singular'")
 
     @require_field
     @handle_AA_and_QQbar
@@ -3128,7 +3244,7 @@ class MPolynomialIdeal_singular_repr(
             gb = MPolynomialIdeal(self.ring(), [mon.lm() for mon in self.groebner_basis()])
 
             return first_hilbert_series(gb, grading)
-        elif algorithm == 'singular':
+        if algorithm == 'singular':
             from sage.libs.singular.function_factory import ff
             hilb = ff.hilb
 
@@ -3143,8 +3259,7 @@ class MPolynomialIdeal_singular_repr(
             else:
                 hs = hilb(gb, 1, attributes={gb: {'isSB': 1}})
             return sum(ZZ(hs[i]) * t**i for i in range(len(hs)-1))
-        else:
-            raise ValueError("'algorithm' must be one of 'sage' or 'singular'")
+        raise ValueError("'algorithm' must be one of 'sage' or 'singular'")
 
     @require_field
     def _normal_basis_libsingular(self, degree, weights=None):
@@ -3295,19 +3410,18 @@ class MPolynomialIdeal_singular_repr(
 
         if algorithm == 'libsingular':
             return self._normal_basis_libsingular(degree, weights=weights)
+        if singular is None:
+            singular = singular_default
+        gb = self.groebner_basis()
+        R = self.ring()
+        if degree is None:
+            res = singular.kbase(R.ideal(gb))
+        elif weights is None:
+            res = singular.kbase(R.ideal(gb), int(degree))
         else:
-            if singular is None:
-                singular = singular_default
-            gb = self.groebner_basis()
-            R = self.ring()
-            if degree is None:
-                res = singular.kbase(R.ideal(gb))
-            elif weights is None:
-                res = singular.kbase(R.ideal(gb), int(degree))
-            else:
-                res = singular.weightKB(R.ideal(gb), int(degree),
-                                        singular(weights, type='intvec'))
-            return PolynomialSequence(R, [R(f) for f in res], immutable=True)
+            res = singular.weightKB(R.ideal(gb), int(degree),
+                                    singular(weights, type='intvec'))
+        return PolynomialSequence(R, [R(f) for f in res], immutable=True)
 
 
 class MPolynomialIdeal_macaulay2_repr:
@@ -4056,7 +4170,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         # comparison for >= and > : swap the arguments
         if op == op_GE:
             return other.__richcmp__(self, op_LE)
-        elif op == op_GT:
+        if op == op_GT:
             return other.__richcmp__(self, op_LT)
 
         # the ideals may be defined w.r.t. to different term orders
@@ -4069,17 +4183,16 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         if S is not R:
             if S.change_ring(order=R.term_order()) != R:  # rings are unique
                 return NotImplemented
-            else:
-                # at this point, the rings are the same, but for the term order,
-                # and we can fix that easily
-                other_new = other.change_ring(R)
+            # at this point, the rings are the same, but for the term order,
+            # and we can fix that easily
+            other_new = other.change_ring(R)
         else:
             other_new = other
 
         s_gens = self.gens()
         o_gens = other_new.gens()
         try:
-            if (s_gens == o_gens) or (set(s_gens) == set(o_gens)):
+            if s_gens == o_gens or set(s_gens) == set(o_gens):
                 # the first clause works in the non-hashable case
                 return rich_to_bool(op, 0)
         except TypeError:
@@ -4093,10 +4206,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                 # first check whether the GB is cached already
                 if other_new.groebner_basis.is_in_cache():
                     r = other_new.groebner_basis()
-                elif len(other_new._gb_by_ordering):
+                elif other_new._gb_by_ordering:
                     o, r = next(iter(other_new._gb_by_ordering.items()))
                     l = self.change_ring(R.change_ring(order=o)).gens()
-                else: # use easy GB otherwise
+                else:  # use easy GB otherwise
                     newR = R.change_ring(order='degrevlex')
                     l = self.change_ring(newR).gens()
                     r = other_new.change_ring(newR).groebner_basis()
@@ -4126,10 +4239,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             contains = all(f.reduce(l) == 0 for f in r)
             if op == op_EQ:
                 return contained and contains
-            elif op == op_NE:
+            if op == op_NE:
                 return not (contained and contains)
-            else:  # remaining case <
-                return contained and not contains
+            # remaining case <
+            return contained and not contains
 
     def groebner_fan(self, is_groebner_basis=False, symmetry=None, verbose=False):
         r"""
@@ -4158,7 +4271,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         - ``verbose`` -- (default: ``False``) if ``True``, printout
           useful info during computations
         """
-        import sage.rings.polynomial.groebner_fan as groebner_fan
+        from sage.rings.polynomial import groebner_fan
         return groebner_fan.GroebnerFan(self, is_groebner_basis=is_groebner_basis,
                                         symmetry=symmetry, verbose=verbose)
 
@@ -4351,7 +4464,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             possible output...
             Polynomial Sequence with 143 Polynomials in 9 Variables
 
-        The list of available Giac options is provided at :func:`sage.libs.giac.groebner_basis`.
+        The available Giac options are forwarded to Giac's Groebner-basis
+        implementation.
 
         Note that ``toy:buchberger`` does not return the reduced Groebner
         basis, ::
@@ -5677,7 +5791,7 @@ class MPolynomialIdeal_quotient(QuotientRingIdeal_generic, MPolynomialIdeal):
         # comparison for >= and > : swap the arguments
         if op == op_GE:
             return other.__richcmp__(self, op_LE)
-        elif op == op_GT:
+        if op == op_GT:
             return other.__richcmp__(self, op_LT)
 
         if other.ring() != self.ring():
@@ -5700,7 +5814,7 @@ class MPolynomialIdeal_quotient(QuotientRingIdeal_generic, MPolynomialIdeal):
             contains = all(g in self for g in o_gens)
             if op == op_EQ:
                 return contained and contains
-            elif op == op_NE:
+            if op == op_NE:
                 return not (contained and contains)
-            else:  # remaining case <
-                return contained and not contains
+            # remaining case <
+            return contained and not contains

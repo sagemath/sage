@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Iwahori-Hecke Algebras
 
@@ -13,6 +12,14 @@ AUTHORS:
 - Chase Meadors, Tianyuan Xu (2021):
   Implemented direct computation of products in the
   `C^{\prime}` basis using du Cloux's Coxeter3 package
+
+.. autoclass:: sage.algebras.iwahori_hecke_algebra::IwahoriHeckeAlgebra._Basis
+
+.. autoclass:: sage.algebras.iwahori_hecke_algebra::IwahoriHeckeAlgebra._KLHeckeBasis
+
+.. automethod:: sage.algebras.iwahori_hecke_algebra::IwahoriHeckeAlgebra._BasesCategory.ElementMethods.hash_involution
+
+.. automethod:: sage.algebras.iwahori_hecke_algebra::IwahoriHeckeAlgebra._BasesCategory.ElementMethods.goldman_involution
 """
 # ****************************************************************************
 #  Copyright (C) 2013 Brant Jones <brant at math.jmu.edu>
@@ -305,7 +312,9 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         sage: Cp = H.Cp()
 
     It is also possible to define these three bases quickly using
-    the :meth:`inject_shorthands` method.
+    the
+    :meth:`~sage.categories.sets_cat.Sets.WithRealizations.ParentMethods.inject_shorthands`
+    method.
 
     Next we create our generators for the `T`-basis and do some basic
     computations and conversions between the bases::
@@ -1615,7 +1624,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             `\alpha(C_w) = (-1)^{\ell(w)}C^{\prime}_w`.
 
             This function is not intended to be called directly. Instead, use
-            :meth:`hash_involution`.
+            :meth:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.hash_involution`.
 
             EXAMPLES::
 
@@ -1655,7 +1664,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             fixed-point subalgebra of the Goldman involution.
 
             This function is not intended to be called directly. Instead, use
-            :meth:`goldman_involution`.
+            :meth:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.goldman_involution`.
 
             EXAMPLES::
 
@@ -1765,7 +1774,10 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     (q^-2)*T[2,1] + (q^-2-q^-1)*T[1] + (q^-2-q^-1)*T[2] + (q^-2-2*q^-1+1)
                 """
                 if len(self) != 1:
-                    raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)" % self)
+                    raise NotImplementedError(
+                        "inverse only implemented for basis elements "
+                        f"(monomials in the generators): {self}"
+                    )
                 H = self.parent()
                 w = self.support_of_term()
 
@@ -2027,7 +2039,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             element ``self[w]``.
 
             This function is not intended to be called directly. Instead, use
-            :meth:`hash_involution`.
+            :meth:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.hash_involution`.
 
             EXAMPLES::
 
@@ -2435,7 +2447,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             element ``self[w]``.
 
             This function is not intended to be called directly. Instead, use
-            :meth:`hash_involution`.
+            :meth:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.hash_involution`.
 
             EXAMPLES::
 
@@ -2545,7 +2557,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             element ``self[w]``.
 
             This function is not intended to be called directly. Instead, use
-            :meth:`goldman_involution`.
+            :meth:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.goldman_involution`.
 
             EXAMPLES::
 
@@ -2572,7 +2584,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         If `w` is an element of the corresponding Coxeter group then
         the `B`-basis element `B_w` is uniquely determined by the conditions
         that `B_w^{\#} = (-1)^{\ell(w)} B_w`, where `\#` is the
-        :meth:`Goldman involution <goldman_involution>` and
+        :meth:`Goldman involution <sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.goldman_involution>`
+        and
 
         .. MATH::
 
@@ -2682,7 +2695,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             indexed by ``w``.
 
             This function is not intended to be called directly. Instead, use
-            :meth:`goldman_involution`.
+            :meth:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.goldman_involution`.
 
             EXAMPLES::
 
@@ -2963,7 +2976,9 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
                                                  \Big)^\#
                     = \sum_v (-1)^{\ell(v)} \overline{a_{vw}} C_v
 
-            Note that we cannot just apply :meth:`hash_involution` here because
+            Note that we cannot just apply
+            :meth:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra._BasesCategory.ElementMethods.hash_involution`
+            here because
             this involution always returns the answer with respect to the
             same basis.
 

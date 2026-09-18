@@ -9,16 +9,20 @@ of a permutation group, or the conjugacy classes of a matrix group.
 
 This file implements:
 
-- :meth:`__eq__`
+- :meth:`IndexedSequence.__eq__`
 
-- :meth:`__mul__` (for right multiplication by a scalar)
+- :meth:`IndexedSequence.__mul__` (for right multiplication by a scalar)
 
 - plotting, printing -- :meth:`IndexedSequence.plot`,
-  :meth:`IndexedSequence.plot_histogram`, :meth:`_repr_`, :meth:`__str__`
+  :meth:`IndexedSequence.plot_histogram`,
+  :meth:`IndexedSequence._repr_`, ``__str__``
 
-- :meth:`dft` --  computes the discrete Fourier transform for the following cases:
+- :meth:`IndexedSequence.dft` --  computes the discrete Fourier transform
+  for the following cases:
 
-  * a sequence (over `\QQ` or :class:`CyclotomicField`) indexed by ``range(N)``
+  * a sequence (over `\QQ` or
+    :class:`CyclotomicField <sage.rings.number_field.number_field.CyclotomicFieldFactory>`)
+    indexed by ``range(N)``
     or `\ZZ / N \ZZ`
   * a sequence (as above) indexed by a finite abelian group
   * a sequence (as above) indexed by a complete set of representatives of
@@ -26,22 +30,27 @@ This file implements:
   * a sequence (as above) indexed by a complete set of representatives of
     the conjugacy classes of a finite matrix group
 
-- :meth:`idft` --  computes the discrete Fourier transform for the following cases:
+- :meth:`IndexedSequence.idft` --  computes the discrete Fourier transform
+  for the following cases:
 
-  * a sequence (over `\QQ` or CyclotomicField) indexed by ``range(N)`` or
-    `\ZZ / N \ZZ`
+  * a sequence (over `\QQ` or
+    :class:`CyclotomicField <sage.rings.number_field.number_field.CyclotomicFieldFactory>`)
+    indexed by ``range(N)`` or `\ZZ / N \ZZ`
 
-- :meth:`dct`, :meth:`dst`  (for discrete Fourier/Cosine/Sine transform)
+- :meth:`IndexedSequence.dct`, :meth:`IndexedSequence.dst`  (for discrete
+  Fourier/Cosine/Sine transform)
 
 - convolution (in :meth:`IndexedSequence.convolution` and
   :meth:`IndexedSequence.convolution_periodic`)
 
-- :meth:`fft`, :meth:`ifft` -- (fast Fourier transforms) wrapping GSL's
+- :meth:`IndexedSequence.fft`, :meth:`IndexedSequence.ifft` -- (fast Fourier
+  transforms) wrapping GSL's
   ``gsl_fft_complex_forward()``, ``gsl_fft_complex_inverse()``,
   using William Stein's :func:`FastFourierTransform`
 
-- :meth:`dwt`, :meth:`idwt` -- (fast wavelet transforms) wrapping GSL's ``gsl_dwt_forward()``,
-  ``gsl_dwt_backward()`` using Joshua Kantor's :func:`WaveletTransform` class.
+- :meth:`IndexedSequence.dwt`, :meth:`IndexedSequence.idwt` -- (fast wavelet
+  transforms) wrapping GSL's ``gsl_dwt_forward()``, ``gsl_dwt_backward()``
+  using Joshua Kantor's :func:`WaveletTransform` class.
   Allows for wavelets of type:
 
   * "haar"
@@ -50,7 +59,6 @@ This file implements:
   * "haar_centered"
   * "bspline"
   * "bspline_centered"
-
 
 .. TODO::
 
@@ -98,6 +106,12 @@ class IndexedSequence(SageObject):
     - ``index_object`` -- must be a Sage object with an ``__iter__`` method
       containing the same number of elements as ``self``, which is a
       list of elements taken from a field
+
+    .. automethod:: __eq__
+
+    .. automethod:: __mul__
+
+    .. automethod:: _repr_
     """
     def __init__(self, L, index_object):
         r"""

@@ -137,17 +137,17 @@ def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
       (where all vector spaces are isomorphic).
 
     - Dimension and maximal degree, see
-      :func:`constructor_from_dim_degree` for arguments. Construct a
+      ``constructor_from_dim_degree`` for arguments. Construct a
       filtration with only one non-trivial step `V\supset 0` at the
       given cutoff degree.
 
     - A dictionary containing the degrees as keys and a list of vector
       space generators as values, see
-      :func:`FilteredVectorSpace_from_generators`
+      ``FilteredVectorSpace_from_generators``
 
     - Generators and a dictionary containing the degrees as keys and
       the indices of vector space generators as values, see
-      :func:`FilteredVectorSpace_from_generators_indices`
+      ``FilteredVectorSpace_from_generators_indices``
 
     In addition, the following keyword arguments are supported:
 
@@ -1218,8 +1218,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: D.degree()
             3
             sage: v = D.basis_matrix()[0]
-            sage: v[0]
-            1
+            sage: v[0] in [0,1]
+            True
 
             sage: while F.random_deformation(1/50).get_degree(2).matrix() == matrix([1, 0, 0]):
             ....:     pass

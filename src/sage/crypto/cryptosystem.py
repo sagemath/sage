@@ -1,25 +1,18 @@
 # sage.doctest: needs sage.combinat
 r"""
-Cryptosystems
 
-This module contains base classes for various cryptosystems, including
-symmetric key and public-key cryptosystems. The classes defined in this
-module should not be called directly. It is the responsibility of child
-classes to implement specific cryptosystems.
+This module contains base classes for symmetric key cryptosystems.
+The classes defined in this module should not be called directly.
+It is the responsibility of child classes to implement specific algorithms.
 
 Take for example the
 Hill or matrix cryptosystem as implemented in
 :class:`HillCryptosystem <sage.crypto.classical.HillCryptosystem>`. It is a
-symmetric key cipher so
-:class:`HillCryptosystem <sage.crypto.classical.HillCryptosystem>` is a child
-class of
-:class:`SymmetricKeyCryptosystem <sage.crypto.cryptosystem.SymmetricKeyCryptosystem>`,
-which in turn is a child class of
-:class:`Cryptosystem <sage.crypto.cryptosystem.Cryptosystem>`. The following
-diagram shows the inheritance relationship of particular cryptosystems::
+symmetric key cipher so it is a child of
+:class:`SymmetricKeyCryptosystem <sage.crypto.cryptosystem.SymmetricKeyCryptosystem>`.
+The following diagram shows the list of child classes of SymmetricKeyCryptosystem.
 
-    Cryptosystem
-    + SymmetricKeyCryptosystem
+    SymmetricKeyCryptosystem
     | + HillCryptosystem
     | + LFSRCryptosystem
     | + ShiftCryptosystem
@@ -27,7 +20,6 @@ diagram shows the inheritance relationship of particular cryptosystems::
     | + SubstitutionCryptosystem
     | + TranspositionCryptosystem
     | + VigenereCryptosystem
-    + PublicKeyCryptosystem
 """
 # ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -37,14 +29,15 @@ diagram shows the inheritance relationship of particular cryptosystems::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.sets.set import Set_generic
+from sage.structure.sage_object import SageObject
 
 
-class Cryptosystem(Set_generic):
+class SymmetricKeyCryptosystem(Set_generic):
     r"""
-    A base cryptosystem class. This is meant to be extended by other
-    specialized child classes that implement specific cryptosystems.
+    A base symmetric cryptosystem class. This is meant to be extended by other
+    specialized child classes that implement specific symmetric cryptosystems.
 
-    A cryptosystem is a pair of maps
+    A symmetric cryptosystem is as a pair of maps
 
     .. MATH::
 
@@ -106,8 +99,7 @@ class Cryptosystem(Set_generic):
     def __init__(self, plaintext_space, ciphertext_space, key_space,
                  block_length=1, period=None):
         r"""
-        Create a ``Cryptosystem`` object. See the class ``Cryptosystem``
-        for detailed documentation.
+        Create a ``SymmetricKeyCryptosystem`` object.
 
         INPUT:
 
@@ -146,7 +138,7 @@ class Cryptosystem(Set_generic):
         r"""
         Comparing ``self`` with ``right``.
 
-        Two ``Cryptosystem`` objects
+        Two ``SymmetricKeyCryptosystem`` objects
         are the same if they satisfy all of these conditions:
 
         - share the same type
@@ -353,11 +345,6 @@ class Cryptosystem(Set_generic):
             raise TypeError("Argument has no associated period.")
         return self._period
 
-
-class SymmetricKeyCryptosystem(Cryptosystem):
-    r"""
-    The base class for symmetric key, or secret key, cryptosystems.
-    """
     def alphabet_size(self):
         r"""
         Return the number of elements in the alphabet of this
@@ -379,8 +366,10 @@ class SymmetricKeyCryptosystem(Cryptosystem):
         """
         return self._cipher_domain.ngens()
 
+Cryptosystem = SymmetricKeyCryptosystem   # Cryptosystem is deprecated. See Issue #42322.
 
-class PublicKeyCryptosystem(Cryptosystem):
+# PublicKeyCryptosystem is deprecated. See Issue #42322.
+class PublicKeyCryptosystem(SageObject):
     r"""
     The base class for asymmetric or public-key cryptosystems.
     """

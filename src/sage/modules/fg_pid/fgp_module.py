@@ -50,7 +50,7 @@ The invariants are computed using the Smith normal form algorithm, and
 determine the structure of this finitely generated module.
 
 You can get the `V` and `W` used in constructing the quotient module using
-the methods :meth:`V` and :meth:`W`::
+the methods :meth:`~sage.modules.fg_pid.fgp_module.FGP_Module_class.V` and :meth:`~sage.modules.fg_pid.fgp_module.FGP_Module_class.W`::
 
     sage: M0.V()
     Free module of degree 3 and rank 3 over Integer Ring
@@ -918,7 +918,7 @@ class FGP_Module_class(Module):
         Smith normal form, and `R` is the relative matrix that defines
         ``self``.
 
-        See :meth:`_relative_matrix`.
+        See ``_relative_matrix``.
 
         EXAMPLES::
 
@@ -952,7 +952,7 @@ class FGP_Module_class(Module):
     def invariants(self, include_ones=False):
         r"""
         Return the diagonal entries of the Smith form of the relative
-        matrix that defines ``self`` (see :meth:`._relative_matrix`)
+        matrix that defines ``self`` (see ``_relative_matrix``)
         padded with zeros, excluding 1s by default.   Thus if ``v`` is the
         list of integers returned, then ``self`` is abstractly isomorphic to
         the product of cyclic groups `\ZZ/n\ZZ` where `n` is in ``v``.

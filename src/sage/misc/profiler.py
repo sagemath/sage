@@ -61,7 +61,7 @@ class Profiler:
            15.240s -- line 17: y = factor(25)
          5000.190s -- last step
 
-    .. SEEALSO:: :func:`runsnake`
+    .. SEEALSO:: :func:`~sage.misc.dev_tools.runsnake`
 
     .. TODO::
 

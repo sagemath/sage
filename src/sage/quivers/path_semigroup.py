@@ -793,7 +793,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         Return a representation of the quiver.
 
         For more information see the
-        :class:`~sage.quivers.representation.QuiverRep` documentation.
+        :class:`~sage.quivers.representation.QuiverRep_generic` documentation.
 
         TESTS::
 
@@ -819,7 +819,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         - ``vertex`` -- integer; a vertex of the quiver
 
-        OUTPUT: :class:`~sage.quivers.representation.QuiverRep`; the simple
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the simple
         module at ``vertex`` with base ring `k`
 
         EXAMPLES::
@@ -861,7 +861,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         - ``vertex`` -- integer; a vertex of the quiver
 
-        OUTPUT: :class:`~sage.quivers.representation.QuiverRep`, the
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`, the
         indecomposable projective module at ``vertex`` with base ring `k`
 
         EXAMPLES::
@@ -901,7 +901,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         OUTPUT:
 
-        - :class:`~sage.quivers.representation.QuiverRep`, the indecomposable
+        - :class:`~sage.quivers.representation.QuiverRep_generic`, the indecomposable
           injective module at vertex ``vertex`` with base ring `k`
 
         EXAMPLES::
@@ -1020,7 +1020,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         .. NOTE::
 
             If there are multiple edges between two vertices, the method
-            :meth:`sage.graphs.digraph.all_paths` will not differentiate
+            :meth:`~sage.graphs.generic_graph.GenericGraph.all_paths` will not differentiate
             between them. But this method, which is not for digraphs but for
             their path semigroup associated with them, will.
 

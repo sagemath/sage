@@ -329,8 +329,8 @@ TESTS::
 ####################################################################################
 
 
-import sage.modules.free_module_morphism as free_module_morphism
-import sage.modules.matrix_morphism as matrix_morphism
+from sage.modules import free_module_morphism
+from sage.modules import matrix_morphism
 from sage.modules import vector_space_homspace
 from sage.structure.element import Matrix
 

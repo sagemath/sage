@@ -183,7 +183,7 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
         raise ValueError('the knight_x and knight_y values must be integers of value >= 1')
 
     # We build the set of vertices of the d-dimensional chessboard
-    V = [x for x in product(*[range(_) for _ in dim])]
+    V = list(product(*[range(_) for _ in dim]))
 
     def edges():
         for u in V:

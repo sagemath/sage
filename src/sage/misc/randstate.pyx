@@ -233,7 +233,7 @@ We get slightly different results with an intervening ``with seed``. ::
     False
 
 We can see that ``r2`` and ``r2m`` are the same except for the
-call to :func:`ntl.ZZ_random`, which produces different results
+call to ``ntl.ZZ_random``, which produces different results
 with and without the ``with seed``.
 
 However, we do still get a partial form of isolation, even in this
@@ -313,9 +313,9 @@ Otherwise, it depends on what random number generator you want to use.
 
   Fetch the current :class:`randstate` with
   :func:`current_randstate()` in every function that wants to use it;
-  don't cache the :class:`randstate`, the :class:`Random` object
+  don't cache the :class:`randstate`, the :class:`random.Random` object
   returned by ``python_random``, or the bound methods on that
-  :class:`Random` object globally or in a class.  (Such caching would
+  :class:`random.Random` object globally or in a class.  (Such caching would
   break ``set_random_seed``).
 
 - ``GAP`` -- if you are calling code in GAP that uses random numbers,
@@ -691,7 +691,7 @@ cdef class randstate:
 
             sage: set_random_seed(2008)
 
-        This call is actually redundant; :func:`ntl.ZZ_random` will
+        This call is actually redundant; ``ntl.ZZ_random`` will
         seed the generator itself.  However, we put the call in
         to make the coverage tester happy. ::
 

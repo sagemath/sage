@@ -169,7 +169,7 @@ def get_trees(*statements):
 
     INPUT:
 
-    - ``*statements`` -- strings or :class:`BooleanFormula` instances
+    - ``*statements`` -- strings or :class:`~sage.logic.boolformula.BooleanFormula` instances
 
     OUTPUT: the parse trees in a list
 

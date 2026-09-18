@@ -137,8 +137,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         """
         if self.degree() == 1:
             return self._gaps_rational()  # faster for rational places
-        else:
-            return self._gaps_wronskian()
+        return self._gaps_wronskian()
 
     def _gaps_rational(self):
         """

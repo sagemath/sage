@@ -200,8 +200,7 @@ class LaurentPolynomialRing_generic(Parent):
         vars = self.variable_names()
         if len(vars) == 1:
             return LaurentPolynomialFunctor(vars[0], False), self.base_ring()
-        else:
-            return LaurentPolynomialFunctor(vars[-1], True), LaurentPolynomialRing(self.base_ring(), vars[:-1])
+        return LaurentPolynomialFunctor(vars[-1], True), LaurentPolynomialRing(self.base_ring(), vars[:-1])
 
     def completion(self, p=None, prec=20, extras=None):
         r"""

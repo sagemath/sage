@@ -212,13 +212,14 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
         """
         R = self.base_ring()
         n = sum(lam)
-        return self._s._from_dict({ mu: R.sum( (-1)**j * lrcalc.lrcoef_unsafe(lam, mu, nu)
-                                               for nu in Partitions(2*j)
-                                                   if all(nu.leg_length(i,i) == nu.arm_length(i,i)+1
-                                                          for i in range(nu.frobenius_rank()))
-                                             )
-                                    for j in range(n//2+1) # // 2 for horizontal dominoes
-                                    for mu in Partitions(n-2*j) })
+        return self._s._from_dict(
+            {mu: R.sum((-1)**j * lrcalc.lrcoef_unsafe(lam, mu, nu)
+                       for nu in Partitions(2 * j)
+                       if all(nu.leg_length(i, i) == nu.arm_length(i, i) + 1
+                              for i in range(nu.frobenius_rank()))
+                       )
+             for j in range(n // 2 + 1)  # // 2 for horizontal dominoes
+             for mu in Partitions(n - 2 * j)})
 
     @cached_method
     def _s_to_sp_on_basis(self, lam):
@@ -246,7 +247,9 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
         """
         R = self.base_ring()
         n = sum(lam)
-        return self._from_dict({ mu: R.sum( lrcalc.lrcoef_unsafe(lam, mu, sum([[x,x] for x in nu], []))
-                                            for nu in Partitions(j) )
-                                 for j in range(n//2+1) # // 2 for vertical dominoes
-                                 for mu in Partitions(n-2*j) })
+        return self._from_dict(
+            {mu: R.sum(lrcalc.lrcoef_unsafe(lam, mu,
+                                            sum([[x, x] for x in nu], []))
+                       for nu in Partitions(j))
+             for j in range(n // 2 + 1)  # // 2 for vertical dominoes
+             for mu in Partitions(n - 2 * j)})

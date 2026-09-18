@@ -1301,7 +1301,8 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
 
         - ``start`` -- (default: ``None``) initial value `i_0` of the index;
           if none are provided, the value returned by
-          :meth:`sage.manifolds.manifold.Manifold.start_index()` is assumed
+          :meth:`~sage.manifolds.manifold.TopologicalManifold.start_index`
+          is assumed
 
         OUTPUT:
 

@@ -95,12 +95,11 @@ class FunctionFieldDerivation_rational(FunctionFieldDerivation):
         numerator = f.derivative() * g - f * g.derivative()
         if numerator.is_zero():
             return self.codomain().zero()
-        else:
-            v = numerator / g**2
-            defining_morphism = self.parent()._defining_morphism
-            if defining_morphism is not None:
-                v = defining_morphism(v)
-            return self._u * v
+        v = numerator / g**2
+        defining_morphism = self.parent()._defining_morphism
+        if defining_morphism is not None:
+            v = defining_morphism(v)
+        return self._u * v
 
     def _add_(self, other):
         """

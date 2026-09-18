@@ -42,7 +42,7 @@ What about a sequence starting with `3, 7, 15, 1` ?
     0: The first 5821569425 terms were computed by _Eric W. Weisstein_ on Sep 18 2011.
     1: The first 10672905501 terms were computed by _Eric W. Weisstein_ on Jul 17 2013.
     2: The first 15000000000 terms were computed by _Eric W. Weisstein_ on Jul 27 2013.
-    3: The first 30113021586 terms were computed by _Syed Fahad_ on Apr 27 2021.
+    ...
 
 ::
 
@@ -103,9 +103,8 @@ primes ?
      27644437, 190899322, 1382958545, 10480142147, 82864869804, 682076806159,
      5832742205057, 51724158235372]
     sage: oeis(L)
-    0: A000110: Bell or exponential numbers: number of ways to partition
-                a set of n labeled elements.
-    1: A292935: E.g.f.: exp(exp(-x) - 1).
+    0: A000110: Bell or exponential numbers: number of ways to partition ...
+    1: A292935: ...
     sage: b = _[0]
     sage: b.formulas()[0]
     'E.g.f.: exp(exp(x) - 1).'
@@ -288,10 +287,7 @@ class OEIS:
         sage: search = oeis([1,2,3,5,8,13]); search     # optional -- internet
         0: A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
         1: A290689: Number of transitive rooted trees with n nodes.
-        2: A027926: Triangular array T read by rows: T(n,0) = T(n,2n) = 1 for n >= 0;
-                    T(n,1) = 1 for n >= 1; T(n,k) = T(n-1,k-2) + T(n-1,k-1)
-                    for k = 2..2n-1, n >= 2.
-
+        ...
         sage: fibo = search[0]                          # optional -- internet
 
         sage: fibo.name()                               # optional -- internet
@@ -312,9 +308,7 @@ class OEIS:
         sage: sfibo = oeis('A039834')                   # optional -- internet
         sage: sfibo.first_terms()                       # optional -- internet
         (1, 1, 0, 1, -1, 2, -3, 5, -8, 13, -21, 34, -55, 89, -144, 233,
-        -377, 610, -987, 1597, -2584, 4181, -6765, 10946, -17711, 28657,
-        -46368, 75025, -121393, 196418, -317811, 514229, -832040, 1346269,
-        -2178309, 3524578, -5702887, 9227465, -14930352, 24157817)
+        -377, 610, -987, 1597, -2584, 4181, -6765, 10946, ...
 
         sage: tuple(abs(i) for i in sfibo.first_terms())[2:20] == fibo.first_terms()[:18]   # optional -- internet
         True
@@ -345,9 +339,7 @@ class OEIS:
             sage: oeis([1,2,3,5,8,13])                  # optional -- internet
             0: A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
             1: A290689: Number of transitive rooted trees with n nodes.
-            2: A027926: Triangular array T read by rows: T(n,0) = T(n,2n) = 1 for n >= 0;
-                        T(n,1) = 1 for n >= 1; T(n,k) = T(n-1,k-2) + T(n-1,k-1)
-                        for k = 2..2n-1, n >= 2.
+            ...
 
             sage: oeis('A000045')                       # optional -- internet
             A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.

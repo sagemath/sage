@@ -28,23 +28,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import product
-from collections.abc import Sequence
 import numbers
+from collections.abc import Sequence
+from itertools import product
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.list_clone import ClonableArray
-from sage.misc.classcall_metaclass import ClasscallMetaclass
-
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.rings.infinity import PlusInfinity
 from sage.arith.misc import binomial
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.rings.infinity import PlusInfinity
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer import Integer
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 def is_gale_ryser(r, s):
@@ -1638,6 +1637,11 @@ class IntegerVectorsConstraints(IntegerVectors):
 
             sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # needs sage.combinat
             False
+
+            sage: [] in IntegerVectors(max_part=0)
+            True
+            sage: [] in IntegerVectors(max_length=0)
+            True
         """
         if isinstance(x, IntegerVector) and x.parent() is self:
             return True
@@ -1652,7 +1656,9 @@ class IntegerVectorsConstraints(IntegerVectors):
             return False
 
         from sage.combinat.misc import check_integer_list_constraints
-        return check_integer_list_constraints(x, singleton=True, **self.constraints)
+        return check_integer_list_constraints(
+            x, singleton=True, **self.constraints
+        ) is not None
 
     def cardinality(self):
         """
@@ -1672,7 +1678,56 @@ class IntegerVectorsConstraints(IntegerVectors):
             27
             sage: IntegerVectors(13, 4, min_part=2, max_part=4).cardinality()
             16
+
+            sage: P = IntegerVectors(length=0, max_part=0)
+            sage: P.cardinality()
+            1
+            sage: list(P)
+            [[]]
+            sage: Q = IntegerVectors(max_length=0)
+            sage: Q.cardinality()
+            1
+            sage: list(Q)
+            [[]]
+            sage: P = IntegerVectors(1, length=1, max_length=0, max_part=1)
+            sage: [1] in P
+            True
+            sage: P.cardinality()
+            1
+            sage: list(P)
+            [[1]]
+            sage: Q = IntegerVectors(max_length=0, min_length=1)
+            sage: [] in Q
+            False
+            sage: Q.cardinality()
+            0
+            sage: list(Q)
+            []
+            sage: R = IntegerVectors(0, length=0, min_length=1)
+            sage: [] in R
+            True
+            sage: R.cardinality()
+            1
+            sage: list(R)
+            [[]]
         """
+        # Handle zero-length cases
+        zero_length = (
+            self.constraints.get('length') == 0 or
+            ('length' not in self.constraints and self.constraints.get('max_length') == 0)
+        )
+        if zero_length:
+            if self.constraints.get('length') == 0:
+                if self.n is not None and self.n != 0:
+                    return Integer(0)
+                return Integer(1)
+            if self.constraints.get('max_length') == 0:
+                if self.n is not None and self.n != 0:
+                    return Integer(0)
+                if self.constraints.get('min_length', 0) > 0:
+                    return Integer(0)
+                return Integer(1)
+
         if self.k is None:
             if self.n is None:
                 return PlusInfinity()
@@ -1754,7 +1809,36 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: iv = [ IntegerVectors(x[0], x[1], max_part=x[2]-1) for x in essai ]
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
+
+            sage: P = IntegerVectors(length=0, max_part=0)
+            sage: list(P)
+            [[]]
+            sage: Q = IntegerVectors(max_length=0)
+            sage: list(Q)
+            [[]]
+            sage: R = IntegerVectors(0, length=0, min_length=1)
+            sage: list(R)
+            [[]]
         """
+        # Handle zero-length cases
+        zero_length = (
+            self.constraints.get('length') == 0 or
+            ('length' not in self.constraints and self.constraints.get('max_length') == 0)
+        )
+        if zero_length:
+            if self.constraints.get('length') == 0:
+                if self.n is not None and self.n != 0:
+                    return
+                yield self.element_class(self, [], check=False)
+                return
+            if self.constraints.get('max_length') == 0:
+                if self.n is not None and self.n != 0:
+                    return
+                if self.constraints.get('min_length', 0) > 0:
+                    return
+                yield self.element_class(self, [], check=False)
+                return
+
         from sage.combinat.integer_lists import IntegerListsLex
 
         if self.n is None:
@@ -1836,9 +1920,3 @@ def integer_vectors_nk_fast_iter(n, k):
             cur[pos] = rem  # Guaranteed to be at least 1
             rem = zero
             yield list(cur)
-
-
-# October 2012: fixing outdated pickles which use classes being deprecated
-from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.integer_vector', 'IntegerVectors_nconstraints', IntegerVectorsConstraints)
-register_unpickle_override('sage.combinat.integer_vector', 'IntegerVectors_nkconstraints', IntegerVectorsConstraints)

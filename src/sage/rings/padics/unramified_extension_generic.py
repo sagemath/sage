@@ -132,8 +132,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         """
         if n == 1:
             return self._res_field
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def discriminant(self, K=None):
         """
@@ -153,8 +152,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         """
         if K is self:
             return 1
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     #def automorphisms(self):
     #    raise NotImplementedError
@@ -329,5 +327,4 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         """
         if self.prime() == 2:
             return n.divides(2 * (self.residue_class_field().order() - 1))
-        else:
-            return n.divides(self.residue_class_field().order() - 1)
+        return n.divides(self.residue_class_field().order() - 1)

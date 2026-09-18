@@ -104,5 +104,4 @@ cdef class qAdicFixedModElement(FMElement):
         L = cmodp_rep(rep.value, self.value, smallest_mode if use_smallest_mode else simple_mode, return_list, self.prime_pow)
         if return_list:
             return rep, L
-        else:
-            return rep
+        return rep

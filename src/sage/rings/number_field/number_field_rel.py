@@ -131,7 +131,7 @@ class NumberField_relative(NumberField_generic):
 
     - ``embedding`` -- currently not supported, must be ``None``
 
-    - ``structure`` -- an instance of :class:`structure.NumberFieldStructure`
+    - ``structure`` -- an instance of :class:`~sage.rings.number_field.structure.NumberFieldStructure`
       or ``None`` (default: ``None``), provides additional information about
       this number field, e.g., the absolute number field from which it was
       created
@@ -1188,9 +1188,8 @@ class NumberField_relative(NumberField_generic):
         d = self.relative_degree()
         if d <= 2:
             return True
-        else:
-            rel_poly = self.relative_polynomial()
-            return d == len(rel_poly.base_extend(self).factor())
+        rel_poly = self.relative_polynomial()
+        return d == len(rel_poly.base_extend(self).factor())
 
     def is_galois_absolute(self) -> bool:
         r"""
@@ -1205,7 +1204,7 @@ class NumberField_relative(NumberField_generic):
             False
         """
         f = self.absolute_polynomial()
-        return f.galois_group(pari_group=True).order() == self.absolute_degree()
+        return f.galois_group(pari_group=f.degree() <= 11).order() == self.absolute_degree()
 
     def is_isomorphic_relative(self, other, base_isom=None) -> bool:
         r"""

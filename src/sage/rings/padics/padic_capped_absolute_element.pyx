@@ -207,7 +207,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             7-adic Ring with capped absolute precision 10
 
         Note that reduction of ``c`` dropped to the precision of the unit part
-        of ``7^2``, see :meth:`_mod_`::
+        of ``7^2``, see ``_mod_``::
 
             sage: R(7^2).unit_part()
             1 + O(7^8)
@@ -232,7 +232,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
 
         .. SEEALSO::
 
-            :meth:`_mod_`
+            ``_mod_``
         """
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)

@@ -118,8 +118,7 @@ def Jacobian(X, **kwds):
         if morphism:
             from sage.schemes.curves.constructor import Curve
             return Jacobian_of_equation(X, curve=Curve(X), **kwds)
-        else:
-            return Jacobian_of_equation(X, **kwds)
+        return Jacobian_of_equation(X, **kwds)
 
     from sage.schemes.generic.scheme import Scheme
     if isinstance(X, Scheme) and X.dimension() == 1:
@@ -153,8 +152,7 @@ def Jacobian_of_curve(curve, morphism=False):
     if eqn is not None:
         if morphism:
             return Jacobian_of_equation(eqn, curve=curve)
-        else:
-            return Jacobian_of_equation(eqn)
+        return Jacobian_of_equation(eqn)
     raise NotImplementedError('Jacobian for this curve is not implemented')
 
 

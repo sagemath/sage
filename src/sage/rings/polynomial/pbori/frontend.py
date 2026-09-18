@@ -5,6 +5,7 @@ a given context.
 
 EXAMPLES::
 
+    sage: # needs brial
     sage: from sage.rings.polynomial.pbori.frontend import x
     sage: x(0)
     x(0)
@@ -19,6 +20,9 @@ EXAMPLES::
     sage: x(9999) + x(9999)
     0
 
+::
+
+    sage: # needs brial
     sage: from sage.rings.polynomial.pbori.frontend import x, polybori_start
     sage: context = dict(globals())
     sage: polybori_start(context)

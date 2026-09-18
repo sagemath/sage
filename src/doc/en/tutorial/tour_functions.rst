@@ -125,8 +125,7 @@ Here are some common problems, with explanations:
        sage: def h(x):
        ....:     if x<2:
        ....:         return 0
-       ....:     else:
-       ....:         return x-2
+       ....:     return x - 2
 
 
 The issue: ``plot(h(x), 0, 4)`` plots the line `y=x-2`, not the multi-line

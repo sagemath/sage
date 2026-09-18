@@ -64,7 +64,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         Graphics object consisting of 120 graphics primitives
 
     Alternatively, one could have implemented
-    :meth:`sage.categories.coxeter_groups.CoxeterGroups.ElementMethods.apply_simple_reflection`
+    :meth:`sage.categories.complex_reflection_or_generalized_coxeter_groups.ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods.apply_simple_reflection`
     instead of :meth:`.simple_reflection` and :meth:`.product`. See
     ``CoxeterGroups().example()``.
 
@@ -96,7 +96,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
     @cached_method
     def one(self):
         """
-        Implement :meth:`Monoids.ParentMethods.one`.
+        Implement :meth:`sage.categories.magmas.Magmas.Unital.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -118,7 +118,8 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def simple_reflection(self, i):
         """
-        Implement :meth:`CoxeterGroups.ParentMethods.simple_reflection`
+        Implement
+        :meth:`sage.categories.complex_reflection_or_generalized_coxeter_groups.ComplexReflectionOrGeneralizedCoxeterGroups.ParentMethods.simple_reflection`
         by returning the transposition `(i, i+1)`.
 
         EXAMPLES::
@@ -145,7 +146,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         """
-        Implement :meth:`Semigroups.ParentMethods.product`.
+        Implement :meth:`sage.categories.magmas.Magmas.ParentMethods.product`.
 
         EXAMPLES::
 

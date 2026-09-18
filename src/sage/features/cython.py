@@ -11,26 +11,37 @@ Features for testing the presence of ``cython``
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from . import CythonFeature
+from sage.features import Feature
 
-
-class sage__misc__cython(CythonFeature):
+class sage__misc__cython(Feature):
     r"""
-    A :class:`~sage.features.Feature` which describes whether :mod:`sage.misc.cython`
-    is available and functional.
+    A :class:`~sage.features.Feature` that is always present,
+    indicating that :mod:`sage.misc.cython` is always available.
+
+    This class can be removed once all ``needs sage.misc.cython``
+    tags have been eliminated from the doctests.
     """
     def __init__(self):
         r"""
         TESTS::
 
-            sage: from sage.features import CythonFeature
             sage: from sage.features.cython import sage__misc__cython
-            sage: isinstance(sage__misc__cython(), CythonFeature)
-            True
+            sage: sage__misc__cython()
+            Feature('sage.misc.cython')
         """
-        # It suffices to use a trivial CythonFeature because CythonFeature
-        # is implemented via sage.misc.cython.
-        CythonFeature.__init__(self, "sage.misc.cython", test_code="")
+        Feature.__init__(self, "sage.misc.cython")
+
+    def _is_present(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.cython import sage__misc__cython
+            sage: sage__misc__cython()._is_present()
+            FeatureTestResult('sage.misc.cython', True)
+
+        """
+        from sage.features import FeatureTestResult
+        return FeatureTestResult(self, True)
 
 
 def all_features():

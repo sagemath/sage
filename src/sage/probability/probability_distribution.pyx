@@ -151,7 +151,8 @@ cdef class ProbabilityDistribution:
 
     def generate_histogram_plot(self, name, num_samples=1000, bins=50):
         r"""
-        Save the histogram from :func:`generate_histogram_data() <sage.libs.gsl.ProbabilityDistribution.generate_histogram_data>`
+        Save the histogram from
+        :meth:`generate_histogram_data() <sage.probability.probability_distribution.ProbabilityDistribution.generate_histogram_data>`
         to a file.
 
         INPUT:

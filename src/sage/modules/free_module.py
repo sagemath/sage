@@ -179,7 +179,7 @@ import itertools
 from warnings import warn
 
 import sage.matrix.matrix_space
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.integer
@@ -192,7 +192,7 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.lazy_import import LazyImport
+from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.randstate import current_randstate
 from sage.modules.free_module_element import (
     FreeModuleElement,
@@ -216,6 +216,9 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+lazy_import('sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
 
 ###############################################################################
 #
@@ -1132,9 +1135,18 @@ class Module_free_ambient(Module):
             sage: F = FreeModule(SR, 2)                                                 # needs sage.symbolic
             sage: tuple(F.some_elements())                                              # needs sage.symbolic
             ((1, 0), (some_variable, some_variable))
+
+        TESTS::
+
+            sage: F = FreeModule(QQ, 0)
+            sage: tuple(F.some_elements())
+            ((),)
         """
         yield self.an_element()
-        yield self.base().an_element() * sum(self.gens())
+        gens = self.gens()
+        if not gens:
+            return
+        yield self.base().an_element() * sum(gens)
         some_elements_base = iter(self.base().some_elements())
         n = self.degree()
         while True:
@@ -2040,9 +2052,8 @@ class FreeModule_generic(Module_free_ambient):
          (finite enumerated fields and subquotients of monoids and quotients of semigroups)
         sage: FreeModule(ZZ,3).category()
         Category of finite dimensional modules with basis over
-         (Dedekind domains and euclidean domains
-          and noetherian rings and infinite enumerated sets
-          and metric spaces)
+         (euclidean domains and noetherian rings
+          and infinite enumerated sets and metric spaces)
         sage: (QQ^0).category()
         Category of finite enumerated finite dimensional vector spaces with basis
          over (number fields and quotient fields and metric spaces)
@@ -2536,7 +2547,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         G = self.gens()
         if not G:
-            yield self(0)
+            yield self.zero()
             return
 
         R = self.base_ring()
@@ -2588,6 +2599,58 @@ class FreeModule_generic(Module_free_ambient):
                 next(iters[n])     # put at 0
                 v[n] = zero
                 n += 1
+
+    def iter_up_to_sign(self):
+        r"""
+        Return an iterator over the elements of ``self`` up to sign.
+
+        This yields one representative from each pair `\{v, -v\}`,
+        choosing the smaller one with respect to the module element ordering.
+        The order of the representatives is inherited from the usual iterator
+        for ``self``; in particular, the zero element is returned first.
+
+        EXAMPLES::
+
+            sage: it = (ZZ^2).iter_up_to_sign()
+            sage: [next(it) for _ in range(10)]
+            [(0, 0), (-1, 0), (0, -1), (-1, 1), (-1, -1),
+             (-2, 0), (0, -2), (-2, 1), (-2, -1), (-1, 2)]
+
+        To skip the zero element, skip the first element of the iterator::
+
+            sage: from itertools import islice
+            sage: it = islice((ZZ^2).iter_up_to_sign(), 1, None)
+            sage: [next(it) for _ in range(5)]
+            [(-1, 0), (0, -1), (-1, 1), (-1, -1), (-2, 0)]
+
+        In characteristic two, negation acts trivially, so all elements are
+        returned::
+
+            sage: list(VectorSpace(GF(2), 2).iter_up_to_sign())                         # needs sage.rings.finite_rings
+            [(0, 0), (1, 0), (0, 1), (1, 1)]
+
+        TESTS::
+
+            sage: V = ZZ^3
+            sage: next(V.iter_up_to_sign()) == V.zero()
+            True
+            sage: it = V.iter_up_to_sign()
+            sage: vs = [next(it) for _ in range(1000)]
+            sage: _ = [v.set_immutable() for v in vs]
+            sage: len(set(vs)) == 1000
+            True
+            sage: all(-v not in vs or v.is_zero() for v in vs)
+            True
+
+            sage: list((ZZ^0).iter_up_to_sign())
+            [()]
+            sage: list(islice((ZZ^0).iter_up_to_sign(), 1, None))
+            []
+        """
+        for v in self:
+            if -v < v:
+                continue
+            yield v
 
     def cardinality(self):
         r"""
@@ -3012,8 +3075,9 @@ class FreeModule_generic(Module_free_ambient):
         Return the ring over which the entries of the vectors are
         defined.
 
-        This is the same as :meth:`base_ring` unless an explicit basis
-        was given over the fraction field.
+        This is the same as
+        :meth:`~sage.structure.category_object.CategoryObject.base_ring` unless
+        an explicit basis was given over the fraction field.
 
         EXAMPLES::
 
@@ -8415,6 +8479,9 @@ def element_class(R, is_sparse):
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
         sage: sage.modules.free_module.element_class(FF, is_sparse=False)               # needs sage.rings.finite_rings
         <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+        sage: FFntl = GF(2, impl='ntl')                                                 # needs sage.rings.finite_rings
+        sage: sage.modules.free_module.element_class(FFntl, is_sparse=False)            # needs sage.rings.finite_rings
+        <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         sage: sage.modules.free_module.element_class(GF(7), is_sparse=False)
         <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
         sage: sage.modules.free_module.element_class(P, is_sparse=True)
@@ -8429,6 +8496,13 @@ def element_class(R, is_sparse):
     if isinstance(R, sage.rings.rational_field.RationalField) and not is_sparse:
         from sage.modules.vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
+    if isinstance(R, FiniteField) and R.order() == 2 and not is_sparse:
+        try:
+            from sage.modules.vector_mod2_dense import Vector_mod2_dense
+        except ImportError:
+            pass
+        else:
+            return Vector_mod2_dense
     if isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:
         if R.order() == 2:
             try:
@@ -8461,10 +8535,10 @@ def element_class(R, is_sparse):
             pass
         else:
             return Vector_complex_double_dense
-    elif isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing) and not is_sparse:
+    elif isinstance(R, CallableSymbolicExpressionRing_class) and not is_sparse:
         import sage.modules.vector_callable_symbolic_dense
         return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
-    elif isinstance(R, sage.rings.abc.SymbolicRing):
+    elif isinstance(R, SymbolicRing):
         if not is_sparse:
             import sage.modules.vector_symbolic_dense
             return sage.modules.vector_symbolic_dense.Vector_symbolic_dense

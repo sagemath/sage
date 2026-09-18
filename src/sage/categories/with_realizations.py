@@ -41,9 +41,9 @@ def WithRealizations(self):
           - :class:`NonCommutativeSymmetricFunctions`
           - :class:`SymmetricFunctionsNonCommutingVariables`
           - :class:`DescentAlgebra`
-          - :class:`algebras.Moebius`
+          - :class:`~sage.combinat.posets.moebius_algebra.MoebiusAlgebra`
           - :class:`IwahoriHeckeAlgebra`
-          - :class:`ExtendedAffineWeylGroup`
+          - :func:`~sage.combinat.root_system.extended_affine_weyl_group.ExtendedAffineWeylGroup`
 
         - The `Implementing Algebraic Structures
           <../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_

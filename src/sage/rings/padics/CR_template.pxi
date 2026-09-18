@@ -1336,8 +1336,7 @@ cdef class CRElement(pAdicTemplateElement):
         prec = self.precision_absolute()
         if e == 1:
             return [R(c, prec) for c in L]
-        else:
-            return [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
+        return [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
 
     def polynomial(self, var='x'):
         """

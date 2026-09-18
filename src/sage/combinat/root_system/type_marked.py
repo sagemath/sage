@@ -720,7 +720,8 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
         r"""
         Return the special node of the Cartan type.
 
-        .. SEEALSO:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
+        .. SEEALSO::
+            :meth:`~sage.combinat.root_system.cartan_type.CartanType_affine.special_node`
 
         It is the special node of the non-marked Cartan type..
 

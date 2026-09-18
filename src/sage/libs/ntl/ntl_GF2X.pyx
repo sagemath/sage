@@ -139,21 +139,21 @@ cdef class ntl_GF2X():
         cdef long _x
 
         if isinstance(x, ntl_GF2):
-            GF2X_conv_GF2(self.x,(<ntl_GF2>x).x)
+            GF2X_conv_GF2(self.x, (<ntl_GF2>x).x)
             return
         elif isinstance(x, ntl_GF2X):
             self.x = (<ntl_GF2X>x).x
             return
         elif isinstance(x, int):
             _x = x
-            GF2XFromBytes(self.x, <unsigned char *>(&_x),sizeof(long))
+            GF2XFromBytes(self.x, <unsigned char *>(&_x), sizeof(long))
             return
 
         if isinstance(x, Integer):
-            #binary repr, reversed, and "["..."]" added
-            x="["+x.binary()[::-1].replace(""," ")+"]"
+            # binary repr, reversed, and "["..."]" added
+            x = "[" + x.binary()[::-1].replace("", " ") + "]"
         elif isinstance(x, Polynomial_GF2X):
-            x = x.list() # this is slow but cimport leads to circular imports
+            x = x.list()  # this is slow but cimport leads to circular imports
         elif isinstance(x, FiniteField):
             if x.characteristic() == 2:
                 x = list(x.modulus())
@@ -161,7 +161,7 @@ cdef class ntl_GF2X():
             x = "0x" + hex(x.to_integer())[2:][::-1]
         elif isinstance(x, FiniteField_ntl_gf2eElement):
             x = x.polynomial().list()
-        s = str(x).replace(","," ")
+        s = str(x).replace(",", " ")
         # TODO: this is very slow, but we wait until somebody complains
         ccreadstr(self.x, s)
 
@@ -243,7 +243,7 @@ cdef class ntl_GF2X():
             b = ntl_GF2X(b)
 
         GF2X_DivRem(q.x, r.x, self.x, (<ntl_GF2X>b).x)
-        return q,r
+        return q, r
 
     def __floordiv__(ntl_GF2X self, b):
         """
@@ -452,7 +452,7 @@ cdef class ntl_GF2X():
             other = ntl_GF2X(other)
 
         GF2X_XGCD(r.x, s.x, t.x, self.x, (<ntl_GF2X>other).x)
-        return r,s,t
+        return r, s, t
 
     def deg(ntl_GF2X self):
         """
@@ -722,8 +722,7 @@ cdef class ntl_GF2X():
         """
         if GF2X_deg(self.x) != 0:
             raise ValueError("cannot convert non-constant polynomial to integer")
-        else:
-            return GF2_conv_to_long(GF2X_coeff(self.x,0))
+        return GF2_conv_to_long(GF2X_coeff(self.x, 0))
 
     def NumBits(self):
         """

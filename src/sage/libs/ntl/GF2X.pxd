@@ -2,15 +2,15 @@ from sage.libs.ntl.types cimport GF2X_c, GF2_c, GF2XModulus_c, vec_GF2_c, ZZ_c
 
 
 cdef extern from "ntlwrap.h":
-    long *GF2XHexOutput_c "(&GF2X::HexOutput)" # work-around for Cython bug
+    long *GF2XHexOutput_c "(&GF2X::HexOutput)"  # work-around for Cython bug
 
     int GF2X_IsOne "IsOne"(GF2X_c x)
     int GF2X_IsZero "IsZero"(GF2X_c x)
     int GF2X_IsX "IsX"(GF2X_c x)
 
-    void GF2X_add "add"( GF2X_c x, GF2X_c a, GF2X_c b)
-    void GF2X_sub "sub"( GF2X_c x, GF2X_c a, GF2X_c b)
-    void GF2X_mul "mul"( GF2X_c x, GF2X_c a, GF2X_c b)
+    void GF2X_add "add"(GF2X_c x, GF2X_c a, GF2X_c b)
+    void GF2X_sub "sub"(GF2X_c x, GF2X_c a, GF2X_c b)
+    void GF2X_mul "mul"(GF2X_c x, GF2X_c a, GF2X_c b)
     void GF2X_negate "NTL::negate"(GF2X_c x, GF2X_c a)
     void GF2X_power "NTL::power"(GF2X_c t, GF2X_c x, long e)
     long GF2X_deg "deg"(GF2X_c x)
@@ -18,8 +18,8 @@ cdef extern from "ntlwrap.h":
     void GF2X_conv_long "conv" (GF2X_c x, long a)
     void GF2X_conv_GF2 "conv" (GF2X_c x, GF2_c a)
 
-    void GF2X_LeftShift "LeftShift"( GF2X_c r, GF2X_c a, long offset)
-    void GF2X_RightShift "RightShift"( GF2X_c r, GF2X_c a, long offset)
+    void GF2X_LeftShift "LeftShift"(GF2X_c r, GF2X_c a, long offset)
+    void GF2X_RightShift "RightShift"(GF2X_c r, GF2X_c a, long offset)
 
     void GF2X_trunc "trunc"(GF2X_c r, GF2X_c a, long n)
     void GF2X_DivRem "DivRem"(GF2X_c q, GF2X_c r, GF2X_c a, GF2X_c b)
@@ -55,7 +55,7 @@ cdef extern from "ntlwrap.h":
     void GF2X_BuildIrred "BuildIrred" (GF2X_c f, long n)
 
     #### GF2XModulus_c
-    void GF2XModulus_build "build"(GF2XModulus_c F, GF2X_c f) # MUST be called before using the modulus
+    void GF2XModulus_build "build"(GF2XModulus_c F, GF2X_c f)  # MUST be called before using the modulus
     long GF2XModulus_deg "deg"(GF2XModulus_c F)
 
     GF2X_c GF2XModulus_GF2X "GF2X" (GF2XModulus_c m)

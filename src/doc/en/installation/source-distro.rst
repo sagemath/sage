@@ -703,6 +703,12 @@ Standard environment controlling the build process
 
 Here are some of the more commonly used variables affecting the build process:
 
+.. envvar:: MAKE
+
+  The command used by Sage's make-based build steps. It may include options
+  such as ``-jNUM``; for parallel builds, :envvar:`MAKEFLAGS` is usually
+  preferred.
+
 .. envvar:: MAKEFLAGS
 
   This variable can be set to tell the ``make`` program to build things in
@@ -773,6 +779,7 @@ Here are some of the more commonly used variables affecting the build process:
 .. envvar:: CFLAGS
 .. envvar:: CXXFLAGS
 .. envvar:: FCFLAGS
+.. envvar:: F77FLAGS
 
   The flags for
   the C compiler, the C++ compiler and the Fortran compiler, respectively.
@@ -792,6 +799,20 @@ Here are some of the more commonly used variables affecting the build process:
 
 Sage-specific environment variables controlling the build process
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. envvar:: SAGE_ROOT
+
+  The root directory of the Sage source tree.
+
+.. envvar:: SAGE_LOCAL
+
+  The installation prefix for non-Python packages built by Sage. In a standard
+  source build, this is the directory pointed to by :file:`$SAGE_ROOT/prefix`.
+
+.. envvar:: SAGE_VENV
+
+  The Python virtual environment used by Sage. In a standard source build, this
+  is the directory pointed to by :file:`$SAGE_ROOT/venv`.
 
 .. envvar:: SAGE_SERVER
 
@@ -1040,6 +1061,11 @@ Environment variables controlling the documentation build
   The Sage computing environment can be specified to either a Binder repo or a
   local Jupyter server. The environment variable :envvar:`SAGE_JUPYTER_SERVER`
   is used for this purpose.
+
+.. envvar:: SAGE_JUPYTER_SERVER_TOKEN
+
+  The token used to authenticate to the local Jupyter server specified by
+  :envvar:`SAGE_JUPYTER_SERVER`.
 
 .. envvar:: SAGE_JUPYTER_SERVER
 

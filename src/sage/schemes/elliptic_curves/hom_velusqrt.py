@@ -49,15 +49,15 @@ and must therefore be equal *up to post-isomorphism*::
     sage: sum(iso * psi == phi for iso in isos)
     1
 
-Just like
-:class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`,
-the constructor supports a ``model`` keyword argument::
+By constructing an :class:`EllipticCurveHom_velusqrt` object through
+the `:meth:`EllipticCurve_field.isogeny` method, a ``model`` keyword
+can be used to specify the shape of the codomain curve::
 
     sage: E = EllipticCurve(GF(6666679), [1,1])
     sage: K = E(9091, 517864)
-    sage: phi = EllipticCurveHom_velusqrt(E, K, model='montgomery')
+    sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt')
     sage: phi
-    Elliptic-curve isogeny (using square-root Vélu) of degree 2999:
+    Composite morphism of degree 2999 = 2999*1:
       From: Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 6666679
       To:   Elliptic Curve defined by y^2 = x^3 + 1559358*x^2 + x over Finite Field of size 6666679
 
@@ -366,8 +366,10 @@ class FastEllipticPolynomial:
         R, Z = self.base['Z'].objgen()
 
         # Cassels, Lectures on Elliptic Curves, p.132
-        A,B = E.a_invariants()[-2:]
-        Fs = lambda X,Y: (
+        A, B = E.a_invariants()[-2:]
+
+        def Fs(X, Y):
+            return (
                 (X - Y)**2,
                 -2 * (X*Y + A) * (X + Y) - 4*B,
                 (X*Y - A)**2 - 4*B*(X+Y),
@@ -375,14 +377,14 @@ class FastEllipticPolynomial:
 
         I, J, K = IJK
         xI = (R.x() for R in _points_range(I, P, Q))
-        xJ = [R.x() for R in _points_range(J, P   )]
+        xJ = [R.x() for R in _points_range(J, P)]
         xK = (R.x() for R in _points_range(K, P, Q))
 
         self.hItree = ProductTree(Z - xi for xi in xI)
 
-        self.EJparts = [Fs(Z,xj) for xj in xJ]
+        self.EJparts = [Fs(Z, xj) for xj in xJ]
 
-        DJ = prod(F0j for F0j,_,_ in self.EJparts)
+        DJ = prod(F0j for F0j, _, _ in self.EJparts)
         self.DeltaIJ = self._hI_resultant(DJ)
 
         self.hK = R(prod(Z - xk for xk in xK))
@@ -617,14 +619,14 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         (0 : 1 : 0)
         sage: P = E(2, 3163*t^2 + 7293*t + 5999)
         sage: phi(P)
-        (6085*t^2 + 855*t + 8720 : 8078*t^2 + 9889*t + 6030 : 1)
+        (6085*t^2 + 855*t + 8720 : 1931*t^2 + 120*t + 3979 : 1)
         sage: Q = E(6, 5575*t^2 + 6607*t + 9991)
         sage: phi(Q)
-        (626*t^2 + 9749*t + 1291 : 5931*t^2 + 8549*t + 3111 : 1)
+        (626*t^2 + 9749*t + 1291 : 4078*t^2 + 1460*t + 6898 : 1)
         sage: phi(P + Q)
-        (983*t^2 + 4894*t + 4072 : 5047*t^2 + 9325*t + 336 : 1)
+        (983*t^2 + 4894*t + 4072 : 4962*t^2 + 684*t + 9673 : 1)
         sage: phi(P) + phi(Q)
-        (983*t^2 + 4894*t + 4072 : 5047*t^2 + 9325*t + 336 : 1)
+        (983*t^2 + 4894*t + 4072 : 4962*t^2 + 684*t + 9673 : 1)
 
     TESTS:
 
@@ -697,12 +699,12 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 301*x + 86 over Finite Field of size 419
             sage: E2 = EllipticCurve(GF(419), [0,6,0,385,42])
-            sage: EllipticCurveHom_velusqrt(E, K, codomain=E2)
-            Elliptic-curve isogeny (using square-root Vélu) of degree 105:
+            sage: E.isogeny(K, codomain=E2, algorithm='velusqrt')
+            Composite morphism of degree 105 = 105*1:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + 385*x + 42 over Finite Field of size 419
-            sage: EllipticCurveHom_velusqrt(E, K, model='montgomery')
-            Elliptic-curve isogeny (using square-root Vélu) of degree 105:
+            sage: E.isogeny(K, model='montgomery', algorithm='velusqrt')
+            Composite morphism of degree 105 = 105*1:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Finite Field of size 419
 
@@ -740,6 +742,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         if self._degree % 2 != 1 or self._degree < 9:
             raise NotImplementedError('only implemented for odd degrees >= 9')
 
+        self._kernel_gens = P,  # cache for .kernel_gens()
+
         try:
             self._raw_domain = E.short_weierstrass_model()
         except ValueError:
@@ -763,7 +767,14 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         self._domain = E
         self._compute_codomain(model=model)
 
+        if model is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(42363, "the 'model' argument to the EllipticCurveHom_velusqrt constructor is deprecated; use E.isogeny(..., codomain={model!r}, ..., algorithm='velusqrt') instead of EllipticCurveHom_velusqrt(E, ..., model={model!r}, ...)")
+
         if codomain is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(42363, "the 'codomain' argument to the EllipticCurveHom_velusqrt constructor is deprecated; use E.isogeny(..., algorithm='velusqrt') instead of EllipticCurveHom_velusqrt(E, ...)")
+
             self._post_iso = self._codomain.isomorphism_to(codomain) * self._post_iso
             self._codomain = codomain
 
@@ -928,9 +939,9 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
             sage: E = EllipticCurve(GF(71), [0,5,0,1,0])
             sage: K = E(4, 19)
-            sage: phi = EllipticCurveHom_velusqrt(E, K, model='montgomery')
+            sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt')
             sage: phi
-            Elliptic-curve isogeny (using square-root Vélu) of degree 19:
+            Composite morphism of degree 19 = 19*1:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x^2 + x over Finite Field of size 71
               To:   Elliptic Curve defined by y^2 = x^3 + 40*x^2 + x over Finite Field of size 71
             sage: phi(K)
@@ -942,7 +953,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: phi(E(0,0))
             (0 : 0 : 1)
             sage: phi(E(7,13))
-            (70 : 31 : 1)
+            (70 : ... : 1)
 
         TESTS::
 
@@ -1105,7 +1116,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         return iso * phi
 
     # not explicitly cached here since .as_EllipticCurveIsogeny() and EllipticCurveIsogeny.dual() already cache their results
-    def dual(self):
+    def dual(self, algorithm=None):
         r"""
         Return the dual of this square-root Vélu
         isogeny as an :class:`EllipticCurveHom`.
@@ -1128,9 +1139,9 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
             sage: phi.dual()
-            Isogeny of degree 11
-              from Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
-              to Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+            Composite morphism of degree 11 = 1*11:
+              From: Elliptic Curve defined by y^2 = x^3 + 39*x + 40 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
             sage: phi.dual() * phi == phi.domain().scalar_multiplication(11)
             True
             sage: phi * phi.dual() == phi.codomain().scalar_multiplication(11)
@@ -1142,25 +1153,24 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: z2 = GF(71^2).gen()
             sage: E = EllipticCurve(j=57*z2+51)
             sage: E.isogeny(3*E.lift_x(0), algorithm='velusqrt').dual()
-            Composite morphism of degree 71 = 71*1^2:
+            Composite morphism of degree 71 = 71*1:
               From: Elliptic Curve defined by y^2 = x^3 + (8*z2+70)*x + (3*z2+49) over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
             sage: E.isogeny(E.lift_x(0), algorithm='velusqrt').dual()
-            Composite morphism of degree 213 = 71*3:
+            Composite morphism of degree 213 = 71*3*1:
               From: Elliptic Curve defined by y^2 = x^3 + (50*z2+61)*x + (22*z2+25) over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42) over Finite Field in z2 of size 71^2
         """
         if self.base_ring().characteristic().divides(self.degree()):
             # The dual is inseparable.
             #TODO: This is a lazy workaround; it could be optimized more.
-            return self.as_EllipticCurveIsogeny().dual()
+            return self.as_EllipticCurveIsogeny().dual(algorithm=algorithm)
 
         # The dual is separable.
         F = self._raw_domain.base_ring()
         from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
         isom = ~WeierstrassIsomorphism(self._raw_domain, (~F(self._degree), 0, 0, 0))
-        from sage.schemes.elliptic_curves.ell_curve_isogeny import EllipticCurveIsogeny
-        phi = EllipticCurveIsogeny(self._raw_codomain, None, isom.domain(), self._degree)
+        phi = self._raw_codomain.isogeny(kernel=None, codomain=isom.domain(), degree=self._degree)
         return ~self._pre_iso * isom * phi * ~self._post_iso
 
     @cached_method
@@ -1252,8 +1262,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
             sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
             sage: K = (E.cardinality() // 11) * E.gens()[0]
-            sage: phi = E.isogeny(K, algorithm='velusqrt', model='montgomery'); phi
-            Elliptic-curve isogeny (using square-root Vélu) of degree 11:
+            sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt'); phi
+            Composite morphism of degree 11 = 11*1:
               From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
               To:   Elliptic Curve defined by y^2 = x^3 + 61*x^2 + x over Finite Field in z2 of size 101^2
             sage: phi.scaling_factor()
@@ -1278,6 +1288,112 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             1
         """
         return Integer(1)
+
+    def kernel_subgroup(self, *, extend=False):
+        r"""
+        Return the kernel subgroup of this isogeny as an
+        :class:`AdditiveAbelianGroupWrapper`.
+
+        (The keyword argument ``extend`` is provided for
+        compatibility with :class:`EllipticCurveHom`,
+        but ignored in this implementation.)
+
+        ALGORITHM:
+
+        In this implementation, the kernel is
+        a cyclic group generated by a single rational
+        kernel point provided to the constructor.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419^2), [1,0])
+            sage: P, _ = E.torsion_basis(5)
+            sage: Q, _ = E.torsion_basis(7)
+            sage: phi = E.isogeny(P + Q, algorithm='velusqrt'); phi
+            Elliptic-curve isogeny (using square-root Vélu) of degree 35:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
+              To:   Elliptic Curve defined by y^2 = x^3 + ... over Finite Field in z2 of size 419^2
+            sage: phi.kernel_subgroup()
+            Additive abelian group isomorphic to Z/35
+              embedded in Abelian group of points
+                on Elliptic Curve defined by y^2 = x^3 + x
+                  over Finite Field in z2 of size 419^2
+
+        TESTS:
+
+        Check that it matches another implementation of the same isogeny::
+
+            sage: psi = E.isogeny([P, Q], algorithm='factored')
+            sage: assert phi.kernel_subgroup() == psi.kernel_subgroup()
+        """
+        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+        pt = (~self._pre_iso)(self._P)
+        return AdditiveAbelianGroupWrapper(pt.parent(), [pt], [self._degree])
+
+    def xEVAL(self, xP):
+        r"""
+        Return the `x`-coordinate of `\varphi(P)` given the `x`-coordinate of `P`.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on the domain of this isogeny,
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, a tuple `(X,Z)`
+          representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `\varphi(P)`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
+        alternatively, a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101^2), [1, 1, 1, 1, 1])
+            sage: K = (E.cardinality() // 11) * E.gens()[0]
+            sage: phi = E.isogeny(K, model='montgomery', algorithm='velusqrt'); phi
+            Composite morphism of degree 11 = 11*1:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 + x^2 + x + 1 over Finite Field in z2 of size 101^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 61*x^2 + x over Finite Field in z2 of size 101^2
+            sage: phi(E.lift_x(42)).x()
+            96
+            sage: phi.xEVAL(42)
+            96
+            sage: phi.xEVAL(K.x())
+            +Infinity
+            sage: phi.xEVAL(oo)
+            +Infinity
+
+        Projectively::
+
+            sage: xP = seq((16, 10), E.base_field())
+            sage: phi.xEVAL(xP)
+            (96, 1)
+            sage: xK = K[0]*5, K[2]*5
+            sage: phi.xEVAL(xK)
+            (1, 0)
+            sage: phi.xEVAL((1, 0))
+            (1, 0)
+        """
+        from sage.rings.infinity import Infinity as oo
+        proj = isinstance(xP, (tuple, list))
+        if proj:
+            #TODO This implementation currently does everything in affine coordinates.
+            # It would not be very difficult to properly support projective coordinates
+            # as well; mainly this would require some minor adjustments in ._raw_eval().
+            xP = xP[0] / xP[1] if xP[1] else oo
+            R = self.codomain().base_ring()
+            inf = R.one(), R.zero()
+        else:
+            inf = oo
+        xP = self._pre_iso.xEVAL(xP)
+        if xP == oo:
+            return inf
+        xP = self._raw_eval(xP)
+        if xP == ():
+            return inf
+        xP = self._post_iso.xEVAL(xP)
+        if proj:
+            return xP, R.one()
+        return xP
 
 
 def _random_example_for_testing():

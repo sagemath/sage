@@ -739,10 +739,9 @@ def ring_to_gfan_format(input_ring) -> str:
     gens = str(input_ring.gens()).replace('(', '[').replace(')', ']')
     if input_ring.base_ring() is QQ:
         return 'Q' + gens
-    elif input_ring.base_ring() is ZZ:
+    if input_ring.base_ring() is ZZ:
         return 'Z' + gens
-    else:
-        return 'Z/{}Z'.format(input_ring.characteristic()) + gens
+    return 'Z/{}Z'.format(input_ring.characteristic()) + gens
 
 
 def ideal_to_gfan_format(input_ring, polys) -> str:
@@ -1000,7 +999,7 @@ class GroebnerFan(SageObject):
 
             sage: R.<a,b> = PolynomialRing(QQ,2)
             sage: gf = R.ideal([a^3-b^2,b^2-a-1]).groebner_fan()
-            sage: gf._gfan_reduced_groebner_bases()
+            sage: gf._gfan_reduced_groebner_bases()                    # random
             'Q[a,b]{{b^6-1+2*b^2-3*b^4,a+1-b^2},{a^3-1-a,b^2-1-a}}'
         """
         B = self.gfan(cmd='bases')
@@ -1031,23 +1030,23 @@ class GroebnerFan(SageObject):
             sage: X = G.reduced_groebner_bases()
             sage: len(X)
             33
-            sage: X[0]
-            [z^15 - z, x - z^9, y - z^11]
-            sage: X[0].ideal()
+            sage: sorted(X[0])
+            [z^15 - z, y - z^11, x - z^9]
+            sage: X[0].ideal()                            # random
             Ideal (z^15 - z, x - z^9, y - z^11) of Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: X[:5]
-            [[z^15 - z, x - z^9, y - z^11],
-            [y^2 - z^8, x - z^9, y*z^4 - z, -y + z^11],
-            [y^3 - z^5, x - y^2*z, y^2*z^3 - y, y*z^4 - z, -y^2 + z^8],
-            [y^4 - z^2, x - y^2*z, y^2*z^3 - y, y*z^4 - z, -y^3 + z^5],
-            [y^9 - z, y^6*z - y, x - y^2*z, -y^4 + z^2]]
+            sage: list(map(sorted, X[:5]))
+            [[z^15 - z, y - z^11, x - z^9],
+             [-y + z^11, y*z^4 - z, y^2 - z^8, x - z^9],
+             [-y^2 + z^8, y*z^4 - z, y^2*z^3 - y, y^3 - z^5, x - y^2*z],
+             [-y^3 + z^5, y*z^4 - z, y^2*z^3 - y, y^4 - z^2, x - y^2*z],
+             [-y^4 + z^2, y^6*z - y, y^9 - z, x - y^2*z]]
             sage: R3.<x,y,z> = PolynomialRing(GF(2477),3)
             sage: gf = R3.ideal([300*x^3-y,y^2-z,z^2-12]).groebner_fan()
-            sage: gf.reduced_groebner_bases()
+            sage: list(map(sorted, gf.reduced_groebner_bases()))
             [[z^2 - 12, y^2 - z, x^3 + 933*y],
-            [y^4 - 12, x^3 + 933*y, -y^2 + z],
-            [x^6 - 1062*z, z^2 - 12, -300*x^3 + y],
-            [x^12 + 200, -300*x^3 + y, -828*x^6 + z]]
+             [-y^2 + z, x^3 + 933*y, y^4 - 12],
+             [-300*x^3 + y, z^2 - 12, x^6 - 1062*z],
+             [-828*x^6 + z, -300*x^3 + y, x^12 + 200]]
         """
         G = self._gfan_reduced_groebner_bases()
         if G.find(']') != -1:
@@ -1102,7 +1101,7 @@ class GroebnerFan(SageObject):
 
             sage: R.<x,y> = PolynomialRing(QQ,2)
             sage: gf = R.ideal([x^3-y,y^3-x-1]).groebner_fan()
-            sage: gf.gfan()
+            sage: gf.gfan()                                           # random
             'Q[x,y]\n{{\ny^9-1-y+3*y^3-3*y^6,\nx+1-y^3}\n,\n{\nx^3-y,\ny^3-1-x}\n,\n{\nx^9-1-x,\ny-x^3}\n}\n'
         """
         if I is None:
@@ -1123,8 +1122,8 @@ class GroebnerFan(SageObject):
             sage: R.<x,y> = PolynomialRing(QQ,2)
             sage: gf = R.ideal([x^3-y,y^3-x-1]).groebner_fan()
             sage: a = gf.__iter__()
-            sage: next(a)
-            [y^9 - 3*y^6 + 3*y^3 - y - 1, -y^3 + x + 1]
+            sage: sorted(next(a))
+            [-y^3 + x + 1, y^9 - 3*y^6 + 3*y^3 - y - 1]
         """
         yield from self.reduced_groebner_bases()
 
@@ -1136,8 +1135,8 @@ class GroebnerFan(SageObject):
 
             sage: R4.<w1,w2,w3,w4> = PolynomialRing(QQ,4)
             sage: gf = R4.ideal([w1^2-w2,w2^3-1,2*w3-w4^2,w4^2-w1]).groebner_fan()
-            sage: gf[0]
-            [w4^12 - 1, -w4^4 + w2, -w4^2 + w1, -1/2*w4^2 + w3]
+            sage: sorted(gf[0])
+            [-w4^4 + w2, -w4^2 + w1, -1/2*w4^2 + w3, w4^12 - 1]
         """
         return self.reduced_groebner_bases()[i]
 
@@ -1150,8 +1149,8 @@ class GroebnerFan(SageObject):
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([x - z^3, y^2 - x + x^2 - z^3*x]).groebner_fan()
-            sage: G.buchberger()
-            [-z^3 + y^2, -z^3 + x]
+            sage: sorted(G.buchberger())
+            [-z^3 + x, -z^3 + y^2]
         """
         B = self.gfan(cmd='buchberger')
         if B.find(']') != -1:
@@ -1881,7 +1880,9 @@ class ReducedGroebnerBasis(SageObject, list):
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([x - z^3, y^2 - 13*x]).groebner_fan()
-            sage: G[0].ideal()
+            sage: G[0].ideal()                                         # random
             Ideal (-13*z^3 + y^2, -z^3 + x) of Multivariate Polynomial Ring in x, y, z over Rational Field
+            sage: sorted(G[0].ideal().gens())
+            [-13*z^3 + y^2, -z^3 + x]
         """
         return self.__groebner_fan.ring().ideal(self)

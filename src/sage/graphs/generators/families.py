@@ -1532,7 +1532,7 @@ def FriendshipGraph(n, immutable=False):
 
     .. SEEALSO::
 
-        - :meth:`GraphGenerators.ButterflyGraph`
+        - :meth:`~sage.graphs.graph_generators.GraphGenerators.ButterflyGraph`
 
     EXAMPLES:
 
@@ -3753,8 +3753,8 @@ def WindmillGraph(k, n, immutable=False):
     .. SEEALSO::
 
         - :wikipedia:`Windmill_graph`
-        - :meth:`GraphGenerators.StarGraph`
-        - :meth:`GraphGenerators.FriendshipGraph`
+        - :meth:`~sage.graphs.graph_generators.GraphGenerators.StarGraph`
+        - :meth:`~sage.graphs.graph_generators.GraphGenerators.FriendshipGraph`
 
     INPUT:
 

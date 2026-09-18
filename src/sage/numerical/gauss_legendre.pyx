@@ -106,9 +106,9 @@ def nodes_uncached(degree, prec):
         nodes and weights in ``src/acb_calc/integrate_gl_auto_deg.c`` has better
         performance.
     """
-    cdef long j,j1,n
-    cdef RealNumber r,t1,t2,t4,a,w
-    cdef mpfr_t u,v
+    cdef long j, j1, n
+    cdef RealNumber r, t1, t2, t4, a, w
+    cdef mpfr_t u, v
     cdef RealField_class R
     if prec < 53:
         prec = 53
@@ -116,8 +116,8 @@ def nodes_uncached(degree, prec):
         raise ValueError("degree=%s not supported (degree must be 3 or even)" % degree)
     R = RealField(int(prec*3/2))
     Rout = RealField(prec)
-    mpfr_init2(u,R._prec)
-    mpfr_init2(v,R._prec)
+    mpfr_init2(u, R._prec)
+    mpfr_init2(v, R._prec)
     ZERO = R.zero()
     ONE = R.one()
     HALF = ONE/2
@@ -127,23 +127,23 @@ def nodes_uncached(degree, prec):
     if degree == 3:
         x = (R(3)/5).sqrt()
         w = R(5)/18
-        nodes = [((1-x)/2,w),(HALF,R(4)/9),((1+x)/2,w)]
+        nodes = [((1-x)/2, w), (HALF, R(4)/9), ((1+x)/2, w)]
     else:
         nodes = []
         n = degree
         for j in range(1, n // 2 + 1):
             r = R(math.cos(math.pi*(j-0.25)/(n+0.5)))
             while True:
-                t1,t2=ONE,ZERO
-                for j1 in range(1,n+1):
-                    mpfr_mul(u,r.value,t1.value,rnd)
-                    mpfr_mul_si(u,u,2*j1-1,rnd)
-                    mpfr_mul_si(v,t2.value,j1-1,rnd)
-                    mpfr_sub(u,u,v,rnd)
-                    mpfr_div_si(u,u,j1,rnd)
+                t1, t2 = ONE, ZERO
+                for j1 in range(1, n+1):
+                    mpfr_mul(u, r.value, t1.value, rnd)
+                    mpfr_mul_si(u, u, 2*j1-1, rnd)
+                    mpfr_mul_si(v, t2.value, j1-1, rnd)
+                    mpfr_sub(u, u, v, rnd)
+                    mpfr_div_si(u, u, j1, rnd)
                     t2=t1
                     t1=R._new()
-                    mpfr_set(t1.value,u,rnd)
+                    mpfr_set(t1.value, u, rnd)
                 t4 = R(n)*(r*t1-t2)/(r**2-ONE)
                 a = t1/t4
                 r = r-a
@@ -151,9 +151,9 @@ def nodes_uncached(degree, prec):
                     break
             x = r
             w = ONE/((ONE-r**2)*t4**2)
-            nodes.append(((ONE+x)/TWO,w))
-            nodes.append(((ONE-x)/TWO,w))
-    nodes=[(Rout(x),Rout(w)) for x,w in nodes]
+            nodes.append(((ONE+x)/TWO, w))
+            nodes.append(((ONE-x)/TWO, w))
+    nodes = [(Rout(x), Rout(w)) for x, w in nodes]
     nodes.sort()
     mpfr_clear(u)
     mpfr_clear(v)
@@ -260,8 +260,8 @@ def estimate_error(results, prec, epsilon):
             D2 = (results[-1][i]-results[-3][i]).abs().log()
         except ValueError:
             e.append(epsilon)
-        #we follow mpmath in clipping the precision
-        D4 = min(ZERO,max(D1**2/D2,2*D1,ZERO-prec))
+        # we follow mpmath in clipping the precision
+        D4 = min(ZERO, max(D1**2/D2, 2*D1, ZERO-prec))
         e.append(D4.exp())
     return max(e)
 
@@ -308,7 +308,7 @@ def integrate_vector_N(f, prec, N=3):
     # use in the Riemann surfaces module.
     nodelist = nodes_uncached(N, prec)
     I = nodelist[0][1]*f(nodelist[0][0])
-    for i in range(1,len(nodelist)):
+    for i in range(1, len(nodelist)):
         I += nodelist[i][1]*f(nodelist[i][0])
     return I
 
@@ -369,12 +369,12 @@ def integrate_vector(f, prec, epsilon=None):
         # values, so it will be very useful, approximately halving the runtime
         nodelist = nodes(degree, prec)
         I = nodelist[0][1]*f(nodelist[0][0])
-        for i in range(1,len(nodelist)):
+        for i in range(1, len(nodelist)):
             I += nodelist[i][1]*f(nodelist[i][0])
         results.append(I)
         if degree > 3:
             err = estimate_error(results, prec, epsilon)
             if err <= epsilon:
                 return I
-        #double the degree to double expected precision
+        # double the degree to double expected precision
         degree *= 2

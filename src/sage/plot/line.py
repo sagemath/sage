@@ -249,7 +249,7 @@ class Line(GraphicPrimitive_xydata):
             sage: line([(1,2), (3,-4), (2, 5), (1,2)])
             Graphics object consisting of 1 graphics primitive
         """
-        import matplotlib.lines as lines
+        from matplotlib import lines
         options = dict(self.options())
         for o in ('alpha', 'legend_color', 'legend_label', 'linestyle',
                   'rgbcolor', 'thickness'):

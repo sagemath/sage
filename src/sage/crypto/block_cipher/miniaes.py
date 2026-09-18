@@ -373,7 +373,7 @@ class MiniAES(SageObject):
                 e = self.GF_to_binary(e)
                 S = "".join([S, str(e)])
             return bin(S)
-        elif algorithm == "decrypt":
+        if algorithm == "decrypt":
             # decrypt each 16-bit block in succession
             for i in range(N):
                 # here 16 is the number of bits per encryption block
@@ -384,8 +384,7 @@ class MiniAES(SageObject):
                 e = self.GF_to_binary(e)
                 S = "".join([S, str(e)])
             return bin(S)
-        else:
-            raise ValueError("algorithm must be either 'encrypt' or 'decrypt'")
+        raise ValueError("algorithm must be either 'encrypt' or 'decrypt'")
 
     def __eq__(self, other):
         r"""
@@ -1215,13 +1214,12 @@ class MiniAES(SageObject):
             # encryption. Then convert the result output by the S-box
             # to an element of GF(2^4).
             return MS([self._int_to_GF[self._sboxE[e]] for e in lst])
-        elif algorithm == "decrypt":
+        if algorithm == "decrypt":
             # Now run each resulting integer through the S-box for
             # decryption. Then convert the result output by the S-box
             # to an element of GF(2^4).
             return MS([self._int_to_GF[self._sboxD[e]] for e in lst])
-        else:
-            raise ValueError("the algorithm for nibble-sub must be either 'encrypt' or 'decrypt'")
+        raise ValueError("the algorithm for nibble-sub must be either 'encrypt' or 'decrypt'")
 
     def random_key(self):
         r"""
@@ -1635,21 +1633,20 @@ class MiniAES(SageObject):
         if G in K:
             return self._GF_to_bin[G]
         # G is a list of elements over GF(16)
-        elif isinstance(G, list):
+        if isinstance(G, list):
             if len(G) == 0:
                 raise ValueError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             S = "".join(str(self._GF_to_bin[g]) for g in G)
             return B(S)
         # G is a matrix over GF(16)
-        elif isinstance(G, Matrix_dense):
+        if isinstance(G, Matrix_dense):
             if G.base_ring() is not K:
                 raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             S = "".join(str(self._GF_to_bin[G[i][j]])
                         for i in range(G.nrows()) for j in range(G.ncols()))
             return B(S)
         # the type of G doesn't match the supported types
-        else:
-            raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
+        raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
 
     def GF_to_integer(self, G):
         r"""
@@ -1766,18 +1763,17 @@ class MiniAES(SageObject):
         if G in K:
             return self._GF_to_int[G]
         # G is a list of elements over GF(16)
-        elif isinstance(G, list):
+        if isinstance(G, list):
             if len(G) == 0:
                 raise ValueError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             return [self._GF_to_int[g] for g in G]
         # G is a matrix over GF(16)
-        elif isinstance(G, Matrix_dense):
+        if isinstance(G, Matrix_dense):
             if G.base_ring() is not K:
                 raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
             return [self._GF_to_int[G[i][j]] for i in range(G.nrows()) for j in range(G.ncols())]
         # the type of G doesn't match the supported types
-        else:
-            raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
+        raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
 
     def binary_to_GF(self, B):
         r"""
@@ -1864,8 +1860,7 @@ class MiniAES(SageObject):
         if Mod(len(b), 4).lift() == 0:
             M = len(b) // 4  # the number of nibbles
             return [self._bin_to_GF[b[i*4 : (i+1)*4]] for i in range(M)]
-        else:
-            raise ValueError("the number of bits in the binary string B must be positive and a multiple of 4")
+        raise ValueError("the number of bits in the binary string B must be positive and a multiple of 4")
 
     def binary_to_integer(self, B):
         r"""
@@ -1932,8 +1927,7 @@ class MiniAES(SageObject):
         if Mod(len(b), 4).lift() == 0:
             M = len(b) // 4  # the number of nibbles
             return [self._bin_to_int[b[i*4 : (i+1)*4]] for i in range(M)]
-        else:
-            raise ValueError("the number of bits in the binary string B must be positive and a multiple of 4")
+        raise ValueError("the number of bits in the binary string B must be positive and a multiple of 4")
 
     def integer_to_binary(self, N):
         r"""
@@ -2037,12 +2031,11 @@ class MiniAES(SageObject):
             # such that 0 <= n <= 15. An error will be raised if otherwise.
             b = "".join(str(self._int_to_bin[n]) for n in N)
             return bin(b)
-        elif isinstance(N, Integer):
+        if isinstance(N, Integer):
             # Here, we assume that N is an integer such that 0 <= n <= 15.
             # An error will be raised if otherwise.
             return self._int_to_bin[N]
-        else:
-            raise TypeError("N must be an integer 0 <= N <= 15 or a list of such integers")
+        raise TypeError("N must be an integer 0 <= N <= 15 or a list of such integers")
 
     def integer_to_GF(self, N):
         r"""
@@ -2162,9 +2155,8 @@ class MiniAES(SageObject):
             # Here, we assume that each element of the list is an integer n
             # such that 0 <= n <= 15. An error will be raised if otherwise.
             return [self._int_to_GF[n] for n in N]
-        elif isinstance(N, Integer):
+        if isinstance(N, Integer):
             # Here, we assume that N is an integer such that 0 <= n <= 15.
             # An error will be raised if otherwise.
             return self._int_to_GF[N]
-        else:
-            raise TypeError("N must be an integer 0 <= N <= 15 or a list of such integers")
+        raise TypeError("N must be an integer 0 <= N <= 15 or a list of such integers")

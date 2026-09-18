@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
@@ -219,7 +219,7 @@ cdef class ntl_ZZ_pE():
         cdef ntl_ZZ_pE y
         cdef ntl_ZZ_pE r = self._new()
         if not isinstance(other, ntl_ZZ_pE):
-            other = ntl_ZZ_pE(other,self.c)
+            other = ntl_ZZ_pE(other, self.c)
         elif self.c is not (<ntl_ZZ_pE>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
@@ -229,7 +229,7 @@ cdef class ntl_ZZ_pE():
 
     def __sub__(ntl_ZZ_pE self, other):
         if not isinstance(other, ntl_ZZ_pE):
-            other = ntl_ZZ_pE(other,self.c)
+            other = ntl_ZZ_pE(other, self.c)
         elif self.c is not (<ntl_ZZ_pE>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pE r = self._new()
@@ -241,7 +241,7 @@ cdef class ntl_ZZ_pE():
         cdef ntl_ZZ_pE y
         cdef ntl_ZZ_pE r = self._new()
         if not isinstance(other, ntl_ZZ_pE):
-            other = ntl_ZZ_pE(other,modulus=self.c)
+            other = ntl_ZZ_pE(other, modulus=self.c)
         elif self.c is not (<ntl_ZZ_pE>other).c:
             raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
@@ -312,11 +312,11 @@ cdef class ntl_ZZ_pE():
         """
         self.set_from_ZZ_pX(value)
 
-    #def lift(self):
-    #    cdef ntl_ZZ r = ntl_ZZ()
-    #    self.c.restore_c()
-    #    r.x = rep(self.x)
-    #    return r
+    # def lift(self):
+    #     cdef ntl_ZZ r = ntl_ZZ()
+    #     self.c.restore_c()
+    #     r.x = rep(self.x)
+    #     return r
 
     def modulus(self):
         r"""

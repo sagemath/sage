@@ -91,7 +91,7 @@ def Realizations(self):
     .. SEEALSO::
 
         - :func:`Sets().WithRealizations <sage.categories.with_realizations.WithRealizations>`
-        - :class:`ClasscallMetaclass`
+        - :class:`~sage.misc.classcall_metaclass.ClasscallMetaclass`
 
     .. TODO::
 

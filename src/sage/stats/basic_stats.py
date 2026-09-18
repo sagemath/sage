@@ -17,13 +17,13 @@ response filter, creating a series of averages using a user-defined number of
 subsets of the full data set. The :func:`std` and the :func:`variance` return a
 measurement of how far data points tend to be from the arithmetic mean.
 
-Functions are available in the namespace :mod:`stats`, i.e. you can use them by
+Functions are available in the namespace ``stats``, i.e. you can use them by
 typing ``stats.mean``, ``stats.median``, etc.
 
 REMARK: If all the data you are working with are floating point
-numbers, you may find :class:`stats.TimeSeries` helpful, since it is
-extremely fast and offers many of the same descriptive statistics as
-in the module.
+numbers, you may find :class:`~sage.stats.time_series.TimeSeries`
+helpful, since it is extremely fast and offers many of the same
+descriptive statistics as in the module.
 
 AUTHOR:
 
@@ -66,15 +66,15 @@ def mean(v):
 
     EXAMPLES::
 
-        sage: mean([pi, e])                                                             # needs sage.symbolic
+        sage: mean([pi, e])
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.mean is deprecated;
         use numpy.mean or numpy.nanmean instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         1/2*pi + 1/2*e
-        sage: mean([])                                                                  # needs sage.symbolic
+        sage: mean([])
         NaN
-        sage: mean([I, sqrt(2), 3/5])                                                   # needs sage.symbolic
+        sage: mean([I, sqrt(2), 3/5])
         1/3*sqrt(2) + 1/3*I + 1/5
         sage: mean([RIF(1.0103,1.0103), RIF(2)])
         1.5051500000000000?
@@ -192,7 +192,6 @@ def std(v, bias=False):
 
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: std([1..6], bias=True)
         doctest:warning...
         DeprecationWarning: sage.stats.basic_stats.std is deprecated;
@@ -287,11 +286,11 @@ def variance(v, bias=False):
         7/2
         sage: variance([1..6], bias=True)
         35/12
-        sage: variance([e, pi])                                                         # needs sage.symbolic
+        sage: variance([e, pi])
         1/2*(pi - e)^2
         sage: variance([])
         NaN
-        sage: variance([I, sqrt(2), 3/5])                                               # needs sage.symbolic
+        sage: variance([I, sqrt(2), 3/5])
         1/450*(10*sqrt(2) - 5*I - 3)^2 + 1/450*(5*sqrt(2) - 10*I + 3)^2
         + 1/450*(5*sqrt(2) + 5*I - 6)^2
         sage: variance([RIF(1.0103, 1.0103), RIF(2)])
@@ -389,11 +388,11 @@ def median(v):
         use numpy.median or numpy.nanmedian instead
         See https://github.com/sagemath/sage/issues/29662 for details.
         3
-        sage: median([e, pi])                                                           # needs sage.symbolic
+        sage: median([e, pi])
         1/2*pi + 1/2*e
         sage: median(['sage', 'linux', 'python'])
         'python'
-        sage: median([])                                                                # needs sage.symbolic
+        sage: median([])
         NaN
         sage: class MyClass:
         ....:    def median(self):
@@ -425,7 +424,7 @@ def moving_average(v, n):
 
     If `v` is empty, we define the entries of the moving average to be NaN.
 
-    This method is deprecated.  Use :meth:`pandas.Series.rolling` instead.
+    This method is deprecated.  Use ``pandas.Series.rolling`` instead.
 
     INPUT:
 
@@ -447,14 +446,17 @@ def moving_average(v, n):
         [5/2, 7/2, 9/2, 11/2, 13/2, 15/2, 17/2]
         sage: moving_average([], 1)
         []
-        sage: moving_average([pi, e, I, sqrt(2), 3/5], 2)                               # needs sage.symbolic
+        sage: moving_average([pi, e, I, sqrt(2), 3/5], 2)
         [1/2*pi + 1/2*e, 1/2*e + 1/2*I, 1/2*sqrt(2) + 1/2*I,
          1/2*sqrt(2) + 3/10]
 
     We check if the input is a time series, and if so use the
-    optimized :meth:`simple_moving_average` method, but with (slightly
-    different) meaning as defined above (the point is that the
-    :meth:`simple_moving_average` on time series returns `n` values::
+    optimized
+    :meth:`~sage.stats.time_series.TimeSeries.simple_moving_average`
+    method, but with (slightly different) meaning as defined above
+    (the point is that
+    :meth:`~sage.stats.time_series.TimeSeries.simple_moving_average`
+    on time series returns `n` values::
 
         sage: a = stats.TimeSeries([1..10])                                             # needs numpy
         sage: stats.moving_average(a, 3)                                                # needs numpy

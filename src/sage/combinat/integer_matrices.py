@@ -20,6 +20,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.integer_lists import IntegerListsLex
+from sage.combinat.integer_vector import IntegerVectors
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 
@@ -72,9 +73,8 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             sage: IM = IntegerMatrices(Composition([4,4,5]), Composition([3,7,1,2])); IM
             Non-negative integer matrices with row sums [4, 4, 5] and column sums [3, 7, 1, 2]
         """
-        from sage.combinat.composition import Composition
-        row_sums = Composition(row_sums)
-        column_sums = Composition(column_sums)
+        row_sums = IntegerVectors()(row_sums)
+        column_sums = IntegerVectors()(column_sums)
         return super().__classcall__(cls, row_sums, column_sums)
 
     def __init__(self, row_sums, column_sums):
@@ -94,8 +94,8 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             Non-negative integer matrices with row sums [3, 2, 2] and column sums [2, 5]
             sage: TestSuite(IM).run()
         """
-        self._row_sums = row_sums
-        self._col_sums = column_sums
+        self._row_sums = list(row_sums)
+        self._col_sums = list(column_sums)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):

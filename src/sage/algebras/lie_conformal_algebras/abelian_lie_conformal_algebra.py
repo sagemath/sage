@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Abelian Lie Conformal Algebra
 

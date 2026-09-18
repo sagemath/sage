@@ -3125,8 +3125,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         """
         if isinstance(right, FrobeniusEndomorphism_generic):
             return self.__class__(self.domain(), self._power + right.power())
-        else:
-            return RingHomomorphism._composition(self, right)
+        return RingHomomorphism._composition(self, right)
 
     def __hash__(self):
         """

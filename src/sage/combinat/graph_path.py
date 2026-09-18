@@ -18,7 +18,7 @@ Paths in directed acyclic graphs
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
-import sage.graphs.digraph as digraph
+from sage.graphs import digraph
 
 
 def GraphPaths(g, source=None, target=None):

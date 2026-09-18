@@ -306,14 +306,13 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         """
         if r < 0:
             raise ValueError("r must be nonnegative")
-        elif r == 0:
+        if r == 0:
             return self.poly_ring.one()
-        elif r == 1:
+        if r == 1:
             return self._inv_shift_seed
-        elif r % 2:
+        if r % 2:
             return (self.pxe_pow(r-1) * self.pxe_pow(1)) % self.modulus
-        else:
-            return (self.pxe_pow(r//2)*self.pxe_pow(r//2)) % self.modulus
+        return (self.pxe_pow(r//2)*self.pxe_pow(r//2)) % self.modulus
 
     @cached_method
     def uniformizer_pow(self, r):
@@ -336,14 +335,13 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         """
         if r < 0:
             raise ValueError("r must be nonnegative")
-        elif r == 0:
+        if r == 0:
             return self.poly_ring.one()
-        elif r < self.e:
+        if r < self.e:
             return self.poly_ring.one() << r
-        elif r % 2:
+        if r % 2:
             return (self.uniformizer_pow(r-1) << 1) % self.modulus
-        else:
-            return (self.uniformizer_pow(r//2) * self.uniformizer_pow(r//2)) % self.modulus
+        return (self.uniformizer_pow(r//2) * self.uniformizer_pow(r//2)) % self.modulus
 
 
 def PowComputer_relative_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed, prec_type):

@@ -384,8 +384,7 @@ def sets_isom_py(generators, set1, set2):
     if not generators:
         if set1 == set2:
             return list(range(max(set1) + 1))
-        else:
-            return False
+        return False
 
     cdef int i, j, n = len(generators[0]), n_gens = len(generators)
     cdef StabilizerChain *supergroup = SC_new(n)

@@ -16,11 +16,12 @@ as they increase the startup time. Since :issue:`23696` those are imported
 by the doctest framework via a matplotlib import. Again the simple test
 would not work (but we don't have to avoid loading IPython)::
 
+    sage: # long time
     sage: from sage.tests import check_executable
     sage: cmd = "print('numpy' in sys.modules)\n"
-    sage: print(check_executable(["sage", "-c", cmd])[0])  # long time
+    sage: print(check_executable(["python3", "-m", "sage.cli", "-c", cmd])[0])
     False
     sage: cmd = "print('pyparsing' in sys.modules)\n"
-    sage: print(check_executable(["sage", "-c", cmd])[0])  # long time
+    sage: print(check_executable(["python3", "-m", "sage.cli", "-c", cmd])[0])
     False
 """

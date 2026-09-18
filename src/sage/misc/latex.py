@@ -14,6 +14,9 @@ AUTHORS:
 - William Stein: original implementation
 
 - Joel B. Mohler: latex_variable_name() drastic rewrite and many doc-tests
+
+.. autofunction:: _default_engine
+.. autofunction:: _latex_file_
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -481,7 +484,8 @@ def default_engine():
     system. It is assumed that at least latex is available.
 
     This function is deprecated as part of the public API. There is
-    instead an internal counterpart :func:`_default_engine`, but no
+    instead an internal counterpart
+    :func:`~sage.misc.latex._default_engine`, but no
     stability promises are made with regards to its interface.
 
     EXAMPLES::
@@ -600,7 +604,7 @@ def latex_extra_preamble():
     Return the string containing the user-configured preamble,
     ``sage_latex_macros``, and any user-configured macros.  This is
     used in the :meth:`~Latex.eval` method for the :class:`Latex`
-    class, and in :func:`_latex_file_`; it follows either
+    class, and in :func:`~sage.misc.latex._latex_file_`; it follows either
     ``LATEX_HEADER`` or ``SLIDE_HEADER`` (defined at the top of this
     file) which is a string containing the documentclass and standard
     usepackage commands.
@@ -1605,7 +1609,7 @@ latex.__doc__ = Latex.__call__.__doc__
 def _latex_file_(objects, title='SAGE', debug=False,
                  sep='', tiny=False, math_left='\\[',
                  math_right='\\]',
-                 extra_preamble=''):
+                 extra_preamble='', preview=False):
     r"""nodetex
     Produce a string to be used as a LaTeX file, containing a
     representation of each object in objects.
@@ -1628,6 +1632,9 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
     - ``extra_preamble`` -- string (default: ``''``); extra LaTeX commands;
       inserted before ``'\\begin{document}'``
+
+    - ``preview`` -- boolean (default: ``False``); whether the ``preview``
+      package captures ``page`` environments
 
     This creates a string intended to be a LaTeX file containing the
     LaTeX representations of objects. It contains the following:
@@ -1677,6 +1684,21 @@ def _latex_file_(objects, title='SAGE', debug=False,
         x
         sage: s = sage.misc.latex._latex_file_(blah())
         coucou
+
+    Check that PGF output is captured by ``preview``, while TikZ output keeps
+    the math mode in which it was previously rendered::
+
+        sage: from sage.misc.latex import LatexExpr, _preview_latex_options
+        sage: options = _preview_latex_options()
+        sage: pgf = LatexExpr(r'\begin{pgfpicture}\end{pgfpicture}')
+        sage: pgf_file = _latex_file_(pgf, **options)
+        sage: r'\end{lrbox}\begin{page}' in pgf_file
+        True
+        sage: tikz = LatexExpr(
+        ....:     r'\vcenter{\hbox{$\begin{tikzpicture}\end{tikzpicture}$}}')
+        sage: tikz_file = _latex_file_(tikz, **options)
+        sage: r'\begin{page}$\vcenter' in tikz_file
+        True
     """
     process = True
     if has_latex_attr(objects):
@@ -1705,7 +1727,15 @@ def _latex_file_(objects, title='SAGE', debug=False,
                 s += r'\begin{lrbox}{\pgffigure}' + '\n'
                 s += '%s' % L
                 s += r'\end{lrbox}'
-                s += r'\resizebox{\ifdim\width>\textwidth\textwidth\else\width\fi}{!}{\usebox{\pgffigure}}' + '\n'
+                rbox = (r'\resizebox{'
+                        r'\ifdim\width>\textwidth\textwidth'
+                        r'\else\width'
+                        r'\fi}'
+                        r'{!}{\usebox{\pgffigure}}' + '\n')
+                if preview:
+                    s += '\\begin{page}\n' + rbox + '\\end{page}\n'
+                else:
+                    s += rbox
             elif '\\begin{verbatim}' not in L:
                 s += '%s%s%s' % (math_left, L, math_right)
             else:
@@ -1728,6 +1758,55 @@ def _latex_file_(objects, title='SAGE', debug=False,
         print('----')
 
     return s
+
+
+def _preview_latex_options(margin=None):
+    r"""
+    Return the LaTeX options used to crop output with ``preview``.
+
+    LuaTeX 0.85 renamed the PDF primitives used by the ``preview`` package.
+    Define only the compatibility aliases that ``preview`` needs, instead of
+    requiring the optional ``luatex85`` package.
+
+    INPUT:
+
+    - ``margin`` -- float or ``None`` (default: ``None``); width of the border
+      in millimetres
+
+    TESTS::
+
+        sage: from sage.misc.latex import _preview_latex_options
+        sage: options = _preview_latex_options(5)
+        sage: options['preview']
+        True
+        sage: r'\let\pdfoutput\outputmode' in options['extra_preamble']
+        True
+        sage: r'\setlength\PreviewBorder{5.000000mm}' in options['extra_preamble']
+        True
+    """
+    if margin is None:
+        margin_str = ""
+    else:
+        margin_str = '\n\\setlength\\PreviewBorder{%fmm}' % margin
+
+    lua_compat = r'''\ifdefined\pdfvariable
+\let\pdfoutput\outputmode
+\let\pdfpagewidth\pagewidth
+\let\pdfpageheight\pageheight
+\protected\edef\pdfhorigin{\pdfvariable horigin}
+\protected\edef\pdfvorigin{\pdfvariable vorigin}
+\fi
+'''
+    return {
+        'extra_preamble': (
+            lua_compat
+            + '\\usepackage[tightpage,active]{preview}\n'
+            + '\\PreviewEnvironment{page}%s' % margin_str
+        ),
+        'math_left': '\\begin{page}$',
+        'math_right': '$\\end{page}',
+        'preview': True,
+    }
 
 
 def view(objects, title='Sage', debug=False, sep='', tiny=False,
@@ -1870,15 +1949,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
         ValueError: Unsupported LaTeX engine.
     """
     if tightpage:
-        if margin is None:
-            margin_str = ""
-        else:
-            margin_str = '\n\\setlength\\PreviewBorder{%fmm}' % margin
-        latex_options = {'extra_preamble':
-                         '\\usepackage[tightpage,active]{preview}\n' +
-                         '\\PreviewEnvironment{page}%s' % margin_str,
-                         'math_left': '\\begin{page}$',
-                         'math_right': '$\\end{page}'}
+        latex_options = _preview_latex_options(margin)
         title = None
     else:
         latex_options = {}
@@ -1923,7 +1994,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
     # the viewer has closed. This function is synchronous and waits
     # for the process to complete...
     def run_viewer():
-        run([*viewer.split(), output_file], capture_output=True)
+        run([*viewer.split(), output_file], capture_output=True, check=False)
         tmp.cleanup()
 
     # ...but we execute it asynchronously so that view() completes
@@ -1974,15 +2045,7 @@ def pdf(x, filename, tiny=False, tightpage=True, margin=None, engine=None, debug
         return
 
     if tightpage:
-        if margin is None:
-            margin_str = ""
-        else:
-            margin_str = '\n\\setlength\\PreviewBorder{%fmm}' % margin
-        latex_options = {'extra_preamble':
-                         '\\usepackage[tightpage,active]{preview}\n' +
-                         '\\PreviewEnvironment{page}%s' % margin_str,
-                         'math_left': '\\begin{page}$',
-                         'math_right': '$\\end{page}'}
+        latex_options = _preview_latex_options(margin)
     else:
         latex_options = {}
 

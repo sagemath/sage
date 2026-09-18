@@ -158,13 +158,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             if self._rational_point is not None:
                 if point or obstruction:
                     return True, self._rational_point
-                else:
-                    return True
+                return True
             if self._local_obstruction is not None:
                 if point or obstruction:
                     return False, self._local_obstruction
-                else:
-                    return False
+                return False
             if (not point) and self._finite_obstructions == [] and \
                self._infinite_obstructions == []:
                 if obstruction:

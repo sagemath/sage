@@ -7,7 +7,7 @@ the posets introduced in this module are mutable, i.e., elements can
 be added and removed from a poset at any time.
 
 To get in touch with Sage's "usual" posets, start with the page
-:mod:`Posets <sage.combinat.posets.__init__>` in the reference manual.
+:mod:`Posets <sage.combinat.posets.posets>` in the reference manual.
 
 
 .. _mutable_poset_examples:
@@ -454,10 +454,9 @@ class MutablePosetShell(SageObject):
         """
         if self.is_null():
             return 'null'
-        elif self.is_oo():
+        if self.is_oo():
             return 'oo'
-        else:
-            return repr(self.element)
+        return repr(self.element)
 
     def __hash__(self) -> int:
         r"""
@@ -557,15 +556,13 @@ class MutablePosetShell(SageObject):
             if not self._predecessors_:
                 # null on the left
                 return True
-            else:
-                # oo on the left
-                if other.element is None:
-                    # null or oo on the right
-                    return not other._successors_
-                else:
-                    # not null, not oo on the right
-                    return False
-        elif other.element is None:
+            # oo on the left
+            if other.element is None:
+                # null or oo on the right
+                return not other._successors_
+            # not null, not oo on the right
+            return False
+        if other.element is None:
             # null/oo on the right
             return not other._successors_
 

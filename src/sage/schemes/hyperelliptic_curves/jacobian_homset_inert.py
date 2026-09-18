@@ -1,6 +1,12 @@
 r"""
 Rational point sets on a Jacobian of a hyperelliptic curve (inert case)
 
+
+.. NOTE::
+
+    In the inert case, the current implementation of hyperelliptic
+    Jacobians only supports arithmetic on curves of *even* genus.
+
 AUTHORS:
 
 - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
@@ -54,9 +60,6 @@ class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
         The Mumford presentation of the zero element is given by
         `(1, 0 : g/2)`, `g` is the genus of the hyperelliptic curve.
 
-        NOTE: We require that the genus is even if the hyperelliptic
-        curve is inert.
-
         EXAMPLES::
 
             sage: R.<x> = QQ[]
@@ -74,8 +77,7 @@ class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
         """
         g = self.curve().genus()
         if g % 2:
-            raise ValueError(
-                "unable to perform arithmetic for inert models of odd genus"
-            )
+            raise NotImplementedError('unable to perform arithmetic for inert models of odd genus; '
+                                      'consider extending the base field to adjoin the points at infinity')
         R = self.curve().polynomial_ring()
         return self._morphism_element(self, R.one(), R.zero(), check=check)

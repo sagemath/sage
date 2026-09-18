@@ -96,8 +96,7 @@ cdef inline bint face_issubset_fused(face_t a, face_t b, algorithm_variant algor
     """
     if algorithm_variant is standard:
         return bitset_issubset(a.atoms, b.atoms)
-    else:
-        return bitset_issuperset(a.coatoms, b.coatoms)
+    return bitset_issuperset(a.coatoms, b.coatoms)
 
 cdef inline bint face_issubset(face_t a, face_t b) noexcept nogil:
     return face_issubset_fused(a, b, <standard> 0)

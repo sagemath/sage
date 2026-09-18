@@ -138,10 +138,9 @@ class NumberFieldHomset(RingHomset_generic):
         L = self.list()
         if len(L) != 0:
             return L[0]
-        else:
-            from sage.categories.sets_cat import EmptySetError
-            raise EmptySetError("There is no morphism from {} to {}".format(
-                self.domain(), self.codomain()))
+        from sage.categories.sets_cat import EmptySetError
+        raise EmptySetError("There is no morphism from {} to {}".format(
+            self.domain(), self.codomain()))
 
     def _repr_(self):
         r"""
@@ -158,8 +157,7 @@ class NumberFieldHomset(RingHomset_generic):
         C = self.codomain()
         if C == D:
             return "Automorphism group of {}".format(D)
-        else:
-            return "Set of field embeddings from {} to {}".format(D, C)
+        return "Set of field embeddings from {} to {}".format(D, C)
 
     def order(self):
         """

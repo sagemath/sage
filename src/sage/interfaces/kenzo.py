@@ -587,7 +587,8 @@ class KenzoChainComplex(KenzoObject):
           representing the differential of the formal combination represented by
           ``comb`` in the chain complex ``self`` in dimension ``dim``. On the other
           hand, if ``dim`` or ``comb`` (or both) take ``None`` value, the differential
-          :class:`KenzoMorphismChainComplex` of ``self`` is returned.
+          :class:`~sage.interfaces.kenzo.KenzoChainComplexMorphism` of
+          ``self`` is returned.
 
         EXAMPLES::
 

@@ -988,7 +988,7 @@ class ToricVariety_field(AmbientSpace):
 
             There is no need to have any relation between ``F`` and the base
             field of ``self``. If you do want to have such a relation, use
-            :meth:`base_extend` instead.
+            :meth:`~sage.schemes.toric.divisor.ToricDivisorGroup.base_extend` instead.
 
         EXAMPLES::
 
@@ -1015,7 +1015,7 @@ class ToricVariety_field(AmbientSpace):
         """
         if self.base_ring() == F:
             return self
-        elif F not in _Fields:
+        if F not in _Fields:
             raise TypeError("need a field to construct a toric variety; got %s"
                             % F)
         else:
@@ -1059,7 +1059,7 @@ class ToricVariety_field(AmbientSpace):
         OUTPUT:
 
         - :class:`scheme morphism
-          <sage.schemes.generic.morphism.SchemeMorphism_polynomial_toric_variety>`
+          <sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety>`
           if the default embedding morphism was defined for ``self``,
           otherwise a :exc:`ValueError` exception is raised.
 
@@ -1787,8 +1787,7 @@ class ToricVariety_field(AmbientSpace):
             AlgebraicScheme_subscheme_toric, AlgebraicScheme_subscheme_affine_toric
         if self.is_affine():
             return AlgebraicScheme_subscheme_affine_toric(self, polynomials)
-        else:
-            return AlgebraicScheme_subscheme_toric(self, polynomials)
+        return AlgebraicScheme_subscheme_toric(self, polynomials)
 
     def Stanley_Reisner_ideal(self):
         r"""
@@ -3341,8 +3340,7 @@ class CohomologyClass(QuotientRingElement):
         p = [x for x in self.lift() if x[1].total_degree() == d]
         if not p:
             return Q.zero()
-        else:
-            return Q.sum(x[0] * x[1] for x in p)
+        return Q.sum(x[0] * x[1] for x in p)
 
     def exp(self):
         r"""

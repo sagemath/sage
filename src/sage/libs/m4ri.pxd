@@ -43,7 +43,7 @@ cdef extern from "m4ri/m4ri.h":
     cdef void mzd_randomize(mzd_t *)
 
     # identity matrix if i%2
-    cdef void mzd_set_ui(mzd_t *, unsigned int )
+    cdef void mzd_set_ui(mzd_t *, unsigned int)
 
     # [A],[B] -> [AB]
     cdef mzd_t *mzd_concat(mzd_t *, mzd_t *, mzd_t *)
@@ -71,13 +71,13 @@ cdef extern from "m4ri/m4ri.h":
     ##############
 
     # set BIT
-    cdef void mzd_write_bit( mzd_t *m, rci_t row, rci_t col, BIT value)
+    cdef void mzd_write_bit(mzd_t *m, rci_t row, rci_t col, BIT value)
 
     # get BIT
-    cdef BIT mzd_read_bit( mzd_t *m, rci_t row, rci_t col )
+    cdef BIT mzd_read_bit(mzd_t *m, rci_t row, rci_t col)
 
     # get BITs (n<=64)
-    cdef m4ri_word mzd_read_bits( mzd_t *m, rci_t row, rci_t col, int n)
+    cdef m4ri_word mzd_read_bits(mzd_t *m, rci_t row, rci_t col, int n)
 
     #####################
     # Row/Column Based IO

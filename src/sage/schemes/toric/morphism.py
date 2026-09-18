@@ -39,7 +39,7 @@ category of toric varieties and toric morphisms.
 
     Do not create the toric morphisms (or any morphism of schemes)
     directly from the ``SchemeMorphism...`` classes. Instead, use the
-    :meth:`~sage.schemes.generic.scheme.hom` method common to all
+    :meth:`~sage.schemes.generic.scheme.Scheme.hom` method common to all
     algebraic schemes to create new homomorphisms.
 
 EXAMPLES:
@@ -388,7 +388,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.
@@ -453,7 +453,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.
@@ -461,7 +461,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
     INPUT:
 
     Same as for
-    :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial`.
+    :class:`~sage.schemes.generic.morphism.SchemeMorphism_polynomial`.
 
     OUTPUT: a :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`
 
@@ -770,7 +770,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.
@@ -857,13 +857,13 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             raise ValueError('the fan morphism codomain must be the fan of the codomain')
         self._fan_morphism = fan_morphism
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         r"""
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``right`` -- another toric morphism
+        - ``other`` -- another toric morphism
 
         OUTPUT: boolean
 
@@ -883,20 +883,20 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: phi == phi.factor()[0]
             False
         """
-        if not isinstance(right, SchemeMorphism_fan_toric_variety):
+        if not isinstance(other, SchemeMorphism_fan_toric_variety):
             return NotImplemented
 
         lx = self.domain()
-        rx = right.domain()
+        rx = other.domain()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
         lx = self.codomain()
-        rx = right.codomain()
+        rx = other.codomain()
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
-        return richcmp(self.fan_morphism(), right.fan_morphism(), op)
+        return richcmp(self.fan_morphism(), other.fan_morphism(), op)
 
     def _composition_(self, right, homset):
         """
@@ -1301,7 +1301,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
     .. WARNING::
 
         You should not create objects of this class directly. Use the
-        :meth:`~sage.schemes.generic.scheme.hom` method of
+        :meth:`~sage.schemes.generic.scheme.Scheme.hom` method of
         :class:`toric varieties
         <sage.schemes.toric.variety.ToricVariety_field>`
         instead.
@@ -1450,14 +1450,12 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         if domain_cone.is_trivial():
             if multiplicity:
                 return self.fiber_generic()
-            else:
-                return self.fiber_generic()[0]
+            return self.fiber_generic()[0]
         embedding = SchemeMorphism_fan_fiber_component_toric_variety(self, domain_cone)
         if multiplicity:
             return embedding.domain(), \
                 self.fan_morphism().index(embedding.base_cone())
-        else:
-            return embedding.domain()
+        return embedding.domain()
 
     @cached_method
     def fiber_dimension(self, codomain_cone):

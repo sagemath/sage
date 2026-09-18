@@ -465,7 +465,7 @@ class TangentVector(FiniteRankFreeModuleElement):
             eff_vector = self
             base_point = self._point
         else:
-            #!# check
+            # check
             # For efficiency, the method FiniteRankFreeModuleMorphism._call_()
             # is called instead of FiniteRankFreeModuleMorphism.__call__()
             eff_vector = mapping.differential(self._point)._call_(self)

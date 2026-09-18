@@ -822,5 +822,44 @@ class SectionFreeModule(FiniteRankFreeModule):
                           symbol_dual=symbol_dual,
                           latex_symbol_dual=latex_symbol_dual)
 
-    set_default_frame = FiniteRankFreeModule.set_default_basis
-    default_frame = FiniteRankFreeModule.default_basis
+    def set_default_frame(self, frame):
+        r"""
+        Set the default frame of ``self``.
+
+        This is a vector-bundle terminology wrapper around
+        :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.set_default_basis`.
+
+        INPUT:
+
+        - ``frame`` -- a local frame on ``self``
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: E = M.vector_bundle(2, 'E')
+            sage: C0 = E.section_module(force_free=True)
+            sage: e = C0.basis('e')
+            sage: f = C0.basis('f')
+            sage: C0.set_default_frame(f)
+            sage: C0.default_frame()
+            Local frame (E|_M, (f_0,f_1))
+        """
+        self.set_default_basis(frame)
+
+    def default_frame(self):
+        r"""
+        Return the default frame of ``self``.
+
+        This is a vector-bundle terminology wrapper around
+        :meth:`~sage.tensor.modules.finite_rank_free_module.FiniteRankFreeModule.default_basis`.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M')
+            sage: E = M.vector_bundle(2, 'E')
+            sage: C0 = E.section_module(force_free=True)
+            sage: e = C0.basis('e')
+            sage: C0.default_frame()
+            Local frame (E|_M, (e_0,e_1))
+        """
+        return self.default_basis()

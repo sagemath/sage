@@ -562,7 +562,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 stream = x._coeff_stream
                 if isinstance(stream, Stream_zero):
                     return self.zero()
-                elif isinstance(stream, Stream_exact):
+                if isinstance(stream, Stream_exact):
                     if x.parent()._arity != 1:
                         # Special case for constant series
                         if stream._degree == 1:
@@ -1790,7 +1790,8 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: f != g
             True
 
-        This can be verified by :meth:`~sage.rings.lazy_series.is_nonzero()`,
+        This can be verified by
+        :meth:`is_nonzero() <sage.rings.lazy_series.LazyModuleElement.is_nonzero>`,
         which only returns ``True`` if the series is known to be nonzero::
 
             sage: (f - g).is_nonzero()
@@ -1889,8 +1890,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run()
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
 
             sage: L = LazyLaurentSeriesRing(QQ, 't')
@@ -1905,11 +1905,11 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
              (unique factorization domains and algebras with basis over
-              (Dedekind domains and euclidean domains
+              (euclidean domains
                and noetherian rings
                and infinite enumerated sets and metric spaces)
               and commutative algebras over
-               (Dedekind domains and euclidean domains
+               (euclidean domains
                 and noetherian rings
                 and infinite enumerated sets and metric spaces)
               and infinite sets)
@@ -1981,6 +1981,25 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         """
         from sage.misc.latex import latex
         return latex(self.base_ring()) + r"(\!({})\!)".format(self.variable_name())
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']
+            sage: L = LazyLaurentSeriesRing(R, 'z')
+            sage: L.variable_names_recursive()
+            ('x', 'z')
+            sage: L.variable_names_recursive(1)
+            ('z',)
+        """
+        return self._laurent_poly_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):
@@ -2119,8 +2138,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: def g(s, i):
             ....:     if i < 0:
             ....:         return 1
-            ....:     else:
-            ....:         return s.coefficient(i - 1) + i
+            ....:     return s.coefficient(i - 1) + i
             sage: e = L.series(g, -5); e
             z^-5 + z^-4 + z^-3 + z^-2 + z^-1 + 1 + 2*z + O(z^2)
             sage: f = e^-1; f
@@ -2570,7 +2588,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             0: A015128: Number of overpartitions of n: ... overlined.
             1: A004402: Expansion of 1 / Sum_{n=-oo..oo} x^(n^2).
 
-        We give an example over the :class:`SymbolicRing` with the input
+        We give an example over the :class:`~sage.symbolic.ring.SymbolicRing` with the input
         `w = e^{\pi i z}` and verify the periodicity::
 
             sage: L.<q> = LazyLaurentSeriesRing(SR)
@@ -2828,7 +2846,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
     def construction(self):
         """
         Return a pair ``(F, R)``, where ``F`` is a
-        :class:`CompletionFunctor` and `R` is a ring, such that
+        :class:`~sage.categories.pushout.CompletionFunctor` and `R` is a ring, such that
         ``F(R)`` returns ``self``.
 
         EXAMPLES::
@@ -2913,6 +2931,25 @@ class LazyPowerSeriesRing(LazySeriesRing):
             return [R.one()]
         return [m.change_ring(R)
                 for m in self._internal_poly_ring.base_ring().monomials_of_degree(n)]
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of this ring and its base rings.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['q']
+            sage: L = LazyPowerSeriesRing(R, 'x, y')
+            sage: L.variable_names_recursive()
+            ('q', 'x', 'y')
+            sage: L.variable_names_recursive(2)
+            ('x', 'y')
+        """
+        return self._laurent_poly_ring.variable_names_recursive(depth)
 
     @cached_method
     def gen(self, n=0):
@@ -3881,6 +3918,60 @@ class LazySymmetricFunctions(LazyCompletionGradedAlgebra):
     """
     Element = LazySymmetricFunction
 
+    @cached_method
+    def combinatorial_logarithm(self):
+        r"""
+        Return the plethystic inverse of the complete homogeneous
+        symmetric function series `h_1 + h_2 + \dots`.
+
+        Let `H_+ = \sum_{n \ge 1} h_n`. This method computes the unique
+        symmetric function `G` such that `H_+ \circ G = p_1`, where
+        `\circ` denotes plethystic substitution.
+
+        Because `H_+` is the symmetric function analogue of `\exp(x) - 1`,
+        this series acts as the analogue of the logarithm `\ln(1 + x)`
+        under plethysm.
+
+        We use Equation (2.42) in [Labelle2013]_ for the
+        implementation.
+
+        EXAMPLES::
+
+            sage: p = SymmetricFunctions(QQ).power()
+            sage: L = LazySymmetricFunctions(p)
+            sage: L.combinatorial_logarithm().truncate(5)
+            p[1] + (-1/2*p[1,1]-1/2*p[2]) + (1/3*p[1,1,1]-1/3*p[3])
+            + (-1/4*p[1,1,1,1]+1/4*p[2,2])
+
+        We can verify its defining property `\Omega\circ H_+ = H_+
+        \circ\Omega = p_1`::
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: Lh = LazySymmetricFunctions(h)
+            sage: H_plus = Lh(lambda n: h[n] if n > 0 else 0)
+            sage: Lh.combinatorial_logarithm()(H_plus)
+            h[1] + O^7
+
+        We could also revert `H_+`, but this special case can be
+        computed much faster::
+
+            sage: pi = Partition([13, 3, 2, 1, 1, 1, 1, 1])
+            sage: Lh.combinatorial_logarithm()[sum(pi)].coefficient(pi)
+            42
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.arith.all import divisors
+        from sage.arith.misc import moebius
+
+        p = SymmetricFunctions(self.base_ring()).power()
+
+        def coefficient(n):
+            if n == 0:
+                return p.zero()
+            return sum(moebius(d) * (-1)**(k - 1) * p([d] * k)
+                       for d in divisors(n) if (k := n // d)) // n
+
+        return self(coefficient)
 
 ######################################################################
 
@@ -3999,7 +4090,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         elif base_ring in Rings().Commutative():
             category = category.Commutative()
         category = category.Infinite()
-        Parent.__init__(self, base=base_ring, names=names,
+        Parent.__init__(self, base=base_ring, names=names, normalize=False,
                         category=category)
 
     def _repr_(self):

@@ -10,6 +10,10 @@ the automorphism group of the normal closure.
 AUTHORS:
 
 - David Roe (2019): initial version
+
+.. autoclass:: sage.groups.galois_group::_GaloisMixin
+
+.. autoclass:: sage.groups.galois_group::_SubGaloisMixin
 """
 
 from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, AbelianGroup_subgroup

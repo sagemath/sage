@@ -202,7 +202,7 @@ ec = dependency(
   required: get_option('eclib'),
   disabler: true,
 )
-ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
+ecm = cc.find_library('ecm', required: false, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
   'fflas-ffpack',

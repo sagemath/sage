@@ -38,7 +38,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
     which define the mapping on elements of a basis.
 
     This class is not supposed to be instantiated directly; the user should
-    use instead the method :meth:`sage.rings.module.free_module.FreeModule_generic.pseudoHom`
+    use instead the method :meth:`~sage.modules.free_module.FreeModule_generic.pseudoHom`
     to create a space of pseudomorphisms.
 
     TESTS::
@@ -224,7 +224,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: H.ore_ring('y')
             Ore Polynomial Ring in y over Finite Field in z of size 7^3 twisted by z |--> z^7
         """
-        return self._ore.change_var(var)
+        return self._ore.change_variable_name(var)
 
     def matrix_space(self):
         r"""

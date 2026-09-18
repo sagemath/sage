@@ -235,7 +235,7 @@ not Sage integers.
 The behaviour of the functions :func:`map` and :func:`filter` has
 changed between Python 2 and Python 3. In Python 3, they return an
 iterator. If you want to return a list like in Python 2 you need to explicitly
-wrap them in :func:`list`::
+wrap them in :class:`list`::
 
     sage: list(map(lambda z: z.cycle_type(), Permutations(3)))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]

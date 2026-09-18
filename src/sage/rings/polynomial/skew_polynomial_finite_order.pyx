@@ -9,7 +9,6 @@ AUTHOR::
 - Arpit Merchant (2016-08-04): improved docstrings, fixed doctests
   and refactored classes and methods
 """
-
 # ***************************************************************************
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
@@ -97,7 +96,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         cdef SkewPolynomial_finite_order_dense powx = <SkewPolynomial_finite_order_dense>self._new_c([zero, one], parent)
         cdef SkewPolynomial_finite_order_dense v
         if (exp % 2 == 1):
-            v = <SkewPolynomial_finite_order_dense>self._new_c([zero,one], parent)
+            v = <SkewPolynomial_finite_order_dense>self._new_c([zero, one], parent)
             if self.degree() == 1:
                 v %= self
         else:
@@ -576,6 +575,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
                 self._optbound = [section(x) for x in bound.list()]
         return center(self._optbound)
 
-     # TODO:
-     # fast multiplication
-     # reduced characteristic polynomial
+    # TODO:
+    # fast multiplication
+    # reduced characteristic polynomial

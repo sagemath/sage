@@ -73,7 +73,7 @@ cdef class FiniteField(Field):
         """
         if category is None:
             category = FiniteFields()
-        Field.__init__(self, base, names, normalize, category)
+        Field.__init__(self, base, names, normalize, category=category)
 
     # The methods __hash__ and __richcmp__ below were copied from
     # sage.misc.fast_methods.WithEqualityById; we cannot inherit from
@@ -124,20 +124,17 @@ cdef class FiniteField(Field):
             False
         """
         if self is other:
-            if m == 2: # ==
+            if m == 2:  # ==
                 return True
-            elif m == 3: # !=
+            if m == 3:  # !=
                 return False
-            else:
-                # <= or >= or NotImplemented
-                return m==1 or m==5 or NotImplemented
-        else:
-            if m == 2:
-                return False
-            elif m == 3:
-                return True
-            else:
-                return NotImplemented
+            # <= or >= or NotImplemented
+            return m == 1 or m == 5 or NotImplemented
+        if m == 2:
+            return False
+        if m == 3:
+            return True
+        return NotImplemented
 
     def __repr__(self) -> str:
         """
@@ -268,6 +265,23 @@ cdef class FiniteField(Field):
             return "ZZ/%s" % self.order()
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
+
+    def _fricas_init_(self):
+        """
+        Return a string representation of this finite field that FriCAS
+        can understand.
+
+        EXAMPLES::
+
+            sage: # optional - fricas
+            sage: fricas(GF(5))
+            PrimeField(5)
+            sage: fricas(GF(5,3))
+            FiniteField(5,3)
+        """
+        if self.degree() == 1:
+            return f'PrimeField({self.characteristic()})'
+        return f'FiniteField({self.characteristic()},{self.degree()})'
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -989,7 +1003,7 @@ cdef class FiniteField(Field):
         .. SEEALSO::
 
             Except for the ``name`` argument, this is identical to the
-            :meth:`modulus` method.
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.modulus` method.
 
         EXAMPLES::
 
@@ -1462,7 +1476,7 @@ cdef class FiniteField(Field):
 
         Check the test above when `a=b=1`, see :issue:`40926`.
         While in general it doesn't make much sense to talk about the generator
-        of a prime finite field (:meth:`gen` returns 1), generic code may find
+        of a prime finite field (:meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.gen` returns 1), generic code may find
         it convenient to always specify the variable name when it is not known
         in advance whether the exponent is 1.
 
@@ -1692,8 +1706,7 @@ cdef class FiniteField(Field):
                     pass
         if map:
             return K, inc
-        else:
-            return K
+        return K
 
     def subfields(self, degree=0, name=None):
         """
@@ -1888,7 +1901,7 @@ cdef class FiniteField(Field):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.ring.Field.an_embedding`
+            :meth:`~sage.categories.fields.Fields.ParentMethods.an_embedding`
 
         EXAMPLES::
 

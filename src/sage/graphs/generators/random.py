@@ -351,7 +351,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None,
         set_random_seed(seed)
 
     complement = False
-    if d1 > n2/2 or d2 > n1/2:
+    if 2 * d1 > n2 or 2 * d2 > n1:
         # We build the complement graph instead
         complement = True
         d1 = n2 - d1
@@ -687,7 +687,8 @@ def RandomGNM(n, m, dense=False, seed=None, immutable=False):
     - ``m`` -- number of edges
 
     - ``dense`` -- whether to use NetworkX's
-      :func:`dense_gnm_random_graph` or :func:`gnm_random_graph`
+      :func:`~networkx.generators.random_graphs.dense_gnm_random_graph` or
+      :func:`~networkx.generators.random_graphs.gnm_random_graph`
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -1720,7 +1721,6 @@ def RandomPartialKTree(n, k, x, seed=None, immutable=False):
                  name=f"Random partial {k}-tree", immutable=True)
 
 
-
 def RandomRegular(d, n, seed=None, immutable=False):
     r"""
     Return a random `d`-regular graph on `n` vertices, or ``False`` on failure.
@@ -2135,7 +2135,8 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None, immutable=False):
     `k`-gon with `n` vertices (including the `k` vertices from the outer face).
     This is a planar graph and comes with a combinatorial embedding. The
     vertices of the root edge are labelled ``-1`` and ``-2`` and the outer face
-    is the face returned by :meth:`Graph.faces` in which ``-1`` and ``-2`` are
+    is the face returned by
+    :meth:`~sage.graphs.generic_graph.GenericGraph.faces` in which ``-1`` and ``-2`` are
     consecutive vertices in this order.
 
     Because some triangulations have nontrivial automorphism
@@ -2371,7 +2372,8 @@ def RandomBicubicPlanar(n, seed=None, immutable=False):
     In the returned graph, the three edges incident to any given
     vertex are colored by the integers 0, 1 and 2.
 
-    .. SEEALSO:: the auxiliary method :func:`blossoming_contour`
+    .. SEEALSO:: the auxiliary function
+       :func:`~sage.graphs.generators.random.blossoming_contour`
 
     EXAMPLES::
 

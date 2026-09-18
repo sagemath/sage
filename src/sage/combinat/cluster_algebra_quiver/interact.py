@@ -13,8 +13,11 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
 
     Only in *Jupyter notebook mode*.
 
-    Not to be called directly. Use the :meth:`interact` methods
-    of :class:`ClusterSeed` and :class:`ClusterQuiver` instead.
+    Not to be called directly. Use the
+    :meth:`~sage.combinat.cluster_algebra_quiver.cluster_seed.ClusterSeed.interact`
+    and
+    :meth:`~sage.combinat.cluster_algebra_quiver.quiver.ClusterQuiver.interact`
+    methods instead.
 
     INPUT:
 

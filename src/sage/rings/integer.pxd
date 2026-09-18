@@ -30,6 +30,9 @@ cdef class Integer(EuclideanDomainElement):
     cdef Integer _divide_knowing_divisible_by(Integer self, Integer right)
     cdef bint _is_power_of(Integer self, Integer n) noexcept
 
+    cpdef bint is_even(self) noexcept
+    cpdef bint is_odd(self) noexcept
+
     cdef bint _pseudoprime_is_prime(self, proof) except -1
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1

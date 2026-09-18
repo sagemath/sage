@@ -431,8 +431,7 @@ class QuotientRingElement(RingElement):
             except NotImplementedError:
                 if R.is_unit():
                     return L * ~R
-                else:
-                    raise
+                raise
 
         # Now the parent is a polynomial ring, so we have an algorithm
         # at our disposal.

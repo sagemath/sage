@@ -5,8 +5,8 @@ The functionality in this module allows to define specific docstrings
 of *instances* of a class, which are different from the class docstring.
 A typical use case is given by cached methods: the documentation of a
 cached method should not be the documentation of the class
-:class:`CachedMethod`; it should be the documentation of the underlying
-method.
+:class:`~sage.misc.cachefunc.CachedMethod`; it should be the documentation of
+the underlying method.
 
 In order to use this, define a class docstring as usual. Also define a
 method ``def _instancedoc_(self)`` which should return the docstring of

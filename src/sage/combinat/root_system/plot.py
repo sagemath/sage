@@ -611,8 +611,10 @@ We conclude with a rank `3 + 1` alcove walk::
 
     #. Draw the tiling of 3D space by the fundamental polygons for
        types A,B,C,D. Hints: use the ``wireframe`` option of
-       :meth:`RootLatticeRealizations.ParentMethods.plot_alcoves` and
-       the ``color`` option of :meth:`plot` to only draw the alcove
+       :meth:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.plot_alcoves`
+       and the ``color`` option of
+       :meth:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.plot`
+       to only draw the alcove
        facets indexed by `0`.
 
 .. TOPIC:: Solution

@@ -486,13 +486,12 @@ cdef class _DegreeSequenceEnumerator:
         Return the degree sequence represented by the current counts.
         """
         cdef list s = []
-        cdef int i, j
+        cdef int i
         cdef int count
 
         for i in range(self.N - 1, -1, -1):
             count = self.seq[i]
-            for j in range(count):
-                s.append(i)
+            s.extend(i for _ in range(count))
 
         return tuple(s)
 

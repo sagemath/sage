@@ -1,8 +1,14 @@
 r"""
 Elliptic curves over a general field
 
-This module defines the class :class:`EllipticCurve_field`, based on
-:class:`EllipticCurve_generic`, for elliptic curves over general fields.
+This module defines the class
+:class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`, based on
+:class:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic`, for
+elliptic curves over general fields.
+
+AUTHORS:
+
+- Travis Morrison, Lorenz Panny (2026): :func:`rational_kernel_polynomials`
 """
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -20,11 +26,12 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.rational_field import QQ
 from sage.misc.misc_c import prod
+from sage.rings.infinity import Infinity as oo
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
 from .constructor import EllipticCurve
-from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from .ell_curve_isogeny import EllipticCurveIsogeny, _construct_isogeny, isogeny_codomain_from_kernel
 from . import ell_generic
 
 
@@ -172,6 +179,25 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: k2 = GF(p^2,'a')
             sage: E.change_ring(k2).is_isomorphic(Et.change_ring(k2))
             True
+
+        TESTS:
+
+        Check that :issue:`42403` is fixed, independently of model or base field::
+
+            sage: E = EllipticCurve(GF(7), [1,0])
+            sage: E.quadratic_twist().is_isomorphic(E)
+            False
+            sage: E = EllipticCurve(GF(7), [0,6,0,8,0])
+            sage: E.quadratic_twist().is_isomorphic(E)
+            False
+            sage: K = GF(7^3, "i")
+            sage: E = EllipticCurve(K, [1,0])
+            sage: E.quadratic_twist().is_isomorphic(E)
+            False
+            sage: F = GF(3^5, "a")
+            sage: E = EllipticCurve_from_j(F(1728))
+            sage: E.quadratic_twist().is_isomorphic(E)
+            False
         """
         K = self.base_ring()
         char = K.characteristic()
@@ -190,6 +216,24 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                         while (x**2 + x + D).roots():
                             D *= a
                 else:
+                    # Handle the case j=1728 and #K=3 mod 4 separately to ensure that
+                    # twist is non-isomorphic if no input D was specified
+                    if char % 4 == 3 and K.degree() % 2 == 1 and self.j_invariant() == 1728:
+                        # Outside of characteristic 3 we have exactly two isomorphism classes,
+                        # given by the parameters [1,0] and [-1,0]
+                        if char > 3:
+                            E0 = EllipticCurve(K, [1,0])
+                            if self.is_isomorphic(E0, field=K):
+                                return EllipticCurve(K, [-1,0])
+                            return E0
+
+                        # Otherwise we are in characteristic 3; here the generic twisting does not
+                        # work exactly if the b-invariant b6 is zero. Note that b2 is zero here.
+                        b2, b4, b6, b8 = self.b_invariants()
+                        # E is isomorphic to [0,b2,0,8*b4,16*b6]
+                        if b6.is_zero():
+                            return EllipticCurve(K, [-8*b4,0])
+
                     # We could take a multiplicative generator but
                     # that might be expensive to compute; otherwise
                     # half the elements will do, and testing squares
@@ -210,7 +254,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         if char != 2:
             b2, b4, b6, b8 = self.b_invariants()
-            # E is isomorphic to  [0,b2,0,8*b4,16*b6]
+            # E is isomorphic to [0,b2,0,8*b4,16*b6]
             return EllipticCurve(K, [0, b2*D, 0, 8*b4*D**2, 16*b6*D**3])
 
         # now char==2
@@ -222,8 +266,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             assert E0.a3() == K(0)
             assert E0.a4() == K(0)
             return EllipticCurve(K, [1, E0.a2() + D, 0, 0, E0.a6()])
-        else:
-            raise ValueError("Quadratic twist not implemented in char 2 when j=0")
+        raise ValueError("Quadratic twist not implemented in char 2 when j=0")
 
     def two_torsion_rank(self):
         r"""
@@ -439,7 +482,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             sage: # needs sage.rings.finite_rings
             sage: E1 = EllipticCurve_from_j(F(0))
-            sage: E2 = E1.quadratic_twist()
+            sage: E2 = E1.quadratic_twist(1)
             sage: D = E1.is_quadratic_twist(E2); D
             1
             sage: E1.is_isomorphic(E2)
@@ -737,7 +780,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         L = self.base_field()
         if L is K:
             return self
-        elif L == K:  # number fields can be equal but not identical
+        if L == K:  # number fields can be equal but not identical
             return self.base_extend(K)
 
         # Construct an embedding f of K in L, and check that the
@@ -827,9 +870,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``n`` -- positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- boolean (default: ``False``); also return an embedding of the
-          :meth:`base_field` into the resulting field
+          :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.base_field` into the resulting field
         - ``kwds`` -- additional keyword arguments passed to
-          :func:`~sage.rings.polynomial.polynomial_element.Polynomial.splitting_field`
+          :meth:`~sage.rings.polynomial.polynomial_element.Polynomial.splitting_field`
 
         OUTPUT:
 
@@ -997,7 +1040,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             has been extended, you may use
             :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
             or
-            :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+            :meth:`sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_basis`.
 
         AUTHORS:
 
@@ -1267,7 +1310,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         factors of `n`.
 
         If ``algorithm`` is ``"structure"``, this method calls
-        :meth:`torsion_subgroup` and
+        :meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup`
+        and
         :meth:`sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
         if algorithm is None:
@@ -1287,7 +1331,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if algorithm == 'structure':
             return E.torsion_subgroup().torsion_subgroup(n)
 
-        elif algorithm == 'divpoly':
+        if algorithm == 'divpoly':
             accP = accQ = E.zero()
 
             for l,m in n.factor():
@@ -1378,15 +1422,15 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
             return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt.order() for pt in gens])
 
-        else:
-            raise ValueError(f'unknown algorithm {algorithm!r}')
+        raise ValueError(f'unknown algorithm {algorithm!r}')
 
     def torsion_gens(self, n, *args, **kwds):
         r"""
         Return a (minimal) set of generators for the `n`-torsion
         subgroup of this elliptic curve.
 
-        This is a thin convenience wrapper around :meth:`torsion_subgroup`;
+        This is a thin convenience wrapper around
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup`;
         all extra arguments ``args`` and keyword arguments ``kwds`` are
         passed on to that method.
 
@@ -1442,7 +1486,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           to be passed on to one of the following methods:
           - :meth:`sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_subgroup()`
           - :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.torsion_subgroup()`
-          - :meth:`sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_field.torsion_subgroup()`
+          - :meth:`sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup()`
 
         EXAMPLES::
 
@@ -1573,8 +1617,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           isogenies.  This algorithm is selected by giving as the
           ``kernel`` parameter a monic polynomial (or a coefficient list
           in little endian) which will define the kernel of the isogeny.
-          Kohel's algorithm is currently only implemented for cyclic
-          isogenies, with the exception of `[2]`.
+          The direct implementation handles odd-degree kernel polynomials
+          and kernel polynomials contained in the 2-torsion; kernel
+          polynomials with both a nontrivial 2-torsion part and a
+          nontrivial odd part are decomposed into a composite of an
+          even-degree and an odd-degree isogeny.
 
         - √élu Algorithm (see
           :mod:`~sage.schemes.elliptic_curves.hom_velusqrt`):
@@ -1658,7 +1705,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``velu_sqrt_bound`` -- integer (default: ``None``); establish the highest
           (prime) degree for which the ``'traditional'`` algorithm should be selected
           instead of ``'velusqrt'``. If ``None``, the default value from
-          :class:`~sage.schemes.elliptic_curves.hom_velusqrt._VeluBoundObj` is used.
+          ``_VeluBoundObj`` is used.
           This value is initially set to 1000, but can be modified by the user.
           If an integer is supplied and the isogeny computation goes through the
           ``'factored'`` algorithm, the same integer is supplied to each factor.
@@ -1753,6 +1800,21 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               From: Elliptic Curve defined by y^2 + x*y = x^3 + x + 2 over Finite Field of size 31
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + 2*x + 26 over Finite Field of size 31
 
+        Kernel polynomials with both a nontrivial 2-torsion part and a
+        nontrivial odd part are decomposed without constructing kernel
+        points (:issue:`42023`)::
+
+            sage: F = GF(419)
+            sage: E = EllipticCurve(F, [1, 0])
+            sage: R.<x> = F[]
+            sage: phi = E.isogeny(x^3 - 25*x^2 + x)
+            sage: [f.degree() for f in phi.factors()]
+            [2, 3]
+            sage: phi.codomain()
+            Elliptic Curve defined by y^2 = x^3 + 141*x + 269 over Finite Field of size 419
+            sage: phi.kernel_polynomial()
+            x^3 + 394*x^2 + x
+
         Multiple ways to set the ``velu_sqrt_bound``::
 
             sage: E = EllipticCurve_from_j(GF(97)(42))
@@ -1841,19 +1903,33 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
         if algorithm == "velusqrt":
             from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
-            return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
+            phi = EllipticCurveHom_velusqrt(self, kernel)
+            if model is not None:
+                if codomain is not None:
+                    raise ValueError("cannot specify a codomain curve and model name simultaneously")
+                from sage.schemes.elliptic_curves.ell_field import compute_model
+                codomain = compute_model(phi.codomain(), model)
+            if codomain is not None:
+                phi = phi.codomain().isomorphism_to(codomain) * phi
+            return phi
         if algorithm == "factored":
             from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+            if len(phi.factors()) == 1:
+                phi = phi.factors()[0]
+            return phi
         if algorithm == "traditional":
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
+            return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
         if kernel is not None:
             # Check for multiple points or point of known order
             kernel_is_list = isinstance(kernel, (list, tuple))
             if kernel_is_list and kernel[0] in self and len(kernel) > 1:
                 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                if len(phi.factors()) == 1:
+                    phi = phi.factors()[0]
+                return phi
 
             if not kernel_is_list or (len(kernel) == 1 and kernel[0] in self):
                 # Single point on the curve; unpack the list for compatibility with velusqrt
@@ -1873,11 +1949,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # Otherwise fall back to the standard case
                 elif known_order:
                     from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-                    return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
-        try:
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
-        except AttributeError as e:
-            raise RuntimeError("Unable to construct isogeny: %s" % e)
+                    phi = EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
+                    if len(phi.factors()) == 1:
+                        phi = phi.factors()[0]
+                    return phi
+
+        return _construct_isogeny(self, kernel, codomain, degree, model, check=check)
 
     def isogeny_codomain(self, kernel):
         r"""
@@ -2256,10 +2333,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.isogenies_prime_degree(13)
             [Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 878063*x + 845666 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 626451*x + 440563 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 375648*x + 342776 over Finite Field of size 1000003]
+                to Elliptic Curve defined by y^2 = x^3 + 37327*x + 182964 over Finite Field of size 1000003]
             sage: E.isogenies_prime_degree(max_l=13)
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
@@ -2272,10 +2349,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 to Elliptic Curve defined by y^2 = x^3 + 999960*x + 78 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 878063*x + 845666 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 626451*x + 440563 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 375648*x + 342776 over Finite Field of size 1000003]
+                to Elliptic Curve defined by y^2 = x^3 + 37327*x + 182964 over Finite Field of size 1000003]
             sage: E.isogenies_prime_degree()  # Default limit of 31
             [Isogeny of degree 2
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
@@ -2288,10 +2365,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 to Elliptic Curve defined by y^2 = x^3 + 999960*x + 78 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 878063*x + 845666 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 626451*x + 440563 over Finite Field of size 1000003,
              Isogeny of degree 13
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
-                to Elliptic Curve defined by y^2 = x^3 + 375648*x + 342776 over Finite Field of size 1000003,
+                to Elliptic Curve defined by y^2 = x^3 + 37327*x + 182964 over Finite Field of size 1000003,
              Isogeny of degree 17
               from Elliptic Curve defined by y^2 = x^3 + 7*x + 8 over Finite Field of size 1000003
                 to Elliptic Curve defined by y^2 = x^3 + 347438*x + 594729 over Finite Field of size 1000003,
@@ -2714,8 +2791,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise ValueError("Second argument is not an Elliptic Curve.")
         if self.is_isomorphic(other):
             return True
-        else:
-            raise NotImplementedError("Only implemented for isomorphic curves over general fields.")
+        raise NotImplementedError("Only implemented for isomorphic curves over general fields.")
 
     def weierstrass_p(self, prec=20, algorithm=None):
         r"""
@@ -3089,6 +3165,412 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         return self.frobenius() not in ZZ
 
+    def xDBL(self, xP):
+        r"""
+        Return the `x`-coordinate of `[2]P` given the `x`-coordinate of `P`.
+
+        INPUT:
+
+        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
+          alternatively, a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `[2]P`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
+        a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        .. NOTE::
+
+            This method is intended to be a fast, low-level API.
+            It performs no checks or type conversions.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP = 53
+            sage: P = E.lift_x(xP); P
+            (53 : 55 : 1)
+            sage: E.xDBL(xP)
+            30
+            sage: 2 * P
+            (30 : 3 : 1)
+
+        This method works even if the `y`-coordinate associated to
+        the given `x`-coordinate is irrational::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP = 1
+            sage: EE = E.change_ring(GF((127, 2)))
+            sage: P = EE.lift_x(xP); P
+            (1 : 48*z2 + 103 : 1)
+            sage: E.xDBL(xP)
+            38
+            sage: 2 * P
+            (38 : 125*z2 + 1 : 1)
+
+        There is also a projective version that avoids inversions in the base field::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP = seq((117, 7), E.base_field())
+            sage: xQ = seq((98, 11), E.base_field())
+            sage: P = E.lift_x(xP[0] / xP[1]); P
+            (53 : 55 : 1)
+            sage: xR = E.xDBL(xP); xR
+            (100, 88)
+            sage: xR[0] / xR[1]
+            30
+            sage: 2 * P
+            (30 : 3 : 1)
+
+        .. TODO::
+
+            This method could, but does currently not, implement a specialized faster
+            version for the case `Z=1`.
+
+        TESTS:
+
+        Random testing::
+
+            sage: F = GF((random_prime(100, lbound=5), randrange(1,7)))
+            sage: E = choice(EllipticCurve(j=F.random_element()).twists()).short_weierstrass_model()
+            sage: P = E.random_point()
+            sage: xP = P.x() if P else oo
+            sage: xR = (2*P).x() if 2*P else oo
+            sage: E.xDBL(xP) == xR
+            True
+
+        Projectively::
+
+            sage: F = GF((random_prime(100, lbound=5), randrange(1,7)))
+            sage: E = choice(EllipticCurve(j=F.random_element()).twists()).short_weierstrass_model()
+            sage: P = E.random_point()
+            sage: Q = E.random_point()
+            sage: PQ = P - Q
+            sage: xP = P[::2] if P else (1,0)
+            sage: xR = (2*P)[::2] if 2*P else (1,0)
+            sage: xS = E.xDBL(xP)
+            sage: xR[0] * xS[1] == xS[0] * xR[1]
+            True
+        """
+        if any(self.a_invariants()[:-2]):
+            raise NotImplementedError('only implemented for short Weierstrass curves')
+
+        proj = isinstance(xP, (tuple, list))
+        if proj:
+            XP, ZP = xP
+        else:
+            XP, ZP = ((xP, 1) if xP != oo else (1, 0))
+
+        if not ZP:
+            return xP
+
+        a, b = self.a_invariants()[-2:]
+
+        # https://hyperelliptic.org/EFD/g1p/auto-code/shortw/xz/doubling/dbl-2002-it-2.op3
+        T1 = XP**2
+        T2 = ZP**2
+        T3 = a * T2
+        T4 = T1 - T3
+        T5 = T4**2
+        T6 = b * T2
+        T7 = XP * ZP
+        T8 = T6 * T7
+        T9 = 8 * T8
+        X3 = T5 - T9
+        T10 = T1 + T3
+        T11 = T7 * T10
+        T12 = T6 * T2
+        T13 = T11 + T12
+        Z3 = T13 + T13
+        Z3 += Z3
+
+        if proj:
+            return X3, Z3
+        if not Z3:
+            return oo
+        return X3 / Z3
+
+    def xADD(self, xP, xQ, xPQ):
+        r"""
+        Return the `x`-coordinate of `P + Q` given the `x`-coordinates of `P`, `Q`, and `P - Q`.
+
+        It is required that ``xP \neq xQ``.
+
+        INPUT:
+
+        - ``xP``, ``xQ``, ``xPQ`` -- `x`-coordinates of points `P`, `Q`, and `P-Q` on this curve,
+          or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively, each of these values should
+          be a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `P + Q`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
+        a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        .. NOTE::
+
+            This method is intended to be a fast, low-level API.
+            It performs no checks or type conversions.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP, xQ = 53, 32
+            sage: P = E.lift_x(xP); P
+            (53 : 55 : 1)
+            sage: Q = E.lift_x(xQ); Q
+            (32 : 57 : 1)
+            sage: xPQ = (P - Q).x(); xPQ
+            14
+            sage: E.xADD(xP, xQ, xPQ)
+            59
+            sage: P + Q
+            (59 : 0 : 1)
+
+        This method works even if the `y`-coordinate associated to (some or all)
+        of the given `x`-coordinates is irrational::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP, xQ = 1, 2
+            sage: EE = E.change_ring(GF((127, 2)))
+            sage: P = EE.lift_x(xP); P
+            (1 : 48*z2 + 103 : 1)
+            sage: Q = EE.lift_x(xQ); Q
+            (2 : 43*z2 + 42 : 1)
+            sage: xPQ = GF(127)((P - Q).x()); xPQ
+            116
+            sage: E.xADD(xP, xQ, xPQ)
+            87
+            sage: P + Q
+            (87 : z2 + 63 : 1)
+
+        There is also a projective version that avoids inversions in the base field::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP = seq((117, 7), E.base_field())
+            sage: xQ = seq((98, 11), E.base_field())
+            sage: P = E.lift_x(xP[0] / xP[1]); P
+            (53 : 55 : 1)
+            sage: Q = E.lift_x(xQ[0] / xQ[1]); Q
+            (32 : 57 : 1)
+            sage: xPQ = (42 * (P - Q).x(), 42); xPQ
+            (80, 42)
+            sage: xR = E.xADD(xP, xQ, xPQ); xR
+            (19, 24)
+            sage: xR[0] / xR[1]
+            59
+            sage: P + Q
+            (59 : 0 : 1)
+
+        .. TODO::
+
+            This method could, but does currently not, implement a specialized faster
+            version for (various combinations of) the cases `Z=1`.
+
+        TESTS:
+
+        Random testing::
+
+            sage: F = GF((random_prime(100, lbound=5), randrange(1,7)))
+            sage: E = choice(EllipticCurve(j=F.random_element()).twists()).short_weierstrass_model()
+            sage: P = E.random_point()
+            sage: Q = E.random_point()
+            sage: PQ = P - Q
+            sage: xP = P.x() if P else oo
+            sage: xQ = Q.x() if Q else oo
+            sage: xPQ = PQ.x() if PQ else oo
+            sage: xR = (P + Q).x() if P + Q else oo
+            sage: E.xADD(xP, xQ, xPQ) == xR
+            True
+
+        Projectively::
+
+            sage: F = GF((random_prime(100, lbound=5), randrange(1,7)))
+            sage: E = choice(EllipticCurve(j=F.random_element()).twists()).short_weierstrass_model()
+            sage: P = E.random_point()
+            sage: Q = E.random_point()
+            sage: PQ = P - Q
+            sage: xP = P[::2] if P else (1,0)
+            sage: xQ = Q[::2] if Q else (1,0)
+            sage: xPQ = PQ[::2] if PQ else (1,0)
+            sage: xR = (P + Q)[::2] if P + Q else (1,0)
+            sage: xS = E.xADD(xP, xQ, xPQ)
+            sage: xR[0] * xS[1] == xS[0] * xR[1]
+            True
+        """
+        if any(self.a_invariants()[:-2]):
+            raise NotImplementedError('only implemented for short Weierstrass curves')
+
+        proj = isinstance(xP, (tuple, list))
+        if proj != isinstance(xQ, (tuple, list)) or proj != isinstance(xPQ, (tuple, list)):
+            raise ValueError('given x-coordinates must either all be affine or all be projective')
+        if proj:
+            XP, ZP = xP
+            XQ, ZQ = xQ
+            XPQ, ZPQ = xPQ
+        else:
+            XP, ZP = ((xP, 1) if xP != oo else (1, 0))
+            XQ, ZQ = ((xQ, 1) if xQ != oo else (1, 0))
+            XPQ, ZPQ = ((xPQ, 1) if xPQ != oo else (1, 0))
+
+        if not ZPQ:
+            return self.xDBL(xP)
+        if not ZP:
+            return xQ
+        if not ZQ:
+            return xP
+
+        a, b = self.a_invariants()[-2:]
+
+        if XPQ:
+            # https://hyperelliptic.org/EFD/g1p/auto-code/shortw/xz/diffadd/dadd-2002-it-3.op3
+            T1 = XP * XQ
+            T2 = ZP * ZQ
+            T3 = XP * ZQ
+            T4 = ZP * XQ
+            T5 = a * T2
+            T6 = T1 - T5
+            T7 = T6**2
+            T8 = b * T2
+            T9 = T8 + T8
+            T9 += T9
+            T10 = T3 + T4
+            T11 = T9 * T10
+            T12 = T7 - T11
+            X5 = ZPQ * T12
+            T13 = T3 - T4
+            T14 = T13**2
+            Z5 = XPQ * T14
+        else:
+            # https://hyperelliptic.org/EFD/g1p/auto-code/shortw/xz/diffadd/dadd-2002-it-4.op3
+            T1 = XP * XQ
+            T2 = ZP * ZQ
+            T3 = XP * ZQ
+            T4 = XQ * ZP
+            T5 = T3 + T4
+            T6 = a * T2
+            T7 = T1 + T6
+            T8 = T5 * T7
+            T9 = T8 + T8
+            T10 = T2**2
+            T11 = b * T10
+            T12 = T11 + T11
+            T12 += T12
+            T13 = T9 + T12
+            T14 = T3 - T4
+            T15 = T14**2
+            T16 = ZPQ * T13
+            T17 = XPQ * T15
+            X5 = T16 - T17
+            Z5 = ZPQ * T15
+
+        if proj:
+            return X5, Z5
+        if not Z5:
+            return oo
+        return X5/Z5
+
+    def xMUL(self, n, xP):
+        r"""
+        Return the `x`-coordinate of `[n]P` given an integer `n` and the `x`-coordinate of `P`.
+
+        INPUT:
+
+        - ``n`` -- integer
+
+        - ``xP`` -- `x`-coordinate of a point `P` on this curve, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`;
+          alternatively, a tuple `(X,Z)` representing the `x`-coordinate `X/Z`.
+
+        OUTPUT:
+
+        `x`-coordinate of `[n]P`, or :class:`Infinity <sage.rings.infinity.PlusInfinity>`; alternatively,
+        a tuple `(X,Y)` representing the `x`-coordinate `X/Z`.
+
+        .. NOTE::
+
+            This method is intended to be a fast, low-level API.
+            It performs no checks or type conversions.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP = 53
+            sage: P = E.lift_x(xP); P
+            (53 : 55 : 1)
+            sage: E.xMUL(7, xP)
+            32
+            sage: 7 * P
+            (32 : 70 : 1)
+
+        This method works even if the `y`-coordinate associated to
+        the given `x`-coordinate is irrational::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP = 1
+            sage: EE = E.change_ring(GF((127, 2)))
+            sage: P = EE.lift_x(xP); P
+            (1 : 48*z2 + 103 : 1)
+            sage: E.xMUL(42, xP)
+            44
+            sage: 42 * P
+            (44 : 59*z2 + 34 : 1)
+
+        There is also a projective version that avoids inversions in the base field::
+
+            sage: E = EllipticCurve(GF(127), [6, 7])
+            sage: xP = seq((117, 7), E.base_field())
+            sage: P = E.lift_x(xP[0] / xP[1]); P
+            (53 : 55 : 1)
+            sage: xR = E.xMUL(7, xP); xR
+            (116, 83)
+            sage: xR[0] / xR[1]
+            32
+            sage: 7 * P
+            (32 : 70 : 1)
+
+        TESTS:
+
+        Random testing::
+
+            sage: F = GF((random_prime(100, lbound=5), randrange(1,7)))
+            sage: E = choice(EllipticCurve(j=F.random_element()).twists()).short_weierstrass_model()
+            sage: P = E.random_point()
+            sage: xP = P.x() if P else oo
+            sage: n = randrange(-2^99, 2^99)
+            sage: xR = (n * P).x() if n * P else oo
+            sage: E.xMUL(n, xP) == xR
+            True
+
+        Projectively::
+
+            sage: F = GF((random_prime(100, lbound=5), randrange(1,7)))
+            sage: E = choice(EllipticCurve(j=F.random_element()).twists()).short_weierstrass_model()
+            sage: P = E.random_point()
+            sage: xP = P[::2] if P else (1,0)
+            sage: n = randrange(-2^99, 2^99)
+            sage: xR = (n * P)[::2] if n * P else (1,0)
+            sage: xS = E.xMUL(n, xP)
+            sage: xR[0] * xS[1] == xS[0] * xR[1]
+            True
+        """
+        n = ZZ(n).abs()
+        proj = isinstance(xP, (tuple, list))
+        if not n:
+            if proj:
+                return xP[0].parent().zero(), xP[1].parent().one()
+            return oo
+        if n.is_one():
+            return xP
+        R0, R1, diff = xP, self.xDBL(xP), xP
+        for bit in reversed(n.digits(2)[:-1]):
+            R0R1 = self.xADD(R0, R1, diff)
+            diff = self.xADD(R0, R1, R0R1)
+            if bit:
+                R0, R1 = R0R1, self.xDBL(R1)
+            else:
+                R0, R1 = self.xDBL(R0), R0R1
+        return R0
+
 
 def compute_model(E, name):
     r"""
@@ -3146,6 +3628,78 @@ def compute_model(E, name):
         return E.montgomery_model()
 
     raise NotImplementedError(f'cannot compute {name} model')
+
+
+def rational_kernel_polynomials(E, l):
+    r"""
+    Returns an iterator over all kernel polynomials
+    of `E` that define an `\ell`-isogeny.
+
+    The `j`-invariant of `E` must not equal `0` or `1728`.
+
+    INPUT:
+
+    - ``E`` -- elliptic curve
+    - ``l`` -- prime integer
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: E = EllipticCurve('26b1')
+        sage: next(rational_kernel_polynomials(E, 7))
+        x^3 - 3*x^2 - x + 3
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: E = EllipticCurve(GF(419), [1, 280])
+        sage: next(rational_kernel_polynomials(E, 13))
+        x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337
+        sage: next(rational_kernel_polynomials(E, 11))
+        Traceback (most recent call last):
+        ...
+        StopIteration
+
+    ::
+
+        sage: from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
+        sage: list(rational_kernel_polynomials(E, 13))
+        [x^6 + 4*x^5 + 202*x^4 + 282*x^3 + 108*x^2 + 378*x + 337,
+         x^6 + 151*x^5 + 140*x^4 + 392*x^3 + 12*x^2 + 100*x + 333]
+        sage: list(rational_kernel_polynomials(E, 11))
+        []
+
+    ALGORITHM: Adapted from the implementation
+    https://github.com/travismo/beyond-the-SEA/blob/edd845a/isogenies.sage
+    of [MPSW25]_.
+    """
+    if E.j_invariant() in (0, 1728):
+        raise NotImplementedError('the case j(E) ∈ {0, 1728} is currently not supported')
+
+    if any(E.a_invariants()[:-2]):
+        Ew = E.short_weierstrass_model()
+        iso = E.isomorphism_to(Ew)
+    else:
+        Ew = E
+        iso = None
+
+    from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
+    j = E.j_invariant()
+    F = classical_modular_polynomial(l, j)
+    x = F.parent().gen()
+    F //= x**F.valuation(x)
+    F //= (x - 1728)**F.valuation(x - 1728)
+
+    from sage.schemes.elliptic_curves.ell_curve_isogeny import normalized_model, compute_isogeny_kernel_polynomial
+
+    def compute(Etilde):
+        if iso:
+            return (Ew.isogeny(None, Etilde, l) * iso).kernel_polynomial()
+        return compute_isogeny_kernel_polynomial(E, Etilde, l)
+
+    for j in F.roots(multiplicities=False):
+        for Etilde in normalized_model(Ew, j, l, all=True):
+            yield compute(Etilde)
 
 
 def point_of_order(E, n):

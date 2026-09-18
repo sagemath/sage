@@ -27,6 +27,7 @@ from itertools import product
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.composition import Composition
+from sage.combinat.integer_vector import IntegerVector
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.combinat.skew_partition import SkewPartition
@@ -687,8 +688,7 @@ class Diagrams(UniqueRepresentation, Parent):
             O . .
             O O O
 
-            sage: from sage.combinat.composition import Composition
-            sage: a = Composition([4,2,0,2,4])
+            sage: a = IntegerVectors()([4,2,0,2,4])
             sage: Dgms(a).pp()
             O O O O
             O O . .
@@ -710,7 +710,7 @@ class Diagrams(UniqueRepresentation, Parent):
         """
         if isinstance(cells, Polyomino):
             return self.from_polyomino(cells)
-        if isinstance(cells, Composition):
+        if isinstance(cells, (Composition, IntegerVector)):
             return self.from_composition(cells)
         if isinstance(cells, Matrix):
             return self.from_zero_one_matrix(cells)
@@ -773,7 +773,7 @@ class Diagrams(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: alpha = Composition([3,0,2,1,4,4])
+            sage: alpha = IntegerVectors()([3,0,2,1,4,4])
             sage: from sage.combinat.diagram import Diagrams
             sage: Diagrams()(alpha).pp()
             O O O .
@@ -1245,7 +1245,7 @@ class NorthwestDiagrams(Diagrams):
     :meth:`from_partition`. This will return a Ferrer's diagram in the
     set of all northwest diagrams. For many use-cases it is probably better
     to get Ferrer's diagrams by the corresponding method on partitions, namely
-    :meth:`sage.combinat.partitions.Partitions.ferrers_diagram`::
+    :meth:`sage.combinat.partition.Partition.ferrers_diagram`::
 
         sage: mu = Partition([7,3,1,1])
         sage: mu.pp()
@@ -1516,7 +1516,7 @@ def RotheDiagram(w):
         . . . .
 
     Currently, only elements of the set of
-    :class:`sage.combinat.permutations.Permutations` are supported. In
+    :class:`sage.combinat.permutation.Permutations` are supported. In
     particular, elements of permutation groups are not supported::
 
         sage: w = SymmetricGroup(9).an_element()                                        # needs sage.groups

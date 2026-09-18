@@ -45,7 +45,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 import sage.modules.matrix_morphism
-import sage.matrix.matrix_space as matrix_space
+from sage.matrix import matrix_space
 
 from .finite_subgroup import TorsionPoint
 

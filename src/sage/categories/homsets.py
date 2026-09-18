@@ -1,5 +1,7 @@
 r"""
 Homset categories
+
+.. automethod:: sage.categories.homsets::HomsetsCategory._test_homsets_category
 """
 # ****************************************************************************
 #  Copyright (C) 2014 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -262,7 +264,8 @@ class Homsets(Category_singleton):
         sage: AdditiveMagmas().AdditiveUnital().Homsets().is_subcategory(Homsets())
         True
 
-    This is tested in :meth:`HomsetsCategory._test_homsets_category`.
+    This is tested in
+    :meth:`~sage.categories.homsets.HomsetsCategory._test_homsets_category`.
     """
     def super_categories(self):
         """

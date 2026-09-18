@@ -1503,7 +1503,7 @@ class OverconvergentModularFormElement(ModuleElement):
         Return ``True`` if this is an eigenform.
 
         At present this returns ``False`` unless this element was explicitly
-        flagged as an eigenform, using the method :meth:`_notify_eigen`.
+        flagged as an eigenform, using the method ``_notify_eigen``.
 
         EXAMPLES::
 
@@ -1523,7 +1523,7 @@ class OverconvergentModularFormElement(ModuleElement):
         This is the valuation of its `U_p`-eigenvalue.
 
         Raises an error unless this element was explicitly
-        flagged as an eigenform, using the method :meth:`_notify_eigen`.
+        flagged as an eigenform, using the method ``_notify_eigen``.
 
         EXAMPLES::
 
@@ -1545,7 +1545,7 @@ class OverconvergentModularFormElement(ModuleElement):
         Return the `U_p`-eigenvalue of this eigenform.
 
         This raises an error unless this element was explicitly flagged
-        as an eigenform, using the method :meth:`_notify_eigen`.
+        as an eigenform, using the method ``_notify_eigen``.
 
         EXAMPLES::
 
@@ -1819,7 +1819,7 @@ class OverconvergentModularFormElement(ModuleElement):
         Return the additive order of this element.
 
         This implements a required method for all
-        elements deriving from :class:`sage.modules.ModuleElement`.
+        elements deriving from :class:`~sage.structure.element.ModuleElement`.
 
         EXAMPLES::
 

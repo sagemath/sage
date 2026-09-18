@@ -26,6 +26,10 @@ save member functions and commands.
    correctly or work correctly.
 
 -  Objects are zlib compressed for space efficiency.
+
+.. autoclass:: sage.misc.persist::_BasePickler
+
+.. autoclass:: sage.misc.persist::_BaseUnpickler
 """
 
 import io
@@ -410,22 +414,22 @@ def register_unpickle_override(module, name, callable, call_name=None):
     associated objects. The python pickle protocol is described in detail on the
     web and, in particular, in the `python pickling documentation`_. For example, the
     following excerpt from this documentation shows that the unpickling of
-    classes is controlled by their :meth:`__setstate__` method.
+    classes is controlled by their ``__setstate__`` method.
 
     ::
 
         object.__setstate__(state)
 
-            Upon unpickling, if the class also defines the method :meth:`__setstate__`, it is
-            called with the unpickled state. If there is no :meth:`__setstate__` method,
+            Upon unpickling, if the class also defines the method ``__setstate__``, it is
+            called with the unpickled state. If there is no ``__setstate__`` method,
             the pickled state must be a dictionary and its items are assigned to the new
-            instance's dictionary. If a class defines both :meth:`__getstate__` and
-            :meth:`__setstate__`, the state object needn't be a dictionary and these methods
+            instance's dictionary. If a class defines both ``__getstate__`` and
+            ``__setstate__``, the state object needn't be a dictionary and these methods
             can do what they want.
 
     .. _python pickling documentation: https://docs.python.org/library/pickle.html#pickle-protocol
 
-    By implementing a :meth:`__setstate__` method for a class it should be
+    By implementing a ``__setstate__`` method for a class it should be
     possible to fix any unpickling problems for the class. As an example of what
     needs to be done, we show how to unpickle a :class:`CombinatorialObject`
     object using a class which also inherits from
@@ -452,10 +456,10 @@ def register_unpickle_override(module, name, callable, call_name=None):
         KeyError: 0
 
     The problem is that the ``SweetPickle`` has inherited a
-    :meth:`~sage.structure.element.Element.__setstate__` method from
+    ``sage.structure.element.Element.__setstate__`` method from
     :class:`~sage.structure.element.Element` which is not compatible with
     unpickling for :class:`CombinatorialObject`. We can fix this by explicitly
-    defining a new :meth:`__setstate__` method::
+    defining a new ``__setstate__`` method::
 
         sage: class SweeterPickle(CombinatorialObject, Element):
         ....:     def __setstate__(self, state):
@@ -477,7 +481,7 @@ def register_unpickle_override(module, name, callable, call_name=None):
         sage: loads(dumps(SweeterPickle([1, 2, 3])))  # check that pickles work for SweeterPickle
         [1, 2, 3]
 
-    The ``state`` passed to :meth:`__setstate__` will usually be something like
+    The ``state`` passed to ``__setstate__`` will usually be something like
     the instance dictionary of the pickled object, however, with some older
     classes such as :class:`CombinatorialObject` it will be a tuple. In general,
     the ``state`` can be any python object.  ``Sage`` provides a special tool,
@@ -525,10 +529,10 @@ def register_unpickle_override(module, name, callable, call_name=None):
     Pickling for python classes and extension classes, such as cython, is
     different -- again this is discussed in the `python pickling
     documentation`_. For the unpickling of extension classes you need to write
-    a :meth:`__reduce__` method which typically returns a tuple ``(f,
+    a ``__reduce__`` method which typically returns a tuple ``(f,
     args,...)`` such that ``f(*args)`` returns (a copy of) the original object.
     The following code snippet is the
-    :meth:`~sage.rings.integer.Integer.__reduce__` method from
+    ``sage.rings.integer.Integer.__reduce__`` method from
     :class:`sage.rings.integer.Integer`.
 
     .. code-block:: cython

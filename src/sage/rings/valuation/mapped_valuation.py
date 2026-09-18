@@ -226,7 +226,7 @@ class MappedValuation_base(DiscretePseudoValuation):
             sage: v = K.valuation(0)
             sage: w = v.extensions(L)[0]
 
-        As :meth:`_relative_size` misses the bloated term ``x^32``, the
+        As ``_relative_size`` misses the bloated term ``x^32``, the
         following term does not get simplified::
 
             sage: w.simplify(y + x^32)                                                  # needs sage.rings.function_field

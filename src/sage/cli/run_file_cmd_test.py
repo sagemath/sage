@@ -10,7 +10,7 @@ def test_run_file_cmd(capsys, tmp_path):
     options = CliOptions(file=[str(file)])
     run_file_cmd = RunFileCmd(options)
 
-    result = run_file_cmd.run()
+    run_file_cmd.run()
     captured = capsys.readouterr()
     assert captured.out == "5559060566555523\n"
 
@@ -22,6 +22,6 @@ def test_run_file_cmd_with_args(capsys, tmp_path):
         options = CliOptions(file=[str(file), "1", "1"])
         run_file_cmd = RunFileCmd(options)
 
-        result = run_file_cmd.run()
+        run_file_cmd.run()
         captured = capsys.readouterr()
         assert captured.out == "2\n"

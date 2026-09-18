@@ -86,6 +86,7 @@ Miscellaneous Useful Functions
 
    sage/misc/misc
    sage/misc/misc_c
+   sage/misc/derivative
    sage/misc/verbose
 
 Laziness
