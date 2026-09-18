@@ -37,8 +37,8 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.tensor.modules.comp import CompFullyAntiSym, Components
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
-from sage.tensor.modules.comp import Components, CompFullyAntiSym
 
 
 class FreeModuleAltForm(FreeModuleTensor):
@@ -160,7 +160,7 @@ class FreeModuleAltForm(FreeModuleTensor):
 
     the contractions::
 
-        sage: s = a.contract(v) ; s
+        sage: s = a.contract(v, swap_indices=False) ; s
         Linear form on the Rank-3 free module M over the Integer Ring
         sage: s.parent()
         Dual of the Rank-3 free module M over the Integer Ring
@@ -381,7 +381,8 @@ class FreeModuleAltForm(FreeModuleTensor):
         """
         from sage.misc.latex import latex
         from sage.typeset.unicode_characters import unicode_wedge
-        from .format_utilities import is_atomic, FormattedExpansion
+
+        from .format_utilities import FormattedExpansion, is_atomic
         basis, format_spec = self._preparse_display(basis=basis,
                                                     format_spec=format_spec)
         cobasis = basis.dual_basis()
@@ -637,6 +638,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             True
         """
         from sage.typeset.unicode_characters import unicode_wedge
+
         from .format_utilities import is_atomic
         if not isinstance(other, FreeModuleAltForm):
             raise TypeError("the second argument for the exterior product " +
@@ -758,7 +760,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             i_A B = -26 e_1 - 19 e_2 + 8 e_3
             sage: latex(c)
             \iota_{A} B
-            sage: c == a.contract(b)
+            sage: c == a.contract(b, swap_indices=False)
             True
 
         Case  ``p=1`` and ``q=3``::
@@ -769,7 +771,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             Alternating contravariant tensor i_A B of degree 2 on the Rank-3 free module M over the Integer Ring
             sage: c.display()
             i_A B = 15 e_1∧e_2 - 20 e_1∧e_3 - 10 e_2∧e_3
-            sage: c == a.contract(b)
+            sage: c == a.contract(b, swap_indices=False)
             True
 
         Case  ``p=2`` and ``q=2``::
@@ -791,7 +793,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             Element i_A B of the Rank-3 free module M over the Integer Ring
             sage: c.display()
             i_A B = 10 e_1 + 30 e_2 + 20 e_3
-            sage: c == a.contract(0, 1, b, 0, 1)
+            sage: c == a.contract(0, 1, b, 0, 1, swap_indices=False)
             True
 
         Case  ``p=3`` and ``q=3``::
@@ -800,18 +802,18 @@ class FreeModuleAltForm(FreeModuleTensor):
             sage: a[1,2,3] = -2
             sage: c = a.interior_product(b); c
             -60
-            sage: c  == a.contract(0, 1, 2, b, 0, 1, 2)
+            sage: c  == a.contract(0, 1, 2, b, 0, 1, 2, swap_indices=False)
             True
         """
-        from .format_utilities import is_atomic
         from .alternating_contr_tensor import AlternatingContrTensor
+        from .format_utilities import is_atomic
         if not isinstance(alt_tensor, AlternatingContrTensor):
             raise TypeError("{} is not an alternating ".format(alt_tensor) +
                             "contravariant tensor")
         p_res = alt_tensor._tensor_rank - self._tensor_rank  # degree of result
         if self._tensor_rank == 1:
             # Case p = 1:
-            res = self.contract(alt_tensor)
+            res = self.contract(alt_tensor, swap_indices=False)
             # contract() deals efficiently with antisymmetry for p = 1
         else:
             # Case p > 1:
