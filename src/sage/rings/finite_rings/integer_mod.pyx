@@ -1950,6 +1950,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     def _integer_(self, ZZ=None):
         return self.lift()
 
+    def to_integer(self):
+        """
+        Alias for lift, added for compatibility with finite fields
+        """
+        return self.lift()
+
     def _rational_(self):
         return rational.Rational(self.lift())
 
