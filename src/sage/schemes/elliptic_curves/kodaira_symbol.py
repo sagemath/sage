@@ -156,7 +156,7 @@ class KodairaSymbol_class(SageObject):
             self._starred = (n < 0)
             self._pari = n
             return
-        elif not symbol:
+        if not symbol:
             raise TypeError("symbol must be a nonempty string")
         if symbol[0] == "I":
             symbol = symbol[1:]
@@ -284,8 +284,7 @@ class KodairaSymbol_class(SageObject):
             if (self._n == "generic" and other._n is not None) or (other._n == "generic" and self._n is not None):
                 return richcmp(self._starred, other._starred, op)
             return richcmp(self._str, other._str, op)
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def _pari_code(self):
         """

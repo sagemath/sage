@@ -13,6 +13,7 @@ Commutative rings
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model
 
@@ -105,12 +106,6 @@ class CommutativeRings(CategoryWithAxiom):
                 1
 
             TESTS::
-
-                sage: R = CommutativeRing(ZZ)
-                sage: R.krull_dimension()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
 
                 sage: R = GF(9).galois_group().algebra(QQ)
                 sage: R.krull_dimension()
@@ -560,7 +555,7 @@ class CommutativeRings(CategoryWithAxiom):
                 sage: Integers(15).fraction_field()
                 Traceback (most recent call last):
                 ...
-                TypeError: self must be an integral domain.
+                TypeError: self must be an integral domain
 
             TESTS::
 
@@ -573,6 +568,33 @@ class CommutativeRings(CategoryWithAxiom):
                 return self.fraction_field()
             except (NotImplementedError, TypeError):
                 return coercion_model.division_parent(self)
+
+        @cached_method
+        def fraction_field(self):
+            """
+            Return the fraction field of ``self``.
+
+            EXAMPLES::
+
+                sage: R = Integers(389)['x,y']
+                sage: Frac(R)
+                Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
+                sage: R.fraction_field()
+                Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
+            """
+            # from sage.categories.fields import Fields
+            from sage.categories.integral_domains import IntegralDomains
+            try:
+                if self.is_field():
+                    # self in Fields(): would turn SR into a field !
+                    return self
+            except NotImplementedError:
+                pass
+            if self not in IntegralDomains():
+                raise TypeError("self must be an integral domain")
+
+            import sage.rings.fraction_field
+            return sage.rings.fraction_field.FractionField_generic(self)
 
         def extension(self, poly, name=None, names=None, **kwds):
             """
@@ -820,7 +842,7 @@ class CommutativeRings(CategoryWithAxiom):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             PY = PolynomialRing(P, 'y')
             y = PY.gen()
-            sq_rt = PY.quotient(y**2-self, names=name)(y)
+            sq_rt = PY.quotient(y**2 - self, names=name)(y)
             if all:
                 if P.characteristic() == 2:
                     return [sq_rt]

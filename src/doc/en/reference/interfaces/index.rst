@@ -64,6 +64,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/expect
    sage/interfaces/sagespawn
    sage/interfaces/abc
+   sage/interfaces/python_internal
    sage/interfaces/axiom
    sage/interfaces/asir
    sage/interfaces/ecm
@@ -106,7 +107,9 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/sage0
    sage/interfaces/scilab
    sage/interfaces/singular
+   sage/interfaces/snappy
    sage/interfaces/sympy
+   sage/interfaces/tab_completion
    sage/interfaces/tachyon
    sage/interfaces/tides
 

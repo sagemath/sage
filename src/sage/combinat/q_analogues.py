@@ -19,6 +19,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.structure.element import parent
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 
 def q_int(n, q=None):
@@ -358,12 +360,10 @@ def q_binomial(n, k, q=None, algorithm='auto'):
             algorithm = 'naive'
         elif is_polynomial:
             algorithm = 'cyclotomic'
+        elif isinstance(R, SymbolicRing):
+            algorithm = 'cyclotomic'
         else:
-            import sage.rings.abc
-            if isinstance(R, sage.rings.abc.SymbolicRing):
-                algorithm = 'cyclotomic'
-            else:
-                algorithm = 'naive'
+            algorithm = 'naive'
 
     # the algorithms
     while algorithm == 'naive':
@@ -1034,7 +1034,7 @@ def number_of_irreducible_polynomials(n, q=None, m=1):
     In the univariate case, classical formula
     `\frac1n \sum_{d\mid n} \mu(n/d) q^d`
     using the Möbius function `\mu`;
-    see :func:`moebius`.
+    see :class:`~sage.arith.misc.Moebius`.
 
     In the multivariate case, formula from [Bodin2007]_,
     independently [Alekseyev2006]_.

@@ -177,7 +177,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution()` is a synonym for the :meth:`omega()`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega`
             method.
 
             OUTPUT: the image of ``self`` under the omega automorphism

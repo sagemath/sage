@@ -25,7 +25,7 @@ AUTHORS:
 
 - Paul Scurek (2013-08-12): added :func:`~sage.logic.propcalc.get_formulas()`,
   :func:`~sage.logic.propcalc.consistent()`,
-  :func:`~sage.logic.propcalc.valid_consequence()`
+  :func:`~sage.logic.boolformula.is_consequence`
 
 EXAMPLES:
 
@@ -149,13 +149,13 @@ from . import logicparser
 
 def formula(s):
     r"""
-    Return an instance of :class:`BooleanFormula`.
+    Return an instance of :class:`~sage.logic.boolformula.BooleanFormula`.
 
     INPUT:
 
     - ``s`` -- string that contains a logical expression
 
-    OUTPUT: an instance of :class:`BooleanFormula`
+    OUTPUT: an instance of :class:`~sage.logic.boolformula.BooleanFormula`
 
     EXAMPLES:
 
@@ -190,7 +190,7 @@ def formula(s):
 def get_formulas(*statements):
     r"""
     Convert statements and parse trees into instances of
-    :class:`BooleanFormula`.
+    :class:`~sage.logic.boolformula.BooleanFormula`.
 
     INPUT:
 
@@ -264,7 +264,7 @@ def consistent(*formulas) -> bool:
 
     INPUT:
 
-    - ``*formulas`` -- instances of :class:`BooleanFormula`
+    - ``*formulas`` -- instances of :class:`~sage.logic.boolformula.BooleanFormula`
 
     OUTPUT: a boolean value to be determined as follows:
 
@@ -292,7 +292,7 @@ def consistent(*formulas) -> bool:
 
     - Paul Scurek (2013-08-12)
     """
-    # make sure only instances of :class:`BooleanFormula` were passed as arguments
+    # make sure only instances of :class:`~sage.logic.boolformula.BooleanFormula` were passed as arguments
     for formula in formulas[1:]:
         if not isinstance(formula, boolformula.BooleanFormula):
             raise TypeError("consistent() takes BooleanFormula() class instances as arguments")

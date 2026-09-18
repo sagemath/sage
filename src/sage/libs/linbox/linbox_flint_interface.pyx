@@ -52,7 +52,7 @@ cdef void fmpz_mat_get_linbox(linbox.DenseMatrix_integer& A, fmpz_mat_t m) noexc
     NOTE: this function does not appear in the Cython header
     (the .pxd file) in order to keep the header C-compatible
     """
-    cdef size_t i,j
+    cdef size_t i, j
     cdef givaro.Integer t
 
     for i in range(fmpz_mat_nrows(m)):
@@ -68,7 +68,7 @@ cdef void fmpz_mat_set_linbox(fmpz_mat_t m, linbox.DenseMatrix_integer& A) noexc
     NOTE: this function does not appear in the Cython header
     (the .pxd file) in order to keep the header C-compatible
     """
-    cdef size_t i,j
+    cdef size_t i, j
     for i in range(A.rowdim()):
         for j in range(A.coldim()):
             fmpz_set_mpz(fmpz_mat_entry(m, i, j), A.getEntry(i, j).get_mpz_const())

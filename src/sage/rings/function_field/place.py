@@ -381,8 +381,7 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         if isinstance(x, FunctionFieldIdeal) and x.is_prime():
             return self.element_class(self, x)
-        else:
-            raise ValueError("not a prime ideal")
+        raise ValueError("not a prime ideal")
 
     def _an_element_(self) -> FunctionFieldPlace:
         """

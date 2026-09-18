@@ -215,7 +215,7 @@ class RightAngledArtinGroup(ArtinGroup):
         """
         return "Right-angled Artin group of {}".format(self._graph)
 
-    def gen(self, i):
+    def gen(self, i=0):
         """
         Return the ``i``-th generator of ``self``.
 
@@ -223,6 +223,8 @@ class RightAngledArtinGroup(ArtinGroup):
 
             sage: Gamma = graphs.CycleGraph(5)
             sage: G = RightAngledArtinGroup(Gamma)
+            sage: G.gen()
+            v0
             sage: G.gen(2)
             v2
         """
@@ -765,7 +767,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
         from sage.misc.latex import latex
         return " \\wedge ".join('e_{{{}}}'.format(latex(i)) for i in m)
 
-    def gen(self, i):
+    def gen(self, i=0):
         """
         Return the ``i``-th standard generator of the algebra ``self``.
 
@@ -777,12 +779,13 @@ class CohomologyRAAG(CombinatorialFreeModule):
             sage: C4 = graphs.CycleGraph(4)
             sage: A = groups.misc.RightAngledArtin(C4)
             sage: H = A.cohomology()
-            sage: H.gen(0)
+            sage: H.gen()
             e0
             sage: H.gen(1)
             e1
         """
-        return self._from_dict({(i,): self.base_ring().one()}, remove_zeros=False)
+        return self._from_dict({(i,): self.base_ring().one()},
+                               remove_zeros=False)
 
     @cached_method
     def one_basis(self):

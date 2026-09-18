@@ -1,7 +1,8 @@
 r"""
 Subsets
 
-The set of subsets of a finite set. The set can be given as a list or a :class:`Set`
+The set of subsets of a finite set. The set can be given as a list or a
+:func:`sage.sets.set.Set`
 or else as an integer `n` which encodes the set `\{1,2,...,n\}`.
 See :class:`Subsets` for more information and examples.
 

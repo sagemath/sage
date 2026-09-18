@@ -81,11 +81,13 @@ Test that :issue:`15971` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.misc.latex as latex
-from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
+from sage.categories.quotient_fields import QuotientFields
+from sage.categories.rings import Rings
+from sage.misc import latex
 from sage.misc.cachefunc import cached_method
 from sage.rings import fraction_field_element, ring
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.structure.coerce import py_scalar_to_element
 from sage.structure.coerce_maps import CallableConvertMap, DefaultConvertMap_unique
@@ -178,7 +180,7 @@ class FractionField_generic(ring.Field):
             cat = cat.Infinite()
         elif R in Rings().Finite():
             cat = cat.Finite()
-        Parent.__init__(self, base=R, names=R._names, category=cat)
+        Parent.__init__(self, base=R, names=R._names, normalize=False, category=cat)
 
     def __reduce__(self):
         """
@@ -501,6 +503,17 @@ class FractionField_generic(ring.Field):
         s = 'FieldOfFractions(%s)' % self.ring()._magma_init_(magma)
         return magma._with_names(s, self.variable_names())
 
+    def _fricas_init_(self) -> str:
+        r"""
+        Return the FriCAS representation of `\QQ`.
+
+        EXAMPLES::
+
+           sage: fricas(FractionField(GF(3)['t']))   #optional - fricas # indirect doctest
+           Fraction(UnivariatePolynomial(t,PrimeField(3)))
+        """
+        return f'Fraction {self._R._fricas_init_()}'
+
     def ring(self):
         """
         Return the ring that this is the fraction field of.
@@ -514,6 +527,29 @@ class FractionField_generic(ring.Field):
             Multivariate Polynomial Ring in x, y over Rational Field
         """
         return self._R
+
+    def variable_names_recursive(self, depth=infinity):
+        r"""
+        Return the variable names of the underlying ring recursively.
+
+        INPUT:
+
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
+
+        EXAMPLES::
+
+            sage: R = QQ['x']['y']
+            sage: K = R.fraction_field()
+            sage: K.variable_names_recursive()
+            ('x', 'y')
+            sage: K.variable_names_recursive(1)
+            ('y',)
+        """
+        try:
+            variable_names_recursive = self.ring().variable_names_recursive
+        except AttributeError:
+            return ()
+        return variable_names_recursive(depth)
 
     @cached_method
     def is_exact(self):
@@ -727,8 +763,8 @@ class FractionField_generic(ring.Field):
                 return x
             from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             if isinstance(self.ring(), PolynomialRing_generic):
-                from sage.rings.power_series_ring_element import PowerSeries
                 from sage.rings.laurent_series_ring_element import LaurentSeries
+                from sage.rings.power_series_ring_element import PowerSeries
                 if isinstance(x, PowerSeries):
                     from sage.misc.superseded import deprecation
                     deprecation(
@@ -1048,8 +1084,7 @@ class FractionField_generic(ring.Field):
         if g.is_zero():
             if f.is_zero():
                 return f
-            else:
-                return f.monic()
+            return f.monic()
         Pol = f.parent()
         Num = Pol.change_ring(self.base())
         f1 = Num(f.numerator())
@@ -1143,7 +1178,7 @@ class FractionField_1poly_field(FractionField_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.function_field.RationalFunctionField.field`
+            :meth:`sage.rings.function_field.function_field_rational.RationalFunctionField.field`
         """
         from sage.rings.function_field.constructor import FunctionField
         return FunctionField(self.base_ring(), names=self.variable_name())

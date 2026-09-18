@@ -40,7 +40,7 @@ class HTMLText(HTMLMath):
     An HTML widget whose ``description`` is always empty.
 
     This is used to display arbitrary HTML text in interacts without
-    a label. The :func:`text_control` function from SageNB is an alias
+    a label. The SageNB name ``text_control`` is an alias
     of :class:`HTMLText`.
 
     EXAMPLES::
@@ -172,7 +172,7 @@ class EvalWidget(TransformWidget):
         sage: w = EvalToggleButtons(options=["pi", "e"], transform=lambda x: x+x)
         sage: w
         EvalToggleButtons(options=('pi', 'e'), value='pi')
-        sage: w.get_interact_value()                                                    # needs sage.symbolic
+        sage: w.get_interact_value()
         2*pi
     """
     def get_value(self):
@@ -198,7 +198,7 @@ class EvalWidget(TransformWidget):
 
 class TransformIntSlider(TransformWidget, IntSlider):
     """
-    An :class:`ipywidgets.IntSlider` widget with an optional
+    An :class:`~ipywidgets.widgets.widget_int.IntSlider` widget with an optional
     transformation.
 
     EXAMPLES::
@@ -215,7 +215,7 @@ class TransformIntSlider(TransformWidget, IntSlider):
 
 class TransformFloatSlider(TransformWidget, FloatSlider):
     """
-    A :class:`ipywidgets.FloatSlider` widget with an optional
+    A :class:`~ipywidgets.widgets.widget_float.FloatSlider` widget with an optional
     transformation.
 
     EXAMPLES::
@@ -224,7 +224,7 @@ class TransformFloatSlider(TransformWidget, FloatSlider):
         sage: w = TransformFloatSlider(min=0, max=100, value=7, transform=lambda x: sqrt(x))
         sage: w
         TransformFloatSlider(value=7.0)
-        sage: w.get_interact_value()                                                    # needs sage.symbolic
+        sage: w.get_interact_value()
         2.6457513110645907
     """
     pass
@@ -232,7 +232,7 @@ class TransformFloatSlider(TransformWidget, FloatSlider):
 
 class TransformIntRangeSlider(TransformWidget, IntRangeSlider):
     """
-    An :class:`ipywidgets.IntRangeSlider` widget with an optional
+    An :class:`~ipywidgets.widgets.widget_int.IntRangeSlider` widget with an optional
     transformation.
 
     EXAMPLES::
@@ -250,7 +250,7 @@ class TransformIntRangeSlider(TransformWidget, IntRangeSlider):
 
 class TransformFloatRangeSlider(TransformWidget, FloatRangeSlider):
     """
-    An :class:`ipywidgets.FloatRangeSlider` widget with an optional
+    An :class:`~ipywidgets.widgets.widget_float.FloatRangeSlider` widget with an optional
     transformation.
 
     EXAMPLES::
@@ -268,7 +268,7 @@ class TransformFloatRangeSlider(TransformWidget, FloatRangeSlider):
 
 class TransformText(TransformWidget, Text):
     """
-    A :class:`ipywidgets.Text` widget with an optional
+    A :class:`~ipywidgets.widgets.widget_string.Text` widget with an optional
     transformation.
 
     EXAMPLES::
@@ -285,7 +285,7 @@ class TransformText(TransformWidget, Text):
 
 class TransformTextarea(TransformWidget, Textarea):
     """
-    A :class:`ipywidgets.Textarea` widget with an optional
+    A :class:`~ipywidgets.widgets.widget_string.Textarea` widget with an optional
     transformation.
 
     EXAMPLES::
@@ -302,7 +302,7 @@ class TransformTextarea(TransformWidget, Textarea):
 
 class EvalText(EvalWidget, Text):
     """
-    A :class:`ipywidgets.Text` widget which evaluates (using
+    A :class:`~ipywidgets.widgets.widget_string.Text` widget which evaluates (using
     :func:`sage_eval`) its contents and applies an optional transformation.
 
     EXAMPLES::
@@ -311,7 +311,7 @@ class EvalText(EvalWidget, Text):
         sage: w = EvalText(value='pi', transform=lambda x: x^2)
         sage: w
         EvalText(value='pi')
-        sage: w.get_interact_value()                                                    # needs sage.symbolic
+        sage: w.get_interact_value()
         pi^2
     """
     pass
@@ -319,7 +319,7 @@ class EvalText(EvalWidget, Text):
 
 class EvalTextarea(EvalWidget, Textarea):
     """
-    A :class:`ipywidgets.Textarea` widget which evaluates (using
+    A :class:`~ipywidgets.widgets.widget_string.Textarea` widget which evaluates (using
     :func:`sage_eval`) its contents and applies an optional transformation.
 
     EXAMPLES::
@@ -328,7 +328,7 @@ class EvalTextarea(EvalWidget, Textarea):
         sage: w = EvalTextarea(value='pi', transform=lambda x: x^2)
         sage: w
         EvalTextarea(value='pi')
-        sage: w.get_interact_value()                                                    # needs sage.symbolic
+        sage: w.get_interact_value()
         pi^2
     """
     pass
@@ -352,7 +352,7 @@ class SageColorPicker(ColorPicker):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.widgets import SageColorPicker
-            sage: SageColorPicker().get_interact_value()                                # needs sage.plot
+            sage: SageColorPicker().get_interact_value()
             RGB color (0.0, 0.0, 0.0)
         """
         return Color(self.value)
@@ -363,7 +363,8 @@ class Grid(TransformWidget, HBox, ValueWidget):
     A square grid of widgets whose value is a list of lists of the
     values of the individual widgets.
 
-    This is usually created using the :func:`input_grid` function.
+    This is usually created using the
+    :func:`~sage.repl.ipython_kernel.widgets_sagenb.input_grid` function.
 
     EXAMPLES::
 
@@ -399,13 +400,13 @@ class Grid(TransformWidget, HBox, ValueWidget):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.widgets import Grid, EvalText
-            sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),                                  # needs sage.modules
+            sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),
             ....:         description="2x2 matrix", transform=matrix); w
             Grid(value=[[0, 1], [4, 5]],
                         children=(Label(value='2x2 matrix'),
                                   VBox(children=(EvalText(value='0'), EvalText(value='4'))),
                                   VBox(children=(EvalText(value='1'), EvalText(value='5')))))
-            sage: w.get_interact_value()                                                            # needs sage.modules
+            sage: w.get_interact_value()
             [0 1]
             [4 5]
 

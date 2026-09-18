@@ -154,16 +154,14 @@ class DivisorGroup_generic(FormalSums):
             P = x.parent()
             if P is self:
                 return x
-            elif P == self:
+            if P == self:
                 return Divisor_generic(x._data, check=False, reduce=False, parent=self)
-            else:
-                x = x._data
+            x = x._data
         if isinstance(x, list):
             return Divisor_generic(x, check=check, reduce=reduce, parent=self)
         if x == 0:
             return Divisor_generic([], check=False, reduce=False, parent=self)
-        else:
-            return Divisor_generic([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
+        return Divisor_generic([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
 
     def _coerce_map_from_(self, other):
         r"""
@@ -241,7 +239,7 @@ class DivisorGroup_generic(FormalSums):
         """
         if self.base_ring().has_coerce_map_from(R):
             return self
-        elif R.has_coerce_map_from(self.base_ring()):
+        if R.has_coerce_map_from(self.base_ring()):
             return DivisorGroup(self.scheme(), base_ring=R)
 
 
@@ -272,13 +270,11 @@ class DivisorGroup_curve(DivisorGroup_generic):
             P = x.parent()
             if P is self:
                 return x
-            elif P == self:
+            if P == self:
                 return Divisor_curve(x._data, check=False, reduce=False, parent=self)
-            else:
-                x = x._data
+            x = x._data
         if isinstance(x, list):
             return Divisor_curve(x, check=check, reduce=reduce, parent=self)
         if x == 0:
             return Divisor_curve([], check=False, reduce=False, parent=self)
-        else:
-            return Divisor_curve([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)
+        return Divisor_curve([(self.base_ring()(1), x)], check=False, reduce=False, parent=self)

@@ -38,8 +38,8 @@ from sage.structure.factorization import Factorization
 from sage.structure.proof.proof import get_flag
 from sage.structure.richcmp import richcmp
 
-import sage.rings.rational_field as rational_field
-import sage.rings.integer_ring as integer_ring
+from sage.rings import rational_field
+from sage.rings import integer_ring
 QQ = rational_field.RationalField()
 ZZ = integer_ring.IntegerRing()
 
@@ -252,9 +252,11 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         """
         return self.absolute_ideal().free_module()
 
-    def gens_reduced(self):
+    def gens_reduced(self) -> tuple:
         r"""
-        Return a small set of generators for this ideal. This will always
+        Return a small set of generators for this ideal.
+
+        This will always
         return a single generator if one exists (i.e. if the ideal is
         principal), and otherwise two generators.
 

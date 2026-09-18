@@ -23,6 +23,7 @@ from sage.arith.power import generic_power
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.misc_c import prod
 from sage.rings.infinity import infinity
 from sage.structure.richcmp import richcmp
 
@@ -795,10 +796,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             sage: i2.norm() == y.norm()
             True
         """
-        n = 1
-        for e in self.basis_matrix().diagonal():
-            n *= e
-        return n
+        return prod(self.basis_matrix().diagonal())
 
     @cached_method
     def is_prime(self) -> bool:
@@ -838,8 +836,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
             self._beta = prime._beta
             self._beta_matrix = prime._beta_matrix
             return True
-        else:
-            return False
+        return False
 
     ###################################################
     # The following methods are only for prime ideals #
@@ -1176,17 +1173,14 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             if g2:
                 self._gens_two_vecs = (_g1, _g2)
                 return (g1, g2)
-            else:
-                self._gens_two_vecs = (_g1,)
-                return (g1,)
+            self._gens_two_vecs = (_g1,)
+            return (g1,)
 
         # ---- start to search for two generators
 
         hnf = self._hnf
 
-        norm = 1
-        for e in hnf.diagonal():
-            norm *= e
+        norm = prod(hnf.diagonal())
 
         if norm.is_constant():  # unit ideal
             self._gens_two_vecs = (1,)

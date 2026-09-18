@@ -463,7 +463,7 @@ class FiniteWords(AbstractLanguage):
             sage: d == e
             True
         """
-        import sage.combinat.words.word as word
+        from sage.combinat.words import word
         classes = {
             'list': word.FiniteWord_list,
             'str': word.FiniteWord_str,
@@ -1406,7 +1406,7 @@ class InfiniteWords(AbstractLanguage):
             sage: d == e
             True
         """
-        import sage.combinat.words.word as word
+        from sage.combinat.words import word
         return {
             'callable_with_caching': word.InfiniteWord_callable_with_caching,
             'callable': word.InfiniteWord_callable,
@@ -1723,7 +1723,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             {'iter': <class 'sage.combinat.words.word.Word_iter'>,
              'iter_with_caching': <class 'sage.combinat.words.word.Word_iter_with_caching'>}
         """
-        import sage.combinat.words.word as word
+        from sage.combinat.words import word
         return {'iter_with_caching': word.Word_iter_with_caching,
                 'iter': word.Word_iter}
 

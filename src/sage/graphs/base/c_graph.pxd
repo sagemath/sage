@@ -71,8 +71,7 @@ cdef class CGraph:
     cdef inline int _next_neighbor_unsafe(self, int v, int u, bint out, int* l) except -2:
         if out:
             return self.next_out_neighbor_unsafe(v, u, l)
-        else:
-            return self.next_in_neighbor_unsafe(v, u, l)
+        return self.next_in_neighbor_unsafe(v, u, l)
 
     cdef int next_out_neighbor_unsafe(self, int, int, int*) except -2
     cdef int next_in_neighbor_unsafe(self, int, int, int*) except -2

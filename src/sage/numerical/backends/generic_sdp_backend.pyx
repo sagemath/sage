@@ -269,7 +269,8 @@ cdef class GenericSDPBackend:
 
         .. NOTE::
 
-            This method raises :class:`SDPSolverException` exceptions when
+            This method raises :class:`~sage.numerical.sdp.SDPSolverException`
+            exceptions when
             the solution cannot be computed for any reason (none
             exists, or the LP solver was not able to find it, etc...)
 

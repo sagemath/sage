@@ -815,7 +815,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: singular._coerce_map_from_(ZZ)
             True
             sage: singular.coerce_map_from(ZZ)
-            Call morphism:
+            Coercion map:
               From: Integer Ring
               To:   Singular
             sage: singular.coerce_map_from(float)

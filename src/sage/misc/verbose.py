@@ -248,5 +248,4 @@ def get_verbose():
         2
         sage: set_verbose(0)
     """
-    global LEVEL
     return LEVEL

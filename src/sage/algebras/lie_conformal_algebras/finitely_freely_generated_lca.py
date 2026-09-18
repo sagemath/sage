@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 """
 Finitely and Freely Generated Lie Conformal Algebras.
 
@@ -119,9 +118,7 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
 
         .. SEEALSO::
 
-            :meth:`lie_conformal_algebra_generators<\
-            FreelyGeneratedLieConformalAlgebra.\
-            lie_conformal_algebra_generators>`
+            :meth:`~sage.algebras.lie_conformal_algebras.freely_generated_lie_conformal_algebra.FreelyGeneratedLieConformalAlgebra.lie_conformal_algebra_generators`
         """
         return self.lie_conformal_algebra_generators()
 

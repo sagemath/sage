@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.libs.pari (for factorization)
 r"""
 Cubic Hecke Base Rings
 
@@ -1318,6 +1317,7 @@ class CubicHeckeRingOfDefinition(Localization):
 
         EXAMPLES::
 
+            sage: # needs libhomfly
             sage: from sage.knots.knotinfo import KnotInfo
             sage: CHA2 = algebras.CubicHecke(2)
             sage: K5_1 = KnotInfo.K5_1.link()

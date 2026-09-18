@@ -207,8 +207,7 @@ cdef inline size_t find_face(face_t face, face_list_t faces) noexcept:
             return middle + start
     if face_cmp(face, faces_pt[start]) == 0:
         return start
-    else:
-        return -1
+    return -1
 
 cdef inline bint is_contained_in_one_fused(face_t face, face_list_t faces, algorithm_variant algorithm) noexcept nogil:
     """

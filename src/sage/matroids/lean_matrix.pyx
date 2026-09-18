@@ -396,8 +396,7 @@ cdef class LeanMatrix:
         if isinstance(left, LeanMatrix):
             if type(left) is type(right):
                 return (<LeanMatrix>left)._matrix_times_matrix_(right)
-            else:
-                return NotImplemented
+            return NotImplemented
         if left not in (<LeanMatrix>right).base_ring():
             try:
                 left = (<LeanMatrix>right).base_ring()(left)
@@ -2282,13 +2281,10 @@ cdef class QuaternaryMatrix(LeanMatrix):
         if bitset_in(self._M0[r], c):
             if bitset_in(self._M1[r], c):
                 return self._x_one
-            else:
-                return self._one
-        else:
-            if bitset_in(self._M1[r], c):
-                return self._x_zero
-            else:
-                return self._zero
+            return self._one
+        if bitset_in(self._M1[r], c):
+            return self._x_zero
+        return self._zero
 
     cdef inline int set(self, long r, long c, x) except -1:   # Not a Sage matrix operation
         if x == self._zero:
@@ -2432,13 +2428,10 @@ cdef class QuaternaryMatrix(LeanMatrix):
         if a:
             if b:
                 return self._x_one
-            else:
-                return self._one
-        else:
-            if b:
-                return self._x_zero
-            else:
-                return self._zero
+            return self._one
+        if b:
+            return self._x_zero
+        return self._zero
 
     cdef int add_multiple_of_row_c(self, long x, long y, s, bint col_start) except -1:
         """

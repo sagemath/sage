@@ -412,7 +412,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
         self._domain = domain
         self._codomain = codomain
 
-        import sage.combinat.ranker as ranker
+        from sage.combinat import ranker
         ldomain = domain.list()
         lcodomain = codomain.list()
         self._unrank_domain = ranker.unrank_from_list(ldomain)
@@ -573,7 +573,7 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
         self._domain = domain
         self._codomain = domain
 
-        import sage.combinat.ranker as ranker
+        from sage.combinat import ranker
         ldomain = domain.list()
         self._unrank_domain = ranker.unrank_from_list(ldomain)
         self._rank_domain = ranker.rank_from_list(ldomain)

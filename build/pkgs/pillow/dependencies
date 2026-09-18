@@ -1,4 +1,4 @@
- freetype trove_classifiers | $(PYTHON_TOOLCHAIN) $(PYTHON)
+ freetype trove_classifiers | $(PYTHON_TOOLCHAIN) $(PYTHON) pybind11
 
 ----------
 All lines of this file are ignored except the first.

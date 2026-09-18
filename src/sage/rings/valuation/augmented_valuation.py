@@ -235,10 +235,8 @@ class AugmentedValuationFactory(UniqueFactory):
         if mu is not infinity:
             if base_valuation.is_trivial():
                 return parent.__make_element_class__(FinalFiniteAugmentedValuation)(parent, base_valuation, phi, mu)
-            else:
-                return parent.__make_element_class__(NonFinalFiniteAugmentedValuation)(parent, base_valuation, phi, mu)
-        else:
-            return parent.__make_element_class__(InfiniteAugmentedValuation)(parent, base_valuation, phi, mu)
+            return parent.__make_element_class__(NonFinalFiniteAugmentedValuation)(parent, base_valuation, phi, mu)
+        return parent.__make_element_class__(InfiniteAugmentedValuation)(parent, base_valuation, phi, mu)
 
 
 AugmentedValuation = AugmentedValuationFactory("sage.rings.valuation.augmented_valuation.AugmentedValuation")
@@ -652,8 +650,7 @@ class AugmentedValuation_base(InductiveValuation):
         if isinstance(other, AugmentedValuation_base):
             if self(other._phi) >= other._mu:
                 return self >= other._base_valuation
-            else:
-                return False
+            return False
 
         return super()._ge_(other)
 
@@ -862,13 +859,12 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         if self.psi().degree() > 1:
             generator = self._residue_ring_generator_name()
             return base.extension(self.psi(), names=generator)
-        else:
-            # Do not call extension() if self.psi().degree() == 1:
-            # In that case the resulting field appears to be the same as the original field,
-            # however, it is not == to the original field (for finite fields at
-            # least) but a distinct copy (this is a bug in finite field's
-            # extension() implementation.)
-            return base
+        # Do not call extension() if self.psi().degree() == 1:
+        # In that case the resulting field appears to be the same as the original field,
+        # however, it is not == to the original field (for finite fields at
+        # least) but a distinct copy (this is a bug in finite field's
+        # extension() implementation.)
+        return base
 
     def reduce(self, f, check=True, degree_bound=None, coefficients=None, valuations=None):
         r"""
@@ -1749,22 +1745,21 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
                     0 if valuations[i] > error
                     else self._base_valuation.simplify(c, error=error-i*self._mu, force=force, phiadic=True)
                     for (i, c) in enumerate(coefficients)])(self.phi())
-        else:
-            # We iterate through the coefficients of the polynomial (in the
-            # usual x-adic way) starting from the leading coefficient and try
-            # to replace the coefficient with a simpler one recursively.
-            # This is a quite expensive operation but small coefficients can
-            # speed up the surrounding calls drastically.
-            for i in range(f.degree(), -1, -1):
-                j = i // self.phi().degree()
+        # We iterate through the coefficients of the polynomial (in the
+        # usual x-adic way) starting from the leading coefficient and try
+        # to replace the coefficient with a simpler one recursively.
+        # This is a quite expensive operation but small coefficients can
+        # speed up the surrounding calls drastically.
+        for i in range(f.degree(), -1, -1):
+            j = i // self.phi().degree()
 
-                coefficients = list(islice(f.list(), int(j * self.phi().degree()),
-                                           int(i) + 1))
-                g = self.domain()(coefficients)
-                ng = self._base_valuation.simplify(g, error=error-j*self._mu, force=force, phiadic=False)
-                if g != ng:
-                    f -= (g - ng)*self.phi()**j
-            return f
+            coefficients = list(islice(f.list(), int(j * self.phi().degree()),
+                                       int(i) + 1))
+            g = self.domain()(coefficients)
+            ng = self._base_valuation.simplify(g, error=error-j*self._mu, force=force, phiadic=False)
+            if g != ng:
+                f -= (g - ng)*self.phi()**j
+        return f
 
     def lower_bound(self, f):
         r"""
@@ -1805,8 +1800,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
                 if ret is infinity or v < ret:
                     ret = v
             return ret
-        else:
-            return self._base_valuation.lower_bound(f)
+        return self._base_valuation.lower_bound(f)
 
     def upper_bound(self, f):
         r"""

@@ -119,42 +119,40 @@ def handle_AA_and_QQbar(func):
         def forward_map(item):
             if isinstance(item, Ideal_generic):
                 return Ideal([forward_map(g) for g in item.gens()])
-            elif isinstance(item, Polynomial):
+            if isinstance(item, Polynomial):
                 return item.map_coefficients(elem_dict.__getitem__, new_base_ring=numfield)
-            elif isinstance(item, MPolynomial):
+            if isinstance(item, MPolynomial):
                 return item.map_coefficients(elem_dict.__getitem__, new_base_ring=numfield)
-            elif isinstance(item, PolynomialSequence_generic):
+            if isinstance(item, PolynomialSequence_generic):
                 return PolynomialSequence(map(forward_map, item),
                                           immutable=item.is_immutable())
-            elif isinstance(item, list):
+            if isinstance(item, list):
                 return list(map(forward_map, item))
-            elif isinstance(item, dict):
+            if isinstance(item, dict):
                 return {k: forward_map(v) for k,v in item.items()}
-            elif isinstance(item, tuple):
+            if isinstance(item, tuple):
                 return tuple(map(forward_map, item))
-            elif isinstance(item, set):
+            if isinstance(item, set):
                 return set(map(forward_map, list(item)))
-            else:
-                return item
+            return item
 
         def reverse_map(item):
             if isinstance(item, Ideal_generic):
                 return Ideal([reverse_map(g) for g in item.gens()])
-            elif isinstance(item, Polynomial):
+            if isinstance(item, Polynomial):
                 return item.map_coefficients(morphism)
-            elif isinstance(item, MPolynomial):
+            if isinstance(item, MPolynomial):
                 return item.map_coefficients(morphism)
-            elif isinstance(item, PolynomialSequence_generic):
+            if isinstance(item, PolynomialSequence_generic):
                 return PolynomialSequence(map(reverse_map, item),
                                           immutable=item.is_immutable())
-            elif isinstance(item, list):
+            if isinstance(item, list):
                 return list(map(reverse_map, item))
-            elif isinstance(item, tuple):
+            if isinstance(item, tuple):
                 return tuple(map(reverse_map, item))
-            elif isinstance(item, set):
+            if isinstance(item, set):
                 return set(map(reverse_map, list(item)))
-            else:
-                return item
+            return item
 
         args = forward_map(args)
         kwds = forward_map(kwds)

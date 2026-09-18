@@ -231,7 +231,9 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ``Monoids.ParentMethods.one``
 
                 It is constructed as the Cartesian product of the ones of the
-                summands, using their :meth:`~AlgebrasWithBasis.ParentMethods.one_basis` methods.
+                summands, using their
+                :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`
+                methods.
 
                 This implementation does not require multiplication by
                 scalars nor calling cartesian_product. This might help keeping

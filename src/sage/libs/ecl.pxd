@@ -9,17 +9,17 @@
 #       Copyright (C) 2009 Nils Bruin <nbruin@sfu.ca>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 
-#ecl's header files export a very large number of definitions, referred to here
-#as ecl.h bindings. In reality ecl.h includes a couple of other header files.
-#We only include the cython translations of the ones we need here.
+# ecl's header files export a very large number of definitions, referred to here
+# as ecl.h bindings. In reality ecl.h includes a couple of other header files.
+# We only include the cython translations of the ones we need here.
 
-#ecl's naming conventions have been followed as much as possible. These
-#conventions are not entirely consistently used in ECL itself, though, and
-#those cases are corrected in the cython bindings.
-#(see cl_cons and ecl_fixnum)
+# ecl's naming conventions have been followed as much as possible. These
+# conventions are not entirely consistently used in ECL itself, though, and
+# those cases are corrected in the cython bindings.
+# (see cl_cons and ecl_fixnum)
 # cl_*  functions are proper common lisp routines. In particular, input and
 #       return types are cl_object
 # ecl_* functions provide other interfaces. Arguments or return types might
@@ -150,7 +150,7 @@ cdef extern from "ecl/ecl.h":
 
     cl_object cl_safe_eval(cl_object form, cl_object env, cl_object value)
     cl_object cl_eval(cl_object form)
-    cl_object cl_funcall(cl_narg narg, cl_object fun, cl_object arg1,...)
+    cl_object cl_funcall(cl_narg narg, cl_object fun, cl_object arg1, ...)
     cl_object cl_apply(cl_narg narg, cl_object fun, cl_object args)
     cl_object cl_set(cl_object var, cl_object val)
     int ecl_nvalues "NVALUES"

@@ -326,17 +326,16 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
         Eq = self.tate_curve(p)
         reg = Eq.padic_regulator(prec=prec)
         return reg
-    elif self.ap(p) % p == 0:
+    if self.ap(p) % p == 0:
         lp = self.padic_lseries(p)
         reg = lp.Dp_valued_regulator(prec=prec)
         return reg
-    else:
-        if self.rank() == 0:
-            return Qp(p,prec)(1)
-        if height is None:
-            height = self.padic_height(p, prec, check_hypotheses=False)
-        d = self.padic_height_pairing_matrix(p=p, prec=prec, height=height, check_hypotheses=False)
-        return d.determinant()
+    if self.rank() == 0:
+        return Qp(p,prec)(1)
+    if height is None:
+        height = self.padic_height(p, prec, check_hypotheses=False)
+    d = self.padic_height_pairing_matrix(p=p, prec=prec, height=height, check_hypotheses=False)
+    return d.determinant()
 
 
 def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=True):
@@ -800,7 +799,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
     if self.conductor() % p == 0:
         Eq = self.tate_curve(p)
         return Eq.padic_height(prec=prec)
-    elif self.ap(p) % p == 0:
+    if self.ap(p) % p == 0:
         lp = self.padic_lseries(p)
         return lp.Dp_valued_height(prec=prec)
 
@@ -1215,9 +1214,9 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
         temp = (s.derivative() * sinv * finv).derivative() * finv + c + x
 
         # coefficient of t^k in the result should be zero mod p^(N-k-2)
-        for k in range(N-2):
+        for k in range(N - 2):
             assert temp[k].lift().valuation(p) >= N - k - 2, \
-                        "sigma correctness check failed!"
+                "sigma correctness check failed!"
 
     return sigma
 
@@ -1681,7 +1680,7 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
         R, x = PolynomialRing(base_ring, 'x').objgen()
         Q = x**3 + base_ring(X.a4()) * x + base_ring(X.a6())
         frob_p = sage.schemes.hyperelliptic_curves.monsky_washnitzer.matrix_of_frobenius(
-                         Q, p, adjusted_prec, trace)
+            Q, p, adjusted_prec, trace)
 
     else:   # algorithm == "sqrtp"
         p_to_prec = p**prec
@@ -1698,8 +1697,8 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
         trace_of_frobenius = frob_p.trace().lift() % p**prec
         correct_trace = self.ap(p) % p**prec
         assert trace_of_frobenius == correct_trace, \
-                "Consistency check failed! (correct = %s, actual = %s)" % \
-                (correct_trace, trace_of_frobenius)
+            "Consistency check failed! (correct = %s, actual = %s)" % \
+            (correct_trace, trace_of_frobenius)
 
     return frob_p.change_ring(Zp(p, prec))
 

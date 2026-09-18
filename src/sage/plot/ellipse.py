@@ -189,7 +189,7 @@ class Ellipse(GraphicPrimitive):
             sage: ellipse((3,2),1,2)
             Graphics object consisting of 1 graphics primitive
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         from sage.plot.misc import get_matplotlib_linestyle
 
         options = self.options()

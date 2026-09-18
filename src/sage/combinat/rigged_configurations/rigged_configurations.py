@@ -30,7 +30,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.combinat.misc import IterableFunctionCall
-import sage.combinat.tableau as tableau
+from sage.combinat import tableau
 from sage.rings.rational_field import QQ
 from sage.categories.loop_crystals import KirillovReshetikhinCrystals
 from sage.combinat.root_system.cartan_type import CartanType
@@ -879,7 +879,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         where we sum over all (classically highest weight) rigged
         configurations of weight `\lambda` where `cc` is the
         :meth:`cocharge statistic
-        <sage.combinat.rigged_configurations.rigged_configuration_element.RiggedConfigurationElement.cc>`.
+        <sage.combinat.rigged_configurations.rigged_configuration_element.KRRCSimplyLacedElement.cc>`.
         This is known to reduce to
 
         .. MATH::
@@ -897,7 +897,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         This is conjecturally equal to the
         :meth:`one dimensional configuration sum
-        <sage.combinat.crystals.tensor_product.CrystalOfWords.one_dimensional_configuration_sum>`
+        <sage.categories.loop_crystals.KirillovReshetikhinCrystals.TensorProducts.ParentMethods.one_dimensional_configuration_sum>`
         of the corresponding tensor product of Kirillov-Reshetikhin crystals, see [HKOTT2002]_.
         This has been proven in general for type `A_n^{(1)}` [BijectionLRT]_,
         single factors `B^{r,s}` in type `D_n^{(1)}` [OSS2011]_ with the result

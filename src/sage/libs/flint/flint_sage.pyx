@@ -1,7 +1,7 @@
 # distutils: extra_compile_args = -D_XPG6
 
 # WARNING: src/sage/libs/flint/flint_sage.pyx is generated from
-# src/sage_setup/autogen/flint/templates/flint_sage.pyx.template;
+# tools/flint-autogen/flint/templates/flint_sage.pyx.template;
 # please make sure that you are modifying the correct file!
 """
 Flint imports
@@ -32,6 +32,7 @@ from .acb_hypgeom cimport *
 from .acb_mat cimport *
 from .acb_modular cimport *
 from .acb_poly cimport *
+from .acb_theta cimport *
 from .acf cimport *
 from .aprcl cimport *
 from .arb cimport *
@@ -77,6 +78,7 @@ from .fmpz_mod cimport *
 from .fmpz_mod_mat cimport *
 from .fmpz_mod_mpoly cimport *
 from .fmpz_mod_mpoly_factor cimport *
+from .fmpz_mod_mpoly_q cimport *
 from .fmpz_mod_poly cimport *
 from .fmpz_mod_poly_factor cimport *
 from .fmpz_mod_vec cimport *
@@ -117,20 +119,21 @@ from .gr cimport *
 from .gr_generic cimport *
 from .gr_mat cimport *
 from .gr_mpoly cimport *
+from .gr_ore_poly cimport *
 from .gr_poly cimport *
+from .gr_series cimport *
 from .gr_special cimport *
 from .gr_vec cimport *
 from .hypgeom cimport *
 from .long_extras cimport *
+from .longlong cimport *
 from .mag cimport *
-from .mpf_mat cimport *
-from .mpf_vec cimport *
-from .mpfr_mat cimport *
-from .mpfr_vec cimport *
 from .mpn_extras cimport *
+from .mpn_mod cimport *
 from .mpoly cimport *
 from .nf cimport *
 from .nf_elem cimport *
+from .nfloat cimport *
 from .nmod cimport *
 from .nmod_mat cimport *
 from .nmod_mpoly cimport *
@@ -149,6 +152,7 @@ from .qadic cimport *
 from .qfb cimport *
 from .qqbar cimport *
 from .qsieve cimport *
+from .radix cimport *
 from .thread_pool cimport *
 from .ulong_extras cimport *
 

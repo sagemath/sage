@@ -2,7 +2,8 @@ r"""
 Morphisms of modules with a basis
 
 This module contains a hierarchy of classes for morphisms of modules
-with a basis (category :class:`Modules.WithBasis`):
+with a basis (category
+:class:`ModulesWithBasis <sage.categories.modules_with_basis.ModulesWithBasis>`):
 
 - :class:`ModuleMorphism`
 - :class:`ModuleMorphismByLinearity`
@@ -14,15 +15,15 @@ with a basis (category :class:`Modules.WithBasis`):
 
 These are internal classes; it is recommended *not* to use them
 directly, and instead to construct morphisms through the
-:meth:`ModulesWithBasis.ParentMethods.module_morphism` method of the
-domain, or through the homset. See the former for an overview
-of the possible arguments.
+:meth:`ModulesWithBasis.ParentMethods.module_morphism <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.module_morphism>`
+method of the domain, or through the homset. See the former for an
+overview of the possible arguments.
 
 EXAMPLES:
 
 We construct a morphism through the method
-:meth:`ModulesWithBasis.ParentMethods.module_morphism`, by specifying
-the image of each element of the distinguished basis::
+:meth:`ModulesWithBasis.ParentMethods.module_morphism <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.module_morphism>`,
+by specifying the image of each element of the distinguished basis::
 
     sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   x = X.basis()
     sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); y = Y.basis()
@@ -98,6 +99,9 @@ AUTHORS:
 
 Before :issue:`8678`, this hierarchy of classes used to be in
 sage.categories.modules_with_basis; see :issue:`8678` for the complete log.
+
+.. automethod:: ModuleMorphism.__init__
+.. automethod:: TriangularModuleMorphism.__init__
 """
 
 # ****************************************************************************
@@ -148,14 +152,15 @@ class ModuleMorphism(Morphism):
 
     .. SEEALSO::
 
-        - :meth:`ModulesWithBasis.ParentMethods.module_morphism` for
-          usage information and examples;
+        - :meth:`ModulesWithBasis.ParentMethods.module_morphism <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.module_morphism>`
+          for usage information and examples;
         - :mod:`sage.modules.with_basis.morphism` for a technical
           overview of the classes for module morphisms;
         - :class:`ModuleMorphismFromFunction` and
           :class:`TriangularModuleMorphism`.
 
-    The role of this class is minimal: it provides an :meth:`__init__`
+    The role of this class is minimal: it provides an
+    :meth:`__init__ <sage.modules.with_basis.morphism.ModuleMorphism.__init__>`
     method which:
 
     - handles the choice of the default category
@@ -355,7 +360,7 @@ class ModuleMorphismByLinearity(ModuleMorphism):
     def on_basis(self):
         """
         Return the action of this morphism on basis elements, as per
-        :meth:`ModulesWithBasis.Homsets.ElementMethods.on_basis`.
+        :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.MorphismMethods.on_basis`.
 
         OUTPUT:
 
@@ -429,11 +434,13 @@ class TriangularModuleMorphism(ModuleMorphism):
     More precisely, `\phi` is *upper triangular* w.r.t. a total order
     `<` on `J` if, for any `j\in J`, there exists at most one index
     `i\in I` such that the leading support of `\phi(F_i)` is `j` (see
-    :meth:`leading_support()`). We denote by `r(j)` this index,
+    :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ElementMethods.leading_support`).
+    We denote by `r(j)` this index,
     setting `r(j)` to ``None`` if it does not exist.
 
     *Lower triangular* morphisms are defined similarly, taking the
-    trailing support instead (see :meth:`trailing_support()`).
+    trailing support instead (see
+    :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ElementMethods.trailing_support`).
 
     A triangular morphism is *unitriangular* if all its pivots
     (i.e. coefficient of `j` in each `\phi(F[r(j)])`) are `1`.
@@ -468,8 +475,8 @@ class TriangularModuleMorphism(ModuleMorphism):
 
     .. SEEALSO::
 
-        - :meth:`ModulesWithBasis.ParentMethods.module_morphism` for
-          usage information and examples;
+        - :meth:`ModulesWithBasis.ParentMethods.module_morphism <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.module_morphism>`
+          for usage information and examples;
         - :mod:`sage.modules.with_basis.morphism` for a technical
           overview of the classes for module morphisms;
         - :class:`ModuleMorphismFromFunction` and
@@ -480,10 +487,12 @@ class TriangularModuleMorphism(ModuleMorphism):
     .. WARNING::
 
         This class is meant to be used as a complement for a concrete
-        morphism class.  In particular, the :meth:`__init__` method
-        focuses on setting up the data structure describing the
+        morphism class.  In particular, the
+        :meth:`__init__ <sage.modules.with_basis.morphism.TriangularModuleMorphism.__init__>`
+        method focuses on setting up the data structure describing the
         triangularity of the morphism. It purposely does *not* call
-        :meth:`ModuleMorphism.__init__` which should be called
+        :meth:`ModuleMorphism.__init__ <sage.modules.with_basis.morphism.ModuleMorphism.__init__>`
+        which should be called
         (directly or indirectly) beforehand.
 
     EXAMPLES:
@@ -1248,8 +1257,8 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
 
     .. SEEALSO::
 
-        - :meth:`ModulesWithBasis.ParentMethods.module_morphism`
-        - :meth:`ModulesWithBasis.FiniteDimensional.MorphismMethods.matrix`
+        - :meth:`ModulesWithBasis.ParentMethods.module_morphism <sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.module_morphism>`
+        - :meth:`~sage.categories.finite_dimensional_modules_with_basis.FiniteDimensionalModulesWithBasis.MorphismMethods.matrix`
 
     INPUT:
 

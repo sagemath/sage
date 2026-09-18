@@ -83,10 +83,10 @@ class pAdicExtensionGeneric(pAdicGeneric):
         # Far more functionality needs to be added here later.
         if R is self.base_ring():
             return True
-        elif isinstance(R, pAdicExtensionGeneric) and R.fraction_field() is self:
+        if isinstance(R, pAdicExtensionGeneric) and R.fraction_field() is self:
             if self._implementation == 'NTL':
                 return True
-            elif R._prec_type() == 'capped-abs':
+            if R._prec_type() == 'capped-abs':
                 if R.absolute_e() == 1:
                     from sage.rings.padics.qadic_flint_CA import pAdicCoercion_CA_frac_field as coerce_map
                 else:
@@ -179,15 +179,13 @@ class pAdicExtensionGeneric(pAdicGeneric):
                 else:
                     subscript = "%s^{%s}" % (p,f)
                 return "%s_{%s}" % (letter, subscript)
-            else:
-                return "%s[%s]" % (self.base_ring()._repr_(do_latex=True), self.latex_name())
-        else:
-            if type != "":
-                type += " "
-            s = "%s-adic %sExtension %s in %s defined by %s" % (p, type, "Field" if self.is_field() else "Ring", self.variable_name(), self.defining_polynomial(exact=True))
-            if base.absolute_degree() > 1:
-                s += " over its base " + ("field" if base.is_field() else "ring")
-            return s
+            return "%s[%s]" % (self.base_ring()._repr_(do_latex=True), self.latex_name())
+        if type != "":
+            type += " "
+        s = "%s-adic %sExtension %s in %s defined by %s" % (p, type, "Field" if self.is_field() else "Ring", self.variable_name(), self.defining_polynomial(exact=True))
+        if base.absolute_degree() > 1:
+            s += " over its base " + ("field" if base.is_field() else "ring")
+        return s
 
     def _convert_map_from_(self, R):
         """
@@ -348,8 +346,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
             ans = self._given_poly
         if var is None:
             return ans
-        else:
-            return ans.change_variable_name(var)
+        return ans.change_variable_name(var)
 
     def exact_field(self):
         r"""
@@ -458,8 +455,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
         """
         if isinstance(self.ground_ring(), pAdicBaseGeneric):
             return self.ground_ring()
-        else:
-            return self.ground_ring().ground_ring_of_tower()
+        return self.ground_ring().ground_ring_of_tower()
 
     #def is_isomorphic(self, ring):
     #    raise NotImplementedError
@@ -728,8 +724,7 @@ class pAdicModuleIsomorphism(Map):
         # For maps of this type, equality depends only on the parent
         if isinstance(other, pAdicModuleIsomorphism):
             return rich_to_bool(op, 0)
-        else:
-            return rich_to_bool(op, 1)
+        return rich_to_bool(op, 1)
 
 
 class MapFreeModuleToOneStep(pAdicModuleIsomorphism):

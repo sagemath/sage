@@ -70,7 +70,8 @@ cdef class E(Expression):
             [a + b]
 
         Numeric evaluation, conversion to other systems, and pickling works
-        as expected. Note that these are properties of the :func:`exp` function,
+        as expected. Note that these are properties of the
+        :meth:`symbolic exponential function <sage.symbolic.expression.Expression.exp>`,
         not this class::
 
             sage: RR(e)

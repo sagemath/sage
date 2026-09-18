@@ -97,7 +97,7 @@ import weakref
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 import sage.modular.arithgroup.all as arithgroup
-import sage.modular.dirichlet as dirichlet
+from sage.modular import dirichlet
 from sage.rings.integer import Integer
 from sage.rings.rational_field import RationalField
 

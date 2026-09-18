@@ -1055,11 +1055,10 @@ cdef class PowComputer_ZZ_pX(PowComputer_ext):
         if self.e == 1:
             return n
         if n > 0:
-            return (n-1) / self.e + 1
-        elif n < 0:
-            return (-1-n) / self.e + 1
-        else:
-            return 0
+            return (n - 1) / self.e + 1
+        if n < 0:
+            return (-1 - n) / self.e + 1
+        return 0
 
     def _capdiv_test(self, n):
         """

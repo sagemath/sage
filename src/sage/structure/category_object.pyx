@@ -212,14 +212,13 @@ cdef class CategoryObject(SageObject):
         EXAMPLES::
 
             sage: ZZ.categories()
-            [Join of Category of Dedekind domains
-                 and Category of euclidean domains
+            [Join of Category of euclidean domains
                  and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
-             Category of Dedekind domains,
              Category of euclidean domains,
              Category of principal ideal domains,
+             Category of Dedekind domains,
              Category of unique factorization domains,
              Category of gcd domains,
              Category of integral domains,
@@ -253,8 +252,7 @@ cdef class CategoryObject(SageObject):
         cls = type(self)
         if isinstance(cls, DynamicMetaclass):
             return cls.__bases__[0]
-        else:
-            return cls
+        return cls
 
     ##############################################################################
     # Generators
@@ -276,8 +274,8 @@ cdef class CategoryObject(SageObject):
 
         EXAMPLES::
 
-            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs sage.rings.polynomial.pbori
-            sage: B.gens_dict()                                                         # needs sage.rings.polynomial.pbori
+            sage: B.<a,b,c,d> = BooleanPolynomialRing()                                 # needs brial
+            sage: B.gens_dict()                                                         # needs brial
             {'a': a, 'b': b, 'c': c, 'd': d}
 
         TESTS::
@@ -290,8 +288,7 @@ cdef class CategoryObject(SageObject):
         """
         if copy:
             return dict(self.__gens_dict())
-        else:
-            return self.__gens_dict()
+        return self.__gens_dict()
 
     def gens_dict_recursive(self):
         r"""
@@ -623,6 +620,11 @@ cdef class CategoryObject(SageObject):
         return self._base
 
     def base(self):
+        """
+        Return the base ring of ``self``.
+
+        See :meth:`base_ring`.
+        """
         return self._base
 
     ############################################################################

@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 r"""
 Finite dimensional graded commutative algebras
 

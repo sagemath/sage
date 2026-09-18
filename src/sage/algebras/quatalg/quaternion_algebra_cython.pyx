@@ -80,7 +80,7 @@ def integral_matrix_and_denom_from_rational_quaternions(v, reverse=False):
 
     cdef Py_ssize_t i, n=len(v)
     M = MatrixSpace(ZZ, n, 4)
-    cdef Matrix_integer_dense A = M.zero_matrix().__copy__()
+    cdef Matrix_integer_dense A = M.element_class(M, None, False, False)
     if n == 0:
         return A
 
@@ -150,7 +150,7 @@ def rational_matrix_from_rational_quaternions(v, reverse=False):
     """
     cdef Py_ssize_t i, j, n=len(v)
     M = MatrixSpace(QQ, n, 4)
-    cdef Matrix_rational_dense A = M.zero_matrix().__copy__()
+    cdef Matrix_rational_dense A = M.element_class(M, None, False, False)
     if n == 0:
         return A
 

@@ -108,11 +108,12 @@ class FusionDouble(CombinatorialFreeModule):
 
         sage: F.fmatrix(u3, u3, u3, u4)  # not tested
 
-    See :class:`FMatrix` for more information.
+    See :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix` for more information.
 
     Unfortunately beyond `S_3` the number of simple objects is seemingly
     impractical. Although the :class:`FusionDouble` class and its methods
-    work well for groups of moderate size, the :class:`FMatrix` may not be
+    work well for groups of moderate size, the
+    :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix` may not be
     computable. For the dihedral group of order 8, there are already 22
     simple objects, and the F-matrix seems out of reach. The actual limitation
     is that singular will not create a polynomial ring in more than
@@ -721,7 +722,8 @@ class FusionDouble(CombinatorialFreeModule):
 
     def get_fmatrix(self, *args, **kwargs):
         r"""
-        Construct an :class:`FMatrix` factory to solve the pentagon and
+        Construct an :class:`~sage.algebras.fusion_rings.f_matrix.FMatrix`
+        factory to solve the pentagon and
         hexagon relations and organize the resulting F-symbols.
 
         EXAMPLES::

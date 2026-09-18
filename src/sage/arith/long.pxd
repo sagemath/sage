@@ -387,10 +387,8 @@ cdef inline bint is_small_python_int(obj) noexcept:
     """
     Test whether Python object is a small Python integer.
 
-    Meaning that it can be converted to a C long. In Python 2,
-    this is equivalent to it being the ``int`` Python type. In Python
-    3, the ``int`` Python type has unlimited precision so we need to
-    check its range.
+    This means that it can be converted to a C long. In Python 3, the ``int``
+    Python type has unlimited precision so we need to check its range.
 
     EXAMPLES::
 

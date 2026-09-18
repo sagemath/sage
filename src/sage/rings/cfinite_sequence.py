@@ -752,26 +752,25 @@ class CFiniteSequence(FieldElement,
         """
         if self._deg == 0:
             return 'Finite sequence %s, offset %d' % (str(self._a), self._off)
+        if self._c[0] == 1:
+            cstr = 'a(n+%d) = a(n+%d)' % (self._deg, self._deg - 1)
+        elif self._c[0] == -1:
+            cstr = 'a(n+%d) = -a(n+%d)' % (self._deg, self._deg - 1)
         else:
-            if self._c[0] == 1:
-                cstr = 'a(n+%d) = a(n+%d)' % (self._deg, self._deg - 1)
-            elif self._c[0] == -1:
-                cstr = 'a(n+%d) = -a(n+%d)' % (self._deg, self._deg - 1)
-            else:
-                cstr = 'a(n+%d) = %s*a(n+%d)' % (self._deg, str(self._c[0]), self._deg - 1)
-            for i in range(1, self._deg):
-                j = self._deg - i - 1
-                if self._c[i] < 0:
-                    if self._c[i] == -1:
-                        cstr = cstr + ' - a(n+%d)' % (j,)
-                    else:
-                        cstr = cstr + ' - %d*a(n+%d)' % (-(self._c[i]), j)
-                elif self._c[i] > 0:
-                    if self._c[i] == 1:
-                        cstr = cstr + ' + a(n+%d)' % (j,)
-                    else:
-                        cstr = cstr + ' + %d*a(n+%d)' % (self._c[i], j)
-            cstr = cstr.replace('+0', '')
+            cstr = 'a(n+%d) = %s*a(n+%d)' % (self._deg, str(self._c[0]), self._deg - 1)
+        for i in range(1, self._deg):
+            j = self._deg - i - 1
+            if self._c[i] < 0:
+                if self._c[i] == -1:
+                    cstr = cstr + ' - a(n+%d)' % (j,)
+                else:
+                    cstr = cstr + ' - %d*a(n+%d)' % (-(self._c[i]), j)
+            elif self._c[i] > 0:
+                if self._c[i] == 1:
+                    cstr = cstr + ' + a(n+%d)' % (j,)
+                else:
+                    cstr = cstr + ' + %d*a(n+%d)' % (self._c[i], j)
+        cstr = cstr.replace('+0', '')
         astr = ', starting a(%s...) = [' % str(self._off)
         maxwexp = self.numerator().quo_rem(self.denominator())[0].degree() + 1
         for i in range(maxwexp + self._deg):

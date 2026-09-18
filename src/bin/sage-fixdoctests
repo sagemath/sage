@@ -371,9 +371,7 @@ def output_filename(filename):
     if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
         if args.filename[0] == filename:
             return args.filename[1]
-        else:
-            return None
-        return filename + ".fixed"
+        return None
     if args.no_overwrite:
         return filename + ".fixed"
     return filename

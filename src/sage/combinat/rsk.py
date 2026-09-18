@@ -14,11 +14,11 @@ Introduction
 
 The Robinson-Schensted-Knuth (RSK) correspondence is most naturally
 stated as a bijection between generalized permutations (also known
-as two-line arrays, biwords, ...) and pairs of semi-standard Young
+as two-line arrays, biwords, ...) and pairs of semistandard Young
 tableaux `(P, Q)` of identical shape.
 
 The basic operation in the RSK correspondence is a row insertion
-`P \leftarrow k` (where `P` is a given semi-standard Young tableau,
+`P \leftarrow k` (where `P` is a given semistandard Young tableau,
 and `k` is an integer). Different insertion algorithms have been
 implemented for the RSK correspondence and can be specified as
 an argument in the function call.
@@ -53,7 +53,7 @@ available:
 - Edelman-Greene insertion (:class:`~sage.combinat.rsk.RuleEG`), an algorithm
   defined in [EG1987]_ Definition 6.20 (where it is referred to as
   Coxeter-Knuth insertion).
-- Hecke RSK algorithm (:class:`~sage.combinat.rsk.RuleHecke`) , defined
+- Hecke RSK algorithm (:class:`~sage.combinat.rsk.RuleHecke`), defined
   using the Hecke insertion studied in [BKSTY06]_ (but using rows instead
   of columns).
 - Dual RSK insertion (:class:`~sage.combinat.rsk.RuleDualRSK`).
@@ -158,15 +158,17 @@ class Rule(UniqueRepresentation):
     r"""
     Generic base class for an insertion rule for an RSK-type correspondence.
 
-    An instance of this class should implement a method
-    :meth:`insertion` (which can be applied to a letter ``j``
-    and a list ``r``, and modifies ``r`` in place by "bumping"
-    ``j`` into it appropriately; it then returns the bumped-out
-    entry or ``None`` if no such entry exists) and a method
-    :meth:`reverse_insertion` (which does the same but for reverse
-    bumping).
-    It may also implement :meth:`_backward_format_output` and
-    :meth:`_forward_format_output` if the RSK correspondence should
+    An instance of this class should implement
+    :meth:`~sage.combinat.rsk.RuleRSK.insertion` (which can be applied
+    to a letter ``j`` and a list ``r``, and modifies ``r`` in place by
+    "bumping" ``j`` into it appropriately; it then returns the bumped-out
+    entry or ``None`` if no such entry exists) and
+    :meth:`~sage.combinat.rsk.RuleRSK.reverse_insertion` (which does the
+    same but for reverse bumping).
+    It may also implement
+    :meth:`~sage.combinat.rsk.Rule._backward_format_output` and
+    :meth:`~sage.combinat.rsk.Rule._forward_format_output` if the
+    RSK correspondence should
     return something other than (semi)standard tableaux (in the
     forward direction) and matrices or biwords (in the backward
     direction).
@@ -176,11 +178,15 @@ class Rule(UniqueRepresentation):
     `[a_1, a_2, \ldots, a_n]` and `[b_1, b_2, \ldots, b_n]`
     satisfying `(a_1, b_1) \leq (a_2, b_2) \leq \cdots
     \leq (a_n, b_n)` in lexicographic order).
-    Finally, it :meth:`forward_rule` and :meth:`backward_rule`
+    Finally, :meth:`~sage.combinat.rsk.Rule.forward_rule` and
+    :meth:`~sage.combinat.rsk.Rule.backward_rule`
     have to be overridden if the overall structure of the
     RSK correspondence differs from that of classical RSK (see,
     e.g., the case of Hecke insertion, in which a letter bumped
     into a row may change a different row).
+
+    .. automethod:: _forward_format_output
+    .. automethod:: _backward_format_output
     """
 
     def to_pairs(self, obj1=None, obj2=None, check=True):
@@ -198,7 +204,7 @@ class Rule(UniqueRepresentation):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a biword
-          (see the doc of :meth:`forward_rule` for the
+          (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for the
           encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check that
@@ -326,7 +332,7 @@ class Rule(UniqueRepresentation):
 
         - ``p``, ``q`` -- two tableaux of the same shape
 
-        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword)
@@ -428,13 +434,13 @@ class Rule(UniqueRepresentation):
             try:
                 P = StandardTableau(p)
             except ValueError:
-                P = SemistandardTableau(p)
+                P = SemistandardTableau(p, check=False)
             try:
                 Q = StandardTableau(q)
             except ValueError:
-                Q = SemistandardTableau(q)
+                Q = SemistandardTableau(q, check=False)
             return [P, Q]
-        return [SemistandardTableau(p), SemistandardTableau(q)]
+        return [SemistandardTableau(p, check=False), SemistandardTableau(q, check=False)]
 
     def _backward_format_output(self, lower_row, upper_row, output,
                                 p_is_standard, q_is_standard):
@@ -787,7 +793,7 @@ class RuleHecke(Rule):
     Rule for Hecke insertion.
 
     The Hecke RSK algorithm is similar to the classical RSK algorithm,
-    but is defined using the Hecke insertion introduced in in
+    but is defined using the Hecke insertion introduced in
     [BKSTY06]_ (but using rows instead of columns).
     It is not clear in what generality it works; thus, following
     [BKSTY06]_, we shall assume that our biword `p` has top row
@@ -918,7 +924,7 @@ class RuleHecke(Rule):
                 # so we need to add a new row to p and q.
                 p.append([j])
                 q.append([(i,)])
-        return [SemistandardTableau(p), Tableau(q)]
+        return [SemistandardTableau(p, check=False), Tableau(q, check=False)]
 
     def backward_rule(self, p, q, output):
         r"""
@@ -929,7 +935,7 @@ class RuleHecke(Rule):
 
         - ``p``, ``q`` -- two tableaux of the same shape
 
-        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword)
@@ -1302,7 +1308,7 @@ class RuleDualRSK(Rule):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a strict biword
-          (see the doc of :meth:`forward_rule` for the
+          (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for the
           encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check
@@ -1488,20 +1494,21 @@ class RuleDualRSK(Rule):
         """
         from sage.combinat.tableau import Tableau, StandardTableau, SemistandardTableau
 
-        if len(p) == 0:
-            return [StandardTableau([]), StandardTableau([])]
+        if not p:
+            T = StandardTableau([], check=False)
+            return [T, T]
 
         if check_standard:
             try:
                 P = StandardTableau(p)
             except ValueError:
-                P = Tableau(p)
+                P = Tableau(p, check=False)
             try:
                 Q = StandardTableau(q)
             except ValueError:
-                Q = SemistandardTableau(q)
+                Q = SemistandardTableau(q, check=False)
             return [P, Q]
-        return [Tableau(p), SemistandardTableau(q)]
+        return [Tableau(p, check=False), SemistandardTableau(q, check=False)]
 
 
 class RuleCoRSK(RuleRSK):
@@ -1684,7 +1691,7 @@ class RuleCoRSK(RuleRSK):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a strict
-          cobiword (see the doc of :meth:`forward_rule` for
+          cobiword (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for
           the encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check
@@ -1778,13 +1785,13 @@ class RuleCoRSK(RuleRSK):
             try:
                 P = StandardTableau(p)
             except ValueError:
-                P = SemistandardTableau(p)
+                P = SemistandardTableau(p, check=False)
             try:
                 Q = StandardTableau(q)
             except ValueError:
-                Q = Tableau(q)
+                Q = Tableau(q, check=False)
             return [P, Q]
-        return [SemistandardTableau(p), Tableau(q)]
+        return [SemistandardTableau(p, check=False), Tableau(q, check=False)]
 
     def backward_rule(self, p, q, output):
         r"""
@@ -1943,7 +1950,7 @@ class RuleSuperRSK(RuleRSK):
         [[1, 2, 2, 2], [2, 1, 2, 3]]
 
     When applied to two tableaux with only even parity elements, reverse super
-    RSK insertion behaves identically to the usual reversel RSK insertion::
+    RSK insertion behaves identically to the usual reverse RSK insertion::
 
         sage: t1 = Tableau([[1, 2, 5], [3], [4]])
         sage: t2 = Tableau([[1, 2, 3], [4], [5]])
@@ -2004,7 +2011,7 @@ class RuleSuperRSK(RuleRSK):
         INPUT:
 
         - ``obj1``, ``obj2`` -- anything representing a restricted super biword
-          (see the doc of :meth:`forward_rule` for the
+          (see the doc of :meth:`~sage.combinat.rsk.Rule.forward_rule` for the
           encodings accepted)
 
         - ``check`` -- boolean (default: ``True``); whether to check
@@ -2288,18 +2295,19 @@ class RuleSuperRSK(RuleRSK):
         from sage.combinat.super_tableau import SemistandardSuperTableau, StandardSuperTableau
 
         if not p:
-            return [StandardTableau([]), StandardTableau([])]
+            T = StandardTableau([], check=False)
+            return [T, T]
         if check_standard:
             try:
                 P = StandardSuperTableau(p)
             except ValueError:
-                P = SemistandardSuperTableau(p)
+                P = SemistandardSuperTableau(p, check=False)
             try:
                 Q = StandardSuperTableau(q)
             except ValueError:
-                Q = SemistandardSuperTableau(q)
+                Q = SemistandardSuperTableau(q, check=False)
             return [P, Q]
-        return [SemistandardSuperTableau(p), SemistandardSuperTableau(q)]
+        return [SemistandardSuperTableau(p, check=False), SemistandardSuperTableau(q, check=False)]
 
     def backward_rule(self, p, q, output='array'):
         r"""
@@ -2740,8 +2748,8 @@ class RuleStar(Rule):
                 p.append([j])
                 q.append([i])
         from sage.combinat.tableau import Tableau, SemistandardTableau
-        p = Tableau(p)
-        q = SemistandardTableau(q)
+        p = Tableau(p, check=False)
+        q = SemistandardTableau(q, check=False)
         return [p, q]
 
     def backward_rule(self, p, q, output='array'):
@@ -2755,7 +2763,7 @@ class RuleStar(Rule):
           conjugate of a semistandard tableau, whose reading word is fully
           commutative and ``q`` is a semistandard tableau.
 
-        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword) that is an increasing Hecke biword
@@ -2964,12 +2972,12 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
     The Robinson-Schensted-Knuth (RSK) correspondence (also known
     as the RSK algorithm) is most naturally stated as a bijection
     between generalized permutations (also known as two-line arrays,
-    biwords, ...) and pairs of semi-standard Young tableaux `(P, Q)`
+    biwords, ...) and pairs of semistandard Young tableaux `(P, Q)`
     of identical shape. The tableau `P` is known as the insertion
     tableau, and `Q` is known as the recording tableau.
 
     The basic operation is known as row insertion `P \leftarrow k`
-    (where `P` is a given semi-standard Young tableau, and `k` is an
+    (where `P` is a given semistandard Young tableau, and `k` is an
     integer). Row insertion is a recursive algorithm which starts by
     setting `k_0 = k`, and in its `i`-th step inserts the number `k_i`
     into the `i`-th row of `P` (we start counting the rows at `0`) by
@@ -2992,7 +3000,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
     Now the RSK algorithm, applied to a generalized permutation
     `p = ((j_0, k_0), (j_1, k_1), \ldots, (j_{\ell-1}, k_{\ell-1}))`
     (encoded as a lexicographically sorted list of pairs) starts by
-    initializing two semi-standard tableaux `P_0` and `Q_0` as empty
+    initializing two semistandard tableaux `P_0` and `Q_0` as empty
     tableaux. For each nonnegative integer `t` starting at `0`, take
     the pair `(j_t, k_t)` from `p` and set
     `P_{t+1} = P_t \leftarrow k_t`, and define `Q_{t+1}` by adding a
@@ -3043,7 +3051,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
       - ``RSK.rules.EG`` (or ``'EG'``) -- Edelman-Greene insertion
         (only for reduced words of permutations/elements of a type `A`
         Coxeter group) (:class:`~sage.combinat.rsk.RuleEG`)
-      - ``RSK.rules.Hecke`` -- (or ``'hecke'``) Hecke insertion (only
+      - ``RSK.rules.Hecke`` (or ``'hecke'``) -- Hecke insertion (only
         guaranteed for generalized permutations whose top row is strictly
         increasing) (:class:`~sage.combinat.rsk.RuleHecke`)
       - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion
@@ -3175,12 +3183,12 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
 
     INPUT:
 
-    - ``p``, ``q`` -- two semi-standard tableaux of the same shape, or
+    - ``p``, ``q`` -- two semistandard tableaux of the same shape, or
       (in the case when Hecke insertion is used) an increasing tableau and
       a set-valued tableau of the same shape (see the note below for the
       format of the set-valued tableau)
 
-    - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+    - ``output`` -- (default: ``'array'``) if ``q`` is semistandard:
 
       - ``'array'`` -- as a two-line array (i.e. generalized permutation or
         biword)

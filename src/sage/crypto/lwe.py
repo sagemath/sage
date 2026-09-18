@@ -347,8 +347,7 @@ class LWE(SageObject):
         """
         if isinstance(self.secret_dist, str):
             return "LWE(%d, %d, %s, '%s', %s)" % (self.n,self.K.order(),self.D,self.secret_dist, self.m)
-        else:
-            return "LWE(%d, %d, %s, %s, %s)" % (self.n,self.K.order(),self.D,self.secret_dist, self.m)
+        return "LWE(%d, %d, %s, %s, %s)" % (self.n,self.K.order(),self.D,self.secret_dist, self.m)
 
     def __call__(self):
         """
@@ -584,8 +583,7 @@ class RingLWE(SageObject):
         """
         if isinstance(self.secret_dist, str):
             return "RingLWE(%d, %d, %s, %s, '%s', %s)" % (self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
-        else:
-            return "RingLWE(%d, %d, %s, %s, %s, %s)" % (self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
+        return "RingLWE(%d, %d, %s, %s, %s, %s)" % (self.N, self.K.order(), self.D, self.poly, self.secret_dist, self.m)
 
     def __call__(self):
         """
@@ -836,5 +834,4 @@ def balance_sample(s, q=None):
 
     if scalar:
         return vector(ZZ, len(a), [e if e <= q2 else e-q for e in a]), c[0] if c[0] <= q2 else c[0]-q
-    else:
-        return vector(ZZ, len(a), [e if e <= q2 else e-q for e in a]), vector(ZZ, len(c), [e if e <= q2 else e-q for e in c])
+    return vector(ZZ, len(a), [e if e <= q2 else e-q for e in a]), vector(ZZ, len(c), [e if e <= q2 else e-q for e in c])

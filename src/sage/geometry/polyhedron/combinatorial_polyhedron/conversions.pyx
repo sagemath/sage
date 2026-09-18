@@ -191,7 +191,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_dense matrix):
     INPUT:
 
     - ``matrix`` -- an incidence matrix as in
-      :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+      :meth:`sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
       with columns corresponding to equations deleted
       of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
@@ -257,7 +257,7 @@ def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
     INPUT:
 
     - ``matrix`` -- an incidence matrix as in
-      :meth:`sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+      :meth:`sage.geometry.polyhedron.base3.Polyhedron_base3.incidence_matrix`
       with columns corresponding to equations deleted
       of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 

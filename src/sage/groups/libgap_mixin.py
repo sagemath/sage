@@ -196,7 +196,8 @@ class GroupMixinLibGAP:
 
     def cardinality(self):
         """
-        Implement :meth:`EnumeratedSets.ParentMethods.cardinality`.
+        Implement
+        :meth:`~sage.categories.finite_enumerated_sets.FiniteEnumeratedSets.ParentMethods.cardinality`.
 
         EXAMPLES::
 

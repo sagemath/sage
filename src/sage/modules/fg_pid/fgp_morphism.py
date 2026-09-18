@@ -151,9 +151,9 @@ class FGP_Morphism(Morphism):
         """
         return tuple([self(x) for x in self.domain().gens()])
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Comparison of ``self`` and ``right``.
+        Comparison of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -180,10 +180,10 @@ class FGP_Morphism(Morphism):
             True
         """
         a = (self.domain(), self.codomain())
-        b = (right.domain(), right.codomain())
+        b = (other.domain(), other.codomain())
         if a != b:
             return (op == op_NE)
-        return richcmp(self.im_gens(), right.im_gens(), op)
+        return richcmp(self.im_gens(), other.im_gens(), op)
 
     def __add__(self, right):
         """

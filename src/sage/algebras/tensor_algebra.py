@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tensor Algebras
 
@@ -472,7 +471,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         r"""
         Return the product of the basis elements indexed by ``a`` and
         ``b``, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.product_on_basis()`.
+        :meth:`~sage.categories.magmatic_algebras.MagmaticAlgebras.WithBasis.ParentMethods.product_on_basis`.
 
         INPUT:
 

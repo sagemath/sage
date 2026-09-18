@@ -7,16 +7,66 @@ if not sirocco.found()
     disabler: true,
   )
 endif
-# cannot be found via pkg-config
-ecl = cc.find_library('ecl', required: false, disabler: true)
-if not ecl.found() and not is_windows
-  ecl_proj = subproject('ecl')
-  ecl = ecl_proj.get_variable('ecl_dep')
+# Select the ECL dependency, executable, and configuration script together.
+# Maxima must use the same ECL provider as sage.libs.ecl; loading two ECL
+# versions into one process corrupts ECL's global state.
+use_system_ecl = false
+if is_windows
+  ecl = disabler()
+  conf_data.set('SAGE_ECL_CONFIG', '')
+else
+  system_ecl_bin = find_program(
+    'ecl',
+    version: '>=26.5.5',
+    required: false,
+  )
+  if system_ecl_bin.found()
+    # Do not combine an ecl executable with an unrelated ecl-config from
+    # another prefix.
+    system_ecl_config = find_program(
+      fs.parent(system_ecl_bin.full_path()) / 'ecl-config',
+      required: false,
+    )
+    use_system_ecl = system_ecl_config.found()
+  endif
+
+  if use_system_ecl
+    ecl_version = run_command(
+      system_ecl_bin,
+      '--norc',
+      '--eval',
+      '(princ (lisp-implementation-version))',
+      '--eval',
+      '(quit)',
+      check: true,
+    ).stdout().strip()
+    ecl_cflags = run_command(system_ecl_config, '--cflags', check: true)
+    ecl_libs = run_command(system_ecl_config, '--libs', check: true)
+    ecl = declare_dependency(
+      version: ecl_version,
+      compile_args: ecl_cflags.stdout().strip().split(),
+      link_args: ecl_libs.stdout().strip().split(),
+      variables: {
+        'ecl_bin': system_ecl_bin.full_path(),
+        'ecl_config': system_ecl_config.full_path(),
+        'ecl_version': ecl_version,
+      },
+    )
+    meson.override_dependency('ecl', ecl)
+  else
+    ecl_proj = subproject('ecl')
+    ecl = ecl_proj.get_variable('ecl_dep')
+  endif
+
+  conf_data.set(
+    'SAGE_ECL_CONFIG',
+    ecl.get_variable(internal: 'ecl_config'),
+  )
 endif
-ecl_bin = find_program('ecl', required: false)
-if ecl_bin.found()
+
+if use_system_ecl
   maxima_check = run_command(
-    ecl_bin,
+    system_ecl_bin,
     '--eval',
     '(require \'maxima)',
     '--eval',
@@ -31,11 +81,11 @@ if ecl_bin.found()
     sage_maxima = join_paths(
       get_option('SAGE_LOCAL'),
       'lib',
-      'ecl',
+      'ecl-' + ecl_version,
       'maxima.fas',
     )
     maxima_check = run_command(
-      ecl_bin,
+      system_ecl_bin,
       '--eval',
       '(require \'maxima "' + sage_maxima + '")',
       '--eval',
@@ -76,22 +126,71 @@ endif
 braiding = dependency(
   'libbraiding',
   version: '>=1.3.1',
-  required: false,
+  required: get_option('libbraiding'),
   disabler: true,
 )
+
+# HiGHS optimization solver (used by sage.numerical.backends.highs_backend)
+# The HiGHS C API headers use relative includes like
+# "lp_data/HighsCallbackStruct.h", so the "highs" subdirectory must be on the
+# include path. This should come from highs.pc's Cflags automatically. Some
+# Debian/Ubuntu packages have a broken includedir such as /usr/usr/include/highs,
+# so fall back to reconstructing it from the correct pkg-config prefix.
+highs_dep = dependency(
+  'highs',
+  version: '>=1.12.0',
+  method: 'pkg-config',
+  required: false,
+)
+if highs_dep.found()
+  highs_header = 'interfaces/highs_c_api.h'
+  if cc.has_header(highs_header, dependencies: highs_dep)
+    highs = highs_dep
+  else
+    highs_prefix = highs_dep.get_variable(pkgconfig: 'prefix', default_value: '')
+    highs_includedir = highs_prefix / 'include' / 'highs'
+    highs = declare_dependency(
+      dependencies: [highs_dep],
+      compile_args: ['-I' + highs_includedir],
+    )
+    cc.has_header(highs_header, dependencies: highs, required: true)
+  endif
+else
+  highs_proj = subproject(
+    'highs',
+    default_options: [
+      'do_install=false',
+      'highsint64=false',
+      'with_pybind11=false',
+      'with_tests=false',
+    ],
+  )
+  highs = highs_proj.get_variable('highs_dep')
+endif
 gc = dependency(
   ['bdw-gc-threaded', 'bdw-gc'],
   version: '>=7.6.4',
   required: not is_windows,
   disabler: true,
 )
-homfly = dependency('libhomfly', required: false, disabler: true)
-if not homfly.found()
+
+
+# This can go back to a simple
+#
+# dependency('libhomfly', required: get_option('libhomfly'), disabler: true)
+#
+# when the fallback is removed.
+homfly = dependency(
+  'libhomfly',
+  required: get_option('libhomfly').disabled() ? get_option('libhomfly') : false,
+  disabler: true,
+)
+if not homfly.found() and not get_option('libhomfly').disabled()
   # fallback for older versions without pkg-config
   homfly = cc.find_library(
     'homfly',
     has_headers: ['homfly.h'],
-    required: false,
+    required: get_option('libhomfly'),
     disabler: true,
   )
 endif
@@ -169,6 +268,13 @@ foreach name, pyx : extension_data_cpp
   )
 endforeach
 
+# Record in the config file whether or not optional packages were
+# found, so that we don't have to look for them at runtime.
+conf_data.set10('LIBBRAIDING_ENABLED', braiding.found())
+conf_data.set10('LIBHOMFLY_ENABLED', homfly.found())
+conf_data.set10('MEATAXE_ENABLED', mtx.found())
+conf_data.set10('SIROCCO_ENABLED', sirocco.found())
+
 subdir('arb')
 subdir('coxeter3')
 install_subdir('cremona', install_dir: sage_install_dir / 'libs')
@@ -179,6 +285,7 @@ install_subdir('giac', install_dir: sage_install_dir / 'libs')
 subdir('glpk')
 subdir('gmp')
 subdir('gsl')
+subdir('highs')
 subdir('lcalc')
 subdir('linbox')
 install_subdir('linkages', install_dir: sage_install_dir / 'libs')

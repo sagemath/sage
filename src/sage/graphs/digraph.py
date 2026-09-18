@@ -57,8 +57,8 @@ graphs. Here is what they can do
     :widths: 30, 70
     :delim: |
 
-    :meth:`~DiGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
-    :meth:`~DiGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
+    :meth:`~sage.graphs.generic_graph.GenericGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
+    :meth:`~sage.graphs.generic_graph.GenericGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
 
 **Representation theory:**
 
@@ -176,7 +176,7 @@ from copy import copy
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from itertools import product
-import sage.graphs.generic_graph_pyx as generic_graph_pyx
+from sage.graphs import generic_graph_pyx
 from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.graphs.views import EdgesView
@@ -664,9 +664,9 @@ class DiGraph(GenericGraph):
         if immutable:
             data_structure = 'static_sparse'
 
-        # If the data structure is static_sparse, we first build a graph
-        # using the sparse data structure, then re-encode the resulting graph
-        # as a static sparse graph.
+        # For ``static_sparse``, construction still defaults to a mutable sparse
+        # backend followed by conversion, though selected simple formats are
+        # handled directly below.
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
         if data_structure in ["sparse", "static_sparse"]:
@@ -754,6 +754,13 @@ class DiGraph(GenericGraph):
         if format is None:
             raise ValueError("This input cannot be turned into a graph")
 
+        direct_static_sparse = False
+        if data_structure == "static_sparse":
+            from sage.graphs.base.static_sparse_backend import (
+                StaticSparseBackend,
+                _direct_static_sparse_backend_from_edges,
+            )
+
         # At this point, format has been set. We build the graph
 
         if format == 'dig6':
@@ -799,16 +806,42 @@ class DiGraph(GenericGraph):
                 loops = any(f(v, v) for v in data[0])
             if weighted is None:
                 weighted = False
-            self.allow_multiple_edges(bool(multiedges), check=False)
-            self.allow_loops(loops, check=False)
-            self.add_vertices(data[0])
-            self.add_edges((u, v) for u in data[0] for v in data[0] if f(u, v))
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse":
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    data[0],
+                    ((u, v) for u in data[0] for v in data[0] if f(u, v)),
+                    directed=True,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_multiple_edges(bool(multiedges), check=False)
+                self.allow_loops(loops, check=False)
+                self.add_vertices(data[0])
+                self.add_edges((u, v) for u in data[0] for v in data[0] if f(u, v))
 
         elif format == "vertices_and_edges":
-            self.allow_multiple_edges(bool(multiedges), check=False)
-            self.allow_loops(bool(loops), check=False)
-            self.add_vertices(data[0])
-            self.add_edges(data[1])
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse" and not multiedges_allowed:
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    data[0],
+                    data[1],
+                    directed=True,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=False,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_multiple_edges(bool(multiedges), check=False)
+                self.allow_loops(bool(loops), check=False)
+                self.add_vertices(data[0])
+                self.add_edges(data[1])
 
         elif format == 'dict_of_dicts':
             from .graph_input import from_dict_of_dicts
@@ -843,18 +876,44 @@ class DiGraph(GenericGraph):
         elif format == 'int':
             if weighted is None:
                 weighted = False
-            self.allow_loops(bool(loops), check=False)
-            self.allow_multiple_edges(bool(multiedges),
-                                      check=False)
             if data < 0:
                 raise ValueError("the number of vertices cannot be strictly negative")
-            elif data:
-                self.add_vertices(range(data))
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse":
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    range(data),
+                    [],
+                    directed=True,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_loops(bool(loops), check=False)
+                self.allow_multiple_edges(bool(multiedges),
+                                          check=False)
+                if data:
+                    self.add_vertices(range(data))
         elif format == 'list_of_edges':
-            self.allow_multiple_edges(bool(multiedges),
-                                      check=False)
-            self.allow_loops(bool(loops), check=False)
-            self.add_edges(data)
+            loops_allowed = bool(loops)
+            multiedges_allowed = bool(multiedges)
+            if data_structure == "static_sparse" and not multiedges_allowed:
+                self._backend = _direct_static_sparse_backend_from_edges(
+                    [],
+                    data,
+                    directed=True,
+                    loops_allowed=loops_allowed,
+                    multiedges_allowed=multiedges_allowed,
+                    sort_vertices=True,
+                )
+                direct_static_sparse = True
+            else:
+                self.allow_multiple_edges(bool(multiedges),
+                                          check=False)
+                self.allow_loops(bool(loops), check=False)
+                self.add_edges(data)
         else:
             raise ValueError("unknown input format '{}'".format(format))
 
@@ -871,12 +930,12 @@ class DiGraph(GenericGraph):
             self.name(name)
 
         if data_structure == "static_sparse":
-            from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            ib = StaticSparseBackend(self,
-                                     loops=self.allows_loops(),
-                                     multiedges=self.allows_multiple_edges(),
-                                     sort=(format != "vertices_and_edges"))
-            self._backend = ib
+            if not direct_static_sparse:
+                ib = StaticSparseBackend(self,
+                                         loops=self.allows_loops(),
+                                         multiedges=self.allows_multiple_edges(),
+                                         sort=(format != "vertices_and_edges"))
+                self._backend = ib
             self._immutable = True
 
     # Formats
@@ -1021,18 +1080,39 @@ class DiGraph(GenericGraph):
         """
         return self._backend.is_directed_acyclic(certificate=certificate)
 
-    def to_directed(self):
+    def to_directed(self, immutable=None):
         """
         Since the graph is already directed, simply returns a copy of itself.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          digraph and the returned copy behave the same way.
 
         EXAMPLES::
 
             sage: DiGraph({0: [1, 2, 3], 4: [5, 1]}).to_directed()
             Digraph on 6 vertices
-        """
-        return self.copy()
 
-    def to_undirected(self, data_structure=None, sparse=None):
+        TESTS:
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = DiGraph(1, immutable=False)
+            sage: G.to_undirected().is_immutable()
+            False
+            sage: G.to_undirected(immutable=True).is_immutable()
+            True
+            sage: G = DiGraph(1, immutable=True)
+            sage: G.to_undirected().is_immutable()
+            True
+            sage: G.to_undirected(immutable=False).is_immutable()
+            False
+        """
+        return self.copy(immutable=immutable)
+
+    def to_undirected(self, data_structure=None, sparse=None, immutable=None):
         """
         Return an undirected version of the graph.
 
@@ -1047,6 +1127,19 @@ class DiGraph(GenericGraph):
         - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
           alias for ``data_structure="sparse"``, and ``sparse=False`` is an
           alias for ``data_structure="dense"``.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable digraph. Only used when ``data_structure=None``.
+
+          * ``immutable=None`` (default) means that the graph and its directed
+            version will behave the same way.
+
+          * ``immutable=True`` is a shortcut for
+            ``data_structure='static_sparse'``
+
+          * ``immutable=False`` means that the created digraph is mutable. When
+            used with an immutable graph, the data structure used is
+            ``'sparse'`` unless anything else is specified.
 
         EXAMPLES::
 
@@ -1064,20 +1157,80 @@ class DiGraph(GenericGraph):
             sage: DiGraph([[1, 2]], immutable=True).to_undirected()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
 
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = DiGraph([[1, 2]], immutable=False)
+            sage: G.to_undirected().is_immutable()
+            False
+            sage: G.to_undirected(immutable=True).is_immutable()
+            True
+            sage: G.to_undirected(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_undirected(data_structure='sparse', immutable=True).is_immutable()
+            False
+            sage: G = DiGraph([[1, 2]], immutable=True)
+            sage: G.to_undirected().is_immutable()
+            True
+            sage: G.to_undirected(immutable=False).is_immutable()
+            False
+            sage: G.to_undirected(data_structure='static_sparse', immutable=False).is_immutable()
+            True
+            sage: G.to_undirected(data_structure='sparse', immutable=True).is_immutable()
+            False
+
         Vertex labels will be retained (:issue:`14708`)::
 
+            sage: D = DiGraph({0: [1, 2], 1: [0]})
             sage: D.set_vertex(0, 'foo')
             sage: G = D.to_undirected()
             sage: D.get_vertices()
             {0: 'foo', 1: None, 2: None}
             sage: G.get_vertices()
             {0: 'foo', 1: None, 2: None}
+
+        Parameters ``data_structure`` and ``sparse`` should not be defined
+        simultaneously::
+
+            sage: G = DiGraph([[1, 2]])
+            sage: G.to_undirected(data_structure='static_sparse', sparse=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the 'sparse' argument is an alias for 'data_structure'.
+             Please do not define both
+
+        There is no dense immutable backend at the moment::
+
+            sage: G.to_undirected(immutable=True, sparse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: there is no dense immutable backend at the moment
         """
-        if sparse is not None:
-            if data_structure is not None:
+        # Which data structure should be used ?
+        if data_structure is not None:
+            # data_structure is already defined so there is nothing left to do.
+            # Parameter immutable is ignored
+            immutable = None
+            # Parameter sprse should not be set
+            if sparse is not None:
                 raise ValueError("the 'sparse' argument is an alias for "
                                  "'data_structure'. Please do not define both")
-            data_structure = "sparse" if sparse else "dense"
+        # At this point, data_structure is None.
+        elif immutable is True:
+            data_structure = 'static_sparse'
+            if sparse is False:
+                raise ValueError("there is no dense immutable backend"
+                                 " at the moment")
+        elif immutable is False:
+            # If the user requests a mutable graph and input is
+            # immutable, we choose the 'sparse' cgraph backend. Unless
+            # the user explicitly asked for something different.
+            if self.is_immutable():
+                data_structure = 'dense' if sparse is False else 'sparse'
+        # At this point, data_structure and immutable are None.
+        elif sparse is True:
+            data_structure = "sparse"
+        elif sparse is False:
+            data_structure = "dense"
 
         if data_structure is None:
             from sage.graphs.base.dense_graph import DenseGraphBackend
@@ -1088,25 +1241,24 @@ class DiGraph(GenericGraph):
                 data_structure = "sparse"
             else:
                 data_structure = "static_sparse"
+
         from sage.graphs.graph import Graph
-        G = Graph(name=self.name(),
-                  pos=self._pos,
+        G = Graph(data=[self, self.edge_iterator()],
+                  format='vertices_and_edges',
+                  data_structure=data_structure,
                   multiedges=self.allows_multiple_edges(),
                   loops=self.allows_loops(),
-                  data_structure=(data_structure if data_structure != "static_sparse"
-                                  else "sparse"))  # we need a mutable copy first
+                  weighted=self.weighted(),
+                  pos=copy(self.get_pos()),
+                  hash_labels=self._hash_labels)
 
-        G.add_vertices(self.vertex_iterator())
-        G.set_vertices(self.get_vertices())
-        G.add_edges(self.edge_iterator())
+        # Copy attributes '_assoc' and '_embedding' if set
         G._copy_attribute_from(self, '_assoc')
         G._copy_attribute_from(self, '_embedding')
-        G._weighted = self._weighted
-
-        if data_structure == "static_sparse":
-            G = G.copy(data_structure=data_structure)
+        G.set_vertices(self.get_vertices())
 
         return G
+
 
     # Edge Handlers
 
@@ -1506,7 +1658,8 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`n_vertices` for the value at `(x, y) = (1, 1)`
+            :meth:`~sage.graphs.generic_graph.GenericGraph.n_vertices` for the
+            value at `(x, y) = (1, 1)`
 
         EXAMPLES::
 
@@ -2968,7 +3121,8 @@ class DiGraph(GenericGraph):
         - ``weight_function`` -- function (default: ``None``); a function
           that takes as input an edge ``(u, v, label)`` and outputs its
           weight; if ``None``, the edge label is used directly as a numeric
-          weight (see :meth:`~GenericGraph._get_weight_function`)
+          weight (see
+          :meth:`GenericGraph._get_weight_function <sage.graphs.generic_graph.GenericGraph._get_weight_function>`)
 
         - ``check_weight`` -- boolean (default: ``True``); if ``True``, the
           ``weight_function`` is applied to all edges and an exception is
@@ -3453,7 +3607,8 @@ class DiGraph(GenericGraph):
           pair `(S, T)` of an iterable `S` and an iterable `T`
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
-          see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+          see the :func:`Polyhedron constructor
+          <sage.geometry.polyhedron.constructor.Polyhedron>`
 
         .. NOTE::
 

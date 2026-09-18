@@ -1153,7 +1153,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
     def to_kirillov_reshetikhin_crystal(self):
         r"""
         Construct a
-        :func:`~sage.combinat.crystals.kirillov_reshetihkin.KashiwaraNakashimaTableaux`
+        :func:`~sage.combinat.crystals.kirillov_reshetikhin.KashiwaraNakashimaTableaux`
         element from ``self``.
 
         We construct the Kirillov-Reshetikhin crystal element as follows:
@@ -1451,7 +1451,8 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
         r"""
         Return the image of ``self`` under the right column splitting map.
 
-        Let `\ast` denote the :meth:`Lusztig involution<lusztig_involution>`,
+        Let `\ast` denote the
+        :meth:`Lusztig involution<sage.combinat.rigged_configurations.tensor_product_kr_tableaux_element.TensorProductOfKirillovReshetikhinTableauxElement.lusztig_involution>`,
         and `\mathrm{ls}` as the :meth:`left splitting map<left_split>`.
         The right splitting map is defined as
         `\mathrm{rs} := \ast \circ \mathrm{ls} \circ \ast`.
@@ -1803,7 +1804,8 @@ class KRTableauxTypeFromRC(KirillovReshetikhinTableaux):
 
         The Kashiwara-Nakashima version is not implemented due to the
         non-trivial multiplicities of classical components, so
-        :meth:`classical_decomposition` does not work.
+        :meth:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableaux.classical_decomposition`
+        does not work.
     """
 
     def __init__(self, cartan_type, r, s):

@@ -508,8 +508,8 @@ cdef class Farey:
             return tuple(tietze)
         if output == 'syllables':
             return tuple((a-1, len(list(g))) if a > 0 else (-a-1, -len(list(g))) for a, g in groupby(tietze))
-        else:  # output == 'gens'
-            return tuple((gens[a-1], len(list(g))) if a > 0 else (gens[-a-1], -len(list(g))) for a, g in groupby(tietze))
+        # output == 'gens'
+        return tuple((gens[a-1], len(list(g))) if a > 0 else (gens[-a-1], -len(list(g))) for a, g in groupby(tietze))
 
     def __contains__(self, M) -> bool:
         r"""
@@ -580,10 +580,9 @@ cdef class Farey:
         """
         if hasattr(self.group, "_repr_"):
             return "FareySymbol(%s)" % self.group._repr_()
-        elif hasattr(self.group, "__repr__"):
+        if hasattr(self.group, "__repr__"):
             return "FareySymbol(%r)" % self.group
-        else:
-            return "FareySymbol(?)"
+        return "FareySymbol(?)"
 
     def _latex_(self, forced_format=None):
         r"""

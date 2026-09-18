@@ -223,7 +223,7 @@ There is another way to create a polyhedron over algebraic numbers:
 
 .. end of output
 
-If the base ring is known it may be a good option to use the proper :meth:`sage.rings.number_field.number_field.number_field.composite_fields`:
+If the base ring is known it may be a good option to use the proper :meth:`sage.rings.number_field.number_field.NumberField_generic.composite_fields`:
 
 ::
 

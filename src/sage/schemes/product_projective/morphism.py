@@ -466,7 +466,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
                 h = max(c.global_height(prec=prec) for c in C)
                 H = max(H, h)
             return H
-        elif isinstance(K, sage.rings.abc.AlgebraicField):
+        if isinstance(K, sage.rings.abc.AlgebraicField):
             raise NotImplementedError("not implemented for QQbar")
         else:
             raise TypeError("Must be over a Numberfield or a Numberfield Order or QQbar")

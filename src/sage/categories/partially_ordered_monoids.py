@@ -9,7 +9,8 @@ Partially ordered monoids
 #******************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
-from sage.categories.basic import Posets, Monoids
+from sage.categories.monoids import Monoids
+from sage.categories.posets import Posets
 
 
 class PartiallyOrderedMonoids(Category_singleton):

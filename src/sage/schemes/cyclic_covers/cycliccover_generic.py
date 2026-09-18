@@ -248,8 +248,7 @@ class CyclicCover_generic(AffinePlaneCurve):
         # test d = 3 and 4
         if self._d == self._r:
             return AffinePlaneCurve.projective_closure(self, **kwds)
-        else:
-            raise NotImplementedError("Weighted Projective Space is not implemented")
+        raise NotImplementedError("Weighted Projective Space is not implemented")
 
     def cover_polynomial(self, K=None, var='x'):
         """
@@ -263,9 +262,8 @@ class CyclicCover_generic(AffinePlaneCurve):
 
         if K is None:
             return self._f
-        else:
-            P = PolynomialRing(K, var)
-            return P(self._f)
+        P = PolynomialRing(K, var)
+        return P(self._f)
 
     def is_singular(self) -> bool:
         r"""
@@ -287,8 +285,7 @@ class CyclicCover_generic(AffinePlaneCurve):
         r = self._r
         if P(r) == 0:
             return True
-        else:
-            return not self._f.is_squarefree()
+        return not self._f.is_squarefree()
 
     def is_smooth(self) -> bool:
         r"""

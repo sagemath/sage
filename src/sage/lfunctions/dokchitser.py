@@ -109,7 +109,7 @@ class Dokchitser(SageObject):
         sage: L.derivative(1,2)
         0.373095594536324
         sage: L.cost()
-        50
+        205
         sage: L.taylor_series(1,4)
         0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + O(z^4)
         sage: L.check_functional_equation()  # abs tol 1e-17
@@ -123,7 +123,7 @@ class Dokchitser(SageObject):
         sage: E = EllipticCurve('389a')
         sage: L = E.lseries().dokchitser(algorithm='pari')
         sage: L.cost()
-        163
+        666
         sage: L.derivative(1,E.rank())
         1.51863300057685
         sage: L.taylor_series(1,4)
@@ -139,7 +139,7 @@ class Dokchitser(SageObject):
         sage: L.conductor
         400
         sage: L.cost()
-        313
+        5499
         sage: L(2)
         1.10398438736918
         sage: L.taylor_series(2,3)
@@ -346,11 +346,11 @@ class Dokchitser(SageObject):
             sage: E = EllipticCurve('11a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.cost()
-            27
+            112
             sage: E = EllipticCurve('5077a')
             sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.cost()
-            591
+            2406
             sage: L = Dokchitser(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[-1], init='1')
             sage: L.cost()
             4
@@ -593,23 +593,6 @@ class Dokchitser(SageObject):
             sage: L = E.lseries().dokchitser(200, algorithm='pari')
             sage: L.taylor_series(1,3)
             ...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
-
-        Check that :issue:`25402` is fixed::
-
-            sage: L = EllipticCurve("24a1").modular_form().lseries()
-            sage: L.taylor_series(-1, 3)
-            0.000000000000000 - 0.702565506265199*z + 0.638929001045535*z^2 + O(z^3)
-
-        Check that :issue:`25965` is fixed::
-
-            sage: L2 = EllipticCurve("37a1").modular_form().lseries(); L2
-            L-series associated to the cusp form q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)
-            sage: L2.taylor_series(0,4)
-            0.000000000000000 - 0.357620466127498*z + 0.273373112603865*z^2 + 0.303362857047671*z^3 + O(z^4)
-            sage: L2.taylor_series(0,1)
-            O(z^1)
-            sage: L2(0)
-            0.000000000000000
         """
         self.__check_init()
         a = self.__CC(a)

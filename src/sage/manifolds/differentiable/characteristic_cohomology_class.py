@@ -120,7 +120,8 @@ The Chern character is then given by::
      manifold M
 
 The corresponding characteristic form w.r.t. the bundle connection can be
-obtained via :meth:`get_form`::
+obtained via
+:meth:`~sage.manifolds.differentiable.characteristic_cohomology_class.CharacteristicCohomologyClassRingElement.get_form`::
 
     sage: ch_form = ch.get_form(nab); ch_form.display_expansion()
     ch(E, nabla^E) = 1 + 1/2*d(A)/dt/pi dt∧dx
@@ -311,7 +312,7 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
     :class:`CharacteristicCohomologyClassRing`.
 
     To construct a characteristic cohomology class, please use
-    :func:`CharacteristicCohomologyClass`.
+    :meth:`~sage.manifolds.differentiable.vector_bundle.DifferentiableVectorBundle.characteristic_cohomology_class`.
 
     EXAMPLES::
 

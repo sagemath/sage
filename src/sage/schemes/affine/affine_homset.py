@@ -13,7 +13,7 @@ done by :class:`SchemeHomset_points` and its subclasses.
 .. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
-    :meth:`~sage.structure.parent.Hom` method that is inherited by all
+    :meth:`~sage.structure.parent.Parent.Hom` method that is inherited by all
     schemes.
 
 AUTHORS:
@@ -354,11 +354,10 @@ class SchemeHomset_points_affine(SchemeHomset_points):
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             from sage.schemes.affine.affine_rational_point import enum_affine_number_field
             return enum_affine_number_field(self, bound=B, tolerance=tol, precision=prec)
-        elif isinstance(R, FiniteField):
+        if isinstance(R, FiniteField):
             from sage.schemes.affine.affine_rational_point import enum_affine_finite_field
             return enum_affine_finite_field(self)
-        else:
-            raise TypeError("unable to enumerate points over %s" % R)
+        raise TypeError("unable to enumerate points over %s" % R)
 
     def numerical_points(self, F=None, **kwds):
         """

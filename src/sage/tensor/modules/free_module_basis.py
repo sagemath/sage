@@ -42,11 +42,14 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
 
     A basis is an :class:`~sage.sets.family.AbstractFamily`, hence like
     :class:`collections.abc.Mapping` subclasses such as :class:`dict`, it is
-    an associative :class:`Container`, providing methods :meth:`keys`,
-    :meth:`values`, and :meth:`items`. Thus, ``e[i]`` returns the element
+    an associative :class:`~collections.abc.Container`, providing methods
+    :meth:`~sage.tensor.modules.free_module_basis.Basis_abstract.keys`,
+    :meth:`~sage.tensor.modules.free_module_basis.Basis_abstract.values`, and
+    :meth:`~sage.sets.family.AbstractFamily.items`. Thus, ``e[i]`` returns the
+    element
     of the basis ``e`` indexed by the key ``i``. However, in contrast to
-    :class:`Mapping` subclasses, not the :meth:`keys` but the
-    :meth:`values` are considered the elements.
+    :class:`~collections.abc.Mapping` subclasses, not the :meth:`~sage.tensor.modules.free_module_basis.Basis_abstract.keys` but the
+    :meth:`~sage.tensor.modules.free_module_basis.Basis_abstract.values` are considered the elements.
 
     EXAMPLES::
 

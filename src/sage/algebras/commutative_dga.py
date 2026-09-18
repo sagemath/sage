@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Commutative Differential Graded Algebras
 
@@ -1321,7 +1320,29 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             ...
             NotImplementedError: homomorphisms of graded commutative algebras
             have only been implemented when the base rings are the same
+
+        It is possible to construct a matrix with GCAlgebra elements.
+        When B is not a GCAlgebra the call is handed to the parent class
+        (:issue:`41434`)::
+
+            sage: R.<dx> = GradedCommutativeAlgebra(QQ)
+            sage: matrix([dx])
+            [dx]
+            sage: matrix([[dx, dx], [dx, dx]])
+            [dx dx]
+            [dx dx]
+
+        Similarly, this works with multiple generators and different base rings::
+
+            sage: S.<a,b> = GradedCommutativeAlgebra(GF(5), degrees=(1,2))
+            sage: matrix([a, b])
+            [a b]
+            sage: matrix([[a*b], [b]])
+            [a*b]
+            [  b]
         """
+        if not isinstance(B, GCAlgebra):
+            return super()._Hom_(B, category)
         R = self.base_ring()
         # The base rings need to be checked before the categories, or
         # else the function sage.categories.homset.Hom catches the
@@ -3486,8 +3507,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
     - ``max_degree`` -- the maximal degree of the graded algebra. If omitted,
       no maximal degree is assumed and an instance of :class:`GCAlgebra` is
       returned. Otherwise, an instance of
-      :class:`sage.algebras.commutative_graded_algebra.GradedCommutativeAlgebraWithMaxDeg`
-      is created.
+      a :class:`GCAlgebra` with that maximal degree is created.
 
     Once such an algebra has been defined, one can use its associated
     methods to take a quotient, impose a differential, etc. See the
@@ -3605,13 +3625,16 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
 
     At this point, ``a``, for example, is an element of ``C``. We can
     redefine it so that it is instead an element of ``D`` in several
-    ways, for instance using :meth:`gens` method::
+    ways, for instance using the
+    :meth:`~sage.rings.quotient_ring.QuotientRing_nc.gens` method::
 
         sage: a, b, c, d = D.gens()
         sage: a.differential()
         c
 
-    Or the :meth:`inject_variables` method::
+    Or the
+    :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
+    method::
 
         sage: D.inject_variables()
         Defining a, b, c, d
@@ -4113,7 +4136,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(x - 2)                                                # needs sage.symbolic
+            sage: CohomologyClass(x - 2)
             [x - 2]
         """
         self._x = x
@@ -4124,7 +4147,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         TESTS::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: hash(CohomologyClass(sin)) == hash(sin)                               # needs sage.symbolic
+            sage: hash(CohomologyClass(sin)) == hash(sin)
             True
         """
         return hash(self._x)
@@ -4134,7 +4157,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: CohomologyClass(sin)                                                  # needs sage.symbolic
+            sage: CohomologyClass(sin)
             [sin]
         """
         return '[{}]'.format(self._x)
@@ -4144,9 +4167,9 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: latex(CohomologyClass(sin))                                           # needs sage.symbolic
+            sage: latex(CohomologyClass(sin))
             \left[ \sin \right]
-            sage: latex(CohomologyClass(x^2))                                           # needs sage.symbolic
+            sage: latex(CohomologyClass(x^2))
             \left[ x^{2} \right]
         """
         from sage.misc.latex import latex
@@ -4159,8 +4182,8 @@ class CohomologyClass(SageObject, CachedRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.commutative_dga import CohomologyClass
-            sage: x = CohomologyClass(sin)                                              # needs sage.symbolic
-            sage: x.representative() == sin                                             # needs sage.symbolic
+            sage: x = CohomologyClass(sin)
+            sage: x.representative() == sin
             True
         """
         return self._x

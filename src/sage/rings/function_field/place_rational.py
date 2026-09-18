@@ -36,8 +36,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
         """
         if self.is_infinite_place():
             return 1
-        else:
-            return self._prime.gen().numerator().degree()
+        return self._prime.gen().numerator().degree()
 
     def is_infinite_place(self):
         """
@@ -132,10 +131,9 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
                 if n_deg < d_deg:
                     return K(0)
-                elif n_deg == d_deg:
+                if n_deg == d_deg:
                     return n.lc() / d.lc()
-                else:
-                    raise TypeError("not in the valuation ring")
+                raise TypeError("not in the valuation ring")
         else:
             O = F.maximal_order()
             K, from_K, _to_K = O._residue_field(prime, name=name)
@@ -143,22 +141,21 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
             def to_K(f):
                 if f in O:  # f.denominator() is 1
                     return _to_K(f.numerator())
-                else:
-                    d = F(f.denominator())
-                    n = d * f
+                d = F(f.denominator())
+                n = d * f
 
-                    nv = prime.valuation(O.ideal(n))
-                    dv = prime.valuation(O.ideal(d))
+                nv = prime.valuation(O.ideal(n))
+                dv = prime.valuation(O.ideal(d))
 
-                    if nv > dv:
-                        return K(0)
-                    elif dv > nv:
-                        raise TypeError("not in the valuation ring")
+                if nv > dv:
+                    return K(0)
+                if dv > nv:
+                    raise TypeError("not in the valuation ring")
 
-                    s = ~prime.gen()
-                    rd = d * s**dv  # in O but not in prime
-                    rn = n * s**nv  # in O but not in prime
-                    return to_K(rn) / to_K(rd)
+                s = ~prime.gen()
+                rd = d * s**dv  # in O but not in prime
+                rn = n * s**nv  # in O but not in prime
+                return to_K(rn) / to_K(rd)
 
         return K, from_K, to_K
 

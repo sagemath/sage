@@ -1,4 +1,4 @@
-iml = cc.find_library('iml', required: not is_windows, disabler: true)
+iml = cc.find_library('iml', required: false, disabler: true)
 
 
 py.install_sources(
@@ -61,6 +61,9 @@ py.install_sources(
   'matrix_mod2_dense.pyx',
   'matrix_modn_dense_double.pxd',
   'matrix_modn_dense_double.pyx',
+  'matrix_modn_dense_flint.pxd',
+  'matrix_modn_dense_flint.pyi',
+  'matrix_modn_dense_flint.pyx',
   'matrix_modn_dense_float.pxd',
   'matrix_modn_dense_float.pyx',
   'matrix_modn_sparse.pxd',
@@ -86,6 +89,7 @@ py.install_sources(
   'matrix_symbolic_dense.pyx',
   'matrix_symbolic_sparse.pxd',
   'matrix_symbolic_sparse.pyx',
+  'matrix_utils.pxd',
   'matrix_window.pxd',
   'matrix_window.pyx',
   'misc.pyx',
@@ -135,6 +139,7 @@ extension_data = {
   'misc_flint': files('misc_flint.pyx'),
   'misc_mpfr': files('misc_mpfr.pyx'),
   'strassen': files('strassen.pyx'),
+  'matrix_modn_dense_flint': files('matrix_modn_dense_flint.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -147,7 +152,7 @@ foreach name, pyx : extension_data
     deps += [mpfr]
   elif name == 'matrix_complex_ball_dense'
     deps += [flint, mpfi]
-  elif name == 'misc_flint' or name == 'matrix_rational_sparse' or name == 'change_ring'
+  elif name == 'misc_flint' or name == 'matrix_rational_sparse' or name == 'change_ring' or name == 'matrix_modn_dense_flint'
     deps += [flint]
   elif name == 'matrix_gf2e_dense'
     deps += [m4rie]

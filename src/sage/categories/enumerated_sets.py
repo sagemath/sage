@@ -1,5 +1,7 @@
 r"""
 Enumerated sets
+
+.. automethod:: sage.categories.enumerated_sets::EnumeratedSets.ParentMethods.__iter__
 """
 # ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
@@ -1031,8 +1033,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 ....:     def __contains__(self, obj):
                 ....:         if obj == 3:
                 ....:             return False
-                ....:         else:
-                ....:             return obj in C
+                ....:         return obj in C
                 sage: CC = CCls()
                 sage: CC._test_enumerated_set_contains()
                 Traceback (most recent call last):

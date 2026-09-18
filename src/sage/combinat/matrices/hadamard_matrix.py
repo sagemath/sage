@@ -1036,7 +1036,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
     Hadamard matrix of order `4n` (see [Djo1994b]_).
 
     The supplementary difference sets are taken from
-    :func:`sage.combinat.designs.difference_family.supplementary_difference_set`.
+    :func:`sage.combinat.designs.difference_family.supplementary_difference_set_hadamard`.
 
     INPUT:
 

@@ -534,7 +534,7 @@ def sturm_bound(level, weight=2):
     Return the Sturm bound for modular forms with given level and weight.
 
     For more details, see the documentation for the ``sturm_bound`` method
-    of :class:`sage.modular.arithgroup.CongruenceSubgroup` objects.
+    of :class:`~sage.modular.arithgroup.congroup_generic.CongruenceSubgroup` objects.
 
     INPUT:
 

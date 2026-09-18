@@ -106,13 +106,10 @@ cdef class DefaultConvertMap_unique(Map):
             if len(args) == 0:
                 if len(kwds) == 0:
                     return C._element_constructor(x)
-                else:
-                    return C._element_constructor(x, **kwds)
-            else:
-                if len(kwds) == 0:
-                    return C._element_constructor(x, *args)
-                else:
-                    return C._element_constructor(x, *args, **kwds)
+                return C._element_constructor(x, **kwds)
+            if len(kwds) == 0:
+                return C._element_constructor(x, *args)
+            return C._element_constructor(x, *args, **kwds)
         except Exception:
             if print_warnings:
                 print(type(C), C)
@@ -460,8 +457,7 @@ cdef class CCallableConvertMap_class(Map):
         """
         if self._name is None:
             return "Conversion via c call at 0x%x" % <long>self._func
-        else:
-            return "Conversion via c call '%s'" % self._name
+        return "Conversion via c call '%s'" % self._name
 
 
 cdef Map CCallableConvertMap(domain, codomain, void* func, name):

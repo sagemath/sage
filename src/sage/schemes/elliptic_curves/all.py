@@ -20,6 +20,7 @@ Exported elliptic curves functionality
 from sage.schemes.elliptic_curves.constructor import (EllipticCurve,
                                                       EllipticCurve_from_c4c6,
                                                       EllipticCurve_from_j,
+                                                      EllipticCurve_from_montgomery,
                                                       EllipticCurve_from_cubic,
                                                       EllipticCurves_with_good_reduction_outside_S)
 

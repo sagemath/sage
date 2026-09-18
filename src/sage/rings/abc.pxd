@@ -1,4 +1,4 @@
-from sage.rings.ring cimport CommutativeRing, Field
+from sage.rings.ring cimport Ring, Field
 
 cdef class RealField(Field):
 
@@ -21,10 +21,5 @@ cdef class ComplexField(Field):
 
 
 cdef class ComplexDoubleField(Field):
-
-    pass
-
-
-cdef class SymbolicRing(CommutativeRing):
 
     pass

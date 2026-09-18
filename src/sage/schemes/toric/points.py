@@ -450,13 +450,13 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
     @cached_method
     def root_generator(self, n):
         """
-        Return a generator for :meth:`roots`.
+        Return a generator for :meth:`~sage.schemes.toric.points.NaiveFinitePointEnumerator.roots`.
 
         INPUT:
 
         - ``n`` -- integer
 
-        OUTPUT: a multiplicative generator for :meth:`roots`
+        OUTPUT: a multiplicative generator for :meth:`~sage.schemes.toric.points.NaiveFinitePointEnumerator.roots`
 
         EXAMPLES::
 
@@ -618,12 +618,12 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
     @cached_method
     def rescaling_log_generators(self):
         """
-        Return the log generators of :meth:`rescalings`.
+        Return the log generators of :meth:`~sage.schemes.toric.points.NaiveFinitePointEnumerator.rescalings`.
 
         OUTPUT:
 
         A tuple containing the logarithms (see :meth:`log`) of the
-        generators of the multiplicative group of :meth:`rescalings`.
+        generators of the multiplicative group of :meth:`~sage.schemes.toric.points.NaiveFinitePointEnumerator.rescalings`.
 
         EXAMPLES::
 

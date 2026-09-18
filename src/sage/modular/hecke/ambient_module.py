@@ -27,7 +27,7 @@ from sage.rings.integer import Integer
 
 import sage.arith.misc as arith
 
-import sage.matrix.matrix_space as matrix_space
+from sage.matrix import matrix_space
 from sage.matrix.constructor import matrix
 
 from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0  # for Sturm bound

@@ -537,10 +537,15 @@ def shortened_00_11_binary_Golay_code_graph(immutable=False):
     return G
 
 
-def shortened_000_111_extended_binary_Golay_code_graph():
+def shortened_000_111_extended_binary_Golay_code_graph(immutable=False):
     r"""
     Return a distance-regular graph with intersection array
     `[21, 20, 16, 9, 2, 1; 1, 2, 3, 16, 20, 21]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -580,25 +585,29 @@ def shortened_000_111_extended_binary_Golay_code_graph():
 
     with as_file(ppath) as p:
         with lzma.open(p) as f:
-            vs_and_es = load(f, fix_imports=False)
+            vertices, edges = load(f, fix_imports=False)
+
+    if len(vertices) != 2048 or len(edges) != 21504:
+        raise ValueError("incorrect number of loaded vertices and edges")
 
     # Vertices/edges are pickled as tuples of ints, but should be
     # vectors with entries in GF(2).
     V = VectorSpace(GF(2), 21)
-    for i in range(2048):
-        # vertex i
-        vs_and_es[0][i] = V(vs_and_es[0][i])
-        vs_and_es[0][i].set_immutable()
-    for i in range(21504):
-        # edge i = (v1, v2, l)
-        vs_and_es[1][i][0] = V(vs_and_es[1][i][0])  # v1
-        vs_and_es[1][i][0].set_immutable()
-        vs_and_es[1][i][1] = V(vs_and_es[1][i][1])  # v2
-        vs_and_es[1][i][1].set_immutable()
+    for i, u in enumerate(vertices):
+        u = V(u)
+        u.set_immutable()
+        vertices[i] = u
+    for i, (v1, v2, label) in enumerate(edges):
+        # edge i = (v1, v2, label)
+        v1 = V(v1)
+        v1.set_immutable()
+        v2 = V(v2)
+        v2.set_immutable()
+        edges[i] = (v1, v2, label)
 
-    G = Graph(vs_and_es, format='vertices_and_edges')
-    G.name("Shortened 000 111 extended binary Golay code")
-    return G
+    return Graph([vertices, edges], format="vertices_and_edges",
+                 name = "Shortened 000 111 extended binary Golay code",
+                 immutable=immutable)
 
 
 def vanLintSchrijverGraph(immutable=False):
@@ -634,12 +643,17 @@ def vanLintSchrijverGraph(immutable=False):
     return H
 
 
-def LeonardGraph():
+def LeonardGraph(immutable=False):
     r"""
     Return the Leonard graph.
 
     The graph is distance-regular with intersection array
     `[12, 11, 10, 7; 1, 2, 5, 12]`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -665,11 +679,10 @@ def LeonardGraph():
     blocks = [frozenset(cl) for cl in D.cliques_maximum()]
 
     edges = [(p, b) for b in blocks for p in b]
-    G = Graph(edges, format='list_of_edges')
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable)
 
 
-def UstimenkoGraph(const int m, const int q):
+def UstimenkoGraph(const int m, const int q, immutable=False):
     r"""
     Return the Ustimenko graph with parameters `(m, q)`.
 
@@ -681,6 +694,9 @@ def UstimenkoGraph(const int m, const int q):
     INPUT:
 
     - ``m``, ``q`` -- integers; `q` must be a prime power and `m > 1`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -710,19 +726,19 @@ def UstimenkoGraph(const int m, const int q):
 
     edgesToAdd = []
     for v in G:
-        for w in G.neighbor_iterator(v):
-            for u in G.neighbor_iterator(w):
-                sig_check()
-                if u != v and not G.has_edge(u, v):
-                    # then u,v are at distance 2
-                    edgesToAdd.append((u, v))
+        # Search for vertices at distance 2
+        for u, d in G.breadth_first_search(v, distance=2, report_distance=True):
+            if d == 2 and u < v:
+                # Add an edge between u and v at distance 2 and
+                # avoid adding both (u, v) and (v, u)
+                edgesToAdd.append((u, v))
 
     G.add_edges(edgesToAdd)
     G.name(f"Ustimenko graph ({m}, {q})")
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def BilinearFormsGraph(const int d, const int e, const int q):
+def BilinearFormsGraph(const int d, const int e, const int q, immutable=False):
     r"""
     Return a bilinear forms graph with the given parameters.
 
@@ -736,7 +752,11 @@ def BilinearFormsGraph(const int d, const int e, const int q):
     INPUT:
 
     - ``d``, ``e`` -- integers; dimension of the matrices
+
     - ``q`` -- integer; a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -808,12 +828,11 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
             edges.append((intM1, intM3))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Bilinear forms graphs over F_%d with parameters (%d, %d)" % (q, d, e))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Bilinear forms graphs over F_{q} with parameters ({d}, {e})")
 
 
-def AlternatingFormsGraph(const int n, const int q):
+def AlternatingFormsGraph(const int n, const int q, immutable=False):
     r"""
     Return the alternating forms graph with the given parameters.
 
@@ -827,7 +846,11 @@ def AlternatingFormsGraph(const int n, const int q):
     INPUT:
 
     - ``n`` -- integer
+
     - ``q`` -- a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -905,9 +928,8 @@ def AlternatingFormsGraph(const int n, const int q):
             t3 = tuple([t1[i] + m2[i] for i in range(size)])
             edges.append((t1, t3))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Alternating forms graph on (F_%d)^%d" % (q, n))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Alternating forms graph on (F_{q})^{n}")
 
 
 def HermitianFormsGraph(const int n, const int r, immutable=False):
@@ -1404,13 +1426,16 @@ def graph_from_GQ_spread(const int s, const int t, immutable=False):
     return Graph(edges, format='list_of_edges', immutable=immutable)
 
 
-def GeneralisedDodecagonGraph(const int s, const int t):
+def GeneralisedDodecagonGraph(const int s, const int t, immutable=False):
     r"""
     Return the point-graph of a generalised dodecagon of order `(s,t)`.
 
     INPUT:
 
     - ``s``, ``t`` -- integers; order of the generalised dodecagon
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1483,7 +1508,7 @@ def GeneralisedDodecagonGraph(const int s, const int t):
 
     if q == 1:  # order (1, 1)
         from sage.graphs.generators.basic import CycleGraph
-        return CycleGraph(12)
+        return CycleGraph(12, immutable=immutable)
 
     if not is_prime_power(q):
         raise ValueError(
@@ -1500,25 +1525,26 @@ def GeneralisedDodecagonGraph(const int s, const int t):
                 sig_check()
                 edges.append((p, l))
 
-        G = Graph(edges, format='list_of_edges')
-        G.name("Generalised dodecagon of order (1, %d)" % q)
-        return G
+        return Graph(edges, format='list_of_edges', immutable=immutable,
+                     name=f"Generalised dodecagon of order (1, {q})")
 
-    else:  # orderType == 1
-        # dual
-        H = GeneralisedDodecagonGraph(t, s)
-        G = _line_graph_generalised_polygon(H)
-        G.name("Generalised dodecagon of order (%s, %d)" % (s, t))
-        return G
+    # orderType == 1
+    # dual
+    H = GeneralisedDodecagonGraph(t, s)
+    name = f"Generalised dodecagon of order ({s}, {t})"
+    return _line_graph_generalised_polygon(H, immutable=immutable, name=name)
 
 
-def GeneralisedOctagonGraph(const int s, const int t):
+def GeneralisedOctagonGraph(const int s, const int t, immutable=False):
     r"""
     Return the point-graph of a generalised octagon of order `(s,t)`.
 
     INPUT:
 
     - ``s``, ``t`` -- integers; order of the generalised octagon
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1582,7 +1608,7 @@ def GeneralisedOctagonGraph(const int s, const int t):
 
     if q == 1:  # order (1, 1)
         from sage.graphs.generators.basic import CycleGraph
-        return CycleGraph(8)
+        return CycleGraph(8, immutable=immutable)
 
     if not is_prime_power(q):
         raise ValueError(f"No generalised octagon of order ({s}, {t}) is known")
@@ -1601,34 +1627,34 @@ def GeneralisedOctagonGraph(const int s, const int t):
                 sig_check()
                 edges.append((p, l))
 
-        G = Graph(edges, format='list_of_edges')
-        G.name("Generalised octagon of order (1, %d)" % q)
-        return G
+        return Graph(edges, format='list_of_edges', immutable=immutable,
+                     name=f"Generalised octagon of order (1, {q})")
 
-    elif orderType == 1:
+    if orderType == 1:
         # dual
         H = GeneralisedOctagonGraph(t, s)
-        G = _line_graph_generalised_polygon(H)
-        G.name("Generalised octagon of order(%d, %d)" % (s, t))
-        return G
-    else:
-        if q == 2:
-            group = libgap.AtlasGroup("2F4(2)", libgap.NrMovedPoints, 1755)
-            G = Graph(libgap.Orbit(group, [1, 73], libgap.OnSets),
-                      format='list_of_edges')
-            G.name("Generalised octagon of order (2, 4)")
-            return G
-        else:
-            raise NotImplementedError("Graph would be too big")
+        name = f"Generalised octagon of order({s}, {t})"
+        return _line_graph_generalised_polygon(H, immutable=immutable, name=name)
+
+    if q == 2:
+        group = libgap.AtlasGroup("2F4(2)", libgap.NrMovedPoints, 1755)
+        return Graph(libgap.Orbit(group, [1, 73], libgap.OnSets),
+                     format='list_of_edges', immutable=immutable,
+                     name=f"Generalised octagon of order (2, 4)")
+
+    raise NotImplementedError("Graph would be too big")
 
 
-def GeneralisedHexagonGraph(const int s, const int t):
+def GeneralisedHexagonGraph(const int s, const int t, immutable=False):
     r"""
     Return the point-graph of a generalised hexagon of order `(s,t)`.
 
     INPUT:
 
     - ``s``, ``t`` -- integers; order of the generalised hexagon
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1694,7 +1720,7 @@ def GeneralisedHexagonGraph(const int s, const int t):
 
     if q == 1:  # order (1, 1)
         from sage.graphs.generators.basic import CycleGraph
-        return CycleGraph(6)
+        return CycleGraph(6, immutable=immutable)
 
     if not is_prime_power(q):
         raise ValueError(f"No generalised hexagon of order ({s}, {t}) is known")
@@ -1709,63 +1735,56 @@ def GeneralisedHexagonGraph(const int s, const int t):
                 sig_check()
                 edges.append((p, tuple(l)))
 
-        G = Graph(edges, format='list_of_edges')
-        G.name("Generalised hexagon of order (1, %d)" % q)
-        return G
+        return Graph(edges, format='list_of_edges', immutable=immutable,
+                     name=f"Generalised hexagon of order (1, {q})")
 
-    elif orderType == 1:
+    if orderType == 1:
         # dual graph
         H = GeneralisedHexagonGraph(t, s)
-        G = _line_graph_generalised_polygon(H)
-        G.name("Generalised hexagon of order(%d, %d)" % (s, t))
-        return G
+        name = f"Generalised hexagon of order({s}, {t})"
+        return _line_graph_generalised_polygon(H, immutable=immutable, name=name)
 
-    elif orderType == 2:
+    if orderType == 2:
         # we use the group G2(q)
         # if q == 2, then G2(2) is isomorphic to U3(3).2
         if q == 2:
             group = libgap.AtlasGroup("U3(3).2", libgap.NrMovedPoints, 63)
-            G = Graph(libgap.Orbit(group, [1, 19], libgap.OnSets),
-                      format='list_of_edges')
-            G.name("Generalised hexagon of order (%d, %d)" % (q, q))
-            return G
+            return Graph(libgap.Orbit(group, [1, 19], libgap.OnSets),
+                         format='list_of_edges', immutable=immutable,
+                         name=f"Generalised hexagon of order ({q}, {q})")
 
-        elif q == 3:  # we don't have permutation representation; so we build it
+        if q == 3:  # we don't have permutation representation; so we build it
             matrixRep = libgap.AtlasGroup("G2(3)", libgap.Position, 7)
             e1 = vector(GF(3), [1, 0, 0, 0, 0, 0, 0])
             orb = libgap.Orbit(matrixRep, e1, libgap.OnLines)
             group = libgap.Action(matrixRep, orb, libgap.OnLines)
 
             # now group is our permutation representation
-            G = Graph(libgap.Orbit(group, [1, 52], libgap.OnSets),
-                      format='list_of_edges')
-            G.name("Generalised hexagon of order (%d, %d)" % (q, q))
-            return G
+            return Graph(libgap.Orbit(group, [1, 52], libgap.OnSets),
+                         format='list_of_edges', immutable=immutable,
+                         name=f"Generalised hexagon of order ({q}, {q})")
 
-        elif q <= 5:
+        if q <= 5:
             n = 1365 if q == 4 else 3906
             p = 43 if q == 4 else 185
             group = libgap.AtlasGroup("G2(%d)" % q, libgap.NrMovedPoints, n)
 
-            G = Graph(libgap.Orbit(group, [1, p], libgap.OnSets),
-                      format='list_of_edges')
-            G.name("Generalised hexagon of order (%d, %d)" % (q, q))
-            return G
+            return Graph(libgap.Orbit(group, [1, p], libgap.OnSets),
+                         format='list_of_edges', immutable=immutable,
+                         name=f"Generalised hexagon of order ({q}, {q})")
 
-        else:
-            raise NotImplementedError("Graph would be too big")
+        raise NotImplementedError("Graph would be too big")
 
-    elif orderType == 3:
+    if orderType == 3:
         if q > 3:
             raise NotImplementedError("Graph would be too big")
 
         movedPoints = 819 if q == 2 else 26572
         group = libgap.AtlasGroup("3D4(%d)" % q, libgap.NrMovedPoints, movedPoints)
 
-        G = Graph(libgap.Orbit(group, [1, 2], libgap.OnSets),
-                  format='list_of_edges')
-        G.name("Generalised hexagon of order (%d, %d)" % (q, q**3))
-        return G
+        return Graph(libgap.Orbit(group, [1, 2], libgap.OnSets),
+                     format='list_of_edges', immutable=immutable,
+                     name=f"Generalised hexagon of order ({q}, {q**3})")
 
 
 def _extract_lines(G):
@@ -1840,7 +1859,7 @@ def _extract_lines(G):
     return lines
 
 
-def _line_graph_generalised_polygon(H):
+def _line_graph_generalised_polygon(H, immutable=False, name=None):
     r"""
     Return the line-graph of the generalised polygon whose point-graph is `H`.
 
@@ -1853,7 +1872,13 @@ def _line_graph_generalised_polygon(H):
 
     - ``H`` -- a graph
 
-    EXAMPLES::
+     - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
+
+   EXAMPLES::
 
         sage: from sage.graphs.generators.distance_regular import (
         ....:     _line_graph_generalised_polygon)
@@ -1888,7 +1913,7 @@ def _line_graph_generalised_polygon(H):
             sig_check()
             edges.append((l1, l2))
 
-    return Graph(edges, format='list_of_edges')
+    return Graph(edges, format='list_of_edges', immutable=immutable, name=name)
 
 
 def _intersection_array_from_graph(G):
@@ -2182,7 +2207,8 @@ def is_classical_parameters_graph(list array):
     return (d, b, alpha, beta, gamma)
 
 
-def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
+def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma,
+                                    immutable=False):
     r"""
     Return the graph with the classical parameters given.
 
@@ -2199,6 +2225,9 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
       graph; ``d`` and ``b`` must be integers
 
     - ``gamma`` -- element of the enum ``ClassicalParametersGraph``
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2262,59 +2291,59 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
         beta = int(beta)
 
     if gamma == ClassicalParametersGraph.Johnson:
-        return JohnsonGraph(beta + d, d)
+        return JohnsonGraph(beta + d, d, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.Hamming:
-        return HammingGraph(d, beta + 1)
+        return HammingGraph(d, beta + 1, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.HalvedCube:
         a = 0 if beta == 2*d + 1 else 1
-        return HalfCube(beta + a)
+        return HalfCube(beta + a, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.UnitaryDualPolar:
-        return UnitaryDualPolarGraph(2 * d, -b)
+        return UnitaryDualPolarGraph(2 * d, -b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.HermitianForms:
-        return HermitianFormsGraph(d, (-b)**2)
+        return HermitianFormsGraph(d, (-b)**2, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.GeneralisedHexagon:
         q = -b
-        return GeneralisedHexagonGraph(q, q**3)
+        return GeneralisedHexagonGraph(q, q**3, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.Grassmann:
         n = int(log((beta + 1) * (b - 1) + 1, b)) + d - 1
-        return GrassmannGraph(b, n, d)
+        return GrassmannGraph(b, n, d, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.OrthogonalDualPolar1:
-        return OrthogonalDualPolarGraph(1, d, b)
+        return OrthogonalDualPolarGraph(1, d, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.SymplecticDualPolar:
-        return SymplecticDualPolarGraph(2 * d, b)
+        return SymplecticDualPolarGraph(2 * d, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.OrthogonalDualPolar2:
-        return OrthogonalDualPolarGraph(-1, d, b)
+        return OrthogonalDualPolarGraph(-1, d, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.UnitaryDualPolar1:
         r = int(sqrt(b))
-        return UnitaryDualPolarGraph(2*d + 1, r)
+        return UnitaryDualPolarGraph(2*d + 1, r, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.UnitaryDualPolar2:
         r = int(sqrt(b))
-        return UnitaryDualPolarGraph(2 * d, r)
+        return UnitaryDualPolarGraph(2 * d, r, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.Ustimenko:
         q = int(sqrt(b))
         m = int(log((beta+1) * (q-1) + 1, q)) - 1
-        UstimenkoGraph(m, q)
+        return UstimenkoGraph(m, q, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.BilinearForms:
         e = int(log(beta + 1, b))
-        return BilinearFormsGraph(d, e, b)
+        return BilinearFormsGraph(d, e, b, immutable=immutable)
 
     elif gamma == ClassicalParametersGraph.AlternatingForms:
         q = int(sqrt(b))
         a = 0 if beta + 1 == q**(2*d - 1) else 1
-        return AlternatingFormsGraph(2*d + a, q)
+        return AlternatingFormsGraph(2*d + a, q, immutable=immutable)
 
     elif (gamma == ClassicalParametersGraph.LieE77 or
           gamma == ClassicalParametersGraph.AffineE6):
@@ -2408,7 +2437,7 @@ def is_pseudo_partition_graph(list arr):
     return False
 
 
-def pseudo_partition_graph(int m, int a):
+def pseudo_partition_graph(int m, int a, immutable=False):
     r"""
     Return a pseudo partition graph with the given parameters.
 
@@ -2421,6 +2450,9 @@ def pseudo_partition_graph(int m, int a):
     INPUT:
 
     - ``m``, ``a`` -- integers; parameters of the graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2462,11 +2494,11 @@ def pseudo_partition_graph(int m, int a):
     from sage.graphs.bipartite_graph import BipartiteGraph
 
     if a == 0:
-        return FoldedCubeGraph(m)
+        return FoldedCubeGraph(m, immutable=immutable)
     elif a == 1:
-        return JohnsonGraph(2 * m, m).folded_graph()
+        return JohnsonGraph(2 * m, m, immutable=immutable).folded_graph()
     elif a == 2:
-        return BipartiteGraph(FoldedCubeGraph(2 * m)).project_left()
+        return BipartiteGraph(FoldedCubeGraph(2 * m), immutable=immutable).project_left()
 
     raise ValueError("No known graph exists")
 
@@ -2625,7 +2657,7 @@ def is_near_polygon(array):
     return False
 
 
-def near_polygon_graph(family, params):
+def near_polygon_graph(family, params, immutable=False):
     r"""
     Return the near polygon graph with the given parameters.
 
@@ -2638,6 +2670,9 @@ def near_polygon_graph(family, params):
 
     - ``params`` -- integer or tuple; the parameters needed to construct a graph
       of the family ``family``
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2665,7 +2700,7 @@ def near_polygon_graph(family, params):
         sage: near_polygon_graph((0, 12))
         Traceback (most recent call last):
         ...
-        TypeError: ...near_polygon_graph() takes exactly 2 positional arguments (1 given)
+        TypeError: ...near_polygon_graph() takes at least 2 positional arguments (1 given)
         sage: near_polygon_graph(0, 12)
         Cycle graph: Graph on 12 vertices
         sage: near_polygon_graph(*is_near_polygon([8, 7, 6, 5, 1, 2, 3, 8]))
@@ -2674,34 +2709,34 @@ def near_polygon_graph(family, params):
 
     if family == NearPolygonGraph.RegularPolygon:
         from sage.graphs.generators.basic import CycleGraph
-        return CycleGraph(params)
+        return CycleGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.GeneralisedPolygon:
         d, s, t = params
         if d == 3:
-            return GeneralisedHexagonGraph(s, t)
+            return GeneralisedHexagonGraph(s, t, immutable=immutable)
         if d == 4:
-            return GeneralisedOctagonGraph(s, t)
+            return GeneralisedOctagonGraph(s, t, immutable=immutable)
         if d == 6:
-            return GeneralisedDodecagonGraph(s, t)
+            return GeneralisedDodecagonGraph(s, t, immutable=immutable)
 
     if family == NearPolygonGraph.OddGraph:
         from sage.graphs.generators.families import OddGraph
-        return OddGraph(params)
+        return OddGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.DoubleOdd:
-        return DoubleOddGraph(params)
+        return DoubleOddGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.DoubleGrassmann:
-        return DoubleGrassmannGraph(*params)
+        return DoubleGrassmannGraph(*params, immutable=immutable)
 
     if family == NearPolygonGraph.FoldedCube:
         from sage.graphs.generators.families import FoldedCubeGraph
-        return FoldedCubeGraph(params)
+        return FoldedCubeGraph(params, immutable=immutable)
 
     if family == NearPolygonGraph.HammingGraph:
         from sage.graphs.generators.families import HammingGraph
-        return HammingGraph(*params)
+        return HammingGraph(*params, immutable=immutable)
 
     if family == NearPolygonGraph.DualPolarGraph:
         from sage.graphs.generators.classical_geometries import (
@@ -2711,15 +2746,15 @@ def near_polygon_graph(family, params):
 
         d, q, e = params
         if e == 0:
-            return OrthogonalDualPolarGraph(1, d, q)
+            return OrthogonalDualPolarGraph(1, d, q, immutable=immutable)
         if e == 0.5:
-            return UnitaryDualPolarGraph(2 * d, int(q**0.5))
+            return UnitaryDualPolarGraph(2 * d, int(q**0.5), immutable=immutable)
         if e == 1:
-            return SymplecticDualPolarGraph(2 * d, q)
+            return SymplecticDualPolarGraph(2 * d, q, immutable=immutable)
         if e == 1.5:
-            return UnitaryDualPolarGraph(2*d + 1, int(q**0.5))
+            return UnitaryDualPolarGraph(2*d + 1, int(q**0.5), immutable=immutable)
         if e == 2:
-            return OrthogonalDualPolarGraph(-1, d, q)
+            return OrthogonalDualPolarGraph(-1, d, q, immutable=immutable)
 
     raise ValueError("No known near polygons with the given parameters")
 
@@ -2727,56 +2762,59 @@ def near_polygon_graph(family, params):
 # dictionary intersection_array (as tuple)  -> construction
 # of sporadic distance-regular graphs
 _sporadic_graph_database = {
-    (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3): FosterGraph,
-    (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7): IvanovIvanovFaradjevGraph,
-    (3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3): BiggsSmithGraph,
+    (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3): lambda: FosterGraph,
+    (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7):
+    lambda: IvanovIvanovFaradjevGraph,
+    (3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3):lambda: BiggsSmithGraph,
     (22, 21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21, 22): lambda:
-    codes.GolayCode(GF(2), False).punctured([0]).cosetGraph().bipartite_double(),
+    codes.GolayCode(GF(2), False).punctured([0]).cosetGraph().bipartite_double,
     (23, 22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22, 23): lambda:
-    codes.GolayCode(GF(2), False).cosetGraph().bipartite_double(),
+    codes.GolayCode(GF(2), False).cosetGraph().bipartite_double,
     (21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21):
-    shortened_00_11_binary_Golay_code_graph,
+    lambda: shortened_00_11_binary_Golay_code_graph,
     (21, 20, 16, 9, 2, 1, 1, 2, 3, 16, 20, 21):
-    shortened_000_111_extended_binary_Golay_code_graph,
+    lambda: shortened_000_111_extended_binary_Golay_code_graph,
     (22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22): lambda:
-    codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph(),
-    (3, 2, 1, 1, 1, 1, 1, 1, 2, 3): DodecahedralGraph,
+    codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph,
+    (3, 2, 1, 1, 1, 1, 1, 1, 2, 3): lambda: DodecahedralGraph,
     (22, 20, 18, 2, 1, 1, 2, 9, 20, 22): lambda:
-    codes.GolayCode(GF(3)).shortened([0]).cosetGraph(),
+    codes.GolayCode(GF(3)).shortened([0]).cosetGraph,
     (7, 6, 6, 1, 1, 1, 1, 6, 6, 7): lambda:
-    HoffmanSingletonGraph().bipartite_double(),
+    HoffmanSingletonGraph().bipartite_double,
     (10, 9, 8, 2, 1, 1, 2, 8, 9, 10): lambda:
-    SimsGewirtzGraph().bipartite_double(),
+    SimsGewirtzGraph().bipartite_double,
     (16, 15, 12, 4, 1, 1, 4, 12, 15, 16): lambda:
-    strongly_regular_graph(77, 16, 0, check=False).bipartite_double(),
+    strongly_regular_graph(77, 16, 0, check=False).bipartite_double,
     (22, 21, 16, 6, 1, 1, 6, 16, 21, 22): lambda:
-    HigmanSimsGraph().bipartite_double(),
-    (3, 2, 2, 1, 1, 1, 1, 2): CoxeterGraph,
-    (6, 5, 5, 4, 1, 1, 2, 6): vanLintSchrijverGraph,
-    (7, 6, 4, 4, 1, 1, 1, 6): DoublyTruncatedWittGraph,
-    (9, 8, 6, 3, 1, 1, 3, 8): distance_3_doubly_truncated_Golay_code_graph,
-    (10, 8, 8, 2, 1, 1, 4, 5): J2Graph,
-    (11, 10, 6, 1, 1, 1, 5, 11): LivingstoneGraph,
-    (5, 4, 1, 1, 1, 1, 4, 5): WellsGraph,
-    (6, 4, 2, 1, 1, 1, 4, 6): FosterGraph3S6,
-    (10, 6, 4, 1, 1, 2, 6, 10):  ConwaySmith_for_3S7,
+    HigmanSimsGraph().bipartite_double,
+    (3, 2, 2, 1, 1, 1, 1, 2): lambda: CoxeterGraph,
+    (6, 5, 5, 4, 1, 1, 2, 6): lambda: vanLintSchrijverGraph,
+    (7, 6, 4, 4, 1, 1, 1, 6): lambda: DoublyTruncatedWittGraph,
+    (9, 8, 6, 3, 1, 1, 3, 8):
+    lambda: distance_3_doubly_truncated_Golay_code_graph,
+    (10, 8, 8, 2, 1, 1, 4, 5): lambda: J2Graph,
+    (11, 10, 6, 1, 1, 1, 5, 11): lambda: LivingstoneGraph,
+    (5, 4, 1, 1, 1, 1, 4, 5): lambda: WellsGraph,
+    (6, 4, 2, 1, 1, 1, 4, 6): lambda: FosterGraph3S6,
+    (10, 6, 4, 1, 1, 2, 6, 10):  lambda: ConwaySmith_for_3S7,
     (20, 18, 4, 1, 1, 2, 18, 20): lambda:
-    codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph(),
-    (45, 32, 12, 1, 1, 6, 32, 45): locally_GQ42_distance_transitive_graph,
-    (117, 80, 24, 1, 1, 12, 80, 117): graph_3O73,
+    codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph,
+    (45, 32, 12, 1, 1, 6, 32, 45):
+    lambda: locally_GQ42_distance_transitive_graph,
+    (117, 80, 24, 1, 1, 12, 80, 117): lambda: graph_3O73,
     (22, 21, 20, 1, 2, 6): lambda:
-    codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph(),
+    codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph,
     (23, 22, 21, 1, 2, 3): lambda:
-    codes.GolayCode(GF(2), extended=False).cosetGraph(),
-    (24, 23, 22, 21, 1, 2, 3, 24): lambda: codes.GolayCode(GF(2)).cosetGraph(),
-    (12, 11, 10, 7, 1, 2, 5, 12): LeonardGraph,
-    (15, 14, 10, 3, 1, 5, 12, 15): cocliques_HoffmannSingleton,
-    (27, 10, 1, 1, 10, 27): GossetGraph,
-    (30, 28, 24, 1, 3, 15): LargeWittGraph,
-    (15, 14, 12, 1, 1, 9): TruncatedWittGraph,
-    (24, 22, 20, 1, 2, 12): lambda: codes.GolayCode(GF(3)).cosetGraph(),
+    codes.GolayCode(GF(2), extended=False).cosetGraph,
+    (24, 23, 22, 21, 1, 2, 3, 24): lambda: codes.GolayCode(GF(2)).cosetGraph,
+    (12, 11, 10, 7, 1, 2, 5, 12): lambda: LeonardGraph,
+    (15, 14, 10, 3, 1, 5, 12, 15): lambda: cocliques_HoffmannSingleton,
+    (27, 10, 1, 1, 10, 27): lambda: GossetGraph,
+    (30, 28, 24, 1, 3, 15): lambda: LargeWittGraph,
+    (15, 14, 12, 1, 1, 9): lambda: TruncatedWittGraph,
+    (24, 22, 20, 1, 2, 12): lambda: codes.GolayCode(GF(3)).cosetGraph,
     (21, 20, 16, 1, 2, 12): lambda:
-    codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
+    codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph
 }
 
 _infinite_families_database = [
@@ -2787,7 +2825,8 @@ _infinite_families_database = [
 ]
 
 
-def distance_regular_graph(list arr, existence=False, check=True):
+def distance_regular_graph(list arr, existence=False, check=True,
+                           immutable=False):
     r"""
     Return a distance-regular graph with the intersection array given.
 
@@ -2805,6 +2844,9 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
     - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
       of this function has the given intersection array
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2838,6 +2880,28 @@ def distance_regular_graph(list arr, existence=False, check=True):
         Generalised octagon of order (1, 5): Graph on 312 vertices
         sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
         Graph on 325 vertices
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: arr = [3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
+        sage: G = graphs.distance_regular_graph(arr, immutable=False); G
+        Foster Graph: Graph on 90 vertices
+        sage: G.is_immutable()
+        False
+        sage: graphs.distance_regular_graph(arr, immutable=True).is_immutable()
+        True
+        sage: arr = [21, 20, 16, 1, 2, 12]
+        sage: G = graphs.distance_regular_graph(arr, immutable=False); G
+        coset graph of Puncturing of [23, 12, 7] Golay code over GF(2)
+         on position(s) [0, 1]: Graph on 512 vertices
+        sage: G.is_immutable()
+        False
+        sage: graphs.distance_regular_graph(arr, immutable=True).is_immutable()
+        True
+        sage: G = graphs.distance_regular_graph([5, 1], immutable=True); G
+        Complete graph: Graph on 6 vertices
+        sage: G.is_immutable()
+        True
     """
     from sage.misc.unknown import Unknown
     from sage.categories.sets_cat import EmptySetError
@@ -2893,7 +2957,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
         if existence:
             return True
         from sage.graphs.generators.basic import CompleteGraph
-        return result(CompleteGraph(arr[0] + 1))
+        return result(CompleteGraph(arr[0] + 1, immutable=immutable))
 
     if d == 2:
         k = arr[0]
@@ -2903,13 +2967,13 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
         if existence:
             return strongly_regular_graph(v, k, l, mu, existence=True)
-        return result(strongly_regular_graph(v, k, l, mu))
+        return result(strongly_regular_graph(v, k, l, mu, immutable=immutable))
 
     t = tuple(arr)
     if t in _sporadic_graph_database:
         if existence:
             return True
-        return result(_sporadic_graph_database[t]())
+        return result(_sporadic_graph_database[t]()(immutable=immutable))
 
     for (f, g) in _infinite_families_database:
         t = f(arr)
@@ -2917,8 +2981,9 @@ def distance_regular_graph(list arr, existence=False, check=True):
             if existence:
                 return True
 
-            G = g(*t) if is_iterable(t) else g(t)
-            return result(G)
+            if is_iterable(t):
+                return result(g(*t, immutable=immutable))
+            return result(g(t, immutable=immutable))
 
     # now try drg feasibility
     if drgModule:

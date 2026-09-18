@@ -375,7 +375,8 @@ def polygons3d(faces, points, **options):
     """
     Draw the union of several polygons in 3d.
 
-    Useful to plot a polyhedron as just one :class:`IndexFaceSet`.
+    Useful to plot a polyhedron as just one
+    :class:`~sage.plot.plot3d.index_face_set.IndexFaceSet`.
 
     INPUT:
 

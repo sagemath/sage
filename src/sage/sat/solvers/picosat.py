@@ -166,8 +166,7 @@ class PicoSAT(SatSolver):
         # sol = pycosat.solve(self._clauses)
         if sol == 'UNSAT':
             return False
-        else:
-            return (None,) + tuple([s > 0 for s in sol])
+        return (None,) + tuple([s > 0 for s in sol])
 
     def __repr__(self):
         r"""

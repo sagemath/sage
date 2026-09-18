@@ -1,3 +1,10 @@
+r"""
+FLINT factorization helpers for unsigned integers
+
+This module provides Python wrappers for FLINT functions that factor unsigned
+machine integers.
+"""
+
 from .types cimport n_factor_t
 from .ulong_extras cimport n_factor_init, n_factor
 

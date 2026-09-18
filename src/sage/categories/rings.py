@@ -396,7 +396,7 @@ class Rings(CategoryWithAxiom):
                 sage: R.fraction_field()                                                    # needs sage.libs.pari
                 Traceback (most recent call last):
                 ...
-                TypeError: self must be an integral domain.
+                TypeError: self must be an integral domain
                 sage: R.is_integral_domain()                                                # needs sage.libs.pari
                 False
 
@@ -1167,7 +1167,8 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES:
 
-            Usually, a ring inherits a method :meth:`sage.rings.ring.Ring.quotient`.
+            Usually, a ring inherits a method
+            :meth:`~sage.categories.rings.Rings.ParentMethods.quotient_ring`.
             So, we need a bit of effort to make the following example work with the
             category framework::
 
@@ -1434,8 +1435,8 @@ class Rings(CategoryWithAxiom):
                 Multivariate Power Series Ring in x, T over Integer Ring
 
             Use :func:`~sage.rings.fraction_field.Frac` or
-            :meth:`~sage.rings.ring.CommutativeRing.fraction_field` to obtain
-            the fields of rational functions and Laurent series::
+            :meth:`~sage.categories.commutative_rings.CommutativeRings.fraction_field`
+            to obtain the fields of rational functions and Laurent series::
 
                 sage: Frac(QQ['t'])
                 Fraction Field of Univariate Polynomial Ring in t over Rational Field

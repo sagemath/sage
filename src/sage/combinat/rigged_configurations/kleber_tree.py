@@ -375,7 +375,7 @@ class KleberTreeNode(Element):
         """
         return hash(self.depth) ^ hash(self.weight)
 
-    def _richcmp_(self, rhs, op):
+    def _richcmp_(self, other, op):
         r"""
         Check whether two nodes are equal.
 
@@ -398,16 +398,16 @@ class KleberTreeNode(Element):
             True
         """
         lx = self.depth
-        rx = rhs.depth
+        rx = other.depth
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
         lx = self.parent_node
-        rx = rhs.parent_node
+        rx = other.parent_node
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
-        return richcmp(self.weight, rhs.weight, op)
+        return richcmp(self.weight, other.weight, op)
 
     def _repr_(self):
         r"""

@@ -87,7 +87,7 @@ AUTHORS:
 
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import richcmp
-import sage.rings.polynomial.polynomial_singular_interface as polynomial_singular_interface
+from sage.rings.polynomial import polynomial_singular_interface
 
 
 class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_singular_repr, CommutativeRingElement):
@@ -420,6 +420,16 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
             sage: ~S(3)
             11
+
+        Check that :issue:`40809` is fixed::
+
+            sage: F.<i> = GF((2**31-1,2), modulus=[1,0,1])
+            sage: R.<x> = F[]
+            sage: f = x^2 + (1196423630*i + 1564527877)*x + 2041534867*i + 2147483645
+            sage: g = x^3 + x
+            sage: S.<y> = R.quotient_ring(g)
+            sage: ~S(f)
+            (2068022062*i + 1610612738)*y^2 + (774635916*i + 1219480766)*y + 2041534867*i + 2
         """
         P = self.parent()
         try:

@@ -772,8 +772,7 @@ def c11_func(SUK, v, A, prec=106):
     R = RealField(prec)
     if is_real_place(v):
         return R(4*c4_func(SUK, v, A, prec)).log() / c3_func(SUK, prec)
-    else:
-        return 2*R(4*(c4_func(SUK, v, A, prec)).sqrt()).log() / c3_func(SUK, prec)
+    return 2*R(4*(c4_func(SUK, v, A, prec)).sqrt()).log() / c3_func(SUK, prec)
 
 
 def c13_func(SUK, v, prec=106):
@@ -822,8 +821,7 @@ def c13_func(SUK, v, prec=106):
         raise TypeError('Place must be infinite')
     if is_real_place(v):
         return c3_func(SUK, prec)
-    else:
-        return c3_func(SUK, prec)/2
+    return c3_func(SUK, prec)/2
 
 
 def K1_func(SUK, v, A, prec=106):
@@ -951,9 +949,8 @@ def minimal_vector(A, y, prec=106):
     v = ALLL.rows()[0]
     if len(ybrace) == 0:
         return v.dot_product(v) / c1
-    else:
-        sigma = ybrace[len(ybrace)-1]
-        return v.dot_product(v) * sigma / c1
+    sigma = ybrace[len(ybrace)-1]
+    return v.dot_product(v) * sigma / c1
 
 
 def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
@@ -1046,10 +1043,9 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
                     # Need to check precision: must be at least two more than the number of digits in largest entry in A to ensure that we get true rounding--
                     if prec < R(C*max_part_log).log()/R(2).log()+3:
                         return 0, True
-                    else:
-                        Bnew = ((R(C * 2).log() - ((l**2-S).sqrt()-T)).log() / c13).round()
-                        finish = True
-                        return max(4, w, Bnew), False
+                    Bnew = ((R(C * 2).log() - ((l**2-S).sqrt()-T)).log() / c13).round()
+                    finish = True
+                    return max(4, w, Bnew), False
     elif is_real_place(place):
         # this is the case when we are working with a real embedding, we get savings here
         C = R(1)
@@ -1083,10 +1079,9 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
                     # Need to check precision: must be at least two more than the number of digits in largest entry in A to ensure that we get true rounding--
                     if prec < R(C*max_part_log).log()/R(2).log()+3:
                         return 0, True
-                    else:
-                        Bnew = ((R(C * 2).log() - ((l-S).sqrt()-T).log()) / c13).round()
-                        finish = True
-                        return max(4, w, Bnew), False
+                    Bnew = ((R(C * 2).log() - ((l-S).sqrt()-T).log()) / c13).round()
+                    finish = True
+                    return max(4, w, Bnew), False
 
     else:
 
@@ -1130,10 +1125,9 @@ def reduction_step_complex_case(place, B0, list_of_gens, torsion_gen, c13):
                     # Need to check precision: must be at least two more than the number of digits in largest entry in A to ensure that we get true rounding--
                     if prec < R(C*max_part_log).log()/R(2).log()+3:
                         return 0, True
-                    else:
-                        Bnew = ((R(C * 2).log() - ((l-S).sqrt()-T).log()) / c13).round()
-                        finish = True
-                        return max(4, w, Bnew), False
+                    Bnew = ((R(C * 2).log() - ((l-S).sqrt()-T).log()) / c13).round()
+                    finish = True
+                    return max(4, w, Bnew), False
 
 
 def cx_LLL_bound(SUK, A, prec=106):
@@ -1416,8 +1410,7 @@ def defining_polynomial_for_Kp(prime, prec=106):
 
         if len(A) == 1:
             return A[0].change_ring(Integers(p**prec)).change_ring(ZZ)
-        else:
-            N += 1
+        N += 1
 
 
 def embedding_to_Kp(a, prime, prec):
@@ -1543,8 +1536,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
     if not M:
         if m0 != 1:
             return max(4, w, R(max(R(p).log()*f*(m0-1).valuation(prime)/c3, 0)).floor()), False
-        else:
-            return 0, False
+        return 0, False
     # we evaluate the p-adic logarithms of m0 and we embed it in the completion of K with respect to prime
 
     m0_logp = log_p(m0, prime, prec)
@@ -1574,8 +1566,7 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
             B1 = (c8 + ordp_Disc/2) / c5
             if B1 > low_bound:
                 return max(4, w, RR(B1).floor()), False
-            else:
-                return max(4, w, low_bound), False
+            return max(4, w, low_bound), False
 
     c8 = min([a.valuation(p) for a in m0_logp] + [c8])
     B = [g/lam for g in M_logp]
@@ -1609,10 +1600,8 @@ def p_adic_LLL_bound_one_prime(prime, B0, M, M_logp, m0, c3, prec=106):
             B2 = (u+c9) / c5
             if B2 > low_bound:
                 return max(4, w, R(B2).floor()), False
-            else:
-                return max(4, w, low_bound), False
-        else:
-            u += 1
+            return max(4, w, low_bound), False
+        u += 1
 
 
 def p_adic_LLL_bound(SUK, A, prec=106):

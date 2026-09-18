@@ -69,8 +69,8 @@ def outerproduct_schur_symmetrica(parta, partb):
     """
     cdef OP cparta, cpartb, cresult
 
-    cparta  = callocobject()
-    cpartb  = callocobject()
+    cparta = callocobject()
+    cpartb = callocobject()
     cresult = callocobject()
 
     _op_partition(parta, cparta)
@@ -98,7 +98,7 @@ def dimension_schur_symmetrica(s):
     cdef OP ca, cresult
 
     cresult = callocobject()
-    ca      = callocobject()
+    ca = callocobject()
 
     _op_schur(s, ca)
     sig_on()

@@ -105,8 +105,11 @@ AUTHORS:
 - Sebastian Oehms (2018): added _coerce_map_from_ in order to use isomorphism coming up with as_permutation_group method (Issue #25706)
 - Christian Stump (2018): Added alternative implementation of strong_generating_system directly using GAP.
 
-- Sebastian Oehms (2018): Added :meth:`PermutationGroup_generic._Hom_` to use :class:`sage.groups.libgap_morphism.GroupHomset_libgap` and :meth:`PermutationGroup_generic.gap` and
-  :meth:`PermutationGroup_generic._subgroup_constructor` (for compatibility to libgap framework, see :issue:`26750`
+- Sebastian Oehms (2018): Added ``PermutationGroup_generic._Hom_`` to use
+  :class:`sage.groups.libgap_morphism.GroupHomset_libgap` and
+  :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.gap` and
+  ``PermutationGroup_generic._subgroup_constructor`` (for compatibility to
+  libgap framework, see :issue:`26750`
 
 REFERENCES:
 
@@ -749,9 +752,9 @@ class PermutationGroup_generic(FiniteGroup):
         g = ', '.join([g._gap_cycle_string() for g in self.gens()])
         return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
-    def __richcmp__(self, right, op):
+    def __richcmp__(self, other, op: int):
         """
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         The comparison extends the subgroup relation. Hence, it is first checked
         whether one of the groups is subgroup of the other. If this is not the
@@ -795,23 +798,23 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G != H
             False
         """
-        if not isinstance(right, PermutationGroup_generic):
+        if not isinstance(other, PermutationGroup_generic):
             return NotImplemented
 
-        if self is right:
+        if self is other:
             return rich_to_bool(op, 0)
 
         gSelf = self._libgap_()
-        gRight = right._libgap_()
+        gOther = other._libgap_()
         if op in [op_EQ, op_NE]:
-            return gSelf._richcmp_(gRight, op)
+            return gSelf._richcmp_(gOther, op)
 
-        if gSelf.IsSubgroup(gRight):
+        if gSelf.IsSubgroup(gOther):
             return rich_to_bool(op, 1)
-        if gRight.IsSubgroup(gSelf):
+        if gOther.IsSubgroup(gSelf):
             return rich_to_bool(op, -1)
 
-        return gSelf._richcmp_(gRight, op)
+        return gSelf._richcmp_(gOther, op)
 
     def __hash__(self):
         r"""
@@ -4211,7 +4214,7 @@ class PermutationGroup_generic(FiniteGroup):
 
     def minimal_normal_subgroups(self):
         """
-        Return the nontrivial minimal normal subgroups ``self``.
+        Return the nontrivial minimal normal subgroups of ``self``.
 
         EXAMPLES::
 
@@ -4467,7 +4470,7 @@ class PermutationGroup_generic(FiniteGroup):
         Return ``True`` if this group is polycyclic. A group is polycyclic if
         it has a subnormal series with cyclic factors. (For finite groups,
         this is the same as if the group is solvable - see
-        :meth:`is_solvable`.)
+        :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.is_solvable`.)
 
         EXAMPLES::
 
@@ -5161,7 +5164,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
                     if g._libgap_() not in ambient_gap_group:
                         raise TypeError("each generator must be in the ambient group")
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op: int):
         r"""
         Compare ``self`` and ``other``.
 

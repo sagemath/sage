@@ -812,8 +812,7 @@ class FunctionFieldCompletion(Map):
         """
         if self._precision == infinity:
             return self._expand_lazy(f)
-        else:
-            return self._expand(f, prec=None)
+        return self._expand(f, prec=None)
 
     def _call_with_args(self, f, args, kwds):
         """
@@ -830,8 +829,7 @@ class FunctionFieldCompletion(Map):
         """
         if self._precision == infinity:
             return self._expand_lazy(f, *args, **kwds)
-        else:
-            return self._expand(f, *args, **kwds)
+        return self._expand(f, *args, **kwds)
 
     def _expand(self, f, prec=None):
         """

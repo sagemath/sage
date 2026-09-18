@@ -921,7 +921,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         r"""
         Return an exact copy of the object.
 
-        OUTPUT: a :class:`ChartFunctionSymb`
+        OUTPUT: a :class:`ChartFunction`
 
         EXAMPLES::
 

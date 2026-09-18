@@ -24,7 +24,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
+from cysignals.signals cimport sig_check, sig_on, sig_off
 from cysignals.memory cimport check_calloc, sig_free
 
 from sage.data_structures.binary_search cimport *
@@ -36,6 +36,7 @@ from cpython.sequence cimport *
 from sage.rings.rational cimport Rational
 from sage.rings.integer  cimport Integer
 from sage.matrix.matrix cimport Matrix
+cimport sage.matrix.matrix0 as matrix0
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.gmp.mpz cimport *
@@ -60,6 +61,11 @@ from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
+    """
+    .. automethod:: _right_kernel_matrix
+    .. automethod:: _right_kernel_matrix_linbox
+    """
+
     def __cinit__(self):
         self._matrix = <mpq_vector*>check_calloc(self._nrows, sizeof(mpq_vector))
         # initialize the rows
@@ -89,6 +95,12 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         - ``coerce`` -- if ``False``, assume without checking that the
           entries are of type :class:`Rational`
         """
+        if entries is None:
+            # ``__cinit__`` already initialized the matrix to the (empty)
+            # zero matrix. Returning here avoids building a ``MatrixArgs``
+            # object and iterating over an empty generator, which makes
+            # creating a zero matrix from scratch faster (see :issue:`36146`).
+            return
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
         for t in ma.iter(coerce, True):
@@ -179,7 +191,23 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [0 0]
             sage: m.nonzero_positions()
             []
+
+        The cache is cleared and immutable matrices cannot be changed
+        (:issue:`42532`)::
+
+            sage: m = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: m.det()
+            -2
+            sage: m.add_to_entry(0, 0, 10)
+            sage: m.det()
+            38
+            sage: m.set_immutable()
+            sage: m.add_to_entry(0, 0, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
         """
+        self.check_mutability()
         if not isinstance(elt, Rational):
             elt = Rational(elt)
         if i < 0:
@@ -215,8 +243,74 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * x _dict -- sparse dictionary of underlying elements (need not be a copy)
 
     cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
+        """
+        Return the product of two sparse rational matrices.
+
+        The result matrix is allocated and then written by
+        :meth:`_set_to_product_classical`.
+
+        EXAMPLES::
+
+            sage: a = matrix(QQ, 2, [1/2, 2, 3, 4], sparse=True)
+            sage: b = matrix(QQ, 2, 3, [1..6], sparse=True)
+            sage: a * b  # indirect doctest
+            [17/2   11 27/2]
+            [  19   26   33]
+        """
         cdef Matrix_rational_sparse right, ans
         right = _right
+
+        ans = self.new_matrix(self._nrows, right._ncols)
+        ans._set_to_product_classical(self, right)
+        return ans
+
+    cdef void _set_to_product_classical(self, matrix0.Matrix _left,
+                                        matrix0.Matrix _right) except *:
+        r"""
+        Set ``self`` to ``_left * _right`` using the specialized sparse
+        rational algorithm.
+
+        This overrides
+        :meth:`~sage.matrix.matrix_sparse.Matrix_sparse._set_to_product_classical`
+        so that :meth:`set_to_product` keeps the specialized ``mpq_vector``
+        algorithm used by ``*``, rather than falling back to the generic sparse
+        one.  It is the shared core of :meth:`_matrix_times_matrix_`, which
+        allocates the result and then calls this method.
+
+        The destination's rows are cleared first, since it may hold the
+        result of an earlier product.
+
+        INPUT:
+
+        - ``_left`` -- a sparse rational matrix
+        - ``_right`` -- a sparse rational matrix
+
+        OUTPUT: none; ``self`` is modified in place
+
+        EXAMPLES::
+
+            sage: a = matrix(QQ, 2, [1/2, 2, 3, 4], sparse=True)
+            sage: b = matrix(QQ, 2, 3, [1..6], sparse=True)
+            sage: C = matrix(QQ, 2, 3, [7] * 6, sparse=True)
+            sage: C.set_to_product(a, b)
+            sage: C == a * b
+            True
+
+        TESTS:
+
+        Reusing the destination must not leave entries of the previous
+        product behind::
+
+            sage: C.set_to_product(2 * a, b)
+            sage: C == (2 * a) * b
+            True
+            sage: C.set_to_product(matrix(QQ, 2, 0, sparse=True),
+            ....:                  matrix(QQ, 0, 3, sparse=True))
+            sage: C.is_zero()
+            True
+        """
+        cdef Matrix_rational_sparse left = <Matrix_rational_sparse>_left
+        cdef Matrix_rational_sparse right = <Matrix_rational_sparse>_right
 
         cdef mpq_vector* v
 
@@ -232,7 +326,19 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         right_indices = [j for j in range(right._ncols)
                          if nonzero_positions_in_columns[j]]
 
-        ans = self.new_matrix(self._nrows, right._ncols)
+        # Clear any previous entries, while avoiding a second initialization
+        # pass for the empty rows of a freshly allocated destination.  Reset
+        # each cleared row to the empty state by hand rather than calling
+        # ``mpq_vector_init``: an empty vector needs no storage, and an
+        # allocation here could raise after ``mpq_vector_clear`` has already
+        # freed the row, leaving it with a stale ``num_nonzero`` and dangling
+        # pointers for the next ``mpq_vector_clear`` to walk.
+        for i in range(self._nrows):
+            if self._matrix[i].num_nonzero:
+                mpq_vector_clear(&self._matrix[i])
+                self._matrix[i].entries = NULL
+                self._matrix[i].positions = NULL
+                self._matrix[i].num_nonzero = 0
 
         # Now do the multiplication, getting each row completely before filling it in.
         cdef set c
@@ -240,8 +346,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_init(x)
         mpq_init(y)
         mpq_init(s)
-        for i in range(self._nrows):
-            v = &(self._matrix[i])
+        for i in range(left._nrows):
+            v = &(left._matrix[i])
             if not v.num_nonzero:
                 continue
             for j in right_indices:
@@ -252,12 +358,11 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                         mpq_vector_get_entry(y, &right._matrix[v.positions[k]], j)
                         mpq_mul(x, v.entries[k], y)
                         mpq_add(s, s, x)
-                mpq_vector_set_entry(&ans._matrix[i], j, s)
+                mpq_vector_set_entry(&self._matrix[i], j, s)
 
         mpq_clear(x)
         mpq_clear(y)
         mpq_clear(s)
-        return ans
 
     def _matrix_times_matrix_dense(self, sage.structure.element.Matrix _right):
         """
@@ -319,7 +424,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _unpickle(self, data, int version):   # use version >= 0
     # cpdef _add_(self, right):
     # cdef _mul_(self, Matrix right):
-    # cpdef _richcmp_(self, Matrix right, int op):
+    # cpdef _richcmp_(self, Matrix other, int op):
     # def __neg__(self):
     # def __invert__(self):
     # def __copy__(self):
@@ -496,7 +601,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         self.mpz_denom(D.value)
 
         MZ = sage.matrix.matrix_space.MatrixSpace(ZZ, self._nrows, self._ncols, sparse=True)
-        A = MZ.zero_matrix().__copy__()
+        A = MZ.element_class(MZ, None, False, False)
 
         mpz_init(t)
         sig_on()
@@ -510,18 +615,120 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpz_clear(t)
         return A, D
 
+    def _clear_denom_rowwise(self):
+        r"""
+        Clear denominators independently in each row, divide out its content,
+        and return the resulting integer matrix together with its height.
+
+        TESTS::
+
+            sage: A = matrix(QQ, [[0, 0], [1/2, 1/3]], sparse=True)
+            sage: B, height = A._clear_denom_rowwise()
+            sage: B
+            [0 0]
+            [3 2]
+            sage: (height, B.is_sparse())
+            (3, True)
+            sage: B.change_ring(QQ).echelon_form() == A.echelon_form()
+            True
+            sage: matrix(QQ, [[2/101, 2/103]], sparse=True)._clear_denom_rowwise()
+            ([103 101], 103)
+
+        Entries that are stored but zero do not become stored entries of the
+        result::
+
+            sage: A = matrix(QQ, [[1, 2], [3, 4]], sparse=True)
+            sage: A.set_row_to_multiple_of_row(0, 1, 0)
+            sage: B, height = A._clear_denom_rowwise()
+            sage: B.nonzero_positions()
+            [(1, 0), (1, 1)]
+        """
+        cdef Py_ssize_t i, j, k, num_nonzero
+        cdef Matrix_integer_sparse B
+        cdef mpq_vector *source_row
+        cdef mpz_vector *target_row
+        cdef mpz_vector new_row
+        cdef mpz_t content, denom
+        cdef Integer height = Integer.__new__(Integer)
+
+        MZ = sage.matrix.matrix_space.MatrixSpace(
+            ZZ, self._nrows, self._ncols, sparse=True)
+        B = MZ.element_class(MZ, None, False, False)
+
+        mpz_set_ui(height.value, 0)
+        mpz_init(content)
+        mpz_init(denom)
+        try:
+            for i in range(self._nrows):
+                sig_check()
+                source_row = &self._matrix[i]
+                mpz_set_ui(content, 0)
+                mpz_set_ui(denom, 1)
+                num_nonzero = 0
+                for j in range(source_row.num_nonzero):
+                    sig_check()
+                    if mpq_sgn(source_row.entries[j]):
+                        num_nonzero += 1
+                        mpz_lcm(denom, denom,
+                                mpq_denref(source_row.entries[j]))
+
+                # Allocate and initialize a complete replacement row before
+                # changing B.  This keeps every row structurally valid if
+                # allocation or a later signal raises an exception.  A stored
+                # entry of ``self`` may be zero, and those must not be stored
+                # in B.
+                mpz_vector_init(&new_row, self._ncols, num_nonzero)
+                k = 0
+                for j in range(source_row.num_nonzero):
+                    if mpq_sgn(source_row.entries[j]):
+                        new_row.positions[k] = source_row.positions[j]
+                        k += 1
+                target_row = &B._matrix[i]
+                mpz_vector_clear(target_row)
+                target_row[0] = new_row
+
+                k = 0
+                for j in range(source_row.num_nonzero):
+                    sig_check()
+                    if not mpq_sgn(source_row.entries[j]):
+                        continue
+                    mpz_divexact(
+                        target_row.entries[k], denom,
+                        mpq_denref(source_row.entries[j]))
+                    mpz_mul(
+                        target_row.entries[k], target_row.entries[k],
+                        mpq_numref(source_row.entries[j]))
+                    mpz_gcd(content, content, target_row.entries[k])
+                    k += 1
+
+                if mpz_sgn(content):
+                    for k in range(num_nonzero):
+                        sig_check()
+                        mpz_divexact(target_row.entries[k],
+                                     target_row.entries[k], content)
+                for k in range(num_nonzero):
+                    sig_check()
+                    if mpz_cmpabs(target_row.entries[k], height.value) > 0:
+                        mpz_abs(height.value, target_row.entries[k])
+        finally:
+            mpz_clear(denom)
+            mpz_clear(content)
+        return B, height
+
     ################################################
     # Echelon form
     ################################################
-    def echelonize(self, height_guess=None, proof=True, **kwds):
+    def echelonize(self, height_guess=None, proof=None, **kwds):
         """
         Transform the matrix ``self`` into reduced row echelon form
         in place.
 
         INPUT:
 
-        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-          algorithm; ignored by the `p`-adic algorithm
+        - ``height_guess``, ``proof`` -- passed to the multimodular algorithm
+
+        - ``**kwds`` -- ignored; accepted for compatibility with the generic
+          :meth:`~sage.matrix.matrix2.Matrix.echelonize`
 
         OUTPUT:
 
@@ -555,7 +762,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             return  # already known to be in echelon form
         self.check_mutability()
 
-        pivots = self._echelonize_multimodular(height_guess, proof, **kwds)
+        pivots = self._echelonize_multimodular(height_guess, proof)
 
         self.cache('in_echelon_form', True)
         self.cache('echelon_form', self)
@@ -563,12 +770,14 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         self.cache('rank', len(pivots))
 
     def echelon_form(self, algorithm='default',
-                     height_guess=None, proof=True, **kwds):
+                     height_guess=None, proof=None, **kwds):
         """
         INPUT:
 
-        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-          algorithm; ignored by the `p`-adic algorithm
+        - ``height_guess``, ``proof`` -- passed to the multimodular algorithm
+
+        - ``**kwds`` -- ignored; accepted for compatibility with the generic
+          :meth:`~sage.matrix.matrix2.Matrix.echelon_form`
 
         OUTPUT: ``self`` is no in reduced row echelon form
 
@@ -584,6 +793,31 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       1       0  -5/157]
             [      0       0       1 238/157]
             [      0       0       0       0]
+
+        TESTS:
+
+        ``proof`` defaults to ``None``, so that the global
+        ``proof.linear_algebra`` flag is honoured just as it is for dense
+        matrices::
+
+            sage: import sage.matrix.misc as matrix_misc
+            sage: original = matrix_misc.matrix_rational_echelon_form_multimodular
+            sage: received = []
+            sage: def wrapper(A, height_guess=None, proof=None):
+            ....:     received.append(proof)
+            ....:     return original(A, height_guess=height_guess, proof=proof)
+            sage: matrix_misc.matrix_rational_echelon_form_multimodular = wrapper
+            sage: try:
+            ....:     a = matrix(QQ, [[1/2, 1/3]], sparse=True)
+            ....:     default = a.echelon_form()
+            ....:     forced = matrix(QQ, [[1/2, 1/3]], sparse=True).echelon_form(
+            ....:         proof=True)
+            ....: finally:
+            ....:     matrix_misc.matrix_rational_echelon_form_multimodular = original
+            sage: received
+            [None, True]
+            sage: default == forced == matrix(QQ, [[1, 2/3]])
+            True
         """
         label = 'echelon_form_%s' % algorithm
         x = self.fetch(label)
@@ -599,15 +833,15 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return E
 
     # Multimodular echelonization algorithms
-    def _echelonize_multimodular(self, height_guess=None, proof=True, **kwds):
+    def _echelonize_multimodular(self, height_guess=None, proof=None):
         cdef Matrix_rational_sparse E
-        E, pivots = self._echelon_form_multimodular(height_guess, proof=proof, **kwds)
+        E, pivots = self._echelon_form_multimodular(height_guess, proof=proof)
         self.clear_cache()
         # Swap the data of E and self (effectively moving E to self)
         self._matrix, E._matrix = E._matrix, self._matrix
         return pivots
 
-    def _echelon_form_multimodular(self, height_guess=None, proof=True):
+    def _echelon_form_multimodular(self, height_guess=None, proof=None):
         """
         Return reduced row-echelon form using a multi-modular
         algorithm.  Does not change ``self``.
@@ -615,7 +849,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         INPUT:
 
         - ``height_guess`` -- integer or ``None``
-        - ``proof`` -- boolean (default: ``True``)
+        - ``proof`` -- boolean or ``None`` (default: ``None``, see
+          ``proof.linear_algebra`` or ``sage.structure.proof``)
         """
         from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
@@ -668,7 +903,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef Matrix_rational_dense B
         cdef mpq_vector* v
 
-        B = self.matrix_space(sparse=False).zero_matrix().__copy__()
+        MS = self.matrix_space(sparse=False)
+        B = MS.element_class(MS, None, False, False)
         for i from 0 <= i < self._nrows:
             v = &(self._matrix[i])
             for j from 0 <= j < v.num_nonzero:
@@ -860,7 +1096,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef linbox.SparseMatrix_rational * M = new_linbox_matrix_rational_sparse(givQQ, self)
 
         MQ = sage.matrix.matrix_space.MatrixSpace(QQ, self._ncols, self._ncols, sparse=True)
-        A = MQ.zero_matrix().__copy__()
+        A = MQ.element_class(MQ, None, False, False)
 
         cdef linbox.SparseMatrix_rational * N = new_linbox_matrix_rational_sparse(givQQ, A)
 

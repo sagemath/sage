@@ -15,7 +15,7 @@ License
 -------
 
 The Matplotlib license - see
-http://matplotlib.sourceforge.net/users/license.html: Matplotlib only
+https://matplotlib.org/stable/users/project/license.html: Matplotlib only
 uses BSD compatible code, and its license is based on the PSF license.
 See the Open Source Initiative licenses page for details on individual
 licenses. Non-BSD compatible licenses (eg LGPL) are acceptable in

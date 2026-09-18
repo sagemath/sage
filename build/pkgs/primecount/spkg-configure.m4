@@ -4,7 +4,17 @@ SAGE_SPKG_CONFIGURE([primecount], [
     m4_pushdef([SAGE_PRIMECOUNT_MINOR],[0])
     SAGE_SPKG_DEPCHECK([primesieve], [
       dnl Checking for primecount with pkg-config
-      PKG_CHECK_MODULES([PRIMECOUNT], [primecount >= SAGE_PRIMECOUNT_MINVER], [ ], [
+      PKG_CHECK_MODULES([PRIMECOUNT], [primecount >= SAGE_PRIMECOUNT_MINVER], [
+          dnl Reject broken .pc files with empty version
+          AC_MSG_CHECKING([whether primecount .pc file reports a non-empty version])
+          primecount_pc_version=`$PKG_CONFIG --modversion primecount 2>/dev/null`
+          AS_IF([test -z "$primecount_pc_version"], [
+              AC_MSG_RESULT([no, broken .pc file])
+              sage_spkg_install_primecount=yes
+          ], [
+              AC_MSG_RESULT([yes ($primecount_pc_version)])
+          ])
+      ], [
           AC_CHECK_HEADER([primecount.h], [
            AC_SEARCH_LIBS([primecount_pi], [primecount], [
              AC_MSG_CHECKING([checking primecount version directly])
@@ -16,7 +26,16 @@ SAGE_SPKG_CONFIGURE([primecount], [
                            PRIMECOUNT_VERSION_MINOR >= ]] SAGE_PRIMECOUNT_MINOR [[ ) return 0;
                        else return 1;
                       ]])],
-                     [AC_MSG_RESULT([Good.])],
+                     [AC_MSG_RESULT([Good.])
+                      dnl Reject broken .pc files with empty version
+                      AC_MSG_CHECKING([whether primecount .pc file reports a non-empty version])
+                      primecount_pc_version=`$PKG_CONFIG --modversion primecount 2>/dev/null`
+                      AS_IF([test -z "$primecount_pc_version"], [
+                          AC_MSG_RESULT([no, broken .pc file])
+                          sage_spkg_install_primecount=yes
+                      ], [
+                          AC_MSG_RESULT([yes ($primecount_pc_version)])
+                      ])],
                      [AC_MSG_RESULT([Too old.])
                       sage_spkg_install_primecount=yes],
                      []) dnl cross-compilation - noop

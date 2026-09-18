@@ -1,6 +1,8 @@
 # cython: old_style_globals=True
 """
 Interpreter reset
+
+.. autodata:: EXCLUDE
 """
 import sys
 
@@ -19,7 +21,7 @@ def reset(vars=None, attached=False):
     If vars is specified, just restore the value of vars and leave
     all other variables alone (i.e., call restore).
 
-    Note that the variables in the set :obj:`sage.misc.reset.EXCLUDE` are
+    Note that the variables in the set :data:`EXCLUDE` are
     excluded from being reset.
 
     INPUT:

@@ -57,16 +57,6 @@ Modular Forms for Hecke Triangle Groups
 
    sage/modular/modform_hecketriangle/series_constructor
 
-Drinfeld Modular Forms
-----------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/modular/drinfeld_modform/tutorial
-   sage/modular/drinfeld_modform/ring
-   sage/modular/drinfeld_modform/element
-
 Quasimodular Forms
 ------------------
 

@@ -35,8 +35,7 @@ Sage example in ./sol/linalg.tex, line 168::
   ....:     F2, U2 = B.frobenius_form(2)
   ....:     if F1 == F2:
   ....:         return True, ~U2*U1
-  ....:     else:
-  ....:         return False, F1 - F2
+  ....:     return False, F1 - F2
   sage: B = matrix(ZZ, [[0,1,4,0,4],[4,-2,0,-4,-2],[0,0,0,2,1],
   ....:                 [-4,2,2,0,-1],[-4,-2,1,2,0]])
   sage: U = matrix(ZZ, [[3,3,-9,-14,40],[-1,-2,4,2,1],[2,4,-7,-1,-13],

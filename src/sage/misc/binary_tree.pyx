@@ -49,37 +49,31 @@ cdef void binary_tree_insert(binary_tree_node *self, int key, object value) noex
 cdef object binary_tree_get(binary_tree_node *self, int key):
     if self.key == key:
         return <object>self.value
-    elif self.key > key:
+    if self.key > key:
         if self.left == NULL:
             return None
-        else:
-            return binary_tree_get(self.left, key)
-    else:
-        if self.right == NULL:
-            return None
-        else:
-            return binary_tree_get(self.right, key)
+        return binary_tree_get(self.left, key)
+    if self.right == NULL:
+        return None
+    return binary_tree_get(self.right, key)
 
 cdef object binary_tree_delete(binary_tree_node *self, int key):
     cdef object t
     if self.key > key:
         if self.left == NULL:
             return None
-        elif self.left.key == key:
+        if self.left.key == key:
             t = <object>self.left.value
             self.left = binary_tree_left_excise(self.left)
             return t
-        else:
-            return binary_tree_delete(self.left, key)
-    else:
-        if self.right == NULL:
-            return None
-        elif self.right.key == key:
-            t = <object>self.right.value
-            self.right = binary_tree_right_excise(self.right)
-            return t
-        else:
-            return binary_tree_delete(self.right, key)
+        return binary_tree_delete(self.left, key)
+    if self.right == NULL:
+        return None
+    if self.right.key == key:
+        t = <object>self.right.value
+        self.right = binary_tree_right_excise(self.right)
+        return t
+    return binary_tree_delete(self.right, key)
 
 cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *left

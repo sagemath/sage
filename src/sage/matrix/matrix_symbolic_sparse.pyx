@@ -638,7 +638,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         If ``subdivide`` is ``True``, the Jordan blocks in the
         returned matrix ``J`` are indicated by a subdivision in
-        the sense of :meth:`~sage.matrix.matrix2.subdivide`.
+        the sense of :meth:`~sage.matrix.matrix2.Matrix.subdivide`.
 
         EXAMPLES:
 
@@ -1015,8 +1015,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             return 1
         if entry:
             return 0
-        else:
-            return 1
+        return 1
 
     def function(self, *args):
         """

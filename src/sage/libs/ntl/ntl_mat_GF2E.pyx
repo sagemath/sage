@@ -5,7 +5,7 @@
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -17,8 +17,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 ##############################################################################
 #
@@ -98,7 +98,7 @@ cdef class ntl_mat_GF2E():
         if isinstance(nrows, Matrix):
             _nrows = nrows.nrows()
             _ncols = nrows.ncols()
-            v     = nrows.list()
+            v = nrows.list()
         else:
             _nrows = nrows
             _ncols = ncols
@@ -148,7 +148,7 @@ cdef class ntl_mat_GF2E():
         cdef ntl_mat_GF2E r
         self.c.restore_c()
         r = ntl_mat_GF2E.__new__(ntl_mat_GF2E)
-        r.x.SetDims(self.x.NumRows(),self.x.NumCols())
+        r.x.SetDims(self.x.NumRows(), self.x.NumCols())
         r.c = self.c
         return r
 
@@ -424,7 +424,7 @@ cdef class ntl_mat_GF2E():
             raise IndexError("array index out of range")
 
         cdef ntl_GF2E e = self._new_element()
-        e.x = self.x.get( i+1, j+1 )
+        e.x = self.x.get(i + 1, j + 1)
         return e
 
     def determinant(self):
@@ -489,7 +489,8 @@ cdef class ntl_mat_GF2E():
             sage: all(a.modulus_context() is ctx for a in l)
             True
         """
-        return [self[i,j] for i in range(self.NumRows()) for j in range(self.x.NumCols())]
+        return [self[i, j] for i in range(self.NumRows())
+                for j in range(self.x.NumCols())]
 
     def IsZero(self):
         """
@@ -541,7 +542,7 @@ cdef class ntl_mat_GF2E():
             e = GF2E_degree()
             k = FiniteField(2**e, name='a', modulus=f)
 
-        l = [e._sage_(k) for e in self.list()] # we actually can do faster than this
+        l = [e._sage_(k) for e in self.list()]  # we actually can do faster than this
 
         from sage.matrix.constructor import matrix
         return matrix(k, self.x.NumRows(), self.x.NumCols(), l)
@@ -709,7 +710,7 @@ cdef class ntl_mat_GF2E():
             sage: while abs(s*1.0/n) > 10: add_samples()
             sage: while abs(s*1.0/n) > 5: add_samples()  # long time
         """
-        cdef long i,j
+        cdef long i, j
         cdef GF2E_c tmp
 
         cdef float _density = density

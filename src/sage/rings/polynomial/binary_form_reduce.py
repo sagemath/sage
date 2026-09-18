@@ -502,20 +502,20 @@ def smallest_poly(F, prec=53, norm_type='norm', emb=None):
         N = len(pts)
         if N == 0:
             return [item]
-        elif N == 1:
+        if N == 1:
             if item[index] > pts[0][index]:
                 pts.insert(0, item)
             else:
                 pts.append(item)
             return pts
-        else:  # binary insertion
-            left = 1
-            right = N
-            mid = (left + right) // 2  # these are ints so this is .floor()
-            if item[index] > pts[mid][index]:  # item goes into first half
-                return insert_item(pts[:mid], item, index) + pts[mid:N]
-            else:  # item goes into second half
-                return pts[:mid] + insert_item(pts[mid:N], item, index)
+        # binary insertion
+        left = 1
+        right = N
+        mid = (left + right) // 2  # these are ints so this is .floor()
+        if item[index] > pts[mid][index]:  # item goes into first half
+            return insert_item(pts[:mid], item, index) + pts[mid:N]
+        # item goes into second half
+        return pts[:mid] + insert_item(pts[mid:N], item, index)
 
     def coshdelta(z):
         # The cosh of the hyperbolic distance from z = t+uj to j

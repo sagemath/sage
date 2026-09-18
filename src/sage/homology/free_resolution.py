@@ -565,10 +565,9 @@ class FiniteFreeResolution(FreeResolution):
         """
         if i <= 0:
             raise IndexError('invalid index')
-        elif i <= self._length:
+        if i <= self._length:
             return self._maps[i - 1]
-        else:
-            return self.differential(i).matrix()
+        return self.differential(i).matrix()
 
     def chain_complex(self):
         r"""

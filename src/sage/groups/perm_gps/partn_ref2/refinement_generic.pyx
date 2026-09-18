@@ -72,33 +72,34 @@ Partitions and refinements
 Now the idea for the canonization algorithm for the action of `G \rtimes
 S_n` on `X^n` can be formulated as follows.
 Let us suppose that we want
-to canonize `x\in X^n`. We build a
-backtrack tree in the following manner:
+to canonize `x \in X^n`. We build a backtrack tree in the following manner:
 
- - each node gets represented by a quadruple `(C, I_C, y, G_{\Pi^{(I_C)}(y))})`
-   where `C` is an ordered partition, `I_C` a subsequence of its fixed
-   points, `y \in X^n` is `I_C`-semicanonical
-   and `G_{\Pi^{(I_C)}(y))}` is the remaining group of the inner action
- - the root node is on level `0` and gets represented by `(([n]), (), x,  G)`
- - nodes with `| I_C | = n`, i.e. all coordinates are fixed, will be leafs
-   and we have `G_{\Pi^{(I_C)}(y))} = G_y`
- - the children of some other node `(C, I_C, y, G_{\Pi^{(I_C)}(y))})` are
-   constructed by
-    * picking one cell `C_j` with `| C_j |` (the choice has to be invariant in
-      some sense)
-    * separating the point `\min(C_j)` from its cell `C_j` which leads to the partition
-      `D` and the sequence `I_D`
-    * building the `| C_j |` successors `(D, I_D, z_k,  G_{\Pi^{(I_D)}(z_k))})`
-      by applying the permutation
-      `\sigma_k := (\min(C_j), k)` for all `k \in C_j` to `y` and computing an
-      `I_D`-semicanonical representative `z_k` of `\sigma_k y`
- - if the projection `\Pi^{(I_D)}(z_k)` is not optimal then we stop the
-   backtracking in this node (i.e. prune the subtree below this node)
- - the tree is traversed in a depth-first manner
- - the smallest reached leaf node is defined to be the canonical form
-   (the defined ordering takes all comparisons in predecessors also into account)
- - equal leaf nodes correspond to automorphism of `x`, they could be used to
-   define further pruning methods.
+- each node gets represented by a quadruple `(C, I_C, y, G_{\Pi^{(I_C)}(y))})`
+  where `C` is an ordered partition, `I_C` a subsequence of its fixed
+  points, `y \in X^n` is `I_C`-semicanonical
+  and `G_{\Pi^{(I_C)}(y))}` is the remaining group of the inner action
+- the root node is on level `0` and gets represented by `(([n]), (), x,  G)`
+- nodes with `| I_C | = n`, i.e. all coordinates are fixed, will be leafs
+  and we have `G_{\Pi^{(I_C)}(y))} = G_y`
+- the children of some other node `(C, I_C, y, G_{\Pi^{(I_C)}(y))})` are
+  constructed by
+
+  - picking one cell `C_j` with `| C_j |` (the choice has to be invariant in
+    some sense)
+  - separating the point `\min(C_j)` from its cell `C_j` which leads to the partition
+    `D` and the sequence `I_D`
+  - building the `| C_j |` successors `(D, I_D, z_k,  G_{\Pi^{(I_D)}(z_k))})`
+    by applying the permutation
+    `\sigma_k := (\min(C_j), k)` for all `k \in C_j` to `y` and computing an
+    `I_D`-semicanonical representative `z_k` of `\sigma_k y`
+
+- if the projection `\Pi^{(I_D)}(z_k)` is not optimal then we stop the
+  backtracking in this node (i.e. prune the subtree below this node)
+- the tree is traversed in a depth-first manner
+- the smallest reached leaf node is defined to be the canonical form
+  (the defined ordering takes all comparisons in predecessors also into account)
+- equal leaf nodes correspond to automorphism of `x`, they could be used to
+  define further pruning methods.
 
 We are able to speed up the computation by making use of refinements
 (i.e. `(S_n)_C`-homomorphisms). Suppose we constructed a node
@@ -116,52 +117,57 @@ refinements could also be applied iteratively.
 
 As said before, the backtrack search tree is traversed in a depth-first search
 manner, hence we maintain a candidate for the result. Each newly constructed
-node is compared to this candidate. If it
- - compares larger, then we can prune the
-   subtree rooted in this node
- - compares smaller, then we replace the candidate by the actual node
-   (more precisely by the next leaf node we will construct, for this we
-   use the boolean flag ``_is_candidate_initialized``)
- - compares equal we just continue.
+node is compared to this candidate. If it:
+
+- compares larger, then we can prune the subtree rooted in this node
+- compares smaller, then we replace the candidate by the actual node
+  (more precisely by the next leaf node we will construct, for this we
+  use the boolean flag ``_is_candidate_initialized``)
+- compares equal we just continue.
 
 
 Implementation Details
 ######################
 
-The class :class:`~sage.groups.perm_gps.partn_ref2.PartitionRefinement_generic`
+The class :class:`~sage.groups.perm_gps.partn_ref2.refinement_generic.PartitionRefinement_generic`
 provides a framework for such a backtracking.
 It maintains the partition `C` and the sequence `I_C`.
 Instead of permuting the elements `x \in X`
 during the construction of nodes and in the refinements,
 we use a ``PartitionStack``,
-see :mod:`sage.groups.perm_gps.partn_ref.automorphism_group_canonical_label`.
+see :mod:`sage.groups.perm_gps.partn_ref.data_structures`.
 Hence, `C = (C_1, ..., C_k)` and `I_C` will be maintained implicitly. If `\pi \in S_n` is the permutation
 applied to this node, then we will store `\pi(I_C)` and in the partition stack
 we will store `(\pi(C_1), ..., \pi(C_k))`.
 
 The class further decides when we have to
 call the inner minimization and which subtrees could be pruned by the use
-of automorphisms, see :class:`sage.groups.perm_gps.partn_ref2.LabelledBranching` for more details.
+of automorphisms, see
+:class:`~sage.groups.perm_gps.partn_ref2.refinement_generic.LabelledBranching`
+for more details.
 
 Derived classes
 ###############
 
 Derived classes have to implement the following methods, see the
 method descriptions for more information:
- - Cython Functions:
-     - bint _inner_min_(self, int pos, bint * inner_group_changed)
-     - bint _refine(self, bint * part_changed)
-     - tuple _store_state_(self)
-     - void _restore_state_(self, tuple act_state)
-     - void _store_best_(self)
-     - void _latex_act_node(self, str comment=None) (to use the implemented debugging method
-       via printing the backtrack tree using latex)
-     - bint _minimization_allowed_on_col(self, int pos)
 
- - Python functions:
-     - get_canonical_form(self)
-     - get_transporter(self)
-     - get_autom_gens(self)
+- Cython functions:
+
+  - ``bint _inner_min_(self, int pos, bint * inner_group_changed)``
+  - ``bint _refine(self, bint * part_changed)``
+  - ``tuple _store_state_(self)``
+  - ``void _restore_state_(self, tuple act_state)``
+  - ``void _store_best_(self)``
+  - ``void _latex_act_node(self, str comment=None)`` (to use the implemented
+    debugging method via printing the backtrack tree using latex)
+  - ``bint _minimization_allowed_on_col(self, int pos)``
+
+- Python functions:
+
+  - ``get_canonical_form(self)``
+  - ``get_transporter(self)``
+  - ``get_autom_gens(self)``
 
 AUTHORS:
 

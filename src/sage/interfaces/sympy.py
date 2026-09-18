@@ -5,8 +5,7 @@ SymPy --> Sage conversion
 The file consists of ``_sage_()`` methods that are added lazily to
 the respective SymPy objects. Any call of the ``_sympy_()`` method
 of a symbolic expression will trigger the addition. See
-:class:`sage.symbolic.expression_conversion.SymPyConverter` for the
-conversion to SymPy.
+:mod:`~sage.symbolic.expression_conversions` for the conversion to SymPy.
 
 Only ``Function`` objects where the names differ need their own ``_sage()_``
 method. There are several functions with differing name that have an alias

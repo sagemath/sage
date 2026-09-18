@@ -13,8 +13,8 @@ and define a code `C` to be a set of vectors of length `n` with entries from
 `M` over `\GF{q}`.
 
 A detailed description on the relationship between the two representations can
-be found in :meth:`sage.coding.linear_rank_metric.to_matrix_representation`
-and :meth:`sage.coding.linear_rank_metric.from_matrix_representation`.
+be found in :func:`sage.coding.linear_rank_metric.to_matrix_representation`
+and :func:`sage.coding.linear_rank_metric.from_matrix_representation`.
 
 We can define a metric using the rank of the matrix representation of the
 codewords. A distance between two codewords `a, b` is the rank of the matrix
@@ -335,23 +335,24 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
     Codewords of rank metric codes have two representations. They can either be
     written as a vector of length `n` over `\GF{q^m}`, or an `m \times n` matrix
     over `\GF{q}`. This implementation principally uses the vector representation.
-    However, one can always get the matrix representation using the
-    :meth:`sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.to_matrix`
-    method. To go back to a vector, use the
-    :meth:`sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.from_matrix`
-    method.
+    However, one can always get the matrix representation using
+    :func:`sage.coding.linear_rank_metric.to_matrix_representation`.
+    To go back to a vector, use
+    :func:`sage.coding.linear_rank_metric.from_matrix_representation`.
 
     Instructions on how to make a new family of rank metric codes is analogous
     to making a new family of linear codes over the Hamming metric, instructions
     for which are in :class:`sage.coding.linear_code.AbstractLinearCode`. For an
     example on, see
-    :meth:`sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.__init__`
+    :meth:`~sage.coding.linear_rank_metric.AbstractLinearRankMetricCode.__init__`.
 
     .. WARNING::
 
         A lot of methods of the abstract class rely on the knowledge of a generator matrix.
         It is thus strongly recommended to set an encoder with a generator matrix implemented
         as a default encoder.
+
+    .. automethod:: __init__
     """
     _registered_encoders = {}
     _registered_decoders = {}

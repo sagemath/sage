@@ -580,7 +580,7 @@ def import_statements(*objects, **kwds):
                 """
                 return all(ord(c) < 128 for c in s)
             if any(is_ascii(s)
-                   for (module_name, obj_names) in modules.items()
+                   for obj_names in modules.values()
                    for s in obj_names):
                 for module_name, obj_names in list(modules.items()):
                     if any(not is_ascii(s) for s in obj_names):

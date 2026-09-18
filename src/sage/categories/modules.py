@@ -111,7 +111,8 @@ class Modules(Category_module):
 
         - Implement a ``FreeModules(R)`` category, when so prompted by a
           concrete use case: e.g.  modeling a free module with several
-          bases (using :meth:`Sets.SubcategoryMethods.Realizations`)
+          bases (using
+          :func:`~sage.categories.realizations.Realizations`)
           or with an atlas of local maps (see e.g. :issue:`15916`).
     """
 
@@ -250,7 +251,7 @@ class Modules(Category_module):
             .. SEEALSO::
 
                 - :class:`.tensor.TensorProductsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`.
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
 
             EXAMPLES::
 
@@ -694,14 +695,15 @@ class Modules(Category_module):
               ``self.submodule(submodule)``
 
             - ``check``, other keyword arguments -- passed on to
-              :meth:`quotient_module`.
+              ``quotient_module``.
 
-            This method just delegates to :meth:`quotient_module`.
+            This method just delegates to ``quotient_module``.
             Classes implementing modules should override that method.
 
             Parents in categories with additional structure may override
             :meth:`quotient`. For example, in algebras, :meth:`quotient` will
-            be the same as :meth:`quotient_ring`.
+            be the same as
+            :meth:`~sage.categories.rings.Rings.ParentMethods.quotient_ring`.
 
             EXAMPLES::
 
@@ -816,7 +818,8 @@ class Modules(Category_module):
                 """
                 Implement the fact that the endomorphism set of a module is an algebra.
 
-                .. SEEALSO:: :meth:`CategoryWithAxiom.extra_super_categories`
+                .. SEEALSO::
+                    :meth:`~sage.categories.category_with_axiom.CategoryWithAxiom.extra_super_categories`
 
                 EXAMPLES::
 
@@ -879,8 +882,7 @@ class Modules(Category_module):
                       Ambient free module of rank 3 over the principal ideal domain Integer Ring)
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
-                     over (Dedekind domains and euclidean domains
-                      and noetherian rings
+                     over (euclidean domains and noetherian rings
                       and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring

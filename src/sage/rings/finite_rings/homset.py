@@ -144,8 +144,7 @@ class FiniteFieldHomset(RingHomset_generic):
         C = self.codomain()
         if C == D:
             return "Automorphism group of %s" % D
-        else:
-            return "Set of field embeddings from %s to %s" % (D, C)
+        return "Set of field embeddings from %s to %s" % (D, C)
 
     def is_aut(self):
         """
@@ -335,7 +334,7 @@ class FiniteFieldHomset(RingHomset_generic):
         L = self.codomain()
         if K.degree() == 1:
             return L.coerce_map_from(K)
-        elif not K.degree().divides(L.degree()):
+        if not K.degree().divides(L.degree()):
             from sage.categories.sets_cat import EmptySetError
             raise EmptySetError('no homomorphisms from %s to %s' % (K, L))
         return K.hom([K.modulus().any_root(L)])

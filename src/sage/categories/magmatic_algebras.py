@@ -225,7 +225,8 @@ class MagmaticAlgebras(Category_over_base_ring):
             class ParentMethods:
                 def to_finite_dimensional_algebra(self, names='e', assume_associative=True, assume_unital=True):
                     r"""
-                    Return ``self`` as a :class:`sage.algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra`.
+                    Return ``self`` as a
+                    :class:`~sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra.FiniteDimensionalAlgebra`.
 
                     This forgets the indexing of the basis, flattening the
                     elements into vectors.

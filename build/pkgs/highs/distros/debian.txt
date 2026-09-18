@@ -1,0 +1,2 @@
+libhighs-dev
+highs

@@ -200,8 +200,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         """
         if other is self._field:
             return True
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def ideal_monoid(self):
         """

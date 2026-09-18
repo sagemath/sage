@@ -67,8 +67,7 @@ def q_bernoulli(m, p=None):
                                   for i in range(m + 1))
     if p is None:
         return result
-    else:
-        return result(q=p)
+    return result(q=p)
 
 
 @cached_function

@@ -755,8 +755,7 @@ class EvaluationAGCodeUniqueDecoder(Decoder):
         if self._extension:
             internal_message = circuit._lift(vector(K, message)) * C
             return circuit._pull_back(circuit.encode(internal_message))
-        else:
-            return circuit.encode(vector(K, message) * C)
+        return circuit.encode(vector(K, message) * C)
 
     def _decode(self, vect, **kwargs):
         r"""
@@ -1162,8 +1161,7 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         if self._extension:
             internal_message = circuit._lift(vector(K, message)) * C
             return circuit._pull_back(circuit.encode(internal_message))
-        else:
-            return circuit.encode(vector(K, message) * C)
+        return circuit.encode(vector(K, message) * C)
 
     def _decode(self, vect, **kwargs):
         r"""
@@ -1393,8 +1391,7 @@ cdef class Decoder_K():
         """
         if f.is_zero():
             return -0b1000000000000000000000000  # -16777216
-        else:
-            return f.degree()
+        return f.degree()
 
     cdef void _exponents(self, int s, int *sk, int *si) noexcept:
         """

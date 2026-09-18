@@ -146,7 +146,7 @@ class OutputBuffer(SageObject):
         except PermissionError:
             pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -158,13 +158,13 @@ class OutputBuffer(SageObject):
             sage: OutputBuffer('test1234')
             buffer containing 8 bytes
         """
-        return 'buffer containing {0} bytes'.format(len(self.get()))
+        return f'buffer containing {len(self.get())} bytes'
 
     def get(self):
         """
         Return the buffer content.
 
-        OUTPUT: bytes; string in Python 2.x
+        OUTPUT: bytes
 
         EXAMPLES::
 
@@ -182,35 +182,15 @@ class OutputBuffer(SageObject):
                 self._data = f.read()
         return self._data
 
-    def get_unicode(self):
+    def get_str(self) -> str:
         """
-        Return the buffer content as string.
+        Return the buffer content as a ``str`` object.
 
-        OUTPUT:
+        This returns a unicode ``str`` with the buffer content
+        decoded from UTF-8.
 
-        String. Unicode in Python 2.x. Raises a :exc:`UnicodeEncodeError`
-        if the data is not valid utf-8.
-
-        EXAMPLES::
-
-            sage: from sage.repl.rich_output.buffer import OutputBuffer
-            sage: OutputBuffer('test1234').get().decode('ascii')
-            'test1234'
-            sage: OutputBuffer('test1234').get_unicode()
-            'test1234'
-        """
-        return self.get().decode('utf-8')
-
-    def get_str(self):
-        """
-        Return the buffer content as a ``str`` object for the current Python
-        version.
-
-        That is, returns a Python 2-style encoding-agnostic ``str`` on Python
-        2, and returns a unicode ``str`` on Python 3 with the buffer content
-        decoded from UTF-8.  In other words, this is equivalent to
-        ``OutputBuffer.get`` on Python 2 and ``OutputBuffer.get_unicode`` on
-        Python 3.  This is useful in some cases for cross-compatible code.
+        This raises a :exc:`UnicodeEncodeError` if the data is not
+        valid UTF-8.
 
         OUTPUT: a ``str`` object
 
@@ -224,8 +204,18 @@ class OutputBuffer(SageObject):
             sage: c = OutputBuffer('été').get_str()
             sage: type(c) is str
             True
+
+        TESTS::
+
+            sage: from sage.repl.rich_output.buffer import OutputBuffer
+            sage: OutputBuffer('test1234').get().decode('ascii')
+            'test1234'
+            sage: OutputBuffer('test1234').get_unicode()
+            'test1234'
         """
-        return self.get_unicode()
+        return self.get().decode('utf-8')
+
+    get_unicode = get_str
 
     def filename(self, ext=None):
         """

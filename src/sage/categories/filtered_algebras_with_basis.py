@@ -122,7 +122,8 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             (where `A = ` ``self``).
 
             This is an isomorphism of `R`-modules, not of algebras. See
-            the class documentation :class:`AssociatedGradedAlgebra`.
+            the class documentation
+            :class:`~sage.algebras.associated_graded.AssociatedGradedAlgebra`.
 
             .. SEEALSO::
 
@@ -151,7 +152,8 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             `\operatorname{gr} A \to A`.
 
             This is an isomorphism of `R`-modules, not of algebras. See
-            the class documentation :class:`AssociatedGradedAlgebra`.
+            the class documentation
+            :class:`~sage.algebras.associated_graded.AssociatedGradedAlgebra`.
 
             .. SEEALSO::
 
@@ -176,7 +178,8 @@ class FilteredAlgebrasWithBasis(FilteredModulesCategory):
             r"""
             Return the `i`-th projection `p_i : F_i \to G_i` (in the
             notations of the class documentation
-            :class:`AssociatedGradedAlgebra`, where `A = ` ``self``).
+            :class:`~sage.algebras.associated_graded.AssociatedGradedAlgebra`,
+            where `A = ` ``self``).
 
             This method actually does not return the map `p_i` itself,
             but an extension of `p_i` to the whole `R`-module `A`.

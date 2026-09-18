@@ -253,7 +253,7 @@ class Polygon(GraphicPrimitive_xydata):
 
             sage: P = polygon([(0,0), (1,2), (0,1), (-1,2)])
         """
-        import matplotlib.patches as patches
+        from matplotlib import patches
         options = self.options()
         p = patches.Polygon([(self.xdata[i], self.ydata[i])
                              for i in range(len(self.xdata))])

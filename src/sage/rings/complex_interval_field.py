@@ -71,7 +71,6 @@ def ComplexIntervalField(prec=53, names=None) -> ComplexIntervalField_class:
         sage: i^i
         0.207879576350761908546955619834978770033877841631769608075136?
     """
-    global cache
     if prec in cache:
         X = cache[prec]
         C = X()

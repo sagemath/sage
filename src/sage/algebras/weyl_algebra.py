@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Algebras
 
@@ -56,12 +55,12 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
         sage: from sage.algebras.weyl_algebra import repr_from_monomials
         sage: R.<x,y,z> = QQ[]
-        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]                                     # needs sage.symbolic
-        sage: repr_from_monomials(d, lambda m: repr(m))                                 # needs sage.symbolic
+        sage: d = [(z, 4/7), (y, sqrt(2)), (x, -5)]
+        sage: repr_from_monomials(d, lambda m: repr(m))
         '4/7*z + sqrt(2)*y - 5*x'
-        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a                   # needs sage.symbolic
+        sage: a = repr_from_monomials(d, lambda m: latex(m), True); a
         \frac{4}{7} z + \sqrt{2} y - 5 x
-        sage: type(a)                                                                   # needs sage.symbolic
+        sage: type(a)
         <class 'sage.misc.latex.LatexExpr'>
 
     The zero element::
@@ -93,7 +92,6 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
     Leading minus signs are dealt with appropriately::
 
-        sage: # needs sage.symbolic
         sage: d = [(z, -4/7), (y, -sqrt(2)), (x, -5)]
         sage: repr_from_monomials(d, lambda m: repr(m))
         '-4/7*z - sqrt(2)*y - 5*x'
@@ -669,7 +667,9 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
     .. TODO::
 
-        Implement the :meth:`graded_algebra` as a polynomial ring once
+        Implement
+        :meth:`~sage.categories.filtered_algebras.FilteredAlgebras.ParentMethods.graded_algebra`
+        as a polynomial ring once
         they are considered to be graded rings (algebras).
     """
     @staticmethod
@@ -1307,7 +1307,7 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
         Differential Weyl algebra in countably many variables y over Rational Field
 
     Alternatively, one can first define an
-    :class:`InfinitePolynomialRing`<sage.rings.infinite_polynomial_ring.InfinitePolynomialRing_dense>`
+    :class:`InfinitePolynomialRing <sage.rings.polynomial.infinite_polynomial_ring.InfinitePolynomialRing_dense>`
     and then define the differential Weyl algebra of that ring::
 
         sage: R.<x> = InfinitePolynomialRing(QQ)

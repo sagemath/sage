@@ -527,8 +527,7 @@ cdef class ntl_ZZ_pX():
         """
         if modulus is None:
             return (<ntl_ZZ_pX>self)._pow(n)
-        else:
-            return (<ntl_ZZ_pX>self)._powmod(Integer(n), modulus)
+        return (<ntl_ZZ_pX>self)._powmod(Integer(n), modulus)
 
     cdef ntl_ZZ_pX _pow(ntl_ZZ_pX self, long n):
         """

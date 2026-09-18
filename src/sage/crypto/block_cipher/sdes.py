@@ -221,7 +221,7 @@ class SimplifiedDES(SageObject):
                 S = "".join([S, str(C)])
             return bin(S)
         # decrypt each 8-bit block in succession
-        elif algorithm == "decrypt":
+        if algorithm == "decrypt":
             for i in range(N):
                 # get an 8-bit block
                 block = B[i*Blength : (i+1)*Blength]
@@ -234,8 +234,7 @@ class SimplifiedDES(SageObject):
                 S = "".join([S, str(P)])
             return bin(S)
         # invalid value for algorithm option
-        else:
-            raise ValueError("algorithm must be either 'encrypt' or 'decrypt'")
+        raise ValueError("algorithm must be either 'encrypt' or 'decrypt'")
 
     def __eq__(self, other):
         r"""
@@ -744,15 +743,14 @@ class SimplifiedDES(SageObject):
                      bin(str(B[7])), bin(str(B[8])),
                      bin(str(B[9])), bin(str(B[5])) ]
         # circular left shift by 2 positions
-        elif n == 2:
+        if n == 2:
             return [ bin(str(B[2])), bin(str(B[3])),
                      bin(str(B[4])), bin(str(B[0])),
                      bin(str(B[1])), bin(str(B[7])),
                      bin(str(B[8])), bin(str(B[9])),
                      bin(str(B[5])), bin(str(B[6])) ]
         # an invalid number of shift positions
-        else:
-            raise ValueError("input n must be either 1 or 2")
+        raise ValueError("input n must be either 1 or 2")
 
     def list_to_string(self, B):
         r"""
@@ -1428,14 +1426,13 @@ class SimplifiedDES(SageObject):
             key1 = self.left_shift(key1, n=1)
             return self.permutation8(key1)
         # get the second subkey
-        elif n == 2:
+        if n == 2:
             key2 = self.permutation10(K)
             key2 = self.left_shift(key2, n=1)
             key2 = self.left_shift(key2, n=2)
             return self.permutation8(key2)
         # an invalid subkey number
-        else:
-            raise ValueError("input n must be either 1 or 2")
+        raise ValueError("input n must be either 1 or 2")
 
     def switch(self, B):
         r"""

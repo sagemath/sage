@@ -260,9 +260,9 @@ class Cusp(Element):
         """
         return hash((self.__a, self.__b))
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare the cusps ``self`` and ``right``.
+        Compare the cusps ``self`` and ``other``.
 
         Comparison is as for rational numbers, except with the cusp oo
         greater than everything but itself.
@@ -312,10 +312,10 @@ class Cusp(Element):
             s = Infinity
         else:
             s = self._rational_()
-        if not right.__b:
+        if not other.__b:
             o = Infinity
         else:
-            o = right._rational_()
+            o = other._rational_()
         return richcmp(s, o, op)
 
     def is_infinity(self) -> bool:

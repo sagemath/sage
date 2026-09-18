@@ -189,13 +189,13 @@ class TorsionPoint(ModuleElement):
         P = self.parent()
         return P.element_class(P, self.__element * right, check=False)
 
-    def _richcmp_(self, right, op):
+    def _richcmp_(self, other, op):
         """
-        Compare ``self`` and ``right``.
+        Compare ``self`` and ``other``.
 
         INPUT:
 
-        - ``self``, ``right`` -- elements of the same finite abelian
+        - ``self``, ``other`` -- elements of the same finite abelian
           variety subgroup
 
         - ``op`` -- comparison operator (see :mod:`sage.structure.richcmp`)
@@ -226,9 +226,9 @@ class TorsionPoint(ModuleElement):
         """
         A = self.parent().abelian_variety()
         from sage.rings.rational_field import QQ
-        if self.__element.change_ring(QQ) - right.__element.change_ring(QQ) in A.lattice():
+        if self.__element.change_ring(QQ) - other.__element.change_ring(QQ) in A.lattice():
             return rich_to_bool(op, 0)
-        return richcmp(self.__element, right.__element, op)
+        return richcmp(self.__element, other.__element, op)
 
     def additive_order(self):
         """

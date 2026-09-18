@@ -273,7 +273,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Implement this if you implement :meth:`module`; see the
             documentation of
-            :meth:`sage.categories.lie_algebras.LieAlgebras.module`
+            :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
             for how this is to be done.
 
             EXAMPLES::
@@ -346,7 +346,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             The rows and the columns of this matrix are indexed by the
             elements of the basis of ``self`` (in the order provided by
-            :meth:`basis`).
+            :meth:`~sage.categories.modules_with_basis.ModulesWithBasis.ParentMethods.basis`).
 
             EXAMPLES::
 
@@ -2556,7 +2556,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             ``self``).
 
             Implement this if you implement ``g.module()``.
-            See :meth:`sage.categories.lie_algebras.LieAlgebras.module`
+            See :meth:`~sage.categories.lie_algebras.LieAlgebras.ParentMethods.module`
             for how this is to be done.
 
             EXAMPLES::

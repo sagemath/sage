@@ -6,6 +6,7 @@ Statistics
 
    sage/stats/basic_stats
    sage/stats/intlist
+   sage/stats/time_series
    sage/stats/hmm/hmm
    sage/stats/hmm/chmm
    sage/stats/hmm/distributions

@@ -207,8 +207,7 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
 
     if parameters:
         return (result, (number_rows, wstrength, number_columns, levels))
-    else:
-        return result
+    return result
 
 
 def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='OA'):
@@ -962,11 +961,10 @@ cpdef _OA_cache_get(int k, int n):
         return None
     if k <= _OA_cache[n].max_true:
         return True
-    elif (k >= _OA_cache[n].min_unknown and k <= _OA_cache[n].max_unknown):
+    if (k >= _OA_cache[n].min_unknown and k <= _OA_cache[n].max_unknown):
         return Unknown
-    elif k >= _OA_cache[n].min_false:
+    if k >= _OA_cache[n].min_false:
         return False
-
     return None
 
 cpdef _OA_cache_construction_available(int k, int n):
@@ -983,5 +981,4 @@ cpdef _OA_cache_construction_available(int k, int n):
         return True
     if k >= _OA_cache[n].min_unknown:
         return False
-    else:
-        return Unknown
+    return Unknown

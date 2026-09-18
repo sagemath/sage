@@ -93,30 +93,23 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
     n = len(intervals)
 
     if points_ordered:
-        def edges():
-            for i in range(n - 1):
-                li, ri = intervals[i]
-                for j in range(i + 1, n):
-                    lj, rj = intervals[j]
-                    if ri < lj or rj < li:
-                        continue
-                    yield (i, j)
-
+        I = sorted((i, u) for u, i in enumerate(intervals))
     else:
-        def edges():
-            for i in range(n - 1):
-                min_I = min(intervals[i])
-                max_I = max(intervals[i])
-                for j in range(i + 1, n):
-                    J = intervals[j]
-                    if max_I < min(J) or max(J) < min_I:
-                        continue
-                    yield (i, j)
+        I = sorted((sorted(i), u) for u, i in enumerate(intervals))
+
+    def edges():
+        for i in range(n - 1):
+            (_, ri), u = I[i]
+            for j in range(i + 1, n):
+                (lj, _), v = I[j]
+                if lj > ri:
+                    break
+                yield (u, v)
 
     g = Graph([range(n), edges()], format="vertices_and_edges",
               immutable=immutable)
 
-    rep = dict(zip(range(n), intervals))
+    rep = dict(enumerate(intervals))
     g.set_vertices(rep)
 
     return g

@@ -159,7 +159,7 @@ from . import parametric_plot3d
 lazy_import("sage.functions.trig", ["cos", "sin"])
 
 
-class _Coordinates:
+class Coordinates:
     """
     This abstract class encapsulates a new coordinate system for plotting.
     Sub-classes must implement the :meth:`transform` method which, given
@@ -180,8 +180,8 @@ class _Coordinates:
 
         TESTS:
 
-        Because the base :class:`_Coordinates` class automatically checks the
-        initializing variables with the transform method, :class:`_Coordinates`
+        Because the base ``Coordinates`` class automatically checks the
+        initializing variables with the transform method, ``Coordinates``
         cannot be instantiated by itself.  We test a subclass::
 
             sage: from sage.plot.plot3d.plot3d import _ArbitraryCoordinates as arb
@@ -302,10 +302,10 @@ class _Coordinates:
             sage: [h(u=1,v=2) for h in T.to_cartesian(operator.mul)]
             [3.0, -1.0, 2.0]
 
-        The output of the function ``func`` is coerced to a float when
-        it is evaluated if the function is something like a lambda or
-        python callable. This takes care of situations like f returning a
-        singleton numpy array, for example.
+        The output of a Python callable ``func`` is coerced to a float when
+        it is evaluated. Thus it must return a scalar or another object
+        accepted by ``float()``. For example, extract the scalar value
+        returned by a SciPy interpolant explicitly (:issue:`42539`)::
 
             sage: from numpy import array
             sage: v_phi=array([ 0.,  1.57079637,  3.14159274, 4.71238911,  6.28318548])
@@ -316,7 +316,8 @@ class _Coordinates:
             ....: [ 0.16763356,  0.19993708,  0.31403568,  0.47359696, 0.55282422],
             ....: [ 0.16763356,  0.25683223,  0.16649297,  0.10594339, 0.55282422]])
             sage: import scipy.interpolate
-            sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r).ev
+            sage: spline = scipy.interpolate.RectBivariateSpline(v_phi, v_theta, m_r)
+            sage: f = lambda x, y: spline.ev(x, y).item()
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
             Graphics3d Object
         """
@@ -426,7 +427,10 @@ def _find_arguments_for_callable(func):
     return params
 
 
-class _ArbitraryCoordinates(_Coordinates):
+_Coordinates = Coordinates
+
+
+class _ArbitraryCoordinates(Coordinates):
     """
     An arbitrary coordinate system.
     """
@@ -475,7 +479,7 @@ class _ArbitraryCoordinates(_Coordinates):
         return tuple(t.subs(**kwds) for t in self.custom_trans)
 
 
-class Spherical(_Coordinates):
+class Spherical(Coordinates):
     """
     A spherical coordinate system for use with ``plot3d(transformation=...)``
     where the position of a point is specified by three numbers:
@@ -547,7 +551,7 @@ class Spherical(_Coordinates):
                 radius * cos(inclination))
 
 
-class SphericalElevation(_Coordinates):
+class SphericalElevation(Coordinates):
     """
     A spherical coordinate system for use with ``plot3d(transformation=...)``
     where the position of a point is specified by three numbers:
@@ -666,7 +670,7 @@ class SphericalElevation(_Coordinates):
                 radius * sin(elevation))
 
 
-class Cylindrical(_Coordinates):
+class Cylindrical(Coordinates):
     """
     A cylindrical coordinate system for use with ``plot3d(transformation=...)``
     where the position of a point is specified by three numbers:
@@ -1103,7 +1107,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
             else:
                 raise ValueError("unable to determine the function variable in the transform")
 
-        if isinstance(transformation, _Coordinates):
+        if isinstance(transformation, Coordinates):
             R = transformation.to_cartesian(f, params)
             return parametric_plot3d.parametric_plot3d(R, urange, vrange, **kwds)
         raise ValueError('unknown transformation type')

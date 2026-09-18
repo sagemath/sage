@@ -125,12 +125,11 @@ class MorphismVectorSpaceToFiniteField(FiniteFieldVectorSpaceIsomorphism):
         if m == n == 1:
             # 1x1 matrix
             return self._C[0][0] * v[0]
-        else:
-            # expand v as a vector over GF(p)
-            w = self._C.row_ambient_module()()
-            for i in range(m):
-                w[i*n:(i+1)*n] = v[i]._vector_()
-            return E(w * self._C)
+        # expand v as a vector over GF(p)
+        w = self._C.row_ambient_module()()
+        for i in range(m):
+            w[i*n:(i+1)*n] = v[i]._vector_()
+        return E(w * self._C)
 
 
 class MorphismFiniteFieldToVectorSpace(FiniteFieldVectorSpaceIsomorphism):
@@ -186,5 +185,4 @@ class MorphismFiniteFieldToVectorSpace(FiniteFieldVectorSpaceIsomorphism):
         w = e._vector_() * self._C
         if F.degree() > 1:
             return V([F(w[i*n:(i+1)*n]) for i in range(m)])
-        else:
-            return w
+        return w

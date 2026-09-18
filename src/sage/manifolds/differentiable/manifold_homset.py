@@ -212,7 +212,7 @@ class DifferentiableManifoldHomset(TopologicalManifoldHomset):
             sage: H._coerce_map_from_(N)
             False
         """
-        #!# for the time being:
+        # for the time being:
         return False
 
     #### End of parent methods ####

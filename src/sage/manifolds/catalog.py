@@ -428,7 +428,7 @@ def RealProjectiveSpace(dim=2):
             )
             ci_new_coords = d_plus_one_coords[:i] + d_plus_one_coords[i + 1 :]
 
-            Cj_to_Ci = Ci_to_Cj.set_inverse(*ci_new_coords, check=False)
+            Ci_to_Cj.set_inverse(*ci_new_coords, check=False)
 
     # this atlas is a global atlas
     P.declare_union(P.subsets())

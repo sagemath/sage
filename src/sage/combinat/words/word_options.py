@@ -58,7 +58,6 @@ def WordOptions(**kwargs):
         sage: u
         word: abba
     """
-    global word_options
     if kwargs == {}:
         return copy.copy(word_options)
     if 'display' in kwargs:

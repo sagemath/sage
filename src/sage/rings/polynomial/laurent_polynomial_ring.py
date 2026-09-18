@@ -303,8 +303,7 @@ def _split_dict_(D, indices, group_by=None):
         result.setdefault(G, dict()).update({I: V})
     if not group_by:
         return result.popitem()[1]
-    else:
-        return result
+    return result
 
 
 def _split_laurent_polynomial_dict_(P, M, d):
@@ -395,8 +394,7 @@ def from_fraction_field(L, x):
     if d.is_unit():
         n = L(x.numerator())
         return n * d.inverse_of_unit()
-    else:
-        raise TypeError("fraction must have unit denominator")
+    raise TypeError("fraction must have unit denominator")
 
 
 class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
@@ -507,7 +505,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         if isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
 
-        elif isinstance(x, LaurentPolynomial):
+        if isinstance(x, LaurentPolynomial):
             P = x.parent()
             if set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):

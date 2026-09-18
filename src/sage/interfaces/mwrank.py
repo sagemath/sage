@@ -59,7 +59,6 @@ def Mwrank(options='', server=None, server_tmpdir=None):
         Generator 1 is [0:-1:1]; height 0.051...
         Regulator = 0.051...
     """
-    global instances
     try:
         X = instances[options]()
         if X:

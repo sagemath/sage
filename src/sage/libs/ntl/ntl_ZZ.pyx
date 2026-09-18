@@ -94,7 +94,7 @@ cdef class ntl_ZZ():
                 v = '0'
             if not ((v[0].isdigit() or v[0] == '-') and
                     (v[1:-1].isdigit() or (len(v) <= 2)) and
-                    (v[-1].isdigit() or (v[-1].lower() in ['l','r']))):
+                    (v[-1].isdigit() or (v[-1].lower() in ['l', 'r']))):
                 raise ValueError("invalid integer: %s" % v)
             ccreadstr(self.x, v)
 
@@ -111,10 +111,12 @@ cdef class ntl_ZZ():
 
     def __reduce__(self):
         """
-        sage: from sage.libs.ntl.ntl_ZZ import ntl_ZZ
-        sage: a = ntl_ZZ(-7)
-        sage: loads(dumps(a))
-        -7
+        EXAMPLES::
+
+            sage: from sage.libs.ntl.ntl_ZZ import ntl_ZZ
+            sage: a = ntl_ZZ(-7)
+            sage: loads(dumps(a))
+            -7
         """
         return unpickle_class_value, (ntl_ZZ, self._integer_())
 
@@ -164,7 +166,7 @@ cdef class ntl_ZZ():
         """
         Return the hash of this integer.
 
-        Agrees with the hash of the corresponding sage integer.
+        This agrees with the hash of the corresponding sage integer.
         """
         cdef Integer v = Integer.__new__(Integer)
         ZZ_to_mpz(v.value, &self.x)
@@ -174,8 +176,7 @@ cdef class ntl_ZZ():
         """
         EXAMPLES::
 
-            sage: n=ntl.ZZ(2983)*ntl.ZZ(2)
-            sage: n
+            sage: n = ntl.ZZ(2983)*ntl.ZZ(2); n
             5966
         """
         cdef ntl_ZZ r = ntl_ZZ.__new__(ntl_ZZ)
@@ -192,8 +193,7 @@ cdef class ntl_ZZ():
         """
         EXAMPLES::
 
-            sage: n=ntl.ZZ(2983)-ntl.ZZ(2)
-            sage: n
+            sage: n = ntl.ZZ(2983)-ntl.ZZ(2); n
             2981
             sage: ntl.ZZ(2983)-2
             2981
@@ -210,8 +210,7 @@ cdef class ntl_ZZ():
         """
         EXAMPLES::
 
-            sage: n=ntl.ZZ(2983)+ntl.ZZ(2)
-            sage: n
+            sage: n = ntl.ZZ(2983)+ntl.ZZ(2); n
             2985
             sage: ntl.ZZ(23)+2
             25
@@ -466,7 +465,7 @@ def ntl_setSeed(x=None):
     cdef ntl_ZZ seed = ntl_ZZ(1)
     if x is None:
         from random import randint
-        seed = ntl_ZZ(randint(0,int(2)**64))
+        seed = ntl_ZZ(randint(0, 1 << 64))
     else:
         seed = ntl_ZZ(x)
     sig_on()

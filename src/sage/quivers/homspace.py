@@ -237,7 +237,8 @@ class QuiverHomSpace(Homset):
         INPUT:
 
         Usually, one would provide a single dict, list,
-        :class:`QuiverRepElement` or :class:`QuiverRepHom` as arguments.
+        :class:`~sage.quivers.representation.QuiverRepElement` or
+        :class:`~sage.quivers.morphism.QuiverRepHom` as arguments.
         The semantics is as follows:
 
           - list: ``data`` can be a list of images for the generators of
@@ -254,24 +255,27 @@ class QuiverHomSpace(Homset):
             to vertices of the quiver are ignored.  An error will be
             generated if these maps do not commute with the edge maps of
             the domain and codomain.
-          - :class:`QuiverRepElement`: if the domain is a
-            :class:`QuiverRep_with_path_basis` then ``data`` can be a single
-            :class:`QuiverRepElement` belonging to the codomain.  The map
-            is then defined by sending each path, ``p``, in the basis
-            to ``data*p``.  If ``data`` is not an element of the codomain or
-            the domain is not a :class:`QuiverRep_with_path_basis` then
-            an error will be generated.
-          - :class:`QuiverRepHom`: the input can also be a map `f : D \to C`
-            such that there is a coercion from the domain of ``self`` to ``D``
-            and from ``C`` to the codomain of ``self``.  The composition
-            of these maps is the result.
+          - :class:`~sage.quivers.representation.QuiverRepElement`: if the
+            domain is a
+            :class:`~sage.quivers.representation.QuiverRep_with_path_basis`
+            then ``data`` can be a single
+            :class:`~sage.quivers.representation.QuiverRepElement` belonging
+            to the codomain.  The map is then defined by sending each path,
+            ``p``, in the basis to ``data*p``.  If ``data`` is not an element
+            of the codomain or the domain is not a
+            :class:`~sage.quivers.representation.QuiverRep_with_path_basis`
+            then an error will be generated.
+          - :class:`~sage.quivers.morphism.QuiverRepHom`: the input can also
+            be a map `f : D \to C` such that there is a coercion from the
+            domain of ``self`` to ``D`` and from ``C`` to the codomain of
+            ``self``.  The composition of these maps is the result.
 
         If there additionally are keyword arguments or if a
-        :class:`QuiverRepHom` can not be created from the data, then the
-        default call method of :class:`~sage.categories.homset.Homset`
-        is called instead.
+        :class:`~sage.quivers.morphism.QuiverRepHom` can not be created from
+        the data, then the default call method of
+        :class:`~sage.categories.homset.Homset` is called instead.
 
-        OUTPUT: :class:`QuiverRepHom`
+        OUTPUT: :class:`~sage.quivers.morphism.QuiverRepHom`
 
         EXAMPLES::
 
@@ -318,8 +322,9 @@ class QuiverHomSpace(Homset):
             Domain: Vector space of dimension 2 over Rational Field
             Codomain: Vector space of dimension 2 over Rational Field
 
-        If the domain is a module of type :class:`QuiverRep_with_path_basis`
-        (for example, the indecomposable projectives) we can create maps by
+        If the domain is a module of type
+        :class:`~sage.quivers.representation.QuiverRep_with_path_basis` (for
+        example, the indecomposable projectives) we can create maps by
         specifying a single image::
 
             sage: Proj = Q.P(GF(7), 3)
@@ -380,7 +385,7 @@ class QuiverHomSpace(Homset):
         """
         Return the identity map.
 
-        OUTPUT: :class:`QuiverRepHom`
+        OUTPUT: :class:`~sage.quivers.morphism.QuiverRepHom`
 
         EXAMPLES::
 
@@ -437,7 +442,8 @@ class QuiverHomSpace(Homset):
         """
         Return the domain of the hom space.
 
-        OUTPUT: :class:`QuiverRep`; the domain of the Hom space
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the
+        domain of the Hom space
 
         EXAMPLES::
 
@@ -453,7 +459,8 @@ class QuiverHomSpace(Homset):
         """
         Return the codomain of the hom space.
 
-        OUTPUT: :class:`QuiverRep`; the codomain of the Hom space
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic`; the
+        codomain of the Hom space
 
         EXAMPLES::
 
@@ -492,7 +499,8 @@ class QuiverHomSpace(Homset):
         Return a tuple of generators of the hom space (as a `k`-vector
         space).
 
-        OUTPUT: tuple of :class:`QuiverRepHom` objects; the generators
+        OUTPUT: tuple of :class:`~sage.quivers.morphism.QuiverRepHom` objects;
+        the generators
 
         EXAMPLES::
 
@@ -513,7 +521,7 @@ class QuiverHomSpace(Homset):
 
         INPUT:
 
-        - ``hom`` -- :class:`QuiverRepHom`
+        - ``hom`` -- :class:`~sage.quivers.morphism.QuiverRepHom`
 
         OUTPUT:
 
@@ -557,19 +565,21 @@ class QuiverHomSpace(Homset):
 
     def left_module(self, basis=False):
         """
-        Create the QuiverRep of ``self`` as a module over the opposite
-        quiver.
+        Create the :class:`~sage.quivers.representation.QuiverRep_generic` of
+        ``self`` as a module over the opposite quiver.
 
         INPUT:
 
         - ``basis`` -- boolean; if ``False``, then only the module is
           returned.  If ``True``, then a tuple is returned.  The first
-          element is the QuiverRep and the second element is a
-          dictionary which associates to each vertex a list.  The
-          elements of this list are the homomorphisms which correspond to
-          the basis elements of that vertex in the module.
+          element is the
+          :class:`~sage.quivers.representation.QuiverRep_generic` and the
+          second element is a dictionary which associates to each vertex a
+          list.  The elements of this list are the homomorphisms which
+          correspond to the basis elements of that vertex in the module.
 
-        OUTPUT: :class:`QuiverRep` or tuple
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep_generic` or
+        tuple
 
         .. WARNING::
 

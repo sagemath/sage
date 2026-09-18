@@ -60,26 +60,26 @@ cdef Matrix_t *rawMatrix(int Field, list entries) except NULL:
     return M
 
 ###############################################################
-## It is needed to do some initialisation. Since the meataxe
-## version used in Sage (SharedMeatAxe) is a dynamic (shared)
-## library, it sufficed to do this initialisation only once.
-## For convenience, the meataxe_init() function is called in
-## this module. Hence, `import sage.libs.meataxe` is enough
-## to make sure that MeatAxe is initialised.
+# It is needed to do some initialisation. Since the meataxe
+# version used in Sage (SharedMeatAxe) is a dynamic (shared)
+# library, it sufficed to do this initialisation only once.
+# For convenience, the meataxe_init() function is called in
+# this module. Hence, `import sage.libs.meataxe` is enough
+# to make sure that MeatAxe is initialised.
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
 cdef void sage_meataxe_error_handler(const MtxErrorRecord_t *err) noexcept:
     sig_block()
-    ErrText  = char_to_str(err.Text)
+    ErrText = char_to_str(err.Text)
     BaseName = char_to_str(err.FileInfo.BaseName)
-    LineNo   = err.LineNo
+    LineNo = err.LineNo
     PyErr_SetObject(ErrMsg.get(ErrText.split(': ')[-1], RuntimeError), f"{ErrText} in file {BaseName} (line {LineNo})")
     sig_unblock()
 
 cdef inline meataxe_init() noexcept:
-    ## Assign to a variable that enables MeatAxe to find
-    ## its multiplication tables.
+    # Assign to a variable that enables MeatAxe to find
+    # its multiplication tables.
     global MtxLibDir
     from sage import env
     mtxdir = str_to_bytes(env.MTXLIB)
@@ -87,7 +87,7 @@ cdef inline meataxe_init() noexcept:
         raise RuntimeError(f"the path for the meataxe library {mtxdir!r} is too long, it needs to be of length < 1024")
     MtxLibDir[:len(mtxdir)] = mtxdir
     MtxLibDir[len(mtxdir)] = c'\0'
-    ## Error handling for MeatAxe, to prevent immediate exit of the program
+    # Error handling for MeatAxe, to prevent immediate exit of the program
     MtxSetErrorHandler(sage_meataxe_error_handler)
 
 meataxe_init()

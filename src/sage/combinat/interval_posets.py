@@ -3901,7 +3901,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
         Return a random Tamari interval poset of fixed size.
 
         This is obtained using the class
-        :class:`~sage.tamari_blossoming_tree.TamariBlossomingTrees`,
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTrees`,
         which generates blossoming trees uniformly at random. A bijection is
         then performed to obtain a Tamari interval poset.
 

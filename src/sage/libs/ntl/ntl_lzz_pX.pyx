@@ -13,15 +13,15 @@ AUTHORS:
    - Craig Citro
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -93,12 +93,12 @@ cdef class ntl_zz_pX():
         else:
             p_sage = Integer(self.c.p)
 
-        #self.c.restore_c() ## We did this in __new__
+        # self.c.restore_c()  # We did this in __new__
 
         n = len(ls)
         if (n == 0):
-            ## the 0 polynomial is just the empty list;
-            ## so in this case, we're done.
+            # the 0 polynomial is just the empty list;
+            # so in this case, we are done.
             return
 
         self.x.SetMaxLength(n+1)
@@ -107,24 +107,24 @@ cdef class ntl_zz_pX():
             a = ls[i]
 
             if isinstance(a, IntegerMod_int):
-                if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
+                if (self.c.p == (<IntegerMod_int>a)._modulus.int32):  # this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_int64):
-                if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
+                if (self.c.p == (<IntegerMod_int64>a)._modulus.int64):  # this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int64>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_gmp):
-                if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
+                if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger):  # this is slow
                     zz_pX_SetCoeff_long(self.x, i, mpz_get_si((<IntegerMod_gmp>a).value))
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, Integer):
                 zz_pX_SetCoeff_long(self.x, i, mpz_fdiv_ui((<Integer>a).value, self.c.p))
             elif isinstance(a, int):
-                # we're lucky that python int is no larger than long
+                # we are lucky that python int is no larger than long
                 temp = a
                 zz_pX_SetCoeff_long(self.x, i, temp % self.c.p)
             else:
@@ -479,7 +479,7 @@ cdef class ntl_zz_pX():
 
     def diff(self):
         """
-        The formal derivative of ``self``.
+        Return the formal derivative of ``self``.
 
         EXAMPLES::
 
@@ -568,12 +568,14 @@ cdef class ntl_zz_pX():
         """
         cdef long i
         self.c.restore_c()
-        return [ zz_p_rep(zz_pX_GetCoeff(self.x, i)) for i from 0 <= i <= zz_pX_deg(self.x) ]
+        return [zz_p_rep(zz_pX_GetCoeff(self.x, i))
+                for i from 0 <= i <= zz_pX_deg(self.x)]
 
     def degree(self):
         """
-        Return the degree of this polynomial.  The degree of the 0
-        polynomial is -1.
+        Return the degree of this polynomial.
+
+        The degree of the 0 polynomial is -1.
 
         EXAMPLES::
 

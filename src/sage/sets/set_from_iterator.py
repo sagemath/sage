@@ -3,8 +3,8 @@ Enumerated set from iterator
 
 EXAMPLES:
 
-We build a set from the iterator :obj:`graphs` that returns a canonical
-representative for each isomorphism class of graphs::
+We build a set from the iterator :data:`graphs <sage.graphs.graph_generators.graphs>`
+that returns a canonical representative for each isomorphism class of graphs::
 
     sage: # needs sage.graphs
     sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator

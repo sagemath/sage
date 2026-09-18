@@ -36,6 +36,11 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     Set of rational points of the Jacobian.
     """
 
+    # Maximum number of positional arguments accepted by
+    # :meth:`_element_constructor_`. Models with two points at infinity (the
+    # split case) also accept an explicit weight, so they override this to 3.
+    _max_constructor_args = 2
+
     def __init__(self, Y, X, **kwds):
         r"""
         Create the Hom-set of a Jacobian.
@@ -149,12 +154,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J.order()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            NotImplementedError: order computation is only implemented for Jacobians over finite fields
         """
         if isinstance(self.base_ring(), FiniteField_generic):
             return sum(self.extended_curve().frobenius_polynomial())
 
-        raise NotImplementedError
+        raise NotImplementedError(
+            "order computation is only implemented for Jacobians over finite fields"
+        )
 
     @cached_method
     def _curve_frobenius_roots(self):
@@ -364,24 +371,43 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J(y^3 + y + 1, 0)
             (x^3 + x + 1, 0)
 
-        TODO:
+        The constructor also works over an extension `L` of the base field
+        `K`: points are built using the curve base-extended to `L`::
 
-        - Allow sending a field element corresponding to the x-coordinate of a point?
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
+            sage: L.<z2> = GF(13^2)
+            sage: JL = H.jacobian()(L)
+            sage: JL.extended_curve().base_ring()
+            Finite Field in z2 of size 13^2
+            sage: HL = JL.extended_curve()
+            sage: P = HL.lift_x(z2 + 1); Q = HL.lift_x(z2 + 5)
+            sage: JL(P)
+            (x + 12*z2 + 12, 4*z2 + 5)
+            sage: JL(P, Q)
+            (x^2 + (11*z2 + 7)*x + 7*z2 + 3, (4*z2 + 8)*x + z2 + 5)
+            sage: JL(P, Q) == JL(P) - JL(Q)
+            True
 
-        - Use ``__classcall__`` to sanitise input?
+        A point defined over the base field `K` may also be coerced into the
+        Jacobian over `L`::
 
-        - Add doctest for base extension
+            sage: D = H.jacobian()(GF(13))(H.lift_x(GF(13)(0)))
+            sage: JL(D).parent() is JL
+            True
         """
-        R = self.extended_curve().polynomial_ring()
-
         if len(args) == 0 or (len(args) == 1 and args[0] == ()):
-            # this returns the incorrect result because subclasses like the inert case may implement
-            # .zero differently
-            # return self._morphism_element(self, R.one(), R.zero(), check=check)
+            # Subclasses such as the inert case implement ``zero`` differently,
+            # so we must defer to it rather than building the element directly.
             return self.zero(check=check)
 
         if len(args) == 1 and isinstance(args[0], (list, tuple)):
-            args = args[0]
+            # Normalise to a tuple so that ``args + (...)`` below is well-defined
+            # even when a list such as ``[P]`` was passed.
+            args = tuple(args[0])
+
+        if len(args) > self._max_constructor_args:
+            raise ValueError(f"at most {self._max_constructor_args} arguments are allowed as input")
 
         if len(args) == 1:
             P1 = args[0]
@@ -390,42 +416,82 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if isinstance(P1, self._morphism_element):
                 if parent(P1) is self:
                     return P1
-                # may have to change polynomial ring etc.
-                # this case will now be handled below.
-                args = P1.uv()
+                # Re-coerce the Mumford coordinates (and weight, if any) into
+                # this homset; handled by the coordinate branch below.
+                args = tuple(P1)
             elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
-                args = args + (
-                    self.extended_curve().distinguished_point(),
-                )  # this case will now be handled below.
+                # Embed the curve point ``P1`` as ``[P1 - P0]`` with ``P0`` the
+                # distinguished point; handled by the two-point branch below.
+                args = args + (self.extended_curve().distinguished_point(),)
             else:
                 raise ValueError(
                     "the input must consist of one or two points, or Mumford coordinates"
                 )
 
-        if len(args) == 2:
-            P1 = args[0]
-            P2 = args[1]
-            if isinstance(
-                P1, SchemeMorphism_point_weighted_projective_ring
-            ) and isinstance(P2, SchemeMorphism_point_weighted_projective_ring):
-                u1, v1 = self.point_to_mumford_coordinates(P1)
-                P2_inv = self.extended_curve().hyperelliptic_involution(P2)
-                u2, v2 = self.point_to_mumford_coordinates(P2_inv)
-                u, v = self.cantor_composition(u1, v1, u2, v2)
-            else:
-                # We try to coerce input Mumford coordinates to polynomials
-                try:
-                    u = R(P1)
-                    v = R(P2)
-                except ValueError:
-                    raise ValueError(
-                        "the input must consist of one or two points, or Mumford coordinates"
-                    )
+        P1, P2 = args[0], args[1]
+        if isinstance(
+            P1, SchemeMorphism_point_weighted_projective_ring
+        ) and isinstance(P2, SchemeMorphism_point_weighted_projective_ring):
+            # Only reachable for models accepting more than two arguments (the
+            # split case, ``_max_constructor_args == 3``): reject ``J(P, Q, R)``.
+            if len(args) > 2:
+                raise ValueError("the input must consist of at most two points")
+            coords = self._cantor_compose_points(P1, P2)
+        else:
+            coords = self._mumford_from_coordinates(args)
 
-        if len(args) > 2:
-            raise ValueError("at most two arguments are allowed as input")
+        return self._morphism_element(self, *coords, check=check)
 
-        return self._morphism_element(self, u, v, check=check)
+    def _cantor_compose_points(self, P1, P2):
+        r"""
+        Return the Mumford coordinates of the divisor class `[P1 - P2]`.
+
+        This is the per-model hook used by :meth:`_element_constructor_` when
+        two curve points are supplied. The generic implementation returns the
+        affine Mumford coordinates ``(u, v)``; the split model overrides this
+        to also track the weight at infinity.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^7 + x + 1)
+            sage: JH = Jacobian(H).point_homset()
+            sage: P = H.lift_x(1)
+            sage: Q = H.lift_x(2)
+            sage: JH(P, Q) == JH(P) - JH(Q)
+            True
+        """
+        u1, v1 = self.point_to_mumford_coordinates(P1)
+        P2_inv = self.extended_curve().hyperelliptic_involution(P2)
+        u2, v2 = self.point_to_mumford_coordinates(P2_inv)
+        return self.cantor_composition(u1, v1, u2, v2)
+
+    def _mumford_from_coordinates(self, args):
+        r"""
+        Return the Mumford coordinates parsed from polynomial input ``args``.
+
+        This is the per-model hook used by :meth:`_element_constructor_` when
+        the input is not a pair of points. The generic implementation coerces
+        the first two arguments to polynomials ``(u, v)``; the split model
+        overrides this to additionally accept an explicit weight.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^7 + x + 1)
+            sage: JH = Jacobian(H).point_homset()
+            sage: JH(x + 12, 4)
+            (x + 12, 4)
+        """
+        R = self.extended_curve().polynomial_ring()
+        try:
+            u = R(args[0])
+            v = R(args[1])
+        except ValueError:
+            raise ValueError(
+                "the input must consist of one or two points, or Mumford coordinates"
+            )
+        return u, v
 
     def zero(self, check=True):
         r"""
@@ -758,14 +824,25 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JK = H.jacobian()(K)
             sage: JK._random_element_cover() # random
             (x + 1, 1)
+
+        The case "inert & odd genus" is not implemented (see :issue:`41985`)::
+
+            sage: K = GF(101)
+            sage: x = polygen(K)
+            sage: f = 7*x^8 + 74*x^7 + 55*x^6 + 3*x^5 + 74*x^4 + 48*x^3 + 15*x^2 + 26*x + 97
+            sage: HyperellipticCurve(f).jacobian()(K)._random_element_cover()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to perform arithmetic for inert models of odd genus; consider extending the base field to adjoin the points at infinity
         """
         H = self.extended_curve()
         R = H.polynomial_ring()
         g = H.genus()
 
         # For the inert case, the genus must be even
-        if H.is_inert():
-            assert not (g % 2)
+        if H.is_inert() and g % 2:
+            raise NotImplementedError('unable to perform arithmetic for inert models of odd genus; '
+                                      'consider extending the base field to adjoin the points at infinity')
 
         if degree is None:
             degree = (-1, g)
@@ -801,6 +878,18 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: JH = J.point_homset()
             sage: len(set(JH._random_element_rational() for _ in range(300)))
             8
+
+        TESTS:
+
+        The case "inert & odd genus" is not implemented (see :issue:`41985`)::
+
+            sage: K = GF(101)
+            sage: x = polygen(K)
+            sage: f = 7*x^8 + 74*x^7 + 55*x^6 + 3*x^5 + 74*x^4 + 48*x^3 + 15*x^2 + 26*x + 97
+            sage: HyperellipticCurve(f).jacobian()(K)._random_element_rational()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to perform arithmetic for inert models of odd genus; consider extending the base field to adjoin the points at infinity
         """
         H = self.extended_curve()
         g = H.genus()
@@ -923,3 +1012,91 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return ss
 
     rational_points = points
+
+    @cached_method
+    def abelian_group(self):
+        r"""
+        Return the group of rational points on this Jacobian as an
+        :class:`~sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper`
+        object.
+
+        EXAMPLES::
+
+            sage: x = polygen(GF(419^2))
+            sage: C = HyperellipticCurve(x^4 + x - 1)
+            sage: C.is_split()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/25193 + Z/7
+              embedded in Abelian group of points over Finite Field in z2 of size 419^2
+                on Jacobian of Hyperelliptic Curve over Finite Field in z2 of size 419^2 defined by y^2 = x^4 + x + 418
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^5 + x)
+            sage: C.is_ramified()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/29346 + Z/6
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^5 + x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(-x^6 + x - 3)
+            sage: C.is_inert()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/174078
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = 418*x^6 + x + 416
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(11*x^6 + x)
+            sage: C.is_inert()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = 11*x^6 + x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^7 - x)
+            sage: C.is_ramified()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420 + Z/210 + Z/2
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^7 + 418*x
+
+        ::
+
+            sage: x = polygen(GF(419))
+            sage: C = HyperellipticCurve(x^8 + x)
+            sage: C.is_split()
+            True
+            sage: C.jacobian().abelian_group()
+            Additive abelian group isomorphic to Z/420 + Z/420 + Z/420
+              embedded in Abelian group of points over Finite Field of size 419
+                on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^8 + x
+        """
+        n = self.order()
+        g = self.curve().genus()
+        from sage.groups.additive_abelian.additive_abelian_wrapper import expand_basis, AdditiveAbelianGroupWrapper
+        gens, ords = [], []
+        for fast in (True, False):
+            for _ in range(99 * g):
+                assert len(ords) <= 2 * g
+                order = product(ords)
+                assert order.divides(n)
+                if order == n:
+                    return AdditiveAbelianGroupWrapper(self, gens, ords)
+                D = self.random_element(fast=fast)
+                gens, ords = expand_basis(gens, D, ords)
+        raise RuntimeError('very unlikely event, or (more likely) bug in HyperellipticJacobianHomset.abelian_group()')

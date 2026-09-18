@@ -97,6 +97,8 @@ class PseudoRiemannianMetric(TensorField):
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the metric;
       if ``None``, it is formed from ``name``
 
+    .. automethod:: _del_derived
+
     EXAMPLES:
 
     Let us construct the standard metric on the sphere `S^2`, described in
@@ -335,7 +337,8 @@ class PseudoRiemannianMetric(TensorField):
         True
     """
     _derived_objects = ('_connection', '_ricci_scalar', '_weyl',
-                       '_schouten', '_cotton', '_cotton_york')
+                       '_schouten', '_cotton', '_cotton_york',
+                       '_kretschmann_scalar')
 
     def __init__(self, vector_field_module, name, signature=None,
                  latex_name=None):
@@ -482,8 +485,8 @@ class PseudoRiemannianMetric(TensorField):
         TensorField._del_derived(self)
         # The inverse metric is cleared:
         self._del_inverse()
-        # The connection, Ricci scalar and Weyl tensor are reset to None:
-        # The Schouten, Cotton and Cotton-York tensors are reset to None:
+        # The connection, Ricci and Kretschmann scalars, and Weyl,
+        # Schouten, Cotton, Cotton-York tensors are reset to None:
         for attr in self._derived_objects:
             self.__setattr__(attr, None)
         # The dictionary of determinants over the various frames is cleared:
@@ -669,7 +672,8 @@ class PseudoRiemannianMetric(TensorField):
         If ``expansion_symbol`` is set, then the zeroth order metric must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use
+        :meth:`_del_derived <sage.manifolds.differentiable.metric.PseudoRiemannianMetric._del_derived>`.
 
         OUTPUT:
 
@@ -1160,6 +1164,77 @@ class PseudoRiemannianMetric(TensorField):
             self._ricci_scalar = resu
         return self._ricci_scalar
 
+    def kretschmann_scalar(self, name=None, latex_name=None):
+        r"""
+        Return the Kretschmann scalar associated with the metric.
+
+        The Kretschmann scalar is the scalar field `K` defined from the
+        Riemann curvature tensor `R` (see :meth:`riemann`) by
+
+        .. MATH::
+
+            K = R_{abcd} R^{abcd}
+
+        It is a curvature invariant frequently used in general relativity,
+        in particular for detecting curvature singularities of a spacetime
+        that are not merely artifacts of the coordinate system used (as
+        opposed to, e.g., the vanishing of some metric component in a
+        particular chart).
+
+        INPUT:
+
+        - ``name`` -- (default: ``None``) name given to the Kretschmann
+          scalar; if none, it is set to "K(g)", where "g" is the metric's
+          name
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
+          Kretschmann scalar; if none, it is set to "K(g)", where "g" is
+          the metric's name
+
+        OUTPUT:
+
+        - the Kretschmann scalar `K`, as an instance of
+          :class:`~sage.manifolds.differentiable.scalarfield.DiffScalarField`
+
+        EXAMPLES:
+
+        Kretschmann scalar of the standard metric on the 2-sphere::
+
+            sage: M = Manifold(2, 'S^2', start_index=1)
+            sage: U = M.open_subset('U') # the complement of a meridian (domain of spherical coordinates)
+            sage: c_spher.<th,ph> = U.chart(r'th:(0,pi):\theta ph:(0,2*pi):\phi')
+            sage: a = var('a') # the sphere radius
+            sage: g = U.metric('g')
+            sage: g[1,1], g[2,2] = a^2, a^2*sin(th)^2
+            sage: g.display() # standard metric on the 2-sphere of radius a:
+            g = a^2 dth⊗dth + a^2*sin(th)^2 dph⊗dph
+            sage: g.kretschmann_scalar()
+            Scalar field K(g) on the Open subset U of the 2-dimensional
+             differentiable manifold S^2
+            sage: g.kretschmann_scalar().display() # constant, as expected for a maximally symmetric space:
+            K(g): U → ℝ
+               (th, ph) ↦ 4/a^4
+
+        For a maximally symmetric 2-dimensional space, the Kretschmann
+        scalar equals the square of the Ricci scalar, since the Riemann
+        tensor is entirely determined by the Ricci scalar in dimension 2::
+
+            sage: g.kretschmann_scalar() == g.ricci_scalar()^2
+            True
+        """
+        if self._kretschmann_scalar is None:
+            riem = self.riemann()
+            riem_down = riem.down(self, 0)  # R_{abcd}, all indices down
+            riem_up = riem.up(self)  # R^{abcd}, all indices up
+            resu = riem_up.contract(0, 1, 2, 3, riem_down, 0, 1, 2, 3)
+            if name is None:
+                name = "K(" + self._name + ")"
+            if latex_name is None:
+                latex_name = "K(" + self._latex_name + ")"
+            resu._name = name
+            resu._latex_name = latex_name
+            self._kretschmann_scalar = resu
+        return self._kretschmann_scalar
+
     def weyl(self, name=None, latex_name=None):
         r"""
         Return the Weyl conformal tensor associated with the metric.
@@ -1556,9 +1631,9 @@ class PseudoRiemannianMetric(TensorField):
             [ 1/8*u^2 - 1/8*v^2 + 1/4*v + 1/2                            1/4*u]
             [                           1/4*u -1/8*u^2 + 1/8*v^2 + 1/4*v + 1/2]
             sage: g.sqrt_abs_det(Y.frame()).expr()
-            1/2*sqrt(-x^2*y^2 - (x + 1)*y + x + 1)
+            1/2*sqrt(abs(x^2*y^2 + (x + 1)*y - x - 1))
             sage: g.sqrt_abs_det(Y.frame()).expr(Y)
-            1/8*sqrt(-u^4 - v^4 + 2*(u^2 + 2)*v^2 - 4*u^2 + 16*v + 16)
+            1/8*sqrt(abs(u^4 + v^4 - 2*(u^2 + 2)*v^2 + 4*u^2 - 16*v - 16))
 
         A chart can be passed instead of a frame::
 
@@ -1578,9 +1653,9 @@ class PseudoRiemannianMetric(TensorField):
             sage: g.sqrt_abs_det().expr()
             sqrt(-x**2*y**2 - x*y + x - y + 1)
             sage: g.sqrt_abs_det(Y.frame()).expr()
-            sqrt(-x**2*y**2 - x*y + x - y + 1)/2
+            sqrt(Abs(x**2*y**2 + x*y - x + y - 1))/2
             sage: g.sqrt_abs_det(Y.frame()).expr(Y)
-            sqrt(-u**4 + 2*u**2*v**2 - 4*u**2 - v**4 + 4*v**2 + 16*v + 16)/8
+            sqrt(Abs(-u**4 + 2*u**2*v**2 - 4*u**2 - v**4 + 4*v**2 + 16*v + 16))/8
         """
         dom = self._domain
         if frame is None:
@@ -1998,6 +2073,8 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the metric;
       if ``None``, it is formed from ``name``
 
+    .. automethod:: _del_derived
+
     EXAMPLES:
 
     Metric on a 2-dimensional manifold::
@@ -2295,7 +2372,8 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
         If ``expansion_symbol`` is set, then the zeroth order metric must be
         invertible. Moreover, subsequent calls to this method will return
         a cached value, even when called with the default value (to enable
-        computation of derived quantities). To reset, use :meth:`_del_derived`.
+        computation of derived quantities). To reset, use
+        :meth:`_del_derived <sage.manifolds.differentiable.metric.PseudoRiemannianMetricParal._del_derived>`.
 
         OUTPUT:
 
