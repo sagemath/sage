@@ -8284,7 +8284,7 @@ class Graph(GenericGraph):
             sage: T = G.gomory_hu_tree()
             sage: from itertools import combinations
             sage: for u,v in combinations(G,2):
-            ....:     assert T.flow(u,v,use_edge_labels=True) == G.flow(u,v,use_edge_labels=True)
+            ....:     assert T.flow(u,v,by_weight=True) == G.flow(u,v,by_weight=True)
 
             sage: graphs.EmptyGraph().gomory_hu_tree()
             Graph on 0 vertices
