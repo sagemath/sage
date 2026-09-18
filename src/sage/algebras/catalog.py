@@ -14,7 +14,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`algebras.ArikiKoike
   <sage.algebras.hecke_algebras.ariki_koike_algebra.ArikiKoikeAlgebra>`
 - :class:`algebras.AskeyWilson <sage.algebras.askey_wilson.AskeyWilsonAlgebra>`
-- :class:`algebras.BirmanMurakamiWenzl <sage.algebras.birman_murakami_wenz.BirmanMurakamiWenzl>`
+- :class:`algebras.BirmanMurakamiWenzl <sage.algebras.birman_murakami_wenzl_algebra.BirmanMurakamiWenzlAlgebra>`
 - :class:`algebras.Blob <sage.combinat.blob_algebra.BlobAlgebra>`
 - :class:`algebras.Brauer <sage.combinat.diagram_algebras.BrauerAlgebra>`
 - :class:`algebras.Clifford <sage.algebras.clifford_algebra.CliffordAlgebra>`

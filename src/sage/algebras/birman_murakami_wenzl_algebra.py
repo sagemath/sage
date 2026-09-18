@@ -28,8 +28,9 @@ algebra* (see, for example, Section 6 in [MW2010]_).
 
 Our implementation essentially uses this realization. It establishes a direct
 connection to the *Kauffman link polynomial*
-(:meth:`~sage.knots.links.Link.kauffman_polynomial`) or more precisely to its
-regular isotopy version, which is implemented in the method :meth:`markov_trace`.
+(:meth:`~sage.knots.link.Link.kauffman_polynomial`) or more precisely to its
+regular isotopy version, which is implemented in
+:meth:`~sage.algebras.birman_murakami_wenzl_algebra.BirmanMurakamiWenzlElement.markov_trace`.
 
 In this identification the relation in the fourth row corresponds to the skein
 relation between these tangles and the relation in the last row to an untwist
