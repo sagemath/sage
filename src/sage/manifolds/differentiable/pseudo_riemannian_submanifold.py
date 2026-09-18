@@ -819,8 +819,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             ....:                              atan2(-y,-x)+pi)
             Check of the inverse coordinate transformation:
               the == 2*arctan(sqrt(-cos(the) + 1)/sqrt(cos(the) + 1))  **failed**
-              phi == pi + arctan2(sin(phi)*sin(the)/(cos(the) - 1),
-                                  cos(phi)*sin(the)/(cos(the) - 1))  **failed**
+              phi == pi + arctan2(cos(the)*sin(phi) - sin(phi), cos(phi)*cos(the) - cos(phi))  **failed**
               x == x  *passed*
               y == y  *passed*
             NB: a failed report can reflect a mere lack of simplification.
