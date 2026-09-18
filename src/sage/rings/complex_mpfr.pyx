@@ -221,8 +221,8 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         0
         sage: CC.precision()
         200
-        sage: CC.variable_name()
-        'I'
+        sage: CC.variable_names()
+        ()
         sage: CC == ComplexField(200)
         True
         sage: CC == ComplexField(53)
@@ -256,7 +256,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         """
         self._prec = int(prec)
         from sage.categories.fields import Fields
-        Parent.__init__(self, self._real_field(), names=('I',),
+        Parent.__init__(self, self._real_field(), names=(),
                         normalize=False,
                         category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_(coerce_list=[RRtoCC(self._real_field(), self)],
