@@ -920,7 +920,7 @@ class HyperbolicModelUHP(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: hp = HyperbolicPlane().UHP().get_background_graphic()                 # needs sage.plot
+            sage: hp = HyperbolicPlane().UHP().get_background_graphic()
         """
         from sage.plot.line import line
         bd_min = bdry_options.get('bd_min', -5)
@@ -1254,7 +1254,7 @@ class HyperbolicModelPD(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().PD().get_background_graphic()                # needs sage.plot
+            sage: circ = HyperbolicPlane().PD().get_background_graphic()
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
@@ -1378,7 +1378,7 @@ class HyperbolicModelKM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: circ = HyperbolicPlane().KM().get_background_graphic()                # needs sage.plot
+            sage: circ = HyperbolicPlane().KM().get_background_graphic()
         """
         from sage.plot.circle import circle
         return circle((0, 0), 1, axes=False, color='black')
@@ -1487,7 +1487,7 @@ class HyperbolicModelHM(HyperbolicModel):
 
         EXAMPLES::
 
-            sage: H = HyperbolicPlane().HM().get_background_graphic()                   # needs sage.plot
+            sage: H = HyperbolicPlane().HM().get_background_graphic()
         """
         from sage.plot.plot3d.all import plot3d
         from sage.symbolic.ring import SR
