@@ -1952,7 +1952,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
     def to_integer(self):
         """
-        Alias of :meth:`lift`. (This is here for compatibility with higher
+        Alias of the method lift(). (This is here for compatibility with higher
         order finite fields.)
         """
         return self.lift()
