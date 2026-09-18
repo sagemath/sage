@@ -120,42 +120,43 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
+import os
+import shlex
 from collections.abc import Hashable
 from copyreg import constructor as copyreg_constructor
 from functools import reduce
 from io import IOBase, StringIO
-from subprocess import Popen, PIPE
-from warnings import warn
-import os
-import shlex
+from subprocess import PIPE, Popen
+from typing import Literal
 
+import sage.geometry.abc
 from sage.arith.misc import GCD as gcd
 from sage.categories.monoids import Monoids
 from sage.features import PythonModule
-from sage.features.palp import PalpExecutable
 from sage.features.databases import DatabaseReflexivePolytopes
+from sage.features.palp import PalpExecutable
 from sage.geometry.cone import _ambient_space_point, integral_length
-from sage.geometry.point_collection import (PointCollection,
-                                            read_palp_point_collection)
-from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 from sage.geometry.convex_set import ConvexSet_compact
+from sage.geometry.point_collection import PointCollection, read_palp_point_collection
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.lazy_import import lazy_import
+from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 from sage.misc.temporary_file import tmp_filename
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.element import Matrix, Element
-from sage.structure.richcmp import richcmp_method, richcmp
-from sage.structure.parent import Parent
+from sage.structure.element import Element, Matrix
+from sage.structure.parent import Parent, Set_generic
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
-import sage.geometry.abc
-
 
 lazy_import("sage.combinat.posets.posets", 'FinitePoset')
 lazy_import("sage.geometry.hasse_diagram", 'lattice_from_incidences')
@@ -168,6 +169,34 @@ lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
             feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 lazy_import('ppl', 'point', as_='PPL_point',
             feature=PythonModule("ppl", spkg='pplpy', type='standard'))
+
+
+class SetOfAllLatticePolytopesClass(Set_generic):
+    def _repr_(self) -> str:
+        r"""
+        Return a string representation.
+
+        TESTS::
+
+            sage: lattice_polytope.SetOfAllLatticePolytopesClass()._repr_()
+            'Set of all Lattice Polytopes'
+        """
+        return "Set of all Lattice Polytopes"
+
+    def __call__(self, x):
+        r"""
+        TESTS::
+
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: lattice_polytope.SetOfAllLatticePolytopesClass().__call__(o)
+            3-d reflexive polytope in 3-d lattice M
+        """
+        if isinstance(x, LatticePolytopeClass):
+            return x
+        raise TypeError
+
+
+SetOfAllLatticePolytopes = SetOfAllLatticePolytopesClass()
 
 
 def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
@@ -516,7 +545,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             self._vertices = ambient.vertices(self._ambient_vertex_indices)
         Element.__init__(self, parent)
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 
@@ -4551,7 +4580,7 @@ class NefPartition(SageObject, Hashable):
             pass
         return result
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool) -> SageInputExpression:
         """
         Return Sage command to reconstruct ``self``.
 

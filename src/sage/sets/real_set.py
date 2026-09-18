@@ -96,7 +96,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 from heapq import merge
+from typing import TYPE_CHECKING, Literal
 
 from sage.categories.sets_cat import EmptySetError
 from sage.categories.topological_spaces import TopologicalSpaces
@@ -108,6 +111,9 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.symbolic.ring import SR
+
+if TYPE_CHECKING:
+    from sage.misc.sage_input import SageInputBuilder, SageInputExpression
 
 
 @richcmp_method
@@ -2701,7 +2707,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         # positive value preferred over negative
         return min(candidates, key=lambda x: (x.denominator(), x.abs(), -x))
 
-    def _sage_input_(self, sib, coerced):
+    def _sage_input_(self, sib: SageInputBuilder, coerced: bool | Literal[2]) -> SageInputExpression:
         """
         Produce an expression which will reproduce this value when evaluated.
 
