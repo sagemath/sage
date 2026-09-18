@@ -297,7 +297,6 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef Py_ssize_t s
     for s in range(n):
         simple_BFS(sd, s, distances + <size_t>s * <size_t>n, NULL, waiting_list, seen)
-    bitset_free(seen)
 
     # Reorder the vertices of an edge
     def r(x, y):
@@ -305,15 +304,23 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
 
     # The equivalence classes of the edges of g
     # Initialize OrbitPartition with all edges
+    # Build the edge list directly from the short_digraph neighbors,
+    # working only with integer vertex IDs (no dictionary lookups, and
+    # any hashable vertex label including NaN is handled correctly)
     cdef list edge_list = []
-    cdef dict edge_to_idx = {}
-    cdef int iu, iv, idx
-    cdef object u_label, v_label
-    for idx, (u_label, v_label) in enumerate(g_imm.edge_iterator(labels=False)):
-        iu = vertex_to_int[u_label]
-        iv = vertex_to_int[v_label]
-        edge_list.append((iu, iv))
-        edge_to_idx[r(iu, iv)] = idx
+    cdef uint32_t ev
+    cdef uint32_t* p_uv
+    cdef uint32_t* p_end
+    cdef Py_ssize_t idx
+    for idx in range(n):
+        p_uv = sd.neighbors[idx]
+        p_end = sd.neighbors[idx + 1]
+        while p_uv < p_end:
+            ev = p_uv[0]
+            if idx < ev:
+                edge_list.append((idx, ev))
+            p_uv += 1
+    cdef dict edge_to_idx = {e: i for i, e in enumerate(edge_list)}
     cdef Py_ssize_t n_edges = len(edge_list)
 
     # For all pairs of vertices u,v of G, according to their number of common
@@ -323,40 +330,54 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
         raise MemoryError("Failed to allocate OrbitPartition")
 
     # Main equivalence-class computation
+    # Work entirely with integer vertex IDs and the short_digraph, so any
+    # hashable vertex label (including NaN or list-like objects) is handled
+    # correctly — no Python-level vertex-label lookups are needed here.
     cdef int u, v, x, y
     cdef set un, intersect
-    cdef object x_label, y_label
-    for u, u_label in enumerate(int_to_vertex):
-        un = set(g_imm.neighbor_iterator(u_label))
-        for v_label in bck.breadth_first_search(u_label):
-            # u and v are different
-            if u_label == v_label:
-                continue
-            # List of common neighbors
-            v = vertex_to_int[v_label]
-            intersect = un & set(g_imm.neighbor_iterator(v_label))
-            # If u and v have no neighbors and uv is not an edge then their
-            # distance is at least 3. As we enumerate the vertices in a
+    cdef uint32_t* bfs_order = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
+    for u in range(n):
+        # BFS from u to enumerate vertices in BFS order
+        simple_BFS(sd, u, distances + <size_t>u * <size_t>n, NULL, bfs_order, seen)
+        # Neighbors of u as a set of integer IDs
+        un = set()
+        p_uv = sd.neighbors[u]
+        p_end = sd.neighbors[u + 1]
+        while p_uv < p_end:
+            un.add(p_uv[0])
+            p_uv += 1
+        # Iterate v in BFS order (skip u itself at index 0)
+        for idx in range(1, n):
+            v = bfs_order[idx]
+            # Common neighbors of u and v, as integer IDs
+            intersect = set()
+            p_uv = sd.neighbors[v]
+            p_end = sd.neighbors[v + 1]
+            while p_uv < p_end:
+                intersect.add(p_uv[0])
+                p_uv += 1
+            intersect &= un
+            # If u and v have no common neighbors and uv is not an edge then
+            # their distance is at least 3. As we enumerate the vertices in a
             # breadth-first search, it means that we already checked all the
             # vertices at distance less than two from u, and we are done with
             # this loop !
             if not intersect:
-                if g_imm.has_edge(u_label, v_label):
+                if distances[<size_t>u * <size_t>n + <size_t>v] == 1:
                     continue
                 else:
                     break
             # Special case: uv is not an edge and exactly 2 common neighbors
-            if len(intersect) == 2 and not g_imm.has_edge(u_label, v_label):
-                x_label, y_label = intersect
-                x = vertex_to_int[x_label]
-                y = vertex_to_int[y_label]
+            if len(intersect) == 2 and distances[<size_t>u * <size_t>n + <size_t>v] != 1:
+                x, y = intersect
                 OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, y)])
                 OP_join(op, edge_to_idx[r(v, x)], edge_to_idx[r(u, y)])
             # All other cases: union with all common neighbors
             else:
-                for x_label in intersect:
-                    x = vertex_to_int[x_label]
+                for x in intersect:
                     OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, x)])
+
+    bitset_free(seen)
 
     # Edges uv and u'v' such that d(u,u')+d(v,v') != d(u,v')+d(v,u') are also
     # equivalent
