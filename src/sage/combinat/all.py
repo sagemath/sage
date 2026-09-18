@@ -230,6 +230,7 @@ from sage.combinat.posets.all import *
 # Cluster Algebras and Quivers
 from sage.combinat.cluster_algebra_quiver.all import *
 
+from sage.combinat.lp_algebra_seed import LPASeed
 from sage.combinat import ranker
 
 from sage.combinat.integer_vector import IntegerVectors
