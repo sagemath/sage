@@ -31,6 +31,7 @@ jobs:
           #- ubuntu:22.04 - gap is outdated there (only 4.11)
           - ubuntu:24.04
           - ubuntu:26.04
+          - almalinux:10
     container:
       image: ${{ matrix.container }}
 
@@ -79,7 +80,7 @@ jobs:
       - name: Install dependencies
         run: |
           SYSTEM=$(build/bin/sage-guess-package-system)
-          if [ "$SYSTEM" = "fedora" ]; then
+          if [[ "${{ matrix.container }}" == fedora:* ]]; then
               dnf install -y git
 
               # Need to use --setopt=tsflags="" to avoid errors with gphelp

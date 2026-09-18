@@ -19,6 +19,8 @@ elif apt-get --version > /dev/null 2>&1; then
     echo debian
 elif dnf5 --version > /dev/null 2>&1; then
     echo fedora
+elif dnf --version > /dev/null 2>&1; then
+    echo fedora
 elif pacman --version > /dev/null 2>&1; then
     echo arch
 elif slackpkg --version > /dev/null 2>&1; then
