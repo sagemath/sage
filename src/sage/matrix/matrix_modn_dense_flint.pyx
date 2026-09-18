@@ -129,9 +129,9 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
             sage: A = matrix(Zmod(36), 3, 3, range(9))
             sage: del A
         """
-        sig_on()
+        # Destructors cannot propagate exceptions, so this must not be
+        # wrapped in sig_on()/sig_off().
         nmod_mat_clear(self._matrix)
-        sig_off()
 
     cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         nmod_mat_set_entry(self._matrix, i, j, value)
@@ -944,7 +944,7 @@ cdef class Matrix_modn_dense_flint(Matrix_dense):
             [9223372036854775800]
         """
         cdef Py_ssize_t i, j, m = self._nrows, n = self._ncols
-        cdef mp_limb_t x, preN, preshift, N = modulus
+        cdef mp_limb_t x, preN, preshift = 0, N = modulus
         preN = n_preinvert_limb(N)
         if not mul:
             preshift = n_preinvert_limb(shift)

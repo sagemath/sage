@@ -106,17 +106,17 @@ class DefaultValue:
         if node is None:
             return None
         if isinstance(node, BoolNode):
-            return cls("True" if node.value else "False")
+            return cls("True" if getattr(node, "value") else "False")
         if isinstance(node, NoneNode):
             return cls("None")
         if isinstance(node, IntNode):
-            return cls(str(node.value))
+            return cls(str(getattr(node, "value")))
         if isinstance(node, FloatNode):
-            return cls(str(node.value))
+            return cls(str(getattr(node, "value")))
         if isinstance(node, IntBinopNode):
             return cls(str(node))
         if isinstance(node, UnicodeNode):
-            return cls(repr(node.value))
+            return cls(repr(getattr(node, "value")))
         if (
             isinstance(node, PowNode)
             or isinstance(node, AddNode)
@@ -145,7 +145,7 @@ class DefaultValue:
         if isinstance(node, IndexNode):
             return cls("...")  # not handled in detail
         if isinstance(node, NameNode):
-            return cls(node.name)
+            return cls(getattr(node, "name"))
         raise NotImplementedError(
             f"Unhandled Cython default value node: {node.__class__.__name__}"
         )
@@ -214,7 +214,11 @@ class WriteResult:
 def _iter_child_nodes(node: Node) -> Iterator[Node]:
     """Yield child nodes using Cython's ``child_attrs`` metadata."""
 
-    for attr in node.child_attrs:
+    child_attrs = node.child_attrs
+    if child_attrs is None:
+        return
+
+    for attr in child_attrs:
         child = getattr(node, attr, None)
         if child is None:
             continue
@@ -284,7 +288,7 @@ def _params_from_def(node: DefNode) -> tuple[Param, ...]:
 
     params: list[Param] = []
 
-    for arg in node.args:
+    for arg in getattr(node, "args"):
         default_node = arg.default or arg.default_value
         default = (
             DefaultValue.from_cython(default_node) if default_node is not None else None
@@ -309,9 +313,10 @@ def _params_from_cfunc(node: CFuncDefNode) -> tuple[Param, ...]:
     py_func = node.py_func
     if isinstance(py_func, DefNode):
         return _params_from_def(py_func)
-    if node.declarator and node.declarator.args:
+    declarator = getattr(node, "declarator")
+    if declarator and declarator.args:
         params: list[Param] = []
-        for arg in node.declarator.args:
+        for arg in declarator.args:
             default = DefaultValue.from_cython(arg.default) if arg.default else None
             if getattr(arg.declarator, "name", None):
                 typ = None  # TODO: extract type info also for Python stubs, then use the following
@@ -323,7 +328,7 @@ def _params_from_cfunc(node: CFuncDefNode) -> tuple[Param, ...]:
 
             params.append(Param(name, "pos", typ, default))
         return tuple(params)
-    return tuple()
+    return ()
 
 
 def _collect_public_symbols(module: ModuleNode) -> set[Symbol]:
@@ -333,10 +338,8 @@ def _collect_public_symbols(module: ModuleNode) -> set[Symbol]:
 
     def visit(node: Node, cls_path: tuple[str, ...]) -> None:
         if isinstance(node, (CClassDefNode, PyClassDefNode)):
-            cls_name = (node.class_name if hasattr(node, "class_name") else None) or (
-                node.name if hasattr(node, "name") else None
-            )
-            if cls_name is None:
+            cls_name = getattr(node, "class_name", None) or getattr(node, "name", None)
+            if not isinstance(cls_name, str):
                 return
             new_path = (*cls_path, cls_name)
             for child in _iter_child_nodes(node):
@@ -344,14 +347,18 @@ def _collect_public_symbols(module: ModuleNode) -> set[Symbol]:
             return
 
         if isinstance(node, DefNode):
-            if _is_public_name(node.name):
-                symbols.add(FunctionSymbol(cls_path, node.name, _params_from_def(node)))
+            name = getattr(node, "name", None)
+            if isinstance(name, str) and _is_public_name(name):
+                symbols.add(FunctionSymbol(cls_path, name, _params_from_def(node)))
             return
 
         if isinstance(node, CFuncDefNode):
             name = node.declared_name()
-            if (node.overridable or node.visibility == "public") and _is_public_name(
-                name
+            visibility = getattr(node, "visibility", None)
+            if (
+                isinstance(name, str)
+                and (node.overridable or visibility == "public")
+                and _is_public_name(name)
             ):
                 symbols.add(FunctionSymbol(cls_path, name, _params_from_cfunc(node)))
             return

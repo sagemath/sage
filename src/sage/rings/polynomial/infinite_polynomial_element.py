@@ -2234,7 +2234,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             blocklength = sh
             nM = sh + 1
             for i in range(P.ngens()):
-                newVars.extend([PPgens[sh-p(j)] for j in range(blocklength, -1, -1)])
+                newVars.extend(PPgens[sh - p(j)] for j in range(blocklength, -1, -1))
                 sh += nM
             mapR = PP.hom(newVars, PP)
             return InfinitePolynomial_dense(P, mapR(self._p))

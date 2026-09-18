@@ -1521,7 +1521,7 @@ class SignedPermutation(ColoredPermutation,
                 s *= self._colors[next_val - 1]
                 l[next_val - 1], next_val = False, l[next_val - 1]
             if s != 1:
-                cycle.extend([-e for e in cycle])
+                cycle.extend([-e for e in cycle])  # [] is necessary
                 add_neg = False
 
             # Add the cycle to the list of cycles

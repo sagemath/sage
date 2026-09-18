@@ -441,14 +441,14 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             Traceback (most recent call last):
             ...
             StopIteration
-            sage: list(a)   # implicit doctest
+            sage: list(a)   # indirect doctest
             [5, 7]
-            sage: tuple(a)  # implicit doctest
+            sage: tuple(a)  # indirect doctest
             (5, 7)
             sage: b = F(11)
-            sage: list(b)   # implicit doctest
+            sage: list(b)   # indirect doctest
             [11, 0]
-            sage: tuple(b)  # implicit doctest
+            sage: tuple(b)  # indirect doctest
             (11, 0)
             sage: list(b.polynomial())
             [11]
@@ -457,21 +457,21 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
             sage: F = GF(random_prime(333)^randrange(111,999),'t')
             sage: a = F.random_element()
-            sage: list(a) == a.list()  # implicit doctest
+            sage: list(a) == a.list()  # indirect doctest
             True
 
         ::
 
             sage: F.<t> = GF(17^60)
             sage: a = F.random_element()
-            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # indirect doctest
             True
 
         ::
 
             sage: F.<t> = GF((2^127 - 1)^10, 't')
             sage: a = F.random_element()
-            sage: a == sum(c*t^i for i,c in enumerate(a))  # implicit doctest
+            sage: a == sum(c*t^i for i,c in enumerate(a))  # indirect doctest
             True
         """
         return iter(self.list())

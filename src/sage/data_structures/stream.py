@@ -1385,6 +1385,24 @@ class DominatingAction(Action):
             Univariate Polynomial Ring in a over
              Fraction Field of Infinite polynomial ring in FESDUMMY over
              Univariate Polynomial Ring in b over Univariate Polynomial Ring in t over Integer Ring
+
+        Elements of modules with basis are moved over to the larger coefficient ring so that undetermined
+        coefficients can be operated with symmetric functions::
+
+            sage: p = SymmetricFunctions(ZZ).p()
+            sage: y = g * p[1]; y
+            FESDUMMY_0*p[1]
+            sage: y.parent()
+            Symmetric Functions over CoefficientRing over Integer Ring in the powersum basis
+            sage: y.parent().base_ring()
+            CoefficientRing over Integer Ring
+
+        This includes tensor products that appear in multisort plethysm ::
+
+            sage: p2 = tensor([p, p])
+            sage: y = g * tensor([p[1], p[2]])
+            sage: y.parent().base_ring()
+            CoefficientRing over Integer Ring
         """
         G = g.parent()
         if x in G.base_ring():
@@ -1729,9 +1747,18 @@ class Stream_uninitialized(Stream):
             Currently, the first invocation is via
             :meth:`_good_cache` in :meth:`__getitem__`.
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+        A cache-less shifted stream does not hide the cached stream on which it depends::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub, Stream_map_coefficients, Stream_shift
+            sage: C = Stream_uninitialized(0)
+            sage: M = Stream_map_coefficients(C, lambda c: c, True)
+            sage: S = Stream_shift(M, -1)
+            sage: C.define(S)
+            sage: C._input_streams == [C, M]
+            True
+
             sage: terms_of_degree = lambda n, R: [R.one()]
             sage: x = Stream_exact([1], order=1)
             sage: C = Stream_uninitialized(1)
@@ -1745,12 +1772,16 @@ class Stream_uninitialized(Stream):
              <sage.data_structures.stream.Stream_cauchy_mul object at 0x...>]
         """
         known = [self]
+        visited = [self]
         todo = [self]
         while todo:
             x = todo.pop()
             for y in x.input_streams():
-                if hasattr(y, "_cache") and not any(y is z for z in known):
-                    todo.append(y)
+                if any(y is z for z in visited):
+                    continue
+                visited.append(y)
+                todo.append(y)
+                if hasattr(y, "_cache"):
                     known.append(y)
         return known
 
@@ -4556,6 +4587,20 @@ class Stream_shift(Stream):
         self._series = series
         self._shift = shift
         super().__init__(series._true_order)
+
+    def input_streams(self):
+        r"""
+        Return the input stream of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_shift
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: s = Stream_shift(f, -1)
+            sage: s.input_streams()[0] is f
+            True
+        """
+        return [self._series]
 
     @lazy_attribute
     def _approximate_order(self):

@@ -5740,7 +5740,7 @@ cdef class RealLiteral(RealNumber):
 
             sage: RealField(200)(float(1.3))
             1.3000000000000000444089209850062616169452667236328125000000
-            sage: RealField(200)(1.3)  # implicit doctest
+            sage: RealField(200)(1.3)  # indirect doctest
             1.3000000000000000000000000000000000000000000000000000000000
             sage: 1.3 + 1.2
             2.50000000000000

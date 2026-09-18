@@ -160,7 +160,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         .. SEEALSO::
 
-            :meth:`_set_to_product`
+            The backend-specific Cython hook ``_set_to_product``.
 
         TESTS:
 
@@ -1147,7 +1147,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef list row_list
         cdef list col_list
         cdef Py_ssize_t i
-        cdef int row, col
+        cdef int row = 0, col = 0
         cdef int nrows = self._nrows
         cdef int ncols = self._ncols
         cdef tuple key_tuple
@@ -1624,7 +1624,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         cdef list value_list
         cdef bint value_list_one_dimensional = 0
         cdef Py_ssize_t i
-        cdef Py_ssize_t row, col
+        cdef Py_ssize_t row = 0, col = 0
         cdef Py_ssize_t nrows = self._nrows
         cdef Py_ssize_t ncols = self._ncols
         cdef tuple key_tuple

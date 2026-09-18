@@ -77,13 +77,13 @@ SAGE_SPKG_CONFIGURE([gfortran], [
         AS_CASE(["$FC"],
             [*gfortran*], [
                 AC_MSG_CHECKING([the version of $FC])
-                GFORTRAN_VERSION="`$FC -dumpversion`"
+                GFORTRAN_VERSION="`$FC -dumpfullversion -dumpversion 2>/dev/null || $FC -dumpversion`"
                 AC_MSG_RESULT([$GFORTRAN_VERSION])
                 # Add the .0 because Debian/Ubuntu gives version numbers like
                 # 4.6 instead of 4.6.4 (Issue #18885)
                 AS_CASE(["$GFORTRAN_VERSION.0"],
-                    [[[0-3]].*|4.[[0-7]].*], [
-                        # Install our own gfortran if the system-provided one is older than gcc-4.8.
+                    [[[0-9]].*|10.[[0-2]].*], [
+                        # Install our own gfortran if the system-provided one is older than gcc-10.3.
                         SAGE_SHOULD_INSTALL_GFORTRAN([$FC is version $GFORTRAN_VERSION, which is quite old])
                     ],
                     [1[[7-9]].*], [
