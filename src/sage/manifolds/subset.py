@@ -78,6 +78,10 @@ from sage.manifolds.point import ManifoldPoint
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
+if TYPE_CHECKING:
+    from sage.manifolds.manifold import TopologicalManifold
+
+
 
 class ManifoldSubset(UniqueRepresentation, Parent):
     r"""
@@ -153,7 +157,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     _name: str
 
-    def __init__(self, manifold, name: str, latex_name=None, category=None):
+    def __init__(self, manifold: TopologicalManifold, name: str, latex_name=None, category=None):
         r"""
         Construct a manifold subset.
 
@@ -1247,7 +1251,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     # ### End of accessors
 
-    def is_subset(self, other):
+    def is_subset(self, other: TopologicalManifold):
         r"""
         Return ``True`` if and only if ``self`` is included in ``other``.
 
