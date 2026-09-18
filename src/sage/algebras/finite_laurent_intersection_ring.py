@@ -2531,7 +2531,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
                 candidate_factors = [f for f, _e in numerator.factor() if not chart.L(f).is_unit()]
 
             if candidate_factors:
-            # check which of the candidate factors are new primes, and add them to the factor list
+                # check which of the candidate factors are new primes, and add them to the factor list
                 factor_list.extend(
                     self._confirmed_new_primes(chart, candidate_factors,
                                                 previously_seen_generators,
@@ -2542,6 +2542,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
 
         self._extra_primes_cache = factor_list
         return factor_list
+
     def _valuation_of_base_element_at_prime(self, base_expr, P: FiniteLaurentIntersectionRingPrimeDivisor):
         """
         v_P(base_expr): multiplicity of P.irreducible in the factorization after substituting into chart.
