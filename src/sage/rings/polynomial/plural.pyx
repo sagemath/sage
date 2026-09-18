@@ -1,3 +1,4 @@
+# sage.doctest: flaky (:issue:`29528`)
 r"""
 Noncommutative polynomials via libSINGULAR/Plural
 
