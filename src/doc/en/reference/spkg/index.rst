@@ -34,30 +34,37 @@ To install an optional package, you can use Sage's package management system.
 Basic Installation
 ~~~~~~~~~~~~~~~~~~
 
-To install an optional package, use the following command from the Sage command line:
+To install an optional package, use the following command in a system
+terminal (not from the Sage prompt):
 
-.. code-block:: sage
+.. code-block:: console
 
     sage -i <package_name>
 
 For example, to install the optional package `bliss`:
 
-.. code-block:: sage
+.. code-block:: console
 
     sage -i bliss
+
+.. note::
+
+    The ``sage -i`` command is part of Sage-the-distribution. It may not
+    work in Conda or other packaged installations. In that case, use the
+    package manager of your installation instead.
 
 Using the Package List
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To see a list of all available optional packages:
+To see a list of all available optional packages, run in a system terminal:
 
-.. code-block:: shell
+.. code-block:: console
 
     sage --optional
 
 To list experimental packages instead:
 
-.. code-block:: shell
+.. code-block:: console
 
     sage --experimental
 
@@ -70,18 +77,28 @@ Alternatively, inside Sage you can use:
 .. code-block:: sage
 
     from sage.misc.package import list_packages
-    list_packages('optional')   # Lists optional packages
-    list_packages('experimental')   # Lists experimental packages
+    list_packages('optional', local=True)     # Lists optional packages
+    list_packages('experimental', local=True) # Lists experimental packages
+
+.. note::
+
+    Use ``local=True`` to avoid network lookups to PyPI, which may fail
+    for some Sage package names.
 
 Installation from Source
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 When installing from source, you can enable specific optional packages
-during the build process.
+during the build process. For example, to enable the `bliss` package:
+
+.. code-block:: console
+
+    ./configure --enable-bliss=yes
+    make
 
 To see all available configure options:
 
-.. code-block:: shell
+.. code-block:: console
 
     ./configure --help
 
@@ -90,14 +107,14 @@ Pip-Installable Optional Packages
 
 Some optional SageMath packages can be installed using pip:
 
-.. code-block:: shell
+.. code-block:: console
 
     ./sage -pip install <package_name>
 
 For example, to install the `graph-genus` package (which provides faster
 graph genus algorithms):
 
-.. code-block:: shell
+.. code-block:: console
 
     ./sage -pip install graph-genus
 
@@ -108,12 +125,21 @@ Verifying Installation
 ~~~~~~~~~~~~~~~~~~~~~~
 
 To verify that an optional package was installed correctly, you can check
-the list of installed packages:
+Sage's package records:
 
 .. code-block:: sage
 
     from sage.misc.package import list_packages
-    list_packages('optional')  # Shows installed optional packages
+    pkgs = list_packages('optional', local=True)
+    pkgs['bliss'].is_installed()   # True if installed
+
+To check whether the functionality is actually available, use the
+corresponding ``sage.features`` check. For example, for `bliss`:
+
+.. code-block:: sage
+
+    from sage.features.bliss import Bliss
+    Bliss().is_present()   # True if the feature is available
 
 For instructions on installing optional packages using your system's
 package manager (Homebrew, apt, dnf, etc.), see the individual
@@ -195,4 +221,3 @@ All External Packages
    :maxdepth: 1
 
    index_alph
-   
