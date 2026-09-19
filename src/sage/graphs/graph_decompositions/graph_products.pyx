@@ -288,22 +288,17 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     cdef dict vertex_to_int      = bck._vertex_to_int
     cdef Py_ssize_t n = sd.n
 
-    # All-pairs distances via simple_BFS on the backend's sd (no duplicate sd)
+    # Allocate the distance array. It is filled by the BFS in the main loop
+    # below: by the time that loop finishes, all-pairs distances are available.
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t* distances    = <uint32_t*> mem.allocarray(<size_t>n * <size_t>n, sizeof(uint32_t))
-    cdef uint32_t* waiting_list = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
+    cdef uint32_t* distances = <uint32_t*> mem.allocarray(<size_t>n * <size_t>n, sizeof(uint32_t))
     cdef bitset_t seen
     bitset_init(seen, n)
-    cdef Py_ssize_t s
-    for s in range(n):
-        simple_BFS(sd, s, distances + <size_t>s * <size_t>n, NULL, waiting_list, seen)
 
     # Reorder the vertices of an edge
     def r(x, y):
         return (x, y) if x < y else (y, x)
 
-    # The equivalence classes of the edges of g
-    # Initialize OrbitPartition with all edges
     # Build the edge list directly from the short_digraph neighbors,
     # working only with integer vertex IDs (no dictionary lookups, and
     # any hashable vertex label including NaN is handled correctly)
@@ -320,25 +315,29 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
             if idx < ev:
                 edge_list.append((idx, ev))
             p_uv += 1
-    cdef dict edge_to_idx = {e: i for i, e in enumerate(edge_list)}
+    cdef dict edge_to_idx = {e: k for k, e in enumerate(edge_list)}
     cdef Py_ssize_t n_edges = len(edge_list)
 
-    # For all pairs of vertices u,v of G, according to their number of common
-    # neighbors... See the module's documentation !
+    # The equivalence classes of the edges of g
+    # Initialize OrbitPartition with all edges
     cdef OrbitPartition *op = OP_new(n_edges)
     if op == NULL:
         raise MemoryError("Failed to allocate OrbitPartition")
 
-    # Main equivalence-class computation
+    # Main equivalence-class computation.
+    # For all pairs of vertices u,v of G, according to their number of common
+    # neighbors... See the module's documentation !
     # Work entirely with integer vertex IDs and the short_digraph, so any
     # hashable vertex label (including NaN or list-like objects) is handled
     # correctly — no Python-level vertex-label lookups are needed here.
     cdef int u, v, x, y
     cdef set un, intersect
+    cdef uint32_t* dist_u
     cdef uint32_t* bfs_order = <uint32_t*> mem.allocarray(n, sizeof(uint32_t))
     for u in range(n):
-        # BFS from u to enumerate vertices in BFS order
-        simple_BFS(sd, u, distances + <size_t>u * <size_t>n, NULL, bfs_order, seen)
+        # BFS from u to fill row u of the distance matrix
+        dist_u = distances + <size_t>u * <size_t>n
+        simple_BFS(sd, u, dist_u, NULL, bfs_order, seen)
         # Neighbors of u as a set of integer IDs
         un = set()
         p_uv = sd.neighbors[u]
@@ -363,12 +362,12 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
             # vertices at distance less than two from u, and we are done with
             # this loop !
             if not intersect:
-                if distances[<size_t>u * <size_t>n + <size_t>v] == 1:
+                if dist_u[v] == 1:
                     continue
                 else:
                     break
             # Special case: uv is not an edge and exactly 2 common neighbors
-            if len(intersect) == 2 and distances[<size_t>u * <size_t>n + <size_t>v] != 1:
+            if len(intersect) == 2 and dist_u[v] != 1:
                 x, y = intersect
                 OP_join(op, edge_to_idx[r(u, x)], edge_to_idx[r(v, y)])
                 OP_join(op, edge_to_idx[r(v, x)], edge_to_idx[r(u, y)])
@@ -385,7 +384,6 @@ def is_cartesian_product(g, certificate=False, relabeling=False, immutable=None)
     # Distance loop using the C distance array
     cdef Py_ssize_t i, j
     cdef uint32_t uu, vv
-    cdef uint32_t* dist_u
     cdef uint32_t* dist_v
     for i in range(n_edges):
         u, v = edge_list[i]
