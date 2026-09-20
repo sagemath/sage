@@ -978,6 +978,7 @@ to do this.  The symmetric group on 7 symbols, `S_7`, has order
 `7! = 5040` and is divisible by `2^4 = 16`.  Let's find one example
 of a subgroup of permutations on 4 symbols with order 16::
 
+    sage: # optional - internet
     sage: G = SymmetricGroup(7)
     sage: subgroups = G.conjugacy_classes_subgroups()
     sage: list(map(order, subgroups))
