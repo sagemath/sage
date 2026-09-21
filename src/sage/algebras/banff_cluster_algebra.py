@@ -89,7 +89,7 @@ Divisor-theoretic functionality is inherited from the FiniteLaurentIntersectionR
     sage: A = BanffClusterAlgebra(B)
     sage: f = A(A.gens()[0])
     sage: D = f.divisor()
-    sage: D.parent() is A.Div()
+    sage: D.parent() is A.divisor_group()
     True
     sage: D
     1*PrimeDivisor(chart=('x0_0p', 'x0_1'), p=x0_1 + 1)
@@ -118,7 +118,7 @@ For example, one can compute the divisor of an element::
     sage: A = BanffClusterAlgebra(B)
     sage: x0, x1, x2, x3, x4 = A.gens()
     sage: D = x0.divisor()
-    sage: D.parent() is A.Div()
+    sage: D.parent() is A.divisor_group()
     True
     sage: D
     1*PrimeDivisor(chart=('x0_0p', 'x0_1', 'x0_2', 'x0_3', 'x0_4'), p=x0_1 + 1)
@@ -130,7 +130,7 @@ For example, one can compute the divisor of an element::
 
 The divisor group can be accessed directly::
 
-    sage: DivA = A.Div()
+    sage: DivA = A.divisor_group()
     sage: D.parent() is DivA
     True
     sage: DivA.zero()
@@ -170,7 +170,7 @@ a generator::
      PrimeDivisor(chart=('x0_0', 'x0_1', 'x0_2p'), p=x0_1 + 1),
      PrimeDivisor(chart=('x0_0p', 'x0_1', 'x0_2p'), p=x0_1 + 1),
      PrimeDivisor(chart=('x0_0', 'x0_1p', 'x0_2'), p=x0_0 + x0_2))
-    sage: G = A.Div()
+    sage: G = A.divisor_group()
     sage: D1 = G({P1: 1})
     sage: D1
     1*PrimeDivisor(chart=('x0_0p', 'x0_1', 'x0_2'), p=x0_1 + 1)
@@ -1514,40 +1514,21 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
         self._ensure_flir_initialized()
         return FiniteLaurentIntersectionRing.divisor_group(self)
 
-    def Div(self):
-        r""" Return the divisor group `\operatorname{Div}(A)`.
-
-        This is a shorthand for :meth:`divisor_group`.
-
-        OUTPUT: A :class:`FiniteLaurentIntersectionRingDivisorGroup`, whose elements are instances of :class:`FiniteLaurentIntersectionRingDivisor`.
-
-        EXAMPLES::
-
-            sage: B = Matrix([[0, 1, 0], [-1, 0, 1], [0, -1, 0]])
-            sage: A = BanffClusterAlgebra(B)
-            sage: A.Div()
-            Divisor group Div(A) of  A Banff Cluster Algebra with initial cluster variables x0, x1, x2 over Rational Field. with coefficients in Integer Ring
-
-        """
-
-        self._ensure_flir_initialized()
-        return FiniteLaurentIntersectionRing.Div(self)
-
     def divisor(self, data=None):
-        r""" Construct a divisor (= an element of self.Div()) of this Banff cluster algebra.
+        r""" Construct a divisor (= an element of self.divisor_group()) of this Banff cluster algebra.
 
         INPUT:
 
          - ``data`` -- optional input describing a divisor. The accepted forms are:
 
            - ``None`` or ``0``: the zero divisor;
-           - a :class:`FiniteLaurentIntersectionRingDivisor` belonging to ``self.Div()``;
+           - a :class:`FiniteLaurentIntersectionRingDivisor` belonging to ``self.divisor_group()``;
            - a :class:`FiniteLaurentIntersectionRingPrimeDivisor`, interpreted with coefficient one;
            - a dictionary mapping prime divisors to integer coefficients;
            - an iterable of ``(prime, coefficient)`` pairs;
            - a :class:`BanffClusterElement`, or an object coercible to the ambient fraction field, in which case its principal divisor is returned.
 
-        OUTPUT: A :class:`FiniteLaurentIntersectionRingDivisor` in ``self.Div()``.
+        OUTPUT: A :class:`FiniteLaurentIntersectionRingDivisor` in ``self.divisor_group()``.
 
         EXAMPLES:
 
@@ -1568,14 +1549,13 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
             sage: D
             1*PrimeDivisor(chart=('x0_0p', 'x0_1', 'x0_2'), p=x0_1 + 1) +
              1*PrimeDivisor(chart=('x0_0p', 'x0_1', 'x0_2p'), p=x0_1 + 1)
-            sage: D.parent() is A.Div()
+            sage: D.parent() is A.divisor_group()
             True
 
         Existing divisors in the same divisor group are returned unchanged::
 
             sage: A.divisor(D) is D
             True
-
         """
         self._ensure_flir_initialized()
         return FiniteLaurentIntersectionRing.divisor(self, data)
@@ -1715,15 +1695,13 @@ class BanffClusterAlgebra(ClusterAlgebra, FiniteLaurentIntersectionRing):
             sage: P = list(D.support())[0]
             sage: A.principal_generator(A.divisor({P: 1})) is None
             True
-
-
         """
         self._ensure_flir_initialized()
         return FiniteLaurentIntersectionRing.principal_generator(self, D)
 
     def find_atoms(self, a):
         r"""
-        Compute the atoms dividing a BanffClusterElement
+        Compute the atoms dividing a BanffClusterElement.
 
         EXAMPLES::
 

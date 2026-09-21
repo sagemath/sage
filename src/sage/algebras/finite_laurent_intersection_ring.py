@@ -1904,7 +1904,7 @@ class FiniteLaurentIntersectionRingElement(CommutativeAlgebraElement):
             raise ValueError("Divisor of 0 is undefined.")
 
         A = self.parent()
-        DivA = A.Div()
+        DivA = A.divisor_group()
 
         # P_i-part via valuations
         Pis = A.extra_primes()
@@ -2088,7 +2088,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
 
     The divisor group is implemented as a free abelian group on prime divisors::
 
-        sage: DivA = A.Div()
+        sage: DivA = A.divisor_group()
         sage: DivA
         Divisor group Div(A) of FiniteLaurentIntersectionRing over Rational Field
           rank n = 2
@@ -2589,17 +2589,6 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
             self._div_group_cache = FiniteLaurentIntersectionRingDivisorGroup(self, base_ring=ZZ)
         return self._div_group_cache
 
-    def Div(self):
-        """
-        Return the divisor group Div(A) of this FiniteLaurentIntersectionRing.
-
-        This is the free abelian group on all height-1 prime divisors of A.
-        Elements are instances of :class:`FiniteLaurentIntersectionRingDivisor`. The group instance is
-        created once and cached by :meth:`divisor_group`; use ``A.Div()`` as
-        the canonical accessor for the ambient divisor group.
-        """
-        return self.divisor_group()
-
     def divisor(self, data=None):
         """
         Create a divisor in Div(A) from `data`.
@@ -2619,7 +2608,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
             sage: C1, C2, C3, C4, C5 = A.charts
             sage: x1, x2, x3 = C1.P.gens()
             sage: y1, y2, y3 = C3.P.gens()
-            sage: A.divisor() == A.Div().zero()
+            sage: A.divisor() == A.divisor_group().zero()
             True
             sage: P = FiniteLaurentIntersectionRingPrimeDivisor(A._base_chart, x1 + x3)
             sage: A.divisor(P)
@@ -2635,7 +2624,7 @@ class FiniteLaurentIntersectionRing(Parent, UniqueRepresentation):
             1*PrimeDivisor(chart=('x_21', 'x_22', 'x_23'), p=x_22 + 1) +
              1*PrimeDivisor(chart=('x_41', 'x_42', 'x_43'), p=x_42 + 1)
         """
-        DivA = self.Div()
+        DivA = self.divisor_group()
 
         # zero
         if data is None or data == 0:
