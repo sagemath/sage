@@ -30,6 +30,8 @@ AUTHORS:
 
 - Lorenz Panny (2026): :meth:`~EllipticCurveHom.kernel_subgroup`, :meth:`~EllipticCurveHom.kernel_gens`
 """
+import operator
+
 from sage.arith.misc import integer_floor
 from sage.categories.map import Map
 from sage.categories.morphism import Morphism
@@ -37,6 +39,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings import finite_field_base
 from sage.rings.integer_ring import ZZ
+from sage.structure.element import coercion_model
 from sage.structure.richcmp import op_EQ, op_NE, richcmp, richcmp_not_equal
 from sage.rings.number_field import number_field_base
 
@@ -157,7 +160,7 @@ class EllipticCurveHom(Morphism):
             Composite morphism of degree 75 = 3*25:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
-            sage: phi * int(5)
+            sage: phi * 5r
             Composite morphism of degree 75 = 3*25:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
@@ -179,14 +182,9 @@ class EllipticCurveHom(Morphism):
             ...
             TypeError: ...
         """
-        try:
-            if other in ZZ:
-                return self.codomain().scalar_multiplication(other) * self
-        except (TypeError, ValueError):
-            pass
         if isinstance(other, Map):
             return super().__mul__(other)
-        return NotImplemented
+        return coercion_model.bin_op(self, other, operator.mul)
 
     def __rmul__(self, other):
         r"""
@@ -201,7 +199,7 @@ class EllipticCurveHom(Morphism):
             Composite morphism of degree 75 = 3*25:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
-            sage: int(5) * phi
+            sage: 5r * phi
             Composite morphism of degree 75 = 3*25:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
@@ -216,12 +214,22 @@ class EllipticCurveHom(Morphism):
             ...
             TypeError: ...
         """
-        try:
-            if other in ZZ:
-                return self.codomain().scalar_multiplication(other) * self
-        except (TypeError, ValueError):
-            pass
-        return NotImplemented
+        return coercion_model.bin_op(other, self, operator.mul)
+
+    def _rmul_(self, other):
+        r"""
+        Multiply this elliptic-curve morphism by a scalar on the left.
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(419), [1, 0])
+            sage: phi, _ = E.isogenies_prime_degree(3)
+            sage: phi._rmul_(5)
+            Composite morphism of degree 75 = 3*25:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
+        """
+        return self.codomain().scalar_multiplication(other) * self
 
     def _acted_upon_(self, other, self_on_left):
         r"""
@@ -232,18 +240,18 @@ class EllipticCurveHom(Morphism):
 
             sage: E = EllipticCurve(GF(419), [1, 0])
             sage: phi, _ = E.isogenies_prime_degree(3)
-            sage: Integer(5) * phi
+            sage: 5 * phi
             Composite morphism of degree 75 = 3*25:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
-            sage: phi * Integer(5)
+            sage: phi * 5
             Composite morphism of degree 75 = 3*25:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
               To:   Elliptic Curve defined by y^2 = x^3 + 182*x + 64 over Finite Field of size 419
         """
         try:
             if other in ZZ:
-                return self.codomain().scalar_multiplication(other) * self
+                return self._rmul_(other)
         except (TypeError, ValueError):
             pass
         return None
