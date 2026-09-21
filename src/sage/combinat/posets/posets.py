@@ -7658,7 +7658,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         ring = q.parent()
         f = self.f_polynomial()
         h = (1-q)**f.degree() * f(q/(1-q))
-        return ring(f)
+        return ring(h)
 
     def flag_f_polynomial(self):
         r"""
