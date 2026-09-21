@@ -1952,8 +1952,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
     def to_integer(self):
         """
-        Alias of the method lift(). (This is here for compatibility with higher
-        order finite fields.)
+        Wrapper of the method lift(). Returns the lift of this element to the ring of integers.
+        This wrapper exists for compatibility with higher order finite fields.
         """
         return self.lift()
 
