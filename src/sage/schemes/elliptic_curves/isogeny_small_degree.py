@@ -2616,21 +2616,27 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
     if l == 3:
         return isogenies_3(E, minimal_models=minimal_models)
 
-    psi_l = E.division_polynomial(l)
-
-    factors = [h for h,_ in psi_l.factor() if h.degree().divides(l//2)]
-
-    kernels = []  # will store all kernel polynomials found
-
-    while factors:
-        h = factors.pop()
+    kernels = None
+    if not E.base_field().characteristic().divides(l):
+        from sage.schemes.elliptic_curves.ell_field import rational_kernel_polynomials
         try:
-            ker = E.kernel_polynomial_from_divisor(h, l, check=False)
-        except ValueError:
-            continue
-        assert ker.degree() == l//2 and ker.divides(psi_l)
-        kernels.append(ker)
-        factors = [h for h in factors if not h.divides(ker)]
+            kernels = list(rational_kernel_polynomials(E, l))
+        except (ValueError, NotImplementedError):
+            pass
+
+    if kernels is None:
+        kernels = []  # will store all kernel polynomials found
+        psi_l = E.division_polynomial(l)
+        factors = [h for h,_ in psi_l.factor() if h.degree().divides(l//2)]
+        while factors:
+            h = factors.pop()
+            try:
+                ker = E.kernel_polynomial_from_divisor(h, l, check=False)
+            except ValueError:
+                continue
+            assert ker.degree() == l//2 and ker.divides(psi_l)
+            kernels.append(ker)
+            factors = [h for h in factors if not h.divides(ker)]
 
     return [E.isogeny(ker, check=False) for ker in kernels]
 
