@@ -1394,7 +1394,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
 
     # Solving the maximum flow
     value, flow = d.flow('s', 't', value_only=False, integer=True,
-                         use_edge_labels=True, solver=solver, verbose=verbose,
+                         by_weight=True, solver=solver, verbose=verbose,
                          integrality_tolerance=integrality_tolerance)
 
     if value != G.size():
