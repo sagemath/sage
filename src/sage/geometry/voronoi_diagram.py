@@ -124,7 +124,7 @@ class VoronoiDiagram(SageObject):
             self._d = self._points.ambient_dim()
 
         if weights is not None:
-            # Finish the rest in the power diagram generator.
+            # Finish the rest in the power diagram constructor.
             self._init_power_diagram(weights)
             return
 
@@ -375,7 +375,7 @@ class VoronoiDiagram(SageObject):
 
         return 'The empty ' + type_of_diagram + ' diagram.'
 
-    def plot(self, cell_colors=None, **kwds):
+    def plot(self, cell_colors=None, plot_weights=False, **kwds):
         """
         Return a graphical representation for 2-dimensional Voronoi diagrams.
 
@@ -383,6 +383,7 @@ class VoronoiDiagram(SageObject):
 
         - ``cell_colors`` -- (default: ``None``) provide the colors for the cells, either as
           dictionary. Randomly colored cells are provided with ``None``.
+        - ``plot_weights`` -- (default: ``False``) whether we should draw a circle around each point, with radius the square root of its weight.
         - ``**kwds`` -- optional keyword parameters, passed on as arguments for
           plot()
 
@@ -414,6 +415,7 @@ class VoronoiDiagram(SageObject):
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
+        from sage.plot.circle import circle
         from sage.plot.colors import rainbow
         from sage.plot.line import line
         from sage.plot.plot import plot
@@ -432,8 +434,13 @@ class VoronoiDiagram(SageObject):
                 col = cell_colors[i]
                 if not self.regions()[p].is_empty(): # Skip plotting empty regions.
                     S += (self.regions()[p]).render_solid(color=col, zorder=1)
-                S += point(p, color=col, pointsize=10, zorder=3)
-                S += point(p, color='black', pointsize=20, zorder=2)
+                if plot_weights and self.weights() is not None:
+                    from sage.rings.real_double import RDF
+                    # Cast weight to double to take the square root
+                    w = RDF(self.weights()[p])
+                    S += circle(vector(p), abs(w).sqrt(), color='lightgray' if w >= 0 else 'gray', zorder=2)
+                S += point(p, color='black', pointsize=20, zorder=3)
+                S += point(p, color=col, pointsize=10, zorder=4)
             return plot(S, **kwds)
         raise NotImplementedError('Plotting of ' + str(self.ambient_dim()) +
                                   '-dimensional Voronoi diagrams not' +
