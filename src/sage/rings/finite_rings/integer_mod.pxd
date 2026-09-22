@@ -13,10 +13,9 @@ cdef class NativeIntStruct:
     cdef inline type element_class(self):
         if self.int32 > 0:
             return IntegerMod_int
-        elif self.int64 > 0:
+        if self.int64 > 0:
             return IntegerMod_int64
-        else:
-            return IntegerMod_gmp
+        return IntegerMod_gmp
 
 
 cdef class IntegerMod_abstract(FiniteRingElement):

@@ -1201,7 +1201,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             These are the positive roots together with the simple negative roots.
 
-            .. SEEALSO:: :meth:`almost_positive_root_decomposition`, :meth:`tau_plus_minus`
+            .. SEEALSO:: ``almost_positive_root_decomposition``,
+                :meth:`tau_plus_minus`
 
             EXAMPLES::
 
@@ -1770,7 +1771,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             Those operators are used to construct the associahedron, a
             polytopal realization of the cluster complex (see
-            :class:`Associahedron`).
+            :func:`sage.combinat.root_system.associahedron.Associahedron`).
 
             .. SEEALSO:: :meth:`tau_epsilon_operator_on_almost_positive_roots`
 
@@ -2167,8 +2168,10 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             .. SEEALSO::
 
-                - :meth:`sage.combinat.root_system.type_A.AmbientSpace._plot_projection`
-                - :meth:`sage.combinat.root_system.type_affine.AmbientSpace._plot_projection`
+                - the ``_plot_projection`` method of
+                  :class:`~sage.combinat.root_system.type_A.AmbientSpace`
+                - the ``_plot_projection`` method of
+                  :class:`~sage.combinat.root_system.type_affine.AmbientSpace`
                 - :meth:`plot` for a description of the plotting options
                 - :ref:`sage.combinat.root_system.plot` for a tutorial
                   on root system plotting
@@ -2186,7 +2189,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             .. SEEALSO::
 
                 - :func:`sage.combinat.root_system.plot.barycentric_projection_matrix`
-                - :meth:`_plot_projection_barycentric`
+                - ``_plot_projection_barycentric``
 
             EXAMPLES::
 
@@ -2242,7 +2245,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             .. SEEALSO::
 
-                - :meth:`_plot_projection`, :meth:`plot`
+                - ``_plot_projection``,
+                  :meth:`~sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.plot`
                 - :ref:`sage.combinat.root_system.plot` for a tutorial
                   on root system plotting
             """

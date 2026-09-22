@@ -224,18 +224,31 @@ WORKSPACE = gap_workspace_file()
 
 first_try = True
 
-if SAGE_GAP_COMMAND is None:
+
+def _gap_command():
+    r"""
+    Return the baseline GAP command.
+
+    When :func:`gap_command` has been removed, this can be made a
+    private method of the interface class.
+    """
+    if SAGE_GAP_COMMAND is not None:
+        return SAGE_GAP_COMMAND
     # Passing -A allows us to use a minimal GAP installation without
     # producing errors at start-up. The files sage.g and sage.gaprc are
     # used to load any additional packages that may be available.
     gap_cmd = "gap -A"
     if SAGE_GAP_MEMORY is not None:
         gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
-else:
-    gap_cmd = SAGE_GAP_COMMAND
+    return gap_cmd
 
 
 def gap_command(use_workspace_cache=True, local=True):
+    from sage.misc.superseded import deprecation
+    deprecation(42427, 'gap_command() is no longer part of the public interface')
+
+    gap_cmd = _gap_command()
+
     if use_workspace_cache:
         if local:
             return "%s -L %s" % (gap_cmd, WORKSPACE), False
@@ -277,7 +290,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             ok
             sage: gap._expect.sendline()  # now we are out of sync
             1
-            sage: gap._synchronize()
+            sage: gap._synchronize(timeout=2)  # allow the CI more time
             sage: gap(123)
             123
         """
@@ -335,7 +348,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         # handler and input, if we don't wait a bit the result is
         # unpredictable.
         E.sendline(chr(3))
-        time.sleep(0.1)
+        time.sleep(0.2)
         E.sendline()
         try:
             # send a dummy command
@@ -352,11 +365,11 @@ class Gap_generic(ExtraTabCompletion, Expect):
             # either complete successfully (output "@n+<number>") or
             # return a "Syntax error: od expected@J@f +<number>"
             E.sendline()
-            time.sleep(0.1)
+            time.sleep(0.2)
             E.sendline('224433437;')
             E.expect(r'@[nf][@J\s>]*224433437', timeout=timeout)
             E.sendline()
-            time.sleep(0.1)
+            time.sleep(0.2)
             E.sendline('224433479;')
             E.expect(r'@[nf][@J\s>]*224433479', timeout=timeout)
             E.send(' ')
@@ -1075,7 +1088,12 @@ class Gap(Gap_generic):
             True
         """
         self.__use_workspace_cache = use_workspace_cache
-        cmd, _ = gap_command(use_workspace_cache, server is None)
+        cmd = _gap_command()
+
+        # -L: restore a saved workspace (TODO: Use remote workspace)
+        if use_workspace_cache and server is None:
+            cmd += f" -L {WORKSPACE}"
+
         # -b: suppress banner
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
@@ -1771,24 +1789,10 @@ def gap_console():
         Try '?help' for help. See also  '?copyright' and  '?authors'
         gap>
 
-    TESTS::
-
-        sage: import subprocess as sp
-        sage: from sage.interfaces.gap import gap_command
-        sage: cmd = 'echo "quit;" | ' + gap_command(use_workspace_cache=False)[0]
-        sage: gap_startup = sp.check_output(cmd, shell=True,
-        ....:                               stderr=sp.STDOUT,
-        ....:                               encoding='latin1')
-        sage: 'www.gap-system.org' in gap_startup
-        True
-        sage: 'Error' not in gap_startup
-        True
-        sage: 'sorry' not in gap_startup
-        True
     """
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%gap magics instead.')
-    cmd, _ = gap_command(use_workspace_cache=False)
+    cmd = _gap_command()
     cmd += ' ' + os.path.join(SAGE_EXTCODE, 'gap', 'console.g')
     os.system(cmd)

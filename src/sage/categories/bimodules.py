@@ -77,8 +77,7 @@ class Bimodules(CategoryWithParameters):
             (Join of Category of number fields
                  and Category of quotient fields
                  and Category of metric spaces,
-             Join of Category of Dedekind domains
-                 and Category of euclidean domains
+             Join of Category of euclidean domains
                  and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
@@ -86,8 +85,7 @@ class Bimodules(CategoryWithParameters):
 
             sage: Bimodules(Fields(), ZZ)._make_named_class_key('element_class')
             (Category of fields,
-             Join of Category of Dedekind domains
-             and Category of euclidean domains
+             Join of Category of euclidean domains
              and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces)
@@ -187,7 +185,8 @@ class Bimodules(CategoryWithParameters):
 
         .. SEEALSO:: :meth:`Category.additional_structure`
 
-        .. TODO:: Should this category be a :class:`CategoryWithAxiom`?
+        .. TODO:: Should this category be a
+           :class:`~sage.categories.category_with_axiom.CategoryWithAxiom`?
 
         EXAMPLES::
 

@@ -624,7 +624,7 @@ class AdditiveMagmas(Category_singleton):
                 of ``self``.
 
                 An inverse :class:`additive magma <AdditiveMagmas>` is
-                a :class:`unital additive magma <AdditiveMagmas.Unital>`
+                a :class:`unital additive magma <AdditiveMagmas.AdditiveUnital>`
                 such that every element admits both an additive
                 inverse on the left and on the right. Such an additive
                 magma is also called an *additive loop*.
@@ -986,8 +986,7 @@ class AdditiveMagmas(Category_singleton):
                     """
                     Return the zero of this additive magma, which index the
                     one of this algebra, as per
-                    :meth:`AlgebrasWithBasis.ParentMethods.one_basis()
-                    <sage.categories.algebras_with_basis.AlgebrasWithBasis.ParentMethods.one_basis>`.
+                    :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
                     EXAMPLES::
 

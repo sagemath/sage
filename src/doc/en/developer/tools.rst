@@ -390,8 +390,8 @@ Pytest
 It is included in the Sage distribution as an optional package.
 
 Currently, Sage only makes very limited use of pytest, for testing the
-package :mod:`sage.numerical.backends` and some modules in
-:mod:`sage.manifolds`.
+package ``sage.numerical.backends`` and some modules in
+``sage.manifolds``.
 
 *Installation:*
 
@@ -509,4 +509,3 @@ as reading ``act``'s documentation.
 
 .. This section is a stub.
    More Sage-specfic details for using ``act`` should be added. PRs welcome!
-

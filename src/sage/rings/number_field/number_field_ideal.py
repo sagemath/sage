@@ -319,8 +319,9 @@ class NumberFieldIdeal(Ideal_generic):
         ALGORITHM:
 
         Uses linear algebra.
-        Provides simpler implementations for :meth:`_contains_`,
-        :meth:`is_integral` and :meth:`smallest_integer`.
+        Provides simpler implementations for ``_contains_``,
+        :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldIdeal.is_integral`
+        and :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldIdeal.smallest_integer`.
 
         EXAMPLES::
 
@@ -1346,7 +1347,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def absolute_ramification_index(self):
         """
-        A synonym for :meth:`ramification_index`.
+        A synonym for :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal.ramification_index`.
 
         EXAMPLES::
 
@@ -1359,7 +1360,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def relative_ramification_index(self):
         """
-        A synonym for :meth:`ramification_index`.
+        A synonym for :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal.ramification_index`.
 
         EXAMPLES::
 
@@ -1493,7 +1494,7 @@ class NumberFieldIdeal(Ideal_generic):
         r"""
         Return the decomposition group of ``self``, as a subset of the
         automorphism group of the number field of ``self``. Raises an
-        error if the field isn't Galois. See the :meth:`GaloisGroup_v2.decomposition_group`
+        error if the field isn't Galois. See the :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.decomposition_group`
         method for further examples and doctests.
 
         EXAMPLES::
@@ -1509,7 +1510,7 @@ class NumberFieldIdeal(Ideal_generic):
         elements `s` of the Galois group of the number field of ``self``
         (which we assume is Galois) such that `s` acts trivially
         modulo the `(v+1)`'st power of ``self``. See the
-        :meth:`GaloisGroup.ramification_group` method for
+        :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.ramification_group` method for
         further examples and doctests.
 
         EXAMPLES::
@@ -1528,7 +1529,7 @@ class NumberFieldIdeal(Ideal_generic):
         Galois group of the number field of ``self`` (which we assume is Galois)
         such that `s` acts trivially modulo ``self``. This is the same as the 0th
         ramification group of ``self``. See the
-        :meth:`GaloisGroup_v2.inertia_group` method further examples and doctests.
+        :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.inertia_group` method further examples and doctests.
 
         EXAMPLES::
 
@@ -1593,7 +1594,7 @@ class NumberFieldIdeal(Ideal_generic):
         where `p` is the residue characteristic of `P`.  (Here `P`
         (``self``) should be prime and unramified.)
 
-        See the :meth:`GaloisGroup_v2.artin_symbol` method
+        See the :meth:`~sage.rings.number_field.galois_group.GaloisGroup_v2.artin_symbol` method
         for further documentation and examples.
 
         EXAMPLES::

@@ -13,44 +13,45 @@ Features for testing the presence of ``tdlib``
 # *****************************************************************************
 
 from sage.config import tdlib_enabled
-from sage.features import PythonModule
-from sage.features.build_feature import BuildFeature
+from sage.features.build_feature import BuildModule
 
-class Tdlib(BuildFeature):
+class Tdlib(BuildModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
-    the SageMath interface to the :ref:`tdlib <spkg_tdlib>` library.
+    the SageMath interface to the treedec (formerly tdlib) library.
+
+    EXAMPLES::
+
+        sage: from sage.features.tdlib import Tdlib
+        sage: Tdlib().is_present()  # needs tdlib
+        FeatureTestResult('tdlib', True)
+        sage: Tdlib().is_present()  # needs !tdlib
+        FeatureTestResult('tdlib', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !tdlib`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.tdlib import Tdlib
+        sage: Tdlib().is_present_at_runtime()  # needs tdlib
+        FeatureTestResult('tdlib', True)
+
     """
     _enabled_in_build = tdlib_enabled
 
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.tdlib import Tdlib
-            sage: isinstance(Tdlib(), Tdlib)
-            True
+            sage: Tdlib()
+            Feature('tdlib')
 
         """
-        super().__init__("tdlib", spkg="tdlib")
+        module_name = "sage.graphs.graph_decompositions.tdlib"
+        super().__init__("tdlib", module_name, spkg="tdlib")
 
-    def is_present_at_runtime(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features import FeatureTestResult
-            sage: from sage.features.tdlib import Tdlib
-            sage: result = Tdlib().is_present_at_runtime()
-            sage: isinstance(result, FeatureTestResult)
-            True
-            sage: result  # needs tdlib
-            FeatureTestResult('tdlib', True)
-
-        """
-        modname = "sage.graphs.graph_decompositions.tdlib"
-        result = PythonModule(modname)._is_present()
-        result.feature = self
-        return result
 
 def all_features():
     return [Tdlib()]

@@ -942,7 +942,8 @@ def semi_global_minimal_model(E, debug=False):
     .. NOTE::
 
         This function is normally not called directly by users, who
-        will use the elliptic curve method :meth:`global_minimal_model`
+        will use the elliptic curve method
+        :meth:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field.global_minimal_model`
         instead; that method also applied various reductions after
         minimising the model.
 

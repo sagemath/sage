@@ -127,8 +127,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
     r"""
     Class representing a texture.
 
-    See documentation of :meth:`Texture.__classcall__
-    <sage.plot.plot3d.texture.Texture.__classcall__>` for more details and
+    See documentation of ``Texture.__classcall__`` for more details and
     examples.
 
     EXAMPLES:
@@ -263,8 +262,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
         r"""
         Construction of a texture.
 
-        See documentation of :meth:`Texture.__classcall__
-        <sage.plot.plot3d.texture.Texture.__classcall__>` for more details and
+        See documentation of ``Texture.__classcall__`` for more details and
         examples.
 
         EXAMPLES::

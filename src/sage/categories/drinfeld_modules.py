@@ -3,7 +3,7 @@ r"""
 Drinfeld modules over a base
 
 This module provides the class
-:class:`sage.category.drinfeld_modules.DrinfeldModules`.
+:class:`sage.categories.drinfeld_modules.DrinfeldModules`.
 
 AUTHORS:
 
@@ -76,7 +76,8 @@ class DrinfeldModules(Category_over_base_ring):
 
     .. RUBRIC:: Properties of the category
 
-    The base field is retrieved using the method :meth:`base`::
+    The base field is retrieved using the method
+    :meth:`~sage.categories.category_types.Category_over_base.base`::
 
         sage: C.base()
         Finite Field in z of size 11^4
@@ -358,7 +359,8 @@ class DrinfeldModules(Category_over_base_ring):
 
         .. NOTE::
 
-            This method has the same behavior as :meth:`base`.
+            This method has the same behavior as
+            :meth:`~sage.categories.category_types.Category_over_base.base`.
 
         EXAMPLES::
 
@@ -594,7 +596,8 @@ class DrinfeldModules(Category_over_base_ring):
 
             .. NOTE::
 
-                This method has the same behavior as :meth:`base`.
+                This method has the same behavior as
+                :meth:`~sage.categories.drinfeld_modules.DrinfeldModules.ParentMethods.base`.
 
             EXAMPLES::
 

@@ -747,7 +747,9 @@ class Func_chebyshev_T(ChebyshevFunction):
 
     def _evalf_(self, n, x, **kwds):
         """
-        Evaluates :class:`chebyshev_T` numerically with mpmath.
+        Evaluates
+        :class:`chebyshev_T <sage.functions.orthogonal_polys.Func_chebyshev_T>`
+        numerically with mpmath.
 
         EXAMPLES::
 
@@ -850,7 +852,9 @@ class Func_chebyshev_T(ChebyshevFunction):
 
     def eval_algebraic(self, n, x):
         """
-        Evaluate :class:`chebyshev_T` as polynomial, using a recursive
+        Evaluate
+        :class:`chebyshev_T <sage.functions.orthogonal_polys.Func_chebyshev_T>`
+        as polynomial, using a recursive
         formula.
 
         INPUT:
@@ -941,8 +945,10 @@ class Func_chebyshev_T(ChebyshevFunction):
 
     def _derivative_(self, n, x, diff_param):
         """
-        Return the derivative of :class:`chebyshev_T` in form of the Chebyshev
-        polynomial of the second kind :class:`chebyshev_U`.
+        Return the derivative of
+        :class:`chebyshev_T <sage.functions.orthogonal_polys.Func_chebyshev_T>`
+        in form of the Chebyshev polynomial of the second kind
+        :class:`chebyshev_U <sage.functions.orthogonal_polys.Func_chebyshev_U>`.
 
         EXAMPLES::
 
@@ -1069,7 +1075,9 @@ class Func_chebyshev_U(ChebyshevFunction):
 
     def eval_algebraic(self, n, x):
         """
-        Evaluate :class:`chebyshev_U` as polynomial, using a recursive
+        Evaluate
+        :class:`chebyshev_U <sage.functions.orthogonal_polys.Func_chebyshev_U>`
+        as polynomial, using a recursive
         formula.
 
         INPUT:
@@ -1142,7 +1150,9 @@ class Func_chebyshev_U(ChebyshevFunction):
 
     def _evalf_(self, n, x, **kwds):
         """
-        Evaluate :class:`chebyshev_U` numerically with mpmath.
+        Evaluate
+        :class:`chebyshev_U <sage.functions.orthogonal_polys.Func_chebyshev_U>`
+        numerically with mpmath.
 
         EXAMPLES::
 
@@ -1231,7 +1241,9 @@ class Func_chebyshev_U(ChebyshevFunction):
 
     def _derivative_(self, n, x, diff_param):
         """
-        Return the derivative of :class:`chebyshev_U` in form of the Chebyshev
+        Return the derivative of
+        :class:`chebyshev_U <sage.functions.orthogonal_polys.Func_chebyshev_U>`
+        in form of the Chebyshev
         polynomials of the first and second kind.
 
         EXAMPLES::

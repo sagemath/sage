@@ -63,7 +63,7 @@ that in pure Python this would be a syntax error)::
     4
     sage: 87.factor()
     3 * 29
-    sage: 15.10.sqrt()                                                                  # needs sage.rings.real_mpfr
+    sage: 15.10.sqrt()
     3.88587184554509
     sage: preparse('87.sqrt()')
     'Integer(87).sqrt()'
@@ -81,7 +81,6 @@ frequently request it::
 
 Symbolic functional notation::
 
-    sage: # needs sage.symbolic
     sage: a = 10; f(theta, beta) = theta + beta; b = x^2 + theta
     sage: f
     (theta, beta) |--> beta + theta
@@ -92,8 +91,8 @@ Symbolic functional notation::
     sage: f(theta,theta)
     2*theta
 
-    sage: a = 5; f(x,y) = x*y*sqrt(a)                                                   # needs sage.symbolic
-    sage: f                                                                             # needs sage.symbolic
+    sage: a = 5; f(x,y) = x*y*sqrt(a)
+    sage: f
     (x, y) |--> sqrt(5)*x*y
 
 This involves an =-, but should still be turned into a symbolic
@@ -101,8 +100,8 @@ expression::
 
     sage: preparse('a(x) =- 5')
     '__tmp__=var("x"); a = symbolic_expression(- Integer(5)).function(x)'
-    sage: f(x)=-x                                                                       # needs sage.symbolic
-    sage: f(10)                                                                         # needs sage.symbolic
+    sage: f(x)=-x
+    sage: f(10)
     -10
 
 This involves -=, which should not be turned into a symbolic
@@ -643,6 +642,12 @@ def strip_string_literals(code, state=None):
         sage: (literals['L2'], literals['L3']) # empty; not ideal, but not harmful
         ('', '')
 
+    A format specifier only applies to its own replacement section
+    (:issue:`42602`)::
+
+        sage: s, literals, state = strip_string_literals("f'{value:d} {value^2}'"); s
+        'f%(L1)s{value:%(L2)s}%(L3)s{value^2}%(L4)s'
+
     Nested format specifiers -- inside a braced section in the main format
     specifier -- are treated as literals.
     (Python does not allow any deeper nesting.)::
@@ -844,6 +849,8 @@ def strip_string_literals(code, state=None):
                     else:
                         if quote.braces > 0:
                             quote.braces -= 1
+                            if not quote.braces:
+                                quote.fmt_spec = False
                         # We can no longer be in a nested format specifier following a }.
                         quote.nested_fmt_spec = False
                     start = q + 1
@@ -1027,7 +1034,7 @@ def parse_ellipsis(code, preparse_step=True):
         '(ellipsis_range(1,2,Ellipsis,n))'
         sage: parse_ellipsis("for i in (f(x) .. L[10]):")
         'for i in (ellipsis_iter(f(x) ,Ellipsis, L[10])):'
-        sage: [1.0..2.0]                                                                # needs sage.rings.real_mpfr
+        sage: [1.0..2.0]
         [1.00000000000000, 2.00000000000000]
 
     TESTS:
@@ -1720,7 +1727,7 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
         "ZZ = ZZ['u,v']; (x, y,) = ZZ._first_ngens(2)"
         sage: preparse("ZZ.<x> = QQ[2^(1/3)]")
         'ZZ = QQ[Integer(2)**(Integer(1)/Integer(3))]; (x,) = ZZ._first_ngens(1)'
-        sage: QQ[2^(1/3)]                                                               # needs sage.rings.number_field sage.symbolic
+        sage: QQ[2^(1/3)]
         Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
 
         sage: preparse("a^b")
@@ -1755,6 +1762,12 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
         sage: preparse("f(x) = x \\\n+ 1")
         '__tmp__=var("x"); f = symbolic_expression(x + Integer(1)).function(x)'
+
+    Check that a format specifier does not affect subsequent replacement
+    sections in an F-string (:issue:`42602`)::
+
+        sage: preparse('f"{10^i} {0x2a:d} {10^i}"')
+        'f"{Integer(10)**i} {Integer(0x2a):d} {Integer(10)**i}"'
 
     Check that multi-line strings starting with a comment are still preparsed
     (:issue:`31043`)::
@@ -1915,7 +1928,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         ....:     file.write(file_contents)
         137
         sage: load(t)
-        sage: sorted(list(func([11,17])))                                               # needs sage.modular
+        sage: sorted(list(func([11,17])))
         [(((11,), {}), None), (((17,), {}), None)]
     """
     if not isinstance(contents, str):

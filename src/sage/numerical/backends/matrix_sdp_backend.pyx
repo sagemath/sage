@@ -367,8 +367,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         """
         if self.is_maximize == 1:
             return 1
-        else:
-            return 0
+        return 0
 
     cpdef problem_name(self, name=None):
         """

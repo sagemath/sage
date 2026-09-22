@@ -525,8 +525,7 @@ cdef class PolyDict:
             return -1
         if w is None:
             return max((<ETuple> e).unweighted_degree() for e in self.__repn)
-        else:
-            return max((<ETuple> e).weighted_degree(w) for e in self.__repn)
+        return max((<ETuple> e).weighted_degree(w) for e in self.__repn)
 
     def polynomial_coefficient(self, degrees):
         """
@@ -1758,10 +1757,8 @@ cdef class ETuple:
         if self._length == 1:
             if self._nonzero:
                 return '(%d,)' % self._data[1]
-            else:
-                return '(0,)'
-        else:
-            return '(' + ', '.join(map(str, self)) + ')'
+            return '(0,)'
+        return '(' + ', '.join(map(str, self)) + ')'
 
     def __reduce__(self):
         """
@@ -2526,8 +2523,7 @@ cdef class ETuple:
         res = set(self.nonzero_positions()).union(other.nonzero_positions())
         if sort:
             return sorted(res)
-        else:
-            return res
+        return res
 
     cpdef list nonzero_values(self, bint sort=True):
         """

@@ -51,7 +51,7 @@ cdef class PythonPartitionStack:
         EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
-            sage: P = PythonPartitionStack(7) # implicit doctest
+            sage: P = PythonPartitionStack(7) # indirect doctest
         """
         self.c_ps = PS_new(n, 1)
 
@@ -63,7 +63,7 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
-            sage: del(P) # implicit doctest
+            sage: del(P) # indirect doctest
         """
         PS_dealloc(self.c_ps)
 
@@ -75,7 +75,7 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
-            sage: P # implicit doctest
+            sage: P # indirect doctest
             PythonPartitionStack of degree 7 and depth 0.
         """
         return "PythonPartitionStack of degree %d and depth %d." % (self.c_ps.degree, self.c_ps.depth)
@@ -352,7 +352,7 @@ class PythonObjectWrapper:
             sage: def cs(a, b, c, d, e):
             ....:  return 0
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
-            sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # implicit doctest
+            sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # indirect doctest
             sage: P.obj
             sage: P.degree
             7
@@ -483,8 +483,7 @@ def aut_gp_and_can_lab_python(S, partition, n,
     deallocate_agcl_output(output)
     if len(return_tuple) == 1:
         return return_tuple[0]
-    else:
-        return tuple(return_tuple)
+    return tuple(return_tuple)
 
 
 def double_coset_python(S1, S2, partition1, ordering2, n,

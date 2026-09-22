@@ -173,7 +173,7 @@ class LoggingBackend(GenericBackend):
         :class:`MixedIntegerLinearProgram`, depends on the base ring.
         This way input will be rational and so suitable for both exact
         and inexact methods; whereas output will be float and will thus
-        trigger :func:`assertAlmostEqual` tests.
+        trigger ``assertAlmostEqual`` tests.
 
         EXAMPLES::
 

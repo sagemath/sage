@@ -34,7 +34,7 @@ def CoxeterGroup(data, implementation='reflection', base_ring=None, index_set=No
         implementation
       * ``'coxeter3'`` -- using the coxeter3 package
       * ``'reflection'`` -- as elements in the reflection representation; see
-        :class:`~sage.groups.matrix_gps.coxeter_groups.CoxeterMatrixGroup`
+        :class:`~sage.groups.matrix_gps.coxeter_group.CoxeterMatrixGroup`
 
     - ``base_ring`` -- (optional) the base ring for the ``'reflection'``
       implementation

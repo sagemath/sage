@@ -61,11 +61,8 @@ init_tools() {
 # ---------------------------------------------------------------------------
 
 check_flags() {
-  # E501: line too long
-  # E741: ambiguous variable name
   case "$1" in
     ruff)         echo "check --config .github/workflows/ruff.toml --preview" ;;
-    cython-lint)  echo "--ignore=E501,E741" ;;
     clang-format) echo "--dry-run --Werror" ;;
   esac
 }

@@ -33,7 +33,8 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
     crystals (see:
     :func:`~sage.combinat.crystals.kirillov_reshetikhin.KirillovReshetikhinCrystal`).
 
-    For general information about crystals see :mod:`sage.combinat.crystals`.
+    For general information about crystals see
+    :mod:`sage.combinat.crystals.crystals`.
 
     INPUT:
 

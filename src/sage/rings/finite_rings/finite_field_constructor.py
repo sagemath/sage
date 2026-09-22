@@ -173,9 +173,11 @@ AUTHORS:
 # ****************************************************************************
 
 from collections import defaultdict
+from collections.abc import Callable
 from sage.structure.category_object import normalize_names, certify_names
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_base
 
 try:
     # We don't late import this because this means trouble with the Givaro library
@@ -221,9 +223,10 @@ class FiniteFieldFactory(UniqueFactory):
     - ``modulus`` -- (optional) either a defining polynomial for the
       field, or a string specifying an algorithm to use to generate
       such a polynomial.  If ``modulus`` is a string, it is passed to
-      :meth:`~sage.rings.polynomial.irreducible_element()` as the
-      parameter ``algorithm``; see there for the permissible values of
-      this parameter. In particular, you can specify
+      :meth:`irreducible_element()
+      <sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_finite_field.irreducible_element>`
+      as the parameter ``algorithm``; see there for the permissible values
+      of this parameter. In particular, you can specify
       ``modulus="primitive"`` to get a primitive polynomial.  You
       may not specify a modulus if you do not specify a variable name.
 
@@ -247,13 +250,13 @@ class FiniteFieldFactory(UniqueFactory):
       controls the way elements are printed to the user:
 
       - 'log': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.log_repr()`
+        ``log_repr()``
 
       - 'int': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.int_repr()`
+        ``int_repr()``
 
       - 'poly': repr is
-        :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.poly_repr()`
+        ``poly_repr()``
 
     - ``check_irreducible`` -- verify that the polynomial modulus is
       irreducible
@@ -356,7 +359,10 @@ class FiniteFieldFactory(UniqueFactory):
 
     Even for prime fields, you can specify a modulus. This will not
     change how Sage computes in this field, but it will change the
-    result of the :meth:`modulus` and :meth:`gen` methods::
+    result of the
+    :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.modulus` and
+    :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.gen`
+    methods::
 
         sage: k.<a> = GF(5, modulus='primitive')
         sage: k.modulus()
@@ -498,7 +504,38 @@ class FiniteFieldFactory(UniqueFactory):
         Finite Field in z2 of size 5^2
         sage: GF(5, 2) is GF((5, 2))
         True
+
+    TESTS:
+
+    The return type exposed to static type checkers matches the runtime
+    type for every backend::
+
+        sage: from sage.rings.finite_rings.finite_field_base import FiniteField
+        sage: all(isinstance(GF(2**8, 'a', implementation=impl), FiniteField)
+        ....:     for impl in ('givaro', 'ntl', 'pari_ffelt'))
+        True
+        sage: isinstance(GF(29), FiniteField)
+        True
+
+    The ``__call__`` annotation resolves to that same class::
+
+        sage: import collections.abc
+        sage: import typing
+        sage: from sage.rings.finite_rings.finite_field_constructor import FiniteFieldFactory
+        sage: ann = FiniteFieldFactory.__annotations__['__call__']
+        sage: typing.get_origin(ann) == collections.abc.Callable
+        True
+        sage: typing.get_type_hints(FiniteFieldFactory)['__call__'] == collections.abc.Callable[..., FiniteField]
+        True
     """
+    # This class-level annotation is only there for the typing info: it
+    # lets static type checkers infer the return type of ``GF`` without a
+    # forwarding ``__call__`` override, which would add a Python frame
+    # and a ``super()`` lookup to every factory call.  No value is
+    # assigned, so instances keep dispatching directly to the inherited
+    # ``UniqueFactory.__call__`` at full speed.
+    __call__: Callable[..., FiniteField_base]
+
     def __init__(self, *args, **kwds):
         """
         Initialization.
@@ -576,22 +613,22 @@ class FiniteFieldFactory(UniqueFactory):
 
         TESTS::
 
-            sage: GF((6, 1), 'a')       # implicit doctest
+            sage: GF((6, 1), 'a')       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF((9, 1), 'a')       # implicit doctest
+            sage: GF((9, 1), 'a')       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF((5, 0), 'a')       # implicit doctest
+            sage: GF((5, 0), 'a')       # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: the order of a finite field must be a prime power
 
-            sage: GF((3, 2, 1), 'a')    # implicit doctest
+            sage: GF((3, 2, 1), 'a')    # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: wrong input for finite field constructor

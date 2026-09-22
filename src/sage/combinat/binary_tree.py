@@ -7,7 +7,7 @@ objects.
 .. NOTE::
 
     If you need the data-structure for example to represent sets or hash
-    tables with AVL trees, you should have a look at :mod:`sage.misc.sagex_ds`.
+    tables with AVL trees, you should have a look at :mod:`sage.misc.binary_tree`.
 
 AUTHORS:
 
@@ -871,8 +871,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             picture are not (in general) the ones given by the
             labelling!
 
-            Use :meth:`_latex_`, ``view``,
-            :meth:`_ascii_art_` or ``pretty_print`` for more
+            Use ``_latex_``, ``view``,
+            :meth:`~sage.structure.sage_object.SageObject._ascii_art_` or
+            ``pretty_print`` for more
             faithful representations of the data of the tree.
 
         TESTS::
@@ -4636,7 +4637,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         using this class, these labels are disregarded by various
         methods such as
         :meth:`~sage.combinat.abstract_tree.AbstractLabelledTree.labels`,
-        :meth:`~sage.combinat.abstract_tree.AbstractLabelledTree.map_labels`,
+        :meth:`~sage.combinat.abstract_tree.AbstractLabelledClonableTree.map_labels`,
         and (ironically)
         :meth:`~sage.combinat.abstract_tree.AbstractLabelledTree.leaf_labels`.
 

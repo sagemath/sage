@@ -728,8 +728,10 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: w0 = W.long_element()
 
         To set the recurrence up properly, one often needs to customize
-        the :meth:`CherednikOperatorsEigenvectors.affine_lift`
-        and :meth:`CherednikOperatorsEigenvectors.affine_retract`
+        the
+        :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_lift`
+        and
+        :meth:`~sage.combinat.root_system.hecke_algebra_representation.CherednikOperatorsEigenvectors.affine_retract`
         methods. This would usually be done by subclassing
         :class:`CherednikOperatorsEigenvectors`; here we just override
         the methods directly.
@@ -747,7 +749,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
         This step is taken care of automatically if one instead calls
         the specialization
-        :meth:`sage.coxeter_groups.CoxeterGroups.Algebras.demazure_lusztig_eigenvectors`.
+        :meth:`sage.categories.coxeter_group_algebras.CoxeterGroupAlgebras.ParentMethods.demazure_lusztig_eigenvectors`.
 
         Now we can compute all eigenvectors::
 

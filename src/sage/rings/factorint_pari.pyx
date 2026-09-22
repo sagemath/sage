@@ -70,8 +70,7 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
         p, e = n.__pari__().factor(proof=proof)
         if int_:
             return [(int(p[i]), int(e[i])) for i in range(len(p))]
-        else:
-            return [(Integer(p[i]), int(e[i])) for i in range(len(p))]
+        return [(Integer(p[i]), int(e[i])) for i in range(len(p))]
     finally:
         if prev != debug_level:
             pari.set_debug_level(prev)

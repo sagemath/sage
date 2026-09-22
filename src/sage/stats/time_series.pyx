@@ -1533,8 +1533,7 @@ cdef class TimeSeries:
             s += a * a
         if bias:
             return s / self._length
-        else:
-            return s / (self._length - 1)
+        return s / (self._length - 1)
 
     def standard_deviation(self, bias=False):
         r"""
@@ -1703,8 +1702,7 @@ cdef class TimeSeries:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def max(self, bint index=False):
         r"""
@@ -1740,8 +1738,7 @@ cdef class TimeSeries:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def clip_remove(self, min=None, max=None):
         r"""

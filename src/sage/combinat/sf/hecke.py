@@ -189,7 +189,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
     def construction(self):
         """
         Return a pair ``(F, R)``, where ``F`` is a
-        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        :class:`~sage.combinat.sf.sfa.SymmetricFunctionsFunctor` and `R` is a ring, such
         that ``F(R)`` returns ``self``.
 
         EXAMPLES::

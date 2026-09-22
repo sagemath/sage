@@ -638,11 +638,12 @@ def simplicial_data_from_kenzo_output(filename) -> dict:
     INPUT:
 
     - ``filename`` -- name of file containing the output from Kenzo's
-      :func:`show-structure` function
+      ``show-structure`` command
 
     OUTPUT: data to construct a simplicial set from the Kenzo output
 
-    Several files with Kenzo output are in the directory
+    Several files with Kenzo output, in the format parsed by
+    :func:`simplicial_data_from_kenzo_output`, are in the directory
     :file:`SAGE_EXTCODE/kenzo/`.
 
     EXAMPLES::

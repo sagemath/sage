@@ -32,10 +32,12 @@ class FiniteSemigroups(CategoryWithAxiom):
         semigroup generators; this was often inconvenient.
 
         Instead, finite semigroups that provide a distinguished finite
-        set of generators with :meth:`semigroup_generators` should now
+        set of generators with
+        :meth:`~sage.categories.finitely_generated_semigroups.FinitelyGeneratedSemigroups.ParentMethods.semigroup_generators`
+        should now
         explicitly declare themselves in the category of
         :class:`finitely generated semigroups
-        <Semigroups.FinitelyGeneratedSemigroup>`::
+        <sage.categories.finitely_generated_semigroups.FinitelyGeneratedSemigroups>`::
 
             sage: Semigroups().FinitelyGenerated()
             Category of finitely generated semigroups

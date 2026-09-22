@@ -1739,7 +1739,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
         If ``dx_mode`` is ``values``, the dictionary ``dx`` directly
         specifies the entries that have to be stored in the precision lattice.
         This mode is only used for multiple conversion between different
-        parents (see :meth:`multiple_conversion`).
+        parents (see ``multiple_conversion``).
 
         TESTS::
 
@@ -1967,8 +1967,8 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
 
         .. NOTE::
 
-            Helper method for :meth:`_precision_absolute` and
-            :meth:`_is_precision_capped`.
+            Helper method for ``_precision_absolute`` and
+            ``_is_precision_capped``.
 
         TESTS::
 
@@ -2321,7 +2321,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         If ``dx_mode`` is ``'values'``, the dictionary ``dx`` directly
         specifies the entries that have to stored in the precision module.
         This mode is only used for multiple conversion between different
-        parents (see :meth:`multiple_conversion`).
+        parents (see ``multiple_conversion``).
 
         TESTS::
 
@@ -2645,7 +2645,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             sage: prec._precision_absolute(y)
             +Infinity
 
-        However calling the method :meth:`absolute_precision` of the
+        However calling the method ``absolute_precision`` of the
         element itself reintroduces a cap::
 
             sage: y.precision_absolute()
@@ -2740,7 +2740,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
 class pAdicLatticeElementWeakProxy:
     r"""
     The implementations of :class:`DifferentialPrecisionGeneric` hold
-    weak references to :class:`pAdicLatticeElement`. They are stored in
+    weak references to ``pAdicLatticeElement``. They are stored in
     dictionaries, e.g., a dictionary that maps an element to the corresponding
     column in the precision lattice matrix.
     However, weak references as implemented by Python are tricky to use as
@@ -2854,7 +2854,8 @@ def list_of_padics(elements):
     Convert a list of `p`-adic composed elements (such as polynomials, matrices)
     to a list of weak references of their `p`-adic coefficients.
 
-    This is a helper function for the method :meth:`precision_lattice`.
+    This is a helper function for the method
+    :meth:`~sage.rings.padics.lattice_precision.DifferentialPrecisionGeneric.precision_lattice`.
 
     TESTS::
 

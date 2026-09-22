@@ -1132,7 +1132,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
             If some coefficients have not enough precision an error is raised.
 
-        OUTPUT: a :class:`NewtonPolygon`
+        OUTPUT: a :class:`~sage.geometry.newton_polygon.NewtonPolygon_element`
 
         EXAMPLES::
 

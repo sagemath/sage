@@ -21,7 +21,8 @@ cpdef call_registered_function(unsigned serial,
     - ``allow_numeric_result`` -- if ``True``, keep numeric results numeric;
       if ``False``, make all results symbolic expressions
 
-    - ``result_parent`` -- an instance of :class:`SymbolicRing`
+    - ``result_parent`` -- an instance of
+      :class:`~sage.symbolic.ring.SymbolicRing`
 
     EXAMPLES::
 
@@ -173,7 +174,8 @@ cdef dict sfunction_serial_dict = {}
 
 cpdef get_sfunction_from_serial(unsigned int serial):
     """
-    Return an already created :class:`SymbolicFunction` given the serial.
+    Return an already created
+    :class:`~sage.symbolic.function.SymbolicFunction` given the serial.
 
     These are stored in the dictionary ``sfunction_serial_dict``.
 
@@ -189,7 +191,8 @@ cpdef get_sfunction_from_serial(unsigned int serial):
 
 cpdef get_sfunction_from_hash(long myhash):
     """
-    Return an already created :class:`SymbolicFunction` given the hash.
+    Return an already created
+    :class:`~sage.symbolic.function.SymbolicFunction` given the hash.
 
     EXAMPLES::
 

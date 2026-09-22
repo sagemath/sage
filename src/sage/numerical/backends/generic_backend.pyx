@@ -969,7 +969,7 @@ cdef class GenericBackend:
             sage: p = get_solver(solver="Nonexistent_LP_solver")
             sage: p.add_variables(2)
             2
-            sage: p.add_linear_constraint([(0, 1], (1, 2)], None, 3)
+            sage: p.add_linear_constraint([(0, 1), (1, 2)], None, 3)
             sage: p.set_objective([2, 5])
             sage: from tempfile import NamedTemporaryFile
             sage: with NamedTemporaryFile(suffix='.lp') as f:

@@ -697,7 +697,8 @@ def RealProjectiveSpace(n):
     of the symmetric group `S_{16}`.  Then the set of all facets
     is the `G`-orbit of the two given facets.  This is implemented
     here by explicitly listing all of the facets; the facets
-    can be computed by the function :func:`~sage.homology.simplicial_complex.facets_for_RP4`, but
+    can be computed by the function
+    :func:`~sage.topology.simplicial_complex_examples.facets_for_RP4`, but
     running the function takes a few seconds.
 
     For `n > 4`, the construction is as follows: let `S` denote
@@ -858,7 +859,8 @@ def K3Surface():
 
     This simplicial complex is implemented just by listing all 288
     facets. The list of facets can be computed by the function
-    :func:`~sage.homology.simplicial_complex.facets_for_K3`, but running the function takes a few
+    :func:`~sage.topology.simplicial_complex_examples.facets_for_K3`,
+    but running the function takes a few
     seconds.
     """
     return UniqueSimplicialComplex(
@@ -1400,7 +1402,7 @@ def RandomTwoSphere(n):
     in a simplicial complex.
 
     This algorithm is implemented in
-    :meth:`~sage.graphs.generators.random.RandomTriangulation`, which
+    :func:`~sage.graphs.generators.random.RandomTriangulation`, which
     creates an embedded graph. The triangles of the simplicial
     complex are recovered from this embedded graph.
 

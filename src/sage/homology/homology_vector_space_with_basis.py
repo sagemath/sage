@@ -1216,10 +1216,10 @@ class CohomologyRing_mod2(CohomologyRing):
               otherwise ``a * self``
 
             Algorithm: for left multiplication by ``a``, since we have
-            :meth:`Sq` to compute multiplication by a single generator
+            :meth:`~sage.homology.homology_vector_space_with_basis.CohomologyRing_mod2.Element.Sq` to compute multiplication by a single generator
             `Sq^i`, first convert ``a`` to the Serre-Cartan basis ---
             that is, sums of products of the elements `Sq^i` --- and
-            then apply :meth:`Sq` repeatedly. Right multiplication by
+            then apply :meth:`~sage.homology.homology_vector_space_with_basis.CohomologyRing_mod2.Element.Sq` repeatedly. Right multiplication by
             ``a`` is the same as left multiplication by the antipode
             applied to ``a``.
 
@@ -1407,7 +1407,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
 
     and `i_k` ranges from `S(k)` to `i_{k+1}-1`. There are two special
     cases: if `k=0`, then `i_0 = S(0)`. Also, the initial case of
-    `S(k)` is `S(n)`, which is set in the method :meth:`Sq` before
+    `S(k)` is `S(n)`, which is set in the method :meth:`~sage.homology.homology_vector_space_with_basis.CohomologyRing_mod2.Element.Sq` before
     calling this function. For this function, given `k`, `i_{k+1}`,
     and `S(k+1)`, return a list consisting of the allowable possible
     indices `[i_k, i_{k-1}, ..., i_1, i_0]` given by the above

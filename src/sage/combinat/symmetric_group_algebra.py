@@ -187,7 +187,9 @@ def SymmetricGroupAlgebra(R, W, category=None):
         this global variable is set to ``'r2l'``.)
         In view of this, it is recommended that code not rely on the
         usual multiplication function, but rather use the methods
-        :meth:`left_action_product` and :meth:`right_action_product`
+        :meth:`~sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.left_action_product`
+        and
+        :meth:`~sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.right_action_product`
         for multiplying permutations (these methods don't depend on the
         setting). See :issue:`14885` for more information.
 
@@ -1432,7 +1434,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         `k`-noninversions of `\sigma` (that is, the number of all
         `k`-element subsets of `\{ 1, 2, \ldots, n \}` on which
         `\sigma` restricts to a strictly increasing map). See
-        :meth:`sage.combinat.permutation.number_of_noninversions` for
+        :meth:`sage.combinat.permutation.Permutation.number_of_noninversions` for
         the `\mathrm{noninv}` map.
 
         This element is more or less the operator `\nu_{k, 1^{n-k}}`
@@ -1887,7 +1889,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         multiplying permutations. This means that for all permutations
         `p` and `q` in `S_n`, the product `pq` is defined in such a way
         that `(pq)(i) = p(q(i))` for each `i \in \{ 1, 2, \ldots, n \}`
-        (this is the same convention as in :meth:`left_action_product`,
+        (this is the same convention as in
+        :meth:`~sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra_n.left_action_product`,
         but not the default semantics of the `*` operator on
         permutations in Sage). Thus, for instance, `s_2 s_1` is the
         permutation obtained by first transposing `1` with `2` and

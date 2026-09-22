@@ -49,7 +49,8 @@ cdef class PrimePi(BuiltinFunction):
         INPUT:
 
         - ``x`` -- a real number
-        - ``prime_bound`` -- (default: 0) a real number `< 2^{32}`; :func:`prime_pi`
+        - ``prime_bound`` -- (default: 0) a real number `< 2^{32}`;
+          :class:`prime_pi <sage.functions.prime_pi.PrimePi>`
           will make sure to use all the primes up to ``prime_bound`` (although,
           possibly more) in computing ``prime_pi``, this can potentially
           speedup the time of computation, at a cost to memory usage.
@@ -78,7 +79,8 @@ cdef class PrimePi(BuiltinFunction):
             sage: prime_pi(10^10)                                                       # needs sage.symbolic
             455052511
 
-        The :func:`prime_pi` function also has a special plotting method, so it
+        The :class:`prime_pi <sage.functions.prime_pi.PrimePi>` function also
+        has a special plotting method, so it
         plots quickly and perfectly as a step function::
 
             sage: P = plot(prime_pi, 50, 100)                                           # needs sage.plot sage.symbolic

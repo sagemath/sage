@@ -445,7 +445,27 @@ class InterfaceInit(Converter):
 
             sage: ii.pyobject(pi, pi.pyobject())
             'Pi'
+
+        Python complex numbers need to be converted through a Sage complex
+        field instead of being represented using Python's ``j`` notation
+        (:issue:`42608`)::
+
+            sage: z = SR(complex(1, 2))
+            sage: (z * x)._maxima_init_()
+            '(_SAGE_VAR_x)*(1.0000000000000000 + 2.0000000000000000*%i)'
+
+        In particular, this fixes symbolic matrix inversion after NumPy has
+        converted complex scalars to Python objects::
+
+            sage: # needs numpy
+            sage: import numpy
+            sage: a = numpy.eye(2, dtype=complex)
+            sage: matrix(x * a).inverse()[0, 0].simplify_full()
+            1.0/x
         """
+        if isinstance(obj, complex):
+            from sage.rings.complex_double import CDF
+            obj = CDF(obj)
         if (self.interface.name() in ['pari', 'gp'] and isinstance(obj, NumberFieldElement_base)):
             from sage.rings.number_field.number_field_element_quadratic import (
                 NumberFieldElement_gaussian,

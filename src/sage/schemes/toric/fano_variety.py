@@ -803,7 +803,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
 
             There is no need to have any relation between ``F`` and the base
             field of ``self``. If you do want to have such a relation, use
-            :meth:`base_extend` instead.
+            :meth:`~sage.schemes.toric.divisor.ToricDivisorGroup.base_extend` instead.
 
         EXAMPLES::
 
@@ -1460,7 +1460,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         r"""
         Return the class of ``self`` in the ambient space cohomology ring.
 
-        OUTPUT: a :class:`cohomology class <sage.schemes.generic.toric_variety.CohomologyClass>`
+        OUTPUT: a :class:`cohomology class <sage.schemes.toric.variety.CohomologyClass>`
 
         EXAMPLES::
 

@@ -1,7 +1,11 @@
+from typing import final
 
-def prime_range(start: int, stop: int | None = None, algorithm: str | None = None, py_ints: bool = False) -> list[int]:
+from sage.rings.integer import Integer
+
+def prime_range(start: Integer | int, stop: Integer | int | None = None, step: Integer | int | None = None, algorithm: str | None = None, py_ints: bool = False) -> list[int]:
     ...
 
+@final
 class arith_int:
     def abs_int(self, x: int) -> int:
         ...
@@ -33,6 +37,7 @@ class arith_int:
     def rational_recon_int(self, a: int, m: int) -> tuple[int, int]:
         ...
 
+@final
 class arith_llong:
     def abs_longlong(self, x: int) -> int:
         ...

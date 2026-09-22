@@ -396,7 +396,10 @@ class SemistandardPathTableau(PathTableau):
         r"""
         Convert ``self`` to a :class:`SemistandardTableau`.
 
-        The :class:`SemistandardSkewTableau` is not implemented so this returns a :class:`SkewTableau`
+        The elements of
+        :class:`~sage.combinat.skew_tableau.SemistandardSkewTableaux` are not
+        implemented as a separate class, so this returns a
+        :class:`~sage.combinat.skew_tableau.SkewTableau`
 
         EXAMPLES::
 

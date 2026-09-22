@@ -87,7 +87,8 @@ However, some algorithms (e.g., toy examples of ECM) involve performing
 elliptic-curve operations as if the base ring were a field even when it
 is not, and exploit the failures when attempting to invert a non-unit.
 Sage provides a *hack* to support such educational examples via the
-:meth:`EllipticCurve_generic.assume_base_ring_is_field` method.
+:meth:`~sage.schemes.elliptic_curves.ell_generic.EllipticCurve_generic.assume_base_ring_is_field`
+method.
 Example::
 
     sage: E.assume_base_ring_is_field()
@@ -195,7 +196,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         """
         Return the curve that this point is on.
 
-        This is a synonym for :meth:`scheme`.
+        This is a synonym for :meth:`~sage.schemes.generic.point.SchemePoint.scheme`.
 
         EXAMPLES::
 
@@ -830,9 +831,9 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
                     sqrt_ub *= 4
         elif algorithm is None:
             raise NotImplementedError(
-                    "default algorithm not available for order of a point on "
-                    "an elliptic curve over general fields; you may try algorithm=generic_small "
-                    "if you are sure the order is finite and small")
+                "default algorithm not available for order of a point on "
+                "an elliptic curve over general fields; you may try algorithm=generic_small "
+                "if you are sure the order is finite and small")
         raise NotImplementedError(f"algorithm {algorithm!r} not implemented for "
                                   "order of a point on an elliptic curve over general fields")
 
@@ -1832,7 +1833,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             47 * 139
 
         The algorithm used internally for this functionality is
-        :meth:`~sage.groups.generic.order_from_multiple`.
+        :func:`~sage.groups.generic.order_from_multiple`.
         Indeed, simply calling :meth:`order` on ``P`` would take
         much longer since factoring ``n`` is fairly expensive::
 
@@ -4531,10 +4532,10 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
                 a = val.lift()
                 N = val.mod()
                 N1 = N.gcd(a)
-                N2 = N//N1
+                N2 = N // N1
                 raise ZeroDivisionError(
-                        f"Inverse of {a} does not exist"
-                        f" (characteristic = {N} = {N1}*{N2})")
+                    f"Inverse of {a} does not exist"
+                    f" (characteristic = {N} = {N1}*{N2})")
             pariQ = None
 
         if pariQ is not None:

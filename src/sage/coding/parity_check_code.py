@@ -286,7 +286,8 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
 
     def encode(self, message):
         r"""
-        Transform the vector ``message`` into a codeword of :meth:`code`.
+        Transform the vector ``message`` into a codeword of
+        :meth:`~sage.coding.encoder.Encoder.code`.
 
         INPUT:
 

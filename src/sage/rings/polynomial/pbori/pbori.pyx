@@ -2,6 +2,7 @@
 # distutils: library_dirs = M4RI_LIBDIR LIBPNG_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR LIBPNG_INCDIR
 # distutils: extra_compile_args = M4RI_CFLAGS
+# sage.doctest: needs brial
 r"""
 Boolean Polynomials
 
@@ -817,13 +818,12 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         if isinstance(other, (int, Integer)):
             if other % 2:
                 return self._one_element
-            else:
-                return self._zero_element
-        elif isinstance(other, BooleanMonomial):
+            return self._zero_element
+        if isinstance(other, BooleanMonomial):
             if (<BooleanMonomial>other)._ring is self:
                 p = new_BP_from_PBMonom(self, (<BooleanMonomial>other)._pbmonom)
                 return p
-            elif (<BooleanMonomial>other)._parent.ngens() <= \
+            if (<BooleanMonomial>other)._parent.ngens() <= \
                     self._pbring.nVariables():
                 try:
                     var_mapping = get_var_mapping(self, other.parent())
@@ -833,11 +833,9 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
                 for i in other.iterindex():
                     p *= var_mapping[i]
                 return p
-            else:
-                raise TypeError("cannot coerce monomial %s to %s" % (other, self))
-
-        elif isinstance(other, BooleanPolynomial) and \
-                ((<BooleanPolynomialRing>(<BooleanPolynomial>other)._parent)._pbring.nVariables() <= self._pbring.nVariables()):
+            raise TypeError("cannot coerce monomial %s to %s" % (other, self))
+        if isinstance(other, BooleanPolynomial) and \
+            ((<BooleanPolynomialRing>(<BooleanPolynomial>other)._parent)._pbring.nVariables() <= self._pbring.nVariables()):
             # try PolyBoRi's built-in coercions
             if self._pbring.hash() == \
                     (<BooleanPolynomialRing>(<BooleanPolynomial>other)._parent)._pbring.hash():
@@ -854,7 +852,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
                     new_monom *= var_mapping[i]
                 p += new_monom
             return p
-        elif isinstance(other, (MPolynomial, Polynomial_generic)) and \
+        if isinstance(other, (MPolynomial, Polynomial_generic)) and \
                 self.base_ring().has_coerce_map_from(other.base_ring()) and \
                 (other.parent().ngens() <= self._pbring.nVariables()):
             try:
@@ -872,15 +870,12 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
                             m *= var_mapping[j]
                     p += m
             return p
-
-        elif isinstance(other, Element) and \
+        if isinstance(other, Element) and \
                 self.base_ring().has_coerce_map_from(other.parent()):
             if self.base_ring()(other).is_zero():
                 return self._zero_element
             return self._one_element
-        else:
-            raise TypeError("cannot coerce from %s to %s" %
-                            (type(other), str(self)))
+        raise TypeError("cannot coerce from %s to %s" % (type(other), str(self)))
 
     def _element_constructor_(self, other):
         """
@@ -1014,8 +1009,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
         if i % 2:
             return self._one_element
-        else:
-            return self._zero_element
+        return self._zero_element
 
     def __hash__(self) -> int:
         """
@@ -1287,8 +1281,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         if l == 1:
             if dfirst:
                 return self._random_monomial_dfirst(degree, vars_set)
-            else:
-                return self._random_monomial_uniform(monom_counts, vars_set)
+            return self._random_monomial_uniform(monom_counts, vars_set)
 
         return (self._random_uniform_rec(degree, monom_counts,
                                          vars_set, dfirst, l // 2) +
@@ -2268,8 +2261,8 @@ cdef class BooleanMonomial(MonoidElement):
 
     .. NOTE::
 
-       Use the :meth:`BooleanMonomialMonoid__call__` method and not
-       this constructor to construct these objects.
+       Call the associated :class:`BooleanMonomialMonoid`, and not this
+       constructor, to construct these objects.
     """
     def __init__(self, parent) -> None:
         """
@@ -2532,8 +2525,7 @@ cdef class BooleanMonomial(MonoidElement):
 
         if self.reducible_by(x.lm()):
             return 1
-        else:
-            return 0
+        return 0
 
     def divisors(self):
         """
@@ -3101,8 +3093,7 @@ cdef class BooleanPolynomial(MPolynomial):
         """
         if left:
             return new_BP_from_PBPoly(self._parent, self._pbpoly)
-        else:
-            return self._parent.zero()
+        return self._parent.zero()
 
     cpdef _mul_(left, right):
         """
@@ -3356,8 +3347,7 @@ cdef class BooleanPolynomial(MPolynomial):
         if x is not None:
             if self._pbpoly.set().multiplesOf(x._pbpoly.firstTerm()).isZero():
                 return 0
-            else:
-                return 1
+            return 1
         return self._pbpoly.deg()
 
     def lm(BooleanPolynomial self):
@@ -3527,6 +3517,33 @@ cdef class BooleanPolynomial(MPolynomial):
             False
 
             sage: P(1).is_zero()
+            False
+        """
+        return self._pbpoly.isZero()
+
+    def is_nilpotent(BooleanPolynomial self):
+        r"""
+        Return whether ``self`` is nilpotent.
+
+        Boolean rings are reduced, so the only nilpotent boolean
+        polynomial is zero.
+
+        EXAMPLES::
+
+            sage: P.<x,y> = BooleanPolynomialRing(2)
+            sage: P(0).is_nilpotent()
+            True
+
+            sage: x.is_nilpotent()
+            False
+
+            sage: (x + y).is_nilpotent()
+            False
+
+        Check that :issue:`23311` is fixed::
+
+            sage: B.<a,b,c> = BooleanPolynomialRing()
+            sage: (a + b).is_nilpotent()
             False
         """
         return self._pbpoly.isZero()
@@ -3868,8 +3885,7 @@ cdef class BooleanPolynomial(MPolynomial):
         mon = B.coerce(mon)
         if mon in set(self.set()):
             return k._one_element
-        else:
-            return k._zero_element
+        return k._zero_element
 
     def constant_coefficient(self):
         """
@@ -3886,8 +3902,7 @@ cdef class BooleanPolynomial(MPolynomial):
         cdef BooleanPolynomialRing B = <BooleanPolynomialRing>self._parent
         if self._pbpoly.hasConstantPart():
             return B._base._one_element
-        else:
-            return B._base._zero_element
+        return B._base._zero_element
 
     def __hash__(self) -> int:
         r"""
@@ -5210,12 +5225,10 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             sage: I == J
             False
         """
-        if not isinstance(other, BooleanPolynomialIdeal):
+        if not isinstance(other, BooleanPolynomialIdeal) or \
+           self.ring() != other.ring():
             return False
-        elif self.ring() != other.ring():
-            return False
-        else:
-            return self.groebner_basis() == other.groebner_basis()
+        return self.groebner_basis() == other.groebner_basis()
 
     def __ne__(self, other) -> bool:
         """
@@ -5994,10 +6007,9 @@ cdef class CCuddNavigator:
 
         if op == Py_EQ:
             return equal
-        elif op == Py_NE:
+        if op == Py_NE:
             return not equal
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __hash__(self) -> int:
         return self._pbnav.hash()
@@ -7415,11 +7427,10 @@ def ll_red_nf_noredsb_single_recursive_call(BooleanPolynomial p, BooleSet reduct
     Redude the polynomial ``p`` by the set of ``reductors`` with
     linear leading terms.
 
-    :func:`ll_red_nf_noredsb_single_recursive` call has the same
-    specification as :func:`ll_red_nf_noredsb`, but a different
-    implementation: It is very sensitive to the ordering of variables,
-    however it has the property, that it needs just one recursive
-    call.
+    This function has the same specification as
+    :func:`ll_red_nf_noredsb`, but a different implementation: it is
+    very sensitive to the ordering of variables, but has the property
+    that it needs just one recursive call.
 
     INPUT:
 

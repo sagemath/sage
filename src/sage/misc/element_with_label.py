@@ -16,7 +16,7 @@ from sage.misc.latex import latex
 
 class ElementWithLabel:
     """
-    Auxiliary class for showing/viewing :class:`Poset`s with
+    Auxiliary class for showing/viewing posets with
     non-injective labelings.
     For hashing and equality testing the resulting object behaves
     like a tuple ``(element, label)``.

@@ -4,6 +4,12 @@
 Welcome to Sage
 ===============
 
+.. note::
+
+   You can try the examples below in your browser right away, with nothing
+   to install: just type them into the Sage Cell Server at
+   https://sagecell.sagemath.org.
+
 This is a short tour of Sage as a calculator.
 
 The Sage command line has a prompt "``sage:``". To experiment with the
@@ -59,7 +65,9 @@ The result is a list of equalities.
     sage: S[0].rhs()  # right hand side of the equation
     -1/2*sqrt(4*a + 1) - 1/2
 
-Sage can plot various useful functions, of course.
+Sage can plot various useful functions, of course. (In the Jupyter
+notebook or the Sage Cell Server the figure appears inline; at the
+``sage`` terminal prompt, ``show`` opens it with an external viewer.)
 
 ::
 

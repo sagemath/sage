@@ -247,8 +247,7 @@ class HypergeometricParameters(SageObject):
                 raise ValueError
         if s == 0:
             return infinity
-        else:
-            return deg
+        return deg
 
     @cached_method
     def christol_sorting(self, c=1):

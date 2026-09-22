@@ -61,7 +61,7 @@ always explicitly invoked, and never used by the coercion model to resolve
 binary operations.
 
 For more information on how to specify coercions, conversions, and actions,
-see the documentation for :class:`Parent`.
+see the documentation for :class:`~sage.structure.parent.Parent`.
 """
 
 # ****************************************************************************
@@ -353,16 +353,14 @@ cpdef bint parent_is_integers(P) except -1:
     if isinstance(P, type):
         if issubclass(P, int):
             return True
-        elif is_numpy_type(P):
+        if is_numpy_type(P):
             from numpy import integer
             return issubclass(P, integer)
-        elif issubclass(P, gmpy2.mpz):
+        if issubclass(P, gmpy2.mpz):
             return True
-        else:
-            return False
-    else:
-        from sage.rings.integer_ring import ZZ
-        return P is ZZ
+        return False
+    from sage.rings.integer_ring import ZZ
+    return P is ZZ
 
 
 def parent_is_numerical(P):
@@ -769,7 +767,7 @@ cdef class CoercionModel:
 
         If all went well, this should be the empty list. If things aren't
         happening as you expect, this is a good place to check. See also
-        :func:`coercion_traceback`.
+        :func:`~sage.structure.element.coercion_traceback`.
 
         EXAMPLES::
 
@@ -796,7 +794,8 @@ cdef class CoercionModel:
             TypeError: no common canonical parent for objects with parents:
             'Rational Field' and 'Finite Field of size 3'
 
-        This is typically accessed via the :func:`coercion_traceback` function.
+        This is typically accessed via the
+        :func:`~sage.structure.element.coercion_traceback` function.
 
         ::
 
@@ -1055,8 +1054,9 @@ cdef class CoercionModel:
 
         OUTPUT:
 
-        A :class:`Parent` into which each input should coerce, or raises a
-        :exc:`TypeError` if no such :class:`Parent` can be found.
+        A :class:`~sage.structure.parent.Parent` into which each input should
+        coerce, or raises a :exc:`TypeError` if no such
+        :class:`~sage.structure.parent.Parent` can be found.
 
         EXAMPLES::
 
@@ -1242,8 +1242,7 @@ cdef class CoercionModel:
         if action is not None:
             if (<Action>action)._is_left:
                 return (<Action>action)._act_(x, y)
-            else:
-                return (<Action>action)._act_(y, x)
+            return (<Action>action)._act_(y, x)
 
         # Now coerce to a common parent and do the operation there
         try:
@@ -1403,8 +1402,7 @@ cdef class CoercionModel:
                 sage_parent = py_scalar_parent(type(x))
                 if sage_parent is None or sage_parent.has_coerce_map_from(yp):
                     return x, x.__class__(y)
-                else:
-                    return self.canonical_coercion(sage_parent(x), y)
+                return self.canonical_coercion(sage_parent(x), y)
             except (TypeError, ValueError):
                 self._record_exception()
 
@@ -1413,8 +1411,7 @@ cdef class CoercionModel:
                 sage_parent = py_scalar_parent(type(y))
                 if sage_parent is None or sage_parent.has_coerce_map_from(xp):
                     return y.__class__(x), y
-                else:
-                    return self.canonical_coercion(x, sage_parent(y))
+                return self.canonical_coercion(x, sage_parent(y))
             except (TypeError, ValueError):
                 self._record_exception()
 
@@ -1842,8 +1839,8 @@ cdef class CoercionModel:
         """
         INPUT:
 
-        - ``R`` -- the left :class:`Parent` (or type)
-        - ``S`` -- the right :class:`Parent` (or type)
+        - ``R`` -- the left :class:`~sage.structure.parent.Parent` (or type)
+        - ``S`` -- the right :class:`~sage.structure.parent.Parent` (or type)
         - ``op`` -- the operand, typically an element of the :mod:`operator` module
         - ``r`` -- (optional) element of `R`
         - ``s`` -- (optional) element of `S`
@@ -1862,7 +1859,8 @@ cdef class CoercionModel:
             True
             sage: cm = sage.structure.element.get_coercion_model()
 
-        If `R` or `S` is a :class:`Parent`, ask it for an action by/on `R`::
+        If `R` or `S` is a :class:`~sage.structure.parent.Parent`, ask it
+        for an action by/on `R`::
 
             sage: cm.discover_action(ZZ, P, operator.mul)
             Left scalar multiplication by Integer Ring on

@@ -240,8 +240,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
             try:
                 if self_on_left:
                     return self._matrix * x
-                else:
-                    return x * self._matrix
+                return x * self._matrix
             except TypeError:
                 return None
 

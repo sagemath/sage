@@ -39,7 +39,7 @@ class DrinfeldModule_finite(DrinfeldModule):
     ideal.
 
     For general definitions and help on Drinfeld modules, see class
-    :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
+    :class:`sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule`.
 
     .. RUBRIC:: Construction:
 
@@ -65,7 +65,8 @@ class DrinfeldModule_finite(DrinfeldModule):
 
     The user should never use ``DrinfeldModule_finite`` to test if a
     Drinfeld module is finite, but rather the
-    :meth:`sage.rings.function_field.drinfeld_modules.DrinfeldModule.is_finite`` method::
+    :meth:`~sage.rings.function_field.drinfeld_modules.drinfeld_module.DrinfeldModule.is_finite`
+    method::
 
         sage: phi.is_finite()
         True
@@ -696,8 +697,9 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Note that the Frobenius norm computed by this method may be
         different than what is computed as the isogeny norm of the
-        Frobenius endomorphism (see :meth:`norm` on the Frobenius
-        endomorphism), which is an ideal defined of the function ring
+        Frobenius endomorphism (see
+        :meth:`~sage.rings.function_field.drinfeld_modules.morphism.DrinfeldModuleMorphism.norm`
+        on the Frobenius endomorphism), which is an ideal defined of the function ring
         given by its monic generator; the Frobenius norm may not be
         monic.
 

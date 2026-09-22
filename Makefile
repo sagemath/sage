@@ -158,6 +158,7 @@ misc-clean:
 	rm -f build/make/Makefile build/make/Makefile-auto
 	rm -f build/platform/meson/sage-configure-native-file.ini
 	rm -rf src/lib
+	rm -f PrOgReSs.gFaN
 
 bdist-clean: clean
 	$(MAKE) misc-clean

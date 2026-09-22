@@ -18,7 +18,7 @@ AUTHORS:
 
 from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
 from sage.categories.lie_algebras import LieAlgebras
-from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.cachefunc import cached_function
 from sage.structure.global_options import GlobalOptions
 from sage.structure.indexed_generators import standardize_names_index_set
 from sage.rings.integer_ring import ZZ
@@ -394,7 +394,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
                 if r < 10:
                     let = repr
                 elif r <= 16:
-                    hexdata = [repr(i) for i in range(10)] + ['a','b','c','d','e','f']
+                    hexdata = [repr(i) for i in range(10)] + list('abcdef')
 
                     def let(i):
                         return hexdata[i]
@@ -403,7 +403,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
 
                     def let(i):
                         ret = repr(i)
-                        return '0'*(rlen-len(ret)) + ret
+                        return '0' * (rlen - len(ret)) + ret
                 names = ['%s_%s' % (names[0], "".join(let(s) for s in ind))
                          for ind in index_set]
             else:
@@ -463,11 +463,11 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
         """
         NAME = 'FreeNilpotentLieAlgebra'
         module = 'sage.algebras.lie_algebras.nilpotent_lie_algebra'
-        display = dict(default='variables',
-                     description='Controls the way elements are printed',
-                     values=dict(variables='print basis elements as variables',
-                                 brackets='print basis elements as brackets'),
-                     case_sensitive=False)
+        display = {'default': 'variables',
+                   'description': 'Controls the way elements are printed',
+                   'values': {'variables': 'print basis elements as variables',
+                              'brackets': 'print basis elements as brackets'},
+                   'case_sensitive': False}
 
     def _repr_generator(self, w, use_latex=False) -> str:
         r"""
@@ -507,7 +507,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
                 from sage.misc.latex import latex
                 ind = ret.find("_")
                 if ind != -1:
-                    ret = ret[:ind] + "_{{{}}}".format(latex(ret[ind+1:]))
+                    ret = ret[:ind] + "_{{{}}}".format(latex(ret[ind + 1:]))
             return ret
 
         basis = self.basis()

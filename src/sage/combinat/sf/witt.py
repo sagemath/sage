@@ -523,8 +523,8 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         (German for "shift") endomorphism of the Witt vectors.
 
         The `n`-th Verschiebung operator is adjoint to the `n`-th
-        Frobenius operator (see :meth:`frobenius` for its definition)
-        with respect to the Hall scalar product (:meth:`scalar`).
+        Frobenius operator (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.adams_operator` for its definition)
+        with respect to the Hall scalar product (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 
         The action of the `n`-th Verschiebung operator on the Schur basis
         can also be computed explicitly. The following (probably clumsier
@@ -697,7 +697,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution` is a synonym for the :meth:`omega`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega`
             method.
 
             EXAMPLES::

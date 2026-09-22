@@ -197,8 +197,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         if self._order == 0:
             return Infinity
-        else:
-            return Integer(self._order)
+        return Integer(self._order)
 
     def power(self):
         """

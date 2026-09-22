@@ -25,7 +25,7 @@ class GapPackage(Feature):
 
     .. SEEALSO::
 
-        :class:`Feature sage.libs.gap <~sage.features.sagemath.sage__libs__gap>`
+        :class:`Feature sage.libs.gap <sage.features.sagemath.sage__libs__gap>`
 
     EXAMPLES::
 

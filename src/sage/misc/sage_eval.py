@@ -24,7 +24,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     - ``source`` -- string or object with a ``_sage_``
       method
 
-    - ``locals`` -- evaluate in namespace of :mod:`sage.all` plus
+    - ``locals`` -- evaluate in namespace of ``sage.all`` plus
       the locals dictionary
 
     - ``cmds`` -- string; sequence of commands to be run

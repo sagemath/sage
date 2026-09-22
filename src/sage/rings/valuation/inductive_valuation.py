@@ -1155,7 +1155,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
           decomposition (default: ``True``)
 
         - ``degree_bound`` -- a bound on the degree of the
-          :meth:`_equivalence_reduction` of ``f`` (default: ``None``)
+          ``_equivalence_reduction`` of ``f`` (default: ``None``)
 
         ALGORITHM:
 

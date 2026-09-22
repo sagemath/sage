@@ -827,8 +827,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``a`` -- group element
     - ``base`` -- group element (the base)
     - ``ord`` -- integer (multiple of order of base, ``None``, or
-      :mod:`oo <sage.rings.infinity>``); if this is
-      :mod:`oo <sage.rings.infinity>`, then it explicitly does
+      :data:`oo <sage.rings.infinity.infinity>`);
+      if this is :data:`oo <sage.rings.infinity.infinity>`, then it explicitly does
       not use this, for example when factorizing the order is difficult
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other

@@ -875,10 +875,9 @@ cdef int py_get_parent_char(o) except -1:
     # instead of the actual characteristic.
     if not c:
         return 0
-    elif c == 2:
+    if c == 2:
         return 2
-    else:
-        return 3
+    return 3
 
 
 #################################################################
@@ -911,8 +910,7 @@ cdef py_binomial_int(int n, unsigned int k):
     # Return the answer or the negative of it (only if k is odd and n is negative).
     if sign:
         return -ans
-    else:
-        return ans
+    return ans
 
 cdef py_binomial(n, k):
     # Keep track of the sign we should use.
@@ -930,8 +928,7 @@ cdef py_binomial(n, k):
     # Return the answer or the negative of it (only if k is odd and n is negative).
     if sign:
         return -ans
-    else:
-        return ans
+    return ans
 
 
 def test_binomial(n, k):
@@ -967,7 +964,7 @@ cdef py_gcd(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return n
-        elif mpz_cmp_si((<Integer>k).value, 1) == 0:
+        if mpz_cmp_si((<Integer>k).value, 1) == 0:
             return k
         return n.gcd(k)
 
@@ -987,7 +984,7 @@ cdef py_lcm(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return k
-        elif mpz_cmp_si((<Integer>k).value, 1) == 0:
+        if mpz_cmp_si((<Integer>k).value, 1) == 0:
             return n
         return n.lcm(k)
     try:
@@ -1510,8 +1507,7 @@ cdef py_factorial(x):
 
     if coercion_success and x_in_ZZ >= 0:
         return factorial(x)
-    else:
-        return py_tgamma(x+1)
+    return py_tgamma(x+1)
 
 
 def py_factorial_py(x):
@@ -1576,7 +1572,7 @@ cdef py_step(n):
     from sage.symbolic.ring import SR
     if n < 0:
         return SR(0)
-    elif n > 0:
+    if n > 0:
         return SR(1)
     return SR(Rational((1,2)))
 
@@ -1909,15 +1905,12 @@ cdef py_atan2(x, y):
             else:
                 res = P(pi)/2
             return res if y > 0 else -res
-        else:
-            return -I*py_log((x + I*y)/py_sqrt(x**2 + y**2))
-    else:
-        if x > 0:
-            return P(0)
-        elif x < 0:
-            return P(pi)
-        else:
-            return P(NaN)
+        return -I*py_log((x + I*y)/py_sqrt(x**2 + y**2))
+    if x > 0:
+        return P(0)
+    if x < 0:
+        return P(pi)
+    return P(NaN)
 
 
 def py_atan2_for_doctests(x, y):

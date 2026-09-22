@@ -206,7 +206,7 @@ But unformatted outputs still are::
     [  0   0   0]
     [  0   0   0]
 
-Internally, the components are stored as a dictionary (:attr:`_comp`) whose
+Internally, the components are stored as a dictionary (``_comp``) whose
 keys are the indices; only the nonzero components are stored::
 
     sage: a[:]
@@ -394,7 +394,7 @@ class Components(SageObject):
         [  0   0   0]
         [  0   0   0]
 
-    Internally, the components are stored as a dictionary (:attr:`_comp`) whose
+    Internally, the components are stored as a dictionary (``_comp``) whose
     keys are the indices; only the nonzero components are stored::
 
         sage: a[:]
@@ -610,12 +610,12 @@ class Components(SageObject):
 
     def _del_zeros(self) -> None:
         r"""
-        Delete all the zeros in the dictionary :attr:`_comp`.
+        Delete all the zeros in the dictionary ``_comp``.
 
         .. NOTE::
 
             The use case of this method must be rare because zeros are not
-            stored in :attr:`_comp`.
+            stored in ``_comp``.
 
         EXAMPLES::
 

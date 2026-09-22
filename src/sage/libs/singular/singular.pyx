@@ -1526,18 +1526,16 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         sage: P(3)
         3
     """
-    if _ring != currRing: rChangeCurrRing(_ring)
+    if _ring != currRing:
+        rChangeCurrRing(_ring)
 
     cdef number *nn
-
     cdef char *_name
     cdef char **_ext_names
-
     cdef nMapFunc nMapFuncPtr = NULL
 
     if _ring.cf.type == n_unknown:
         return n_Init(int(d), _ring.cf)
-
     if _ring.cf.type == n_Z2m:
         if sizeof(number *) >= sizeof(unsigned long):
             # one may also always choose the second branch,
@@ -1545,11 +1543,9 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
             # casting to unsigned long is safe because n_Z2m
             # is only chosen if the exponent is small, see singular_ring_new
             return nr2mMapZp(<number *> <unsigned long> d, currRing.cf, _ring.cf)
-        else:
-            return _ring.cf.cfInit(<long> <unsigned long> d, _ring.cf)
-    elif _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
+        return _ring.cf.cfInit(<long> <unsigned long> d, _ring.cf)
+    if _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
         lift = d.lift()
-
         # if I understand nrnMapGMP/nMapFuncPtr correctly we need first
         # a source value in ZZr
         # create ZZr, a plain polynomial ring over ZZ with one variable.
@@ -1568,8 +1564,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         nMapFuncPtr  = nrnSetMap( ZZr.cf, _ring.cf)
 
         return nMapFuncPtr(nn, ZZr.cf, _ring.cf)
-    else:
-        raise ValueError
+    raise ValueError
 
 cdef object si2sa(number *n, ring *_ring, object base):
     r"""

@@ -13,10 +13,9 @@ Feature for testing the presence of ``meataxe``
 # *****************************************************************************
 
 from sage.config import meataxe_enabled
-from sage.features import PythonModule
-from sage.features.build_feature import BuildFeature
+from sage.features.build_feature import BuildModule
 
-class Meataxe(BuildFeature):
+class Meataxe(BuildModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of
     the Sage modules that depend on the :ref:`meataxe <spkg_meataxe>`
@@ -27,38 +26,33 @@ class Meataxe(BuildFeature):
         sage: from sage.features.meataxe import Meataxe
         sage: Meataxe().is_present()  # needs meataxe
         FeatureTestResult('meataxe', True)
+        sage: Meataxe().is_present()  # needs !meataxe
+        FeatureTestResult('meataxe', False)
+
+    A runtime check. We only check the "present" case because, if
+    feature checks are _not_ deferred, the ``needs !meataxe`` can be
+    satisfied (disabled at build time) at the same time we are able to
+    import a module that was installed for a previous build of sage::
+
+        sage: from sage.features.meataxe import Meataxe
+        sage: Meataxe().is_present_at_runtime()  # needs meataxe
+        FeatureTestResult('meataxe', True)
 
     """
     _enabled_in_build = meataxe_enabled
 
     def __init__(self):
         r"""
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.features.meataxe import Meataxe
-            sage: isinstance(Meataxe(), Meataxe)
-            True
+            sage: Meataxe()
+            Feature('meataxe')
 
         """
-        super().__init__("meataxe", spkg="meataxe")
+        module_name = "sage.matrix.matrix_gfpn_dense"
+        super().__init__("meataxe", module_name)
 
-    def is_present_at_runtime(self):
-        r"""
-        TESTS::
-
-            sage: from sage.features import FeatureTestResult
-            sage: from sage.features.meataxe import Meataxe
-            sage: result = Meataxe().is_present_at_runtime()
-            sage: isinstance(result, FeatureTestResult)
-            True
-            sage: result  # needs meataxe
-            FeatureTestResult('meataxe', True)
-
-        """
-        modname = "sage.matrix.matrix_gfpn_dense"
-        result = PythonModule(modname)._is_present()
-        result.feature = self
-        return result
 
 def all_features():
     return [Meataxe()]

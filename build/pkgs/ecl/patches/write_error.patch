@@ -1,8 +1,7 @@
-diff --git a/src/c/file.d b/src/c/file.d
-index 2d15d50f8..199f24c4f 100755
---- a/src/c/file.d
-+++ b/src/c/file.d
-@@ -3536,7 +3536,8 @@ output_stream_write_byte8(cl_object strm, unsigned char *c, cl_index n)
+diff --git a/src/c/streams/strm_os.d b/src/c/streams/strm_os.d
+--- a/src/c/streams/strm_os.d
++++ b/src/c/streams/strm_os.d
+@@ -784,7 +784,8 @@ output_stream_write_byte8(cl_object strm, unsigned char *c, cl_index n)
    ecl_disable_interrupts();
    do {
      out = fwrite(c, sizeof(char), n, IO_STREAM_FILE(strm));
@@ -12,6 +11,4 @@ index 2d15d50f8..199f24c4f 100755
    ecl_enable_interrupts();
    return out;
  }
--- 
-2.20.1
 

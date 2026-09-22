@@ -2249,7 +2249,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
                                  morphism * parent.twisting_morphism())
         return M(morphism(self._scalar))
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare this derivation with ``other`` according
         to the comparison operator ``op``.

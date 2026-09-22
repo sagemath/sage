@@ -245,7 +245,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
 
         .. SEEALSO::
 
-            :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.naive_hasse_digram`,
+            :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.naive_hasse_diagram`,
             :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.min_hasse_diagram`.
 
         EXAMPLES::
@@ -284,7 +284,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
 
         .. SEEALSO::
 
-            :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.hasse_digram`,
+            :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.hasse_diagram`,
             :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.naive_hasse_diagram`.
 
         EXAMPLES::
@@ -340,7 +340,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
 
         .. SEEALSO::
 
-            :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.hasse_digram`,
+            :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.hasse_diagram`,
             :meth:`~sage.monoids.trace_monoid.TraceMonoidElement.min_hasse_diagram`.
 
         EXAMPLES::

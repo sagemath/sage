@@ -391,11 +391,11 @@ are named
        * cdef _list -- list of underlying elements (need not be a copy)
        * cdef _dict -- sparse dictionary of underlying elements
        * cdef _add_ -- add two matrices with identical parents
-       * _matrix_times_matrix_c_impl -- multiply two matrices with compatible dimensions and
+       * _matrix_times_matrix_ -- multiply two matrices with compatible dimensions and
                                         identical base rings (both sparse or both dense)
        * cpdef _richcmp_ -- compare two matrices with identical parents
-       * cdef _lmul_c_impl -- multiply this matrix on the right by a scalar, i.e., self * scalar
-       * cdef _rmul_c_impl -- multiply this matrix on the left by a scalar, i.e., scalar * self
+       * cdef _lmul_ -- multiply this matrix on the right by a scalar, i.e., self * scalar
+       * cdef _rmul_ -- multiply this matrix on the left by a scalar, i.e., scalar * self
        * __copy__
        * __neg__
 

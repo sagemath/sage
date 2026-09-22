@@ -145,7 +145,9 @@ class PieriFactors(UniqueRepresentation, Parent):
         Those are constructed as the elements below the maximal
         elements of ``self`` in Bruhat order.
 
-        OUTPUT: a :class:`RecursivelyEnumeratedSet_generic` object
+        OUTPUT: a
+        :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_generic`
+        object
 
         EXAMPLES::
 
@@ -153,12 +155,14 @@ class PieriFactors(UniqueRepresentation, Parent):
             sage: sorted(w.reduced_word() for w in PF.elements())
             [[], [1], [2], [2, 1], [3], [3, 1], [3, 2], [3, 2, 1]]
 
-        .. SEEALSO:: :meth:`maximal_elements`
+        .. SEEALSO::
+            :meth:`~sage.combinat.root_system.pieri_factors.PieriFactors_affine_type.maximal_elements`
 
         .. TODO::
 
             Possibly remove this method and instead have this class
-            inherit from :class:`RecursivelyEnumeratedSet_generic`.
+            inherit from
+            :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_generic`.
         """
         return RecursivelyEnumeratedSet(self.maximal_elements(),
                 attrcall('bruhat_lower_covers'), structure=None,
@@ -344,10 +348,10 @@ class PieriFactors_affine_type(PieriFactors):
         Return the maximal elements of ``self`` with respect to Bruhat order.
 
         The current implementation is via a conjectural type-free
-        formula. Use :meth:`maximal_elements_combinatorial` for proven
+        formula. Use ``maximal_elements_combinatorial`` for proven
         type-specific implementations. To compare type-free and
         type-specific (combinatorial) implementations, use method
-        :meth:`_test_maximal_elements`.
+        ``_test_maximal_elements``.
 
         EXAMPLES::
 
@@ -642,7 +646,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
     def _test_maximal_elements(self, **options):
         r"""
-        Same as :meth:`PieriFactors._test_maximal_elements`, but skips
+        Same as ``PieriFactors._test_maximal_elements``, but skips
         the tests if ``self`` is not the full set of Pieri factors.
 
         EXAMPLES::

@@ -864,7 +864,7 @@ def get_module_type(graph):
     """
     if not graph.is_connected():
         return NodeType.PARALLEL
-    elif graph.complement().is_connected():
+    if graph.complement().is_connected():
         return NodeType.PRIME
     return NodeType.SERIES
 
@@ -1100,8 +1100,7 @@ def tree_to_nested_tuple(root):
     """
     if root.node_type == NodeType.NORMAL:
         return root.children[0]
-    else:
-        return (root.node_type, [tree_to_nested_tuple(x) for x in root.children])
+    return (root.node_type, [tree_to_nested_tuple(x) for x in root.children])
 
 
 def nested_tuple_to_tree(nest):

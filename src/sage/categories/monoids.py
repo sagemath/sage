@@ -200,7 +200,7 @@ class Monoids(CategoryWithAxiom):
 
             - ``generators`` -- a finite family of elements of
               ``self``, or a list, iterable, ... that can be converted
-              into one (see :class:`Family`).
+              into one (see :func:`~sage.sets.family.Family`).
 
             - ``category`` -- a category
 
@@ -528,8 +528,7 @@ class Monoids(CategoryWithAxiom):
                 """
                 Return the unit of the monoid, which indexes the unit of
                 this algebra, as per
-                :meth:`AlgebrasWithBasis.ParentMethods.one_basis()
-                <sage.categories.algebras_with_basis.AlgebrasWithBasis.ParentMethods.one_basis>`.
+                :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
                 EXAMPLES::
 

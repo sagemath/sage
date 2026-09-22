@@ -4,7 +4,8 @@ Crystals
 
 TESTS:
 
-Catch warnings produced by :func:`check_tkz_graph`::
+Catch warnings produced by
+:func:`~sage.graphs.graph_latex.check_tkz_graph`::
 
     sage: from sage.graphs.graph_latex import check_tkz_graph
     sage: check_tkz_graph()  # random
@@ -1796,7 +1797,7 @@ class Crystals(Category_singleton):
             .. SEEALSO::
 
                 - :class:`.tensor.TensorProductsCategory`
-                - :class:`~.covariant_functorial_construction.RegressiveCovariantFunctorialConstruction`.
+                - :class:`~.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
 
             EXAMPLES::
 
