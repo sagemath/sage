@@ -387,9 +387,7 @@ cdef class Polynomial_template(Polynomial):
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
-        sig_on()
         celement_gcd(&r.x, &(<Polynomial_template>self).x, &(<Polynomial_template>other).x, (<Polynomial_template>self)._cparent)
-        sig_off()
         return r
 
     @coerce_binop
