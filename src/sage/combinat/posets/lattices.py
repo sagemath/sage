@@ -1151,6 +1151,12 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: LatticePoset().is_stone()  # Empty lattice
             True
 
+            sage: P = LatticePoset({0:[1,2],1:[3],2:[3]})
+            sage: P.is_stone()
+            True
+            sage: P.category()
+            Category of facade finite enumerated stone distributive lattices
+
             sage: L = LatticePoset(DiGraph('GW?_W@?W@?O?'))
             sage: L.is_stone()  # Pass the fast check, but not a Stone lattice
             False
@@ -4473,11 +4479,22 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: P.is_congruence_uniform()
             False
 
+        TESTS::
+
+            sage: P = LatticePoset({0:[1,2],1:[3],2:[3],3:[4]})
+            sage: P.is_congruence_uniform()
+            True
+            sage: P.category()
+            Category of facade finite enumerated congruence uniform lattice posets
+
         REFERENCES:
 
         - [Day1979]_
         """
-        return self.is_constructible_by_doublings(type="interval")
+        check = self.is_constructible_by_doublings(type="interval")
+        if check:
+            self._refine_category_(self.category().CongruenceUniform())
+        return check
 
     def is_isoform(self, certificate=False) -> bool | tuple:
         """
