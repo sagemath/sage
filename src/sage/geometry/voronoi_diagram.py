@@ -27,13 +27,14 @@ class VoronoiDiagram(SageObject):
 
     Compute the Voronoi diagram of a list of points.
     If weights are given, computes their power diagram instead.
-    These weights should be though of as the radii of circles around the points (see [Ed1987]_).
+    Positive weights should be though of as the squared radii of circles around the points (see [Ed1987]_).
+    Negative weights are also valid.
 
     INPUT:
 
     - ``points`` -- list of points; any valid input for the
       :class:`PointConfiguration` will do
-    - ``weights`` -- list (default: ``None``) list of weights (one for each point, in the same order). If ``None``, will set all weights to zero, producing the classic Voronoi diagram.
+    - ``weights`` -- list (default: ``None``) list of weights (one for each point, in the same order). If ``None``, will produce the classic Voronoi diagram.
 
     OUTPUT: an instance of the VoronoiDiagram class
 
@@ -202,8 +203,8 @@ class VoronoiDiagram(SageObject):
         for poi in self._points:
             v = vector(poi)
             eqs = []
-            # we substract the weight squared
-            eqs.append(v.dot_product(v) - self._weights[poi]**2)
+            # we substract the weight
+            eqs.append(v.dot_product(v) - self._weights[poi])
             eqs.extend([self._base_ring(-2) * v[k] for k in range(self._d)])
             eqs.append(self._base_ring(1))
             e.append(eqs)
@@ -328,7 +329,7 @@ class VoronoiDiagram(SageObject):
             ....:                                                 rays=[(RDF(4.5), RDF(1), -RDF(25)), (-RDF(2.25), -RDF(1), RDF(2.5))],
             ....:                                                 vertices=[(-RDF(1.1074999999999999), RDF(1.149444444), RDF(9.0138888890000004))])}
             True
-            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights=[0, 0, 4]); V.regions()
+            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights=[0, 0, 4**2]); V.regions()
             {P(-1, 0): A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line,
             P(0, 0): The empty polyhedron in QQ^0,
             P(1, 0): A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex, 1 ray, 1 line}
@@ -445,7 +446,7 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights=[0, 0, 4]); V.are_points_in_regions()
+            sage: V = VoronoiDiagram([[-1, 0], [0, 0], [1, 0]], weights=[0, 0, 4**2]); V.are_points_in_regions()
             {P(-1, 0): False, P(0, 0): False, P(1, 0): True}
             sage: py_trips = [[a, b] for a in range(1, 50) for b in range(1, 50) if ZZ(a^2 + b^2).is_square()]
             sage: V = VoronoiDiagram(py_trips)
