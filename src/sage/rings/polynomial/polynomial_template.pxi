@@ -21,6 +21,7 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer cimport Integer
 from cypari2.gen cimport Gen as pari_gen
+from cysignals.signals cimport sig_on, sig_off
 
 import operator
 
@@ -386,8 +387,9 @@ cdef class Polynomial_template(Polynomial):
         celement_construct(&r.x, (<Polynomial_template>self)._cparent)
         r._parent = (<Polynomial_template>self)._parent
         r._cparent = (<Polynomial_template>self)._cparent
+        sig_on()
         celement_gcd(&r.x, &(<Polynomial_template>self).x, &(<Polynomial_template>other).x, (<Polynomial_template>self)._cparent)
-        #assert(r._parent(pari(self).gcd(pari(other))) == r)
+        sig_off()
         return r
 
     @coerce_binop
