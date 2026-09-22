@@ -21,7 +21,6 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer cimport Integer
 from cypari2.gen cimport Gen as pari_gen
-from cysignals.signals cimport sig_on, sig_off
 
 import operator
 
