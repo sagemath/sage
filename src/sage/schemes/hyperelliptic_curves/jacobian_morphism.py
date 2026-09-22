@@ -118,14 +118,31 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         EXAMPLES::
 
             sage: R.<x> = PolynomialRing(QQ)
-            sage: H = HyperellipticCurve(x^5 + 2*x^3 + x, x^3 + 1)
+            sage: H = HyperellipticCurve(x^5 + x^2 + x + 1)
             sage: P = H([0,-1])
-            sage: Q = H([0,0])
+            sage: Q = H([1,-2])
             sage: J = H.jacobian()
             sage: D = J(P,Q); D # indirect doctest
-            (x^2, -x - 1 : 0)
+            (x^2 - x, 3*x - 1)
         """
         return f"({self._u}, {self._v})"
+
+    def _latex_(self) -> str:
+        r"""
+        Return the Mumford presentation of the divisor class in LaTeX.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: H = HyperellipticCurve(x^5 + x^2 + x + 1)
+            sage: P = H([0,-1])
+            sage: Q = H([1,-2])
+            sage: J = H.jacobian()
+            sage: D = J(P, Q)
+            sage: latex(D)
+            (x^{2} - x, 3 x - 1)
+        """
+        return f"({self._u._latex_()}, {self._v._latex_()})"
 
     def uv(self) -> tuple[Polynomial, Polynomial]:
         r"""
@@ -419,7 +436,7 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
         self._n = (g - u.degree()) // 2
         super().__init__(parent, u, v, check=check)
 
-    def __repr__(self) -> str:
+    def _repr_(self) -> str:
         """
         Return a representation of the element.
 
@@ -434,6 +451,23 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
             (x^2 + x + 4, 4*x : 0)
         """
         return f"({self._u}, {self._v} : {self._n})"
+
+    def _latex_(self) -> str:
+        """
+        Return a LaTeX representation of the element.
+
+        TESTS::
+
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurve(2*x^6 + 1)
+            sage: H.is_inert()
+            True
+            sage: J = Jacobian(H)
+            sage: D = J(x^2 + x + 4, 4*x)
+            sage: latex(D)
+            (x^{2} + x + 4, 4 x : 0)
+        """
+        return f"({self._u._latex_()}, {self._v._latex_()} : {self._n})"
 
     def _add_(self, *args, **kwds):
         r"""
@@ -538,7 +572,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
 
         super().__init__(parent, u, v, check=check)
 
-    def __repr__(self) -> str:
+    def _repr_(self) -> str:
         r"""
         Return a representation of the element.
 
@@ -551,6 +585,21 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
             (x^2 + 3, 3 : 0)
         """
         return f"({self._u}, {self._v} : {self._n})"
+
+    def _latex_(self) -> str:
+        r"""
+        Return a LaTeX representation of the element.
+
+        TESTS::
+
+            sage: R.<x> = GF(5)[]
+            sage: H = HyperellipticCurve(x^6 + 1)
+            sage: J = Jacobian(H)
+            sage: D = J(x^2 + 3, 3)
+            sage: latex(D)
+            (x^{2} + 3, 3 : 0)
+        """
+        return f"({self._u._latex_()}, {self._v._latex_()} : {self._n})"
 
     def __bool__(self) -> bool:
         r"""
