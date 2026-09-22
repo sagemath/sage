@@ -135,7 +135,7 @@ class VoronoiDiagram(SageObject):
             eqs = []
             # the independent term is equal to the norm of the vector squared
             eqs.append(v.dot_product(v))
-            eqs.extend([self._base_ring(-2) * v[k] for k in range(self._d)])
+            eqs.extend(self._base_ring(-2) * v)
             eqs.append(self._base_ring(1))
             e.append(eqs)
 
@@ -205,7 +205,7 @@ class VoronoiDiagram(SageObject):
             eqs = []
             # we substract the weight
             eqs.append(v.dot_product(v) - self._weights[poi])
-            eqs.extend([self._base_ring(-2) * v[k] for k in range(self._d)])
+            eqs.extend(self._base_ring(-2) * v)
             eqs.append(self._base_ring(1))
             e.append(eqs)
 
