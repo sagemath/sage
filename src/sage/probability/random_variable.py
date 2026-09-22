@@ -323,6 +323,37 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             Discrete probability space defined by {'A': 1/2, 'B': 1/4, 'C': 1/4}
             sage: X.entropy().n()
             1.50000000000000
+
+        With ``check=True``, the probabilities must sum to one::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2}, check=True)
+            sage: X.domain()
+            (1, 2)
+
+        Invalid probabilities raise an error::
+
+            sage: DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/4}, check=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: Argument P (= {1: 1/2, 2: 1/4}) does not define a probability function
+
+        The check is exact when the codomain is the rationals::
+
+            sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2}, codomain=QQ, check=True)
+            sage: X.domain()
+            (1, 2)
+
+            sage: DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/4}, codomain=QQ, check=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: Argument P (= {1: 1/2, 2: 1/4}) does not define a probability function
+
+        An invalid codomain raises an error::
+
+            sage: DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2}, codomain=ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: Argument codomain (= Integer Ring) must be the reals or rationals
         """
         if codomain is None:
             from sage.rings.real_mpfr import RealField
@@ -333,12 +364,15 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             one = sum(P.values())
             if isinstance(codomain, RationalField):
                 if not one == 1:
-                    raise TypeError("Argument P (= %s) does not define a probability function")
+                    raise TypeError("Argument P (= %s) does not define a probability function" % P)
             else:
                 if not abs(one - 1) < 2 ** (-codomain.precision() + 1):
-                    raise TypeError("Argument P (= %s) does not define a probability function")
+                    raise TypeError("Argument P (= %s) does not define a probability function" % P)
         ProbabilitySpace_generic.__init__(self, X, codomain)
-        DiscreteRandomVariable.__init__(self, self, P, codomain, check)
+        # The probability function has already been checked above, so
+        # pass check=False to avoid DiscreteRandomVariable's
+        # unimplemented check.
+        DiscreteRandomVariable.__init__(self, self, P, codomain, False)
 
     def __repr__(self):
         """
@@ -357,12 +391,52 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         r"""
         The set of values of the probability space taking possibly nonzero
         probability (a subset of the domain).
+
+        EXAMPLES::
+
+            sage: X = DiscreteProbabilitySpace([1, 2, 3], {1: 1/2, 2: 1/4, 3: 1/4})
+            sage: X.set()
+            {1, 2, 3}
+
+        The set is determined by the keys of the probability function,
+        not by the domain::
+
+            sage: X = DiscreteProbabilitySpace([1, 2, 3, 4], {1: 1/2, 2: 1/2})
+            sage: X.set()
+            {1, 2}
         """
         return Set(self.function())
 
     def entropy(self):
-        """
+        r"""
         The entropy of the probability space.
+
+        EXAMPLES::
+
+            A fair coin has one bit of entropy::
+
+                sage: X = DiscreteProbabilitySpace([1, 2], {1: 1/2, 2: 1/2})
+                sage: X.entropy().n(digits=10)
+                1.000000000
+
+            Four equally likely outcomes have two bits::
+
+                sage: X = DiscreteProbabilitySpace([1, 2, 3, 4],
+                ....:     {1: 1/4, 2: 1/4, 3: 1/4, 4: 1/4})
+                sage: X.entropy().n(digits=10)
+                2.000000000
+
+            A non-uniform distribution has less entropy::
+
+                sage: X = DiscreteProbabilitySpace([1, 2, 3], {1: 1/2, 2: 1/4, 3: 1/4})
+                sage: X.entropy().n(digits=10)
+                1.500000000
+
+            An outcome with zero probability contributes nothing::
+
+                sage: X = DiscreteProbabilitySpace([1, 2], {1: 1, 2: 0})
+                sage: X.entropy().n(digits=10)
+                0.0000000000
         """
         def neg_xlog2x(p):
             if p == 0:
