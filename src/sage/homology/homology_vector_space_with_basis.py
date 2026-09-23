@@ -1129,69 +1129,33 @@ class CohomologyRing_mod2(CohomologyRing):
 
             # Do the square on each graded component of ``self``.
             for j in deg_comp:
-                # Make it into an actual element
-                m = j + i
-                if not P._graded_indices.get(m, []) or i > j:
+                if j < i:
+                    # Sq^i kills dimensions < i
                     continue
+                m = j + i
+                if not P._graded_indices.get(m, []):
+                    # Target cohomology is trivial
+                    continue
+                # Make it into an actual element
                 elt = P._from_dict(deg_comp[j], remove_zeros=False)
                 if i == j:
                     ret += elt.cup_product(elt)
                     continue
-
                 n = j - i
-                # Now assemble the indices over which the sums take place.
-                # S(n) is defined to be floor((m+1)/2) + floor(n/2).
-                S_n = (m+1) // 2 + n // 2
-                if n == 0:
-                    sums = [[S_n]]
-                else:
-                    sums = [[i_n] + l for i_n in range(S_n, m+1)
-                            for l in sum_indices(n-1, i_n, S_n)]
-                # At this point, 'sums' is a list of lists of the form
-                # [i_n, i_{n-1}, ..., i_0]. (It is reversed from the
-                # obvious order because this is closer to the order in
-                # which the face maps will be applied.)  Now we sum over
-                # these, according to the formula in [GDR1999], Corollary 3.2.
+                face_map_pairs = Sq_face_map_pairs(m, n)
                 result = {}
                 cycle = elt.to_cycle()
                 n_chains = scomplex.n_chains(j, base_ring)
                 for gamma_index in H._graded_indices.get(m, []):
                     gamma_coeff = base_ring.zero()
                     for cell, coeff in H._to_cycle_on_basis((m, gamma_index)):
-                        for indices in sums:
-                            indices = list(indices)
+                        for left_face_maps, right_face_maps in face_map_pairs:
                             left = cell
+                            for k in left_face_maps:
+                                left = scomplex.face(left, k)
                             right = cell
-                            # Since we are working with a simplicial complex, 'cell' is a simplex.
-                            if not m % 2:
-                                left_endpoint = m
-                                while indices:
-                                    right_endpoint = indices[0] - 1
-                                    for k in range(left_endpoint, indices.pop(0), -1):
-                                        left = scomplex.face(left, k)
-                                    try:
-                                        left_endpoint = indices[0] - 1
-                                        for k in range(right_endpoint, indices.pop(0), -1):
-                                            right = scomplex.face(right, k)
-                                    except IndexError:
-                                        pass
-                                for k in range(right_endpoint, -1, -1):
-                                    right = scomplex.face(right, k)
-                            else:
-                                right_endpoint = m
-                                while indices:
-                                    left_endpoint = indices[0] - 1
-                                    try:
-                                        for k in range(right_endpoint, indices.pop(0), -1):
-                                            right = scomplex.face(right, k)
-                                        right_endpoint = indices[0] - 1
-                                    except IndexError:
-                                        pass
-                                    for k in range(left_endpoint, indices.pop(0), -1):
-                                        left = scomplex.face(left, k)
-                                for k in range(right_endpoint, -1, -1):
-                                    right = scomplex.face(right, k)
-
+                            for k in right_face_maps:
+                                right = scomplex.face(right, k)
                             if ((hasattr(left, 'is_nondegenerate')
                                  and left.is_nondegenerate()
                                  and right.is_nondegenerate())
@@ -1393,7 +1357,70 @@ class CohomologyRing_mod2(CohomologyRing):
                           len(H_basis_cod), entries)
 
 
-def sum_indices(k, i_k_plus_one, S_k_plus_one):
+def Sq_face_map_pairs(m, n):
+    return [indices_to_face_map_pairs(indices, m)
+            for indices in Sq_sum_indices(m, n)]
+
+def indices_to_face_map_pairs(indices, m):
+    left_face_maps, right_face_maps = [], []
+    indices = list(indices)
+    # Since we are working with a simplicial complex, 'cell' is a simplex.
+    if not m % 2:
+        left_endpoint = m
+        while indices:
+            right_endpoint = indices[0] - 1
+            for k in range(left_endpoint, indices.pop(0), -1):
+                left_face_maps.append(k)
+            try:
+                left_endpoint = indices[0] - 1
+                for k in range(right_endpoint, indices.pop(0), -1):
+                    right_face_maps.append(k)
+            except IndexError:
+                pass
+        for k in range(right_endpoint, -1, -1):
+            right_face_maps.append(k)
+    else:
+        right_endpoint = m
+        while indices:
+            left_endpoint = indices[0] - 1
+            try:
+                for k in range(right_endpoint, indices.pop(0), -1):
+                    right_face_maps.append(k)
+                right_endpoint = indices[0] - 1
+            except IndexError:
+                pass
+            for k in range(left_endpoint, indices.pop(0), -1):
+                left_face_maps.append(k)
+        for k in range(right_endpoint, -1, -1):
+            right_face_maps.append(k)
+    return left_face_maps, right_face_maps
+
+def Sq_sum_indices(m, n):
+    r"""
+    Find the indices `[i_n, i_{n-1}, ..., i_0]` to sum over
+    when computing a Steenrod square `Sq^i : H^j \to H^{j+i}`
+    as in González-Díaz and Réal [GDR1999]_, Corollary 3.2.
+
+    INPUT:
+
+    - ``m`` -- The degree `j+i` of output cochains.
+    - ``n`` -- The difference `j-i`; one less than the length of the indices.
+
+    EXAMPLES::
+
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_sum_indices
+        sage: Sq_sum_indices(1, 1)
+        [[1, 0]]
+    """
+    # S(n) is defined to be floor((m+1)/2) + floor(n/2).
+    S_n = (m+1) // 2 + n // 2
+    sums = [[i_n] + l for i_n in range(S_n, m+1)
+            for l in Sq_sum_indices_helper(n-1, i_n, S_n)]
+    # Sort in decreasing order because this is closer to
+    # the order in which the face maps will be applied.
+    return sums
+
+def Sq_sum_indices_helper(k, i_k_plus_one, S_k_plus_one):
     r"""
     This is a recursive function for computing the indices for the
     nested sums in González-Díaz and Réal [GDR1999]_, Corollary 3.2.
@@ -1421,17 +1448,17 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
 
     EXAMPLES::
 
-        sage: from sage.homology.homology_vector_space_with_basis import sum_indices
-        sage: sum_indices(1, 3, 3)
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_sum_indices_helper
+        sage: Sq_sum_indices_helper(1, 3, 3)
         [[1, 0], [2, 1]]
-        sage: sum_indices(0, 4, 2)
+        sage: Sq_sum_indices_helper(0, 4, 2)
         [[2]]
     """
     S_k = -S_k_plus_one + k//2 + (k+1)//2 + i_k_plus_one
     if k == 0:
         return [[S_k]]
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
-            for l in sum_indices(k-1, i_k, S_k)]
+            for l in Sq_sum_indices_helper(k-1, i_k, S_k)]
 
 
 def is_GF2(R) -> bool:
