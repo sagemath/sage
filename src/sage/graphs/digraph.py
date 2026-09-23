@@ -1231,7 +1231,7 @@ class DiGraph(GenericGraph):
             sage: H = G.to_undirected()
             sage: hasattr(H, '_assoc')
             False
-            sage: G.set_vertex(0, 'abc') 
+            sage: G.set_vertex(0, 'abc')
             sage: hasattr(G, '_assoc')
             True
             sage: H = G.to_undirected()
