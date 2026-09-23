@@ -1806,6 +1806,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             TESTS::
 
+                sage: M0 = MolecularSpecies([])
+                sage: M0.one()()
+                1
+
                 sage: M = MolecularSpecies("X")
                 sage: M.one()()
                 Traceback (most recent call last):
@@ -1832,6 +1836,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 raise ValueError("all args must have the same parent")
             if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
                 raise ValueError("all args must be molecular species")
+
+            if not args:
+                # the parent has arity zero, so self is the unit
+                return self
 
             # TODO: the case that G in F(G) has a constant part and F
             # is a polynomial species is not yet covered - see
@@ -2155,6 +2163,25 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             True
         """
         return self.is_molecular() and len(self.support()[0]) == 1
+
+    def is_singleton(self):
+        r"""
+        Return whether this is one of the singleton species of the parent.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, ["X", "Y"])
+            sage: X, Y = P._first_ngens(P._arity)
+            sage: Y.is_singleton()
+            True
+            sage: (X + Y).is_singleton()
+            False
+            sage: (2*X).is_singleton()
+            False
+        """
+        P = self.parent()
+        return self in P._first_ngens(P._arity)
 
     def tilde(self):
         r"""
@@ -2629,8 +2656,34 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             ...
             ValueError: all args must have the same parent
 
+        Substitution reduces to relabelling the sorts if every
+        argument is either zero or a singleton::
+
+            sage: P.<X, Y> = PolynomialSpecies(QQ)
+            sage: Q.<A, B, C> = PolynomialSpecies(QQ)
+            sage: Z = Q.zero()
+            sage: E2 = P(SymmetricGroup(2), {0: [1, 2]})
+            sage: (X + Y + E2)(A, B)
+            A + B + E_2(A)
+            sage: (X + Y + E2)(A, A)
+            2*A + E_2(A)
+            sage: (X + Y + E2)(A, Z)
+            A + E_2(A)
+            sage: (X + Y + E2)(Z, A)
+            A
+            sage: (X + Y + E2)(Z, Z)
+            0
+
             sage: P.zero()(X, X)
             0
+
+        Check the case of arity zero::
+
+            sage: P = PolynomialSpecies(QQ, [])
+            sage: P.one()()
+            1
+            sage: (5*P.one())()
+            5
         """
         P = self.parent()
         if len(args) != P._arity:
@@ -2638,11 +2691,46 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         if len(set(arg.parent() for arg in args)) > 1:
             raise ValueError("all args must have the same parent")
 
-        P0 = args[0].parent()
+        P0 = args[0].parent() if args else P
         if not isinstance(P0, PolynomialSpecies):
             raise ValueError("the args must be PolynomialSpecies")
         if not self.support():
             return P0.zero()
+
+        # composition with zero and singleton species only relabels
+        # the sorts.  Atomic species supported on a sort that is
+        # substituted by zero vanish.
+        if args and all(g.is_zero() or g.is_singleton() for g in args):
+            target_singletons = P0._first_ngens(P0._arity)
+            sorts = [None if g.is_zero() else target_singletons.index(g)
+                     for g in args]
+            M = P0._indices
+            A = M._indices
+            R = P0.base_ring()
+
+            def relabel_atomic(a):
+                pi = {}
+                for s, block in zip(sorts, a._dompart):
+                    if block:
+                        if s is None:
+                            return None
+                        pi.setdefault(s, []).extend(block)
+                return A(a._dis, pi, check=False)
+
+            result = {}
+            for mol, c in self.monomial_coefficients().items():
+                factors = {}
+                for a, e in mol._monomial.items():
+                    a_new = relabel_atomic(a)
+                    if a_new is None:
+                        factors = None
+                        break
+                    factors[a_new] = factors.get(a_new, ZZ.zero()) + e
+                if factors is None:
+                    continue
+                mol_new = M(factors, check=False)
+                result[mol_new] = result.get(mol_new, R.zero()) + c
+            return P0._from_dict(result)
 
         args = [sorted(g, key=lambda x: x[0].grade()) for g in args]
         multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
