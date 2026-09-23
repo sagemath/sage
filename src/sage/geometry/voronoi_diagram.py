@@ -191,7 +191,7 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: V = VoronoiDiagram([[1, 3], [2, -2], [-1 ,2], [2, 2]], weights=[1, 9, 0, 8]); V
+            sage: V = VoronoiDiagram([[1, 3], [2, -2], [-1 ,2], [2, 2]], weights=[1, 9, 0, 8]); V        # indirect doctest
             The power diagram of 4 points of dimension 2 in the Rational Field
         """
         self._is_power_diagram = True
