@@ -1045,7 +1045,7 @@ class Graph(GenericGraph):
             sage: Graph(g).get_vertices()
             {0: 'foo'}
 
-        Check that vertex attributes are properly set::
+        Check that vertex attributes are properly set (:issue:`42841`)::
 
             sage: G = Graph(2)
             sage: G.get_vertices()
