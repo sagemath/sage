@@ -7828,7 +7828,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return classes
 
-    @rename_keyword(deprecation=13112, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42839, use_edge_labels='by_weight')
     def edge_cut(self, s, t, value_only=True, by_weight=False,
                  weight_function=None, check_weight=True, vertices=False,
                  algorithm='FF', solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -8001,7 +8001,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.edge_cut(0, 2, use_edge_labels=True)
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/13112 for details.
+            See https://github.com/sagemath/sage/issues/42839 for details.
             2
         """
         self._scream_if_not_simple(allow_loops=True)
@@ -8241,7 +8241,7 @@ class GenericGraph(GenericGraph_pyx):
             answer.append([l0, l1])
         return tuple(answer)
 
-    @rename_keyword(deprecation=13112, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42839, use_edge_labels='by_weight')
     def multiway_cut(self, vertices, value_only=False, by_weight=False,
                      weight_function=None, check_weight=True,
                      solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -8344,7 +8344,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.multiway_cut([0, 2], value_only=True, use_edge_labels=True)         # needs sage.numerical.mip
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/13112 for details.
+            See https://github.com/sagemath/sage/issues/42839 for details.
             2
         """
         self._scream_if_not_simple(allow_loops=True)
@@ -8410,7 +8410,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return [e for e in self.edge_iterator() if cut[good_edge((e[0], e[1]))]]
 
-    @rename_keyword(deprecation=13112, use_edge_labels='by_weight')
+    @rename_keyword(deprecation=42839, use_edge_labels='by_weight')
     def max_cut(self, value_only=True, by_weight=False, weight_function=None,
                 check_weight=True, vertices=False,
                 solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -8498,7 +8498,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.max_cut(use_edge_labels=True)                                       # needs sage.numerical.mip
             doctest:warning...
             DeprecationWarning: use the option 'by_weight' instead of 'use_edge_labels'
-            See https://github.com/sagemath/sage/issues/13112 for details.
+            See https://github.com/sagemath/sage/issues/42839 for details.
             6
         """
         self._scream_if_not_simple(allow_loops=True)
