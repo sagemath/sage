@@ -1044,6 +1044,23 @@ class Graph(GenericGraph):
             {0: 'foo'}
             sage: Graph(g).get_vertices()
             {0: 'foo'}
+
+        Check that vertex attributes are properly set::
+
+            sage: G = Graph(2)
+            sage: G.get_vertices()
+            {0: None, 1: None}
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = Graph(G)
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc')
+            sage: G.get_vertices()
+            {0: 'abc', 1: None}
+            sage: H = Graph(G)
+            sage: H.get_vertices()
+            {0: 'abc', 1: None}
         """
         GenericGraph.__init__(self)
 
@@ -1211,7 +1228,8 @@ class Graph(GenericGraph):
             if data.get_pos() is not None:
                 pos = data.get_pos()
             self.name(data.name())
-            self.set_vertices(data.get_vertices())
+            if hasattr(data, '_assoc'):
+                self.set_vertices(data.get_vertices())
             data._backend.subgraph_given_vertices(self._backend, data)
 
         elif format == 'NX':
