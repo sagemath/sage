@@ -1142,7 +1142,7 @@ class CohomologyRing_mod2(CohomologyRing):
                     ret += elt.cup_product(elt)
                     continue
                 n = j - i
-                face_map_pairs = Sq_face_map_pairs(m, n)
+                face_map_pairs = Sq_face_maps(m, n)
                 result = {}
                 cycle = elt.to_cycle()
                 n_chains = scomplex.n_chains(j, base_ring)
@@ -1357,11 +1357,73 @@ class CohomologyRing_mod2(CohomologyRing):
                           len(H_basis_cod), entries)
 
 
-def Sq_face_map_pairs(m, n):
-    return [indices_to_face_map_pairs(indices, m)
+def Sq_face_maps(m, n):
+    """
+    Find pairs (left_face_maps, right_face_maps) of lists of integers
+    indexing the face maps to apply for each term in the sum
+    computing a Steenrod square `Sq^i : H^j \to H^{j+i}` as in
+    González-Díaz and Réal [GDR1999]_, Corollary 3.2.
+
+    INPUT:
+
+    - ``m`` -- The degree `j+i` of output cochains.
+    - ``n`` -- The difference `j-i`; one less than the length of the indices.
+
+    TESTS::
+
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_face_maps
+        sage: Sq_face_maps(0, 0) # Sq^0(H^0)
+        [([], [])]
+        sage: Sq_face_maps(1, 1) # Sq^0(H^1)
+        [([], [])]
+        sage: Sq_face_maps(2, 0) # Sq^1(H^1)
+        [([2], [0])]
+        sage: Sq_face_maps(2, 2) # Sq^0(H^2)
+        [([], [])]
+        sage: Sq_face_maps(3, 1) # Sq^1(H^2)
+        [([1], [3]), ([2], [0])]
+        sage: Sq_face_maps(4, 0) # Sq^2(H^2)
+        [([4, 3], [1, 0])]
+        sage: Sq_face_maps(3, 3) # Sq^0(H^3)
+        [([], [])]
+        sage: Sq_face_maps(4, 2) # Sq^1(H^3)
+        [([4], [2]), ([4], [0]), ([1], [3]), ([2], [0])]
+        sage: Sq_face_maps(5, 1) # Sq^2(H^3)
+        [([2, 1], [5, 4]), ([3, 2], [5, 0]), ([4, 3], [1, 0])]
+        sage: Sq_face_maps(6, 0) # Sq^3(H^3)
+        [([6, 5, 4], [2, 1, 0])]
+        sage: Sq_face_maps(4, 4) # Sq^0(H^4)
+        [([], [])]
+        sage: Sq_face_maps(5, 3) # Sq^1(H^4)
+        [([3], [5]), ([1], [5]), ([4], [2]), ([4], [0]), ([1], [3]), ([2], [0])]
+        sage: Sq_face_maps(6, 2) # Sq^2(H^4)
+        [([6, 5], [3, 2]), ([6, 5], [3, 0]), ([6, 5], [1, 0]), ([6, 1], [4, 3]), ([6, 2], [4, 0]), ([6, 3], [1, 0]), ([2, 1], [5, 4]), ([3, 2], [5, 0]), ([4, 3], [1, 0])]
+        sage: Sq_face_maps(7, 1) # Sq^3(H^4)
+        [([3, 2, 1], [7, 6, 5]), ([4, 3, 2], [7, 6, 0]), ([5, 4, 3], [7, 1, 0]), ([6, 5, 4], [2, 1, 0])]
+        sage: Sq_face_maps(8, 0) # Sq^4(H^4)
+        [([8, 7, 6, 5], [3, 2, 1, 0])]
+    """
+    return [Sq_indices_to_face_maps(indices, m)
             for indices in Sq_sum_indices(m, n)]
 
-def indices_to_face_map_pairs(indices, m):
+def Sq_indices_to_face_maps(indices, m):
+    """
+    Given a subset `[i_n, i_{n-1}, ..., i_0]` of `{0, ..., m}`,
+    partition its complement into two parts by
+    dealing out contiguous segments alternately between
+    the two output bins. The segment smaller than `i_0`
+    should always go in the right bin.
+
+    TESTS::
+
+        sage: from sage.homology.homology_vector_space_with_basis import Sq_indices_to_face_maps
+        sage: # Input the positions of the bars in "b|a|bbb|aaa"
+        sage: Sq_indices_to_face_maps([7, 3, 1], 10)
+        ([10, 9, 8, 2], [6, 5, 4, 0])
+        sage: # Input the positions of the bars in "|a||a|bb|a|b"
+        sage: Sq_indices_to_face_maps([10, 8, 5, 3, 2, 0], 11)
+        ([9, 4, 1], [11, 7, 6])
+    """
     left_face_maps, right_face_maps = [], []
     indices = list(indices)
     # Since we are working with a simplicial complex, 'cell' is a simplex.
@@ -1395,25 +1457,60 @@ def indices_to_face_map_pairs(indices, m):
             right_face_maps.append(k)
     return left_face_maps, right_face_maps
 
+
 def Sq_sum_indices(m, n):
     r"""
     Find the indices `[i_n, i_{n-1}, ..., i_0]` to sum over
     when computing a Steenrod square `Sq^i : H^j \to H^{j+i}`
     as in González-Díaz and Réal [GDR1999]_, Corollary 3.2.
 
+    When :func:`Sq_indices_to_face_maps` is applied to indices
+    produced by this function, the resulting left and right
+    face map lists will have the same length.
+
     INPUT:
 
     - ``m`` -- The degree `j+i` of output cochains.
     - ``n`` -- The difference `j-i`; one less than the length of the indices.
 
-    EXAMPLES::
+    TESTS::
 
         sage: from sage.homology.homology_vector_space_with_basis import Sq_sum_indices
-        sage: Sq_sum_indices(1, 1)
+        sage: Sq_sum_indices(0, 0) # Sq^0(H^0)
+        [[0]]
+        sage: Sq_sum_indices(1, 1) # Sq^0(H^1)
         [[1, 0]]
+        sage: Sq_sum_indices(2, 0) # Sq^1(H^1)
+        [[1]]
+        sage: Sq_sum_indices(2, 2) # Sq^0(H^2)
+        [[2, 1, 0]]
+        sage: Sq_sum_indices(3, 1) # Sq^1(H^2)
+        [[2, 0], [3, 1]]
+        sage: Sq_sum_indices(4, 0) # Sq^2(H^2)
+        [[2]]
+        sage: Sq_sum_indices(3, 3) # Sq^0(H^3)
+        [[3, 2, 1, 0]]
+        sage: Sq_sum_indices(4, 2) # Sq^1(H^3)
+        [[3, 1, 0], [3, 2, 1], [4, 2, 0], [4, 3, 1]]
+        sage: Sq_sum_indices(5, 1) # Sq^2(H^3)
+        [[3, 0], [4, 1], [5, 2]]
+        sage: Sq_sum_indices(6, 0) # Sq^3(H^3)
+        [[3]]
+        sage: Sq_sum_indices(4, 4) # Sq^0(H^4)
+        [[4, 3, 2, 1, 0]]
+        sage: Sq_sum_indices(5, 3) # Sq^1(H^4)
+        [[4, 2, 1, 0], [4, 3, 2, 0], [5, 3, 1, 0], [5, 3, 2, 1], [5, 4, 2, 0], [5, 4, 3, 1]]
+        sage: Sq_sum_indices(6, 2) # Sq^2(H^4)
+        [[4, 1, 0], [4, 2, 1], [4, 3, 2], [5, 2, 0], [5, 3, 1], [5, 4, 2], [6, 3, 0], [6, 4, 1], [6, 5, 2]]
+        sage: Sq_sum_indices(7, 1) # Sq^3(H^4)
+        [[4, 0], [5, 1], [6, 2], [7, 3]]
+        sage: Sq_sum_indices(8, 0) # Sq^4(H^4)
+        [[4]]
     """
     # S(n) is defined to be floor((m+1)/2) + floor(n/2).
     S_n = (m+1) // 2 + n // 2
+    if n == 0:
+        return [[S_n]]
     sums = [[i_n] + l for i_n in range(S_n, m+1)
             for l in Sq_sum_indices_helper(n-1, i_n, S_n)]
     # Sort in decreasing order because this is closer to
