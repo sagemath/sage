@@ -210,8 +210,6 @@ class ContourPlot(GraphicPrimitive):
         if options.get('labels', False):
             label_options = options['label_options']
             label_options['fontsize'] = int(label_options['fontsize'])
-            if fill and label_options is None:
-                label_options['inline'] = False
             subplot.clabel(CS, **label_options)
         if options.get('colorbar', False):
             colorbar_options = options['colorbar_options']
@@ -237,6 +235,17 @@ def contour_plot(f, xrange, yrange, **options):
     ``xrange`` and ``yrange`` as demonstrated below.
 
     ``contour_plot(f, (xmin,xmax), (ymin,ymax), ...)``
+
+    The default for ``label_inline`` depends on whether contours are filled::
+
+        sage: C = contour_plot(lambda x, y: x*y, (0, 1), (0, 1),
+        ....:                  fill=False, labels=True)
+        sage: C[0].options()['label_options']['inline']
+        True
+        sage: C = contour_plot(lambda x, y: x*y, (0, 1), (0, 1),
+        ....:                  fill=True, labels=True)
+        sage: C[0].options()['label_options']['inline']
+        False
 
     INPUT:
 
@@ -1024,6 +1033,9 @@ def contour_plot(f, xrange, yrange, **options):
                              dtype=bool)
 
         xy_data_array[mask] = numpy.ma.masked
+
+    if options['label_options']['inline'] is None:
+        options['label_options']['inline'] = not options['fill']
 
     g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, options))
 

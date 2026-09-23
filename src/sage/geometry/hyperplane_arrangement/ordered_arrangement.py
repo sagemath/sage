@@ -382,7 +382,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: H.projective_fundamental_group()
             Finitely presented group < x0, x1 |  >
 
-            sage: # needs sirocco sage.graphs
+            sage: # needs sirocco
             sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
             sage: H = A3(hyperplane_arrangements.braid(4).essentialization())
             sage: G3 = H.projective_fundamental_group(); G3.sorted_presentation()
@@ -482,7 +482,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: H.projective_meridians()
             {0: x0, 1: x1, 2: [x1^-1*x0^-1]}
 
-            sage: # needs sirocco sage.graphs
+            sage: # needs sirocco
             sage: A3.<x, y, z> = OrderedHyperplaneArrangements(QQ)
             sage: H = A3(hyperplane_arrangements.braid(4).essentialization())
             sage: H.projective_meridians()
