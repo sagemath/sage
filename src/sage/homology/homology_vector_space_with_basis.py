@@ -1424,39 +1424,17 @@ def Sq_indices_to_face_maps(indices, m):
         sage: Sq_indices_to_face_maps([10, 8, 5, 3, 2, 0], 11)
         ([9, 4, 1], [11, 7, 6])
     """
-    left_face_maps, right_face_maps = [], []
-    indices = list(indices)
-    # Since we are working with a simplicial complex, 'cell' is a simplex.
-    if not m % 2:
-        left_endpoint = m
-        while indices:
-            right_endpoint = indices[0] - 1
-            for k in range(left_endpoint, indices.pop(0), -1):
-                left_face_maps.append(k)
-            try:
-                left_endpoint = indices[0] - 1
-                for k in range(right_endpoint, indices.pop(0), -1):
-                    right_face_maps.append(k)
-            except IndexError:
-                pass
-        for k in range(right_endpoint, -1, -1):
-            right_face_maps.append(k)
-    else:
-        right_endpoint = m
-        while indices:
-            left_endpoint = indices[0] - 1
-            try:
-                for k in range(right_endpoint, indices.pop(0), -1):
-                    right_face_maps.append(k)
-                right_endpoint = indices[0] - 1
-            except IndexError:
-                pass
-            for k in range(left_endpoint, indices.pop(0), -1):
-                left_face_maps.append(k)
-        for k in range(right_endpoint, -1, -1):
-            right_face_maps.append(k)
-    return left_face_maps, right_face_maps
-
+    omitted = [-1] + sorted(indices) + [m + 1]
+    blocks = list(zip(omitted, omitted[1:]))
+    left_face_maps = []
+    right_face_maps = []
+    for block_index, (left_i, right_i) in enumerate(blocks):
+        between_i = range(left_i + 1, right_i)
+        if block_index % 2:
+            left_face_maps.extend(between_i)
+        else:
+            right_face_maps.extend(between_i)
+    return left_face_maps[::-1], right_face_maps[::-1]
 
 def Sq_sum_indices(m, n):
     r"""
