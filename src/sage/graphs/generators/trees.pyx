@@ -480,7 +480,7 @@ def RandomLobster(n, p, q, seed=None, immutable=False):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.random_lobster(n, p, q, seed=seed),
+    return Graph(networkx.random_lobster_graph(n, p, q, seed=seed),
                  immutable=immutable)
 
 
