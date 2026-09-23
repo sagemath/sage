@@ -1211,8 +1211,7 @@ class Graph(GenericGraph):
             if data.get_pos() is not None:
                 pos = data.get_pos()
             self.name(data.name())
-            if hasattr(data, '_assoc'):
-                self.set_vertices(data.get_vertices())
+            self.set_vertices(data.get_vertices())
             data._backend.subgraph_given_vertices(self._backend, data)
 
         elif format == 'NX':
