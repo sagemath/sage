@@ -82,8 +82,9 @@ cdef class GabowEdgeConnectivity:
         True
 
     The same holds for digraphs with multiple edges, for which the
-    initialization used to be disabled: it filtered on a stale copy of the edge
-    assignment, and so could both miscount and exhaust memory::
+    initialization was disabled until :issue:`42838`: it filtered on a stale
+    copy of the edge assignment, and so could both miscount and exhaust
+    memory::
 
         sage: D = DiGraph([(0, 1), (0, 1), (1, 0), (1, 2),
         ....:              (2, 3), (2, 3), (3, 0), (3, 2)], multiedges=True)
