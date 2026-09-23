@@ -1095,74 +1095,69 @@ class CohomologyRing_mod2(CohomologyRing):
             """
             P = self.parent()
             scomplex = P.complex()
+            base_ring = P.base_ring()
             if isinstance(scomplex, CubicalComplex):
                 # Convert cubical complex to simplicial complex, and
                 # convert self to basis element in the new complex's
                 # cohomology ring.
                 scomplex = SimplicialComplex(scomplex, immutable=True)
-                P = scomplex.cohomology_ring(self.base_ring())
+                P = scomplex.cohomology_ring(base_ring)
                 self = P.sum_of_terms(self.monomial_coefficients().items())
             if not isinstance(scomplex, (SimplicialComplex, SimplicialSet_arbitrary)):
                 print(scomplex, isinstance(scomplex, SimplicialComplex))
                 raise NotImplementedError('Steenrod squares are not implemented for '
                                           'this type of cell complex')
-            scomplex = P.complex()
-            base_ring = P.base_ring()
             if not is_GF2(base_ring):
                 # This should never happen: the class should only be
                 # instantiated in characteristic 2.
                 raise ValueError('Steenrod squares are only defined in characteristic 2')
             # We keep the same notation as in [GDR1999].
-            # The trivial cases:
             if i == 0:
                 # Sq^0 is the identity.
                 return self
-
             # Construct each graded component of ``self``
-            ret = P.zero()
-            H = scomplex.homology_with_basis(base_ring)
             deg_comp = {}
             for index, coeff in self:
-                d = deg_comp.get(index[0], {})
-                d[index] = coeff
-                deg_comp[index[0]] = d
+                deg_comp.setdefault(index[0], {})[index] = coeff
 
-            # Do the square on each graded component of ``self``.
-            for j in deg_comp:
+            ret = P.zero()
+            H = scomplex.homology_with_basis(base_ring)
+
+            # Apply Sq^i to each graded component of ``self``.
+            for j, j_component in deg_comp.items():
                 if j < i:
-                    # Sq^i kills dimensions < i
+                    # Sq^i annihilates degrees < i
                     continue
                 m = j + i
                 if not P._graded_indices.get(m, []):
                     # Target cohomology is trivial
                     continue
                 # Make it into an actual element
-                elt = P._from_dict(deg_comp[j], remove_zeros=False)
-                if i == j:
+                elt = P._from_dict(j_component, remove_zeros=False)
+                if j == i:
                     ret += elt.cup_product(elt)
                     continue
                 n = j - i
-                face_map_pairs = Sq_face_maps(m, n)
+                face_maps = Sq_face_maps(m, n)
                 result = {}
                 cycle = elt.to_cycle()
                 n_chains = scomplex.n_chains(j, base_ring)
                 for gamma_index in H._graded_indices.get(m, []):
                     gamma_coeff = base_ring.zero()
                     for cell, coeff in H._to_cycle_on_basis((m, gamma_index)):
-                        for left_face_maps, right_face_maps in face_map_pairs:
+                        for left_face_maps, right_face_maps in face_maps:
                             left = cell
                             for k in left_face_maps:
                                 left = scomplex.face(left, k)
                             right = cell
                             for k in right_face_maps:
                                 right = scomplex.face(right, k)
-                            if ((hasattr(left, 'is_nondegenerate')
-                                 and left.is_nondegenerate()
-                                 and right.is_nondegenerate())
-                                    or not hasattr(left, 'is_nondegenerate')):
-                                left = n_chains(left)
-                                right = n_chains(right)
-                                gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
+                            if hasattr(left, "is_degenerate"):
+                                if left.is_degenerate() or right.is_degenerate():
+                                     continue
+                            left = n_chains(left)
+                            right = n_chains(right)
+                            gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
                     if gamma_coeff != base_ring.zero():
                         result[(m, gamma_index)] = gamma_coeff
                 ret += P._from_dict(result, remove_zeros=False)
