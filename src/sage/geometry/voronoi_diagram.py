@@ -173,11 +173,11 @@ class VoronoiDiagram(SageObject):
             equ = p.Hrepresentation(j)
             # Forget the last coordinate to project back to our ambient space.
             pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
-                    if u.is_vertex()]
+                     if u.is_vertex()]
             pline = [[u[k] for k in range(self._d)] for u in equ.incident()
-                    if u.is_line()]
+                     if u.is_line()]
             prays = [[u[k] for k in range(self._d)] for u in equ.incident()
-                    if u.is_ray()]
+                     if u.is_ray()]
             (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
                                                     lines=pline, rays=prays,
                                                     base_ring=self._base_ring)
@@ -186,7 +186,8 @@ class VoronoiDiagram(SageObject):
         r"""
         Creates a weighted ``VoronoiDiagram`` instance (a power diagram).
 
-        The code that associates a region to each point of a power diagram is slightly less efficient, since regions might be empty and the order of inequalities can change between the list e and the Polyhedron p.
+        The code that associates a region to each point of a power diagram is slightly less efficient,
+        since regions might be empty and the order of inequalities can change between the list e and the Polyhedron p.
 
         EXAMPLES::
 
@@ -203,7 +204,7 @@ class VoronoiDiagram(SageObject):
         for poi in self._points:
             v = vector(poi)
             eqs = []
-            # we substract the weight
+            # we subtract the weight
             eqs.append(v.dot_product(v) - self._weights[poi])
             eqs.extend(self._base_ring(-2) * v)
             eqs.append(self._base_ring(1))
@@ -246,17 +247,17 @@ class VoronoiDiagram(SageObject):
             else:
                 # We take the infinity norm distance to account for precision errors.
                 distances = [max([abs(ineq[k] - enormalized[i][k]) for k in range(len(ineq))])
-                            for i in available_point_indices]
+                             for i in available_point_indices]
                 arg_min = min(range(len(distances)), key=lambda k: distances[k])
                 i = available_point_indices[arg_min]
             equ = p.Hrepresentation(j)
             # Forget the last coordinate to project back to our ambient space.
             pvert = [[u[k] for k in range(self._d)] for u in equ.incident()
-                    if u.is_vertex()]
+                     if u.is_vertex()]
             pline = [[u[k] for k in range(self._d)] for u in equ.incident()
-                    if u.is_line()]
+                     if u.is_line()]
             prays = [[u[k] for k in range(self._d)] for u in equ.incident()
-                    if u.is_ray()]
+                     if u.is_ray()]
             (self._P)[self._points[i]] = Polyhedron(vertices=pvert,
                                                     lines=pline, rays=prays,
                                                     base_ring=self._base_ring)
@@ -432,7 +433,7 @@ class VoronoiDiagram(SageObject):
                 raise AssertionError("'cell_colors' must be a list or a dictionary")
             for i, p in enumerate(self._P):
                 col = cell_colors[i]
-                if not self.regions()[p].is_empty(): # Skip plotting empty regions.
+                if not self.regions()[p].is_empty():  # Skip plotting empty regions.
                     S += (self.regions()[p]).render_solid(color=col, zorder=1)
                 if plot_weights and self.weights() is not None:
                     from sage.rings.real_double import RDF
@@ -460,4 +461,4 @@ class VoronoiDiagram(SageObject):
             sage: all(V.are_points_in_regions().values()) # True if every point is in its generated region
             True
         """
-        return {p:self.regions()[p].contains(p) for p in self.points()}
+        return {p: self.regions()[p].contains(p) for p in self.points()}
