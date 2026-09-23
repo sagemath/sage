@@ -1222,6 +1222,21 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: there is no dense immutable backend at the moment
+
+        Check that attribute ``_assoc`` is properly set (:issue:`42841`)::
+
+            sage: G = DiGraph(2)
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = G.to_undirected()
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc') 
+            sage: hasattr(G, '_assoc')
+            True
+            sage: H = G.to_undirected()
+            sage: hasattr(H, '_assoc')
+            True
         """
         # Which data structure should be used ?
         if data_structure is not None:
@@ -1273,7 +1288,6 @@ class DiGraph(GenericGraph):
         # Copy attributes '_assoc' and '_embedding' if set
         G._copy_attribute_from(self, '_assoc')
         G._copy_attribute_from(self, '_embedding')
-        G.set_vertices(self.get_vertices())
 
         return G
 
