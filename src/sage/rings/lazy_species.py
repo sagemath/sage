@@ -681,15 +681,12 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             False
         """
         coeff_stream = self._coeff_stream
-        if not isinstance(coeff_stream, Stream_exact):
-            return False
-        if (coeff_stream._constant
+        if (not isinstance(coeff_stream, Stream_exact)
+                or coeff_stream._constant
                 or coeff_stream._degree != 2
                 or coeff_stream.order() != 1):
             return False
-        c = coeff_stream[1]
-        return (isinstance(c, PolynomialSpecies.Element)
-                and c.is_singleton())
+        return coeff_stream[1].is_singleton()
 
     def __call__(self, *args):
         """
@@ -1520,10 +1517,8 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         # the sorts.
         if all(isinstance(g._coeff_stream, Stream_zero) or g.is_singleton()
                for g in args):
-            target_singletons = P._laurent_poly_ring._first_ngens(P._arity)
             zero = P._laurent_poly_ring.zero()
-            poly_args = [zero if isinstance(g._coeff_stream, Stream_zero)
-                         else target_singletons[target_singletons.index(g[1])]
+            poly_args = [zero if isinstance(g._coeff_stream, Stream_zero) else g[1]
                          for g in args]
 
             def coefficient(n):
