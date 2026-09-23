@@ -655,6 +655,42 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
         return R.sum(self[:m])
 
+    def is_singleton(self):
+        r"""
+        Return whether this is a singleton species.
+
+        A species is a singleton if its coefficient stream is exact,
+        consists of a single linear term, and this term is a singleton.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: X.is_singleton()
+            True
+            sage: (2*X).is_singleton()
+            False
+            sage: (X + L.Sets()).is_singleton()
+            False
+
+            sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)
+            sage: X.is_singleton()
+            True
+            sage: Y.is_singleton()
+            True
+            sage: (X + Y).is_singleton()
+            False
+        """
+        coeff_stream = self._coeff_stream
+        if not isinstance(coeff_stream, Stream_exact):
+            return False
+        if (coeff_stream._constant
+                or coeff_stream._degree != 2
+                or coeff_stream.order() != 1):
+            return False
+        c = coeff_stream[1]
+        return (isinstance(c, PolynomialSpecies.Element)
+                and c.is_singleton())
+
     def __call__(self, *args):
         """
         Evaluate ``self`` at ``*args``.
@@ -1439,6 +1475,27 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
             sage: L2.<X,Y> = LazyCombinatorialSpecies(QQ)
             sage: F = L.Sets()(X + 2*Y)
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
+
+        Composition with zero and singleton species takes a fast path::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: E2X = L2(P(SymmetricGroup(2), {0: [1, 2]}))
+            sage: E2Y = L2(P(SymmetricGroup(2), {1: [1, 2]}))
+            sage: F = E2X + E2Y
+            sage: F(X, Y)[2]
+            E_2(X) + E_2(Y)
+            sage: F(Y, X)[2]
+            E_2(X) + E_2(Y)
+            sage: F(X, L2.zero())[2]
+            E_2(X)
+            sage: F(X, X)[2]
+            2*E_2(X)
+
+            sage: L1 = LazyCombinatorialSpecies(QQ, "Z")
+            sage: C = L1.Cycles()(Y)
+            sage: C[20]
+            C_20(Y)
         """
         fP = left.parent()
         # Find a good parent for the result
@@ -1459,51 +1516,68 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
         R = P._internal_poly_ring.base_ring()
         L = fP._internal_poly_ring.base_ring()
 
-        def coeff(g, i):
-            c = g._coeff_stream[i]
-            if not isinstance(c, PolynomialSpecies.Element):
-                return R(c)
-            return c
+        # composition with zero and singleton species only relabels
+        # the sorts.
+        if all(isinstance(g._coeff_stream, Stream_zero) or g.is_singleton()
+               for g in args):
+            target_singletons = P._laurent_poly_ring._first_ngens(P._arity)
+            zero = P._laurent_poly_ring.zero()
+            poly_args = [zero if isinstance(g._coeff_stream, Stream_zero)
+                         else target_singletons[target_singletons.index(g[1])]
+                         for g in args]
 
-        # args_flat and weights contain one list for each g
-        weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j+1)))
-                      for g in args]
+            def coefficient(n):
+                if not n:
+                    if left[0]:
+                        return R(list(left[0])[0][1])
+                    return R.zero()
+                return left[n](*poly_args)
+        else:
+            def coeff(g, i):
+                c = g._coeff_stream[i]
+                if not isinstance(c, PolynomialSpecies.Element):
+                    return R(c)
+                return c
 
-        def flat(g):
-            # function needed to work around python's scoping rules
-            return itertools.chain.from_iterable(coeff(g, j) for j in itertools.count())
+            # args_flat and weights contain one list for each g
+            weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j+1)))
+                          for g in args]
 
-        args_flat1 = [lazy_list(flat(g)) for g in args]
+            def flat(g):
+                # function needed to work around python's scoping rules
+                return itertools.chain.from_iterable(coeff(g, j) for j in itertools.count())
 
-        def coefficient(n):
-            if not n:
-                if left[0]:
-                    return R(list(left[0])[0][1])
-                return R.zero()
-            result = R.zero()
-            for i in range(1, n // gv + 1):
-                # skip i=0 because it produces a term only for n=0
+            args_flat1 = [lazy_list(flat(g)) for g in args]
 
-                # compute homogeneous components
-                lF = defaultdict(L)
-                for M, c in left[i]:
-                    lF[M.grade()] += L._from_dict({M: c})
-                for mc, F in lF.items():
-                    for degrees in weighted_vector_compositions(mc, n, weight_exp):
-                        args_flat = [list(a[0:len(degrees[j])])
-                                     for j, a in enumerate(args_flat1)]
-                        multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
-                                          for d, (_, c) in zip(alpha, g_flat) if d]
-                        molecules = [M for alpha, g_flat in zip(degrees, args_flat)
-                                     for d, (M, _) in zip(alpha, g_flat) if d]
-                        non_zero_degrees = [[d for d in alpha if d] for alpha in degrees]
-                        names = ["X%s" % i for i in range(len(molecules))]
-                        FX = F._compose_with_weighted_singletons(names,
-                                                                 multiplicities,
-                                                                 non_zero_degrees)
-                        FG = [(M(*molecules), c) for M, c in FX]
-                        result += R.sum_of_terms(FG)
-            return result
+            def coefficient(n):
+                if not n:
+                    if left[0]:
+                        return R(list(left[0])[0][1])
+                    return R.zero()
+                result = R.zero()
+                for i in range(1, n // gv + 1):
+                    # skip i=0 because it produces a term only for n=0
+
+                    # compute homogeneous components
+                    lF = defaultdict(L)
+                    for M, c in left[i]:
+                        lF[M.grade()] += L._from_dict({M: c})
+                    for mc, F in lF.items():
+                        for degrees in weighted_vector_compositions(mc, n, weight_exp):
+                            args_flat = [list(a[0:len(degrees[j])])
+                                         for j, a in enumerate(args_flat1)]
+                            multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
+                                              for d, (_, c) in zip(alpha, g_flat) if d]
+                            molecules = [M for alpha, g_flat in zip(degrees, args_flat)
+                                         for d, (M, _) in zip(alpha, g_flat) if d]
+                            non_zero_degrees = [[d for d in alpha if d] for alpha in degrees]
+                            names = ["X%s" % i for i in range(len(molecules))]
+                            FX = F._compose_with_weighted_singletons(names,
+                                                                     multiplicities,
+                                                                     non_zero_degrees)
+                            FG = [(M(*molecules), c) for M, c in FX]
+                            result += R.sum_of_terms(FG)
+                return result
 
         coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
         super().__init__(P, coeff_stream)
