@@ -429,4 +429,3 @@ class ECDSA(DigitalSignatureBase):
         ecdsa = cls(E, E(Gx, Gy), order=n)
         ecdsa.rename(f'ecdsa-{name}')
         return ecdsa
-
