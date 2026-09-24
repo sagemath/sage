@@ -51,7 +51,7 @@ class DigitalSignatureBase(SageObject):
         message to obtain an integer. To make these classes easier to use, we
         therefore suggest that messages are represented as some 32-byte integer.
         An implementer may choose otherwise, but must then override the
-        :meth:`_test_signature` method so that the test suite uses a
+        `_test_signature` method so that the test suite uses a
         representation the scheme accepts.
     """
 
