@@ -93,7 +93,8 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.groups.perm_gps.permgroup import PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_element import SymmetricGroupElement
 from sage.libs.gap.libgap import libgap
-from sage.misc.cachefunc import cached_method, weak_cached_function
+from sage.libs.gap.util import GAPError
+from sage.misc.cachefunc import cached_function, cached_method, weak_cached_function
 from sage.misc.functional import is_even
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
@@ -105,6 +106,38 @@ from sage.sets.primes import Primes
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import CachedRepresentation
+
+
+@cached_function
+def _table_of_marks_from_tomlib(name):
+    r"""
+    Return the table of marks from GAP's ``tomlib`` package.
+
+    Return ``None`` if the table is not available, either because the
+    ``tomlib`` package is not installed or because it does not contain
+    a table for ``name``.
+
+    INPUT:
+
+    - ``name`` -- a string; the name of the table in ``tomlib``, e.g.
+      ``"S6"`` or ``"A5"``
+
+    EXAMPLES::
+
+        sage: from sage.groups.perm_gps.permgroup_named import _table_of_marks_from_tomlib
+        sage: _table_of_marks_from_tomlib("S4")
+        TableOfMarks( "S4" )
+        sage: _table_of_marks_from_tomlib("S3") is None
+        True
+    """
+    try:
+        tom = libgap.TableOfMarks(name)
+    except GAPError:
+        # the tomlib package is not installed
+        return None
+    if tom == libgap.fail:
+        return None
+    return tom
 
 
 class PermutationGroup_unique(CachedRepresentation, PermutationGroup_generic):
@@ -190,6 +223,39 @@ class PermutationGroup_symalt(PermutationGroup_unique):
             v = domain
 
         return super().__classcall__(cls, domain=v)
+
+    def conjugacy_classes_subgroups(self):
+        r"""
+        Return a complete list of representatives of conjugacy classes of
+        subgroups in ``self``.
+
+        The ordering of the subgroups is not specified.
+
+        ALGORITHM:
+
+        Use the table of marks returned by ``_table_of_marks``, which for
+        the groups handled here is taken from GAP's ``tomlib`` package
+        whenever possible.  This is much faster than determining the
+        conjugacy classes of subgroups directly.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(4)
+            sage: ccs = G.conjugacy_classes_subgroups()
+            sage: len(ccs)
+            11
+            sage: sorted(H.order() for H in ccs)
+            [1, 2, 2, 3, 4, 4, 4, 6, 8, 12, 24]
+
+        ::
+
+            sage: G = AlternatingGroup(5)
+            sage: sorted(H.order() for H in G.conjugacy_classes_subgroups())
+            [1, 2, 3, 4, 5, 6, 10, 12, 60]
+        """
+        M = self._table_of_marks()
+        return [self.subgroup(gap_group=M.RepresentativeTom(i))
+                for i in range(1, M.OrdersTom().Length().sage() + 1)]
 
 
 class SymmetricGroup(PermutationGroup_symalt):
@@ -293,6 +359,32 @@ class SymmetricGroup(PermutationGroup_symalt):
             'SymmetricGroup(3)'
         """
         return f'SymmetricGroup({self.degree()})'
+
+    def _table_of_marks(self):
+        r"""
+        Return the table of marks of ``self``.
+
+        GAP's ``tomlib`` package contains precomputed tables of marks
+        for the symmetric groups of small degree.  If such a table is
+        available it is returned; otherwise the table is computed from
+        the group.
+
+        EXAMPLES::
+
+            sage: SymmetricGroup(4)._table_of_marks()
+            TableOfMarks( "S4" )
+            sage: SymmetricGroup(3)._table_of_marks()
+            TableOfMarks( Sym( [ 1 .. 3 ] ) )
+
+        TESTS::
+
+            sage: SymmetricGroup(4)._table_of_marks() is SymmetricGroup(4)._table_of_marks()
+            True
+        """
+        tom = _table_of_marks_from_tomlib(f"S{self.degree()}")
+        if tom is not None:
+            return tom
+        return super()._table_of_marks()
 
     @cached_method
     def index_set(self):
@@ -777,6 +869,32 @@ class AlternatingGroup(PermutationGroup_symalt):
             'AlternatingGroup(3)'
         """
         return f'AlternatingGroup({self.degree()})'
+
+    def _table_of_marks(self):
+        r"""
+        Return the table of marks of ``self``.
+
+        GAP's ``tomlib`` package contains precomputed tables of marks
+        for the alternating groups of small degree.  If such a table is
+        available it is returned; otherwise the table is computed from
+        the group.
+
+        EXAMPLES::
+
+            sage: AlternatingGroup(5)._table_of_marks()
+            TableOfMarks( "A5" )
+            sage: AlternatingGroup(4)._table_of_marks()
+            TableOfMarks( Alt( [ 1 .. 4 ] ) )
+
+        TESTS::
+
+            sage: AlternatingGroup(5)._table_of_marks() is AlternatingGroup(5)._table_of_marks()
+            True
+        """
+        tom = _table_of_marks_from_tomlib(f"A{self.degree()}")
+        if tom is not None:
+            return tom
+        return super()._table_of_marks()
 
 
 class CyclicPermutationGroup(PermutationGroup_unique):

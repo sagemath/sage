@@ -1667,7 +1667,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             f_N = left.generating_series()[N] * factorial(N)
             return f_N * R(S_n)
 
-        M = libgap.TableOfMarks(S_n)
+        M = S_n._table_of_marks()
         m = libgap.MarksTom(M).Length().sage()
         C_n = [libgap.RepresentativeTom(M, i+1) for i in range(m)]
         l_G = [H.gap()
