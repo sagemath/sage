@@ -32,12 +32,12 @@ def _number_field_elements_from_algebraics_list_of_lists_of_lists(listss, **kwds
 
     EXAMPLES::
 
-        sage: rt2 = AA(sqrt(2)); rt2                                                    # needs sage.rings.number_field sage.symbolic
+        sage: rt2 = AA(sqrt(2)); rt2
         1.414213562373095?
-        sage: rt3 = AA(sqrt(3)); rt3                                                    # needs sage.rings.number_field sage.symbolic
+        sage: rt3 = AA(sqrt(3)); rt3
         1.732050807568878?
         sage: from sage.geometry.polyhedron.base_number_field import _number_field_elements_from_algebraics_list_of_lists_of_lists
-        sage: K, results, hom = _number_field_elements_from_algebraics_list_of_lists_of_lists([[[rt2], [1]], [[rt3]], [[1], []]]); results                      # needs sage.rings.number_field sage.symbolic
+        sage: K, results, hom = _number_field_elements_from_algebraics_list_of_lists_of_lists([[[rt2], [1]], [[rt3]], [[1], []]]); results
         [[[-a^3 + 3*a], [1]], [[a^2 - 2]], [[1], []]]
     """
     from sage.rings.qqbar import number_field_elements_from_algebraics
@@ -58,7 +58,7 @@ class Polyhedron_base_number_field(Polyhedron_base):
 
         EXAMPLES::
 
-            sage: # optional - pynormaliz, needs sage.rings.number_field
+            sage: # optional - pynormaliz
             sage: p = Polyhedron(vertices=[(0,1/2), (2,0), (4,5/6)],
             ....:                base_ring=AA, backend='normaliz')
             sage: def convert_QQ(ieqs, eqs):
@@ -79,8 +79,8 @@ class Polyhedron_base_number_field(Polyhedron_base):
 
         TESTS::
 
-            sage: K.<a> = QuadraticField(-5)                                            # needs sage.rings.number_field
-            sage: p = Polyhedron(base_ring=K,       # indirect doctest  # optional - pynormaliz, needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(-5)
+            sage: p = Polyhedron(base_ring=K,       # indirect doctest  # optional - pynormaliz
             ....:                backend='normaliz',
             ....:                vertices=[(a,1/2), (2,0), (4,5/6)])
             Traceback (most recent call last):
@@ -89,11 +89,11 @@ class Polyhedron_base_number_field(Polyhedron_base):
 
         Checks that :issue:`30248` is fixed::
 
-            sage: q = Polyhedron(base_ring=AA,      # indirect doctest  # optional - pynormaliz, needs sage.rings.number_field
+            sage: q = Polyhedron(base_ring=AA,      # indirect doctest  # optional - pynormaliz
             ....:                backend='normaliz',
             ....:                rays=[(0, 0, 1), (0, 1, -1), (1, 0, -1)]); q
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 1 vertex and 3 rays
-            sage: -q                                                    # optional - pynormaliz, needs sage.rings.number_field
+            sage: -q                                                    # optional - pynormaliz
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 1 vertex and 3 rays
         """
         from sage.categories.number_fields import NumberFields
