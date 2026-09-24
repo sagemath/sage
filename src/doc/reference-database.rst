@@ -2325,6 +2325,11 @@
 .. [DeVi1984] \M.-P. Delest, and G. Viennot, *Algebraic Languages and
               Polyominoes Enumeration.* Theoret. Comput. Sci. 34, 169-206, 1984.
 
+.. [DFLLW2023] Luca De Feo, Antonin Leroux, Patrick Longa and Benjamin Wesolowski:
+               *New Algorithms for the Deuring Correspondence: Towards Practical
+               and Secure SQISign Signatures*. Eurocrypt 2023.
+               https://eprint.iacr.org/2022/234.pdf
+
 .. [DFMS1996] Philipppe Di Francesco, Pierre Mathieu, and David Sénéchal.
               *Conformal Field Theory*. Graduate Texts in Contemporary
               Physics, Springer, 1996.
@@ -4282,6 +4287,11 @@
               *PRINTcipher: A block cipher for IC-printing*; in
               CHES, (2010), pp. 16-32.
 
+.. [KLPT2014] David Kohel, Kristin Lauter, Christophe Petit, and Jean-Pierre Tignol:
+              *On the quaternion `\ell`-isogeny path problem*.
+              LMS Journal of Computation and Mathematics 17, pp. 418-432, 2014.
+              https://ia.cr/2014/505
+
 .. [KLRS2016] \S.-J. Kang, K.-H. Lee, H. Ryu, and B. Salisbury.
               *A combinatorial description of the affine Gindikin-Karpelevich
               formula of type* `A_n^{(1)}`. Lie Algebras, Lie Superalgebras,
@@ -5353,6 +5363,10 @@
 .. [MM2022] Matthew Mastroeni and Jason McCullough. *Chow rings of matroids are
             Koszul*. Mathematische Annalen, 387(3-4):1819-1851, November 2022.
 
+.. [MM2024] William E. Mahaney and Travis Morrison: *Computing isogenies at
+            singular points of the modular polynomial*. 2024.
+            https://arxiv.org/pdf/2402.02038
+
 .. [MMIB2012] \Y. Matsumoto, S. Moriyama, H. Imai, D. Bremner:
               Matroid Enumeration for Incidence Geometry,
               Discrete and Computational Geometry,
@@ -5539,7 +5553,14 @@
             247 (1997), 313-320, Cambridge Univ. Press.
 
 .. [Mue2010] Jan Steffen Mueller, *Explicit Kummer surface formulas for arbitrary characteristic*.
-             LMS Journal of Computation and Mathematics, Volume 13, 47--64, 2010.
+             LMS Journal of Computation and Mathematics, Volume 13, 47--64, 2010
+
+.. [Muhle2017] Henri Mühle, *The Core Label Order of a Congruence-Uniform
+               Lattice*, Algebra Universalis 80:10 (2019),
+               :doi:`10.1007/s00012-019-0585-5`, :arxiv:`1708.02104`
+
+.. [Muhle2021] Henri Mühle, *Noncrossing Arc Diagrams, Tamari Lattices, and Parabolic Quotients
+               of the Symmetric Group*. Annals of Combinatorics, Volume 25, pages 307–344 (2021).
 
 .. [Mul2004] Siguna Muller, *On the Computation of Square Roots in
              Finite Fields*, in Designs, Codes and Cryptography,
@@ -6228,6 +6249,10 @@
              cubic graphs*, Journal of Combinatorial Theory, Series B, vol. 138,
              (2019), pages: 219 -- 285, ISSN: 0095 -- 8956,
              :doi:`10.1016/j.jctb.2019.02.002`.
+
+.. [RST2024] Nathan Reading, David E Speyer, and Hugh Thomas, *The fundamental theorem
+             of finite semidistributive lattices*.
+             :arxiv:`1907.08050v2`
 
 .. [RSW2004] Reiner, Stanton, White - *The cyclic sieving phenomenon*,
              Journal of Combinatorial Theory A 108 (2004).
@@ -7058,6 +7083,9 @@
 
 .. [TW1980] \A.D. Thomas and G.V. Wood, Group Tables (Exeter: Shiva
             Publishing, 1980)
+
+.. [TW2018] Hugh Thomas and Nathan Williams, *Rowmotion in slow motion*.
+            :arxiv:`1712.10123v2`
 
 .. [TY1984] Robert Endre Tarjan, Mihalis Yannakakis. *Simple linear-time
             algorithms to test chordality of graphs, test acyclicity of

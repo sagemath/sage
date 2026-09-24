@@ -260,7 +260,7 @@ def maximal_orthogonal_pairs_lattice(G, labels="pair"):
 
     - [RST2024]_
 
-    - [Muh2021]_
+    - [Muhle2021]_
 
     - [TW2018]_
 
