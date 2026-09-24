@@ -98,11 +98,12 @@ def _parallel_map(function, inputs) -> list:
     :func:`~sage.parallel.decorate.parallel`: a list of pairs
     ``((args, kwds), value)``, which here follows the order of ``inputs``.
 
-    The inputs are split into as many chunks as available CPUs (see
+    The inputs are split into a few chunks for each available CPU (see
     :func:`~sage.parallel.ncpus.ncpus`) and a process is forked for each
     chunk, instead of one for each input: the computations for a single
-    input are often much faster than forking a process. With only one CPU
-    the values are computed in the current process.
+    input are often much faster than forking a process. Having several
+    chunks per CPU balances the load when some CPUs are slower than others.
+    With only one CPU the values are computed in the current process.
 
     INPUT:
 
@@ -122,12 +123,13 @@ def _parallel_map(function, inputs) -> list:
     # the undecorated function: a function decorated with @parallel takes a
     # first argument which is a list as a list of inputs
     function = getattr(function, 'func', function)
-    n = min(ncpus(), len(inputs))
-    if n <= 1:
+    n = ncpus()
+    if n <= 1 or len(inputs) <= 1:
         return [((args, {}), function(*args)) for args in inputs]
+    m = min(4 * n, len(inputs))
     indexed = list(enumerate(inputs))
     values = [None] * len(inputs)
-    chunks = [(function, indexed[k::n]) for k in range(n)]
+    chunks = [(function, indexed[k::m]) for k in range(m)]
     for ((_, chunk), _), chunk_values in _evaluate_chunk(chunks):
         if not isinstance(chunk_values, list):
             raise ChildProcessError("a forked process did not return its results")
@@ -1755,6 +1757,16 @@ def conjugate_positive_form(braid) -> list[list]:
         sage: s1 = B.gen(1)^3
         sage: conjugate_positive_form(s1)
         [[s1^3, []]]
+
+    A braid given by a word `u v u^{-1}` is decomposed through `v`::
+
+        sage: # needs libbraiding
+        sage: B = BraidGroup(4)
+        sage: u = B([2, -1, 3, 3])
+        sage: t = u * B([1, 1, 3]) / u
+        sage: L = conjugate_positive_form(t)
+        sage: t == prod(prod(b) * a / prod(b) for a, b in L)
+        True
     """
     from sage.features.libbraiding import Libbraiding
     Libbraiding().require()
@@ -1762,6 +1774,24 @@ def conjugate_positive_form(braid) -> list[list]:
 
     B = braid.parent()
     d = B.strands()
+    # A braid given by a word u * v * u^-1, as the braids of a braid
+    # monodromy, is decomposed through the core v: the costly computations
+    # below depend on the length of the word, and v is often much shorter.
+    w = braid.Tietze()
+    n = len(w)
+    k = 0
+    while 2 * k + 1 < n and w[k] == -w[n - 1 - k]:
+        k += 1
+    if k:
+        u = B(w[:k])
+        shorts = []
+        for alpha, gammas in conjugate_positive_form(B(w[k:n - k])):
+            # conjugate by u * gamma, written as in the general case below
+            A1 = rightnormalform(u * prod(gammas, B.one()))
+            if A1[-1][0] % 2:
+                alpha = B([d - i for i in alpha.Tietze()])
+            shorts.append([alpha, [B(a0) for a0 in A1[:-1]]])
+        return shorts
     rnf = rightnormalform(braid)
     ex = rnf[-1][0]
     if ex >= 0:
@@ -2300,7 +2330,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         sage: G.sorted_presentation()
         Finitely presented group
         < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x0^-1*x1*x3*x0,
-                           x3^-1*x1^-1*x0^-1*x3*x0*x1, x2^-1*x0^-1*x2*x0 >
+                           x3^-1*x1^-1*x3*x0*x1*x0^-1, x2^-1*x0^-1*x2*x0 >
         sage: dic
         {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
         sage: fundamental_group_arrangement(L, vertical=True)
