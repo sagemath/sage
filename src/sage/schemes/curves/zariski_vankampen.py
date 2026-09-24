@@ -58,6 +58,8 @@ from sage.misc.flatten import flatten
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
+from sage.parallel.ncpus import ncpus
+from sage.rings.complex_arb import ComplexBallField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer_ring import ZZ
@@ -69,6 +71,36 @@ from sage.rings.real_mpfr import RealField
 from sage.schemes.curves.constructor import Curve
 
 roots_interval_cache: dict[tuple, Any] = {}
+
+
+def _parallel_map(function, inputs) -> list:
+    r"""
+    Evaluate a function decorated with :func:`~sage.parallel.decorate.parallel`
+    on a list of inputs.
+
+    The output has the format of the parallel iterator: a list of pairs
+    ``((args, kwds), value)``. If only one CPU is available (see
+    :func:`~sage.parallel.ncpus.ncpus`), the values are computed in the
+    current process, since forking a process for each input would only add
+    overhead.
+
+    INPUT:
+
+    - ``function`` -- a function decorated with ``@parallel``
+    - ``inputs`` -- list of tuples of arguments
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _parallel_map
+        sage: @parallel
+        ....: def f(a, b):
+        ....:     return a + b
+        sage: sorted(_parallel_map(f, [(1, 2), (3, 4)]))
+        [(((1, 2), {}), 3), (((3, 4), {}), 7)]
+    """
+    if ncpus() > 1:
+        return list(function(inputs))
+    return [((tuple(args), {}), function(*args)) for args in inputs]
 
 
 def braid_from_piecewise(strands):
@@ -524,6 +556,116 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
          (0.7651655429449553, -1.015686131039112, -0.25243563967299404),
          (1.0, -1.026166099551513, -0.3276894025360433)]
     """
+    return _followstrand(f, factors, x0, x1, y0a, prec, {})
+
+
+def _segment_polynomial(f, x0, x1, prec, cache):
+    r"""
+    Return `f((1-t) x_0 + t x_1, y)` with interval coefficients.
+
+    The result is stored in ``cache``, so that the substitution is done
+    once per polynomial and segment, instead of once per strand.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables
+    - ``x0``, ``x1`` -- complex numbers, the ends of the segment
+    - ``prec`` -- the precision of the intervals
+    - ``cache`` -- dictionary used to store the results
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _segment_polynomial
+        sage: R.<x, y> = QQ[]
+        sage: cache = {}
+        sage: _segment_polynomial(x^2 + y, 1, 1 + I, 53, cache)
+        -x^2 + 2*I*x + y + 1
+        sage: _segment_polynomial(x^2 + y, 1, 1 + I, 53, cache) is cache[(x^2 + y, 53)]
+        True
+    """
+    key = (f, prec)
+    try:
+        return cache[key]
+    except KeyError:
+        pass
+    CIF = ComplexIntervalField(prec)
+    G = f.change_ring(QQbar).change_ring(CIF)
+    x = G.parent().gen(0)
+    g = G.subs({x: (1 - x) * CIF(x0) + x * CIF(x1)})
+    cache[key] = g
+    return g
+
+
+def _segment_coefficients(f, x0, x1, prec, degree, cache) -> list:
+    r"""
+    Return the interval coefficients of `f((1-t) x_0 + t x_1, y)` in the
+    format expected by ``sirocco``.
+
+    The list contains, for each monomial `t^{d-i} y^i` with `d \leq`
+    ``degree`` (ordered by `d` and then by `i`), the endpoints of the real
+    and imaginary parts of its coefficient. Results are stored in ``cache``.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables
+    - ``x0``, ``x1`` -- complex numbers, the ends of the segment
+    - ``prec`` -- the precision of the intervals
+    - ``degree`` -- the bound for the total degree of the monomials
+    - ``cache`` -- dictionary used to store the results
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _segment_coefficients
+        sage: R.<x, y> = QQ[]
+        sage: cache = {}
+        sage: c = _segment_coefficients(x + 2*y, 0, 1, 53, 1, cache)
+        sage: len(c), c[4:6], c[8:10]
+        (12, [1.00000000000000, 1.00000000000000], [2.00000000000000, 2.00000000000000])
+        sage: _segment_coefficients(x + 2*y, 0, 1, 53, 1, cache) is c
+        True
+    """
+    key = (f, prec, degree)
+    try:
+        return cache[key]
+    except KeyError:
+        pass
+    CIF = ComplexIntervalField(prec)
+    g = _segment_polynomial(f, x0, x1, prec, cache)
+    x, y = g.parent().gens()
+    coefs = []
+    for d in range(degree + 1):
+        for i in range(d + 1):
+            c = CIF(g.coefficient({x: d - i, y: i}))
+            coefs += list(c.real().endpoints())
+            coefs += list(c.imag().endpoints())
+    cache[key] = coefs
+    return coefs
+
+
+def _followstrand(f, factors, x0, x1, y0a, prec, cache) -> list[tuple]:
+    r"""
+    Implementation of :func:`followstrand`.
+
+    The additional argument ``cache`` is a dictionary where the
+    coefficients of the polynomials restricted to the segment are stored;
+    it can be shared by all the strands of a segment.
+
+    TESTS::
+
+        sage: # needs sirocco
+        sage: from sage.schemes.curves.zariski_vankampen import _followstrand, followstrand
+        sage: R.<x, y> = QQ[]
+        sage: f = x^2 + y^3
+        sage: x0, x1 = CC(1, 0), CC(1, 0.5)
+        sage: fup, fdown = f.subs({y: y - 1/10}), f.subs({y: y + 1/10})
+        sage: cache = {}
+        sage: a = _followstrand(f, [fup, fdown], x0, x1, -1.0, 53, cache)
+        sage: a == followstrand(f, [fup, fdown], x0, x1, -1.0)
+        True
+        sage: b = _followstrand(fup, [f, fdown], x0, x1, -0.9, 53, cache)
+        sage: b == followstrand(fup, [f, fdown], x0, x1, -0.9)
+        True
+    """
     if f.degree() == 1:
         CF = ComplexField(prec)
         g = f.change_ring(CF)
@@ -532,20 +674,9 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
         y1 = CF[y](g.subs({x: x1})).roots()[0][0]
         res = [(0.0, y0.real(), y0.imag()), (1.0, y1.real(), y1.imag())]
         return res
-    CIF = ComplexIntervalField(prec)
     CC = ComplexField(prec)
-    G = f.change_ring(QQbar).change_ring(CIF)
-    x, y = G.parent().gens()
-    g = G.subs({x: (1 - x) * CIF(x0) + x * CIF(x1)})
-    coefs = []
-    deg = g.total_degree()
-    for d in range(deg + 1):
-        for i in range(d + 1):
-            c = CIF(g.coefficient({x: d - i, y: i}))
-            cr = c.real()
-            ci = c.imag()
-            coefs += list(cr.endpoints())
-            coefs += list(ci.endpoints())
+    deg = _segment_polynomial(f, x0, x1, prec, cache).total_degree()
+    coefs = _segment_coefficients(f, x0, x1, prec, deg, cache)
     yr = CC(y0a).real()
     yi = CC(y0a).imag()
     coefsfactors = []
@@ -553,15 +684,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
     for fc in factors:
         degfc = fc.degree()
         degsfactors.append(degfc)
-        G = fc.change_ring(QQbar).change_ring(CIF)
-        g = G.subs({x: (1 - x) * CIF(x0) + x * CIF(x1)})
-        for d in range(degfc + 1):
-            for i in range(d + 1):
-                c = CIF(g.coefficient({x: d - i, y: i}))
-                cr = c.real()
-                ci = c.imag()
-                coefsfactors += list(cr.endpoints())
-                coefsfactors += list(ci.endpoints())
+        coefsfactors += _segment_coefficients(fc, x0, x1, prec, degfc, cache)
     from sage.libs.sirocco import (contpath, contpath_mp,
                                    contpath_comps, contpath_mp_comps)
     try:
@@ -576,7 +699,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list[tuple]:
             points = contpath_mp(deg, coefs, yr, yi, prec)
         return points
     except Exception:
-        return followstrand(f, factors, x0, x1, y0a, 2 * prec)
+        return _followstrand(f, factors, x0, x1, y0a, 2 * prec, cache)
 
 
 def newton(f, x0, i0):
@@ -675,6 +798,147 @@ def fieldI(field: NumberField) -> NumberField:
             return F1
 
 
+@cached_function
+def _coefficients_in_y(f) -> tuple:
+    r"""
+    Return the coefficients of ``f`` as a polynomial in the second variable.
+
+    They are univariate polynomials in the first variable, so that ``f`` can
+    be restricted to many vertical lines without a multivariate substitution
+    for each one.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _coefficients_in_y
+        sage: R.<x, y> = QQ[]
+        sage: _coefficients_in_y(x^2*y^2 + 3*y - x)
+        (-x, 3, x^2)
+    """
+    y = f.parent().gen(1)
+    return tuple(f.polynomial(y).list())
+
+
+def _restriction(f, x0):
+    r"""
+    Return the univariate polynomial ``f(x0, y)``.
+
+    INPUT:
+
+    - ``f`` -- a polynomial in two variables over a field `F`
+    - ``x0`` -- an element of `F`
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _restriction, fieldI
+        sage: R.<x, y> = fieldI(QQ)[]
+        sage: f = x^2*y^2 + 3*y - x
+        sage: _restriction(f, 2)
+        4*y^2 + 3*y - 2
+        sage: _restriction(f, 2) == f.subs({x: 2}).polynomial(y)
+        True
+    """
+    F = f.base_ring()
+    x0 = F(x0)
+    return F[f.parent().gen(1)]([c(x0) for c in _coefficients_in_y(f)])
+
+
+def _isolated_roots(pol, prec=53) -> list:
+    r"""
+    Return disjoint complex balls isolating the roots of ``pol``.
+
+    Each ball contains exactly one root of ``pol`` and the balls are pairwise
+    disjoint. The roots are computed with certified ball arithmetic, which
+    avoids exact computations in `\QQbar`; the working precision is doubled
+    until all the roots are isolated.
+
+    INPUT:
+
+    - ``pol`` -- a nonconstant univariate polynomial with coefficients in
+      `\QQ` or in a number field with a fixed embedding in `\QQbar`
+
+    - ``prec`` -- integer (default: 53); the initial precision in bits
+
+    OUTPUT: list of complex balls, one for each distinct root of ``pol``
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _isolated_roots, fieldI
+        sage: K = fieldI(QQ)
+        sage: t = polygen(K)
+        sage: rts = _isolated_roots(t^3 - 1); len(rts)
+        3
+        sage: CBF100 = ComplexBallField(100)
+        sage: all(sum(b.overlaps(CBF100(r)) for b in rts) == 1
+        ....:     for r in (t^3 - 1).roots(QQbar, multiplicities=False))
+        True
+
+    Multiple roots are returned once::
+
+        sage: len(_isolated_roots((t - 1)^2 * (t + K.gen())))
+        2
+    """
+    squarefree = False
+    while True:
+        try:
+            return pol.roots(ComplexBallField(2 * prec), multiplicities=False)
+        except ValueError:
+            # The roots are not isolated at this precision. Multiple roots
+            # can never be isolated, so the squarefree part is used from now
+            # on; it is not computed beforehand, since the polynomials used in
+            # this module are usually squarefree.
+            if not squarefree:
+                d = pol.gcd(pol.derivative())
+                if d.degree() > 0:
+                    pol = pol // d
+                squarefree = True
+            else:
+                prec *= 2
+
+
+def _refine_root(pol, ball, prec):
+    r"""
+    Return an approximation of the root of ``pol`` in ``ball`` with ``prec``
+    bits of precision.
+
+    Newton iterations in floating point arithmetic are applied to the center
+    of ``ball``, which must isolate a simple root of ``pol``. The result is
+    not certified; it is used to choose simple rational approximations of
+    roots that are certified by other means.
+
+    INPUT:
+
+    - ``pol`` -- a univariate polynomial with coefficients in `\QQ` or in a
+      number field with a fixed embedding in `\QQbar`
+    - ``ball`` -- a complex ball isolating a simple root of ``pol``
+    - ``prec`` -- the precision of the result
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _isolated_roots, _refine_root
+        sage: t = polygen(QQ)
+        sage: b = [r for r in _isolated_roots(t^2 - 2) if r.real() > 0][0]
+        sage: z = _refine_root(t^2 - 2, b, 300)
+        sage: z.parent()
+        Complex Field with 300 bits of precision
+        sage: abs(z - RealField(300)(2).sqrt()) < 2^-295
+        True
+    """
+    CF = ComplexField(prec)
+    z = CF(ball.mid())
+    polC = pol.change_ring(CF)
+    dpolC = polC.derivative()
+    for _ in range(int(prec).bit_length() + 2):
+        dz = polC(z) / dpolC(z)
+        z -= dz
+        if dz.abs() <= z.abs() >> prec:
+            break
+    return z
+
+
 @parallel
 def roots_interval(f, x0) -> dict:
     """
@@ -720,31 +984,49 @@ def roots_interval(f, x0) -> dict:
           -0.933012701892219 + 1.29903810567666*I,
           -0.0669872981077806 + 0.433012701892219*I)]
     """
-    F1 = f.base_ring()
-    x, y = f.parent().gens()
-    fx = F1[y](f.subs({x: F1(x0)}))
-    roots = fx.roots(QQbar, multiplicities=False)
+    fx = _restriction(f, x0)
+    # Certified isolating balls replace the exact roots in QQbar: proving
+    # the interval Newton condition at an exact algebraic root forces QQbar
+    # to decide that f(root) is exactly zero, which is very expensive.
+    roots = _isolated_roots(fx)
+    I0 = QQbar.gen()
     result = {}
     for i, r in enumerate(roots):
+        others = roots[:i] + roots[i + 1:]
         prec = 53
-        IF = ComplexIntervalField(prec)
-        CF = ComplexField(prec)
         divisor = 4
-        diam = min((CF(r) - CF(r0)).abs()
-                   for r0 in roots[:i] + roots[i + 1:]) / divisor
-        envelop = IF(diam) * IF((-1, 1), (-1, 1))
-        while newton(fx, r, r + envelop) not in r + envelop:
-            prec += 53
+        while True:
             IF = ComplexIntervalField(prec)
             CF = ComplexField(prec)
-            divisor *= 2
-            diam = min((CF(r) - CF(r0)).abs()
-                       for r0 in roots[:i] + roots[i + 1:]) / divisor
+            diam = min((CF(r) - CF(r0)).abs() for r0 in others) / divisor
             envelop = IF(diam) * IF((-1, 1), (-1, 1))
-        qapr = QQ(CF(r).real()) + QQbar.gen() * QQ(CF(r).imag())
-        if qapr not in r + envelop:
+            box = IF(r) + envelop
+            # The ball r contains a root of fx and it is contained in box. If
+            # the derivative does not vanish on the (convex) box, this root is
+            # the only one in box. This is the condition checked by the
+            # interval Newton operator at an exact root.
+            if not fx.derivative()(box).contains_zero():
+                break
+            prec += 53
+            divisor *= 2
+        # The rational approximation of the root is taken at the precision
+        # ``prec``, from an approximation whose accuracy is well beyond
+        # ``prec``, so that the rounding agrees with the rounding of the exact
+        # root. A part whose ball contains zero is set to zero, as it happens
+        # with the exact roots. Exact ties between roots are kept, which
+        # matters for the order in which the strands are read.
+        if prec == 53:
+            # the balls are computed aiming at a relative accuracy of
+            # 106 bits, which is enough to round to 53 bits
+            z = r.mid()
+        else:
+            z = _refine_root(fx, r, prec + 53)
+        RFp = RealField(prec)
+        qr, qi = (QQ.zero() if part.contains_zero() else QQ(RFp(zpart))
+                  for part, zpart in ((r.real(), z.real()), (r.imag(), z.imag())))
+        if IF(qr, qi) not in box:
             raise ValueError("could not approximate roots with exact values")
-        result[qapr] = r + envelop
+        result[qr + I0 * qi] = box
     return result
 
 
@@ -803,13 +1085,16 @@ def populate_roots_interval_cache(inputs) -> None:
          -1.255469441943070? + 0.9121519421827974?*I: -2.? + 1.?*I,
          0.4795466549853897? - 1.475892845355996?*I: 1.? - 2.?*I,
          0.4795466549853897? + 1.475892845355996?*I: 1.? + 2.?*I,
-         14421467174121563/9293107134194871: 2.? + 0.?*I}
+         7070890639567791/4556439608696174: 2.? + 0.?*I}
     """
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
+    # computed before forking, so that the processes inherit them
+    for f in {inp[0] for inp in tocompute}:
+        _coefficients_in_y(f)
     problem_par = True
     while problem_par:  # hack to deal with random fails in parallelization
         try:
-            result = roots_interval(tocompute)
+            result = _parallel_map(roots_interval, tocompute)
             for r in result:
                 roots_interval_cache[r[0][0]] = r[1]
             problem_par = False
@@ -872,32 +1157,37 @@ def braid_in_segment(glist, x0, x1, precision={}):
     precision1 = precision.copy()
     g = prod(glist)
     F1 = fieldI(g.base_ring())
-    g = g.change_ring(F1)
-    glist1 = [f.change_ring(F1) for f in glist]
-    x, y = g.parent().gens()
+    if g.base_ring() is F1:
+        # nothing to convert; change_ring would rebuild every polynomial
+        glist1 = list(glist)
+    else:
+        g = g.change_ring(F1)
+        glist1 = [f.change_ring(F1) for f in glist]
     intervals = {}
     if not precision1:
         precision1 = {f: 53 for f in glist1}
-    y0s = []
     for f in glist1:
-        if f.variables() == (y,):
-            f0 = F1[y](f)
-        else:
-            f0 = F1[y](f.subs({x: F1(x0)}))
-        y0sf = f0.roots(QQbar, multiplicities=False)
-        y0s += list(y0sf)
+        f0 = _restriction(f, x0)
+        # certified isolating balls for the roots; they play the role of
+        # the exact roots in QQbar, which are much more expensive
+        y0sf = _isolated_roots(f0, precision1[f])
         while True:
             CIFp = ComplexIntervalField(precision1[f])
-            intervals[f] = [r.interval(CIFp) for r in y0sf]
+            intervals[f] = [CIFp(r) for r in y0sf]
             if not any(a.overlaps(b) for a, b in
                        combinations(intervals[f], 2)):
                 break
             precision1[f] *= 2
+            y0sf = _isolated_roots(f0, precision1[f])
     strands = []
+    # the restrictions of the polynomials to the segment are shared
+    # by all the strands
+    segment_cache = {}
     for f in glist:
         for i in intervals[f]:
-            aux = followstrand(f, [p for p in glist if p != f],
-                               x0, x1, i.center(), precision1[f])
+            aux = _followstrand(f, [p for p in glist if p != f],
+                                x0, x1, i.center(), precision1[f],
+                                segment_cache)
             strands.append(aux)
     complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b]
                       for b in strands]
@@ -1369,11 +1659,19 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
     vertices = list(set(flatten(segs)))
     tocacheverts = tuple([(gF, v) for v in vertices])
     populate_roots_interval_cache(tocacheverts)
+    # The groups used by braid_from_piecewise and the coefficients of the
+    # polynomials are computed here, so that forked processes inherit them
+    # instead of computing them again.
+    B = BraidGroup(d)
+    SymmetricGroup(d)
+    for g0 in glistF:
+        _coefficients_in_y(g0)
     end_braid_computation = False
     while not end_braid_computation:
         try:
-            braidscomputed = braid_in_segment([(glistF, seg[0], seg[1])
-                                               for seg in segs])
+            braidscomputed = _parallel_map(braid_in_segment,
+                                           [(glistF, seg[0], seg[1])
+                                            for seg in segs])
             segsbraids = {}
             for braidcomputed in braidscomputed:
                 seg = (braidcomputed[0][0][1], braidcomputed[0][0][2])
@@ -1385,7 +1683,6 @@ def braid_monodromy(f, arrangement=(), vertical=False) -> tuple:
             end_braid_computation = True
         except ChildProcessError:  # hack to deal with random fails first time
             pass
-    B = BraidGroup(d)
     result = []
     for path in geombasis:
         braidpath = B.one()
