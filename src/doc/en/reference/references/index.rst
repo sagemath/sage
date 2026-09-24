@@ -2798,6 +2798,10 @@ REFERENCES:
 .. [Fed2015] Federal Agency on Technical Regulation and Metrology (GOST),
              GOST R 34.12-2015, (2015)
 
+.. [FIPS186-2] National Institute of Standards and Technology.
+               *Digital Signature Standard (DSS)*, FIPS PUB 186-2, 2000.
+               :doi:`10.6028/NIST.FIPS.186-2`
+
 .. [Feingold2004] Alex J. Feingold. *Fusion rules for affine Kac-Moody algebras*.
                   Contemp. Math., **343** (2004), pp. 53-96.
                   :arxiv:`math/0212387`
@@ -6125,6 +6129,11 @@ REFERENCES:
              2003.
              `Downloadable from Reutenauer's website
              <https://reutenauer.math.uqam.ca/wp-content/uploads/2024/05/Free-Lie-Algebras-Handbook-2003-compresse.pdf>`_
+
+.. [RFC6979] \T. Pornin. *Deterministic Usage of the Digital Signature
+             Algorithm (DSA) and Elliptic Curve Digital Signature Algorithm
+             (ECDSA)*, in RFC 6979.
+             Available at https://www.rfc-editor.org/rfc/rfc6979
 
 .. [Rho69] John Rhodes, *Characters and complexity of finite semigroups*
            \J. Combinatorial Theory, vol 6, 1969

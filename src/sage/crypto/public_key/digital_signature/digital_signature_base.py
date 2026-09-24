@@ -25,8 +25,9 @@ AUTHORS:
 
 
 from abc import abstractmethod
-from typing import Any
+from typing import Any, Self
 
+from sage.misc.prandom import randint
 from sage.misc.superseded import experimental_warning
 from sage.structure.sage_object import SageObject
 
@@ -38,41 +39,68 @@ experimental_warning(
 
 class DigitalSignatureBase(SageObject):
     r"""
-    A base class for Digial Signature Schemes
+    A base class for digital signature schemes.
 
     Implementers of this class must implement all abstract methods
-    defined in :meth:`DigitalSignatureBase`.
+    defined in :class:`DigitalSignatureBase`.
 
-    NOTE:
+    .. NOTE::
 
-    Typically Digital Signatures Sign arbitrary bytes as messages, however for teaching purposes
-    most schemes will use a cryptographic hash on the message to generate an integer.
-    Thus to make it easier for users we suggest that messages are represented as some 32-byte
-    integer. This can be changed by the implementor however if so then the implementing class
-    must override the ``_test_sign()`` method to be able to test with different messages.
+        Digital signatures typically sign arbitrary bytes as messages. However,
+        for teaching purposes most schemes will apply a cryptographic hash to the
+        message to obtain an integer. To make these classes easier to use, we
+        therefore suggest that messages are represented as some 32-byte integer.
+        An implementer may choose otherwise, but must then override the
+        :meth:`_test_signature` method so that the test suite uses a
+        representation the scheme accepts.
     """
 
     @abstractmethod
-    def generate_keys(self) -> tuple[Any, Any]:
+    def secret_key(self):
         """
-        Generates a keypair to be used for signatures
+        Generate a valid secret key for the signer.
 
         OUTPUT:
 
-        Returns a 2-tuple of (public_key, secret_key)
+        A secret key, which must be kept secret from all other parties
         """
         raise NotImplementedError
 
     @abstractmethod
-    def sign(self, message, secret_key) -> tuple[Any, Any]:
+    def public_key(self, secret_key):
         """
-        Signs a message from the secret_key
+        Return the public key corresponding to ``secret_key``.
 
         INPUT:
 
-        - ``message`` -- The message that will be signed, these are assumed to be integers
-            for the test suite
-        - ``secret_key`` -- The secret_key that only the signer has.
+        - ``secret_key`` -- the signer's secret key
+
+        OUTPUT:
+
+        The public key that verifiers use to check signatures made with
+        ``secret_key``
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def sign(self, message, secret_key, nonce=None) -> tuple[Any, Any]:
+        """
+        Sign a message with the secret key.
+
+        INPUT:
+
+        - ``message`` -- the message that will be signed; assumed to be an
+          integer for the test suite
+        - ``secret_key`` -- the secret key that only the signer has
+        - ``nonce`` -- (default: ``None``) the per-signature nonce to use. If
+          ``None``, a nonce is chosen uniformly at random, which is what callers
+          should normally do. Passing an explicit nonce makes signing
+          deterministic, which is needed to reproduce published test vectors.
+
+          .. WARNING::
+
+              Reusing a nonce across two different messages reveals the secret
+              key. Only pass an explicit nonce when reproducing a known answer.
 
         OUTPUT:
 
@@ -83,29 +111,33 @@ class DigitalSignatureBase(SageObject):
     @abstractmethod
     def verify(self, public_key, signature, message) -> bool:
         """
-        Verifies that the signature is valid
+        Verify that a signature is valid.
+
+        This must return ``False`` for a malformed signature rather than raising
+        an exception, since a verifier acts on data supplied by another party.
 
         INPUT:
 
-        - ``public_key`` -- A public key that is used to verify that the signature is valid
-        - ``signature`` -- The signature that the verifier is checking is valid
-        - ``message`` -- The message being sent over, assumed to be an integer for the test suite
+        - ``public_key`` -- the public key that the signature is checked against
+        - ``signature`` -- the candidate signature that the verifier is checking
+        - ``message`` -- the message that was signed; assumed to be an integer
+          for the test suite
 
         OUTPUT:
 
-        Returns True if it is a valid signature for the public_key and message and returns
-        False if not.
+        ``True`` if ``signature`` is a valid signature on ``message`` under
+        ``public_key``, and ``False`` otherwise
         """
         raise NotImplementedError
 
     @abstractmethod
-    def parameters(self):
+    def parameters(self) -> tuple:
         """
-        Returns a tuple of the public parameter set for the Digital Signature
+        A tuple of the public parameters of the digital signature scheme.
 
-        :meth:`parameters` should a tuple of useful attributes of the instance
-        which are sufficient to define the parameter set of the digital signature
-        scheme that the instance represents. For some implementations this
+        :meth:`parameters` should return a tuple of useful attributes of the
+        instance which are sufficient to define the parameter set of the digital
+        signature scheme that the instance represents. For some implementations this
         may simply be the parameters passed to ``__init__`` when the object was
         constructed. For some implementations we may wish to return additional
         information for convenience. For example, a digital signature scheme that
@@ -113,14 +145,14 @@ class DigitalSignatureBase(SageObject):
         characteristic of the finite field in addition to the elliptic curve, even
         though the finite field can be accessed via methods on elliptic curve objects.
 
-        The default implementations of ``_eq_`` and ``__hash__`` for
-        :class:`DigitalSignatureBase` are implementing using :meth:`parameters`.
-        Hence two key exchange instances ``a`` and ``b`` compare as equal
-        if and only if ``a.parameters()`` == ``b.parameters()``. Similarly,
-        a key exchange instance ``a`` is hashable if and only if ``a.parameters()``
-        is hashable. This is a reasonable default that should work for most key
-        exchange schemes, but user classes can override the ``_eq_`` and ``__hash__``
-        methods if this is not desirable.
+        The default implementations of ``__eq__`` and ``__hash__`` for
+        :class:`DigitalSignatureBase` are implemented using :meth:`parameters`.
+        Hence two digital signature instances ``a`` and ``b`` compare as equal
+        if and only if ``a.parameters() == b.parameters()``. Similarly,
+        a digital signature instance ``a`` is hashable if and only if
+        ``a.parameters()`` is hashable. This is a reasonable default that should
+        work for most digital signature schemes, but user classes can override the
+        ``__eq__`` and ``__hash__`` methods if this is not desirable.
 
         OUTPUT:
 
@@ -128,30 +160,51 @@ class DigitalSignatureBase(SageObject):
         """
         raise NotImplementedError
 
+    def key_generation(self) -> tuple[Any, Any]:
+        """
+        Generate a keypair to be used for signatures.
+
+        OUTPUT:
+
+        A 2-tuple ``(public_key, secret_key)``
+        """
+        secret_key = self.secret_key()
+        return (self.public_key(secret_key), secret_key)
+
     def do_signature(self, message) -> tuple[Any, Any, Any, Any, bool]:
         """
-        Runs the digital signature protocol for one message, and outputs
+        Run the digital signature protocol for one message, and output
         all values computed.
+
+        INPUT:
+
+        - ``message`` -- the message to sign
+
+        OUTPUT:
 
         A 5-tuple ``(public_key, secret_key, signature, message, result_of_verification)``
         """
-        public_key, secret_key = self.generate_keys()
+        public_key, secret_key = self.key_generation()
         signature, message = self.sign(message, secret_key)
         result_of_verification = self.verify(public_key, signature, message)
         return public_key, secret_key, signature, message, result_of_verification
 
-    
     @classmethod
     def named_parameter_set(cls, name: str) -> Self:
         r"""
-        Convenience method to easily construct particular instances of a key exchange scheme
-        for actual parameter sets that are used in practice and have names. Implementations
-        may also wish to implement a parameter set named 'toy' of a size that is just large
-        enough to be non-trivial but is nowhere near cryptographic size. Implementations may
-        also wish to set a custom name on the key exchange instance before returning it.
+        Convenience method to easily construct particular instances of a digital
+        signature scheme for actual parameter sets that are used in practice and
+        have names. Implementations may also wish to implement a parameter set
+        named 'toy' of a size that is just large enough to be non-trivial but is
+        nowhere near cryptographic size. Implementations may also wish to set a
+        custom name on the digital signature instance before returning it.
 
-        Sage library implementations of key exchange schemes should define a 'toy' implementation
-        and use it for most tests to reduce testing time.
+        Sage library implementations of digital signature schemes should define a
+        'toy' implementation and use it for most tests to reduce testing time.
+
+        INPUT:
+
+        - ``name`` -- the name of the parameter set to construct
         """
         raise ValueError(f'Unknown parameter set name "{name}" for {cls}')
 
@@ -164,15 +217,12 @@ class DigitalSignatureBase(SageObject):
     def __hash__(self) -> int:
         return hash(self.parameters())
 
-    def _test_signature(self, **options):
+    def _test_signature(self, **options) -> None:
         """
-        Tests that the signature scheme verifies a correct signature for a random
+        Test that the signature scheme verifies a correct signature for a random
         integer message.
         """
         tester = self._tester(**options)
         message = randint(2, 2000)
-        public_key, secret_key, signature, message, result = self.do_signature(message)
+        *_, result = self.do_signature(message)
         tester.assertTrue(result)
-
-
-
