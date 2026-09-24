@@ -368,7 +368,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         ::
 
             sage: EllipticCurveHom_composite(E, E.lift_x(3), codomain=E)
-            Composite morphism of degree 20 = 2^2*5:
+            Composite morphism of degree 20 = 2^2*5*1:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19
 
@@ -409,10 +409,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             if not isinstance(codomain, EllipticCurve_generic):
                 raise ValueError(f'not an elliptic curve: {codomain}')
             iso = self._phis[-1].codomain().isomorphism_to(codomain)
-            if hasattr(self._phis[-1], '_set_post_isomorphism'):
-                self._phis[-1]._set_post_isomorphism(iso)
-            else:
-                self._phis.append(iso)
+            self._phis.append(iso)
 
         self._phis = tuple(self._phis)  # make immutable
         self.__perform_inheritance_housekeeping()
@@ -459,7 +456,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
           always return an :class:`EllipticCurveHom_composite` object,
           else may return another :class:`EllipticCurveHom` type
 
-        OUTPUT: the composite of ``maps``
+        OUTPUT: the composition of ``maps``
 
         EXAMPLES::
 
@@ -486,7 +483,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: EllipticCurveHom_composite.from_factors(phi.factors()) == phi
             True
         """
-        maps = tuple(maps)
+        maps = list(maps)
         if not maps and E is None:
             raise ValueError('need either factors or domain')
         if E is None:
@@ -500,13 +497,46 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             E = phi.codomain()
 
         if not maps:
-            maps = (identity_morphism(E),)
+            maps = identity_morphism(E),
 
-        if len(maps) == 1 and not strict:
-            return maps[0]
+        if not strict:
+            # flatten nested compositions
+            i = 0
+            while i < len(maps):
+                if isinstance(maps[i], EllipticCurveHom_composite):
+                    maps[i:i+1] = maps[i].factors()
+                else:
+                    i += 1
+
+            # collect scalars
+            from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
+            scalars = []
+            i = 0
+            while i < len(maps):
+                if isinstance(maps[i], EllipticCurveHom_scalar):
+                    scalars.append(maps[i]._m)
+                    del maps[i]
+                else:
+                    i += 1
+            if scalars:
+                maps.append(E.scalar_multiplication(prod(scalars)))
+
+            # fold isomorphisms and Frobenius isogenies
+            from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            for typ in (WeierstrassIsomorphism, EllipticCurveHom_frobenius):
+                i = 0
+                while i < len(maps) - 1:
+                    if isinstance(maps[i], typ) and isinstance(maps[i+1], typ):
+                        maps[i:i+2] = maps[i+1] * maps[i],
+                    else:
+                        i += 1
+
+            if len(maps) == 1:
+                return maps[0]
 
         result = cls.__new__(cls)
-        result._phis = maps
+        result._phis = tuple(maps)  # immutable
         result.__perform_inheritance_housekeeping()
         return result
 
@@ -656,7 +686,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-3331/4)*x + (-142593/8*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
             sage: iso2 * EllipticCurveHom_composite.from_factors([phi, psi]) # indirect doctest
-            Composite morphism of degree 16 = 4^2:
+            Composite morphism of degree 16 = 2^2*4*1:
               From: Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
@@ -675,15 +705,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         if isinstance(left, EllipticCurveHom_composite):
-            if isinstance(right, EllipticCurveHom_composite):
-                return EllipticCurveHom_composite.from_factors(right.factors() + left.factors())
-            if isinstance(right, EllipticCurveHom):
-                return EllipticCurveHom_composite.from_factors((right,) + left.factors())
+            return EllipticCurveHom_composite.from_factors((right,) + left.factors(), E=right.domain(), strict=False)
         if isinstance(right, EllipticCurveHom_composite):
-            if isinstance(left, WeierstrassIsomorphism) and hasattr(right.factors()[-1], '_set_post_isomorphism'):  # XXX bit of a hack
-                return EllipticCurveHom_composite.from_factors(right.factors()[:-1] + (left * right.factors()[-1],), strict=False)
-            if isinstance(left, EllipticCurveHom):
-                return EllipticCurveHom_composite.from_factors(right.factors() + (left,))
+            return EllipticCurveHom_composite.from_factors(right.factors() + (left,), E=right.domain(), strict=False)
         return NotImplemented
 
     @staticmethod
