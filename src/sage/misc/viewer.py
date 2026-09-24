@@ -77,11 +77,14 @@ def default_viewer(viewer=None):
 
     elif platform.system() == 'Darwin':
         # Simple on OS X, since there is an open command that opens
-        # anything, using the user's preferences.
-        BROWSER = 'open -W'
-        DVI_VIEWER = BROWSER
-        PDF_VIEWER = BROWSER
-        PNG_VIEWER = BROWSER
+        # anything, using the user's preferences. The browser should
+        # not use -W: unlike DVI/PDF/PNG viewers (often opened on a
+        # temp file that gets cleaned up), a browser tab can stay open
+        # indefinitely, and -W would block until the whole browser quits
+        BROWSER = 'open'
+        DVI_VIEWER = BROWSER + ' -W'
+        PDF_VIEWER = BROWSER + ' -W'
+        PNG_VIEWER = BROWSER + ' -W'
 
     elif executable_is_present('xdg-open'):
         # On other OS'es try xdg-open if present.
