@@ -1002,11 +1002,19 @@ def roots_interval(f, x0) -> dict:
         return centers[prec], derivatives[prec]
 
     def refined_roots(prec):
+        # The ball of ``finer`` that contains the same root as a ball r of
+        # ``roots`` overlaps r; it is identified as the only ball of ``finer``
+        # overlapping r. Another ball can only overlap r if its root is close
+        # to r, so smaller balls are computed until the matching is unique.
         if prec not in refined:
-            finer = _isolated_roots(fx, prec)
-            c = [b.mid() for b in finer]
-            refined[prec] = [finer[min(range(n), key=lambda j: (c[j] - r.mid()).abs())]
-                             for r in roots]
+            p = prec
+            while True:
+                finer = _isolated_roots(fx, p)
+                matches = [[b for b in finer if b.overlaps(r)] for r in roots]
+                if all(len(m) == 1 for m in matches):
+                    break
+                p *= 2
+            refined[prec] = [m[0] for m in matches]
         return refined[prec]
 
     boxes = []
