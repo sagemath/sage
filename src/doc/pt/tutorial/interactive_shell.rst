@@ -370,7 +370,7 @@ Outras Dicas para o IPython
 Como observado acima, o Sage usa o IPython como interface, logo você
 pode usar quaisquer comandos e recursos do IPython. Você pode ler a
 `Documentação completa do IPython
-<http://ipython.scipy.org/moin/Documentation>`_ (em inglês).
+<https://ipython.readthedocs.io/en/stable/>`_ (em inglês).
 
 - Você pode usar ``%edit`` (ou ``%ed`` ou ``ed``) para abrir um
   editor, se você desejar digitar algum código mais complexo. Antes de

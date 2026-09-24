@@ -99,8 +99,7 @@ except ImportError:
 cdef inline obj(x):
     if type(x) is LazyImport:
         return (<LazyImport>x).get_object()
-    else:
-        return x
+    return x
 
 
 # boolean to determine whether Sage is still starting up
@@ -114,7 +113,7 @@ cpdef finish_startup():
     Finish the startup phase.
 
     This function must be called exactly once at the end of the Sage
-    import process (:mod:`~sage.all`).
+    import process (``sage.all``).
 
     TESTS::
 
@@ -499,7 +498,7 @@ cdef class LazyImport():
 
         Here we show how to take a function in a module, and lazy
         import it as a method of a class. For the sake of this
-        example, we add manually a function in :mod:`sage.all`::
+        example, we add manually a function in ``sage.all``::
 
             sage: def my_method(self): return self
             sage: import sage.all

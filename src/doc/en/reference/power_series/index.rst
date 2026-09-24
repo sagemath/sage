@@ -22,5 +22,6 @@ Power Series Rings and Laurent Series Rings
    sage/rings/puiseux_series_ring_element
 
    sage/rings/tate_algebra
+   sage/rings/tate_algebra_element
 
 .. include:: ../footer.txt

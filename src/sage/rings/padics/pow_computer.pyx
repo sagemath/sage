@@ -424,8 +424,7 @@ cdef class PowComputer_class(SageObject):
             raise ValueError("n too big")
         if _n < 0:
             return ~self.pow_Integer(-mpz_get_si(_n.value))
-        else:
-            return self.pow_Integer(mpz_get_ui(_n.value))
+        return self.pow_Integer(mpz_get_ui(_n.value))
 
 
 cdef class PowComputer_base(PowComputer_class):

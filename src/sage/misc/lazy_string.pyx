@@ -340,8 +340,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() + other
-        else:
-            return self + (<_LazyString>other).val()
+        return self + (<_LazyString>other).val()
 
     def __mod__(self, other):
         """
@@ -360,8 +359,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() % other
-        else:
-            return self % (<_LazyString>other).val()
+        return self % (<_LazyString>other).val()
 
     def __mul__(self, other):
         """
@@ -377,8 +375,7 @@ cdef class _LazyString():
         """
         if isinstance(self, _LazyString):
             return (<_LazyString>self).val() * other
-        else:
-            return self * (<_LazyString>other).val()
+        return self * (<_LazyString>other).val()
 
     def __richcmp__(_LazyString self, other, int op):
         """

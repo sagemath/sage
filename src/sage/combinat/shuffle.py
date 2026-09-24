@@ -711,7 +711,7 @@ class ShuffleProduct_overlapping(ShuffleProduct_abstract):
 
     If `c = a + b`, then the overlapping shuffle product with
     precisely `a + b - c` overlaps is plainly the shuffle product
-    (:class:`ShuffleProduct_w1w2`).
+    (:class:`~sage.combinat.words.shuffle_product.ShuffleProduct_w1w2`).
 
     INPUT:
 

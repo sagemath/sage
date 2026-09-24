@@ -1679,8 +1679,7 @@ class PlanePartitions_box(PlanePartitions):
 
         .. MATH::
 
-            \prod_{i=1}^{a} \prod_{j=1}^{b} \prod_{k=1}^{c}
-            \frac{i+j+k-1}{i+j+k-2}.
+            \prod_{i=1}^{a} \prod_{j=1}^{b} \frac{i+j+c-1}{i+j-1}.
 
         EXAMPLES::
 
@@ -1688,17 +1687,93 @@ class PlanePartitions_box(PlanePartitions):
             sage: P.cardinality()
             116424
         """
-        A = self._box[0]
-        B = self._box[1]
-        C = self._box[2]
-        return Integer(prod(i + j + k - 1
-                            for i in range(1, A + 1)
-                            for j in range(1, B + 1)
-                            for k in range(1, C + 1)) //
-                       prod(i + j + k - 2
-                            for i in range(1, A + 1)
-                            for j in range(1, B + 1)
-                            for k in range(1, C + 1)))
+        a, b, c = sorted(self._box)
+        return Integer(prod(i + j + c - 1
+                            for i in range(1, a + 1)
+                            for j in range(1, b + 1)) //
+                       prod(i + j - 1
+                            for i in range(1, a + 1)
+                            for j in range(1, b + 1)))
+
+    def generating_series(self, q=None):
+        r"""
+        Return the generating function of plane partitions in this box.
+
+        The generating function of plane partitions inside an `a \times b \times c`
+        box is equal to
+
+        .. MATH::
+            \prod_{i=1}^{a} \prod_{j=1}^{b} \frac{1-q^{i+j+c-1}}{1-q^{i+j-1}}.
+
+        INPUT:
+
+        - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
+          default variable in `\ZZ[q]`
+
+        ALGORITHM:
+
+        This function computes the generating function `N_q(a,b,c)` by factoring it
+        into cyclotomic polynomials:
+
+        .. MATH::
+
+            N_q(a, b, c) = \prod_{d=1}^{a+b+c-1} \Phi_d(q)^{e_d}
+
+        where
+
+        .. MATH::
+            e_d = \sum_{i=0}^{a-1} \left\lfloor \frac{b+c+i}{d} \right\rfloor -
+            \left\lfloor \frac{c+i}{d} \right\rfloor +
+            \left\lfloor \frac{i}{d} \right\rfloor -
+            \left\lfloor \frac{b+i}{d} \right\rfloor.
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions([2, 2, 2])
+            sage: P.generating_series()
+            q^8 + q^7 + 3*q^6 + 3*q^5 + 4*q^4 + 3*q^3 + 3*q^2 + q + 1
+
+            sage: R.<t> = ZZ[]
+            sage: P = PlanePartitions([3, 1, 1])
+            sage: P.generating_series(q=t)
+            t^3 + t^2 + t + 1
+
+        TESTS::
+
+            sage: PlanePartitions([1, 1, 1]).generating_series()
+            q + 1
+
+            sage: PlanePartitions([0, 1, 1]).generating_series()
+            1
+
+            sage: PlanePartitions([1, 8, 5]).generating_series() == q_binomial(8+5, 5)
+            True
+
+            sage: P = PlanePartitions([4, 6, 3])
+            sage: P.cardinality() == P.generating_series()(1)
+            True
+        """
+        from sage.rings.polynomial.cyclotomic import cyclotomic_value
+
+        if q is None:
+            R = ZZ['q']
+            q = R.gen()
+        else:
+            R = q.parent()
+
+        a, b, c = sorted(self._box)
+
+        if a == 0:
+            return R.one()
+
+        factors = []
+
+        for d in range(1, a + b + c):
+            e = sum((b+c+i)//d + i//d - (c+i)//d - (b+i)//d for i in range(a))
+            if e > 0:
+                factors.append(cyclotomic_value(d, q) ** e)
+
+        return prod(factors)
 
     def random_element(self) -> PP:
         r"""

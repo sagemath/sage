@@ -23,7 +23,7 @@ class Singular(Executable):
 
     .. SEEALSO::
 
-        :class:`Feature sage.libs.singular <~sage.features.sagemath.sage__libs__singular>`
+        :class:`Feature sage.libs.singular <sage.features.sagemath.sage__libs__singular>`
 
     EXAMPLES::
 

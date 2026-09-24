@@ -16,6 +16,7 @@ The Sage Category Framework
    :maxdepth: 1
 
    sage/categories/primer
+   sage/categories/basic
    sage/categories/category
    sage/categories/category_with_axiom
    sage/categories/functor

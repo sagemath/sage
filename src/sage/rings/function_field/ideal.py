@@ -377,7 +377,7 @@ class FunctionFieldIdeal(Element):
         """
         Return the factorization of this ideal.
 
-        Subclass of this class should define :meth:`_factor` method that
+        Subclass of this class should define ``_factor`` method that
         returns a list of prime ideal and multiplicity pairs.
 
         EXAMPLES::

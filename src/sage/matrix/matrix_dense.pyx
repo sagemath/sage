@@ -36,6 +36,12 @@ cdef class Matrix_dense(matrix.Matrix):
     cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         self.set_unsafe(i, j, value)
 
+    cdef void set_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j, unsigned long value):
+        self.set_unsafe(i, j, value)
+
+    cdef unsigned long get_unsafe_ui(self, Py_ssize_t i, Py_ssize_t j):
+        return self.get_unsafe(i, j)
+
     def _pickle(self):
         version = -1
         data = self._list()  # linear list of all elements
@@ -54,7 +60,7 @@ cdef class Matrix_dense(matrix.Matrix):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef _richcmp_(self, right, int op):
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -82,13 +88,13 @@ cdef class Matrix_dense(matrix.Matrix):
             sage: M.transpose() == M
             False
         """
-        other = <Matrix_dense>right
+        m_other = <Matrix_dense>other
         cdef Py_ssize_t i, j
         # Parents are equal, so dimensions of self and other are equal
         for i in range(self._nrows):
             for j in range(self._ncols):
                 lij = self.get_unsafe(i, j)
-                rij = other.get_unsafe(i, j)
+                rij = m_other.get_unsafe(i, j)
                 r = richcmp_item(lij, rij, op)
                 if r is not NotImplemented:
                     return bool(r)

@@ -553,7 +553,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
         if not g.order():
             if value_only:
                 return 0
-            elif hex_colors:
+            if hex_colors:
                 return dict()
             return []
         # - Independent set
@@ -585,8 +585,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
             if tmp is not False:
                 if value_only:
                     return k
-                else:
-                    return tmp
+                return tmp
             k += 1
     else:
         # Is the graph empty?
@@ -2119,8 +2118,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
                 return {} if hex_colors else []
             if hex_colors:
                 return format_coloring([[] for _ in range(k)], hex_colors=True)
-            else:
-                return [copy(g) for _ in range(k)]
+            return [copy(g) for _ in range(k)]
 
     if k is None:
         k = max(g.degree())

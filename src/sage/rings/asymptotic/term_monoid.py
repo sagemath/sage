@@ -806,7 +806,7 @@ class GenericTerm(MultiplicativeGroupElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: a tuple of terms
 
@@ -860,7 +860,7 @@ class GenericTerm(MultiplicativeGroupElement):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: a tuple of terms
 
@@ -2528,7 +2528,7 @@ class OTerm(GenericTerm):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: a tuple of terms
 
@@ -3252,7 +3252,7 @@ class TermWithCoefficient(GenericTerm):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: a tuple of terms
 
@@ -3849,7 +3849,7 @@ class ExactTerm(TermWithCoefficient):
         - ``locals`` -- dictionary which may contain the following keys and values:
 
           - ``'log'`` -- value: a function. If not used, then the usual
-            :class:`log <sage.functions.log.Function_log>` is taken.
+            :class:`log <sage.functions.log.Function_log1>` is taken.
 
         OUTPUT: a tuple of terms
 

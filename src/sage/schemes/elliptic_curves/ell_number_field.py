@@ -1960,7 +1960,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
         needed to find all `n`-torsion points that exist over
         the algebraic closure.
 
-        OUTPUT: the :class:`EllipticCurveTorsionSubgroup` associated
+        OUTPUT: the
+        :class:`~sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup`
+        associated
         to this elliptic curve in case ``n`` is ``None``, or an
         :class:`AdditiveAbelianGroupWrapper` object representing
         the `n`-torsion subgroup.
@@ -2041,8 +2043,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
             to determine the field of definition of the `\ell`-torsion subgroup.
 
         ALGORITHM: If ``n`` is ``None``, constructs and returns the
-        :class:`EllipticCurveTorsionSubgroup` of this curve. If ``n``
-        is an integer, calls :meth:`EllipticCurve_field.torsion_subgroup`.
+        :class:`~sage.schemes.elliptic_curves.ell_torsion.EllipticCurveTorsionSubgroup`
+        of this curve. If ``n`` is an integer, calls
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.torsion_subgroup`.
         """
         if n is None:
             if not hasattr(self, '_cached_torsion_subgroup'):
@@ -2601,7 +2604,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
             If using the algorithm ``'heuristic'`` for non-CM curves, the
             result is not guaranteed to be the complete isogeny class,
             since only reducible primes up to the default bound in
-            :meth:`reducible_primes_naive` (currently 1000) are
+            :func:`~sage.schemes.elliptic_curves.gal_reps_number_field.reducible_primes_naive`
+            (currently 1000) are
             tested.  However, no examples of non-CM elliptic curves
             with reducible primes greater than 100 have yet been
             computed so the output is likely to be correct.
@@ -3763,13 +3767,13 @@ class EllipticCurve_number_field(EllipticCurve_field):
           certificate is a prime `p` such that the reductions of `E`
           at the primes dividing `p` are inconsistent with the
           property of being a `\QQ`-curve.  See the documentation for
-          :meth:`sage.src.schemes.elliptic_curves.Qcurves.is_Q_curve`
+          :func:`sage.schemes.elliptic_curves.Qcurves.is_Q_curve`
           for details.
 
         ALGORITHM:
 
         See the documentation for
-        :meth:`sage.src.schemes.elliptic_curves.Qcurves.is_Q_curve`, and
+        :func:`sage.schemes.elliptic_curves.Qcurves.is_Q_curve`, and
         [CrNa2020]_ for details.
 
         EXAMPLES:
@@ -4156,7 +4160,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
     def rational_points(self, **kwds):
         r"""
         Find rational points on the elliptic curve, all arguments are passed
-        on to :meth:`sage.schemes.generic.algebraic_scheme.rational_points`.
+        on to
+        :meth:`sage.schemes.generic.algebraic_scheme.AlgebraicScheme_subscheme.rational_points`.
 
         EXAMPLES::
 

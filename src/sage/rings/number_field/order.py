@@ -831,8 +831,7 @@ class Order(Parent, sage.rings.abc.Order):
         ALGORITHM:
 
         Uses linear algebra.  The change-of-basis matrix is
-        cached.  Provides simpler implementations for
-        :meth:`_contains_`, :meth:`is_integral` and :meth:`smallest_integer`.
+        cached.
 
         EXAMPLES::
 

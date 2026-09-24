@@ -40,8 +40,9 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
     - ``trace`` -- if ``True``, then this displays the trace: the intermediate
       results. This is instructive and fun.
 
-    The parent of ``q`` may be a :class:`PolynomialRing` or a
-    :class:`LaurentPolynomialRing`.
+    The parent of ``q`` may be a
+    :func:`~sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing` or a
+    :func:`~sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing`.
 
     EXAMPLES::
 
@@ -177,7 +178,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
 
         .. SEEALSO::
 
-            :mod:`~sage.libs.coxeter3.coxeter_group.CoxeterGroup.kazhdan_lusztig_polynomial`
+            ``CoxeterGroup.kazhdan_lusztig_polynomial``
             for a faster implementation using Fokko Ducloux's Coxeter3 C++ library.
 
         EXAMPLES::

@@ -156,10 +156,10 @@ Unpickling Cython code
 
 Pickling for Python classes and extension classes, such as Cython, is different.
 This is discussed in the `Python pickling documentation`_. For the unpickling of
-extension classes you need to write a :meth:`__reduce__` method which typically
+extension classes you need to write a :meth:`~object.__reduce__` method which typically
 returns a tuple ``(f, args, ...)`` such that ``f(*args)`` returns (a copy of) the
 original object. As an example, the following code snippet is the
-:meth:`~sage.rings.integer.Integer.__reduce__` method from
+:meth:`~object.__reduce__` method from
 :class:`sage.rings.integer.Integer`:
 
 .. CODE-BLOCK:: cython
@@ -209,4 +209,3 @@ it. We use 666 in the example below.
 
       from sage.misc.superseded import deprecation_cython
       deprecation_cython(666, "Do not use your computer to compute 1+1. Use your brain.")
-

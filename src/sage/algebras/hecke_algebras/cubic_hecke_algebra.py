@@ -545,6 +545,8 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
             sage: sup = mt3_1.support()
             sage: u, v, w, s = mt3_1.base_ring().gens()
             sage: LK3_1 = mt3_1*s**-3 # since the writhe of K3_1 is 3
+
+            sage: # needs libhomfly
             sage: f = MT.specialize_homfly()
             sage: g = sum(f(LK3_1.coefficient(b)) * b.regular_homfly_polynomial() for b in sup); g
             L^-2*M^2 - 2*L^-2 - L^-4

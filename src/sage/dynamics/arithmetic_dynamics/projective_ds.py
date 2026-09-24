@@ -131,8 +131,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         You should not create objects of this class directly because
         no type or consistency checking is performed. The preferred
         method to construct such dynamical systems is to use
-        :func:`~sage.dynamics.arithmetic_dynamics.generic_ds.DynamicalSystem_projective`
-        function
+        :class:`~sage.dynamics.arithmetic_dynamics.projective_ds.DynamicalSystem_projective`
+        constructor.
 
     INPUT:
 
@@ -566,9 +566,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         polynomial and its roots are the points of formal period `period`.
         If possible the division is done in the coordinate ring of this
         map and a polynomial is returned. In rings where that is not
-        possible, a :class:`FractionField` element will be returned.
+        possible, a
+        :class:`~sage.rings.fraction_field_element.FractionFieldElement`
+        will be returned.
         In certain cases, when the conversion back to a polynomial fails,
-        a :class:`SymbolRing` element will be returned.
+        a symbolic expression whose parent is the
+        :class:`~sage.symbolic.ring.SymbolicRing` will be returned.
 
         ALGORITHM:
 
@@ -824,7 +827,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             Multivariate Polynomial Ring in x, y over Univariate Polynomial Ring in
             c over Rational Field
 
-        Some rings still return :class:`SymoblicRing` elements::
+        Some rings still return elements whose parent is the
+        :class:`~sage.symbolic.ring.SymbolicRing`::
 
             sage: S.<t> = FunctionField(CC)
             sage: P.<x,y> = ProjectiveSpace(S,1)
@@ -1665,7 +1669,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         this dynamical system.
 
         If ``normalize`` is ``True``, then first normalize the coordinate
-        functions with :meth:`normalize_coordinates`.
+        functions with
+        :meth:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space.normalize_coordinates`.
 
         INPUT:
 
@@ -2414,7 +2419,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``prec`` -- (default: :class:`RealField` default)
+        - ``prec`` -- (default: :func:`RealField <sage.rings.real_mpfr.RealField>` default)
           positive integer, float point precision
 
         OUTPUT: a real number
@@ -2758,9 +2763,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         OUTPUT:
 
-        If ``return_points`` is ``False``, a :class:`GraphPlot` object representing
+        If ``return_points`` is ``False``, a
+        :class:`~sage.graphs.graph_plot.GraphPlot` object representing
         the `n`-th pre-image tree.  If ``return_points`` is ``True``, a tuple
-        ``(GP, points)``, where ``GP`` is a :class:`GraphPlot` object, and
+        ``(GP, points)``, where ``GP`` is a
+        :class:`~sage.graphs.graph_plot.GraphPlot` object, and
         ``points`` is a list of lists as described above under
         ``return_points``.
 
@@ -3898,7 +3905,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         Only for endomorphisms of `\mathbb{P}^1`. It checks if each critical
         point is preperiodic. The optional parameter ``err`` is passed into
-        :meth:`is_preperiodic` as part of the preperiodic check.
+        :meth:`is_preperiodic <sage.schemes.projective.projective_point.SchemeMorphism_point_projective_ring.is_preperiodic>`
+        as part of the preperiodic check.
 
         The computations can be done either over the algebraic closure of the
         base field or over the minimal extension of the base field that
@@ -5991,8 +5999,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         but this is not always the case. By default the coefficient minimizing
         algorithm in [HS2018]_ is applied.
 
-        See :meth:`sage.rings.polynomial.multi_polynomial.reduced_form` for
-        the information on binary form reduction.
+        See
+        :meth:`~sage.rings.polynomial.multi_polynomial.MPolynomial.reduced_form`
+        for the information on binary form reduction.
 
         Implemented by Rebecca Lauren Miller as part of GSOC 2016.
         Minimal height added by Ben Hutz July 2018.
@@ -7512,7 +7521,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         In others words, all the rational points which have some
         iterate in the set points. This function repeatedly calls
-        :meth:`rational_preimages`. If the degree is at least two,
+        :meth:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space_field.rational_preimages`.
+        If the degree is at least two,
         by Northocott, this is always a finite set. The map must be
         defined over number fields and be an endomorphism.
 

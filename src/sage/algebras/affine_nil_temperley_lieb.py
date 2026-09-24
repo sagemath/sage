@@ -96,7 +96,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         """
         Return the unit of the underlying Weyl group, which index
         the one of this algebra, as per
-        :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        :meth:`~sage.categories.unital_algebras.UnitalAlgebras.WithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
 

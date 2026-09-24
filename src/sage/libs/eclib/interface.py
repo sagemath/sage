@@ -6,7 +6,7 @@ arithmetic on elliptic curves.  The classes defined in this module
 give Sage interpreter-level access to some of the functionality of
 ``eclib``.  For most purposes, it is not necessary to directly use these
 classes. Instead, one can create an
-:class:`EllipticCurve <sage.schemes.elliptic_curves.constructor.EllipticCurve>`
+``EllipticCurve``
 and call methods that are implemented using this module.
 
 .. NOTE::
@@ -1083,7 +1083,7 @@ class mwrank_MordellWeil(SageObject):
 
         - ``min_prime`` -- integer (default: 2); only do saturation at
           primes no less than this.  (For example, if the points have
-          been found via :meth:`two_descent` they should already be
+          been found via :meth:`~sage.libs.eclib.interface.mwrank_EllipticCurve.two_descent` they should already be
           2-saturated so a value of 3 is appropriate.)
 
         OUTPUT:

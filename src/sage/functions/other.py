@@ -1404,7 +1404,7 @@ class Function_factorial(GinacFunction):
             120
 
         We can also give input other than nonnegative integers.  For
-        other nonnegative numbers, the :func:`sage.functions.gamma.gamma`
+        other nonnegative numbers, ``sage.functions.gamma.gamma``
         function is used::
 
             sage: factorial(1/2)                                                        # needs sage.symbolic
@@ -2224,7 +2224,8 @@ class Function_elementof(BuiltinFunction):
 
     This function is called to express a set membership statement,
     usually as part of a solution set returned by :func:`solve`.
-    See :class:`sage.sets.set.Set` and :class:`sage.sets.real_set.RealSet`
+    See :class:`~sage.sets.set.Set_object` and
+    :class:`sage.sets.real_set.RealSet`
     for possible set arguments.
 
     EXAMPLES::

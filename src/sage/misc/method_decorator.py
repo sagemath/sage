@@ -44,7 +44,7 @@ class MethodDecorator(SageObject):
 
             sage: P.<x,y,z> = PolynomialRing(ZZ)
             sage: I = ideal( x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1 )
-            sage: "primary" in I.primary_decomposition._sage_src_() # indirect doctest
+            sage: "variety" in I.variety._sage_src_()  # indirect doctest
             True
         """
         from sage.misc.sageinspect import sage_getsource
@@ -59,10 +59,10 @@ class MethodDecorator(SageObject):
 
             sage: P.<x,y,z> = PolynomialRing(Zmod(126))
             sage: I = ideal( x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1 )
-            sage: I.primary_decomposition() # indirect doctest
+            sage: I.variety()  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: Coefficient ring must be a field for function 'primary_decomposition'.
+            ValueError: Coefficient ring must be a field for function 'variety'.
         """
         return self.f(self._instance, *args, **kwds)
 
@@ -75,10 +75,10 @@ class MethodDecorator(SageObject):
 
             sage: P.<x,y,z> = PolynomialRing(Zmod(126))
             sage: I = ideal( x^2 - 3*y, y^3 - x*y, z^3 - x, x^4 - y*z + 1 )
-            sage: I.primary_decomposition() # indirect doctest
+            sage: I.variety()  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: Coefficient ring must be a field for function 'primary_decomposition'.
+            ValueError: Coefficient ring must be a field for function 'variety'.
         """
         self._instance = inst
         return self

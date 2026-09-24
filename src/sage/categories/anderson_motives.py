@@ -35,7 +35,7 @@ class AndersonMotives(OreModules):
 
     .. SEEALSO::
 
-        :class:`sage.category.drinfeld_modules.DrinfeldModules`,
+        :class:`sage.categories.drinfeld_modules.DrinfeldModules`,
         :mod:`sage.rings.function_field.drinfeld_modules.anderson_motive`
     """
     @staticmethod

@@ -667,7 +667,7 @@ def matrix(*args, **kwds):
       and :issue:`20016`
 
     - Jeroen Demeyer (2018-02-20): completely rewritten using
-      :class:`MatrixArgs`, see :issue:`24742`
+      :class:`~sage.matrix.args.MatrixArgs`, see :issue:`24742`
     """
     immutable = kwds.pop('immutable', False)
     return MatrixArgs(*args, **kwds).element(immutable=immutable)

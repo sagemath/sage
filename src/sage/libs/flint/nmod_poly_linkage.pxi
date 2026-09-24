@@ -131,6 +131,22 @@ cdef inline int celement_set_si(nmod_poly_t res, long i, unsigned long n) except
     if i:
         nmod_poly_set_coeff_ui(res, 0, <unsigned long>i)
 
+cdef inline int celement_set_ui(nmod_poly_t res, unsigned long i, unsigned long n) except -2:
+    """
+    EXAMPLES::
+
+        sage: P.<x> = GF(18446744073709551557)[]
+        sage: P(18446744073709551557)
+        0
+        sage: P(18446744073709551558)
+        1
+        sage: P(-4)
+        18446744073709551553
+    """
+    nmod_poly_zero(res)
+    if i:
+        nmod_poly_set_coeff_ui(res, 0, <unsigned long>i)
+
 cdef inline long celement_get_si(nmod_poly_t res, unsigned long n) except -2:
     raise NotImplementedError
 

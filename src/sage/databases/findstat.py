@@ -1634,7 +1634,7 @@ class FindStatFunction(SageObject):
           statistic followed by its description on a separate line
 
         This information is used when submitting the statistic or map with
-        :meth:`submit`.
+        ``submit``.
 
         EXAMPLES::
 
@@ -1732,7 +1732,7 @@ class FindStatFunction(SageObject):
         <https://findstat.org/NewStatistic>.
 
         This information is used when submitting the statistic with
-        :meth:`submit`.
+        :meth:`~sage.databases.findstat.FindStatStatistic.submit`.
 
         EXAMPLES::
 
@@ -3108,7 +3108,8 @@ class FindStatMap(Element,
     map available in the FindStat database.
 
     This class provides methods to inspect various properties of
-    these maps, in particular :meth:`code`.
+    these maps, in particular
+    :meth:`~sage.databases.findstat.FindStatFunction.sage_code`.
 
     EXAMPLES::
 
@@ -3330,7 +3331,7 @@ class FindStatMap(Element,
         - ``value`` -- string; the new name of the map
 
         This information is used when submitting the map with
-        :meth:`submit`.
+        :meth:`~sage.databases.findstat.FindStatMap.submit`.
 
         TESTS::
 

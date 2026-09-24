@@ -259,8 +259,8 @@ class Standalone(SageObject):
     - ``macros`` -- list of strings (default: ``[]``); stuff you need for the picture
     - ``use_sage_preamble`` -- boolean (default: ``False``); whether to include sage
       latex preamble and sage latex macros, that is, the content of
-      :func:`sage.misc.latex.extra_preamble()`,
-      :func:`sage.misc.latex.extra_macros()` and
+      :meth:`sage.misc.latex.Latex.extra_preamble`,
+      :meth:`sage.misc.latex.Latex.extra_macros` and
       :func:`sage.misc.latex_macros.sage_latex_macros()`
 
     EXAMPLES::
@@ -290,7 +290,7 @@ class Standalone(SageObject):
     """
     def __init__(self, content, document_class_options=None,
                  standalone_config=None, usepackage=None, macros=None,
-                 use_sage_preamble=False):
+                 use_sage_preamble=False) -> None:
         r"""
         See :class:`Standalone` for full information.
 
@@ -314,7 +314,7 @@ class Standalone(SageObject):
             from sage.misc.latex_macros import sage_latex_macros
             self._macros.extend(sage_latex_macros())
 
-    def _latex_file_header_lines(self):
+    def _latex_file_header_lines(self) -> list[str]:
         r"""
         EXAMPLES::
 
@@ -343,7 +343,7 @@ class Standalone(SageObject):
         lines.extend(self._macros)
         return lines
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the Standalone file.
 
@@ -409,8 +409,8 @@ class Standalone(SageObject):
         else:
             lines.extend(L[:5])
             lines.append('---')
-            lines.append('{} lines not printed ({} characters in total).'.format(len(L) - 10,
-                                                           len(self._content)))
+            lines.append(f'{len(L) - 10} lines not printed ({len(self._content)} '
+                         'characters in total).')
             lines.append('Use print to see the full content.')
             lines.append('---')
             lines.extend(L[-5:])
@@ -480,7 +480,7 @@ class Standalone(SageObject):
                 buf = OutputBuffer.from_file(filename)
                 return output_container(buf)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the complete string of the standalone document class file.
 
@@ -509,7 +509,7 @@ class Standalone(SageObject):
         lines.append(r"\end{document}")
         return '\n'.join(lines)
 
-    def content(self):
+    def content(self) -> str:
         r"""
         Return the content of the standalone document class file.
 
@@ -532,7 +532,7 @@ class Standalone(SageObject):
         """
         return self._content
 
-    def add_document_class_option(self, option):
+    def add_document_class_option(self, option: str):
         r"""
         Add a document class option.
 
@@ -575,7 +575,7 @@ class Standalone(SageObject):
         """
         self._standalone_config.append(config)
 
-    def add_usepackage(self, package):
+    def add_usepackage(self, package: str):
         r"""
         Add a ``usepackage`` line.
 
@@ -597,7 +597,7 @@ class Standalone(SageObject):
         """
         self._usepackage.append(package)
 
-    def add_macro(self, macro):
+    def add_macro(self, macro: str):
         r"""
         Add a macro.
 
@@ -1152,7 +1152,7 @@ class Standalone(SageObject):
 
         return temp_filename_eps
 
-    def tex(self, filename=None, content_only=False, include_header=None):
+    def tex(self, filename=None, content_only=False):
         r"""
         Writes the latex code to a file.
 
@@ -1195,14 +1195,6 @@ class Standalone(SageObject):
         else:
             filename = os.path.abspath(filename)
 
-        if include_header is not None:
-            content_only = not include_header
-            from sage.misc.superseded import deprecation
-            deprecation(20343, "When merging this code from slabbe into "
-                    "SageMath the argument include_header=False was "
-                    "replaced by content_only=True. Please update your code "
-                    "before include_header option gets removed from SageMath.")
-
         if content_only:
             output = self.content()
         else:
@@ -1237,7 +1229,7 @@ class Standalone(SageObject):
         .. NOTE::
 
             This method follows the signature of the method
-            :meth:`sage.plot.Graphics.save` in order to be compatible with
+            :meth:`sage.plot.graphics.Graphics.save` in order to be compatible with
             with sagetex. In particular so that ``\sageplot{t}`` written
             in a ``tex`` file works when ``t`` is an instance of
             :class:`Standalone` or :class:`TikzPicture`.
@@ -1287,8 +1279,8 @@ class TikzPicture(Standalone):
     - ``macros`` -- list of strings (default: ``[]``); stuff you need for the picture
     - ``use_sage_preamble`` -- boolean (default: ``False``); whether to include sage
       latex preamble and sage latex macros, that is, the content of
-      :func:`sage.misc.latex.extra_preamble()`,
-      :func:`sage.misc.latex.extra_macros()` and
+      :meth:`sage.misc.latex.Latex.extra_preamble`,
+      :meth:`sage.misc.latex.Latex.extra_macros` and
       :func:`sage.misc.latex_macros.sage_latex_macros()`
 
     EXAMPLES:
@@ -1347,7 +1339,7 @@ class TikzPicture(Standalone):
         sage: _ = t.pdf(view=False)                     # long time (2s), optional - latex
     """
     def __init__(self, content, standalone_config=None, usepackage=None,
-            usetikzlibrary=None, macros=None, use_sage_preamble=False):
+                 usetikzlibrary=None, macros=None, use_sage_preamble=False) -> None:
         r"""
         See :class:`TikzPicture` for full information.
 
@@ -1358,12 +1350,12 @@ class TikzPicture(Standalone):
             sage: t = TikzPicture(s)
         """
         Standalone.__init__(self, content, document_class_options=['tikz'],
-            standalone_config=standalone_config, usepackage=usepackage,
-            macros=macros, use_sage_preamble=use_sage_preamble)
+                            standalone_config=standalone_config, usepackage=usepackage,
+                            macros=macros, use_sage_preamble=use_sage_preamble)
 
         self._usetikzlibrary = [] if usetikzlibrary is None else usetikzlibrary
 
-    def _latex_file_header_lines(self):
+    def _latex_file_header_lines(self) -> list[str]:
         r"""
         EXAMPLES::
 
@@ -1381,7 +1373,7 @@ class TikzPicture(Standalone):
             lines.append(r"\usetikzlibrary{{{}}}".format(library))
         return lines
 
-    def add_usetikzlibrary(self, library):
+    def add_usetikzlibrary(self, library: str):
         r"""
         Add a ``usetikzlibrary`` line.
 
@@ -1473,7 +1465,7 @@ class TikzPicture(Standalone):
     @classmethod
     @experimental(issue_number=20343)
     def from_graph(cls, graph, merge_multiedges=True,
-            merge_label_function=tuple, **kwds):
+                   merge_label_function=tuple, **kwds):
         r"""
         Convert a graph to a tikzpicture using graphviz and dot2tex.
 
@@ -1603,7 +1595,7 @@ class TikzPicture(Standalone):
         if merge_multiedges and graph.has_multiple_edges():
             from collections import defaultdict
             d = defaultdict(list)
-            for (u, v, label) in graph.edges(sort=False):
+            for u, v, label in graph.edges(sort=False):
                 d[(u, v)].append(label)
             edges = [(u, v, merge_label_function(label_list)) for (u, v), label_list in d.items()]
             loops = graph.has_loops()
@@ -1699,7 +1691,7 @@ class TikzPicture(Standalone):
         if merge_multiedges and graph.has_multiple_edges():
             from collections import defaultdict
             d = defaultdict(list)
-            for (u, v, label) in graph.edges(sort=True):
+            for u, v, label in graph.edges(sort=True):
                 d[(u, v)].append(label)
             edges = [(u, v, merge_label_function(label_list)) for (u, v), label_list in d.items()]
             loops = graph.has_loops()
@@ -1726,24 +1718,26 @@ class TikzPicture(Standalone):
         # edges
         lines.append(r'% edges')
         arrow = '->' if graph.is_directed() else ''
-        for (u, v, label) in graph.edges(sort=True):
+        for u, v, label in graph.edges(sort=True):
             if u == v:
                 # loops are done below
                 continue
             if label:
-                line = r'\draw[{}] ({}) -- node {{{}}} ({});'.format(arrow,
-                                                    keys_for_vertices(u),
-                                                    label,
-                                                    keys_for_vertices(v))
+                line = r'\draw[{}] ({}) -- node {{{}}} ({});'.format(
+                    arrow,
+                    keys_for_vertices(u),
+                    label,
+                    keys_for_vertices(v))
             else:
-                line = r'\draw[{}] ({}) -- ({});'.format(arrow,
-                                                    keys_for_vertices(u),
-                                                    keys_for_vertices(v))
+                line = r'\draw[{}] ({}) -- ({});'.format(
+                    arrow,
+                    keys_for_vertices(u),
+                    keys_for_vertices(v))
             lines.append(line)
 
         # loops
         lines.append(r'% loops')
-        for (u, v, label) in graph.loop_edges():
+        for u, v, label in graph.loop_edges():
             line = r'\draw ({}) edge [loop above] node {{{}}} ();'.format(
                 keys_for_vertices(u), label)
             lines.append(line)

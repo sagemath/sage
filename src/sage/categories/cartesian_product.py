@@ -142,7 +142,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
 
         - handle the following plain Python containers as input:
           :class:`frozenset`, :class:`list`, :class:`set`,
-          :class:`tuple`, and :class:`xrange` (Python3 ``range``).
+          :class:`tuple`, and :class:`range`.
 
         - handle the empty list of factors.
 

@@ -386,7 +386,7 @@ def eisenstein_series_lseries(weight, prec=53, max_imaginary_part=0):
     This returns an interface to Pari for computing with the
     `L`-series of the Eisenstein series.
 
-    See :class:`~sage.lfunctions.pari.lfun_eisenstein`.
+    See :func:`~sage.lfunctions.pari.lfun_eisenstein`.
 
     INPUT:
 

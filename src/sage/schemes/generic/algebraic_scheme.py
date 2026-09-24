@@ -303,7 +303,7 @@ class AlgebraicScheme(scheme.Scheme):
         OUTPUT:
 
         A scheme morphism whose
-        :meth:`~morphism.SchemeMorphism.domain` is ``self``.
+        :meth:`~sage.schemes.generic.morphism.SchemeMorphism.domain` is ``self``.
 
         * By default, it is the tautological embedding into its own
           ambient space :meth:`ambient_space`.
@@ -349,7 +349,8 @@ class AlgebraicScheme(scheme.Scheme):
 
         Note that `p=(1,1,0)` is a singular point of `X`. So the
         neighborhood of `p` is not just affine space. The
-        :meth:`neighborhood` method returns a presentation of
+        :meth:`~sage.schemes.projective.projective_subscheme.AlgebraicScheme_subscheme_projective.neighborhood`
+        method returns a presentation of
         the neighborhood as a subscheme of an auxiliary 2-dimensional
         affine space::
 
@@ -538,7 +539,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         You should not create objects of this class directly. The
         preferred method to construct such subschemes is to use
-        :meth:`complement` method of algebraic schemes.
+        :meth:`~sage.schemes.generic.algebraic_scheme.AlgebraicScheme_subscheme.complement` method of algebraic schemes.
 
     OUTPUT: an instance of :class:`AlgebraicScheme_quasi`
 
@@ -2036,15 +2037,15 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         Given a family of maps defined over a polynomial ring. A specialization
         is a particular member of that family. The specialization can be specified either
-        by a dictionary or a :class:`SpecializationMorphism`.
+        by a dictionary or a :class:`~sage.rings.polynomial.flatten.SpecializationMorphism`.
 
         INPUT:
 
         - ``D`` -- dictionary (optional)
 
-        - ``phi`` -- :class:`SpecializationMorphism` (optional)
+        - ``phi`` -- :class:`~sage.rings.polynomial.flatten.SpecializationMorphism` (optional)
 
-        OUTPUT: :class:`SchemeMorphism_polynomial`
+        OUTPUT: :class:`~sage.schemes.generic.morphism.SchemeMorphism_polynomial`
 
         EXAMPLES::
 

@@ -1418,7 +1418,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: gap.coerce(a)
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Finite Field in a of size 1009^2 to Gap
+            TypeError: order must be at most 65536
         """
         F = self._parent
         if F.order() > 65536:

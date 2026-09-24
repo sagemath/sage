@@ -1342,7 +1342,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             sage: D = C2.semidirect_product(C8, hom); D
             Finitely presented group < a, b | a^2, b^8, a^-1*b*a*b >
             sage: D = C2.semidirect_product(C8, hom, reduced=True); D
-            Finitely presented group < a, b | a^2, a*b*a*b, b^8 >
+            Finitely presented group < a, b | a^2, ..., b^8 >
+            sage: D(D.relations()[1])==D((a*b)^2)
+            True
 
             sage: C3 = groups.presentation.Cyclic(3)
             sage: C4 = groups.presentation.Cyclic(4)
@@ -2025,11 +2027,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             sage: G = F / [a^2,b^3,(a*b/a)^3,b*a*b*a]
             sage: k = G.rewriting_system()
             sage: k
-            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, b*a*b*a >
+            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, ...b*a... >
             with rules:
                 a^2    --->    1
                 b^3    --->    1
-                b*a*b*a    --->    1
+                ...b*a...    --->    1
                 a*b^3*a^-1    --->    1
 
             sage: G([1,1,2,2,2])

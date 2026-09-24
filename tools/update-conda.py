@@ -166,7 +166,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     all_requirements = {
         # Following can be removed once https://github.com/regro/cf-scripts/pull/2176 is used in grayskull
         req.replace("lrcalc", "python-lrcalc")
-        .replace("symengine", "python-symengine")
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
         .replace("pkg:generic/latexmk", "latexmk")
@@ -175,6 +174,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("pkg:generic/sagemath-polytopes-db", "sagemath-db-polytopes")
         .replace("pkg:generic/tachyon", "tachyon")
         .replace("pkg:generic/highs", "highs")
+        .replace("pkg:generic/libatomic_ops", "libatomic_ops")
         .replace("brial", "libbrial") # on Conda, 'brial' refers to the Python package
         for req in all_requirements
     }
@@ -305,7 +305,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     # https://github.com/sagemath/sage/pull/40679
     if platform != "win-64":
         all_requirements.remove("maxima")
-        all_requirements.add("maxima < 5.48.0")
+        all_requirements.add("maxima ==5.49.0")
         all_requirements.remove("singular")
         all_requirements.add("singular ==4.4.1.p5")
 

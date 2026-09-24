@@ -180,7 +180,8 @@ its negative, while sending `\alpha_1` to `2\alpha_0+\alpha_1`.
     - list of reduced words for an element
     - list of reduced words in reflections for an element
     - Hurwitz action?
-    - :meth:`is_crystallographic` should be hardcoded
+    - :meth:`~sage.combinat.root_system.reflection_group_complex.ComplexReflectionGroup.is_crystallographic`
+      should be hardcoded
 
 AUTHORS:
 
@@ -667,7 +668,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
     def reflections(self):
         r"""
         Return a finite family containing the reflections of ``self``,
-        indexed by :meth:`self.reflection_index_set`.
+        indexed by
+        :meth:`~sage.combinat.root_system.reflection_group_complex.ComplexReflectionGroup.reflection_index_set`.
 
         EXAMPLES::
 
@@ -1855,7 +1857,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         .. NOTE::
 
             The ordering follows the one in Chevie and is not compatible with
-            the current implementation of :meth:`irredubile_characters()`.
+            the current implementation of ``irreducible_characters()``.
 
         EXAMPLES::
 
@@ -2071,8 +2073,8 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
             .. SEEALSO::
 
-                :meth:`~IrreducibleComplexReflectionGroup.coxeter_element`
-                :meth:`~sage.categories.finite_complex_reflection_groups.coxeter_elements`
+                :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.WellGenerated.ParentMethods.coxeter_element`
+                :meth:`~sage.categories.finite_complex_reflection_groups.FiniteComplexReflectionGroups.WellGenerated.ParentMethods.coxeter_elements`
 
             EXAMPLES::
 

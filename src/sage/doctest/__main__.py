@@ -225,10 +225,9 @@ def main():
     if pytest_nprocs != 1 and not find_spec("xdist"):
         # The default is "1", so anything else is an explicit request
         # that we should warn about if we are unable to comply.
-        from pytest import PytestWarning
         from warnings import warn
         warn("pytest-xdist not found, pytest will run sequentially",
-             PytestWarning)
+             pytest.PytestWarning)
         pytest_nprocs = 1
 
     # pytest-xdist is now guaranteed to be available in these cases

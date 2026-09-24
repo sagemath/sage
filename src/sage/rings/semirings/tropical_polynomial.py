@@ -59,7 +59,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
     EXAMPLES:
 
     We construct a tropical polynomial semiring by defining a base
-    tropical semiring and then inputting it to :class:`PolynomialRing`::
+    tropical semiring and then inputting it to :func:`~sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing`::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<x> = PolynomialRing(T); R

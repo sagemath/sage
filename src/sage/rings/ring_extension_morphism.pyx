@@ -481,8 +481,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         backend = self._backend * backend_right
         if isinstance(domain, RingExtension_generic) or isinstance(codomain, RingExtension_generic):
             return RingExtensionHomomorphism(domain.Hom(codomain), backend)
-        else:
-            return backend
+        return backend
 
     cdef _update_slots(self, dict _slots):
         """

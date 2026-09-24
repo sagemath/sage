@@ -177,7 +177,7 @@ def unpickle_circuit_closures_matroid(version, data):
 
 def unpickle_flats_matroid(version, data):
     """
-    Unpickle a :class:`FlatsMatroid`.
+    Unpickle a :class:`~sage.matroids.flats_matroid.FlatsMatroid`.
 
     *Pickling* is Python's term for the loading and saving of objects.
     Functions like these serve to reconstruct a saved object. This all happens
@@ -258,7 +258,7 @@ def unpickle_dual_matroid(version, data):
 
 def unpickle_gammoid(version, data):
     """
-    Unpickle a :class:`Gammoid`.
+    Unpickle a :class:`~sage.matroids.gammoid.Gammoid`.
 
     *Pickling* is Python's term for the loading and saving of objects.
     Functions like these serve to reconstruct a saved object. This all happens
@@ -501,7 +501,7 @@ def unpickle_linear_matroid(version, data):
       ``reduced`` is a boolean indicating whether ``A`` is a reduced matrix,
       and ``name`` is a custom name.
 
-    OUTPUT: :class:`LinearMatroid`
+    OUTPUT: :class:`~sage.matroids.linear_matroid.LinearMatroid`
 
     .. WARNING::
 
@@ -545,7 +545,7 @@ def unpickle_binary_matroid(version, data):
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
-      OUTPUT: :class:`BinaryMatroid`
+      OUTPUT: :class:`~sage.matroids.linear_matroid.BinaryMatroid`
 
     .. WARNING::
 
@@ -589,7 +589,7 @@ def unpickle_ternary_matroid(version, data):
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
-    OUTPUT: :class:`TernaryMatroid`
+    OUTPUT: :class:`~sage.matroids.linear_matroid.TernaryMatroid`
 
     .. WARNING::
 
@@ -634,7 +634,7 @@ def unpickle_quaternary_matroid(version, data):
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
-    OUTPUT: :class:`TernaryMatroid`
+    OUTPUT: :class:`~sage.matroids.linear_matroid.QuaternaryMatroid`
 
     .. WARNING::
 
@@ -685,7 +685,7 @@ def unpickle_regular_matroid(version, data):
       ``reduced`` is a boolean indicating whether ``A`` is a reduced matrix,
       and ``name`` is a custom name.
 
-    OUTPUT: :class:`RegularMatroid`
+    OUTPUT: :class:`~sage.matroids.linear_matroid.RegularMatroid`
 
     .. WARNING::
 
@@ -733,7 +733,7 @@ def unpickle_minor_matroid(version, data):
       contractions, ``D`` is the set of deletions, and ``name`` is a custom
       name.
 
-    OUTPUT: :class:`MinorMatroid`
+    OUTPUT: :class:`~sage.matroids.minor_matroid.MinorMatroid`
 
     .. WARNING::
 
@@ -771,7 +771,7 @@ def unpickle_graphic_matroid(version, data):
     - ``version`` -- integer (currently 0)
     - ``data`` -- tuple consisting of a SageMath graph and a name
 
-    OUTPUT: :class:`GraphicMatroid`
+    OUTPUT: :class:`~sage.matroids.graphic_matroid.GraphicMatroid`
 
     .. WARNING::
 
@@ -813,7 +813,7 @@ def unpickle_transversal_matroid(version, data):
       consisting of a name for the set, and a ``frozenset`` of groundset
       elements it contains.
 
-    OUTPUT: :class:`TransversalMatroid`
+    OUTPUT: :class:`~sage.matroids.transversal_matroid.TransversalMatroid`
 
     .. WARNING::
 

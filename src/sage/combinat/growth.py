@@ -15,7 +15,7 @@ AUTHORS:
       or labels
     - optimize rules, mainly for :class:`RuleRSK` and
       :class:`RuleBurge`
-    - implement backward rules for :class:`GrowthDiagram.rules.Domino`
+    - implement backward rules for :attr:`sage.combinat.growth.Rules.Domino`
     - implement backward rule from [LLMSSZ2013]_, [LS2007]_
     - make semistandard extension generic
     - accommodate dual filtered graphs
@@ -2081,6 +2081,8 @@ class Rule(UniqueRepresentation, SageObject):
     In particular, this allows to work with dual graded graphs
     without local rules.
 
+    .. automethod:: _test_local_rules
+
     """
     has_multiple_edges = False          # override when necessary
     zero_edge = 0                       # override when necessary
@@ -2093,7 +2095,8 @@ class Rule(UniqueRepresentation, SageObject):
         zero.
 
         By default, this is ``[1,...,r]``.  It is used by the
-        :class:`TestSuite` in :meth:`_test_local_rules`.
+        :class:`~sage.misc.sage_unittest.TestSuite` in
+        :meth:`_test_local_rules <sage.combinat.growth.Rule._test_local_rules>`.
 
         EXAMPLES::
 
@@ -3058,7 +3061,7 @@ class RuleLLMS(Rule):
         0  0  0  0  0  1
         0  0  0  1  0  0
 
-    The :meth:`P_symbol` is a
+    The :meth:`~sage.combinat.growth.RulePartitions.P_symbol` is a
     :class:`~sage.combinat.k_tableau.StrongTableau`::
 
         sage: G.P_symbol().pp()
@@ -3068,7 +3071,7 @@ class RuleLLMS(Rule):
          5
          6
 
-    The :meth:`Q_symbol` is a
+    The :meth:`~sage.combinat.growth.RulePartitions.Q_symbol` is a
     :class:`~sage.combinat.k_tableau.WeakTableau`::
 
         sage: G.Q_symbol().pp()
@@ -3649,8 +3652,8 @@ class RuleSylvester(Rule):
     is the lattice of finite order ideals of the infinite binary
     tree, see Example 2.4.6 in [Fom1994]_.
 
-    For a permutation, the :meth:`P_symbol` is the binary search
-    tree, the :meth:`Q_symbol` is the increasing tree corresponding
+    For a permutation, the :meth:`~sage.combinat.growth.RulePartitions.P_symbol` is the binary search
+    tree, the :meth:`~sage.combinat.growth.RulePartitions.Q_symbol` is the increasing tree corresponding
     to the inverse permutation.  Note that, instead of passing the
     rule to :class:`GrowthDiagram`, we can also call the rule to
     create growth diagrams.  From [Nze2007]_::
@@ -4460,7 +4463,7 @@ class RuleRSK(RulePartitions):
         [   3            ,   5             ]
 
     For rectangular fillings, the Kleitman-Greene invariant is the
-    shape of the :meth:`P_symbol` (or the :meth:`Q_symbol`).  Put
+    shape of the :meth:`~sage.combinat.growth.RulePartitions.P_symbol` (or the :meth:`~sage.combinat.growth.RulePartitions.Q_symbol`).  Put
     differently, it is the partition labelling the lower right corner
     of the filling (recall that we are using matrix coordinates).  It
     can be computed alternatively as the partition
@@ -5160,7 +5163,8 @@ class RuleCompositions(Rule):
         sage: L.vertices(3)
         Compositions of 3
 
-    The saturated chains in the :meth:`Q_graph` are not in the OEIS
+    The saturated chains in the :meth:`sage.combinat.growth.Rule.Q_graph`
+    are not in the OEIS
     as of 2026::
 
         sage: [len(L.Q_graph(n).maximal_chains()) for n in range(1,8)]
@@ -5288,7 +5292,8 @@ class RuleLeftCompositions(RuleCompositions):
         sage: L.vertices(3)
         Compositions of 3
 
-    A saturated chain in the :meth:`P_graph` is a (skew)
+    A saturated chain in the :meth:`sage.combinat.growth.Rule.P_graph`
+    is a (skew)
     :class:`~sage.combinat.composition_tableau.CompositionTableau`::
 
         sage: c = [[], [1], [2], [1, 2], [1, 1, 2], [1, 1, 3], [2, 1, 3], [1, 2, 1, 3]]
@@ -5309,7 +5314,8 @@ class RuleLeftCompositions(RuleCompositions):
         sage: [StandardTableaux(n).cardinality() for n in range(7)]
         [1, 1, 2, 4, 10, 26, 76]
 
-    The saturated chains in the :meth:`Q_graph` are not in the OEIS
+    The saturated chains in the :meth:`sage.combinat.growth.Rule.Q_graph`
+    are not in the OEIS
     as of 2026::
 
         sage: [len(L.Q_graph(n).maximal_chains()) for n in range(1,8)]

@@ -278,8 +278,8 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             def one_from_one_basis(self):
                 """
                 Return the one of the algebra, as per
-                :meth:`Monoids.ParentMethods.one()
-                <sage.categories.monoids.Monoids.ParentMethods.one>`
+                :meth:`Magmas.Unital.ParentMethods.one()
+                <sage.categories.magmas.Magmas.Unital.ParentMethods.one>`
 
                 By default, this is implemented from
                 :meth:`.one_basis`, if available.

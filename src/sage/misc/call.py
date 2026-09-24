@@ -178,7 +178,7 @@ def call_method(obj: Any, name: str, *args: Any, **kwds: Any) -> Any:
 
     This has to exist somewhere in Python!!!
 
-    .. SEEALSO:: :func:`operator.methodcaller` :func:`attrcal`
+    .. SEEALSO:: :func:`operator.methodcaller` :func:`attrcall`
 
     EXAMPLES::
 

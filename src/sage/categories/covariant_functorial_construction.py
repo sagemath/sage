@@ -5,7 +5,9 @@ A *functorial construction* is a collection of functors
 `(F_{Cat})_{Cat}` (indexed by a collection of categories) which associate
 to a sequence of parents `(A, B, ...)` in a category `Cat` a parent
 `F_{Cat}(A, B, ...)`. Typical examples of functorial
-constructions are :obj:`cartesian_product` and :obj:`tensor_product`.
+constructions are
+:class:`~sage.categories.cartesian_product.CartesianProductFunctor` and
+:obj:`~sage.categories.tensor.tensor`.
 
 The category of `F_{Cat}(A, B, ...)`, which only depends on `Cat`, is
 called the (functorial) construction category.
@@ -30,6 +32,8 @@ monoid structure.
 See :class:`CovariantFunctorialConstruction`,
 :class:`CovariantConstructionCategory` and
 :class:`RegressiveCovariantConstructionCategory` for more details.
+
+.. automethod:: sage.categories.covariant_functorial_construction::CovariantConstructionCategory.extra_super_categories
 
 AUTHORS:
 
@@ -121,8 +125,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
     Note: for each functorial construction, there probably is one (or several)
     largest categories on which it applies. For example, the
-    :func:`~sage.categories.cartesian_product.CartesianProducts` construction makes
-    only sense for concrete categories, that is subcategories of
+    :class:`~sage.categories.cartesian_product.CartesianProductsCategory`
+    construction makes only sense for concrete categories, that is subcategories of
     ``Sets()``. Maybe we want to model this one way or the other.
     """
 

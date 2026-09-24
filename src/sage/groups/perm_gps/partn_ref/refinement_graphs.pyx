@@ -453,8 +453,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
             return_tuple.append(Integer(1))
         if len(return_tuple) == 1:
             return return_tuple[0]
-        else:
-            return tuple(return_tuple)
+        return tuple(return_tuple)
 
     GS.scratch = <int *> sig_malloc( (3*G.num_verts + 1) * sizeof(int) )
     part = PS_from_list(partition)
@@ -503,8 +502,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     deallocate_agcl_output(output)
     if len(return_tuple) == 1:
         return return_tuple[0]
-    else:
-        return tuple(return_tuple)
+    return tuple(return_tuple)
 
 
 cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
@@ -641,8 +639,7 @@ cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, 
         current_cell_against += 1
     if GS.use_indicator:
         return invariant
-    else:
-        return 0
+    return 0
 
 cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degree) noexcept:
     r"""
@@ -1382,8 +1379,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
             out_list.append(MemoryError())
     if construct:
         return out_list
-    else:
-        return number
+    return number
 
 
 # Dense graphs: adding vertices

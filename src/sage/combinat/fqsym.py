@@ -877,7 +877,8 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         The M-basis of `FQSym`.
 
         This is the Monomial basis `(\mathcal{M}_w)`, with `w` ranging
-        over all permutations. See the documentation of :class:`FQSym`
+        over all permutations. See the documentation of
+        :class:`~sage.combinat.fqsym.FreeQuasisymmetricFunctions`
         for details.
 
         EXAMPLES::
@@ -1197,12 +1198,13 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 under the star involution.
 
                 See
-                :meth:`FQSymBases.ElementMethods.star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
                 for a definition of the involution and for examples.
 
                 .. SEEALSO::
 
-                    :meth:`omega_involution`, :meth:`psi_involution`
+                    :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                    :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`
 
                 EXAMPLES::
 
@@ -1569,7 +1571,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`psi_involution`, :meth:`star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
 
             EXAMPLES::
 
@@ -1679,7 +1682,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`omega_involution`, :meth:`star_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.star_involution`
 
             EXAMPLES::
 
@@ -1783,7 +1787,7 @@ class FQSymBases(Category_realization_of_parent):
             (:meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.star_involution`)
             with `\pi : NSym \to FQSym` being the canonical inclusion
             and the word quasisymmetric functions
-            (:meth:`~sage.combinat.chas.wqsym.WordQuasiSymmetricFunctions.Bases.ElementMethods.star_involution`)
+            (:meth:`~sage.combinat.chas.wqsym.WQSymBases.ElementMethods.star_involution`)
             with `\pi : FQSym \to WQSym` the canonical inclusion.
 
             .. TODO::
@@ -1792,7 +1796,8 @@ class FQSymBases(Category_realization_of_parent):
 
             .. SEEALSO::
 
-                :meth:`omega_involution`, :meth:`psi_involution`
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.omega_involution`,
+                :meth:`~sage.combinat.fqsym.FQSymBases.ElementMethods.psi_involution`
 
             EXAMPLES::
 

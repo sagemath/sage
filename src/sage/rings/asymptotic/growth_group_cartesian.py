@@ -1025,7 +1025,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
               values:
 
               - ``'log'`` -- value: a function; if not used, then the usual
-                :class:`log <sage.functions.log.Function_log>` is taken
+                :class:`log <sage.functions.log.Function_log1>` is taken
 
             OUTPUT:
 

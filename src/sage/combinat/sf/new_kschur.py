@@ -1124,7 +1124,7 @@ class kSchur(CombinatorialFreeModule):
         If `t \neq 1`, then take the product by lifting to the Schur functions and then
         retracting back into the `k`-bounded subspace (if possible).
 
-        If `t=1`, then the product calls :meth:`_product_on_basis_via_rectangles`.
+        If `t=1`, then the product calls ``_product_on_basis_via_rectangles``.
 
         INPUT:
 

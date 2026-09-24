@@ -48,7 +48,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
     INPUT:
 
-    - ``poly`` -- a :class:`TropicalMPolynomial`
+    - ``poly`` -- a :class:`~sage.rings.semirings.tropical_mpolynomial.TropicalMPolynomial`
 
     ALGORITHM:
 

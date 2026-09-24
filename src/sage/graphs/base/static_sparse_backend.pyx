@@ -1553,8 +1553,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         if directed:
             if cg._directed:
                 return cg.in_degree(v) + cg.out_degree(v)
-            else:
-                return 2 * cg.out_degree(v)
+            return 2 * cg.out_degree(v)
         else:
             if cg._directed:
                 raise NotImplementedError("Sorry, I have no idea what is expected "
@@ -1587,8 +1586,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         if cg._directed:
             return cg.in_degree(v)
-        else:
-            return cg.out_degree(v)
+        return cg.out_degree(v)
 
     def out_degree(self, v):
         r"""

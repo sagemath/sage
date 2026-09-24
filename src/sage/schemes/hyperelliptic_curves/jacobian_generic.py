@@ -174,7 +174,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.order`.
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset.order`.
         """
         return self.point_homset().order()
 
@@ -197,7 +197,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.count_points`.
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset.count_points`.
         """
         return self.point_homset().count_points(*args, **kwds)
 
@@ -207,7 +207,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.lift_u`.
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset.lift_u`.
         """
         return self.point_homset().lift_u(*args, **kwds)
 
@@ -226,7 +226,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.random_element`.
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset.random_element`.
         """
         return self.point_homset().random_element(*args, **kwds)
 
@@ -264,7 +264,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.points`.
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset.points`.
         """
 
         return self.point_homset().points(*args, **kwds)
@@ -297,7 +297,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
         .. SEEALSO::
 
-            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.abelian_group`.
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.HyperellipticJacobianHomset.abelian_group`.
         """
         return self.point_homset().abelian_group(*args, **kwds)
 

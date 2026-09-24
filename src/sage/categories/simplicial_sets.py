@@ -231,7 +231,7 @@ class SimplicialSets(Category_singleton):
                 - ``domain`` -- (default: ``None``) use this to specify a
                   particular one-point space as the domain. The default
                   behavior is to use the
-                  :func:`sage.topology.simplicial_set.Point` function to use a
+                  :func:`sage.topology.simplicial_set_examples.Point` function to use a
                   standard one-point space.
 
                 EXAMPLES::

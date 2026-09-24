@@ -56,7 +56,7 @@ def Associahedron(cartan_type, backend='ppl'):
       :class:`sage.combinat.root_system.cartan_type.CartanTypeFactory`
 
     - ``backend`` -- string (``'ppl'``); the backend to use;
-      see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
+      see :func:`sage.geometry.polyhedron.constructor.Polyhedron`
 
     EXAMPLES::
 

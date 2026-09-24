@@ -18,7 +18,7 @@ Module layout:
 - :mod:`sage.categories.homset`               morphisms, ...
 - :mod:`sage.categories.map`
 - :mod:`sage.categories.morphism`
-- :mod:`sage.categories.functors`
+- :mod:`sage.categories.functor`
 - :mod:`sage.categories.cartesian_product`    functorial constructions
 - :mod:`sage.categories.tensor`
 - :mod:`sage.categories.dual`

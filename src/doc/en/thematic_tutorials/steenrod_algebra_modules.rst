@@ -402,9 +402,9 @@ cokernels all exist and can be computed using :class:`the morphisms
     provides a surjective homomorphism onto the cokernel module.
 
     In each case, getting a reference to the module instance requires calling
-    :meth:`~sage.categories.morphism.Morphism.domain`
+    :attr:`~sage.categories.map.Map.domain`
     or
-    :meth:`~sage.categories.morphism.Morphism.codomain`
+    :attr:`~sage.categories.map.Map.codomain`
     on the returned homomorphism, depending on the case.
 
     Refer to each function's documentation for specific details.

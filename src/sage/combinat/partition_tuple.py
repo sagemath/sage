@@ -1247,7 +1247,7 @@ class PartitionTuple(CombinatorialElement):
 
         .. SEEALSO::
 
-            - :meth:`~sage.combinat.partition.Partition_tuple.garnir_tableau`
+            - :meth:`~sage.combinat.partition_tuple.PartitionTuple.garnir_tableau`
         """
         comp, row, col = cell
         if comp >= len(self) or row+1 >= len(self[comp]) or col >= self[comp][row+1]:

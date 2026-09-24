@@ -530,10 +530,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         s = unicode_art(*chunks)
         if first:
             return UnicodeArt(["0"])
-        elif s == empty_unicode_art:
+        if s == empty_unicode_art:
             return UnicodeArt(["1"])
-        else:
-            return s
+        return s
 
     def _latex_(self):
         r"""
@@ -798,7 +797,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             - :func:`vector`
             - :meth:`CombinatorialFreeModule.get_order`
             - :meth:`CombinatorialFreeModule.from_vector`
-            - :meth:`CombinatorialFreeModule._dense_free_module`
+            - ``CombinatorialFreeModule._dense_free_module``
 
         EXAMPLES::
 

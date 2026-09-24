@@ -316,7 +316,7 @@ def nest(f, n, x):
     """
     Return `f(f(...f(x)...))`, where the composition occurs n times.
 
-    See also :func:`compose()` and :func:`self_compose()`
+    See also :func:`compose` and ``self_compose``
 
     INPUT:
 

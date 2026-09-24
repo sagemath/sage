@@ -4,7 +4,7 @@ Solve SAT problems Integer Linear Programming
 The class defined here is a :class:`~sage.sat.solvers.satsolver.SatSolver` that
 solves its instance using :class:`MixedIntegerLinearProgram`. Its performance
 can be expected to be slower than when using
-:class:`~sage.sat.solvers.cryptominisat.cryptominisat.CryptoMiniSat`.
+:class:`~sage.sat.solvers.cryptominisat.CryptoMiniSat`.
 """
 from sage.numerical.mip import MIPSolverException, MixedIntegerLinearProgram
 from sage.sat.solvers.satsolver import SatSolver

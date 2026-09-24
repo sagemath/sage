@@ -157,7 +157,8 @@ Implementation details
 
 **Test that the equivalence classes are not self-contradictory**
 
-This is done by a call to :meth:`Graph.is_bipartite`, and here is how :
+This is done by a call to
+:meth:`~sage.graphs.generic_graph.GenericGraph.is_bipartite`, and here is how :
 
    Around a vertex `u`, any two edges `uv, uv'` such that `vv'\not\in G` are
    equivalent. Hence, the equivalence class of edges around a vertex are

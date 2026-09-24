@@ -79,7 +79,7 @@ def _pyrand():
 
 def getrandbits(k):
     r"""
-    getrandbits(k) -> x.  Generates a long int with k random bits.
+    Return a long integer with ``k`` random bits.
 
     EXAMPLES::
 

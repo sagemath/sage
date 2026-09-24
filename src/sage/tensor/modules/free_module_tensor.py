@@ -145,7 +145,7 @@ The components are managed by the class
     sage: type(t.comp(e))
     <class 'sage.tensor.modules.comp.Components'>
 
-Only nonzero components are actually stored, in the dictionary :attr:`_comp`
+Only nonzero components are actually stored, in the dictionary ``_comp``
 of class :class:`~sage.tensor.modules.comp.Components`, whose keys are
 the indices::
 
@@ -2126,7 +2126,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             sage: a._rmul_(-1) == -a
             True
         """
-        #!# The following test is probably not necessary:
+        # The following test is probably not necessary:
         if isinstance(other, FreeModuleTensor):
             raise NotImplementedError("left tensor product not implemented")
         # Left multiplication by a scalar:

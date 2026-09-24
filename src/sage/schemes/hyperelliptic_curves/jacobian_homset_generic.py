@@ -36,6 +36,11 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     Set of rational points of the Jacobian.
     """
 
+    # Maximum number of positional arguments accepted by
+    # :meth:`_element_constructor_`. Models with two points at infinity (the
+    # split case) also accept an explicit weight, so they override this to 3.
+    _max_constructor_args = 2
+
     def __init__(self, Y, X, **kwds):
         r"""
         Create the Hom-set of a Jacobian.
@@ -366,24 +371,43 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J(y^3 + y + 1, 0)
             (x^3 + x + 1, 0)
 
-        TODO:
+        The constructor also works over an extension `L` of the base field
+        `K`: points are built using the curve base-extended to `L`::
 
-        - Allow sending a field element corresponding to the x-coordinate of a point?
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
+            sage: L.<z2> = GF(13^2)
+            sage: JL = H.jacobian()(L)
+            sage: JL.extended_curve().base_ring()
+            Finite Field in z2 of size 13^2
+            sage: HL = JL.extended_curve()
+            sage: P = HL.lift_x(z2 + 1); Q = HL.lift_x(z2 + 5)
+            sage: JL(P)
+            (x + 12*z2 + 12, 4*z2 + 5)
+            sage: JL(P, Q)
+            (x^2 + (11*z2 + 7)*x + 7*z2 + 3, (4*z2 + 8)*x + z2 + 5)
+            sage: JL(P, Q) == JL(P) - JL(Q)
+            True
 
-        - Use ``__classcall__`` to sanitise input?
+        A point defined over the base field `K` may also be coerced into the
+        Jacobian over `L`::
 
-        - Add doctest for base extension
+            sage: D = H.jacobian()(GF(13))(H.lift_x(GF(13)(0)))
+            sage: JL(D).parent() is JL
+            True
         """
-        R = self.extended_curve().polynomial_ring()
-
         if len(args) == 0 or (len(args) == 1 and args[0] == ()):
-            # this returns the incorrect result because subclasses like the inert case may implement
-            # .zero differently
-            # return self._morphism_element(self, R.one(), R.zero(), check=check)
+            # Subclasses such as the inert case implement ``zero`` differently,
+            # so we must defer to it rather than building the element directly.
             return self.zero(check=check)
 
         if len(args) == 1 and isinstance(args[0], (list, tuple)):
-            args = args[0]
+            # Normalise to a tuple so that ``args + (...)`` below is well-defined
+            # even when a list such as ``[P]`` was passed.
+            args = tuple(args[0])
+
+        if len(args) > self._max_constructor_args:
+            raise ValueError(f"at most {self._max_constructor_args} arguments are allowed as input")
 
         if len(args) == 1:
             P1 = args[0]
@@ -392,42 +416,82 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             if isinstance(P1, self._morphism_element):
                 if parent(P1) is self:
                     return P1
-                # may have to change polynomial ring etc.
-                # this case will now be handled below.
-                args = P1.uv()
+                # Re-coerce the Mumford coordinates (and weight, if any) into
+                # this homset; handled by the coordinate branch below.
+                args = tuple(P1)
             elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
-                args = args + (
-                    self.extended_curve().distinguished_point(),
-                )  # this case will now be handled below.
+                # Embed the curve point ``P1`` as ``[P1 - P0]`` with ``P0`` the
+                # distinguished point; handled by the two-point branch below.
+                args = args + (self.extended_curve().distinguished_point(),)
             else:
                 raise ValueError(
                     "the input must consist of one or two points, or Mumford coordinates"
                 )
 
-        if len(args) == 2:
-            P1 = args[0]
-            P2 = args[1]
-            if isinstance(
-                P1, SchemeMorphism_point_weighted_projective_ring
-            ) and isinstance(P2, SchemeMorphism_point_weighted_projective_ring):
-                u1, v1 = self.point_to_mumford_coordinates(P1)
-                P2_inv = self.extended_curve().hyperelliptic_involution(P2)
-                u2, v2 = self.point_to_mumford_coordinates(P2_inv)
-                u, v = self.cantor_composition(u1, v1, u2, v2)
-            else:
-                # We try to coerce input Mumford coordinates to polynomials
-                try:
-                    u = R(P1)
-                    v = R(P2)
-                except ValueError:
-                    raise ValueError(
-                        "the input must consist of one or two points, or Mumford coordinates"
-                    )
+        P1, P2 = args[0], args[1]
+        if isinstance(
+            P1, SchemeMorphism_point_weighted_projective_ring
+        ) and isinstance(P2, SchemeMorphism_point_weighted_projective_ring):
+            # Only reachable for models accepting more than two arguments (the
+            # split case, ``_max_constructor_args == 3``): reject ``J(P, Q, R)``.
+            if len(args) > 2:
+                raise ValueError("the input must consist of at most two points")
+            coords = self._cantor_compose_points(P1, P2)
+        else:
+            coords = self._mumford_from_coordinates(args)
 
-        if len(args) > 2:
-            raise ValueError("at most two arguments are allowed as input")
+        return self._morphism_element(self, *coords, check=check)
 
-        return self._morphism_element(self, u, v, check=check)
+    def _cantor_compose_points(self, P1, P2):
+        r"""
+        Return the Mumford coordinates of the divisor class `[P1 - P2]`.
+
+        This is the per-model hook used by :meth:`_element_constructor_` when
+        two curve points are supplied. The generic implementation returns the
+        affine Mumford coordinates ``(u, v)``; the split model overrides this
+        to also track the weight at infinity.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^7 + x + 1)
+            sage: JH = Jacobian(H).point_homset()
+            sage: P = H.lift_x(1)
+            sage: Q = H.lift_x(2)
+            sage: JH(P, Q) == JH(P) - JH(Q)
+            True
+        """
+        u1, v1 = self.point_to_mumford_coordinates(P1)
+        P2_inv = self.extended_curve().hyperelliptic_involution(P2)
+        u2, v2 = self.point_to_mumford_coordinates(P2_inv)
+        return self.cantor_composition(u1, v1, u2, v2)
+
+    def _mumford_from_coordinates(self, args):
+        r"""
+        Return the Mumford coordinates parsed from polynomial input ``args``.
+
+        This is the per-model hook used by :meth:`_element_constructor_` when
+        the input is not a pair of points. The generic implementation coerces
+        the first two arguments to polynomials ``(u, v)``; the split model
+        overrides this to additionally accept an explicit weight.
+
+        TESTS::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x^7 + x + 1)
+            sage: JH = Jacobian(H).point_homset()
+            sage: JH(x + 12, 4)
+            (x + 12, 4)
+        """
+        R = self.extended_curve().polynomial_ring()
+        try:
+            u = R(args[0])
+            v = R(args[1])
+        except ValueError:
+            raise ValueError(
+                "the input must consist of one or two points, or Mumford coordinates"
+            )
+        return u, v
 
     def zero(self, check=True):
         r"""

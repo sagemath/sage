@@ -1516,7 +1516,8 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         r"""
         Return the graded Frobenius image of ``self``.
 
-        The graded Frobenius image is the sum of the :meth:`frobenius_image`
+        The graded Frobenius image is the sum of the
+        :meth:`sage.combinat.specht_module.SymmetricGroupRepresentation.frobenius_image`
         of each graded component, which is known to result in the modified
         Hall-Littlewood polynomial `\widetilde{H}_{\lambda}(x; q)`.
 

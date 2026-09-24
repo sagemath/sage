@@ -1034,7 +1034,7 @@ cdef class InfinityCrystalOfTableauxElement(CrystalOfTableauxElement):
             if ret._list[k+i-j].value != j:
                 return ret
         # We've found a column, so we need to remove it
-        for j in range(i):
+        for _ in range(i):
             ret._list.pop(k)
         return ret
 
@@ -1119,7 +1119,7 @@ cdef class InfinityCrystalOfTableauxElementTypeD(InfinityCrystalOfTableauxElemen
             if ret._list[k+i-j].value != j:
                 return ret
         # We've found a column, so we need to remove it
-        for j in range(i):
+        for _ in range(i):
             ret._list.pop(k)
         return ret
 
@@ -1495,8 +1495,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             from sage.categories.regular_supercrystals import RegularSuperCrystals
             if self._parent in RegularSuperCrystals():
                 return TensorProductOfRegularCrystalsElement.e(self, i)
-            else:
-                return TensorProductOfCrystalsElement.e(self, i)
+            return TensorProductOfCrystalsElement.e(self, i)
         cdef tuple w
         cdef int k, a, l
         l = len(self._list)
@@ -1555,8 +1554,7 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             from sage.categories.regular_supercrystals import RegularSuperCrystals
             if self._parent in RegularSuperCrystals():
                 return TensorProductOfRegularCrystalsElement.f(self, i)
-            else:
-                return TensorProductOfCrystalsElement.f(self, i)
+            return TensorProductOfCrystalsElement.f(self, i)
         cdef tuple w
         cdef int k, a, l
         l = len(self._list)

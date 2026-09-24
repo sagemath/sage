@@ -105,8 +105,11 @@ AUTHORS:
 - Sebastian Oehms (2018): added _coerce_map_from_ in order to use isomorphism coming up with as_permutation_group method (Issue #25706)
 - Christian Stump (2018): Added alternative implementation of strong_generating_system directly using GAP.
 
-- Sebastian Oehms (2018): Added :meth:`PermutationGroup_generic._Hom_` to use :class:`sage.groups.libgap_morphism.GroupHomset_libgap` and :meth:`PermutationGroup_generic.gap` and
-  :meth:`PermutationGroup_generic._subgroup_constructor` (for compatibility to libgap framework, see :issue:`26750`
+- Sebastian Oehms (2018): Added ``PermutationGroup_generic._Hom_`` to use
+  :class:`sage.groups.libgap_morphism.GroupHomset_libgap` and
+  :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.gap` and
+  ``PermutationGroup_generic._subgroup_constructor`` (for compatibility to
+  libgap framework, see :issue:`26750`
 
 REFERENCES:
 
@@ -4467,7 +4470,7 @@ class PermutationGroup_generic(FiniteGroup):
         Return ``True`` if this group is polycyclic. A group is polycyclic if
         it has a subnormal series with cyclic factors. (For finite groups,
         this is the same as if the group is solvable - see
-        :meth:`is_solvable`.)
+        :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.is_solvable`.)
 
         EXAMPLES::
 

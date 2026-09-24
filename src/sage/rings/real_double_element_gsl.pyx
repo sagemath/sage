@@ -304,11 +304,9 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             return CDF(self).log(base)
         if base is None:
             return self._log_base(1)
-        else:
-            if isinstance(base, RealDoubleElement):
-                return self._log_base(base._log_base(1))
-            else:
-                return self._log_base(gsl_sf_log(float(base)))
+        if isinstance(base, RealDoubleElement):
+            return self._log_base(base._log_base(1))
+        return self._log_base(gsl_sf_log(float(base)))
 
     def log2(self):
         """

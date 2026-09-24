@@ -255,7 +255,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     - ``independent`` -- boolean (default: ``False``); when ``True``, computes
       minimum independent dominating sets, that is minimum dominating sets that
       are also independent sets (see also
-      :meth:`~sage.graphs.graph.independent_set`)
+      :meth:`~sage.graphs.graph.Graph.independent_set`)
 
     - ``total`` -- boolean (default: ``False``); when ``True``, computes total
       dominating sets (see the See the :wikipedia:`Dominating_set`)
@@ -506,7 +506,7 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
     - ``independent`` -- boolean (default: ``False``); when ``True``, computes a
       minimum independent dominating set, that is a minimum dominating set that
       is also an independent set (see also
-      :meth:`~sage.graphs.graph.independent_set`)
+      :meth:`~sage.graphs.graph.Graph.independent_set`)
 
     - ``total`` -- boolean (default: ``False``); when ``True``, computes a total
       dominating set (see the See the :wikipedia:`Dominating_set`)

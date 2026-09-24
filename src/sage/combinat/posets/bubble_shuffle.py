@@ -157,7 +157,8 @@ def BubblePoset(m, n) -> FiniteLatticePoset:
 
     .. SEEALSO::
 
-        :func:`ShufflePoset`, :func:`noncrossing_bipartite_complex`
+        :func:`ShufflePoset`,
+        :func:`sage.combinat.posets.bubble_shuffle.noncrossing_bipartite_complex`
 
     EXAMPLES::
 

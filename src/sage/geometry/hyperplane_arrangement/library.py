@@ -84,7 +84,7 @@ class HyperplaneArrangementLibrary:
 
         EXAMPLES::
 
-            sage: hyperplane_arrangements.braid(4)                                      # needs sage.graphs
+            sage: hyperplane_arrangements.braid(4)
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
         """
         from sage.graphs.graph_generators import graphs
@@ -285,7 +285,7 @@ class HyperplaneArrangementLibrary:
         If the Cartan type is not crystallographic, the Coxeter arrangement
         is not implemented yet::
 
-            sage: hyperplane_arrangements.Coxeter("H3")                                 # needs sage.libs.gap
+            sage: hyperplane_arrangements.Coxeter("H3")
             Traceback (most recent call last):
             ...
             NotImplementedError: Coxeter arrangements are not implemented
@@ -487,8 +487,8 @@ class HyperplaneArrangementLibrary:
 
         TESTS::
 
-            sage: a.characteristic_polynomial.clear_cache()     # long time             # needs sage.combinat
-            sage: a.characteristic_polynomial()         # long time                     # needs sage.combinat
+            sage: a.characteristic_polynomial.clear_cache()     # long time
+            sage: a.characteristic_polynomial()         # long time
             x^3 - 6*x^2 + 9*x
 
         REFERENCES:
@@ -545,7 +545,7 @@ class HyperplaneArrangementLibrary:
              Hyperplane t0 + 0*t1 + 0,
              Hyperplane t0 + 0*t1 + 1,
              Hyperplane t0 + t1 + 0)
-            sage: a.cone().is_free()                                                    # needs sage.libs.singular
+            sage: a.cone().is_free()
             True
 
         .. PLOT::

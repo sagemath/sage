@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.graphs
 r"""
 Finite polyhedral complexes
 
@@ -127,6 +126,9 @@ class PolyhedralComplex(GenericCellComplex):
     r"""
     A polyhedral complex.
 
+    .. automethod:: _n_maximal_cells_sorted
+    .. automethod:: _n_cells_sorted
+
     A **polyhedral complex** `PC` is a collection of polyhedra in a certain
     ambient space `\RR^n` such that the following hold.
 
@@ -205,7 +207,7 @@ class PolyhedralComplex(GenericCellComplex):
          (A vertex at (0, 1/4),),
          (A vertex at (1/7, 2/7),),
          (A vertex at (1/3, 1/3),)]
-        sage: pc.plot()                                                                 # needs sage.plot
+        sage: pc.plot()
         Graphics object consisting of 10 graphics primitives
         sage: pc.is_pure()
         True
@@ -732,18 +734,18 @@ class PolyhedralComplex(GenericCellComplex):
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
           - ``sticky_vertices`` -- (default: ``False``) boolean or dict;
             whether to draw line segments between shared vertices of the given polyhedra.
-            A dict gives options for :func:`sage.plot.line`.
+            A dict gives options for :func:`sage.plot.line.line`.
           - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
-            A dict gives options for :func:`sage.plot.line`.
+            A dict gives options for :func:`sage.plot.line.line`.
 
         - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color
           to every maximal cell; otherwise, passed on to
-          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+          :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         - other keyword arguments are passed on to
-          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+          :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`.
 
         EXAMPLES::
 
@@ -752,17 +754,17 @@ class PolyhedralComplex(GenericCellComplex):
             sage: p3 = Polyhedron(vertices=[(0, 0), (0, 2), (-1, 1)])
             sage: pc1 = PolyhedralComplex([p1, p2, p3, -p1, -p2, -p3])
             sage: bb = dict(xmin=-2, xmax=2, ymin=-3, ymax=3, axes=False)
-            sage: g0 = pc1.plot(color='rainbow', **bb)                                  # needs sage.plot
-            sage: g1 = pc1.plot(explosion_factor=0.5, **bb)                             # needs sage.plot
-            sage: g2 = pc1.plot(explosion_factor=1, color='rainbow', alpha=0.5, **bb)   # needs sage.plot
+            sage: g0 = pc1.plot(color='rainbow', **bb)
+            sage: g1 = pc1.plot(explosion_factor=0.5, **bb)
+            sage: g2 = pc1.plot(explosion_factor=1, color='rainbow', alpha=0.5, **bb)
             sage: graphics_array([g0, g1, g2]).show(axes=False)                        # not tested
 
             sage: pc2 = PolyhedralComplex([polytopes.hypercube(3)])
             sage: pc3 = pc2.subdivide(new_vertices=[(0, 0, 0)])
-            sage: g3 = pc3.plot(explosion_factor=1, color='rainbow',                    # needs sage.plot
+            sage: g3 = pc3.plot(explosion_factor=1, color='rainbow',
             ....:               alpha=0.5, axes=False, online=True)
             sage: pc4 = pc2.subdivide(make_simplicial=True)
-            sage: g4 = pc4.plot(explosion_factor=1, center=(1, -1, 1), fill='blue',     # needs sage.plot
+            sage: g4 = pc4.plot(explosion_factor=1, center=(1, -1, 1), fill='blue',
             ....:              wireframe='white', point={'color':'red', 'size':10},
             ....:              alpha=0.6, online=True)
             sage: pc5 = PolyhedralComplex([
@@ -773,7 +775,7 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[-1,0,0], [0,-1,0], [0,0,1]]),
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,-1]]),
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,1]])])
-            sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,       # needs sage.plot
+            sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,
             ....:               point={'size': 20}, axes=False, online=True)
         """
         if self.dimension() > 3:
@@ -1004,7 +1006,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: poset
             Finite poset containing 11 elements
             sage: d = {i: i.vertices_matrix() for i in poset}
-            sage: poset.plot(element_labels=d)                                          # needs sage.plot
+            sage: poset.plot(element_labels=d)
             Graphics object consisting of 28 graphics primitives
 
         For a nonbounded polyhedral complex::
@@ -2529,19 +2531,19 @@ def exploded_plot(polyhedra, *,
 
     - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to
       draw line segments between shared vertices of the given polyhedra. A dict
-      gives options for :func:`sage.plot.line`.
+      gives options for :func:`sage.plot.line.line`.
 
     - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center``
       is a vertex of some of the polyhedra, whether to draw line segments
       connecting the ``center`` to the shifted copies of these vertices. A dict
-      gives options for :func:`sage.plot.line`.
+      gives options for :func:`sage.plot.line.line`.
 
     - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different
       color to every maximal cell and every vertex; otherwise, passed on to
-      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
+      :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`
 
     - other keyword arguments are passed on to
-      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
+      :meth:`~sage.geometry.polyhedron.base6.Polyhedron_base6.plot`
 
     EXAMPLES::
 
@@ -2549,11 +2551,11 @@ def exploded_plot(polyhedra, *,
         sage: p1 = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
         sage: p2 = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
         sage: p3 = Polyhedron(vertices=[(0, 0), (1, 1), (2, 0)])
-        sage: exploded_plot([p1, p2, p3])                                               # needs sage.plot
+        sage: exploded_plot([p1, p2, p3])
         Graphics object consisting of 20 graphics primitives
-        sage: exploded_plot([p1, p2, p3], center=(1, 1))                                # needs sage.plot
+        sage: exploded_plot([p1, p2, p3], center=(1, 1))
         Graphics object consisting of 19 graphics primitives
-        sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)          # needs sage.plot
+        sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)
         Graphics object consisting of 23 graphics primitives
     """
     from sage.plot.colors import rainbow

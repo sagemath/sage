@@ -429,7 +429,8 @@ def _non_surjective(E, patience=100):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` (over a number field)
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     - ``A`` -- integer; a bound on the number of traces of Frobenius to use
       while trying to prove surjectivity
@@ -502,7 +503,8 @@ def Frobenius_filter(E, L, patience=100):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     - ``L`` -- list of prime numbers
 
@@ -595,7 +597,8 @@ def _exceptionals(E, L, patience=1000):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     - ``L`` -- list of prime numbers
 
@@ -744,7 +747,8 @@ def _over_numberfield(E):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     OUTPUT:
 
@@ -825,7 +829,8 @@ def _semistable_reducible_primes(E, verbose=False):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
 
     OUTPUT:
 
@@ -916,7 +921,7 @@ def _semistable_reducible_primes(E, verbose=False):
             if verbose:
                 print("gx and gy both 0!")
 
-        ## It is possible that our curve has CM. ##
+        # --- It is possible that our curve has CM. --- #
 
         # Our character must be of the form Nm^K_F for an imaginary
         # quadratic subfield F of K (which is the CM field if E has CM).
@@ -934,16 +939,18 @@ def _semistable_reducible_primes(E, verbose=False):
         # See #19229: the names given here, which are not used, should
         # not be the name of the generator of the base field.
 
-        rootsa = K(a).sqrt(all=True) # otherwise if a is not a square the
-                                     # returned result is in the symbolic ring!
+        rootsa = K(a).sqrt(all=True)
+        # otherwise if a is not a square the
+        # returned result is in the symbolic ring!
+
         try:
             roota = rootsa[0]
         except IndexError:
             raise RuntimeError("error in _semistable_reducible_primes: K={} does not contain sqrt({})".format(K,a))
-        K_rel = K.relativize(roota, ['name1','name2'])
-        iso = K_rel.structure()[1] # an isomorphism from K to K_rel
+        K_rel = K.relativize(roota, ['name1', 'name2'])
+        iso = K_rel.structure()[1]  # an isomorphism from K to K_rel
 
-        ## We try again to find a nontrivial divisibility condition. ##
+        # We try again to find a nontrivial divisibility condition. ##
 
         div = 0
         patience = 5 * K.absolute_degree()
@@ -1001,7 +1008,9 @@ def _possible_normalizers(E, SA):
 
     INPUT:
 
-    - ``E`` -- :class:`EllipticCurve` over a number field K
+    - ``E`` --
+      :class:`~sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field`
+      over a number field `K`
 
     - ``SA`` -- list of primes of K
 

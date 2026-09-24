@@ -144,12 +144,15 @@ def AffineOrthogonalPolarGraph(d, q, sign='+', immutable=False):
     .. NOTE::
 
         The graph `VO^\epsilon(d,q)` is the graph induced by the
-        non-neighbors of a vertex in an :meth:`Orthogonal Polar Graph
-        <OrthogonalPolarGraph>` `O^\epsilon(d+2,q)`.
+        non-neighbors of a vertex in an :func:`Orthogonal Polar Graph
+        <sage.graphs.generators.classical_geometries.OrthogonalPolarGraph>`
+        `O^\epsilon(d+2,q)`.
 
     EXAMPLES:
 
-    The :meth:`Brouwer-Haemers graph <BrouwerHaemersGraph>` is isomorphic to
+    The :meth:`Brouwer-Haemers graph
+    <sage.graphs.graph_generators.GraphGenerators.BrouwerHaemersGraph>` is
+    isomorphic to
     `VO^-(4,3)`::
 
         sage: g = graphs.AffineOrthogonalPolarGraph(4,3,"-")                            # needs sage.libs.gap
