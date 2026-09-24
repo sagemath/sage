@@ -3073,6 +3073,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         raise ValueError(f"{G} must be an element of the base ring, a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
 
+    @cached_method
     def _first_ngens(self, n):
         r"""
         Used by the preparser for ``F.<x> = ...``.
@@ -3087,10 +3088,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P.<X, Y> = PolynomialSpecies(QQ)  # indirect doctest
             sage: X + 2*Y
             X + 2*Y
+
+        Only the first ``n`` singletons are returned::
+
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: P._first_ngens(1)
+            (X,)
+            sage: P._first_ngens(2)
+            (X, Y)
         """
         B = self.basis()
-        return tuple([B[i] for grade in IntegerVectors(1, length=self._arity)
-                      for i in self._indices.graded_component(grade)])
+        singletons = [B[i] for grade in IntegerVectors(1, length=self._arity)
+                      for i in self._indices.graded_component(grade)]
+        return tuple(singletons[:n])
 
     def change_ring(self, R):
         r"""
