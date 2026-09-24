@@ -165,6 +165,7 @@ cdef class GabowEdgeConnectivity:
     cdef Py_ssize_t m  # number of arcs
 
     cdef int max_ec  # upper bound on the edge connectivity
+    cdef int max_trees  # number of trees the per-tree data structures can hold
     cdef int ec  # current (proven) value of edge connectivity
     cdef bint ec_checked  # whether we have well computed edge connectivity
 
@@ -300,8 +301,8 @@ cdef class GabowEdgeConnectivity:
         if G.size() > INT_MAX - 2:
             raise ValueError("the graph is too large for this code")
 
-        # Trivial cases
-        if not G or not G.is_strongly_connected():
+        # Trivial case
+        if not G:
             self.ec = 0
             self.ec_checked = True
             self.F.clear()
@@ -332,24 +333,29 @@ cdef class GabowEdgeConnectivity:
             if d < self.max_ec:
                 self.max_ec = d
 
+        # The number of spanning arborescences rooted at a vertex may exceed
+        # the edge connectivity (see :meth:`rooted_degree_bound`). The per-tree
+        # data structures are sized for the largest number over all roots.
+        self.max_trees = self.max_rooted_degree_bound()
+
         self.labels = <int*>self.mem.calloc(self.m, sizeof(int))
-        self.tree_flag = <bint*>self.mem.calloc(self.max_ec, sizeof(bint))
+        self.tree_flag = <bint*>self.mem.calloc(self.max_trees, sizeof(bint))
         self.forests = <bint*>self.mem.calloc(self.n, sizeof(bint))
-        self.L_roots = <int*>self.mem.calloc(self.max_ec, sizeof(int))
-        self.labeled = <bint**>self.mem.calloc(self.max_ec, sizeof(bint*))
+        self.L_roots = <int*>self.mem.calloc(self.max_trees, sizeof(int))
+        self.labeled = <bint**>self.mem.calloc(self.max_trees, sizeof(bint*))
         self.seen = <bint*>self.mem.calloc(self.n, sizeof(bint))
         self.root = <int*>self.mem.calloc(self.n, sizeof(int))
         self.edge_state_1 = <int*>self.mem.calloc(self.m, sizeof(int))
         self.edge_state_2 = <int*>self.mem.calloc(self.m, sizeof(int))
-        self.parent_1 = <int**>self.mem.calloc(self.max_ec, sizeof(int*))
-        self.parent_2 = <int**>self.mem.calloc(self.max_ec, sizeof(int*))
-        self.parent_edge_id_1 = <int**>self.mem.calloc(self.max_ec, sizeof(int*))
-        self.parent_edge_id_2 = <int**>self.mem.calloc(self.max_ec, sizeof(int*))
-        self.depth_1 = <int**>self.mem.calloc(self.max_ec, sizeof(int*))
-        self.depth_2 = <int**>self.mem.calloc(self.max_ec, sizeof(int*))
+        self.parent_1 = <int**>self.mem.calloc(self.max_trees, sizeof(int*))
+        self.parent_2 = <int**>self.mem.calloc(self.max_trees, sizeof(int*))
+        self.parent_edge_id_1 = <int**>self.mem.calloc(self.max_trees, sizeof(int*))
+        self.parent_edge_id_2 = <int**>self.mem.calloc(self.max_trees, sizeof(int*))
+        self.depth_1 = <int**>self.mem.calloc(self.max_trees, sizeof(int*))
+        self.depth_2 = <int**>self.mem.calloc(self.max_trees, sizeof(int*))
         self.stack = <int*>self.mem.calloc(self.n, sizeof(int))
         self.incident_edge_index = <int*>self.mem.calloc(self.n, sizeof(int))
-        self.tree_edges.resize(self.max_ec)
+        self.tree_edges.resize(self.max_trees)
         self.tree_edges_incident.resize(self.n)
         self.visited = <bint*>self.mem.calloc(self.n, sizeof(bint))
 
@@ -373,6 +379,15 @@ cdef class GabowEdgeConnectivity:
             self.edge_state_1[i] = self.UNUSED  # edge i is unused
             self.edge_state_2[i] = self.UNUSED
             self.labels[i] = self.UNUSED  # edge i is unlabeled
+
+        # A digraph that is not strongly connected has edge connectivity 0.
+        # We keep the data structures, since spanning arborescences can still
+        # be packed at a root from which every vertex is reachable.
+        if not G.is_strongly_connected():
+            self.ec = 0
+            self.ec_checked = True
+            self.F.clear()
+            return
 
         _ = self.compute_edge_connectivity()
         sig_check()
@@ -1294,6 +1309,124 @@ cdef class GabowEdgeConnectivity:
     # Packing arborescences
     #
 
+    cdef int rooted_degree_bound(self, int r) noexcept:
+        r"""
+        Return an upper bound on the number of edge-disjoint spanning
+        arborescences rooted at ``r``.
+
+        Each arborescence uses an arc leaving ``r`` and an arc entering every
+        other vertex, so their number is at most the outdegree of ``r`` and
+        the indegree of every other vertex. This bound may exceed the edge
+        connectivity of the digraph, which also accounts for the arcs leaving
+        the other vertices and entering ``r``.
+
+        INPUT:
+
+        - ``r`` -- integer; internal index of the root vertex
+
+        EXAMPLES:
+
+        Adding to a complete digraph a vertex with outdegree 1 drops the edge
+        connectivity to 1, but not the number of arborescences rooted at a
+        vertex of the complete digraph::
+
+            sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+            sage: D = digraphs.Complete(5)
+            sage: D.add_edges([(i, 5) for i in range(4)] + [(5, 0)])
+            sage: GabowEdgeConnectivity(D).edge_connectivity()
+            1
+            sage: len(GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=4, root=0))
+            4
+        """
+        cdef int v, d
+        cdef int bound = <int>self.g_out[r].size()
+        for v in range(self.n):
+            if v != r:
+                d = <int>self.g_in[v].size()
+                if d < bound:
+                    bound = d
+        return bound
+
+    cdef int max_rooted_degree_bound(self) noexcept:
+        r"""
+        Return the maximum of :meth:`rooted_degree_bound` over all vertices.
+
+        The minimum indegree of the vertices other than ``r`` is the smallest
+        indegree, unless ``r`` is the only vertex with that indegree, in which
+        case it is the second smallest indegree. This gives a linear time
+        computation.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+            sage: D = digraphs.Complete(5)
+            sage: D.add_edges([(i, 5) for i in range(4)] + [(5, 0)])
+            sage: len(GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=4, root=1))
+            4
+        """
+        cdef int v, d
+        cdef int in1 = INT_MAX  # smallest indegree
+        cdef int in2 = INT_MAX  # second smallest indegree
+        cdef int v1 = -1  # a vertex of indegree in1
+        for v in range(self.n):
+            d = <int>self.g_in[v].size()
+            if d < in1:
+                in2 = in1
+                in1 = d
+                v1 = v
+            elif d < in2:
+                in2 = d
+
+        cdef int best = 0
+        for v in range(self.n):
+            d = in2 if v == v1 else in1
+            if <int>self.g_out[v].size() < d:
+                d = <int>self.g_out[v].size()
+            if d > best:
+                best = d
+        return best
+
+    cdef bint reaches_all(self, int r) noexcept:
+        r"""
+        Return whether every vertex is reachable from ``r``.
+
+        This is required for a spanning arborescence rooted at ``r`` to exist.
+        The digraph need not be strongly connected.
+
+        INPUT:
+
+        - ``r`` -- integer; internal index of the root vertex
+
+        EXAMPLES::
+
+            sage: from sage.graphs.edge_connectivity import GabowEdgeConnectivity
+            sage: D = DiGraph([(0, 1), (1, 2)])
+            sage: len(GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=1, root=0))
+            1
+            sage: GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=1, root=1)
+            Traceback (most recent call last):
+            ...
+            EmptySetError: this digraph does not contain 1 edge-disjoint spanning arborescences rooted at 1
+        """
+        cdef int i, u, v, e_id
+        for i in range(self.n):
+            self.seen[i] = False
+        self.seen[r] = True
+        self.stack[0] = r
+        cdef int top = 1
+        cdef int num_seen = 1
+        while top:
+            top -= 1
+            u = self.stack[top]
+            for e_id in self.g_out[u]:
+                v = self.head[e_id]
+                if not self.seen[v]:
+                    self.seen[v] = True
+                    self.stack[top] = v
+                    top += 1
+                    num_seen += 1
+        return num_seen == self.n
+
     cdef void rebuild_pool_adjacency(self) noexcept:
         r"""
         Rebuild ``g_in`` / ``g_out`` to contain only the *pool* edges:
@@ -1359,7 +1492,11 @@ cdef class GabowEdgeConnectivity:
         if k <= 0:
             self.arborescence_F.clear()
             return True
-        if k > self.max_ec:
+        # The digraph need not be strongly connected, and k may exceed the
+        # edge connectivity. But each arborescence needs an arc leaving the
+        # root and an arc entering every other vertex, and every vertex must
+        # be reachable from the root.
+        if k > self.rooted_degree_bound(root_idx) or not self.reaches_all(root_idx):
             return False
 
         cdef int i, j, t, round_i, current_k
@@ -1536,8 +1673,12 @@ cdef class GabowEdgeConnectivity:
             self.incident_edges_Q.pop()
 
         for i in range(self.current_tree + 1):
-            for j in range(self.n):
-                self.labeled[i][j] = False
+            # The data structures of a tree are allocated when the tree is
+            # first built. On a digraph that is not strongly connected, the
+            # edge connectivity computation builds no tree.
+            if self.labeled[i]:
+                for j in range(self.n):
+                    self.labeled[i][j] = False
             self.L_roots[i] = self.UNUSED
             self.tree_flag[i] = False
 
@@ -2342,9 +2483,10 @@ cdef class GabowEdgeConnectivity:
         trees with all edges directed away from the root).
         Following [Gabow1995]_ and Edmonds' branching theorem, the maximum
         number of edge-disjoint spanning out-arborescences rooted at a
-        vertex ``r`` equals the minimum ``r``-cut of the digraph. When the
-        digraph is strongly connected, this is at least the edge
-        connectivity ``ec`` of the digraph.
+        vertex ``r`` equals the minimum ``r``-cut of the digraph. This is at
+        least the edge connectivity ``ec`` of the digraph, and it can be
+        larger. The digraph need not be strongly connected, but every
+        vertex must be reachable from ``r``.
 
         INPUT:
 
@@ -2542,6 +2684,48 @@ cdef class GabowEdgeConnectivity:
             ....:     trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=ec, root=r)
             ....:     assert len(trees) == ec
             ....:     assert is_valid_multigraph_packing(D, r, trees)
+
+        The digraph need not be strongly connected, and the number of
+        arborescences rooted at a vertex may exceed the edge connectivity::
+
+            sage: D = DiGraph([(0, 1), (1, 2)])
+            sage: GabowEdgeConnectivity(D).edge_connectivity()
+            0
+            sage: [T] = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=1, root=0)
+            sage: sorted(T.edges(labels=False, sort=False))
+            [(0, 1), (1, 2)]
+            sage: D = digraphs.Complete(5)
+            sage: D.add_edges([(i, 5) for i in range(4)] + [(5, 0)])
+            sage: GabowEdgeConnectivity(D).edge_connectivity()
+            1
+            sage: trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=4, root=0)
+            sage: is_valid_packing(D, 0, trees)
+            True
+            sage: GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=5, root=0)
+            Traceback (most recent call last):
+            ...
+            EmptySetError: this digraph does not contain 5 edge-disjoint spanning arborescences rooted at 0
+
+        Randomized validation against Edmonds' branching theorem: the maximum
+        number of arborescences rooted at ``r`` is the minimum over the
+        vertices ``v`` of the number of edge-disjoint paths from ``r`` to
+        ``v``, which is 0 when some vertex is not reachable from ``r``::
+
+            sage: for _ in range(5):
+            ....:     D = digraphs.RandomDirectedGNP(randint(2, 10), random())
+            ....:     for r in D:
+            ....:         k = 0
+            ....:         if set(D.depth_first_search(r)) == set(D):
+            ....:             k = min(len(D.edge_disjoint_paths(r, v)) for v in D if v != r)
+            ....:             trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=k, root=r)
+            ....:             assert len(trees) == k
+            ....:             assert is_valid_packing(D, r, trees)
+            ....:         try:
+            ....:             _ = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=k + 1, root=r)
+            ....:         except EmptySetError:
+            ....:             pass
+            ....:         else:
+            ....:             raise AssertionError("more arborescences than the minimum r-cut")
         """
         from sage.graphs.digraph import DiGraph
         from sage.categories.sets_cat import EmptySetError
@@ -2556,11 +2740,9 @@ cdef class GabowEdgeConnectivity:
         if k <= 0:
             return []
 
-        # Empty or non-strongly-connected digraphs are not handled by the
-        # Gabow machinery: __init__ returns early without building the
-        # compact data structures, leaving ``int_to_vertex`` unset. No
-        # spanning arborescence packing of size k >= 1 exists in that case
-        # via this backend (the public API may fall back to MILP).
+        # The empty digraph has no spanning arborescence: __init__ returns
+        # early without building the compact data structures, leaving
+        # ``int_to_vertex`` unset.
         if self.int_to_vertex is None:
             raise EmptySetError(
                 "this digraph does not contain {} edge-disjoint spanning "
