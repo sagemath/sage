@@ -21,6 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import xgcd
 from sage.misc.misc_c import prod
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
 
@@ -143,7 +144,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         return r"\left({}\right)".format(" : ".join(map(latex, self._coords)))
 
     def _richcmp_(self, other: SchemeMorphism_point, op) -> bool:
-        """
+        r"""
         Test the weighted projective equality of two points.
 
         INPUT:
@@ -181,39 +182,85 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
             sage: WP(2, 3, 4) == WeightedProjectiveSpace([3, 4, 5], ZZ)(2, 3, 4)
             False
+
+        TESTS:
+
+        The points are equal when a single `\lambda` scales one to the other,
+        ``self[i] == lambda^w_i * other[i]``.  Matching the ratios of the
+        coordinates only up to roots of unity is not enough::
+
+            sage: WP = WeightedProjectiveSpace([1, 2, 1], QQ)
+            sage: WP(1, 1, 1) == WP(-1, 1, -1)
+            True
+            sage: WP(1, 1, 1) == WP(-1, 1, 1)
+            False
+            sage: WP(1, 1, 1) != WP(-1, 1, 1)
+            True
+            sage: WP(1, 1, 1) != WP(-1, 1, -1)
+            False
+            sage: hash(WP(1, 1, 1)) == hash(WP(-1, 1, -1))
+            True
+
+        `\lambda` may lie in an extension of the base field::
+
+            sage: WP = WeightedProjectiveSpace([2, 2], QQ)
+            sage: WP(1, 1) == WP(-1, -1)
+            True
+            sage: WP(1, 1) == WP(-1, 1)
+            False
+
+        Distinct points of a hyperelliptic curve with the same `y`-coordinate
+        are not equal::
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurve(x^3 + x^2 - x)
+            sage: H(1, 1) == H(-1, 1), H(1, 1) != H(-1, 1)
+            (False, True)
         """
         space = self.codomain()
         if space is not other.codomain():
             return op == op_NE
 
         if op in (op_EQ, op_NE):
-            weights = space.weights()
-            # (other[i] / self[i])^(1 / weight[i]) all equal
-            # check weights
-            if (weights == other.codomain().weights()) != (op == op_EQ):
-                return False
-
-            # check zeros
-            b1 = all(
-                c1 == c2
-                for c1, c2 in zip(self._coords, other._coords)
-                if c1 == 0 or c2 == 0
-            )
-            if b1 != (op == op_EQ):
-                return False
-
-            # check nonzeros
-            prod_weights = prod(weights)
-            ratio = [
-                (c1 / c2) ** (prod_weights // w)
-                for c1, c2, w in zip(self._coords, other._coords, weights)
-                if c1 != 0 and c2 != 0
-            ]
-            r0 = ratio[0]
-            b2 = all(r == r0 for r in ratio)
-            return b2 == (op == op_EQ)
+            return self._is_scaling_of(other) == (op == op_EQ)
 
         return richcmp(self._coords, other._coords, op)
+
+    def _is_scaling_of(self, other) -> bool:
+        r"""
+        Return whether ``self[i] == lambda^w_i * other[i]`` for one `\lambda`.
+
+        Both points must lie in the same weighted projective space.  The
+        zero coordinates must agree.  Let `d` be the gcd of the weights `w_i`
+        of the nonzero coordinates, and `\sum a_i w_i = d` a Bezout relation.
+        The ratios `r_i` of the nonzero coordinates determine
+        `\lambda^d = \prod r_i^{a_i}`, and the points are equal if and only if
+        `r_i = (\lambda^d)^{w_i/d}` for every `i`.  The scalar `\lambda`
+        itself may lie in an extension of the base field.
+
+        EXAMPLES::
+
+            sage: WP = WeightedProjectiveSpace([2, 3, 1], QQ)
+            sage: WP(1, 1, 1)._is_scaling_of(WP(4, -8, -2))
+            True
+            sage: WP(1, 1, 1)._is_scaling_of(WP(4, 8, -2))
+            False
+            sage: WP(1, 0, 1)._is_scaling_of(WP(1, 1, 1))
+            False
+        """
+        pairs = []
+        for c1, c2, w in zip(self._coords, other._coords,
+                             self.codomain().weights()):
+            if (c1 == 0) != (c2 == 0):
+                return False
+            if c1 != 0:
+                pairs.append((c1 / c2, w))
+        d, exponents = 0, []
+        for _, w in pairs:
+            d, u, v = xgcd(d, w)
+            exponents = [u * a for a in exponents] + [v]
+        power = prod(r**a for (r, _), a in zip(pairs, exponents))
+        return all(r == power**(w // d) for r, w in pairs)
 
     def __hash__(self):
         """
