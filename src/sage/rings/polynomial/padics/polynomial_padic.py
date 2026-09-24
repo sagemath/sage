@@ -233,11 +233,30 @@ class Polynomial_padic(Polynomial):
             sage: P.<x> = R[]
             sage: ((1 + 2)*x + (1 + 2)*x^2).factor()
             (1 + 2) * (x + 1) * x
+
+        A leading coefficient that is indistinguishable from zero leaves the
+        degree undetermined.  It used to reach PARI, which crashed; root
+        finding now falls back to Sage's own algorithm::
+
+            sage: K = Qp(11, 13); R.<z> = K[]
+            sage: f = R([K(0, 5), K(15), K(0), K(0, 5)]); f
+            O(11^5)*z^3 + (4 + 11 + O(11^13))*z + O(11^5)
+            sage: f.factor()
+            Traceback (most recent call last):
+            ...
+            PrecisionError: p-adic factorization not well-defined since the
+            leading coefficient is indistinguishable from 0
+            sage: f.roots()
+            [(O(11^5), 1)]
         """
         if self == 0:
             raise ArithmeticError("factorization of {!r} is not defined".format(self))
         elif self.is_constant():
             return Factorization((), self.constant_coefficient())
+        if not self.list()[-1]:
+            raise PrecisionError(
+                "p-adic factorization not well-defined since the leading "
+                "coefficient is indistinguishable from 0")
 
         # Scale self such that 0 is the lowest valuation
         # amongst the coefficients
