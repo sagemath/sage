@@ -73,20 +73,40 @@ from sage.schemes.curves.constructor import Curve
 roots_interval_cache: dict[tuple, Any] = {}
 
 
+@parallel
+def _evaluate_chunk(function, chunk) -> list:
+    r"""
+    Evaluate ``function`` on each of the arguments in ``chunk``.
+
+    Helper for :func:`_parallel_map`; ``chunk`` is a list of pairs
+    ``(index, args)``.
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _evaluate_chunk
+        sage: _evaluate_chunk(lambda a, b: a + b, [(0, (1, 2)), (1, (3, 4))])
+        [3, 7]
+    """
+    return [function(*args) for _, args in chunk]
+
+
 def _parallel_map(function, inputs) -> list:
     r"""
-    Evaluate a function decorated with :func:`~sage.parallel.decorate.parallel`
-    on a list of inputs.
+    Evaluate a function on a list of inputs, in parallel if possible.
 
-    The output has the format of the parallel iterator: a list of pairs
-    ``((args, kwds), value)``. If only one CPU is available (see
-    :func:`~sage.parallel.ncpus.ncpus`), the values are computed in the
-    current process, since forking a process for each input would only add
-    overhead.
+    The output has the format of the iterator of a function decorated with
+    :func:`~sage.parallel.decorate.parallel`: a list of pairs
+    ``((args, kwds), value)``, which here follows the order of ``inputs``.
+
+    The inputs are split into as many chunks as available CPUs (see
+    :func:`~sage.parallel.ncpus.ncpus`) and a process is forked for each
+    chunk, instead of one for each input: the computations for a single
+    input are often much faster than forking a process. With only one CPU
+    the values are computed in the current process.
 
     INPUT:
 
-    - ``function`` -- a function decorated with ``@parallel``
+    - ``function`` -- a function, possibly decorated with ``@parallel``
     - ``inputs`` -- list of tuples of arguments
 
     TESTS::
@@ -95,12 +115,25 @@ def _parallel_map(function, inputs) -> list:
         sage: @parallel
         ....: def f(a, b):
         ....:     return a + b
-        sage: sorted(_parallel_map(f, [(1, 2), (3, 4)]))
-        [(((1, 2), {}), 3), (((3, 4), {}), 7)]
+        sage: _parallel_map(f, [(1, 2), (3, 4), (5, 6)])
+        [(((1, 2), {}), 3), (((3, 4), {}), 7), (((5, 6), {}), 11)]
     """
-    if ncpus() > 1:
-        return list(function(inputs))
-    return [((tuple(args), {}), function(*args)) for args in inputs]
+    inputs = [tuple(args) for args in inputs]
+    # the undecorated function: a function decorated with @parallel takes a
+    # first argument which is a list as a list of inputs
+    function = getattr(function, 'func', function)
+    n = min(ncpus(), len(inputs))
+    if n <= 1:
+        return [((args, {}), function(*args)) for args in inputs]
+    indexed = list(enumerate(inputs))
+    values = [None] * len(inputs)
+    chunks = [(function, indexed[k::n]) for k in range(n)]
+    for ((_, chunk), _), chunk_values in _evaluate_chunk(chunks):
+        if not isinstance(chunk_values, list):
+            raise ChildProcessError("a forked process did not return its results")
+        for (i, _), value in zip(chunk, chunk_values):
+            values[i] = value
+    return [((args, {}), value) for args, value in zip(inputs, values)]
 
 
 def braid_from_piecewise(strands):
@@ -734,6 +767,7 @@ def newton(f, x0, i0):
     return x0 - f(x0) / f.derivative()(i0)
 
 
+@cached_function
 def fieldI(field: NumberField) -> NumberField:
     r"""
     Return the (either double or trivial) extension of a number field which contains ``I``.
@@ -899,46 +933,6 @@ def _isolated_roots(pol, prec=53) -> list:
                 prec *= 2
 
 
-def _refine_root(pol, ball, prec):
-    r"""
-    Return an approximation of the root of ``pol`` in ``ball`` with ``prec``
-    bits of precision.
-
-    Newton iterations in floating point arithmetic are applied to the center
-    of ``ball``, which must isolate a simple root of ``pol``. The result is
-    not certified; it is used to choose simple rational approximations of
-    roots that are certified by other means.
-
-    INPUT:
-
-    - ``pol`` -- a univariate polynomial with coefficients in `\QQ` or in a
-      number field with a fixed embedding in `\QQbar`
-    - ``ball`` -- a complex ball isolating a simple root of ``pol``
-    - ``prec`` -- the precision of the result
-
-    TESTS::
-
-        sage: from sage.schemes.curves.zariski_vankampen import _isolated_roots, _refine_root
-        sage: t = polygen(QQ)
-        sage: b = [r for r in _isolated_roots(t^2 - 2) if r.real() > 0][0]
-        sage: z = _refine_root(t^2 - 2, b, 300)
-        sage: z.parent()
-        Complex Field with 300 bits of precision
-        sage: abs(z - RealField(300)(2).sqrt()) < 2^-295
-        True
-    """
-    CF = ComplexField(prec)
-    z = CF(ball.mid())
-    polC = pol.change_ring(CF)
-    dpolC = polC.derivative()
-    for _ in range(int(prec).bit_length() + 2):
-        dz = polC(z) / dpolC(z)
-        z -= dz
-        if dz.abs() <= z.abs() >> prec:
-            break
-    return z
-
-
 @parallel
 def roots_interval(f, x0) -> dict:
     """
@@ -989,41 +983,59 @@ def roots_interval(f, x0) -> dict:
     # the interval Newton condition at an exact algebraic root forces QQbar
     # to decide that f(root) is exactly zero, which is very expensive.
     roots = _isolated_roots(fx)
+    n = len(roots)
+    dfx = fx.derivative()
+    # Data that only depends on the precision is computed once for all the
+    # roots: rounded centers, the derivative with interval coefficients and
+    # balls whose accuracy (twice the precision) is enough to round to it.
+    centers = {}
+    derivatives = {}
+    refined = {53: roots}
+
+    def data(prec):
+        if prec not in centers:
+            CF = ComplexField(prec)
+            centers[prec] = [CF(r) for r in roots]
+            derivatives[prec] = dfx.change_ring(ComplexIntervalField(prec))
+        return centers[prec], derivatives[prec]
+
+    def refined_roots(prec):
+        if prec not in refined:
+            finer = _isolated_roots(fx, prec)
+            c = [b.mid() for b in finer]
+            refined[prec] = [finer[min(range(n), key=lambda j: (c[j] - r.mid()).abs())]
+                             for r in roots]
+        return refined[prec]
+
     I0 = QQbar.gen()
     result = {}
     for i, r in enumerate(roots):
-        others = roots[:i] + roots[i + 1:]
         prec = 53
         divisor = 4
         while True:
             IF = ComplexIntervalField(prec)
-            CF = ComplexField(prec)
-            diam = min((CF(r) - CF(r0)).abs() for r0 in others) / divisor
+            c, dfxI = data(prec)
+            diam = min((c[i] - c[j]).abs() for j in range(n) if j != i) / divisor
             envelop = IF(diam) * IF((-1, 1), (-1, 1))
             box = IF(r) + envelop
             # The ball r contains a root of fx and it is contained in box. If
             # the derivative does not vanish on the (convex) box, this root is
             # the only one in box. This is the condition checked by the
             # interval Newton operator at an exact root.
-            if not fx.derivative()(box).contains_zero():
+            if not dfxI(box).contains_zero():
                 break
             prec += 53
             divisor *= 2
         # The rational approximation of the root is taken at the precision
-        # ``prec``, from an approximation whose accuracy is well beyond
-        # ``prec``, so that the rounding agrees with the rounding of the exact
-        # root. A part whose ball contains zero is set to zero, as it happens
-        # with the exact roots. Exact ties between roots are kept, which
-        # matters for the order in which the strands are read.
-        if prec == 53:
-            # the balls are computed aiming at a relative accuracy of
-            # 106 bits, which is enough to round to 53 bits
-            z = r.mid()
-        else:
-            z = _refine_root(fx, r, prec + 53)
+        # ``prec``, from a ball whose accuracy is well beyond ``prec``, so
+        # that the rounding agrees with the rounding of the exact root. A part
+        # whose ball contains zero is set to zero, as it happens with the exact
+        # roots. Exact ties between roots are kept, which matters for the order
+        # in which the strands are read.
+        rp = refined_roots(prec)[i]
         RFp = RealField(prec)
-        qr, qi = (QQ.zero() if part.contains_zero() else QQ(RFp(zpart))
-                  for part, zpart in ((r.real(), z.real()), (r.imag(), z.imag())))
+        qr, qi = (QQ.zero() if part.contains_zero() else QQ(RFp(part.mid()))
+                  for part in (rp.real(), rp.imag()))
         if IF(qr, qi) not in box:
             raise ValueError("could not approximate roots with exact values")
         result[qr + I0 * qi] = box
@@ -1081,10 +1093,10 @@ def populate_roots_interval_cache(inputs) -> None:
         sage: (f, 3) in roots_interval_cache
         True
         sage: roots_interval_cache[(f, 3)]
-        {-1.255469441943070? - 0.9121519421827974?*I: -2.? - 1.?*I,
-         -1.255469441943070? + 0.9121519421827974?*I: -2.? + 1.?*I,
-         0.4795466549853897? - 1.475892845355996?*I: 1.? - 2.?*I,
-         0.4795466549853897? + 1.475892845355996?*I: 1.? + 2.?*I,
+        {-1368410724224840092608413/1500200417213612960930942*I - 424449098063465720395046/338079991342961536885997: -2.? - 1.?*I,
+         1368410724224840092608413/1500200417213612960930942*I - 424449098063465720395046/338079991342961536885997: -2.? + 1.?*I,
+         -117053739/79310459*I + 114171080/238081277: 1.? - 2.?*I,
+         117053739/79310459*I + 114171080/238081277: 1.? + 2.?*I,
          7070890639567791/4556439608696174: 2.? + 0.?*I}
     """
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
@@ -1166,8 +1178,9 @@ def braid_in_segment(glist, x0, x1, precision={}):
     intervals = {}
     if not precision1:
         precision1 = {f: 53 for f in glist1}
+    x0F = F1(x0)
     for f in glist1:
-        f0 = _restriction(f, x0)
+        f0 = _restriction(f, x0F)
         # certified isolating balls for the roots; they play the role of
         # the exact roots in QQbar, which are much more expensive
         y0sf = _isolated_roots(f0, precision1[f])
@@ -1773,8 +1786,15 @@ def conjugate_positive_form(braid) -> list[list]:
         if sg0 == B.one():
             res0 = [B(a), []]
         else:
-            bra = sg0 * B(a) / sg0
-            br1, sg = bra.super_summit_set_element()
+            if len(blocks) == 1:
+                # The only block is ``braid1`` itself, hence ``bra`` below
+                # would be ``braid``, whose super summit set element and
+                # conjugating braid have been computed above; this is the
+                # usual case and it is costly for long braids.
+                br1, sg = braid1, sg0
+            else:
+                bra = sg0 * B(a) / sg0
+                br1, sg = bra.super_summit_set_element()
             A1 = rightnormalform(sg)
             par = A1[-1][0] % 2
             A1 = [B(a0) for a0 in A1[:-1]]
@@ -1844,19 +1864,84 @@ def braid2rels(L) -> list:
     U = [tuple(sign(k1) * (abs(k1) + k) for k1 in br.Tietze()) for br in U0]
     pasos = [B.one()]
     pasos.extend(reversed(L1))
-    for C in pasos:
-        U = [(F(a) * C.inverse()).Tietze() for a in U]
-        ga = F / U
-        P = ga.gap().PresentationFpGroup()
-        dic = P.TzOptions().sage()
-        dic['protected'] = d
-        dic['printLevel'] = 0
-        P.SetTzOptions(dic)
-        P.TzGoGo()
-        P.TzGoGo()
-        gb = P.FpGroupPresentation().sage()
-        U = [rel.Tietze() for rel in gb.relations()]
-    return U
+    # For each braid C in pasos, the relations are transformed by the action
+    # of C^-1 and the presentation is simplified; this is done in GAP, without
+    # converting the intermediate presentations to Sage.
+    Fg = F.gap()
+    rels = [F(a).gap() for a in U]
+    steps = [list(C.inverse().Tietze()) for C in pasos]
+    result = _gap_braid2rels_loop()(Fg, rels, steps, d)
+    return [tuple(r.sage()) for r in result]
+
+
+_braid2rels_loop = None
+
+
+def _gap_braid2rels_loop():
+    r"""
+    Return the GAP function doing the main loop of :func:`braid2rels`.
+
+    The function takes a free group `F` of rank `d`, a list of words in `F`,
+    a list of braids given by Tietze words and the integer `d`. For each
+    braid, it applies its right action (the same as
+    :class:`~sage.groups.braid.MappingClassGroupAction`) to the words and
+    replaces them by the relators of the presentation obtained after
+    applying ``TzGoGo`` twice, with the generators protected. It returns the
+    final relators as Tietze words.
+
+    TESTS::
+
+        sage: from sage.schemes.curves.zariski_vankampen import _gap_braid2rels_loop
+        sage: F = FreeGroup(3); B = BraidGroup(3)
+        sage: U = [(1, 2, -1, -2, 3)]
+        sage: C = B([1, -2])
+        sage: new = _gap_braid2rels_loop()(F.gap(), [F(u).gap() for u in U],
+        ....:                              [list(C.Tietze())], 3)
+
+    The same computation in Sage::
+
+        sage: G = F / [(F(u) * C).Tietze() for u in U]
+        sage: P = G.gap().PresentationFpGroup()
+        sage: dic = P.TzOptions().sage()
+        sage: dic['protected'] = 3; dic['printLevel'] = 0
+        sage: P.SetTzOptions(dic); P.TzGoGo(); P.TzGoGo()
+        sage: old = [list(r.Tietze()) for r in P.FpGroupPresentation().sage().relations()]
+        sage: new.sage() == old
+        True
+    """
+    global _braid2rels_loop
+    if _braid2rels_loop is None:
+        from sage.libs.gap.libgap import libgap
+        _braid2rels_loop = libgap.eval(r"""
+        function(F, rels, steps, d)
+            local gens, imgs, step, j, i, G, P;
+            gens := GeneratorsOfGroup(F);
+            for step in steps do
+                for j in step do
+                    imgs := ShallowCopy(gens);
+                    if j > 0 then
+                        imgs[j] := gens[j] * gens[j + 1] * gens[j]^-1;
+                        imgs[j + 1] := gens[j];
+                    else
+                        i := -j;
+                        imgs[i] := gens[i + 1];
+                        imgs[i + 1] := gens[i + 1]^-1 * gens[i] * gens[i + 1];
+                    fi;
+                    rels := List(rels, w -> MappedWord(w, gens, imgs));
+                od;
+                G := F / rels;
+                P := PresentationFpGroup(G);
+                TzOptions(P).protected := d;
+                TzOptions(P).printLevel := 0;
+                TzGoGo(P);
+                TzGoGo(P);
+                G := FpGroupPresentation(P);
+                rels := List(RelatorsOfFpGroup(G),
+                             r -> MappedWord(r, FreeGeneratorsOfFpGroup(G), gens));
+            od;
+            return List(rels, r -> TietzeWordAbstractWord(r, gens));
+        end""")
+    return _braid2rels_loop
 
 
 @parallel
@@ -1950,14 +2035,16 @@ def fundamental_group_from_braid_mon(bm, degree=None,
     if d == 1:
         return Fv / [(1, j, -1, -j) for j in range(2, d + v + 1)]
     bmh = [br for j, br in enumerate(bm) if j not in vertical0]
+    # _parallel_map keeps the order of the inputs, so that the presentation
+    # does not depend on the order in which parallel computations finish
     if not puiseux:
-        relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
+        relations_h = _parallel_map(relation, [(x, b) for x in F.gens() for b in bmh])
         rel_h = [r[1] for r in relations_h]
     else:
-        conjugate_desc = conjugate_positive_form_p(bmh)
+        conjugate_desc = _parallel_map(conjugate_positive_form_p, [(b,) for b in bmh])
         trenzas_desc = [b1[-1] for b1 in conjugate_desc]
         trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
-        relations_h = braid2rels_p(trenzas_desc_1)
+        relations_h = _parallel_map(braid2rels_p, [(L,) for L in trenzas_desc_1])
         rel_h = [r[1] for r in relations_h]
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
