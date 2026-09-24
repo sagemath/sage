@@ -35,17 +35,21 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.12", "3.13", "3.14"]
+#pythons = ["3.13", "3.14", "3.15"]
+pythons = ["3.15"]
 tags = [""]
 
 
 def write_env_file(env_file: Path, dependencies: list[str]) -> None:
+    # TODO: Remove python_rc from channels and _python_rc from dependencies
     env_file.write_text(
         """name: sage
 channels:
+  - conda-forge/label/python_rc
   - conda-forge
   - nodefaults
 dependencies:
+  - _python_rc
 """
         + "".join(f"  - {req}" + "\n" for req in dependencies)
     )
@@ -113,6 +117,8 @@ def update_conda(source_dir: Path, systems: list[str] | None) -> None:
                 [
                     "conda-lock",
                     "--mamba",
+                    "--channel",
+                    "conda-forge/label/python_rc",
                     "--channel",
                     "conda-forge",
                     "--kind",
