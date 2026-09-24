@@ -1009,8 +1009,8 @@ def roots_interval(f, x0) -> dict:
                              for r in roots]
         return refined[prec]
 
-    I0 = QQbar.gen()
-    result = {}
+    boxes = []
+    precs = []
     for i, r in enumerate(roots):
         prec = 53
         divisor = 4
@@ -1028,17 +1028,23 @@ def roots_interval(f, x0) -> dict:
                 break
             prec += 53
             divisor *= 2
-        # The rational approximation of the root is taken at the precision
-        # ``prec``, from a ball whose accuracy is well beyond ``prec``, so
-        # that the rounding agrees with the rounding of the exact root. A part
-        # whose ball contains zero is set to zero, as it happens with the exact
-        # roots. Exact ties between roots are kept, which matters for the order
-        # in which the strands are read.
-        rp = refined_roots(prec)[i]
-        RFp = RealField(prec)
+        boxes.append(box)
+        precs.append(prec)
+    # The rational approximations of the roots are taken at a common
+    # precision, from balls whose accuracy is well beyond it, so that they
+    # are the roundings of the exact roots. Hence roots with the same real
+    # part have approximations with the same real part: the strands are read
+    # in the order of the exact roots (by real part, then imaginary part),
+    # which is the order used by :func:`strand_components`. A part whose ball
+    # contains zero is set to zero.
+    prec = max(precs)
+    RFp = RealField(prec)
+    I0 = QQbar.gen()
+    result = {}
+    for rp, box in zip(refined_roots(prec), boxes):
         qr, qi = (QQ.zero() if part.contains_zero() else QQ(RFp(part.mid()))
                   for part in (rp.real(), rp.imag()))
-        if IF(qr, qi) not in box:
+        if box.parent()(qr, qi) not in box:
             raise ValueError("could not approximate roots with exact values")
         result[qr + I0 * qi] = box
     return result
@@ -1097,9 +1103,9 @@ def populate_roots_interval_cache(inputs) -> None:
         sage: roots_interval_cache[(f, 3)]
         {-1368410724224840092608413/1500200417213612960930942*I - 424449098063465720395046/338079991342961536885997: -2.? - 1.?*I,
          1368410724224840092608413/1500200417213612960930942*I - 424449098063465720395046/338079991342961536885997: -2.? + 1.?*I,
-         -117053739/79310459*I + 114171080/238081277: 1.? - 2.?*I,
-         117053739/79310459*I + 114171080/238081277: 1.? + 2.?*I,
-         7070890639567791/4556439608696174: 2.? + 0.?*I}
+         -1753706701770506814078961/1188234435371560487870233*I + 1134722748456088598770855/2366240566292053371152767: 1.? - 2.?*I,
+         1753706701770506814078961/1188234435371560487870233*I + 1134722748456088598770855/2366240566292053371152767: 1.? + 2.?*I,
+         585192171259718720724302/377094332771307119686215: 2.? + 0.?*I}
     """
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
     # computed before forking, so that the processes inherit them
@@ -1166,7 +1172,17 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: p2b = QQ(p2a.real()) + I*QQ(p2a.imag())
         sage: glist = tuple([_[0] for _ in g.factor()])
         sage: B = braid_in_segment(glist, p1b, p2b); B              # needs sirocco
-        s5*s3^-1
+        s3*s5*s3^-1
+
+    The strands are read in the order of the exact roots, by real part
+    and then by imaginary part. Over ``p1b`` some roots have the same real
+    part; the first factor ``s3`` puts two of them in this order::
+
+        sage: # needs sage.rings.real_mpfr sage.symbolic
+        sage: gx = g.subs({g.parent().gen(0): Kw1(p1b)}).univariate_polynomial()
+        sage: rts = gx.roots(QQbar, multiplicities=False)
+        sage: any(a.real() == b.real() for a, b in combinations(rts, 2))
+        True
     """
     precision1 = precision.copy()
     g = prod(glist)
