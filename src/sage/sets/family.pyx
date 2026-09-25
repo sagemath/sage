@@ -1131,11 +1131,17 @@ class LazyFamily(AbstractFamily):
             sage: F = Family(C, lambda x: x)
             sage: F.cardinality()
             +Infinity
+
+        Check that we can compute the cardinality of large sets::
+
+            sage: S = SemistandardTableaux(Partition([10]*10), max_entry=50)
+            sage: Family(S, lambda x: x.to_word(), lazy=True).cardinality()
+            363571989527246729778823373311156411639006711939619106085234539792656250000
             """
         try:
-            return Integer(len(self.set))
-        except (AttributeError, NotImplementedError, TypeError):
             return self.set.cardinality()
+        except (AttributeError, NotImplementedError, TypeError):
+            return Integer(len(self.set))
 
     def __iter__(self):
         """
