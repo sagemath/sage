@@ -83,6 +83,7 @@ from sage.data_structures.stream import (Stream_zero,
                                          Stream_map_coefficients,
                                          Stream_shift)
 from sage.categories.tensor import tensor
+from sage.combinat.constellation import Constellations
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.subset import subsets
 from sage.combinat.sf.sf import SymmetricFunctions
@@ -518,8 +519,8 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
                 s = list(self.structures(labels))
                 tester.assertEqual(len(s), len(set(s)),
                                    f"structures for {labels} are {s}, which is not a set")
-                coeff = self.generating_series()[n]
-                tester.assertEqual(len(s) / factorial(n), coeff,
+                coeff = self.generating_series()[n] * factorial(n)
+                tester.assertEqual(len(s), coeff,
                                    f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}")
             else:
                 label_shapes = IntegerVectors(n, length=P._arity)
@@ -527,9 +528,9 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
                     labels = [list(range(k)) for k in shape]
                     s = list(self.structures(*labels))
                     tester.assertEqual(len(s), len(set(s)), f"structures for {labels} are {s}, which is not a set")
-                    coeff = self.generating_series()[n].coefficient(list(shape))
-                    tester.assertEqual(len(s) / ZZ.prod(factorial(k) for k in shape),
-                                       coeff,
+                    coeff = (self.generating_series()[n].coefficient(list(shape))
+                             * ZZ.prod(factorial(k) for k in shape))
+                    tester.assertEqual(len(s), coeff,
                                        f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}")
 
     def isotypes(self, *shape):
@@ -2302,6 +2303,32 @@ class LazyCombinatorialSpeciesUnivariate(LazyCombinatorialSpecies):
         """
         return SetPartitionSpecies(self)
 
+    def Constellations(self, length, connected=True):
+        r"""
+        Return the species of (connected) constellations.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
+            sage: C = L.Constellations(3)
+            sage: set(C.isotypes(3))
+            {(C_3, 0), (C_3, 1), (C_3, 2), (C_3, 3), (X^3, 0), (X^3, 1), (X^3, 2)}
+            sage: list(C.structures(["a", "b"]))
+            [Constellation of length 3 and degree 2
+             g0 ('a')('b')
+             g1 ('a','b')
+             g2 ('a','b'),
+             Constellation of length 3 and degree 2
+             g0 ('a','b')
+             g1 ('a')('b')
+             g2 ('a','b'),
+             Constellation of length 3 and degree 2
+             g0 ('a','b')
+             g1 ('a','b')
+             g2 ('a')('b')]
+        """
+        return ConstellationSpecies(self, length, connected=connected)
+
 
 class LazyCombinatorialSpeciesMultivariate(LazyCombinatorialSpecies):
     pass
@@ -2965,6 +2992,143 @@ class SetPartitionSpecies(CompositionSpeciesElement, UniqueRepresentation,
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
         return L(lambda n: Partitions(n).cardinality())
+
+
+class ConstellationSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
+                           LazyCombinatorialSpeciesElement,
+                           UniqueRepresentation,
+                           metaclass=InheritComparisonClasscallMetaclass):
+    def __init__(self, parent, length, connected):
+        r"""
+        Initialize the species of constellations.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: C = L.Constellations(3, connected=False)
+            sage: Cc = L.Constellations(3, connected=True)
+            sage: E = L.Sets()
+            sage: E(Cc)[3]
+            E_3 + 4*C_3 + 3*X*E_2 + 3*X^3
+            sage: C[3]
+            E_3 + 4*C_3 + 3*X*E_2 + 3*X^3
+
+        TESTS::
+
+            sage: TestSuite(C).run(skip=['_test_category', '_test_pickling'])
+            sage: TestSuite(Cc).run(skip=['_test_category', '_test_pickling'])
+        """
+        P = parent._laurent_poly_ring
+        self._length = length
+        self._connected = connected
+
+        def coefficient(n):
+            X = Constellations(self._length, n, connected=self._connected)
+            return P((X, lambda c, pi: c.relabel(pi)), {0: range(1, n+1)}, check=False)
+
+        S = parent(coefficient)
+        super().__init__(parent, S._coeff_stream)
+
+    def structures(self, labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
+            sage: Cc = L.Constellations(3, connected=True)
+            sage: list(Cc.structures([]))
+            []
+            sage: list(Cc.structures([1]))
+            [Constellation of length 3 and degree 1
+             g0 (1)
+             g1 (1)
+             g2 (1)]
+
+            sage: list(Cc.structures([1,2]))
+            [Constellation of length 3 and degree 2
+             g0 (1)(2)
+             g1 (1,2)
+             g2 (1,2),
+             Constellation of length 3 and degree 2
+             g0 (1,2)
+             g1 (1)(2)
+             g2 (1,2),
+             Constellation of length 3 and degree 2
+             g0 (1,2)
+             g1 (1,2)
+             g2 (1)(2)]
+        """
+        labels = _label_sets(self.parent()._arity, [labels])
+        yield from Constellations(length=self._length,
+                                  degree=len(labels[0]),
+                                  domain=labels[0],
+                                  connected=self._connected)
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: C = L.Constellations(3, connected=False)
+            sage: C.generating_series()
+            1 + X + 2*X^2 + 6*X^3 + 24*X^4 + 120*X^5 + 720*X^6 + O(X^7)
+
+            sage: Cc = L.Constellations(3, connected=True)
+            sage: Cc.generating_series()
+            X + 3/2*X^2 + 13/3*X^3 + 71/4*X^4 + 461/5*X^5 + 1149/2*X^6 + O(X^7)
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(lambda n: Constellations(self._length,
+                                          n,
+                                          connected=self._connected).cardinality() / factorial(n))
+
+    def cycle_index_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: C = L.Constellations(3, connected=False)
+            sage: C.cycle_index_series()
+            p[] + p[1] + (2*p[1,1]+2*p[2]) + (6*p[1,1,1]+2*p[2,1]+3*p[3])
+            + (24*p[1,1,1,1]+4*p[2,1,1]+8*p[2,2]+3*p[3,1]+4*p[4])
+            + ... + O^7
+
+            sage: C.isotype_generating_series()
+            1 + X + 4*X^2 + 11*X^3 + 43*X^4 + 161*X^5 + 901*X^6 + O(X^7)
+
+            sage: Cc = L.Constellations(3, connected=True)
+            sage: Cc.cycle_index_series()
+            p[1] + (3/2*p[1,1]+3/2*p[2]) + (13/3*p[1,1,1]+8/3*p[3])
+            + (71/4*p[1,1,1,1]+21/4*p[2,2]+3*p[4]) + (461/5*p[1,1,1,1,1]+24/5*p[5])
+            + ... + O^8
+
+            sage: Cc.isotype_generating_series()
+            X + 3*X^2 + 7*X^3 + 26*X^4 + 97*X^5 + 624*X^6 + O(X^7)
+        """
+        P = self.parent()
+        S = SymmetricFunctions(P.base_ring().fraction_field())
+        p = S.p()
+        L = LazySymmetricFunctions(p)
+
+        def coefficient(n):
+            return p._from_dict({sigma: sigma.centralizer_size() ** (self._length-2)
+                                 for sigma in Partitions(n)})
+
+        s = L(coefficient)
+
+        if self._connected:
+            h = S.h()
+            H = L(lambda n: h[n]) - 1
+            return H.revert()(s - 1)
+
+        return s
 
 
 class RestrictedSpeciesElement(LazyCombinatorialSpeciesElement):
