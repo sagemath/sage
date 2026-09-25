@@ -1504,23 +1504,23 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
 
     Comparison with exponential algorithm::
 
+        sage: # needs sage.numerical.mip
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):                                                       # needs sage.numerical.mip
-        ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
-        ....:     ve, le = vertex_separation.vertex_separation(G)
-        ....:     vm, lm = vertex_separation.vertex_separation_MILP(G)
-        ....:     if ve != vm:
-        ....:        raise ValueError("the solution is not optimal")
+        sage: G = digraphs.RandomDirectedGNP(10, 0.2)
+        sage: ve, le = vertex_separation.vertex_separation(G)
+        sage: vm, lm = vertex_separation.vertex_separation_MILP(G)
+        sage: if ve != vm:
+        ....:    raise ValueError("the solution is not optimal")
 
     Comparison with different values of the integrality parameter::
 
+        sage: # needs sage.numerical.mip
         sage: from sage.graphs.graph_decompositions import vertex_separation
-        sage: for i in range(10):               # long time (11s on sage.math, 2012), needs sage.numerical.mip
-        ....:     G = digraphs.RandomDirectedGNP(10, 0.2)
-        ....:     va, la = vertex_separation.vertex_separation_MILP(G, integrality=False)
-        ....:     vb, lb = vertex_separation.vertex_separation_MILP(G, integrality=True)
-        ....:     if va != vb:
-        ....:        raise ValueError("the integrality parameter changes the result")
+        sage: G = digraphs.RandomDirectedGNP(10, 0.2)
+        sage: va, la = vertex_separation.vertex_separation_MILP(G, integrality=False)
+        sage: vb, lb = vertex_separation.vertex_separation_MILP(G, integrality=True)
+        sage: if va != vb:
+        ....:    raise ValueError("the integrality parameter changes the result")
 
     Giving anything else than a Graph or a DiGraph::
 
