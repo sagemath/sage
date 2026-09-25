@@ -25,6 +25,7 @@ py.install_sources(
   'group_algebra.py',
   'hall_algebra.py',
   'iwahori_hecke_algebra.py',
+  'birman_murakami_wenzl_algebra.py',
   'jordan_algebra.py',
   'nil_coxeter_algebra.py',
   'octonion_algebra.pxd',

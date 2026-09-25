@@ -44,6 +44,7 @@ Named associative algebras
 
    sage/algebras/affine_nil_temperley_lieb
    sage/algebras/askey_wilson
+   sage/algebras/birman_murakami_wenzl_algebra
    sage/combinat/diagram_algebras
    sage/algebras/clifford_algebra
    sage/algebras/clifford_algebra_element

@@ -16,6 +16,7 @@ py.install_sources(
   'string_monoid_element.py',
   'string_ops.py',
   'trace_monoid.py',
+  'tangles.py',
   subdir: 'sage/monoids',
 )
 
