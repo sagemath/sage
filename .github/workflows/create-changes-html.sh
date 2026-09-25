@@ -15,6 +15,7 @@ echo '<head>' >> CHANGES.html
 echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">' >> CHANGES.html
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> CHANGES.html
 echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
+echo '<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>' >> CHANGES.html
 cat >> CHANGES.html << EOF
 <style>
   p.diff a:first-child {
