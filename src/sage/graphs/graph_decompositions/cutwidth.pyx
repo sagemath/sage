@@ -383,6 +383,15 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
         (1, [2, 3, 0, 1, 4])
         sage: cutwidth(G, algorithm='MILP', solver='GLPK')                              # needs sage.numerical.mip
         (1, [2, 3, 0, 1, 4])
+
+    Check that the use of the homeomorphically reduced graph performs well::
+
+        sage: G = graphs.CycleGraph(100) * 2
+        sage: cw, L = G.cutwidth(algorithm='exponential'); cw
+        2
+        sage: from sage.graphs.graph_decompositions import cutwidth
+        sage: cutwidth.width_of_cut_decomposition(G, L)
+        2
     """
     from sage.graphs.graph import Graph
 
@@ -394,6 +403,10 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
     elif G.size() <= cut_off:
         # We have a trivial solution
         return width_of_cut_decomposition(G, list(G)), list(G)
+
+    # The cutwidth of a graph is equal to the cutwidth of its homeomorphically
+    # reduced graph. So we use this reduced graph
+    G, steps = G.reduced_homeomorphic_graph(return_steps=True)
 
     cdef list CC
     if not G.is_connected():
@@ -432,6 +445,15 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
             cw = max(cw, cwH)
             L.extend(LH)
             this_cut_off = max(cw, this_cut_off)
+
+    # We insert back the vertices that have been removed in the homeomorphic
+    # reduction. If a vertex u of degree 2 with neighbors x and y was removed,
+    # we insert it between x and y in the ordering, before the right most of x
+    # and y. We proceed in the reverse order of the steps of the reduction.
+    while steps:
+        x, u, y = steps.pop()
+        pos = max(L.index(x), L.index(y))
+        L.insert(pos, u)
 
     return cw, L
 
