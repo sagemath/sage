@@ -3710,6 +3710,53 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         return all(a in ZZ for a in self.absolute_minpoly())
 
+    def is_S_integral(self, S):
+        r"""
+        Return whether this number is `S`-integral, that is, integral
+        at every prime of the ring of integers not contained in ``S``.
+
+        INPUT:
+
+        - ``S`` -- list of prime ideals of the ring of integers of the
+          parent number field
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 - 5)
+            sage: S = K.primes_above(2)
+            sage: (a/2).is_integral()
+            False
+            sage: (a/2).is_S_integral(S)
+            True
+            sage: (K(1)/3).is_S_integral(S)
+            False
+
+        With ``S`` empty this is the same as :meth:`is_integral`::
+
+            sage: a.is_S_integral([])
+            True
+            sage: (a/2).is_S_integral([])
+            False
+
+        The zero element is `S`-integral for every ``S``::
+
+            sage: K(0).is_S_integral(S)
+            True
+
+        An example in a relative extension::
+
+            sage: K.<a, b> = NumberField([x^2 + 1, x^2 + 3])
+            sage: S = K.primes_above(2)
+            sage: ((a - b)/2).is_integral()
+            False
+            sage: ((a - b)/2).is_S_integral(S)
+            True
+        """
+        if self.is_zero():
+            return True
+        return self.parent().ideal(self).is_S_integral(S)
+
     def matrix(self, base=None):
         r"""
         If ``base`` is ``None``, return the matrix of right multiplication by the
