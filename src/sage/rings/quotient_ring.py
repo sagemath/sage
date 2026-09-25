@@ -264,9 +264,9 @@ def QuotientRing(R, I, names=None, **kwds):
          over Rational Field by the ideal
          (-y*y*z - y*z*x - 2*y*z*z, x*y + y*z, x*x + x*y - y*x - y*y)
         sage: i^3
-        -j*k*i - j*k*j - j*k*k
+        j*j*k - j*k*j + j*k*k
         sage: j^3
-        -j*k*i - j*k*j - j*k*k
+        j*j*k - j*k*j + j*k*k
 
     Check that :issue:`5978` is fixed by if we quotient by the zero ideal `(0)`
     then we just return ``R``::
@@ -371,9 +371,9 @@ class QuotientRing_nc(Parent):
          Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
          by the ideal (-y*y*z - y*z*x - 2*y*z*z, x*y + y*z, x*x + x*y - y*x - y*y)
         sage: i^3
-        -j*k*i - j*k*j - j*k*k
+        j*j*k - j*k*j + j*k*k
         sage: j^3
-        -j*k*i - j*k*j - j*k*k
+        j*j*k - j*k*j + j*k*k
 
     For rings that *do* inherit from :class:`~sage.rings.ring.Ring`,
     we provide a subclass :class:`QuotientRing_generic`, for backwards

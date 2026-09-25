@@ -341,6 +341,14 @@ class LetterplaceIdeal(Ideal_nc):
             True
             sage: 1 in I
             False
+
+        Check that :issue:`42105` is fixed::
+
+            sage: A.<x,y> = FreeAlgebra(QQ, 2, implementation='letterplace')
+            sage: f = x*y*x + y*y*x - y*x*x - y*x*y
+            sage: J = A*f*A
+            sage: f*y*x in J
+            True
         """
         R = self.ring()
         return (x in R) and R(x).normal_form(self).is_zero()
@@ -375,6 +383,18 @@ class LetterplaceIdeal(Ideal_nc):
             Twosided Ideal (y*z, x*x - y*x - y*y) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
             sage: I.reduce(F*[x^2+x*y,y^2+y*z]*F)
             Twosided Ideal (x*y + y*z, -y*x + y*z) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+
+        Check that reduction does not rely on the shifted commutative
+        reductors, which are not always a Groebner basis (see
+        :issue:`42105`)::
+
+            sage: A.<x,y> = FreeAlgebra(QQ, 2, implementation='letterplace')
+            sage: f = x*y*x + y*y*x - y*x*x - y*x*y
+            sage: J = A*f*A
+            sage: g = f*y*x
+            sage: K = A*g*A
+            sage: K.reduce(J.groebner_basis(degbound=g.degree()).gens())
+            Twosided Ideal (0) of Free Associative Unital Algebra on 2 generators (x, y) over Rational Field
         """
         P = self.ring()
         if not isinstance(G, (list, tuple)):
@@ -383,20 +403,11 @@ class LetterplaceIdeal(Ideal_nc):
             if G in P:
                 return G.normal_form(self)
             G = G.gens()
-        C = P.current_ring()
-        sI = C.ideal([C(X.letterplace_polynomial()) for X in self.gens()],
-                     coerce=False)
-        selfdeg = max([x.degree() for x in sI.gens()])
-        gI = P._reductor_(G, selfdeg)
-        from sage.libs.singular.option import LibSingularOptions
-        libsingular_options = LibSingularOptions()
-        bck = (libsingular_options['redTail'], libsingular_options['redSB'])
-        libsingular_options['redTail'] = True
-        libsingular_options['redSB'] = True
-        from sage.libs.singular.function import singular_function
-        poly_reduce = singular_function("NF")
-        sI = poly_reduce(sI, gI, ring=C, attributes={gI: {"isSB": 1}})
-        libsingular_options['redTail'] = bck[0]
-        libsingular_options['redSB'] = bck[1]
-        return P.ideal([FreeAlgebraElement_letterplace(P, x, check=False)
-                        for x in sI], coerce=False)
+        # Reduce each generator of ``self`` by ``G`` via the letterplace
+        # ring path.  This avoids relying on the shifts of generators
+        # (as produced by ``_reductor_``) being a commutative Groebner
+        # basis, which is not always the case (see :issue:`42105`).
+        selfdeg = max(x.degree() for x in self.gens())
+        reduced = [x._letterplace_normal_form(G, selfdeg)
+                   for x in self.gens()]
+        return P.ideal(reduced, coerce=False)
