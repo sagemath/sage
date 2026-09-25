@@ -389,7 +389,7 @@ Can I make Sage automatically execute commands on startup?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Yes, just make a file ``$HOME/.sage/init.sage`` and it will be
-executed any time you start Sage. This assumes that the Sage
+executed when you start an interactive Sage session. This assumes that the Sage
 environment variable ``DOT_SAGE`` points to the hidden directory
 ``$HOME/.sage``, which by default is the case.
 
