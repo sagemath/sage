@@ -356,21 +356,26 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         v = self._new(out)
         return v
 
-    def norm(self, p=2):
+    def norm(self, p=None):
         r"""
-        Return the norm (or related computations) of the vector.
+        Return the default norm or a related computation of the vector.
 
         INPUT:
 
-        - ``p`` -- (default: 2) controls which norm is computed,
-          allowable values are any real number and positive and
-          negative infinity.  See output discussion for specifics.
+        - ``p`` -- (default: ``None``) if ``None``, use the norm induced
+          by a nonstandard inner product defined by the parent, or the
+          usual Euclidean norm otherwise; explicitly specified values can
+          be any real number or positive or negative infinity.  See the
+          output discussion for specifics.
 
         OUTPUT:
 
-        Returned value is a double precision floating point value
-        in ``RDF`` (or an integer when ``p=0``).  The default value
-        of ``p = 2`` is the "usual" Euclidean norm.  For other values:
+        For an explicitly specified ``p``, the returned value is a double
+        precision floating point value in ``RDF`` (or an integer when
+        ``p=0``).  The value ``p = 2`` gives the "usual" Euclidean norm.
+        If ``p`` is ``None`` and the parent defines a nonstandard inner
+        product, the result is the square root of the inner product of the
+        vector with itself and may instead be in ``CDF``.  For other values:
 
         - ``p = Infinity`` or ``p = oo``: the maximum of the
           absolute values of the entries, where the absolute value
@@ -426,6 +431,17 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             sage: w.norm(p=oo)
             13.0
 
+        If the parent defines a nonstandard inner product, it determines
+        the default.  An explicitly requested 2-norm is still the Euclidean
+        norm of the coordinates::
+
+            sage: V = VectorSpace(RDF, 2, inner_product_matrix=[[4, 0], [0, 1]])
+            sage: u = V([1, 0])
+            sage: u.norm()
+            2.0
+            sage: u.norm(p=2)
+            1.0
+
         Negative values of ``p`` are allowed and will
         provide the same computation as for positive values.
         A zero entry in the vector will raise a warning and return
@@ -457,6 +473,10 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         """
         import sage.rings.infinity
         import sage.rings.integer
+        if p is None:
+            if not self.parent()._inner_product_is_dot_product():
+                return self.inner_product(self).sqrt()
+            p = 2
         if p == sage.rings.infinity.Infinity:
             p = numpy.inf
         elif p == -sage.rings.infinity.Infinity:
