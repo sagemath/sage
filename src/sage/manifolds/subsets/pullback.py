@@ -422,7 +422,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             ([t > -1, t < 1], [t >= 3, t <= 4])
         """
         disjunction = []
-        for interval in realset:
+        for interval in realset.intervals():
             condition = ManifoldSubsetPullback._interval_restriction(expr, interval)
             if condition == []:
                 return []
