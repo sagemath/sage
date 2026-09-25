@@ -1976,11 +1976,8 @@ def __GCD_sequence(v, **kwargs):
     """
     if len(v) == 0:
         return ZZ.zero()
-    if hasattr(v, 'universe'):
-        g = v.universe()(0)
-    else:
-        g = ZZ.zero()
-    for vi in v:
+    g = v[0]
+    for vi in v[1:]:
         g = vi.gcd(g, **kwargs)
     return g
 
