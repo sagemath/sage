@@ -2711,21 +2711,20 @@ cdef class GabowEdgeConnectivity:
         vertices ``v`` of the number of edge-disjoint paths from ``r`` to
         ``v``, which is 0 when some vertex is not reachable from ``r``::
 
-            sage: for _ in range(5):
-            ....:     D = digraphs.RandomDirectedGNP(randint(2, 10), random())
-            ....:     for r in D:
-            ....:         k = 0
-            ....:         if set(D.depth_first_search(r)) == set(D):
-            ....:             k = min(len(D.edge_disjoint_paths(r, v)) for v in D if v != r)
-            ....:             trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=k, root=r)
-            ....:             assert len(trees) == k
-            ....:             assert is_valid_packing(D, r, trees)
-            ....:         try:
-            ....:             _ = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=k + 1, root=r)
-            ....:         except EmptySetError:
-            ....:             pass
-            ....:         else:
-            ....:             raise AssertionError("more arborescences than the minimum r-cut")
+            sage: D = digraphs.RandomDirectedGNP(randint(2, 10), random())
+            sage: for r in D:
+            ....:     k = 0
+            ....:     if set(D.depth_first_search(r)) == set(D):
+            ....:         k = min(len(D.edge_disjoint_paths(r, v)) for v in D if v != r)
+            ....:         trees = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=k, root=r)
+            ....:         assert len(trees) == k
+            ....:         assert is_valid_packing(D, r, trees)
+            ....:     try:
+            ....:         _ = GabowEdgeConnectivity(D).edge_disjoint_spanning_trees(k=k + 1, root=r)
+            ....:     except EmptySetError:
+            ....:         pass
+            ....:     else:
+            ....:         raise AssertionError("more arborescences than the minimum r-cut")
         """
         from sage.graphs.digraph import DiGraph
         from sage.categories.sets_cat import EmptySetError
