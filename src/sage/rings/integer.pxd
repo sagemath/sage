@@ -1,4 +1,4 @@
-from sage.libs.gmp.types cimport __mpz_struct, mpz_t, mpz_ptr
+from sage.libs.gmp.types cimport __mpz_struct, mp_bitcnt_t, mpz_t, mpz_ptr
 from sage.libs.gmp.mpz cimport mpz_set
 
 from sage.structure.element cimport EuclideanDomainElement, RingElement
@@ -23,6 +23,7 @@ cdef class Integer(EuclideanDomainElement):
     cdef _or(Integer self, Integer other)
     cdef _xor(Integer self, Integer other)
 
+    cpdef mp_bitcnt_t trailing_zero_bits(self) noexcept
     cpdef size_t _exact_log_log2_iter(self, Integer m) noexcept
     cpdef size_t _exact_log_mpfi_log(self, m) noexcept
     cpdef RingElement _valuation(Integer self, Integer p)
