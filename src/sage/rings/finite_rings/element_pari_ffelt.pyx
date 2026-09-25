@@ -1026,19 +1026,23 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sig_off()
         return bool(i)
 
-    def sqrt(self, extend=False, all=False):
+    def sqrt(self, *, extend=False, all=False, algorithm=None, name=None):
         """
         Return a square root of ``self``, if it exists.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``False``)
-
-           .. WARNING::
-
-               This option is not implemented.
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
+          square root in an extension field when necessary
 
         - ``all`` -- boolean (default: ``False``)
+
+        - ``algorithm`` -- optional algorithm hint (default: ``None``);
+          accepted for the common finite-field interface; PARI always uses
+          its backend default
+
+        - ``name`` -- string (default: ``None``); name of the generator when
+          a quadratic extension is created
 
         OUTPUT:
 
@@ -1050,10 +1054,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         extension field if necessary.  If ``extend`` is ``False``, a
         :exc:`ValueError` is raised if the element is not a square in the
         base field.
-
-        .. WARNING::
-
-           The ``extend`` option is not implemented (yet).
 
         EXAMPLES::
 
@@ -1072,15 +1072,31 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             Traceback (most recent call last):
             ...
             ValueError: element is not a square
-            sage: K(3).sqrt(all=True)
+            sage: K(3).sqrt(extend=False, all=True)
             []
 
             sage: K.<a> = GF(3^17, implementation='pari_ffelt')
             sage: (a^3 - a - 1).sqrt()
             a^16 + 2*a^15 + a^13 + 2*a^12 + a^10 + 2*a^9 + 2*a^8 + a^7 + a^6 + 2*a^5 + a^4 + 2*a^2 + 2*a + 2
+
+        TESTS:
+
+        Check the common finite-field square-root interface
+        (:issue:`40796`)::
+
+            sage: q = a**2
+            sage: for method in (q.sqrt, q.square_root):
+            ....:     for algorithm in (None, 'tonelli', 'cipolla'):
+            ....:         roots = method(extend=True, all=True,
+            ....:                        algorithm=algorithm, name='w')
+            ....:         assert isinstance(roots, list) and len(roots) == 2
+            ....:         assert all(r.parent() is K and r**2 == q for r in roots)
+            ....:     assert method(algorithm='backend-default')**2 == q
+            sage: nonsquare = K.quadratic_nonresidue()
+            sage: for method in (nonsquare.sqrt, nonsquare.square_root):
+            ....:     root = method(extend=True, name='w')
+            ....:     assert root**2 == nonsquare
         """
-        if extend:
-            raise NotImplementedError
         cdef GEN s
         cdef FiniteFieldElement_pari_ffelt x, mx
         sig_on()
@@ -1098,10 +1114,17 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                 return [x, mx]
         else:
             sig_off()
+            if extend:
+                from sage.categories.finite_fields import _sqrt_in_extension
+                return _sqrt_in_extension(
+                    self, all_roots=all, name=name, algorithm=algorithm
+                )
             if all:
                 return []
             else:
                 raise ValueError("element is not a square")
+
+    square_root = sqrt
 
     def log(self, base, order=None, *, check=False):
         """

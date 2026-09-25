@@ -1057,6 +1057,17 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: Mod(1/25, 2^40).is_square()                                           # needs sage.libs.pari
             True
 
+            sage: for n in (2, 3, 5, 7, 8, 9, 11, 15):
+            ....:     R = Zmod(n)
+            ....:     squares = {x*x for x in R}
+            ....:     assert all(a.is_square() == (a in squares) for a in R)
+            sage: p = next_prime(2^40)
+            sage: R = Zmod(p)
+            sage: values = [R(i) for i in range(40)]
+            sage: all(a.is_square() == (a == 0 or a^((p - 1)//2) == 1)
+            ....:     for a in values)
+            True
+
             sage: for p,q,r in cartesian_product_iterator([[3,5],[11,13],[17,19]]):  # long time, needs sage.libs.pari
             ....:     for ep,eq,er in cartesian_product_iterator([[0,1,2,3],[0,1,2,3],[0,1,2,3]]):
             ....:         for e2 in [0, 1, 2, 3, 4]:
@@ -1102,20 +1113,34 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             return 0
         # We need to factor the modulus.  We do it here instead of
         # letting PARI do it, so that we can cache the factorisation.
-        return lift.__pari__().Zn_issquare(self._parent.factored_order())
+        factorization = self._parent.factored_order()
+        # A single factor of exponent one means that the modulus is prime.
+        # The zero/one guards above cover characteristic two, and otherwise
+        # the Jacobi symbol just computed is the Legendre symbol.  Since it
+        # was not -1, the element is therefore a square.
+        if len(factorization) == 1 and factorization[0][1] == 1:
+            return 1
+        return lift.__pari__().Zn_issquare(factorization)
 
-    def sqrt(self, extend=True, all=False):
+    def sqrt(self, *, extend=False, all=False, algorithm=None, name=None):
         r"""
         Return square root or square roots of ``self`` modulo `n`.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
           square root in an extension ring, if necessary. Otherwise, raise a
           :exc:`ValueError` if the square root is not in the base ring.
 
         - ``all`` -- boolean (default: ``False``); if ``True``, return {all}
-          square roots of self, instead of just one
+          square roots of self
+
+        - ``algorithm`` -- optional algorithm hint (default: ``None``);
+          accepted for the common finite-ring interface; the modular backend
+          always uses its own default
+
+        - ``name`` -- string (default: ``None``); name of the generator when
+          an extension is created
 
         ALGORITHM: Calculates the square roots mod `p` for each of
         the primes `p` dividing the order of the ring, then lifts
@@ -1140,18 +1165,22 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: mod(15, 389).sqrt(extend=False)
             Traceback (most recent call last):
             ...
-            ValueError: self must be a square
+            ValueError: element is not a square
             sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)
             9
             sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
             25
 
-        Error message as requested in :issue:`38802`::
+        All roots in the quadratic extension are computed without enumerating
+        that extension (:issue:`38802`)::
 
-            sage: sqrt(Mod(2, 101010), all=True)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).
+            sage: roots = sqrt(Mod(2, 101010), extend=True, all=True)
+            sage: len(roots)
+            128
+            sage: len(set(roots)) == len(roots)
+            True
+            sage: all(root**2 == 2 for root in roots)
+            True
 
         Using the suggested ``extend=False`` works and returns an empty list
         as expected::
@@ -1167,13 +1196,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: x.sqrt(extend=False)
             Traceback (most recent call last):
             ...
-            ValueError: self must be a square
-            sage: y = x.sqrt(); y
+            ValueError: element is not a square
+            sage: y = x.sqrt(extend=True); y
             sqrt359
             sage: y.parent()
             Univariate Quotient Polynomial Ring in sqrt359 over
              Ring of integers modulo 360 with modulus x^2 + 1
-            sage: y^2
+            sage: y**2
             359
 
         We compute all square roots in several cases::
@@ -1222,6 +1251,26 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             [23, 41, 87, 105]
             sage: [x for x in R if x^2==17]
             [23, 41, 87, 105]
+
+        TESTS:
+
+        Check the common finite-ring square-root interface on the GMP
+        implementation (:issue:`40796`)::
+
+            sage: K = GF(next_prime(2^40))
+            sage: q = K(4)
+            sage: for method in (q.sqrt, q.square_root):
+            ....:     for algorithm in (None, 'tonelli', 'cipolla'):
+            ....:         roots = method(extend=False, all=True,
+            ....:                        algorithm=algorithm, name='w')
+            ....:         assert isinstance(roots, list) and len(roots) == 2
+            ....:         assert all(r.parent() is K and r**2 == q for r in roots)
+            ....:     assert method(algorithm='backend-default')**2 == q
+            sage: nonsquare = K.quadratic_nonresidue()
+            sage: for method in (nonsquare.sqrt, nonsquare.square_root):
+            ....:     roots = method(extend=True, all=True, name='w')
+            ....:     assert len(roots) == 2
+            ....:     assert all(root**2 == nonsquare for root in roots)
         """
         if self.is_one():
             if all:
@@ -1230,23 +1279,25 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         if not self.is_square_c():
             if extend:
-                y = 'sqrt%s' % self
+                if self._parent.is_field():
+                    from sage.categories.finite_fields import _sqrt_in_extension
+                    return _sqrt_in_extension(
+                        self, all_roots=all, name=name, algorithm=algorithm
+                    )
+                # Keep the traditional element-dependent name for extensions
+                # of nonfields.  Finite fields use the shared ``sqrt_ext``
+                # parent in ``_sqrt_in_extension`` instead.
+                y = name if name is not None else 'sqrt%s' % self
                 R = self.parent()['x']
                 modulus = R.gen()**2 - R(self)
-                if self._parent.is_field():
-                    from sage.rings.finite_rings.finite_field_constructor import FiniteField
-                    Q = FiniteField(self._modulus.sageInteger**2, y, modulus)
-                else:
-                    R = self.parent()['x']
-                    Q = R.quotient(modulus, names=(y,))
+                Q = R.quotient(modulus, names=(y,))
                 z = Q.gen()
                 if all:
-                    # TODO
-                    raise NotImplementedError("Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).")
+                    return _square_roots_in_quadratic_extension(self, Q)
                 return z
             if all:
                 return []
-            raise ValueError("self must be a square")
+            raise ValueError("element is not a square")
 
         F = self._parent.factored_order()
         cdef long e, exp, val
@@ -2897,22 +2948,34 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             return 0
         # We need to factor the modulus.  We do it here instead of
         # letting PARI do it, so that we can cache the factorisation.
-        return lift.__pari__().Zn_issquare(self._parent.factored_order())
+        factorization = self._parent.factored_order()
+        # A single factor of exponent one means that the modulus is prime.
+        # The zero/one guards above cover characteristic two, and otherwise
+        # the Jacobi symbol just computed is the Legendre symbol.  Since it
+        # was not -1, the element is therefore a square.
+        if len(factorization) == 1 and factorization[0][1] == 1:
+            return 1
+        return lift.__pari__().Zn_issquare(factorization)
 
-    def sqrt(self, extend=True, all=False):
+    def sqrt(self, *, extend=False, all=False, algorithm=None, name=None):
         r"""
         Return square root or square roots of ``self`` modulo `n`.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``);
-          if ``True``, return a square root in an extension ring,
-          if necessary. Otherwise, raise a :exc:`ValueError` if the
-          square root is not in the base ring.
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return a
+          square root in an extension ring, if necessary. Otherwise, raise a
+          :exc:`ValueError` if the square root is not in the base ring.
 
-        - ``all`` -- boolean (default: ``False``); if
-          ``True``, return {all} square roots of self, instead of
-          just one.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return {all}
+          square roots of self.
+
+        - ``algorithm`` -- optional algorithm hint (default: ``None``);
+          accepted for the common finite-ring interface; the modular backend
+          always uses its own default
+
+        - ``name`` -- string (default: ``None``); name of the generator when
+          an extension is created
 
         ALGORITHM: Calculates the square roots mod `p` for each of
         the primes `p` dividing the order of the ring, then lifts
@@ -2937,7 +3000,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: mod(15, 389).sqrt(extend=False)
             Traceback (most recent call last):
             ...
-            ValueError: self must be a square
+            ValueError: element is not a square
             sage: Mod(1/9, next_prime(2^40)).sqrt()^(-2)
             9
             sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
@@ -2951,13 +3014,13 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: x.sqrt(extend=False)
             Traceback (most recent call last):
             ...
-            ValueError: self must be a square
-            sage: y = x.sqrt(); y
+            ValueError: element is not a square
+            sage: y = x.sqrt(extend=True); y
             sqrt359
             sage: y.parent()
             Univariate Quotient Polynomial Ring in sqrt359
              over Ring of integers modulo 360 with modulus x^2 + 1
-            sage: y^2
+            sage: y**2
             359
 
         We compute all square roots in several cases::
@@ -3002,6 +3065,33 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         TESTS:
 
+        Check the common finite-ring square-root interface on the native
+        implementation (:issue:`40796`)::
+
+            sage: K = Zmod(15)
+            sage: q = K(4)
+            sage: for method in (q.sqrt, q.square_root):
+            ....:     for algorithm in (None, 'tonelli', 'cipolla'):
+            ....:         roots = method(extend=False, all=True,
+            ....:                        algorithm=algorithm, name='w')
+            ....:         assert isinstance(roots, list) and len(roots) == 4
+            ....:         assert all(r.parent() is K and r**2 == q for r in roots)
+            ....:     assert method(algorithm='backend-default')**2 == q
+            sage: nonsquare = GF(7)(3)
+            sage: for method in (nonsquare.sqrt, nonsquare.square_root):
+            ....:     root = method(extend=True, name='w')
+            ....:     assert root**2 == nonsquare
+            ....:     roots = method(extend=True, all=True, name='w')
+            ....:     assert len(roots) == 2
+            ....:     assert all(r**2 == nonsquare for r in roots)
+            sage: for method in (Zmod(15)(2).sqrt, Zmod(15)(2).square_root):
+            ....:     roots = method(extend=True, all=True, name='w')
+            ....:     assert len(roots) == 4
+            ....:     assert len(set(roots)) == len(roots)
+            ....:     assert all(root**2 == 2 for root in roots)
+
+        TESTS:
+
         Check for :issue:`30797`::
 
             sage: GF(103)(-1).sqrt(extend=False, all=True)
@@ -3026,22 +3116,28 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             if not extend:
                 if all:
                     return []
-                raise ValueError("self must be a square")
+                raise ValueError("element is not a square")
         # Now we use a heuristic to guess whether or not it will
         # be faster to just brute-force search for squares in a c loop...
         # TODO: more tuning?
         elif n <= 100 or n / (1 << len(moduli)) < 5000:
             if all:
-                return [self._new_c(i) for i from 0 <= i < n if (i*i) % n == self.ivalue]
+                roots = [self._new_c(i) for i from 0 <= i < n
+                         if (i*i) % n == self.ivalue]
+                if roots or not extend:
+                    return roots
             for i from 0 <= i <= n/2:
                 if (i*i) % n == self.ivalue:
                     return self._new_c(i)
             if not extend:
                 if all:
                     return []
-                raise ValueError("self must be a square")
+                raise ValueError("element is not a square")
         # Either it failed but extend was True, or the generic algorithm is better
-        return IntegerMod_abstract.sqrt(self, extend=extend, all=all)
+        return IntegerMod_abstract.sqrt(self, extend=extend, all=all,
+                                        algorithm=algorithm, name=name)
+
+    square_root = sqrt
 
     def _balanced_abs(self):
         r"""
@@ -3895,6 +3991,148 @@ cdef int jacobi_int64(int_fast64_t a, int_fast64_t m) except -2:
 # Square root functions
 ########################
 
+def _square_roots_in_quadratic_extension(IntegerMod_abstract a, quotient):
+    r"""
+    Return all square roots of ``a`` in its quadratic quotient extension.
+
+    The input ``quotient`` must be
+    `(\ZZ/n\ZZ)[z]/(z^2-a)`.  Every element of this ring is uniquely of the
+    form `u + vz`, and it squares to ``a`` precisely when
+
+    .. MATH::
+
+        2uv = 0, \qquad u^2 + av^2 = a \pmod n.
+
+    The equations are solved modulo every prime-power factor of `n`.  Starting
+    with all solutions modulo `p`, each lift from `p^k` to `p^{k+1}` is a
+    two-variable linear system over `\GF{p}`.  The local answers are then
+    combined by the Chinese remainder theorem.
+
+    EXAMPLES::
+
+        sage: from sage.rings.finite_rings.integer_mod import _square_roots_in_quadratic_extension
+        sage: R = Zmod(8)
+        sage: P.<x> = R[]
+        sage: Q.<z> = P.quotient(x^2 - 2)
+        sage: roots = _square_roots_in_quadratic_extension(R(2), Q)
+        sage: len(roots), len(set(roots))
+        (8, 8)
+        sage: set(roots) == {root for root in Q if root^2 == 2}
+        True
+    """
+    value = a.lift()
+
+    def linear_solutions(a11, a12, a21, a22, b1, b2, p):
+        """
+        Solve a two-by-two linear system modulo the prime ``p``.
+        """
+        a11 = Integer(a11) % p
+        a12 = Integer(a12) % p
+        a21 = Integer(a21) % p
+        a22 = Integer(a22) % p
+        b1 = Integer(b1) % p
+        b2 = Integer(b2) % p
+
+        determinant = (a11 * a22 - a12 * a21) % p
+        if determinant:
+            inverse = determinant.inverse_mod(p)
+            return [((b1 * a22 - a12 * b2) * inverse % p,
+                     (a11 * b2 - b1 * a21) * inverse % p)]
+
+        if a11 or a12:
+            ax, ay, b = a11, a12, b1
+            cx, cy, d = a21, a22, b2
+        elif a21 or a22:
+            ax, ay, b = a21, a22, b2
+            cx, cy, d = a11, a12, b1
+        else:
+            if b1 or b2:
+                return []
+            return [(s, t) for s in range(p) for t in range(p)]
+
+        if ax:
+            inverse = ax.inverse_mod(p)
+            x0 = b * inverse % p
+            if cx * x0 % p != d:
+                return []
+            kernel_x = -ay * inverse % p
+            return [((x0 + kernel_x * t) % p, t) for t in range(p)]
+
+        inverse = ay.inverse_mod(p)
+        y0 = b * inverse % p
+        if cy * y0 % p != d:
+            return []
+        return [(s, y0) for s in range(p)]
+
+    def roots_mod_prime_power(p, exponent):
+        """
+        Return coefficient pairs for roots modulo ``p^exponent``.
+        """
+        residue_mod_p = value % p
+        if p == 2:
+            solutions = [
+                (u, v) for u in range(2) for v in range(2)
+                if (u * u + residue_mod_p * v * v - residue_mod_p) % 2 == 0
+            ]
+        elif not residue_mod_p:
+            solutions = [(0, v) for v in range(p)]
+        else:
+            solutions = [(0, 1), (0, p - 1)]
+            if residue_mod_p.jacobi(p) == 1:
+                root = square_root_mod_prime(
+                    Mod(residue_mod_p, p), p
+                ).lift()
+                solutions.extend([(root, 0), ((-root) % p, 0)])
+
+        modulus = p
+        for _ in range(1, exponent):
+            lifted_solutions = []
+            for u, v in solutions:
+                # Linearize (2*u*v, u^2 + a*v^2 - a) after replacing
+                # (u, v) by (u, v) + modulus*(du, dv).  All quadratic
+                # correction terms vanish modulo modulus*p.
+                first_error = 2 * u * v // modulus
+                second_error = (
+                    u * u + value * v * v - value
+                ) // modulus
+                corrections = linear_solutions(
+                    2 * v, 2 * u,
+                    2 * u, 2 * residue_mod_p * v,
+                    -first_error, -second_error, p,
+                )
+                lifted_solutions.extend(
+                    (u + modulus * du, v + modulus * dv)
+                    for du, dv in corrections
+                )
+            solutions = lifted_solutions
+            modulus *= p
+        return solutions
+
+    factorization = list(a.parent().factored_order())
+    moduli = [p**exponent for p, exponent in factorization]
+    local_roots = [roots_mod_prime_power(p, exponent)
+                   for p, exponent in factorization]
+
+    if len(local_roots) == 1:
+        coefficient_pairs = local_roots[0]
+    else:
+        from itertools import product
+        from sage.arith.misc import CRT_basis
+
+        basis = CRT_basis(moduli)
+        modulus = a.modulus()
+        coefficient_pairs = []
+        for local_choice in product(*local_roots):
+            constant = sum(b * root[0]
+                           for b, root in zip(basis, local_choice)) % modulus
+            linear = sum(b * root[1]
+                         for b, root in zip(basis, local_choice)) % modulus
+            coefficient_pairs.append((constant, linear))
+
+    return [quotient([constant, linear])
+            for constant, linear in coefficient_pairs]
+
+
 def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     r"""
     Calculate the square root of `a`, where `a` is an
@@ -3948,7 +4186,7 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     # strip off even powers of p
     cdef int i, val = a.lift().valuation(p)
     if val % 2 == 1:
-        raise ValueError("self must be a square")
+        raise ValueError("element is not a square")
     if val > 0:
         unit = a._parent(a.lift() // p**val)
     else:
@@ -3959,7 +4197,7 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
     if p == 2:
         # squares in Z/2^e are of the form 4^n*(1+8*m)
         if unit.lift() % 8 != 1:
-            raise ValueError("self must be a square")
+            raise ValueError("element is not a square")
 
         u = unit.lift()
         x = next(i for i in range(1,8,2) if i*i & 31 == u & 31)

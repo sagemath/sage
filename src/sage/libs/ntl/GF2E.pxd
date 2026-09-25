@@ -12,6 +12,7 @@ cdef extern from "ntlwrap.h":
     void GF2E_add "add"(GF2E_c x, GF2E_c a, GF2E_c b)
     void GF2E_sub "sub"(GF2E_c x, GF2E_c a, GF2E_c b)
     void GF2E_mul "mul"(GF2E_c x, GF2E_c a, GF2E_c b)
+    void GF2E_sqr "sqr"(GF2E_c x, GF2E_c a)
     void GF2E_div "div"(GF2E_c x, GF2E_c a, GF2E_c b)
     void GF2E_power "NTL::power"(GF2E_c t, GF2E_c x, long e)
     long GF2E_deg "deg"(GF2E_c x)
