@@ -415,9 +415,8 @@ def linear_ordering_to_path_decomposition(G, L, immutable=None):
         sage: h = linear_ordering_to_path_decomposition(g, L)
         sage: sorted(h, key=str)
         [{0, 1, 5}, {1, 2, 5}, {2, 3, 4}, {2, 4, 5}]
-        sage: sorted(h.edge_iterator(labels=None), key=str)
-        [({0, 1, 5}, {1, 2, 5}), ({1, 2, 5}, {2, 4, 5}), ({2, 4, 5}, {2, 3, 4})]
-
+        sage: h.is_isomorphic(graphs.PathGraph(4))
+        True
 
     TESTS::
 
@@ -865,9 +864,44 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
         Traceback (most recent call last):
         ...
         ValueError: the parameter must be a Graph or a DiGraph
+
+    Check that the use of the homeomorphically reduced graph performs well::
+
+        sage: G = graphs.CycleGraph(100) * 2
+        sage: vertex_separation(G, algorithm='exponential')[0]
+        2
+        sage: vertex_separation(G, algorithm='BAB')[0]
+        2
+        sage: vertex_separation(G, algorithm='MILP')[0]
+        2
+        sage: G = digraphs.Circuit(100) * 2
+        sage: vertex_separation(G, algorithm='exponential')[0]
+        1
+        sage: vertex_separation(G, algorithm='BAB')[0]
+        1
+        sage: vertex_separation(G, algorithm='MILP')[0]
+        1
     """
     from sage.graphs.graph import Graph
     from sage.graphs.digraph import DiGraph
+
+    if not isinstance(G, Graph) and not isinstance(G, DiGraph):
+        raise ValueError('the parameter must be a Graph or a DiGraph')
+
+    # The vertex separation / pathwidth of a (di)graph and of its
+    # homeomorphically reduced (di)graph are equl. So we use this reduction.
+    G, steps = G.reduced_homeomorphic_graph(return_steps=True)
+
+    # Function to insert back the vertices that have been removed in the homeomorphic
+    # reduction. If a vertex u of degree 2 with neighbors x and y was removed,
+    # we insert it between x and y in the ordering, before the right most of x
+    # and y. We proceed in the reverse order of the steps of the reduction.
+    def consolidate(L, steps):
+        while steps:
+            x, u, y = steps.pop()
+            pos = max(L.index(x), L.index(y))
+            L.insert(pos, u)
+        return L
 
     CC = []
     if isinstance(G, Graph):
@@ -875,16 +909,12 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
             # We decompose the graph into connected components.
             CC = G.connected_components()
 
-    elif isinstance(G, DiGraph):
-        if not G.is_strongly_connected():
-            # We decompose the digraph into strongly connected components and
-            # arrange them in the inverse order of the topological sort of the
-            # digraph of the strongly connected components.
-            scc_digraph = G.strongly_connected_components_digraph()
-            CC = scc_digraph.topological_sort()[::-1]
-
-    else:
-        raise ValueError('the parameter must be a Graph or a DiGraph')
+    elif not G.is_strongly_connected():
+        # We decompose the digraph into strongly connected components and
+        # arrange them in the inverse order of the topological sort of the
+        # digraph of the strongly connected components.
+        scc_digraph = G.strongly_connected_components_digraph()
+        CC = scc_digraph.topological_sort()[::-1]
 
     if cut_off is None:
         cut_off = 0
@@ -927,23 +957,24 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
                 # resolution for other components (used when algorithm=='BAB')
                 cut_off = max(cut_off, vs)
 
-        return vs, L
+        return vs, consolidate(L, steps)
 
     # We have a (strongly) connected graph and we call the desired algorithm
     if algorithm == "exponential":
-        return vertex_separation_exp(G, verbose=verbose)
+        vs, L = vertex_separation_exp(G, verbose=verbose)
 
     elif algorithm == "MILP":
-        return vertex_separation_MILP(G, solver=solver, verbose=verbose,
-                                      integrality_tolerance=integrality_tolerance)
+        vs, L = vertex_separation_MILP(G, solver=solver, verbose=verbose,
+                                       integrality_tolerance=integrality_tolerance)
 
     elif algorithm == "BAB":
-        return vertex_separation_BAB(G, cut_off=cut_off, upper_bound=upper_bound, verbose=verbose,
-                                     max_prefix_length=max_prefix_length, max_prefix_number=max_prefix_number)
+        vs, L = vertex_separation_BAB(G, cut_off=cut_off, upper_bound=upper_bound, verbose=verbose,
+                                      max_prefix_length=max_prefix_length, max_prefix_number=max_prefix_number)
 
     else:
         raise ValueError('algorithm "{}" has not been implemented yet, please contribute'.format(algorithm))
 
+    return vs, consolidate(L, steps)
 
 ################################
 # Exact exponential algorithms #
