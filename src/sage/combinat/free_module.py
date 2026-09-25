@@ -872,6 +872,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         EXAMPLES::
 
+            sage: F = CombinatorialFreeModule(QQ, ['x','y'])
+            sage: F.dimension()
+            2
+
             sage: F = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
             sage: F.dimension()
             3
@@ -885,7 +889,17 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.rank()
             3
 
-        ::
+        The dimension is zero when the basis is empty::
+
+            sage: F = CombinatorialFreeModule(QQ, [])
+            sage: F.dimension()
+            0
+
+        The dimension is infinite when the basis is infinite::
+
+            sage: F = CombinatorialFreeModule(QQ, ZZ)
+            sage: F.dimension()
+            +Infinity
 
             sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
             sage: s.dimension()                                                         # needs sage.combinat
@@ -894,6 +908,22 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         return self._indices.cardinality()
 
     rank = dimension
+
+    def is_finite_dimensional(self):
+        """
+        Return ``True`` if the module has finite dimension.
+
+        EXAMPLES::
+
+            sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+            sage: F.is_finite_dimensional()
+            True
+
+            sage: F = CombinatorialFreeModule(QQ, ZZ)
+            sage: F.is_finite_dimensional()
+            False
+        """
+        return self._indices in Sets().Finite()
 
     def is_exact(self):
         r"""
