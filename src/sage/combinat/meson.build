@@ -99,6 +99,7 @@ py.install_sources(
   'recognizable_series.py',
   'regular_sequence.py',
   'regular_sequence_bounded.py',
+  'regular_sequence_test.py',
   'restricted_growth.py',
   'ribbon.py',
   'ribbon_shaped_tableau.py',

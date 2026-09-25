@@ -9729,6 +9729,7 @@ class Graph(GenericGraph):
         minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
         dictionary from :meth:`~Graph.minor`::
 
+            sage: # long time
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
             sage: is_planar, minor_map = K44.is_projective_planar(return_map=True)
             sage: is_planar
