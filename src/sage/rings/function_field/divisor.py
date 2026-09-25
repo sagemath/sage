@@ -66,8 +66,8 @@ from sage.rings.function_field import riemann_roch
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.structure.element import ModuleElement
+from sage.structure.formal_sum import _compare_formal_sums
 from sage.structure.parent import Parent
-from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 from .place import FunctionFieldPlace, PlaceSet
@@ -272,12 +272,12 @@ class FunctionFieldDivisor(ModuleElement):
         """
         return self._format(latex, '', '')
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare the divisor and the other divisor with respect to the operator.
 
-        Divisors are compared lexicographically, viewed as lists of pairs of
-        place and multiplicity.
+        Divisors are partially ordered by effectivity: ``self <= other`` if
+        and only if ``other - self`` is effective.
 
         INPUT:
 
@@ -285,33 +285,35 @@ class FunctionFieldDivisor(ModuleElement):
 
         - ``op`` -- comparison operator
 
-        EXAMPLES::
+        EXAMPLES:
+
+        We can compare divisors with a partial order::
 
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 +x^3*Y + x)
             sage: pls1 = L.places()
             sage: D1 = pls1[0] + pls1[1]
-            sage: D2 = pls1[1] + 2*pls1[2]
-            sage: (D1 < D2) == (not D2 < D1)
+            sage: D2 = pls1[0] + 2*pls1[1]
+            sage: D1 < D2
             True
+            sage: D2 < D1
+            False
+            sage: pls1[0].divisor() < pls1[1].divisor()
+            False
+            sage: pls1[1].divisor() < pls1[0].divisor()
+            False
             sage: D1 + D2 == D2 + D1
             True
+
+        Make sure that :issue:`39356` is fixed::
+
+            sage: p = pls1[0]
+            sage: 0 >= -p
+            True
+            sage: 0 >= -p.divisor()
+            True
         """
-        s = sorted(self._data)
-        o = sorted(other._data)
-        while s and o:
-            skey = s[-1]
-            okey = o[-1]
-            if skey == okey:
-                svalue = self._data[skey]
-                ovalue = other._data[okey]
-                if svalue == ovalue:
-                    s.pop()
-                    o.pop()
-                    continue
-                return richcmp(svalue, ovalue, op)
-            return richcmp(skey, okey, op)
-        return richcmp(len(s), len(o), op)
+        return _compare_formal_sums(self._data, other._data, Integer(0), op)
 
     def _neg_(self) -> Self:
         """

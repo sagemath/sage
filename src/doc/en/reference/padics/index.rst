@@ -37,6 +37,7 @@
    sage/rings/padics/pow_computer_ext
    sage/rings/padics/padic_printing
    sage/rings/padics/precision_error
+   sage/rings/padics/lattice_precision
    sage/rings/padics/misc
 
    sage/rings/padics/common_conversion

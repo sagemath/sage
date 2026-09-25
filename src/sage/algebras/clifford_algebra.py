@@ -36,7 +36,7 @@ from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.matrix.constructor import Matrix
 from sage.matrix.args import MatrixArgs
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -412,8 +412,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
     (where `\ZZ_2 = \ZZ / 2 \ZZ`); this grading is determined by
     placing all elements of `V` in degree `1`. It is also an
     `\NN`-filtered algebra, with the filtration too being defined
-    by placing all elements of `V` in degree `1`. The :meth:`degree` gives
-    the `\NN`-*filtration* degree, and to get the super degree use instead
+    by placing all elements of `V` in degree `1`. The
+    :meth:`~sage.categories.filtered_modules_with_basis.FilteredModulesWithBasis.ElementMethods.degree`
+    method gives the `\NN`-*filtration* degree, and to get the super degree use instead
     :meth:`~sage.categories.super_modules.SuperModules.ElementMethods.is_even_odd`.
 
     The Clifford algebra also can be considered as a covariant functor
@@ -511,8 +512,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: Cl = CliffordAlgebra(Q)
             sage: Cl.category()
             Category of finite dimensional super algebras with basis over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: TestSuite(Cl).run()
 
@@ -801,7 +801,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return self._from_dict({FrozenBitset((i,)): self.base_ring().one()}, remove_zeros=False)
 
-    def algebra_generators(self) -> Family:
+    def algebra_generators(self) -> AbstractFamily:
         """
         Return the algebra generators of ``self``.
 
@@ -1092,8 +1092,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi = Cl.lift_module_morphism(m, 'abc')
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [  1   0   0   0   7  -3  -7   0]
@@ -1175,8 +1174,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi = Cl.lift_isometry(m, 'abc')
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [ 1  0  0  0  1  2  5  0]
@@ -1585,7 +1583,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         .. NOTE::
 
             This is the map going out of ``self`` as opposed to
-            :meth:`~sage.algebras.clifford_algebra.CliffordAlgebraElement.lift_module_morphism()`
+            :meth:`~sage.algebras.clifford_algebra.CliffordAlgebra.lift_module_morphism`
             for general Clifford algebras.
 
         INPUT:
@@ -1840,12 +1838,13 @@ class ExteriorAlgebra(CliffordAlgebra):
         Return the interior product `\iota_b a` of ``a`` with respect to
         ``b``.
 
-        See :meth:`~sage.algebras.clifford_algebra.CliffordAlgebra.Element.interior_product`
+        See
+        :meth:`~sage.algebras.clifford_algebra_element.ExteriorAlgebraElement.interior_product`
         for more information.
 
         In this method, ``a`` and ``b`` are supposed to be
         basis elements (see
-        :meth:`~sage.algebras.clifford_algebra.CliffordAlgebra.Element.interior_product`
+        :meth:`~sage.algebras.clifford_algebra_element.ExteriorAlgebraElement.interior_product`
         for a method that computes interior product of arbitrary
         elements), and to be input as their keys.
 

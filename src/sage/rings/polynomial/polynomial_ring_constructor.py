@@ -9,7 +9,7 @@ wasteful and breaks the general assumption in Sage that parents are unique).
 There is also a function :func:`BooleanPolynomialRing_constructor`, used for
 constructing Boolean polynomial rings, which are not technically polynomial
 rings but rather quotients of them (see module
-:mod:`sage.rings.polynomial.pbori` for more details).
+:mod:`sage.rings.polynomial.pbori.pbori` for more details).
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -124,7 +124,8 @@ def PolynomialRing(base_ring, *args, **kwds):
     one multivariate polynomial ring over each base ring for each
     choice of names of variables and term order.  The names of the
     generators can only be temporarily changed after the ring has been
-    created.  Do this using the :func:`localvars` context.
+    created.  Do this using the
+    ``localvars`` context.
 
     EXAMPLES:
 

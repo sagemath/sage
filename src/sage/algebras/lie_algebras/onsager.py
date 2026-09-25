@@ -430,7 +430,7 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
             sage: Q._basis_key((1,2))
             (0, 2)
         """
-        if k[0] == 0: # B_{m\delta + \alpha_1}
+        if k[0] == 0:  # B_{m\delta + \alpha_1}
             if k[1] < 0:
                 return (-1, -k[1])
             return (1, -k[1])
@@ -1307,7 +1307,7 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         """
         R = self.base_ring()
         O = OnsagerAlgebra(R)
-        if x[0] == 0: # A_k
+        if x[0] == 0:  # A_k
             return O._from_dict({x: R.one()}, remove_zeros=False)
         # Otherwise B_k
         c = R.one() / 2

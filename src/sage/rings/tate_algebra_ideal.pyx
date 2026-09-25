@@ -636,7 +636,7 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
     """
     # We assume that the elements of the sgb are such that lt(g) = p^v lm(g) to
     # avoid performing divisions
-    cdef dict coeffs = { }
+    cdef dict coeffs = {}
     cdef TateAlgebraElement f
     cdef TateAlgebraTerm lt, factor
     cdef list ltds = [(<TateAlgebraElement>(d[1]))._terms_c()[0] for d in sgb]
@@ -709,7 +709,7 @@ cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
         (1 + O(3^8))*x + (1 + O(3^8))*y + (3^5 + O(3^8))*x^8*y^2
         + (3^5 + 2*3^6 + 2*3^7 + O(3^8))*x^7*y + O(3^8 * <x, y>)
     """
-    cdef dict coeffs = { }
+    cdef dict coeffs = {}
     cdef TateAlgebraElement f
     cdef TateAlgebraTerm lt, factor
     cdef list ltds = [(<TateAlgebraElement>d)._terms_c()[0] for d in gb]

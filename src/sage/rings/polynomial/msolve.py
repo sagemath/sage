@@ -18,7 +18,7 @@ Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
 .. SEEALSO::
 
-    - :mod:`sage.features.msolve`
+    - ``sage.features.msolve``
     - :mod:`sage.rings.polynomial.multi_polynomial_ideal`
 
 AUTHORS:

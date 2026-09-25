@@ -564,7 +564,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
 
-        steps = [ GaussValuation(R, self) ]
+        steps = [GaussValuation(R, self)]
         while True:
             v = steps[-1]
             if v.E() > 1:
@@ -659,7 +659,7 @@ class pAdicValuation_base(DiscreteValuation):
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
 
-        steps = [ GaussValuation(R, self) ]
+        steps = [GaussValuation(R, self)]
         while True:
             v = steps[-1]
             if v.F() > 1:

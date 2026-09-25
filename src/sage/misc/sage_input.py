@@ -48,7 +48,7 @@ value in a Python or Cython source file.::
     int(5)
 
 Adding :func:`sage_input` support to your own classes is
-straightforward.  You need to add a :func:`_sage_input_` method which
+straightforward.  You need to add a ``_sage_input_`` method which
 returns a :class:`SageInputExpression` (henceforth abbreviated as SIE)
 which will reconstruct this instance of your class.
 
@@ -56,7 +56,7 @@ A ``_sage_input_`` method takes two parameters, conventionally named
 ``sib`` and ``coerced``.  The first argument is a
 :class:`SageInputBuilder`; it has methods to build SIEs.  The second
 argument, ``coerced``, is a boolean.  This is only useful if your class
-is a subclass of :class:`Element` (although it is always present).  If
+is a subclass of :class:`~sage.structure.element.Element` (although it is always present).  If
 ``coerced`` is ``False``, then your method must generate an expression
 which will evaluate to a value of the correct type with the correct
 parent.  If ``coerced`` is ``True``, then your method may generate an
@@ -119,8 +119,7 @@ since if we are not careful we will get results in `\ZZ` instead of `\QQ`::
     ....:     if self.denominator() == 1:
     ....:         if coerced:
     ....:             return sib.int(self.numerator())
-    ....:         else:
-    ....:             return sib.name('QQ')(sib.int(self.numerator()))
+    ....:         return sib.name('QQ')(sib.int(self.numerator()))
     ....:     return sib(self.numerator())/sib.int(self.denominator())
 
 We see that the \method{name} method gives an SIE representing a \sage
@@ -130,7 +129,7 @@ constant or function.::
     [-ZZ(5)/7, -ZZ(5)/7, -5/7, -5/7, QQ(3), 3, QQ(3), 3]
 
 This is the prettiest output we're going to get, but let's make one
-further refinement.  Other :class:`_sage_input_` methods, like the one
+further refinement.  Other ``_sage_input_`` methods, like the one
 for polynomials, analyze the structure of SIEs; they work better (give
 prettier output) if negations are at the outside.  If the above code
 were used for rationals, then ``sage_input(polygen(QQ) - 2/3)`` would
@@ -2639,8 +2638,7 @@ class SIE_unary(SageInputExpression):
             sage: def mk_CC(b):
             ....:     if b._sie_is_negation():
             ....:         return -sib.name('CC')(b._sie_operand)
-            ....:     else:
-            ....:         return sib.name('CC')(b)
+            ....:     return sib.name('CC')(b)
 
             sage: mk_CC(x)
             {call: {atomic:CC}({atomic:x})}

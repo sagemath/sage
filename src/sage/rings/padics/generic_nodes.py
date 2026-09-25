@@ -500,7 +500,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
         .. SEEALSO::
 
-            :class:`sage.rings.padics.lattice_precision.PrecisionLattice`
+            :class:`~sage.rings.padics.lattice_precision.PrecisionLattice`
         """
         return self._precision
 
@@ -1005,9 +1005,9 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         one = self.one()
         L = [self.zero(), one, p, a, (one+p+p).inverse_of_unit(), p-p**2]
         if self.is_field():
-            L.extend([~(p-p-a),p**(-20)])
+            L.extend([~(p-p-a), p**(-20)])
         if not unbounded:
-            L = [ x.at_precision_absolute() for x in L ]
+            return [x.at_precision_absolute() for x in L]
         return L
 
     def unknown(self, start_val=0, digits=None):
@@ -1028,7 +1028,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         of the previous ones. This method is used to declare a self-referent
         number (and optionally, to set its first digits).
         The definition of the number itself will be given afterwords using
-        to method :meth:`sage.rings.padics.relaxed_template.RelaxedElement_unknown.set`
+        to method ``sage.rings.padics.relaxed_template.RelaxedElement_unknown.set``
         of the element.
 
         EXAMPLES:
@@ -1045,7 +1045,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
             sage: a
             O(5^0)
 
-        We can now use the method :meth:`sage.rings.padics.relaxed_template.RelaxedElement_unknown.set`
+        We can now use the method ``sage.rings.padics.relaxed_template.RelaxedElement_unknown.set``
         to define `a`. Below, for example, we say that the digits of `a` have to
         agree with the digits of `1 + 5 a`. Note that the factor `5` shifts the
         digits; the `n`-th digit of `a` is then defined by the previous ones::

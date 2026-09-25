@@ -206,10 +206,9 @@ def find_position_right_after_module_docstring(G):
         while j < len(v) and quotes not in v[j]:
             j += 1
         return pos_after_line(j)
-    else:
-        # it must be a single line; so add up the lengths of all lines
-        # including this one and return that
-        return pos_after_line(i)
+    # it must be a single line; so add up the lengths of all lines
+    # including this one and return that
+    return pos_after_line(i)
 
 
 def find_future_imports(G):

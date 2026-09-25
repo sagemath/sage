@@ -294,8 +294,7 @@ cpdef int mixed_order(lhs, rhs) except -2:
     greater_than = _mixed_key(lhs) > _mixed_key(rhs)
     if greater_than:
         return 1
-    else:
-        return 0
+    return 0
 
 
 class _mixed_key():
@@ -354,11 +353,9 @@ class _mixed_key():
         if selfv:
             if otherv:
                 return _print_key(self.ex) < _print_key(other.ex)
-            else:
-                return False
-        else:
-            if otherv:
-                return True
+            return False
+        if otherv:
+            return True
 
         # no variables involved from here on
         rel = self.ex < other.ex
@@ -381,7 +378,7 @@ class _mixed_key():
             try:
                 from sage.rings.qqbar import QQbar
                 num = QQbar(det_ex)
-            except (TypeError, AttributeError,ValueError,NotImplementedError):
+            except (TypeError, AttributeError, ValueError, NotImplementedError):
                 try:
                     num = det_ex.expand().n(RIF.prec()+5)
                 except (TypeError, AttributeError):

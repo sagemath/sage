@@ -1,6 +1,8 @@
 # sage.doctest: needs sage.groups
 r"""
 Common category for Generalized Coxeter Groups or Complex Reflection Groups
+
+.. automethod:: sage.categories.complex_reflection_or_generalized_coxeter_groups::ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods._mul_
 """
 # ****************************************************************************
 #  Copyright (C) 2016 Nicolas M. Thiéry <nthiery at users.sf.net>
@@ -75,8 +77,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
     .. SEEALSO::
 
-        - :class:`complex_reflection_groups.ComplexReflectionGroups`
-        - :class:`generalized_coxeter_groups.GeneralizedCoxeterGroups`
+        - :class:`~sage.categories.complex_reflection_groups.ComplexReflectionGroups`
+        - :class:`~sage.categories.generalized_coxeter_groups.GeneralizedCoxeterGroups`
 
     EXAMPLES::
 
@@ -386,7 +388,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             returning some typical elements of ``self``.
 
             The result is currently composed of the simple reflections
-            together with the unit and the result of :meth:`an_element`.
+            together with the unit and the result of
+            :meth:`~sage.categories.sets_cat.Sets.ParentMethods.an_element`.
 
             EXAMPLES::
 
@@ -447,7 +450,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
             .. SEEALSO::
 
-                - :meth:`reflections_index_set`
+                - :meth:`reflection_index_set`
                 - :meth:`reflections`
 
             EXAMPLES::
@@ -675,8 +678,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 - :meth:`reflection_index_set`
                 - :meth:`hyperplane_index_set`
                 - :meth:`~ComplexReflectionOrGeneralizedCoxeterGroups.ElementMethods.apply_simple_reflections`
-                - :meth:`~CoxeterGroup.ElementMethods.reduced_word`
-                - :meth:`~CoxeterGroup.ParentMethods._test_reduced_word`
+                - :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ElementMethods.reduced_word`
+                - ``CoxeterGroups.ParentMethods._test_reduced_word``
 
             EXAMPLES::
 
@@ -1119,7 +1122,9 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             Return the product of ``self`` and ``other``.
 
             This default implementation computes a reduced word of
-            ``other`` using :meth:`reduced_word`, and applies the
+            ``other`` using
+            :meth:`~sage.categories.coxeter_groups.CoxeterGroups.ElementMethods.reduced_word`,
+            and applies the
             corresponding simple reflections on ``self`` using
             :meth:`apply_simple_reflections`.
 

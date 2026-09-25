@@ -28,8 +28,7 @@ from sage.rings.integer_ring import ZZ
 #  def __call__(self, v, w=None):
 #    if w is None:
 #        return half(v * self._matrix_() * v)
-#    else:
-#      return v * self._matrix_() * w
+#    return v * self._matrix_() * w
 
 
 def disc(self):

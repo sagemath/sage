@@ -7,6 +7,9 @@
 """
 Univariate Polynomials over GF(2) via NTL's GF2X
 
+This implementation includes the internal ``ntl_GF2X_linkage`` Cython
+definitions.
+
 AUTHOR:
 - Martin Albrecht (2008-10) initial implementation
 """

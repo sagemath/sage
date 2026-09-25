@@ -132,7 +132,7 @@ from sage.categories.noetherian_rings import NoetherianRings
 _Rings = Rings()
 _CommutativeRings = CommutativeRings()
 
-cdef class Ring(ParentWithGens):
+cdef class Ring(Parent):
     """
     Generic ring class.
 
@@ -253,11 +253,6 @@ cdef class Ring(ParentWithGens):
             sage: R
             Multivariate Polynomial Ring in x, y over Rational Field
         """
-        # Unfortunately, ParentWithGens inherits from sage.structure.parent_old.Parent.
-        # Its __init__ method does *not* call Parent.__init__, since this would somehow
-        # yield an infinite recursion. But when we call it from here, it works.
-        # This is done in order to ensure that __init_extra__ is called.
-        #
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
         if base is None:
@@ -266,6 +261,28 @@ cdef class Ring(ParentWithGens):
             category = check_default_category(_Rings, category)
         Parent.__init__(self, base=base, names=names, normalize=normalize,
                         category=category)
+
+    def gens(self):
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+
+        EXAMPLES::
+
+           sage: ZZ.gens()
+           (1,)
+
+           sage: ZZ["y"].gens()
+           (y,)
+
+           sage: InfinitePolynomialRing(QQ, "a").gens()
+           (a_*,)
+        """
+        cdef int i
+        if self._gens is not None:
+            return self._gens
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
 
     def __iter__(self):
         r"""

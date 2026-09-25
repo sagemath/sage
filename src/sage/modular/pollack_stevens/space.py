@@ -6,7 +6,7 @@ This module contains a class for spaces of modular symbols that use Glenn
 Stevens' conventions, as explained in [PS2011]_.
 
 There are two main differences between the modular symbols in this directory
-and the ones in :mod:`sage.modular.modsym`:
+and the ones in :mod:`~sage.modular.pollack_stevens.modsym`:
 
 - There is a shift in the weight: weight `k=0` here corresponds to weight `k=2`
   there.

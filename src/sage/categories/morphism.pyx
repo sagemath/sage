@@ -94,10 +94,17 @@ cdef class Morphism(Map):
         D = self.domain()
         if D is None:
             return "Defunct morphism"
+        t = self._repr_type()
         if self.is_endomorphism():
-            s = "{} endomorphism of {}".format(self._repr_type(), self.domain())
+            if t is None:
+                s = "Endomorphism of {}".format(self.domain())
+            else:
+                s = t + " endomorphism of {}".format(self.domain())
         else:
-            s = "{} morphism:".format(self._repr_type())
+            if t is None:
+                s = "Morphism:"
+            else:
+                s = t + " morphism:"
             s += "\n  From: {}".format(self.domain())
             s += "\n  To:   {}".format(self._codomain)
         if isinstance(self.domain, ConstantFunction):
@@ -166,8 +173,7 @@ cdef class Morphism(Map):
         d = self._repr_defn()
         if d == "":
             return self._repr_()
-        else:
-            return ", ".join(d.split("\n"))
+        return ", ".join(d.split("\n"))
 
     def category(self):
         """
@@ -179,12 +185,10 @@ cdef class Morphism(Map):
             sage: f = R.hom([t**2])
             sage: f.category()
             Category of endsets of unital magmas and right modules over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
              and left modules over
-             (Dedekind domains and euclidean domains
-              and noetherian rings
+             (euclidean domains and noetherian rings
               and infinite enumerated sets and metric spaces)
 
             sage: # needs sage.rings.number_field
@@ -499,8 +503,7 @@ cdef class IdentityMorphism(Morphism):
                             f"right (={right}) codomain")
         if isinstance(left, IdentityMorphism):
             return right
-        else:
-            return left
+        return left
 
     cpdef _pow_int(self, n):
         return self

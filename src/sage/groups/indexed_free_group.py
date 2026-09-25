@@ -189,24 +189,32 @@ class IndexedFreeGroup(IndexedGroup, Group):
         """
         return self.element_class(self, ())
 
-    def gen(self, x):
+    def gen(self, i=0):
         """
-        The generator indexed by ``x`` of ``self``.
+        The generator indexed by ``i`` of ``self``.
 
         EXAMPLES::
 
             sage: G = Groups().free(index_set=ZZ)
-            sage: G.gen(0)
+            sage: G.gen()
             F[0]
             sage: G.gen(2)
             F[2]
+
+        TESTS::
+
+            sage: G = Groups().free(index_set=ZZ)
+            sage: G.gen(1/2)
+            Traceback (most recent call last):
+            ...
+            IndexError: 1/2 is not in the index set
         """
-        if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+        if i not in self._indices:
+            raise IndexError(f"{i} is not in the index set")
         try:
-            return self.element_class(self, ((self._indices(x),1),))
-        except TypeError: # Backup (if it is a string)
-            return self.element_class(self, ((x,1),))
+            return self.element_class(self, ((self._indices(i), 1),))
+        except TypeError:  # Backup (if it is a string)
+            return self.element_class(self, ((i, 1),))
 
     class Element(IndexedFreeMonoidElement):
         def __len__(self):
@@ -387,24 +395,24 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
         """
         return self.element_class(self, {})
 
-    def gen(self, x):
+    def gen(self, i=0):
         """
-        The generator indexed by ``x`` of ``self``.
+        The generator indexed by ``i`` of ``self``.
 
         EXAMPLES::
 
             sage: G = Groups().Commutative().free(index_set=ZZ)
-            sage: G.gen(0)
+            sage: G.gen()
             F[0]
             sage: G.gen(2)
             F[2]
         """
-        if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+        if i not in self._indices:
+            raise IndexError(f"{i} is not in the index set")
         try:
-            return self.element_class(self, {self._indices(x):1})
-        except TypeError: # Backup (if it is a string)
-            return self.element_class(self, {x:1})
+            return self.element_class(self, {self._indices(i): 1})
+        except TypeError:  # Backup (if it is a string)
+            return self.element_class(self, {i: 1})
 
     class Element(IndexedFreeAbelianMonoidElement, IndexedFreeGroup.Element):
         def _mul_(self, other):

@@ -255,7 +255,9 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
         r"""
         Return a divisor representing this divisor class.
 
-        OUTPUT: an instance of :class:`ToricDivisor` representing ``self``
+        OUTPUT: an instance of
+        :class:`~sage.schemes.toric.divisor.ToricDivisor_generic`
+        representing ``self``
 
         EXAMPLES::
 

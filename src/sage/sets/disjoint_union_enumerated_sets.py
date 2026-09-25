@@ -196,14 +196,14 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
           sage: pp.list()
           [[1], [1, 2], [2, 1]]
 
-      In case the :meth:`__init__` method takes optional arguments,
+      In case the ``__init__`` method takes optional arguments,
       or does some normalization on them, a specific method
       ``__classcall_private__`` is required (see the
       documentation of :class:`UniqueRepresentation`).
 
     - In the second use case, the input of the ``__init__`` method
       is the same as that of :class:`DisjointUnionEnumeratedSets`;
-      one therefore wants to inherit the :meth:`__classcall_private__`
+      one therefore wants to inherit the ``__classcall_private__``
       method as well, which can be achieved as follows::
 
           sage: class UnionOfSpecialSets(DisjointUnionEnumeratedSets):

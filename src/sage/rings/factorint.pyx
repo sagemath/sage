@@ -240,8 +240,7 @@ def factor_cunningham(m, proof=None):
             L.append( (p,v) )
     if n.is_one():
         return IntegerFactorization(L)
-    else:
-        return IntegerFactorization(L)*n.factor(proof=proof)
+    return IntegerFactorization(L)*n.factor(proof=proof)
 
 
 cpdef factor_trial_division(m, long limit=LONG_MAX):

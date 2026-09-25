@@ -5,7 +5,7 @@ This module provides an implementation for shared dictionary like
 state attributes required by the orthogonal F-matrix solver.
 
 Currently, the attributes only work when the base field of the
-:class:`FMatrix` factory is a cyclotomic field.
+:class:`~sage.algebras.fusion_rings.f_matrix.FMatrix` factory is a cyclotomic field.
 """
 
 # ****************************************************************************
@@ -436,7 +436,8 @@ cdef class FvarsHandler:
     .. NOTE::
 
         If you ever encounter an :exc:`OverflowError` when running the
-        :meth:`FMatrix.find_orthogonal_solution` solver, consider
+        :meth:`~sage.algebras.fusion_rings.f_matrix.FMatrix.find_orthogonal_solution`
+        solver, consider
         increasing the parameter ``n_bytes``.
 
     .. WARNING::

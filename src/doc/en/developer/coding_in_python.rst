@@ -195,8 +195,7 @@ The following is from
         def _matrix_(self, R=None):
             if R is None:
                 return self.am()
-            else:
-                return self.am().change_ring(R)
+            return self.am().change_ring(R)
 
 
         def adjacency_matrix(self, sparse=None, boundary_first=False):

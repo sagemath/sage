@@ -9,6 +9,7 @@ for use in doc-strings.
 
 import inspect
 
+from sage.features import FeatureNotPresentError
 from sage.misc.sageinspect import _extract_embedded_position
 from sage.misc.sageinspect import is_function_or_cython_function as _isfunction
 
@@ -279,7 +280,7 @@ def list_of_subfunctions(root, only_local_functions=True):
         # poke it to provoke a lazy import to resolve
         try:
             hasattr(f, 'xyz')
-        except ImportError:
+        except (ImportError, FeatureNotPresentError):
             return False
         return True
 

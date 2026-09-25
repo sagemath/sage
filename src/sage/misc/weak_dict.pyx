@@ -127,7 +127,6 @@ from cpython.weakref cimport PyWeakref_NewRef
 from cpython.ref cimport Py_INCREF
 from sage.cpython.dict_del_by_value cimport *
 
-from sage.misc.superseded import deprecation
 
 cdef extern from "Python.h":
     PyObject* Py_None
@@ -670,8 +669,7 @@ cdef class WeakValueDictionary(dict):
         out = PyWeakref_GetObject(wr)
         if out == Py_None:
             return d
-        else:
-            return <object>out
+        return <object>out
 
     def __getitem__(self, k):
         """

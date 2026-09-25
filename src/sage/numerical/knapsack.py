@@ -627,7 +627,7 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
     """
     reals = not isinstance(seq[0], tuple)
     if reals:
-        seq = [(x,1) for x in seq]
+        seq = [(x, 1) for x in seq]
 
     from sage.numerical.mip import MixedIntegerLinearProgram
     from sage.rings.integer_ring import ZZ
@@ -639,14 +639,17 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
     else:
         present = p.new_variable(integer=True)
 
-    p.set_objective(p.sum([present[i] * seq[i][1] for i in range(len(seq))]))
-    p.add_constraint(p.sum([present[i] * seq[i][0] for i in range(len(seq))]), max=max)
+    p.set_objective(p.sum([present[i] * seq[i][1]
+                           for i in range(len(seq))]))
+    p.add_constraint(p.sum([present[i] * seq[i][0]
+                            for i in range(len(seq))]), max=max)
 
     if value_only:
         return p.solve(objective_only=True, log=verbose)
 
     objective = p.solve(log=verbose)
-    present = p.get_values(present, convert=ZZ, tolerance=integrality_tolerance)
+    present = p.get_values(present, convert=ZZ,
+                           tolerance=integrality_tolerance)
 
     val = []
 
@@ -655,4 +658,4 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
     else:
         [val.extend([seq[i]] * present[i]) for i in range(len(seq))]
 
-    return [objective,val]
+    return [objective, val]

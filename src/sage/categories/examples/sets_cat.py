@@ -166,7 +166,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         sage: P = Sets().example("inherits")
         sage: P = Sets().example("wrapper")
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -174,7 +174,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -214,7 +214,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         """
         if i in self:
             return self._from_integer_(i)
-        raise ValueError("%s is not a prime number" % (i))
+        raise ValueError(f"{i} is not a prime number")
 
     @abstract_method
     def _from_integer_(self, i):
@@ -251,7 +251,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         assert i in self
         return self._from_integer_((Integer(i) + 1).next_prime())
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return some prime numbers.
 
@@ -269,7 +269,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         return res
 
     class Element(Element):
-        def is_prime(self):
+        def is_prime(self) -> bool:
             """
             Return whether ``self`` is a prime number.
 
@@ -296,8 +296,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
             .. NOTE::
 
-                This method is not meant to implement the protocol iterator,
-                and thus not subject to Python 2 vs Python 3 incompatibilities.
+                This method is not meant to implement the protocol iterator.
             """
             return self.parent().next(self)
 

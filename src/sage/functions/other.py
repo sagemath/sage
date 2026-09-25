@@ -888,19 +888,13 @@ class Function_real_nth_root(BuiltinFunction):
             else:
                 raise ValueError("exponent cannot be complex")
         exp = ZZ(exp)
-
         negative = base < 0
-
         if negative:
             if exp.mod(2) == 0:
                 raise ValueError('no real nth root of negative real number with even n')
             base = -base
-
         r = base**(1/exp)
-
-        if negative:
-            return -r
-        return r
+        return r if not negative else -r
 
     def _eval_(self, base, exp):
         """
@@ -1046,13 +1040,13 @@ class Function_arg(BuiltinFunction):
             sage: arg(sqrt(2)+i)
             arg(sqrt(2) + I)
         """
-        if isinstance(x,Expression):
+        if isinstance(x, Expression):
             if x.is_trivial_zero():
                 return x
-        elif not x:
+            return None
+        if not x:
             return x
-        else:
-            return arctan2(imag_part(x),real_part(x))
+        return arctan2(imag_part(x), real_part(x))
 
     def _evalf_(self, x, parent=None, algorithm=None):
         """
@@ -1410,7 +1404,7 @@ class Function_factorial(GinacFunction):
             120
 
         We can also give input other than nonnegative integers.  For
-        other nonnegative numbers, the :func:`sage.functions.gamma.gamma`
+        other nonnegative numbers, ``sage.functions.gamma.gamma``
         function is used::
 
             sage: factorial(1/2)                                                        # needs sage.symbolic
@@ -2230,7 +2224,8 @@ class Function_elementof(BuiltinFunction):
 
     This function is called to express a set membership statement,
     usually as part of a solution set returned by :func:`solve`.
-    See :class:`sage.sets.set.Set` and :class:`sage.sets.real_set.RealSet`
+    See :class:`~sage.sets.set.Set_object` and
+    :class:`sage.sets.real_set.RealSet`
     for possible set arguments.
 
     EXAMPLES::

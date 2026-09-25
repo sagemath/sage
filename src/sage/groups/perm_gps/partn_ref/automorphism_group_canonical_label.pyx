@@ -118,10 +118,9 @@ from sage.data_structures.bitset_base cimport *
 cdef inline int agcl_cmp(int a, int b) noexcept:
     if a < b:
         return -1
-    elif a == b:
+    if a == b:
         return 0
-    else:
-        return 1
+    return 1
 
 # Functions
 

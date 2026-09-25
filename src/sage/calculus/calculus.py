@@ -133,8 +133,8 @@ including exponentiation::
     [x^2 + x   2*x^3]
     [      2 x^2 + x]
     sage: e^M
-    [          1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x)) 1/2*(x*e^(2*sqrt(x)) - x)*sqrt(x)*e^(x - sqrt(x))]
-    [  1/2*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))/x^(3/2)           1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x))]
+    [        1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x)) 1/2*x^(3/2)*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))]
+    [1/2*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))/x^(3/2)         1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x))]
 
 Complex exponentiation works, but may require a patched version of
 maxima (:issue:`32898`) for now::
@@ -182,20 +182,22 @@ It is no longer allowed to call expressions with positional arguments::
     sage: f(x=pi)
     0
 
-We can also make a :class:`CallableSymbolicExpression`,
-which is a :class:`SymbolicExpression` that is a function of
-specified variables in a fixed order. Each
-:class:`SymbolicExpression` has a
-``function(...)`` method that is used to create a
-:class:`CallableSymbolicExpression`, as illustrated below::
+We can also make a
+:meth:`callable symbolic expression <sage.symbolic.expression.Expression.is_callable>`,
+which is an instance of :class:`~sage.symbolic.expression.Expression` whose parent is a
+:class:`callable symbolic expression ring <sage.symbolic.callable.CallableSymbolicExpressionRing_class>`;
+it is a function of specified variables in a fixed order. Each
+:class:`~sage.symbolic.expression.Expression` has a
+:meth:`function(...) <sage.symbolic.expression.Expression.function>`
+method that is used to create such a callable expression, as illustrated
+below::
 
     sage: u = log((2-x)/(y+5))
     sage: f = u.function(x, y); f
     (x, y) |--> log(-(x - 2)/(y + 5))
 
 There is an easier way of creating a
-:class:`CallableSymbolicExpression`, which relies on the
-Sage preparser.
+callable symbolic expression, which relies on the Sage preparser.
 
 ::
 
@@ -1247,7 +1249,7 @@ def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
 
         sage: limit(sin(x)/x, x, 0, algorithm='sympy')
         1
-        sage: limit(sin(x)/x, x, 0, algorithm='giac') # needs sage.libs.giac
+        sage: limit(sin(x)/x, x, 0, algorithm='giac')                                   # needs sage.libs.giac
         1
         sage: limit(x^x, x, 0, dir='+', algorithm='fricas') # optional - fricas
         1
@@ -1928,13 +1930,12 @@ def laplace(ex, t, s, algorithm='maxima'):
                 return result._sage_(), a, cond
             except AttributeError:
                 raise AttributeError("Unable to convert SymPy result (={}) into"
-                        " Sage".format(result))
-        elif 'LaplaceTransform' in format(result):
+                                     " Sage".format(result))
+        if 'LaplaceTransform' in format(result):
             return dummy_laplace(ex, t, s)
-        else:
-            return result
+        return result
 
-    elif algorithm == 'giac':
+    if algorithm == 'giac':
         from sage.interfaces.giac import giac
         try:
             result = giac.laplace(ex, t, s)
@@ -1944,8 +1945,7 @@ def laplace(ex, t, s, algorithm='maxima'):
             return dummy_laplace(ex, t, s)
         return result.sage()
 
-    else:
-        raise ValueError("Unknown algorithm: %s" % algorithm)
+    raise ValueError("Unknown algorithm: %s" % algorithm)
 
 
 def inverse_laplace(ex, s, t, algorithm='maxima'):

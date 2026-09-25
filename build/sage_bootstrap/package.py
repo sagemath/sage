@@ -171,7 +171,7 @@ class Package(object):
             if dollar_brace_var in pattern:
                 value = getattr(self, var.lower())
                 return pattern.replace(dollar_brace_var, value, 1), True
-            elif var in pattern:
+            if var in pattern:
                 value = getattr(self, var.lower())
                 return pattern.replace(var, value, 1), True
         return pattern, False
@@ -219,8 +219,7 @@ class Package(object):
         pattern = self.tarball_pattern
         if pattern:
             return self._substitute_variables(pattern)
-        else:
-            return None
+        return None
 
     @property
     def tarball_upstream_url_pattern(self):
@@ -246,8 +245,7 @@ class Package(object):
         pattern = self.tarball_upstream_url_pattern
         if pattern:
             return self._substitute_variables(pattern)
-        else:
-            return None
+        return None
 
     @property
     def tarballs_info(self):
@@ -455,8 +453,7 @@ class Package(object):
         n = self.__tarball_package_name
         if n == self.name:
             return self
-        else:
-            return type(self)(n)
+        return type(self)(n)
 
     @property
     def version(self):

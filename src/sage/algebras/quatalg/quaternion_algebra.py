@@ -23,7 +23,8 @@ AUTHORS:
 
 - Lorenz Panny (2026): :meth:`QuaternionOrder.random_ideal`,
   :meth:`QuaternionFractionalIdeal_rational.reduce_equiv`,
-  :meth:`QuaternionFractionalIdeal_rational.gens_two`
+  :meth:`QuaternionFractionalIdeal_rational.gens_two`,
+  :meth:`QuaternionOrder.represent_integer`
 
 - Lorenz Panny (2026): :meth:`QuaternionOrder.commutator_ideal`,
   :meth:`QuaternionOrder.two_sided_prime_ideals`
@@ -373,9 +374,9 @@ class QuaternionAlgebraFactory(UniqueFactory):
             # Check that the finite ramification is given by prime ideals
             try:
                 if isinstance(K, RationalField):
-                    primes = set(ZZ.ideal(p) for p in arg1)
+                    primes = {ZZ.ideal(p) for p in arg1}
                 else:
-                    primes = set(K.ideal(p) for p in arg1)
+                    primes = {K.ideal(p) for p in arg1}
                 assert all(p.is_prime() for p in primes)
             except (AssertionError, TypeError, NameError):
                 raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
@@ -418,7 +419,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
                 inv_arch_pari = [arg2[i-1] for i in perm]
 
                 # Compute the correct quaternion algebra over L in PARI
-                A = L.__pari__().alginit([2, [fin_places_pari, [QQ((1,2))] * len(fin_places_pari)], inv_arch_pari], flag=0)
+                A = L.__pari__().alginit([2, [fin_places_pari, [QQ((1, 2))] * len(fin_places_pari)], inv_arch_pari], flag=0)
 
                 # Obtain representation of A in terms of invariants in L
                 a_L = L(A.algsplittingfield().disc()[1])
@@ -1177,7 +1178,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         #     # we do not know why magma does the following, so we do not do it.
         #     for p in self.ramified_primes():
         #         if not (level % p**2):
-        #             raise NotImplementedError("currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
+        #             raise NotImplementedError("currently sage can
+        #             only compute orders whose level is divisible by
+        #             at most one power of any prime that ramifies in
+        #             the quaternion algebra")
 
         #     P = O._left_ideal_basis([N1] + [x * y - y * x
         #                                     for x in self.basis()
@@ -1300,7 +1304,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return self._gens
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Print representation.
 
@@ -1500,10 +1504,14 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # For efficiency (and to not convert QQ into a number field manually),
         # we handle the case F = QQ first
         if isinstance(F, RationalField):
-            ram_fin = sorted([p for p in set([2]).union(
-                    prime_divisors(a.numerator()), prime_divisors(a.denominator()),
-                    prime_divisors(b.numerator()), prime_divisors(b.denominator()))
-                    if hilbert_symbol(a, b, p) == -1])
+            ram_fin = sorted([p
+                              for p in {2}.union(
+                                  prime_divisors(a.numerator()),
+                                  prime_divisors(a.denominator()),
+                                  prime_divisors(b.numerator()),
+                                  prime_divisors(b.denominator())
+                              )
+                              if hilbert_symbol(a, b, p) == -1])
 
             if not inf:
                 return ram_fin
@@ -1683,7 +1691,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         except ValueError:
             raise NotImplementedError("base field must be rational numbers or a number field")
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return Magma version of this quaternion algebra.
 
@@ -2236,7 +2244,7 @@ class QuaternionOrder(Parent):
         """
         return self.__quaternion_algebra
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this order.
 
@@ -2760,7 +2768,7 @@ class QuaternionOrder(Parent):
           discriminant.
 
         - ``reduce`` -- boolean or (default) ``None``; whether to reduce
-          the ideal using :meth:`reduce_equiv` prior to returning it or not.
+          the ideal using :meth:`~sage.algebras.quatalg.quaternion_algebra.QuaternionFractionalIdeal_rational.reduce_equiv` prior to returning it or not.
           Note that the norm of the ideal is only preserved when this is
           ``False``; thus, the default is ``False`` when ``norm`` is explicitly
           given and ``True`` otherwise.
@@ -3292,6 +3300,168 @@ class QuaternionOrder(Parent):
         # Otherwise, there might be other unknown alpha's giving isomorphism. If so we can't find them.
         raise NotImplementedError("isomorphism_to was not able to recognize the given orders as isomorphic")
 
+    def represent_integer(self, n, smooth_bound=None, *, full=True):
+        r"""
+        Given a positive integer `n`, compute a quaternion in this order whose
+        (reduced) norm equals `n`. If no such element exists, ``None`` is returned.
+
+        INPUT:
+
+        - ``n`` -- positive integer
+
+        - ``smooth_bound`` -- positive integer or (default) ``None``;
+          specifies an upper bound on the prime factors this method attempts
+          to extract prior to representing integers by binary quadratic forms
+
+        - ``full`` -- boolean (default: ``True``); specifies whether to search
+          for solutions in the entire order or merely in a convenient suborder.
+
+        .. WARNING::
+
+            If ``full`` is set to ``False`` or ``smooth_bound`` is given, this
+            method may fail to find a solution even if one exists.
+
+        .. NOTE::
+
+            This method heuristically runs in polynomial time (in the bit length
+            of the input) if all of the following constraints hold:
+
+            - The shortest trace-zero element of this quaternion order has small norm;
+            - ``smooth_bound`` is small;
+            - ``full`` is ``False`` or there exists a basis of the order that is close to orthogonal
+
+            (Here, "small" means polynomial in the bit length of the discriminant
+            of this order.)
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -419)
+            sage: O = B.maximal_order(); O
+            Order of Quaternion Algebra (-1, -419) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            sage: O.represent_integer(5)
+            2 - i
+            sage: O.represent_integer(1019)
+            -8 - 7/2*i - 3/2*k
+            sage: O.represent_integer(1019, full=False)  # random
+            10 + 9*i + j + k
+
+        ::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-3, -419)
+            sage: O = B.quaternion_order([1,
+            ....:                         1/2 - 11911/23944*i - 33/11972*j + 45/23944*k,
+            ....:                         15503/23944*i + 3487/11972*j + 13203/23944*k,
+            ....:                         -12989/23944*i + 11639/11972*j + 3175/23944*k])
+            sage: O.represent_integer(7)
+            5/2 + 11911/23944*i + 33/11972*j - 45/23944*k
+
+        ::
+
+            sage: p = 2^127 - 1
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -p)
+            sage: O = B.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+            sage: print(O.represent_integer(2^127 + 100))
+            10 + i + k
+            sage: print(O.represent_integer(2^127 + 101))
+            9247344907038065505 + 9199336695150709798*i
+            sage: print(O.represent_integer(2^127 + 102))
+            None
+            sage: print(O.represent_integer(2^127 + 103))
+            18007179761979493019/2 - 6822115276825140697*i + 1/2*k
+            sage: print(O.represent_integer(2^127 + 103, full=False))
+            -10 - 2*i + k
+            sage: print(O.represent_integer(2^127 + 103, smooth_bound=1))
+            None
+            sage: print(O.represent_integer(2^127 + 103, smooth_bound=100))
+            -10 - 2*i + k
+            sage: print(O.represent_integer(2^127 + 303))
+            17652745271232707461/2 + 7049896005799996563*i + 1/2*k
+            sage: print(O.represent_integer(2^127 + 303, full=False))
+            None
+
+        ALGORITHM: Generalized variant of [KLPT2014]_, §3.2, with ideas taken
+        from the ``FullRepresentInteger`` algorithm of [DFLLW2023]_.
+        """
+        n = ZZ(n)
+        if n < 0:
+            raise ValueError('target norm must be non-negative')
+        if not n:
+            return self.zero()
+        if n.is_one():
+            return self.one()
+
+        basis = self.unit_ideal().reduced_basis()
+        _, ii, jj, __ = basis
+        assert _ in (self.one(), -self.one()), 'reduced basis of unit ideal does not start with 1; this is a bug'
+
+        # find orthogonal elements ii, jj with norm(ii) minimal
+        # these do not necessarily generate the full order!
+        ii -= ii.reduced_trace() / 2
+        ii *= self.basis_matrix().solve_left(vector(ii)).denominator()
+        jj -= jj.reduced_trace() / 2
+        jj -= jj.pair(ii) / 2 * ii
+        jj *= self.basis_matrix().solve_left(vector(jj)).denominator()
+        kk = ii * jj
+        assert ii in self and jj in self and kk in self, 'orthogonal basis of sublattice not contained in this order; this is a bug'
+
+        from sage.quadratic_forms.binary_qf import BinaryQF
+        q, p = (-ZZ(g**2) for g in (ii, jj))
+        assert q >= 1 and p >= 1, 'one of -i^2 or -j^2 is not positive; this is a bug'
+        nf = BinaryQF(1, 0, q)
+
+        nn = n
+        if full:
+            O = self.quaternion_algebra().fractional_ideal([1, ii, jj, ii*jj])
+            f = O.basis_matrix().solve_left(self.basis_matrix()).denominator()
+            nn *= f**2
+
+        from sage.misc.functional import isqrt
+
+        def _abcd():
+            cbnd = isqrt(nn / p)
+            for c in range(cbnd + 1):
+                n0 = nn - p * nf(c,0)
+                assert n0 >= 0, 'incorrect bound on c; this is a bug'
+
+                dbnd = isqrt(n0 / p / q)
+                for d in range(dbnd + 1):
+                    n1 = nn - p * nf(c,d)
+                    assert n1 >= 0, 'incorrect bound on d; this is a bug'
+
+                    if n1 <= 1:
+                        yield n1, 0, c, d
+                        continue
+
+                    if smooth_bound == 1:
+                        fac = (n1, 1),
+                    else:
+                        fac = n1.factor(limit=smooth_bound)
+
+                    if not fac[-1][0].is_pseudoprime():
+                        continue
+
+                    algo = 'cornacchia' if len(fac) == 1 and fac[0][1] == 1 else 'general'
+                    sol = nf.solve_integer(n1, algorithm=algo)
+                    if sol is None:
+                        continue
+                    a, b = sol
+
+                    yield a, b, c, d
+
+        for a, b, c, d in _abcd():
+            elt = a * self.one() + b * ii + c * jj + d * kk
+            if full:
+                elt /= f
+                if elt not in self:
+                    continue
+            break
+        else:
+            return
+
+        assert elt in self, 'constructed element does not lie in this order; this is a bug'
+        assert elt.reduced_norm() == n, 'constructed element has incorrect norm; this is a bug'
+        return elt
+
 
 class QuaternionFractionalIdeal(Ideal_fractional):
     pass
@@ -3569,7 +3739,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             self.__right_order = self._compute_order(side='right')
         return self.__right_order
 
-    def gens_two(self):
+    def gens_two(self) -> tuple:
         r"""
         Return a pair of elements `N,\alpha` of this quaternion fractional ideal
         such that the ideal equals `O_L N + O_L\alpha` and `N O_R + \alpha O_R`,
@@ -3616,6 +3786,17 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: assert I == O1*N + O1*a
             sage: assert I == N*O2 + a*O2
 
+        The second generator is nonzero even when the ideal has norm one::
+
+            sage: I = O1.unit_ideal()
+            sage: N,a = I.gens_two()
+            sage: N
+            1
+            sage: a.is_zero()
+            False
+            sage: assert I == O1*N + O1*a
+            sage: assert I == N*O1 + a*O1
+
         ::
 
             sage: s = choice((-1,+1)) * ZZ(randrange(1,100)) / randrange(1,100)
@@ -3630,9 +3811,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         I = denom * self
         N = ZZ(I.norm())
         Q = I.quadratic_form()
-        for v in ZZ**4:
-            if -v < v:  # enumerate up to sign  #TODO this should be a method of free modules
-                continue
+        from itertools import islice
+        for v in islice((ZZ**4).iter_up_to_sign(), 1, None):
             if N.gcd(Q(v)) == 1:
                 break
         else:
@@ -3681,7 +3861,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         return self.gens()
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare this fractional quaternion ideal to ``other``.
 
@@ -3984,11 +4164,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: # optional - magma
             sage: a, b = M.quaternion_algebra().invariants()
-            sage: magma.eval(f'A<i,j,k> := QuaternionAlgebra<Rationals() | {a}, {b}>'
+            sage: magma.eval(f'A<i,j,k> := QuaternionAlgebra<Rationals() | {a}, {b}>')
             ''
-            sage: magma.eval(f'O := QuaternionOrder({list(C[0].right_order().basis())})'')
+            sage: magma.eval(f'O := QuaternionOrder({list(C[0].right_order().basis())})')
             ''
-            sage: [ magma(f'rideal<O | {list(I.basis())}>' for I in C]
+            sage: [ magma(f'rideal<O | {list(I.basis())}>').Norm() for I in C]
             [16, 32, 32]
 
             sage: A.<i,j,k> = QuaternionAlgebra(-1,-1)
@@ -4567,8 +4747,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             False
             sage: J.right_order().isomorphism_to(I.right_order())
             Ring morphism:
-              From: Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/8*j + 461/8*k, 1/4646*i + 131/808*j + 2342737/18584*k, 1/4*j + 461/4*k, 404*k)
-              To:   Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/35777778754*i + 286703630/777777799*j + 6908838277026128463/17888889377*k, 1/17888889377*i + 369036721/1555555598*j + 4377163512488215059/35777778754*k, 1/2*j + 1300147209/2*k, 777777799*k)
+              From: Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/8*j + 461/8*k, 1/4646*i + 131/808*j + 2342737/18584*k, 1/4*j + 461/4*k, 404*k)
+              To:   Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/35777778754*i + 286703630/777777799*j + 6908838277026128463/17888889377*k, 1/17888889377*i + 369036721/1555555598*j + 4377163512488215059/35777778754*k, 1/2*j + 1300147209/2*k, 777777799*k)
               Defn: i |--> -1555944509277/1806777827077*i - 63443295/157111115398*j + 1912127635/3613555654154*k
                     j |--> -1488349653720/78555557699*i - 593494326683/628444461592*j - 41222551815/628444461592*k
                     k |--> 855677048751220/1806777827077*i - 961404429945/628444461592*j + 11644714791909/14454222616616*k
@@ -4581,8 +4765,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             False
             sage: K.left_order().isomorphism_to(I.left_order())
             Ring morphism:
-              From: Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/3613555654154*i + 46626963583/628444461592*j + 4431632142858537833956781/14454222616616*k, 1/1806777827077*i + 14698369467/628444461592*j + 4268487353014308385342305/14454222616616*k, 1/8*j + 29300147973/8*k, 314222230796*k)
-              To:   Order of Quaternion Algebra (-23, -900001) with base ring Rational Field with basis (1/2 + 1/46*i + 9/23*k, 1/23*i + 18/23*k, 1/2*j + 1/2*k, k)
+              From: Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/3613555654154*i + 46626963583/628444461592*j + 4431632142858537833956781/14454222616616*k, 1/1806777827077*i + 14698369467/628444461592*j + 4268487353014308385342305/14454222616616*k, 1/8*j + 29300147973/8*k, 314222230796*k)
+              To:   Order of Quaternion Algebra (-23, -900001)
+              with base ring Rational Field with basis
+              (1/2 + 1/46*i + 9/23*k, 1/23*i + 18/23*k, 1/2*j + 1/2*k, k)
               Defn: i |--> -1555944509277/1806777827077*i - 38035560/78555557699*j + 950751220/1806777827077*k
                     j |--> -57099028943295/3613555654154*i - 593494326683/628444461592*j - 961404429945/14454222616616*k
                     k |--> 1720916783627635/3613555654154*i - 948118691745/628444461592*j + 11644714791909/14454222616616*k

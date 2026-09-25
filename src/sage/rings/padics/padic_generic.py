@@ -1579,7 +1579,7 @@ class ResidueReductionMap(Morphism):
     r"""
     Reduction map from a `p`-adic ring or field to its residue field or ring.
 
-    These maps must be created using the :meth:`_create_` method in order
+    These maps must be created using the ``_create_`` method in order
     to support categories correctly.
 
     EXAMPLES::
@@ -1723,7 +1723,7 @@ class ResidueLiftingMap(Morphism):
     r"""
     Lifting map to a `p`-adic ring or field from its residue field or ring.
 
-    These maps must be created using the :meth:`_create_` method in order
+    These maps must be created using the ``_create_`` method in order
     to support categories correctly.
 
     EXAMPLES::
@@ -1865,7 +1865,7 @@ def local_print_mode(obj, print_options, pos=None, ram_name=None):
 
     .. NOTE::
 
-        For more documentation see :class:`sage.structure.parent_gens.localvars`.
+        For more documentation see ``localvars``.
     """
     from sage.rings.padics.padic_printing import pAdicPrinter
 

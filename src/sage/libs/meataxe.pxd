@@ -1,13 +1,13 @@
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Simon King <simon.king@uni-jena.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 #
 # Import SOME features from meataxe.h
@@ -24,15 +24,16 @@ cdef extern from "meataxe.h":
     ctypedef FEL *PTR
 
     # global constants
-    cdef extern int FfOrder             # Current field order
-    cdef extern int FfChar              # Current characteristic
-    cdef extern FEL FfGen               # Generator
-    cdef extern int FfNoc               # Number of columns for row ops
-    cdef extern int MPB                 # Number of marks stored in a single byte
-    cdef extern size_t FfCurrentRowSize # The byte size of a single row in memory,
-                                        # always a multiple of sizeof(long)
-    cdef extern size_t FfCurrentRowSizeIo # The number of bytes actually used in a row
-    cdef extern char MtxLibDir[1024]    # Where to search/create multiplication tables
+    cdef extern int FfOrder              # Current field order
+    cdef extern int FfChar               # Current characteristic
+    cdef extern FEL FfGen                # Generator
+    cdef extern int FfNoc                # Number of columns for row ops
+    cdef extern int MPB                  # Number of marks stored in a single byte
+    cdef extern size_t FfCurrentRowSize
+    # The byte size of a single row in memory, always a multiple of sizeof(long)
+
+    cdef extern size_t FfCurrentRowSizeIo  # The number of bytes actually used in a row
+    cdef extern char MtxLibDir[1024]  # Where to search/create multiplication tables
 
     # we only wrap MeatAxe for small fields (size < 255)
     cdef extern FEL mtx_tmult[256][256]
@@ -45,13 +46,13 @@ cdef extern from "meataxe.h":
 
 #########################################
 # function prototypes
-    ## global parameters
+    # global parameters
     size_t FfRowSize(int noc)
-    size_t FfTrueRowSize(int noc) # Difference to FfRowSize: Doesn't count padding bytes
+    size_t FfTrueRowSize(int noc)  # Difference to FfRowSize: Doesn't count padding bytes
     int FfSetField(int field) except -1
     int FfSetNoc(int ncols) except -1
 
-    ## Finite Fields
+    # Finite Fields
     FEL FfAdd(FEL a, FEL b)
     FEL FfSub(FEL a, FEL b)
     FEL FfNeg(FEL a)
@@ -63,7 +64,7 @@ cdef extern from "meataxe.h":
     FEL FfFromInt(int l)
     int FfToInt(FEL f)
 
-    ## Rows
+    # Rows
     void FfMulRow(PTR row, FEL mark)
     void FfAddMulRow(PTR dest, PTR src, FEL f)
     void FfAddMulRowPartial(PTR dest, PTR src, FEL f, int first, int len)
@@ -79,19 +80,19 @@ cdef extern from "meataxe.h":
     void FfPermRow(PTR row, long *perm, PTR result)
     int FfCmpRows(PTR p1, PTR p2)
 
-    ## multiple rows
+    # multiple rows
     PTR FfAlloc(int nor) except NULL
-    void FfExtractColumn(PTR mat,int nor,int col,PTR result)
+    void FfExtractColumn(PTR mat, int nor, int col, PTR result)
     int FfStepPtr(PTR *x)  # Advance to next row
     PTR FfGetPtr(PTR base, int row)  # Advance to "row" rows after base
     void FfInsert(PTR row, int col, FEL mark)
     void FfMapRow(PTR row, PTR matrix, int nor, PTR result)
 
     ############
-    ## Skip: Application, error handling, i/o
+    # Skip: Application, error handling, i/o
 
     ############
-    ## Matrices
+    # Matrices
     ############
     ctypedef struct Matrix_t:
         int Field, Nor, Noc        # Field, #rows, #columns
@@ -99,7 +100,7 @@ cdef extern from "meataxe.h":
         int RowSize                # Size (in bytes) of one row
         int *PivotTable            # Pivot table (if matrix is in echelon form)
 
-    ## Basic memory operations
+    # Basic memory operations
     Matrix_t *MatAlloc(int field, int nor, int noc) except NULL
     int MatFree(Matrix_t *mat)
     PTR MatGetPtr(Matrix_t *mat, int row) except NULL
@@ -112,7 +113,7 @@ cdef extern from "meataxe.h":
     Matrix_t *MatLoad(char *fn) except? NULL
     int MatSave(Matrix_t *mat, char *fn) except -1
 
-    ## Basic Arithmetic  ## general rule: dest is changed, src/mat are unchanged!
+    # Basic Arithmetic  # general rule: dest is changed, src/mat are unchanged!
     Matrix_t *MatTransposed(Matrix_t *src) except NULL
     Matrix_t *MatAdd(Matrix_t *dest, Matrix_t *src) except NULL
     Matrix_t *MatAddMul(Matrix_t *dest, Matrix_t *src, FEL coeff) except NULL
@@ -124,7 +125,7 @@ cdef extern from "meataxe.h":
     Matrix_t *MatMulStrassen(Matrix_t *dest, Matrix_t *A, Matrix_t *B) except NULL
     void StrassenSetCutoff(size_t size)
 
-    ## "Higher" Arithmetic
+    # "Higher" Arithmetic
     Matrix_t *MatTensor(Matrix_t *m1, Matrix_t *m2) except NULL
     Matrix_t *TensorMap(Matrix_t *vec, Matrix_t *a, Matrix_t *b) except NULL
 
@@ -136,7 +137,7 @@ cdef extern from "meataxe.h":
     Matrix_t *MatNullSpace(Matrix_t *mat) except NULL
     Matrix_t *MatNullSpace__(Matrix_t *mat) except NULL
 
-    ## Error handling
+    # Error handling
     cdef extern int MTX_ERR_NOMEM, MTX_ERR_GAME_OVER, MTX_ERR_DIV0, MTX_ERR_FILEFMT, MTX_ERR_BADARG
     cdef extern int MTX_ERR_RANGE, MTX_ERR_NOTECH, MTX_ERR_NOTSQUARE, MTX_ERR_INCOMPAT
     cdef extern int MTX_ERR_BADUSAGE, MTX_ERR_OPTION, MTX_ERR_NARGS, MTX_ERR_NOTMATRIX, MTX_ERR_NOTPERM

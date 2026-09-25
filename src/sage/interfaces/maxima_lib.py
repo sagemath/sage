@@ -79,23 +79,46 @@ The output is parseable (i. e. :issue:`31796` is fixed)::
 
 TESTS:
 
-Check our workaround for a race in ecl works, see :issue:`26968`.
-We use a temporary ``MAXIMA_USERDIR`` so it's empty; we place it
-in ``DOT_SAGE`` since we expect it to have more latency than ``/tmp``.
+Check that concurrent Maxima initialization is not affected by ECL races,
+see :issue:`26968`.  The subprocesses share an empty ``MAXIMA_USERDIR`` and
+wait at a barrier before importing this module.  In particular, check every
+subprocess return code so that a failure cannot go unnoticed::
 
-    sage: import tempfile, subprocess
-    sage: tmpdir = tempfile.TemporaryDirectory(dir=DOT_SAGE)
-    sage: _ = subprocess.run(['sage', '-c',  # long time
-    ....: f'''
-    ....: import os
-    ....: os.environ["MAXIMA_USERDIR"] = "{tmpdir.name}"
-    ....: if not os.fork():
-    ....:     import sage.interfaces.maxima_lib
-    ....: else:
-    ....:     import sage.interfaces.maxima_lib
-    ....:     os.wait()
-    ....: '''])
-    sage: tmpdir.cleanup()
+    sage: import os, pathlib, subprocess, sys, tempfile, time
+    sage: with tempfile.TemporaryDirectory(dir=DOT_SAGE) as userdir:  # long time
+    ....:     start = pathlib.Path(userdir, "start")
+    ....:     ready = [pathlib.Path(userdir, f"ready-{i}") for i in range(4)]
+    ....:     processes = []
+    ....:     for ready_file in ready:
+    ....:         code = f'''
+    ....: from pathlib import Path
+    ....: import time
+    ....: Path({str(ready_file)!r}).touch()
+    ....: while not Path({str(start)!r}).exists():
+    ....:     time.sleep(0.01)
+    ....: import sage.all
+    ....: from sage.interfaces.maxima_lib import maxima
+    ....: maxima("load(linearalgebra)")
+    ....: '''
+    ....:         env = os.environ.copy()
+    ....:         env["MAXIMA_USERDIR"] = userdir
+    ....:         processes.append(subprocess.Popen(
+    ....:             [sys.executable, "-c", code], env=env,
+    ....:             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    ....:             text=True))
+    ....:     deadline = time.monotonic() + 30
+    ....:     while not all(path.exists() for path in ready):
+    ....:         if time.monotonic() >= deadline:
+    ....:             raise RuntimeError("Maxima test subprocess did not start")
+    ....:         time.sleep(float("0.01"))
+    ....:     start.touch()
+    ....:     failures = []
+    ....:     for process in processes:
+    ....:         output, _ = process.communicate()
+    ....:         if process.returncode:
+    ....:             failures.append((process.returncode, output))
+    ....:     failures
+    []
 """
 
 # ****************************************************************************
@@ -112,7 +135,10 @@ in ``DOT_SAGE`` since we expect it to have more latency than ``/tmp``.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import errno
 import os
+import time
+from contextlib import contextmanager
 
 import sage.rings.real_double
 import sage.symbolic.expression
@@ -132,6 +158,58 @@ from sage.structure.element import Expression
 from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
 from sage.symbolic.ring import SR
 
+
+@contextmanager
+def _maxima_cache_lock(cache_dir):
+    r"""
+    Lock operations that can write to Maxima's per-user ECL cache.
+
+    ECL derives compiler intermediate names from the final ``.fas`` name.
+    Concurrent processes compiling the same Maxima package therefore use and
+    delete the same ``.c``, ``.eclh``, ``.data`` and object files.  Serialize
+    those operations across Sage processes while continuing to share the
+    completed cache.
+    """
+    os.makedirs(cache_dir, exist_ok=True)
+    lock_path = os.path.join(cache_dir, ".sage-maxima-lib.lock")
+
+    with open(lock_path, "a+b") as lock_file:
+        if os.name == "nt":
+            import msvcrt
+
+            # Locking an empty range is unreliable on Windows.  Concurrent
+            # appenders may add more than one byte, which is harmless because
+            # every process locks the first byte.
+            lock_file.seek(0, os.SEEK_END)
+            if lock_file.tell() == 0:
+                lock_file.write(b"\0")
+                lock_file.flush()
+            lock_file.seek(0)
+            while True:
+                try:
+                    msvcrt.locking(lock_file.fileno(), msvcrt.LK_NBLCK, 1)
+                except OSError as error:
+                    if error.errno not in (errno.EACCES, errno.EAGAIN,
+                                            errno.EDEADLK):
+                        raise
+                    time.sleep(0.05)
+                else:
+                    break
+        else:
+            import fcntl
+
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+
+        try:
+            yield
+        finally:
+            if os.name == "nt":
+                lock_file.seek(0)
+                msvcrt.locking(lock_file.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
 # We begin here by initializing Maxima in library mode
 # i.e. loading it into ECL
 ecl_eval("(setf *load-verbose* NIL)")
@@ -145,30 +223,76 @@ ecl_eval("(set-locale-subdir)")
 if MAXIMA_PREFIX:
     os.environ["MAXIMA_PREFIX"] = MAXIMA_PREFIX
 
-# This workaround has to happen before any call to (set-pathnames).
-# To be safe please do not call anything other than
-# (set-locale-subdir) before this block.
-try:
-    ecl_eval("(set-pathnames)")
-except RuntimeError:
-    # Recover from :issue:`26968` by creating `*maxima-objdir*` here.
-    # This cannot be done before calling `(set-pathnames)` since
-    # `*maxima-objdir*` is computed there.
-    # We use python `os.makedirs()` which is immune to the race.
-    # Using `(ensure-directories-exist ...)` in lisp would be
-    # subject to the same race condition and since `*maxima-objdir*`
-    # has multiple components this is quite plausible to happen.
+maxima_userdir = os.environ.get("MAXIMA_USERDIR")
+if not maxima_userdir:
+    maxima_userdir = ecl_eval("(default-userdir)").python()[1:-1]
+
+# This lock prevents both the directory-creation race of :issue:`26968` and
+# concurrent writes to the compiler cache.  Keep the Python fallback because
+# an external Maxima process does not honor Sage's lock.
+with _maxima_cache_lock(maxima_userdir):
+    try:
+        ecl_eval("(set-pathnames)")
+    except RuntimeError:
+        maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
+        os.makedirs(maxima_objdir, exist_ok=True)
+        ecl_eval("(set-pathnames)")
+
     maxima_objdir = ecl_eval("*maxima-objdir*").python()[1:-1]
-    import os
     os.makedirs(maxima_objdir, exist_ok=True)
-    # Call `(set-pathnames)` again to complete its job.
-    ecl_eval("(set-pathnames)")
+
+
+def _maxima_share_subdirs(sharedir=None):
+    r"""
+    Return Maxima's share-package subdirectories, relative to the share tree.
+
+    The directories are read from Maxima's own ``*maxima-sharedir*`` -- the
+    canonical package tree that Maxima itself searches and compiles into --
+    rather than from a hardcoded list, so they cannot drift out of sync with
+    the installed Maxima version.
+
+    INPUT:
+
+    - ``sharedir`` -- string or ``None`` (default: ``None``); the Maxima
+      share directory to walk.  When ``None``, use ``*maxima-sharedir*``.
+
+    OUTPUT: a sorted list of ``/``-separated subdirectory paths relative to
+    ``sharedir``.
+
+    TESTS::
+
+        sage: from sage.interfaces.maxima_lib import _maxima_share_subdirs
+        sage: import os, tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     os.makedirs(os.path.join(d, 'linearalgebra'))
+        ....:     os.makedirs(os.path.join(d, 'contrib', 'diffequations'))
+        ....:     _maxima_share_subdirs(sharedir=d)
+        ['contrib', 'contrib/diffequations', 'linearalgebra']
+
+    On startup the list is computed from the live Maxima share tree::
+
+        sage: from sage.interfaces.maxima_lib import _maxima_share_packages
+        sage: 'linearalgebra' in _maxima_share_packages
+        True
+    """
+    if sharedir is None:
+        sharedir = ecl_eval("*maxima-sharedir*").python()[1:-1]
+
+    subdirs = []
+    for dirpath, _, _ in os.walk(sharedir):
+        rel = os.path.relpath(dirpath, sharedir)
+        if rel != os.curdir:
+            subdirs.append(rel.replace(os.sep, "/"))
+    return sorted(subdirs)
+
+
+_maxima_share_packages = _maxima_share_subdirs()
 
 ecl_eval("(initialize-runtime-globals)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval(r"(defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
-ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
+ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not *pcprntd*) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
 
@@ -210,9 +334,8 @@ ecl_eval("(setf *standard-output* *dev-null*)")
 # ecl_eval("(setf *error-output* *dev-null*)")
 
 # Add search paths
-# Keep these in sync with the default Maxima search paths defined in subprojects/maxima-<version>/src/share-subdirs_autogenerated.lisp
 if MAXIMA_PREFIX:
-    import_packages = "{affine,algebra,algebra/charsets,algebra/solver,amatrix,bernstein,calculus,cobyla,cobyla/ex,cobyla/lisp,colnew,colnew/ex1,colnew/ex2,colnew/ex3,colnew/ex4,colnew/lisp,combinatorics,contrib,contrib/Eulix,contrib/Grobner,contrib/Zeilberger,contrib/alt-display,contrib/altsimp,contrib/binsplit,contrib/bitwise,contrib/boolsimp,contrib/coma,contrib/diffequations,contrib/diffequations/tests,contrib/elliptic_curves,contrib/elliptic_curves/figures,contrib/format,contrib/fresnel,contrib/gentran,contrib/gentran/man,contrib/gentran/test,contrib/gf,contrib/integration,contrib/levin,contrib/lurkmathml,contrib/maxima-odesolve,contrib/maximaMathML,contrib/mcclim,contrib/noninteractive,contrib/odes,contrib/operatingsystem,contrib/prim,contrib/rand,contrib/rkf45,contrib/sarag,contrib/smath,contrib/state,contrib/symplectic_ode,contrib/trigtools,contrib/unicodedata,contrib/unit,contrib/vector3d,descriptive,diff_form,diff_form/tests,diffequations,distrib,draw,dynamics,ezunits,fftpack5,fftpack5/lisp,finance,fourier_elim,fractals,graphs,hompack,hompack/lisp,hypergeometric,integequations,integer_sequence,integration,lapack,lapack/blas,lapack/lapack,lbfgs,linearalgebra,logic,lsquares,macro,matrix,minpack,minpack/lisp,misc,mnewton,multiadditive,nelder_mead,numeric,numericalio,odepack,odepack/src,orthopoly,pdiff,physics,pslq,pytranslate,quantum,simplex,simplex/Tests,simplification,solve_rat_ineq,solve_rec,sound,stats,stringproc,sym,tensor,tensor/tracefree-code,test_batch_encodings,to_poly_solve,translators,translators/m2mj,trigonometry,utils,vector,z_transform}"
+    import_packages = "{" + ",".join(_maxima_share_packages) + "}"
     ecl_eval(f'#$file_search_maxima: append(file_search_maxima, ["{MAXIMA_PREFIX}/###.{{mac,mc,wxm}}", "{MAXIMA_PREFIX}/{import_packages}/###.{{mac,mc,wxm}}"])$')
     ecl_eval(f'#$file_search_lisp: append(file_search_lisp, ["{MAXIMA_PREFIX}/###.{{fas,lisp,lsp}}", "{MAXIMA_PREFIX}/../src/###.{{fas,lisp,lsp}}", "{MAXIMA_PREFIX}/{import_packages}/###.{{fas,lisp,lsp}}"])$')
 
@@ -220,8 +343,10 @@ if MAXIMA_PREFIX:
 # display2d -- no ascii art output
 # keepfloat -- don't automatically convert floats to rationals
 
+# Load linearalgebra explicitly under the cache lock instead of relying on
+# transitive loads from other packages, which vary between Maxima builds.
 init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'keepfloat : true',
-             'load(to_poly_solve)', 'load(simplify_sum)',
+             'load(linearalgebra)', 'load(to_poly_solve)', 'load(simplify_sum)',
              'load(diag)', 'load(abs_integrate)']
 
 
@@ -232,8 +357,9 @@ init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'ke
 # Robert Dodier for figuring this out!
 # See trac # 6818.
 init_code.append('nolabels : true')
-for l in init_code:
-    ecl_eval("#$%s$" % l)
+with _maxima_cache_lock(maxima_objdir):
+    for l in init_code:
+        ecl_eval("#$%s$" % l)
 # To get more debug information uncomment the next line
 # should allow to do this through a method
 # ecl_eval("(setf *standard-output* original-standard-output)")
@@ -1227,6 +1353,8 @@ sage_op_dict = {
     sage.functions.error.erf: "%ERF",
     sage.functions.gamma.gamma_inc: "%GAMMA_INCOMPLETE",
     sage.functions.other.conjugate: "$CONJUGATE",
+    sage.functions.other.imag_part: "%IMAGPART",
+    sage.functions.other.real_part: "%REALPART",
 }
 # we compile the dictionary
 sage_op_dict = {k: EclObject(sage_op_dict[k]) for k in sage_op_dict}

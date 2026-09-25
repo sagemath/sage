@@ -252,9 +252,11 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         """
         return self.absolute_ideal().free_module()
 
-    def gens_reduced(self):
+    def gens_reduced(self) -> tuple:
         r"""
-        Return a small set of generators for this ideal. This will always
+        Return a small set of generators for this ideal.
+
+        This will always
         return a single generator if one exists (i.e. if the ideal is
         principal), and otherwise two generators.
 

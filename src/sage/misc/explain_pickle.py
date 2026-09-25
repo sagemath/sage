@@ -126,21 +126,21 @@ old pickles to work).
 
   - ``unpickle_newobj(klass, args)``:
     Usually equivalent to ``klass.__new__(klass, *args)``.  If
-    ``klass`` is a Python class, then you can define :meth:`__new__`
+    ``klass`` is a Python class, then you can define ``__new__``
     to control the result (this result actually need not be an
     instance of ``klass``).  (This doesn't work for Cython classes.)
 
   - ``unpickle_build(obj, state)``:
-    If ``obj`` has a :meth:`__setstate__` method, then this is equivalent to
+    If ``obj`` has a ``__setstate__`` method, then this is equivalent to
     ``obj.__setstate__(state)``.  Otherwise uses ``state`` to set the attributes
-    of ``obj``.  Customize by defining :meth:`__setstate__`.
+    of ``obj``.  Customize by defining ``__setstate__``.
 
   - ``unpickle_instantiate(klass, args)``:
     Usually equivalent to ``klass(*args)``.  Cannot be customized.
 
   - ``unpickle_appends(lst, vals)``:
     Appends the values in ``vals`` to ``lst``.  If not ``isinstance(lst, list)``,
-    can be customized by defining a :meth:`append` method.
+    can be customized by defining an ``append`` method.
 """
 
 # *****************************************************************************
@@ -2390,7 +2390,8 @@ def unpickle_newobj(klass, args):
 
     TESTS:
 
-    We can create a :class:`Sequence_generic` which would not work with
+    We can create a :class:`~sage.structure.sequence.Sequence_generic`
+    which would not work with
     a pure Python implementation. We just test that this does not raise
     an exception, we cannot do anything with ``s`` since ``s.__init__``
     was never called::
@@ -2712,7 +2713,7 @@ class EmptyNewstyleClass:
 
 class TestReduceGetinitargs:
     r"""
-    An old-style class with a :func:`__getinitargs__` method.  Used for testing
+    An old-style class with a ``__getinitargs__`` method.  Used for testing
     :func:`explain_pickle`.
     """
     def __init__(self):
@@ -2764,7 +2765,7 @@ class TestReduceGetinitargs:
 
 class TestReduceNoGetinitargs:
     r"""
-    An old-style class with no :meth:`__getinitargs__` method.  Used for testing
+    An old-style class with no ``__getinitargs__`` method.  Used for testing
     :func:`explain_pickle`.
     """
     def __init__(self):
@@ -2934,7 +2935,7 @@ class TestAppendNonlist:
 
 class TestBuild:
     r"""
-    A simple class with a :meth:`__getstate__` but no :meth:`__setstate__`.  Used for testing
+    A simple class with a ``__getstate__`` but no ``__setstate__``.  Used for testing
     :func:`explain_pickle`.
     """
     def __getstate__(self):
@@ -2971,7 +2972,7 @@ class TestBuild:
 
 class TestBuildSetstate(TestBuild):
     r"""
-    A simple class with a :meth:`__getstate__` and a :meth:`__setstate__`.  Used for testing
+    A simple class with a ``__getstate__`` and a ``__setstate__``.  Used for testing
     :func:`explain_pickle`.
     """
     def __setstate__(self, state):

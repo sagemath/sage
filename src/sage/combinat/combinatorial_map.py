@@ -36,7 +36,7 @@ thereof, for all the combinatorial maps that apply to it.
 .. NOTE::
 
     Since decorators are evaluated upon loading Python modules,
-    customizing :obj:`combinatorial map` needs to be done before the
+    customizing :func:`combinatorial_map` needs to be done before the
     modules using it are loaded. In the examples below, where we
     illustrate the customized ``combinatorial_map`` decorator on the
     :mod:`sage.combinat.permutation` module, we resort to force a

@@ -760,7 +760,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         Return a random element of ``self``.
 
         Optional input parameters are propagated to the ``random_element``
-        method of the underlying :class:`VectorSpace`.
+        method of the underlying vector space.
 
         EXAMPLES::
 

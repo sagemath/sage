@@ -306,8 +306,7 @@ sage: legendre_symbol(69,389)
 sage: def kr(a, p):
 ....:  if Mod(a,p)^((p-1)//2) == 1:
 ....:     return 1
-....:  else:
-....:     return -1
+....:  return -1
 sage: for a in range(1,5):
 ....:     print("{} {}".format(a, kr(a,5)))
 1 1

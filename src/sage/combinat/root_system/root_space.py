@@ -97,7 +97,16 @@ class RootSpace(CombinatorialFreeModule):
         """
         return self._name_string_helper("root", capitalize=capitalize, base_ring=base_ring, type=type)
 
-    simple_root = CombinatorialFreeModule.monomial
+    def simple_root(self, i):
+        r"""
+        Return the simple root indexed by ``i``.
+
+        EXAMPLES::
+
+            sage: RootSystem(['A', 3]).root_lattice().simple_root(1)
+            alpha[1]
+        """
+        return self.monomial(i)
 
     @cached_method
     def to_coroot_space_morphism(self):

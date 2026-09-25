@@ -8,8 +8,14 @@ AUTHORS:
 - Sebastien Besnier (2014-05-5): :class:`FormalCompositeMap` contains
   a list of Map instead of only two Map. See :issue:`16291`.
 
-- Sebastian Oehms   (2019-01-19): :meth:`section` added to :class:`FormalCompositeMap`.
+- Sebastian Oehms   (2019-01-19):
+  :meth:`~sage.categories.map.FormalCompositeMap.section` added to
+  :class:`FormalCompositeMap`.
   See :issue:`27081`.
+
+.. automethod:: sage.categories.map::Map._make_weak_references
+
+.. automethod:: sage.categories.map::Map._make_strong_references
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -527,8 +533,7 @@ cdef class Map(Element):
         """
         if self._repr_type_str is None:
             return "Generic"
-        else:
-            return self._repr_type_str
+        return self._repr_type_str
 
     def _repr_defn(self):
         """
@@ -1173,10 +1178,9 @@ cdef class Map(Element):
         cdef Map connecting = D._internal_coerce_map_from(new_domain)
         if connecting is None:
             raise TypeError("No coercion from %s to %s" % (new_domain, D))
-        elif connecting.codomain() is not D:
+        if connecting.codomain() is not D:
             raise RuntimeError("BUG: coerce_map_from should always return a map to self (%s)" % D)
-        else:
-            return self.pre_compose(connecting.__copy__())
+        return self.pre_compose(connecting.__copy__())
 
     def extend_codomain(self, new_codomain):
         r"""
@@ -1213,10 +1217,9 @@ cdef class Map(Element):
         cdef Map connecting = new_codomain._internal_coerce_map_from(self._codomain)
         if connecting is None:
             raise TypeError("No coercion from %s to %s" % (self._codomain, new_codomain))
-        elif connecting.domain() is not self._codomain:
+        if connecting.domain() is not self._codomain:
             raise RuntimeError("BUG: coerce_map_from should always return a map from its input (%s)" % new_codomain)
-        else:
-            return self.post_compose(connecting.__copy__())
+        return self.post_compose(connecting.__copy__())
 
     def is_surjective(self):
         """
@@ -2075,7 +2078,7 @@ cdef class FormalCompositeMap(Map):
             sage: sect(p-q)
             3
 
-        the following example has been attached to :meth:`_integer_`
+        the following example has been attached to ``_integer_``
         of :class:`sage.rings.polynomial.polynomial_element.Polynomial`
         before (see comment there)::
 

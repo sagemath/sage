@@ -485,8 +485,8 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 return None
 
             # copy the vector sequence into a working vector sequence ws
-            #!!! ws only needs to be the actual vector sequence, not some
-            #!!! fancy crystal graph element
+            # !!! ws only needs to be the actual vector sequence, not some
+            # !!! fancy crystal graph element
             P = self.parent()
             ws = P(self.value)
 
@@ -506,8 +506,8 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 else:
                     ws = ws.reflect_step(j, i)
                 ix -= 1
-            #!!! at this point we should return the fancy crystal graph element
-            #!!! corresponding to the humble vector sequence ws
+            # !!! at this point we should return the fancy crystal graph element
+            # !!! corresponding to the humble vector sequence ws
             return P(ws.compress())
 
         def dualize(self):
@@ -650,7 +650,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
     When ``weight`` is just a single fundamental weight `\Lambda_r`, this
     crystal is isomorphic to a Kirillov-Reshetikhin (KR) crystal, see also
-    :meth:`sage.combinat.crystals.kirillov_reshetikhin.KirillovReshetikhinFromLSPaths`.
+    :func:`sage.combinat.crystals.kirillov_reshetikhin.KirillovReshetikhinCrystalFromLSPaths`.
     For general weights, it is isomorphic to a tensor product of
     single-column KR crystals.
 
@@ -1176,8 +1176,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
                     #if a.is_short_root():
                     #    if cartan_dual.type() == 'G':
                     #        return 3*a
-                    #    else:
-                    #        return 2*a
+                    #    return 2*a
                     #return a
 
             paths = [G.shortest_path(L[i+1],L[i]) for i in range(len(L)-1)]
@@ -1328,7 +1327,9 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: x.e_string([3,2,1,0]) == mg
                 True
 
-            We check that :meth:`epsilon` works::
+            We check that
+            :meth:`~sage.categories.crystals.Crystals.ElementMethods.epsilon`
+            works::
 
                 sage: B = crystals.infinity.LSPaths(['D',4])
                 sage: mg = B.highest_weight_vector()

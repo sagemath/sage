@@ -1048,7 +1048,7 @@ class LocalGeneric(Parent):
 
     def ext(self, *args, **kwds):
         r"""
-        Construct an extension of ``self``.  See :meth:`extension` for more details.
+        Construct an extension of ``self``.  See :meth:`~sage.rings.padics.padic_generic.pAdicGeneric.extension` for more details.
 
         EXAMPLES::
 

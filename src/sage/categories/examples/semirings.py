@@ -181,7 +181,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
     def summation(self, x, y) -> Ternary:
         r"""
         Return the sum of ``x`` and ``y`` in the semiring as per
-        :meth:`Semirings.ParentMethods.summation`.
+        :meth:`sage.categories.additive_magmas.AdditiveMagmas.ParentMethods.summation`.
 
         EXAMPLES::
 
@@ -208,7 +208,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
     def product(self, x, y) -> Ternary:
         r"""
         Return the product of ``x`` and ``y`` in the semiring as per
-        :meth:`Semirings.ParentMethods.product`.
+        :meth:`sage.categories.magmas.Magmas.ParentMethods.product`.
 
         EXAMPLES::
 

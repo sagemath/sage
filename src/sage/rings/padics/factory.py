@@ -15,6 +15,10 @@ TESTS::
     sage: R = ZpLF(2)
     sage: R = QpLC(2)
     sage: R = QpLF(2)
+
+.. autodata:: sage.rings.padics.factory::Qp
+.. autodata:: sage.rings.padics.factory::Zp
+.. autodata:: sage.rings.padics.factory::pAdicExtension
 """
 
 # ****************************************************************************
@@ -452,7 +456,8 @@ class Qp_class(UniqueFactory):
     A quite interesting feature with relaxed `p`-adics is the possibility to
     create (in some cases) self-referent numbers, that are numbers whose
     `n`-th digit is defined by the previous ones.
-    We refer to the documentation of the function :func:`ZpL` for a
+    We refer to the documentation of the function
+    :func:`ZpER <sage.rings.padics.factory.ZpER>` for a
     small demonstration of the capabilities of this precision model.
 
     PRINTING:
@@ -733,7 +738,8 @@ class Qp_class(UniqueFactory):
         r"""
         Create a key from input parameters for ``Qp``.
 
-        See the documentation for ``Qp`` for more information.
+        See the documentation for :data:`Qp <sage.rings.padics.factory.Qp>`
+        for more information.
 
         TESTS::
 
@@ -756,7 +762,8 @@ class Qp_class(UniqueFactory):
         r"""
         Create an object using a given key.
 
-        See the documentation for ``Qp`` for more information.
+        See the documentation for :data:`Qp <sage.rings.padics.factory.Qp>`
+        for more information.
 
         TESTS::
 
@@ -1282,7 +1289,8 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     EXAMPLES:
 
-    Unlike for ``Qp``, you can't create ``Qq(N)`` when ``N`` is not a prime power.
+    Unlike for :data:`Qp <sage.rings.padics.factory.Qp>`, you can't create
+    ``Qq(N)`` when ``N`` is not a prime power.
 
     However, you can use ``check=False`` to pass in a pair in order to not
     have to factor.  If you do so, you need to use names explicitly
@@ -1395,7 +1403,8 @@ def QpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic fields.
 
-    Same functionality as :func:`Qp`.  See documentation for :func:`Qp` for a
+    Same functionality as :data:`Qp <sage.rings.padics.factory.Qp>`.  See
+    documentation for :data:`Qp <sage.rings.padics.factory.Qp>` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -1410,7 +1419,8 @@ def QpFP(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point `p`-adic fields.
 
-    Same functionality as :func:`Qp`.  See documentation for :func:`Qp` for a
+    Same functionality as :data:`Qp <sage.rings.padics.factory.Qp>`.  See
+    documentation for :data:`Qp <sage.rings.padics.factory.Qp>` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -1653,7 +1663,8 @@ class Zp_class(UniqueFactory):
     A quite interesting feature with relaxed `p`-adics is the possibility to
     create (in some cases) self-referent numbers, that are numbers whose
     `n`-th digit is defined by the previous ones.
-    We refer to the documentation of the function :func:`ZpL` for a
+    We refer to the documentation of the function
+    :func:`ZpER <sage.rings.padics.factory.ZpER>` for a
     small demonstration of the capabilities of this precision model.
 
     PRINTING:
@@ -1952,7 +1963,8 @@ class Zp_class(UniqueFactory):
         r"""
         Create a key from input parameters for ``Zp``.
 
-        See the documentation for :func:`Zp` for more information.
+        See the documentation for :data:`Zp <sage.rings.padics.factory.Zp>`
+        for more information.
 
         TESTS::
 
@@ -1990,7 +2002,8 @@ class Zp_class(UniqueFactory):
         r"""
         Create an object using a given key.
 
-        See the documentation for :func:`Zp` for more information.
+        See the documentation for :data:`Zp <sage.rings.padics.factory.Zp>`
+        for more information.
 
         TESTS::
 
@@ -2524,7 +2537,8 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     EXAMPLES:
 
-    Unlike for :func:`Zp`, you can't create ``Zq(N)`` when ``N`` is not a prime power.
+    Unlike for :data:`Zp <sage.rings.padics.factory.Zp>`, you can't create
+    ``Zq(N)`` when ``N`` is not a prime power.
 
     However, you can use ``check=False`` to pass in a pair in order to not
     have to factor.  If you do so, you need to use names explicitly
@@ -2622,7 +2636,8 @@ def ZpCR(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped relative `p`-adic rings.
 
-    Same functionality as :func:`Zp`.  See documentation for :func:`Zp` for a
+    Same functionality as :data:`Zp <sage.rings.padics.factory.Zp>`.  See
+    documentation for :data:`Zp <sage.rings.padics.factory.Zp>` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -2637,7 +2652,8 @@ def ZpCA(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create capped absolute `p`-adic rings.
 
-    See documentation for :func:`Zp` for a description of the input parameters.
+    See documentation for :data:`Zp <sage.rings.padics.factory.Zp>` for a
+    description of the input parameters.
 
     EXAMPLES::
 
@@ -2651,7 +2667,8 @@ def ZpFM(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create fixed modulus `p`-adic rings.
 
-    See documentation for :func:`Zp` for a description of the input parameters.
+    See documentation for :data:`Zp <sage.rings.padics.factory.Zp>` for a
+    description of the input parameters.
 
     EXAMPLES::
 
@@ -2665,7 +2682,8 @@ def ZpFP(p, prec=None, *args, **kwds):
     r"""
     A shortcut function to create floating point `p`-adic rings.
 
-    Same functionality as :func:`Zp`.  See documentation for :func:`Zp` for a
+    Same functionality as :data:`Zp <sage.rings.padics.factory.Zp>`.  See
+    documentation for :data:`Zp <sage.rings.padics.factory.Zp>` for a
     description of the input parameters.
 
     EXAMPLES::
@@ -2741,7 +2759,8 @@ def ZpLC(p, prec=None, *args, **kwds):
     (precision is encoded by a lattice in a large vector space and tracked
     using automatic differentiation).
 
-    See documentation for :func:`Zp` for a description of the input parameters.
+    See documentation for :data:`Zp <sage.rings.padics.factory.Zp>` for a
+    description of the input parameters.
 
     EXAMPLES:
 
@@ -2888,14 +2907,15 @@ def ZpLC(p, prec=None, *args, **kwds):
     [CRV2018]_).
 
     Concretely, this precision datum is an instance of the class
-    :class:`sage.rings.padic.lattice_precision.PrecisionLattice`.
+    :class:`~sage.rings.padics.lattice_precision.PrecisionLattice`.
     It is attached to the parent and is created at the same time
     as the parent.
     (It is actually a bit more subtle because two different parents
     may share the same instance; this happens for instance for a
     `p`-adic ring and its field of fractions.)
 
-    This precision datum is accessible through the method :meth:`precision`::
+    This precision datum is accessible through the method
+    :meth:`~sage.rings.padics.generic_nodes.pAdicLatticeGeneric.precision`::
 
         sage: R = ZpLC(5, print_mode='terse')
         sage: prec = R.precision()
@@ -2916,7 +2936,7 @@ def ZpLC(p, prec=None, *args, **kwds):
         sage: prec
         Precision lattice on 3 objects
 
-    The method :meth:`tracked_elements` provides the list of all
+    The method :meth:`~sage.rings.padics.lattice_precision.DifferentialPrecisionGeneric.tracked_elements` provides the list of all
     tracked elements::
 
         sage: prec.tracked_elements()
@@ -2924,7 +2944,7 @@ def ZpLC(p, prec=None, *args, **kwds):
 
     Similarly, when a variable is collected by the garbage collector,
     the precision lattice is updated. Note however that the update
-    might be delayed. We can force it with the method :meth:`del_elements`::
+    might be delayed. We can force it with the method :meth:`~sage.rings.padics.lattice_precision.DifferentialPrecisionGeneric.del_elements`::
 
         sage: z = 0
         sage: prec  # random output, could be 2 objects if the garbage collector is fast
@@ -2933,7 +2953,7 @@ def ZpLC(p, prec=None, *args, **kwds):
         sage: prec
         Precision lattice on 2 objects
 
-    The method :meth:`precision_lattice` returns (a matrix defining)
+    The method :meth:`~sage.rings.padics.lattice_precision.DifferentialPrecisionGeneric.precision_lattice` returns (a matrix defining)
     the lattice that models the precision. Here we have::
 
         sage: prec.precision_lattice()
@@ -2985,9 +3005,9 @@ def ZpLC(p, prec=None, *args, **kwds):
     hundred variables (e.g. square matrices of size 5 or
     polynomials of degree 20).
 
-    The class :class:`PrecisionLattice` provides several
+    The class :class:`~sage.rings.padics.lattice_precision.PrecisionLattice` provides several
     features for introspection, especially concerning timings.
-    See :meth:`history` and :meth:`timings` for details.
+    See :meth:`~sage.rings.padics.lattice_precision.DifferentialPrecisionGeneric.history` and :meth:`~sage.rings.padics.lattice_precision.DifferentialPrecisionGeneric.timings` for details.
 
     .. SEEALSO::
 
@@ -3002,7 +3022,8 @@ def ZpLF(p, prec=None, *args, **kwds):
     A shortcut function to create `p`-adic rings where precision
     is encoded by a module in a large vector space.
 
-    See documentation for :func:`Zp` for a description of the input parameters.
+    See documentation for :data:`Zp <sage.rings.padics.factory.Zp>` for a
+    description of the input parameters.
 
     .. NOTE::
 
@@ -3038,8 +3059,8 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
       consider indistinguishable elements at the working precision
       as equal. Otherwise, raise an error.
 
-    See documentation for :func:`Zp` for a description of the other
-    input parameters.
+    See documentation for :data:`Zp <sage.rings.padics.factory.Zp>` for a
+    description of the other input parameters.
 
     A SHORT INTRODUCTION TO RELAXED `p`-ADICS:
 
@@ -3097,8 +3118,8 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
         sage: a.precision_absolute()
         +Infinity
 
-    Asking for more digits is achieved by the methods :meth:`at_precision_absolute`
-    and :meth:`at_precision_relative`::
+    Asking for more digits is achieved by the methods ``at_precision_absolute``
+    and ``at_precision_relative``::
 
         sage: a.at_precision_absolute(30)
         ...?244200244200244200244200244201
@@ -3188,7 +3209,7 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
         sage: x = R.unknown(); x
         ...?.0
 
-    We then use the method :meth:`set` to define `x` by writing down an equation
+    We then use the method ``set`` to define `x` by writing down an equation
     it satisfies::
 
         sage: x.set(1 + 5*x^2)
@@ -3263,7 +3284,8 @@ class pAdicExtension_class(UniqueFactory):
                                   print_max_unram_terms=None, print_max_terse_terms=None,
                                   show_prec=None, check=True, unram=False, implementation='FLINT'):
         r"""
-        Create a key from input parameters for :class:`pAdicExtension`.
+        Create a key from input parameters for
+        :data:`pAdicExtension <sage.rings.padics.factory.pAdicExtension>`.
 
         See the documentation for :func:`Qq` for more information.
 
@@ -3410,7 +3432,9 @@ class pAdicExtension_class(UniqueFactory):
         r"""
         Create an object using a given key.
 
-        See the documentation for :class:`pAdicExtension` for more information.
+        See the documentation for
+        :data:`pAdicExtension <sage.rings.padics.factory.pAdicExtension>`
+        for more information.
 
         TESTS::
 

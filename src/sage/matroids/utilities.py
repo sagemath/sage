@@ -378,9 +378,7 @@ def spanning_forest(M):
         spanning_tree = kruskal(component)
         for (x, y, z) in spanning_tree:
             if x < m:
-                t = x
-                x = y
-                y = t
+                x, y = y, x
             T.append((x - m, y))
     return T
 
@@ -463,9 +461,7 @@ def spanning_stars(M):
     T = []
     for x, y in H:
         if x < m:
-            t = x
-            x = y
-            y = t
+            x, y = y, x
         T.append((x - m, y))
     return T
 

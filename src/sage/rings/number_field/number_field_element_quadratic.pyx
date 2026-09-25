@@ -2418,12 +2418,11 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         test = 2 * (self - n)
         if test < 1:
             return n
-        elif test > 1:
+        if test > 1:
             return n + 1
-        elif n % 2 == 0:
+        if n % 2 == 0:
             return n
-        else:
-            return n + 1
+        return n + 1
 
 
 cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):

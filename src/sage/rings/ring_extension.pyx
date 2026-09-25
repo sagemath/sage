@@ -24,8 +24,9 @@ the user can customize them by passing in appropriate arguments::
     sage: K.<a> = k.over(F, gen=1-z4); K
     Field in a with defining polynomial x^2 + z2*x + 4 over its base
 
-The base of the extension is available via the method :meth:`base` (or
-equivalently :meth:`base_ring`)::
+The base of the extension is available via the method
+:meth:`~sage.rings.ring_extension.RingExtension_generic.base` (or equivalently
+``base_ring``)::
 
     sage: K.base()
     Finite Field in z2 of size 5^2
@@ -40,7 +41,8 @@ obtaining this way a tower of extensions::
     sage: L.base().base()
     Finite Field in z2 of size 5^2
 
-The method :meth:`bases` gives access to the complete list of rings in
+The method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases` gives
+access to the complete list of rings in
 a tower::
 
     sage: L.bases()
@@ -62,7 +64,7 @@ When the base is omitted, the default is the natural base of the extension::
     sage: L.basis_over()
     [1, b]
 
-The method :meth:`sage.rings.ring_extension_element.RingExtensionWithBasis.vector`
+The method :meth:`sage.rings.ring_extension_element.RingExtensionWithBasisElement.vector`
 computes the coordinates of an element according to the above basis::
 
     sage: u = a + 2*b + 3*a*b
@@ -248,8 +250,7 @@ def common_base(K, L, degree):
         raise NotImplementedError("unable to find a common base")
     if degree:
         return base, degrees_K[iK], degrees_L[iL]
-    else:
-        return base
+    return base
 
 
 def generators(ring, base):
@@ -279,8 +280,7 @@ def generators(ring, base):
         ring = ring.base_ring()
     if base is None:
         return gens
-    else:
-        return tuple([x for x in gens if x not in base])
+    return tuple([x for x in gens if x not in base])
 
 
 def variable_names(ring, base):
@@ -891,8 +891,7 @@ cdef class RingExtension_generic(Parent):
         if print_as is not None:
             if isinstance(print_as, RingExtension_generic):
                 return print_as._repr_(**options)
-            else:
-                return str(print_as)
+            return str(print_as)
         print_options = self._print_options.copy()
         for (name, value) in options.items():
             method = None
@@ -954,8 +953,7 @@ cdef class RingExtension_generic(Parent):
         if print_as is not None:
             if isinstance(print_as, RingExtension_generic):
                 return print_as._latex_(**options)
-            else:
-                return latex(print_as)
+            return latex(print_as)
         print_options = self._print_options.copy()
         for (name, value) in options.items():
             method = None
@@ -1081,7 +1079,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`bases`, :meth:`absolute_base`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.absolute_base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         return self._base
 
@@ -1111,7 +1109,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`absolute_base`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`absolute_base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         L = [self]
         base = self
@@ -1141,7 +1139,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`bases`, :meth:`is_defined_over`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`
         """
         return self.bases()[-1]
 
@@ -1182,7 +1180,7 @@ cdef class RingExtension_generic(Parent):
 
         .. SEEALSO::
 
-            :meth:`base`, :meth:`bases`, :meth:`absolute_base`
+            :meth:`~sage.rings.ring_extension.RingExtension_generic.base`, :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`, :meth:`~sage.rings.ring_extension.RingExtension_generic.absolute_base`
         """
         cdef Parent b
         b = self
@@ -1204,7 +1202,7 @@ cdef class RingExtension_generic(Parent):
         OUTPUT:
 
         The base ``base`` normalized as a parent appearing in the
-        list of bases of this extension as returned by :meth:`bases`.
+        list of bases of this extension as returned by :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`.
 
         EXAMPLES::
 
@@ -1267,7 +1265,7 @@ cdef class RingExtension_generic(Parent):
               Defn: z4 |--> z4
 
         One can also pass in a base over which the extension is explicitly
-        defined (see also :meth:`is_defined_over`)::
+        defined (see also :meth:`~sage.rings.ring_extension.RingExtension_generic.is_defined_over`)::
 
             sage: L.defining_morphism(F)
             Ring morphism:
@@ -1421,7 +1419,7 @@ cdef class RingExtension_generic(Parent):
             3
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: K.degree_over(GF(5))
             Traceback (most recent call last):
@@ -1477,7 +1475,7 @@ cdef class RingExtension_generic(Parent):
             6
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: A.degree(GF(5))
             Traceback (most recent call last):
@@ -2026,8 +2024,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
             sr = str(self._ring)
         if self._ring in Fields():
             return sr
-        else:
-            return "Fraction Field of %s" % sr
+        return "Fraction Field of %s" % sr
 
     def _latex_topring(self, **options):
         r"""
@@ -2043,8 +2040,7 @@ cdef class RingExtensionFractionField(RingExtension_generic):
         """
         if self._ring in Fields():
             return self._ring._latex_topring(**options)
-        else:
-            return "\\mathrm{Frac}(%s)" % latex(self._ring)
+        return "\\mathrm{Frac}(%s)" % latex(self._ring)
 
 
 # Finite free extensions
@@ -2181,10 +2177,9 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         """
         if base is self:
             return ZZ(1)
-        elif base is self._base:
+        if base is self._base:
             return len(self._basis)
-        else:
-            return len(self._basis) * self._base._degree_over(base)
+        return len(self._basis) * self._base._degree_over(base)
 
     cpdef _is_finite_over(self, Parent base):
         r"""
@@ -2255,7 +2250,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             [1, b]
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: L.degree_over(GF(5^6))
             Traceback (most recent call last):
@@ -2307,7 +2302,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         - A finite-rank free module V over ``base``
 
         - The isomorphism from V to this ring corresponding to the
-          basis output by the method :meth:`basis_over`
+          basis output by the method :meth:`~sage.rings.ring_extension.RingExtensionWithBasis.basis_over`
           (only included if ``map`` is ``True``)
 
         - The reverse isomorphism of the isomorphism above
@@ -2365,7 +2360,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
              Field in a with defining polynomial x^2 + 7*x + 2 over its base
 
         Note that ``base`` must be an explicit base over which the
-        extension has been defined (as listed by the method :meth:`bases`)::
+        extension has been defined (as listed by the method :meth:`~sage.rings.ring_extension.RingExtension_generic.bases`)::
 
             sage: L.degree(GF(11^3))
             Traceback (most recent call last):
@@ -2394,7 +2389,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         - A finite-rank free module V over ``base``
 
         - The isomorphism from V to this ring corresponding to the
-          basis output by the method :meth:`basis_over`
+          basis output by the method :meth:`~sage.rings.ring_extension.RingExtensionWithBasis.basis_over`
           (only included if ``map`` is ``True``)
 
         - The reverse isomorphism of the isomorphism above
@@ -2412,8 +2407,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         d = self._degree_over(base)
         if map:
             return base**d, MapFreeModuleToRelativeRing(self, base), MapRelativeRingToFreeModule(self, base)
-        else:
-            return base**d
+        return base**d
 
     @cached_method
     def fraction_field(self, extend_base=False):
@@ -2588,8 +2582,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
             return RingExtension_generic._latex_topring(self)
         if isinstance(self._base, RingExtension_generic):
             return "%s[%s]" % (self._base._latex_topring(), self.latex_variable_names()[0])
-        else:
-            return "%s[%s]" % (latex(self._base), self.latex_variable_names()[0])
+        return "%s[%s]" % (latex(self._base), self.latex_variable_names()[0])
 
     def modulus(self, var='x'):
         r"""

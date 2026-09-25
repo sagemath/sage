@@ -43,14 +43,16 @@ class BuildFeature(Feature):
     you should set the member variable ``_enabled_in_build`` to the
     value of that config variable.
 
-    The :meth:`_is_present` method for this class will return the
+    The ``_is_present`` method for this class will return the
     value of that config variable unless ``defer_feature_checks`` is
     set to ``True`` in ``sage.config``. If checks are deferred, the
-    :meth:`_is_present` method will try to return the value of
-    :meth:`is_present_at_runtime` instead. If your feature can be
-    detected at run-time, you should implement that check in
-    :meth:`is_present_at_runtime`. Otherwise, leave it unimplemented;
-    and :meth:`_is_present` will return ``False``.
+    ``_is_present`` method will try to return the value of
+    :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`
+    instead. If your feature can be detected at run-time, you should
+    implement that check in
+    :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`.
+    Otherwise, leave it unimplemented; and ``_is_present`` will return
+    ``False``.
 
     EXAMPLES::
 
@@ -82,13 +84,13 @@ class BuildFeature(Feature):
         - Deferred feature checks have been enabled globally by
           passing ``-Ddefer_feature_checks=true`` to ``meson setup``.
 
-        - An ``is_present_at_runtime`` method has been implemented for
-          the feature.
+        - An :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`
+          method has been implemented for the feature.
 
         EXAMPLES:
 
         The method returns ``False`` if you have not implemented
-        ``is_present_at_runtime``::
+        :meth:`is_present_at_runtime <sage.features.build_feature.BuildModule.is_present_at_runtime>`::
 
             sage: from sage.features.build_feature import BuildFeature
             sage: bf = BuildFeature("example")
@@ -99,10 +101,9 @@ class BuildFeature(Feature):
         from sage.config import defer_feature_checks
         if not defer_feature_checks:
             return False
-        elif hasattr(self, "is_present_at_runtime"):
+        if hasattr(self, "is_present_at_runtime"):
             return True
-        else:
-            return False
+        return False
 
     def _is_present(self):
         r"""
@@ -129,10 +130,83 @@ class BuildFeature(Feature):
         """
         if self.is_runtime_detectable():
             return self.is_present_at_runtime()
+        # Wrap with bool() so that we can be lazy and use meson's
+        # set10() rather than painstakingly writing "True" and
+        # "False" to the config file.
+        result = bool(self._enabled_in_build)
+        return FeatureTestResult(self, result)
+
+
+class BuildModule(BuildFeature):
+    r"""
+    A :class:`~sage.features.Feature` indicating the presence of
+    a python (or cython) module, with explicit support from the build
+    system.
+
+    This subclass encapsulates the runtime import check that is
+    standard for most python and cython modules. Its constructor takes
+    a ``module_name`` parameter that (optionally) differs from the
+    name of the feature. It is this ``module_name`` that we actually
+    try to import when feature checks are deferred to runtime.
+    """
+    def __init__(self, name, module_name=None, **kwargs):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.features.build_feature import BuildModule
+            sage: f = BuildModule("libgap", "sage.libs.gap.libgap")
+            sage: f._enabled_in_build = True
+            sage: f.is_present()
+            FeatureTestResult('libgap', True)
+
+        """
+        if module_name is None:
+            self._module_name = name
         else:
-            import sage.config
-            # Wrap with bool() so that we can be lazy and use meson's
-            # set10() rather than painstakingly writing "True" and
-            # "False" to the config file.
-            result =  bool(self._enabled_in_build)
-            return FeatureTestResult(self, result)
+            self._module_name = module_name
+
+        super().__init__(name, **kwargs)
+
+    def is_present_at_runtime(self):
+        r"""
+        Check for the module at runtime.
+
+        This uses :func:`importlib.util.find_spec` rather than (say)
+        :func:`importlib.import_module` because we are only checking
+        for the _presence_ of the feature; if there's an error, then
+        so be it, but that doesn't mean that the feature is
+        nonexistent! Perhaps more importantly, this allows us to check
+        for the presence of a feature cheaply, without triggering a
+        module import. If the feature check performed the import,
+        doing a lazy import inside of ``if foo.is_present(): ...``
+        would be pointless.
+
+        TESTS::
+
+            sage: from sage.features.build_feature import BuildModule
+            sage: f = BuildModule("libgap", "sage.libs.gap.libgap")
+            sage: f.is_present_at_runtime()
+            FeatureTestResult('libgap', True)
+
+        ::
+
+            sage: from sage.features.build_feature import BuildModule
+            sage: f = BuildModule("sage.libs.nonexistent")
+            sage: f.is_present_at_runtime()
+            FeatureTestResult('sage.libs.nonexistent', False)
+
+        """
+        from importlib import import_module
+        result = True
+        msg = f"Successfully imported module `{self._module_name}`"
+
+        try:
+            import_module(self._module_name)
+        except ModuleNotFoundError:
+            result = False
+            msg = f"Module `{self._module_name}` not found"
+        except ImportError:
+            result = False
+            msg = f"Unable to import module `{self._module_name}`"
+
+        return FeatureTestResult(self, result, reason=msg)

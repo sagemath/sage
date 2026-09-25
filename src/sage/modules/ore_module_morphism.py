@@ -731,7 +731,7 @@ class OreModuleMorphism(Morphism):
             True
         """
         if not isinstance(other, OreModuleMorphism):
-            raise ValueError("the morphism is not a morphism of Ore modules")
+            raise NotImplementedError("the morphism is not a morphism of Ore modules")
         return homset(other._matrix * self._matrix, check=False)
 
     def inverse(self):

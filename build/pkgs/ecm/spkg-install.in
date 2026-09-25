@@ -54,11 +54,19 @@ fi
 
 CFLAGS="$CFLAGS_O3"
 
+# Build Sage's copy of libecm as a shared library by default.  This lets
+# libecm record optional dependencies detected by GMP-ECM itself, such as
+# primesieve, instead of making Sage's Cython module duplicate that detection.
+ECM_CONFIGURE_USER="$ECM_CONFIGURE"
+if ! (echo $ECM_CONFIGURE | egrep -- "--enable-shared|--disable-shared" >/dev/null); then
+    ECM_CONFIGURE="--enable-shared --disable-static $ECM_CONFIGURE"
+fi
 
 # libtool should add the proper flags, but doesn't use "-fPIC"
-# for the *static* library (which the Sage library links to unless
-# we also build the shared one). The following only handles the
-# most common cases, not all variations with '=yes' or '=no' etc.:
+# for the *static* library.  If the user disables the shared library,
+# Sage may again link the static library into a Python extension.
+# The following only handles the most common cases, not all variations
+# with '=yes' or '=no' etc.:
 if ! (echo $ECM_CONFIGURE | egrep -- "--enable-shared|--with-pic" >/dev/null) ||
      (echo $ECM_CONFIGURE | egrep -- "--disable-shared" >/dev/null);
 then
@@ -183,29 +191,21 @@ export CFLAGS # Not exported by 'sage-env'.  LDFLAGS are exported above if
               # necessary.  We currently don't set (or modify) any other
               # environment variables, so don't have to export them here.
 
-# Workaround for build failure with Xcode 15, https://github.com/sagemath/sage/issues/36342
-case "$UNAME" in
-    Darwin*)
-        export gmp_cv_asm_underscore=yes
-        ;;
-esac
-
 ###############################################################################
 # Now configure ECM:
-# (Note: Building (also) a *shared* library is disabled by default.
-#        Add "--enable-shared" below if you want it, though one can
-#        now pass extra 'configure' options through ECM_CONFIGURE.)
-#        If you do so, i.e. add '--enable-shared' by default, also
-#        adapt the logic regarding '-fPIC' above.
+# (Note: Building a *shared* library is enabled by default so that Sage links
+#        libecm dynamically.  Pass extra 'configure' options through
+#        ECM_CONFIGURE, including '--disable-shared' to opt back into a static
+#        library.)
 ###############################################################################
 
 echo
-if [ -z "$ECM_CONFIGURE" ]; then
+if [ -z "$ECM_CONFIGURE_USER" ]; then
     echo "Now configuring GMP-ECM with the following options:"
 else
-    echo "Now configuring GMP-ECM with additional options as specified by" \
+    echo "Now configuring GMP-ECM with default options and additional options specified by" \
         "ECM_CONFIGURE:"
-    echo "  $ECM_CONFIGURE"
+    echo "  $ECM_CONFIGURE_USER"
     echo "Finally configuring GMP-ECM with the following options:"
 fi
 echo "  --prefix=\"$SAGE_LOCAL\""
@@ -217,10 +217,10 @@ fi
 for opt in $ECM_CONFIGURE; do
     echo "  $opt"
 done
-if [ -z "$ECM_CONFIGURE" ]; then
+if [ -z "$ECM_CONFIGURE_USER" ]; then
     echo "You can set ECM_CONFIGURE to pass additional parameters,"
-    echo "e.g. \"--enable-shared\" to also build a *shared* library,"
-    echo "or \"--disable-sse2\" if you encounter problems on a Pentium III system."
+    echo "e.g. \"--disable-sse2\" if you encounter problems on a Pentium III system,"
+    echo "or \"--disable-shared\" to build only a static library."
 fi
 echo
 

@@ -18,7 +18,7 @@ class CartanType(CartanType_standard_finite):
     """
     Cartan Type `Q_n`.
 
-    .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
+    .. SEEALSO:: :func:`~sage.combinat.root_system.cartan_type.CartanType`
     """
 
     def __init__(self, m):

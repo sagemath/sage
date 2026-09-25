@@ -7,7 +7,7 @@ objects.
 .. NOTE::
 
     If you need the data-structure for example to represent sets or hash
-    tables with AVL trees, you should have a look at :mod:`sage.misc.sagex_ds`.
+    tables with AVL trees, you should have a look at :mod:`sage.misc.binary_tree`.
 
 AUTHORS:
 
@@ -871,8 +871,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             picture are not (in general) the ones given by the
             labelling!
 
-            Use :meth:`_latex_`, ``view``,
-            :meth:`_ascii_art_` or ``pretty_print`` for more
+            Use ``_latex_``, ``view``,
+            :meth:`~sage.structure.sage_object.SageObject._ascii_art_` or
+            ``pretty_print`` for more
             faithful representations of the data of the tree.
 
         TESTS::
@@ -4160,10 +4161,12 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
         EXAMPLES::
 
             sage: B = BinaryTrees()
-            sage: B._element_constructor_([])
+            sage: B([])      # indirect doctest
             [., .]
+
             sage: B([[],[]]) # indirect doctest
             [[., .], [., .]]
+
             sage: B(None)    # indirect doctest
             .
         """
@@ -4312,9 +4315,17 @@ class BinaryTrees_size(BinaryTrees):
             sage: S = BinaryTrees(1)   # indirect doctest
             sage: S([])
             [., .]
+
+        TESTS:
+
+        Check that checking is disabled with ``check=False``::
+
+            sage: S = BinaryTrees(0)
+            sage: S([], check=False)   # indirect doctest
+            [., .]
         """
         res = BinaryTree(*args, **keywords)
-        if res.number_of_nodes() != self._size:
+        if keywords.get('check', True) and res.node_number() != self._size:
             raise ValueError("wrong number of nodes")
         return res
 
@@ -4379,19 +4390,27 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
         EXAMPLES::
 
             sage: FB = BinaryTrees(full=True)
-            sage: FB._element_constructor_([])
-            [., .]
+
             sage: FB([[],[]]) # indirect doctest
             [[., .], [., .]]
+
             sage: FB(None)    # indirect doctest
             .
-            sage: FB([None, []]) #indirect doctest
+            sage: FB([None, []]) # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: not full
+
+        TESTS:
+
+        Check that checking is disabled with ``check=False``::
+
+            sage: FB = BinaryTrees(full=True)
+            sage: FB([None, []], check=False) # indirect doctest
+            [., [., .]]
         """
         res = BinaryTree(*args, **keywords)
-        if not res.is_full():
+        if keywords.get('check', True) and not res.is_full():
             raise ValueError("not full")
         return res
 
@@ -4582,12 +4601,24 @@ class FullBinaryTrees_size(BinaryTrees):
             Traceback (most recent call last):
             ...
             ValueError: not full
+
+        TESTS:
+
+        Check that checking is disabled with ``check=False``::
+
+            sage: FB5 = BinaryTrees(5, full=True)
+            sage: FB5([[], [None, [None, []]]], check=False)
+            [[., .], [., [., [., .]]]]
+
+            sage: FB5([], check=False)
+            [., .]
         """
         res = BinaryTree(*args, **keywords)
-        if res.number_of_nodes() != self._size:
-            raise ValueError("wrong number of nodes")
-        if not res.is_full():
-            raise ValueError("not full")
+        if keywords.get('check', True):
+            if res.node_number() != self._size:
+                raise ValueError("wrong number of nodes")
+            if not res.is_full():
+                raise ValueError("not full")
         return res
 
 
@@ -4606,7 +4637,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         using this class, these labels are disregarded by various
         methods such as
         :meth:`~sage.combinat.abstract_tree.AbstractLabelledTree.labels`,
-        :meth:`~sage.combinat.abstract_tree.AbstractLabelledTree.map_labels`,
+        :meth:`~sage.combinat.abstract_tree.AbstractLabelledClonableTree.map_labels`,
         and (ironically)
         :meth:`~sage.combinat.abstract_tree.AbstractLabelledTree.leaf_labels`.
 

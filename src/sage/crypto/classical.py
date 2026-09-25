@@ -14,15 +14,15 @@ A convenient user interface to various classical ciphers. These include:
 These classical cryptosystems support alphabets such as:
 
 - the capital letters of the English alphabet; see
-  :func:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
+  :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 - the hexadecimal number system; see
-  :func:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
+  :attr:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
 - the binary number system; see
-  :func:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
+  :attr:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
 - the octal number system; see
-  :func:`OctalStrings() <sage.monoids.string_monoid.OctalStrings>`
+  :attr:`OctalStrings() <sage.monoids.string_monoid.OctalStrings>`
 - the radix-64 number system; see
-  :func:`Radix64Strings() <sage.monoids.string_monoid.Radix64Strings>`
+  :attr:`Radix64Strings() <sage.monoids.string_monoid.Radix64Strings>`
 
 AUTHORS:
 
@@ -42,9 +42,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-# TODO: check off this todo list:
-# - methods to cryptanalyze the Hill, substitution, transposition, and
-#   Vigenere ciphers
 
 from random import randint
 
@@ -110,8 +107,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
     supported for the affine cipher:
 
     - capital letters of the English alphabet as implemented in
-      :func:`AlphabeticStrings()
-      <sage.monoids.string_monoid.AlphabeticStrings>`
+      :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
     EXAMPLES:
 
@@ -503,8 +499,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: A.rank_by_chi_square(H.encoding("shift"), Plist)
@@ -712,8 +707,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: A.rank_by_squared_differences(H.encoding("line"), Plist)
@@ -1118,7 +1112,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
         is supported for the affine cipher:
 
         - capital letters of the English alphabet as implemented in
-          :func:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
+          :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
         INPUT:
 
@@ -1521,6 +1515,39 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
+    def _is_valid_key(self, A):
+        """
+        Check if matrix A is a valid key (invertible over Z/nZ).
+        A matrix is invertible over Z/nZ if gcd(det(A), n) = 1.
+        INPUT:
+
+        - ``A`` -- a matrix to check
+
+        OUTPUT: ``True`` if A is a valid key, ``False`` otherwise
+
+        EXAMPLES::
+
+            sage: # needs sage.modules
+            sage: H = HillCryptosystem(AlphabeticStrings(), 3)
+            sage: M = H.key_space()
+            sage: A = M([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+            sage: H._is_valid_key(A)
+            True
+            sage: B = M([[2, 0, 0], [0, 1, 0], [0, 0, 1]])
+            sage: H._is_valid_key(B)
+            False
+            sage: C = M([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
+            sage: H._is_valid_key(C)
+            False
+            sage: H._is_valid_key("not a matrix")
+            False
+        """
+        M = self.key_space()
+        if A not in M:
+            return False
+        N = Integer(self.cipher_domain().ngens())
+        return N.gcd(A.det().lift()) == 1
+
     def deciphering(self, A, C):
         """
         Decrypt the ciphertext ``C`` using the key ``A``.
@@ -1542,8 +1569,21 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
             sage: M = H.encoding("Good day, mate! How ya going?")
             sage: H.deciphering(K, H.enciphering(K, M)) == M
             True
+
+        Deciphering with an invalid key raises an error::
+
+            sage: # needs sage.modules
+            sage: H = HillCryptosystem(AlphabeticStrings(), 3)
+            sage: MS = H.key_space()
+            sage: A = MS([[2, 0, 0], [0, 1, 0], [0, 0, 1]])
+            sage: C = H.encoding("ABCDEF")
+            sage: H.deciphering(A, C)
+            Traceback (most recent call last):
+            ...
+            ValueError: A is not a valid key: must be an invertible matrix in the key space
         """
-        # TODO: some type checking that A is invertible hence a valid key
+        if not self._is_valid_key(A):
+            raise ValueError("A is not a valid key: must be an invertible matrix in the key space")
         i = self(self.inverse_key(A))
         return i(C)
 
@@ -1568,8 +1608,21 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
             sage: M = H.encoding("Good day, mate! How ya going?")
             sage: H.deciphering(K, H.enciphering(K, M)) == M
             True
+
+        Enciphering with an invalid key raises an error::
+
+            sage: # needs sage.modules
+            sage: H = HillCryptosystem(AlphabeticStrings(), 3)
+            sage: MS = H.key_space()
+            sage: A = MS([[2, 0, 0], [0, 1, 0], [0, 0, 1]])
+            sage: P = H.encoding("HELLO")
+            sage: H.enciphering(A, P)
+            Traceback (most recent call last):
+            ...
+            ValueError: A is not a valid key: must be an invertible matrix in the key space
         """
-        # TODO: some type checking that A is invertible hence a valid key
+        if not self._is_valid_key(A):
+            raise ValueError("A is not a valid key: must be an invertible matrix in the key space")
         e = self(A)
         return e(M)
 
@@ -1610,16 +1663,14 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
     alphabets are supported for the shift cipher:
 
     - capital letters of the English alphabet as implemented in
-      :func:`AlphabeticStrings()
-      <sage.monoids.string_monoid.AlphabeticStrings>`
+      :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
     - the alphabet consisting of the hexadecimal number system as
       implemented in
-      :func:`HexadecimalStrings()
-      <sage.monoids.string_monoid.HexadecimalStrings>`
+      :attr:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
 
     - the alphabet consisting of the binary number system as implemented in
-      :func:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
+      :attr:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
 
     EXAMPLES:
 
@@ -2097,8 +2148,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: S.rank_by_chi_square(H.encoding("shift"), Pdict)
@@ -2332,8 +2382,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         The ciphertext must be encoded using the capital letters of the
         English alphabet as implemented in
-        :func:`AlphabeticStrings()
-        <sage.monoids.string_monoid.AlphabeticStrings>`::
+        :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`::
 
             sage: H = HexadecimalStrings()
             sage: S.rank_by_squared_differences(H.encoding("shift"), Pdict)
@@ -2746,14 +2795,14 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         are supported for the shift cipher:
 
         - capital letters of the English alphabet as implemented in
-          :func:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
+          :attr:`AlphabeticStrings() <sage.monoids.string_monoid.AlphabeticStrings>`
 
         - the alphabet consisting of the hexadecimal number system as
           implemented in
-          :func:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
+          :attr:`HexadecimalStrings() <sage.monoids.string_monoid.HexadecimalStrings>`
 
         - the alphabet consisting of the binary number system as implemented in
-          :func:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
+          :attr:`BinaryStrings() <sage.monoids.string_monoid.BinaryStrings>`
 
         INPUT:
 

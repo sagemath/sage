@@ -55,7 +55,7 @@ class SplittingFieldAbort(Exception):
 class SplittingData:
     """
     A class to store data for internal use in :func:`splitting_field`.
-    It contains two attributes :attr:`pol` (polynomial), :attr:`dm`
+    It contains two attributes ``pol`` (polynomial), ``dm``
     (degree multiple), where ``pol`` is a PARI polynomial and
     ``dm`` a Sage :class:`Integer`.
 

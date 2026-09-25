@@ -76,8 +76,6 @@ The following miscellaneous Graphics functions are included:
 
 -  :func:`~sage.plot.graphics.Graphics`
 
--  :func:`~sage.plot.graphics.is_Graphics`
-
 -  :func:`~sage.plot.colors.hue`
 
 Type ``?`` after each primitive in Sage for help and examples.
@@ -1755,7 +1753,7 @@ def plot(funcs, *args, **kwds):
         sphinx_plot(g)
 
     This includes options for custom ticks and formatting.  See documentation
-    for :meth:`show` for more details.
+    for :meth:`~sage.plot.graphics.Graphics.show` for more details.
 
     ::
 

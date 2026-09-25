@@ -560,10 +560,9 @@ def open_extrep_url(url):
     root, ext = os.path.splitext(url)
     if ext == '.gz':
         raise NotImplementedError
-    elif ext == '.bz2':
+    if ext == '.bz2':
         return bz2.decompress(f.read())
-    else:
-        return f.read()
+    return f.read()
 
 
 pattern_integer = re.compile(r'\d+$')

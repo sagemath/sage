@@ -5,7 +5,7 @@ import sys
 
 import requests
 
-from .conf import _vendored_inventories_dir, _intersphinx_targets
+from .ext.crossrefs import _vendored_inventories_dir, _intersphinx_targets
 
 
 if __name__ == '__main__':

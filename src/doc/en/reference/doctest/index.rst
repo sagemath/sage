@@ -8,6 +8,7 @@ Sage's Doctesting Framework
    sage/doctest/sources
    sage/doctest/forker
    sage/doctest/parsing
+   sage/doctest/marked_output
    sage/doctest/reporting
    sage/doctest/external
    sage/doctest/test

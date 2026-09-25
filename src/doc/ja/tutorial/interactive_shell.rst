@@ -348,7 +348,7 @@ IPythonトリック
 
 すでに述べたように，SageはそのフロントエンドとしてIPythonを援用しており，ユーザはIPythonのコマンドと独自機能を自由に利用することができる．
 その全貌については， ご自分で `full IPython documentation
-<http://ipython.scipy.org/moin/Documentation>`_ を読んみてほしい．
+<https://ipython.readthedocs.io/en/stable/>`_ を読んみてほしい．
 そのかわり，ここではIPythonの「マジックコマンド」と呼ばれる，お便利なトリックをいくつか紹介させていただこう:
 
 - ``%edit`` (``%ed`` や ``ed`` でもいい)を使ってエディタを起動すれば，複雑なコードの入力が楽になる．

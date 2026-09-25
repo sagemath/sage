@@ -1,2 +1,2 @@
 #sage
-sphinx
+sphinx >=9.1, <10

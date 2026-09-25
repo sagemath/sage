@@ -1010,8 +1010,9 @@ class MathematicaElement(ExpectElement):
 
         OUTPUT:
 
-        This method does not return anything. Use :meth:`save` if you
-        want to save the figure as an image.
+        This method does not return anything. Use
+        :meth:`~sage.interfaces.mathematica.MathematicaElement.save_image` if
+        you want to save the figure as an image.
 
         EXAMPLES::
 

@@ -70,8 +70,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         You should not create objects of this class directly because
         no type or consistency checking is performed. The preferred
         method to construct such dynamical systems is to use
-        :func:`~sage.dynamics.arithmetic_dynamics.generic_ds.DynamicalSystem_affine`
-        function.
+        :class:`~sage.dynamics.arithmetic_dynamics.affine_ds.DynamicalSystem_affine`
+        constructor.
 
     INPUT:
 

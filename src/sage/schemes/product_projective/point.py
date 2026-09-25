@@ -321,7 +321,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``L`` -- list of nonnegative integers
 
-        OUTPUT: :class:`SchemeMorphism_point_affine`
+        OUTPUT: :class:`~sage.schemes.affine.affine_point.SchemeMorphism_point_affine`
 
         EXAMPLES::
 
@@ -383,7 +383,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
     def change_ring(self, R, **kwds):
         r"""
-        Return a new :class:`ProductProjectiveSpaces_point` which is this point coerced to ``R``.
+        Return a new
+        :class:`~sage.schemes.product_projective.point.ProductProjectiveSpaces_point_ring`
+        which is this point coerced to ``R``.
 
         If the keyword ``check`` is ``True``, then the initialization checks are performed.
         The user may specify the embedding into ``R`` with a keyword.
@@ -398,7 +400,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``embedding`` -- field embedding from the base ring of this point to ``R``
 
-        OUTPUT: :class:`ProductProjectiveSpaces_point`
+        OUTPUT:
+
+        :class:`~sage.schemes.product_projective.point.ProductProjectiveSpaces_point_ring`
 
         EXAMPLES::
 

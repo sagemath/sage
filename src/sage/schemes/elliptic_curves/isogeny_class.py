@@ -418,7 +418,7 @@ class IsogenyClass_EC(SageObject):
             return G
 
         M = self.matrix(fill=False)
-        n = M.nrows() # = M.ncols()
+        n = M.nrows()  # = M.ncols()
         G = Graph(M, format='weighted_adjacency_matrix')
         N = self.matrix(fill=True)
         D = {v: self.curves[v] for v in G.vertices(sort=False)}
@@ -835,9 +835,9 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             if not any(E2.is_isomorphic(E3) for E3 in curves):
                 curves.append(E2)
                 if verbose:
-                    sys.stdout.write(" -added curve #%s (degree %s)..." % (ncurves,d))
+                    sys.stdout.write(" -added curve #%s (degree %s)..." % (ncurves, d))
                     sys.stdout.flush()
-                add_tup([0,ncurves,d,phi])
+                add_tup([0, ncurves, d, phi])
                 ncurves += 1
                 if d not in degs:
                     degs.append(d)
@@ -927,9 +927,10 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         if verbose:
             print("Creating degree matrix (CM case)")
 
-        allQs = {}  # keys: discriminants d
-                    # values: lists of equivalence classes of
-                    # primitive forms of discriminant d
+        allQs = {}
+        # keys: discriminants d
+        # values: lists of equivalence classes of
+        # primitive forms of discriminant d
 
         def find_quadratic_form(d, n):
             if d not in allQs:

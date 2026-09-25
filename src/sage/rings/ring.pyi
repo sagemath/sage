@@ -9,13 +9,12 @@ from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.structure.category_object import NameSpec
 from sage.structure.parent import Parent
-from sage.structure.parent_gens import ParentWithGens
 
 _Rings: Rings
 _CommutativeRings: CommutativeRings
 _Fields: Fields
 
-class Ring(ParentWithGens):
+class Ring(Parent):
     def __init__(
         self,
         base: Parent[Any] | object,

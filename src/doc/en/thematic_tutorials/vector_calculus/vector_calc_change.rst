@@ -215,7 +215,7 @@ spherical coordinates, while the third one is the standard *orthonormal* frame
 coordinates, the coordinate frame and the orthonormal frame coincide: it is
 `(e_x,e_y,e_z)`. For spherical coordinates, the orthonormal frame is returned
 by the method
-:meth:`~sage.manifolds.differentiable.euclidean.Euclidean3dimSpace.spherical_frame`::
+:meth:`~sage.manifolds.differentiable.examples.euclidean.Euclidean3dimSpace.spherical_frame`::
 
     sage: spherical_frame = E.spherical_frame()
     sage: spherical_frame

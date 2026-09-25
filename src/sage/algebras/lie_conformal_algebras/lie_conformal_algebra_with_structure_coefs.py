@@ -25,7 +25,7 @@ from sage.algebras.lie_conformal_algebras.lie_conformal_algebra_element import (
 from sage.arith.misc import binomial
 from sage.categories.lie_conformal_algebras import LieConformalAlgebras
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.sets.family import Family
+from sage.sets.family import Family, AbstractFamily
 from sage.structure.indexed_generators import (
     IndexedGenerators,
     standardize_names_index_set,
@@ -291,7 +291,7 @@ class LieConformalAlgebraWithStructureCoefficients(
         self._parity = dict(zip(self.gens(),
                                 parity + (0,) * len(central_elements)))
 
-    def structure_coefficients(self) -> Family:
+    def structure_coefficients(self) -> AbstractFamily:
         """
         The structure coefficients of this Lie conformal algebra.
 

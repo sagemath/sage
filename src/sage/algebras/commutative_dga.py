@@ -3507,8 +3507,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
     - ``max_degree`` -- the maximal degree of the graded algebra. If omitted,
       no maximal degree is assumed and an instance of :class:`GCAlgebra` is
       returned. Otherwise, an instance of
-      :class:`sage.algebras.commutative_graded_algebra.GradedCommutativeAlgebraWithMaxDeg`
-      is created.
+      a :class:`GCAlgebra` with that maximal degree is created.
 
     Once such an algebra has been defined, one can use its associated
     methods to take a quotient, impose a differential, etc. See the
@@ -3626,13 +3625,16 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
 
     At this point, ``a``, for example, is an element of ``C``. We can
     redefine it so that it is instead an element of ``D`` in several
-    ways, for instance using :meth:`gens` method::
+    ways, for instance using the
+    :meth:`~sage.rings.quotient_ring.QuotientRing_nc.gens` method::
 
         sage: a, b, c, d = D.gens()
         sage: a.differential()
         c
 
-    Or the :meth:`inject_variables` method::
+    Or the
+    :meth:`~sage.structure.category_object.CategoryObject.inject_variables`
+    method::
 
         sage: D.inject_variables()
         Defining a, b, c, d

@@ -222,7 +222,7 @@ cdef class SetSystem:
                 E.append(mapping[self._E[i]])
             else:
                 E.append(self._E[i])
-        self._groundset = E
+        self._groundset = tuple(E)
         self._idx = {}
         for i in range(self._groundset_size):
             self._idx[self._groundset[i]] = i

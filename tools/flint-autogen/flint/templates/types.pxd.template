@@ -258,6 +258,18 @@ cdef extern from "flint_wrap.h":
     ctypedef int (*acb_theta_ql_worker_t)(acb_ptr, acb_srcptr, acb_srcptr,
         arb_srcptr, arb_srcptr, const acb_mat_t, slong, slong)
 
+    cdef struct acb_theta_ctx_tau_struct:
+        pass
+    ctypedef acb_theta_ctx_tau_struct acb_theta_ctx_tau_t[1]
+
+    ctypedef struct acb_theta_ctx_z_struct:
+        pass
+    ctypedef acb_theta_ctx_z_struct acb_theta_ctx_z_t[1]
+
+    ctypedef void (*acb_theta_sum_worker_t)(acb_ptr, acb_srcptr, acb_srcptr, const slong *,
+    slong, const acb_t, const slong *, slong, slong, slong, slong)
+
+
     # flint/d_mat.h
     ctypedef struct d_mat_struct:
         double * entries
@@ -324,14 +336,30 @@ cdef extern from "flint_wrap.h":
         mp_limb_t ninv
         mp_bitcnt_t norm
 
-    ctypedef struct nmod_poly_multi_crt_struct:
+    ctypedef struct nmod_poly_res_struct:
+        pass
+    ctypedef nmod_poly_res_struct nmod_poly_res_t[1]
+
+    ctypedef struct nmod_poly_matrix_precompute_arg_t:
         pass
 
+    ctypedef struct nmod_poly_compose_mod_precomp_preinv_arg_t:
+        pass
+
+    ctypedef struct nmod_geometric_progression_struct:
+        pass
+    ctypedef nmod_geometric_progression_struct nmod_geometric_progression_t[1]
+
+    ctypedef struct nmod_poly_multi_crt_struct:
+        pass
     ctypedef nmod_poly_multi_crt_struct nmod_poly_multi_crt_t[1]
+
+    ctypedef struct nmod_poly_mulmod_precond_struct:
+        pass
+    ctypedef nmod_poly_mulmod_precond_struct nmod_poly_mulmod_precond_t[1]
 
     ctypedef struct nmod_berlekamp_massey_struct:
         pass
-
     ctypedef nmod_berlekamp_massey_struct nmod_berlekamp_massey_t[1]
 
 
@@ -466,6 +494,12 @@ cdef extern from "flint_wrap.h":
         slong alloc
 
     ctypedef nmod_mpoly_factor_struct nmod_mpoly_factor_t[1]
+
+    ctypedef enum dot_method_t:
+        pass
+
+    ctypedef struct dot_params_t:
+        pass
 
 
     # flint/nmod_mpoly.h
@@ -624,6 +658,10 @@ cdef extern from "flint_wrap.h":
 
     ctypedef fmpz_mod_mpoly_factor_struct fmpz_mod_mpoly_factor_t[1]
 
+    ctypedef struct fmpz_mod_mpoly_q_struct:
+        pass
+    ctypedef fmpz_mod_mpoly_q_struct fmpz_mod_mpoly_q_t[1]
+
 
     # flint/fmpq_poly.h
     ctypedef struct fmpq_poly_powers_precomp_struct:
@@ -667,6 +705,10 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/nmod.h
+    ctypedef struct nmod_redc_ctx_struct:
+        pass
+    ctypedef nmod_redc_ctx_struct nmod_redc_ctx_t[1]
+
     ctypedef struct nmod_discrete_log_pohlig_hellman_table_entry_struct:
         pass
 
@@ -757,6 +799,9 @@ cdef extern from "flint_wrap.h":
         pass
     ctypedef fmpz_mod_mpoly_univar_struct fmpz_mod_mpoly_univar_t[1]
 
+    ctypedef struct fmpz_mod_mpoly_vec_struct:
+        pass
+    ctypedef fmpz_mod_mpoly_vec_struct fmpz_mod_mpoly_vec_t[1]
 
     # flint/padic_poly.h
     ctypedef struct padic_poly_struct:
@@ -812,6 +857,27 @@ cdef extern from "flint_wrap.h":
     ctypedef struct qs_s:
         pass
     ctypedef qs_s qs_t[1]
+
+
+    # flint/radix.h
+    ctypedef struct n_div_precomp_struct:
+        pass
+    ctypedef n_div_precomp_struct n_div_precomp_t[1]
+
+    ctypedef struct n_pair_struct:
+        pass
+
+    ctypedef struct radix_struct:
+        pass
+    ctypedef radix_struct radix_t[1];
+
+    ctypedef struct radix_powers_struct:
+        pass
+    ctypedef radix_powers_struct radix_powers_t[1]
+
+    ctypedef struct radix_integer_struct:
+        pass
+    ctypedef radix_integer_struct radix_integer_t[1]
 
 
     # flint/thread_pool.h
@@ -1851,6 +1917,9 @@ cdef extern from "flint_wrap.h":
     ctypedef int ((*gr_method_poly_binary_op)(gr_ptr, gr_srcptr, slong, gr_srcptr, slong, gr_ctx_ptr))
     ctypedef int ((*gr_method_poly_binary_binary_op)(gr_ptr, gr_ptr, gr_srcptr, slong, gr_srcptr, slong, gr_ctx_ptr))
     ctypedef int ((*gr_method_poly_binary_trunc_op)(gr_ptr, gr_srcptr, slong, gr_srcptr, slong, slong, gr_ctx_ptr))
+    ctypedef int ((*gr_method_poly_binary_trunc2_op)(gr_ptr, gr_srcptr, slong, gr_srcptr, slong, slong, slong, gr_ctx_ptr))
+    ctypedef int ((*gr_method_poly_gcd_op)(gr_ptr, slong *, gr_srcptr, slong, gr_srcptr, slong, gr_ctx_ptr))
+    ctypedef int ((*gr_method_poly_xgcd_op)(slong *, gr_ptr, gr_ptr, gr_ptr, gr_srcptr, slong, gr_srcptr, slong, gr_ctx_ptr))
     ctypedef int ((*gr_method_vec_ctx_op)(gr_vec_t, gr_ctx_ptr))
 
     ctypedef struct polynomial_ctx_t:
@@ -1869,16 +1938,76 @@ cdef extern from "flint_wrap.h":
     ctypedef gr_poly_struct gr_poly_t[1]
 
 
+    # flint/gr_series.h
+    ctypedef struct series_mod_ctx_t:
+        pass
+
+    ctypedef struct series_ctx_t:
+        pass
+
+    ctypedef struct gr_series_struct:
+        pass
+    ctypedef gr_series_struct gr_series_t[1]
+
+    ctypedef struct gr_series_vec_struct:
+        pass
+    ctypedef gr_series_vec_struct gr_series_vec_t[1]
+
+
+    # fint/gr_ore_poly.h
+    ctypedef enum ore_algebra_t:
+        ORE_ALGEBRA_CUSTOM
+        ORE_ALGEBRA_COMMUTATIVE
+        ORE_ALGEBRA_DERIVATIVE
+        ORE_ALGEBRA_EULER_DERIVATIVE
+        ORE_ALGEBRA_FORWARD_SHIFT
+        ORE_ALGEBRA_FORWARD_DIFFERENCE
+        ORE_ALGEBRA_BACKWARD_SHIFT
+        ORE_ALGEBRA_BACKWARD_DIFFERENCE
+        ORE_ALGEBRA_Q_SHIFT
+        ORE_ALGEBRA_MAHLER
+        ORE_ALGEBRA_FROBENIUS
+        ORE_POLY_NUM_ALGEBRAS
+
+    ctypedef struct gr_ore_poly_struct:
+        pass
+
+    ctypedef gr_ore_poly_struct gr_ore_poly_t[1]
+
+    ctypedef gr_ctx_struct gr_ore_poly_ctx_struct
+
+    ctypedef gr_ore_poly_ctx_struct gr_ore_poly_ctx_t[1]
+
+    ctypedef int (* gr_ore_poly_sigma_delta_t) (gr_ptr, gr_ptr, gr_srcptr, gr_ore_poly_ctx_struct *)
+
+    ctypedef struct gr_ore_poly_ore_data_t:
+        pass
+
     # flint/gr_mat.h
     ctypedef struct gr_mat_struct:
         pass
     ctypedef gr_mat_struct gr_mat_t[1]
+
+    ctypedef int ((*gr_method_mat_unary_op_get_scalar)(gr_ptr, const gr_mat_t, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_unary_op)(gr_mat_t, const gr_mat_t, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_binary_op)(gr_mat_t, const gr_mat_t, const gr_mat_t, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_binary_op_with_flag)(gr_mat_t, const gr_mat_t, const gr_mat_t, int, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_binary_unary_op)(gr_mat_t, gr_mat_t, const gr_mat_t, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_pivot_op)(slong *, gr_mat_t, slong, slong, slong, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_diagonalization_op)(gr_vec_t, gr_mat_t, gr_mat_t, const gr_mat_t, int, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_lu_op)(slong *, slong *, gr_mat_t, const gr_mat_t, int, gr_ctx_ptr))
+    ctypedef int ((*gr_method_mat_reduce_row_op)(slong *, gr_mat_t, slong *, slong *, slong, gr_ctx_ptr))
 
 
     # flint/gr_mpoly.h
     ctypedef struct gr_mpoly_struct:
         pass
     ctypedef gr_mpoly_struct gr_mpoly_t[1]
+
+    ctypedef struct _gr_mpoly_ctx_struct:
+        pass
+    ctypedef gr_ctx_struct gr_mpoly_ctx_struct
+    ctypedef gr_mpoly_ctx_struct gr_mpoly_ctx_t[1]
 
 
     # flint/double_interval.h
@@ -2086,3 +2215,42 @@ cdef extern from "flint_wrap.h":
         mpf_mat_t appSP2
         fmpz_mat_t exactSP
     ctypedef fmpz_gram_union fmpz_gram_t[1]
+
+
+    # flint/nfloat.h
+    ctypedef struct _nfloat_ctx_struct:
+        pass
+    ctypedef void * nfloat_ptr
+    ctypedef const void * nfloat_srcptr
+
+    ctypedef struct nfloat64_struct:
+        pass
+    ctypedef struct nfloat128_struct:
+        pass
+    ctypedef struct nfloat192_struct:
+        pass
+    ctypedef struct nfloat256_struct:
+        pass
+    ctypedef struct nfloat384_struct:
+        pass
+    ctypedef struct nfloat512_struct:
+        pass
+    ctypedef struct nfloat1024_struct:
+        pass
+    ctypedef struct nfloat2048_struct:
+        pass
+    ctypedef struct nfloat4096_struct:
+        pass
+
+    ctypedef nfloat64_struct nfloat64_t[1]
+    ctypedef nfloat128_struct nfloat128_t[1]
+    ctypedef nfloat192_struct nfloat192_t[1]
+    ctypedef nfloat256_struct nfloat256_t[1]
+    ctypedef nfloat384_struct nfloat384_t[1]
+    ctypedef nfloat512_struct nfloat512_t[1]
+    ctypedef nfloat1024_struct nfloat1024_t[1]
+    ctypedef nfloat2048_struct nfloat2048_t[1]
+    ctypedef nfloat4096_struct nfloat4096_t[1]
+
+    ctypedef nfloat_ptr nfloat_complex_ptr
+    ctypedef nfloat_srcptr nfloat_complex_srcptr

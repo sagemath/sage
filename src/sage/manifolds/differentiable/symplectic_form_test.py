@@ -50,6 +50,7 @@ class TestGenericSymplecticForm:
         assert omega._poisson is None  # type: ignore reportPrivateUsage
 
 
+@pytest.mark.long
 class TestCoherenceOfFormulas:
     r"""
     Test correctness of the implementation, by checking that equivalent formulas give the correct result.

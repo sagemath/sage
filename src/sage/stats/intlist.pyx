@@ -445,8 +445,7 @@ cdef class IntList:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def max(self, bint index=False):
         """
@@ -481,8 +480,7 @@ cdef class IntList:
                 j = i
         if index:
             return s, j
-        else:
-            return s
+        return s
 
     def time_series(self):
         """

@@ -78,6 +78,7 @@ Toric geometry
    :maxdepth: 1
 
    sage/geometry/toric_lattice
+   sage/geometry/toric_lattice_element
    sage/geometry/cone
    sage/geometry/cone_catalog
    sage/geometry/cone_critical_angles
@@ -102,6 +103,8 @@ Base classes for polyhedra
    sage/geometry/polyhedron/base6
    sage/geometry/polyhedron/base7
    sage/geometry/polyhedron/base
+   sage/geometry/polyhedron/base_mutable
+   sage/geometry/polyhedron/base_number_field
    sage/geometry/polyhedron/base_QQ
    sage/geometry/polyhedron/base_ZZ
    sage/geometry/polyhedron/base_RDF

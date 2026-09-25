@@ -579,8 +579,7 @@ cdef class MPComplexField_class(Field):
         mpc_urandom(z.value, rstate.gmp_state)
         if min == 0 and max == 1:
             return z
-        else:
-            return (max-min)*z + min*self(1,1)
+        return (max-min)*z + min*self(1,1)
 
     cpdef bint is_exact(self) except -2:
         """
@@ -2417,7 +2416,7 @@ cdef inline mp_exp_t max_exp(MPComplexNumber z) noexcept:
     """
     if mpfr_zero_p(z.value.im):
         return mpfr_get_exp(z.value.re)
-    elif mpfr_zero_p(z.value.re):
+    if mpfr_zero_p(z.value.re):
         return mpfr_get_exp(z.value.im)
     return max_exp_t(mpfr_get_exp(z.value.re), mpfr_get_exp(z.value.im))
 

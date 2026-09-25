@@ -15,10 +15,9 @@ from sage.rings.integer cimport Integer
 cdef inline int int_cmp(int a, int b) noexcept:
     if a < b:
         return -1
-    elif a == b:
+    if a == b:
         return 0
-    else:
-        return 1
+    return 1
 
 cdef struct dc_work_space:
     int degree

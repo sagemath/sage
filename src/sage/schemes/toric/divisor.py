@@ -2,8 +2,8 @@
 r"""
 Toric divisors and divisor classes
 
-Let `X` be a :class:`toric variety
-<sage.schemes.toric.variety.ToricVariety_field>` corresponding to a
+Let `X` be a :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
+corresponding to a
 :class:`rational polyhedral fan <sage.geometry.fan.RationalPolyhedralFan>`
 `\Sigma`. A :class:`toric divisor <ToricDivisor_generic>` `D` is a T-Weil
 divisor over a given coefficient ring (usually `\ZZ` or `\QQ`), i.e. a formal
@@ -199,8 +199,8 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
 
     INPUT:
 
-    - ``toric_variety`` -- a :class:`toric variety
-      <sage.schemes.toric.variety.ToricVariety_field>`
+    - ``toric_variety`` -- a
+      :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     - ``arg`` -- one of the following description of the toric divisor to be
       constructed:
@@ -1290,18 +1290,27 @@ class ToricDivisor_generic(Divisor_generic):
             sage: M = dP6.fan().dual_lattice()
             sage: D._sheaf_complex( M(1,0) )
             Simplicial complex with vertex set (0, 1, 3) and facets {(3,), (0, 1)}
+
+        A non-simplicial cone can contribute a simplex that is not a face of
+        the fan::
+
+            sage: cone = Cone([(1,1,1), (1,-1,1), (-1,1,1), (-1,-1,1)])
+            sage: X = ToricVariety(Fan([cone]))
+            sage: N = X.fan().lattice()
+            sage: D = -X.divisor(N(1,1,1)) - X.divisor(N(-1,-1,1))
+            sage: M = X.fan().dual_lattice()
+            sage: D._sheaf_complex(M(0,0,0))
+            Simplicial complex with vertex set (0, 3) and facets {(0, 3)}
+            sage: D._sheaf_cohomology(_)
+            (0, 0, 0, 0)
         """
         fan = self.parent().scheme().fan()
         ray_is_negative = [m * ray + self.coefficient(i) < 0
                            for i, ray in enumerate(fan.rays())]
 
-        def cone_is_negative(cone):  # and non-trivial
-            if cone.is_trivial():
-                return False
-            return all(ray_is_negative[i] for i in cone.ambient_ray_indices())
-
-        negative_cones = [cone for cone in flatten(fan.cones()) if cone_is_negative(cone)]
-        return SimplicialComplex([c.ambient_ray_indices() for c in negative_cones])
+        simplicial_faces = [[i for i in cone.ambient_ray_indices()
+                             if ray_is_negative[i]] for cone in fan]
+        return SimplicialComplex(simplicial_faces)
 
     def _sheaf_cohomology(self, cplx):
         """
@@ -1451,7 +1460,7 @@ class ToricDivisor_generic(Divisor_generic):
           non-compact chambers. Hence, the convex hull of the vertices
           of the chamber decomposition contains all non-vanishing
           cohomology groups. This is returned by the private method
-          :meth:`_sheaf_cohomology_support`.
+          ``_sheaf_cohomology_support``.
 
           It would be more efficient, but more difficult to implement,
           to keep track of all of the individual chambers. We leave
@@ -1461,7 +1470,7 @@ class ToricDivisor_generic(Divisor_generic):
           cohomology can be rewritten as the cohomology of a
           simplicial complex, see Exercise 9.1.10 of [CLS2011]_,
           [Per2007]_. This is returned by the private method
-          :meth:`_sheaf_complex`.
+          ``_sheaf_complex``.
 
           The simplicial complex is the same for all points in a
           chamber, but we currently do not make use of this and
@@ -1469,7 +1478,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         * Finally, the cohomology (over `\QQ`) of this simplicial
           complex is computed in the private method
-          :meth:`_sheaf_cohomology`. Summing over the supporting
+          ``_sheaf_cohomology``. Summing over the supporting
           points `m\in M` yields the cohomology of the sheaf`.
 
         EXAMPLES:
@@ -1531,6 +1540,21 @@ class ToricDivisor_generic(Divisor_generic):
             False
             sage: K.cohomology(dim=True)
             (0, 0, 0, 1)
+
+        A non-simplicial example::
+
+            sage: r0, r1, r2, r3, r4 = [(0,0,-1), (1,1,1), (1,-1,1),
+            ....:                       (-1,1,1), (-1,-1,1)]
+            sage: c0 = Cone([r1, r2, r3, r4])
+            sage: c1 = Cone([r0, r1, r2])
+            sage: c2 = Cone([r0, r1, r3])
+            sage: c3 = Cone([r0, r4, r2])
+            sage: c4 = Cone([r0, r4, r3])
+            sage: X = ToricVariety(Fan([c0, c1, c2, c3, c4]))
+            sage: N = X.fan().lattice()
+            sage: D = -X.divisor(N(r1)) - X.divisor(N(r4))
+            sage: D.cohomology(dim=True)
+            (0, 0, 0, 0)
         """
         if '_cohomology_vector' in self.__dict__ and weight is None:
             # cache the cohomology but not the individual weight pieces
@@ -1621,8 +1645,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         INPUT:
 
         - ``toric_variety`` -- a
-          :class:`toric variety
-          <sage.schemes.toric.variety.ToricVariety_field>``
+          :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
         - ``base_ring`` -- the coefficient ring of this divisor group,
           usually `\ZZ` (default) or `\QQ`
@@ -1840,8 +1863,8 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
 
     INPUT:
 
-    - ``toric_variety`` -- :class:`toric variety
-      <sage.schemes.toric.variety.ToricVariety_field`
+    - ``toric_variety`` --
+      :class:`toric variety <sage.schemes.toric.variety.ToricVariety_field>`
 
     OUTPUT: rational divisor class group of a toric variety
 

@@ -149,7 +149,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
             `s` = Schur).
 
-            :meth:`omega_involution` is a synonym for the :meth:`omega`
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega_involution` is a synonym for the :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.omega`
             method.
 
             EXAMPLES::
@@ -204,7 +204,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             (German for "shift") endomorphism of the Witt vectors.
 
             The `n`-th Verschiebung operator is adjoint to the `n`-th
-            Frobenius operator (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.frobenius`
+            Frobenius operator (see :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.adams_operator`
             for its definition) with respect to the Hall scalar product
             (:meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`).
 

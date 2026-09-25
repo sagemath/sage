@@ -324,7 +324,8 @@ def function(s, **kwds):
         sage: 2*f(x)
         2*f(x)
 
-    Since Sage 4.0, you need to use :meth:`substitute_function` to
+    Since Sage 4.0, you need to use
+    :meth:`~sage.symbolic.expression.Expression.substitute_function` to
     replace all occurrences of a function with another::
 
         sage: var('a, b')

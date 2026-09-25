@@ -16,6 +16,7 @@ The Sage Category Framework
    :maxdepth: 1
 
    sage/categories/primer
+   sage/categories/basic
    sage/categories/category
    sage/categories/category_with_axiom
    sage/categories/functor
@@ -48,6 +49,7 @@ Individual Categories
    sage/categories/algebra_modules
    sage/categories/algebras
    sage/categories/algebras_with_basis
+   sage/categories/anderson_motives
    sage/categories/aperiodic_semigroups
    sage/categories/associative_algebras
    sage/categories/bialgebras
@@ -76,6 +78,7 @@ Individual Categories
    sage/categories/distributive_magmas_and_additive_magmas
    sage/categories/division_rings
    sage/categories/domains
+   sage/categories/drinfeld_modules
    sage/categories/enumerated_sets
    sage/categories/euclidean_domains
    sage/categories/fields

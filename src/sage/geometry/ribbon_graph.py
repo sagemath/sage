@@ -162,12 +162,12 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
     Alternatively, one can pass in 2 integers and this will construct
     a ribbon graph with genus ``sigma`` and ``rho`` boundary components.
-    See :func:`~sage.geometry.ribbon_graphs.make_ribbon`.
+    See :func:`~sage.geometry.ribbon_graph.make_ribbon`.
 
     One can also construct the bipartite graph modeling the
     corresponding Brieskorn-Pham singularity by passing 2 integers
     and the keyword ``bipartite=True``.
-    See :func:`~sage.geometry.ribbon_graphs.bipartite_ribbon_graph`.
+    See :func:`~sage.geometry.ribbon_graph.bipartite_ribbon_graph`.
 
     EXAMPLES:
 

@@ -1,5 +1,7 @@
 r"""
 Singleton categories
+
+.. automethod:: sage.categories.category_singleton::Category_singleton.__classcall__
 """
 # ****************************************************************************
 #  Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
@@ -272,10 +274,11 @@ class Category_singleton(Category):
         Most of the time, ``args`` is meant to be empty. However some
         singleton categories, in particular axiom categories of
         singleton categories, may require a constant argument.
-        ``*args`` is passed down to :meth:`__init__`, and ignored upon
+        ``*args`` is passed down to ``__init__``, and ignored upon
         later calls.
 
-        .. SEEALSO:: :class:`sage.categories.category_with_axiomCategoryWithAxiom_singleton`
+        .. SEEALSO::
+            :class:`~sage.categories.category_with_axiom.CategoryWithAxiom_singleton`
 
         TESTS::
 

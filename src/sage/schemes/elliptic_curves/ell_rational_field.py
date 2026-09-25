@@ -124,8 +124,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     .. NOTE::
 
         This class should not be called directly; use
-        :class:`sage.constructor.EllipticCurve` to construct
-        elliptic curves.
+        :class:`EllipticCurve <sage.schemes.elliptic_curves.constructor.EllipticCurveFactory>`
+        to construct elliptic curves.
 
     EXAMPLES:
 
@@ -4636,8 +4636,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
             The codomains of the isogenies returned are standard
             minimal models.  This is because the functions
-            :meth:`isogenies_prime_degree_genus_0()` and
-            :meth:`isogenies_sporadic_Q()` are implemented that way for
+            :func:`~sage.schemes.elliptic_curves.isogeny_small_degree.isogenies_prime_degree_genus_0`
+            and
+            :func:`~sage.schemes.elliptic_curves.isogeny_small_degree.isogenies_sporadic_Q`
+            are implemented that way for
             curves defined over `\QQ`.
 
         EXAMPLES::

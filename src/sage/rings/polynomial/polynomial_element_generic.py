@@ -342,9 +342,10 @@ class Polynomial_generic_sparse(Polynomial):
             Q = R.change_ring(F)
 
         if var is not None and var != R.gen():
-            return Q({k:v.integral(var) for k,v in self.__coeffs.items()}, check=False)
+            return Q({k: v.integral(var) for k, v in self.__coeffs.items()},
+                     check=False)
 
-        return Q({ k+1:v/(k+1) for k,v in self.__coeffs.items()}, check=False)
+        return Q({k+1: v/(k+1) for k, v in self.__coeffs.items()}, check=False)
 
     def _dict_unsafe(self):
         """
@@ -612,11 +613,9 @@ class Polynomial_generic_sparse(Polynomial):
             sage: -a
             -x^10000000
         """
-        output = { }
-        for (index, coeff) in self.__coeffs.items():
-            output[index] = -coeff
-        output = self.parent()(output, check=False)
-        return output
+        output = {index: -coeff
+                  for index, coeff in self.__coeffs.items()}
+        return self.parent()(output, check=False)
 
     def _mul_(self, right):
         r"""
@@ -633,8 +632,8 @@ class Polynomial_generic_sparse(Polynomial):
         """
         output = {}
 
-        for (index1, coeff1) in self.__coeffs.items():
-            for (index2, coeff2) in right.__coeffs.items():
+        for index1, coeff1 in self.__coeffs.items():
+            for index2, coeff2 in right.__coeffs.items():
                 product = coeff1 * coeff2
                 index = index1 + index2
                 if index in output:
@@ -1461,7 +1460,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         P = ~unit * self
 
         deg_first = vertices[0][0]
-        factors = [ ]
+        factors = []
         if deg_first > 0:
             P >>= deg_first
             factors.append((self._parent.gen(), deg_first))
@@ -1469,8 +1468,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             for i in range(1, len(vertices)-1):
                 deg = vertices[i][0]
                 div = P._factor_of_degree(deg-deg_first)
-                factors.append((div,1))
-                P,_ = P.quo_rem(div)
+                factors.append((div, 1))
+                P, _ = P.quo_rem(div)
                 deg_first = deg
         if len(vertices) > 1:
             factors.append((P, 1))
@@ -1517,9 +1516,9 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         # Trivial cases
         if self.degree() == 0:
-            return [ ]
+            return []
         if self.degree() == 1:
-            return [ (-self[0]/self[1], 1) ]
+            return [(-self[0] / self[1], 1)]
 
         # We consider the case where zero is a (possibly multiple) root
         i = 0
@@ -1528,7 +1527,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         if secure and i > 1:
             raise PrecisionError("not enough precision to determine the number of roots")
         if i == 0:
-            roots = [ ]
+            roots = []
             P = self
         else:
             vali = self[i].valuation()

@@ -45,6 +45,13 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 
+'''
+Singular supports characteristics up to 2^31-1 in principle,
+but many algorithms are broken unless the characteristic is
+actually <= 2^29-1. See the manual:
+https://www.singular.uni-kl.de/Manual/latest/sing_418.htm
+'''
+singular_max_char = 2**29 - 1
 
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""
@@ -100,7 +107,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
     if isinstance(base_ring, sage.rings.abc.IntegerModRing):
         char = base_ring.characteristic()
-        if isinstance(base_ring, FiniteField) and char <= 2147483647:
+        if isinstance(base_ring, FiniteField) and char <= singular_max_char:
             return make_ring(str(char)), None
         if char.is_power_of(2):
             return make_ring(f"(integer,2,{char.nbits()-1})"), None
@@ -145,7 +152,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
         if B.is_prime_field() or B is ZZ:
             return make_ring(f"({base_char},{gens})"), None
 
-        if isinstance(B, FiniteField) and B.characteristic() <= 2147483647:
+        if isinstance(B, FiniteField) and B.characteristic() <= singular_max_char:
             ext_gen = str(B.gen())
             _vars = '(' + ext_gen + ', ' + _vars[1:]
 
@@ -406,10 +413,10 @@ def can_convert_to_singular(R):
 
     Check for :issue:`33319`::
 
-        sage: R.<x,y> = GF((2^31-1)^3)[]
+        sage: R.<x,y> = GF((2^29-3)^3)[]
         sage: R._has_singular
         True
-        sage: R.<x,y> = GF((2^31+11)^2)[]
+        sage: R.<x,y> = GF((2^29+11)^2)[]
         sage: R._has_singular
         False
         sage: R.<x,y> = GF(10^20 - 11)[]
@@ -444,14 +451,14 @@ def can_convert_to_singular(R):
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
         return True
     if isinstance(base_ring, FiniteField):
-        return base_ring.characteristic() <= 2147483647
+        return base_ring.characteristic() <= singular_max_char
     if isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
     if (isinstance(base_ring, sage.rings.fraction_field.FractionField_generic)
         and isinstance(base_ring.base(), (PolynomialRing_general, MPolynomialRing_base))):
         B = base_ring.base_ring()
         return (B.is_prime_field() or B is ZZ
-                or (isinstance(B, FiniteField) and B.characteristic() <= 2147483647))
+                or (isinstance(B, FiniteField) and B.characteristic() <= singular_max_char))
     if isinstance(base_ring, RationalFunctionField):
         return base_ring.constant_field().is_prime_field()
     return False

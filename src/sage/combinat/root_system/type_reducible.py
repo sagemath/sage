@@ -53,7 +53,7 @@ class CartanType(SageObject, CartanType_abstract):
         False
 
     This is implemented by inserting the appropriate abstract
-    super classes (see :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract._add_abstract_superclass`)::
+    super classes (see ``CartanType_abstract._add_abstract_superclass``)::
 
         sage: t.__class__.mro()
         [<class 'sage.combinat.root_system.type_reducible.CartanType_with_superclass'>, <class 'sage.combinat.root_system.type_reducible.CartanType'>, <class 'sage.structure.sage_object.SageObject'>, <class 'sage.combinat.root_system.cartan_type.CartanType_finite'>, <class 'sage.combinat.root_system.cartan_type.CartanType_crystallographic'>, <class 'sage.combinat.root_system.cartan_type.CartanType_abstract'>, <class 'object'>]

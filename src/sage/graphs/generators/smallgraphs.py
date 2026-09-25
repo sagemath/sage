@@ -953,12 +953,13 @@ def Balaban11Cage(embedding=1, immutable=False):
       - The first embedding is the one appearing on page 9 of the Fifth Annual
         Graph Drawing Contest report [EMMN1998]_. It separates vertices based on
         their eccentricity (see :meth:`eccentricity()
-        <sage.graphs.generic_graph.GenericGraph.eccentricity>`).
+        <sage.graphs.graph.Graph.eccentricity>`).
 
       - The second embedding has been produced just for Sage and is meant to
         emphasize the automorphism group's 6 orbits.
 
-      - The last embedding is the default one produced by the :meth:`LCFGraph`
+      - The last embedding is the default one produced by the
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.LCFGraph`
         constructor.
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
@@ -2463,7 +2464,7 @@ def DyckGraph(immutable=False):
 
     It is a toroidal graph, and its embedding on a torus is dual to an embedding
     of the Shrikhande graph (:meth:`ShrikhandeGraph
-    <GraphGenerators.ShrikhandeGraph>`).
+    <sage.graphs.graph_generators.GraphGenerators.ShrikhandeGraph>`).
     """
     pos_dict = {}
     for i in range(8):
@@ -3306,7 +3307,8 @@ def HeawoodGraph(immutable=False):
     Return a Heawood graph.
 
     The Heawood graph is a cage graph that has 14 nodes. It is a cubic symmetric
-    graph. (See also the Möbius-Kantor graph, :meth:`~MobiusKantorGraph`). It is
+    graph. (See also the Möbius-Kantor graph,
+    :meth:`~sage.graphs.graph_generators.GraphGenerators.MoebiusKantorGraph`). It is
     nonplanar and Hamiltonian. It has diameter 3, radius 3, girth 6, and
     chromatic number 2. It is 4-transitive but not 5-transitive.
     See the :wikipedia:`Heawood_graph`.
@@ -4828,7 +4830,8 @@ def ShrikhandeGraph(immutable=False):
         (x - 6) * (x - 2)^6 * (x + 2)^9
 
     It is a toroidal graph, and its embedding on a torus is dual to an
-    embedding of the Dyck graph (:meth:`DyckGraph <GraphGenerators.DyckGraph>`).
+    embedding of the Dyck graph
+    (:meth:`DyckGraph <sage.graphs.graph_generators.GraphGenerators.DyckGraph>`).
     """
     pos_dict = {}
     for i in range(8):

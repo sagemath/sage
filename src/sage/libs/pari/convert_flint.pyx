@@ -40,8 +40,7 @@ cdef inline GEN _new_GEN_from_fmpz_t(fmpz_t value) noexcept:
     """
     if COEFF_IS_MPZ(value[0]):
         return _new_GEN_from_mpz_t(COEFF_TO_PTR(value[0]))
-    else:
-        return stoi(value[0])
+    return stoi(value[0])
 
 
 cdef inline GEN _new_GEN_from_fmpq_t(fmpq_t value) noexcept:

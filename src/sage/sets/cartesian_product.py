@@ -32,7 +32,7 @@ _Rings = Rings()
 class CartesianProduct(UniqueRepresentation, Parent):
     """
     A class implementing a raw data structure for Cartesian products
-    of sets (and elements thereof). See :obj:`cartesian_product` for
+    of sets (and elements thereof). See :obj:`~sage.sets.cartesian_product` for
     how to construct full fledged Cartesian products.
 
     EXAMPLES::
@@ -240,7 +240,10 @@ class CartesianProduct(UniqueRepresentation, Parent):
         """
         Return the Cartesian product of the given ``elements``.
 
-        This implements :meth:`Sets.CartesianProducts.ParentMethods._cartesian_product_of_elements`.
+        This implements
+        ``Sets.CartesianProducts.ParentMethods._cartesian_product_of_elements()``
+        from :class:`~sage.categories.sets_cat.Sets.CartesianProducts`.
+
         INPUT:
 
         - ``elements`` -- an iterable (e.g. tuple, list) with one element of

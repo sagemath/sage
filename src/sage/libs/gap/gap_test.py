@@ -18,6 +18,7 @@ def test_libgap_can_read_and_write_files(tmpfile):
     assert SystemFile(tmpfile.name) == libgap(message)
 
 
+@pytest.mark.long
 def test_gc_loop_1():
     r"""
     Stress test for garbage collection in libgap.
@@ -33,6 +34,7 @@ def test_gc_loop_1():
     assert True
 
 
+@pytest.mark.long
 def test_gc_loop_2():
     r"""
     Stress test for garbage collection in libgap.
@@ -66,6 +68,7 @@ def test_gc_loop_2():
     assert result
 
 
+@pytest.mark.long
 def test_gc_loop_3():
     r"""
     Stress test for garbage collection in libgap.

@@ -525,7 +525,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         - ``n`` -- positive integer
         - ``names`` -- (default: ``'t'``) a variable name for the division field
         - ``map`` -- boolean (default: ``False``); also return an embedding of the
-          :meth:`base_field` into the resulting field
+          :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.base_field`
+          into the resulting field
         - ``kwds`` -- additional keyword arguments passed to
           :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.extension`
 
@@ -553,21 +554,21 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
         .. SEEALSO::
 
-            :meth:`EllipticCurve_field.division_field()`
+            :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field()`
 
         ALGORITHM: For supersingular elliptic curves, this method uses a
         combination of [MPSW25]_, Lemma 2.2, and [EPSV2023]_, Theorem 2.
         For ordinary elliptic curves, it uses the algorithm of [VT2001]_.
-        In some cases (in particular: for ordinary curves, for square
-        factors of `n`), we defer to the general implementation
-        :meth:`EllipticCurve_field.division_field`.
+        In some cases (in particular: for ordinary curves in the case that
+        `\ell` divides the discriminant), we defer to the general implementation
+        :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`.
 
         TESTS:
 
-        Some random testing for prime orders::
+        Some random testing for prime orders and prime power orders::
 
             sage: # needs sage.rings.finite_rings
-            sage: def check(E, l, K):
+            ....: def check(E, l, K):
             ....:     EE = E.change_ring(K)
             ....:     cof = EE.order().prime_to_m_part(l)
             ....:     pts = (cof * EE.random_point() for _ in iter(int, 1))
@@ -583,34 +584,40 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             ....:         assert l.divides(EE.order())
             ....:         for _ in range(9999):
             ....:             P,Q = next(pts), next(pts)
-            ....:             if P.weil_pairing(Q,l) != 1:
+            ....:             if P.weil_pairing(Q,l).multiplicative_order() == l:
             ....:                 Ps = (P,Q)
             ....:                 break
             ....:         else:
             ....:             assert False
-            ....:     deg = lcm(el.minpoly().degree() for el in sum(map(list,Ps),[]))
+            ....:     pt_coords = sum(map(list,Ps),[])
+            ....:     deg = lcm(el.minpoly().degree() for el in pt_coords)
             ....:     assert max(deg, E.base_field().degree()) == K.degree()
-            sage: q = next_prime_power(randrange(1, 10^9))
-            sage: F.<a> = GF(q)
-            sage: while True:
+            ....:
+            ....: q = next_prime_power(randrange(1, 10^9))
+            ....: F.<a> = GF(q)
+            ....: for _ in range(9999):
             ....:     try:
             ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
             ....:     except ArithmeticError:
             ....:         continue
             ....:     break
-            sage: l = random_prime(8)
-            sage: K = E.division_field(l)
-            sage: n = E.cardinality(extension_degree=K.degree()//F.degree())
-            sage: (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
-            True
-            sage: check(E, l, K)  # long time
+            ....: ells = [2, 4, 5, 8, 25]
+            ....: for l in ells:
+            ....:     K = E.division_field(l)
+            ....:     n = E.cardinality(extension_degree=K.degree()//F.degree())
+            ....:     assert (l^2 if q%l else 0 + E.is_ordinary()).divides(n)
+            ....:     check(E, l, K)  # long time
 
-        Also check that it matches the generic implementation from :class:`EllipticCurve_field`::
+        Also check that it matches the generic implementation from
+        :class:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field`::
 
             sage: # needs sage.rings.finite_rings
             sage: from sage.schemes.elliptic_curves.ell_field import EllipticCurve_field
-            sage: K.degree() == EllipticCurve_field.division_field(E, l).degree()  # long time
+            sage: E.division_field(7).degree() == EllipticCurve_field.division_field(E, 7).degree()  # long time
             True
+            sage: E.division_field(8).degree() == EllipticCurve_field.division_field(E, 8).degree()  # long time
+            True
+
         """
         n = ZZ(n)
         if n <= 0:
@@ -633,32 +640,46 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                     ext = m * Mod((pi**m)[0], n).multiplicative_order()
 
         else:
-            def van_tuyl(N):
-                if not N.is_prime():
-                    # currently not implemented here; defer to general implementation
+            def van_tuyl(f, e):
+                N = f**e
+                chi = self.frobenius_polynomial()
+
+                if e == 1:
+                    chi_mod_N = chi.change_ring(GF(N))
+                    if (roots := chi_mod_N.roots(multiplicities=False)):
+
+                        if len(roots) == 1:  # repeated root
+                            assert F(N)
+                            dstar = roots[0].multiplicative_order()
+                            from sage.rings.qqbar import QQbar
+                            gamma, delta = (r for r,m in chi.roots(ring=QQbar) for _ in range(m))
+                            if (N**2).divides(1 + F.cardinality()**dstar - gamma**dstar - delta**dstar):
+                                l = lcm(f.degree() for f,_ in self.division_polynomial(N).factor())
+                                if dstar in (l, 2*l):
+                                    return dstar
+                            return N * dstar
+
+                        return lcm(r.multiplicative_order() for r in roots if r.is_unit())
+
+                    return GF(N).extension(chi_mod_N, 'U').gen().multiplicative_order()
+
+                if f.divides(chi.discriminant()): # case that frobenius has 1 or > 2 roots over Z/NZ
+                    # defer to general implementation
                     return EllipticCurve_field.division_field(self, N).degree() // F.degree()
 
-                chi = self.frobenius_polynomial()
-                chi_mod_N = chi.change_ring(GF(N))
+                from sage.rings.finite_rings.integer_mod_ring import Zmod
+                chi_mod_N = chi.change_ring(Zmod(N))
 
                 if (roots := chi_mod_N.roots(multiplicities=False)):
-
-                    if len(roots) == 1:  # repeated root
-                        assert F(N)
-                        dstar = roots[0].multiplicative_order()
-                        from sage.rings.qqbar import QQbar
-                        gamma, delta = (r for r,m in chi.roots(ring=QQbar) for _ in range(m))
-                        if (N**2).divides(1 + F.cardinality()**dstar - gamma**dstar - delta**dstar):
-                            l = lcm(f.degree() for f,_ in self.division_polynomial(N).factor())
-                            if dstar in (l, 2*l):
-                                return dstar
-                        return N * dstar
-
+                    assert len(roots) == 2
                     return lcm(r.multiplicative_order() for r in roots if r.is_unit())
 
-                return GF(N).extension(chi_mod_N, 'U').gen().multiplicative_order()
+                # Irreducible case
+                U = Zmod(N)['U'].quotient(chi_mod_N).gen()
+                from sage.groups.generic import order_from_multiple
+                return order_from_multiple(U, N*(f**2 - 1), operation='*')
 
-            ext = lcm(van_tuyl(f**e) for f,e in n.factor())
+            ext = lcm(van_tuyl(f, e) for f,e in n.factor())
 
         return F.extension(ext, names=names, map=map, **kwds)
 
@@ -1192,9 +1213,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
                 over Finite Field in t of size 2147483647^3
             sage: E.torsion_subgroup(42, extend=True, algorithm='divpoly')
-            Additive abelian group isomorphic to Z/42 + Z/14
+            Additive abelian group isomorphic to Z/42 + Z/42
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
-                over Finite Field of size 2147483647
+                  over Finite Field in t of size 2147483647^3
             sage: E.torsion_subgroup(42, extend=True, algorithm='structure')
             Additive abelian group isomorphic to Z/42 + Z/42
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 1767054656*x + 143637714
@@ -1267,6 +1288,16 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             sage: A1 = E.torsion_subgroup(n, algorithm='random')
             sage: A2 = E.torsion_subgroup(n, algorithm='structure')
             sage: A3 = E.torsion_subgroup(n, algorithm='divpoly')
+            sage: assert A1 == A2 == A3
+
+        ::
+
+            sage: p = 2^31 - 1
+            sage: n = 42
+            sage: E = EllipticCurve(GF(p), [1767054656, 143637714])
+            sage: A1 = E.torsion_subgroup(n, extend=true, algorithm='random')
+            sage: A2 = E.torsion_subgroup(n, extend=true, algorithm='structure')
+            sage: A3 = E.torsion_subgroup(n, extend=true, algorithm='divpoly')
             sage: assert A1 == A2 == A3
 
         .. SEEALSO::
@@ -1380,7 +1411,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
         if algorithm == 'divpoly':
             # NB: we already handled extend= above
-            return super().torsion_subgroup(n, extend=False, algorithm='divpoly')
+            return EllipticCurve_field.torsion_subgroup(E, n, extend=False, algorithm='divpoly')
 
         if algorithm == 'structure':
             return E.abelian_group().torsion_subgroup(n)
@@ -2258,6 +2289,17 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             ....:         pass
             sage: all(any(E2.is_isomorphic(E1) for E1 in twists1) for E2 in twists2)
             True
+
+        ::
+
+            sage: E = EllipticCurve(GF(101), [0, 2])
+            sage: E in E.twists()
+            True
+            sage: E == E.twists()[0]
+            True
+            sage: E.is_isomorphic(E.twists()[0])
+            True
+
         """
         K = self.base_field()
         j = self.j_invariant()
@@ -2273,7 +2315,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                 if self.is_isomorphic(t):
                     twists[i] = twists[0]
                     twists[0] = self
-                break
+                    break
             return twists
 
         # Now j is not 0 or 1728, and we only have a quadratic twist
@@ -2882,9 +2924,8 @@ def is_j_supersingular(j, proof=True):
                     n = p - 1
                 else:           # then p*P == -P != P
                     n = p + 1
-            else:
-                if not (n*P).is_zero():
-                    return False
+            elif not (n*P).is_zero():
+                return False
 
     # when proof is False we return True for any curve which passes
     # the probabilistic test:
@@ -3010,6 +3051,13 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
         ...
         ValueError: invalid choice of q
 
+    The value of `q` must satisfy `q < p/4`::
+
+        sage: special_supersingular_curve(GF(11^2), q=5)
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid choice of q
+
     If ``maximal_order`` is set to ``True``, the function also returns
     a quaternion maximal order which corresponds to the endomorphism ring::
 
@@ -3131,7 +3179,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
 
     Also try it when `q` is given:
 
-        sage: p = random_prime(300, lbound=10)
+        sage: p = random_prime(300, lbound=50)
         sage: k = ZZ(randrange(1, 5))
         sage: while True:
         ....:     q = randrange(1, p//4)
@@ -3161,7 +3209,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
     Also try it when `q` is given and ``maximal_order`` is requested::
 
         sage: while True:
-        ....:     q = ZZ(randrange(1, min(50, p)))
+        ....:     q = ZZ(randrange(1, min(50, p//4+1)))
         ....:     if QuaternionAlgebra(-q, -p).discriminant() != p:
         ....:         continue
         ....:     E = special_supersingular_curve(F, q)
@@ -3180,6 +3228,15 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
         ....:     numer = sum(ZZ(c) * gen for c,gen in zip(vec, [1, iota, pi, iota*pi]))
         ....:     numer._degree = ZZ(O.quaternion_algebra()(vec).reduced_norm())
         ....:     _ = EllipticCurveHom_fractional(numer, denom, check=True)  # fails if not divisible
+
+    Make sure it works for `p = 2` (:issue:`42535`)::
+
+        sage: special_supersingular_curve(GF(2^2), endomorphism=True, maximal_order=True)
+        (Elliptic Curve defined by y^2 + y = x^3 over Finite Field in z2 of size 2^2,
+         Elliptic-curve endomorphism of Elliptic Curve defined by y^2 + y = x^3 over Finite Field in z2 of size 2^2
+           Via:  (u,r,s,t) = (1, 1, 1, z2),
+         Order of Quaternion Algebra (-1, -2) with base ring Rational Field
+           with basis (1, i, 1/2 + 1/2*i + 1/2*j, 1/2 + 1/2*i + 1/2*k))
 
     .. NOTE::
 
@@ -3212,7 +3269,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
             q += 1
     else:
         q = ZZ(q)
-        if p.divides(q) or hilbert_conductor(-q, -p) != p:
+        if 4*q >= p or p.divides(q) or hilbert_conductor(-q, -p) != p:
             raise ValueError('invalid choice of q')
 
     from sage.arith.misc import fundamental_discriminant
@@ -3265,7 +3322,10 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
     assert Quat.discriminant() == p
 
     if q == 1:
-        O = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+        if p == 2:
+            O = Quat.quaternion_order([1, i, (1+i+j)/2, (1+i+k)/2])
+        else:
+            O = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
 
     elif q == 3:
         O = Quat.quaternion_order([1, (1+i)/2, (j+k)/2, (i+k)/3])
@@ -3276,6 +3336,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
         from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
 
         maps = [E.identity_morphism(), endo, E.frobenius_isogeny(), endo * E.frobenius_isogeny()]
+
         def matrix_of_quat(quat, PQ):
             denom = quat.denominator()
             numer = sum(ZZ(c) * phi for c, phi in zip(quat * denom, maps))
@@ -3294,8 +3355,11 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False, maximal_order=
 
             while l.divides(Quat.quaternion_order(lgens).discriminant()):
                 mat = matrix(matrix_of_quat(gen, tors).list() for gen in lgens)
+                ker = mat.left_kernel_matrix().change_ring(ZZ)
+                if not ker.nrows():
+                    raise RuntimeError('could not saturate quaternion order; this is likely an invalid choice of q')
 
-                for vec in mat.left_kernel_matrix().change_ring(ZZ):
+                for vec in ker:
                     gen = sum(c * g for c, g in zip(vec, lgens)) / l
                     lgens.append(gen)
 

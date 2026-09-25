@@ -51,7 +51,7 @@ cdef extern from "givaro/givcategory.h" namespace "Givaro":
         pass
 
 cdef extern from "givaro/zring.h":
-    ## template<class _Element> class ZRing
+    # template<class _Element> class ZRing
     cdef cppclass ZRing "Givaro::ZRing<Givaro::Integer>":
         ctypedef Integer Element
         Element zero
@@ -59,7 +59,7 @@ cdef extern from "givaro/zring.h":
         Element mone
 
 cdef extern from "givaro/qfield.h":
-    ## template<class RatElement> class QField
+    # template<class RatElement> class QField
     cdef cppclass QField "Givaro::QField<Givaro::Rational>":
         ctypedef Rational Element
         Element one
@@ -122,12 +122,12 @@ cdef extern from "givaro/modular-floating.h":
         ostream& write(ostream&)
 
 cdef extern from "givaro/givpoly1.h" namespace "Givaro":
-    ## template < typename T, typename A=std::allocator<T> >
-    ## class givvector : public __GIV_STANDARD_VECTOR<T,A>
-    cdef cppclass givvector [T,ALLOCATOR=*]:
+    # template < typename T, typename A=std::allocator<T> >
+    # class givvector : public __GIV_STANDARD_VECTOR<T,A>
+    cdef cppclass givvector [T, ALLOCATOR=*]:
         T& operator[](size_t i)
         size_t size()
 
-    ## template<class Domain, class StorageTag=Dense> class Poly1Dom
-    cdef cppclass Poly1Dom[Domain,StorageClass=*]:
+    # template<class Domain, class StorageTag=Dense> class Poly1Dom
+    cdef cppclass Poly1Dom[Domain, StorageClass=*]:
         Poly1Dom(Domain&)

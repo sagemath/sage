@@ -847,7 +847,8 @@ class assuming:
     necessary to a given integration, or the exact solution to a system of
     equations.
 
-    It can also be used to explore the branches of a :func:`cases()` expression.
+    It can also be used to explore the branches of a
+    ``cases()`` expression.
 
     As with :func:`assume`, it is an error to add an assumption either redundant
     or inconsistent with the current assumption set (unless ``replace=True`` is
@@ -867,7 +868,7 @@ class assuming:
 
     EXAMPLES:
 
-    Basic functionality : inside a :func:`with assuming:` block, Sage uses the
+    Basic functionality: inside a ``with assuming:`` block, Sage uses the
     updated assumptions database. After exit, the original database is
     restored. ::
 

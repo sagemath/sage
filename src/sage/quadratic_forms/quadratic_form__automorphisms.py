@@ -289,7 +289,7 @@ def automorphism_group(self):
     """
     Return the group of automorphisms of the quadratic form.
 
-    OUTPUT: a :class:`MatrixGroup`
+    OUTPUT: a :func:`~sage.groups.matrix_gps.finitely_generated.MatrixGroup`
 
     EXAMPLES::
 

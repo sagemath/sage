@@ -52,8 +52,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
     The non-broken circuit (NBC) sets of `M` (that is, the subsets
     of `X` containing :meth:`no broken circuit
     <sage.matroids.matroid.Matroid.no_broken_circuits_sets>`
-    of `M`) form a basis of `A(M)`. (Recall that a
-    :meth:`broken circuit <sage.matroids.matroid.Matroid.broken_circuit>`
+    of `M`) form a basis of `A(M)`. (Recall that a broken circuit
     of `M` is defined to be the result of removing
     the smallest element from a circuit of `M`.)
 
@@ -574,7 +573,9 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         True
 
     The underlying ambient module is the Orlik-Terao algebra,
-    which is accessible via :meth:`ambient()`::
+    which is accessible via the
+    :meth:`~sage.modules.with_basis.subquotient.SubmoduleWithBasis.ambient`
+    method::
 
         sage: M.orlik_terao_algebra(QQ) is OTG.ambient()
         True

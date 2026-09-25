@@ -2,7 +2,7 @@ diff --git a/src/init-cl.lisp b/src/init-cl.lisp
 index 0e1f18b..125f449 100644
 --- a/src/init-cl.lisp
 +++ b/src/init-cl.lisp
-@@ -134,7 +134,7 @@ When one changes, the other does too."
+@@ -91,7 +91,7 @@ When one changes, the other does too.
  	  (setq libdir     (combine-path maxima-prefix-env "lib"))
  	  (setq libexecdir (combine-path maxima-prefix-env "libexec"))
  	  (setq datadir    (combine-path maxima-prefix-env "share"))

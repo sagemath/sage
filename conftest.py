@@ -179,7 +179,7 @@ def pytest_collect_file(
         # Normally, Cython files are filtered out already by pytest and we only
         # hit this here if someone explicitly runs `pytest some_file.pyx`.
         return IgnoreCollector.from_parent(parent)
-    elif file_path.suffix == ".py":
+    if file_path.suffix == ".py":
         if parent.config.option.doctest:
             if file_path.name == "__main__.py" or file_path.name == "setup.py":
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
@@ -257,9 +257,23 @@ def pytest_ignore_collect(
     See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#pytest.hookspec.pytest_ignore_collect>`_.
     """
     root = config.rootpath
+    sage_docbuild = root / "src" / "sage_docbuild"
+    if is_subpath(collection_path, sage_docbuild):
+        # Importing arbitrary sage_docbuild modules during pytest collection
+        # fails with Meson.  Permit only traversal of the package itself and
+        # its explicit pytest modules, which handle unavailable optional build
+        # dependencies before importing sage_docbuild.
+        if (
+            collection_path == sage_docbuild
+            or (
+                collection_path.parent == sage_docbuild
+                and collection_path.name.endswith("_test.py")
+            )
+        ):
+            return None
+        return True
     if (
-        is_subpath(collection_path, root / "src" / "sage_docbuild")
-        or is_subpath(collection_path, root / "src" / "sage_setup")
+        is_subpath(collection_path, root / "src" / "sage_setup")
         or collection_path == root / "src" / "build-docs.py"
     ):
         # Fails to import with Meson

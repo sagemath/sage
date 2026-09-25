@@ -155,10 +155,11 @@ class UnionOfIntervals:
         """
         return not self._endpoints
 
-    def __add__(left, right):
+    def __add__(self, other):
         r"""
-        If both left and right are unions of intervals, take their union,
-        otherwise treat the non-union of intervals as a scalar and shift.
+        If both ``self`` and ``other`` are unions of intervals, take their
+        union, otherwise treat the non-union of intervals as a scalar and
+        shift.
 
         EXAMPLES::
 
@@ -172,14 +173,11 @@ class UnionOfIntervals:
             sage: A + UnionOfIntervals([-infinity, -1])
             ([-Infinity, -1] U [0, 1/2] U [2, +Infinity])
         """
-        if not isinstance(left, UnionOfIntervals):
-            left, right = right, left
-        elif not isinstance(right, UnionOfIntervals):
-            return UnionOfIntervals([right + e for e in left._endpoints])
-        else:
-            return left.union([left, right])
+        if not isinstance(other, UnionOfIntervals):
+            return UnionOfIntervals([other + e for e in self._endpoints])
+        return self.union([self, other])
 
-    def __mul__(left, right):
+    def __mul__(self, other):
         r"""
         Scale a union of intervals on the left or right.
 
@@ -195,10 +193,8 @@ class UnionOfIntervals:
             sage: 1.5 * A
             ([0.000000000000000, 0.750000000000000] U [3.00000000000000, +Infinity])
         """
-        if not isinstance(right, UnionOfIntervals):
-            return UnionOfIntervals([e*right for e in left._endpoints])
-        if not isinstance(left, UnionOfIntervals):
-            return UnionOfIntervals([left*e for e in right._endpoints])
+        if not isinstance(other, UnionOfIntervals):
+            return UnionOfIntervals([e * other for e in self._endpoints])
         return NotImplemented
 
     def __rmul__(self, other):
@@ -683,18 +679,19 @@ def rat_term_CIF(z, try_strict=True):
         corner_reals = []
         corner_imags = []
         for a, b in product(z.real().endpoints(), z.imag().endpoints()):
-            zz = CDF(a,b)
-            u = (two_pi_i_CDF*zz).exp()
-            f = u/(1-u)**2
+            zz = CDF(a, b)
+            u = (two_pi_i_CDF * zz).exp()
+            f = u / (1 - u)**2
             corner_reals.append(f.real())
             corner_imags.append(f.imag())
 
-        p1 = (((((r+2*x)*r - 6)*r + 2*x) * r) + 1)
-            # =  r^4 + 2*r^3*x - 6*r^2 + 2*r*x + 1
-        p2 = (r*(x*(r+2*x)-4)+x)
-            # = r^2*x + 2*r*x^2 - 4*r + x
+        p1 = (((((r + 2 * x) * r - 6) * r + 2 * x) * r) + 1)
+        # = r^4 + 2*r^3*x - 6*r^2 + 2*r*x + 1
 
-        df_dr = (r**2-1) * p2
+        p2 = (r * (x * (r + 2 * x) - 4) + x)
+        # = r^2*x + 2*r*x^2 - 4*r + x
+
+        df_dr = (r**2 - 1) * p2
         dg_dr = p1 * y
         dg_dx = r * df_dr / y
 

@@ -354,8 +354,8 @@ class AmbientSpace(CombinatorialFreeModule):
 
             - :meth:`~sage.combinat.root_system.weight_space.WeightSpace.simple_root`
             - :class:`~sage.combinat.root_system.weight_space.WeightSpace`
-            - :meth:`CartanType.col_annihilator`
-            - :meth:`null_root`
+            - :meth:`sage.combinat.root_system.cartan_type.CartanType_affine.col_annihilator`
+            - :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations.ParentMethods.null_root`
         """
         cartan_type = self.cartan_type()
         special_node = cartan_type.special_node()
@@ -410,7 +410,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
         .. SEEALSO::
 
-            :meth:`sage.combinat.root_system.root_lattice_realizations.RootLatticeRealizations._plot_projection`
+            ``RootLatticeRealizations.ParentMethods._plot_projection``
 
         EXAMPLES::
 

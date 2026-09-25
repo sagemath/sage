@@ -3486,27 +3486,26 @@ class LazyCauchyProductSeries(LazyModuleElement):
                 assert lc != 1 or val != 0
                 temp /= lc
                 return P(BR(lc**n) * LazyModuleElement.__pow__(temp, n).shift(new_val))
-            else:
-                lc = self[val]
-                lcp = P._laurent_poly_ring(lc ** n)
-                offset = ZZ(val*n)
+            lc = self[val]
+            lcp = P._laurent_poly_ring(lc ** n)
+            offset = ZZ(val*n)
 
-                # Since arity > 1, the exact case will be handled above.
-                sparse = P._sparse
-                if isinstance(cs, Stream_exact):
-                    cs = Stream_exact(cs._initial_coefficients[1:], order=0, constant=0)
-                else:
-                    cs = Stream_truncated(cs, -val, 1)
-                lci = ~lc
-                # We unroll the construction from LazyModuleElement.__pow__().
-                # This is done because we want elements in the fraction field of _Laurent_poly_ring
-                f = Stream_function(lambda k: prod(n - i for i in range(k)) * lci**k / ZZ(k).factorial(),
-                                    is_sparse=P._sparse, approximate_order=0)
-                cs = Stream_cauchy_compose(f, cs, is_sparse=sparse)
-                if lcp != 1:
-                    cs = Stream_rmul(cs, lcp, is_sparse=sparse)
-                cs = Stream_shift(cs, offset)  # to get the correct valuation
-                return P.element_class(P, cs)
+            # Since arity > 1, the exact case will be handled above.
+            sparse = P._sparse
+            if isinstance(cs, Stream_exact):
+                cs = Stream_exact(cs._initial_coefficients[1:], order=0, constant=0)
+            else:
+                cs = Stream_truncated(cs, -val, 1)
+            lci = ~lc
+            # We unroll the construction from LazyModuleElement.__pow__().
+            # This is done because we want elements in the fraction field of _Laurent_poly_ring
+            f = Stream_function(lambda k: prod(n - i for i in range(k)) * lci**k / ZZ(k).factorial(),
+                                is_sparse=P._sparse, approximate_order=0)
+            cs = Stream_cauchy_compose(f, cs, is_sparse=sparse)
+            if lcp != 1:
+                cs = Stream_rmul(cs, lcp, is_sparse=sparse)
+            cs = Stream_shift(cs, offset)  # to get the correct valuation
+            return P.element_class(P, cs)
 
         return super().__pow__(n)
 
@@ -5257,7 +5256,8 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         r"""
         Return the exponential series of ``self``.
 
-        This method is deprecated, use :meth:`exp` instead.
+        This method is deprecated, use
+        :meth:`~sage.rings.lazy_series.LazyCauchyProductSeries.exp` instead.
 
         TESTS::
 
@@ -6820,7 +6820,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             return False
         return self[0].is_unit()
 
-    def __call__(self, *args):
+    def __call__(self, *args, include=None, exclude=None):
         r"""
         Return the composition of ``self`` with ``g``.
 
@@ -6849,10 +6849,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         INPUT:
 
         - ``g`` -- other (lazy) symmetric functions
+        - ``include`` -- list of coefficient-ring variables to be treated
+          as degree one elements. If specified, variables not in this list
+          are treated as scalars
+        - ``exclude`` -- list of coefficient-ring variables to be treated
+          as scalars, overriding the default degree one variables
 
-        .. TODO::
-
-            Allow specification of degree one elements.
+        Specify at most one of ``include`` and ``exclude``.
 
         EXAMPLES::
 
@@ -6873,6 +6876,25 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: g = s[1] + s[2,2]
             sage: L(f)(L(q*g)) - L(f(q*g))
             0
+
+        The optional ``include`` and ``exclude`` arguments control which
+        coefficient-ring variables are treated as degree one under plethysm::
+
+            sage: R.<q> = QQ[]
+            sage: p = SymmetricFunctions(R).p()
+            sage: L = LazySymmetricFunctions(p)
+            sage: f = L(p[2])
+            sage: g = L(lambda n: q*p[1] if n == 1 else 0, valuation=1)
+            sage: f(g)[2]
+            q^2*p[2]
+            sage: f(g, include=[])[2]
+            q*p[2]
+            sage: f(g, exclude=[q])[2]
+            q*p[2]
+            sage: f(g, include=[], exclude=[q])
+            Traceback (most recent call last):
+            ...
+            ValueError: include and exclude cannot be specified together
 
         The Frobenius character of the permutation action on set
         partitions is a plethysm::
@@ -6958,6 +6980,9 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         if len(args) != fP._arity:
             raise ValueError("arity must be equal to the number of arguments provided")
 
+        if include is not None and exclude is not None:
+            raise ValueError("include and exclude cannot be specified together")
+
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
@@ -6985,13 +7010,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
                 if not isinstance(g, LazySymmetricFunction):
                     f = self.symmetric_function()
-                    return f(g)
+                    return f(g, include=include, exclude=exclude)
 
                 if (isinstance(g._coeff_stream, Stream_exact)
                     and not g._coeff_stream._constant):
                     f = self.symmetric_function()
                     gs = g.symmetric_function()
-                    return P(f(gs))
+                    return P(f(gs, include=include, exclude=exclude))
 
             if isinstance(g, LazySymmetricFunction):
                 R = P._laurent_poly_ring
@@ -7011,9 +7036,16 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             if P._arity == 1:
                 ps = R.realization_of().p()
             else:
-                ps = tensor([R._sets[0].realization_of().p()]*P._arity)
-            coeff_stream = Stream_plethysm(self._coeff_stream, g._coeff_stream,
-                                           P.is_sparse(), ps, R)
+                ps = tensor([R._sets[0].realization_of().p()] * P._arity)
+            coeff_stream = Stream_plethysm(
+                self._coeff_stream,
+                g._coeff_stream,
+                P.is_sparse(),
+                ps,
+                R,
+                include=include,
+                exclude=exclude,
+            )
             return P.element_class(P, coeff_stream)
 
         raise NotImplementedError("only implemented for arity 1")

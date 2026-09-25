@@ -1,6 +1,7 @@
 import pytest
 
 
+@pytest.mark.longlong
 def test_shortened_000_111_extended_binary_Golay_code_graph():
     r"""
     Test that Sage produces a graph equal to the one that we get

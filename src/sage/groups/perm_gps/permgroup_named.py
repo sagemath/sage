@@ -447,7 +447,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         .. SEEALSO::
 
-            - :meth:`reflections_index_set`
+            - ``reflections_index_set``
             - :meth:`reflections`
 
         EXAMPLES::
@@ -656,7 +656,8 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         If ``self`` is the symmetric group on `1,\ldots,n`, then this
         is special cased to take advantage of the features in
-        :class:`SymmetricGroupAlgebra`. Otherwise the usual group
+        :func:`~sage.combinat.symmetric_group_algebra.SymmetricGroupAlgebra`.
+        Otherwise the usual group
         algebra is returned.
 
         EXAMPLES::
@@ -3451,7 +3452,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
             = \sum_{g \in G} \det(g) q^{\dim(V^g)},
 
         where `V` is the natural complex vector space that `G` acts on
-        and `\ell` is the :meth:`rank`.
+        and `\ell` is the ``rank``.
 
         If `m = 1`, then we are in the special case of the symmetric group
         and the codegrees are `(n-2, n-3, \ldots 1, 0)`. Otherwise the
@@ -3496,7 +3497,9 @@ class SmallPermutationGroup(PermutationGroup_generic):
 
     - ``gap_id`` -- the numerical index in the GAP id of the group
 
-    Generators may be obtained through the :meth:`gens` method.
+    Generators may be obtained through the
+    :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.gens`
+    method.
     These could change for a particular group in later releases
     of GAP. In many instances the degree of the constructed group
     ``SmallPermutationGroup(n,k)`` will be a permutation group on

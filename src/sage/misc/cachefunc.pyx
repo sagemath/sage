@@ -849,8 +849,7 @@ cdef class CachedFunction():
         k = self._argument_fixer.fix_to_pos_args_kwds(args, kwds)
         if self.key is None:
             return k
-        else:
-            return self.key(*k[0], **dict(k[1]))
+        return self.key(*k[0], **dict(k[1]))
 
     def __reduce__(self):
         """
@@ -905,7 +904,6 @@ cdef class CachedFunction():
             sage: I = P * [x,y]
             sage: from sage.misc.sageinspect import sage_getdoc
             sage: print(sage_getdoc(I.groebner_basis))  # indirect doctest
-            WARNING: the enclosing module is marked...
                Return the reduced Groebner basis of this ideal.
             ...
 
@@ -1890,8 +1888,7 @@ cdef class CachedMethodCaller(CachedFunction):
         k = self._argument_fixer.fix_to_pos_args_kwds(args, kwds)
         if self.key is None:
             return k
-        else:
-            return self.key(self._instance, *k[0], **dict(k[1]))
+        return self.key(self._instance, *k[0], **dict(k[1]))
 
     def __call__(self, *args, **kwds):
         """
@@ -2585,8 +2582,10 @@ cdef class CachedMethod():
         sage: a.f(3) is res
         True
 
-    Note, however, that accessing the attribute directly will call :meth:`__get__`,
-    and returns a :class:`CachedMethodCaller` or :class:`CachedMethodCallerNoArgs`.
+    Note, however, that accessing the attribute directly will call
+    :meth:`object.__get__`,
+    and returns a :class:`~sage.misc.cachefunc.CachedMethodCaller` or
+    :class:`~sage.misc.cachefunc.CachedMethodCallerNoArgs`.
 
     ::
 
@@ -3067,6 +3066,7 @@ cdef class CachedSpecialMethod(CachedMethod):
             D[name] = Caller
         return Caller
 
+
 @decorator_keywords
 def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False) -> CachedMethod:
     """
@@ -3119,7 +3119,8 @@ def cached_method(f, name: str | None = None, key=None, do_pickle: bool = False)
         8
 
     Using cached methods for the hash and other special methods was
-    implemented in :issue:`12601`, by means of :class:`CachedSpecialMethod`. We
+    implemented in :issue:`12601`, by means of
+    :class:`~sage.misc.cachefunc.CachedSpecialMethod`. We
     show that it is used behind the scenes::
 
         sage: cached_method(c.__hash__)

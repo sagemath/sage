@@ -6,6 +6,8 @@ fi
 
 cd src
 
+export CFLAGS="$CFLAGS -std=gnu17"
+
 $MAKE
 if [ $? -ne 0 ]; then
     echo >&2 "Error building buckygen."

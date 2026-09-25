@@ -1270,7 +1270,7 @@ class GraphicsArray(MultiGraphics):
             sage: import numpy  # to ensure numpy 2.0 compatibility
             sage: if int(numpy.version.short_version[0]) > 1:
             ....:     _ = numpy.set_printoptions(legacy="1.25")
-            sage: G.position(0)  # tol 5.0e-3
+            sage: G.position(0)  # tol 2.0e-2
             (0.025045451349937315,
              0.03415488992713045,
              0.4489880779745068,

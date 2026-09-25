@@ -27,8 +27,7 @@ EXAMPLES::
     sage: def g(X):
     ....:     if len(X) >= 3:
     ....:         return 1
-    ....:     else:
-    ....:         return 0
+    ....:     return 0
     sage: N = Matroid(groundset='abc', rank_function=g)
     sage: N.is_valid()
     False
