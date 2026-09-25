@@ -176,6 +176,15 @@ def Combinations(mset, k=None, *, as_tuples=False):
         sage: l = [vector((0,0)), vector((0,1))]                                        # needs sage.modules
         sage: Combinations(l).list()                                                    # needs sage.modules
         [[], [(0, 0)], [(0, 1)], [(0, 0), (0, 1)]]
+
+    Combinations can be used as Cartesian product factors (:issue:`39004`)::
+
+        sage: from sage.categories.cartesian_product import cartesian_product
+        sage: a = Combinations([1,2,3], 2)
+        sage: cartesian_product([a, a]).cardinality()
+        9
+        sage: cartesian_product([Combinations([1,2]), a]).cardinality()
+        12
     """
     # Check to see if everything in mset is unique
     is_unique = False
@@ -214,6 +223,18 @@ class Combinations_mset(Parent):
         self.mset = mset
         self.as_tuples = as_tuples
         Parent.__init__(self, category=FiniteEnumeratedSets())
+
+    def _cache_key(self):
+        """
+        Return a cache key for ``self``.
+
+        TESTS::
+
+            sage: from sage.misc.cachefunc import cache_key
+            sage: cache_key(Combinations([1,2,3]))
+            (..., (1, 2, 3), False)
+        """
+        return (self.__class__, tuple(self.mset), self.as_tuples)
 
     def __contains__(self, x) -> bool:
         """
@@ -367,6 +388,18 @@ class Combinations_msetk(Parent):
         self.k = k
         self.as_tuples = as_tuples
         Parent.__init__(self, category=FiniteEnumeratedSets())
+
+    def _cache_key(self):
+        """
+        Return a cache key for ``self``.
+
+        TESTS::
+
+            sage: from sage.misc.cachefunc import cache_key
+            sage: cache_key(Combinations([1,2,3], 2))
+            (..., (1, 2, 3), 2, False)
+        """
+        return (self.__class__, tuple(self.mset), self.k, self.as_tuples)
 
     def __contains__(self, x) -> bool:
         """
