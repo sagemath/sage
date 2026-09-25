@@ -46,11 +46,17 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             sage: CoxeterType(['A',3])
             Coxeter type of ['A', 3]
         """
+        hyperbolic_prefix = ("Hyperbolic", "Ah", "Bh", "Dh", "Eh", "K", "L", "Q", "X")
         if len(x) == 1:
             x = x[0]
 
         if isinstance(x, CoxeterType):
             return x
+
+        if isinstance(x, (list, tuple)):
+            if x[0] in hyperbolic_prefix:
+                from sage.combinat.root_system.type_hyperbolic import CoxeterType_Hyperbolic
+                return CoxeterType_Hyperbolic(x)
 
         try:
             return CoxeterTypeFromCartanType(CartanType(x))
@@ -63,7 +69,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         raise NotImplementedError("Coxeter types not from Cartan types not yet implemented")
 
     @classmethod
-    def samples(self, finite=None, affine=None, crystallographic=None):
+    def samples(self, finite=None, affine=None, crystallographic=None, hyperbolic=None):
         """
         Return a sample of the available Coxeter types.
 
@@ -75,9 +81,12 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         - ``crystallographic`` -- boolean or ``None`` (default: ``None``)
 
-        The sample contains all the exceptional finite and affine
-        Coxeter types, as well as typical representatives of the
-        infinite families.
+        - ``hyperbolic`` -- boolean or ``None`` (default: ``None``)
+
+        The sample contains the exceptional finite, affine and
+        crystallographic Coxeter types, together with some hyperbolic
+        types, and a few representatives of the classical infinite
+        families.
 
         EXAMPLES::
 
@@ -94,7 +103,14 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              Coxeter type of ['D', 5, 1], Coxeter type of ['E', 6, 1],
              Coxeter type of ['E', 7, 1], Coxeter type of ['E', 8, 1],
              Coxeter type of ['F', 4, 1], Coxeter type of ['G', 2, 1],
-             Coxeter type of ['A', 1, 1]]
+             Coxeter type of ['A', 1, 1],
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 3),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 4),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 2, Row : 5),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 6),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 7),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 8),
+             Coxeter type with Humphrey's datum (Page : 144, Column : 1, Row : 3)]
 
         The finite, affine and crystallographic options allow
         respectively for restricting to (non) finite, (non) affine,
@@ -128,12 +144,20 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              Coxeter type of ['C', 5, 1], Coxeter type of ['D', 5, 1],
              Coxeter type of ['E', 6, 1], Coxeter type of ['E', 7, 1],
              Coxeter type of ['E', 8, 1], Coxeter type of ['F', 4, 1],
-             Coxeter type of ['G', 2, 1], Coxeter type of ['A', 1, 1]]
+             Coxeter type of ['G', 2, 1], Coxeter type of ['A', 1, 1],
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 7),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 8),
+             Coxeter type with Humphrey's datum (Page : 144, Column : 1, Row : 3)]
 
             sage: CoxeterType.samples(crystallographic=False)
             [Coxeter type of ['H', 3],
              Coxeter type of ['H', 4],
-             Coxeter type of ['I', 10]]
+             Coxeter type of ['I', 10],
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 3),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 4),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 2, Row : 5),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 6)]
+
 
         .. TODO:: add some reducible Coxeter types (suggestions?)
 
@@ -148,6 +172,8 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             result = [t for t in result if t.is_finite() == finite]
         if affine is not None:
             result = [t for t in result if t.is_affine() == affine]
+        if hyperbolic is not None:
+            result = [t for t in result if t.is_hyperbolic() == hyperbolic]
         return result
 
     @cached_method
@@ -174,7 +200,14 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              Coxeter type of ['D', 5, 1], Coxeter type of ['E', 6, 1],
              Coxeter type of ['E', 7, 1], Coxeter type of ['E', 8, 1],
              Coxeter type of ['F', 4, 1], Coxeter type of ['G', 2, 1],
-             Coxeter type of ['A', 1, 1]]
+             Coxeter type of ['A', 1, 1],
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 3),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 1, Row : 4),
+             Coxeter type with Humphrey's datum (Page : 141, Column : 2, Row : 5),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 6),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 7),
+             Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 8),
+             Coxeter type with Humphrey's datum (Page : 144, Column : 1, Row : 3)]
         """
         finite = [CoxeterType(t) for t in [['A', 1], ['A', 5], ['B', 1], ['B', 5],
                                            ['C', 1], ['C', 5], ['D', 4], ['D', 5],
@@ -186,7 +219,12 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                                            ['E', 7, 1], ['E', 8, 1], ['F', 4, 1],
                                            ['G', 2, 1], ['A', 1, 1]]]
 
-        return finite + affine
+        hyperbolic = [CoxeterType(t) for t in [['Hyperbolic', (141, 1, 3)], ['Hyperbolic', (141, 1, 4)],
+                                               ['Hyperbolic', (141, 2, 5)], ['Hyperbolic', (142, 1, 6)],
+                                               ['Hyperbolic', (142, 1, 7)], ['Hyperbolic', (142, 1, 8)],
+                                               ['Hyperbolic', (144, 1, 3)]]]
+
+        return finite + affine + hyperbolic
 
     @abstract_method
     def rank(self):
@@ -312,6 +350,21 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              [['E', 6], True], [['E', 7], True], [['E', 8], True],
              [['F', 4], True], [['G', 2], True],
              [['I', 5], False], [['H', 3], False], [['H', 4], False]]
+        """
+        return False
+
+    def is_hyperbolic(self):
+        """
+        Return whether ``self`` is hyperbolic.
+
+        This returns ``False`` by default. Derived class should override this
+        appropriately.
+
+        EXAMPLES::
+            sage: CoxeterType(['A', 3]).is_hyperbolic()
+            False
+            sage: CoxeterType(['Hyperbolic', (141, 1, 3)]).is_hyperbolic()
+            True
         """
         return False
 
