@@ -1,13 +1,10 @@
-# Do not keep running on errors
-set -e
+#!/bin/sh
 
-# Create conda environment
-conda config --env --add channels conda-forge
-conda config --env --set channel_priority strict
-conda update -y --all --override-channels -c conda-forge
-conda install mamba=1 -n base -y
-mamba env create -y --file environment-3.12-linux.yml || mamba env update --file environment-3.12-linux.yml
-conda init bash
+set -eu
 
-# Build sage
-conda run -n sage-dev pip install --no-build-isolation -v -v -e . --config-settings=build-dir="build/conda-cp312"
+# Interactive shells should enter the development environment rather than
+# Conda's base environment.  The environment itself is synchronized by the
+# updateContentCommand, which also runs when a prebuild is refreshed.
+conda_dir=${CONDA_DIR:-/opt/conda}
+"$conda_dir/bin/conda" config --set auto_activate_base false
+"$conda_dir/bin/conda" init bash
