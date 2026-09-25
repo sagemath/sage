@@ -10,37 +10,67 @@
 
     body { margin: 0px; overflow: hidden; }
 
-    #menu-container { position: absolute; bottom: 30px; right: 40px; }
+    #menu-container { position: absolute; bottom: 30px; right: 40px; cursor: default; }
+
+    #menu-message { position: absolute; bottom: 0px; right: 0px; white-space: nowrap;
+                    display: none; background-color: #F5F5F5; padding: 10px; }
 
     #menu-content { position: absolute; bottom: 0px; right: 0px;
                     display: none; background-color: #F5F5F5; border-bottom: 1px solid black;
                     border-right: 1px solid black; border-left: 1px solid black; }
 
     #menu-content div { border-top: 1px solid black; padding: 10px; white-space: nowrap; }
-  
+
+    #menu-content div:hover { background-color: #FEFEFE; }
+
+    .dark-theme #menu-container { color: white; }
+
+    .dark-theme #menu-message { background-color: #181818; }
+
+    .dark-theme #menu-content { background-color: #181818; border-color: white; }
+
+    .dark-theme #menu-content div { border-color: white; }
+
+    .dark-theme #menu-content div:hover { background-color: #303030; }
+
+    #stereo-panel { position: absolute; top: 20px; left: 20px; display: none;
+                    background-color: #F5F5F5; border: 1px solid black; padding: 12px;
+                    min-width: 230px; font-family: sans-serif; font-size: 13px; cursor: default; }
+
+    #stereo-panel-header { font-weight: bold; margin-bottom: 8px;
+                           display: flex; justify-content: space-between; align-items: center; }
+
+    #stereo-panel-close { cursor: pointer; font-size: 16px; line-height: 1; }
+
+    #stereo-panel label { display: block; margin-top: 8px; }
+
+    #stereo-panel select, #stereo-panel input[type=range] { width: 100%; margin-top: 4px; box-sizing: border-box; }
+
+    .dark-theme #stereo-panel { background-color: #181818; border-color: white; color: white; }
+
 </style>
+
 </head>
 
 <body>
 
-<script src=&quot;https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/build/three.min.js&quot;></script>
-<script src=&quot;https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/controls/OrbitControls.js&quot;></script>
-
+<script src=&quot;https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@r122/build/three.min.js&quot;></script>
+            
 <script>
+
+    var options = {&quot;animate&quot;: false, &quot;animationControls&quot;: true, &quot;aspectRatio&quot;: [1.0, 1.0, 1.0], &quot;autoScaling&quot;: [false, false, false], &quot;autoPlay&quot;: true, &quot;axes&quot;: false, &quot;axesLabels&quot;: [&quot;x&quot;, &quot;y&quot;, &quot;z&quot;], &quot;axesLabelsStyle&quot;: null, &quot;decimals&quot;: 2, &quot;delay&quot;: 20, &quot;frame&quot;: true, &quot;loop&quot;: true, &quot;projection&quot;: &quot;perspective&quot;, &quot;theme&quot;: &quot;light&quot;, &quot;viewpoint&quot;: false};
+    var animate = options.animate;
+
+    if ( options.theme === 'dark' )
+        document.body.className = 'dark-theme';
 
     var scene = new THREE.Scene();
 
     var renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.setClearColor( 0xffffff, 1 );
+    renderer.setClearColor( options.theme === 'dark' ? 0 : 0xffffff, 1 );
     document.body.appendChild( renderer.domElement );
-
-    var options = {&quot;aspect_ratio&quot;: [1.0, 1.0, 1.0], &quot;axes&quot;: false, &quot;axes_labels&quot;: [&quot;x&quot;, &quot;y&quot;, &quot;z&quot;], &quot;decimals&quot;: 2, &quot;frame&quot;: true, &quot;projection&quot;: &quot;perspective&quot;};
-
-    // When animations are supported by the viewer, the value 'false'
-    // will be replaced with an option set in Python by the user
-    var animate = false; // options.animate;
 
     var b = [{&quot;x&quot;:-0.9963974885425274, &quot;y&quot;:-0.9990989662046814, &quot;z&quot;:0.0}, {&quot;x&quot;:1.0, &quot;y&quot;:0.9990989662046817, &quot;z&quot;:1.2566370614359172}]; // bounds
 
@@ -57,18 +87,26 @@
         b[1].z += 1;
     }
 
-    var rRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
+    var rxRange = Math.sqrt( Math.pow( b[1].z - b[0].z, 2 )
+                            + Math.pow( b[1].y - b[0].y, 2 ) );
+    var ryRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
+                            + Math.pow( b[1].z - b[0].z, 2 ) );
+    var rzRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
                             + Math.pow( b[1].y - b[0].y, 2 ) );
     var xRange = b[1].x - b[0].x;
     var yRange = b[1].y - b[0].y;
     var zRange = b[1].z - b[0].z;
 
-    var ar = options.aspect_ratio;
+    var ar = options.aspectRatio;
     var a = [ ar[0], ar[1], ar[2] ]; // aspect multipliers
-    var autoAspect = 2.5;
-    if ( zRange > autoAspect * rRange && a[2] === 1 ) a[2] = autoAspect * rRange / zRange;
 
-    // Distance from (xMid,yMid,zMid) to any corner of the bounding box, after applying aspect_ratio.
+    var autoScaling = options.autoScaling;
+    var autoAspect = 2.5;
+    if ( xRange > autoAspect * rxRange && autoScaling[0] ) a[0] = autoAspect * rxRange / xRange;
+    if ( yRange > autoAspect * ryRange && autoScaling[1] ) a[1] = autoAspect * ryRange / yRange;
+    if ( zRange > autoAspect * rzRange && autoScaling[2] ) a[2] = autoAspect * rzRange / zRange;
+
+    // Distance from (xMid,yMid,zMid) to any corner of the bounding box, after applying aspectRatio
     var midToCorner = Math.sqrt( a[0]*a[0]*xRange*xRange + a[1]*a[1]*yRange*yRange + a[2]*a[2]*zRange*zRange ) / 2;
 
     var xMid = ( b[0].x + b[1].x ) / 2;
@@ -79,68 +117,113 @@
     box.vertices.push( new THREE.Vector3( a[0]*b[0].x, a[1]*b[0].y, a[2]*b[0].z ) );
     box.vertices.push( new THREE.Vector3( a[0]*b[1].x, a[1]*b[1].y, a[2]*b[1].z ) );
     var boxMesh = new THREE.Line( box );
-    if ( options.frame ) scene.add( new THREE.BoxHelper( boxMesh, 'black' ) );
+    var boxColor = options.theme === 'dark' ? 'white' : 'black';
+    if ( options.frame ) scene.add( new THREE.BoxHelper( boxMesh, boxColor ) );
 
-    if ( options.axes_labels ) {
+    if ( options.axesLabels ) {
 
         var d = options.decimals; // decimals
         var offsetRatio = 0.1;
-        var al = options.axes_labels;
+        var al = options.axesLabels;
+        var als = options.axesLabelsStyle || [{}, {}, {}];
 
         var offset = offsetRatio * a[1]*( b[1].y - b[0].y );
         var xm = xMid.toFixed(d);
         if ( /^-0.?0*$/.test(xm) ) xm = xm.substr(1);
-        addLabel( al[0] + '=' + xm, a[0]*xMid, a[1]*b[1].y+offset, a[2]*b[0].z );
-        addLabel( ( b[0].x ).toFixed(d), a[0]*b[0].x, a[1]*b[1].y+offset, a[2]*b[0].z );
-        addLabel( ( b[1].x ).toFixed(d), a[0]*b[1].x, a[1]*b[1].y+offset, a[2]*b[0].z );
+        addLabel( al[0] + '=' + xm, a[0]*xMid, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
+        addLabel( ( b[0].x ).toFixed(d), a[0]*b[0].x, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
+        addLabel( ( b[1].x ).toFixed(d), a[0]*b[1].x, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
 
         var offset = offsetRatio * a[0]*( b[1].x - b[0].x );
         var ym = yMid.toFixed(d);
         if ( /^-0.?0*$/.test(ym) ) ym = ym.substr(1);
-        addLabel( al[1] + '=' + ym, a[0]*b[1].x+offset, a[1]*yMid, a[2]*b[0].z );
-        addLabel( ( b[0].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[0].y, a[2]*b[0].z );
-        addLabel( ( b[1].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[1].y, a[2]*b[0].z );
+        addLabel( al[1] + '=' + ym, a[0]*b[1].x+offset, a[1]*yMid, a[2]*b[0].z, als[1] );
+        addLabel( ( b[0].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[0].y, a[2]*b[0].z, als[1] );
+        addLabel( ( b[1].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[1].y, a[2]*b[0].z, als[1] );
 
         var offset = offsetRatio * a[1]*( b[1].y - b[0].y );
         var zm = zMid.toFixed(d);
         if ( /^-0.?0*$/.test(zm) ) zm = zm.substr(1);
-        addLabel( al[2] + '=' + zm, a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*zMid );
-        addLabel( ( b[0].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[0].z );
-        addLabel( ( b[1].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[1].z );
+        addLabel( al[2] + '=' + zm, a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*zMid, als[2] );
+        addLabel( ( b[0].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[0].z, als[2] );
+        addLabel( ( b[1].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[1].z, als[2] );
 
     }
 
-    function addLabel( text, x, y, z ) {
+    function addLabel( text, x, y, z, style ) {
 
-        var fontsize = 14;
+        var color = style.color || 'black';
+        var fontSize = style.fontSize || 14;
+        var fontFamily = style.fontFamily || 'monospace';
+        var fontStyle = style.fontStyle || 'normal';
+        var fontWeight = style.fontWeight || 'normal';
+        var opacity = style.opacity || 1;
+
+        if ( options.theme === 'dark' )
+            if ( color === 'black' || color === '#000000' )
+                color = 'white';
+
+        if ( Array.isArray( fontStyle ) ) {
+            fontFamily = fontFamily.map( function( f ) {
+                // Need to put quotes around fonts that have whitespace in their names.
+                return /\s/.test( f ) ? '&quot;' + f + '&quot;' : f;
+            }).join(', ');
+        }
 
         var canvas = document.createElement( 'canvas' );
-        var pixelRatio = Math.round( window.devicePixelRatio );
-        canvas.width = 128 * pixelRatio;
-        canvas.height = 32 * pixelRatio; // powers of two
-        canvas.style.width = '128px';
-        canvas.style.height = '32px';
-
         var context = canvas.getContext( '2d' );
+        var pixelRatio = Math.round( window.devicePixelRatio );
+
+        // For example: italic bold 20px &quot;Times New Roman&quot;, Georgia, serif
+        var font = [fontStyle, fontWeight, fontSize + 'px', fontFamily].join(' ');
+
+        context.font = font;
+        var width = context.measureText( text ).width;
+        var height = fontSize;
+
+        // The dimensions of the canvas's underlying image data need to be powers
+        // of two in order for the resulting texture to support mipmapping.
+        canvas.width = THREE.MathUtils.ceilPowerOfTwo( width * pixelRatio );
+        canvas.height = THREE.MathUtils.ceilPowerOfTwo( height * pixelRatio );
+
+        // Re-compute the unscaled dimensions after the power of two conversion.
+        width = canvas.width / pixelRatio;
+        height = canvas.height / pixelRatio;
+
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+
         context.scale( pixelRatio, pixelRatio );
-        context.fillStyle = 'black';
-        context.font = fontsize + 'px monospace';
+        context.fillStyle = color;
+        context.font = font; // Must be set again after measureText.
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText( text, canvas.width/2/pixelRatio, canvas.height/2/pixelRatio );
+        context.fillText( text, width/2, height/2 );
 
         var texture = new THREE.Texture( canvas );
         texture.needsUpdate = true;
 
-        var sprite = new THREE.Sprite( new THREE.SpriteMaterial( { map: texture } ) );
+        var materialOptions = { map: texture, sizeAttenuation: false, depthWrite: false };
+        if ( opacity < 1 ) {
+            // Setting opacity=1 would cause the texture's alpha component to be
+            // discarded, giving the text a black background instead of the
+            // background being transparent.
+            materialOptions.opacity = opacity;
+        }
+        var sprite = new THREE.Sprite( new THREE.SpriteMaterial( materialOptions ) );
         sprite.position.set( x, y, z );
 
-        // Set the initial scale based on plot size to accommodate orthographic projection.
-        // For other projections, the scale will get reset each frame based on camera distance.
-        var scale = midToCorner/2;
-        sprite.scale.set( scale, scale*.25 ); // ratio of canvas width to height
+        // Scaling factor, chosen somewhat arbitrarily so that the size of the text
+        // is consistent with previously generated plots.
+        var scale = 1/625;
+        if ( options.projection === 'orthographic' ) {
+            scale = midToCorner/256; // Needs to scale along with the plot itself.
+        }
+        sprite.scale.set( scale * width, scale * height, 1 );
 
         scene.add( sprite );
+
+        return sprite;
 
     }
 
@@ -148,19 +231,49 @@
 
     var camera = createCamera();
     camera.up.set( 0, 0, 1 );
-    camera.position.set( a[0]*(xMid+xRange), a[1]*(yMid+yRange), a[2]*(zMid+zRange) );
+    camera.position.set( a[0]*xMid, a[1]*yMid, a[2]*zMid );
+
+    // camera is positioned so that the line from the camera to the center
+    // of the bounding sphere of the objects makes an angle of 60 degrees with x-axis
+    // and an angle of 30 degrees with z-axis and the field of view of the camera looking
+    // at the center has an angle of 45 degrees.
+    const sin8 = Math.sin(Math.PI / 8);
+    const sin5 = Math.sin(Math.PI / 5);
+    const cos5 = Math.cos(Math.PI / 5);
+    const sin3 = Math.sin(Math.PI / 3);
+    const cos3 = Math.cos(Math.PI / 3);
+    var r = midToCorner / sin8;
+    var offset = new THREE.Vector3( r * sin3 * cos5, r * sin3 * sin5, r * cos3 );
+
+    if ( options.viewpoint ) {
+
+        var aa = options.viewpoint;
+        var axis = new THREE.Vector3( aa[0][0], aa[0][1], aa[0][2] ).normalize();
+        var angle = aa[1] * Math.PI / 180;
+        var q = new THREE.Quaternion().setFromAxisAngle( axis, angle ).inverse();
+
+        offset.set( 0, 0, offset.length() );
+        offset.applyQuaternion( q );
+
+    }
+
+    camera.position.add( offset );
 
     function createCamera() {
 
         var aspect = window.innerWidth / window.innerHeight;
 
+        // Scale the near and far clipping planes along with the overall plot size.
+        var nearClip = 0.01 * midToCorner;
+        var farClip = 100 * midToCorner;
+
         if ( options.projection === 'orthographic' ) {
-            var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, -1000, 1000 );
+            var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, -farClip, farClip );
             updateCameraAspect( camera, aspect );
             return camera;
         }
 
-        return new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000 );
+        return new THREE.PerspectiveCamera( 45, aspect, nearClip, farClip );
 
     }
 
@@ -206,16 +319,22 @@
     controls.addEventListener( 'change', function() { if ( !animate ) render(); } );
 
     window.addEventListener( 'resize', function() {
-        
+
         renderer.setSize( window.innerWidth, window.innerHeight );
         updateCameraAspect( camera, window.innerWidth / window.innerHeight );
+        if ( window.rescaleFatLines ) rescaleFatLines();
+        if ( typeof disposeStereoTargets === 'function' ) disposeStereoTargets();
         if ( !animate ) render();
-        
+
     } );
 
     var texts = [];
-    for ( var i=0 ; i < texts.length ; i++ )
-        addLabel( texts[i].text, a[0]*texts[i].x, a[1]*texts[i].y, a[2]*texts[i].z );
+    for ( var i=0 ; i < texts.length ; i++ ) addText( texts[i] );
+
+    function addText( json ) {
+        var sprite = addLabel( json.text, a[0]*json.x, a[1]*json.y, a[2]*json.z, json );
+        sprite.userData = json;
+    }
 
     var points = [];
     for ( var i=0 ; i < points.length ; i++ ) addPoint( points[i] );
@@ -251,11 +370,12 @@
 
         var mesh = new THREE.Points( geometry, material );
         mesh.position.set( c.x, c.y, c.z );
+        mesh.userData = json;
         scene.add( mesh );
 
     }
 
-    var lines = [{&quot;points&quot;:[[1.0, 0.0, 0.0], [0.9856159103477085, 0.16900082032184907, 0.01698158191129618], [0.9428774454610842, 0.33313979474205757, 0.03396316382259236], [0.8730141131611882, 0.48769494381363454, 0.05094474573388855], [0.7780357543184395, 0.6282199972956423, 0.06792632764518472], [0.6606747233900816, 0.7506723052527243, 0.08490790955648089], [0.5243072835572319, 0.8515291377333112, 0.10188949146777707], [0.37285647778030884, 0.9278890272965092, 0.11887107337907324], [0.21067926999572661, 0.9775552389476861, 0.1358526552903694], [0.042441203196148684, 0.9990989662046814, 0.15283423720166558], [-0.1270178197468783, 0.991900435258877, 0.16981581911296176], [-0.2928227712765499, 0.9561667347392511, 0.18679740102425793], [-0.450203744817673, 0.8929258581495687, 0.20377898293555413], [-0.5946331763042862, 0.8039971303669409, 0.2207605648468503], [-0.7219560939545242, 0.6919388689775465, 0.23774214675814648], [-0.8285096492438419, 0.5599747861375959, 0.25472372866944265], [-0.9112284903881355, 0.4119012482439932, 0.2717053105807388], [-0.9677329469334987, 0.25197806138512585, 0.288686892492035], [-0.9963974885425264, 0.08480592447550994, 0.30566847440333117], [-0.9963974885425265, -0.08480592447550837, 0.32265005631462734], [-0.9677329469334991, -0.25197806138512435, 0.3396316382259235], [-0.9112284903881361, -0.4119012482439918, 0.3566132201372197], [-0.8285096492438426, -0.5599747861375945, 0.37359480204851586], [-0.7219560939545252, -0.6919388689775454, 0.39057638395981203], [-0.5946331763042872, -0.8039971303669401, 0.40755796587110826], [-0.45020374481767356, -0.8929258581495684, 0.4245395477824045], [-0.2928227712765503, -0.956166734739251, 0.4415211296937007], [-0.12701781974687834, -0.991900435258877, 0.4585027116049969], [0.04244120319614911, -0.9990989662046814, 0.4754842935162931], [0.21067926999572745, -0.9775552389476859, 0.49246587542758935], [0.37285647778031006, -0.9278890272965088, 0.5094474573388855], [0.5243072835572333, -0.8515291377333103, 0.5264290392501818], [0.6606747233900832, -0.7506723052527229, 0.543410621161478], [0.7780357543184412, -0.6282199972956402, 0.5603922030727743], [0.8730141131611897, -0.4876949438136319, 0.5773737849840704], [0.9428774454610853, -0.3331397947420543, 0.5943553668953666], [0.9856159103477091, -0.16900082032184532, 0.6113369488066629], [1.0, 4.195962738671156e-15, 0.6283185307179591], [0.9856159103477077, 0.16900082032185357, 0.6453001126292554], [0.9428774454610825, 0.33313979474206223, 0.6622816945405515], [0.8730141131611855, 0.4876949438136392, 0.6792632764518478], [0.778035754318436, 0.6282199972956468, 0.696244858363144], [0.6606747233900769, 0.7506723052527283, 0.7132264402744402], [0.5243072835572262, 0.8515291377333147, 0.7302080221857364], [0.3728564777803023, 0.9278890272965119, 0.7471896040970326], [0.21067926999571926, 0.9775552389476877, 0.7641711860083289], [0.04244120319614072, 0.9990989662046817, 0.7811527679196251], [-0.12701781974688667, 0.9919004352588758, 0.7981343498309212], [-0.2928227712765575, 0.9561667347392487, 0.8151159317422174], [-0.4502037448176803, 0.8929258581495649, 0.8320975136535136], [-0.5946331763042932, 0.8039971303669357, 0.8490790955648099], [-0.7219560939545304, 0.69193886897754, 0.866060677476106], [-0.8285096492438472, 0.5599747861375879, 0.8830422593874023], [-0.9112284903881396, 0.41190124824398416, 0.9000238412986985], [-0.9677329469335013, 0.2519780613851158, 0.9170054232099947], [-0.9963974885425274, 0.08480592447549912, 0.933987005121291], [-0.9963974885425256, -0.08480592447551964, 0.9509685870325871], [-0.9677329469334961, -0.2519780613851357, 0.9679501689438834], [-0.9112284903881311, -0.41190124824400287, 0.9849317508551796], [-0.8285096492438356, -0.559974786137605, 1.0019133327664758], [-0.7219560939545162, -0.6919388689775549, 1.018894914677772], [-0.5946331763042767, -0.8039971303669479, 1.0358764965890683], [-0.4502037448176619, -0.8929258581495743, 1.0528580785003645], [-0.29282277127653783, -0.9561667347392547, 1.0698396604116607], [-0.12701781974686535, -0.9919004352588786, 1.0868212423229568], [0.04244120319616217, -0.9990989662046809, 1.103802824234253], [0.21067926999574027, -0.9775552389476831, 1.1207844061455494], [0.37285647778032216, -0.9278890272965039, 1.1377659880568456], [0.5243072835572444, -0.8515291377333034, 1.1547475699681418], [0.660674723390093, -0.7506723052527142, 1.171729151879438], [0.7780357543184495, -0.62821999729563, 1.188710733790734], [0.873014113161196, -0.48769494381362044, 1.2056923157020305], [0.9428774454610896, -0.33313979474204203, 1.2226738976133267], [0.9856159103477113, -0.16900082032183242, 1.2396554795246228], [1.0, -4.898587196589413e-16, 1.2566370614359172]], &quot;color&quot;:&quot;red&quot;, &quot;opacity&quot;:1.0, &quot;linewidth&quot;:1}];
+    var lines = [{&quot;points&quot;: [[1.0, 0.0, 0.0], [0.9856159103477085, 0.16900082032184907, 0.01698158191129618], [0.9428774454610842, 0.33313979474205757, 0.03396316382259236], [0.8730141131611882, 0.48769494381363454, 0.05094474573388855], [0.7780357543184395, 0.6282199972956423, 0.06792632764518472], [0.6606747233900815, 0.7506723052527243, 0.08490790955648089], [0.5243072835572319, 0.8515291377333112, 0.10188949146777707], [0.37285647778030884, 0.9278890272965092, 0.11887107337907324], [0.21067926999572661, 0.9775552389476861, 0.1358526552903694], [0.042441203196148684, 0.9990989662046814, 0.15283423720166558], [-0.1270178197468783, 0.991900435258877, 0.16981581911296176], [-0.2928227712765499, 0.9561667347392511, 0.18679740102425793], [-0.450203744817673, 0.8929258581495686, 0.20377898293555413], [-0.5946331763042862, 0.8039971303669408, 0.2207605648468503], [-0.7219560939545241, 0.6919388689775465, 0.23774214675814648], [-0.8285096492438419, 0.5599747861375959, 0.25472372866944265], [-0.9112284903881355, 0.41190124824399327, 0.2717053105807388], [-0.9677329469334987, 0.25197806138512585, 0.288686892492035], [-0.9963974885425264, 0.08480592447550994, 0.30566847440333117], [-0.9963974885425265, -0.08480592447550837, 0.32265005631462734], [-0.9677329469334991, -0.25197806138512435, 0.3396316382259235], [-0.9112284903881361, -0.4119012482439918, 0.3566132201372197], [-0.8285096492438427, -0.5599747861375945, 0.37359480204851586], [-0.7219560939545252, -0.6919388689775454, 0.39057638395981203], [-0.5946331763042871, -0.8039971303669401, 0.40755796587110826], [-0.4502037448176736, -0.8929258581495684, 0.4245395477824045], [-0.2928227712765503, -0.956166734739251, 0.4415211296937007], [-0.12701781974687834, -0.991900435258877, 0.4585027116049969], [0.0424412031961491, -0.9990989662046814, 0.4754842935162931], [0.21067926999572748, -0.9775552389476859, 0.49246587542758935], [0.37285647778031006, -0.9278890272965088, 0.5094474573388855], [0.5243072835572333, -0.8515291377333103, 0.5264290392501818], [0.6606747233900832, -0.7506723052527229, 0.543410621161478], [0.7780357543184412, -0.6282199972956403, 0.5603922030727743], [0.8730141131611896, -0.4876949438136319, 0.5773737849840704], [0.9428774454610853, -0.3331397947420543, 0.5943553668953666], [0.9856159103477091, -0.16900082032184532, 0.6113369488066629], [1.0, 4.195962738671156e-15, 0.6283185307179591], [0.9856159103477077, 0.1690008203218536, 0.6453001126292554], [0.9428774454610825, 0.33313979474206223, 0.6622816945405515], [0.8730141131611856, 0.4876949438136392, 0.6792632764518478], [0.778035754318436, 0.6282199972956467, 0.696244858363144], [0.6606747233900768, 0.7506723052527283, 0.7132264402744402], [0.5243072835572262, 0.8515291377333147, 0.7302080221857364], [0.3728564777803023, 0.9278890272965119, 0.7471896040970326], [0.21067926999571926, 0.9775552389476877, 0.7641711860083289], [0.04244120319614072, 0.9990989662046817, 0.7811527679196251], [-0.12701781974688664, 0.9919004352588758, 0.7981343498309212], [-0.29282277127655754, 0.9561667347392487, 0.8151159317422174], [-0.4502037448176803, 0.8929258581495649, 0.8320975136535136], [-0.5946331763042932, 0.8039971303669357, 0.8490790955648099], [-0.7219560939545304, 0.69193886897754, 0.866060677476106], [-0.8285096492438472, 0.559974786137588, 0.8830422593874023], [-0.9112284903881396, 0.41190124824398416, 0.9000238412986985], [-0.9677329469335013, 0.2519780613851158, 0.9170054232099947], [-0.9963974885425274, 0.08480592447549913, 0.933987005121291], [-0.9963974885425256, -0.08480592447551963, 0.9509685870325871], [-0.9677329469334961, -0.2519780613851357, 0.9679501689438834], [-0.911228490388131, -0.4119012482440029, 0.9849317508551796], [-0.8285096492438356, -0.559974786137605, 1.0019133327664758], [-0.7219560939545162, -0.6919388689775549, 1.018894914677772], [-0.5946331763042767, -0.8039971303669479, 1.0358764965890683], [-0.4502037448176619, -0.8929258581495743, 1.0528580785003645], [-0.29282277127653783, -0.9561667347392547, 1.0698396604116607], [-0.12701781974686535, -0.9919004352588786, 1.0868212423229568], [0.04244120319616217, -0.9990989662046809, 1.103802824234253], [0.21067926999574024, -0.9775552389476831, 1.1207844061455494], [0.37285647778032216, -0.9278890272965039, 1.1377659880568456], [0.5243072835572444, -0.8515291377333034, 1.1547475699681418], [0.660674723390093, -0.7506723052527142, 1.171729151879438], [0.7780357543184494, -0.62821999729563, 1.188710733790734], [0.873014113161196, -0.48769494381362044, 1.2056923157020305], [0.9428774454610896, -0.333139794742042, 1.2226738976133267], [0.9856159103477113, -0.16900082032183242, 1.2396554795246228], [1.0, -4.898587196589413e-16, 1.2566370614359172]], &quot;color&quot;: &quot;#ff0000&quot;, &quot;opacity&quot;: 1.0, &quot;linewidth&quot;: 1.0}];
     for ( var i=0 ; i < lines.length ; i++ ) addLine( lines[i] );
 
     function addLine( json ) {
@@ -266,17 +386,25 @@
             geometry.vertices.push( new THREE.Vector3( a[0]*v[0], a[1]*v[1], a[2]*v[2] ) );
         }
 
-        var transparent = json.opacity < 1 ? true : false;
-        var material = new THREE.LineBasicMaterial( { color: json.color, linewidth: json.linewidth,
-                                                      transparent: transparent, opacity: json.opacity } );
-
         var c = new THREE.Vector3();
         geometry.computeBoundingBox();
         geometry.boundingBox.getCenter( c );
         geometry.translate( -c.x, -c.y, -c.z );
 
-        var mesh = new THREE.Line( geometry, material );
+        var transparent = json.opacity < 1 ? true : false;
+        var materialOptions = { color: json.color, linewidth: json.linewidth,
+                                transparent: transparent, opacity: json.opacity };
+
+        var mesh;
+        if ( json.linewidth > 1 && window.createFatLineStrip ) {
+            mesh = createFatLineStrip( geometry, materialOptions );
+        } else {
+            var material = new THREE.LineBasicMaterial( materialOptions );
+            mesh = new THREE.Line( geometry, material );
+        }
+
         mesh.position.set( c.x, c.y, c.z );
+        mesh.userData = json;
         scene.add( mesh );
 
     }
@@ -305,12 +433,15 @@
 
         var side = json.singleSide ? THREE.FrontSide : THREE.DoubleSide;
         var transparent = json.opacity < 1 ? true : false;
+        var depthWrite = 'depthWrite' in json ? json.depthWrite : !transparent;
+        var flatShading = json.useFlatShading ? json.useFlatShading : false;
 
         var material = new THREE.MeshPhongMaterial( { side: side,
                                      color: useFaceColors ? 'white' : json.color,
                                      vertexColors: useFaceColors ? THREE.FaceColors : THREE.NoColors,
                                      transparent: transparent, opacity: json.opacity,
-                                     shininess: 20, flatShading: json.useFlatShading } );
+                                     shininess: 20, flatShading: flatShading,
+                                     depthWrite: depthWrite } );
 
         var c = new THREE.Vector3();
         geometry.computeBoundingBox();
@@ -319,65 +450,325 @@
 
         var mesh = new THREE.Mesh( geometry, material );
         mesh.position.set( c.x, c.y, c.z );
-        if ( transparent && json.renderOrder ) mesh.renderOrder = json.renderOrder
+        if ( transparent && json.renderOrder ) mesh.renderOrder = json.renderOrder;
+        mesh.userData = json;
         scene.add( mesh );
 
-        if ( json.showMeshGrid ) {
+        if ( json.showMeshGrid ) addSurfaceMeshGrid( json );
 
-            var geometry = new THREE.Geometry();
+    }
 
-            for ( var i=0 ; i < json.faces.length ; i++ ) {
-                var f = json.faces[i];
-                for ( var j=0 ; j < f.length ; j++ ) {
-                    var k = j === f.length-1 ? 0 : j+1;
-                    var v1 = json.vertices[f[j]];
-                    var v2 = json.vertices[f[k]];
-                    // vertices in opposite directions on neighboring faces
-                    var nudge = f[j] < f[k] ? .0005*zRange : -.0005*zRange;
-                    geometry.vertices.push( new THREE.Vector3( a[0]*v1.x, a[1]*v1.y, a[2]*(v1.z+nudge) ) );
-                    geometry.vertices.push( new THREE.Vector3( a[0]*v2.x, a[1]*v2.y, a[2]*(v2.z+nudge) ) );
-                }
+    function addSurfaceMeshGrid( json ) {
+
+        var geometry = new THREE.Geometry();
+
+        for ( var i=0 ; i < json.faces.length ; i++ ) {
+            var f = json.faces[i];
+            for ( var j=0 ; j < f.length ; j++ ) {
+                var k = j === f.length-1 ? 0 : j+1;
+                var v1 = json.vertices[f[j]];
+                var v2 = json.vertices[f[k]];
+                // vertices in opposite directions on neighboring faces
+                var nudge = f[j] < f[k] ? .0005*zRange : -.0005*zRange;
+                geometry.vertices.push( new THREE.Vector3( a[0]*v1.x, a[1]*v1.y, a[2]*(v1.z+nudge) ) );
+                geometry.vertices.push( new THREE.Vector3( a[0]*v2.x, a[1]*v2.y, a[2]*(v2.z+nudge) ) );
             }
+        }
 
-            var material = new THREE.LineBasicMaterial( { color: 'black', linewidth: 1 } );
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
 
-            var c = new THREE.Vector3();
-            geometry.computeBoundingBox();
-            geometry.boundingBox.getCenter( c );
-            geometry.translate( -c.x, -c.y, -c.z );
+        var gridColor = options.theme === 'dark' ? 'white' : 'black';
+        var linewidth = json.linewidth || 1;
+        var materialOptions = { color: gridColor, linewidth: linewidth };
 
-            var mesh = new THREE.LineSegments( geometry, material );
-            mesh.position.set( c.x, c.y, c.z );
-            scene.add( mesh );
+        var mesh;
+        if ( linewidth > 1 && window.createFatLineSegments ) {
+            mesh = createFatLineSegments( geometry, materialOptions );
+        } else {
+            var material = new THREE.LineBasicMaterial( materialOptions );
+            mesh = new THREE.LineSegments( geometry, material );
+        }
 
+        mesh.position.set( c.x, c.y, c.z );
+        mesh.userData = json;
+        scene.add( mesh );
+
+    }
+
+    // --- Stereo ---
+
+    var stereoState = { mode: 'none', swapped: false, eyeFraction: 0.02, panelFraction: 0.5 };
+    var stereoCamera = new THREE.StereoCamera();
+    var stereoTargetL = null, stereoTargetR = null;
+    var parallaxMat = null, parallaxScene = null, parallaxCamera = null;
+    var anaglyphMat = null, anaglyphScene = null, anaglyphCamera = null;
+
+    function getCameraEyes() {
+
+        var eyeSep = stereoState.eyeFraction * midToCorner;
+
+        if ( camera.isPerspectiveCamera ) {
+            stereoCamera.eyeSep = eyeSep;
+            stereoCamera.update( camera );
+            var L = stereoCamera.cameraL, R = stereoCamera.cameraR;
+            return stereoState.swapped ? [ R, L ] : [ L, R ];
+        }
+
+        // Orthographic: offset camera positions along the right vector
+        var fwd = new THREE.Vector3();
+        camera.getWorldDirection( fwd );
+        var right = new THREE.Vector3().crossVectors( fwd, camera.up ).normalize();
+
+        var camL = camera.clone(), camR = camera.clone();
+        camL.position.addScaledVector( right, -eyeSep / 2 );
+        camR.position.addScaledVector( right,  eyeSep / 2 );
+        return stereoState.swapped ? [ camR, camL ] : [ camL, camR ];
+
+    }
+
+    function renderStereo() {
+
+        // For side-by-side, each eye renders into panelFraction of the total width.
+        // stereoCamera.aspect x mainAspect = panelAspect — must be set before update().
+        stereoCamera.aspect = ( stereoState.mode === 'side-by-side' ) ? stereoState.panelFraction : 1;
+
+        var eyes = getCameraEyes();
+        switch ( stereoState.mode ) {
+            case 'side-by-side': renderSideBySide( eyes[0], eyes[1] ); break;
+            case 'anaglyph':     renderAnaglyph( eyes[0], eyes[1] );   break;
+            case 'parallax':     renderParallax( eyes[0], eyes[1] );   break;
         }
 
     }
 
-    var scratch = new THREE.Vector3();
+    function renderSideBySide( camL, camR ) {
+
+        var w = renderer.domElement.width, h = renderer.domElement.height;
+        var pw = Math.floor( w * stereoState.panelFraction );
+        var xL = Math.floor( ( w - 2 * pw ) / 2 );
+        var xR = xL + pw;
+
+        renderer.autoClear = false;
+        renderer.clear();
+        renderer.setScissorTest( true );
+
+        renderer.setViewport( xL, 0, pw, h );
+        renderer.setScissor( xL, 0, pw, h );
+        renderer.render( scene, camL );
+
+        renderer.setViewport( xR, 0, pw, h );
+        renderer.setScissor( xR, 0, pw, h );
+        renderer.render( scene, camR );
+
+        renderer.setScissorTest( false );
+        renderer.setViewport( 0, 0, w, h );
+        renderer.autoClear = true;
+
+    }
+
+    function ensureAnaglyphSetup() {
+
+        if ( anaglyphScene ) return;
+        var geo = new THREE.PlaneGeometry( 2, 2 );
+        anaglyphMat = new THREE.ShaderMaterial( {
+            uniforms: {
+                mapL:             { value: null },
+                mapR:             { value: null },
+                colorMatrixLeft:  { value: new THREE.Matrix3().fromArray( [ 0.456100, -0.0400822, -0.0152161, 0.500484, -0.0378246, -0.0205971, 0.176381, -0.0157589, -0.00546856 ] ) },
+                colorMatrixRight: { value: new THREE.Matrix3().fromArray( [ -0.0434706, 0.378476, -0.0721527, -0.0879388, 0.73364, -0.112961, -0.00155529, -0.0184503, 1.2264 ] ) }
+            },
+            vertexShader: [
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vUv = vec2( uv.x, uv.y );',
+                '    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+                '}'
+            ].join( '\n' ),
+            fragmentShader: [
+                'uniform sampler2D mapL;',
+                'uniform sampler2D mapR;',
+                'varying vec2 vUv;',
+                'uniform mat3 colorMatrixLeft;',
+                'uniform mat3 colorMatrixRight;',
+                'float lin( float c ) {',
+                '    return c <= 0.04045 ? c * 0.0773993808 :',
+                '           pow( c * 0.9478672986 + 0.0521327014, 2.4 );',
+                '}',
+                'float dev( float c ) {',
+                '    return c <= 0.0031308 ? c * 12.92',
+                '           : pow( c, 0.41666 ) * 1.055 - 0.055;',
+                '}',
+                'void main() {',
+                '    vec2 uv = vUv;',
+                '    vec4 cL = texture2D( mapL, uv );',
+                '    vec4 cR = texture2D( mapR, uv );',
+                '    vec3 linL = vec3( lin(cL.r), lin(cL.g), lin(cL.b) );',
+                '    vec3 linR = vec3( lin(cR.r), lin(cR.g), lin(cR.b) );',
+                '    vec3 color = clamp( colorMatrixLeft * linL + colorMatrixRight * linR, 0.0, 1.0 );',
+                '    gl_FragColor = vec4( dev(color.r), dev(color.g), dev(color.b), max(cL.a, cR.a) );',
+                '}'
+            ].join( '\n' ),
+            depthTest: false,
+            depthWrite: false
+        } );
+        anaglyphScene = new THREE.Scene();
+        anaglyphScene.add( new THREE.Mesh( geo, anaglyphMat ) );
+        anaglyphCamera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
+
+    }
+
+    function renderAnaglyph( camL, camR ) {
+
+        ensureStereoTargets();
+        ensureAnaglyphSetup();
+        anaglyphMat.uniforms.mapL.value = stereoTargetL.texture;
+        anaglyphMat.uniforms.mapR.value = stereoTargetR.texture;
+        renderer.setRenderTarget( stereoTargetL );
+        renderer.clear();
+        renderer.render( scene, camL );
+        renderer.setRenderTarget( stereoTargetR );
+        renderer.clear();
+        renderer.render( scene, camR );
+        renderer.setRenderTarget( null );
+        renderer.render( anaglyphScene, anaglyphCamera );
+
+    }
+
+    function ensureStereoTargets() {
+
+        var w = renderer.domElement.width, h = renderer.domElement.height;
+        if ( stereoTargetL && stereoTargetL.width === w && stereoTargetL.height === h ) return;
+        disposeStereoTargets();
+        stereoTargetL = new THREE.WebGLRenderTarget( w, h );
+        stereoTargetR = new THREE.WebGLRenderTarget( w, h );
+
+    }
+
+    function disposeStereoTargets() {
+
+        // Release WebGL render targets allocated for anaglyph/parallax modes.
+        if ( stereoTargetL ) { stereoTargetL.dispose(); stereoTargetR.dispose(); stereoTargetL = null; stereoTargetR = null; }
+
+    }
+
+    function ensureParallaxSetup() {
+
+        if ( parallaxScene ) return;
+        var geo = new THREE.PlaneGeometry( 2, 2 );
+        parallaxMat = new THREE.ShaderMaterial( {
+            uniforms: {
+                mapL: { value: null },
+                mapR: { value: null }
+            },
+            vertexShader: [
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vUv = vec2( uv.x, uv.y );',
+                '    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+                '}'
+            ].join( '\n' ),
+            fragmentShader: [
+                'uniform sampler2D mapL;',
+                'uniform sampler2D mapR;',
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vec2 uv = vUv;',
+                '    if ( mod( gl_FragCoord.y, 2.0 ) > 1.0 ) {',
+                '        gl_FragColor = texture2D( mapL, uv );',
+                '    } else {',
+                '        gl_FragColor = texture2D( mapR, uv );',
+                '    }',
+                '}'
+            ].join( '\n' ),
+            depthTest: false,
+            depthWrite: false
+        } );
+        parallaxScene = new THREE.Scene();
+        parallaxScene.add( new THREE.Mesh( geo, parallaxMat ) );
+        parallaxCamera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
+
+    }
+
+    function renderParallax( camL, camR ) {
+
+        ensureStereoTargets();
+        ensureParallaxSetup();
+        parallaxMat.uniforms.mapL.value = stereoTargetL.texture;
+        parallaxMat.uniforms.mapR.value = stereoTargetR.texture;
+        renderer.setRenderTarget( stereoTargetL );
+        renderer.clear();
+        renderer.render( scene, camL );
+        renderer.setRenderTarget( stereoTargetR );
+        renderer.clear();
+        renderer.render( scene, camR );
+        renderer.setRenderTarget( null );
+        renderer.render( parallaxScene, parallaxCamera );
+
+    }
 
     function render() {
 
+        if ( window.updateAnimation ) animate = updateAnimation();
         if ( animate ) requestAnimationFrame( render );
-        renderer.render( scene, camera );
 
-        // Resize text based on distance from camera.
-        // Not necessary for orthographic due to the nature of the projection (preserves sizes).
-        if ( !camera.isOrthographicCamera ) {
-            for ( var i=0 ; i < scene.children.length ; i++ ) {
-                if ( scene.children[i].type === 'Sprite' ) {
-                    var sprite = scene.children[i];
-                    var adjust = scratch.addVectors( sprite.position, scene.position )
-                                    .sub( camera.position ).length() / 5;
-                    sprite.scale.set( adjust, .25*adjust ); // ratio of canvas width to height
-                }
-            }
+        if ( stereoState.mode === 'none' ) {
+            renderer.render( scene, camera );
+        } else {
+            renderStereo();
         }
+
     }
-    
+
     render();
     controls.update();
     if ( !animate ) render();
+
+
+    function toggleStereoPanel() {
+
+        var p = document.getElementById( 'stereo-panel' );
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        var m = document.getElementById( 'menu-content' );
+        if ( m.style.display === 'block' ) m.style.display = 'none';
+
+    }
+
+    function setStereoMode( mode ) {
+
+        stereoState.mode = mode;
+        // Only anaglyph and parallax modes need offscreen render targets; release them otherwise.
+        if ( mode !== 'anaglyph' && mode !== 'parallax' ) disposeStereoTargets();
+        document.getElementById( 'stereo-options' ).style.display = mode === 'none' ? 'none' : 'block';
+        document.getElementById( 'stereo-sbs-options' ).style.display = mode === 'side-by-side' ? 'block' : 'none';
+        if ( !animate ) render();
+
+    }
+
+    function setStereoSwap( checked ) {
+
+        stereoState.swapped = checked;
+        if ( !animate ) render();
+
+    }
+
+    function setStereoEyeFraction( val ) {
+
+        stereoState.eyeFraction = parseFloat( val );
+        document.getElementById( 'stereo-eye-label' ).textContent = ( stereoState.eyeFraction * 100 ).toFixed( 1 ) + '%';
+        if ( !animate ) render();
+
+    }
+
+    function setStereoPanelFraction( val ) {
+
+        stereoState.panelFraction = parseFloat( val );
+        document.getElementById( 'stereo-panel-label' ).textContent = Math.round( stereoState.panelFraction * 100 ) + '%';
+        if ( !animate ) render();
+
+    }
 
 
     // menu functions
@@ -408,38 +799,107 @@
         var blob = new Blob( [ '<!DOCTYPE html>\n' + document.documentElement.outerHTML ] );
         var a = document.body.appendChild( document.createElement( 'a' ) );
         a.href = window.URL.createObjectURL( blob );
-        a.download = 'graphic.html';
+        a.download = suggestFilename();
         a.click();
+
+        function suggestFilename() {
+            if ( !document.title ) {
+                return 'graphic.html';
+            } else if ( /\.html?$/i.test( document.title ) ) {
+                return document.title; // already ends in .htm or .html
+            } else {
+                return document.title + '.html';
+            }
+        }
 
     }
 
     function getViewpoint() {
 
+        function roundTo( x, n ) { return +x.toFixed(n); }
+
         var v = camera.quaternion.inverse();
         var r = Math.sqrt( v.x*v.x + v.y*v.y + v.z*v.z );
-        var axis = [ v.x / r, v.y / r, v.z / r ];
-        var angle = 2 * Math.atan2( r, v.w ) * 180 / Math.PI;
+        var axis = [ roundTo( v.x / r, 4 ), roundTo( v.y / r, 4 ), roundTo( v.z / r, 4 ) ];
+        var angle = roundTo( 2 * Math.atan2( r, v.w ) * 180 / Math.PI, 2 );
 
         var textArea = document.createElement( 'textarea' );
-        textArea.textContent = JSON.stringify( axis ) + ', ' + angle;
+        textArea.textContent = JSON.stringify( axis ) + ',' + angle;
         textArea.style.csstext = 'position: absolute; top: -100%';
         document.body.append( textArea );
         textArea.select();
         document.execCommand( 'copy' );
+
+        var m = document.getElementById( 'menu-message' );
+        m.innerHTML = 'Viewpoint copied to clipboard';
+        m.style.display = 'block';
+        setTimeout( function() { m.style.display = 'none'; }, 2000 );
+
+    }
+
+    function getCamera() {
+
+        function roundTo( x, n ) { return +x.toFixed(n); }
+
+        var pos = camera.position;
+        var pos_r = [ roundTo( pos.x, 4 ), roundTo( pos.y, 4 ), roundTo( pos.z, 4 ) ];
+   //     var up = camera.up; // up is always (0,0,1)
+        var textArea = document.createElement('textarea');
+        var cam_position = JSON.stringify(pos_r);
+        textArea.textContent = ',camera_position=' + cam_position;
+        textArea.style.csstext = 'position: absolute; top: -100%';
+        document.body.append( textArea );
+        textArea.select();
+        document.execCommand( 'copy' );
+
+        var m = document.getElementById( 'menu-message' );
+        m.innerHTML = 'Camera position '+ cam_position+' copied to clipboard';
+        m.style.display = 'block';
+        setTimeout( function() { m.style.display = 'none'; }, 2000 );
 
     }
 
 </script>
 
 <div id=&quot;menu-container&quot; onclick=&quot;toggleMenu()&quot;>&#x24d8;
+<div id=&quot;menu-message&quot;></div>
 <div id=&quot;menu-content&quot;>
 <div onclick=&quot;saveAsPNG()&quot;>Save as PNG</div>
 <div onclick=&quot;saveAsHTML()&quot;>Save as HTML</div>
-<div onclick=&quot;getViewpoint()&quot;>Get Viewpoint</div>
+<div onclick=&quot;getCamera()&quot;>Get camera</div>
+<div onclick=&quot;getViewpoint()&quot;>Get viewpoint</div>
+<div onclick=&quot;toggleStereoPanel()&quot;>Stereo View</div>
 <div>Close Menu</div>
 </div></div>
 
+<div id=&quot;stereo-panel&quot;>
+<div id=&quot;stereo-panel-header&quot;>Stereo View <span id=&quot;stereo-panel-close&quot; onclick=&quot;toggleStereoPanel()&quot;>&#x2715;</span></div>
+<label>Mode
+<select id=&quot;stereo-mode&quot; onchange=&quot;setStereoMode(this.value)&quot;>
+<option value=&quot;none&quot;>Normal</option>
+<option value=&quot;side-by-side&quot;>Side-by-Side</option>
+<option value=&quot;parallax&quot;>Parallax Barrier</option>
+<option value=&quot;anaglyph&quot;>Anaglyph (Red/Cyan)</option>
+</select>
+</label>
+<div id=&quot;stereo-options&quot; style=&quot;display:none&quot;>
+<label><input type=&quot;checkbox&quot; id=&quot;stereo-swap&quot; onchange=&quot;setStereoSwap(this.checked)&quot;> Swap L/R</label>
+<label>Eye distance: <span id=&quot;stereo-eye-label&quot;>2.0%</span>
+<input type=&quot;range&quot; id=&quot;stereo-eye-sep&quot; min=&quot;0&quot; max=&quot;0.2&quot; step=&quot;0.001&quot; value=&quot;0.02&quot;
+       oninput=&quot;setStereoEyeFraction(this.value)&quot;>
+</label>
+<div id=&quot;stereo-sbs-options&quot; style=&quot;display:none&quot;>
+<label>Panel size: <span id=&quot;stereo-panel-label&quot;>50%</span>
+<input type=&quot;range&quot; id=&quot;stereo-panel-frac&quot; min=&quot;0.1&quot; max=&quot;0.5&quot; step=&quot;0.01&quot; value=&quot;0.5&quot;
+       oninput=&quot;setStereoPanelFraction(this.value)&quot;>
+</label>
+</div>
+</div>
+</div>
+
+
 </body>
 </html>
+
 
 "></iframe>

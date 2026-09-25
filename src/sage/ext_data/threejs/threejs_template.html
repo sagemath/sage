@@ -31,6 +31,21 @@
 
     .dark-theme #menu-content div:hover { background-color: #303030; }
 
+    #stereo-panel { position: absolute; top: 20px; left: 20px; display: none;
+                    background-color: #F5F5F5; border: 1px solid black; padding: 12px;
+                    min-width: 230px; font-family: sans-serif; font-size: 13px; cursor: default; }
+
+    #stereo-panel-header { font-weight: bold; margin-bottom: 8px;
+                           display: flex; justify-content: space-between; align-items: center; }
+
+    #stereo-panel-close { cursor: pointer; font-size: 16px; line-height: 1; }
+
+    #stereo-panel label { display: block; margin-top: 8px; }
+
+    #stereo-panel select, #stereo-panel input[type=range] { width: 100%; margin-top: 4px; box-sizing: border-box; }
+
+    .dark-theme #stereo-panel { background-color: #181818; border-color: white; color: white; }
+
 </style>
 SAGE_STYLES
 </head>
@@ -304,6 +319,7 @@ SAGE_SCRIPTS
         renderer.setSize( window.innerWidth, window.innerHeight );
         updateCameraAspect( camera, window.innerWidth / window.innerHeight );
         if ( window.rescaleFatLines ) rescaleFatLines();
+        if ( typeof disposeStereoTargets === 'function' ) disposeStereoTargets();
         if ( !animate ) render();
 
     } );
@@ -478,18 +494,277 @@ SAGE_SCRIPTS
 
     }
 
+    // --- Stereo ---
+
+    var stereoState = { mode: 'none', swapped: false, eyeFraction: 0.02, panelFraction: 0.5 };
+    var stereoCamera = new THREE.StereoCamera();
+    var stereoTargetL = null, stereoTargetR = null;
+    var parallaxMat = null, parallaxScene = null, parallaxCamera = null;
+    var anaglyphMat = null, anaglyphScene = null, anaglyphCamera = null;
+
+    function getCameraEyes() {
+
+        var eyeSep = stereoState.eyeFraction * midToCorner;
+
+        if ( camera.isPerspectiveCamera ) {
+            stereoCamera.eyeSep = eyeSep;
+            stereoCamera.update( camera );
+            var L = stereoCamera.cameraL, R = stereoCamera.cameraR;
+            return stereoState.swapped ? [ R, L ] : [ L, R ];
+        }
+
+        // Orthographic: offset camera positions along the right vector
+        var fwd = new THREE.Vector3();
+        camera.getWorldDirection( fwd );
+        var right = new THREE.Vector3().crossVectors( fwd, camera.up ).normalize();
+
+        var camL = camera.clone(), camR = camera.clone();
+        camL.position.addScaledVector( right, -eyeSep / 2 );
+        camR.position.addScaledVector( right,  eyeSep / 2 );
+        return stereoState.swapped ? [ camR, camL ] : [ camL, camR ];
+
+    }
+
+    function renderStereo() {
+
+        // For side-by-side, each eye renders into panelFraction of the total width.
+        // stereoCamera.aspect x mainAspect = panelAspect — must be set before update().
+        stereoCamera.aspect = ( stereoState.mode === 'side-by-side' ) ? stereoState.panelFraction : 1;
+
+        var eyes = getCameraEyes();
+        switch ( stereoState.mode ) {
+            case 'side-by-side': renderSideBySide( eyes[0], eyes[1] ); break;
+            case 'anaglyph':     renderAnaglyph( eyes[0], eyes[1] );   break;
+            case 'parallax':     renderParallax( eyes[0], eyes[1] );   break;
+        }
+
+    }
+
+    function renderSideBySide( camL, camR ) {
+
+        var w = renderer.domElement.width, h = renderer.domElement.height;
+        var pw = Math.floor( w * stereoState.panelFraction );
+        var xL = Math.floor( ( w - 2 * pw ) / 2 );
+        var xR = xL + pw;
+
+        renderer.autoClear = false;
+        renderer.clear();
+        renderer.setScissorTest( true );
+
+        renderer.setViewport( xL, 0, pw, h );
+        renderer.setScissor( xL, 0, pw, h );
+        renderer.render( scene, camL );
+
+        renderer.setViewport( xR, 0, pw, h );
+        renderer.setScissor( xR, 0, pw, h );
+        renderer.render( scene, camR );
+
+        renderer.setScissorTest( false );
+        renderer.setViewport( 0, 0, w, h );
+        renderer.autoClear = true;
+
+    }
+
+    function ensureAnaglyphSetup() {
+
+        if ( anaglyphScene ) return;
+        var geo = new THREE.PlaneGeometry( 2, 2 );
+        anaglyphMat = new THREE.ShaderMaterial( {
+            uniforms: {
+                mapL:             { value: null },
+                mapR:             { value: null },
+                colorMatrixLeft:  { value: new THREE.Matrix3().fromArray( [ 0.456100, -0.0400822, -0.0152161, 0.500484, -0.0378246, -0.0205971, 0.176381, -0.0157589, -0.00546856 ] ) },
+                colorMatrixRight: { value: new THREE.Matrix3().fromArray( [ -0.0434706, 0.378476, -0.0721527, -0.0879388, 0.73364, -0.112961, -0.00155529, -0.0184503, 1.2264 ] ) }
+            },
+            vertexShader: [
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vUv = vec2( uv.x, uv.y );',
+                '    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+                '}'
+            ].join( '\n' ),
+            fragmentShader: [
+                'uniform sampler2D mapL;',
+                'uniform sampler2D mapR;',
+                'varying vec2 vUv;',
+                'uniform mat3 colorMatrixLeft;',
+                'uniform mat3 colorMatrixRight;',
+                'float lin( float c ) {',
+                '    return c <= 0.04045 ? c * 0.0773993808 :',
+                '           pow( c * 0.9478672986 + 0.0521327014, 2.4 );',
+                '}',
+                'float dev( float c ) {',
+                '    return c <= 0.0031308 ? c * 12.92',
+                '           : pow( c, 0.41666 ) * 1.055 - 0.055;',
+                '}',
+                'void main() {',
+                '    vec2 uv = vUv;',
+                '    vec4 cL = texture2D( mapL, uv );',
+                '    vec4 cR = texture2D( mapR, uv );',
+                '    vec3 linL = vec3( lin(cL.r), lin(cL.g), lin(cL.b) );',
+                '    vec3 linR = vec3( lin(cR.r), lin(cR.g), lin(cR.b) );',
+                '    vec3 color = clamp( colorMatrixLeft * linL + colorMatrixRight * linR, 0.0, 1.0 );',
+                '    gl_FragColor = vec4( dev(color.r), dev(color.g), dev(color.b), max(cL.a, cR.a) );',
+                '}'
+            ].join( '\n' ),
+            depthTest: false,
+            depthWrite: false
+        } );
+        anaglyphScene = new THREE.Scene();
+        anaglyphScene.add( new THREE.Mesh( geo, anaglyphMat ) );
+        anaglyphCamera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
+
+    }
+
+    function renderAnaglyph( camL, camR ) {
+
+        ensureStereoTargets();
+        ensureAnaglyphSetup();
+        anaglyphMat.uniforms.mapL.value = stereoTargetL.texture;
+        anaglyphMat.uniforms.mapR.value = stereoTargetR.texture;
+        renderer.setRenderTarget( stereoTargetL );
+        renderer.clear();
+        renderer.render( scene, camL );
+        renderer.setRenderTarget( stereoTargetR );
+        renderer.clear();
+        renderer.render( scene, camR );
+        renderer.setRenderTarget( null );
+        renderer.render( anaglyphScene, anaglyphCamera );
+
+    }
+
+    function ensureStereoTargets() {
+
+        var w = renderer.domElement.width, h = renderer.domElement.height;
+        if ( stereoTargetL && stereoTargetL.width === w && stereoTargetL.height === h ) return;
+        disposeStereoTargets();
+        stereoTargetL = new THREE.WebGLRenderTarget( w, h );
+        stereoTargetR = new THREE.WebGLRenderTarget( w, h );
+
+    }
+
+    function disposeStereoTargets() {
+
+        // Release WebGL render targets allocated for anaglyph/parallax modes.
+        if ( stereoTargetL ) { stereoTargetL.dispose(); stereoTargetR.dispose(); stereoTargetL = null; stereoTargetR = null; }
+
+    }
+
+    function ensureParallaxSetup() {
+
+        if ( parallaxScene ) return;
+        var geo = new THREE.PlaneGeometry( 2, 2 );
+        parallaxMat = new THREE.ShaderMaterial( {
+            uniforms: {
+                mapL: { value: null },
+                mapR: { value: null }
+            },
+            vertexShader: [
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vUv = vec2( uv.x, uv.y );',
+                '    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+                '}'
+            ].join( '\n' ),
+            fragmentShader: [
+                'uniform sampler2D mapL;',
+                'uniform sampler2D mapR;',
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vec2 uv = vUv;',
+                '    if ( mod( gl_FragCoord.y, 2.0 ) > 1.0 ) {',
+                '        gl_FragColor = texture2D( mapL, uv );',
+                '    } else {',
+                '        gl_FragColor = texture2D( mapR, uv );',
+                '    }',
+                '}'
+            ].join( '\n' ),
+            depthTest: false,
+            depthWrite: false
+        } );
+        parallaxScene = new THREE.Scene();
+        parallaxScene.add( new THREE.Mesh( geo, parallaxMat ) );
+        parallaxCamera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
+
+    }
+
+    function renderParallax( camL, camR ) {
+
+        ensureStereoTargets();
+        ensureParallaxSetup();
+        parallaxMat.uniforms.mapL.value = stereoTargetL.texture;
+        parallaxMat.uniforms.mapR.value = stereoTargetR.texture;
+        renderer.setRenderTarget( stereoTargetL );
+        renderer.clear();
+        renderer.render( scene, camL );
+        renderer.setRenderTarget( stereoTargetR );
+        renderer.clear();
+        renderer.render( scene, camR );
+        renderer.setRenderTarget( null );
+        renderer.render( parallaxScene, parallaxCamera );
+
+    }
+
     function render() {
 
         if ( window.updateAnimation ) animate = updateAnimation();
         if ( animate ) requestAnimationFrame( render );
 
-        renderer.render( scene, camera );
+        if ( stereoState.mode === 'none' ) {
+            renderer.render( scene, camera );
+        } else {
+            renderStereo();
+        }
 
     }
 
     render();
     controls.update();
     if ( !animate ) render();
+
+
+    function toggleStereoPanel() {
+
+        var p = document.getElementById( 'stereo-panel' );
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        var m = document.getElementById( 'menu-content' );
+        if ( m.style.display === 'block' ) m.style.display = 'none';
+
+    }
+
+    function setStereoMode( mode ) {
+
+        stereoState.mode = mode;
+        // Only anaglyph and parallax modes need offscreen render targets; release them otherwise.
+        if ( mode !== 'anaglyph' && mode !== 'parallax' ) disposeStereoTargets();
+        document.getElementById( 'stereo-options' ).style.display = mode === 'none' ? 'none' : 'block';
+        document.getElementById( 'stereo-sbs-options' ).style.display = mode === 'side-by-side' ? 'block' : 'none';
+        if ( !animate ) render();
+
+    }
+
+    function setStereoSwap( checked ) {
+
+        stereoState.swapped = checked;
+        if ( !animate ) render();
+
+    }
+
+    function setStereoEyeFraction( val ) {
+
+        stereoState.eyeFraction = parseFloat( val );
+        document.getElementById( 'stereo-eye-label' ).textContent = ( stereoState.eyeFraction * 100 ).toFixed( 1 ) + '%';
+        if ( !animate ) render();
+
+    }
+
+    function setStereoPanelFraction( val ) {
+
+        stereoState.panelFraction = parseFloat( val );
+        document.getElementById( 'stereo-panel-label' ).textContent = Math.round( stereoState.panelFraction * 100 ) + '%';
+        if ( !animate ) render();
+
+    }
 
 
     // menu functions
@@ -589,8 +864,34 @@ SAGE_SCRIPTS
 <div onclick="saveAsHTML()">Save as HTML</div>
 <div onclick="getCamera()">Get camera</div>
 <div onclick="getViewpoint()">Get viewpoint</div>
+<div onclick="toggleStereoPanel()">Stereo View</div>
 <div>Close Menu</div>
 </div></div>
+
+<div id="stereo-panel">
+<div id="stereo-panel-header">Stereo View <span id="stereo-panel-close" onclick="toggleStereoPanel()">&#x2715;</span></div>
+<label>Mode
+<select id="stereo-mode" onchange="setStereoMode(this.value)">
+<option value="none">Normal</option>
+<option value="side-by-side">Side-by-Side</option>
+<option value="parallax">Parallax Barrier</option>
+<option value="anaglyph">Anaglyph (Red/Cyan)</option>
+</select>
+</label>
+<div id="stereo-options" style="display:none">
+<label><input type="checkbox" id="stereo-swap" onchange="setStereoSwap(this.checked)"> Swap L/R</label>
+<label>Eye distance: <span id="stereo-eye-label">2.0%</span>
+<input type="range" id="stereo-eye-sep" min="0" max="0.2" step="0.001" value="0.02"
+       oninput="setStereoEyeFraction(this.value)">
+</label>
+<div id="stereo-sbs-options" style="display:none">
+<label>Panel size: <span id="stereo-panel-label">50%</span>
+<input type="range" id="stereo-panel-frac" min="0.1" max="0.5" step="0.01" value="0.5"
+       oninput="setStereoPanelFraction(this.value)">
+</label>
+</div>
+</div>
+</div>
 
 SAGE_EXTRA_HTML
 </body>
