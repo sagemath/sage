@@ -958,7 +958,7 @@ class EnumeratedSets(CategoryWithAxiom):
             """
             raise NotImplementedError("unknown cardinality")
 
-        def map(self, f, name=None, *, is_injective=True):
+        def map(self, f, name=None, *, is_injective=True, inverse=None):
             r"""
             Return the image `\{f(x) | x \in \text{self}\}` of this
             enumerated set by `f`, as an enumerated set.
@@ -967,6 +967,11 @@ class EnumeratedSets(CategoryWithAxiom):
 
             - ``is_injective`` -- boolean (default: ``True``); whether to assume
               that `f` is injective
+
+            - ``inverse`` -- a function (default: ``None``); a left inverse of
+              ``f`` from the image back to ``self``; if provided, membership
+              testing in the resulting set becomes possible even when ``f`` has
+              no formal inverse map
 
             EXAMPLES::
 
@@ -981,6 +986,16 @@ class EnumeratedSets(CategoryWithAxiom):
                 [[1, 2, 3, 4], [1, 2, 4], [1, 3, 4], [1, 4], [2, 3, 4], [2, 4], [3, 4], [4]]
                 sage: R.category()
                 Category of finite enumerated subobjects of sets
+
+            Providing an ``inverse`` enables membership testing::
+
+                sage: from sage.combinat.cartesian_product import CartesianProduct_iters
+                sage: cp = CartesianProduct_iters([1, 2], ['a', 'b'])
+                sage: I = cp.map(tuple, is_injective=True, inverse=cp._element_constructor_)
+                sage: (1, 'a') in I
+                True
+                sage: (1, 'c') in I
+                False
 
             .. WARNING::
 
@@ -1006,7 +1021,7 @@ class EnumeratedSets(CategoryWithAxiom):
             """
             from sage.sets.image_set import ImageSubobject
 
-            image = ImageSubobject(f, self, is_injective=is_injective)
+            image = ImageSubobject(f, self, is_injective=is_injective, inverse=inverse)
             if name:
                 image.rename(name)
             return image
