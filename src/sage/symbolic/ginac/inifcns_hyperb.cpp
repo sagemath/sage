@@ -911,7 +911,8 @@ static ex atanh_series(const ex &arg,
  		// method:
  		// This is the branch cut: assemble the primitive series manually and
  		// then add the corresponding complex step function.
- 		const symbol &s = ex_to<symbol>(rel.lhs());
+		const ex lhs = rel.lhs();
+		const symbol &s = ex_to<symbol>(lhs);
  		const ex &point = rel.rhs();
  		const symbol foo;
  		const ex replarg = series(atanh(arg), s==foo, order).subs(foo==point, subs_options::no_pattern);

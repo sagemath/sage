@@ -749,8 +749,9 @@ static ex Order_series(const ex & x, const relational & r, int order, unsigned o
 {
 	// Just wrap the function into a pseries object
 	epvector new_seq;
-	GINAC_ASSERT(is_a<symbol>(r.lhs()));
-	const symbol &s = ex_to<symbol>(r.lhs());
+	const ex lhs = r.lhs();
+	GINAC_ASSERT(is_a<symbol>(lhs));
+	const symbol &s = ex_to<symbol>(lhs);
         int ldeg = x.ldegree(s).to_int();
 	new_seq.emplace_back(Order(_ex1), numeric(std::min(ldeg, order)));
 	return pseries(r, new_seq);
