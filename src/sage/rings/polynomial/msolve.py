@@ -11,6 +11,8 @@ It additionally provides a function for computing sample points
 per connected components of semi-algebraic sets defined by a single inequality
 or inequation. Note that it does not guarantee uniqueness; in particular, there
 can be multiple points in the output belonging to the same connected component.
+See https://arxiv.org/abs/2605.18110 for a detailled explanation of the
+algorithm.
 
 Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
@@ -355,7 +357,7 @@ def _format_output_msolve_grobner(ms_output):
         if is_sol_reached and l2 != '' and l2[0] == '-':
             is_sol_reached = False
         if not is_sol_reached:
-            print(l2)
+            #print(l2)
             continue
         l = ''
         for c in l2:
@@ -381,7 +383,7 @@ def _format_output_msolve_intervals(ms_output):
         if is_sol_reached and l2 != '' and l2[0] == '-':
             is_sol_reached = False
         if not is_sol_reached:
-            print(l2)
+            #print(l2)
             continue
         sols += l2
     sols = sols.replace("\n", "").replace(":", "")
@@ -451,6 +453,16 @@ def _grp_random_matrix(n, changevar=True):
     OUTPUT:
 
         - list of matrices; format [A, B_0 (= A^{-1}), B_1, ..., B_n]
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.msolve import _grp_random_matrix
+        sage: _grp_random_matrix(3, False)
+        [
+        [1 0 0]  [1 0 0]
+        [0 1 0]  [0 1 0]  [1 0]
+        [0 0 1], [0 0 1], [0 1], [1]
+        ]
     """
 
     while True:
@@ -479,6 +491,22 @@ def _derivative_order(poly):
 
         - polynomial; re-labeled polynomial with partial derivatives of
         increasing degree
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.msolve import _derivative_order
+        sage: R.<x,y,z> = QQ[]
+        sage: f = x^3 + y + z
+        sage: _derivative_order(f)
+        ((0,1,2), z^3 + x + y)
+
+    ::
+
+        sage: from sage.rings.polynomial.msolve import _derivative_order
+        sage: R.<x,y,z> = QQ[]
+        sage: f = x + y + z^5
+        sage: _derivative_order(f)
+        ((), z^5 + x + y)
     """
 
     from sage.combinat.words.word import Word
@@ -486,7 +514,7 @@ def _derivative_order(poly):
     from sage.symbolic.ring import SR
     R = poly.parent()
     variables = list(R.gens())
-    n = len(poly.variables())
+    n = len(variables)
     der_deg = {variables[i] : poly.derivative(variables[i]).degree() for i in range(n)}
     new_var = sorted(der_deg, key=lambda k: der_deg[k])
     perm = Word(variables).standard_permutation() / Word(new_var).standard_permutation()
@@ -513,6 +541,24 @@ def _remove_absent_variable(P, x):
     OUTPUT:
 
         - polynomial; P, but such that P.parent() does not contain x anymore.
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.msolve import _remove_absent_variable
+        sage: R.<x,y,z> = QQ[]
+        sage: f = x^2 + y^2
+        sage: g = _remove_absent_variable(f, [z])
+        sage: g.parent()
+        Multivariate Polynomial Ring in x, y over Rational Field
+
+    ::
+
+        sage: from sage.rings.polynomial.msolve import _remove_absent_variable
+        sage: R.<a,b,c,d,e> = QQ[]
+        sage: f = a*b^3 + c^2*a + b
+        sage: g = _remove_absent_variable(f, [d,e])
+        sage: g.parent()
+        Multivariate Polynomial Ring in a, b, c over Rational Field
     """
 
     from sage.rings.polynomial.polydict import PolyDict, ETuple
@@ -587,6 +633,24 @@ def _critical_points(f, threads, msolve_verbose, precision, k, n, list_of_matric
         V^A on the X_k-axis, where the first coordinates have been
         instantiated to sigma[0], ..., sigma[k-1]. This follows the msolve
         output format for the -P0 flag.
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.msolve import _critical_points
+        sage: R.<x,y> = QQ[]
+        sage: f = 2*x^2 - 7*x*y + 5*y^2 - 3*x + y - 2
+        sage: list_of_matrices = [matrix.identity(2),matrix.identity(2),matrix.identity(1)]
+        sage: _critical_points(f,1,0,64,0,2,list_of_matrices,[1],[x,y],[4*x-7*y-3,-7*x+10*y+1]) # optional - msolve
+        ([], [0, [1, [[[-1347862638603866387463337666665404373823/340282366920938463463374607431768211456, -336965659650966596865834416666351093455/85070591730234615865843651857942052864], [-977532083714800317570673827408959882821/340282366920938463463374607431768211456, -1955064167429600635141347654817919765641/680564733841876926926749214863536422912]], [[-391358347880930203571688104652522040287/340282366920938463463374607431768211456, -195679173940465101785844052326261020143/170141183460469231731687303715884105728], [-710151409083398159978660820745309637247099551539152056493/784637716923335095479473677900958302012794430558004314112, -177537852270849539994665205186327409311774887884788014123/196159429230833773869868419475239575503198607639501078528]]]]])
+
+    ::
+
+        sage: from sage.rings.polynomial.msolve import _critical_points
+        sage: R.<x,y> = QQ[]
+        sage: f = 2*x^2 - 7*x*y + 5*y^2 - 3*x + y - 2
+        sage: list_of_matrices = [matrix.identity(2),matrix.identity(2),matrix.identity(1)]
+        sage: _critical_points(f,1,0,64,1,2,list_of_matrices,[1],[x,y],[4*x-7*y-3,-7*x+10*y+1]) # optional - msolve
+        ([1], [0, [1, [[[-2067805549065042515500332649899245241803/5444517870735015415413993718908291383296, -4135611098130085031000665299798490483605/10889035741470030830827987437816582766592]], [[537576687121691313374820319536824681359/340282366920938463463374607431768211456, 33598542945105707085926269971051542585/21267647932558653966460912964485513216]]]]])
     """
 
     # Computing the actual values to substitue into x_0, ..., x_{k-1}
@@ -623,13 +687,13 @@ def _critical_points(f, threads, msolve_verbose, precision, k, n, list_of_matric
 
     return substitution, sol
 
-def _rough_eval(point,poly):
+def _rough_eval(point,poly,precision):
     r"""
     Internal Function
 
     Function computing the isolation interval that a polynomial takes on a box
-    approximating a point. Although MPFI technically does it already, it is not
-    precise enough for us in most examples
+    approximating a point. Uses MPFI with precision management to obtain a 
+    sufficiently precise result.
 
     INPUT:
 
@@ -638,40 +702,51 @@ def _rough_eval(point,poly):
 
         - ``poly`` -- polynomial with rational coefficients
 
+        - ``precision`` -- integer; number of bits of precision
+
     OUTPUT:
 
         - two rational numbers; lower and upper bounds for the value that `poly`
         can take on the approximation box of `point`.
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.msolve import _rough_eval
+        sage: R.<x,y> = QQ[]
+        sage: point = [[1/2^32,2/2^32],[1/2^64,2/2^64]]
+        sage: poly = 3*x^2 - 7*x*y + 2*y^2 - x - y + 2
+        sage: _rough_eval(point,poly,64)
+        (121413115499237538561/60706557763753116197, 103560668486545358013/51780334249300703267)
+
+    ::
+
+        sage: from sage.rings.polynomial.msolve import _rough_eval
+        sage: R.<x,y> = QQ[]
+        sage: point = [[-1347862638603866387463337666665404373823/340282366920938463463374607431768211456, -336965659650966596865834416666351093455/85070591730234615865843651857942052864], [-977532083714800317570673827408959882821/340282366920938463463374607431768211456, -1955064167429600635141347654817919765641/680564733841876926926749214863536422912]]
+        sage: poly = 4*x - 7*y - 3
+        sage: _rough_eval(point,poly,128)
+        (5686176089679557472/4495316905044313921, 77611246570388580208/61357077801839888641)
     """
 
     varss = poly.parent().gens()
     if len(poly.variables()) == 0:
         return QQ(poly), QQ(poly)
 
-    rg = range(len(varss))
-    sign_list = [sign(coord[0]) for coord in point]
-    modified_point = []
-    for i in range(len(point)):
-        if sign_list[i] == -1:
-            modified_point.append([point[i][1], point[i][0]])
-        else:
-            modified_point.append([point[i][0], point[i][1]])
-    min_out_poly = 0
-    max_out_poly = 0
-    if len(varss) == 1:
-        poly = PolynomialRing(QQ, 1, varss)(poly)
-        varss = PolynomialRing(QQ, 1, varss).gens()
-    for coeff,monom in poly:
-        signn = coeff*monom.subs({varss[i] : sign_list[i] for i in rg})
-        if sign(signn) == -1:
-            min_out_poly += coeff*monom.subs({varss[i] : modified_point[i][1] for i in rg})
-            max_out_poly += coeff*monom.subs({varss[i] : modified_point[i][0] for i in rg})
-        else:
-            min_out_poly += coeff*monom.subs({varss[i] : modified_point[i][0] for i in rg})
-            max_out_poly += coeff*monom.subs({varss[i] : modified_point[i][1] for i in rg})
-    return min_out_poly, max_out_poly
+    d = poly.degree()
+    RIF64 = RealIntervalField(prec=64)
+    mag_upper = abs(poly.subs({varss[i]: RIF64(point[i][0], point[i][1]) for i in range(len(varss))})).upper()
 
-def _matrix_box(n, point, matrix, substitution):
+    if mag_upper == 0:
+        mag_bits = precision
+    else:
+        mag_bits = max(0, int(mag_upper).bit_length())
+
+    prec = min(d * precision + mag_bits + 2,(d + 64) * precision + 2)
+    RIF = RealIntervalField(prec=prec)
+    val = poly.subs({varss[i]: RIF(point[i][0], point[i][1]) for i in range(len(varss))})
+    return QQ(val.lower()), QQ(val.upper())
+
+def _matrix_box(n, point, mat, substitution, precision):
         r"""
         Internal Function
 
@@ -694,16 +769,47 @@ def _matrix_box(n, point, matrix, substitution):
 
             - list; list of isolation intervals for the last n-k+1 coordinates
             of matrix*point, in msolve approximation format.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.msolve import _matrix_box
+            sage: point = [[-1451799264507203689716623995896282877863/340282366920938463463374607431768211456, -725899632253601844858311997948141438931/170141183460469231731687303715884105728], [-7605521109310547852362531254243109945643/2722258935367507707706996859454145691648, -3802760554655273926181265627121554972821/1361129467683753853853498429727072845824]]
+            sage: mat = matrix([[-4/285, 23/285], [23/285, -61/285]])
+            sage: _matrix_box(2,point,mat,[],32)
+            [[-8564627269994138835560416731927365110547/51722919771982646446432940329628768141312, -676154784473221487017927636731107771885/4083388403051261561560495289181218537472], [1035819594729568105717134690862703458723/4083388403051261561560495289181218537472, 13120381533241196005750372750927577143841/51722919771982646446432940329628768141312]]
+
+        ::
+
+            sage: from sage.rings.polynomial.msolve import _matrix_box
+            sage: R.<y> = QQ[]
+            sage: point = [[8609008234524257613322236371198172330028717152025991485713/12259964326927110866866776217202473468949912977468817408, 34436032938097030453288945484792689320114868608103965942853/49039857307708443467467104868809893875799651909875269632]]
+            sage: mat = matrix([[-4/285, 23/285], [23/285, -61/285]])
+            sage: _matrix_box(2,point,mat,[23/4*y - 2280],32)
+            [[-3850482337372267675004105508643453934188658654078985503643425499/455745783907024955809472105710176147498009590067937083916288000, -3651384946277361357542848290765513137647930278854323378221148693/432180477375486913563387134805923671156769549086990058567761920]]
         """
 
-        first_coords_point = [_rough_eval(point, item) for item in substitution]
-        extended_point = first_coords_point + point
-        vertices = [list(item) for item in itertools.product(*extended_point)]
-        changed_vertices = [matrix*vector(vertex) for vertex in vertices]
-        new_box = [[min(item[i] for item in changed_vertices),max(item[i] for item in changed_vertices)] for i in range(n)]
+        first_coords_point = [_rough_eval(point, item, precision) for item in substitution]
+        extended_point = first_coords_point + point   # n intervals total
+
+        new_box = []
+        for j in range(n):
+            lo = QQ(0)
+            hi = QQ(0)
+            for i in range(n):
+                mji = mat[j, i]
+                ai, bi = extended_point[i][0], extended_point[i][1]
+                if mji >= 0:
+                    lo += mji * ai
+                    hi += mji * bi
+                else:
+                    lo += mji * bi   # negative coefficient flips the interval
+                    hi += mji * ai
+            new_box.append([lo, hi])
+
         for coord in new_box[len(substitution):]:
             if sign(coord[0]) != sign(coord[1]):
                 raise ValueError("Not precise enough to ensure coordinate sign after transformation. Consider increasing the precision.")
+
         return new_box[len(substitution):]
 
 def _do_boxes_intersect(point_list):
@@ -719,23 +825,28 @@ def _do_boxes_intersect(point_list):
 
     OUTPUT:
 
-       - boolean; ``True`` if any box intersects another, ``False`` otherwise.
+        - boolean; ``True`` if any box intersects another, ``False`` otherwise.
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.msolve import _do_boxes_intersect
+        sage: _do_boxes_intersect([[[1,5],[1,5]],[[4,6],[4,6]]])
+        True
+
+    ::
+
+        sage: from sage.rings.polynomial.msolve import _do_boxes_intersect
+        sage: _do_boxes_intersect([[[-772128348493854694695583555343458510369567/12541446915238108009406134531505249201422336, -3088513393975418778782334221373834041472875/50165787660952432037624538126020996805689344], [163743502072905047911265299758077815677803/12541446915238108009406134531505249201422336, 40935875518226261977816324939519453919715/3135361728809527002351533632876312300355584]], [[-63929104321780636399523222353811278627653825746649463663397/3614825961865804784873935234089714897372943941580725875113984, -15982276080445159099880805588452819656865033733468878342853/903706490466451196218483808522428724343235985395181468778496], [744595217501201888721476986572526980938989991781930437317/225926622616612799054620952130607181085808996348795367194624, 2978380870004807554885907946290107923793429916027444276005/903706490466451196218483808522428724343235985395181468778496]]])
+        False
     """
 
-    if point_list == []:
+    if len(point_list) < 2:
         return False
     n = len(point_list[0])
-    all_vertices = [[list(item) for item in itertools.product(*point)] for point in point_list]
     for i in range(len(point_list)):
-        vertices = all_vertices[i]
-        for vertex in vertices:
-            for j in range(i+1, len(point_list)):
-                counter = 0
-                for k in range(n):
-                    if point_list[j][k][0] <= vertex[k] <= point_list[j][k][1]:
-                        counter += 1
-                if counter == n:
-                    return True
+        for j in range(i + 1, len(point_list)):
+            if all(point_list[i][k][0] <= point_list[j][k][1] and point_list[j][k][0] <= point_list[i][k][1] for k in range(n)):
+                return True
     return False
 
 def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbose, precision):
@@ -755,8 +866,8 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
         - ``point`` -- list of lists; list of isolation intervals,
         in msolve approximation format
 
-        - ``low_prec`` list of lists; ``point``, but with coordinates at a
-        lower precision
+        - ``low_prec`` list; first coordinate of ``point``, but with isolating 
+        interval at a lower precision
 
         - ``threads`` -- integer; number of threads to be used by msolve in
         computation
@@ -772,6 +883,16 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
         - Two points (in msolve format), each being to the 'left' and the
         'right' of the critical point on the transverse line, and sufficiently
         close to be in the right connected component.
+
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.msolve import _transverse_intersection
+        sage: R.<x,y> = QQ[]
+        sage: f = 2*x^2 - 7*x*y + 5*y^2 - 3*x + y - 2
+        sage: point = [[-1347862638603866387463337666665404373823/340282366920938463463374607431768211456, -336965659650966596865834416666351093455/85070591730234615865843651857942052864], [-977532083714800317570673827408959882821/340282366920938463463374607431768211456, -1955064167429600635141347654817919765641/680564733841876926926749214863536422912]]
+        sage: low_prec = [-4253104565/1073741824, -17012418259/4294967296]
+        sage: _transverse_intersection(f,(x,y),point,low_prec, 1,0,32) # optional - msolve
+        ([-81327242789970644619/18230669955817908734, -151863759432751750973/52864310410056725586], [-63096572834152735885/18230669955817908734, -151863759432751750973/52864310410056725586])
     """
 
     UnivarRing = PolynomialRing(QQ, "ttttt")
@@ -806,7 +927,7 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
         raise ValueError("Coordinates not precise enough to compute a good intersection line. Consider increasing the precision")
 
     if len(sorted_endpoints) != 2 and allowed_lambda_interval[0] <= sorted_endpoints[2] <= allowed_lambda_interval[1]:
-        raise ValueError("Isolation box not precise enough to gurantee a single intersection point of the transverse line inside it. Consider increasing the precision")
+        raise ValueError("Isolation box not precise enough to guarantee a single intersection point of the transverse line inside it. Consider increasing the precision")
 
     right_pt = [approx[0] + lambd]
     left_pt = [approx[0] - lambd]
@@ -815,7 +936,7 @@ def _transverse_intersection(poly, vars, point, low_prec, threads, msolve_verbos
         left_pt += approx[1:]
     return left_pt, right_pt
 
-def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar=True):
+def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar=True, _retry=0):
     r"""
     Internal Function
 
@@ -844,18 +965,25 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
         - ``changevar`` -- boolean (default ``True``); uses A = Identity and
         sigma = [1,...,1] if set to ``False``
 
+        - ``_retry`` -- integer (default 0); inner variable counting how many 
+        attempts have been made at trying to obtain finitely many critical 
+        points (main function gives up after 3 attempts)
+
     OUTPUT:
 
         - list of lists; each sublist corresponds to the coordinates of a
         rational point
     """
 
+    if _retry > 2:
+        raise RuntimeError("Failed to find a valid change of variables after 3 attempts.")
     # Setting up correct parent rings and variables
     R = poly.parent()
     variables = list(R.gens())
     n = len(variables)
 
     # Re-naming variables to have the increasing partial derivatives degree
+    original_poly = poly
     inv_permutation, poly = _derivative_order(poly)
     f = R(poly)
 
@@ -883,13 +1011,11 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
 
         # Obtaining approximations to critical points
         substitution, crit = _critical_points(f, threads, msolve_verbose,2*precision,k, n, list_of_matrices, sigma, variables, der_list)
-
         Solsk = []
-        #print(crit)
 
         # In case we have infinitely many of them
         if crit[0] > 0:
-            return _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar)
+            return _smooth_points_per_component(original_poly, threads, msolve_verbose, precision, inequation, isempty, changevar,_retry+1)
 
         # In case we have finitely many of them, and at least one
         if crit[0] != -1 and len(crit) < 3 and crit[1][1] != []:
@@ -920,7 +1046,7 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
                             raise ValueError("Msolve not precise enough to determine coordinate sign. Consider increasing the precision.")
 
                     # Computing approximation box of original (no A) critical point
-                    A_inv_point = _matrix_box(n,point,list_of_matrices[1],substitution)
+                    A_inv_point = _matrix_box(n,point,list_of_matrices[1],substitution,precision)
 
                     # Checking whether the sign of each coordinate is still known
                     for coord in A_inv_point:
@@ -929,7 +1055,7 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
 
                     A_inv_list.append(A_inv_point)
 
-                     # Checking whether the new approximation boxes intersect
+                    # Checking whether the new approximation boxes intersect
                     if _do_boxes_intersect(A_inv_list):
                         raise ValueError("Msolve not precise enough to isolate critical points. Consider increasing the precision.")
 
@@ -943,7 +1069,7 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
                 if [item[0] for item in point] != [item[1] for item in point]:
 
                     # Checking if df^A/dx_k = 0 in the msolve approximation box
-                    dfA_interval = _rough_eval(point, dfAdxk)
+                    dfA_interval = _rough_eval(point, dfAdxk, precision)
 
                     # Checking whether 0 is in the interval
                     if (dfA_interval[0] == 0 or dfA_interval[1] == 0 or sign(dfA_interval[0]) != sign(dfA_interval[1])):
@@ -961,13 +1087,18 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
                     elif k == n-2:
                         low_f = low_f.univariate_polynomial()
                         high_f = high_f.univariate_polynomial()
-                        low_inter = _rough_eval(point[1:], low_f)
-                        high_inter = _rough_eval(point[1:], high_f)
+                        low_inter = _rough_eval(point[1:], low_f, precision)
+                        high_inter = _rough_eval(point[1:], high_f, precision)
                     else:
                         low_f = _remove_absent_variable(low_f, variabless[0])
                         high_f = _remove_absent_variable(high_f, variabless[0])
-                        low_inter = _rough_eval(point[1:], low_f)
-                        high_inter = _rough_eval(point[1:], high_f)
+                        # print(point[1:])
+                        # print(low_f)
+                        # print(high_f)
+                        low_inter = _rough_eval(point[1:], low_f, precision)
+                        high_inter = _rough_eval(point[1:], high_f, precision)
+                        # print(low_inter)
+                        # print(high_inter)
 
                     # Checking whether 0 is in any interval
                     if (low_inter[0] == 0 or low_inter[1] == 0 or sign(low_inter[0]) != sign(low_inter[1])) \
@@ -978,7 +1109,6 @@ def _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequ
                 # Computing the points lying on the transverse line in the
                 # corresponding connected components
                 left, right = _transverse_intersection(fA_sub, variabless, point, coord_low_prec, threads, msolve_verbose, precision)
-
                 left = list_of_matrices[0]*vector(sigma[:k] + left)
                 right = list_of_matrices[0]*vector(sigma[:k] + right)
 
@@ -1069,6 +1199,6 @@ def points_per_components_single_inequality(poly, threads, msolve_verbose, preci
         raise ValueError("msolve relies on heuristics; please use proof=False.")
 
     if _is_smooth(poly, threads, msolve_verbose):
-        return _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar)
+        return _smooth_points_per_component(poly, threads, msolve_verbose, precision, inequation, isempty, changevar, 0)
     else:
         raise ValueError("Input polynomial does not define a smooth hypersurface, this case is not yet implemented.")
