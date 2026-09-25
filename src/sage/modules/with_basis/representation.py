@@ -532,6 +532,77 @@ class Representation_abstract:
         """
         return SchurFunctorRepresentation(self, la)
 
+    def restrict(self, semigroup, embedding=None, **kwargs):
+        r"""
+        Return the restriction of ``self`` to ``semigroup``.
+
+        INPUT:
+
+        - ``semigroup`` -- the semigroup to restrict to
+        - ``embedding`` -- (optional) a map from ``semigroup`` to the
+          original acting semigroup
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H = SymmetricGroup(2)
+            sage: R = G.regular_representation(QQ)
+            sage: res = R.restrict(H)
+            sage: res.semigroup() is H
+            True
+            sage: h = H((1,2))
+            sage: res.representation_matrix(h) == R.representation_matrix(G(h))
+            True
+            sage: TestSuite(res).run()
+        """
+        return RestrictedRepresentation(semigroup, self, embedding=embedding, **kwargs)
+
+    restriction = restrict
+
+    def induce(self, group, **kwargs):
+        r"""
+        Return the induction of ``self`` to ``group``.
+
+        INPUT:
+
+        - ``group`` -- a finite group containing the acting group of
+          ``self`` as a subgroup; elements of the acting group must coerce
+          into ``group``
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H = SymmetricGroup(2)
+            sage: V = H.sign_representation(QQ)
+            sage: ind = V.induce(G)
+            sage: ind.semigroup() is G
+            True
+            sage: ind.dimension()
+            3
+            sage: TestSuite(ind).run()
+        """
+        return InducedRepresentation(group, self.semigroup(), self, **kwargs)
+
+    def external_tensor_product(self, *others, **kwargs):
+        r"""
+        Return the external tensor product of ``self`` with ``others``.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H = CyclicPermutationGroup(2)
+            sage: V = G.regular_representation(QQ)
+            sage: W = H.sign_representation(QQ)
+            sage: E = V.external_tensor_product(W)
+            sage: E.semigroup().cartesian_factors() == (G, H)
+            True
+            sage: E.dimension()
+            6
+        """
+        if len(others) == 1 and isinstance(others[0], (list, tuple)):
+            others = tuple(others[0])
+        return ExternalTensorProductRepresentation(self, *others, **kwargs)
+
     @abstract_method(optional=True)
     def _semigroup_action(self, g, vec, vec_on_left):
         """
@@ -2122,6 +2193,617 @@ class Representation_Symmetric(Representation_abstract, CombinatorialFreeModule)
         ind = self._indices
         data = {ind(mon.exponents()[0]): c for c, mon in temp}
         return self.element_class(self, data)
+
+# ====================================================================
+# Induced representation from H to G
+# ====================================================================
+
+class InducedRepresentation(Representation_abstract, CombinatorialFreeModule):
+    r"""
+    Induced representation from `H` to `G`.
+
+    This assumes that `H` is realized as a subgroup of `G`, so elements
+    of `H` coerce into `G` and membership tests in `H` are available for
+    elements of `G`.
+
+    EXAMPLES::
+
+        sage: from sage.modules.with_basis.representation import InducedRepresentation
+        sage: G = SymmetricGroup(3)
+        sage: H = SymmetricGroup(2)
+        sage: V = H.trivial_representation(QQ)
+        sage: ind = InducedRepresentation(G, H, V)
+        sage: ind.dimension()
+        3
+
+        sage: g = G((1,2,3))
+        sage: ind.representation_matrix(g).nrows() == ind.dimension()
+        True
+
+        sage: G = SymmetricGroup(4)
+        sage: H = SymmetricGroup(3)
+        sage: V = H.sign_representation(QQ)
+        sage: InducedRepresentation(G, H, V).dimension()
+        4
+
+    The action satisfies the group action identity::
+
+        sage: G = SymmetricGroup(3)
+        sage: H = SymmetricGroup(2)
+        sage: V = H.sign_representation(QQ)
+        sage: ind = V.induce(G)
+        sage: g = G((1,2,3))
+        sage: h = G((1,2))
+        sage: v = ind.an_element()
+        sage: g * (h * v) == (g * h) * v
+        True
+
+    TESTS::
+
+        sage: G = SymmetricGroup(3)
+        sage: H = SymmetricGroup(2)
+        sage: V = H.regular_representation(QQ, side='right')
+        sage: V.induce(G)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: only left representations are supported
+    """
+
+    def __init__(self, G, H, sub_representation, **kwargs):
+        """
+        INPUT:
+
+        - ``G`` -- a finite group
+        - ``H`` -- a subgroup of ``G``
+        - ``sub_representation`` -- a left or two-sided representation of `H`
+        """
+        if not isinstance(sub_representation, Representation_abstract):
+            raise TypeError("sub_representation must be a representation")
+        if sub_representation.semigroup() != H:
+            raise ValueError("sub_representation must be a representation of H")
+        if sub_representation.side() == "right":
+            raise NotImplementedError("only left representations are supported")
+
+        self._G = G
+        self._H = H
+        self._sub_rep = sub_representation
+        self._coset_representatives = self._left_coset_representatives()
+        self._coset_factorization_cache = {}
+
+        from sage.categories.cartesian_product import cartesian_product
+
+        B = cartesian_product(
+            [self._coset_representatives, self._sub_rep.basis().keys()]
+        ).map(tuple, is_injective=True)
+
+        category = kwargs.pop('category', Modules(self._sub_rep.base_ring()).WithBasis())
+        if 'FiniteDimensional' in self._sub_rep.category().axioms():
+            category = category.FiniteDimensional()
+
+        CombinatorialFreeModule.__init__(self, self._sub_rep.base_ring(), B, category=category)
+        Representation_abstract.__init__(self, self._G, "left")
+
+    @staticmethod
+    def _element_constructor(parent, x):
+        """
+        Return ``x`` as an element of ``parent``.
+        """
+        try:
+            return parent(x, check=False)
+        except TypeError:
+            return parent(x)
+
+    @staticmethod
+    def _libgap_group(group):
+        """
+        Return the GAP object corresponding to ``group``.
+        """
+        try:
+            return group._libgap_()
+        except (AttributeError, NotImplementedError):
+            pass
+        from sage.libs.gap.libgap import libgap
+        return libgap(group)
+
+    def _left_coset_representatives(self):
+        """
+        Return representatives of the left cosets of `H` in `G`.
+        """
+        try:
+            from sage.libs.gap.libgap import libgap
+            G_gap = self._libgap_group(self._G)
+            H_gap = self._libgap_group(self._H)
+            reps = libgap.RightTransversal(G_gap, H_gap)
+            return tuple(~self._element_constructor(self._G, rep) for rep in reps)
+        except (AttributeError, ImportError, TypeError, ValueError):
+            pass
+
+        remaining = set(self._G)
+        ret = []
+        while remaining:
+            r = remaining.pop()
+            ret.append(r)
+            for h in self._H:
+                remaining.discard(r * self._element_constructor(self._G, h))
+        return tuple(ret)
+
+    def _coset_factorization(self, g):
+        r"""
+        Return `(r, h)` such that ``g == r * h`` with `r \in G/H`
+        and `h \in H`.
+        """
+        try:
+            return self._coset_factorization_cache[g]
+        except KeyError:
+            pass
+
+        for r in self._coset_representatives:
+            h = ~r * g
+            if h in self._H:
+                h = self._element_constructor(self._H, h)
+                ret = (r, h)
+                self._coset_factorization_cache[g] = ret
+                return ret
+        raise ValueError("unable to factor group element using the coset representatives")
+
+    def _semigroup_action(self, g, vec, vec_on_left):
+        if self._left_repr == vec_on_left:
+            g = ~g
+        g = self._element_constructor(self._G, g)
+        B = self._sub_rep.basis()
+        ret = self.zero()
+        for k, c in vec.monomial_coefficients(copy=False).items():
+            r, v = k
+            rep, h = self._coset_factorization(g * r)
+            acted = h * B[v]
+            ret += self.sum_of_terms(
+                ((rep, b), c * coeff)
+                for b, coeff in acted.monomial_coefficients(copy=False).items()
+            )
+        return ret
+
+    def dimension(self):
+        return (self._G.cardinality() // self._H.cardinality()) * self._sub_rep.dimension()
+
+    def _repr_(self):
+        return (
+            f"Induced representation from {self._H} to {self._G} "
+            f"of {self._sub_rep}"
+        )
+
+
+# ====================================================================
+# Restricted representation
+# ====================================================================
+
+class RestrictedRepresentation(Representation_abstract, CombinatorialFreeModule):
+    r"""
+    Restriction of a representation to a subsemigroup.
+
+    The new semigroup acts on the same underlying module through its
+    image in the original acting semigroup.
+
+    EXAMPLES::
+
+        sage: G = SymmetricGroup(3)
+        sage: H = SymmetricGroup(2)
+        sage: R = G.regular_representation(QQ)
+        sage: res = R.restrict(H)
+        sage: res.dimension()
+        6
+        sage: h = H((1,2))
+        sage: res.representation_matrix(h) == R.representation_matrix(G(h))
+        True
+
+    The side of the representation is preserved::
+
+        sage: R = G.regular_representation(QQ, side='right')
+        sage: R.restrict(H).side()
+        'right'
+        sage: T = G.trivial_representation(QQ)
+        sage: T.restrict(H).side()
+        'twosided'
+    """
+
+    def __init__(self, semigroup, representation, *args, embedding=None, **kwargs):
+        """
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``semigroup`` -- the semigroup to restrict to
+        - ``representation`` -- the representation to restrict
+        - ``embedding`` -- (optional) a map from ``semigroup`` to the
+          original acting semigroup
+        """
+        if args:
+            if len(args) != 1:
+                raise TypeError("invalid input for restricted representation")
+            ambient_semigroup = representation
+            representation = args[0]
+        else:
+            if not isinstance(representation, Representation_abstract):
+                raise TypeError("representation must be a representation")
+            ambient_semigroup = representation.semigroup()
+
+        if not isinstance(representation, Representation_abstract):
+            raise TypeError("representation must be a representation")
+
+        self._ambient_representation = representation
+        self._ambient_semigroup = ambient_semigroup
+        self._embedding = embedding
+        self._module = representation
+
+        category = kwargs.pop('category', representation.category())
+        options = representation.print_options()
+        options.update(kwargs)
+        CombinatorialFreeModule.__init__(
+            self, representation.base_ring(), representation.basis().keys(),
+            category=category, **options
+        )
+        Representation_abstract.__init__(self, semigroup, representation.side())
+
+    @staticmethod
+    def _element_constructor(parent, x):
+        """
+        Return ``x`` as an element of ``parent``.
+        """
+        try:
+            return parent(x, check=False)
+        except TypeError:
+            return parent(x)
+
+    def _ambient_element(self, g):
+        """
+        Return the image of ``g`` in the original acting semigroup.
+        """
+        if self._embedding is not None:
+            g = self._embedding(g)
+        return self._element_constructor(self._ambient_semigroup, g)
+
+    def _repr_term(self, b):
+        """
+        Return a string representation of the term indexed by ``b``.
+        """
+        return self._ambient_representation._repr_term(b)
+
+    def _latex_term(self, b):
+        """
+        Return a LaTeX representation of the term indexed by ``b``.
+        """
+        return self._ambient_representation._latex_term(b)
+
+    def _element_constructor_(self, x):
+        """
+        Construct an element of ``self`` from ``x``.
+        """
+        if isinstance(x, Element) and x.parent() is self._ambient_representation:
+            return self._from_dict(x.monomial_coefficients(copy=False),
+                                   remove_zeros=False)
+        return super()._element_constructor_(x)
+
+    def product_by_coercion(self, left, right):
+        """
+        Return the product of ``left`` and ``right`` using the ambient
+        representation.
+        """
+        M = self._ambient_representation
+        left = M._from_dict(left._monomial_coefficients, False, False)
+        right = M._from_dict(right._monomial_coefficients, False, False)
+        ret = left * right
+        return self._from_dict(ret.monomial_coefficients(copy=False), False, False)
+
+    def _semigroup_action(self, g, vec, vec_on_left):
+        """
+        Return the action of the semigroup element ``g`` on ``vec``.
+        """
+        g = self._ambient_element(g)
+        vec = self._ambient_representation._from_dict(
+            vec.monomial_coefficients(copy=False), False, False
+        )
+        ret = vec * g if vec_on_left else g * vec
+        return self._from_dict(ret.monomial_coefficients(copy=False), False, False)
+
+    def _repr_(self):
+        return (
+            f"Restricted representation of {self._ambient_representation} "
+            f"to {self._semigroup}"
+        )
+
+    class Element(Representation_abstract.Element):
+        pass
+
+
+# ====================================================================
+# Internal Frobenius reciprocity verification
+# ====================================================================
+
+def _character_value(representation, g):
+    r"""
+    Return the character value `\chi(g)` of ``representation`` at ``g``.
+
+    This extracts the trace of the matrix of the action of ``g`` on
+    the underlying module.
+
+    INPUT:
+
+    - ``representation`` -- a ``Representation_abstract`` instance
+    - ``g`` -- an element of the group acting on ``representation``
+
+    OUTPUT: an element of the base ring
+    """
+    return representation.representation_matrix(g).trace()
+
+
+def _character_inner_product(chi1, chi2, G):
+    r"""
+    Return the inner product `\langle \chi_1, \chi_2 \rangle_G` of two
+    class functions on a finite group ``G``.
+
+    The inner product is
+
+    .. MATH::
+
+        \langle \chi_1, \chi_2 \rangle_G
+        = \frac{1}{|G|} \sum_{g \in G} \chi_1(g) \overline{\chi_2(g)},
+
+    where `\overline{\cdot}` denotes complex conjugation.  For
+    representations over `\mathbb{Q}` (e.g. symmetric groups with rational
+    characters) the conjugate equals the original value, so this reduces to
+    the familiar real inner product.
+
+    INPUT:
+
+    - ``chi1``, ``chi2`` -- callables `G \to \text{base ring}`
+    - ``G`` -- a finite group supporting iteration and ``cardinality()``
+
+    OUTPUT: a rational number (or element of the base ring)
+    """
+    from sage.rings.rational_field import QQ
+
+    def conjugate(x):
+        try:
+            return x.conjugate()
+        except AttributeError:
+            return x
+
+    total = sum(chi1(g) * conjugate(chi2(g)) for g in G)
+    return QQ(total) / QQ(G.cardinality())
+
+
+def _verify_frobenius_reciprocity(G, H, rep_H, rep_G, embedding=None, verbose=False):
+    r"""
+    Verify Frobenius reciprocity between a representation of `H` and one of `G`.
+
+    This checks the identity
+
+    .. MATH::
+
+        \langle \mathrm{Ind}_H^G(\chi), \psi \rangle_G
+        = \langle \chi, \mathrm{Res}_G^H(\psi) \rangle_H,
+
+    where `\chi` is the character of ``rep_H`` (a representation of `H`)
+    and `\psi` is the character of ``rep_G`` (a representation of `G`).
+
+    INPUT:
+
+    - ``G`` -- a finite group
+    - ``H`` -- a subgroup of ``G``
+    - ``rep_H`` -- a left representation of ``H``
+    - ``rep_G`` -- a left representation of ``G``
+    - ``embedding`` -- (optional) a group homomorphism `H \to G`;
+      passed directly to :class:`RestrictedRepresentation`.  If ``None``,
+      the natural inclusion is used.
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
+      two inner product values and their difference
+
+    OUTPUT: ``True`` if Frobenius reciprocity holds, ``False`` otherwise
+
+    TESTS::
+
+        sage: from sage.modules.with_basis.representation import _verify_frobenius_reciprocity
+        sage: G = SymmetricGroup(3)
+        sage: H = SymmetricGroup(2)
+        sage: rep_H = H.trivial_representation(QQ)
+        sage: rep_G = G.regular_representation(QQ)
+        sage: _verify_frobenius_reciprocity(G, H, rep_H, rep_G)
+        True
+
+        sage: rep_H = H.sign_representation(QQ)
+        sage: _verify_frobenius_reciprocity(G, H, rep_H, rep_G)
+        True
+    """
+    ind_rep = rep_H.induce(G)
+    res_rep = RestrictedRepresentation(H, rep_G, embedding=embedding)
+
+    def chi_ind(g):
+        return _character_value(ind_rep, g)
+
+    def chi_res(h):
+        return _character_value(res_rep, h)
+
+    def chi_G(g):
+        return _character_value(rep_G, g)
+
+    def chi_H(h):
+        return _character_value(rep_H, h)
+
+    left = _character_inner_product(chi_ind, chi_G, G)
+    right = _character_inner_product(chi_H, chi_res, H)
+
+    if verbose:
+        print(f"<Ind chi, psi>_G = {left}")
+        print(f"<chi, Res psi>_H = {right}")
+        print(f"Difference   = {left - right}")
+
+    return left == right
+
+# ====================================================================
+# External tensor product of representations
+# ====================================================================
+
+class ExternalTensorProductRepresentation(Representation_abstract, CombinatorialFreeModule_Tensor):
+    r"""
+    External tensor product of representations.
+
+    Given representations `V_i` of semigroups `G_i` over a common base
+    ring, their external tensor product is a representation of
+    `G_1 \times \cdots \times G_n` on `V_1 \otimes \cdots \otimes V_n`
+    with coordinatewise action
+
+    .. MATH::
+
+        (g_1, \ldots, g_n) (v_1 \otimes \cdots \otimes v_n)
+        = g_1 v_1 \otimes \cdots \otimes g_n v_n.
+
+    EXAMPLES::
+
+        sage: G = SymmetricGroup(3)
+        sage: H = CyclicPermutationGroup(2)
+        sage: V = G.regular_representation(QQ)
+        sage: W = H.sign_representation(QQ)
+        sage: E = V.external_tensor_product(W)
+        sage: E.dimension()
+        6
+        sage: E.semigroup().cartesian_factors() == (G, H)
+        True
+        sage: g = E.semigroup().an_element()
+        sage: E.representation_matrix(g).nrows() == E.dimension()
+        True
+
+        sage: T = V.external_tensor_product(W, W)
+        sage: T.dimension()
+        6
+        sage: T.semigroup().cartesian_factors() == (G, H, H)
+        True
+        sage: TestSuite(E).run()
+        sage: TestSuite(T).run()
+
+    TESTS::
+
+        sage: G = SymmetricGroup(3)
+        sage: H = CyclicPermutationGroup(2)
+        sage: L = G.regular_representation(QQ, side='left')
+        sage: R = H.regular_representation(QQ, side='right')
+        sage: L.external_tensor_product(R)
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot mix left and right representations
+    """
+
+    @staticmethod
+    def __classcall_private__(cls, *reps, **options):
+        """
+        Normalize input to ensure a unique representation.
+        """
+        if len(reps) == 1 and isinstance(reps[0], (list, tuple)):
+            reps = tuple(reps[0])
+        if not reps:
+            raise ValueError("at least one representation is required")
+        if not all(isinstance(rep, Representation_abstract) for rep in reps):
+            raise TypeError("all factors must be representations")
+        reps = sum((rep._sets if isinstance(rep, cls) else (rep,)
+                    for rep in reps), ())
+        R = reps[0].base_ring()
+        if not all(rep in Modules(R).WithBasis() for rep in reps):
+            raise ValueError("all representations must be over the same base ring")
+        return super().__classcall__(cls, reps, **options)
+
+    def __init__(self, reps, **kwargs):
+        """
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``reps`` -- representations over the same base ring
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H = CyclicPermutationGroup(2)
+            sage: V = G.trivial_representation(QQ)
+            sage: W = H.trivial_representation(QQ)
+            sage: V.external_tensor_product(W)
+            External tensor product representation of The Cartesian product of ...
+        """
+        sides = set(rep.side() for rep in reps)
+        non_twosided = sides - {"twosided"}
+        if len(non_twosided) > 1:
+            raise ValueError("cannot mix left and right representations")
+        if non_twosided:
+            side, = non_twosided
+        else:
+            side = "twosided"
+
+        from sage.categories.cartesian_product import cartesian_product
+        semigroup = cartesian_product([rep.semigroup() for rep in reps])
+
+        R = reps[0].base_ring()
+        category = kwargs.pop('category', Modules(R).WithBasis())
+        if all('FiniteDimensional' in rep.category().axioms() for rep in reps):
+            category = category.FiniteDimensional()
+
+        CombinatorialFreeModule_Tensor.__init__(self, reps, category=category, **kwargs)
+        Representation_abstract.__init__(self, semigroup, side)
+
+    def _semigroup_action(self, g, vec, vec_on_left):
+        r"""
+        Return the action of ``g`` on ``vec``.
+
+        The action is defined on basis elements by acting coordinatewise.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H = CyclicPermutationGroup(2)
+            sage: V = G.regular_representation(QQ)
+            sage: W = H.sign_representation(QQ)
+            sage: E = V.external_tensor_product(W)
+            sage: g = E.semigroup().an_element()
+            sage: v = E.an_element()
+            sage: E._semigroup_action(g, v, False) in E
+            True
+        """
+        from functools import reduce
+        from itertools import product as iproduct
+
+        g = self._semigroup(g)
+        factors = tuple(g)
+        result = self.zero()
+        bases = [rep.basis() for rep in self._sets]
+        for b, c in vec.monomial_coefficients(copy=False).items():
+            if vec_on_left:
+                acted = [B[k] * g_i for B, k, g_i in zip(bases, b, factors)]
+            else:
+                acted = [g_i * B[k] for B, k, g_i in zip(bases, b, factors)]
+            monomial_coefficients = [elt.monomial_coefficients(copy=False).items()
+                                     for elt in acted]
+            # Expand multilinearly.
+            for terms in iproduct(*monomial_coefficients):
+                keys, coeffs = zip(*terms)
+                result += self.term(tuple(keys), reduce(lambda a, b: a * b, coeffs, c))
+        return result
+
+    def dimension(self):
+        r"""
+        Return the dimension of ``self``.
+
+        This equals `\prod_i \dim(V_i)`.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H = CyclicPermutationGroup(2)
+            sage: V = G.regular_representation(QQ)
+            sage: W = H.regular_representation(QQ)
+            sage: V.external_tensor_product(W).dimension()
+            12
+        """
+        from functools import reduce
+        return reduce(lambda a, b: a * b, (rep.dimension() for rep in self._sets))
+
+    def _repr_(self):
+        return f"External tensor product representation of {self._semigroup}"
 
 
 class RegularRepresentation(Representation):
