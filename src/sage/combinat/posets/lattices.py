@@ -1151,12 +1151,20 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: LatticePoset().is_stone()  # Empty lattice
             True
 
+            sage: P = LatticePoset({0:[1,2],1:[3],2:[3]})
+            sage: P.is_stone()
+            True
+            sage: P.category()
+            Category of facade finite enumerated stone distributive lattices
+
             sage: L = LatticePoset(DiGraph('GW?_W@?W@?O?'))
             sage: L.is_stone()  # Pass the fast check, but not a Stone lattice
             False
         """
         # TODO: For now we can factor only undirected graphs. When that
         # is extended to directed, use that; see comment below.
+
+        cat = self.category().Stone()
 
         if not self.is_distributive():
             return (False, None) if certificate else False
@@ -1166,6 +1174,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         # Needed for the empty lattice that has no bottom element.
         if self.cardinality() < 5:
+            self._refine_category_(cat)
             return ok
 
         # Quick check:
@@ -1174,6 +1183,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         # and odd number of elements.
         atoms_n = self._hasse_diagram.out_degree(0)
         if atoms_n == 1:
+            self._refine_category_(cat)
             return ok
         if not certificate:
             if sum([x[1] for x in factor(self.cardinality())]) < atoms_n:
@@ -1193,6 +1203,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     return False
                 tested.add(e_)
 
+        self._refine_category_(cat)
         return ok
 
     def is_distributive(self, certificate=False) -> bool | tuple:
@@ -1223,6 +1234,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L = LatticePoset({1: [2, 3], 2: [4], 3: [4], 4: [5]})
             sage: L.is_distributive()
             True
+            sage: L.category()
+            Category of facade finite enumerated distributive lattices
+
             sage: L = LatticePoset({1: [2, 3, 4], 2: [5], 3: [6], 4: [6], 5: [6]})
             sage: L.is_distributive()
             False
@@ -1249,12 +1263,16 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         ok = (True, None) if certificate else True
 
+        cat = self.category().Distributive()
+
         if self.cardinality() == 0:
+            self._refine_category_(cat)
             return ok
 
         if (self.is_graded() and
                 self.rank() == len(self.join_irreducibles()) ==
                 len(self.meet_irreducibles())):
+            self._refine_category_(cat)
             return ok
 
         if not certificate:
@@ -1288,6 +1306,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L = LatticePoset({1: [2, 3], 2: [4, 5], 3: [5], 4: [6], 5: [7], 6: [7]})
             sage: L.is_semidistributive()
             True
+            sage: L.category()
+            Category of facade finite enumerated semidistributive lattice posets
 
         The diamond is not semidistributive::
 
@@ -1311,9 +1331,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         """
         H = self._hasse_diagram
         # See trac #21528 for explanation.
-        return ((H.in_degree_sequence().count(1) ==
-                 H.out_degree_sequence().count(1)) and
-                self.is_meet_semidistributive())
+        cat = self.category().Semidistributive()
+        check = ((H.in_degree_sequence().count(1) ==
+                  H.out_degree_sequence().count(1)) and
+                 self.is_meet_semidistributive())
+        if check:
+            self._refine_category_(cat)
+        return check
 
     def is_meet_semidistributive(self, certificate=False) -> bool | tuple:
         r"""
@@ -1567,6 +1591,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             ....:     [[1,2],[1,3],[3,4],[4,5],[2,5],[2,6],[6,5],[2,4]]))
             sage: L.is_trim(True)
             (True, [1, 2, 6, 5])
+            sage: L.category()
+            Category of facade finite enumerated trim lattice posets
 
         Testing a lattice which is not trim ::
 
@@ -1592,7 +1618,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if not (ji == mi == h - 1):
             return (False, None) if certificate else False
 
+        cat = self.category().Trim()
         if all(self.is_left_modular_element(e) for e in chain):
+            self._refine_category_(cat)
             return (True, chain) if certificate else True
         return (False, None) if certificate else False
 
@@ -4451,11 +4479,22 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: P.is_congruence_uniform()
             False
 
+        TESTS::
+
+            sage: P = LatticePoset({0:[1,2],1:[3],2:[3],3:[4]})
+            sage: P.is_congruence_uniform()
+            True
+            sage: P.category()
+            Category of facade finite enumerated congruence uniform lattice posets
+
         REFERENCES:
 
         - [Day1979]_
         """
-        return self.is_constructible_by_doublings(type="interval")
+        check = self.is_constructible_by_doublings(type="interval")
+        if check:
+            self._refine_category_(self.category().CongruenceUniform())
+        return check
 
     def is_isoform(self, certificate=False) -> bool | tuple:
         """
