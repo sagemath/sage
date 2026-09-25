@@ -720,9 +720,16 @@ select = [
 "all.py" = [
   "F401", # Unused import - these files are by definition collections of imports.
 ]
+"src/sage/**/*catalog.py" = [
+  "F401", # Unused import - catalog files are used for reexports
+]
 "src/sage/algebras/lie_conformal_algebras/examples.py" = [
   "F401", # Unused import - reexports for convenience.
 ]
+"src/sage/categories/basic.py" = [
+  "F401", # Unused import - this file is used to define basic categories that are imported at startup
+]
+
 
 [tool.cython-lint]
 ignore = ["E501", "E741"]
