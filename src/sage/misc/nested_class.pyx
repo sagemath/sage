@@ -162,11 +162,10 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
         ....:  "    class B2:",
         ....:  "        class C2: pass"]
         sage: import os
-        sage: cython(os.linesep.join(cython_code))                                      # needs sage.misc.cython
+        sage: cython(os.linesep.join(cython_code))
 
     Before :issue:`9107`, the name of ``A1.B1.C1`` would have been wrong::
 
-        sage: # needs sage.misc.cython
         sage: A1.B1.C1.__name__
         'A1.B1.C1'
         sage: A1.B2.C2.__name__

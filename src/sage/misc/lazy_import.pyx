@@ -366,7 +366,7 @@ cdef class LazyImport():
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: rm = LazyImport('sage.matrix.special', 'random_matrix')
-            sage: rm._sage_argspec_()                                                   # needs sage.modules
+            sage: rm._sage_argspec_()
             FullArgSpec(args=['ring', 'nrows', 'ncols', 'algorithm', 'implementation'],
                         varargs='args', varkw='kwds', defaults=(None, 'randomize', None),
                         kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -542,12 +542,12 @@ cdef class LazyImport():
 
            We access the ``plot`` method::
 
-               sage: Bar.plot                                                           # needs sage.plot
+               sage: Bar.plot
                <function plot at 0x...>
 
            Now ``plot`` has been replaced in the dictionary of ``Foo``::
 
-               sage: type(Foo.__dict__['plot'])                                         # needs sage.plot
+               sage: type(Foo.__dict__['plot'])
                <... 'function'>
         """
         # Don't use the namespace of the class definition
@@ -1077,16 +1077,16 @@ def lazy_import(module, names, as_=None, *,
         ....:     pass
         sage: type(Foo.__dict__['plot'])
         <class 'sage.misc.lazy_import.LazyImport'>
-        sage: 'EXAMPLES' in Bar.plot.__doc__                                            # needs sage.plot
+        sage: 'EXAMPLES' in Bar.plot.__doc__
         True
-        sage: type(Foo.__dict__['plot'])                                                # needs sage.plot
+        sage: type(Foo.__dict__['plot'])
         <... 'function'>
 
     If deprecated then a deprecation warning is issued::
 
         sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp',
         ....:             deprecation=14275)
-        sage: my_Qp(5)                                                                  # needs sage.rings.padics
+        sage: my_Qp(5)
         doctest:...: DeprecationWarning:
         Importing my_Qp from here is deprecated;
         please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
@@ -1097,7 +1097,7 @@ def lazy_import(module, names, as_=None, *,
 
         sage: lazy_import('sage.rings.padics.factory', 'Qp', 'my_Qp_msg',
         ....:             deprecation=(14275, "This is an example."))
-        sage: my_Qp_msg(5)                                                              # needs sage.rings.padics
+        sage: my_Qp_msg(5)
         doctest:...: DeprecationWarning: This is an example.
         See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
@@ -1180,7 +1180,7 @@ def get_star_imports(module_name):
         sage: from sage.misc.lazy_import import get_star_imports
         sage: 'get_star_imports' in get_star_imports('sage.misc.lazy_import')
         True
-        sage: 'EllipticCurve' in get_star_imports('sage.schemes.all')                   # needs sage.schemes
+        sage: 'EllipticCurve' in get_star_imports('sage.schemes.all')
         True
 
     TESTS::
@@ -1194,7 +1194,7 @@ def get_star_imports(module_name):
         sage: import sage.misc.lazy_import_cache as cache
         sage: cache.get_cache_file = (lambda: cache_file)
         sage: lazy.star_imports = None
-        sage: lazy.get_star_imports('sage.schemes.all')                                 # needs sage.schemes
+        sage: lazy.get_star_imports('sage.schemes.all')
         doctest:...: UserWarning: star_imports cache is corrupted
         [...]
         sage: os.remove(cache_file)
@@ -1272,7 +1272,6 @@ def clean_namespace(namespace=None):
 
     EXAMPLES::
 
-        sage: # needs sage.symbolic
         sage: from sage.misc.lazy_import import attributes, clean_namespace
         sage: from sage.misc.functional import CDF as C
         sage: attributes(C)['_as_name']
