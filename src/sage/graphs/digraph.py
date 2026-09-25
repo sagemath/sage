@@ -646,6 +646,23 @@ class DiGraph(GenericGraph):
             {0: 'foo'}
             sage: DiGraph(g).get_vertices()
             {0: 'foo'}
+
+        Check that vertex attributes are properly set (:issue:`42841`)::
+
+            sage: G = DiGraph(2)
+            sage: G.get_vertices()
+            {0: None, 1: None}
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = DiGraph(G)
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc')
+            sage: G.get_vertices()
+            {0: 'abc', 1: None}
+            sage: H = DiGraph(G)
+            sage: H.get_vertices()
+            {0: 'abc', 1: None}
         """
         msg = ''
         GenericGraph.__init__(self)
@@ -797,7 +814,8 @@ class DiGraph(GenericGraph):
                 weighted = data.weighted()
             if data.get_pos() is not None:
                 pos = data.get_pos()
-            self.set_vertices(data.get_vertices())
+            if hasattr(data, '_assoc'):
+                self.set_vertices(data.get_vertices())
             data._backend.subgraph_given_vertices(self._backend, data)
             self.name(data.name())
         elif format == 'rule':
@@ -1204,6 +1222,21 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: there is no dense immutable backend at the moment
+
+        Check that attribute ``_assoc`` is properly set (:issue:`42841`)::
+
+            sage: G = DiGraph(2)
+            sage: hasattr(G, '_assoc')
+            False
+            sage: H = G.to_undirected()
+            sage: hasattr(H, '_assoc')
+            False
+            sage: G.set_vertex(0, 'abc')
+            sage: hasattr(G, '_assoc')
+            True
+            sage: H = G.to_undirected()
+            sage: hasattr(H, '_assoc')
+            True
         """
         # Which data structure should be used ?
         if data_structure is not None:
@@ -1255,7 +1288,6 @@ class DiGraph(GenericGraph):
         # Copy attributes '_assoc' and '_embedding' if set
         G._copy_attribute_from(self, '_assoc')
         G._copy_attribute_from(self, '_embedding')
-        G.set_vertices(self.get_vertices())
 
         return G
 
