@@ -89,6 +89,7 @@ class IndefiniteIntegral(BuiltinFunction):
         # (unevaluated) answer if libgiac is unavailable. This essentially
         # causes it to be skipped.
         self.integrators = [external.maxima_integrator,
+                            external.fricas_integrator,
                             external.libgiac_integrator,
                             external.sympy_integrator]
 
@@ -220,6 +221,7 @@ class DefiniteIntegral(BuiltinFunction):
         # a global variable in this module to enable customization by
         # creating a subclasses which define a different set of integrators
         self.integrators = [external.maxima_integrator,
+                            external.fricas_integrator,
                             external.libgiac_integrator,
                             external.sympy_integrator]
 
