@@ -15048,10 +15048,7 @@ cdef class Matrix(Matrix1):
             return result
 
         cdef Py_ssize_t i, j, k  # loop indices
-        cdef Py_ssize_t r = 0    # another row/column index (set before use)
-
-        # We need to construct 1x1 and 2x2 matrices to stick in d.
-        from sage.matrix.constructor import matrix
+        cdef Py_ssize_t r        # another row/column index
 
         # We have to make at least one copy of the input matrix so
         # that we can change the base ring to its fraction field. Both
@@ -15095,7 +15092,11 @@ cdef class Matrix(Matrix1):
         # working in exact arithmetic where the process is stable anyway.
         # So, we define these constants to be C doubles, forcing any
         # comparisons to be made quickly.
-        cdef double omega_1, omega_r = 0
+        cdef double omega_1, omega_r
+
+        # Temporary storage for the double value of this diagonal
+        # entry. We need to compare with it a few times.
+        cdef double a_kk_abs
 
         # Keep track of the permutations and diagonal blocks in a vector
         # rather than in a matrix, for efficiency.
@@ -15159,18 +15160,45 @@ cdef class Matrix(Matrix1):
             # Note: omega_1 is defined as a C double, but the abs()
             # below would make a complex number approximate anyway.
             omega_1 = 0
+
+            # We set r=i > k >= 0 in the loop if we find a nonzero
+            # subdiagonal entry; r ==0 afterward thus indicates that
+            # the subdiagonal is zero. We cannot rely on the value of
+            # omega_1 for this, because it is a C double that may not
+            # be able to represent e.g. a miniscule rational number.
+            r = 0
+
             for i in range(k+1, n):
                 a_ik_abs = A.get_unsafe(i, k).abs()
                 if a_ik_abs > omega_1:
-                    omega_1 = a_ik_abs
                     # We record the index "r" that corresponds to
                     # omega_1 for later. This is still part of Step
                     # (1) in B&K, but occurs later in the "else"
                     # branch of Higham's Step (1), separate from
                     # his computation of omega_1.
+                    omega_1 = a_ik_abs
                     r = i
 
-            if omega_1 == 0:
+            if r == 0:
+                # We didn't find a non-zero subdiagonal entry when
+                # comparing them as C doubles (fast). Try an exact
+                # (slow) comparison instead, and quit as soon as we
+                # find something non-zero. This can be necessary if
+                # every non-zero subdiagonal entry is too small to be
+                # represented as a C double. There is no need to set
+                # omega_1 = a_ik_abs in this case because omega_1 is a
+                # C double, and will end up zero. Likewise there is no
+                # need to record the largest entry because they all
+                # differ by an amount too small to matter. It is
+                # however important that we set r=i to avoid the "if
+                # (r == 0) ... continue" that follows.
+                for i in range(k+1, n):
+                    a_ik_abs = A.get_unsafe(i, k).abs()
+                    if a_ik_abs:
+                        r = i
+                        break
+
+            if r == 0:
                 # In this case, our matrix looks like
                 #
                 #   [ a 0 ]
@@ -15184,7 +15212,11 @@ cdef class Matrix(Matrix1):
                 k += 1
                 continue
 
-            if A_kk.abs() > alpha*omega_1:
+            # Store the C double value of this entry for quick
+            # comparisons.
+            a_kk_abs = A_kk.abs()
+
+            if a_kk_abs > alpha*omega_1:
                 # This is the first case in Higham's Step (1), and B&K's
                 # Step (2). Note that we have skipped the part of B&K's
                 # Step (1) where we determine "r", since "r" is not yet
@@ -15192,6 +15224,9 @@ cdef class Matrix(Matrix1):
                 # otherwise. We are performing a 1x1 pivot, but the
                 # rows/columns are already where we want them, so nothing
                 # needs to be permuted.
+                #
+                # Note: we can miss this case if the approximate
+                # a_kk_abs is zero but the real entry is non-zero.
                 d.append(one_by_one_space(A_kk))
                 _block_ldlt_pivot1x1(A, k)
                 k += 1
@@ -15214,18 +15249,30 @@ cdef class Matrix(Matrix1):
                 if a_rj_abs > omega_r:
                     omega_r = a_rj_abs
 
-            if A_kk.abs()*omega_r >= alpha*(omega_1**2):
+            if a_kk_abs*omega_r >= alpha*(omega_1**2):
                 # Step (2) in Higham or Step (4) in B&K.
-                d.append(one_by_one_space(A_kk))
-                _block_ldlt_pivot1x1(A, k)
-                k += 1
-                continue
+                #
+                # Note: we can miss this case if the approximate
+                # a_kk_abs is zero but the real entry is non-zero.
+                if a_kk_abs or A_kk:
+                    # If the inequality does hold, as the comparison
+                    # is non-strict, we need to check that A_kk is
+                    # actually non-zero. In theory omega_1 should be
+                    # positive (making this pointless) but due to
+                    # numerical issues that may not be the case.
+                    d.append(one_by_one_space(A_kk))
+                    _block_ldlt_pivot1x1(A, k)
+                    k += 1
+                    continue
 
             A_rr = A.get_unsafe(r, r)
             if A_rr.abs() > alpha*omega_r:
                 # This is Step (3) in Higham or Step (5) in B&K. Still
                 # a 1x1 pivot, but this time we need to swap
                 # rows/columns k and r.
+                #
+                # Again, this case can be missed due to numerical
+                # issues.
                 d.append(one_by_one_space(A_rr))
                 A.swap_columns_c(k, r)
                 A.swap_rows_c(k, r)
@@ -15357,6 +15404,11 @@ cdef class Matrix(Matrix1):
         Kaufman [BK1977]_ that describes the stable pivoting strategy.
         The same scheme is described by Higham [Hig2002]_.
 
+        Floating-point arithmetic is used in some cases to speed up
+        comparisons. If your matrix contains entries too small to be
+        represented as a C double, this can change the output,
+        although no promises that we have made will be broken.
+
         .. SEEALSO::
 
             :meth:`indefinite_factorization`
@@ -15389,6 +15441,29 @@ cdef class Matrix(Matrix1):
             [1 1|0]
             [---+-]
             [0 0|0]
+            sage: P.transpose()*A*P == L*D*L.transpose()
+            True
+
+        As mentioned in the ALGORITHM block, if we scale this matrix
+        to have extremely small entries (too small for a C double),
+        the output can change meaningfully though the relationship
+        between ``A``, ``P``, ``L``, and ``D`` will still hold::
+
+            sage: A /= 2^2000
+            sage: P,L,D = A.block_ldlt()
+            sage: P
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: L
+            [1 0 0]
+            [0 1 0]
+            [2 0 1]
+            sage: D.n(20)
+            [    0.00000 8.7098e-603|    0.00000]
+            [8.7098e-603 8.7098e-603|    0.00000]
+            [-----------------------+-----------]
+            [    0.00000     0.00000|    0.00000]
             sage: P.transpose()*A*P == L*D*L.transpose()
             True
 
@@ -15603,6 +15678,51 @@ cdef class Matrix(Matrix1):
             sage: _,L,D = A.block_ldlt(classical=True)
             sage: l,d = A.indefinite_factorization()
             sage: L == l and D == matrix.diagonal(d)
+            True
+
+        Several examples with entries too small to represent
+        as a C double::
+
+            sage: t = QQ(1) / 2^2000
+            sage: A = matrix(QQ, [[0, t],
+            ....:                 [t, 0]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
+
+        ::
+
+            sage: s = QQ(1) / 2^2001
+            sage: A = matrix(QQ, [[s, t],
+            ....:                 [t, s]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
+
+        ::
+
+            sage: A = matrix(QQ, [[t, t],
+            ....:                 [t, t]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
+
+        ::
+
+            sage: A = matrix(QQ, [[ s, -t],
+            ....:                 [-t,  s]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.T
+            True
+
+        Ensure that Step (2) in Higham is not skipped; this matrix
+        leads to a system with no solutions if it is::
+
+            sage: A = matrix(QQ, [[1/2, 0, 1],
+            ....:                 [0,   0, 4],
+            ....:                 [1,   4, 2]])
+            sage: P, L, D = A.block_ldlt()
+            sage: P.T * A * P == L * D * L.H
             True
         """
         cdef Py_ssize_t n     # size of the matrices
