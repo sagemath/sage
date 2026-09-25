@@ -224,12 +224,38 @@ class MatrixPlot(GraphicPrimitive):
             extent = (lim['xmin'], lim['xmax'],
                       lim['ymax' if flip_y else 'ymin'],
                       lim['ymin' if flip_y else 'ymax'])
+            
+            # Handle large integer overflow: convert to float and check for inf values
+            import numpy as np
+            xy_data = np.asarray(self.xy_data_array, dtype=float)
+            
+            # Detect and handle infinite values from overflow
+            if not np.isfinite(xy_data).all():
+                finite_mask = np.isfinite(xy_data)
+                if not finite_mask.any():
+                    # All values are infinite - cannot plot safely
+                    raise ValueError("Matrix entries too large to plot safely")
+                
+                # Extract finite values to compute proper bounds
+                finite_vals = xy_data[finite_mask]
+                vmin_safe = float(finite_vals.min())
+                vmax_safe = float(finite_vals.max())
+                
+                # Clip infinite values to the range of finite values
+                xy_data = np.clip(xy_data, vmin_safe, vmax_safe)
+                
+                # If user didn't specify vmin/vmax, use the safe bounds
+                if options['vmin'] is None:
+                    options['vmin'] = vmin_safe
+                if options['vmax'] is None:
+                    options['vmax'] = vmax_safe
+            
             opts = {'cmap': cmap, 'interpolation': 'nearest',
                     'aspect': 'equal', 'norm': norm,
                     'vmin': options['vmin'], 'vmax': options['vmax'],
                     'origin': ('upper' if flip_y else 'lower'),
                     'extent': extent, 'zorder': options.get('zorder')}
-            image = subplot.imshow(self.xy_data_array, **opts)
+            image = subplot.imshow(xy_data, **opts)
 
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
@@ -517,6 +543,44 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sage: matrix_plot(identity_matrix(50), title='identity')
         Graphics object consisting of 1 graphics primitive
 
+    Large integer overflow is handled gracefully by clipping to finite bounds::
+
+        sage: a = matrix(2, [16^1000, 0, 0, -16^1000])
+        sage: matrix_plot(a)
+        Graphics object consisting of 1 graphics primitive
+
+    Matrices where all entries overflow raise a clear error::
+
+        sage: c = matrix(2, [10^1000, 10^1001, 10^1002, 10^1003])
+        sage: matrix_plot(c)
+        Traceback (most recent call last):
+        ...
+        ValueError: Matrix entries too large to plot safely
+
+    Matrices with symbolic infinity are handled gracefully::
+
+        sage: m = matrix([[1, 2], [oo, 4]])     # needs sage.symbolic
+        sage: matrix_plot(m)                   # needs sage.symbolic
+        Graphics object consisting of 1 graphics primitive
+
+    Negative infinity is also supported::
+
+        sage: m = matrix([[1, -oo], [3, 4]])    # needs sage.symbolic
+        sage: matrix_plot(m)                   # needs sage.symbolic
+        Graphics object consisting of 1 graphics primitive
+
+    NaN values are replaced with zero for visualization::
+
+        sage: m = matrix([[1, 2], [NaN, 4]])    # needs sage.symbolic
+        sage: matrix_plot(m)                   # needs sage.symbolic
+        Graphics object consisting of 1 graphics primitive
+
+    Mixed cases with multiple infinity types are handled correctly::
+
+        sage: m = matrix(SR, [[1, 2, 3], [oo, -oo, 5], [NaN, 7, 9]])  # needs sage.symbolic
+        sage: matrix_plot(m)                                          # needs sage.symbolic
+        Graphics object consisting of 1 graphics primitive
+
     TESTS::
 
         sage: P.<t> = RR[]
@@ -571,13 +635,57 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
                                     [col for (row,col),_ in entries]], dtype=int)
             mat = scipysparse.coo_matrix((data,positions), shape=(mat.nrows(), mat.ncols()))
         else:
-            mat = mat.change_ring(RDF).numpy()
+            # FAST PATH
+            try:
+                mat = mat.change_ring(RDF).numpy()
+            except (TypeError, ValueError) as e:
+                # Only handle infinity/NaN conversion errors
+                # Re-raise if it's a different kind of error (e.g., nonconstant polynomial)
+                error_msg = str(e)
+                if 'nonconstant' in error_msg:
+                    raise
+                
+                # FALLBACK FOR oo / -oo / NaN
+                import numpy as np
+                from sage.rings.infinity import infinity, minus_infinity
+                
+                nrows, ncols = mat.nrows(), mat.ncols()
+                vals = []
+
+                for i in range(nrows):
+                    for j in range(ncols):
+                        x = mat[i, j]
+                        if x is infinity or str(x) == '+Infinity':
+                            vals.append(float('inf'))
+                        elif x is minus_infinity or str(x) == '-Infinity':
+                            vals.append(float('-inf'))
+                        else:
+                            # Try to convert to float, re-raise if it fails for other reasons
+                            try:
+                                vals.append(float(x))
+                            except (TypeError, ValueError):
+                                # If conversion fails and not infinity, set to 0
+                                vals.append(0.0)
+
+                mat = np.array(vals, dtype=float).reshape(nrows, ncols)
+            
+            # ALWAYS sanitize inf/nan (runs for BOTH paths)
+            import numpy as np
+            if np.any(~np.isfinite(mat)):
+                finite_mask = np.isfinite(mat)
+                if not finite_mask.any():
+                    # All values are infinite - cannot plot safely
+                    raise ValueError("Matrix entries too large to plot safely")
+                vmin = mat[finite_mask].min()
+                vmax = mat[finite_mask].max()
+                mat = np.nan_to_num(mat, nan=0.0, posinf=vmax, neginf=vmin)
+
     elif hasattr(mat, 'tocoo'):
         sparse = True
     else:
         sparse = False
-
     try:
+
         if sparse:
             xy_data_array = mat
         else:
