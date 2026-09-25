@@ -81,6 +81,8 @@ GAP_FAIL = libgap.eval('fail')
 # TODO: most likely, it would be better to store the groups as GAP groups
 _dis_cache = dict()
 
+# normalizer of each canonical representative in the full symmetric group
+_normalizer_cache = dict()
 
 def _SymmetricGroup(n):
     r"""
@@ -222,6 +224,14 @@ class AtomicSpeciesElement(WithEqualityById,
             False
             sage: a is c
             True
+
+        Check that :issue:`42821` is fixed::
+
+            sage: G = PermutationGroup([[(2,3),(4,5)], [(1,2),(4,6)]])
+            sage: a = A(G, {0: [1,2,3], 1: [4,5,6]})
+            sage: b = A(G, {0: [4,5,6], 1: [1,2,3]})
+            sage: a == b
+            True
         """
         # a directly indecomposable group has no fixed points, so we
         # can use the gap group without worrying about the domain
@@ -272,15 +282,26 @@ class AtomicSpeciesElement(WithEqualityById,
             if parent._arity == 1 and lookup:
                 assert len(lookup) == 1
                 return lookup[0]
-            domain = list(chain(*map(sorted, dompart)))
+
             dis_gap = dis.gap()
-            dis_gens = dis_gap.GeneratorsOfGroup()
+            norm_gap = _normalizer_cache.get(dis)
+            if norm_gap is None:
+                norm_gap = libgap.Normalizer(S_gap, dis_gap)
+                _normalizer_cache[dis] = norm_gap
+
+            dompart_gap = libgap([sorted(b) for b in dompart])
+
             for elm in lookup:
                 # check whether the assignment to sorts given by
                 # dompart and by elm._dompart are the same
-                elm_domain = list(chain(*map(sorted, elm._dompart)))
-                mp = libgap.MappingPermListList(elm_domain, domain)
-                if all(g ** mp in dis_gap for g in dis_gens):
+                elm_dompart_gap = libgap([sorted(b) for b in elm._dompart])
+                mp = libgap.RepresentativeAction(
+                    norm_gap,
+                    elm_dompart_gap,
+                    dompart_gap,
+                    libgap.OnTuplesSets
+                )
+                if mp != GAP_FAIL:
                     return elm
         else:
             lookup = parent._cache[key] = []
@@ -2181,7 +2202,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             E_2^2      4*E_2^2
             Pb_4       4*Pb_4
             X*E_3      X*E_3 + X^2*E_2 + X*C_3
-            Eo_4       Eo_4 + 2*X*C_3 + Pb_4
+            Eo_4       Eo_4 + Pb_4 + 2*X*C_3
             E_2(E_2)   2*E_2(E_2) + E_2^2 + Pb_4 + C_4
             E_4        E_4 + E_2(E_2) + E_2^2 + X*C_3 + C_4
 
