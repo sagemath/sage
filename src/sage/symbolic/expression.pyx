@@ -12009,20 +12009,40 @@ cdef class Expression(Expression_abc):
 
         Converting temperatures works as well::
 
+            sage: s = 5*units.temperature.kelvin
+            sage: s.convert(units.temperature.rankine)
+            9*rankine
+            sage: s.convert()
+            5*kelvin
+
+        Units requiring offsets (like Celsius and Fahrenheit) can be`
+        instantiated and converted::
+
+            sage: s = 5*units.temperature.kelvin
+            sage: units.temperature.celsius
+            celsius
+            sage: 5*units.temperature.celsius
+            5563/20*kelvin
+            sage: s.convert(units.temperature.celsius)
+            -5363/20*celsius
+
+        Offset units can be converted to other offset units::
+
             sage: s = 68*units.temperature.fahrenheit
             sage: s.convert(units.temperature.celsius)
             20*celsius
             sage: s.convert()
-            293.150000000000*kelvin
+            5863/20*kelvin
 
-        Trying to multiply temperatures by another unit then converting
-        raises a ValueError::
+        Non-offset temperature units can be combined with other units
+        to form compound expressions::
 
-            sage: wrong = 50*units.temperature.celsius*units.length.foot
-            sage: wrong.convert()
-            Traceback (most recent call last):
-            ...
-            ValueError: cannot convert
+            sage: s = 5*units.temperature.kelvin
+            sage: compound = 5*units.temperature.kelvin*units.length.foot
+            sage: compound.convert()
+            381/250*kelvin*meter
+            sage: compound.convert(units.temperature.kelvin*units.length.meter)
+            381/250*(kelvin*meter)
         """
         from sage.symbolic import units
         return units.convert(self, target)
