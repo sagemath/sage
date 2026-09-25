@@ -199,9 +199,10 @@ Finally there is a method :meth:`Link.get_knotinfo` of class :class:`Link` to fi
 in the KnotInfo database::
 
     sage: # needs libbraiding libhomfly
-    sage: L = Link([[3,1,2,4], [8,9,1,7], [5,6,7,3], [4,18,6,5],
-    ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
-    ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
+    sage: L = Link([[16, 13, 17, 14], [12, 6, 13, 5], [4, 15, 5, 16],
+    ....:           [14, 3, 15, 4], [11, 2, 12, 3], [6, 20, 7, 19],
+    ....:           [20, 8, 1, 7], [8, 2, 9, 1], [18, 10, 19, 9],
+    ....:           [10, 18, 11, 17]])
     sage: L.get_knotinfo()
     KnotInfo['K0_1']
 
