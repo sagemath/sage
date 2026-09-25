@@ -31,6 +31,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
+from sage.rings.rational_field import QQ
 from sage.sets.family import Family
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -210,27 +211,87 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: W4 = CoxeterGroup(G2)
             sage: W1 is W4
             True
+
+        The default base ring is chosen from the actual bonds, so that
+        infinite (e.g. affine) Coxeter groups also use a small quadratic
+        field when possible instead of the much slower universal cyclotomic
+        field (:issue:`42345`)::
+
+            sage: # needs sage.rings.number_field
+            sage: CoxeterGroup(['B',3,1]).base_ring()
+            Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+            sage: CoxeterGroup(['G',2,1]).base_ring()
+            Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
+            sage: CoxeterGroup(['A',1,1]).base_ring()
+            Integer Ring
+            sage: CoxeterGroup(['B',3]).base_ring()  # finite, unchanged
+            Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
         """
         data = CoxeterMatrix(data, index_set=index_set)
 
         if base_ring is None:
-            if data.is_simply_laced():
-                base_ring = ZZ
-            elif data.is_finite():
+            # Pick the smallest ring containing the matrix entries
+            # `2*cos(pi/m_ij)`.  Bonds with `m_ij` in `{1, 2, 3}` (and
+            # `m_ij <= -1`, which represents an infinite label) give
+            # rational values, so only the bonds with `m_ij >= 4` can force
+            # an extension of `QQ`.  When the bonds requiring an extension
+            # all live in the same quadratic field we use it; otherwise we
+            # fall back to the universal cyclotomic field.  This is selected
+            # from the actual bonds rather than from the Cartan type so that
+            # infinite (e.g. affine) Coxeter groups also benefit, instead of
+            # always being built over the much slower universal cyclotomic
+            # field (see :issue:`42345`).
+            index_set = data.index_set()
+            bonds = set()
+            negative_label_ring = ZZ
+            for i, a in enumerate(index_set):
+                for b in index_set[i + 1:]:
+                    m = data[a, b]
+                    if m in ZZ:
+                        m = ZZ(m)
+                        if m >= 4:
+                            bonds.add(m)
+                    else:
+                        try:
+                            is_negative_label = bool(m <= -1)
+                        except (TypeError, ValueError):
+                            is_negative_label = False
+                        if is_negative_label:
+                            negative_label_ring = data._matrix.base_ring()
+                        else:
+                            # an unusual bond label; do not try to optimize
+                            bonds.add(None)
+            # Determine the smallest known ring forced by the bonds
+            # `m_ij >= 4` (the only ones that can require an extension of
+            # `QQ`).
+            if not bonds:
+                bond_ring = ZZ
+            elif bonds == {ZZ(4)}:
                 from sage.rings.number_field.number_field import QuadraticField
-                letter = data.coxeter_type().cartan_type().type()
-                if letter in ['B', 'C', 'F']:
-                    base_ring = QuadraticField(2)
-                elif letter == 'G':
-                    base_ring = QuadraticField(3)
-                elif letter == 'H':
-                    base_ring = QuadraticField(5)
-                else:
-                    from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-                    base_ring = UniversalCyclotomicField()
+                bond_ring = QuadraticField(2)
+            elif bonds == {ZZ(6)}:
+                from sage.rings.number_field.number_field import QuadraticField
+                bond_ring = QuadraticField(3)
+            elif bonds == {ZZ(5)}:
+                from sage.rings.number_field.number_field import QuadraticField
+                bond_ring = QuadraticField(5)
             else:
                 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
-                base_ring = UniversalCyclotomicField()
+                bond_ring = UniversalCyclotomicField()
+            # Combine it with the ring needed to hold any non-integer
+            # negative labels.  Usually one of the two rings contains the
+            # other; if they genuinely disagree (e.g. an irrational negative
+            # label in one quadratic field together with a bond living in a
+            # different quadratic field) fall back to the algebraic numbers,
+            # which contain both.
+            if (negative_label_ring is ZZ
+                    or bond_ring.has_coerce_map_from(negative_label_ring)):
+                base_ring = bond_ring
+            elif negative_label_ring.has_coerce_map_from(bond_ring):
+                base_ring = negative_label_ring
+            else:
+                from sage.rings.qqbar import QQbar
+                base_ring = QQbar
         return super().__classcall__(cls, data, base_ring, data.index_set())
 
     def __init__(self, coxeter_matrix, base_ring, index_set):
@@ -249,6 +310,34 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: TestSuite(W).run(max_runs=30)
             sage: W = CoxeterGroup([[1,3,2],[3,1,-1],[2,-1,1]])
             sage: TestSuite(W).run(max_runs=30)
+
+        Negative labels are allowed in generalized Coxeter matrices: a
+        label ``m`` with ``m <= -1`` represents an infinite bond and
+        contributes the off-diagonal value ``-2*m`` to the reflection
+        representation (so the usual ``-1``, marking an infinite bond,
+        gives ``2``)::
+
+            sage: W = CoxeterGroup([[1,-2],[-2,1]])
+            sage: W.base_ring()
+            Integer Ring
+            sage: W.gens()
+            (
+            [-1  4]  [ 1  0]
+            [ 0  1], [ 4 -1]
+            )
+            sage: TestSuite(W).run(max_runs=30)
+            sage: W = CoxeterGroup([[1,-4/3],[-4/3,1]])
+            sage: W.base_ring()
+            Rational Field
+            sage: W.gen(0).matrix()[0, 1]
+            8/3
+
+        The Coxeter relations test also handles generalized matrices whose
+        finite labels live in a larger base ring because of another
+        non-integer negative label::
+
+            sage: W = CoxeterGroup([[1,-3/2,4],[-3/2,1,3],[4,3,1]])
+            sage: W._test_coxeter_relations()
 
         We check that :issue:`16630` is fixed::
 
@@ -283,8 +372,8 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             E = base_ring.gen
 
             def val(x):
-                if x == -1:
-                    return 2
+                if x <= -1:
+                    return base_ring(-2 * x)
                 return E(2 * x) + ~E(2 * x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
@@ -292,13 +381,13 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             E = UniversalCyclotomicField().gen
 
             def val(x):
-                if x == -1:
-                    return 2
+                if x <= -1:
+                    return base_ring(-2 * x)
                 return base_ring((E(2 * x) + ~E(2 * x)).to_cyclotomic_field())
         else:
             def val(x):
-                if x == -1:
-                    return 2
+                if x <= -1:
+                    return base_ring(-2 * x)
                 if x == 1:
                     return -2
                 if x == 2:
@@ -607,9 +696,9 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: W = CoxeterGroup(['I',5], implementation='reflection')
             sage: W.positive_roots()
             ((1, 0),
-             (-E(5)^2 - E(5)^3, 1),
-             (-E(5)^2 - E(5)^3, -E(5)^2 - E(5)^3),
-             (1, -E(5)^2 - E(5)^3),
+             (1/2*a + 1/2, 1),
+             (1/2*a + 1/2, 1/2*a + 1/2),
+             (1, 1/2*a + 1/2),
              (0, 1))
         """
         return tuple(self._positive_roots_reflections().keys())

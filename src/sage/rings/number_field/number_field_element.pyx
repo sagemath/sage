@@ -523,6 +523,36 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
+            sage: K.<a> = QuadraticField(3)
+            sage: libgap(a)                                                              # needs sage.libs.gap
+            a
+            sage: libgap(a + 2)                                                          # needs sage.libs.gap
+            a+2
+            sage: libgap(a)^2                                                            # needs sage.libs.gap
+            !3
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - a)
+            sage: libgap(b)                                                              # needs sage.libs.gap
+            b
+            sage: libgap(a*b + 2)                                                        # needs sage.libs.gap
+            a*b+!2
+
+        The relative generator need not be a primitive element of the
+        absolute field (here ``b`` does not generate ``L`` over ``QQ``)::
+
+            sage: K.<a> = NumberField(x^2 + 1)
+            sage: S.<y> = K[]
+            sage: L.<b> = K.extension(y^2 - 2)
+            sage: libgap(a*b)                                                            # needs sage.libs.gap
+            a*b
+            sage: L(libgap(a*b)) == a*b                                                  # needs sage.libs.gap
+            True
+            sage: L(libgap(a + b)) == a + b                                              # needs sage.libs.gap
+            True
+
         Check that :issue:`15276` is fixed::
 
             sage: for n in range(2,20):                                                 # needs sage.libs.gap
@@ -535,10 +565,25 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         from sage.rings.number_field.number_field import NumberField_cyclotomic
         P = self.parent()
-        if not isinstance(P, NumberField_cyclotomic):
-            raise NotImplementedError("libgap conversion is only implemented for cyclotomic fields")
-
         from sage.libs.gap.libgap import libgap
+        if not isinstance(P, NumberField_cyclotomic):
+            gap_field = libgap(P)
+            E = gap_field.GeneratorsOfField()[0]
+            if not P.is_absolute():
+                # ``self.list()`` gives the coordinates over the base field in
+                # the relative power basis ``[1, E, E^2, ...]`` of the relative
+                # generator ``E``.  This is the representation that matches GAP's
+                # tower; ``self.polynomial()`` would instead use the absolute
+                # primitive element, which only coincides with ``E`` when the
+                # relative generator happens to generate ``L`` over ``QQ``.
+                total = gap_field.Zero()
+                power = gap_field.One()
+                for coeff in self.list():
+                    total += libgap(coeff) * gap_field.One() * power
+                    power *= E
+                return total
+            return self.polynomial()(E) * gap_field.One()
+
         E = libgap(P).GeneratorsOfField()[0]
         n = P._n()
         if n % 4 == 2:
