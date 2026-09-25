@@ -1835,12 +1835,35 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v = vector(QQ, [1,2])
             sage: v.norm(int(2))                                                        # needs sage.symbolic
             sqrt(5)
+
+        For vectors in an :class:`~sage.modules.free_quadratic_module_integer_symmetric.FreeQuadraticModule_integer_symmetric`
+        (e.g. an :func:`~sage.modules.free_quadratic_module_integer_symmetric.IntegralLattice`),
+        the 2-norm uses the lattice inner product, so ``norm()^2 == inner_product(v, v)``
+        (see :issue:`38543`)::
+
+            sage: from sage.modules.free_quadratic_module_integer_symmetric import IntegralLattice
+            sage: L = IntegralLattice(matrix([[1000, 0], [0, 1]]))
+            sage: v = L.0
+            sage: v.inner_product(v)
+            1000
+            sage: v.norm()^2
+            1000
+            sage: v.norm()^2 == v.inner_product(v)
+            True
         """
         abs_self = [abs(x) for x in self]
         if p == Infinity:
             return max(abs_self)
         if p < 1:
             raise ValueError("%s is not greater than or equal to 1" % p)
+
+        if p == 2:
+            # For IntegralLattice vectors, use the lattice inner product so that
+            # norm()^2 == inner_product(self, self). See :issue:`38543`.
+            from sage.modules.free_quadratic_module_integer_symmetric import (
+                FreeQuadraticModule_integer_symmetric)
+            if isinstance(self.parent(), FreeQuadraticModule_integer_symmetric):
+                return self.inner_product(self).sqrt()
 
         s = sum(a ** p for a in abs_self)
         return s**(__one__/p)
