@@ -70,7 +70,7 @@ Limits of inductive valuations are discussed in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Section 4.6 of [Rüt2014]_.
 """
 # ****************************************************************************
-#       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
+#       Copyright (C) 2016-2026 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -85,7 +85,7 @@ from sage.structure.factory import UniqueFactory
 class LimitValuationFactory(UniqueFactory):
     r"""
     Return a limit valuation which sends the polynomial ``G`` to infinity and
-    is greater than or equal than ``base_valuation``.
+    is greater than or equal to ``base_valuation``.
 
     INPUT:
 
