@@ -237,9 +237,9 @@ x_n = x_{n-4} + x_{n-1},\ \ \ n\geq 4.
     sage: s = lfsr_sequence(key,fill,n); s
     [1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0]
     sage: lfsr_autocorrelation(s,15,7)
-    4/15
+    -1/15
     sage: lfsr_autocorrelation(s,15,0)
-    8/15
+    1
     sage: lfsr_connection_polynomial(s)
     x^4 + x + 1
     sage: from sage.matrix.berlekamp_massey import berlekamp_massey
