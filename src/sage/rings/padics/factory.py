@@ -32,8 +32,6 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from functools import reduce
-
 from sage.categories.fields import Fields
 from sage.misc.superseded import experimental
 from sage.rings.infinity import Infinity

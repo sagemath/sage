@@ -63,17 +63,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.abstract_method import abstract_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
-from sage.structure.sage_object import SageObject
-from sage.structure.element import Matrix
-from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.categories.integral_domains import IntegralDomains
-from sage.modules.free_module_element import vector
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.modules.free_module import FreeModule
-from sage.modules.free_module import Module_free_ambient, FreeModule_generic
+from sage.modules.free_module import Module_free_ambient
+from sage.modules.free_module_element import vector
 from sage.rings.ideal import Ideal_generic
+from sage.structure.element import Matrix
+from sage.structure.sage_object import SageObject
 
 from copy import copy
 
