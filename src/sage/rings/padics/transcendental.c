@@ -7,7 +7,11 @@
 #include <math.h>
 #include <gmp.h>
 #include <stdlib.h>
-#include <macros.h>  /* cysignals library */
+/* cysignals sig_block/sig_unblock are provided by macros.h, which is
+   included later in the Cython-generated file that includes this file.
+   We just need forward declarations here. */
+static inline void sig_block(void);
+static inline void sig_unblock(void);
 
 /* p-adic logarithm */
 void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo) {
