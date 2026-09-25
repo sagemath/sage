@@ -122,7 +122,7 @@ read the following step-by-step instructions for building Sage.
 The instructions cover all of Linux, macOS, and WSL.
 
 More details, providing a background for these instructions, can be found
-in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source.html)
+in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source-distro.html)
 in the Installation Guide.
 
 
@@ -201,7 +201,7 @@ in the Installation Guide.
 3.  Install system packages.
 
     Either refer for this to the [section on installation from
-    source](https://doc.sagemath.org/html/en/installation/source.html) in the
+    source](https://doc.sagemath.org/html/en/installation/source-distro.html) in the
     Sage Installation Manual for compilations of system packages
     that you can install. When done, skip to step 7 (bootstrapping).
 
@@ -360,7 +360,7 @@ in the Installation Guide.
 
     For an in-depth discussion of more environment variables for
     building Sage, see [the installation
-    guide](https://doc.sagemath.org/html/en/installation/source.html#environment-variables).
+    guide](https://doc.sagemath.org/html/en/installation/source-distro.html#environment-variables).
 
 12. Type `./configure`, followed by any options that you wish to use.
     For example, to build Sage with `gf2x` package supplied by Sage,
@@ -408,7 +408,7 @@ in the Installation Guide.
 
     If you followed the above instructions, in particular regarding the
     installation of system packages recommended by the output of
-    `./configure` (step 11), and regarding the parallel build (step 10),
+    `./configure` (steps 12-13), and regarding the parallel build (step 11),
     building Sage takes less than one hour on a modern computer.
     (Otherwise, it can take much longer.)
 
@@ -613,7 +613,7 @@ after building Sage.  If you do move the directories, you will have to
 run ``make distclean`` and build Sage again from scratch.
 
 For a system-wide installation, you have to build Sage as a "normal" user
-and then as root you can change permissions. See the [Installation Guide](https://doc.sagemath.org/html/en/installation/source.html#installation-in-a-multiuser-environment)
+and then as root you can change permissions. See the [Installation Guide](https://doc.sagemath.org/html/en/installation/source-distro.html#installation-in-a-multiuser-environment)
 for further information.
 
 Redistribution
