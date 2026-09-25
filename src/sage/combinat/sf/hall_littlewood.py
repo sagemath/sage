@@ -546,6 +546,21 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         return self(self._s(left) * self._s(right))
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to the Schur basis once.
+
+        TESTS::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: for B in [Sym.hall_littlewood(t=2).P(),
+            ....:           Sym.hall_littlewood(t=2).Q(),
+            ....:           Sym.hall_littlewood(t=2).Qp()]:
+            ....:     f = B[2] + B[1, 1]
+            ....:     assert f^4 == f._pow_naive(4)
+        """
+        return self._power_via(x, n, self._s)
+
     def hall_littlewood_family(self):
         r"""
         The family of Hall-Littlewood bases associated to ``self``.

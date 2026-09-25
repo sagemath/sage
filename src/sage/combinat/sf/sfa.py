@@ -216,6 +216,7 @@ AUTHORS:
 from copy import copy
 from functools import reduce
 
+from sage.arith.power import generic_power
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -1850,6 +1851,74 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
                                          category=cat,
                                          bracket='', prefix=prefix)
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n``.
+
+        This is the default powering strategy for a basis of symmetric
+        functions.  Bases whose multiplication is computed in another basis
+        can override this method to avoid changing basis at every
+        multiplication.
+
+        TESTS::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: f = p[2] + p[1, 1]
+            sage: f^3 == f * f * f
+            True
+        """
+        return generic_power(x, n)
+
+    def _power_naive(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by repeated multiplication.
+
+        Negative powers retain the standard inversion semantics.
+
+        Stop as soon as a product vanishes, which is important over base
+        rings with zero divisors::
+
+            sage: Sym = SymmetricFunctions(Zmod(4))
+            sage: (2*Sym.m()[1])^(10^100)
+            0
+            sage: (2*Sym.s()[1])^(10^100)
+            0
+        """
+        if n < 0:
+            return generic_power(x, n)
+        if n == 0:
+            return self.one()
+        if n == 1:
+            return x
+        # Avoid a linear loop for zero and scalar elements, in particular
+        # when the exponent does not fit in a machine integer.
+        if all(not part for part in x._monomial_coefficients):
+            return generic_power(x, n)
+        result = x
+        for _ in range(n - 1):
+            result *= x
+            if not result:
+                return result
+        return result
+
+    def _power_via(self, x, n, basis):
+        r"""
+        Return ``x`` to the power ``n`` by working in ``basis``.
+
+        The input and output are converted exactly once.  The powering
+        strategy of ``basis`` is used for the intermediate computation.
+        """
+        if n < 0:
+            return generic_power(x, n)
+        if n == 0:
+            return self.one()
+        if n == 1:
+            return x
+        if basis is self:
+            return generic_power(x, n)
+        y = basis(x)
+        return self(basis._power(y, n))
+
     _print_style = 'lex'
 
     # Todo: share this with ncsf and over algebras with basis indexed by word-like elements
@@ -3135,6 +3204,36 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         m[1, 1, 1] + m[2, 1] + m[3]
         sage: m.set_print_style('lex')
     """
+    def _pow_int(self, n):
+        r"""
+        Return ``self`` to the integer power ``n``.
+
+        The parent selects the powering strategy so that bases implemented
+        through a change of basis can perform that change only once.
+
+        This also preserves the standard handling of negative powers and of
+        the three-argument form of :func:`pow`::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: (2*s.one())^(-2)
+            1/4*s[]
+            sage: s[1]^(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot invert self (= s[1])
+            sage: pow(s[1], 2, 3)
+            Traceback (most recent call last):
+            ...
+            TypeError: the 3-argument version of pow() is not supported
+
+        Both Python and Sage integers use the same strategy::
+
+            sage: f = s[2] + s[1, 1]
+            sage: f^int(3) == f^Integer(3)
+            True
+        """
+        return self.parent()._power(self, n)
+
     def __truediv__(self, x):
         r"""
         Return the quotient of ``self`` by ``other``.

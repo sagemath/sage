@@ -576,6 +576,19 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         return self(self._m(left) * self._m(right))
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to monomials once.
+
+        TESTS::
+
+            sage: LLT = SymmetricFunctions(QQ).llt(3, t=2)
+            sage: for B in [LLT.hspin(), LLT.hcospin()]:
+            ....:     f = B[2] + B[1, 1]
+            ....:     assert f^3 == f._pow_naive(3)
+        """
+        return self._power_via(x, n, self._m)
+
     def _m_cache(self, n):
         r"""
         Compute the change of basis from the monomial symmetric functions

@@ -731,6 +731,19 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         return self(self._P(left) * self._P(right))
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to the Jack `P` basis once.
+
+        TESTS::
+
+            sage: Jack = SymmetricFunctions(QQ).jack(t=2)
+            sage: for B in [Jack.J(), Jack.Q()]:
+            ....:     f = B[2] + B[1, 1]
+            ....:     assert f^4 == f._pow_naive(4)
+        """
+        return self._power_via(x, n, self._P)
+
     def jack_family(self):
         r"""
         Return the family of Jack bases associated to the basis ``self``.
@@ -969,6 +982,19 @@ class JackPolynomials_p(JackPolynomials_generic):
         """
         return self(self._m(left) * self._m(right))
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to monomials once.
+
+        TESTS::
+
+            sage: P = SymmetricFunctions(QQ).jack(t=2).P()
+            sage: f = P[2] + P[1, 1]
+            sage: f^4 == f._pow_naive(4)
+            True
+        """
+        return self._power_via(x, n, self._m)
+
     def scalar_jack_basis(self, part1, part2=None):
         r"""
         Return the scalar product of `P(part1)` and `P(part2)`.
@@ -1171,6 +1197,19 @@ class JackPolynomials_qp(JackPolynomials_generic):
         """
         return self(self._h(left) * self._h(right))
 
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to homogeneous functions once.
+
+        TESTS::
+
+            sage: Qp = SymmetricFunctions(QQ).jack(t=2).Qp()
+            sage: f = Qp[2] + Qp[1, 1]
+            sage: f^4 == f._pow_naive(4)
+            True
+        """
+        return self._power_via(x, n, self._h)
+
     def _h_cache(self, n):
         r"""
         Compute the change of basis between the Jack polynomials in the `Qp`
@@ -1365,6 +1404,19 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
             64/45*Z[2, 2] + 16/21*Z[3, 1] + Z[4]
         """
         return self(self._P(left) * self._P(right))
+
+    def _power(self, x, n):
+        r"""
+        Return ``x`` to the power ``n`` by converting to Jack `P` once.
+
+        TESTS::
+
+            sage: Z = SymmetricFunctions(QQ).zonal()
+            sage: f = Z[2] + Z[1, 1]
+            sage: f^4 == f._pow_naive(4)
+            True
+        """
+        return self._power_via(x, n, self._P)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         def scalar_zonal(self, x):
