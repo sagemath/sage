@@ -131,7 +131,7 @@ def _siegel_big_period_matrix(big_omega):
         M_siegel = numerical_inverse(big_omega_hat[:, :g]) * big_omega_hat[:, g:]
         M_siegel = half * (M_siegel + M_siegel.transpose())
 
-        T = cholesky_decomposition(M_siegel.apply_map(imag_func))
+        T = cholesky_decomposition(M_siegel.apply_map(imag_func)).transpose()
         U = pari.qflll(T).sage()
         TU = T * U
         TU_norm = [v.norm() for v in TU.columns()]

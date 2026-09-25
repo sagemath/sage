@@ -685,6 +685,10 @@ cdef class NormCholesky:
         """
         cdef RealNumber s
         cdef Vector_mpfr w
+
+        if self.n != len(v):
+            raise ValueError("Vector length mismatch")
+
         s = self.RR._new()
         w = Vector_mpfr.from_vector(v)
         self.mpfr_norm(s.value, w.vec)
@@ -838,6 +842,10 @@ cdef class NormGramInt:
     cdef mpfr_norm(self, mpfr_t result, long* v):
         r"""
         Compute norm of a vector and place in preallocated mpfr_t.
+
+        Computations on the integer coefficients include taking products of
+        pairs of entries from `v`, so the entries must be smaller than
+        `2^31` on a 64 bit machine. This is assumed to be true.
 
         INPUT:
 
@@ -1071,7 +1079,7 @@ def cholesky_decomposition(G):
     Return Cholesky decomposition of a positive definite real matrix.
 
     The Cholesky decomposition of a real positive definite matrix `G` is
-    a lower triangular matrix `G` such that `G = C C^T`.
+    a lower triangular matrix `C` such that `G = C C^T`.
 
     This routine wraps the multiprecision implementation in the mp library.
 
@@ -1372,6 +1380,9 @@ cdef class RiemannTheta:
 
         if tol is None:
             tol = self.RR(2)**(-self.prec)
+        else:
+            tol = self.RR(tol)
+
         result = self._eval_vector_(z, eps, delta, N, derivs, tol)
         if vecresult:
             return tuple(result)
