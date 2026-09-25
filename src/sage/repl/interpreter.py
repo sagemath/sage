@@ -74,7 +74,7 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code)
+    sage: shell.run_cell('1/0')
     ...
     ZeroDivisionError...Traceback (most recent call last)
     ...
@@ -82,9 +82,9 @@ Check that Cython source code appears in tracebacks::
     ...
     ...integer.pyx... in sage.rings.integer.Integer...div...
     ...
-    -> ...                  raise ZeroDivisionError("rational division by zero")
-       ....:            x = <Rational> Rational.__new__(Rational)
-       ....:            mpq_div_zz(x.value, ....value, (<Integer>right).value)
+    -> ...raise ZeroDivisionError("rational division by zero")
+       ...x = <Rational>PY_NEW(Rational)
+       ...mpq_div_zz(x.value, ....value, (<Integer>right).value)
     <BLANKLINE>
     ZeroDivisionError: rational division by zero
     sage: shell.quit()
@@ -137,7 +137,9 @@ We test that :issue:`16196` is resolved::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import linecache
 import re
+import sys
 from ctypes import c_int, c_void_p, pythonapi
 
 from IPython.core.crashhandler import CrashHandler
@@ -149,9 +151,23 @@ from IPython.terminal.interactiveshell import TerminalInteractiveShell
 from IPython.terminal.ipapp import IPAppCrashHandler, TerminalIPythonApp
 from traitlets import Bool, Type
 
+from sage.config import get_editable_root
 from sage.repl.configuration import SAGE_EXTENSION, sage_ipython_config
 from sage.repl.preparse import containing_block, preparse
 from sage.repl.prompts import InterfacePrompts
+
+# Cython records source filenames relative to the Python package root.  A
+# regular installation puts that root on sys.path, which lets linecache find
+# the sources for tracebacks.  Meson editable installs use an import hook
+# instead, so add the source root explicitly.  Appending it preserves the
+# editable loader's precedence for imports.
+_editable_root = get_editable_root()
+if _editable_root is not None:
+    _editable_src = str(_editable_root[0] / "src")
+    if _editable_src not in sys.path:
+        sys.path.append(_editable_src)
+    del _editable_src
+del _editable_root
 
 # The following functions are part of the stable ABI since python 3.2
 # See: https://docs.python.org/3/c-api/sys.html#c.PyOS_getsig
@@ -236,6 +252,32 @@ class SageShellOverride:
     Mixin to override methods in IPython's [Terminal]InteractiveShell
     classes.
     """
+
+    def showtraceback(self, exc_tuple=None, filename=None, tb_offset=None,
+                      exception_only=False, running_compiled_code=False):
+        """
+        Make Cython sources available before IPython formats a traceback.
+
+        Cython stores paths relative to the Python package root in code
+        objects.  Prime :mod:`linecache` so that :mod:`inspect` and
+        the `stack_data package <https://pypi.org/project/stack-data/>`_ can
+        resolve those paths consistently.
+        """
+        if exc_tuple is None:
+            tb = sys.exc_info()[2]
+            if tb is None:
+                tb = getattr(sys, "last_traceback", None)
+        else:
+            tb = exc_tuple[2]
+        while tb is not None:
+            frame = tb.tb_frame
+            source_filename = frame.f_code.co_filename
+            if source_filename.endswith((".pyx", ".pxd", ".pxi")):
+                linecache.getlines(source_filename, frame.f_globals)
+            tb = tb.tb_next
+        return super().showtraceback(
+            exc_tuple, filename, tb_offset, exception_only,
+            running_compiled_code)
 
     def show_usage(self):
         """
