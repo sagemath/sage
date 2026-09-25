@@ -827,9 +827,10 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: A(AlternatingGroup(4), {1: range(1, 5)})
             Eo_4(Y)
 
-        TESTS:
-
-        Check that :issue:`42858` is fixed::
+        The species of bicoloured polygons `P^{bic}_{2n}`, polygons
+        with `2n` vertices whose edges are alternately coloured with
+        two colours, is defined in Example 2.6.28 of [BLL1998]_ (see
+        :issue:`42858`)::
 
             sage: A = AtomicSpecies("X")
             sage: G = graphs.CycleGraph(6)
