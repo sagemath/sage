@@ -6,6 +6,7 @@ Knot Theory
 
    sage/knots/knot
    sage/knots/link
+   sage/knots/mosaic
    sage/knots/knotinfo
    sage/knots/free_knotinfo_monoid
 
