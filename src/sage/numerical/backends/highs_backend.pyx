@@ -936,7 +936,7 @@ cdef class HiGHSBackend(GenericBackend):
 
             self.numrows += 1
 
-    cpdef int ncols(self) noexcept:
+    cpdef int ncols(self) except? -1:
         """
         Return the number of columns/variables.
 
@@ -953,7 +953,7 @@ cdef class HiGHSBackend(GenericBackend):
         """
         return self.numcols
 
-    cpdef int nrows(self) noexcept:
+    cpdef int nrows(self) except? -1:
         """
         Return the number of rows/constraints.
 
@@ -971,7 +971,7 @@ cdef class HiGHSBackend(GenericBackend):
         """
         return self.numrows
 
-    cpdef bint is_maximization(self) noexcept:
+    cpdef bint is_maximization(self) except? -1:
         """
         Test whether the problem is a maximization.
 
@@ -1553,7 +1553,7 @@ cdef class HiGHSBackend(GenericBackend):
 
         return (lb_ret, ub_ret)
 
-    cpdef bint is_variable_integer(self, int index) noexcept:
+    cpdef bint is_variable_integer(self, int index) except? -1:
         """
         Test whether the given variable is of integer type.
 
@@ -1593,7 +1593,7 @@ cdef class HiGHSBackend(GenericBackend):
             return False
         return integrality == kHighsVarTypeInteger
 
-    cpdef bint is_variable_binary(self, int index) noexcept:
+    cpdef bint is_variable_binary(self, int index) except? -1:
         """
         Test whether the given variable is of binary type.
 
@@ -1639,7 +1639,7 @@ cdef class HiGHSBackend(GenericBackend):
 
         return False
 
-    cpdef bint is_variable_continuous(self, int index) noexcept:
+    cpdef bint is_variable_continuous(self, int index) except? -1:
         """
         Test whether the given variable is of continuous/real type.
 

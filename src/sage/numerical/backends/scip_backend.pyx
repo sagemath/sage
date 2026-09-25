@@ -862,7 +862,7 @@ cdef class SCIPBackend(GenericBackend):
         """
         return self.model.getActivity(self.get_constraints()[i])
 
-    cpdef int ncols(self) noexcept:
+    cpdef int ncols(self) except? -1:
         """
         Return the number of columns/variables.
 
@@ -879,7 +879,7 @@ cdef class SCIPBackend(GenericBackend):
         """
         return len(self.variables)
 
-    cpdef int nrows(self) noexcept:
+    cpdef int nrows(self) except? -1:
         """
         Return the number of rows/constraints.
 
@@ -951,7 +951,7 @@ cdef class SCIPBackend(GenericBackend):
         """
         return self.get_constraints()[index].name
 
-    cpdef bint is_variable_binary(self, int index) noexcept:
+    cpdef bint is_variable_binary(self, int index) except? -1:
         """
         Test whether the given variable is of binary type.
 
@@ -973,7 +973,7 @@ cdef class SCIPBackend(GenericBackend):
         """
         return self.variables[index].vtype() == 'BINARY'
 
-    cpdef bint is_variable_integer(self, int index) noexcept:
+    cpdef bint is_variable_integer(self, int index) except? -1:
         """
         Test whether the given variable is of integer type.
 
@@ -995,7 +995,7 @@ cdef class SCIPBackend(GenericBackend):
         """
         return self.variables[index].vtype() == 'INTEGER'
 
-    cpdef bint is_variable_continuous(self, int index) noexcept:
+    cpdef bint is_variable_continuous(self, int index) except? -1:
         """
         Test whether the given variable is of continuous/real type.
 
@@ -1019,7 +1019,7 @@ cdef class SCIPBackend(GenericBackend):
         """
         return self.variables[index].vtype() == 'CONTINUOUS'
 
-    cpdef bint is_maximization(self) noexcept:
+    cpdef bint is_maximization(self) except? -1:
         """
         Test whether the problem is a maximization
 
