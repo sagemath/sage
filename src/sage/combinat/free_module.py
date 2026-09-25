@@ -1103,8 +1103,12 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         Design: should this do coercion on the coefficient ring?
         """
+        if index not in self._indices:
+            raise ValueError("index {} is not in the basis".format(index))
+
         if coeff is None:
             coeff = self.base_ring().one()
+
         return self._from_dict({index: coeff})
 
     def _monomial(self, index):
