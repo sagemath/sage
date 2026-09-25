@@ -9,3 +9,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
 cdef class MPolynomial_libsingular(MPolynomial):
     pass
+
+cdef class MPolynomial_flint(MPolynomial):
+    pass

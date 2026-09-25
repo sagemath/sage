@@ -906,19 +906,23 @@ cdef extern from "flint_wrap.h":
         ORD_DEGREVLEX
 
     ctypedef struct mpoly_ctx_struct:
-        pass
+        slong nvars
+        slong nfields
+        ordering_t ord
+        int deg
+        int rev
     ctypedef mpoly_ctx_struct mpoly_ctx_t[1]
 
     ctypedef struct nmod_mpoly_ctx_struct:
-        pass
+        mpoly_ctx_t minfo
     ctypedef nmod_mpoly_ctx_struct nmod_mpoly_ctx_t[1]
 
     ctypedef struct fmpz_mpoly_ctx_struct:
-        pass
+        mpoly_ctx_t minfo
     ctypedef fmpz_mpoly_ctx_struct fmpz_mpoly_ctx_t[1]
 
     ctypedef struct fmpq_mpoly_ctx_struct:
-        pass
+        fmpz_mpoly_ctx_t zctx
 
     ctypedef fmpq_mpoly_ctx_struct fmpq_mpoly_ctx_t[1]
 
