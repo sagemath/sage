@@ -2786,6 +2786,15 @@ cdef class IntegerMod_int(IntegerMod_abstract):
             sage: type(R(0)^0) == type(R(0))
             True
 
+        Python integers that do not fit into a C ``long`` are handled
+        correctly, see :issue:`36080`::
+
+            sage: e = int(2) ** 4000 + 1234
+            sage: Integers(13)(2)^e
+            4
+            sage: Integers(13)(2)^(-e)
+            10
+
         When the modulus is ``1``, the only element in the ring is
         ``0`` (and it is equivalent to ``1``), so we return that
         instead::
@@ -2797,11 +2806,14 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         cdef long long_exp
         cdef int_fast32_t res
         cdef mpz_t res_mpz
-        if type(exp) is int and -100000 < PyLong_AsLong(exp) < 100000:
+        cdef bint use_long_exp = False
+        if is_small_python_int(exp):
             long_exp = PyLong_AsLong(exp)
+            use_long_exp = -100000 < long_exp < 100000
         elif type(exp) is Integer and mpz_cmpabs_ui((<Integer>exp).value, 100000) == -1:
             long_exp = mpz_get_si((<Integer>exp).value)
-        else:
+            use_long_exp = True
+        if not use_long_exp:
             base = self.lift()
             sig_on()
             try:
@@ -3602,6 +3614,16 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             sage: type(R(0)^0) == type(R(0))
             True
 
+        Python integers that do not fit into a C ``long`` are handled
+        correctly, see :issue:`36080`::
+
+            sage: e = int(2) ** 4000 + 1234
+            sage: R = Integers(2^31 - 1)
+            sage: R(2)^e
+            67108864
+            sage: R(2)^(-e)
+            32
+
         When the modulus is ``1``, the only element in the ring is
         ``0`` (and it is equivalent to ``1``), so we return that
         instead::
@@ -3617,11 +3639,14 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         cdef long long_exp
         cdef int_fast64_t res
         cdef mpz_t res_mpz
-        if type(exp) is int and -100000 < PyLong_AsLong(exp) < 100000:
+        cdef bint use_long_exp = False
+        if is_small_python_int(exp):
             long_exp = PyLong_AsLong(exp)
+            use_long_exp = -100000 < long_exp < 100000
         elif type(exp) is Integer and mpz_cmpabs_ui((<Integer>exp).value, 100000) == -1:
             long_exp = mpz_get_si((<Integer>exp).value)
-        else:
+            use_long_exp = True
+        if not use_long_exp:
             base = self.lift()
             sig_on()
             try:
