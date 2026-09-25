@@ -1384,18 +1384,90 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2]); F
             F
+
+        A one-fold tensor product canonically coerces to its factor, while
+        remaining a distinct parent (:issue:`41704`)::
+
+            sage: F.rename('F')
+            sage: T = tensor([F])
+            sage: F.has_coerce_map_from(T)
+            True
+            sage: x = F.monomial(1) + 2 * F.monomial(2)
+            sage: F(tensor([x])) == x
+            True
+            sage: T.has_coerce_map_from(F)
+            False
+            sage: F(tensor([F.zero()]))
+            0
+
+        Tensor products with more than one factor do not coerce to a single
+        factor::
+
+            sage: F.has_coerce_map_from(tensor([F, F]))
+            False
+
+        Coercions from the factor compose with this one::
+
+            sage: # needs sage.combinat
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: p = Sym.powersum()
+            sage: s = Sym.schur()
+            sage: t = tensor([p[2]])
+            sage: p(t)
+            p[2]
+            sage: s(t)
+            -s[1, 1] + s[2]
+            sage: p[2] * t, t * p[2]
+            (p[2, 2], p[2, 2])
+
+        Registration on construction also handles factors that override
+        coercion discovery::
+
+            sage: # needs sage.combinat
+            sage: A.<x, y> = FreeAlgebra(QQ)
+            sage: A(tensor([x + y])) == x + y
+            True
+
+        This includes parents for which ``tensor`` selects a signed tensor
+        product category::
+
+            sage: # needs sage.combinat
+            sage: A = SteenrodAlgebra(2)
+            sage: a = A.an_element()
+            sage: A(tensor([a])) == a
+            True
         """
         self._sets = modules
         indices = CartesianProduct_iters(*[module.basis().keys()
                                            for module in modules]).map(tuple, is_injective=True)
         CombinatorialFreeModule.__init__(self, modules[0].base_ring(), indices, **options)
+        if len(modules) == 1:
+            self.module_morphism(
+                on_basis=self._onefold_to_factor_on_basis,
+                codomain=modules[0],
+            ).register_as_coercion()
         # the following is not the best option, but it's better than nothing.
         if 'tensor_symbol' in options:
             self._print_options['tensor_symbol'] = options['tensor_symbol']
 
+    def _onefold_to_factor_on_basis(self, key):
+        """
+        Return the image of the basis element indexed by ``key`` under the
+        canonical map from a one-fold tensor product to its factor.
+
+        TESTS::
+
+            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename('F')
+            sage: T = tensor([F])
+            sage: loads(dumps(F.coerce_map_from(T)))(T.monomial((2,)))
+            B[2]
+        """
+        return self._sets[0].monomial(key[0])
+
     def _repr_(self):
         r"""
-        This is customizable by setting
+        For tensor products with at least two factors, the separator is
+        customizable by setting
         ``self.print_options('tensor_symbol'=...)``.
 
         TESTS::
@@ -1414,7 +1486,15 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         To avoid a side\--effect on another doctest, we revert the change::
 
             sage: T.print_options(tensor_symbol=' # ')
+
+        A one-fold tensor product is displayed explicitly, rather than like
+        its sole factor (:issue:`18349`)::
+
+            sage: T = tensor([F]); T
+            tensor([F])
         """
+        if len(self._sets) == 1:
+            return f"tensor([{self._sets[0]}])"
         from sage.categories.tensor import tensor
         if hasattr(self, "_print_options"):
             symb = self._print_options['tensor_symbol']
@@ -1529,7 +1609,15 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             sage: g = 2*G.monomial(3) +     G.monomial(4)
             sage: tensor([f, g]) # indirect doctest
             2*F[1] # G[3] + F[1] # G[4] + 4*F[2] # G[3] + 2*F[2] # G[4]
+
+        The representation of an element of a one-fold tensor product keeps
+        the tensor structure visible::
+
+            sage: tensor([f])
+            tensor([F[1]]) + 2*tensor([F[2]])
         """
+        if len(self._sets) == 1:
+            return f"tensor([{self._sets[0]._repr_term(term[0])}])"
         if hasattr(self, "_print_options"):
             symb = self._print_options['tensor_symbol']
             if symb is None:
