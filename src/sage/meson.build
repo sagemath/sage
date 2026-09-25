@@ -170,6 +170,7 @@ configure_file(
 # runtime.
 conf_data.set10('DEFER_FEATURE_CHECKS', get_option('defer_feature_checks'))
 conf_data.set10('ECLIB_ENABLED', ec.found())
+conf_data.set10('M4RIE_ENABLED', m4rie.found())
 
 # Write config file
 # Should be last so that subdir calls can modify the config data
