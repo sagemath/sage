@@ -11394,6 +11394,30 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             zeta48^2 + 1
             sage: K(L.0**2)
             zeta24
+
+        Check that an element of small multiplicative order can be coerced
+        even when its parent field does not itself embed into ``self``::
+
+            sage: K3 = CyclotomicField(3); K9 = CyclotomicField(9)
+            sage: K12 = CyclotomicField(12)
+            sage: K12(K9.gen()^3) == K12(K3(K9.gen()^3))
+            True
+            sage: K12(K9.gen())
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot coerce zeta9 into Cyclotomic Field of order 12 and degree 4
+
+        Rational elements (which need not have finite multiplicative order,
+        e.g. `0`) are always coercible, regardless of any relationship
+        between the multiplicative orders of the two fields::
+
+            sage: K13 = CyclotomicField(13); K5 = CyclotomicField(5)
+            sage: K5(K13(0))
+            0
+            sage: K5(K13(2))
+            2
+            sage: K5(K13(1/2))
+            1/2
         """
         K = x.parent()
         if K is self:
@@ -11407,24 +11431,35 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             return x._lift_cyclotomic_element(self)
         if only_canonical:
             raise TypeError
+        if x.is_rational():
+            # x lies in the common base field QQ, so it is always
+            # coercible.  This must be checked before computing
+            # x.multiplicative_order() below, since a rational x need not
+            # have finite multiplicative order (e.g. x = 0).
+            return self(QQ(x))
         n = x.multiplicative_order()
         m = self.zeta_order()
         if m % n == 0:
-            # Harder case.  E.g., x = (zeta_42)^7 and
-            # self.__zeta = zeta_6, so it is possible to
-            # coerce x in, but not zeta_42 in.
+            # Harder case.  E.g., x = (zeta_9)^3 has multiplicative order 3,
+            # and self = Q(zeta_12) contains a primitive cube root of unity,
+            # even though Q(zeta_9) does not itself embed into Q(zeta_12).
             # Algorithm:
-            #    1. Compute self.__zeta as an element
-            #       of K = parent of x.  Call this y.
-            #    2. Write x as a power r of y.
+            #    1. Compute a primitive n-th root of unity w of K = parent
+            #       of x, where n is the multiplicative order of x.  Since
+            #       self also has a primitive n-th root of unity (because
+            #       m % n == 0), this avoids having to coerce a root of
+            #       unity of order m, which need not exist in K, into K.
+            #    2. Write x as a power r of w.
             #       TODO: we do step two STUPIDLY.
-            #    3. Return self.__zeta to the power r.
-            y = K(self.zeta(m))
-            z = y
-            for r in range(y.multiplicative_order()):
+            #    3. Return the primitive n-th root of unity of self to the
+            #       power r.
+            w = K.zeta(n)
+            zeta_n = self.zeta(n)
+            z = w
+            for r in range(1, n + 1):
                 if z == x:
-                    return self.zeta(m)**(r+1)
-                z *= y
+                    return zeta_n**r
+                z *= w
         raise TypeError("cannot coerce %s into %s" % (x, self))
         return self._element_class(self, x)
 
