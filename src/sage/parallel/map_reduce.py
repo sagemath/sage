@@ -1117,6 +1117,35 @@ class RESetMapReduce:
             <multiprocessing.queues.Queue object at 0x...>
             sage: len(S._workers)
             2
+
+        A worker construction failure releases the workers already created::
+
+            sage: from unittest.mock import patch
+            sage: from sage.parallel.map_reduce import RESetMapReduceWorker
+            sage: created = []
+            sage: def create_worker(*args):
+            ....:     if created:
+            ....:         raise RuntimeError('worker construction failed')
+            ....:     worker = RESetMapReduceWorker(*args)
+            ....:     created.append(worker)
+            ....:     return worker
+            sage: S.finish()
+            sage: with patch('sage.parallel.map_reduce.RESetMapReduceWorker', create_worker):
+            ....:     S.setup_workers(2)
+            Traceback (most recent call last):
+            ...
+            RuntimeError: worker construction failed
+            sage: created[0]._read_task.closed and created[0]._write_task.closed
+            True
+            sage: hasattr(S, '_workers')
+            False
+            sage: S.print_communication_statistics()
+            #proc:        0
+            reqs sent:    0
+            reqs rcvs:    0
+            - thefs:      0
+            + thefs:      0
+            sage: del created
         """
         self._nprocess = proc_number(max_proc)
         self._results = mp.Queue()
@@ -1127,8 +1156,14 @@ class RESetMapReduce:
         self._aborted = mp.Value(ctypes.c_bool, False, lock=False)
         sys.stdout.flush()
         sys.stderr.flush()
-        self._workers = [RESetMapReduceWorker(self, i, reduce_locally)
-                         for i in range(self._nprocess)]
+        self._workers = []
+        try:
+            for i in range(self._nprocess):
+                self._workers.append(RESetMapReduceWorker(self, i, reduce_locally))
+        except BaseException:
+            self._aborted.value = True
+            self.finish()
+            raise
 
     def start_workers(self):
         r"""
@@ -1238,21 +1273,31 @@ class RESetMapReduce:
 
         .. SEEALSO:: :meth:`print_communication_statistics`
         """
-        if not self._aborted.value:
-            logger.debug("Joining worker processes...")
-            for worker in self._workers:
-                logger.debug(f"Joining {worker.name}")
-                worker.join()
-            logger.debug("Joining done")
-        else:
+        if not hasattr(self, '_workers'):
+            return
+        if self._aborted.value:
             logger.debug("Killing worker processes...")
             for worker in self._workers:
-                logger.debug(f"Terminating {worker.name}")
-                worker.terminate()
+                if worker.pid is not None:
+                    logger.debug(f"Terminating {worker.name}")
+                    worker.terminate()
             logger.debug("Killing done")
 
-        del self._results, self._active_tasks, self._done
+        logger.debug("Joining worker processes...")
+        for worker in self._workers:
+            if worker.pid is not None:
+                worker.join()
+        logger.debug("Joining done")
+
         self._get_stats()
+        for worker in self._workers:
+            worker._request.close()
+            worker._read_task.close()
+            worker._write_task.close()
+        self._results.close()
+        del self._results, self._active_tasks, self._done
+        # Suspended iterators retain this list to identify their own run.
+        self._workers.clear()
         del self._workers
 
     def abort(self):
@@ -1490,8 +1535,7 @@ class RESetMapReduce:
             sage: S.run()  # indirect doctest
             720*x^6 + 120*x^5 + 24*x^4 + 6*x^3 + 2*x^2 + x + 1
         """
-        res = [tuple(self._workers[i]._stats) for i in range(self._nprocess)]
-        self._stats = res
+        self._stats = [tuple(worker._stats) for worker in self._workers]
 
     def print_communication_statistics(self, blocksize=16):
         r"""
@@ -1518,8 +1562,8 @@ class RESetMapReduce:
         def pstat(name, start, end, istat):
             res[0] += ("\n" + name + " ".join(
                 "%4i" % (self._stats[i][istat]) for i in range(start, end)))
-        for start in range(0, self._nprocess, blocksize):
-            end = min(start + blocksize, self._nprocess)
+        for start in range(0, len(self._stats), blocksize):
+            end = min(start + blocksize, len(self._stats))
             res[0] = ("#proc:     " +
                       " ".join("%4i" % (i) for i in range(start, end)))
             pstat("reqs sent: ", start, end, 0)
@@ -1969,6 +2013,13 @@ class RESetParallelIterator(RESetMapReduce):
     a recursively enumerated set for which the computations are done in
     parallel.
 
+    When stopping iteration early, use this object as a context manager or
+    explicitly close the generator returned by :func:`iter`. A ``break``
+    statement does not close a generator that is still referenced elsewhere.
+    Leaving the context or calling :meth:`close` terminates unfinished workers
+    and waits for them to exit; it does not wait for the current node's
+    computation to finish.
+
     EXAMPLES::
 
         sage: from sage.parallel.map_reduce import RESetParallelIterator
@@ -1976,7 +2027,101 @@ class RESetParallelIterator(RESetMapReduce):
         ....:     lambda l: [l + [0], l + [1]] if len(l) < 15 else [])
         sage: sum(1 for _ in S)
         65535
+
+    Stop iteration while another worker is still computing (:issue:`41015`)::
+
+        sage: from multiprocessing import Event
+        sage: from unittest.mock import patch
+        sage: started, blocked = Event(), Event()
+        sage: def children(n):
+        ....:     if n:
+        ....:         started.set()
+        ....:         blocked.wait()
+        ....:     return []
+        sage: with patch('sage.parallel.map_reduce.proc_number', return_value=2):
+        ....:     with RESetParallelIterator([0, 1], children) as S:
+        ....:         for n in S:
+        ....:             workers = list(S._workers)
+        ....:             assert started.wait(10)
+        ....:             break
+        sage: all(w.exitcode is not None for w in workers)
+        True
+        sage: hasattr(S, '_workers')
+        False
+        sage: del workers
     """
+    def __enter__(self):
+        r"""
+        Return this parallel iterable without starting any workers.
+
+        EXAMPLES::
+
+            sage: from sage.parallel.map_reduce import RESetParallelIterator
+            sage: S = RESetParallelIterator([], lambda n: [])
+            sage: with S as entered:
+            ....:     assert entered is S
+            sage: hasattr(S, '_workers')
+            False
+        """
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        r"""
+        Close the current computation without suppressing exceptions.
+
+        TESTS:
+
+        An exception before iteration must not be masked by cleanup::
+
+            sage: from sage.parallel.map_reduce import RESetParallelIterator
+            sage: with RESetParallelIterator([], lambda n: []):
+            ....:     raise ValueError('original error')
+            Traceback (most recent call last):
+            ...
+            ValueError: original error
+
+        Normal exhaustion has already released the workers::
+
+            sage: from unittest.mock import patch
+            sage: with patch('sage.parallel.map_reduce.proc_number', return_value=2):
+            ....:     with RESetParallelIterator([1, 2], lambda n: []) as S:
+            ....:         values = sorted(S)
+            sage: values
+            [1, 2]
+        """
+        self.close()
+
+    def close(self):
+        r"""
+        Terminate and join any workers belonging to the current iteration.
+
+        Calling this method before iteration starts or after it finishes has
+        no effect. The object can be iterated again after it is closed.
+
+        Termination uses :meth:`multiprocessing.Process.terminate`. Workers
+        that ignore the termination signal can prevent this method from
+        returning.
+
+        EXAMPLES::
+
+            sage: from sage.parallel.map_reduce import RESetParallelIterator
+            sage: S = RESetParallelIterator([0], lambda n: [n+1] if n < 10 else [])
+            sage: S.close()
+            sage: it = iter(S)
+            sage: next(it)
+            0
+            sage: S.close()
+            sage: S.close()
+            sage: list(it)
+            []
+        """
+        if hasattr(self, '_workers'):
+            # abort() sends shutdown messages synchronously, which can block
+            # on pipes no longer being consumed. We are terminating the
+            # workers, so there is no need to send those messages first.
+            self._aborted.value = True
+            self.finish()
+
     def map_function(self, z):
         r"""
         Return a singleton tuple.
@@ -2015,17 +2160,83 @@ class RESetParallelIterator(RESetMapReduce):
             [1, 1, 0, 1]
             sage: sum(1 for _ in it)
             65533
+
+        TESTS:
+
+        Explicitly closing the generator releases its workers::
+
+            sage: it = iter(S)
+            sage: _ = next(it)
+            sage: workers = list(S._workers)
+            sage: it.close()
+            sage: all(w.exitcode is not None for w in workers)
+            True
+            sage: del workers
+
+        Closing an old generator must not close a subsequent iteration::
+
+            sage: old = iter(S)
+            sage: _ = next(old)
+            sage: S.close()
+            sage: new = iter(S)
+            sage: _ = next(new)
+            sage: old.close()
+            sage: hasattr(S, '_workers')
+            True
+            sage: new.close()
+
+        Two active iterations of the same object are not supported::
+
+            sage: it = iter(S)
+            sage: _ = next(it)
+            sage: next(iter(S))
+            Traceback (most recent call last):
+            ...
+            RuntimeError: parallel iteration is already running
+            sage: it.close()
+
+        A failure to start a worker also cleans up processes already started::
+
+            sage: from unittest.mock import patch
+            sage: from sage.parallel.map_reduce import RESetMapReduceWorker
+            sage: start = RESetMapReduceWorker.start
+            sage: processes = []
+            sage: def start_worker(worker):
+            ....:     processes.append(worker)
+            ....:     if len(processes) == 2:
+            ....:         raise RuntimeError('worker startup failed')
+            ....:     start(worker)
+            sage: with patch('sage.parallel.map_reduce.proc_number', return_value=2):
+            ....:     with patch.object(RESetMapReduceWorker, 'start', start_worker):
+            ....:         next(iter(S))
+            Traceback (most recent call last):
+            ...
+            RuntimeError: worker startup failed
+            sage: processes[0].exitcode is not None and processes[1].pid is None
+            True
+            sage: hasattr(S, '_workers')
+            False
+            sage: del processes
         """
+        if hasattr(self, '_workers'):
+            raise RuntimeError("parallel iteration is already running")
         self.setup_workers(reduce_locally=False)
-        self.start_workers()
-        active_proc = self._nprocess
-        while True:
-            newres = self._results.get()
-            if newres is not None:
-                logger.debug("Got some results")
-                yield from newres
-            else:
-                active_proc -= 1
-                if active_proc == 0:
-                    break
-        self.finish()
+        workers = self._workers
+        try:
+            self.start_workers()
+            active_proc = self._nprocess
+            while active_proc and getattr(self, '_workers', None) is workers:
+                newres = self._results.get()
+                if newres is not None:
+                    logger.debug("Got some results")
+                    for result in newres:
+                        if getattr(self, '_workers', None) is not workers:
+                            return
+                        yield result
+                else:
+                    active_proc -= 1
+            if active_proc == 0:
+                self.finish()
+        finally:
+            if getattr(self, '_workers', None) is workers:
+                self.close()
