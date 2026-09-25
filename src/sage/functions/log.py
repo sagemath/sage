@@ -12,6 +12,7 @@ AUTHORS:
 
 from sage.misc.functional import log
 from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1093,6 +1094,16 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         sage: harmonic_number(5, 1. + I)
         1.57436810798989 - 1.06194728851357*I
 
+    Evaluation at infinity is handled using zeta functions::
+
+        sage: # needs sage.symbolic
+        sage: harmonic_number(oo, 2)
+        1/6*pi^2
+        sage: harmonic_number(oo, 1)
+        +Infinity
+        sage: harmonic_number(oo, 1/2)
+        +Infinity
+
     Solutions to certain sums are returned in terms of harmonic numbers::
 
         sage: k = var('k')                                                              # needs sage.symbolic
@@ -1172,11 +1183,33 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
         TESTS::
 
-            sage: harmonic_number(int(3), int(3))                                       # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: harmonic_number(int(3), int(3))
             1.162037037037037
         """
         if m == 0:
             return z
+
+        if ((isinstance(z, Expression) and z.is_positive_infinity())
+                or (not isinstance(z, Expression) and z == infinity)):
+            if m == 1:
+                return z
+            if isinstance(m, Expression):
+                if m.is_real():
+                    delta = m - 1
+                    if delta.is_positive():
+                        return zeta(m)
+                    if delta.is_negative() or delta.is_trivial_zero():
+                        return z
+            else:
+                try:
+                    if m > 1:
+                        return zeta(m)
+                    if m <= 1:
+                        return z
+                except TypeError:
+                    pass
+
         if m == 1:
             return harmonic_m1._eval_(z)
 
